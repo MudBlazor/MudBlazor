@@ -1,0 +1,108 @@
+﻿@page "/"
+
+@using Microsoft.CodeAnalysis;
+@using Microsoft.CodeAnalysis.CSharp;
+@using System.IO;
+@using System.Reflection;
+@using System.Runtime.Loader;
+@using BlazorFiddlePoC.Shared;
+@using System.Text.Json;
+
+
+@inject HttpClient Http
+@inject ComponentCompilationService CompilationService
+@inject IJSRuntime JsRuntime
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="asdasd" />
+
+Import new dll:
+
+
+<input type="file" onchange="readFile(this.files[0])">
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Compile();
+        await base.OnInitializedAsync();
+    }
+
+    public async Task Compile()
+    {
+
+        var result = CompilationService.CompileToAssembly("Counter.razor", @"
+            @page ""/counter7""
+<h1>Counter 7</h1>
+@code { 
+    protected override void OnInitialized()
+    {
+        Console.WriteLine(""OnInitialized"");
+        base.OnInitialized();
+    }
+}");
+
+
+        Console.WriteLine(result.Base64Assembly);
+
+        await JsRuntime.InvokeVoidAsync("window.readFile", result.AssemblyBytes);
+
+        //        var result = CompilationService.CompileToAssembly("Test.razor", @"
+        //namespace BlazorFiddle.Test1;
+
+        //public static class Test1 { public static void Test1() {Console.WriteLine(""Test1"")}});");
+
+        //Type calledType = Type.GetType("BlazorFiddle.Test1.Test1");
+
+        //// Invoke the method itself. The string returned by the method winds up in s
+        //calledType.InvokeMember(
+        //                 "Test1",
+        //                 BindingFlags.InvokeMethod | BindingFlags.Public |
+        //                     BindingFlags.Static,
+        //                 null,
+        //                 null,
+        //                 null);
+
+
+
+
+
+        //        var response = await Http.GetAsync("https://localhost:44347/_framework/_bin/mscorlib.dll");
+
+        //        var mscorlibStream = await response.Content.ReadAsStreamAsync();
+
+
+        //        //var netstandardStream = await response.Content.ReadAsStreamAsync();
+        //        //var systemRuntimeStream = await response.Content.ReadAsStreamAsync();
+
+        //        //var a = 3;
+
+        //        var compilation = CSharpCompilation.Create("LibraryName")
+        //           .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary) { })
+        //           .AddReferences(
+        //               MetadataReference.CreateFromStream(mscorlibStream))
+        //           .AddSyntaxTrees(CSharpSyntaxTree.ParseText(
+        //               @"public static class ClassName
+        //{
+        //public static void MethodName() => System.Console.WriteLine(""Hello C# Compilation."");
+        //}"));
+
+
+        //        foreach (var compilerMessage in compilation.GetDiagnostics())
+        //            Console.WriteLine(compilerMessage);
+
+
+        //        var dllStream = new MemoryStream();
+        //        var emitResult = compilation.Emit(dllStream);
+
+        //        var bytes = dllStream.ToArray();
+        //        var base64 = Convert.ToBase64String(bytes);
+
+        //        Console.WriteLine(base64);
+
+        //        Console.WriteLine("Finish");
+    }
+}

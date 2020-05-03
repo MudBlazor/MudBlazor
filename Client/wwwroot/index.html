@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>BlazorFiddlePoC</title>
+    <base href="/" />
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/site.css" rel="stylesheet" />
+
+
+    <script>
+        window.readFile = function readFile(file) {
+            var response = new Response(new Blob([base64ToArrayBuffer(file)], { type: "application/octet-stream" }));
+            debugger;
+
+            caches.open("blazor-resources-/").then(function (cache) {
+                cache.keys().then(function (keys) {
+                    var keysForDelete = keys.filter(x => x.url.indexOf('UserComponents') > -1)
+
+                    var pdb = keysForDelete.find(x => x.url.indexOf("pdb") > -1).url.substr('https://localhost:44347'.length);
+                    var dll = keysForDelete.find(x => x.url.indexOf("dll") > -1).url.substr('https://localhost:44347'.length);
+                    debugger;
+                    cache.delete(dll).then(function (result) {
+                        console.log(result);
+                        cache.delete(pdb).then(function (result) {
+                            console.log(result);
+                            debugger;
+                            cache.put(dll, response).then(function (result) {
+                                console.log(result);
+                            })
+                        });
+                    });
+                });
+            });
+
+            function base64ToArrayBuffer(base64) {
+                var binaryString = window.atob(base64);
+                var binaryLen = binaryString.length;
+                var bytes = new Uint8Array(binaryLen);
+                for (var i = 0; i < binaryLen; i++) {
+                    var ascii = binaryString.charCodeAt(i);
+                    bytes[i] = ascii;
+                }
+                return bytes;
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <app>Loading...</app>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="_framework/blazor.webassembly.js"></script>
+</body>
+
+</html>
