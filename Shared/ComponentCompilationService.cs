@@ -36,6 +36,7 @@ namespace BlazorFiddlePoC.Shared
                 typeof(NavLink).Assembly,
                 typeof(HttpClient).Assembly,
                 typeof(IJSRuntime).Assembly,
+                typeof(JsonSerializer).Assembly,
                 typeof(ComponentCompilationService).Assembly, // Reference this assembly, so that we can refer to test component types
             };
 
