@@ -16,34 +16,18 @@
 
 Welcome to your new app.
 
-<SurveyPrompt Title="asdasd" />
+<textarea style="width:100%" rows="10" @bind="@ComponentCode"></textarea>
 
-Import new dll:
-
-
-<input type="file" onchange="readFile(this.files[0])">
+<button @onclick="@Compile">Compile</button>
 
 @code {
+public string ComponentCode { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await Compile();
-        await base.OnInitializedAsync();
-    }
-
-    public async Task Compile()
-    {
-
-        var result = CompilationService.CompileToAssembly("Counter.razor", @"
-            @page ""/counter7""
-<h1>Counter 7</h1>
-@code { 
-    protected override void OnInitialized()
-    {
-        Console.WriteLine(""OnInitialized"");
-        base.OnInitialized();
-    }
-}");
+public async Task Compile()
+{
+    var result = CompilationService.CompileToAssembly("UserPage.razor", $@"
+    @page ""/user-page""
+    {ComponentCode}");
 
 
         Console.WriteLine(result.Base64Assembly);
@@ -104,5 +88,5 @@ Import new dll:
         //        Console.WriteLine(base64);
 
         //        Console.WriteLine("Finish");
-    }
-}
+        }
+        }

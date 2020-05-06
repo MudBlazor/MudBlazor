@@ -19,17 +19,11 @@
                 cache.keys().then(function (keys) {
                     var keysForDelete = keys.filter(x => x.url.indexOf('UserComponents') > -1)
 
-                    var pdb = keysForDelete.find(x => x.url.indexOf("pdb") > -1).url.substr('https://localhost:44347'.length);
                     var dll = keysForDelete.find(x => x.url.indexOf("dll") > -1).url.substr('https://localhost:44347'.length);
-                    debugger;
                     cache.delete(dll).then(function (result) {
                         console.log(result);
-                        cache.delete(pdb).then(function (result) {
+                        cache.put(dll, response).then(function (result) {
                             console.log(result);
-                            debugger;
-                            cache.put(dll, response).then(function (result) {
-                                console.log(result);
-                            })
                         });
                     });
                 });

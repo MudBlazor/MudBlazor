@@ -23,7 +23,7 @@ namespace BlazorFiddlePoC.Shared
 {
     public class ComponentCompilationService
     {
-        private static readonly AsyncLocal<StringBuilder> _output = new AsyncLocal<StringBuilder>();
+        private static readonly StringBuilder _output = new StringBuilder();
 
         public static async Task Init()
         {
@@ -95,11 +95,6 @@ namespace BlazorFiddlePoC.Shared
 
             return streams;
 
-        }
-
-        public ComponentCompilationService()
-        {
-            _output.Value = new StringBuilder();
         }
 
         private static CSharpParseOptions CSharpParseOptions { get; set; }
@@ -252,28 +247,28 @@ namespace BlazorFiddlePoC.Shared
                 // Result of real code generation for the document under test
                 codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
 
-                _output.Value.AppendLine("Use this output when opening an issue");
-                _output.Value.AppendLine(string.Empty);
+                _output.AppendLine("Use this output when opening an issue");
+                _output.AppendLine(string.Empty);
 
-                _output.Value.AppendLine($"## Main source file ({projectItem.FileKind}):");
-                _output.Value.AppendLine("```");
-                _output.Value.AppendLine(ReadProjectItem(projectItem));
-                _output.Value.AppendLine("```");
-                _output.Value.AppendLine(string.Empty);
+                _output.AppendLine($"## Main source file ({projectItem.FileKind}):");
+                _output.AppendLine("```");
+                _output.AppendLine(ReadProjectItem(projectItem));
+                _output.AppendLine("```");
+                _output.AppendLine(string.Empty);
 
                 foreach (var item in AdditionalRazorItems)
                 {
-                    _output.Value.AppendLine($"### Additional source file ({item.FileKind}):");
-                    _output.Value.AppendLine("```");
-                    _output.Value.AppendLine(ReadProjectItem(item));
-                    _output.Value.AppendLine("```");
-                    _output.Value.AppendLine(string.Empty);
+                    _output.AppendLine($"### Additional source file ({item.FileKind}):");
+                    _output.AppendLine("```");
+                    _output.AppendLine(ReadProjectItem(item));
+                    _output.AppendLine("```");
+                    _output.AppendLine(string.Empty);
                 }
 
-                _output.Value.AppendLine("## Generated C#:");
-                _output.Value.AppendLine("```C#");
-                _output.Value.AppendLine(codeDocument.GetCSharpDocument().GeneratedCode);
-                _output.Value.AppendLine("```");
+                _output.AppendLine("## Generated C#:");
+                _output.AppendLine("```C#");
+                _output.AppendLine(codeDocument.GetCSharpDocument().GeneratedCode);
+                _output.AppendLine("```");
 
                 return new CompileToCSharpResult
                 {
