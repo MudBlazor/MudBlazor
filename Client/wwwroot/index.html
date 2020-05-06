@@ -10,6 +10,26 @@
     <link href="css/site.css" rel="stylesheet" />
 
 
+    <script src="lib/monaco-editor/min/vs/loader.js"></script>
+    <script>
+        window.initEditor = function initEditor(editorId) {
+
+            require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
+            require(['vs/editor/editor.main'], function () {
+                window.editor = monaco.editor.create(document.getElementById(editorId), {
+                    value: [
+                        '<h1> Hello World </h1>',
+                        '@code {',
+                        '',
+                        '}'
+                    ].join('\n'),
+                    language: 'razor'
+                });
+            });
+        }
+
+    </script>
+
     <script>
         window.reloadIFrame = function reloadIFrame(id) {
             document.getElementById(id).contentWindow.location.reload();

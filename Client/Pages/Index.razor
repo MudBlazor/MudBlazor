@@ -10,7 +10,7 @@
 
 <div class="row" style="height: 100%">
     <div class="col-md-6">
-        <textarea style="width:100%" rows="10" @bind="@ComponentCode"></textarea>
+        <div id="user-code-editor" style="width:800px;height:600px;border:1px solid grey"></div>
         <button @onclick="@Compile">Compile</button>
     </div>
 
@@ -19,10 +19,11 @@
     </div>
 </div>
 @code {
-    public string ComponentCode { get; set; }
 
     public async Task Compile()
     {
+        var code = await JsRuntime.InvokeAsync<string>("window.editor.getValue");
+
         var result = CompilationService.CompileToAssembly("UserPage.razor", $@"
 @page ""/user-page""
 
@@ -32,10 +33,20 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.JSInterop
 @using System.Text.Json
-{ComponentCode}");
+{code}");
 
         await JsRuntime.InvokeVoidAsync("window.readFile", result.AssemblyBytes);
 
         await JsRuntime.InvokeVoidAsync("window.reloadIFrame", "user-page-window");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JsRuntime.InvokeVoidAsync("window.initEditor", "user-code-editor");
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
     }
 }
