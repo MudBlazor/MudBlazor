@@ -11,6 +11,10 @@
 
 
     <script>
+        window.reloadIFrame = function reloadIFrame(id) {
+            document.getElementById(id).contentWindow.location.reload();
+        }
+
         window.readFile = function readFile(file) {
             var response = new Response(new Blob([base64ToArrayBuffer(file)], { type: "application/octet-stream" }));
             debugger;

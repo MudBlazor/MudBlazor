@@ -18,6 +18,8 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Runtime.Loader;
+using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.JSInterop;
 
 namespace BlazorFiddlePoC.Shared
 {
@@ -30,7 +32,10 @@ namespace BlazorFiddlePoC.Shared
             var referenceAssemblyRoots = new[]
             {
                 typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly, // System.Runtime
-                typeof(ComponentBase).Assembly,
+                //typeof(ComponentBase).Assembly,
+                typeof(NavLink).Assembly,
+                typeof(HttpClient).Assembly,
+                typeof(IJSRuntime).Assembly,
                 typeof(ComponentCompilationService).Assembly, // Reference this assembly, so that we can refer to test component types
             };
 
