@@ -20,6 +20,7 @@ using System.Text.Json;
 using System.Runtime.Loader;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
+using System.Net.Http.Json;
 
 namespace BlazorFiddlePoC.Shared
 {
@@ -34,6 +35,7 @@ namespace BlazorFiddlePoC.Shared
                 typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly, // System.Runtime
                 //typeof(ComponentBase).Assembly,
                 typeof(NavLink).Assembly,
+                typeof(HttpClientJsonExtensions).Assembly,
                 typeof(HttpClient).Assembly,
                 typeof(IJSRuntime).Assembly,
                 typeof(JsonSerializer).Assembly,
