@@ -145,11 +145,11 @@ namespace BlazorFiddlePoC.Shared
                 Console.WriteLine(diagnostic);
             }
 
-            if (diagnostics.Any(x => x.Severity == DiagnosticSeverity.Error) && throwOnFailure)
-            {
-                throw new Exception(compilation.ToString());
-            }
-            else if (diagnostics.Any(x => x.Severity == DiagnosticSeverity.Error))
+            //if (diagnostics.Any(x => x.Severity == DiagnosticSeverity.Error) && throwOnFailure)
+            //{
+            //    throw new Exception(compilation.ToString());
+            //}
+            if (diagnostics.Any(x => x.Severity == DiagnosticSeverity.Error))
             {
                 return new CompileToAssemblyResult
                 {

@@ -2,6 +2,7 @@
 @layout MainLayout
 
 @using BlazorFiddlePoC.Shared;
+@using Microsoft.CodeAnalysis;
 
 @inject ComponentCompilationService CompilationService
 @inject IJSRuntime JsRuntime
@@ -18,7 +19,60 @@
         <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%;"></iframe>
     </div>
 </div>
+
+<div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+        <strong class="mr-auto">Output</strong>
+        <small>@ErrorsCount errors / @WarningsCount warnings</small>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Switch Visibility" @onclick="@ToggleDiagnostics">
+            @if (AreDiagnosticsShown)
+            {
+                <span class="oi oi-chevron-bottom"></span>
+            }
+            else
+            {
+                <span class="oi oi-chevron-top"></span>
+            }
+        </button>
+    </div>
+    @if (AreDiagnosticsShown && Diagnostics.Any())
+    {
+        <div class="toast-body">
+            <table class="table table-borderless">
+                <thead>
+                    <tr>
+                        <th scope="col">Severity</th>
+                        <th scope="col">Code</th>
+                        <th scope="col">Description</th>
+                        @*<th scope="col">File</th>*@
+                        <th scope="col">Line</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var diagnostic in Diagnostics)
+                    {
+                        <tr>
+                            <th>@diagnostic.Severity</th>
+                            <td>@diagnostic.Descriptor?.Id</td>
+                            <td>@diagnostic.GetMessage()</td>
+                            @*<td>@diagnostic.Descriptor</td>*@
+                            <td>@diagnostic.Location?.GetLineSpan().Span.Start.Line</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
 @code {
+    public IEnumerable<Diagnostic> Diagnostics { get; set; } = new List<Diagnostic>();
+    public bool AreDiagnosticsShown { get; set; }
+    public int ErrorsCount { get; set; }
+    public int WarningsCount { get; set; }
+
+    public void ToggleDiagnostics() => AreDiagnosticsShown = !AreDiagnosticsShown;
+
     public async Task Compile()
     {
         var code = await JsRuntime.InvokeAsync<string>("window.editor.getValue");
@@ -27,31 +81,29 @@
         var result = CompilationService.CompileToAssembly("UserPage.razor", $@"
 @page ""/user-page""
 
-@using System.Net.Http
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.JSInterop
-@using System.Text.Json
-@using System.Net.Http.Json
-@using Telerik.Blazor
-@using Telerik.Blazor.Components
-@using Telerik.DataSource.Extensions
 @using System.Linq;
 
 {code}");
 
-        //Console.WriteLine("CompileToAssembly: " + sw.Elapsed.TotalSeconds);
+        Diagnostics = result.Diagnostics;
+        AreDiagnosticsShown = true;
+
+        ErrorsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error);
+        WarningsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
 
         sw.Restart();
+        if (result.AssemblyBytes != null && result.AssemblyBytes.Length > 0)
+        {
+            await JsRuntime.InvokeVoidAsync("window.readFile", result.AssemblyBytes);
 
-        await JsRuntime.InvokeVoidAsync("window.readFile", result.AssemblyBytes);
+            // Add error page in IFrame
+            await JsRuntime.InvokeVoidAsync("window.reloadIFrame", "user-page-window");
+        }
 
-        //Console.WriteLine("readFile: " + sw.Elapsed.TotalSeconds);
-
-        await JsRuntime.InvokeVoidAsync("window.reloadIFrame", "user-page-window");
-
-        //Console.WriteLine("Bytes length: " + result.AssemblyBytes.Length);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

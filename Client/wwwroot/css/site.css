@@ -181,3 +181,7 @@ app {
         display: block;
     }
 }
+
+.main .toast {
+    max-width: 100%;
+}
