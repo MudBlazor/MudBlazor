@@ -5,67 +5,27 @@
 
 @layout EmptyLayout
 
-<div style="height: 60px;">
-    <TelerikMenu Data="@MenuItems" IconField="TelerikIcon" ImageUrlField="RasterImage" IconClassField="CustomFontIcon">
-    </TelerikMenu>
-</div>
+@*@inject HttpClient Http*@
+
+<h1>Http Call</h1>
+
+<p>Response: @httpResponse</p>
+<p>obj summary: @Obj?["summary"]</p>
+
+<button class="btn btn-primary" @onclick="CallHttp">Click me</button>
 
 @code {
-    public List<MenuItem> MenuItems { get; set; }
+    private string httpResponse = string.Empty;
+    private IDictionary<string, object> Obj = null;
 
-    public class MenuItem
+    private async Task CallHttp()
     {
-        public string Text { get; set; }
-        public string TelerikIcon { get; set; }
-        public string CustomFontIcon { get; set; }
-        public string RasterImage { get; set; }
-        public List<MenuItem> Items { get; set; }
-    }
+        Console.WriteLine("Test");
 
-    protected override void OnInitialized()
-    {
-        MenuItems = new List<MenuItem>()
-{
-            new MenuItem()
-            {
-                Text = "Share",
-                TelerikIcon = IconName.Share,
-                Items = new List<MenuItem>()
-        {
-                    new MenuItem()
-                    {
-                        Text = "FaceBook",
-                        TelerikIcon = IconName.Facebook
-                    },
-                    new MenuItem()
-                    {
-                        Text = "LinkedIn",
-                        TelerikIcon = IconName.Linkedin
-                    },
-                    new MenuItem()
-                    {
-                        Text = "Twitter",
-                        TelerikIcon = IconName.Twitter
-                    },
-                }
-            },
-            new MenuItem()
-            {
-                Text = "Star (Telerik)",
-                TelerikIcon = IconName.Star
-            },
-            new MenuItem()
-            {
-                Text = "Star (raster)",
-                RasterImage = "images/star.png"
-            },
-            new MenuItem
-            {
-                Text = "Star (custom font)",
-                CustomFontIcon = "oi oi-star"
-            }
-        };
+        //var result = await Http.GetAsync("WeatherForecast");
 
-        base.OnInitialized();
+        //httpResponse = await result.Content.ReadAsStringAsync();
+
+        //Obj = System.Text.Json.JsonSerializer.Deserialize<List<IDictionary<string, object>>>(httpResponse)[0];
     }
 }

@@ -10,14 +10,9 @@ using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.CodeAnalysis.Razor;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using System.Text;
-using System.Threading;
-using System.Runtime.InteropServices;
-using Microsoft.AspNetCore.Components;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
-using System.Text.Json;
-using System.Runtime.Loader;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using System.Net.Http.Json;
@@ -29,7 +24,6 @@ namespace BlazorFiddlePoC.Shared
 {
     public class ComponentCompilationService
     {
-        private static readonly StringBuilder _output = new StringBuilder();
         private static Stopwatch _sw;
 
         public static async Task Init()
@@ -42,8 +36,7 @@ namespace BlazorFiddlePoC.Shared
                 typeof(IQueryable).Assembly,
                 typeof(HttpClientJsonExtensions).Assembly,
                 typeof(TelerikGrid<>).Assembly,
-                typeof(IJSRuntime).Assembly,
-                typeof(ComponentCompilationService).Assembly, // Reference this assembly, so that we can refer to test component types
+                typeof(IJSRuntime).Assembly
             };
 
             var temp = referenceAssemblyRoots
@@ -51,25 +44,7 @@ namespace BlazorFiddlePoC.Shared
                 .Distinct()
                 .ToList();
 
-            //var temp2 = temp.Select(Assembly.Load)
-            //    .ToList();
-
             var assemblyStreams = await GetStreamFromHttp(new HttpClient(), temp.Select(x => x.Name));
-
-            ////Console.WriteLine(temp.Count);
-
-            //////Console.WriteLine(string.Join(", ", temp2.SelectMany(assembly => assembly.GetManifestResourceNames().FirstOrDefault())));
-            ////Console.WriteLine(string.Join(", ", temp2.Select(x => x.Location)));
-
-            ////var referenceAssemblies = temp2
-            ////    .Where(x => x.GetManifestResourceNames().Any())
-            ////    .Select(assembly => MetadataReference.CreateFromStream(
-            ////        assembly.GetManifestResourceStream(
-            ////            assembly.GetManifestResourceNames().First())))
-            ////    .ToList();
-
-            ////Console.WriteLine(temp.Count);
-            ///
 
             var referenceAssemblies = assemblyStreams.Select(a => MetadataReference.CreateFromStream(a)).ToList();
 
@@ -144,8 +119,6 @@ namespace BlazorFiddlePoC.Shared
 
             Console.WriteLine("CompileToAssembly " + _sw.Elapsed.TotalSeconds);
 
-            //var test = AssemblyLoadContext.Default;
-
             return result;
         }
 
@@ -208,33 +181,32 @@ namespace BlazorFiddlePoC.Shared
                 // what the build does.
                 var projectEngine = CreateProjectEngine(Array.Empty<MetadataReference>());
 
-                Console.WriteLine("CreateProjectEngine " + _sw.Elapsed.TotalSeconds);
-                _sw.Restart();
+                //Console.WriteLine("CreateProjectEngine " + _sw.Elapsed.TotalSeconds);
+                //_sw.Restart();
 
                 RazorCodeDocument codeDocument;
                 foreach (var item in AdditionalRazorItems)
                 {
                     // Result of generating declarations
                     codeDocument = projectEngine.ProcessDeclarationOnly(item);
-                    //Assert.Empty(codeDocument.GetCSharpDocument().Diagnostics);
 
                     var syntaxTree = Parse(codeDocument.GetCSharpDocument().GeneratedCode, path: item.FilePath);
                     AdditionalSyntaxTrees.Add(syntaxTree);
                 }
 
-                Console.WriteLine("AdditionalRazorItems " + _sw.Elapsed.TotalSeconds);
-                _sw.Restart();
+                //Console.WriteLine("AdditionalRazorItems " + _sw.Elapsed.TotalSeconds);
+                //_sw.Restart();
 
                 // Result of generating declarations
                 var projectItem = CreateProjectItem(cshtmlRelativePath, cshtmlContent);
 
-                Console.WriteLine("CreateProjectItem " + _sw.Elapsed.TotalSeconds);
-                _sw.Restart();
+                //Console.WriteLine("CreateProjectItem " + _sw.Elapsed.TotalSeconds);
+                //_sw.Restart();
 
                 codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
 
-                Console.WriteLine("ProcessDeclarationOnly " + _sw.Elapsed.TotalSeconds);
-                _sw.Restart();
+                //Console.WriteLine("ProcessDeclarationOnly " + _sw.Elapsed.TotalSeconds);
+                //_sw.Restart();
 
                 var declaration = new CompileToCSharpResult
                 {
@@ -244,14 +216,14 @@ namespace BlazorFiddlePoC.Shared
                     Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
                 };
 
-                Console.WriteLine("CompileToCSharpResult " + _sw.Elapsed.TotalSeconds);
-                _sw.Restart();
+                //Console.WriteLine("CompileToCSharpResult " + _sw.Elapsed.TotalSeconds);
+                //_sw.Restart();
 
                 // Result of doing 'temp' compilation
                 var tempAssembly = CompileToAssembly(declaration);
 
-                Console.WriteLine("CompileToAssembly " + _sw.Elapsed.TotalSeconds);
-                _sw.Restart();
+                //Console.WriteLine("CompileToAssembly " + _sw.Elapsed.TotalSeconds);
+                //_sw.Restart();
 
                 // Add the 'temp' compilation as a metadata reference
                 var references = BaseCompilation.References.Concat(new[] { tempAssembly.Compilation.ToMetadataReference() }).ToArray();
@@ -270,39 +242,16 @@ namespace BlazorFiddlePoC.Shared
                     AdditionalSyntaxTrees.Add(syntaxTree);
                 }
 
-                Console.WriteLine("CreateProjectEngine +  AdditionalRazorItems" + _sw.Elapsed.TotalSeconds);
-                _sw.Restart();
+                //Console.WriteLine("CreateProjectEngine +  AdditionalRazorItems" + _sw.Elapsed.TotalSeconds);
+                //_sw.Restart();
 
 
                 // Result of real code generation for the document under test
                 codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
 
-                Console.WriteLine("ProcessDesignTime " + _sw.Elapsed.TotalSeconds);
-                Console.WriteLine("DesignTime " + DesignTime);
-                _sw.Restart();
-
-                //_output.AppendLine("Use this output when opening an issue");
-                //_output.AppendLine(string.Empty);
-
-                //_output.AppendLine($"## Main source file ({projectItem.FileKind}):");
-                //_output.AppendLine("```");
-                //_output.AppendLine(ReadProjectItem(projectItem));
-                //_output.AppendLine("```");
-                //_output.AppendLine(string.Empty);
-
-                //foreach (var item in AdditionalRazorItems)
-                //{
-                //    _output.AppendLine($"### Additional source file ({item.FileKind}):");
-                //    _output.AppendLine("```");
-                //    _output.AppendLine(ReadProjectItem(item));
-                //    _output.AppendLine("```");
-                //    _output.AppendLine(string.Empty);
-                //}
-
-                //_output.AppendLine("## Generated C#:");
-                //_output.AppendLine("```C#");
-                //_output.AppendLine(codeDocument.GetCSharpDocument().GeneratedCode);
-                //_output.AppendLine("```");
+                //Console.WriteLine("ProcessDesignTime " + _sw.Elapsed.TotalSeconds);
+                //Console.WriteLine("DesignTime " + DesignTime);
+                //_sw.Restart();
 
                 return new CompileToCSharpResult
                 {
@@ -321,21 +270,6 @@ namespace BlazorFiddlePoC.Shared
                 var projectItem = CreateProjectItem(cshtmlRelativePath, cshtmlContent);
                 var codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
 
-                // Log the generated code for test results.
-                //_output.Value.WriteLine("Use this output when opening an issue");
-                //_output.Value.WriteLine(string.Empty);
-
-                //_output.Value.WriteLine($"## Main source file ({projectItem.FileKind}):");
-                //_output.Value.WriteLine("```");
-                //_output.Value.WriteLine(ReadProjectItem(projectItem));
-                //_output.Value.WriteLine("```");
-                //_output.Value.WriteLine(string.Empty);
-
-                //_output.Value.WriteLine("## Generated C#:");
-                //_output.Value.WriteLine("```C#");
-                //_output.Value.WriteLine(codeDocument.GetCSharpDocument().GeneratedCode);
-                //_output.Value.WriteLine("```");
-
                 return new CompileToCSharpResult
                 {
                     BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
@@ -343,14 +277,6 @@ namespace BlazorFiddlePoC.Shared
                     Code = codeDocument.GetCSharpDocument().GeneratedCode,
                     Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
                 };
-            }
-        }
-
-        private static string ReadProjectItem(RazorProjectItem item)
-        {
-            using (var reader = new StreamReader(item.Read()))
-            {
-                return reader.ReadToEnd();
             }
         }
 
