@@ -34,7 +34,7 @@
 
 <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
-        <strong class="mr-auto">Output</strong>
+        <strong class="mr-auto">Error List</strong>
         <small>@ErrorsCount errors / @WarningsCount warnings</small>
         <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Switch Visibility" @onclick="@ToggleDiagnostics">
             @if (AreDiagnosticsShown)
@@ -85,6 +85,9 @@
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.JSInterop
+@using Telerik.Blazor
+@using Telerik.DataSource.Extensions
+@using Telerik.Blazor.Components
 ";
 
     public IReadOnlyCollection<Diagnostic> Diagnostics { get; set; } = new List<Diagnostic>();
