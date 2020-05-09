@@ -41,10 +41,10 @@ app {
             margin-left: 1.5rem;
         }
 
-.main .top-row a:first-child {
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+        .main .top-row a:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
 .sidebar {
     background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
@@ -129,12 +129,12 @@ app {
     z-index: 1000;
 }
 
-#blazor-error-ui .dismiss {
-    cursor: pointer;
-    position: absolute;
-    right: 0.75rem;
-    top: 0.5rem;
-}
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
 
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
@@ -184,4 +184,30 @@ app {
 
 .main .toast {
     max-width: 100%;
+    width: 97%;
+    position: fixed;
+    bottom: 0;
+    max-height: 40%;
+    overflow-y: visible;
+}
+
+
+.user-page-container .user-page-loader {
+    position: absolute;
+    top: 37%;
+    left: 45%;
+}
+
+    .user-page-container .user-page-loader .spinner-border {
+        width: 10rem;
+        height: 10rem;
+    }
+
+.user-page-container .user-page-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
 }

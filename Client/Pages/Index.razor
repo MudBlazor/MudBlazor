@@ -9,14 +9,24 @@
 
 <h1 class="text-center" style="padding-bottom: 20px">Repl for your Blazor component</h1>
 
-<button class="btn btn-primary" @onclick="@Compile">Compile</button>
+<button class="btn btn-primary" @onclick="@Compile" disabled="@Loading">Compile</button>
 
 <div class="row" style="margin-top: 10px; margin-bottom: 10px">
     <div class="col-md-6">
         <div id="user-code-editor" style="height: 500px; border: 1px solid #ccc"></div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-6 user-page-container">
+        @if (Loading)
+        {
+            <div class="user-page-overlay"></div>
+            <div class="d-flex justify-content-center user-page-loader">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        }
+
         <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%"></iframe>
     </div>
 </div>
@@ -82,12 +92,17 @@
 
     public bool AreDiagnosticsShown { get; set; }
 
+    public bool Loading { get; set; }
+
     public int UserComponentCodeStartLine { get; set; }
 
     public void ToggleDiagnostics() => AreDiagnosticsShown = !AreDiagnosticsShown;
 
     public async Task Compile()
     {
+        Loading = true;
+        await Task.Delay(10); // Ensure rendering has time to be called
+
         var code = await JsRuntime.InvokeAsync<string>("window.editor.getValue");
 
         var result = CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code);
@@ -98,6 +113,7 @@
         WarningsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
 
         AreDiagnosticsShown = true;
+        Loading = false;
 
         if (result.AssemblyBytes != null && result.AssemblyBytes.Length > 0)
         {
