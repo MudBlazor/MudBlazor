@@ -19,7 +19,6 @@
     </div>
 </div>
 @code {
-
     public async Task Compile()
     {
         var code = await JsRuntime.InvokeAsync<string>("window.editor.getValue");
@@ -42,7 +41,6 @@
 
 {code}");
 
-
         //Console.WriteLine("CompileToAssembly: " + sw.Elapsed.TotalSeconds);
 
         sw.Restart();
@@ -54,7 +52,6 @@
         await JsRuntime.InvokeVoidAsync("window.reloadIFrame", "user-page-window");
 
         //Console.WriteLine("Bytes length: " + result.AssemblyBytes.Length);
-
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -62,7 +59,6 @@
         if (firstRender)
         {
             await JsRuntime.InvokeVoidAsync("window.initEditor", "user-code-editor");
-
         }
 
         await base.OnAfterRenderAsync(firstRender);
