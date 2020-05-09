@@ -195,13 +195,20 @@ app {
 .user-page-container .user-page-loader {
     position: absolute;
     top: 37%;
-    left: 45%;
+    left: 43%;
 }
 
     .user-page-container .user-page-loader .spinner-border {
         width: 10rem;
         height: 10rem;
     }
+
+.user-page-container .user-page-loader-text {
+    width: 100%;
+    position: absolute;
+    top: 76%;
+    font-size: 30px;
+}
 
 .user-page-container .user-page-overlay {
     position: absolute;

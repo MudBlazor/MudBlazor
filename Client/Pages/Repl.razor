@@ -23,17 +23,17 @@
 
     public async Task Compile()
     {
-        var result = CompilationService.CompileToAssembly("UserPage.razor", $@"
-        @using System.Net.Http
-        @using Microsoft.AspNetCore.Components.Forms
-        @using Microsoft.AspNetCore.Components.Routing
-        @using Microsoft.AspNetCore.Components.Web
-        @using Microsoft.JSInterop
-        @page ""/user-page""
-        {ComponentCode}");
+        //var result = CompilationService.CompileToAssembly("UserPage.razor", $@"
+        //@using System.Net.Http
+        //@using Microsoft.AspNetCore.Components.Forms
+        //@using Microsoft.AspNetCore.Components.Routing
+        //@using Microsoft.AspNetCore.Components.Web
+        //@using Microsoft.JSInterop
+        //@page ""/user-page""
+        //{ComponentCode}");
 
-        await JsRuntime.InvokeVoidAsync("window.readFile", result.AssemblyBytes);
+        //await JsRuntime.InvokeVoidAsync("window.readFile", result.AssemblyBytes);
 
-        await JsRuntime.InvokeVoidAsync("window.reloadIFrame", "user-page-window");
+        //await JsRuntime.InvokeVoidAsync("window.reloadIFrame", "user-page-window");
     }
 }

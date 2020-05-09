@@ -25,6 +25,7 @@
                     <span class="sr-only">Loading...</span>
                 </div>
             </div>
+            <div class="text-center user-page-loader-text">@LoaderText</div>
         }
 
         <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%"></iframe>
@@ -92,20 +93,30 @@
 
     public bool AreDiagnosticsShown { get; set; }
 
+    public string LoaderText { get; set; }
+
     public bool Loading { get; set; }
 
     public int UserComponentCodeStartLine { get; set; }
 
     public void ToggleDiagnostics() => AreDiagnosticsShown = !AreDiagnosticsShown;
 
+    public async Task UpdateLoaderText(string loaderText)
+    {
+        LoaderText = loaderText;
+        StateHasChanged();
+        await Task.Delay(10); // Ensure rendering has time to be called
+    }
+
     public async Task Compile()
     {
         Loading = true;
+        LoaderText = "Processing";
         await Task.Delay(10); // Ensure rendering has time to be called
 
         var code = await JsRuntime.InvokeAsync<string>("window.editor.getValue");
 
-        var result = CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code);
+        var result = await CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code, UpdateLoaderText);
 
         Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Descriptor?.Id).ToList();
 

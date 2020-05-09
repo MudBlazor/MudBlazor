@@ -108,14 +108,15 @@ namespace BlazorFiddlePoC.Shared
         // so making sure it doesn't happen for each test.
         private static CSharpCompilation BaseCompilation;
 
-        public CompileToAssemblyResult CompileToAssembly(string cshtmlRelativePath, string cshtmlContent)
+        public async Task<CompileToAssemblyResult> CompileToAssembly(string cshtmlRelativePath, string cshtmlContent, Func<string, Task> updateStatusFunc)
         {
             _sw = Stopwatch.StartNew();
-            var cSharpResult = CompileToCSharp(cshtmlRelativePath, cshtmlContent);
+            var cSharpResult = await CompileToCSharp(cshtmlRelativePath, cshtmlContent, updateStatusFunc);
 
             Console.WriteLine("CompileToCSharp " + _sw.Elapsed.TotalSeconds);
             _sw.Restart();
 
+            await updateStatusFunc?.Invoke("Compiling Assembly");
             var result = CompileToAssembly(cSharpResult);
 
             Console.WriteLine("CompileToAssembly " + _sw.Elapsed.TotalSeconds);
@@ -174,7 +175,7 @@ namespace BlazorFiddlePoC.Shared
             return (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(text, CSharpParseOptions, path: path);
         }
 
-        protected CompileToCSharpResult CompileToCSharp(string cshtmlRelativePath, string cshtmlContent)
+        protected async Task<CompileToCSharpResult> CompileToCSharp(string cshtmlRelativePath, string cshtmlContent, Func<string, Task> updateStatusFunc)
         {
             if (true)
             {
@@ -247,6 +248,7 @@ namespace BlazorFiddlePoC.Shared
                 //_sw.Restart();
 
 
+                await updateStatusFunc?.Invoke("Preparing Project");
                 // Result of real code generation for the document under test
                 codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
 
