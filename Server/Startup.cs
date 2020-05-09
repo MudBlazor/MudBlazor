@@ -43,7 +43,8 @@ namespace BlazorFiddlePoC.Server
 
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
-            app.UseStaticFiles();
+            app.UseFileServer(true);
+            //app.UseStaticFiles(new StaticFileOptions(new Microsoft.AspNetCore.StaticFiles.Infrastructure.SharedOptions( { }));
 
             app.UseRouting();
 

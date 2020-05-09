@@ -8,10 +8,10 @@
 
 <h1 class="text-center" style="padding-bottom: 20px;">Repl for your Blazor component</h1>
 
+<button @onclick="@Compile">Compile</button>
 <div class="row" style="height: 100%">
     <div class="col-md-6">
         <div id="user-code-editor" style="width:800px;height:600px;border:1px solid grey"></div>
-        <button @onclick="@Compile">Compile</button>
     </div>
 
     <div class="col-md-6">
@@ -24,6 +24,7 @@
     {
         var code = await JsRuntime.InvokeAsync<string>("window.editor.getValue");
 
+        var sw = System.Diagnostics.Stopwatch.StartNew();
         var result = CompilationService.CompileToAssembly("UserPage.razor", $@"
 @page ""/user-page""
 
@@ -34,12 +35,26 @@
 @using Microsoft.JSInterop
 @using System.Text.Json
 @using System.Net.Http.Json
+@using Telerik.Blazor
+@using Telerik.Blazor.Components
+@using Telerik.DataSource.Extensions
+@using System.Linq;
 
 {code}");
 
+
+        //Console.WriteLine("CompileToAssembly: " + sw.Elapsed.TotalSeconds);
+
+        sw.Restart();
+
         await JsRuntime.InvokeVoidAsync("window.readFile", result.AssemblyBytes);
 
+        //Console.WriteLine("readFile: " + sw.Elapsed.TotalSeconds);
+
         await JsRuntime.InvokeVoidAsync("window.reloadIFrame", "user-page-window");
+
+        //Console.WriteLine("Bytes length: " + result.AssemblyBytes.Length);
+
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -47,6 +62,7 @@
         if (firstRender)
         {
             await JsRuntime.InvokeVoidAsync("window.initEditor", "user-code-editor");
+
         }
 
         await base.OnAfterRenderAsync(firstRender);

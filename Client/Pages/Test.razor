@@ -1,0 +1,71 @@
+﻿@page "/test"
+
+@using Telerik.Blazor.Components;
+@using Telerik.Blazor;
+
+@layout EmptyLayout
+
+<div style="height: 60px;">
+    <TelerikMenu Data="@MenuItems" IconField="TelerikIcon" ImageUrlField="RasterImage" IconClassField="CustomFontIcon">
+    </TelerikMenu>
+</div>
+
+@code {
+    public List<MenuItem> MenuItems { get; set; }
+
+    public class MenuItem
+    {
+        public string Text { get; set; }
+        public string TelerikIcon { get; set; }
+        public string CustomFontIcon { get; set; }
+        public string RasterImage { get; set; }
+        public List<MenuItem> Items { get; set; }
+    }
+
+    protected override void OnInitialized()
+    {
+        MenuItems = new List<MenuItem>()
+{
+            new MenuItem()
+            {
+                Text = "Share",
+                TelerikIcon = IconName.Share,
+                Items = new List<MenuItem>()
+        {
+                    new MenuItem()
+                    {
+                        Text = "FaceBook",
+                        TelerikIcon = IconName.Facebook
+                    },
+                    new MenuItem()
+                    {
+                        Text = "LinkedIn",
+                        TelerikIcon = IconName.Linkedin
+                    },
+                    new MenuItem()
+                    {
+                        Text = "Twitter",
+                        TelerikIcon = IconName.Twitter
+                    },
+                }
+            },
+            new MenuItem()
+            {
+                Text = "Star (Telerik)",
+                TelerikIcon = IconName.Star
+            },
+            new MenuItem()
+            {
+                Text = "Star (raster)",
+                RasterImage = "images/star.png"
+            },
+            new MenuItem
+            {
+                Text = "Star (custom font)",
+                CustomFontIcon = "oi oi-star"
+            }
+        };
+
+        base.OnInitialized();
+    }
+}
