@@ -7,16 +7,17 @@
 @inject ComponentCompilationService CompilationService
 @inject IJSRuntime JsRuntime
 
-<h1 class="text-center" style="padding-bottom: 20px;">Repl for your Blazor component</h1>
+<h1 class="text-center" style="padding-bottom: 20px">Repl for your Blazor component</h1>
 
-<button @onclick="@Compile">Compile</button>
-<div class="row" style="height: 100%">
+<button class="btn btn-primary" @onclick="@Compile">Compile</button>
+
+<div class="row" style="margin-top: 10px; margin-bottom: 10px">
     <div class="col-md-6">
-        <div id="user-code-editor" style="width:800px;height:600px;border:1px solid grey"></div>
+        <div id="user-code-editor" style="height: 500px; border: 1px solid #ccc"></div>
     </div>
 
     <div class="col-md-6">
-        <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%;"></iframe>
+        <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%"></iframe>
     </div>
 </div>
 
@@ -52,11 +53,11 @@
                     @foreach (var diagnostic in Diagnostics)
                     {
                         <tr>
-                            <th>@diagnostic.Severity</th>
+                            <td>@diagnostic.Severity</td>
                             <td>@diagnostic.Descriptor?.Id</td>
                             <td>@diagnostic.GetMessage()</td>
                             @*<td>@diagnostic.Descriptor</td>*@
-                            <td>@diagnostic.Location?.GetLineSpan().Span.Start.Line</td>
+                            <td>@(diagnostic.Location?.GetMappedLineSpan().StartLinePosition.Line - UserComponentCodeStartLine + 1)</td>
                         </tr>
                     }
                 </tbody>
@@ -66,10 +67,22 @@
 </div>
 
 @code {
-    public IEnumerable<Diagnostic> Diagnostics { get; set; } = new List<Diagnostic>();
-    public bool AreDiagnosticsShown { get; set; }
+    private const string UserComponentCodePrefix =
+    @"@page ""/user-page""
+@using System.Linq
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+";
+
+    public IReadOnlyCollection<Diagnostic> Diagnostics { get; set; } = new List<Diagnostic>();
     public int ErrorsCount { get; set; }
     public int WarningsCount { get; set; }
+
+    public bool AreDiagnosticsShown { get; set; }
+
+    public int UserComponentCodeStartLine { get; set; }
 
     public void ToggleDiagnostics() => AreDiagnosticsShown = !AreDiagnosticsShown;
 
@@ -77,33 +90,22 @@
     {
         var code = await JsRuntime.InvokeAsync<string>("window.editor.getValue");
 
-        var sw = System.Diagnostics.Stopwatch.StartNew();
-        var result = CompilationService.CompileToAssembly("UserPage.razor", $@"
-@page ""/user-page""
+        var result = CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code);
 
-@using Microsoft.AspNetCore.Components.Routing
-@using Microsoft.AspNetCore.Components.Web
-@using Microsoft.AspNetCore.Components.Forms
-@using Microsoft.JSInterop
-@using System.Linq;
-
-{code}");
-
-        Diagnostics = result.Diagnostics;
-        AreDiagnosticsShown = true;
+        Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Descriptor?.Id).ToList();
 
         ErrorsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error);
         WarningsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
 
-        sw.Restart();
+        AreDiagnosticsShown = true;
+
         if (result.AssemblyBytes != null && result.AssemblyBytes.Length > 0)
         {
             await JsRuntime.InvokeVoidAsync("window.readFile", result.AssemblyBytes);
 
-            // Add error page in IFrame
+            // TODO: Add error page in iframe
             await JsRuntime.InvokeVoidAsync("window.reloadIFrame", "user-page-window");
         }
-
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -111,6 +113,8 @@
         if (firstRender)
         {
             await JsRuntime.InvokeVoidAsync("window.initEditor", "user-code-editor");
+
+            UserComponentCodeStartLine = UserComponentCodePrefix.Count(ch => ch == '\n');
         }
 
         await base.OnAfterRenderAsync(firstRender);
