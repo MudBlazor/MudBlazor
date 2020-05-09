@@ -5,7 +5,7 @@
 
 @layout EmptyLayout
 
-@*@inject HttpClient Http*@
+@inject HttpClient Http
 
 <h1>Http Call</h1>
 
@@ -22,10 +22,10 @@
     {
         Console.WriteLine("Test");
 
-        //var result = await Http.GetAsync("WeatherForecast");
+        var result = await Http.GetAsync("WeatherForecast");
 
-        //httpResponse = await result.Content.ReadAsStringAsync();
+        httpResponse = await result.Content.ReadAsStringAsync();
 
-        //Obj = System.Text.Json.JsonSerializer.Deserialize<List<IDictionary<string, object>>>(httpResponse)[0];
+        Obj = System.Text.Json.JsonSerializer.Deserialize<List<IDictionary<string, object>>>(httpResponse)[0];
     }
 }

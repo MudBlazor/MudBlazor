@@ -35,6 +35,7 @@ namespace BlazorFiddlePoC.Shared
                 typeof(DataTable).Assembly,
                 typeof(IQueryable).Assembly,
                 typeof(HttpClientJsonExtensions).Assembly,
+                typeof(HttpClient).Assembly,
                 typeof(TelerikGrid<>).Assembly,
                 typeof(IJSRuntime).Assembly
             };
