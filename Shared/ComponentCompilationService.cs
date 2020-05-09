@@ -51,7 +51,6 @@ namespace BlazorFiddlePoC.Shared
                 .Distinct()
                 .ToList();
 
-
             //var temp2 = temp.Select(Assembly.Load)
             //    .ToList();
 
@@ -61,7 +60,6 @@ namespace BlazorFiddlePoC.Shared
 
             //////Console.WriteLine(string.Join(", ", temp2.SelectMany(assembly => assembly.GetManifestResourceNames().FirstOrDefault())));
             ////Console.WriteLine(string.Join(", ", temp2.Select(x => x.Location)));
-
 
             ////var referenceAssemblies = temp2
             ////    .Where(x => x.GetManifestResourceNames().Any())
@@ -153,24 +151,20 @@ namespace BlazorFiddlePoC.Shared
 
         public CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult, bool throwOnFailure = true)
         {
-
             if (cSharpResult.Diagnostics.Any())
             {
                 var diagnosticsLog = string.Join(Environment.NewLine, cSharpResult.Diagnostics.Select(d => d.ToString()).ToArray());
                 throw new InvalidOperationException($"Aborting compilation to assembly because RazorCompiler returned nonempty diagnostics: {diagnosticsLog}");
             }
 
-            var syntaxTrees = new[]
-            {
-                Parse(cSharpResult.Code),
-            };
+            var syntaxTrees = new[] { Parse(cSharpResult.Code), };
 
             var compilation = cSharpResult.BaseCompilation.AddSyntaxTrees(syntaxTrees);
 
             var diagnostics = compilation
                 .GetDiagnostics()
-                .Where(d => d.Severity > DiagnosticSeverity.Info);
-
+                .Where(d => d.Severity > DiagnosticSeverity.Info)
+                .ToList();
 
             foreach (var diagnostic in diagnostics)
             {
@@ -321,13 +315,13 @@ namespace BlazorFiddlePoC.Shared
             else
             {
                 // For single phase compilation tests just use the base compilation's references.
-                // This will include the built-in Blazor components.
-                //var projectEngine = CreateProjectEngine(BaseCompilation.References.ToArray());
+                // This will include the built -in Blazor components.
+                var projectEngine = CreateProjectEngine(BaseCompilation.References.ToList());
 
-                //var projectItem = CreateProjectItem(cshtmlRelativePath, cshtmlContent);
-                //var codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
+                var projectItem = CreateProjectItem(cshtmlRelativePath, cshtmlContent);
+                var codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
 
-                //// Log the generated code for test results.
+                // Log the generated code for test results.
                 //_output.Value.WriteLine("Use this output when opening an issue");
                 //_output.Value.WriteLine(string.Empty);
 
@@ -342,13 +336,13 @@ namespace BlazorFiddlePoC.Shared
                 //_output.Value.WriteLine(codeDocument.GetCSharpDocument().GeneratedCode);
                 //_output.Value.WriteLine("```");
 
-                //return new CompileToCSharpResult
-                //{
-                //    BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
-                //    CodeDocument = codeDocument,
-                //    Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                //    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
-                //};
+                return new CompileToCSharpResult
+                {
+                    BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
+                    CodeDocument = codeDocument,
+                    Code = codeDocument.GetCSharpDocument().GeneratedCode,
+                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
+                };
             }
         }
 
@@ -385,7 +379,7 @@ namespace BlazorFiddlePoC.Shared
                 Encoding.UTF8.GetBytes(cshtmlContent.TrimStart()));
         }
 
-        private RazorProjectEngine CreateProjectEngine(MetadataReference[] references)
+        private RazorProjectEngine CreateProjectEngine(IReadOnlyList<MetadataReference> references)
         {
             return RazorProjectEngine.Create(Configuration, FileSystem, b =>
             {

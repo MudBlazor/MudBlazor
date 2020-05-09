@@ -39,18 +39,15 @@
         }
 
         window.readFile = function readFile(file) {
-            var response = new Response(new Blob([base64ToArrayBuffer(file)], { type: "application/octet-stream" }));
+            var response = new Response(new Blob([base64ToArrayBuffer(file)], { type: 'application/octet-stream' }));
 
-            caches.open("blazor-resources-/").then(function (cache) {
+            caches.open('blazor-resources-/').then(function (cache) {
                 cache.keys().then(function (keys) {
                     var keysForDelete = keys.filter(x => x.url.indexOf('UserComponents') > -1)
 
                     var dll = keysForDelete.find(x => x.url.indexOf("dll") > -1).url.substr('https://localhost:44347'.length);
                     cache.delete(dll).then(function (result) {
-                        console.log(result);
-                        cache.put(dll, response).then(function (result) {
-                            console.log(result);
-                        });
+                        cache.put(dll, response).then(function (result) { });
                     });
                 });
             });
