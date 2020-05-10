@@ -19,7 +19,6 @@ namespace BlazorFiddlePoC.Client
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddSingleton(new HttpClient() { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            await ComponentCompilationService.Init();
             builder.Services.AddSingleton(new ComponentCompilationService());
             builder.Services.AddTelerikBlazor();
            //builder.Services.AddScoped<IJSRuntime>();

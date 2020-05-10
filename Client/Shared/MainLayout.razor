@@ -1,6 +1,5 @@
 ﻿@inherits LayoutComponentBase
 
-
 <div class="main">
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
@@ -25,3 +24,12 @@
         @Body
     </div>
 </div>
+
+@code { 
+    protected override async Task OnInitializedAsync()
+    {
+        await ComponentCompilationService.Init();
+
+        await base.OnInitializedAsync();
+    }
+}

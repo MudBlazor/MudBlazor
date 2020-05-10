@@ -194,20 +194,20 @@ app {
 
 .user-page-container .user-page-loader {
     position: absolute;
-    top: 37%;
-    left: 43%;
+    top: 43%;
+    left: 48%;
 }
 
     .user-page-container .user-page-loader .spinner-border {
-        width: 10rem;
-        height: 10rem;
+        width: 5rem;
+        height: 5rem;
     }
 
 .user-page-container .user-page-loader-text {
-    width: 100%;
+    width: 99%;
     position: absolute;
-    top: 76%;
-    font-size: 30px;
+    top: 65%;
+    font-size: 25px;
 }
 
 .user-page-container .user-page-overlay {
@@ -218,3 +218,14 @@ app {
     height: 100%;
     background-color: #f4f4f4;
 }
+
+.app-loader {
+    position: fixed;
+    top: 41%;
+    left: 48%;
+}
+
+    .app-loader .spinner-border {
+        width: 5rem;
+        height: 5rem;
+    }
