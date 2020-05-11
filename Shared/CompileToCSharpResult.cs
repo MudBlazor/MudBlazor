@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 
 namespace BlazorFiddlePoC.Shared
@@ -11,6 +10,6 @@ namespace BlazorFiddlePoC.Shared
 
         public string Code { get; set; }
 
-        public IEnumerable<RazorDiagnostic> Diagnostics { get; set; }
+        public IEnumerable<CompilationDiagnostics> Diagnostics { get; set; }
     }
 }

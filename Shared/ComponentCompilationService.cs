@@ -119,7 +119,7 @@ namespace BlazorFiddlePoC.Shared
             Console.WriteLine("CompileToCSharp " + _sw.Elapsed.TotalSeconds);
             _sw.Restart();
 
-            await updateStatusFunc?.Invoke("Compiling Assembly");
+            await (updateStatusFunc?.Invoke("Compiling Assembly") ?? Task.CompletedTask);
             var result = CompileToAssembly(cSharpResult);
 
             Console.WriteLine("CompileToAssembly " + _sw.Elapsed.TotalSeconds);
@@ -129,27 +129,9 @@ namespace BlazorFiddlePoC.Shared
 
         public CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult)
         {
-            if (cSharpResult.Diagnostics.Any(d => d.Severity == RazorDiagnosticSeverity.Error))
+            if (cSharpResult.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
             {
-                return new CompileToAssemblyResult
-                {
-                    Diagnostics = cSharpResult.Diagnostics
-                        .Select(d => Diagnostic.Create(
-                            new DiagnosticDescriptor(
-                                d.Id,
-                                title: string.Empty,
-                                messageFormat: d.GetMessage(),
-                                category: "Razor",
-                                defaultSeverity: d.Severity == RazorDiagnosticSeverity.Error
-                                    ? DiagnosticSeverity.Error
-                                    : DiagnosticSeverity.Warning,
-                                isEnabledByDefault: true,
-                                description: null,
-                                helpLinkUri: null,
-                                customTags: Array.Empty<string>()),
-                            location: Location.None))
-                        .ToList()
-                };
+                return new CompileToAssemblyResult { Diagnostics = cSharpResult.Diagnostics, };
             }
 
             var syntaxTrees = new[] { Parse(cSharpResult.Code), };
@@ -166,24 +148,21 @@ namespace BlazorFiddlePoC.Shared
                 Console.WriteLine(diagnostic);
             }
 
-            if (diagnostics.Any(x => x.Severity == DiagnosticSeverity.Error))
-            {
-                return new CompileToAssemblyResult
-                {
-                    Compilation = compilation,
-                    Diagnostics = diagnostics,
-                };
-            }
-
-            using var peStream = new MemoryStream();
-            compilation.Emit(peStream);
-
-            return new CompileToAssemblyResult
+            var result = new CompileToAssemblyResult
             {
                 Compilation = compilation,
-                Diagnostics = diagnostics,
-                AssemblyBytes = peStream.ToArray()
+                Diagnostics = diagnostics.Select(CompilationDiagnostics.FromCSharpDiagnostic).Concat(cSharpResult.Diagnostics).ToList(),
             };
+
+            if (result.Diagnostics.All(x => x.Severity != DiagnosticSeverity.Error))
+            {
+                using var peStream = new MemoryStream();
+                compilation.Emit(peStream);
+
+                result.AssemblyBytes = peStream.ToArray();
+            }
+
+            return result;
         }
 
         protected static CSharpSyntaxTree Parse(string text, string path = null)
@@ -233,7 +212,7 @@ namespace BlazorFiddlePoC.Shared
                 {
                     BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                     Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
+                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostics.FromRazorDiagnostic).ToList(),
                 };
 
                 //Console.WriteLine("CompileToCSharpResult " + _sw.Elapsed.TotalSeconds);
@@ -243,7 +222,7 @@ namespace BlazorFiddlePoC.Shared
                 var tempAssembly = CompileToAssembly(declaration);
                 if (tempAssembly.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
                 {
-                    return new CompileToCSharpResult { };
+                    return new CompileToCSharpResult { Diagnostics = tempAssembly.Diagnostics, };
                 }
 
                 //Console.WriteLine("CompileToAssembly " + _sw.Elapsed.TotalSeconds);
@@ -270,7 +249,7 @@ namespace BlazorFiddlePoC.Shared
                 //_sw.Restart();
 
 
-                await updateStatusFunc?.Invoke("Preparing Project");
+                await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
                 // Result of real code generation for the document under test
                 codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
 
@@ -282,7 +261,7 @@ namespace BlazorFiddlePoC.Shared
                 {
                     BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                     Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
+                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostics.FromRazorDiagnostic).ToList(),
                 };
             }
             else
@@ -298,7 +277,7 @@ namespace BlazorFiddlePoC.Shared
                 {
                     BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                     Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
+                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostics.FromRazorDiagnostic).ToList(),
                 };
             }
         }
