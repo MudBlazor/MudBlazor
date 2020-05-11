@@ -17,7 +17,6 @@ using System.Net.Http.Json;
 using Telerik.Blazor.Components;
 using System.Data;
 using System.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
 
 namespace BlazorFiddlePoC.Shared
 {
@@ -175,7 +174,7 @@ namespace BlazorFiddlePoC.Shared
             string cshtmlContent,
             Func<string, Task> updateStatusFunc)
         {
-            if (false)
+            if (true)
             {
                 // The first phase won't include any metadata references for component discovery. This mirrors
                 // what the build does.

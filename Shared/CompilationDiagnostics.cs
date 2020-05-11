@@ -1,8 +1,8 @@
-﻿namespace BlazorFiddlePoC.Shared
-{
-    using Microsoft.AspNetCore.Razor.Language;
-    using Microsoft.CodeAnalysis;
+﻿using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis;
 
+namespace BlazorFiddlePoC.Shared
+{
     public class CompilationDiagnostics
     {
         public string Code { get; set; }
