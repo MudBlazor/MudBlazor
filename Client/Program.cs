@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
@@ -15,14 +14,11 @@ namespace BlazorFiddlePoC.Client
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
 
-            builder.Services.AddSingleton(new HttpClient() { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddTransient(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddSingleton(new ComponentCompilationService());
             builder.Services.AddTelerikBlazor();
-           //builder.Services.AddScoped<IJSRuntime>();
 
-
-
-           await builder.Build().RunAsync();
+            await builder.Build().RunAsync();
         }
     }
 }

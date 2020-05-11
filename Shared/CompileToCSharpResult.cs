@@ -10,6 +10,6 @@ namespace BlazorFiddlePoC.Shared
 
         public string Code { get; set; }
 
-        public IEnumerable<CompilationDiagnostics> Diagnostics { get; set; }
+        public IEnumerable<CompilationDiagnostic> Diagnostics { get; set; }
     }
 }

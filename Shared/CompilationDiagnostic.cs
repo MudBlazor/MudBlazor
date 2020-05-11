@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 
 namespace BlazorFiddlePoC.Shared
 {
-    public class CompilationDiagnostics
+    public class CompilationDiagnostic
     {
         public string Code { get; set; }
 
@@ -17,14 +17,14 @@ namespace BlazorFiddlePoC.Shared
 
         public CompilationDiagnosticsKind Kind { get; set; }
 
-        public static CompilationDiagnostics FromCSharpDiagnostic(Diagnostic diagnostic)
+        public static CompilationDiagnostic FromCSharpDiagnostic(Diagnostic diagnostic)
         {
             if (diagnostic == null)
             {
                 return null;
             }
 
-            return new CompilationDiagnostics
+            return new CompilationDiagnostic
             {
                 Code = diagnostic.Descriptor.Id,
                 Severity = diagnostic.Severity,
@@ -34,14 +34,14 @@ namespace BlazorFiddlePoC.Shared
             };
         }
 
-        public static CompilationDiagnostics FromRazorDiagnostic(RazorDiagnostic diagnostic)
+        public static CompilationDiagnostic FromRazorDiagnostic(RazorDiagnostic diagnostic)
         {
             if (diagnostic == null)
             {
                 return null;
             }
 
-            return new CompilationDiagnostics
+            return new CompilationDiagnostic
             {
                 Code = diagnostic.Id,
                 Severity = (DiagnosticSeverity)diagnostic.Severity,

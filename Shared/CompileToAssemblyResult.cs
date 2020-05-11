@@ -7,7 +7,7 @@ namespace BlazorFiddlePoC.Shared
     {
         public Compilation Compilation { get; set; }
 
-        public IEnumerable<CompilationDiagnostics> Diagnostics { get; set; }
+        public IEnumerable<CompilationDiagnostic> Diagnostics { get; set; }
 
         public byte[] AssemblyBytes { get; set; }
     }

@@ -29,13 +29,13 @@ namespace BlazorFiddlePoC.Shared
             var referenceAssemblyRoots = new[]
             {
                 typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly, // System.Runtime
-                typeof(NavLink).Assembly,
-                typeof(DataTable).Assembly,
-                typeof(IQueryable).Assembly,
-                typeof(HttpClientJsonExtensions).Assembly,
-                typeof(HttpClient).Assembly,
-                typeof(TelerikGrid<>).Assembly,
-                typeof(IJSRuntime).Assembly
+                typeof(NavLink).Assembly, // Microsoft.AspNetCore.Components.Web
+                typeof(DataTable).Assembly, // System.Data
+                typeof(IQueryable).Assembly, // System.Linq
+                typeof(HttpClientJsonExtensions).Assembly, // System.Net.Http.Json
+                typeof(HttpClient).Assembly, // System.Net.Http
+                typeof(TelerikGrid<>).Assembly, // Telerik.Blazor.Components
+                typeof(IJSRuntime).Assembly // Microsoft.JSInterop
             };
 
             var assemblyNames = referenceAssemblyRoots
@@ -85,7 +85,8 @@ namespace BlazorFiddlePoC.Shared
 
         internal virtual string DefaultRootNamespace { get; } = "UserComponents";
 
-        internal virtual RazorConfiguration Configuration { get; } = RazorConfiguration.Create(RazorLanguageVersion.Latest, "MVC-3.0", Array.Empty<RazorExtension>());
+        internal virtual RazorConfiguration Configuration { get; }
+            = RazorConfiguration.Create(RazorLanguageVersion.Latest, "MVC-3.0", Array.Empty<RazorExtension>());
 
         internal virtual VirtualRazorProjectFileSystem FileSystem { get; } = new VirtualRazorProjectFileSystem();
 
@@ -150,7 +151,7 @@ namespace BlazorFiddlePoC.Shared
             var result = new CompileToAssemblyResult
             {
                 Compilation = compilation,
-                Diagnostics = diagnostics.Select(CompilationDiagnostics.FromCSharpDiagnostic).Concat(cSharpResult.Diagnostics).ToList(),
+                Diagnostics = diagnostics.Select(CompilationDiagnostic.FromCSharpDiagnostic).Concat(cSharpResult.Diagnostics).ToList(),
             };
 
             if (result.Diagnostics.All(x => x.Severity != DiagnosticSeverity.Error))
@@ -211,7 +212,7 @@ namespace BlazorFiddlePoC.Shared
                 {
                     BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                     Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostics.FromRazorDiagnostic).ToList(),
+                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
                 };
 
                 //Console.WriteLine("CompileToCSharpResult " + _sw.Elapsed.TotalSeconds);
@@ -260,7 +261,7 @@ namespace BlazorFiddlePoC.Shared
                 {
                     BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                     Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostics.FromRazorDiagnostic).ToList(),
+                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
                 };
             }
             else
@@ -276,7 +277,7 @@ namespace BlazorFiddlePoC.Shared
                 {
                     BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                     Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostics.FromRazorDiagnostic).ToList(),
+                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
                 };
             }
         }
