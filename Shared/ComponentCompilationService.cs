@@ -5,10 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.CodeAnalysis.Razor;
-using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -26,26 +24,27 @@ namespace BlazorFiddlePoC.Shared
     {
         private static Stopwatch _sw;
 
-        public static async Task Init()
+        public static async Task Init(HttpClient httpClient)
         {
             var referenceAssemblyRoots = new[]
             {
                 typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly, // System.Runtime
-                typeof(NavLink).Assembly,
-                typeof(DataTable).Assembly,
-                typeof(IQueryable).Assembly,
-                typeof(HttpClientJsonExtensions).Assembly,
-                typeof(HttpClient).Assembly,
-                typeof(TelerikGrid<>).Assembly,
-                typeof(IJSRuntime).Assembly
+                typeof(NavLink).Assembly, // Microsoft.AspNetCore.Components.Web
+                typeof(DataTable).Assembly, // System.Data
+                typeof(IQueryable).Assembly, // System.Linq
+                typeof(HttpClientJsonExtensions).Assembly, // System.Net.Http.Json
+                typeof(HttpClient).Assembly, // System.Net.Http
+                typeof(TelerikGrid<>).Assembly, // Telerik.Blazor.Components
+                typeof(IJSRuntime).Assembly // Microsoft.JSInterop
             };
 
-            var temp = referenceAssemblyRoots
+            var assemblyNames = referenceAssemblyRoots
                 .SelectMany(assembly => assembly.GetReferencedAssemblies().Concat(new[] { assembly.GetName() }))
                 .Distinct()
+                .Select(x => x.Name)
                 .ToList();
 
-            var assemblyStreams = await GetStreamFromHttp(new HttpClient(), temp.Select(x => x.Name));
+            var assemblyStreams = await GetStreamFromHttp(httpClient, assemblyNames);
 
             var referenceAssemblies = assemblyStreams.Select(a => MetadataReference.CreateFromStream(a)).ToList();
 
@@ -58,14 +57,14 @@ namespace BlazorFiddlePoC.Shared
             CSharpParseOptions = new CSharpParseOptions(LanguageVersion.Preview);
         }
 
-        private static async Task<IEnumerable<Stream>> GetStreamFromHttp(HttpClient httpClient, IEnumerable<string> enumerable)
+        private static async Task<IEnumerable<Stream>> GetStreamFromHttp(HttpClient httpClient, IEnumerable<string> assemblyNames)
         {
             var streams = new ConcurrentBag<Stream>();
 
             await Task.WhenAll(
-                enumerable.Select(async e =>
+                assemblyNames.Select(async assemblyName =>
                 {
-                    var result = await httpClient.GetAsync("https://localhost:44347/_framework/_bin/" + e + ".dll");
+                    var result = await httpClient.GetAsync($"/_framework/_bin/{assemblyName}.dll");
 
                     result.EnsureSuccessStatusCode();
 
@@ -86,7 +85,8 @@ namespace BlazorFiddlePoC.Shared
 
         internal virtual string DefaultRootNamespace { get; } = "UserComponents";
 
-        internal virtual RazorConfiguration Configuration { get; } = RazorConfiguration.Create(RazorLanguageVersion.Latest, "MVC-3.0", Array.Empty<RazorExtension>());
+        internal virtual RazorConfiguration Configuration { get; }
+            = RazorConfiguration.Create(RazorLanguageVersion.Latest, "MVC-3.0", Array.Empty<RazorExtension>());
 
         internal virtual VirtualRazorProjectFileSystem FileSystem { get; } = new VirtualRazorProjectFileSystem();
 
@@ -108,7 +108,10 @@ namespace BlazorFiddlePoC.Shared
         // so making sure it doesn't happen for each test.
         private static CSharpCompilation BaseCompilation;
 
-        public async Task<CompileToAssemblyResult> CompileToAssembly(string cshtmlRelativePath, string cshtmlContent, Func<string, Task> updateStatusFunc)
+        public async Task<CompileToAssemblyResult> CompileToAssembly(
+            string cshtmlRelativePath,
+            string cshtmlContent,
+            Func<string, Task> updateStatusFunc)
         {
             _sw = Stopwatch.StartNew();
             var cSharpResult = await CompileToCSharp(cshtmlRelativePath, cshtmlContent, updateStatusFunc);
@@ -116,7 +119,7 @@ namespace BlazorFiddlePoC.Shared
             Console.WriteLine("CompileToCSharp " + _sw.Elapsed.TotalSeconds);
             _sw.Restart();
 
-            await updateStatusFunc?.Invoke("Compiling Assembly");
+            await (updateStatusFunc?.Invoke("Compiling Assembly") ?? Task.CompletedTask);
             var result = CompileToAssembly(cSharpResult);
 
             Console.WriteLine("CompileToAssembly " + _sw.Elapsed.TotalSeconds);
@@ -124,12 +127,11 @@ namespace BlazorFiddlePoC.Shared
             return result;
         }
 
-        public CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult, bool throwOnFailure = true)
+        public CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult)
         {
-            if (cSharpResult.Diagnostics.Any())
+            if (cSharpResult.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
             {
-                var diagnosticsLog = string.Join(Environment.NewLine, cSharpResult.Diagnostics.Select(d => d.ToString()).ToArray());
-                throw new InvalidOperationException($"Aborting compilation to assembly because RazorCompiler returned nonempty diagnostics: {diagnosticsLog}");
+                return new CompileToAssemblyResult { Diagnostics = cSharpResult.Diagnostics, };
             }
 
             var syntaxTrees = new[] { Parse(cSharpResult.Code), };
@@ -146,28 +148,21 @@ namespace BlazorFiddlePoC.Shared
                 Console.WriteLine(diagnostic);
             }
 
-            //if (diagnostics.Any(x => x.Severity == DiagnosticSeverity.Error) && throwOnFailure)
-            //{
-            //    throw new Exception(compilation.ToString());
-            //}
-            if (diagnostics.Any(x => x.Severity == DiagnosticSeverity.Error))
-            {
-                return new CompileToAssemblyResult
-                {
-                    Compilation = compilation,
-                    Diagnostics = diagnostics,
-                };
-            }
-
-            using var peStream = new MemoryStream();
-            compilation.Emit(peStream);
-
-            return new CompileToAssemblyResult
+            var result = new CompileToAssemblyResult
             {
                 Compilation = compilation,
-                Diagnostics = diagnostics,
-                AssemblyBytes = peStream.ToArray()
+                Diagnostics = diagnostics.Select(CompilationDiagnostic.FromCSharpDiagnostic).Concat(cSharpResult.Diagnostics).ToList(),
             };
+
+            if (result.Diagnostics.All(x => x.Severity != DiagnosticSeverity.Error))
+            {
+                using var peStream = new MemoryStream();
+                compilation.Emit(peStream);
+
+                result.AssemblyBytes = peStream.ToArray();
+            }
+
+            return result;
         }
 
         protected static CSharpSyntaxTree Parse(string text, string path = null)
@@ -175,7 +170,10 @@ namespace BlazorFiddlePoC.Shared
             return (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(text, CSharpParseOptions, path: path);
         }
 
-        protected async Task<CompileToCSharpResult> CompileToCSharp(string cshtmlRelativePath, string cshtmlContent, Func<string, Task> updateStatusFunc)
+        protected async Task<CompileToCSharpResult> CompileToCSharp(
+            string cshtmlRelativePath,
+            string cshtmlContent,
+            Func<string, Task> updateStatusFunc)
         {
             if (true)
             {
@@ -213,9 +211,8 @@ namespace BlazorFiddlePoC.Shared
                 var declaration = new CompileToCSharpResult
                 {
                     BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
-                    CodeDocument = codeDocument,
                     Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
+                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
                 };
 
                 //Console.WriteLine("CompileToCSharpResult " + _sw.Elapsed.TotalSeconds);
@@ -223,6 +220,10 @@ namespace BlazorFiddlePoC.Shared
 
                 // Result of doing 'temp' compilation
                 var tempAssembly = CompileToAssembly(declaration);
+                if (tempAssembly.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
+                {
+                    return new CompileToCSharpResult { Diagnostics = tempAssembly.Diagnostics, };
+                }
 
                 //Console.WriteLine("CompileToAssembly " + _sw.Elapsed.TotalSeconds);
                 //_sw.Restart();
@@ -248,7 +249,7 @@ namespace BlazorFiddlePoC.Shared
                 //_sw.Restart();
 
 
-                await updateStatusFunc?.Invoke("Preparing Project");
+                await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
                 // Result of real code generation for the document under test
                 codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
 
@@ -259,9 +260,8 @@ namespace BlazorFiddlePoC.Shared
                 return new CompileToCSharpResult
                 {
                     BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
-                    CodeDocument = codeDocument,
                     Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
+                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
                 };
             }
             else
@@ -276,9 +276,8 @@ namespace BlazorFiddlePoC.Shared
                 return new CompileToCSharpResult
                 {
                     BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
-                    CodeDocument = codeDocument,
                     Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics,
+                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
                 };
             }
         }
@@ -287,7 +286,7 @@ namespace BlazorFiddlePoC.Shared
         {
             var fullPath = WorkingDirectory + PathSeparator + cshtmlRelativePath;
 
-            // FilePaths in Razor are **always** are of the form '/a/b/c.cshtml'
+            // FilePaths in Razor are **always** of the form '/a/b/c.cshtml'
             var filePath = cshtmlRelativePath.Replace('\\', '/');
             if (!filePath.StartsWith('/'))
             {
@@ -326,64 +325,11 @@ namespace BlazorFiddlePoC.Shared
                 RazorExtensions.Register(b);
 
                 // Features that use Roslyn are mandatory for components
-                Microsoft.CodeAnalysis.Razor.CompilerFeatures.Register(b);
+                CompilerFeatures.Register(b);
 
                 b.Features.Add(new CompilationTagHelperFeature());
-                b.Features.Add(new DefaultMetadataReferenceFeature()
-                {
-                    References = references,
-                });
+                b.Features.Add(new DefaultMetadataReferenceFeature { References = references, });
             });
         }
-    }
-
-    public class ForceLineEndingPhase : RazorEnginePhaseBase
-    {
-        public ForceLineEndingPhase(string lineEnding)
-        {
-            LineEnding = lineEnding;
-        }
-
-        public string LineEnding { get; }
-
-        protected override void ExecuteCore(RazorCodeDocument codeDocument)
-        {
-            var field = typeof(CodeRenderingContext).GetField("NewLineString", BindingFlags.Static | BindingFlags.NonPublic);
-            var key = field.GetValue(null);
-            codeDocument.Items[key] = LineEnding;
-        }
-    }
-
-    public class SuppressChecksum : IConfigureRazorCodeGenerationOptionsFeature
-    {
-        public int Order => 0;
-
-        public RazorEngine Engine { get; set; }
-
-        public void Configure(RazorCodeGenerationOptionsBuilder options)
-        {
-            options.SuppressChecksum = true;
-        }
-    }
-
-    public class CompileToAssemblyResult
-    {
-        public Assembly Assembly { get; set; }
-        public Compilation Compilation { get; set; }
-        public string VerboseLog { get; set; }
-        public IEnumerable<Diagnostic> Diagnostics { get; set; }
-        public string Base64Assembly { get; set; }
-        public byte[] AssemblyBytes { get; set; }
-    }
-
-
-
-    public class CompileToCSharpResult
-    {
-        // A compilation that can be used *with* this code to compile an assembly
-        public Compilation BaseCompilation { get; set; }
-        public RazorCodeDocument CodeDocument { get; set; }
-        public string Code { get; set; }
-        public IEnumerable<RazorDiagnostic> Diagnostics { get; set; }
     }
 }

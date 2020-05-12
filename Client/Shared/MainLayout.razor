@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
+@inject HttpClient Http
+
 <div class="main">
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
@@ -8,7 +10,7 @@
             </div>
             <ul class="nav">
                 <li class="nav-item">
-                    <NavLink href="/repl" class="nav-link">Repl</NavLink>
+                    <NavLink href="/repl" class="nav-link">REPL</NavLink>
                 </li>
                 <li class="nav-item">
                     <NavLink href="/about" class="nav-link">About</NavLink>
@@ -25,10 +27,10 @@
     </div>
 </div>
 
-@code { 
+@code {
     protected override async Task OnInitializedAsync()
     {
-        await ComponentCompilationService.Init();
+        await ComponentCompilationService.Init(Http);
 
         await base.OnInitializedAsync();
     }

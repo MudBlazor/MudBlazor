@@ -12,7 +12,6 @@
     <script src="_content/Telerik.UI.for.Blazor.Trial/js/telerik-blazor.js"></script>
     <link rel="stylesheet" href="_content/Telerik.UI.for.Blazor.Trial/css/kendo-theme-default/all.css" />
 
-
     <script src="lib/monaco-editor/min/vs/loader.js"></script>
     <script>
         window.initEditor = function initEditor(editorId) {
@@ -31,9 +30,6 @@
             });
         }
 
-    </script>
-
-    <script>
         window.reloadIFrame = function reloadIFrame(id) {
             document.getElementById(id).contentWindow.location.reload();
         }
@@ -43,11 +39,11 @@
 
             caches.open('blazor-resources-/').then(function (cache) {
                 cache.keys().then(function (keys) {
-                    var keysForDelete = keys.filter(x => x.url.indexOf('UserComponents') > -1)
+                    var keysForDelete = keys.filter(x => x.url.indexOf('UserComponents') > -1);
 
-                    var dll = keysForDelete.find(x => x.url.indexOf("dll") > -1).url.substr('https://localhost:44347'.length);
-                    cache.delete(dll).then(function (result) {
-                        cache.put(dll, response).then(function (result) { });
+                    var dll = keysForDelete.find(x => x.url.indexOf("dll") > -1).url.substr(window.location.origin.length);
+                    cache.delete(dll).then(function () {
+                        cache.put(dll, response).then(function () { });
                     });
                 });
             });

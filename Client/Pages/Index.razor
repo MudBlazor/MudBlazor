@@ -1,8 +1,7 @@
 ﻿@page "/"
 @layout MainLayout
 
-@using BlazorFiddlePoC.Shared;
-@using Microsoft.CodeAnalysis;
+@using Microsoft.CodeAnalysis
 
 @inject ComponentCompilationService CompilationService
 @inject IJSRuntime JsRuntime
@@ -69,10 +68,10 @@
                     {
                         <tr>
                             <td>@diagnostic.Severity</td>
-                            <td>@diagnostic.Descriptor?.Id</td>
-                            <td>@diagnostic.GetMessage()</td>
+                            <td>@diagnostic.Code</td>
+                            <td>@diagnostic.Description</td>
                             @*<td>@diagnostic.Descriptor</td>*@
-                            <td>@(diagnostic.Location?.GetMappedLineSpan().StartLinePosition.Line - UserComponentCodeStartLine + 1)</td>
+                            <td>@(diagnostic.Line - UserComponentCodeStartLine + 1)</td>
                         </tr>
                     }
                 </tbody>
@@ -94,7 +93,7 @@
 @using Telerik.Blazor.Components
 ";
 
-    public IReadOnlyCollection<Diagnostic> Diagnostics { get; set; } = new List<Diagnostic>();
+    public IReadOnlyCollection<CompilationDiagnostic> Diagnostics { get; set; } = Array.Empty<CompilationDiagnostic>();
     public int ErrorsCount { get; set; }
     public int WarningsCount { get; set; }
 
@@ -125,7 +124,7 @@
 
         var result = await CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code, UpdateLoaderText);
 
-        Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Descriptor?.Id).ToList();
+        Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
 
         ErrorsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error);
         WarningsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
