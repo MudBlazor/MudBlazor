@@ -11,7 +11,7 @@ namespace BlazorFiddlePoC.Shared
 
         public string Description { get; set; }
 
-        public int Line { get; set; }
+        public int? Line { get; set; }
 
         public string File { get; set; }
 
@@ -46,7 +46,7 @@ namespace BlazorFiddlePoC.Shared
                 Code = diagnostic.Id,
                 Severity = (DiagnosticSeverity)diagnostic.Severity,
                 Description = diagnostic.GetMessage(),
-                Line = diagnostic.Span.LineIndex, // TODO: Math
+                // Line = diagnostic.Span.LineIndex, // TODO: Math
                 Kind = CompilationDiagnosticsKind.Razor,
             };
         }
