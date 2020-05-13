@@ -26,19 +26,23 @@ namespace BlazorFiddlePoC.Shared
 
         public static async Task Init(HttpClient httpClient)
         {
-            var referenceAssemblyRoots = new[]
+            var basicReferenceAssemblyRoots = new[]
             {
                 typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly, // System.Runtime
                 typeof(NavLink).Assembly, // Microsoft.AspNetCore.Components.Web
-                typeof(DataTable).Assembly, // System.Data
                 typeof(IQueryable).Assembly, // System.Linq
                 typeof(HttpClientJsonExtensions).Assembly, // System.Net.Http.Json
                 typeof(HttpClient).Assembly, // System.Net.Http
-                typeof(TelerikGrid<>).Assembly, // Telerik.Blazor.Components
                 typeof(IJSRuntime).Assembly // Microsoft.JSInterop
             };
 
-            var assemblyNames = referenceAssemblyRoots
+            var telerikAssemblyRoots = new[]
+            {
+               typeof(DataTable).Assembly, // System.Data
+                typeof(TelerikGrid<>).Assembly, // Telerik.Blazor.Components
+            }.Concat(basicReferenceAssemblyRoots);
+
+            var assemblyNames = telerikAssemblyRoots
                 .SelectMany(assembly => assembly.GetReferencedAssemblies().Concat(new[] { assembly.GetName() }))
                 .Distinct()
                 .Select(x => x.Name)
@@ -46,20 +50,37 @@ namespace BlazorFiddlePoC.Shared
 
             var assemblyStreams = await GetStreamFromHttp(httpClient, assemblyNames);
 
-            var referenceAssemblies = assemblyStreams.Select(a => MetadataReference.CreateFromStream(a)).ToList();
+            var allReferenceAssemblies = assemblyStreams.ToDictionary(a => a.Key, a => MetadataReference.CreateFromStream(a.Value));
+
+            var basicReferenceAssemblies = allReferenceAssemblies
+                .Where(a => basicReferenceAssemblyRoots.Any(t => t.GetName().Name == a.Key))
+                .Select(a => a.Value)
+                .ToList();
+
+            var telerikReferenceAssemblies = allReferenceAssemblies.Values;
+
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(allReferenceAssemblies
+                .Where(a => basicReferenceAssemblyRoots.Any(t => t.GetName().Name == a.Key))));
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(telerikReferenceAssemblies));
 
             BaseCompilation = CSharpCompilation.Create(
                 "TestAssembly",
                 Array.Empty<SyntaxTree>(),
-                referenceAssemblies,
+                basicReferenceAssemblies,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            TelerikBaseCompilation = CSharpCompilation.Create(
+                "TestAssembly",
+                Array.Empty<SyntaxTree>(),
+                telerikReferenceAssemblies,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
             CSharpParseOptions = new CSharpParseOptions(LanguageVersion.Preview);
         }
 
-        private static async Task<IEnumerable<Stream>> GetStreamFromHttp(HttpClient httpClient, IEnumerable<string> assemblyNames)
+        private static async Task<IDictionary<string, Stream>> GetStreamFromHttp(HttpClient httpClient, IEnumerable<string> assemblyNames)
         {
-            var streams = new ConcurrentBag<Stream>();
+            var streams = new ConcurrentDictionary<string, Stream>();
 
             await Task.WhenAll(
                 assemblyNames.Select(async assemblyName =>
@@ -68,8 +89,10 @@ namespace BlazorFiddlePoC.Shared
 
                     result.EnsureSuccessStatusCode();
 
-                    streams.Add(await result.Content.ReadAsStreamAsync());
+                    streams.TryAdd(assemblyName, await result.Content.ReadAsStreamAsync());
                 }));
+
+            Console.WriteLine("GetStreamFromHttp");
 
             return streams;
 
@@ -108,13 +131,18 @@ namespace BlazorFiddlePoC.Shared
         // so making sure it doesn't happen for each test.
         private static CSharpCompilation BaseCompilation;
 
+        private static CSharpCompilation TelerikBaseCompilation;
+
         public async Task<CompileToAssemblyResult> CompileToAssembly(
             string cshtmlRelativePath,
             string cshtmlContent,
+            string preset,
             Func<string, Task> updateStatusFunc)
         {
+            var compilation = preset == "basic" ? BaseCompilation : TelerikBaseCompilation;
+
             _sw = Stopwatch.StartNew();
-            var cSharpResult = await CompileToCSharp(cshtmlRelativePath, cshtmlContent, updateStatusFunc);
+            var cSharpResult = await CompileToCSharp(cshtmlRelativePath, cshtmlContent, compilation, updateStatusFunc);
 
             Console.WriteLine("CompileToCSharp " + _sw.Elapsed.TotalSeconds);
             _sw.Restart();
@@ -173,6 +201,7 @@ namespace BlazorFiddlePoC.Shared
         protected async Task<CompileToCSharpResult> CompileToCSharp(
             string cshtmlRelativePath,
             string cshtmlContent,
+            CSharpCompilation compilation,
             Func<string, Task> updateStatusFunc)
         {
             if (true)
@@ -210,7 +239,7 @@ namespace BlazorFiddlePoC.Shared
 
                 var declaration = new CompileToCSharpResult
                 {
-                    BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
+                    BaseCompilation = compilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                     Code = codeDocument.GetCSharpDocument().GeneratedCode,
                     Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
                 };
@@ -229,7 +258,7 @@ namespace BlazorFiddlePoC.Shared
                 //_sw.Restart();
 
                 // Add the 'temp' compilation as a metadata reference
-                var references = BaseCompilation.References.Concat(new[] { tempAssembly.Compilation.ToMetadataReference() }).ToArray();
+                var references = compilation.References.Concat(new[] { tempAssembly.Compilation.ToMetadataReference() }).ToArray();
                 projectEngine = CreateProjectEngine(references);
 
                 // Now update the any additional files
@@ -259,7 +288,7 @@ namespace BlazorFiddlePoC.Shared
 
                 return new CompileToCSharpResult
                 {
-                    BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
+                    BaseCompilation = compilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                     Code = codeDocument.GetCSharpDocument().GeneratedCode,
                     Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
                 };
@@ -268,14 +297,14 @@ namespace BlazorFiddlePoC.Shared
             {
                 // For single phase compilation tests just use the base compilation's references.
                 // This will include the built -in Blazor components.
-                var projectEngine = CreateProjectEngine(BaseCompilation.References.ToList());
+                var projectEngine = CreateProjectEngine(compilation.References.ToList());
 
                 var projectItem = CreateProjectItem(cshtmlRelativePath, cshtmlContent);
                 var codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
 
                 return new CompileToCSharpResult
                 {
-                    BaseCompilation = BaseCompilation.AddSyntaxTrees(AdditionalSyntaxTrees),
+                    BaseCompilation = compilation.AddSyntaxTrees(AdditionalSyntaxTrees),
                     Code = codeDocument.GetCSharpDocument().GeneratedCode,
                     Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
                 };

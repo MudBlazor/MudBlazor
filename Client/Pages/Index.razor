@@ -9,9 +9,16 @@
 <h1 class="text-center" style="padding-bottom: 20px">REPL your Blazor component</h1>
 
 <div class="row" style="margin-top: 10px; margin-bottom: 10px">
-    <div class="col-md-6 text-right">
+    <div class="col-md-3">
+        <select @bind="@Preset">
+            <option value="basic">Basic Blazor</option>
+            <option value="telerik">Telerik Blazor</option>
+        </select>
+    </div>
+    <div class="col-md-3 text-right">
         <button class="btn btn-primary" @onclick="@Compile" disabled="@Loading">Compile</button>
     </div>
+
 </div>
 
 <div class="row" style="margin-top: 10px; margin-bottom: 10px">
@@ -81,17 +88,26 @@
 </div>
 
 @code {
-    private const string UserComponentCodePrefix =
-    @"@page ""/user-page""
+    private const string BasicUserComponentCodePrefix =
+@"@page ""/user-page""
 @using System.Linq
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.JSInterop
-@using Telerik.Blazor
+";
+
+    private const string TelerikUserComponentCodePrefix = BasicUserComponentCodePrefix +
+@"@using Telerik.Blazor
 @using Telerik.DataSource.Extensions
 @using Telerik.Blazor.Components
 ";
+
+    public string Preset { get; set; } = "basic";
+
+    public string UserComponentCodePrefix => Preset == "basic"
+        ? BasicUserComponentCodePrefix
+        : TelerikUserComponentCodePrefix;
 
     public IReadOnlyCollection<CompilationDiagnostic> Diagnostics { get; set; } = Array.Empty<CompilationDiagnostic>();
     public int ErrorsCount { get; set; }
@@ -122,7 +138,7 @@
 
         var code = await JsRuntime.InvokeAsync<string>("window.editor.getValue");
 
-        var result = await CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code, UpdateLoaderText);
+        var result = await CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code, Preset, UpdateLoaderText);
 
         Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
 
