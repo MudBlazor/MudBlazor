@@ -17,8 +17,6 @@ using System.Net.Http.Json;
 using Telerik.Blazor.Components;
 using System.Data;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Components;
-using System.Text.Json;
 
 namespace BlazorFiddlePoC.Shared
 {
