@@ -17,6 +17,8 @@ using System.Net.Http.Json;
 using Telerik.Blazor.Components;
 using System.Data;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Components;
+using System.Text.Json;
 
 namespace BlazorFiddlePoC.Shared
 {
@@ -38,14 +40,14 @@ namespace BlazorFiddlePoC.Shared
 
             var telerikAssemblyRoots = new[]
             {
-               typeof(DataTable).Assembly, // System.Data
+                typeof(DataTable).Assembly, // System.Data
                 typeof(TelerikGrid<>).Assembly, // Telerik.Blazor.Components
-            }.Concat(basicReferenceAssemblyRoots);
+            }.Concat(basicReferenceAssemblyRoots).ToList();
 
             var assemblyNames = telerikAssemblyRoots
                 .SelectMany(assembly => assembly.GetReferencedAssemblies().Concat(new[] { assembly.GetName() }))
-                .Distinct()
                 .Select(x => x.Name)
+                .Distinct()
                 .ToList();
 
             var assemblyStreams = await GetStreamFromHttp(httpClient, assemblyNames);
@@ -53,15 +55,14 @@ namespace BlazorFiddlePoC.Shared
             var allReferenceAssemblies = assemblyStreams.ToDictionary(a => a.Key, a => MetadataReference.CreateFromStream(a.Value));
 
             var basicReferenceAssemblies = allReferenceAssemblies
-                .Where(a => basicReferenceAssemblyRoots.Any(t => t.GetName().Name == a.Key))
+                .Where(a => basicReferenceAssemblyRoots
+                    .Select(x => x.GetName().Name)
+                    .Union(basicReferenceAssemblyRoots.SelectMany(y => y.GetReferencedAssemblies().Select(z => z.Name)))
+                    .Any(n => n == a.Key))
                 .Select(a => a.Value)
                 .ToList();
 
             var telerikReferenceAssemblies = allReferenceAssemblies.Values;
-
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(allReferenceAssemblies
-                .Where(a => basicReferenceAssemblyRoots.Any(t => t.GetName().Name == a.Key))));
-            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(telerikReferenceAssemblies));
 
             BaseCompilation = CSharpCompilation.Create(
                 "TestAssembly",
@@ -89,10 +90,11 @@ namespace BlazorFiddlePoC.Shared
 
                     result.EnsureSuccessStatusCode();
 
-                    streams.TryAdd(assemblyName, await result.Content.ReadAsStreamAsync());
+                    if (!streams.TryAdd(assemblyName, await result.Content.ReadAsStreamAsync()))
+                    {
+                        Console.WriteLine($"DIDN'T ADD {assemblyName}");
+                    }
                 }));
-
-            Console.WriteLine("GetStreamFromHttp");
 
             return streams;
 
