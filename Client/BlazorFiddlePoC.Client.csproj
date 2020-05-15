@@ -11,11 +11,12 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.0-rc1.20223.4" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.0-rc1.20223.4" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.5.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.3" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.4" />
 		<PackageReference Include="System.Net.Http.Json" Version="3.2.0-rc1.20217.1" />
 		<PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
 		<PackageReference Include="Telerik.UI.for.Blazor.Trial" Version="2.12.0" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\Shared\BlazorFiddlePoC.Shared.csproj" />
 	</ItemGroup>
