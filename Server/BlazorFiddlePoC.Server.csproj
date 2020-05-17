@@ -14,5 +14,4 @@
     <ProjectReference Include="..\Shared\BlazorFiddlePoC.Shared.csproj" />
   </ItemGroup>
 
-
 </Project>

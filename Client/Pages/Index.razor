@@ -120,7 +120,9 @@
 
     public bool Loading { get; set; }
 
-    public int UserComponentCodeStartLine { get; set; }
+    public int UserComponentCodeStartLine => Preset == "basic"
+        ? UserComponentCodePrefix.Count(ch => ch == '\n')
+        : TelerikUserComponentCodePrefix.Count(ch => ch == '\n');
 
     public void ToggleDiagnostics() => AreDiagnosticsShown = !AreDiagnosticsShown;
 
@@ -163,8 +165,6 @@
         if (firstRender)
         {
             await JsRuntime.InvokeVoidAsync("window.initEditor", "user-code-editor");
-
-            UserComponentCodeStartLine = UserComponentCodePrefix.Count(ch => ch == '\n');
         }
 
         await base.OnAfterRenderAsync(firstRender);
