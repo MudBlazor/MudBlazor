@@ -1,37 +1,172 @@
 ﻿@page "/repl"
 @layout MainLayout
 
+@using Microsoft.CodeAnalysis
+
 @inject ComponentCompilationService CompilationService
 @inject IJSRuntime JsRuntime
 
-<h1 class="text-center" style="padding-bottom: 20px;">Repl for your Blazor component</h1>
+<h1 class="text-center" style="padding-bottom: 20px">REPL your Blazor component</h1>
 
-<div class="row" style="height: 100%">
-    <div class="col-md-6">
-        <textarea style="width:100%" rows="10" @bind="@ComponentCode"></textarea>
-        <button @onclick="@Compile">Compile</button>
+<div class="row" style="margin-top: 10px; margin-bottom: 10px">
+    <div class="col-md-3">
+        <select @bind="@Preset">
+            <option value="basic">Basic Blazor</option>
+            <option value="telerik">Telerik Blazor</option>
+        </select>
     </div>
-
-    <div class="col-md-6">
-        <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%;"></iframe>
+    <div class="col-md-3 text-right">
+        <button class="btn btn-primary" @onclick="@Compile" disabled="@Loading">Compile</button>
     </div>
 </div>
+
+<div class="row" style="margin-top: 10px; margin-bottom: 10px">
+    <div class="col-md-6">
+        <div id="user-code-editor" style="height: 500px; border: 1px solid #ccc"></div>
+    </div>
+
+    <div class="col-md-6 user-page-container">
+        @if (Loading)
+        {
+            <div class="user-page-overlay"></div>
+            <div class="d-flex justify-content-center user-page-loader">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <div class="text-center user-page-loader-text">@LoaderText</div>
+        }
+
+        <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%"></iframe>
+    </div>
+</div>
+
+<div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+        <strong class="mr-auto">Error List</strong>
+        <small>@ErrorsCount errors / @WarningsCount warnings</small>
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Switch Visibility" @onclick="@ToggleDiagnostics">
+            @if (AreDiagnosticsShown)
+            {
+                <span class="oi oi-chevron-bottom"></span>
+            }
+            else
+            {
+                <span class="oi oi-chevron-top"></span>
+            }
+        </button>
+    </div>
+    @if (AreDiagnosticsShown && Diagnostics.Any())
+    {
+        <div class="toast-body">
+            <table class="table table-borderless">
+                <thead>
+                    <tr>
+                        <th scope="col">Severity</th>
+                        <th scope="col">Code</th>
+                        <th scope="col">Description</th>
+                        @*<th scope="col">File</th>*@
+                        <th scope="col">Line</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var diagnostic in Diagnostics)
+                    {
+                        <tr>
+                            <td>@diagnostic.Severity</td>
+                            <td>@diagnostic.Code</td>
+                            <td>@diagnostic.Description</td>
+                            @*<td>@diagnostic.Descriptor</td>*@
+                            <td>@(diagnostic.Line - UserComponentCodeStartLine + 1)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
 @code {
-    public string ComponentCode { get; set; }
+    private const string BasicUserComponentCodePrefix =
+@"@page ""/user-page""
+@using System.Linq
+@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+";
+
+    private const string TelerikUserComponentCodePrefix = BasicUserComponentCodePrefix +
+@"@using Telerik.Blazor
+@using Telerik.DataSource.Extensions
+@using Telerik.Blazor.Components
+";
+
+    public string Preset { get; set; } = "basic";
+
+    public string UserComponentCodePrefix => Preset == "basic"
+        ? BasicUserComponentCodePrefix
+        : TelerikUserComponentCodePrefix;
+
+    public IReadOnlyCollection<CompilationDiagnostic> Diagnostics { get; set; } = Array.Empty<CompilationDiagnostic>();
+    public int ErrorsCount { get; set; }
+    public int WarningsCount { get; set; }
+
+    public bool AreDiagnosticsShown { get; set; }
+
+    public string LoaderText { get; set; }
+
+    public bool Loading { get; set; }
+
+    public int UserComponentCodeStartLine => Preset == "basic"
+        ? UserComponentCodePrefix.Count(ch => ch == '\n')
+        : TelerikUserComponentCodePrefix.Count(ch => ch == '\n');
+
+    public void ToggleDiagnostics() => AreDiagnosticsShown = !AreDiagnosticsShown;
+
+    public async Task UpdateLoaderText(string loaderText)
+    {
+        LoaderText = loaderText;
+        StateHasChanged();
+        await Task.Delay(10); // Ensure rendering has time to be called
+    }
 
     public async Task Compile()
     {
-        //var result = CompilationService.CompileToAssembly("UserPage.razor", $@"
-        //@using System.Net.Http
-        //@using Microsoft.AspNetCore.Components.Forms
-        //@using Microsoft.AspNetCore.Components.Routing
-        //@using Microsoft.AspNetCore.Components.Web
-        //@using Microsoft.JSInterop
-        //@page ""/user-page""
-        //{ComponentCode}");
+        Loading = true;
+        LoaderText = "Processing";
+        await Task.Delay(10); // Ensure rendering has time to be called
 
-        //await JsRuntime.InvokeVoidAsync("window.readFile", result.AssemblyBytes);
+        var code = await JsRuntime.InvokeAsync<string>("window.editor.getValue");
 
-        //await JsRuntime.InvokeVoidAsync("window.reloadIFrame", "user-page-window");
+        var result = await CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code, Preset, UpdateLoaderText);
+
+        Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
+
+        ErrorsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error);
+        WarningsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
+
+        AreDiagnosticsShown = true;
+        Loading = false;
+
+        if (result.AssemblyBytes != null && result.AssemblyBytes.Length > 0)
+        {
+            await JsRuntime.InvokeVoidAsync("window.readFile", result.AssemblyBytes);
+
+            // TODO: Add error page in iframe
+            await JsRuntime.InvokeVoidAsync("window.reloadIFrame", "user-page-window");
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JsRuntime.InvokeVoidAsync("window.initEditor", "user-code-editor");
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
     }
 }
