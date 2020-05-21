@@ -231,11 +231,3 @@ app {
     }
 
 
-/*Theme overrides*/
-.video-hero .display-tc h2 {
-    font-size: 50px;
-}
-
-.video-hero .display-tc p {
-    font-size: 22px;
-}
