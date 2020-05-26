@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.4" />
-    <PackageReference Include="Telerik.UI.for.Blazor.Trial" Version="2.12.0" />
   </ItemGroup>
 
 </Project>
