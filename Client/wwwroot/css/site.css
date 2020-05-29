@@ -8,12 +8,6 @@ a, .btn-link {
     color: #0366d6;
 }
 
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
 app {
     position: relative;
     display: flex;
@@ -97,10 +91,17 @@ app {
                 color: white;
             }
 
+#colorlib-footer .copy {
+    padding: 0.7em 0;
+}
+
+#colorlib-footer {
+    padding-top: 0;
+}
+
 /*.content {
     padding-top: 1.1rem;
 }*/
-
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
 }
