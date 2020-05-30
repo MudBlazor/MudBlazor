@@ -196,6 +196,7 @@ app {
     bottom: 0;
     max-height: 40%;
     overflow-y: visible;
+    left: 1.5%;
 }
 
     .toast.show {
