@@ -9,13 +9,7 @@
 <h1 class="text-center" style="padding-bottom: 20px">REPL your Blazor component</h1>
 
 <div class="row" style="margin-top: 10px; margin-bottom: 10px">
-    <div class="col-md-3">
-        <select @bind="@Preset">
-            <option value="basic">Basic Blazor</option>
-            <option value="telerik">Telerik Blazor</option>
-        </select>
-    </div>
-    <div class="col-md-3 text-right">
+    <div class="col-md-6 text-right">
         <button class="btn btn-primary" @onclick="@Compile" disabled="@Loading">Compile</button>
     </div>
 </div>
@@ -98,17 +92,9 @@
 @using Microsoft.JSInterop
 ";
 
-    private const string TelerikUserComponentCodePrefix = BasicUserComponentCodePrefix +
-@"@using Telerik.Blazor
-@using Telerik.DataSource.Extensions
-@using Telerik.Blazor.Components
-";
-
     public string Preset { get; set; } = "basic";
 
-    public string UserComponentCodePrefix => Preset == "basic"
-        ? BasicUserComponentCodePrefix
-        : TelerikUserComponentCodePrefix;
+    public string UserComponentCodePrefix => BasicUserComponentCodePrefix;
 
     public IReadOnlyCollection<CompilationDiagnostic> Diagnostics { get; set; } = Array.Empty<CompilationDiagnostic>();
     public int ErrorsCount { get; set; }
@@ -120,9 +106,7 @@
 
     public bool Loading { get; set; }
 
-    public int UserComponentCodeStartLine => Preset == "basic"
-        ? UserComponentCodePrefix.Count(ch => ch == '\n')
-        : TelerikUserComponentCodePrefix.Count(ch => ch == '\n');
+    public int UserComponentCodeStartLine => UserComponentCodePrefix.Count(ch => ch == '\n');
 
     public void ToggleDiagnostics() => AreDiagnosticsShown = !AreDiagnosticsShown;
 
