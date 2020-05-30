@@ -40,41 +40,41 @@
 
 <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
-        <strong class="mr-auto">Error List</strong>
+        <strong style="margin-right: auto">Error List</strong>
         <small>@ErrorsCount errors / @WarningsCount warnings</small>
-        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Switch Visibility" @onclick="@ToggleDiagnostics">
+        <button type="button" style="margin-left: 0.5rem; margin-bottom: 0.25rem" class="close" data-dismiss="toast" aria-label="Switch Visibility" @onclick="@ToggleDiagnostics">
             @if (AreDiagnosticsShown)
             {
-                <span class="oi oi-chevron-bottom"></span>
+                <i class="icon-circle-down"></i>
             }
             else
             {
-                <span class="oi oi-chevron-top"></span>
+                <i class="icon-circle-up"></i>
             }
         </button>
     </div>
     @if (AreDiagnosticsShown && Diagnostics.Any())
     {
         <div class="toast-body">
-            <table class="table table-borderless">
+            <table class="table" style="color: #212529">
                 <thead>
                     <tr>
-                        <th scope="col">Severity</th>
-                        <th scope="col">Code</th>
-                        <th scope="col">Description</th>
-                        @*<th scope="col">File</th>*@
-                        <th scope="col">Line</th>
+                        <th scope="col" style="border: 0">Severity</th>
+                        <th scope="col" style="border: 0">Code</th>
+                        <th scope="col" style="border: 0">Description</th>
+                        @*<th scope="col" style="border: 0">File</th>*@
+                        <th scope="col" style="border: 0">Line</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var diagnostic in Diagnostics)
                     {
                         <tr>
-                            <td>@diagnostic.Severity</td>
-                            <td>@diagnostic.Code</td>
-                            <td>@diagnostic.Description</td>
-                            @*<td>@diagnostic.Descriptor</td>*@
-                            <td>@(diagnostic.Line - UserComponentCodeStartLine + 1)</td>
+                            <td style="border: 0">@diagnostic.Severity</td>
+                            <td style="border: 0">@diagnostic.Code</td>
+                            <td style="border: 0">@diagnostic.Description</td>
+                            @*<td style="border: 0">@diagnostic.Descriptor</td>*@
+                            <td style="border: 0">@(diagnostic.Line - UserComponentCodeStartLine + 1)</td>
                         </tr>
                     }
                 </tbody>

@@ -1,6 +1,4 @@
-﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
-
-html, body {
+﻿html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -99,9 +97,6 @@ app {
     padding-top: 0;
 }
 
-/*.content {
-    padding-top: 1.1rem;
-}*/
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
 }
@@ -183,8 +178,19 @@ app {
     }
 }
 
-.main .toast {
+/* Error List */
+.toast {
     max-width: 100%;
+    overflow: hidden;
+    font-size: 1.5rem;
+    background-color: rgba(255,255,255,.85);
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.1);
+    box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    border-radius: .25rem;
     width: 97%;
     position: fixed;
     bottom: 0;
@@ -192,7 +198,32 @@ app {
     overflow-y: visible;
 }
 
+    .toast.show {
+        display: block;
+        opacity: 1;
+    }
 
+    .toast.hide {
+        display: none;
+    }
+
+.toast-header {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: .5rem 1rem;
+    color: #6c757d;
+    background-color: rgba(255,255,255,.85);
+    background-clip: padding-box;
+    border-bottom: 1px solid rgba(0,0,0,.05);
+}
+
+.toast-body {
+    padding: .75rem;
+}
+
+/* User Page */
 .user-page-container .user-page-loader {
     position: absolute;
     top: 43%;
@@ -220,6 +251,7 @@ app {
     background-color: #f4f4f4;
 }
 
+/* App Loader */
 .app-loader {
     position: fixed;
     top: 41%;
@@ -231,6 +263,7 @@ app {
         height: 5rem;
     }
 
+/* Nav Actions */
 .navbar-header .nav-action {
     position: relative;
     padding: 8px;
