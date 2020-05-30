@@ -1,6 +1,5 @@
 ﻿@page "/"
 @layout EmptyLayout
-@*<div class="colorlib-loader"></div>*@
 
 <div id="page">
     <nav class="colorlib-nav" role="navigation">
@@ -8,23 +7,15 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-2">
-                        <div id="colorlib-logo"><a href="index.html">Blazor REPL</a></div>
+                        <div id="colorlib-logo"><a href="/">Blazor REPL</a></div>
                     </div>
                     <div class="col-md-10 text-right menu-1">
                         <ul>
-                            <li class="active"><a href="index.html">Home</a></li>
-                            <li class="has-dropdown">
-                                <a href="work.html">Works</a>
-                                <ul class="dropdown">
-                                    <li><a href="work-grid.html">Works grid with text</a></li>
-                                    <li><a href="work-grid-without-text.html">Works grid w/o text</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="services.html">Services</a></li>
-                            <li><a href="blog.html">Blog</a></li>
-                            <li><a href="about.html">About</a></li>
-                            <li><a href="shop.html">Shop</a></li>
-                            <li><a href="contact.html">Contact</a></li>
+                            <li class="active"><a href="/">Home</a></li>
+                            <li><a href="/repl">REPL</a></li>
+                            <li><a href="/getting-started">Getting Started</a></li>
+                            <li><a href="https://github.com/BlazorRepl/BlazorRepl" target="_blank">Source Code</a></li>
+                            @*<li><a href="contact.html">Contact</a></li>*@
                         </ul>
                     </div>
                 </div>
@@ -34,7 +25,6 @@
 
     <section id="home" class="video-hero" style="height: 700px; background-image: url(unapp-theme/images/code-editor.JPG);  background-size:cover; background-position: center center;" data-section="home">
         <div class="overlay"></div>
-        <a class="player" data-property="{videoURL:'https://www.youtube.com/watch?v=vqqt5p0q-eU',containment:'#home', showControls:false, autoPlay:true, loop:true, mute:true, startAt:0, opacity:1, quality:'default'}"></a>
         <div class="display-t text-center">
             <div class="display-tc">
                 <div class="container">
@@ -102,14 +92,18 @@
         </div>
     </div>
 
-    <div id="colorlib-subscribe" class="colorlib-subscribe" style="background-image: url(images/cover_img_1.jpg);" data-stellar-background-ratio="0.5">
+    <div id="colorlib-subscribe" class="colorlib-subscribe" data-stellar-background-ratio="0.5">
         <div class="overlay"></div>
         <div class="container">
             <div class="row">
                 <div class="col-md-10 col-md-offset-1 text-center colorlib-heading animate-box">
                     <h2>Support our Project</h2>
                     <p>Blazor Repl is an open-source project and it's always open for contributions</p>
-                    <p><a href="https://github.com/BlazorRepl/BlazorRepl" class="btn btn-primary btn-lg btn-custom" style="font-size: 18px"><i class="icon-github"></i> Explore</a></p>
+                    <p>
+                        <a href="https://github.com/BlazorRepl/BlazorRepl" target="_blank" class="btn btn-primary btn-lg btn-custom" style="font-size: 18px">
+                            <i class="icon-github"></i> Explore
+                        </a>
+                    </p>
                 </div>
             </div>
             <div class="row animate-box">
@@ -118,9 +112,15 @@
                         <div class="col-md-12">
                             <div class="form-inline qbstp-header-subscribe text-center" style="display: block">
                                 <div>
-                                    <a href="https://github.com/BlazorRepl/BlazorRepl/stargazers" class="btn btn-primary">Give us a Star</a>
-                                    <a href="https://github.com/BlazorRepl/BlazorRepl/issues" class="btn btn-primary">Submit an Issue</a>
-                                    <a href="https://github.com/BlazorRepl/BlazorRepl/pulls" class="btn btn-primary">Contribute</a>
+                                    <a href="https://github.com/BlazorRepl/BlazorRepl/stargazers" target="_blank" class="btn btn-primary">
+                                        <i class="icon-open"></i> Give us a Star
+                                    </a>
+                                    <a href="https://github.com/BlazorRepl/BlazorRepl/issues" target="_blank" class="btn btn-primary">
+                                        <i class="icon-open"></i> Submit an Issue
+                                    </a>
+                                    <a href="https://github.com/BlazorRepl/BlazorRepl/pulls" target="_blank" class="btn btn-primary">
+                                        <i class="icon-open"></i> Contribute
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -200,7 +200,3 @@
 <div class="gototop js-top">
     <a href="#" class="js-gotop"><i class="icon-arrow-up2"></i></a>
 </div>
-
-@code {
-
-}
