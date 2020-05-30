@@ -6,13 +6,16 @@
 @inject ComponentCompilationService CompilationService
 @inject IJSRuntime JsRuntime
 
-<h1 class="text-center" style="padding-bottom: 20px">REPL your Blazor component</h1>
-
-<div class="row" style="margin-top: 10px; margin-bottom: 10px">
-    <div class="col-md-6 text-right">
-        <button class="btn btn-primary" @onclick="@Compile" disabled="@Loading">Compile</button>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header" style="color: #303133">
+            <a href="/" class="navbar-brand">Blazor REPL</a>
+            <button href="/" class="btn btn-link nav-action" @onclick="@Compile" disabled="@Loading">
+                <i class="icon-play4"></i> RUN
+            </button>
+        </div>
     </div>
-</div>
+</nav>
 
 <div class="row" style="margin-top: 10px; margin-bottom: 10px">
     <div class="col-md-6">

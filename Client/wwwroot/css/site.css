@@ -231,4 +231,31 @@ app {
         height: 5rem;
     }
 
+.navbar-header .nav-action {
+    position: relative;
+    padding: 8px;
+    font-size: 18px;
+    margin-top: 7px;
+    text-decoration: none
+}
 
+    .navbar-header .nav-action:after {
+        content: "";
+        display: block;
+        width: 100%;
+        background: #4aca85;
+        height: 3px;
+        bottom: -1px;
+        left: 0;
+        position: absolute;
+        pointer-events: none;
+        border-radius: 3px;
+        transition: all .15s;
+        opacity: 0;
+        transform: scale(.95);
+    }
+
+    .navbar-header .nav-action:hover:after {
+        opacity: 1;
+        transform: scale(1);
+    }
