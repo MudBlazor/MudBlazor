@@ -14,8 +14,6 @@ using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using System.Net.Http.Json;
-using Telerik.Blazor.Components;
-using System.Data;
 using System.Diagnostics;
 
 namespace BlazorFiddlePoC.Shared
@@ -36,13 +34,7 @@ namespace BlazorFiddlePoC.Shared
                 typeof(IJSRuntime).Assembly // Microsoft.JSInterop
             };
 
-            var telerikAssemblyRoots = new[]
-            {
-                typeof(DataTable).Assembly, // System.Data
-                typeof(TelerikGrid<>).Assembly, // Telerik.Blazor.Components
-            }.Concat(basicReferenceAssemblyRoots).ToList();
-
-            var assemblyNames = telerikAssemblyRoots
+            var assemblyNames = basicReferenceAssemblyRoots
                 .SelectMany(assembly => assembly.GetReferencedAssemblies().Concat(new[] { assembly.GetName() }))
                 .Select(x => x.Name)
                 .Distinct()
@@ -60,18 +52,10 @@ namespace BlazorFiddlePoC.Shared
                 .Select(a => a.Value)
                 .ToList();
 
-            var telerikReferenceAssemblies = allReferenceAssemblies.Values;
-
             BaseCompilation = CSharpCompilation.Create(
                 "TestAssembly",
                 Array.Empty<SyntaxTree>(),
                 basicReferenceAssemblies,
-                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-
-            TelerikBaseCompilation = CSharpCompilation.Create(
-                "TestAssembly",
-                Array.Empty<SyntaxTree>(),
-                telerikReferenceAssemblies,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
             CSharpParseOptions = new CSharpParseOptions(LanguageVersion.Preview);
@@ -88,10 +72,7 @@ namespace BlazorFiddlePoC.Shared
 
                     result.EnsureSuccessStatusCode();
 
-                    if (!streams.TryAdd(assemblyName, await result.Content.ReadAsStreamAsync()))
-                    {
-                        Console.WriteLine($"DIDN'T ADD {assemblyName}");
-                    }
+                    streams.TryAdd(assemblyName, await result.Content.ReadAsStreamAsync());
                 }));
 
             return streams;
@@ -131,15 +112,13 @@ namespace BlazorFiddlePoC.Shared
         // so making sure it doesn't happen for each test.
         private static CSharpCompilation BaseCompilation;
 
-        private static CSharpCompilation TelerikBaseCompilation;
-
         public async Task<CompileToAssemblyResult> CompileToAssembly(
             string cshtmlRelativePath,
             string cshtmlContent,
             string preset,
             Func<string, Task> updateStatusFunc)
         {
-            var compilation = preset == "basic" ? BaseCompilation : TelerikBaseCompilation;
+            var compilation = BaseCompilation;
 
             _sw = Stopwatch.StartNew();
             var cSharpResult = await CompileToCSharp(cshtmlRelativePath, cshtmlContent, compilation, updateStatusFunc);
