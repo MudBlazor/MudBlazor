@@ -231,32 +231,52 @@ app {
     padding: .75rem;
 }
 
+@keyframes spinner-border {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner-border {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    vertical-align: text-bottom;
+    border: .25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    -webkit-animation: spinner-border .75s linear infinite;
+    animation: spinner-border .75s linear infinite;
+}
+
 /* User Page */
-.user-page-container .user-page-loader {
-    position: absolute;
+.user-page-loader {
+    position: fixed;
     top: 43%;
     left: 48%;
+    z-index: 11;
 }
 
-    .user-page-container .user-page-loader .spinner-border {
+    .user-page-loader .spinner-border {
         width: 5rem;
         height: 5rem;
+        z-index: 11;
     }
 
-.user-page-container .user-page-loader-text {
+.user-page-loader-text {
     width: 99%;
-    position: absolute;
+    position: fixed;
     top: 65%;
     font-size: 25px;
+    z-index: 11;
 }
 
-.user-page-container .user-page-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
+.user-page-overlay {
+    position: fixed;
     width: 100%;
     height: 100%;
     background-color: #f4f4f4;
+    z-index: 10;
 }
 
 /* App Loader */

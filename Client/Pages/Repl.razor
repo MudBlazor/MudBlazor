@@ -18,21 +18,21 @@
 </nav>
 
 <div class="row flex" style="margin: 0">
+    @if (Loading)
+    {
+        <div class="user-page-overlay"></div>
+        <div class="d-flex justify-content-center user-page-loader">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <div class="text-center user-page-loader-text">@LoaderText</div>
+    }
+
     <div id="user-code-editor-container">
         <div id="user-code-editor" style="height: 100%; border: 1px solid #ccc"></div>
     </div>
     <div class="user-page-container" id="user-page-window-container">
-        @if (false)
-        {
-            <div class="user-page-overlay"></div>
-            <div class="d-flex justify-content-center user-page-loader">
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
-            <div class="text-center user-page-loader-text">@LoaderText</div>
-        }
-
         <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%; padding: 10px"></iframe>
     </div>
 </div>
