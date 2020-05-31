@@ -1,7 +1,7 @@
 ﻿window.App = window.App || {};
 
 (function () {
-    let editor;
+    var editor;
     window.App.initRepl = function (editorContainerId, resultContainerId, editorId) {
         setElementHeight(editorContainerId);
         setElementHeight(resultContainerId);
@@ -10,10 +10,47 @@
         initEditor(editorId);
 
         window.addEventListener('resize', () => {
-            setElementHeight(resultContainerId)
+            setElementHeight(resultContainerId);
             setElementHeight(editorContainerId);
             resetEditor(editorId);
         });
+    }
+
+    window.App.reloadIFrame = function (id) {
+        var iFrame = document.getElementById(id);
+        if (iFrame) {
+            iFrame.contentWindow.location.reload();
+        }
+    }
+
+    window.App.getEditorValue = function () {
+        return editor && editor.getValue();
+    }
+
+    window.App.readFile = function (file) {
+        var response = new Response(new Blob([base64ToArrayBuffer(file)], { type: 'application/octet-stream' }));
+
+        caches.open('blazor-resources-/').then(function (cache) {
+            cache.keys().then(function (keys) {
+                var keysForDelete = keys.filter(x => x.url.indexOf('UserComponents') > -1);
+
+                var dll = keysForDelete.find(x => x.url.indexOf('dll') > -1).url.substr(window.location.origin.length);
+                cache.delete(dll).then(function () {
+                    cache.put(dll, response).then(function () { });
+                });
+            });
+        });
+
+        function base64ToArrayBuffer(base64) {
+            var binaryString = window.atob(base64);
+            var binaryLen = binaryString.length;
+            var bytes = new Uint8Array(binaryLen);
+            for (var i = 0; i < binaryLen; i++) {
+                var ascii = binaryString.charCodeAt(i);
+                bytes[i] = ascii;
+            }
+            return bytes;
+        }
     }
 
     function initReplSplitter(editorContainerId, resultContainerId, editorId) {
@@ -32,7 +69,7 @@
                 }),
                 onDrag: () => throttle(() => resetEditor(editorId), 100),
                 onDragEnd: () => resetEditor(editorId)
-            });            
+            });
 
             function throttle(func, timeFrame) {
                 var now = new Date();
@@ -54,62 +91,28 @@
         initEditor(editorId, value);
     }
 
-    function setElementHeight(elementId) {        
-        const element = document.getElementById(elementId);
+    function setElementHeight(elementId) {
+        var element = document.getElementById(elementId);
         var height = window.innerHeight - document.getElementsByClassName('repl-navbar')[0].offsetHeight - 10;
 
         element.style.height = height + 'px';
     }
 
     function initEditor(editorId, defaultValue) {
+        var value = defaultValue ||
+            `<h1>Hello World</h1>
+
+@code {
+
+}
+`;
         require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
         require(['vs/editor/editor.main'], function () {
             editor = monaco.editor.create(document.getElementById(editorId), {
                 fontSize: "18px",
-                value: defaultValue || [
-                    '<h1> Hello World </h1>',
-                    '@code {',
-                    '',
-                    '}'
-                ].join('\n'),
+                value: value,
                 language: 'razor'
             });
         });
     }
-
-    window.App.reloadIFrame = function (id) {
-        document.getElementById(id).contentWindow.location.reload();
-    }
-
-    window.App.getEditorValue = function () {
-        return editor && editor.getValue()
-    }
-
-    window.App.readFile = function (file) {
-        var response = new Response(new Blob([base64ToArrayBuffer(file)], { type: 'application/octet-stream' }));
-
-        caches.open('blazor-resources-/').then(function (cache) {
-            cache.keys().then(function (keys) {
-                var keysForDelete = keys.filter(x => x.url.indexOf('UserComponents') > -1);
-
-                var dll = keysForDelete.find(x => x.url.indexOf("dll") > -1).url.substr(window.location.origin.length);
-                cache.delete(dll).then(function () {
-                    cache.put(dll, response).then(function () { });
-                });
-            });
-        });
-
-        function base64ToArrayBuffer(base64) {
-            var binaryString = window.atob(base64);
-            var binaryLen = binaryString.length;
-            var bytes = new Uint8Array(binaryLen);
-            for (var i = 0; i < binaryLen; i++) {
-                var ascii = binaryString.charCodeAt(i);
-                bytes[i] = ascii;
-            }
-            return bytes;
-        }
-    }
 }());
-
-
