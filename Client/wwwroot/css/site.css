@@ -293,3 +293,15 @@ app {
         opacity: 1;
         transform: scale(1);
     }
+
+/* Splitter */
+.flex {
+    display: flex;
+    flex-direction: row;
+}
+
+.gutter.gutter-horizontal {
+    cursor: ew-resize;
+    height: 1000px;
+    background-color: #ccc;
+}

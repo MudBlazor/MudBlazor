@@ -17,12 +17,11 @@
     </div>
 </nav>
 
-<div class="row" style="margin: 0">
-    <div class="col-md-6">
+<div class="row flex" style="margin: 0">
+    <div id="user-code-editor-container">
         <div id="user-code-editor" style="height: 500px; border: 1px solid #ccc"></div>
     </div>
-
-    <div class="col-md-6 user-page-container">
+    <div class="user-page-container" id="user-page-window-container">
         @if (Loading)
         {
             <div class="user-page-overlay"></div>
@@ -151,6 +150,8 @@
     {
         if (firstRender)
         {
+            await JsRuntime.InvokeVoidAsync("window.App.initSplitter", "user-code-editor-container", "user-page-window-container");
+
             await JsRuntime.InvokeVoidAsync("window.initEditor", "user-code-editor");
         }
 
