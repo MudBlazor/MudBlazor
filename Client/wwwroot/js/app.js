@@ -65,6 +65,7 @@
         require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
         require(['vs/editor/editor.main'], function () {
             editor = monaco.editor.create(document.getElementById(editorId), {
+                fontSize: "18px",
                 value: defaultValue || [
                     '<h1> Hello World </h1>',
                     '@code {',
