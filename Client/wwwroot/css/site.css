@@ -6,6 +6,12 @@ a, .btn-link {
     color: #0366d6;
 }
 
+* {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 app {
     position: relative;
     display: flex;
@@ -20,6 +26,7 @@ app {
 
 .main {
     flex: 1;
+    position: relative;
 }
 
     .main .top-row {
@@ -264,7 +271,7 @@ app {
         height: 5rem;
     }
 
-/* Nav Actions */
+/* Repl Navigation */
 .navbar-header .nav-action {
     position: relative;
     padding: 8px;
@@ -294,6 +301,10 @@ app {
         transform: scale(1);
     }
 
+.repl-navbar {
+    margin-bottom: 0;
+}
+
 /* Splitter */
 .flex {
     display: flex;
@@ -302,6 +313,15 @@ app {
 
 .gutter.gutter-horizontal {
     cursor: ew-resize;
-    height: 1000px;
     background-color: #ccc;
+}
+
+/* Editor */
+.overflowingContentWidgets {
+    display: none;
+}
+
+#user-code-editor {
+    padding-top: 10px;
+    background-color: #FFF;
 }

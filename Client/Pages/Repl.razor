@@ -6,7 +6,7 @@
 @inject ComponentCompilationService CompilationService
 @inject IJSRuntime JsRuntime
 
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default repl-navbar">
     <div class="container-fluid">
         <div class="navbar-header" style="color: #303133">
             <a href="/" class="navbar-brand">Blazor REPL</a>
@@ -19,10 +19,10 @@
 
 <div class="row flex" style="margin: 0">
     <div id="user-code-editor-container">
-        <div id="user-code-editor" style="height: 500px; border: 1px solid #ccc"></div>
+        <div id="user-code-editor" style="height: 100%; border: 1px solid #ccc"></div>
     </div>
     <div class="user-page-container" id="user-page-window-container">
-        @if (Loading)
+        @if (false)
         {
             <div class="user-page-overlay"></div>
             <div class="d-flex justify-content-center user-page-loader">
@@ -33,7 +33,7 @@
             <div class="text-center user-page-loader-text">@LoaderText</div>
         }
 
-        <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%"></iframe>
+        <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%; padding: 10px"></iframe>
     </div>
 </div>
 
@@ -125,7 +125,9 @@
         LoaderText = "Processing";
         await Task.Delay(10); // Ensure rendering has time to be called
 
-        var code = await JsRuntime.InvokeAsync<string>("window.editor.getValue");
+        var code = await JsRuntime.InvokeAsync<string>("window.App.getEditorValue");
+
+        Console.WriteLine(code);
 
         var result = await CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code, Preset, UpdateLoaderText);
 
@@ -139,10 +141,10 @@
 
         if (result.AssemblyBytes != null && result.AssemblyBytes.Length > 0)
         {
-            await JsRuntime.InvokeVoidAsync("window.readFile", result.AssemblyBytes);
+            await JsRuntime.InvokeVoidAsync("window.App.readFile", result.AssemblyBytes);
 
             // TODO: Add error page in iframe
-            await JsRuntime.InvokeVoidAsync("window.reloadIFrame", "user-page-window");
+            await JsRuntime.InvokeVoidAsync("window.App.reloadIFrame", "user-page-window");
         }
     }
 
@@ -150,9 +152,7 @@
     {
         if (firstRender)
         {
-            await JsRuntime.InvokeVoidAsync("window.App.initSplitter", "user-code-editor-container", "user-page-window-container");
-
-            await JsRuntime.InvokeVoidAsync("window.initEditor", "user-code-editor");
+            await JsRuntime.InvokeVoidAsync("window.App.initRepl", "user-code-editor-container", "user-page-window-container", "user-code-editor");
         }
 
         await base.OnAfterRenderAsync(firstRender);

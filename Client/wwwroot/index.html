@@ -23,52 +23,6 @@
     <script src="lib/split.js/split.min.js"></script>
 
     <script src="lib/monaco-editor/min/vs/loader.js"></script>
-    <script>
-        window.initEditor = function initEditor(editorId) {
-            require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
-            require(['vs/editor/editor.main'], function () {
-                window.editor = monaco.editor.create(document.getElementById(editorId), {
-                    value: [
-                        '<h1> Hello World </h1>',
-                        '@code {',
-                        '',
-                        '}'
-                    ].join('\n'),
-                    language: 'razor'
-                });
-            });
-        }
-
-        window.reloadIFrame = function reloadIFrame(id) {
-            document.getElementById(id).contentWindow.location.reload();
-        }
-
-        window.readFile = function readFile(file) {
-            var response = new Response(new Blob([base64ToArrayBuffer(file)], { type: 'application/octet-stream' }));
-
-            caches.open('blazor-resources-/').then(function (cache) {
-                cache.keys().then(function (keys) {
-                    var keysForDelete = keys.filter(x => x.url.indexOf('UserComponents') > -1);
-
-                    var dll = keysForDelete.find(x => x.url.indexOf("dll") > -1).url.substr(window.location.origin.length);
-                    cache.delete(dll).then(function () {
-                        cache.put(dll, response).then(function () { });
-                    });
-                });
-            });
-
-            function base64ToArrayBuffer(base64) {
-                var binaryString = window.atob(base64);
-                var binaryLen = binaryString.length;
-                var bytes = new Uint8Array(binaryLen);
-                for (var i = 0; i < binaryLen; i++) {
-                    var ascii = binaryString.charCodeAt(i);
-                    bytes[i] = ascii;
-                }
-                return bytes;
-            }
-        }
-    </script>
 </head>
 
 <body>
