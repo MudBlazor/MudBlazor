@@ -266,8 +266,8 @@ app {
 .user-page-loader-text {
     width: 99%;
     position: fixed;
-    top: 65%;
-    font-size: 25px;
+    top: 58%;
+    font-size: 30px;
     z-index: 11;
 }
 
