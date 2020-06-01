@@ -96,14 +96,6 @@ app {
                 color: white;
             }
 
-#colorlib-footer .copy {
-    padding: 0.7em 0;
-}
-
-#colorlib-footer {
-    padding-top: 0;
-}
-
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
 }
@@ -170,11 +162,6 @@ app {
         top: 0;
     }
 
-    /*.main > div {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
-    }*/
-
     .navbar-toggler {
         display: none;
     }
@@ -184,6 +171,15 @@ app {
         display: block;
     }
 }
+
+/* Landing page */
+#unapp-page #colorlib-footer {
+    padding-top: 0;
+}
+
+    #unapp-page #colorlib-footer .copy {
+        padding: 0.7em 0;
+    }
 
 /* Error List */
 .toast {

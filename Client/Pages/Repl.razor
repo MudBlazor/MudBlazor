@@ -127,8 +127,6 @@
 
         var code = await JsRuntime.InvokeAsync<string>("window.App.getEditorValue");
 
-        Console.WriteLine(code);
-
         var result = await CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code, Preset, UpdateLoaderText);
 
         Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
