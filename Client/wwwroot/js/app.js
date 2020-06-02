@@ -93,7 +93,7 @@
 
     function setElementHeight(elementId) {
         var element = document.getElementById(elementId);
-        var height = window.innerHeight - document.getElementsByClassName('repl-navbar')[0].offsetHeight - 10;
+        var height = window.innerHeight - document.getElementsByClassName('repl-navbar')[0].offsetHeight;
 
         element.style.height = height + 'px';
     }

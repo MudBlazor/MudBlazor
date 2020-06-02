@@ -33,15 +33,15 @@
         <div id="user-code-editor" style="height: 100%; border: 1px solid #ccc"></div>
     </div>
     <div id="user-page-window-container">
-        <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%; padding: 10px"></iframe>
+        <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%"></iframe>
     </div>
 </div>
 
 <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
-        <strong style="margin-right: auto">Error List</strong>
-        <small>@ErrorsCount errors / @WarningsCount warnings</small>
-        <button type="button" style="margin-left: 0.5rem; margin-bottom: 0.25rem" class="close" data-dismiss="toast" aria-label="Switch Visibility" @onclick="@ToggleDiagnostics">
+        <strong style="margin-right: auto; font-weight: bold">Error List</strong>
+        <span>@ErrorsCount errors / @WarningsCount warnings</span>
+        <button type="button" style="margin-left: 0.5rem; margin-bottom: 0.25rem" class="close mt-1 toggle-error-list-btn" data-dismiss="toast" aria-label="Switch Visibility" @onclick="@ToggleDiagnostics">
             @if (AreDiagnosticsShown)
             {
                 <i class="icon-circle-down"></i>
@@ -55,25 +55,25 @@
     @if (AreDiagnosticsShown && Diagnostics.Any())
     {
         <div class="toast-body">
-            <table class="table" style="color: #212529">
+            <table class="table table-borderless">
                 <thead>
                     <tr>
-                        <th scope="col" style="border: 0">Severity</th>
-                        <th scope="col" style="border: 0">Code</th>
-                        <th scope="col" style="border: 0">Description</th>
-                        @*<th scope="col" style="border: 0">File</th>*@
-                        <th scope="col" style="border: 0">Line</th>
+                        <th scope="col">Severity</th>
+                        <th scope="col">Code</th>
+                        <th scope="col">Description</th>
+                        @*<th scope="col">File</th>*@
+                        <th scope="col">Line</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var diagnostic in Diagnostics)
                     {
                         <tr>
-                            <td style="border: 0">@diagnostic.Severity</td>
-                            <td style="border: 0">@diagnostic.Code</td>
-                            <td style="border: 0">@diagnostic.Description</td>
-                            @*<td style="border: 0">@diagnostic.Descriptor</td>*@
-                            <td style="border: 0">@(diagnostic.Line - UserComponentCodeStartLine + 1)</td>
+                            <td>@diagnostic.Severity</td>
+                            <td>@diagnostic.Code</td>
+                            <td>@diagnostic.Description</td>
+                            @*<td>@diagnostic.Descriptor</td>*@
+                            <td>@(diagnostic.Line - UserComponentCodeStartLine + 1)</td>
                         </tr>
                     }
                 </tbody>

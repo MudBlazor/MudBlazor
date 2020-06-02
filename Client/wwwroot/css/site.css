@@ -45,56 +45,21 @@ app {
             text-overflow: ellipsis;
         }
 
-.sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+.navbar-brand {
+    color: #6c757d;
 }
 
-    .sidebar .top-row {
-        background-color: rgba(0,0,0,0.4);
+    .navbar-brand:hover {
+        color: #333;
     }
 
-    .sidebar .navbar-brand {
-        font-size: 1.1rem;
-    }
+#colorlib-footer .copy {
+    padding: 0.7em 0;
+}
 
-    .sidebar .oi {
-        width: 2rem;
-        font-size: 1.1rem;
-        vertical-align: text-top;
-        top: -2px;
-    }
-
-    .sidebar .nav-item {
-        font-size: 0.9rem;
-        padding-bottom: 0.5rem;
-    }
-
-        .sidebar .nav-item:first-of-type {
-            padding-top: 1rem;
-        }
-
-        .sidebar .nav-item:last-of-type {
-            padding-bottom: 1rem;
-        }
-
-        .sidebar .nav-item a {
-            color: #d7d7d7;
-            border-radius: 4px;
-            height: 3rem;
-            display: flex;
-            align-items: center;
-            line-height: 3rem;
-        }
-
-            .sidebar .nav-item a.active {
-                background-color: rgba(255,255,255,0.25);
-                color: white;
-            }
-
-            .sidebar .nav-item a:hover {
-                background-color: rgba(255,255,255,0.1);
-                color: white;
-            }
+#colorlib-footer {
+    padding-top: 0;
+}
 
 .navbar-toggler {
     background-color: rgba(255, 255, 255, 0.1);
@@ -162,6 +127,11 @@ app {
         top: 0;
     }
 
+    /*.main > div {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+    }*/
+
     .navbar-toggler {
         display: none;
     }
@@ -172,28 +142,9 @@ app {
     }
 }
 
-/* Landing page */
-#unapp-page #colorlib-footer {
-    padding-top: 0;
-}
-
-    #unapp-page #colorlib-footer .copy {
-        padding: 0.7em 0;
-    }
-
 /* Error List */
-.toast {
+.main .toast {
     max-width: 100%;
-    overflow: hidden;
-    font-size: 1.5rem;
-    background-color: rgba(255,255,255,.85);
-    background-clip: padding-box;
-    border: 1px solid rgba(0,0,0,.1);
-    box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,.1);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    opacity: 0;
-    border-radius: .25rem;
     width: 97%;
     position: fixed;
     bottom: 0;
@@ -202,29 +153,8 @@ app {
     left: 1.5%;
 }
 
-    .toast.show {
-        display: block;
-        opacity: 1;
-    }
-
-    .toast.hide {
-        display: none;
-    }
-
-.toast-header {
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-align: center;
-    align-items: center;
-    padding: .5rem 1rem;
-    color: #6c757d;
-    background-color: rgba(255,255,255,.85);
-    background-clip: padding-box;
-    border-bottom: 1px solid rgba(0,0,0,.05);
-}
-
-.toast-body {
-    padding: .75rem;
+.toggle-error-list-btn:focus {
+    outline-width: 0;
 }
 
 @keyframes spinner-border {
@@ -249,7 +179,7 @@ app {
 .user-page-loader {
     position: fixed;
     top: 43%;
-    left: 48%;
+    left: 47.4%;
     z-index: 11;
 }
 
@@ -292,8 +222,8 @@ app {
     position: relative;
     padding: 8px;
     font-size: 18px;
-    margin-top: 7px;
-    text-decoration: none
+    text-decoration: none;
+    color: #6c757d;
 }
 
     .navbar-header .nav-action:after {
@@ -338,6 +268,6 @@ app {
 }
 
 #user-code-editor {
-    padding-top: 10px;
+    /*padding-top: 10px;*/
     background-color: #FFF;
 }
