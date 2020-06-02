@@ -3,26 +3,7 @@
 @inject HttpClient Http
 
 <div class="main">
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a href="/" class="navbar-brand">Blazor REPL</a>
-            </div>
-            <ul class="nav">
-                <li class="nav-item">
-                    <NavLink href="/repl" class="nav-link">REPL</NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink href="/about" class="nav-link">About</NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink href="/contacts" class="nav-link">Contacts</NavLink>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <div class="content px-4">
+    <div class="content">
         @Body
     </div>
 </div>

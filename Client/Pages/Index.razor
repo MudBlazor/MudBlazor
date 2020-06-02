@@ -1,156 +1,202 @@
 ﻿@page "/"
 @layout MainLayout
 
-@using Microsoft.CodeAnalysis
-
-@inject ComponentCompilationService CompilationService
-@inject IJSRuntime JsRuntime
-
-<h1 class="text-center" style="padding-bottom: 20px">REPL your Blazor component</h1>
-
-<div class="row" style="margin-top: 10px; margin-bottom: 10px">
-    <div class="col-md-6 text-right">
-        <button class="btn btn-primary" @onclick="@Compile" disabled="@Loading">Compile</button>
-    </div>
-</div>
-
-<div class="row" style="margin-top: 10px; margin-bottom: 10px">
-    <div class="col-md-6">
-        <div id="user-code-editor" style="height: 500px; border: 1px solid #ccc"></div>
-    </div>
-
-    <div class="col-md-6 user-page-container">
-        @if (Loading)
-        {
-            <div class="user-page-overlay"></div>
-            <div class="d-flex justify-content-center user-page-loader">
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
+<div id="unapp-page">
+    <nav class="colorlib-nav" role="navigation">
+        <div class="top-menu">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div id="colorlib-logo"><a href="/">Blazor REPL</a></div>
+                    </div>
+                    <div class="col-md-10 text-right menu-1">
+                        <ul>
+                            <li class="active"><a href="/">Home</a></li>
+                            <li><a href="/repl">REPL</a></li>
+                            <li><a href="/getting-started">Getting Started</a></li>
+                            <li><a href="https://github.com/BlazorRepl/BlazorRepl" target="_blank">Source Code</a></li>
+                            @*<li><a href="contact.html">Contact</a></li>*@
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="text-center user-page-loader-text">@LoaderText</div>
-        }
-
-        <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%"></iframe>
-    </div>
-</div>
-
-<div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header">
-        <strong class="mr-auto">Error List</strong>
-        <small>@ErrorsCount errors / @WarningsCount warnings</small>
-        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Switch Visibility" @onclick="@ToggleDiagnostics">
-            @if (AreDiagnosticsShown)
-            {
-                <span class="oi oi-chevron-bottom"></span>
-            }
-            else
-            {
-                <span class="oi oi-chevron-top"></span>
-            }
-        </button>
-    </div>
-    @if (AreDiagnosticsShown && Diagnostics.Any())
-    {
-        <div class="toast-body">
-            <table class="table table-borderless">
-                <thead>
-                    <tr>
-                        <th scope="col">Severity</th>
-                        <th scope="col">Code</th>
-                        <th scope="col">Description</th>
-                        @*<th scope="col">File</th>*@
-                        <th scope="col">Line</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var diagnostic in Diagnostics)
-                    {
-                        <tr>
-                            <td>@diagnostic.Severity</td>
-                            <td>@diagnostic.Code</td>
-                            <td>@diagnostic.Description</td>
-                            @*<td>@diagnostic.Descriptor</td>*@
-                            <td>@(diagnostic.Line - UserComponentCodeStartLine + 1)</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
         </div>
-    }
+    </nav>
+
+    <section id="home" class="video-hero" style="height: 700px; background-image: url(img/code-editor.JPG); background-size:cover; background-position: center center;" data-section="home">
+        <div class="overlay"></div>
+        <div class="display-t text-center">
+            <div class="display-tc">
+                <div class="container">
+                    <div class="col-md-12 offset-md-0">
+                        <div class="animate-box">
+                            <h2>Blazor REPL</h2>
+                            <h2>Write, Compile, Execute and Share</h2>
+                            <p>your rich UI Blazor components</p>
+                            <p><a href="/repl" class="btn btn-primary btn-lg btn-custom">Try now</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="colorlib-services colorlib-bg-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 text-center animate-box">
+                    <div class="services">
+                        <span class="icon">
+                            <i class="icon-smile"></i>
+                        </span>
+                        <div class="desc">
+                            <h3>Easy To Use</h3>
+                            <p>Write your code from anywhere using our integrated editor and easily share you component</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center animate-box">
+                    <div class="services">
+                        <span class="icon">
+                            <i class="icon-gift"></i>
+                        </span>
+                        <div class="desc">
+                            <h3>Free</h3>
+                            <p>Blazor REPL is free to use web application. Our codebase is open-source and you can find it in GitHub</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center animate-box">
+                    <div class="services">
+                        <span class="icon">
+                            <i class="icon-lock"></i>
+                        </span>
+                        <div class="desc">
+                            <h3>Secure</h3>
+                            <p>Run your components entirely in the browser security sandbox without any communication with a server</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center animate-box">
+                    <div class="services">
+                        <span class="icon">
+                            <i class="icon-rocket"></i>
+                        </span>
+                        <div class="desc">
+                            <h3>Fast</h3>
+                            <p>Your code is compiled on top of Web Assembly, which has near to native performance</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="colorlib-subscribe" class="colorlib-subscribe" data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 offset-md-1 text-center colorlib-heading animate-box">
+                    <h2>Support our Project</h2>
+                    <p>Blazor REPL is an open-source project and it's always open for contributions</p>
+                    <p>
+                        <a href="https://github.com/BlazorRepl/BlazorRepl" target="_blank" class="btn btn-primary btn-lg btn-custom" style="font-size: 18px">
+                            <i class="icon-github"></i> Explore
+                        </a>
+                    </p>
+                </div>
+            </div>
+            <div class="row animate-box">
+                <div class="col-md-6 offset-md-3">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-inline qbstp-header-subscribe text-center" style="display: block">
+                                <div>
+                                    <a href="https://github.com/BlazorRepl/BlazorRepl/stargazers" target="_blank" class="btn btn-primary">
+                                        <i class="icon-open"></i> Give us a Star
+                                    </a>
+                                    <a href="https://github.com/BlazorRepl/BlazorRepl/issues" target="_blank" class="btn btn-primary">
+                                        <i class="icon-open"></i> Submit an Issue
+                                    </a>
+                                    <a href="https://github.com/BlazorRepl/BlazorRepl/pulls" target="_blank" class="btn btn-primary">
+                                        <i class="icon-open"></i> Contribute
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="colorlib-blog">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 offset-md-2 text-center colorlib-heading animate-box">
+                    <h2>About the authors</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 text-center animate-box">
+                    <div class="staff-entry">
+                        <a href="#" class="staff-img" style="background-image: url(img/kris.png);"></a>
+                        <div class="desc">
+                            <h3>Kristian Mariyanov</h3>
+                            <span>Software Engineer</span>
+                            <p>
+                                Energetic Software Engineer passionate about coding and learning new things.
+                            </p>
+                            <p>
+                                <ul class="colorlib-social-icons">
+                                    <li><a href="https://github.com/KristianMariyanov"><i class="icon-github"></i></a></li>
+                                    <li><a href="https://www.linkedin.com/in/kristian-mariyanov/"><i class="icon-linkedin"></i></a></li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center animate-box">
+                    <div class="staff-entry">
+                        <a href="#" class="staff-img" style="background-image: url(img/vladislav.png);"></a>
+                        <div class="desc">
+                            <h3>Vladislav Karamfilov</h3>
+                            <span>Software Architect</span>
+                            <p>
+                                Software engineering professional and leader, always striving towards high-quality code.
+                            </p>
+                            <p>
+                                <ul class="colorlib-social-icons">
+                                    <li><a href="https://github.com/vladislav-karamfilov"><i class="icon-github"></i></a></li>
+                                    <li><a href="https://www.linkedin.com/in/vladislav-karamfilov/"><i class="icon-linkedin"></i></a></li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="colorlib-footer">
+        <div class="copy">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p>
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                            Copyright &copy;
+                            2020 All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --><br>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="gototop js-top">
+        <a href="#" class="js-gotop"><i class="icon-arrow-up2"></i></a>
+    </div>
 </div>
-
-@code {
-    private const string BasicUserComponentCodePrefix =
-@"@page ""/user-page""
-@using System.Linq
-@using System.Net.Http
-@using System.Net.Http.Json
-@using Microsoft.AspNetCore.Components.Forms
-@using Microsoft.AspNetCore.Components.Routing
-@using Microsoft.AspNetCore.Components.Web
-@using Microsoft.JSInterop
-";
-
-    public string Preset { get; set; } = "basic";
-
-    public string UserComponentCodePrefix => BasicUserComponentCodePrefix;
-
-    public IReadOnlyCollection<CompilationDiagnostic> Diagnostics { get; set; } = Array.Empty<CompilationDiagnostic>();
-    public int ErrorsCount { get; set; }
-    public int WarningsCount { get; set; }
-
-    public bool AreDiagnosticsShown { get; set; }
-
-    public string LoaderText { get; set; }
-
-    public bool Loading { get; set; }
-
-    public int UserComponentCodeStartLine => UserComponentCodePrefix.Count(ch => ch == '\n');
-
-    public void ToggleDiagnostics() => AreDiagnosticsShown = !AreDiagnosticsShown;
-
-    public async Task UpdateLoaderText(string loaderText)
-    {
-        LoaderText = loaderText;
-        StateHasChanged();
-        await Task.Delay(10); // Ensure rendering has time to be called
-    }
-
-    public async Task Compile()
-    {
-        Loading = true;
-        LoaderText = "Processing";
-        await Task.Delay(10); // Ensure rendering has time to be called
-
-        var code = await JsRuntime.InvokeAsync<string>("window.editor.getValue");
-
-        var result = await CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code, Preset, UpdateLoaderText);
-
-        Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
-
-        ErrorsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error);
-        WarningsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
-
-        AreDiagnosticsShown = true;
-        Loading = false;
-
-        if (result.AssemblyBytes != null && result.AssemblyBytes.Length > 0)
-        {
-            await JsRuntime.InvokeVoidAsync("window.readFile", result.AssemblyBytes);
-
-            // TODO: Add error page in iframe
-            await JsRuntime.InvokeVoidAsync("window.reloadIFrame", "user-page-window");
-        }
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await JsRuntime.InvokeVoidAsync("window.initEditor", "user-code-editor");
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
-}
