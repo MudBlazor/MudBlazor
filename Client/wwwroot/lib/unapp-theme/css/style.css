@@ -1819,6 +1819,10 @@ body {
     }
 }
 
+#unapp-page .btn-primary:hover {
+    color: #fff;
+}
+
 #unapp-page .btn {
     margin-right: 4px;
     margin-bottom: 4px;
