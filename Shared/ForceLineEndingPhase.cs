@@ -2,7 +2,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Razor.Language.CodeGeneration;
 
-namespace BlazorFiddlePoC.Shared
+namespace BlazorRepl.Shared
 {
     public class ForceLineEndingPhase : RazorEnginePhaseBase
     {

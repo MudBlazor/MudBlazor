@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
-using BlazorFiddlePoC.Shared;
+using BlazorRepl.Shared;
 
-namespace BlazorFiddlePoC.Client
+namespace BlazorRepl.Client
 {
     public class Program
     {

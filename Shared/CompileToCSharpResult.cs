@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 
-namespace BlazorFiddlePoC.Shared
+namespace BlazorRepl.Shared
 {
     public class CompileToCSharpResult
     {

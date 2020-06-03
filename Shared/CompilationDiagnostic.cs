@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.CodeAnalysis;
 
-namespace BlazorFiddlePoC.Shared
+namespace BlazorRepl.Shared
 {
     public class CompilationDiagnostic
     {

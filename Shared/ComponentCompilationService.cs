@@ -16,7 +16,7 @@ using Microsoft.JSInterop;
 using System.Net.Http.Json;
 using System.Diagnostics;
 
-namespace BlazorFiddlePoC.Shared
+namespace BlazorRepl.Shared
 {
     public class ComponentCompilationService
     {

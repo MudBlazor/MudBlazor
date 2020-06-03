@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Razor.Language;
 
-namespace BlazorFiddlePoC.Shared
+namespace BlazorRepl.Shared
 {
     public class SuppressChecksum : IConfigureRazorCodeGenerationOptionsFeature
     {

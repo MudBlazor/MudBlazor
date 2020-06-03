@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Client\BlazorFiddlePoC.Client.csproj" />
-    <ProjectReference Include="..\Shared\BlazorFiddlePoC.Shared.csproj" />
+    <ProjectReference Include="..\Client\BlazorRepl.Client.csproj" />
+    <ProjectReference Include="..\Shared\BlazorRepl.Shared.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace BlazorFiddlePoC.Shared
+﻿namespace BlazorRepl.Shared
 {
     public enum CompilationDiagnosticsKind
     {
