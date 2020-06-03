@@ -53,11 +53,11 @@ app {
         color: #333;
     }
 
-#colorlib-footer .copy {
+#unapp-page #colorlib-footer .copy {
     padding: 0.7em 0;
 }
 
-#colorlib-footer {
+#unapp-page #colorlib-footer {
     padding-top: 0;
 }
 
@@ -115,13 +115,6 @@ app {
         flex-direction: row;
     }
 
-    .sidebar {
-        width: 250px;
-        height: 100vh;
-        position: sticky;
-        top: 0;
-    }
-
     .main .top-row {
         position: sticky;
         top: 0;
@@ -134,11 +127,6 @@ app {
 
     .navbar-toggler {
         display: none;
-    }
-
-    .sidebar .collapse {
-        /* Never collapse the sidebar for wide screens */
-        display: block;
     }
 }
 
