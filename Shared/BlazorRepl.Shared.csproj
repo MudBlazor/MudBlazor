@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\UserComponents\UserComponents.csproj" />
+    <ProjectReference Include="..\UserComponents\BlazorRepl.UserComponents.csproj" />
   </ItemGroup>
 
 </Project>

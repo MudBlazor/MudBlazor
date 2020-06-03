@@ -20,8 +20,6 @@ namespace BlazorRepl.Shared
 {
     public class ComponentCompilationService
     {
-        private static Stopwatch _sw;
-
         public static async Task Init(HttpClient httpClient)
         {
             var basicReferenceAssemblyRoots = new[]
@@ -53,7 +51,7 @@ namespace BlazorRepl.Shared
                 .ToList();
 
             BaseCompilation = CSharpCompilation.Create(
-                "TestAssembly",
+                "BlazorRepl.UserComponent",
                 Array.Empty<SyntaxTree>(),
                 basicReferenceAssemblies,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
@@ -87,7 +85,7 @@ namespace BlazorRepl.Shared
         // the *count* of characters written.
         internal virtual string LineEnding { get; } = "\n";
 
-        internal virtual string DefaultRootNamespace { get; } = "UserComponents";
+        internal virtual string DefaultRootNamespace { get; } = "BlazorRepl.UserComponents";
 
         internal virtual RazorConfiguration Configuration { get; }
             = RazorConfiguration.Create(RazorLanguageVersion.Latest, "MVC-3.0", Array.Empty<RazorExtension>());
@@ -102,7 +100,7 @@ namespace BlazorRepl.Shared
 
         internal virtual string PathSeparator { get; } = Path.DirectorySeparatorChar.ToString();
 
-        internal virtual string WorkingDirectory { get; } = "x:\\dir\\subdir\\Test";
+        internal virtual string WorkingDirectory { get; } = "x:\\BlazorRepl";
 
         internal virtual bool NormalizeSourceLineEndings { get; } = true;
 
@@ -120,16 +118,10 @@ namespace BlazorRepl.Shared
         {
             var compilation = BaseCompilation;
 
-            _sw = Stopwatch.StartNew();
             var cSharpResult = await CompileToCSharp(cshtmlRelativePath, cshtmlContent, compilation, updateStatusFunc);
-
-            Console.WriteLine("CompileToCSharp " + _sw.Elapsed.TotalSeconds);
-            _sw.Restart();
 
             await (updateStatusFunc?.Invoke("Compiling Assembly") ?? Task.CompletedTask);
             var result = CompileToAssembly(cSharpResult);
-
-            Console.WriteLine("CompileToAssembly " + _sw.Elapsed.TotalSeconds);
 
             return result;
         }
@@ -183,111 +175,66 @@ namespace BlazorRepl.Shared
             CSharpCompilation compilation,
             Func<string, Task> updateStatusFunc)
         {
-            if (true)
+            // The first phase won't include any metadata references for component discovery. 
+            // This mirrors what the build does.
+            var projectEngine = CreateProjectEngine(Array.Empty<MetadataReference>());
+
+            RazorCodeDocument codeDocument;
+            foreach (var item in AdditionalRazorItems)
             {
-                // The first phase won't include any metadata references for component discovery. This mirrors
-                // what the build does.
-                var projectEngine = CreateProjectEngine(Array.Empty<MetadataReference>());
-
-                //Console.WriteLine("CreateProjectEngine " + _sw.Elapsed.TotalSeconds);
-                //_sw.Restart();
-
-                RazorCodeDocument codeDocument;
-                foreach (var item in AdditionalRazorItems)
-                {
-                    // Result of generating declarations
-                    codeDocument = projectEngine.ProcessDeclarationOnly(item);
-
-                    var syntaxTree = Parse(codeDocument.GetCSharpDocument().GeneratedCode, path: item.FilePath);
-                    AdditionalSyntaxTrees.Add(syntaxTree);
-                }
-
-                //Console.WriteLine("AdditionalRazorItems " + _sw.Elapsed.TotalSeconds);
-                //_sw.Restart();
-
                 // Result of generating declarations
-                var projectItem = CreateProjectItem(cshtmlRelativePath, cshtmlContent);
+                codeDocument = projectEngine.ProcessDeclarationOnly(item);
 
-                //Console.WriteLine("CreateProjectItem " + _sw.Elapsed.TotalSeconds);
-                //_sw.Restart();
-
-                codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
-
-                //Console.WriteLine("ProcessDeclarationOnly " + _sw.Elapsed.TotalSeconds);
-                //_sw.Restart();
-
-                var declaration = new CompileToCSharpResult
-                {
-                    BaseCompilation = compilation.AddSyntaxTrees(AdditionalSyntaxTrees),
-                    Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
-                };
-
-                //Console.WriteLine("CompileToCSharpResult " + _sw.Elapsed.TotalSeconds);
-                //_sw.Restart();
-
-                // Result of doing 'temp' compilation
-                var tempAssembly = CompileToAssembly(declaration);
-                if (tempAssembly.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
-                {
-                    return new CompileToCSharpResult { Diagnostics = tempAssembly.Diagnostics, };
-                }
-
-                //Console.WriteLine("CompileToAssembly " + _sw.Elapsed.TotalSeconds);
-                //_sw.Restart();
-
-                // Add the 'temp' compilation as a metadata reference
-                var references = compilation.References.Concat(new[] { tempAssembly.Compilation.ToMetadataReference() }).ToArray();
-                projectEngine = CreateProjectEngine(references);
-
-                // Now update the any additional files
-                foreach (var item in AdditionalRazorItems)
-                {
-                    // Result of generating declarations
-                    codeDocument = DesignTime ? projectEngine.ProcessDesignTime(item) : projectEngine.Process(item);
-                    //Assert.Empty(codeDocument.GetCSharpDocument().Diagnostics);
-
-                    // Replace the 'declaration' syntax tree
-                    var syntaxTree = Parse(codeDocument.GetCSharpDocument().GeneratedCode, path: item.FilePath);
-                    AdditionalSyntaxTrees.RemoveAll(st => st.FilePath == item.FilePath);
-                    AdditionalSyntaxTrees.Add(syntaxTree);
-                }
-
-                //Console.WriteLine("CreateProjectEngine +  AdditionalRazorItems" + _sw.Elapsed.TotalSeconds);
-                //_sw.Restart();
-
-
-                await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
-                // Result of real code generation for the document under test
-                codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
-
-                //Console.WriteLine("ProcessDesignTime " + _sw.Elapsed.TotalSeconds);
-                //Console.WriteLine("DesignTime " + DesignTime);
-                //_sw.Restart();
-
-                return new CompileToCSharpResult
-                {
-                    BaseCompilation = compilation.AddSyntaxTrees(AdditionalSyntaxTrees),
-                    Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
-                };
+                var syntaxTree = Parse(codeDocument.GetCSharpDocument().GeneratedCode, path: item.FilePath);
+                AdditionalSyntaxTrees.Add(syntaxTree);
             }
-            else
+
+            // Result of generating declarations
+            var projectItem = CreateProjectItem(cshtmlRelativePath, cshtmlContent);
+
+            codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
+
+            var declaration = new CompileToCSharpResult
             {
-                // For single phase compilation tests just use the base compilation's references.
-                // This will include the built -in Blazor components.
-                var projectEngine = CreateProjectEngine(compilation.References.ToList());
+                BaseCompilation = compilation.AddSyntaxTrees(AdditionalSyntaxTrees),
+                Code = codeDocument.GetCSharpDocument().GeneratedCode,
+                Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
+            };
 
-                var projectItem = CreateProjectItem(cshtmlRelativePath, cshtmlContent);
-                var codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
-
-                return new CompileToCSharpResult
-                {
-                    BaseCompilation = compilation.AddSyntaxTrees(AdditionalSyntaxTrees),
-                    Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
-                };
+            // Result of doing 'temp' compilation
+            var tempAssembly = CompileToAssembly(declaration);
+            if (tempAssembly.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
+            {
+                return new CompileToCSharpResult { Diagnostics = tempAssembly.Diagnostics, };
             }
+
+            // Add the 'temp' compilation as a metadata reference
+            var references = compilation.References.Concat(new[] { tempAssembly.Compilation.ToMetadataReference() }).ToArray();
+            projectEngine = CreateProjectEngine(references);
+
+            // Now update the any additional files
+            foreach (var item in AdditionalRazorItems)
+            {
+                // Result of generating declarations
+                codeDocument = DesignTime ? projectEngine.ProcessDesignTime(item) : projectEngine.Process(item);
+
+                // Replace the 'declaration' syntax tree
+                var syntaxTree = Parse(codeDocument.GetCSharpDocument().GeneratedCode, path: item.FilePath);
+                AdditionalSyntaxTrees.RemoveAll(st => st.FilePath == item.FilePath);
+                AdditionalSyntaxTrees.Add(syntaxTree);
+            }
+
+            await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
+
+            // Result of real code generation for the document
+            codeDocument = DesignTime ? projectEngine.ProcessDesignTime(projectItem) : projectEngine.Process(projectItem);
+
+            return new CompileToCSharpResult
+            {
+                BaseCompilation = compilation.AddSyntaxTrees(AdditionalSyntaxTrees),
+                Code = codeDocument.GetCSharpDocument().GeneratedCode,
+                Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
+            };
         }
 
         internal RazorProjectItem CreateProjectItem(string cshtmlRelativePath, string cshtmlContent)
@@ -328,9 +275,6 @@ namespace BlazorRepl.Shared
                 {
                     b.Phases.Insert(0, new ForceLineEndingPhase(LineEnding));
                 }
-
-                // Including MVC here so that we can find any issues that arise from mixed MVC + Components.
-                RazorExtensions.Register(b);
 
                 // Features that use Roslyn are mandatory for components
                 CompilerFeatures.Register(b);
