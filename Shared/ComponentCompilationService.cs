@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.Razor.Extensions;
 using Microsoft.CodeAnalysis.Razor;
 using System.Text;
 using System.Net.Http;
@@ -14,7 +13,6 @@ using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using System.Net.Http.Json;
-using System.Diagnostics;
 using System.ComponentModel.DataAnnotations;
 
 namespace BlazorRepl.Shared
@@ -23,9 +21,7 @@ namespace BlazorRepl.Shared
     {
         private const string LineEnding = "\n";
         private const string DefaultRootNamespace = "BlazorRepl.UserComponents";
-        private const string WorkingDirectory = "x:\\BlazorRepl";
-
-        private static readonly string PathSeparator = Path.DirectorySeparatorChar.ToString();
+        private const string WorkingDirectory = "/BlazorRepl/";
 
         public static async Task Init(HttpClient httpClient)
         {
@@ -103,10 +99,10 @@ namespace BlazorRepl.Shared
         {
             var compilation = BaseCompilation;
 
-            var cSharpResult = await CompileToCSharp(cshtmlRelativePath, cshtmlContent, compilation, updateStatusFunc);
+            var cSharpResult = await this.CompileToCSharp(cshtmlRelativePath, cshtmlContent, compilation, updateStatusFunc);
 
             await (updateStatusFunc?.Invoke("Compiling Assembly") ?? Task.CompletedTask);
-            var result = CompileToAssembly(cSharpResult);
+            var result = this.CompileToAssembly(cSharpResult);
 
             return result;
         }
@@ -144,10 +140,8 @@ namespace BlazorRepl.Shared
             return result;
         }
 
-        private static CSharpSyntaxTree Parse(string text, string path = null)
-        {
-            return (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(text, CSharpParseOptions, path: path);
-        }
+        private static CSharpSyntaxTree Parse(string text, string path = null) =>
+            (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(text, CSharpParseOptions, path: path);
 
         private async Task<CompileToCSharpResult> CompileToCSharp(
             string cshtmlRelativePath,
@@ -157,7 +151,7 @@ namespace BlazorRepl.Shared
         {
             // The first phase won't include any metadata references for component discovery. 
             // This mirrors what the build does.
-            var projectEngine = CreateProjectEngine(Array.Empty<MetadataReference>());
+            var projectEngine = this.CreateProjectEngine(Array.Empty<MetadataReference>());
 
             // Result of generating declarations
             var projectItem = CreateProjectItem(cshtmlRelativePath, cshtmlContent);
@@ -173,7 +167,7 @@ namespace BlazorRepl.Shared
             };
 
             // Result of doing 'temp' compilation
-            var tempAssembly = CompileToAssembly(declaration);
+            var tempAssembly = this.CompileToAssembly(declaration);
             if (tempAssembly.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
             {
                 return new CompileToCSharpResult { Diagnostics = tempAssembly.Diagnostics, };
@@ -181,7 +175,7 @@ namespace BlazorRepl.Shared
 
             // Add the 'temp' compilation as a metadata reference
             var references = compilation.References.Concat(new[] { tempAssembly.Compilation.ToMetadataReference() }).ToArray();
-            projectEngine = CreateProjectEngine(references);
+            projectEngine = this.CreateProjectEngine(references);
 
             await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
 
@@ -197,9 +191,9 @@ namespace BlazorRepl.Shared
             };
         }
 
-        private RazorProjectItem CreateProjectItem(string cshtmlRelativePath, string cshtmlContent)
+        private static RazorProjectItem CreateProjectItem(string cshtmlRelativePath, string cshtmlContent)
         {
-            var fullPath = WorkingDirectory + PathSeparator + cshtmlRelativePath;
+            var fullPath = WorkingDirectory + cshtmlRelativePath;
 
             // FilePaths in Razor are **always** of the form '/a/b/c.cshtml'
             var filePath = cshtmlRelativePath.Replace('\\', '/');
@@ -208,7 +202,7 @@ namespace BlazorRepl.Shared
                 filePath = '/' + filePath;
             }
 
-            cshtmlContent = cshtmlContent.Replace("\r", "").Replace("\n", LineEnding);
+            cshtmlContent = cshtmlContent.Replace("\r", "");
 
             return new VirtualProjectItem(
                 WorkingDirectory,
@@ -221,7 +215,7 @@ namespace BlazorRepl.Shared
 
         private RazorProjectEngine CreateProjectEngine(IReadOnlyList<MetadataReference> references)
         {
-            return RazorProjectEngine.Create(Configuration, FileSystem, b =>
+            return RazorProjectEngine.Create(this.Configuration, this.FileSystem, b =>
             {
                 b.SetRootNamespace(DefaultRootNamespace);
 
