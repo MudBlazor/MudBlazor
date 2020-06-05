@@ -18,16 +18,8 @@
 </nav>
 
 <div class="row flex" style="margin: 0">
-    @if (Loading)
-    {
-        <div class="user-page-overlay"></div>
-        <div class="user-page-loader">
-            <div class="spinner-border" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div>
-        <div class="text-center user-page-loader-text">@LoaderText</div>
-    }
+
+    <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
 
     <div id="user-code-editor-container">
         <div id="user-code-editor" style="height: 100%; border: 1px solid #ccc"></div>
@@ -37,50 +29,9 @@
     </div>
 </div>
 
-<div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header">
-        <strong style="margin-right: auto; font-weight: bold">Error List</strong>
-        <span>@ErrorsCount errors / @WarningsCount warnings</span>
-        <button type="button" style="margin-left: 0.5rem; margin-bottom: 0.25rem" class="close mt-1 toggle-error-list-btn" data-dismiss="toast" aria-label="Switch Visibility" @onclick="@ToggleDiagnostics">
-            @if (AreDiagnosticsShown)
-            {
-                <i class="icon-circle-down"></i>
-            }
-            else
-            {
-                <i class="icon-circle-up"></i>
-            }
-        </button>
-    </div>
-    @if (AreDiagnosticsShown && Diagnostics.Any())
-    {
-        <div class="toast-body">
-            <table class="table table-borderless">
-                <thead>
-                    <tr>
-                        <th scope="col">Severity</th>
-                        <th scope="col">Code</th>
-                        <th scope="col">Description</th>
-                        @*<th scope="col">File</th>*@
-                        <th scope="col">Line</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var diagnostic in Diagnostics)
-                    {
-                        <tr>
-                            <td>@diagnostic.Severity</td>
-                            <td>@diagnostic.Code</td>
-                            <td>@diagnostic.Description</td>
-                            @*<td>@diagnostic.Descriptor</td>*@
-                            <td>@(diagnostic.Line - UserComponentCodeStartLine + 1)</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
+<ErrorList @bind-Show="AreDiagnosticsShown"
+           Diagnostics="Diagnostics"
+           UserComponentCodeStartLine="UserComponentCodeStartLine"></ErrorList>
 
 @code {
     private const string BasicUserComponentCodePrefix =
@@ -99,8 +50,6 @@
     public string UserComponentCodePrefix => BasicUserComponentCodePrefix;
 
     public IReadOnlyCollection<CompilationDiagnostic> Diagnostics { get; set; } = Array.Empty<CompilationDiagnostic>();
-    public int ErrorsCount { get; set; }
-    public int WarningsCount { get; set; }
 
     public bool AreDiagnosticsShown { get; set; }
 
@@ -109,8 +58,6 @@
     public bool Loading { get; set; }
 
     public int UserComponentCodeStartLine => UserComponentCodePrefix.Count(ch => ch == '\n');
-
-    public void ToggleDiagnostics() => AreDiagnosticsShown = !AreDiagnosticsShown;
 
     public async Task UpdateLoaderText(string loaderText)
     {
@@ -130,11 +77,8 @@
         var result = await CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code, Preset, UpdateLoaderText);
 
         Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
-
-        ErrorsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error);
-        WarningsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
-
         AreDiagnosticsShown = true;
+
         Loading = false;
 
         if (result.AssemblyBytes != null && result.AssemblyBytes.Length > 0)
