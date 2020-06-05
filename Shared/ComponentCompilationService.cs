@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.JSInterop;
 using System.Net.Http.Json;
 using System.Diagnostics;
+using System.ComponentModel.DataAnnotations;
 
 namespace BlazorRepl.Shared
 {
@@ -35,7 +36,8 @@ namespace BlazorRepl.Shared
                 typeof(IQueryable).Assembly, // System.Linq
                 typeof(HttpClientJsonExtensions).Assembly, // System.Net.Http.Json
                 typeof(HttpClient).Assembly, // System.Net.Http
-                typeof(IJSRuntime).Assembly // Microsoft.JSInterop
+                typeof(IJSRuntime).Assembly, // Microsoft.JSInterop
+                typeof(RequiredAttribute).Assembly, // System.ComponentModel.Annotations
             };
 
             var assemblyNames = basicReferenceAssemblyRoots
