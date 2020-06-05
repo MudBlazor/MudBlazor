@@ -15,7 +15,7 @@ namespace BlazorRepl.Shared
 
         public string File { get; set; }
 
-        public CompilationDiagnosticsKind Kind { get; set; }
+        public CompilationDiagnosticKind Kind { get; set; }
 
         public static CompilationDiagnostic FromCSharpDiagnostic(Diagnostic diagnostic)
         {
@@ -30,7 +30,7 @@ namespace BlazorRepl.Shared
                 Severity = diagnostic.Severity,
                 Description = diagnostic.GetMessage(),
                 Line = diagnostic.Location.GetMappedLineSpan().StartLinePosition.Line,
-                Kind = CompilationDiagnosticsKind.CSharp,
+                Kind = CompilationDiagnosticKind.CSharp,
             };
         }
 
@@ -47,7 +47,7 @@ namespace BlazorRepl.Shared
                 Severity = (DiagnosticSeverity)diagnostic.Severity,
                 Description = diagnostic.GetMessage(),
                 // Line = diagnostic.Span.LineIndex, // TODO: Math
-                Kind = CompilationDiagnosticsKind.Razor,
+                Kind = CompilationDiagnosticKind.Razor,
             };
         }
     }

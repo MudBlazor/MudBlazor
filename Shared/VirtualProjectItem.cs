@@ -31,7 +31,7 @@ namespace Microsoft.AspNetCore.Razor.Language
 
         public override string RelativePhysicalPath { get; }
 
-        public override string FileKind { get; }  
+        public override string FileKind { get; }
 
         public override string FilePath { get; }
 
@@ -39,9 +39,6 @@ namespace Microsoft.AspNetCore.Razor.Language
 
         public override bool Exists => true;
 
-        public override Stream Read()
-        {
-            return new MemoryStream(_content);
-        }
+        public override Stream Read() => new MemoryStream(_content);
     }
 }

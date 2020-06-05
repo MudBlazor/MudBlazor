@@ -82,10 +82,10 @@ namespace BlazorRepl.Shared
 
         private static CSharpParseOptions CSharpParseOptions { get; set; }
 
-        private RazorConfiguration Configuration { get; }
-            = RazorConfiguration.Create(RazorLanguageVersion.Latest, "MVC-3.0", Array.Empty<RazorExtension>());
+        private RazorConfiguration Configuration { get; } =
+            RazorConfiguration.Create(RazorLanguageVersion.Latest, "MVC-3.0", Array.Empty<RazorExtension>());
 
-        private VirtualRazorProjectFileSystem FileSystem { get; } = new VirtualRazorProjectFileSystem();
+        private RazorProjectFileSystem FileSystem { get; } = new VirtualRazorProjectFileSystem();
 
         // Creating the initial compilation + reading references is on the order of 250ms without caching
         // so making sure it doesn't happen for each run.
