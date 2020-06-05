@@ -2,12 +2,12 @@
 
 (function () {
     var editor;
+
     window.App.initRepl = function (editorContainerId, resultContainerId, editorId) {
         setElementHeight(editorContainerId);
         setElementHeight(resultContainerId);
 
         initReplSplitter(editorContainerId, resultContainerId, editorId);
-        initEditor(editorId);
 
         window.addEventListener('resize', () => {
             setElementHeight(resultContainerId);
@@ -53,6 +53,25 @@
         }
     }
 
+    window.App.initEditor = function (editorId, defaultValue) {
+        var value = defaultValue ||
+            `<h1>Hello World</h1>
+
+@code {
+
+}
+`;
+
+        require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
+        require(['vs/editor/editor.main'], () => {
+            editor = monaco.editor.create(document.getElementById(editorId), {
+                fontSize: '18px',
+                value: value,
+                language: 'razor'
+            });
+        });
+    }
+
     function initReplSplitter(editorContainerId, resultContainerId, editorId) {
         if (editorContainerId &&
             resultContainerId &&
@@ -88,7 +107,7 @@
             oldEditorElement.childNodes.forEach(c => oldEditorElement.removeChild(c));
         }
 
-        initEditor(editorId, value);
+        window.App.initEditor(editorId, value);
     }
 
     function setElementHeight(elementId) {
@@ -96,23 +115,5 @@
         var height = window.innerHeight - document.getElementsByClassName('repl-navbar')[0].offsetHeight;
 
         element.style.height = height + 'px';
-    }
-
-    function initEditor(editorId, defaultValue) {
-        var value = defaultValue ||
-            `<h1>Hello World</h1>
-
-@code {
-
-}
-`;
-        require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
-        require(['vs/editor/editor.main'], function () {
-            editor = monaco.editor.create(document.getElementById(editorId), {
-                fontSize: "18px",
-                value: value,
-                language: 'razor'
-            });
-        });
     }
 }());
