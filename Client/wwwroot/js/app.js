@@ -17,7 +17,7 @@
     }
 
     window.App.reloadIFrame = function (id) {
-        var iFrame = document.getElementById(id);
+        const iFrame = document.getElementById(id);
         if (iFrame) {
             iFrame.contentWindow.location.reload();
         }
@@ -31,8 +31,13 @@
         var response = new Response(new Blob([base64ToArrayBuffer(file)], { type: 'application/octet-stream' }));
 
         caches.open('blazor-resources-/').then(function (cache) {
+            if (!cache) {
+                // TODO: alert user
+                return;
+            }
+
             cache.keys().then(function (keys) {
-                var keysForDelete = keys.filter(x => x.url.indexOf('UserComponents') > -1);
+                const keysForDelete = keys.filter(x => x.url.indexOf('UserComponents') > -1);
 
                 var dll = keysForDelete.find(x => x.url.indexOf('dll') > -1).url.substr(window.location.origin.length);
                 cache.delete(dll).then(function () {
@@ -42,13 +47,14 @@
         });
 
         function base64ToArrayBuffer(base64) {
-            var binaryString = window.atob(base64);
-            var binaryLen = binaryString.length;
-            var bytes = new Uint8Array(binaryLen);
-            for (var i = 0; i < binaryLen; i++) {
-                var ascii = binaryString.charCodeAt(i);
+            const binaryString = window.atob(base64);
+            const binaryLen = binaryString.length;
+            const bytes = new Uint8Array(binaryLen);
+            for (let i = 0; i < binaryLen; i++) {
+                const ascii = binaryString.charCodeAt(i);
                 bytes[i] = ascii;
             }
+
             return bytes;
         }
     }
@@ -91,7 +97,7 @@
             });
 
             function throttle(func, timeFrame) {
-                var now = new Date();
+                const now = new Date();
                 if (now - lastTime >= timeFrame) {
                     func();
                     lastTime = now;
@@ -101,8 +107,8 @@
     };
 
     function resetEditor(editorId) {
-        var value = window.App.getEditorValue();
-        var oldEditorElement = document.getElementById(editorId);
+        const value = window.App.getEditorValue();
+        const oldEditorElement = document.getElementById(editorId);
         if (oldEditorElement && oldEditorElement.childNodes) {
             oldEditorElement.childNodes.forEach(c => oldEditorElement.removeChild(c));
         }
@@ -111,8 +117,9 @@
     }
 
     function setElementHeight(elementId) {
-        var element = document.getElementById(elementId);
-        var height = window.innerHeight - document.getElementsByClassName('repl-navbar')[0].offsetHeight;
+        const element = document.getElementById(elementId);
+        // TODO: Abstract class name
+        const height = window.innerHeight - document.getElementsByClassName('repl-navbar')[0].offsetHeight;
 
         element.style.height = height + 'px';
     }
