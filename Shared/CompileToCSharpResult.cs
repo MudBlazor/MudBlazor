@@ -1,11 +1,16 @@
-﻿using Microsoft.CodeAnalysis;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis;
 
 namespace BlazorRepl.Shared
 {
     public class CompileToCSharpResult
     {
-        // A compilation that can be used *with* this code to compile an assembly
+        public CompileToCSharpResult()
+        {
+            this.Diagnostics = Enumerable.Empty<CompilationDiagnostic>();
+        }
+
         public Compilation BaseCompilation { get; set; }
 
         public string Code { get; set; }

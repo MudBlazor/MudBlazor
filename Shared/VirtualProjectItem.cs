@@ -1,13 +1,11 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
 using System.IO;
+using Microsoft.AspNetCore.Razor.Language;
 
-namespace Microsoft.AspNetCore.Razor.Language
+namespace BlazorRepl.Shared
 {
     internal class VirtualProjectItem : RazorProjectItem
     {
-        private readonly byte[] _content;
+        private readonly byte[] content;
 
         public VirtualProjectItem(
             string basePath,
@@ -17,14 +15,14 @@ namespace Microsoft.AspNetCore.Razor.Language
             string fileKind,
             byte[] content)
         {
-            BasePath = basePath;
-            FilePath = filePath;
-            PhysicalPath = physicalPath;
-            RelativePhysicalPath = relativePhysicalPath;
-            _content = content;
+            this.BasePath = basePath;
+            this.FilePath = filePath;
+            this.PhysicalPath = physicalPath;
+            this.RelativePhysicalPath = relativePhysicalPath;
+            this.content = content;
 
             // Base class will detect based on file-extension.
-            FileKind = fileKind ?? base.FileKind;
+            this.FileKind = fileKind ?? base.FileKind;
         }
 
         public override string BasePath { get; }
@@ -39,6 +37,6 @@ namespace Microsoft.AspNetCore.Razor.Language
 
         public override bool Exists => true;
 
-        public override Stream Read() => new MemoryStream(_content);
+        public override Stream Read() => new MemoryStream(this.content);
     }
 }

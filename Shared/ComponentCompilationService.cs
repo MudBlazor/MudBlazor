@@ -1,25 +1,24 @@
-﻿using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using System;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using Microsoft.CodeAnalysis.Razor;
-using System.Text;
 using System.Net.Http;
-using System.Threading.Tasks;
-using System.Collections.Concurrent;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.JSInterop;
 using System.Net.Http.Json;
-using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Razor;
+using Microsoft.JSInterop;
 
 namespace BlazorRepl.Shared
 {
     public class ComponentCompilationService
     {
-        private const string LineEnding = "\n";
         private const string DefaultRootNamespace = "BlazorRepl.UserComponents";
         private const string WorkingDirectory = "/BlazorRepl/";
 
@@ -95,7 +94,7 @@ namespace BlazorRepl.Shared
             string cshtmlRelativePath,
             string cshtmlContent,
             string preset,
-            Func<string, Task> updateStatusFunc)
+            Func<string, Task> updateStatusFunc) // TODO: try convert to event
         {
             var compilation = BaseCompilation;
 
@@ -218,11 +217,6 @@ namespace BlazorRepl.Shared
             return RazorProjectEngine.Create(this.Configuration, this.FileSystem, b =>
             {
                 b.SetRootNamespace(DefaultRootNamespace);
-
-                // Turn off checksums, we're testing code generation.
-                b.Features.Add(new SuppressChecksum());
-
-                b.Phases.Insert(0, new ForceLineEndingPhase(LineEnding));
 
                 // Features that use Roslyn are mandatory for components
                 CompilerFeatures.Register(b);
