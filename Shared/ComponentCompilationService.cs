@@ -113,7 +113,7 @@ namespace BlazorRepl.Shared
                 return new CompileToAssemblyResult { Diagnostics = cSharpResult.Diagnostics, };
             }
 
-            var syntaxTrees = new[] { Parse(cSharpResult.Code), };
+            var syntaxTrees = new[] { CSharpSyntaxTree.ParseText(cSharpResult.Code, cSharpParseOptions) };
 
             var compilation = cSharpResult.BaseCompilation.AddSyntaxTrees(syntaxTrees);
 
@@ -138,9 +138,6 @@ namespace BlazorRepl.Shared
 
             return result;
         }
-
-        private static CSharpSyntaxTree Parse(string text) =>
-            (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(text, cSharpParseOptions, path: null);
 
         private static RazorProjectItem CreateProjectItem(string cshtmlFileName, string cshtmlContent)
         {
