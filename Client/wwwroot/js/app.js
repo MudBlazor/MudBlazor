@@ -71,7 +71,7 @@
         require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
         require(['vs/editor/editor.main'], () => {
             editor = monaco.editor.create(document.getElementById(editorId), {
-                fontSize: '18px',
+                fontSize: '16px',
                 value: value,
                 language: 'razor'
             });
