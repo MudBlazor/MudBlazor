@@ -1,33 +1,43 @@
-﻿using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using System;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using Microsoft.CodeAnalysis.Razor;
-using System.Text;
 using System.Net.Http;
-using System.Threading.Tasks;
-using System.Collections.Concurrent;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.JSInterop;
 using System.Net.Http.Json;
-using System.ComponentModel.DataAnnotations;
+using System.Runtime;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Razor.Language;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Razor;
+using Microsoft.JSInterop;
 
 namespace BlazorRepl.Shared
 {
     public class ComponentCompilationService
     {
-        private const string LineEnding = "\n";
         private const string DefaultRootNamespace = "BlazorRepl.UserComponents";
         private const string WorkingDirectory = "/BlazorRepl/";
+
+        // Creating the initial compilation + reading references is on the order of 250ms without caching
+        // so making sure it doesn't happen for each run.
+        private static CSharpCompilation baseCompilation;
+        private static CSharpParseOptions cSharpParseOptions;
+
+        private RazorConfiguration Configuration { get; } =
+            RazorConfiguration.Create(RazorLanguageVersion.Latest, "MVC-3.0", Array.Empty<RazorExtension>());
+
+        private RazorProjectFileSystem FileSystem { get; } = new VirtualRazorProjectFileSystem();
 
         public static async Task Init(HttpClient httpClient)
         {
             var basicReferenceAssemblyRoots = new[]
             {
-                typeof(System.Runtime.AssemblyTargetedPatchBandAttribute).Assembly, // System.Runtime
+                typeof(AssemblyTargetedPatchBandAttribute).Assembly, // System.Runtime
                 typeof(NavLink).Assembly, // Microsoft.AspNetCore.Components.Web
                 typeof(IQueryable).Assembly, // System.Linq
                 typeof(HttpClientJsonExtensions).Assembly, // System.Net.Http.Json
@@ -54,13 +64,29 @@ namespace BlazorRepl.Shared
                 .Select(a => a.Value)
                 .ToList();
 
-            BaseCompilation = CSharpCompilation.Create(
+            baseCompilation = CSharpCompilation.Create(
                 "BlazorRepl.UserComponent",
                 Array.Empty<SyntaxTree>(),
                 basicReferenceAssemblies,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-            CSharpParseOptions = new CSharpParseOptions(LanguageVersion.Preview);
+            cSharpParseOptions = new CSharpParseOptions(LanguageVersion.Preview);
+        }
+
+        public async Task<CompileToAssemblyResult> CompileToAssembly(
+            string cshtmlFileName,
+            string cshtmlContent,
+            string preset,
+            Func<string, Task> updateStatusFunc) // TODO: try convert to event
+        {
+            var compilation = baseCompilation;
+
+            var cSharpResult = await this.CompileToCSharp(cshtmlFileName, cshtmlContent, compilation, updateStatusFunc);
+
+            await (updateStatusFunc?.Invoke("Compiling Assembly") ?? Task.CompletedTask);
+            var result = CompileToAssembly(cSharpResult);
+
+            return result;
         }
 
         private static async Task<IDictionary<string, Stream>> GetStreamFromHttp(HttpClient httpClient, IEnumerable<string> assemblyNames)
@@ -80,41 +106,14 @@ namespace BlazorRepl.Shared
             return streams;
         }
 
-        private static CSharpParseOptions CSharpParseOptions { get; set; }
-
-        private RazorConfiguration Configuration { get; }
-            = RazorConfiguration.Create(RazorLanguageVersion.Latest, "MVC-3.0", Array.Empty<RazorExtension>());
-
-        private VirtualRazorProjectFileSystem FileSystem { get; } = new VirtualRazorProjectFileSystem();
-
-        // Creating the initial compilation + reading references is on the order of 250ms without caching
-        // so making sure it doesn't happen for each run.
-        private static CSharpCompilation BaseCompilation;
-
-        public async Task<CompileToAssemblyResult> CompileToAssembly(
-            string cshtmlRelativePath,
-            string cshtmlContent,
-            string preset,
-            Func<string, Task> updateStatusFunc)
-        {
-            var compilation = BaseCompilation;
-
-            var cSharpResult = await this.CompileToCSharp(cshtmlRelativePath, cshtmlContent, compilation, updateStatusFunc);
-
-            await (updateStatusFunc?.Invoke("Compiling Assembly") ?? Task.CompletedTask);
-            var result = this.CompileToAssembly(cSharpResult);
-
-            return result;
-        }
-
-        public CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult)
+        private static CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult)
         {
             if (cSharpResult.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
             {
                 return new CompileToAssemblyResult { Diagnostics = cSharpResult.Diagnostics, };
             }
 
-            var syntaxTrees = new[] { Parse(cSharpResult.Code), };
+            var syntaxTrees = new[] { CSharpSyntaxTree.ParseText(cSharpResult.Code, cSharpParseOptions) };
 
             var compilation = cSharpResult.BaseCompilation.AddSyntaxTrees(syntaxTrees);
 
@@ -140,21 +139,39 @@ namespace BlazorRepl.Shared
             return result;
         }
 
-        private static CSharpSyntaxTree Parse(string text, string path = null) =>
-            (CSharpSyntaxTree)CSharpSyntaxTree.ParseText(text, CSharpParseOptions, path: path);
+        private static RazorProjectItem CreateProjectItem(string cshtmlFileName, string cshtmlContent)
+        {
+            var fullPath = WorkingDirectory + cshtmlFileName;
+
+            // FilePaths in Razor are always of the form '/a/b/c.cshtml'
+            var filePath = cshtmlFileName;
+            if (!filePath.StartsWith('/'))
+            {
+                filePath = '/' + filePath;
+            }
+
+            cshtmlContent = cshtmlContent.Replace("\r", "");
+
+            return new VirtualProjectItem(
+                WorkingDirectory,
+                filePath,
+                fullPath,
+                cshtmlFileName,
+                FileKinds.Component,
+                Encoding.UTF8.GetBytes(cshtmlContent.TrimStart()));
+        }
 
         private async Task<CompileToCSharpResult> CompileToCSharp(
-            string cshtmlRelativePath,
+            string cshtmlFileName,
             string cshtmlContent,
             CSharpCompilation compilation,
             Func<string, Task> updateStatusFunc)
         {
-            // The first phase won't include any metadata references for component discovery. 
-            // This mirrors what the build does.
+            // The first phase won't include any metadata references for component discovery. This mirrors what the build does.
             var projectEngine = this.CreateProjectEngine(Array.Empty<MetadataReference>());
 
             // Result of generating declarations
-            var projectItem = CreateProjectItem(cshtmlRelativePath, cshtmlContent);
+            var projectItem = CreateProjectItem(cshtmlFileName, cshtmlContent);
 
             var codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
             var cSharpDocument = codeDocument.GetCSharpDocument();
@@ -167,7 +184,7 @@ namespace BlazorRepl.Shared
             };
 
             // Result of doing 'temp' compilation
-            var tempAssembly = this.CompileToAssembly(declaration);
+            var tempAssembly = CompileToAssembly(declaration);
             if (tempAssembly.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
             {
                 return new CompileToCSharpResult { Diagnostics = tempAssembly.Diagnostics, };
@@ -191,38 +208,10 @@ namespace BlazorRepl.Shared
             };
         }
 
-        private static RazorProjectItem CreateProjectItem(string cshtmlRelativePath, string cshtmlContent)
-        {
-            var fullPath = WorkingDirectory + cshtmlRelativePath;
-
-            // FilePaths in Razor are **always** of the form '/a/b/c.cshtml'
-            var filePath = cshtmlRelativePath.Replace('\\', '/');
-            if (!filePath.StartsWith('/'))
-            {
-                filePath = '/' + filePath;
-            }
-
-            cshtmlContent = cshtmlContent.Replace("\r", "");
-
-            return new VirtualProjectItem(
-                WorkingDirectory,
-                filePath,
-                fullPath,
-                cshtmlRelativePath,
-                FileKinds.Component,
-                Encoding.UTF8.GetBytes(cshtmlContent.TrimStart()));
-        }
-
-        private RazorProjectEngine CreateProjectEngine(IReadOnlyList<MetadataReference> references)
-        {
-            return RazorProjectEngine.Create(this.Configuration, this.FileSystem, b =>
+        private RazorProjectEngine CreateProjectEngine(IReadOnlyList<MetadataReference> references) =>
+            RazorProjectEngine.Create(this.Configuration, this.FileSystem, b =>
             {
                 b.SetRootNamespace(DefaultRootNamespace);
-
-                // Turn off checksums, we're testing code generation.
-                b.Features.Add(new SuppressChecksum());
-
-                b.Phases.Insert(0, new ForceLineEndingPhase(LineEnding));
 
                 // Features that use Roslyn are mandatory for components
                 CompilerFeatures.Register(b);
@@ -230,6 +219,5 @@ namespace BlazorRepl.Shared
                 b.Features.Add(new CompilationTagHelperFeature());
                 b.Features.Add(new DefaultMetadataReferenceFeature { References = references, });
             });
-        }
     }
 }

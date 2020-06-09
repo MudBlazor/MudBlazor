@@ -1,6 +1,6 @@
 ﻿namespace BlazorRepl.Shared
 {
-    public enum CompilationDiagnosticsKind
+    public enum CompilationDiagnosticKind
     {
         CSharp = 0,
 

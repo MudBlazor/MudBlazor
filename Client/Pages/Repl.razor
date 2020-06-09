@@ -1,12 +1,10 @@
 ﻿@page "/repl"
 @layout MainLayout
 
-@using Microsoft.CodeAnalysis
-
 @inject ComponentCompilationService CompilationService
 @inject IJSRuntime JsRuntime
 
-<nav class="navbar navbar-default repl-navbar">
+<nav class="navbar repl-navbar">
     <div class="container-fluid">
         <div class="navbar-header" style="color: #303133">
             <a href="/" class="navbar-brand">Blazor REPL</a>
@@ -18,11 +16,10 @@
 </nav>
 
 <div class="row flex" style="margin: 0">
-
     <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
 
     <div id="user-code-editor-container">
-        <div id="user-code-editor" style="height: 100%; border: 1px solid #ccc"></div>
+        <CodeEditor @ref="@CodeEditor"></CodeEditor>
     </div>
     <div id="user-page-window-container">
         <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%"></iframe>
@@ -45,6 +42,8 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.JSInterop
 ";
+
+    public CodeEditor CodeEditor { get; set; }
 
     public string Preset { get; set; } = "basic";
 
@@ -73,7 +72,7 @@
         LoaderText = "Processing";
         await Task.Delay(10); // Ensure rendering has time to be called
 
-        var code = await JsRuntime.InvokeAsync<string>("window.App.getEditorValue");
+        var code = await CodeEditor.GetCode();
 
         var result = await CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code, Preset, UpdateLoaderText);
 

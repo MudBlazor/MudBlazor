@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace BlazorRepl.Client.Components
 {
-    public partial class ErrorList : ComponentBase
+    public partial class ErrorList
     {
         [Parameter]
         public IReadOnlyCollection<CompilationDiagnostic> Diagnostics { get; set; } = Array.Empty<CompilationDiagnostic>();
 
         [Parameter]
         public int UserComponentCodeStartLine { get; set; }
-        
+
         [Parameter]
         public bool Show { get; set; }
 
@@ -36,11 +36,10 @@ namespace BlazorRepl.Client.Components
             return base.OnInitializedAsync();
         }
 
-        public void ToggleDiagnostics()
+        public Task ToggleDiagnostics()
         {
             Show = !Show;
-            ShowChanged.InvokeAsync(Show);
+            return ShowChanged.InvokeAsync(Show);
         }
-
     }
 }
