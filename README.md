@@ -19,5 +19,6 @@
 - Support installing NuGet packages
 - [More...](https://github.com/BlazorRepl/BlazorRepl/issues)
 
-## License
-
+## Authors
+- [Kristian Mariyanov](https://github.com/kristianmariyanov)
+- [Vladislav Karamfilov](https://github.com/vladislav-karamfilov)
