@@ -23,6 +23,25 @@
         }
     }
 
+    window.App.initEditor = function (editorId, defaultValue) {
+        var value = defaultValue ||
+            `<h1>Hello World</h1>
+
+@code {
+
+}
+`;
+
+        require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
+        require(['vs/editor/editor.main'], () => {
+            editor = monaco.editor.create(document.getElementById(editorId), {
+                fontSize: '16px',
+                value: value,
+                language: 'razor'
+            });
+        });
+    }
+
     window.App.getEditorValue = function () {
         return editor && editor.getValue();
     }
@@ -57,25 +76,6 @@
 
             return bytes;
         }
-    }
-
-    window.App.initEditor = function (editorId, defaultValue) {
-        var value = defaultValue ||
-            `<h1>Hello World</h1>
-
-@code {
-
-}
-`;
-
-        require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
-        require(['vs/editor/editor.main'], () => {
-            editor = monaco.editor.create(document.getElementById(editorId), {
-                fontSize: '16px',
-                value: value,
-                language: 'razor'
-            });
-        });
     }
 
     function initReplSplitter(editorContainerId, resultContainerId, editorId) {

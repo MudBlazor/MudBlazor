@@ -1,5 +1,9 @@
-﻿@page "/repl"
+﻿@page "/repl/{demoId:int}"
+@page "/repl/"
+
 @layout MainLayout
+
+@using BlazorRepl.Client.Services
 
 @inject ComponentCompilationService CompilationService
 @inject IJSRuntime JsRuntime
@@ -19,7 +23,7 @@
     <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
 
     <div id="user-code-editor-container">
-        <CodeEditor @ref="@CodeEditor"></CodeEditor>
+        <CodeEditor @ref="@CodeEditor" DefaultCode="@DemoCode"></CodeEditor>
     </div>
     <div id="user-page-window-container">
         <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%"></iframe>
@@ -42,6 +46,11 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.JSInterop
 ";
+
+    [Parameter]
+    public int? DemoId { get; set; }
+
+    public string DemoCode { get; set; }
 
     public CodeEditor CodeEditor { get; set; }
 
@@ -98,5 +107,15 @@
         }
 
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        if (DemoId.HasValue && DemoCodeProvider.DemoCodeMapping.ContainsKey(DemoId.Value))
+        {
+            DemoCode = DemoCodeProvider.DemoCodeMapping[DemoId.Value];
+        }
+
+        return base.OnInitializedAsync();
     }
 }

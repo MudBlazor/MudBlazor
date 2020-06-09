@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -11,13 +12,16 @@ namespace BlazorRepl.Client.Components
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
 
+        [Parameter]
+        public string DefaultCode { get; set; }
+
         public ValueTask<string> GetCode() => this.JsRuntime.InvokeAsync<string>("window.App.getEditorValue");
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                await this.JsRuntime.InvokeVoidAsync("window.App.initEditor", EditorId);
+                await this.JsRuntime.InvokeVoidAsync("App.initEditor", EditorId, DefaultCode);
             }
 
             await base.OnAfterRenderAsync(firstRender);
