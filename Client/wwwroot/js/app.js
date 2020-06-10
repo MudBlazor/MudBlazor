@@ -87,7 +87,7 @@
             var lastTime = 0;
             Split(['#' + editorContainerId, '#' + resultContainerId], {
                 elementStyle: (dimension, size, gutterSize) => ({
-                    'flex-basis': `calc(${size}% - ${gutterSize}px)`,
+                    'flex-basis': `calc(${size}% - ${gutterSize + 1}px)`,
                 }),
                 gutterStyle: (dimension, gutterSize) => ({
                     'flex-basis': `${gutterSize}px`,
