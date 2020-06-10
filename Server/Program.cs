@@ -11,10 +11,9 @@ namespace BlazorRepl.Server
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>().UseSetting(WebHostDefaults.DetailedErrorsKey, "true");
-                });
+            Host
+                .CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(
+                    webBuilder => webBuilder.UseStartup<Startup>().UseSetting(WebHostDefaults.DetailedErrorsKey, bool.TrueString));
     }
 }
