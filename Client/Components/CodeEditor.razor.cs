@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -21,7 +20,7 @@ namespace BlazorRepl.Client.Components
         {
             if (firstRender)
             {
-                await this.JsRuntime.InvokeVoidAsync("App.initEditor", EditorId, DefaultCode);
+                await this.JsRuntime.InvokeVoidAsync("App.initEditor", EditorId, this.DefaultCode);
             }
 
             await base.OnAfterRenderAsync(firstRender);

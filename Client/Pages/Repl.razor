@@ -83,7 +83,11 @@
 
         var code = await CodeEditor.GetCode();
 
-        var result = await CompilationService.CompileToAssembly("UserPage.razor", UserComponentCodePrefix + code, Preset, UpdateLoaderText);
+        var result = await CompilationService.CompileToAssembly(
+            "UserPage.razor",
+            UserComponentCodePrefix + code,
+            Preset,
+            UpdateLoaderText);
 
         Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
         AreDiagnosticsShown = true;
@@ -103,7 +107,11 @@
     {
         if (firstRender)
         {
-            await JsRuntime.InvokeVoidAsync("window.App.initRepl", "user-code-editor-container", "user-page-window-container", "user-code-editor");
+            await JsRuntime.InvokeVoidAsync(
+                "window.App.initRepl",
+                "user-code-editor-container",
+                "user-page-window-container",
+                "user-code-editor");
         }
 
         await base.OnAfterRenderAsync(firstRender);
