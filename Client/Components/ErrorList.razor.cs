@@ -1,10 +1,10 @@
-﻿using BlazorRepl.Shared;
-using Microsoft.AspNetCore.Components;
-using Microsoft.CodeAnalysis;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BlazorRepl.Shared;
+using Microsoft.AspNetCore.Components;
+using Microsoft.CodeAnalysis;
 
 namespace BlazorRepl.Client.Components
 {
@@ -26,20 +26,20 @@ namespace BlazorRepl.Client.Components
 
         public int WarningsCount { get; set; }
 
-        public bool ShowIcon => Diagnostics.Any();
+        public bool ShowIcon => this.Diagnostics.Any();
 
         protected override Task OnInitializedAsync()
         {
-            ErrorsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error);
-            WarningsCount = Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
+            this.ErrorsCount = this.Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error);
+            this.WarningsCount = this.Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
 
             return base.OnInitializedAsync();
         }
 
         public Task ToggleDiagnostics()
         {
-            Show = !Show;
-            return ShowChanged.InvokeAsync(Show);
+            this.Show = !this.Show;
+            return this.ShowChanged.InvokeAsync(this.Show);
         }
     }
 }

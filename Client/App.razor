@@ -1,5 +1,5 @@
-<Router AppAssembly="@typeof(Program).Assembly" 
-        AdditionalAssemblies="@(new List<System.Reflection.Assembly> { typeof(BlazorRepl.UserComponents.UserPage).Assembly })">
+<Router AppAssembly="@typeof(Program).Assembly"
+        AdditionalAssemblies="@(new List<System.Reflection.Assembly> { typeof(UserComponents.UserPage).Assembly })">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(EmptyLayout)" />
     </Found>
