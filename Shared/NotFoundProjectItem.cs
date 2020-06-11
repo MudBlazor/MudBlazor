@@ -1,9 +1,9 @@
-﻿using System;
-using System.IO;
-using Microsoft.AspNetCore.Razor.Language;
-
-namespace BlazorRepl.Shared
+﻿namespace BlazorRepl.Shared
 {
+    using System;
+    using System.IO;
+    using Microsoft.AspNetCore.Razor.Language;
+
     internal class NotFoundProjectItem : RazorProjectItem
     {
         public NotFoundProjectItem(string basePath, string path)

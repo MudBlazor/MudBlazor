@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Runtime;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Razor;
-using Microsoft.JSInterop;
-
-namespace BlazorRepl.Shared
+﻿namespace BlazorRepl.Shared
 {
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.IO;
+    using System.Linq;
+    using System.Net.Http;
+    using System.Net.Http.Json;
+    using System.Runtime;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Components.Routing;
+    using Microsoft.AspNetCore.Razor.Language;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Razor;
+    using Microsoft.JSInterop;
+
     public class ComponentCompilationService
     {
         private const string DefaultRootNamespace = "BlazorRepl.UserComponents";

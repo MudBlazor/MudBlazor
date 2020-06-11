@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace BlazorRepl.Client.Services
+﻿namespace BlazorRepl.Client.Services
 {
+    using System.Collections;
+    using System.Collections.Generic;
+
     public static class DemoCodeProvider
     {
         public static readonly IDictionary<int, string> DemoCodeMapping = new Dictionary<int, string>()
@@ -34,7 +34,8 @@ namespace BlazorRepl.Client.Services
                 Counter += 100;
             }
         }
-    }" },
+    }"
+            },
             {
                 2,
                 @"@inject HttpClient Http
@@ -62,7 +63,7 @@ namespace BlazorRepl.Client.Services
         }
     }"
             },
-            { 
+            {
                 3,
                 @"<h2>New Ship Entry Form</h2>
 
@@ -140,8 +141,7 @@ namespace BlazorRepl.Client.Services
             public DateTime ProductionDate { get; set; }
         }
     }"
-            }
-
-    };
+            },
+        };
         }
 }
