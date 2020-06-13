@@ -6,7 +6,7 @@
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components;
     using BlazorRepl.Client.Services;
-    using BlazorRepl.Shared;
+    using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
 

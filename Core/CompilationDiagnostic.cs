@@ -1,4 +1,4 @@
-﻿namespace BlazorRepl.Shared
+﻿namespace BlazorRepl.Core
 {
     using Microsoft.AspNetCore.Razor.Language;
     using Microsoft.CodeAnalysis;

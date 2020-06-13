@@ -1,4 +1,4 @@
-﻿namespace BlazorRepl.Shared
+﻿namespace BlazorRepl.Core
 {
     public enum CompilationDiagnosticKind
     {

@@ -1,4 +1,4 @@
-﻿namespace BlazorRepl.Shared
+﻿namespace BlazorRepl.Core
 {
     using System.Collections.Generic;
     using System.Linq;

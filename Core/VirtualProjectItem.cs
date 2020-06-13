@@ -1,4 +1,4 @@
-namespace BlazorRepl.Shared
+namespace BlazorRepl.Core
 {
     using System.IO;
     using Microsoft.AspNetCore.Razor.Language;

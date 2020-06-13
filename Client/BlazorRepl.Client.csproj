@@ -16,13 +16,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <ProjectReference Include="..\Shared\BlazorRepl.Shared.csproj" />
+    <ProjectReference Include="..\Core\BlazorRepl.Core.csproj" />
   </ItemGroup>
 
 </Project>

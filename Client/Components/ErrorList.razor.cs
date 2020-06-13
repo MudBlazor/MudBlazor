@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using BlazorRepl.Shared;
+    using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components;
     using Microsoft.CodeAnalysis;
 
