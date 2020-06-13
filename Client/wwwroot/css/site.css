@@ -100,40 +100,6 @@ app {
         top: 0.5rem;
     }
 
-@media (max-width: 767.98px) {
-    .main .top-row:not(.auth) {
-        display: none;
-    }
-
-    .main .top-row.auth {
-        justify-content: space-between;
-    }
-
-    .main .top-row a, .main .top-row .btn-link {
-        margin-left: 0;
-    }
-}
-
-@media (min-width: 768px) {
-    app {
-        flex-direction: row;
-    }
-
-    .main .top-row {
-        position: sticky;
-        top: 0;
-    }
-
-    /*.main > div {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
-    }*/
-
-    .navbar-toggler {
-        display: none;
-    }
-}
-
 /* Error List */
 .main .toast {
     max-width: 100%;
@@ -201,7 +167,7 @@ app {
 .app-loader {
     position: fixed;
     top: 41%;
-    left: 48%;
+    left: 47.5%;
 }
 
     .app-loader .spinner-border {
@@ -262,4 +228,66 @@ app {
 #user-code-editor {
     /*padding-top: 10px;*/
     background-color: #FFF;
+}
+
+@media (max-width: 767.98px) {
+    .main .top-row:not(.auth) {
+        display: none;
+    }
+
+    .main .top-row.auth {
+        justify-content: space-between;
+    }
+
+    .main .top-row a, .main .top-row .btn-link {
+        margin-left: 0;
+    }
+
+    .app-loader {
+        left: 43.5%;
+    }
+
+    .user-page-loader {
+        left: 44%;
+    }
+}
+
+@media (max-width: 576px) {
+    .app-loader {
+        left: 40%;
+    }
+
+    .user-page-loader {
+        left: 40%;
+    }
+}
+
+@media (min-width: 768px) {
+    app {
+        flex-direction: row;
+    }
+
+    .main .top-row {
+        position: sticky;
+        top: 0;
+    }
+
+    /*.main > div {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+    }*/
+
+    .navbar-toggler {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1200px) {
+    .app-loader {
+        left: 46%;
+    }
+
+    .user-page-loader {
+        left: 46%;
+    }
 }
