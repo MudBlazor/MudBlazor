@@ -150,7 +150,7 @@
                 filePath = '/' + filePath;
             }
 
-            cshtmlContent = cshtmlContent.Replace("\r", "");
+            cshtmlContent = cshtmlContent.Replace("\r", string.Empty);
 
             return new VirtualProjectItem(
                 WorkingDirectory,
