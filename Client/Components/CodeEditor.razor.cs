@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-
-namespace BlazorRepl.Client.Components
+﻿namespace BlazorRepl.Client.Components
 {
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Components;
+    using Microsoft.JSInterop;
+
     public partial class CodeEditor
     {
         private const string EditorId = "user-code-editor";

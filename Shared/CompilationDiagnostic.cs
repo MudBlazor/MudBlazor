@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.CodeAnalysis;
-
-namespace BlazorRepl.Shared
+﻿namespace BlazorRepl.Shared
 {
+    using Microsoft.AspNetCore.Razor.Language;
+    using Microsoft.CodeAnalysis;
+
     public class CompilationDiagnostic
     {
         public string Code { get; set; }
@@ -46,6 +46,7 @@ namespace BlazorRepl.Shared
                 Code = diagnostic.Id,
                 Severity = (DiagnosticSeverity)diagnostic.Severity,
                 Description = diagnostic.GetMessage(),
+
                 // Line = diagnostic.Span.LineIndex, // TODO: Find a way to calculate this
                 Kind = CompilationDiagnosticKind.Razor,
             };

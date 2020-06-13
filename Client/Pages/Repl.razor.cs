@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BlazorRepl.Client.Components;
-using BlazorRepl.Client.Services;
-using BlazorRepl.Shared;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-
-namespace BlazorRepl.Client.Pages
+﻿namespace BlazorRepl.Client.Pages
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using BlazorRepl.Client.Components;
+    using BlazorRepl.Client.Services;
+    using BlazorRepl.Shared;
+    using Microsoft.AspNetCore.Components;
+    using Microsoft.JSInterop;
+
     public partial class Repl
     {
         private const string BasicUserComponentCodePrefix =

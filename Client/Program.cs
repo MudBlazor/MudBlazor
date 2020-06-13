@@ -1,12 +1,12 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http;
-using BlazorRepl.Shared;
-
 namespace BlazorRepl.Client
 {
+    using System;
+    using System.Net.Http;
+    using System.Threading.Tasks;
+    using BlazorRepl.Shared;
+    using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+    using Microsoft.Extensions.DependencyInjection;
+
     public class Program
     {
         public static async Task Main(string[] args)

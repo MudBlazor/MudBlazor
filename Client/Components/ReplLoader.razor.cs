@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BlazorRepl.Client.Components
+﻿namespace BlazorRepl.Client.Components
 {
+    using Microsoft.AspNetCore.Components;
+
     public partial class ReplLoader : ComponentBase
     {
         [Parameter]

@@ -1,8 +1,8 @@
-using System.IO;
-using Microsoft.AspNetCore.Razor.Language;
-
 namespace BlazorRepl.Shared
 {
+    using System.IO;
+    using Microsoft.AspNetCore.Razor.Language;
+
     internal class VirtualProjectItem : RazorProjectItem
     {
         private readonly byte[] content;
