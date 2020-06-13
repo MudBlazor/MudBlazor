@@ -3,6 +3,19 @@
 @layout MainLayout
 
 <div id="unapp-page">
+    @*Mobile Nav*@
+    <a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle colorlib-nav-white"><i></i></a>
+    <div id="colorlib-offcanvas">
+        <ul>
+            <li><a href="/" class="mobile-nav-link">Home</a></li>
+            <li><a href="/repl" class="mobile-nav-link">REPL</a></li>
+            <li class="active"><a class="mobile-nav-link" href="/getting-started">Getting Started</a></li>
+            <li><a href="https://github.com/BlazorRepl/BlazorRepl" target="_blank" class="mobile-nav-link">Source Code</a></li>
+            @*<li><a href="contact.html">Contact</a></li>*@
+        </ul>
+    </div>
+
+    @*Desktop Nav*@
     <nav class="colorlib-nav" role="navigation">
         <div class="top-menu">
             <div class="container">

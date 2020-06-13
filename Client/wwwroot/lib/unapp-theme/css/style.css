@@ -33,7 +33,6 @@ body {
 
 .offcanvas #unapp-page {
     overflow: hidden;
-    position: absolute;
 }
 
     .offcanvas #unapp-page:after {
@@ -1589,7 +1588,7 @@ body {
     }
 }
 
-#unapp-page .offcanvas #colorlib-offcanvas {
+.offcanvas #unapp-page #colorlib-offcanvas {
     -moz-transform: translateX(0px);
     -webkit-transform: translateX(0px);
     -ms-transform: translateX(0px);
