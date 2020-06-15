@@ -33,6 +33,8 @@
         [Parameter]
         public int? DemoId { get; set; }
 
+        private DotNetObjectReference<Repl> DotNetInstance { get; set; }
+
         public string DemoCode { get; set; }
 
         public CodeEditor CodeEditor { get; set; }
@@ -89,15 +91,25 @@
             }
         }
 
+        [JSInvokable]
+        public async Task OnCompileEvent()
+        {
+            await this.Compile();
+            this.StateHasChanged();
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
+                this.DotNetInstance = DotNetObjectReference.Create(this);
+
                 await this.JsRuntime.InvokeVoidAsync(
                     "window.App.initRepl",
                     "user-code-editor-container",
                     "user-page-window-container",
-                    "user-code-editor");
+                    "user-code-editor",
+                    this.DotNetInstance);
             }
 
             await base.OnAfterRenderAsync(firstRender);

@@ -3,17 +3,28 @@
 (function () {
     var editor;
 
-    window.App.initRepl = function (editorContainerId, resultContainerId, editorId) {
+    window.App.initRepl = function (editorContainerId, resultContainerId, editorId, dotNetInstance) {
         setElementHeight(editorContainerId);
         setElementHeight(resultContainerId);
 
         initReplSplitter(editorContainerId, resultContainerId, editorId);
 
+        // TODO: Remove event listeners on repl dispose
         window.addEventListener('resize', () => {
             setElementHeight(resultContainerId);
             setElementHeight(editorContainerId);
             resetEditor(editorId);
         });
+
+        window.addEventListener('keydown', e => {
+            // CTRL + S
+            if (e.ctrlKey && e.keyCode === 83) {
+                e.preventDefault();
+                if (dotNetInstance && dotNetInstance.invokeMethodAsync) {
+                    return dotNetInstance.invokeMethodAsync('OnCompileEvent');
+                }
+            }
+        })
     }
 
     window.App.reloadIFrame = function (id) {
