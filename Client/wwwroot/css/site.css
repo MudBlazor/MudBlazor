@@ -45,6 +45,18 @@ app {
             text-overflow: ellipsis;
         }
 
+.blazor-logo {
+    width: 49px;
+    padding-right: 10px;
+    display: flex;
+    padding-bottom: 4px;
+    align-self: center;
+}
+
+.blazor-logo-wrapper {
+    display: flex;
+}
+
 .navbar-brand {
     color: #6c757d;
 }
