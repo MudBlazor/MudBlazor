@@ -24,6 +24,8 @@
 @using Microsoft.JSInterop
 ";
 
+        private DotNetObjectReference<Repl> dotNetInstance;
+
         [Inject]
         public ComponentCompilationService CompilationService { get; set; }
 
@@ -33,11 +35,9 @@
         [Parameter]
         public int? DemoId { get; set; }
 
-        private DotNetObjectReference<Repl> DotNetInstance { get; set; }
+        public CodeEditor CodeEditor { get; set; }
 
         public string DemoCode { get; set; }
-
-        public CodeEditor CodeEditor { get; set; }
 
         public string Preset { get; set; } = "basic";
 
@@ -102,14 +102,14 @@
         {
             if (firstRender)
             {
-                this.DotNetInstance = DotNetObjectReference.Create(this);
+                this.dotNetInstance = DotNetObjectReference.Create(this);
 
                 await this.JsRuntime.InvokeVoidAsync(
                     "window.App.initRepl",
                     "user-code-editor-container",
                     "user-page-window-container",
                     "user-code-editor",
-                    this.DotNetInstance);
+                    this.dotNetInstance);
             }
 
             await base.OnAfterRenderAsync(firstRender);
