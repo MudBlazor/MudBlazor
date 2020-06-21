@@ -38,17 +38,22 @@
         }
     }
 
-    window.App.initEditor = function (editorId, defaultValue) {
-        var value = defaultValue ||
-            `<h1>Hello World</h1>
+    window.App.initEditor = function (editorId, defaultValue) {    
+        require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
+        require(['vs/editor/editor.main'], () => {
+            const oldValue = window.App.getEditorValue();
+            const oldEditorElement = document.getElementById(editorId);
+            if (oldEditorElement && oldEditorElement.childNodes) {
+                oldEditorElement.childNodes.forEach(c => oldEditorElement.removeChild(c));
+            }
+
+            var value = defaultValue || oldValue ||
+                `<h1>Hello World</h1>
 
 @code {
 
 }
 `;
-
-        require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
-        require(['vs/editor/editor.main'], () => {
             editor = monaco.editor.create(document.getElementById(editorId), {
                 fontSize: '16px',
                 value: value,

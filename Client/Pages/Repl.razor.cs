@@ -2,12 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Net.Http;
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components;
     using BlazorRepl.Client.Services;
     using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components;
+    using Microsoft.AspNetCore.Components.WebAssembly.Http;
     using Microsoft.JSInterop;
 
     public partial class Repl
@@ -27,13 +30,16 @@
         private DotNetObjectReference<Repl> dotNetInstance;
 
         [Inject]
+        public HttpClient HttpClient { get; set; }
+
+        [Inject]
         public ComponentCompilationService CompilationService { get; set; }
 
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
 
         [Parameter]
-        public int? DemoId { get; set; }
+        public string DemoId { get; set; }
 
         public CodeEditor CodeEditor { get; set; }
 
@@ -115,12 +121,25 @@
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            if (this.DemoId.HasValue && DemoCodeProvider.DemoCodeMapping.ContainsKey(this.DemoId.Value))
+
+            try
             {
-                this.DemoCode = DemoCodeProvider.DemoCodeMapping[this.DemoId.Value];
+                using var result = await this.HttpClient.GetStreamAsync("https://blazorrepl.blob.core.windows.net/snippets/form.txt");
+
+                var cr = new StreamReader(result);
+                this.DemoCode = await cr.ReadToEndAsync();
+
+                Console.WriteLine(this.DemoCode);
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+
+            await base.OnInitializedAsync();
         }
     }
 }

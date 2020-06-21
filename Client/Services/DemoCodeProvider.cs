@@ -5,10 +5,10 @@
 
     public static class DemoCodeProvider
     {
-        public static readonly IDictionary<int, string> DemoCodeMapping = new Dictionary<int, string>()
+        public static readonly IDictionary<string, string> DemoCodeMapping = new Dictionary<string, string>()
         {
             {
-                1,
+                1.ToString(),
                 @"<h1>Counter Demo</h1>
 
 <button class=""btn btn-primary"" @onclick=""@Increment"">Increment</button>
@@ -37,7 +37,7 @@
     }"
             },
             {
-                2,
+                2.ToString(),
                 @"@inject HttpClient Http
 
 <h1>HTTP Demo</h1>
@@ -64,7 +64,7 @@
     }"
             },
             {
-                3,
+                3.ToString(),
                 @"<h2>New Ship Entry Form</h2>
 
 <EditForm Model=""@StarshipModel"" OnValidSubmit=""@OnSubmit"">
