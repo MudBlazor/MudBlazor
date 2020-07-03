@@ -102,11 +102,14 @@
         {
             var code = await this.CodeEditor.GetCode();
 
+            // TODO: Add env variable for url
+            // TODO: Add strongly typed object
             var result = await this.HttpClient.PostAsJsonAsync("https://create-snippet.blazorrepl.workers.dev/", new { Files = new List<object> { new { Content = code } } });
 
             if (result.IsSuccessStatusCode)
             {
                 var id = await result.Content.ReadAsStringAsync();
+                //TODO: Update url + show link of the user
                 Console.WriteLine(id);
             }
         }
@@ -148,8 +151,6 @@
 
                 var cr = new StreamReader(result);
                 this.DemoCode = await cr.ReadToEndAsync();
-
-                Console.WriteLine(this.DemoCode);
             }
 
             await base.OnInitializedAsync();
