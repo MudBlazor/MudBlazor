@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Net.Http;
+    using System.Net.Http.Json;
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components;
     using BlazorRepl.Client.Services;
@@ -97,6 +98,19 @@
             }
         }
 
+        public async Task Save()
+        {
+            var code = await this.CodeEditor.GetCode();
+
+            var result = await this.HttpClient.PostAsJsonAsync("https://create-snippet.blazorrepl.workers.dev/", new { Files = new List<object> { new { Content = code } } });
+
+            if (result.IsSuccessStatusCode)
+            {
+                var id = await result.Content.ReadAsStringAsync();
+                Console.WriteLine(id);
+            }
+        }
+
         [JSInvokable]
         public async Task OnCompileEvent()
         {
@@ -123,20 +137,19 @@
 
         protected override async Task OnInitializedAsync()
         {
-
-            try
+            if (!string.IsNullOrWhiteSpace(this.DemoId))
             {
-                using var result = await this.HttpClient.GetStreamAsync("https://blazorrepl.blob.core.windows.net/snippets/form.txt");
+                var yearFolder = this.DemoId.Substring(0, 2);
+                var monthFolder = this.DemoId.Substring(2, 2);
+                var dayAndHourFolder = this.DemoId.Substring(4, 4);
+
+                var id = this.DemoId.Substring(8);
+                using var result = await this.HttpClient.GetStreamAsync($"https://blazorrepl.blob.core.windows.net/snippets/{yearFolder}/{monthFolder}/{dayAndHourFolder}/{id}.txt");
 
                 var cr = new StreamReader(result);
                 this.DemoCode = await cr.ReadToEndAsync();
 
                 Console.WriteLine(this.DemoCode);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
             }
 
             await base.OnInitializedAsync();
