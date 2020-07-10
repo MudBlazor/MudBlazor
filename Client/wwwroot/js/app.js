@@ -25,10 +25,10 @@
             if (e.ctrlKey && e.keyCode === 83) {
                 e.preventDefault();
                 if (dotNetInstance && dotNetInstance.invokeMethodAsync) {
-                    throttle(() => dotNetInstance.invokeMethodAsync('OnCompileEvent'), 1000, 'compile')
+                    throttle(() => dotNetInstance.invokeMethodAsync('OnCompileEvent'), 1000, 'compile');
                 }
             }
-        })
+        });
     }
 
     window.App.reloadIFrame = function (id) {
@@ -38,7 +38,24 @@
         }
     }
 
-    window.App.initEditor = function (editorId, defaultValue) {    
+    window.App.appendSegmentToUrl = function (id) {
+        if (!id) {
+            return;
+        }
+
+        let currentHref = window.location.href.trim();
+        if (!currentHref) {
+            return;
+        }
+
+        if (currentHref[currentHref.length - 1] !== '/') {
+            currentHref += '/';
+        }
+
+        window.location.href = currentHref + id;
+    }
+
+    window.App.initEditor = function (editorId, defaultValue) {
         require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
         require(['vs/editor/editor.main'], () => {
             const oldValue = window.App.getEditorValue();

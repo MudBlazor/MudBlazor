@@ -8,10 +8,8 @@
     using System.Net.Http.Json;
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components;
-    using BlazorRepl.Client.Services;
     using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components;
-    using Microsoft.AspNetCore.Components.WebAssembly.Http;
     using Microsoft.JSInterop;
 
     public partial class Repl
@@ -104,13 +102,15 @@
 
             // TODO: Add env variable for url
             // TODO: Add strongly typed object
-            var result = await this.HttpClient.PostAsJsonAsync("https://create-snippet.blazorrepl.workers.dev/", new { Files = new List<object> { new { Content = code } } });
+            var result = await this.HttpClient.PostAsJsonAsync(
+                "https://create-snippet-staging.blazorrepl.workers.dev/",
+                new { Files = new List<object> { new { Content = code } } });
 
             if (result.IsSuccessStatusCode)
             {
                 var id = await result.Content.ReadAsStringAsync();
-                //TODO: Update url + show link of the user
-                Console.WriteLine(id);
+                // TODO: handle existing snippet id
+                await this.JsRuntime.InvokeVoidAsync("window.App.appendSegmentToUrl", id);
             }
         }
 
@@ -147,7 +147,8 @@
                 var dayAndHourFolder = this.DemoId.Substring(4, 4);
 
                 var id = this.DemoId.Substring(8);
-                using var result = await this.HttpClient.GetStreamAsync($"https://blazorrepl.blob.core.windows.net/snippets/{yearFolder}/{monthFolder}/{dayAndHourFolder}/{id}.txt");
+                using var result = await this.HttpClient.GetStreamAsync(
+                    $"https://blazorrepl.blob.core.windows.net/snippets-staging/{yearFolder}/{monthFolder}/{dayAndHourFolder}/{id}.txt");
 
                 var cr = new StreamReader(result);
                 this.DemoCode = await cr.ReadToEndAsync();
