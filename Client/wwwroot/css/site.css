@@ -93,6 +93,10 @@ app {
     color: red;
 }
 
+.save-icon {
+    font-size: 14px;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
