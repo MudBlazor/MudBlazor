@@ -38,21 +38,12 @@
         }
     }
 
-    window.App.appendSegmentToUrl = function (id) {
-        if (!id) {
+    window.App.changeDisplayUrl = function (url) {
+        if (!url) {
             return;
         }
 
-        let currentHref = window.location.href.trim();
-        if (!currentHref) {
-            return;
-        }
-
-        if (currentHref[currentHref.length - 1] !== '/') {
-            currentHref += '/';
-        }
-
-        window.location.href = currentHref + id;
+        window.history.pushState(null, null, url);
     }
 
     window.App.initEditor = function (editorId, defaultValue) {

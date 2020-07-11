@@ -32,6 +32,9 @@
         public HttpClient HttpClient { get; set; }
 
         [Inject]
+        public NavigationManager NavigationManager { get; set; }
+
+        [Inject]
         public ComponentCompilationService CompilationService { get; set; }
 
         [Inject]
@@ -109,8 +112,10 @@
             if (result.IsSuccessStatusCode)
             {
                 var id = await result.Content.ReadAsStringAsync();
-                // TODO: handle existing snippet id
-                await this.JsRuntime.InvokeVoidAsync("window.App.appendSegmentToUrl", id);
+                var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"repl/{id}" };
+
+                var url = urlBuilder.Uri.ToString();
+                await this.JsRuntime.InvokeVoidAsync("window.App.changeDisplayUrl", url);
             }
         }
 
