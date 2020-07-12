@@ -1,4 +1,4 @@
-﻿@page "/repl/{demoId}"
+﻿@page "/repl/{snippetId}"
 @page "/repl/"
 
 @layout MainLayout
@@ -21,7 +21,7 @@
     <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
 
     <div id="user-code-editor-container">
-        <CodeEditor @ref="@CodeEditor" DefaultCode="@DemoCode"></CodeEditor>
+        <CodeEditor @ref="@CodeEditor" DefaultCode="@SnippetContent"></CodeEditor>
     </div>
     <div id="user-page-window-container">
         <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%"></iframe>

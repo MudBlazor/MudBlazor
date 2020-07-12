@@ -3,6 +3,7 @@ namespace BlazorRepl.Client
     using System;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using BlazorRepl.Client.Services;
     using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
     using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ namespace BlazorRepl.Client
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddTransient(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddTransient<SnippetsService>();
             builder.Services.AddSingleton(new ComponentCompilationService());
 
             await builder.Build().RunAsync();

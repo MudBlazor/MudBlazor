@@ -8,6 +8,7 @@
     using System.Net.Http.Json;
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components;
+    using BlazorRepl.Client.Services;
     using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
@@ -32,6 +33,9 @@
         public HttpClient HttpClient { get; set; }
 
         [Inject]
+        public SnippetsService SnippetsService { get; set; }
+
+        [Inject]
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
@@ -41,11 +45,11 @@
         public IJSRuntime JsRuntime { get; set; }
 
         [Parameter]
-        public string DemoId { get; set; }
+        public string SnippetId { get; set; }
 
         public CodeEditor CodeEditor { get; set; }
 
-        public string DemoCode { get; set; }
+        public string SnippetContent { get; set; }
 
         public string Preset { get; set; } = "basic";
 
@@ -145,18 +149,9 @@
 
         protected override async Task OnInitializedAsync()
         {
-            if (!string.IsNullOrWhiteSpace(this.DemoId))
+            if (!string.IsNullOrWhiteSpace(this.SnippetId))
             {
-                var yearFolder = this.DemoId.Substring(0, 2);
-                var monthFolder = this.DemoId.Substring(2, 2);
-                var dayAndHourFolder = this.DemoId.Substring(4, 4);
-
-                var id = this.DemoId.Substring(8);
-                using var result = await this.HttpClient.GetStreamAsync(
-                    $"https://blazorrepl.blob.core.windows.net/snippets-staging/{yearFolder}/{monthFolder}/{dayAndHourFolder}/{id}.txt");
-
-                var cr = new StreamReader(result);
-                this.DemoCode = await cr.ReadToEndAsync();
+                this.SnippetContent = await this.SnippetsService.GetSnippetContentAsync(this.SnippetId);
             }
 
             await base.OnInitializedAsync();
