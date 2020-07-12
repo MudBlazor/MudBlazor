@@ -4,11 +4,14 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Net.Http;
+    using System.Net.Http.Json;
     using System.Threading.Tasks;
 
     public class SnippetsService
     {
-        private const int SnippetIdCharsCount = 18;
+        private const int SnippetIdLength = 18;
+        private const int SnippetContentMinLength = 10;
+
         private static readonly IDictionary<char, char> LetterToDigitIdMappings = new Dictionary<char, char>
         {
             ['a'] = '0',
@@ -72,9 +75,31 @@
             this.httpClient = httpClient;
         }
 
+        public async Task<string> SaveSnippetAsync(string content)
+        {
+            if (string.IsNullOrWhiteSpace(content) || content.Trim().Length < SnippetContentMinLength)
+            {
+                throw new ArgumentException("The snippet content should be at least 10 symbols.", nameof(content));
+            }
+
+            // TODO: Add env variable for url
+            // TODO: Add strongly typed object
+            var result = await this.httpClient.PostAsJsonAsync(
+                "https://create-snippet-staging.blazorrepl.workers.dev", // TODO: Env var
+                new { Files = new List<object> { new { Content = content } } });
+
+            if (result.IsSuccessStatusCode)
+            {
+                var id = await result.Content.ReadAsStringAsync();
+                return id;
+            }
+
+            throw new Exception("Something went wrong. Please try again later.");
+        }
+
         public async Task<string> GetSnippetContentAsync(string snippetId)
         {
-            if (string.IsNullOrWhiteSpace(snippetId) || snippetId.Length != SnippetIdCharsCount)
+            if (string.IsNullOrWhiteSpace(snippetId) || snippetId.Length != SnippetIdLength)
             {
                 throw new ArgumentException("Invalid snippet ID", nameof(snippetId));
             }

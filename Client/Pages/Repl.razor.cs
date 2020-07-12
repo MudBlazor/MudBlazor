@@ -30,9 +30,6 @@
         private DotNetObjectReference<Repl> dotNetInstance;
 
         [Inject]
-        public HttpClient HttpClient { get; set; }
-
-        [Inject]
         public SnippetsService SnippetsService { get; set; }
 
         [Inject]
@@ -105,22 +102,14 @@
 
         public async Task Save()
         {
-            var code = await this.CodeEditor.GetCode();
+            var content = await this.CodeEditor.GetCode();
 
-            // TODO: Add env variable for url
-            // TODO: Add strongly typed object
-            var result = await this.HttpClient.PostAsJsonAsync(
-                "https://create-snippet-staging.blazorrepl.workers.dev/",
-                new { Files = new List<object> { new { Content = code } } });
+            var snippetId = await this.SnippetsService.SaveSnippetAsync(content);
 
-            if (result.IsSuccessStatusCode)
-            {
-                var id = await result.Content.ReadAsStringAsync();
-                var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"repl/{id}" };
+            var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"repl/{snippetId}" };
 
-                var url = urlBuilder.Uri.ToString();
-                await this.JsRuntime.InvokeVoidAsync("window.App.changeDisplayUrl", url);
-            }
+            var url = urlBuilder.Uri.ToString();
+            await this.JsRuntime.InvokeVoidAsync("window.App.changeDisplayUrl", url);
         }
 
         [JSInvokable]
