@@ -7,15 +7,17 @@
     <div class="container-fluid">
         <div class="navbar-header" style="color: #303133">
             <a href="/" class="navbar-brand">Blazor REPL</a>
-            <button href="/" class="btn btn-link nav-action" @onclick="@Compile" disabled="@Loading" title="Run (Ctrl + S)">
+            <button class="btn btn-link nav-action" @onclick="@Compile" disabled="@Loading" title="Run (Ctrl + S)">
                 <i class="icon-play4"></i> RUN
             </button>
-            <button href="/" class="btn btn-link nav-action" @onclick="@Save" disabled="@Loading" title="Generate link and share the snippet">
-                <i class="icon-floppy-disk save-icon"></i> SAVE
+            <button @onclick="@ShowSaveSnippetPopup" class="btn btn-link nav-action" id="save-snippet-btn" title="Save public snippet">
+                <i class="icon-floppy-disk"></i> SAVE
             </button>
         </div>
     </div>
 </nav>
+
+<SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn"></SaveSnippetPopup>
 
 <div class="row flex" style="margin: 0">
     <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>

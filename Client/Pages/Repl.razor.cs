@@ -2,10 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using System.Net.Http;
-    using System.Net.Http.Json;
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components;
     using BlazorRepl.Client.Services;
@@ -27,6 +24,7 @@
 @using Microsoft.JSInterop
 ";
 
+        // TODO: Dispose
         private DotNetObjectReference<Repl> dotNetInstance;
 
         [Inject]
@@ -47,6 +45,8 @@
         public CodeEditor CodeEditor { get; set; }
 
         public string SnippetContent { get; set; }
+
+        public bool SaveSnippetPopupVisible { get; set; }
 
         public string Preset { get; set; } = "basic";
 
@@ -110,6 +110,11 @@
 
             var url = urlBuilder.Uri.ToString();
             await this.JsRuntime.InvokeVoidAsync("window.App.changeDisplayUrl", url);
+        }
+
+        public void ShowSaveSnippetPopup()
+        {
+            this.SaveSnippetPopupVisible = true;
         }
 
         [JSInvokable]

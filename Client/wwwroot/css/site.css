@@ -24,6 +24,15 @@ app {
     align-items: center;
 }
 
+.save-snippets-popup {
+    position: absolute;
+    top: 55px;
+    left: 140px;
+    width: 340px;
+    height: 329px;
+    z-index: 100;
+}
+
 .main {
     flex: 1;
     position: relative;
@@ -117,7 +126,7 @@ app {
     }
 
 /* Error List */
-.main .toast {
+.main .error-list {
     max-width: 100%;
     width: 97%;
     position: fixed;
