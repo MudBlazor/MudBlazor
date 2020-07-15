@@ -31,9 +31,6 @@
         public SnippetsService SnippetsService { get; set; }
 
         [Inject]
-        public NavigationManager NavigationManager { get; set; }
-
-        [Inject]
         public ComponentCompilationService CompilationService { get; set; }
 
         [Inject]
@@ -98,18 +95,6 @@
                 // TODO: Add error page in iframe
                 await this.JsRuntime.InvokeVoidAsync("window.App.reloadIFrame", "user-page-window");
             }
-        }
-
-        public async Task Save()
-        {
-            var content = await this.CodeEditor.GetCode();
-
-            var snippetId = await this.SnippetsService.SaveSnippetAsync(content);
-
-            var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"repl/{snippetId}" };
-
-            var url = urlBuilder.Uri.ToString();
-            await this.JsRuntime.InvokeVoidAsync("window.App.changeDisplayUrl", url);
         }
 
         public void ShowSaveSnippetPopup()

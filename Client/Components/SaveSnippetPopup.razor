@@ -3,8 +3,12 @@
         <h4 class="m-auto">Save public snippet</h4>
     </div>
 
-    <ul>
+    <ul class="snippet-save-warnings list-unstyled">
         <li>Please <span class="font-weight-bold">do NOT include</span> any personal data</li>
         <li>Please <span class="font-weight-bold">do NOT include</span> any copyrighted content</li>
     </ul>
+
+    <div class="snippet-link-disclaimer">After successful snippet save you can get the URL from the browser address bar.</div>
+
+    <button class="btn btn-primary" @onclick="SaveAsync">Confirm</button>
 </div>

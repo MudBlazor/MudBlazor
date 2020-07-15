@@ -17,7 +17,7 @@
     </div>
 </nav>
 
-<SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn"></SaveSnippetPopup>
+<SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeEditor="@CodeEditor"></SaveSnippetPopup>
 
 <div class="row flex" style="margin: 0">
     <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
@@ -30,6 +30,6 @@
     </div>
 </div>
 
-<ErrorList @bind-Show="AreDiagnosticsShown"
-           Diagnostics="Diagnostics"
-           UserComponentCodeStartLine="UserComponentCodeStartLine"></ErrorList>
+<ErrorList @bind-Show="@AreDiagnosticsShown"
+           Diagnostics="@Diagnostics"
+           UserComponentCodeStartLine="@UserComponentCodeStartLine"></ErrorList>
