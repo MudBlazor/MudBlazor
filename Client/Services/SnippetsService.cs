@@ -112,6 +112,7 @@
 
             var id = snippetId.Substring(8);
 
+            // TODO: Add strongly typed config options
             var snippetContent = await this.httpClient.GetStringAsync(
                 string.Format(this.configuration["Snippets:ReadUrlFormat"], yearFolder, monthFolder, dayAndHourFolder, id));
 

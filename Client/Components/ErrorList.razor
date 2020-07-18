@@ -2,7 +2,13 @@
     <div class="toast-header">
         <strong style="margin-right: auto; font-weight: bold">Error List</strong>
         <span>@ErrorsCount errors / @WarningsCount warnings</span>
-        <button type="button" style="margin-left: 0.5rem; margin-bottom: 0.25rem" class="close mt-1 toggle-error-list-btn" data-dismiss="toast" aria-label="Switch Visibility" @onclick="@ToggleDiagnostics">
+        <button type="button"
+                style="margin-left: 0.5rem; margin-bottom: 0.25rem"
+                class="close mt-1 toggle-error-list-btn"
+                data-dismiss="toast"
+                aria-label="Toggle Diagnostics"
+                @onclick="@ToggleDiagnosticsAsync">
+
             @if (ShowIcon)
             {
                 @if (Show)

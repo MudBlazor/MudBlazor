@@ -10,7 +10,7 @@
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
 
-    public partial class Repl
+    public partial class Repl : IDisposable
     {
         private const string BasicUserComponentCodePrefix =
     @"@page ""/user-page""
@@ -24,7 +24,6 @@
 @using Microsoft.JSInterop
 ";
 
-        // TODO: Dispose
         private DotNetObjectReference<Repl> dotNetInstance;
 
         [Inject]
@@ -59,29 +58,20 @@
 
         public int UserComponentCodeStartLine => this.UserComponentCodePrefix.Count(ch => ch == '\n');
 
-        public async Task UpdateLoaderText(string loaderText)
-        {
-            this.LoaderText = loaderText;
-
-            this.StateHasChanged();
-
-            await Task.Delay(10); // Ensure rendering has time to be called
-        }
-
-        public async Task Compile()
+        public async Task CompileAsync()
         {
             this.Loading = true;
             this.LoaderText = "Processing";
 
             await Task.Delay(10); // Ensure rendering has time to be called
 
-            var code = await this.CodeEditor.GetCode();
+            var code = await this.CodeEditor.GetCodeAsync();
 
             var result = await this.CompilationService.CompileToAssembly(
                 "UserPage.razor",
                 this.UserComponentCodePrefix + code,
                 this.Preset,
-                this.UpdateLoaderText);
+                this.UpdateLoaderTextAsync);
 
             this.Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
             this.AreDiagnosticsShown = true;
@@ -97,17 +87,17 @@
             }
         }
 
-        public void ShowSaveSnippetPopup()
-        {
-            this.SaveSnippetPopupVisible = true;
-        }
+        public void ShowSaveSnippetPopup() => this.SaveSnippetPopupVisible = true;
 
         [JSInvokable]
-        public async Task OnCompileEvent()
+        public async Task TriggerCompileAsync()
         {
-            await this.Compile();
+            await this.CompileAsync();
+
             this.StateHasChanged();
         }
+
+        public void Dispose() => this.dotNetInstance?.Dispose();
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -134,6 +124,15 @@
             }
 
             await base.OnInitializedAsync();
+        }
+
+        private Task UpdateLoaderTextAsync(string loaderText)
+        {
+            this.LoaderText = loaderText;
+
+            this.StateHasChanged();
+
+            return Task.Delay(10); // Ensure rendering has time to be called
         }
     }
 }

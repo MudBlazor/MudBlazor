@@ -7,7 +7,7 @@
     <div class="container-fluid">
         <div class="navbar-header" style="color: #303133">
             <a href="/" class="navbar-brand">Blazor REPL</a>
-            <button class="btn btn-link nav-action" @onclick="@Compile" disabled="@Loading" title="Run (Ctrl + S)">
+            <button class="btn btn-link nav-action" @onclick="@CompileAsync" disabled="@Loading" title="Run (Ctrl + S)">
                 <i class="icon-play4"></i> RUN
             </button>
             <button @onclick="@ShowSaveSnippetPopup" class="btn btn-link nav-action" id="save-snippet-btn" title="Save public snippet">

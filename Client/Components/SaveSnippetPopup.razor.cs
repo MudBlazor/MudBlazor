@@ -6,9 +6,8 @@
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
 
-    public partial class SaveSnippetPopup
+    public partial class SaveSnippetPopup : IDisposable
     {
-        // TODO: Dispose
         private DotNetObjectReference<SaveSnippetPopup> dotNetInstance;
 
         [Inject]
@@ -42,7 +41,7 @@
                     $"Cannot use save snippet popup without specified {nameof(this.CodeEditor)} parameter.");
             }
 
-            var content = await this.CodeEditor.GetCode();
+            var content = await this.CodeEditor.GetCodeAsync();
 
             var snippetId = await this.SnippetsService.SaveSnippetAsync(content);
 
@@ -55,7 +54,9 @@
         }
 
         [JSInvokable]
-        public Task Close() => this.CloseInternalAsync();
+        public Task CloseAsync() => this.CloseInternalAsync();
+
+        public void Dispose() => this.dotNetInstance?.Dispose();
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -73,10 +74,10 @@
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        private async Task CloseInternalAsync()
+        private Task CloseInternalAsync()
         {
             this.Visible = false;
-            await this.VisibleChanged.InvokeAsync(this.Visible);
+            return this.VisibleChanged.InvokeAsync(this.Visible);
         }
     }
 }

@@ -3,7 +3,7 @@
 (function () {
     var editor;
 
-    let throttleLastTimeFuncNameMappings = {};
+    const throttleLastTimeFuncNameMappings = {};
 
     window.App.initRepl = function (editorContainerId, resultContainerId, editorId, dotNetInstance) {
         throttleLastTimeFuncNameMappings['compile'] = new Date();
@@ -25,7 +25,7 @@
             if (e.ctrlKey && e.keyCode === 83) {
                 e.preventDefault();
                 if (dotNetInstance && dotNetInstance.invokeMethodAsync) {
-                    throttle(() => dotNetInstance.invokeMethodAsync('OnCompileEvent'), 1000, 'compile');
+                    throttle(() => dotNetInstance.invokeMethodAsync('TriggerCompileAsync'), 1000, 'compile');
                 }
             }
         });
@@ -39,20 +39,16 @@
     }
 
     window.App.initSaveSnippetPopup = function (id, invokerId, dotNetInstance) {
-        if (!id) {
+        if (!id || !dotNetInstance || !dotNetInstance.invokeMethodAsync) {
             return;
-        }
-
-        if (!dotNetInstance || !dotNetInstance.invokeMethodAsync) {
-            return
         }
 
         window.addEventListener('click', e => {
             let currentElement = e.target;
             while (currentElement.id !== id && currentElement.id !== invokerId) {
-                currentElement = currentElement.parentNode
+                currentElement = currentElement.parentNode;
                 if (!currentElement) {
-                    dotNetInstance.invokeMethodAsync('Close')
+                    dotNetInstance.invokeMethodAsync('CloseAsync');
                     break;
                 }
             }
@@ -76,7 +72,7 @@
                 oldEditorElement.childNodes.forEach(c => oldEditorElement.removeChild(c));
             }
 
-            var value = defaultValue || oldValue ||
+            const value = defaultValue || oldValue ||
                 `<h1>Hello World</h1>
 
 @code {
@@ -171,7 +167,7 @@
             // TODO: Abstract class name
             const height = window.innerHeight - document.getElementsByClassName('repl-navbar')[0].offsetHeight;
 
-            element.style.height = height + 'px';
+            element.style.height = `${height}px`;
         }
     }
 }());
