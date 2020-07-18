@@ -6,6 +6,7 @@
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Configuration;
 
     public class SnippetsService
     {
@@ -69,23 +70,24 @@
         };
 
         private readonly HttpClient httpClient;
+        private readonly IConfiguration configuration;
 
-        public SnippetsService(HttpClient httpClient)
+        public SnippetsService(HttpClient httpClient, IConfiguration configuration)
         {
             this.httpClient = httpClient;
+            this.configuration = configuration;
         }
 
         public async Task<string> SaveSnippetAsync(string content)
         {
             if (string.IsNullOrWhiteSpace(content) || content.Trim().Length < SnippetContentMinLength)
             {
-                throw new ArgumentException("The snippet content should be at least 10 symbols.", nameof(content));
+                throw new ArgumentException($"The snippet content should be at least {SnippetContentMinLength} symbols.", nameof(content));
             }
 
-            // TODO: Add env variable for url
-            // TODO: Add strongly typed object
+            // TODO: Add strongly typed request object + config options
             var result = await this.httpClient.PostAsJsonAsync(
-                "https://create-snippet-staging.blazorrepl.workers.dev", // TODO: Env var
+                this.configuration["Snippets:CreateUrl"],
                 new { Files = new List<object> { new { Content = content } } });
 
             if (result.IsSuccessStatusCode)
@@ -109,8 +111,9 @@
             var dayAndHourFolder = DecodeDateIdPart(snippetId.Substring(4, 4));
 
             var id = snippetId.Substring(8);
+
             var snippetContent = await this.httpClient.GetStringAsync(
-                $"https://blazorrepl.blob.core.windows.net/snippets-staging/{yearFolder}/{monthFolder}/{dayAndHourFolder}/{id}.txt"); // TODO: Env var
+                string.Format(this.configuration["Snippets:ReadUrlFormat"], yearFolder, monthFolder, dayAndHourFolder, id));
 
             return snippetContent;
         }
