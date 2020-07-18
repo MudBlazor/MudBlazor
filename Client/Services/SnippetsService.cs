@@ -6,7 +6,6 @@
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.Configuration;
 
     public class SnippetsService
     {
@@ -70,12 +69,12 @@
         };
 
         private readonly HttpClient httpClient;
-        private readonly IConfiguration configuration;
+        private readonly SnippetsOptions snippetsOptions;
 
-        public SnippetsService(HttpClient httpClient, IConfiguration configuration)
+        public SnippetsService(HttpClient httpClient, SnippetsOptions snippetsOptions)
         {
             this.httpClient = httpClient;
-            this.configuration = configuration;
+            this.snippetsOptions = snippetsOptions;
         }
 
         public async Task<string> SaveSnippetAsync(string content)
@@ -87,7 +86,7 @@
 
             // TODO: Add strongly typed request object + config options
             var result = await this.httpClient.PostAsJsonAsync(
-                this.configuration["Snippets:CreateUrl"],
+                this.snippetsOptions.CreateUrl,
                 new { Files = new List<object> { new { Content = content } } });
 
             if (result.IsSuccessStatusCode)
@@ -103,7 +102,7 @@
         {
             if (string.IsNullOrWhiteSpace(snippetId) || snippetId.Length != SnippetIdLength)
             {
-                throw new ArgumentException("Invalid snippet ID", nameof(snippetId));
+                throw new ArgumentException("Invalid snippet ID.", nameof(snippetId));
             }
 
             var yearFolder = DecodeDateIdPart(snippetId.Substring(0, 2));
@@ -112,9 +111,8 @@
 
             var id = snippetId.Substring(8);
 
-            // TODO: Add strongly typed config options
-            var snippetContent = await this.httpClient.GetStringAsync(
-                string.Format(this.configuration["Snippets:ReadUrlFormat"], yearFolder, monthFolder, dayAndHourFolder, id));
+            var url = string.Format(this.snippetsOptions.ReadUrlFormat, yearFolder, monthFolder, dayAndHourFolder, id);
+            var snippetContent = await this.httpClient.GetStringAsync(url);
 
             return snippetContent;
         }
