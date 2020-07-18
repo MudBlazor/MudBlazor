@@ -1,11 +1,10 @@
 ﻿namespace BlazorRepl.Client.Services
 {
-    using System.Collections;
     using System.Collections.Generic;
 
     public static class DemoCodeProvider
     {
-        public static readonly IDictionary<string, string> DemoCodeMapping = new Dictionary<string, string>()
+        public static readonly IDictionary<string, string> DemoCodeMapping = new Dictionary<string, string>
         {
             {
                 1.ToString(),

@@ -84,14 +84,15 @@
                 throw new ArgumentException($"The snippet content should be at least {SnippetContentMinLength} symbols.", nameof(content));
             }
 
-            // TODO: Add strongly typed request object + config options
-            var result = await this.httpClient.PostAsJsonAsync(
-                this.snippetsOptions.CreateUrl,
-                new { Files = new List<object> { new { Content = content } } });
-
-            if (result.IsSuccessStatusCode)
+            var requestData = new CreateSnippetRequestModel
             {
-                var id = await result.Content.ReadAsStringAsync();
+                Files = new[] { new CreateSnippetFileRequestModel { Content = content }, },
+            };
+
+            var response = await this.httpClient.PostAsJsonAsync(this.snippetsOptions.CreateUrl, requestData);
+            if (response.IsSuccessStatusCode)
+            {
+                var id = await response.Content.ReadAsStringAsync();
                 return id;
             }
 
