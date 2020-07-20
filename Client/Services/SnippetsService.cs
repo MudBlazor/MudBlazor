@@ -6,6 +6,7 @@
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Options;
 
     public class SnippetsService
     {
@@ -71,10 +72,10 @@
         private readonly HttpClient httpClient;
         private readonly SnippetsOptions snippetsOptions;
 
-        public SnippetsService(HttpClient httpClient, SnippetsOptions snippetsOptions)
+        public SnippetsService(HttpClient httpClient, IOptions<SnippetsOptions> snippetsOptions)
         {
             this.httpClient = httpClient;
-            this.snippetsOptions = snippetsOptions;
+            this.snippetsOptions = snippetsOptions.Value;
         }
 
         public async Task<string> SaveSnippetAsync(string content)
