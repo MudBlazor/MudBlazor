@@ -33,6 +33,8 @@
 
         public string VisibleClass => this.Visible ? "show" : string.Empty;
 
+        public string DisplayStyle => this.Visible ? string.Empty : "display: none;";
+
         public async Task SaveAsync()
         {
             if (this.CodeEditor == null)

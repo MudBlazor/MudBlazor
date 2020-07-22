@@ -37,6 +37,7 @@ window.App.CodeEditor = window.App.CodeEditor || (function () {
 
 }
 `;
+            console.log(editorId);
             editor = monaco.editor.create(document.getElementById(editorId), {
                 fontSize: '16px',
                 value: value,
