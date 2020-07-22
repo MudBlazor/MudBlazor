@@ -80,10 +80,10 @@
 
             if (result.AssemblyBytes != null && result.AssemblyBytes.Length > 0)
             {
-                await this.JsRuntime.InvokeVoidAsync("window.App.readFile", result.AssemblyBytes);
+                await this.JsRuntime.InvokeVoidAsync("App.Repl.updateUserAssemblyInCacheStorage", result.AssemblyBytes);
 
                 // TODO: Add error page in iframe
-                await this.JsRuntime.InvokeVoidAsync("window.App.reloadIFrame", "user-page-window");
+                await this.JsRuntime.InvokeVoidAsync("App.reloadIFrame", "user-page-window");
             }
         }
 
@@ -97,7 +97,11 @@
             this.StateHasChanged();
         }
 
-        public void Dispose() => this.dotNetInstance?.Dispose();
+        public void Dispose()
+        {
+            this.dotNetInstance?.Dispose();
+            _ = this.JsRuntime.InvokeVoidAsync("App.Repl.dispose");
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -106,7 +110,7 @@
                 this.dotNetInstance = DotNetObjectReference.Create(this);
 
                 await this.JsRuntime.InvokeVoidAsync(
-                    "window.App.initRepl",
+                    "App.Repl.init",
                     "user-code-editor-container",
                     "user-page-window-container",
                     "user-code-editor",

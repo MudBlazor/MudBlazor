@@ -1,10 +1,11 @@
 ﻿namespace BlazorRepl.Client.Components
 {
+    using System;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
 
-    public partial class CodeEditor
+    public partial class CodeEditor : IDisposable
     {
         private const string EditorId = "user-code-editor";
 
@@ -28,13 +29,18 @@
             return base.SetParametersAsync(parameters);
         }
 
+        public void Dispose()
+        {
+            _ = this.JsRuntime.InvokeAsync<string>("App.CodeEditor.dispose");
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender || this.shouldReInitEditor)
             {
                 this.shouldReInitEditor = false;
 
-                await this.JsRuntime.InvokeVoidAsync("App.initEditor", EditorId, this.DefaultCode);
+                await this.JsRuntime.InvokeVoidAsync("App.CodeEditor.init", EditorId, this.DefaultCode);
             }
 
             await base.OnAfterRenderAsync(firstRender);

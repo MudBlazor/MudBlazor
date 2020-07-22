@@ -48,7 +48,7 @@
             var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"repl/{snippetId}" };
 
             var url = urlBuilder.Uri.ToString();
-            await this.JsRuntime.InvokeVoidAsync("window.App.changeDisplayUrl", url);
+            await this.JsRuntime.InvokeVoidAsync("App.changeDisplayUrl", url);
 
             await this.CloseInternalAsync();
         }
@@ -59,7 +59,7 @@
         public void Dispose()
         {
             this.dotNetInstance?.Dispose();
-            _ = this.JsRuntime.InvokeVoidAsync("window.App.saveSnippetPopup.dispose");
+            _ = this.JsRuntime.InvokeVoidAsync("App.SaveSnippetPopup.dispose");
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -69,7 +69,7 @@
                 this.dotNetInstance = DotNetObjectReference.Create(this);
 
                 await this.JsRuntime.InvokeVoidAsync(
-                    "window.App.saveSnippetPopup.init",
+                    "App.SaveSnippetPopup.init",
                     "save-snippet-popup",
                     this.InvokerId,
                     this.dotNetInstance);
