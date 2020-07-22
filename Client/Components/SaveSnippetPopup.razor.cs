@@ -56,7 +56,11 @@
         [JSInvokable]
         public Task CloseAsync() => this.CloseInternalAsync();
 
-        public void Dispose() => this.dotNetInstance?.Dispose();
+        public void Dispose()
+        {
+            this.dotNetInstance?.Dispose();
+            _ = this.JsRuntime.InvokeVoidAsync("window.App.saveSnippetPopup.dispose");
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -65,7 +69,7 @@
                 this.dotNetInstance = DotNetObjectReference.Create(this);
 
                 await this.JsRuntime.InvokeVoidAsync(
-                    "window.App.initSaveSnippetPopup",
+                    "window.App.saveSnippetPopup.init",
                     "save-snippet-popup",
                     this.InvokerId,
                     this.dotNetInstance);

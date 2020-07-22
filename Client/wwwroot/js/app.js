@@ -38,23 +38,6 @@
         }
     }
 
-    window.App.initSaveSnippetPopup = function (id, invokerId, dotNetInstance) {
-        if (!id || !dotNetInstance || !dotNetInstance.invokeMethodAsync) {
-            return;
-        }
-
-        window.addEventListener('click', e => {
-            let currentElement = e.target;
-            while (currentElement.id !== id && currentElement.id !== invokerId) {
-                currentElement = currentElement.parentNode;
-                if (!currentElement) {
-                    dotNetInstance.invokeMethodAsync('CloseAsync');
-                    break;
-                }
-            }
-        });
-    }
-
     window.App.changeDisplayUrl = function (url) {
         if (!url) {
             return;
@@ -170,4 +153,44 @@
             element.style.height = `${height}px`;
         }
     }
+}());
+
+window.App.saveSnippetPopup = window.App.saveSnippetPopup || (function () {
+    const that = this;
+
+    let dotNetInstance;
+    let invokerId;
+    let id;
+
+    function closePopupOnWindowClick(e) {
+        if (!dotNetInstance || !invokerId || !id) {
+            return;
+        }
+
+        let currentElement = e.target;
+        while (currentElement.id !== id && currentElement.id !== invokerId) {
+            currentElement = currentElement.parentNode;
+            if (!currentElement) {
+                dotNetInstance.invokeMethodAsync('CloseAsync');
+                break;
+            }
+        }
+    }
+
+    return {
+        init: function (id, invokerId, dotNetInstance) {
+            that.dotNetInstance = dotNetInstance;
+            that.invokerId = invokerId;
+            that.id = id;
+
+            window.addEventListener('click', closePopupOnWindowClick);
+        },
+        dispose: function () {
+            that.dotNetInstance = null;
+            that.invokerId = null;
+            that.id = null;
+
+            window.removeEventListener('click', closePopupOnWindowClick);
+        }
+    };
 }());
