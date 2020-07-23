@@ -17,7 +17,7 @@
         [Parameter]
         public string DefaultCode { get; set; }
 
-        public ValueTask<string> GetCodeAsync() => this.JsRuntime.InvokeAsync<string>("window.App.getEditorValue");
+        public ValueTask<string> GetCodeAsync() => this.JsRuntime.InvokeAsync<string>("App.CodeEditor.getValue");
 
         public override Task SetParametersAsync(ParameterView parameters)
         {

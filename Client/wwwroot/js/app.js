@@ -17,11 +17,13 @@
 }());
 
 window.App.CodeEditor = window.App.CodeEditor || (function () {
-    const that = this;
-
-    let editor;
+    let _editor;
 
     function initEditor(editorId, defaultValue) {
+        if (!editorId) {
+            return;
+        }
+
         require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
         require(['vs/editor/editor.main'], () => {
             const oldValue = getValue();
@@ -37,8 +39,7 @@ window.App.CodeEditor = window.App.CodeEditor || (function () {
 
 }
 `;
-            console.log(editorId);
-            editor = monaco.editor.create(document.getElementById(editorId), {
+            _editor = monaco.editor.create(document.getElementById(editorId), {
                 fontSize: '16px',
                 value: value,
                 language: 'razor'
@@ -47,7 +48,7 @@ window.App.CodeEditor = window.App.CodeEditor || (function () {
     }
 
     function getValue() {
-        return editor && editor.getValue();
+        return _editor && _editor.getValue();
     }
 
     return {
@@ -57,20 +58,18 @@ window.App.CodeEditor = window.App.CodeEditor || (function () {
         initEditor: initEditor,
         getValue: getValue,
         dispose: function () {
-            that.editor = null;
+            _editor = null;
         }
     };
 }());
 
 window.App.Repl = window.App.Repl || (function () {
-    const that = this;
-
     const throttleLastTimeFuncNameMappings = {};
 
-    let dotNetInstance;
-    let editorContainerId;
-    let resultContainerId;
-    let editorId;
+    let _dotNetInstance;
+    let _editorContainerId;
+    let _resultContainerId;
+    let _editorId;
 
     function setElementHeight(elementId) {
         const element = document.getElementById(elementId);
@@ -82,48 +81,48 @@ window.App.Repl = window.App.Repl || (function () {
         }
     }
 
-    function initReplSplitter(editorContainerId, resultContainerId, editorId) {
-        if (editorContainerId &&
-            resultContainerId &&
-            document.getElementById(editorContainerId) &&
-            document.getElementById(resultContainerId)) {
+    function initReplSplitter() {
+        if (_editorContainerId &&
+            _resultContainerId &&
+            document.getElementById(_editorContainerId) &&
+            document.getElementById(_resultContainerId)) {
 
             throttleLastTimeFuncNameMappings['resetEditor'] = new Date();
-            Split(['#' + editorContainerId, '#' + resultContainerId], {
+            Split(['#' + _editorContainerId, '#' + _resultContainerId], {
                 elementStyle: (dimension, size, gutterSize) => ({
                     'flex-basis': `calc(${size}% - ${gutterSize + 1}px)`,
                 }),
                 gutterStyle: (dimension, gutterSize) => ({
                     'flex-basis': `${gutterSize}px`,
                 }),
-                onDrag: () => throttle(() => resetEditor(editorId), 100, 'resetEditor'),
-                onDragEnd: () => resetEditor(editorId)
+                onDrag: () => throttle(resetEditor, 100, 'resetEditor'),
+                onDragEnd: resetEditor
             });
         }
     }
 
-    function resetEditor(editorId) {
+    function resetEditor() {
         const value = window.App.CodeEditor.getValue();
-        const oldEditorElement = document.getElementById(editorId);
+        const oldEditorElement = document.getElementById(_editorId);
         if (oldEditorElement && oldEditorElement.childNodes) {
             oldEditorElement.childNodes.forEach(c => oldEditorElement.removeChild(c));
         }
 
-        window.App.CodeEditor.initEditor(editorId, value);
+        window.App.CodeEditor.initEditor(_editorId, value);
     }
 
     function onWindowResize() {
-        setElementHeight(resultContainerId);
-        setElementHeight(editorContainerId);
-        resetEditor(editorId);
+        setElementHeight(_resultContainerId);
+        setElementHeight(_editorContainerId);
+        resetEditor();
     }
 
     function onKeyDown(e) {
         // CTRL + S
         if (e.ctrlKey && e.keyCode === 83) {
             e.preventDefault();
-            if (dotNetInstance && dotNetInstance.invokeMethodAsync) {
-                throttle(() => dotNetInstance.invokeMethodAsync('TriggerCompileAsync'), 1000, 'compile');
+            if (_dotNetInstance && _dotNetInstance.invokeMethodAsync) {
+                throttle(() => _dotNetInstance.invokeMethodAsync('TriggerCompileAsync'), 1000, 'compile');
             }
         }
     }
@@ -150,17 +149,17 @@ window.App.Repl = window.App.Repl || (function () {
 
     return {
         init: function (editorContainerId, resultContainerId, editorId, dotNetInstance) {
-            that.dotNetInstance = dotNetInstance;
-            that.editorContainerId = editorContainerId;
-            that.resultContainerId = resultContainerId;
-            that.editorId = editorId;
+            _dotNetInstance = dotNetInstance;
+            _editorContainerId = editorContainerId;
+            _resultContainerId = resultContainerId;
+            _editorId = editorId;
 
             throttleLastTimeFuncNameMappings['compile'] = new Date();
 
             setElementHeight(editorContainerId);
             setElementHeight(resultContainerId);
 
-            initReplSplitter(editorContainerId, resultContainerId, editorId);
+            initReplSplitter();
 
             window.addEventListener('resize', onWindowResize);
             window.addEventListener('keydown', onKeyDown);
@@ -185,10 +184,10 @@ window.App.Repl = window.App.Repl || (function () {
             });
         },
         dispose: function () {
-            that.dotNetInstance = null;
-            that.editorContainerId = null;
-            that.resultContainerId = null;
-            that.editorId = null;
+            _dotNetInstance = null;
+            _editorContainerId = null;
+            _resultContainerId = null;
+            _editorId = null;
 
             window.removeEventListener('resize', onWindowResize);
             window.removeEventListener('keydown', onKeyDown);
@@ -197,22 +196,20 @@ window.App.Repl = window.App.Repl || (function () {
 }());
 
 window.App.SaveSnippetPopup = window.App.SaveSnippetPopup || (function () {
-    const that = this;
-
-    let dotNetInstance;
-    let invokerId;
-    let id;
+    let _dotNetInstance;
+    let _invokerId;
+    let _id;
 
     function closePopupOnWindowClick(e) {
-        if (!dotNetInstance || !invokerId || !id) {
+        if (!_dotNetInstance || !_invokerId || !_id) {
             return;
         }
 
         let currentElement = e.target;
-        while (currentElement.id !== id && currentElement.id !== invokerId) {
+        while (currentElement.id !== _id && currentElement.id !== _invokerId) {
             currentElement = currentElement.parentNode;
             if (!currentElement) {
-                dotNetInstance.invokeMethodAsync('CloseAsync');
+                _dotNetInstance.invokeMethodAsync('CloseAsync');
                 break;
             }
         }
@@ -220,16 +217,16 @@ window.App.SaveSnippetPopup = window.App.SaveSnippetPopup || (function () {
 
     return {
         init: function (id, invokerId, dotNetInstance) {
-            that.dotNetInstance = dotNetInstance;
-            that.invokerId = invokerId;
-            that.id = id;
+            _dotNetInstance = dotNetInstance;
+            _invokerId = invokerId;
+            _id = id;
 
             window.addEventListener('click', closePopupOnWindowClick);
         },
         dispose: function () {
-            that.dotNetInstance = null;
-            that.invokerId = null;
-            that.id = null;
+            _dotNetInstance = null;
+            _invokerId = null;
+            _id = null;
 
             window.removeEventListener('click', closePopupOnWindowClick);
         }
