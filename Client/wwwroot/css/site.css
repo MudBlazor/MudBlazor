@@ -24,6 +24,31 @@ app {
     align-items: center;
 }
 
+.save-snippets-popup {
+    position: absolute;
+    top: 55px;
+    left: 140px;
+    width: 340px;
+    height: 250px;
+    z-index: 100;
+    padding: 5px 20px;
+}
+
+.snippet-save-warnings li {
+    list-style-type: none;
+    position: relative;
+    padding-left: 5px;
+    margin-left: 10px;
+}
+
+    .snippet-save-warnings li:before {
+        content: "\25BA \0020";
+        font-size: 6px;
+        position: absolute;
+        top: 5px;
+        left: -10px;
+    }
+
 .main {
     flex: 1;
     position: relative;
@@ -93,6 +118,10 @@ app {
     color: red;
 }
 
+.save-icon {
+    font-size: 14px;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
@@ -113,7 +142,7 @@ app {
     }
 
 /* Error List */
-.main .toast {
+.main .error-list {
     max-width: 100%;
     width: 97%;
     position: fixed;
@@ -302,4 +331,9 @@ app {
     .user-page-loader {
         left: 46%;
     }
+}
+
+.snippet-link-disclaimer {
+    font-size: 0.8em;
+    margin-bottom: 8px;
 }

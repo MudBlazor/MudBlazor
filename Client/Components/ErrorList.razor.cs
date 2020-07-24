@@ -28,18 +28,16 @@
 
         public bool ShowIcon => this.Diagnostics.Any();
 
-        public Task ToggleDiagnostics()
+        public Task ToggleDiagnosticsAsync()
         {
             this.Show = !this.Show;
             return this.ShowChanged.InvokeAsync(this.Show);
         }
 
-        protected override Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
             this.ErrorsCount = this.Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error);
             this.WarningsCount = this.Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
-
-            return base.OnInitializedAsync();
         }
     }
 }

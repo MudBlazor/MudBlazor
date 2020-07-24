@@ -2,7 +2,7 @@
 {
     using Microsoft.AspNetCore.Components;
 
-    public partial class ReplLoader : ComponentBase
+    public partial class ReplLoader
     {
         [Parameter]
         public bool Show { get; set; }
