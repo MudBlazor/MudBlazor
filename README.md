@@ -15,6 +15,7 @@
 
 ## Future work
 - Support multiple components
+- Enable REPL page integration in external sites (iframe)
 - Support overriding configurations and introducing new services
 - Support installing NuGet packages
 - [More...](https://github.com/BlazorRepl/BlazorRepl/issues)
