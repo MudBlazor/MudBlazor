@@ -24,31 +24,6 @@ app {
     align-items: center;
 }
 
-.save-snippets-popup {
-    position: absolute;
-    top: 55px;
-    left: 140px;
-    width: 340px;
-    height: 250px;
-    z-index: 100;
-    padding: 5px 20px;
-}
-
-.snippet-save-warnings li {
-    list-style-type: none;
-    position: relative;
-    padding-left: 5px;
-    margin-left: 10px;
-}
-
-    .snippet-save-warnings li:before {
-        content: "\25BA \0020";
-        font-size: 6px;
-        position: absolute;
-        top: 5px;
-        left: -10px;
-    }
-
 .main {
     flex: 1;
     position: relative;
@@ -334,6 +309,32 @@ app {
 }
 
 /* Save Snippet Popup */
+.save-snippets-popup {
+    position: absolute;
+    top: 55px;
+    left: 125px;
+    width: 340px;
+    height: 250px;
+    z-index: 100;
+    padding: 5px 20px;
+    overflow: visible;
+}
+
+.snippet-save-warnings li {
+    list-style-type: none;
+    position: relative;
+    padding-left: 5px;
+    margin-left: 10px;
+}
+
+    .snippet-save-warnings li:before {
+        content: "\25BA \0020";
+        font-size: 6px;
+        position: absolute;
+        top: 5px;
+        left: -10px;
+    }
+
 .snippet-link-disclaimer {
     font-size: 0.8em;
     margin-bottom: 8px;
@@ -343,4 +344,19 @@ app {
     position: fixed;
     margin-left: 10px;
     margin-top: 2px;
+}
+
+.save-snippet-callout {
+    margin-left: -6px;
+    top: -12px;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent;
+    border-bottom-color: #fff;
+    box-sizing: border-box;
+    position: absolute;
+    pointer-events: none;
 }
