@@ -1,4 +1,9 @@
-﻿<div id="save-snippet-popup" class="toast @VisibleClass save-snippets-popup" role="alert" aria-live="assertive" aria-atomic="true" style="@DisplayStyle">
+﻿<div id="save-snippet-popup"
+     class="toast save-snippets-popup @VisibleClass"
+     role="alert"
+     aria-live="assertive"
+     aria-atomic="true"
+     style="@DisplayStyle">
     <div class="toast-header">
         <h4 class="m-auto">Save public snippet</h4>
     </div>
@@ -10,5 +15,14 @@
 
     <div class="snippet-link-disclaimer">After successful snippet save you can get the URL from the browser address bar.</div>
 
-    <button class="btn btn-primary" @onclick="SaveAsync">Confirm</button>
+    <div>
+        <button class="btn btn-primary" disabled="@Loading" @onclick="SaveAsync">Confirm</button>
+
+        @if (Loading)
+        {
+            <div class="spinner-border save-snippet-loader" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        }
+    </div>
 </div>

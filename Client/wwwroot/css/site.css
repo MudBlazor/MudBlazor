@@ -333,7 +333,14 @@ app {
     }
 }
 
+/* Save Snippet Popup */
 .snippet-link-disclaimer {
     font-size: 0.8em;
     margin-bottom: 8px;
+}
+
+.save-snippet-loader {
+    position: fixed;
+    margin-left: 10px;
+    margin-top: 2px;
 }

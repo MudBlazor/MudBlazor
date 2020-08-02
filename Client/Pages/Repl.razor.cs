@@ -65,18 +65,24 @@
 
             await Task.Delay(10); // Ensure rendering has time to be called
 
-            var code = await this.CodeEditor.GetCodeAsync();
+            CompileToAssemblyResult result;
+            try
+            {
+                var code = await this.CodeEditor.GetCodeAsync();
 
-            var result = await this.CompilationService.CompileToAssembly(
-                "UserPage.razor",
-                this.UserComponentCodePrefix + code,
-                this.Preset,
-                this.UpdateLoaderTextAsync);
+                result = await this.CompilationService.CompileToAssembly(
+                    "UserPage.razor",
+                    this.UserComponentCodePrefix + code,
+                    this.Preset,
+                    this.UpdateLoaderTextAsync);
 
-            this.Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
-            this.AreDiagnosticsShown = true;
-
-            this.Loading = false;
+                this.Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
+                this.AreDiagnosticsShown = true;
+            }
+            finally
+            {
+                this.Loading = false;
+            }
 
             if (result.AssemblyBytes != null && result.AssemblyBytes.Length > 0)
             {

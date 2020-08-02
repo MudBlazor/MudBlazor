@@ -31,6 +31,8 @@
         [Parameter]
         public CodeEditor CodeEditor { get; set; }
 
+        public bool Loading { get; set; }
+
         public string VisibleClass => this.Visible ? "show" : string.Empty;
 
         public string DisplayStyle => this.Visible ? string.Empty : "display: none;";
@@ -43,14 +45,22 @@
                     $"Cannot use save snippet popup without specified {nameof(this.CodeEditor)} parameter.");
             }
 
-            var content = await this.CodeEditor.GetCodeAsync();
+            this.Loading = true;
 
-            var snippetId = await this.SnippetsService.SaveSnippetAsync(content);
+            try
+            {
+                var content = await this.CodeEditor.GetCodeAsync();
 
-            var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"repl/{snippetId}" };
+                var snippetId = await this.SnippetsService.SaveSnippetAsync(content);
 
-            var url = urlBuilder.Uri.ToString();
-            await this.JsRuntime.InvokeVoidAsync("App.changeDisplayUrl", url);
+                var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"repl/{snippetId}" };
+                var url = urlBuilder.Uri.ToString();
+                await this.JsRuntime.InvokeVoidAsync("App.changeDisplayUrl", url);
+            }
+            finally
+            {
+                this.Loading = false;
+            }
 
             await this.CloseInternalAsync();
         }

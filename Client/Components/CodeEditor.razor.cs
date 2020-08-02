@@ -29,10 +29,7 @@
             return base.SetParametersAsync(parameters);
         }
 
-        public void Dispose()
-        {
-            _ = this.JsRuntime.InvokeAsync<string>("App.CodeEditor.dispose");
-        }
+        public void Dispose() => _ = this.JsRuntime.InvokeAsync<string>("App.CodeEditor.dispose");
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
