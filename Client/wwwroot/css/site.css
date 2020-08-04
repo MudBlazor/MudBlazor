@@ -314,7 +314,7 @@ app {
     top: 55px;
     left: 125px;
     width: 340px;
-    height: 250px;
+    height: 200px;
     z-index: 100;
     padding: 5px 20px;
     overflow: visible;
@@ -359,4 +359,9 @@ app {
     box-sizing: border-box;
     position: absolute;
     pointer-events: none;
+}
+
+.link-wrapper {
+    display: flex;
+    margin-top: 10px;
 }

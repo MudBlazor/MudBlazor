@@ -33,9 +33,21 @@
 
         public bool Loading { get; set; }
 
+        public string SnippetLink { get; set; }
+
+        public bool SnippetLinkCopied { get; set; }
+
         public string VisibleClass => this.Visible ? "show" : string.Empty;
 
+        public string CopyButtonIcon => this.SnippetLinkCopied ? "icon-check" : "icon-copy";
+
         public string DisplayStyle => this.Visible ? string.Empty : "display: none;";
+
+        public async Task CopyLinkToClipboard()
+        {
+            await this.JsRuntime.InvokeVoidAsync("App.copyToClipboard", this.SnippetLink);
+            this.SnippetLinkCopied = true;
+        }
 
         public async Task SaveAsync()
         {
@@ -55,14 +67,14 @@
 
                 var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"repl/{snippetId}" };
                 var url = urlBuilder.Uri.ToString();
+                this.SnippetLink = url;
+
                 await this.JsRuntime.InvokeVoidAsync("App.changeDisplayUrl", url);
             }
             finally
             {
                 this.Loading = false;
             }
-
-            await this.CloseInternalAsync();
         }
 
         [JSInvokable]
@@ -93,6 +105,8 @@
         private Task CloseInternalAsync()
         {
             this.Visible = false;
+            this.SnippetLink = default;
+            this.SnippetLinkCopied = false;
             return this.VisibleChanged.InvokeAsync(this.Visible);
         }
     }

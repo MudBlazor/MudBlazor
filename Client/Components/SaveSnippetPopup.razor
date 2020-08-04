@@ -13,18 +13,28 @@
         <li>Please <span class="font-weight-bold">do NOT include</span> any copyrighted content</li>
     </ul>
 
-    <div class="snippet-link-disclaimer">After successful snippet save you can get the URL from the browser address bar.</div>
+    @if (string.IsNullOrWhiteSpace(SnippetLink))
+    {
+        <div>
+            <button class="btn btn-primary" disabled="@Loading" @onclick="SaveAsync">Confirm</button>
 
-    <div>
-        <button class="btn btn-primary" disabled="@Loading" @onclick="SaveAsync">Confirm</button>
+            @if (Loading)
+            {
+                <div class="spinner-border save-snippet-loader" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+         <div class="link-wrapper">
+            <input type="text" class="form-control" @bind="SnippetLink"/>
+            
+            <button class="btn btn-primary @CopyButtonIcon" @onclick="CopyLinkToClipboard"></button>
+        </div>
+    }
 
-        @if (Loading)
-        {
-            <div class="spinner-border save-snippet-loader" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        }
-    </div>
 
     <div class="save-snippet-callout"></div>
 </div>
