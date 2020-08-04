@@ -43,7 +43,7 @@
 
         public string DisplayStyle => this.Visible ? string.Empty : "display: none;";
 
-        public async Task CopyLinkToClipboard()
+        public async Task CopyLinkToClipboardAsync()
         {
             await this.JsRuntime.InvokeVoidAsync("App.copyToClipboard", this.SnippetLink);
             this.SnippetLinkCopied = true;
@@ -105,7 +105,7 @@
         private Task CloseInternalAsync()
         {
             this.Visible = false;
-            this.SnippetLink = default;
+            this.SnippetLink = null;
             this.SnippetLinkCopied = false;
             return this.VisibleChanged.InvokeAsync(this.Visible);
         }

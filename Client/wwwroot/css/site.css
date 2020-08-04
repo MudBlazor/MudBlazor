@@ -361,7 +361,11 @@ app {
     pointer-events: none;
 }
 
-.link-wrapper {
+.snippet-link-wrapper {
     display: flex;
     margin-top: 10px;
 }
+
+    .snippet-link-wrapper input[readonly] {
+        background-color: #fff;
+    }

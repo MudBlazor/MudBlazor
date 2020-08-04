@@ -28,13 +28,12 @@
     }
     else
     {
-         <div class="link-wrapper">
-            <input type="text" class="form-control" @bind="SnippetLink"/>
-            
-            <button class="btn btn-primary @CopyButtonIcon" @onclick="CopyLinkToClipboard"></button>
+        <div class="snippet-link-wrapper">
+            <input type="text" class="form-control" @bind="SnippetLink" readonly />
+
+            <button class="btn btn-primary @CopyButtonIcon" @onclick="CopyLinkToClipboardAsync"></button>
         </div>
     }
-
 
     <div class="save-snippet-callout"></div>
 </div>
