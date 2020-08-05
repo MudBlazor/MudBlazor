@@ -369,3 +369,21 @@ app {
     .snippet-link-wrapper input[readonly] {
         background-color: #fff;
     }
+
+/*Heading section of pages*/
+#unapp-page .video-hero {
+    background-image: url(../img/code-editor.jpg);
+    background-size: auto;
+    background-position: top center;
+}
+
+    #unapp-page .video-hero.index {
+        height: 700px;
+    }
+
+    #unapp-page .video-hero.getting-started {
+        height: 500px;
+    }
+
+/*height: 500px; background-size:cover; background-position: center center;background-attachment:fixed;*/
+
