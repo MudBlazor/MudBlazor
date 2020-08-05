@@ -377,10 +377,10 @@ app {
     background-position: top center;
 }
 
-    #unapp-page .video-hero.index {
+    #unapp-page .video-hero.index-page {
         height: 700px;
     }
 
-    #unapp-page .video-hero.getting-started {
+    #unapp-page .video-hero.getting-started-page {
         height: 500px;
     }
