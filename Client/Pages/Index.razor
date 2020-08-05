@@ -5,7 +5,7 @@
 <div id="unapp-page">
     @*Mobile Nav*@
     <a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle colorlib-nav-white"><i></i></a>
-    <div id="colorlib-offcanvas">
+    <nav id="colorlib-offcanvas">
         <ul>
             <li><a href="/" class="mobile-nav-link">Home</a></li>
             <li><a href="/repl" class="mobile-nav-link">REPL</a></li>
@@ -13,17 +13,17 @@
             <li><a href="https://github.com/BlazorRepl/BlazorRepl" target="_blank" class="mobile-nav-link">Source Code</a></li>
             @*<li><a href="contact.html">Contact</a></li>*@
         </ul>
-    </div>
+    </nav>
 
     @*Desktop Nav*@
-    <nav class="colorlib-nav" role="navigation">
+    <header class="colorlib-nav" role="navigation">
         <div class="top-menu">
             <div class="container">
                 <div class="row">
                     <div class="col-md-3">
                         <div id="colorlib-logo"><a href="/" class="blazor-logo-wrapper"> <img src="img/blazor-repl-logo-white.png" alt="Blazor REPL Logo" class="blazor-logo" />Blazor REPL</a></div>
                     </div>
-                    <div class="col-md-9 text-right menu-1">
+                    <nav class="col-md-9 text-right menu-1">
                         <ul>
                             <li class="active"><a href="/">Home</a></li>
                             <li><a href="/repl">REPL</a></li>
@@ -31,191 +31,193 @@
                             <li><a href="https://github.com/BlazorRepl/BlazorRepl" target="_blank">Source Code</a></li>
                             @*<li><a href="contact.html">Contact</a></li>*@
                         </ul>
-                    </div>
+                    </nav>
                 </div>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <section id="home" class="video-hero index-page" data-section="home">
-        <div class="overlay"></div>
-        <div class="display-t text-center">
-            <div class="display-tc">
-                <div class="container">
-                    <div class="col-md-12 offset-md-0">
-                        <div class="animate-box">
-                            <h2>Blazor REPL</h2>
-                            <h2>Write, Compile, Execute and Share</h2>
-                            <p>your rich UI Blazor components</p>
-                            <p><a href="/repl" class="btn btn-primary btn-lg btn-custom">Try now</a></p>
+    <main>
+        <section id="home" class="video-hero index-page" data-section="home">
+            <div class="overlay"></div>
+            <div class="display-t text-center">
+                <div class="display-tc">
+                    <div class="container">
+                        <div class="col-md-12 offset-md-0">
+                            <div class="animate-box">
+                                <h2>Blazor REPL</h2>
+                                <h2>Write, Compile, Execute and Share</h2>
+                                <p>your rich UI Blazor components</p>
+                                <p><a href="/repl" class="btn btn-primary btn-lg btn-custom">Try now</a></p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <div class="colorlib-services colorlib-bg-white">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3 text-center animate-box">
-                    <div class="services">
-                        <span class="icon">
-                            <i class="icon-smile"></i>
-                        </span>
-                        <div class="desc">
-                            <h3>Easy To Use</h3>
-                            <p>Write your code from anywhere using our integrated editor and easily share you component</p>
+        <section class="colorlib-services colorlib-bg-white">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3 text-center animate-box">
+                        <div class="services">
+                            <span class="icon">
+                                <i class="icon-smile"></i>
+                            </span>
+                            <div class="desc">
+                                <h3>Easy To Use</h3>
+                                <p>Write your code from anywhere using our integrated editor and easily share you component</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-3 text-center animate-box">
-                    <div class="services">
-                        <span class="icon">
-                            <i class="icon-gift"></i>
-                        </span>
-                        <div class="desc">
-                            <h3>Free</h3>
-                            <p>
-                                Blazor REPL is a free to use web application. Our codebase is open-source and you can
-                                <a href="https://github.com/BlazorRepl/BlazorRepl" target="_blank">find it in GitHub</a>
-                            </p>
+                    <div class="col-md-3 text-center animate-box">
+                        <div class="services">
+                            <span class="icon">
+                                <i class="icon-gift"></i>
+                            </span>
+                            <div class="desc">
+                                <h3>Free</h3>
+                                <p>
+                                    Blazor REPL is a free to use web application. Our codebase is open-source and you can
+                                    <a href="https://github.com/BlazorRepl/BlazorRepl" target="_blank">find it in GitHub</a>
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-3 text-center animate-box">
-                    <div class="services">
-                        <span class="icon">
-                            <i class="icon-lock"></i>
-                        </span>
-                        <div class="desc">
-                            <h3>Secure</h3>
-                            <p>Run your components entirely in the browser security sandbox without any communication with a server</p>
+                    <div class="col-md-3 text-center animate-box">
+                        <div class="services">
+                            <span class="icon">
+                                <i class="icon-lock"></i>
+                            </span>
+                            <div class="desc">
+                                <h3>Secure</h3>
+                                <p>Run your components entirely in the browser security sandbox without any communication with a server</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-3 text-center animate-box">
-                    <div class="services">
-                        <span class="icon">
-                            <i class="icon-rocket"></i>
-                        </span>
-                        <div class="desc">
-                            <h3>Fast</h3>
-                            <p>Your code is compiled on top of Web Assembly which has near to native performance</p>
+                    <div class="col-md-3 text-center animate-box">
+                        <div class="services">
+                            <span class="icon">
+                                <i class="icon-rocket"></i>
+                            </span>
+                            <div class="desc">
+                                <h3>Fast</h3>
+                                <p>Your code is compiled on top of Web Assembly which has near to native performance</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <div id="colorlib-subscribe" class="colorlib-subscribe" data-stellar-background-ratio="0.5">
-        <div class="overlay"></div>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-10 offset-md-1 text-center colorlib-heading animate-box">
-                    <h2>Support our project</h2>
-                    <p>Blazor REPL is an open-source project and it's always open for contributions</p>
-                    <p>
-                        <a href="https://github.com/BlazorRepl/BlazorRepl" target="_blank" class="btn btn-primary btn-lg btn-custom" style="font-size: 18px">
-                            <i class="icon-github"></i> Explore
-                        </a>
-                    </p>
+        <section id="colorlib-subscribe" class="colorlib-subscribe" data-stellar-background-ratio="0.5">
+            <div class="overlay"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-10 offset-md-1 text-center colorlib-heading animate-box">
+                        <h2>Support our project</h2>
+                        <p>Blazor REPL is an open-source project and it's always open for contributions</p>
+                        <p>
+                            <a href="https://github.com/BlazorRepl/BlazorRepl" target="_blank" class="btn btn-primary btn-lg btn-custom" style="font-size: 18px">
+                                <i class="icon-github"></i> Explore
+                            </a>
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <div class="row animate-box">
-                <div class="col-md-6 offset-md-3">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-inline qbstp-header-subscribe text-center" style="display: block">
-                                <div>
-                                    <a href="https://github.com/BlazorRepl/BlazorRepl/stargazers" target="_blank" class="btn btn-primary">
-                                        <i class="icon-open"></i> Give us a Star
-                                    </a>
-                                    <a href="https://github.com/BlazorRepl/BlazorRepl/issues" target="_blank" class="btn btn-primary">
-                                        <i class="icon-open"></i> Submit an Issue
-                                    </a>
-                                    <a href="https://github.com/BlazorRepl/BlazorRepl/pulls" target="_blank" class="btn btn-primary">
-                                        <i class="icon-open"></i> Contribute
-                                    </a>
+                <div class="row animate-box">
+                    <div class="col-md-6 offset-md-3">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-inline qbstp-header-subscribe text-center" style="display: block">
+                                    <div>
+                                        <a href="https://github.com/BlazorRepl/BlazorRepl/stargazers" target="_blank" class="btn btn-primary">
+                                            <i class="icon-open"></i> Give us a Star
+                                        </a>
+                                        <a href="https://github.com/BlazorRepl/BlazorRepl/issues" target="_blank" class="btn btn-primary">
+                                            <i class="icon-open"></i> Submit an Issue
+                                        </a>
+                                        <a href="https://github.com/BlazorRepl/BlazorRepl/pulls" target="_blank" class="btn btn-primary">
+                                            <i class="icon-open"></i> Contribute
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <div class="colorlib-blog">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 offset-md-2 text-center colorlib-heading animate-box">
-                    <h2>About the authors</h2>
+        <section class="colorlib-blog">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 offset-md-2 text-center colorlib-heading animate-box">
+                        <h2>About the authors</h2>
+                    </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-md-6 text-center animate-box">
-                    <div class="staff-entry">
-                        <a href="#" class="staff-img" style="background-image: url(img/kris.png);"></a>
-                        <div class="desc">
-                            <h3>Kristian Mariyanov</h3>
-                            <span>Software Engineer</span>
-                            <p>
-                                Energetic Software Engineer passionate about coding and learning new things.
-                            </p>
-                            <p>
-                                <ul class="colorlib-social-icons">
-                                    <li>
-                                        <a href="https://github.com/KristianMariyanov" target="_blank">
-                                            <i class="icon-github"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="https://www.linkedin.com/in/kristian-mariyanov" target="_blank">
-                                            <i class="icon-linkedin"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="https://twitter.com/kris_mariyanov" target="_blank">
-                                            <i class="icon-twitter"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </p>
+                <div class="row">
+                    <div class="col-md-6 text-center animate-box">
+                        <div class="staff-entry">
+                            <a href="#" class="staff-img" style="background-image: url(img/kris.png);"></a>
+                            <div class="desc">
+                                <h3>Kristian Mariyanov</h3>
+                                <span>Software Engineer</span>
+                                <p>
+                                    Energetic Software Engineer passionate about coding and learning new things.
+                                </p>
+                                <p>
+                                    <ul class="colorlib-social-icons">
+                                        <li>
+                                            <a href="https://github.com/KristianMariyanov" target="_blank">
+                                                <i class="icon-github"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.linkedin.com/in/kristian-mariyanov" target="_blank">
+                                                <i class="icon-linkedin"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://twitter.com/kris_mariyanov" target="_blank">
+                                                <i class="icon-twitter"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-center animate-box">
+                        <div class="staff-entry">
+                            <a href="#" class="staff-img" style="background-image: url(img/vladislav.png);"></a>
+                            <div class="desc">
+                                <h3>Vladislav Karamfilov</h3>
+                                <span>Solutions Architect</span>
+                                <p>
+                                    Software engineering professional and leader. Always striving towards high-quality code.
+                                </p>
+                                <p>
+                                    <ul class="colorlib-social-icons">
+                                        <li>
+                                            <a href="https://github.com/vladislav-karamfilov" target="_blank">
+                                                <i class="icon-github"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.linkedin.com/in/vladislav-karamfilov" target="_blank">
+                                                <i class="icon-linkedin"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 text-center animate-box">
-                    <div class="staff-entry">
-                        <a href="#" class="staff-img" style="background-image: url(img/vladislav.png);"></a>
-                        <div class="desc">
-                            <h3>Vladislav Karamfilov</h3>
-                            <span>Solutions Architect</span>
-                            <p>
-                                Software engineering professional and leader. Always striving towards high-quality code.
-                            </p>
-                            <p>
-                                <ul class="colorlib-social-icons">
-                                    <li>
-                                        <a href="https://github.com/vladislav-karamfilov" target="_blank">
-                                            <i class="icon-github"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="https://www.linkedin.com/in/vladislav-karamfilov" target="_blank">
-                                            <i class="icon-linkedin"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </p>
-                        </div>
-                    </div>
-                </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <footer id="colorlib-footer">
         <div class="copy">
