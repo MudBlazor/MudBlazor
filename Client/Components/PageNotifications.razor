@@ -1,0 +1,18 @@
+﻿<div style="position: absolute; top:75px; right: 10px; width: 400px;">
+
+    @foreach (var notification in Notifications)
+    {
+        var alertClass = GetAlertClass(notification.Type);
+        <div class="alert @alertClass alert-dismissible fade show" role="alert">
+            @if (!string.IsNullOrWhiteSpace(notification.Title))
+            {
+                <strong class="font-weight-bold">@(notification.Title)</strong> <br />
+            }
+
+            @notification.Content
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+</div>
