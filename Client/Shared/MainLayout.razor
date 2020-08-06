@@ -1,14 +1,21 @@
-﻿@inherits LayoutComponentBase
+﻿@using BlazorRepl.Client.Components.Models;
+
+@inherits LayoutComponentBase
 
 @inject HttpClient Http
 
 <div class="main">
+    <PageNotifications Notifications="@Notifications"></PageNotifications>
+
     <div class="content">
         @Body
     </div>
 </div>
 
 @code {
+    public IEnumerable<PageNotification> Notifications { get; set; } =
+        new List<PageNotification> { new PageNotification { Type = NotificationType.Error, Content = "Test Content", Title = "Title" }, new PageNotification { Type = NotificationType.Warning, Content = "Test Content", Title = "Title" }, };
+
     protected override async Task OnInitializedAsync()
     {
         await ComponentCompilationService.Init(Http);
