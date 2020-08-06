@@ -13,7 +13,7 @@
 </div>
 
 @code {
-    public IEnumerable<PageNotification> Notifications { get; set; } =
+    public ICollection<PageNotification> Notifications { get; set; } =
         new List<PageNotification> { new PageNotification { Type = NotificationType.Error, Content = "Test Content", Title = "Title" }, new PageNotification { Type = NotificationType.Warning, Content = "Test Content", Title = "Title" }, };
 
     protected override async Task OnInitializedAsync()

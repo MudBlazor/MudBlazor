@@ -7,14 +7,23 @@
     public partial class PageNotifications
     {
         [Parameter]
-        public IEnumerable<PageNotification> Notifications { get; set; }
+        public ICollection<PageNotification> Notifications { get; set; }
 
-        public string GetAlertClass(NotificationType type) =>
+        [Parameter]
+        public EventCallback<ICollection<PageNotification>> NotificationsChanged { get; set; }
+
+        private string GetAlertClass(NotificationType type) =>
             type switch
             {
                 NotificationType.Info => "alert-info",
                 NotificationType.Warning => "alert-warning",
                 NotificationType.Error => "alert-danger",
             };
+
+        private void RemoveNotification(PageNotification notification)
+        {
+            this.Notifications.Remove(notification);
+            this.NotificationsChanged?.InvokeAsync(this.Notifications);
+        }
     }
 }
