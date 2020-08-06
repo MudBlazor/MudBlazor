@@ -1,6 +1,6 @@
 ﻿<div style="position: absolute; top:75px; right: 10px; width: 400px;">
 
-    @foreach (var notification in Notifications)
+    @foreach (var notification in notifications)
     {
         var alertClass = GetAlertClass(notification.Type);
         <div class="alert @alertClass alert-dismissible fade show" role="alert">
@@ -10,7 +10,7 @@
             }
 
             @notification.Content
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close" @onclick="@(() => RemoveNotification(notification))">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" @onclick="@(() => RemoveNotification(notification))" @onclick:preventDefault>
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>

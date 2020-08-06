@@ -2,15 +2,20 @@
 {
     using System.Collections.Generic;
     using BlazorRepl.Client.Components.Models;
-    using Microsoft.AspNetCore.Components;
 
     public partial class PageNotifications
     {
-        [Parameter]
-        public ICollection<PageNotification> Notifications { get; set; }
+        private readonly ICollection<PageNotification> notifications = new List<PageNotification>();
 
-        [Parameter]
-        public EventCallback<ICollection<PageNotification>> NotificationsChanged { get; set; }
+        public void AddNotification(NotificationType type, string content, string title = null)
+        {
+            if (!string.IsNullOrWhiteSpace(content))
+            {
+                this.notifications.Add(new PageNotification { Type = type, Title = title, Content = content });
+
+                this.StateHasChanged();
+            }
+        }
 
         private string GetAlertClass(NotificationType type) =>
             type switch
@@ -22,8 +27,7 @@
 
         private void RemoveNotification(PageNotification notification)
         {
-            this.Notifications.Remove(notification);
-            this.NotificationsChanged?.InvokeAsync(this.Notifications);
+            this.notifications.Remove(notification);
         }
     }
 }

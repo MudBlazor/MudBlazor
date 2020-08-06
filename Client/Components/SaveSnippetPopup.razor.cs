@@ -1,7 +1,9 @@
 ﻿namespace BlazorRepl.Client.Components
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
+    using BlazorRepl.Client.Components.Models;
     using BlazorRepl.Client.Services;
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
@@ -18,6 +20,9 @@
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+
+        [CascadingParameter]
+        public PageNotifications PageNotificationsComponent { get; set; }
 
         [Parameter]
         public bool Visible { get; set; }
@@ -70,6 +75,12 @@
                 this.SnippetLink = url;
 
                 await this.JsRuntime.InvokeVoidAsync("App.changeDisplayUrl", url);
+            }
+            catch (Exception)
+            {
+                this.PageNotificationsComponent.AddNotification(
+                    NotificationType.Error,
+                    content: "Error while saving snippet. Please try again later.");
             }
             finally
             {
