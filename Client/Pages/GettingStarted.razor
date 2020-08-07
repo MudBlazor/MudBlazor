@@ -5,7 +5,7 @@
 <div id="unapp-page">
     @*Mobile Nav*@
     <a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle colorlib-nav-white"><i></i></a>
-    <div id="colorlib-offcanvas">
+    <nav id="colorlib-offcanvas">
         <ul>
             <li><a href="/" class="mobile-nav-link">Home</a></li>
             <li><a href="/repl" class="mobile-nav-link">REPL</a></li>
@@ -13,10 +13,10 @@
             <li><a href="https://github.com/BlazorRepl/BlazorRepl" target="_blank" class="mobile-nav-link">Source Code</a></li>
             @*<li><a href="contact.html">Contact</a></li>*@
         </ul>
-    </div>
+    </nav>
 
     @*Desktop Nav*@
-    <nav class="colorlib-nav" role="navigation">
+    <header class="colorlib-nav" role="navigation">
         <div class="top-menu">
             <div class="container">
                 <div class="row">
@@ -27,7 +27,7 @@
                             </a>
                         </div>
                     </div>
-                    <div class="col-md-9 text-right menu-1">
+                    <nav class="col-md-9 text-right menu-1">
                         <ul>
                             <li><a href="/">Home</a></li>
                             <li><a href="/repl">REPL</a></li>
@@ -35,110 +35,112 @@
                             <li><a href="https://github.com/BlazorRepl/BlazorRepl" target="_blank">Source Code</a></li>
                             @*<li><a href="contact.html">Contact</a></li>*@
                         </ul>
-                    </div>
+                    </nav>
                 </div>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <section id="home"
-             class="video-hero getting-started-page"
-             data-section="home">
-        <div class="overlay"></div>
-        <div class="display-t display-t2 text-center">
-            <div class="display-tc display-tc2">
-                <div class="container">
-                    <div class="col-md-12 col-md-offset-0">
-                        <div class="animate-box fadeInUp animated-fast">
-                            <h2>Getting Started</h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <div class="colorlib-work-featured colorlib-bg-white">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-9 animate-box fadeInUp animated-fast">
-                    <div class="mobile-img"
-                         style="background-image: url(img/counter-example.jpg); background-size: contain; height: 639px;"></div>
-                </div>
-                <div class="col-md-3 animate-box fadeInUp animated-fast">
-                    <div class="desc">
-                        <h2>Counter Demo</h2>
-                        <div class="features">
-                            <span class="icon"><i class="icon-lightbulb"></i></span>
-                            <div class="f-desc">
-                                <p>
-                                    Counter demo is one that every Blazor developer is familiar with.
-                                    We prepared an extended demo that you can run on our platform.
-                                </p>
+    <main>
+        <section id="home"
+                 class="video-hero getting-started-page"
+                 data-section="home">
+            <div class="overlay"></div>
+            <div class="display-t display-t2 text-center">
+                <div class="display-tc display-tc2">
+                    <div class="container">
+                        <div class="col-md-12 col-md-offset-0">
+                            <div class="animate-box fadeInUp animated-fast">
+                                <h2>Getting Started</h2>
                             </div>
                         </div>
-                        <p>
-                            <a href="/repl/GYOVcwFg12QGtGsS42" class="btn btn-primary btn-outline with-arrow">
-                                Run it<i class="icon-arrow-right3"></i>
-                            </a>
-                        </p>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <div class="row mt-5">
-                <div class="col-md-9 animate-box fadeInUp animated-fast">
-                    <div class="mobile-img"
-                         style="background-image: url(img/http-example.jpg); background-size: contain; height: 490px;"></div>
-                </div>
-                <div class="col-md-3 animate-box fadeInUp animated-fast">
-                    <div class="desc">
-                        <h2>Http Demo</h2>
-                        <div class="features">
-                            <span class="icon"><i class="icon-lightbulb"></i></span>
-                            <div class="f-desc">
-                                <p>
-                                    Blazor REPL supports most of the Blazor framework built-in features.
-                                    In this demo we create a simple HTTP request and visualize the result on the page.
-                                </p>
+        <section class="colorlib-work-featured colorlib-bg-white">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9 animate-box fadeInUp animated-fast">
+                        <div class="mobile-img"
+                             style="background-image: url(img/counter-example.jpg); background-size: contain; height: 639px;"></div>
+                    </div>
+                    <div class="col-md-3 animate-box fadeInUp animated-fast">
+                        <div class="desc">
+                            <h2>Counter Demo</h2>
+                            <div class="features">
+                                <span class="icon"><i class="icon-lightbulb"></i></span>
+                                <div class="f-desc">
+                                    <p>
+                                        Counter demo is one that every Blazor developer is familiar with.
+                                        We prepared an extended demo that you can run on our platform.
+                                    </p>
+                                </div>
                             </div>
+                            <p>
+                                <a href="/repl/GYOVcwFg12QGtGsS42" class="btn btn-primary btn-outline with-arrow">
+                                    Run it<i class="icon-arrow-right3"></i>
+                                </a>
+                            </p>
                         </div>
-                        <p>
-                            <a href="/repl/wYuVcmPK13mRs0iK01" class="btn btn-primary btn-outline with-arrow">
-                                Run it<i class="icon-arrow-right3"></i>
-                            </a>
-                        </p>
                     </div>
                 </div>
-            </div>
 
-            <div class="row mt-5">
-                <div class="col-md-9 animate-box fadeInUp animated-fast">
-                    <div class="mobile-img"
-                         style="background-image: url(img/form-example.jpg); background-size: contain; height: 1262px;"></div>
-                </div>
-                <div class="col-md-3 animate-box fadeInUp animated-fast">
-                    <div class="desc">
-                        <h2>Form Demo</h2>
-                        <div class="features">
-                            <span class="icon"><i class="icon-lightbulb"></i></span>
-                            <div class="f-desc">
-                                <p>
-                                    In this demo we are creating a full-featured form with different kinds of inputs.
-                                    The form supports all common validations with DataAnnotation attributes.
-                                </p>
+                <div class="row mt-5">
+                    <div class="col-md-9 animate-box fadeInUp animated-fast">
+                        <div class="mobile-img"
+                             style="background-image: url(img/http-example.jpg); background-size: contain; height: 490px;"></div>
+                    </div>
+                    <div class="col-md-3 animate-box fadeInUp animated-fast">
+                        <div class="desc">
+                            <h2>Http Demo</h2>
+                            <div class="features">
+                                <span class="icon"><i class="icon-lightbulb"></i></span>
+                                <div class="f-desc">
+                                    <p>
+                                        Blazor REPL supports most of the Blazor framework built-in features.
+                                        In this demo we create a simple HTTP request and visualize the result on the page.
+                                    </p>
+                                </div>
                             </div>
+                            <p>
+                                <a href="/repl/wYuVcmPK13mRs0iK01" class="btn btn-primary btn-outline with-arrow">
+                                    Run it<i class="icon-arrow-right3"></i>
+                                </a>
+                            </p>
                         </div>
-                        <p>
-                            <a href="/repl/wYarcmbK2666IYVS59" class="btn btn-primary btn-outline with-arrow">
-                                Run it<i class="icon-arrow-right3"></i>
-                            </a>
-                        </p>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-md-9 animate-box fadeInUp animated-fast">
+                        <div class="mobile-img"
+                             style="background-image: url(img/form-example.jpg); background-size: contain; height: 1262px;"></div>
+                    </div>
+                    <div class="col-md-3 animate-box fadeInUp animated-fast">
+                        <div class="desc">
+                            <h2>Form Demo</h2>
+                            <div class="features">
+                                <span class="icon"><i class="icon-lightbulb"></i></span>
+                                <div class="f-desc">
+                                    <p>
+                                        In this demo we are creating a full-featured form with different kinds of inputs.
+                                        The form supports all common validations with DataAnnotation attributes.
+                                    </p>
+                                </div>
+                            </div>
+                            <p>
+                                <a href="/repl/wYarcmbK2666IYVS59" class="btn btn-primary btn-outline with-arrow">
+                                    Run it<i class="icon-arrow-right3"></i>
+                                </a>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <footer id="colorlib-footer">
         <div class="copy">
