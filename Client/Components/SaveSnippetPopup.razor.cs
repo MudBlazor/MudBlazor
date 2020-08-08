@@ -1,7 +1,9 @@
 ﻿namespace BlazorRepl.Client.Components
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
+    using BlazorRepl.Client.Components.Models;
     using BlazorRepl.Client.Services;
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
@@ -19,6 +21,9 @@
         [Inject]
         public NavigationManager NavigationManager { get; set; }
 
+        [CascadingParameter]
+        public PageNotifications PageNotificationsComponent { get; set; }
+
         [Parameter]
         public bool Visible { get; set; }
 
@@ -29,7 +34,7 @@
         public string InvokerId { get; set; }
 
         [Parameter]
-        public CodeEditor CodeEditor { get; set; }
+        public CodeEditor CodeEditorComponent { get; set; }
 
         public bool Loading { get; set; }
 
@@ -51,17 +56,17 @@
 
         public async Task SaveAsync()
         {
-            if (this.CodeEditor == null)
+            if (this.CodeEditorComponent == null)
             {
                 throw new InvalidOperationException(
-                    $"Cannot use save snippet popup without specified {nameof(this.CodeEditor)} parameter.");
+                    $"Cannot use save snippet popup without specified {nameof(this.CodeEditorComponent)} parameter.");
             }
 
             this.Loading = true;
 
             try
             {
-                var content = await this.CodeEditor.GetCodeAsync();
+                var content = await this.CodeEditorComponent.GetCodeAsync();
 
                 var snippetId = await this.SnippetsService.SaveSnippetAsync(content);
 
@@ -70,6 +75,18 @@
                 this.SnippetLink = url;
 
                 await this.JsRuntime.InvokeVoidAsync("App.changeDisplayUrl", url);
+            }
+            catch (ArgumentException)
+            {
+                this.PageNotificationsComponent.AddNotification(
+                    NotificationType.Error,
+                    content: "Snippet content should be at least 10 characters long.");
+            }
+            catch (Exception)
+            {
+                this.PageNotificationsComponent.AddNotification(
+                    NotificationType.Error,
+                    content: "Error while saving snippet. Please try again later.");
             }
             finally
             {
