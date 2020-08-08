@@ -23,11 +23,9 @@
                 NotificationType.Info => "alert-info",
                 NotificationType.Warning => "alert-warning",
                 NotificationType.Error => "alert-danger",
+                _ => "alert-info",
             };
 
-        private void RemoveNotification(PageNotification notification)
-        {
-            this.notifications.Remove(notification);
-        }
+        private void RemoveNotification(PageNotification notification) => this.notifications.Remove(notification);
     }
 }

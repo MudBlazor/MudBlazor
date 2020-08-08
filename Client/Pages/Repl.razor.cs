@@ -93,7 +93,7 @@
                 this.Loading = false;
             }
 
-            if (result?.AssemblyBytes != null && result.AssemblyBytes.Length > 0)
+            if (result?.AssemblyBytes?.Length > 0)
             {
                 await this.JsRuntime.InvokeVoidAsync("App.Repl.updateUserAssemblyInCacheStorage", result.AssemblyBytes);
 
