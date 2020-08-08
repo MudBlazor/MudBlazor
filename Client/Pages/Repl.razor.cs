@@ -70,7 +70,7 @@
 
             await Task.Delay(10); // Ensure rendering has time to be called
 
-            CompileToAssemblyResult result;
+            CompileToAssemblyResult result = null;
             try
             {
                 var code = await this.CodeEditorComponent.GetCodeAsync();
@@ -84,12 +84,16 @@
                 this.Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
                 this.AreDiagnosticsShown = true;
             }
+            catch (Exception)
+            {
+                this.PageNotificationsComponent.AddNotification(NotificationType.Error, content: "Error while compiling the code.");
+            }
             finally
             {
                 this.Loading = false;
             }
 
-            if (result.AssemblyBytes != null && result.AssemblyBytes.Length > 0)
+            if (result?.AssemblyBytes != null && result.AssemblyBytes.Length > 0)
             {
                 await this.JsRuntime.InvokeVoidAsync("App.Repl.updateUserAssemblyInCacheStorage", result.AssemblyBytes);
 
