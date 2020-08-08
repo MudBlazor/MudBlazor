@@ -3,12 +3,17 @@
 @inject HttpClient Http
 
 <div class="main">
-    <div class="content">
-        @Body
-    </div>
+    <PageNotifications @ref="@PageNotificationsComponent"></PageNotifications>
+    <CascadingValue Value="@PageNotificationsComponent">
+        <div class="content">
+            @Body
+        </div>
+    </CascadingValue>
 </div>
 
 @code {
+    public PageNotifications PageNotificationsComponent { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await ComponentCompilationService.Init(Http);

@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components;
+    using BlazorRepl.Client.Components.Models;
     using BlazorRepl.Client.Services;
     using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components;
@@ -25,6 +26,7 @@
 ";
 
         private DotNetObjectReference<Repl> dotNetInstance;
+        private string errorMessage;
 
         [Inject]
         public SnippetsService SnippetsService { get; set; }
@@ -35,10 +37,13 @@
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
 
+        [CascadingParameter]
+        public PageNotifications PageNotificationsComponent { get; set; }
+
         [Parameter]
         public string SnippetId { get; set; }
 
-        public CodeEditor CodeEditor { get; set; }
+        public CodeEditor CodeEditorComponent { get; set; }
 
         public string SnippetContent { get; set; }
 
@@ -65,10 +70,10 @@
 
             await Task.Delay(10); // Ensure rendering has time to be called
 
-            CompileToAssemblyResult result;
+            CompileToAssemblyResult result = null;
             try
             {
-                var code = await this.CodeEditor.GetCodeAsync();
+                var code = await this.CodeEditorComponent.GetCodeAsync();
 
                 result = await this.CompilationService.CompileToAssembly(
                     "UserPage.razor",
@@ -79,12 +84,16 @@
                 this.Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
                 this.AreDiagnosticsShown = true;
             }
+            catch (Exception)
+            {
+                this.PageNotificationsComponent.AddNotification(NotificationType.Error, content: "Error while compiling the code.");
+            }
             finally
             {
                 this.Loading = false;
             }
 
-            if (result.AssemblyBytes != null && result.AssemblyBytes.Length > 0)
+            if (result?.AssemblyBytes?.Length > 0)
             {
                 await this.JsRuntime.InvokeVoidAsync("App.Repl.updateUserAssemblyInCacheStorage", result.AssemblyBytes);
 
@@ -123,6 +132,13 @@
                     this.dotNetInstance);
             }
 
+            if (!string.IsNullOrWhiteSpace(this.errorMessage) && this.PageNotificationsComponent != null)
+            {
+                this.PageNotificationsComponent.AddNotification(NotificationType.Error, content: this.errorMessage);
+
+                this.errorMessage = null;
+            }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -130,7 +146,18 @@
         {
             if (!string.IsNullOrWhiteSpace(this.SnippetId))
             {
-                this.SnippetContent = await this.SnippetsService.GetSnippetContentAsync(this.SnippetId);
+                try
+                {
+                    this.SnippetContent = await this.SnippetsService.GetSnippetContentAsync(this.SnippetId);
+                }
+                catch (ArgumentException)
+                {
+                    this.errorMessage = "Invalid Snippet ID.";
+                }
+                catch (Exception)
+                {
+                    this.errorMessage = "Unable to get snippet content. Please try again later.";
+                }
             }
 
             const string DefaultUserPageAssemblyBytes = "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AAAAABglAAAAAAAAAAAAAAAAX0NvckRsbE1haW4AbXNjb3JlZS5kbGwAAAAAAP8lACAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAADAAAADg1AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
