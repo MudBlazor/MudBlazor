@@ -1,7 +1,6 @@
 ﻿namespace BlazorRepl.Client.Components
 {
     using System;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components.Models;
     using BlazorRepl.Client.Services;

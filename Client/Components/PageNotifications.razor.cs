@@ -5,7 +5,7 @@
 
     public partial class PageNotifications
     {
-        private readonly ICollection<PageNotification> notifications = new List<PageNotification>();
+        private readonly IList<PageNotification> notifications = new List<PageNotification>();
 
         public void AddNotification(NotificationType type, string content, string title = null)
         {

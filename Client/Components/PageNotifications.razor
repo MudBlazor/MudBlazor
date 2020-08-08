@@ -1,6 +1,7 @@
 ﻿<div class="page-notifications-container">
-    @foreach (var notification in notifications)
+    @for (var i = notifications.Count - 1; i >= 0; i--)
     {
+        var notification = notifications[i];
         var alertClass = GetAlertClass(notification.Type);
         <div class="alert @alertClass alert-dismissible fade show" role="alert">
             @if (!string.IsNullOrWhiteSpace(notification.Title))
@@ -9,7 +10,12 @@
             }
 
             @notification.Content
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close" @onclick="@(() => RemoveNotification(notification))" @onclick:preventDefault>
+            <button type="button"
+                    class="close"
+                    data-dismiss="alert"
+                    aria-label="Close"
+                    @onclick="@(() => RemoveNotification(notification))"
+                    @onclick:preventDefault>
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>

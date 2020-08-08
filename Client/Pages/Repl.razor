@@ -17,7 +17,9 @@
     </div>
 </nav>
 
-<SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeEditorComponent="@CodeEditorComponent"></SaveSnippetPopup>
+<SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible"
+                  InvokerId="save-snippet-btn"
+                  CodeEditorComponent="@CodeEditorComponent"></SaveSnippetPopup>
 
 <div class="row flex" style="margin: 0">
     <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
