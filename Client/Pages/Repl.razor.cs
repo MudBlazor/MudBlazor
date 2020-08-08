@@ -115,6 +115,7 @@
         public void Dispose()
         {
             this.dotNetInstance?.Dispose();
+
             _ = this.JsRuntime.InvokeVoidAsync("App.Repl.dispose");
         }
 
@@ -144,6 +145,8 @@
 
         protected override async Task OnInitializedAsync()
         {
+            this.PageNotificationsComponent?.Clear();
+
             if (!string.IsNullOrWhiteSpace(this.SnippetId))
             {
                 try

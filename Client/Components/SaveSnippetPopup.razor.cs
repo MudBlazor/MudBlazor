@@ -99,6 +99,7 @@
         public void Dispose()
         {
             this.dotNetInstance?.Dispose();
+
             _ = this.JsRuntime.InvokeVoidAsync("App.SaveSnippetPopup.dispose");
         }
 

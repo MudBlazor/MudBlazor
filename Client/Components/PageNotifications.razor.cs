@@ -17,7 +17,14 @@
             }
         }
 
-        private string GetAlertClass(NotificationType type) =>
+        public void Clear()
+        {
+            this.notifications.Clear();
+
+            this.StateHasChanged();
+        }
+
+        private static string GetAlertClass(NotificationType type) =>
             type switch
             {
                 NotificationType.Info => "alert-info",
