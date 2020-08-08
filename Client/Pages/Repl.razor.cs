@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components;
+    using BlazorRepl.Client.Components.Models;
     using BlazorRepl.Client.Services;
     using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components;
@@ -25,6 +26,7 @@
 ";
 
         private DotNetObjectReference<Repl> dotNetInstance;
+        private string errorMessage;
 
         [Inject]
         public SnippetsService SnippetsService { get; set; }
@@ -35,10 +37,13 @@
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
 
+        [CascadingParameter]
+        public PageNotifications PageNotificationsComponent { get; set; }
+
         [Parameter]
         public string SnippetId { get; set; }
 
-        public CodeEditor CodeEditor { get; set; }
+        public CodeEditor CodeEditorComponent { get; set; }
 
         public string SnippetContent { get; set; }
 
@@ -68,7 +73,7 @@
             CompileToAssemblyResult result;
             try
             {
-                var code = await this.CodeEditor.GetCodeAsync();
+                var code = await this.CodeEditorComponent.GetCodeAsync();
 
                 result = await this.CompilationService.CompileToAssembly(
                     "UserPage.razor",
@@ -123,6 +128,13 @@
                     this.dotNetInstance);
             }
 
+            if (!string.IsNullOrWhiteSpace(this.errorMessage) && this.PageNotificationsComponent != null)
+            {
+                this.PageNotificationsComponent.AddNotification(NotificationType.Error, content: this.errorMessage);
+
+                this.errorMessage = null;
+            }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -130,7 +142,18 @@
         {
             if (!string.IsNullOrWhiteSpace(this.SnippetId))
             {
-                this.SnippetContent = await this.SnippetsService.GetSnippetContentAsync(this.SnippetId);
+                try
+                {
+                    this.SnippetContent = await this.SnippetsService.GetSnippetContentAsync(this.SnippetId);
+                }
+                catch (ArgumentException)
+                {
+                    this.errorMessage = "Invalid Snippet ID.";
+                }
+                catch (Exception)
+                {
+                    this.errorMessage = "Unable to get snippet content. Please try again later.";
+                }
             }
 
             await base.OnInitializedAsync();

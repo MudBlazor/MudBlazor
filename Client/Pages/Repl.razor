@@ -17,13 +17,13 @@
     </div>
 </nav>
 
-<SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeEditor="@CodeEditor"></SaveSnippetPopup>
+<SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible" InvokerId="save-snippet-btn" CodeEditorComponent="@CodeEditorComponent"></SaveSnippetPopup>
 
 <div class="row flex" style="margin: 0">
     <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
 
     <div id="user-code-editor-container">
-        <CodeEditor @ref="@CodeEditor" DefaultCode="@SnippetContent"></CodeEditor>
+        <CodeEditor @ref="@CodeEditorComponent" DefaultCode="@SnippetContent"></CodeEditor>
     </div>
     <div id="user-page-window-container">
         <iframe id="user-page-window" src="/user-page" style="width: 100%; height: 100%"></iframe>
