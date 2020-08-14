@@ -22,9 +22,9 @@
         [Parameter]
         public EventCallback<bool> ShowChanged { get; set; }
 
-        public int ErrorsCount { get; set; }
+        public int ErrorsCount => this.Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error);
 
-        public int WarningsCount { get; set; }
+        public int WarningsCount => this.Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
 
         public bool ShowIcon => this.Diagnostics.Any();
 
@@ -32,12 +32,6 @@
         {
             this.Show = !this.Show;
             return this.ShowChanged.InvokeAsync(this.Show);
-        }
-
-        protected override void OnInitialized()
-        {
-            this.ErrorsCount = this.Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Error);
-            this.WarningsCount = this.Diagnostics.Count(d => d.Severity == DiagnosticSeverity.Warning);
         }
     }
 }
