@@ -11,7 +11,7 @@ html {
 }
 
 body {
-    background-color: var(--theme-palette-main-background-default, #fff) !important;
+    background-color: #fff !important;
     height: 100%;
 }
 
@@ -22,5 +22,5 @@ a {
 .root {
     height: 100%;
     display: flex;
-    background-color: var(--theme-palette-main-background-default, #fff);
+    background-color: #fff;
 }

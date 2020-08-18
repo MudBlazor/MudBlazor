@@ -17,11 +17,6 @@
 
 
   <ItemGroup>
-    <Folder Include="Components\" />
-  </ItemGroup>
-
-
-  <ItemGroup>
     <None Include="compilerconfig.json" />
   </ItemGroup>
 
