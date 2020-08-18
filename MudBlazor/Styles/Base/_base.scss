@@ -1,0 +1,26 @@
+﻿* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    height: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    background-color: var(--theme-palette-main-background-default, #fff) !important;
+    height: 100%;
+}
+
+a {
+    text-decoration: none;
+}
+
+.root {
+    height: 100%;
+    display: flex;
+    background-color: var(--theme-palette-main-background-default, #fff);
+}
