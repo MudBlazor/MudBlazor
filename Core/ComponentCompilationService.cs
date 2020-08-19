@@ -11,6 +11,7 @@
     using System.Runtime;
     using System.Text;
     using System.Threading.Tasks;
+
     using Microsoft.AspNetCore.Components.Routing;
     using Microsoft.AspNetCore.Razor.Language;
     using Microsoft.CodeAnalysis;
@@ -74,17 +75,16 @@
         }
 
         public async Task<CompileToAssemblyResult> CompileToAssembly(
-            string cshtmlFileName,
-            string cshtmlContent,
+            IReadOnlyList<ComponentFile> componentFiles,
             string preset,
             Func<string, Task> updateStatusFunc) // TODO: try convert to event
         {
             var compilation = baseCompilation;
 
-            var cSharpResult = await this.CompileToCSharp(cshtmlFileName, cshtmlContent, compilation, updateStatusFunc);
+            var cSharpResults = await this.CompileToCSharp(componentFiles, compilation, updateStatusFunc);
 
             await (updateStatusFunc?.Invoke("Compiling Assembly") ?? Task.CompletedTask);
-            var result = CompileToAssembly(cSharpResult);
+            var result = CompileToAssembly(cSharpResults, compilation);
 
             return result;
         }
@@ -106,32 +106,43 @@
             return streams;
         }
 
-        private static CompileToAssemblyResult CompileToAssembly(CompileToCSharpResult cSharpResult)
+        private static CompileToAssemblyResult CompileToAssembly(
+            IReadOnlyList<CompileToCSharpResult> cSharpResults,
+            CSharpCompilation compilation)
         {
-            if (cSharpResult.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
+            var resultWithError = cSharpResults.FirstOrDefault(r => r.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error));
+            if (resultWithError != null)
             {
-                return new CompileToAssemblyResult { Diagnostics = cSharpResult.Diagnostics, };
+                return new CompileToAssemblyResult { Diagnostics = resultWithError.Diagnostics, };
             }
 
-            var syntaxTrees = new[] { CSharpSyntaxTree.ParseText(cSharpResult.Code, cSharpParseOptions) };
+            var syntaxTrees = new SyntaxTree[cSharpResults.Count];
+            for (var i = 0; i < cSharpResults.Count; i++)
+            {
+                var cSharpResult = cSharpResults[i];
+                syntaxTrees[i] = CSharpSyntaxTree.ParseText(cSharpResult.Code, cSharpParseOptions);
+            }
 
-            var compilation = cSharpResult.BaseCompilation.AddSyntaxTrees(syntaxTrees);
+            var finalCompilation = compilation.AddSyntaxTrees(syntaxTrees);
 
-            var diagnostics = compilation
+            var diagnostics = finalCompilation
                 .GetDiagnostics()
                 .Where(d => d.Severity > DiagnosticSeverity.Info)
                 .ToList();
 
             var result = new CompileToAssemblyResult
             {
-                Compilation = compilation,
-                Diagnostics = diagnostics.Select(CompilationDiagnostic.FromCSharpDiagnostic).Concat(cSharpResult.Diagnostics).ToList(),
+                Compilation = finalCompilation,
+                Diagnostics = diagnostics
+                    .Select(CompilationDiagnostic.FromCSharpDiagnostic)
+                    .Concat(cSharpResults.SelectMany(r => r.Diagnostics))
+                    .ToList(),
             };
 
             if (result.Diagnostics.All(x => x.Severity != DiagnosticSeverity.Error))
             {
                 using var peStream = new MemoryStream();
-                compilation.Emit(peStream);
+                finalCompilation.Emit(peStream);
 
                 result.AssemblyBytes = peStream.ToArray();
             }
@@ -161,9 +172,8 @@
                 Encoding.UTF8.GetBytes(cshtmlContent.TrimStart()));
         }
 
-        private async Task<CompileToCSharpResult> CompileToCSharp(
-            string cshtmlFileName,
-            string cshtmlContent,
+        private async Task<IReadOnlyList<CompileToCSharpResult>> CompileToCSharp(
+            IReadOnlyList<ComponentFile> componentFiles,
             CSharpCompilation compilation,
             Func<string, Task> updateStatusFunc)
         {
@@ -171,23 +181,29 @@
             var projectEngine = this.CreateProjectEngine(Array.Empty<MetadataReference>());
 
             // Result of generating declarations
-            var projectItem = CreateProjectItem(cshtmlFileName, cshtmlContent);
-
-            var codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
-            var cSharpDocument = codeDocument.GetCSharpDocument();
-
-            var declaration = new CompileToCSharpResult
+            var declarations = new CompileToCSharpResult[componentFiles.Count];
+            for (var i = 0; i < componentFiles.Count; i++)
             {
-                BaseCompilation = compilation,
-                Code = cSharpDocument.GeneratedCode,
-                Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
-            };
+                var componentFile = componentFiles[i];
+
+                var projectItem = CreateProjectItem(componentFile.Name, componentFile.Content);
+
+                var codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
+                var cSharpDocument = codeDocument.GetCSharpDocument();
+
+                declarations[i] = new CompileToCSharpResult
+                {
+                    ProjectItem = projectItem,
+                    Code = cSharpDocument.GeneratedCode,
+                    Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
+                };
+            }
 
             // Result of doing 'temp' compilation
-            var tempAssembly = CompileToAssembly(declaration);
+            var tempAssembly = CompileToAssembly(declarations, compilation);
             if (tempAssembly.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
             {
-                return new CompileToCSharpResult { Diagnostics = tempAssembly.Diagnostics, };
+                return new[] { new CompileToCSharpResult { Diagnostics = tempAssembly.Diagnostics, } };
             }
 
             // Add the 'temp' compilation as a metadata reference
@@ -196,16 +212,24 @@
 
             await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
 
-            // Result of real code generation for the document
-            codeDocument = projectEngine.Process(projectItem);
-            cSharpDocument = codeDocument.GetCSharpDocument();
-
-            return new CompileToCSharpResult
+            // Result of real code generation for the documents
+            var results = new CompileToCSharpResult[componentFiles.Count];
+            for (var i = 0; i < declarations.Length; i++)
             {
-                BaseCompilation = compilation,
-                Code = cSharpDocument.GeneratedCode,
-                Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
-            };
+                var declaration = declarations[i];
+
+                var codeDocument = projectEngine.Process(declaration.ProjectItem);
+                var cSharpDocument = codeDocument.GetCSharpDocument();
+
+                results[i] = new CompileToCSharpResult
+                {
+                    ProjectItem = declaration.ProjectItem,
+                    Code = cSharpDocument.GeneratedCode,
+                    Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
+                };
+            }
+
+            return results;
         }
 
         private RazorProjectEngine CreateProjectEngine(IReadOnlyList<MetadataReference> references) =>
