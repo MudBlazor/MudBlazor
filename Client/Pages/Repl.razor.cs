@@ -4,12 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-
     using BlazorRepl.Client.Components;
     using BlazorRepl.Client.Components.Models;
     using BlazorRepl.Client.Services;
     using BlazorRepl.Core;
-
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
 

@@ -129,15 +129,12 @@
 
             var finalCompilation = compilation.AddSyntaxTrees(syntaxTrees);
 
-            var diagnostics = finalCompilation
-                .GetDiagnostics()
-                .Where(d => d.Severity > DiagnosticSeverity.Info)
-                .ToList();
+            var compilationDiagnostics = finalCompilation.GetDiagnostics().Where(d => d.Severity > DiagnosticSeverity.Info);
 
             var result = new CompileToAssemblyResult
             {
                 Compilation = finalCompilation,
-                Diagnostics = diagnostics
+                Diagnostics = compilationDiagnostics
                     .Select(CompilationDiagnostic.FromCSharpDiagnostic)
                     .Concat(cSharpResults.SelectMany(r => r.Diagnostics))
                     .ToList(),
@@ -154,7 +151,7 @@
             return result;
         }
 
-        private static RazorProjectItem CreateProjectItem(string cshtmlFileName, string cshtmlContent)
+        private static RazorProjectItem CreateRazorProjectItem(string cshtmlFileName, string cshtmlContent)
         {
             var fullPath = WorkingDirectory + cshtmlFileName;
 
@@ -182,7 +179,7 @@
             Func<string, Task> updateStatusFunc)
         {
             // The first phase won't include any metadata references for component discovery. This mirrors what the build does.
-            var projectEngine = this.CreateProjectEngine(Array.Empty<MetadataReference>());
+            var projectEngine = this.CreateRazorProjectEngine(Array.Empty<MetadataReference>());
 
             // Result of generating declarations
             var declarations = new CompileToCSharpResult[componentFiles.Count];
@@ -190,7 +187,7 @@
             {
                 var componentFile = componentFiles[i];
 
-                var projectItem = CreateProjectItem(componentFile.Name, componentFile.Content);
+                var projectItem = CreateRazorProjectItem(componentFile.Name, componentFile.Content);
 
                 var codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
                 var cSharpDocument = codeDocument.GetCSharpDocument();
@@ -211,8 +208,8 @@
             }
 
             // Add the 'temp' compilation as a metadata reference
-            var references = compilation.References.Concat(new[] { tempAssembly.Compilation.ToMetadataReference() }).ToList();
-            projectEngine = this.CreateProjectEngine(references);
+            var references = new List<MetadataReference>(compilation.References) { tempAssembly.Compilation.ToMetadataReference() };
+            projectEngine = this.CreateRazorProjectEngine(references);
 
             await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
 
@@ -236,7 +233,7 @@
             return results;
         }
 
-        private RazorProjectEngine CreateProjectEngine(IReadOnlyList<MetadataReference> references) =>
+        private RazorProjectEngine CreateRazorProjectEngine(IReadOnlyList<MetadataReference> references) =>
             RazorProjectEngine.Create(this.configuration, this.fileSystem, b =>
             {
                 b.SetRootNamespace(DefaultRootNamespace);
