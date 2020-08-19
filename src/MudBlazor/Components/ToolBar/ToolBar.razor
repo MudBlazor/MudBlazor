@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@using MudBlazor.Extensions
+
+<div class="@Classname">
+    @ChildContent
+</div>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("mud-toolbar-root")
+      .AddClass($"mud-toolbar-{Variant.ToDescriptionString()}")
+      .AddClass($"mud-toolbar-gutters", !DisableGutters)
+      .AddClass(Class)
+    .Build();
+
+    [Parameter] public bool DisableGutters { get; set; }
+
+    [Parameter] public Variant Variant { get; set; } = Variant.Regular;
+
+    [Parameter] public string Class { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+}
