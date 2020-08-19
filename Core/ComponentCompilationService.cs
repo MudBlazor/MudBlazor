@@ -11,7 +11,6 @@
     using System.Runtime;
     using System.Text;
     using System.Threading.Tasks;
-
     using Microsoft.AspNetCore.Components.Routing;
     using Microsoft.AspNetCore.Razor.Language;
     using Microsoft.CodeAnalysis;
@@ -29,10 +28,11 @@
         private static CSharpCompilation baseCompilation;
         private static CSharpParseOptions cSharpParseOptions;
 
-        private RazorConfiguration Configuration { get; } =
-            RazorConfiguration.Create(RazorLanguageVersion.Latest, "MVC-3.0", Array.Empty<RazorExtension>());
-
-        private RazorProjectFileSystem FileSystem { get; } = new VirtualRazorProjectFileSystem();
+        private readonly RazorProjectFileSystem fileSystem = new VirtualRazorProjectFileSystem();
+        private readonly RazorConfiguration configuration = RazorConfiguration.Create(
+            RazorLanguageVersion.Latest,
+            configurationName: "Blazor",
+            extensions: Array.Empty<RazorExtension>());
 
         public static async Task Init(HttpClient httpClient)
         {
@@ -66,7 +66,7 @@
                 .ToList();
 
             baseCompilation = CSharpCompilation.Create(
-                "BlazorRepl.UserComponent",
+                "BlazorRepl.UserComponents",
                 Array.Empty<SyntaxTree>(),
                 basicReferenceAssemblies,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
@@ -79,6 +79,11 @@
             string preset,
             Func<string, Task> updateStatusFunc) // TODO: try convert to event
         {
+            if (componentFiles == null)
+            {
+                throw new ArgumentNullException(nameof(componentFiles));
+            }
+
             var compilation = baseCompilation;
 
             var cSharpResults = await this.CompileToCSharp(componentFiles, compilation, updateStatusFunc);
@@ -110,10 +115,9 @@
             IReadOnlyList<CompileToCSharpResult> cSharpResults,
             CSharpCompilation compilation)
         {
-            var resultWithError = cSharpResults.FirstOrDefault(r => r.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error));
-            if (resultWithError != null)
+            if (cSharpResults.Any(r => r.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error)))
             {
-                return new CompileToAssemblyResult { Diagnostics = resultWithError.Diagnostics, };
+                return new CompileToAssemblyResult { Diagnostics = cSharpResults.SelectMany(r => r.Diagnostics).ToList() };
             }
 
             var syntaxTrees = new SyntaxTree[cSharpResults.Count];
@@ -203,11 +207,11 @@
             var tempAssembly = CompileToAssembly(declarations, compilation);
             if (tempAssembly.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
             {
-                return new[] { new CompileToCSharpResult { Diagnostics = tempAssembly.Diagnostics, } };
+                return new[] { new CompileToCSharpResult { Diagnostics = tempAssembly.Diagnostics } };
             }
 
             // Add the 'temp' compilation as a metadata reference
-            var references = compilation.References.Concat(new[] { tempAssembly.Compilation.ToMetadataReference() }).ToArray();
+            var references = compilation.References.Concat(new[] { tempAssembly.Compilation.ToMetadataReference() }).ToList();
             projectEngine = this.CreateProjectEngine(references);
 
             await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
@@ -233,7 +237,7 @@
         }
 
         private RazorProjectEngine CreateProjectEngine(IReadOnlyList<MetadataReference> references) =>
-            RazorProjectEngine.Create(this.Configuration, this.FileSystem, b =>
+            RazorProjectEngine.Create(this.configuration, this.fileSystem, b =>
             {
                 b.SetRootNamespace(DefaultRootNamespace);
 
@@ -241,7 +245,7 @@
                 CompilerFeatures.Register(b);
 
                 b.Features.Add(new CompilationTagHelperFeature());
-                b.Features.Add(new DefaultMetadataReferenceFeature { References = references, });
+                b.Features.Add(new DefaultMetadataReferenceFeature { References = references });
             });
     }
 }
