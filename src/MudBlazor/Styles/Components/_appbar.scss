@@ -1,1 +1,68 @@
 ﻿
+.mud-appbar-root {
+    width: 100%;
+    display: flex;
+    z-index: 1100;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    flex-direction: column;
+}
+
+.mud-appbar-position-fixed {
+    top: 0;
+    left: auto;
+    right: 0;
+    position: fixed;
+}
+
+@media print {
+    .mud-appbar-position-fixed {
+        position: absolute;
+    }
+}
+
+.mud-appbar-position-absolute {
+    top: 0;
+    left: auto;
+    right: 0;
+    position: absolute;
+}
+
+.mud-appbar-position-sticky {
+    top: 0;
+    left: auto;
+    right: 0;
+    position: sticky;
+}
+
+.mud-appbar-position-static {
+    position: static;
+}
+
+.mud-appbar-position-relative {
+    position: relative;
+}
+
+.mud-appbar-color-default {
+    color: rgba(0, 0, 0, 0.87);
+    background-color: #f5f5f5;
+}
+
+.mud-appbar-color-primary {
+    color: #fff;
+    background-color: #1976d2;
+}
+
+.mud-appbar-color-secondary {
+    color: #fff;
+    background-color: rgb(220, 0, 78);
+}
+
+.mud-appbar-color-inherit {
+    color: inherit;
+}
+
+.mud-appbar-color-transparent {
+    color: inherit;
+    background-color: transparent;
+}
