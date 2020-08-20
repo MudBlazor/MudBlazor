@@ -1,0 +1,37 @@
+﻿.mud-divider-root {
+    border: none;
+    height: 1px;
+    margin: 0;
+    flex-shrink: 0;
+    background-color: rgba(0, 0, 0, 0.12);
+}
+
+.mud-divider-absolute {
+    left: 0;
+    width: 100%;
+    bottom: 0;
+    position: absolute;
+}
+
+.mud-divider-inset {
+    margin-left: 72px;
+}
+
+.mud-divider-light {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.mud-divider-middle {
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
+.mud-divider-vertical {
+    width: 1px;
+    height: 100%;
+}
+
+.mud-divider-flexitem {
+    height: auto;
+    align-self: stretch;
+}
