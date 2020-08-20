@@ -20,4 +20,9 @@
     <None Include="compilerconfig.json" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Folder Include="Components\Main\" />
+  </ItemGroup>
+
 </Project>

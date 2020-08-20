@@ -1,27 +1,26 @@
-﻿* {
+﻿html {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0; }
-
-html {
-  height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
-body {
-  background-color: #fff !important;
-  height: 100%; }
+*, *::before, *::after {
+  box-sizing: inherit; }
 
-a {
-  text-decoration: none; }
+strong, b {
+  font-weight: 700; }
+
+body {
+  color: rgba(0, 0, 0, 0.87);
+  margin: 0;
+  font-size: 0.875rem;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 400;
+  line-height: 1.43;
+  letter-spacing: 0.01071em;
+  background-color: #fff; }
 
 app {
   display: flex; }
-
-.root {
-  height: 100%;
-  display: flex;
-  background-color: #fff; }
 
 #blazor-error-ui {
   background: lightyellow;
@@ -450,6 +449,37 @@ app {
   flex-shrink: 0;
   user-select: none; }
 
+.mud-divider-root {
+  border: none;
+  height: 1px;
+  margin: 0;
+  flex-shrink: 0;
+  background-color: rgba(0, 0, 0, 0.12); }
+
+.mud-divider-absolute {
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  position: absolute; }
+
+.mud-divider-inset {
+  margin-left: 72px; }
+
+.mud-divider-light {
+  background-color: rgba(0, 0, 0, 0.08); }
+
+.mud-divider-middle {
+  margin-left: 16px;
+  margin-right: 16px; }
+
+.mud-divider-vertical {
+  width: 1px;
+  height: 100%; }
+
+.mud-divider-flexitem {
+  height: auto;
+  align-self: stretch; }
+
 .mud-appbar-root {
   width: 100%;
   display: flex;
@@ -532,3 +562,80 @@ app {
 
 .mud-toolbar-dense {
   min-height: 48px; }
+
+.mud-main-content {
+  padding: 24px;
+  flex-grow: 1;
+  transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+  margin-left: -240px; }
+
+.mud-drawer-header {
+  min-height: 64px; }
+
+.mud-main-appbar-spacer {
+  min-height: 64px; }
+
+.mud-drawer-docked {
+  flex: 0 0 auto; }
+
+.mud-drawer-root.mud-drawer-docked {
+  width: 240px;
+  flex-shrink: 0; }
+  .mud-drawer-root.mud-drawer-docked > div {
+    width: 240px; }
+
+.mud-drawer--open {
+  transform: none;
+  transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms; }
+
+.mud-drawer--closed {
+  transform: translateX(-240px);
+  visibility: hidden; }
+
+.mud-drawer-paper {
+  top: 0;
+  flex: 1 0 auto;
+  height: 100%;
+  display: flex;
+  outline: 0;
+  z-index: 1200;
+  position: fixed;
+  overflow-y: auto;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch; }
+
+.mud-drawer-paper-anchor-left {
+  left: 0;
+  right: auto; }
+
+.mud-drawer-paper-anchor-right {
+  left: auto;
+  right: 0; }
+
+.mud-drawer-paper-anchor-top {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  height: auto;
+  max-height: 100%; }
+
+.mud-drawer-paper-anchor-bottom {
+  top: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: auto;
+  max-height: 100%; }
+
+.mud-drawer-paper-anchor-docked-left {
+  border-right: 1px solid rgba(0, 0, 0, 0.12); }
+
+.mud-drawer-paper-anchor-docked-top {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12); }
+
+.mud-drawer-paper-anchor-docked-right {
+  border-left: 1px solid rgba(0, 0, 0, 0.12); }
+
+.mud-drawer-paper-anchor-docked-bottom {
+  border-top: 1px solid rgba(0, 0, 0, 0.12); }

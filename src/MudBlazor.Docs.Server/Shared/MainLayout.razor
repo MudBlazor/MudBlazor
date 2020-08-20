@@ -1,12 +1,36 @@
 ﻿@inherits LayoutComponentBase
 
 
-<AppBar>
-    <ToolBar>
-        <IconButton Color="Color.Inherit" Edge="Edge.Start"></IconButton>
-    </ToolBar>
-</AppBar>
+    <AppBar>
+        <ToolBar>
+            <IconButton Color="Color.Inherit" Edge="Edge.Start"></IconButton>
+        </ToolBar>
+    </AppBar>
+    <Drawer DrawerOpen="false">
+        <div class="mud-drawer-header">
+            MudBlazor
+        </div>
+        <Divider />
+        <NavMenu />
+    </Drawer>
+    <main class="mud-main-content">
+        <div class="mud-main-appbar-spacer"></div>
+        @Body
+    </main>
 
-<NavMenu />
+@code {
+    bool _drawerOpen = false;
+    bool _fullWidthAppBar = false;
 
-@Body
+    void NavToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+        this.StateHasChanged();
+    }
+
+    void LayoutToggle()
+    {
+        _fullWidthAppBar = !_fullWidthAppBar;
+        this.StateHasChanged();
+    }
+}

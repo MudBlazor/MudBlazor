@@ -1,1 +1,101 @@
-﻿
+﻿//ToDo
+.mud-main-content {
+    padding: 24px;
+    flex-grow: 1;
+    transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+    margin-left: -240px;
+}
+
+.mud-drawer-header {
+    min-height: 64px;
+}
+
+
+.mud-main-appbar-spacer {
+    min-height: 64px;
+}
+
+// MudDrawer
+.mud-drawer-root {
+    
+}
+
+.mud-drawer-docked {
+    flex: 0 0 auto;
+}
+
+.mud-drawer-root.mud-drawer-docked {
+    width: 240px;
+    flex-shrink: 0;
+
+    & > div {
+        width: 240px;
+    }
+}
+
+.mud-drawer--open {
+    transform: none;
+    transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+}
+
+.mud-drawer--closed {
+    transform: translateX(-240px);
+    visibility: hidden;
+}
+
+.mud-drawer-paper {
+    top: 0;
+    flex: 1 0 auto;
+    height: 100%;
+    display: flex;
+    outline: 0;
+    z-index: 1200;
+    position: fixed;
+    overflow-y: auto;
+    flex-direction: column;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mud-drawer-paper-anchor-left {
+    left: 0;
+    right: auto;
+}
+
+.mud-drawer-paper-anchor-right {
+    left: auto;
+    right: 0;
+}
+
+.mud-drawer-paper-anchor-top {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    height: auto;
+    max-height: 100%;
+}
+
+.mud-drawer-paper-anchor-bottom {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: auto;
+    max-height: 100%;
+}
+
+.mud-drawer-paper-anchor-docked-left {
+    border-right: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.mud-drawer-paper-anchor-docked-top {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.mud-drawer-paper-anchor-docked-right {
+    border-left: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.mud-drawer-paper-anchor-docked-bottom {
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+}

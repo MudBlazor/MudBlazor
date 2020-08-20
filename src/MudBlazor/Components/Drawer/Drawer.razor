@@ -1,0 +1,46 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@using MudBlazor.Extensions
+
+
+<div class="mud-drawer-root mud-drawer-docked">
+    <div class="@Classname">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("mud-paper-root")
+      .AddClass($"mud-drawer-paper")
+      .AddClass($"mud-drawer-paper-anchor-left")
+      .AddClass($"mud-drawer-paper-anchor-docked-left")
+      .AddClass($"mud-drawer--open", DrawerOpen)
+      .AddClass($"mud-drawer--closed", !DrawerOpen)
+      .AddClass(Class)
+    .Build();
+
+    [Parameter] public string Class { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    public EventCallback<bool> ValueChanged { get; set; }
+
+    private bool _isOpen;
+
+    [Parameter]
+    public bool DrawerOpen
+    {
+        get => _isOpen;
+        set
+        {
+            if (value != _isOpen)
+            {
+                _isOpen = value;
+                ValueChanged.InvokeAsync(value);
+            }
+        }
+    }
+
+}
