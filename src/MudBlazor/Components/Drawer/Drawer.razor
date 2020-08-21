@@ -1,6 +1,5 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
-@using MudBlazor.Extensions
 
 
 <div class="mud-drawer-root mud-drawer-docked">
@@ -25,22 +24,6 @@
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    public EventCallback<bool> ValueChanged { get; set; }
-
-    private bool _isOpen;
-
-    [Parameter]
-    public bool DrawerOpen
-    {
-        get => _isOpen;
-        set
-        {
-            if (value != _isOpen)
-            {
-                _isOpen = value;
-                ValueChanged.InvokeAsync(value);
-            }
-        }
-    }
+    [CascadingParameter] bool DrawerOpen { get; set; }
 
 }

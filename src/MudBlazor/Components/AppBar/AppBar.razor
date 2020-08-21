@@ -3,7 +3,9 @@
 @using MudBlazor.Extensions
 
 <header class="@Classname">
-    @ChildContent
+    <ToolBar>
+        @ChildContent
+    </ToolBar>
 </header>
 
 @code {
@@ -13,6 +15,7 @@
       .AddClass($"mud-appbar-position-{Position.ToDescriptionString()}")
       .AddClass($"mud-appbar-color-{Color.ToDescriptionString()}")
       .AddClass($"mud-paper-elevation{Elevation.ToString()}")
+      .AddClass($"mud-appbar-drawer-open", DrawerOpen)
       .AddClass(Class)
     .Build();
 
@@ -25,5 +28,8 @@
     [Parameter] public string Class { get; set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [CascadingParameter] bool DrawerOpen { get; set; }
+
 
 }
