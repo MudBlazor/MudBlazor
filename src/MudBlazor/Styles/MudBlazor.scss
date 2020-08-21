@@ -8,7 +8,6 @@
 @import 'core/animations';
 
 
-
 @import 'components/button';
 @import 'components/grid';
 @import 'components/paper';
@@ -16,6 +15,8 @@
 @import 'components/divider';
 
 
-@import 'components/appbar';
-@import 'components/toolbar';
-@import 'components/drawer';
+@import 'layout/appbar';
+@import 'layout/toolbar';
+@import 'layout/drawer';
+@import 'layout/maincontent';
+@import 'layout/layout';

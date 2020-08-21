@@ -486,17 +486,19 @@ app {
   z-index: 1100;
   box-sizing: border-box;
   flex-shrink: 0;
-  flex-direction: column; }
+  flex-direction: column;
+  transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms, width 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms; }
+
+.mud-appbar-drawer-open {
+  width: calc(100% - 240px);
+  transition: margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms, width 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+  margin-left: 240px; }
 
 .mud-appbar-position-fixed {
   top: 0;
   left: auto;
   right: 0;
   position: fixed; }
-
-@media print {
-  .mud-appbar-position-fixed {
-    position: absolute; } }
 
 .mud-appbar-position-absolute {
   top: 0;
@@ -563,18 +565,6 @@ app {
 .mud-toolbar-dense {
   min-height: 48px; }
 
-.mud-main-content {
-  padding: 24px;
-  flex-grow: 1;
-  transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
-  margin-left: -240px; }
-
-.mud-drawer-header {
-  min-height: 64px; }
-
-.mud-main-appbar-spacer {
-  min-height: 64px; }
-
 .mud-drawer-docked {
   flex: 0 0 auto; }
 
@@ -583,6 +573,9 @@ app {
   flex-shrink: 0; }
   .mud-drawer-root.mud-drawer-docked > div {
     width: 240px; }
+
+.mud-drawer-header {
+  min-height: 64px; }
 
 .mud-drawer--open {
   transform: none;
@@ -639,3 +632,19 @@ app {
 
 .mud-drawer-paper-anchor-docked-bottom {
   border-top: 1px solid rgba(0, 0, 0, 0.12); }
+
+.mud-main-content {
+  padding: 24px;
+  flex-grow: 1;
+  transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+  margin-left: -240px; }
+
+.mud-main-appbar-spacer {
+  min-height: 64px; }
+
+.mud-main-drawer-open {
+  transition: margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+  margin-left: 0; }
+
+.mud-layout-root {
+  display: flex; }
