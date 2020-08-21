@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+
+
+<main class="@Classname">
+    <div class="mud-main-appbar-spacer"></div>
+    @ChildContent
+</main>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("mud-main-content")
+      .AddClass($"mud-main-drawer-open", DrawerOpen)
+      .AddClass(Class)
+    .Build();
+
+    [Parameter] public string Class { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [CascadingParameter] bool DrawerOpen { get; set; }
+    
+}

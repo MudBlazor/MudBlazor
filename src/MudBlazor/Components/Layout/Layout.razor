@@ -1,0 +1,37 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+
+
+<div class="@Classname">
+    <CascadingValue Value="@DrawerOpen">
+        @ChildContent
+    </CascadingValue>
+</div>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("mud-layout-root")
+        .AddClass(Class)
+    .Build();
+
+    [Parameter] public string Class { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private bool _isOpen;
+
+    [Parameter]
+    public bool DrawerOpen
+    {
+        get => _isOpen;
+        set
+        {
+            if (value != _isOpen)
+            {
+                _isOpen = value;
+                StateHasChanged();
+            }
+        }
+    }
+}
