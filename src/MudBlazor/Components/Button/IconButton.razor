@@ -1,9 +1,8 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Utilities
-@using MudBlazor.Extensions
+@inherits IconButtonBase
 
 
-<button class="@Classname">
+<button type="button" class="@Classname" @onclick="OnClickHandler" href="@Link" disabled="@Disabled">
     <span class="mud-iconbutton-label">
         <SvgIcon></SvgIcon>
     </span>
@@ -12,19 +11,5 @@
 
 @code {
 
-    protected string Classname =>
-    new CssBuilder("mud-button-base-root mud-iconbutton-root")
-      .AddClass($"mud-iconbutton-color-{Color.ToDescriptionString()}")
-      .AddClass($"mud-iconbutton-size-{Size.ToDescriptionString()}", when: () => Size != Size.Medium)
-      .AddClass($"mud-iconbutton-edge-{Edge.ToDescriptionString()}", when: () => !String.IsNullOrEmpty(Edge.ToDescriptionString()))
-      .AddClass(Class)
-    .Build();
 
-    [Parameter] public Color Color { get; set; } = Color.Default;
-
-    [Parameter] public Size Size { get; set; } = Size.Medium;
-
-    [Parameter] public Edge Edge { get; set; }
-
-    [Parameter] public string Class { get; set; }
 }
