@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+
+
+<div class="@Classname">
+    @ChildContent
+</div>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("mud-drawer-header")
+      .AddClass(Class)
+    .Build();
+
+    [Parameter] public string Class { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+}
