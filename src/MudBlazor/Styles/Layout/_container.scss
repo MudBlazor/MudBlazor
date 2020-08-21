@@ -1,0 +1,76 @@
+﻿
+.mud-container-root {
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+@media (min-width:600px) {
+    .mud-container-root {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}
+
+.mud-container-disable-gutters {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+@media (min-width:600px) {
+    .mud-container-fixed {
+        max-width: 600px;
+    }
+}
+
+@media (min-width:960px) {
+    .mud-container-fixed {
+        max-width: 960px;
+    }
+}
+
+@media (min-width:1280px) {
+    .mud-container-fixed {
+        max-width: 1280px;
+    }
+}
+
+@media (min-width:1920px) {
+    .mud-container-fixed {
+        max-width: 1920px;
+    }
+}
+
+@media (min-width:0px) {
+    .mud-container-maxwidth-xs {
+        max-width: 444px;
+    }
+}
+
+@media (min-width:600px) {
+    .mud-container-maxwidth-sm {
+        max-width: 600px;
+    }
+}
+
+@media (min-width:960px) {
+    .mud-container-maxwidth-md {
+        max-width: 960px;
+    }
+}
+
+@media (min-width:1280px) {
+    .mud-container-maxwidth-lg {
+        max-width: 1280px;
+    }
+}
+
+@media (min-width:1920px) {
+    .mud-container-maxwidth-xl {
+        max-width: 1920px;
+    }
+}

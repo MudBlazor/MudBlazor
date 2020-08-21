@@ -1,22 +1,4 @@
-﻿//ToDo
-.mud-main-content {
-    padding: 24px;
-    flex-grow: 1;
-    transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
-    margin-left: -240px;
-}
-
-.mud-drawer-header {
-    min-height: 64px;
-}
-
-
-.mud-main-appbar-spacer {
-    min-height: 64px;
-}
-
-// MudDrawer
-.mud-drawer-root {
+﻿.mud-drawer-root {
     
 }
 
@@ -31,6 +13,10 @@
     & > div {
         width: 240px;
     }
+}
+
+.mud-drawer-header {
+    min-height: 64px;
 }
 
 .mud-drawer--open {

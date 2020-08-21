@@ -6,6 +6,13 @@
     box-sizing: border-box;
     flex-shrink: 0;
     flex-direction: column;
+    transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms,width 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+}
+
+.mud-appbar-drawer-open {
+    width: calc(100% - 240px);
+    transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,width 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+    margin-left: 240px;
 }
 
 .mud-appbar-position-fixed {
@@ -13,12 +20,6 @@
     left: auto;
     right: 0;
     position: fixed;
-}
-
-@media print {
-    .mud-appbar-position-fixed {
-        position: absolute;
-    }
 }
 
 .mud-appbar-position-absolute {
