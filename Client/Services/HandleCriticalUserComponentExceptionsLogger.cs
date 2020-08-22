@@ -5,7 +5,7 @@
     using Microsoft.JSInterop;
 
     // This is a workaround for the currently missing global exception handling mechanism in Blazor. If the user's code generates
-    // an assembly that throws TypeLoadException on load, we need to override the stored assembly in browser's cache storage
+    // an assembly that make the app throw a critical exception on start, we need to override the stored assembly in browser's cache storage
     // so the app works on reload. (Approach: https://github.com/dotnet/aspnetcore/issues/13452#issuecomment-632660280)
     public class HandleCriticalUserComponentExceptionsLogger : ILogger
     {
