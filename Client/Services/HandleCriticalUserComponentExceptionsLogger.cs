@@ -23,7 +23,7 @@
             Exception exception,
             Func<TState, Exception, string> formatter)
         {
-            if (exception is TypeLoadException tle && tle.TypeName.StartsWith("BlazorRepl.UserComponents"))
+            if (exception?.ToString()?.Contains("BlazorRepl.UserComponents") ?? false)
             {
                 this.jsRuntime.InvokeVoidAsync(
                     "App.Repl.updateUserAssemblyInCacheStorage",
