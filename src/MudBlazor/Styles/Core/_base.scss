@@ -1,11 +1,13 @@
-﻿html {
+﻿* {
     box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 0;
 }
 
-*, *::before, *::after {
-    box-sizing: inherit;
+html {
+    height: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 strong, b {
@@ -13,8 +15,8 @@ strong, b {
 }
 
 body {
+    height: 100%;
     color: rgba(0, 0, 0, 0.87);
-    margin: 0;
     font-size: 0.875rem;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 400;
@@ -23,6 +25,12 @@ body {
     background-color: #fff;
 }
 
-app {
-    display: flex;
+a {
+    text-decoration: none;
+}
+
+// Temp & Test
+
+.padding-20p {
+    padding: 20px;
 }
