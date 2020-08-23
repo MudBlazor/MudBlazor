@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@using MudBlazor.Extensions
+
+
+<CascadingValue Value="this">
+    <div class="@Classname">
+        @ChildContent
+    </div>
+</CascadingValue>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("mud-grid-root mud-grid-container")
+      .AddClass("mud-grid-spacing-xs-3")
+      .AddClass(Class)
+    .Build();
+
+    [Parameter] public string Class { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+}

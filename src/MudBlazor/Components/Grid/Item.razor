@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@using MudBlazor.Extensions
+
+
+
+<div class="@Classname">
+    @ChildContent
+</div>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("mud-grid-root mud-grid-item")
+      .AddClass(Class)
+    .Build();
+
+    [CascadingParameter]
+    private Grid Parent { get; set; }
+
+    [Parameter] public string Class { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Parent == null)
+            throw new ArgumentNullException(nameof(Parent), "Item must exist within a Grid");
+        base.OnInitialized();
+    }
+}
+
