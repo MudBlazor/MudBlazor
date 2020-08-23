@@ -2,16 +2,16 @@
 @using MudBlazor.Utilities
 
 
-<main class="@Classname">
-    <div class="mud-main-appbar-spacer"></div>
+<div class="@Classname">
     @ChildContent
-</main>
+</div>
 
 @code {
 
     protected string Classname =>
-    new CssBuilder("mud-main-content")
+    new CssBuilder("mud-main-content-root")
       .AddClass($"mud-main-drawer-open", DrawerOpen)
+      .AddClass($"mud-main-drawer-closed", !DrawerOpen)
       .AddClass(Class)
     .Build();
 
