@@ -4,9 +4,10 @@
     using Microsoft.Extensions.Logging;
     using Microsoft.JSInterop;
 
-    // This is a workaround for the currently missing global exception handling mechanism in Blazor. If the user's code generates
-    // an assembly that make the app throw a critical exception on start, we need to override the stored assembly in browser's cache storage
-    // so the app works on reload. (Approach: https://github.com/dotnet/aspnetcore/issues/13452#issuecomment-632660280)
+    // This is a workaround for the currently missing global exception handling mechanism in Blazor. If the user code generates
+    // an assembly that makes the app throw an exception, we need to override the stored assembly in browser's cache storage
+    // so the app works on reload in cases of exceptions for duplicate routes, invalid directives, etc.
+    // (Approach: https://github.com/dotnet/aspnetcore/issues/13452#issuecomment-632660280)
     public class HandleCriticalUserComponentExceptionsLogger : ILogger
     {
         private readonly IJSRuntime jsRuntime;
