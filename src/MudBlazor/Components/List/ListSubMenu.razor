@@ -1,0 +1,14 @@
+﻿@namespace MudBlazor
+@inherits ComponentBaseListSubItem
+@using Microsoft.AspNetCore.Components.Routing
+
+
+<li class="@Classname" disabled="@Disabled">
+    <button tabindex="0" class="@Classname">
+        Button Text
+        <Icon>@Icons.Material_Menu</Icon>
+    </button>
+    <List>
+        @ChildContent
+    </List>  
+</li>
