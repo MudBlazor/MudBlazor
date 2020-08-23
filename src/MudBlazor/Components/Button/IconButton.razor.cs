@@ -9,17 +9,19 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public class IconButtonBase : ComponentBase
+    public class ComponentBaseIconButton : ComponentBase
     {
         protected string Classname =>
         new CssBuilder("mud-button-base-root mud-iconbutton-root")
           .AddClass($"mud-iconbutton-color-{Color.ToDescriptionString()}")
           .AddClass($"mud-iconbutton-size-{Size.ToDescriptionString()}", when: () => Size != Size.Medium)
-          .AddClass($"mud-iconbutton-edge-{Edge.ToDescriptionString()}", when: () => !String.IsNullOrEmpty(Edge.ToDescriptionString()))
+          .AddClass($"mud-iconbutton-edge-{Edge.ToDescriptionString()}", when: () => Edge != Edge.False)
           .AddClass(Class)
         .Build();
 
         [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
+
+        [Parameter] public string Icon { get; set; }
 
         [Parameter] public Color Color { get; set; } = Color.Default;
 

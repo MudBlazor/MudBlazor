@@ -1,15 +1,9 @@
 ﻿@namespace MudBlazor
-@inherits IconButtonBase
+@inherits ComponentBaseIconButton
 
 
 <button type="button" class="@Classname" @onclick="OnClickHandler" href="@Link" disabled="@Disabled">
     <span class="mud-iconbutton-label">
-        <SvgIcon></SvgIcon>
+        <Icon Icon="@Icon"/>
     </span>
 </button>
-
-
-@code {
-
-
-}
