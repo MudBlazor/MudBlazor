@@ -12,10 +12,10 @@
             this.jsRuntime = jsRuntime;
         }
 
+        public ILogger CreateLogger(string categoryName) => new HandleCriticalUserComponentExceptionsLogger(this.jsRuntime);
+        
         public void Dispose()
         {
         }
-
-        public ILogger CreateLogger(string categoryName) => new HandleCriticalUserComponentExceptionsLogger(this.jsRuntime);
     }
 }
