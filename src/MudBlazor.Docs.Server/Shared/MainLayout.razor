@@ -1,12 +1,16 @@
 ﻿@inherits LayoutComponentBase
 
 <Layout DrawerOpen="@_drawerOpen">
-    <AppBar>
-        <IconButton Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"></IconButton>
+    <AppBar Elevation="0">
+        <IconButton Icon="@Icons.Material_Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
+        <AppBarSpacer/>
+        <IconButton Icon="@Icons.Brand_GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor"/>
     </AppBar>
     <Drawer>
         <DrawerHeader>
-            MudBlazor
+            <span class="mudblazor-brand">
+                MudBlazor
+            </span>
         </DrawerHeader>
         <Divider />
         <NavMenu />
@@ -17,7 +21,7 @@
 </Layout>
 
 @code {
-    bool _drawerOpen = false;
+    bool _drawerOpen = true;
 
     void DrawerToggle()
     {

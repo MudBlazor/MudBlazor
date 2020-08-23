@@ -1,10 +1,14 @@
 ﻿@page "/counter"
 
-<h1>Counter</h1>
 
-<p>Current count: @currentCount</p>
+<Container MaxWidth="MaxWidth.False">
+    <h1>Counter</h1>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+    <p>Current count: @currentCount</p>
+
+    <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+</Container>
+
 
 @code {
     private int currentCount = 0;

@@ -1,19 +1,13 @@
 ﻿
-<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-    Home
-</NavLink>
 
-<NavLink class="nav-link" href="counter">
-    Counter
-</NavLink>
-
-<NavLink class="nav-link" href="fetchdata">
-    Fetch data
-</NavLink>
-
-<NavLink class="nav-link" href="/components/surfaces/paper">
-    Paper
-</NavLink>
+<List>
+    <ListItem Match="NavLinkMatch.All">Home</ListItem>
+    <ListItem Href="components/surfaces/paper">Paper</ListItem>
+    <ListSubMenu>
+        <ListItem Href="counter">Counter</ListItem>
+        <ListItem Href="fetchdata">Fetch data</ListItem>
+    </ListSubMenu>
+</List>
 
 
 @code {
