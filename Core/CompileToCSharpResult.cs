@@ -4,7 +4,7 @@
     using System.Linq;
     using Microsoft.AspNetCore.Razor.Language;
 
-    public class CompileToCSharpResult
+    internal class CompileToCSharpResult
     {
         public CompileToCSharpResult()
         {

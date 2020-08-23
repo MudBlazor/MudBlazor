@@ -1,11 +1,11 @@
 <Router AppAssembly="@typeof(Program).Assembly"
-        AdditionalAssemblies="@(new List<System.Reflection.Assembly> { typeof(UserComponents.UserPage).Assembly })">
+        AdditionalAssemblies="@(new List<System.Reflection.Assembly> { typeof(UserComponents.__Main).Assembly })">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(EmptyLayout)" />
     </Found>
     <NotFound>
         <LayoutView Layout="@typeof(EmptyLayout)">
-            <p>Sorry, there's nothing atas das dasd as this address.</p>
+            <p>Sorry, there's nothing at this address.</p>
         </LayoutView>
     </NotFound>
 </Router>

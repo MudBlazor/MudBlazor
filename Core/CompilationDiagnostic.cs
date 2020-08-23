@@ -17,7 +17,7 @@
 
         public CompilationDiagnosticKind Kind { get; set; }
 
-        public static CompilationDiagnostic FromCSharpDiagnostic(Diagnostic diagnostic)
+        internal static CompilationDiagnostic FromCSharpDiagnostic(Diagnostic diagnostic)
         {
             if (diagnostic == null)
             {
@@ -34,7 +34,7 @@
             };
         }
 
-        public static CompilationDiagnostic FromRazorDiagnostic(RazorDiagnostic diagnostic)
+        internal static CompilationDiagnostic FromRazorDiagnostic(RazorDiagnostic diagnostic)
         {
             if (diagnostic == null)
             {
