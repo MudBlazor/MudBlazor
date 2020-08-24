@@ -12,7 +12,7 @@ namespace MudBlazor
     public class ComponentBaseButton : ComponentBase
     {
         protected string Classname =>
-        new CssBuilder("mud-button-base-root mud-button-root")
+        new CssBuilder("mud-button-root mud-button")
           .AddClass($"mud-button-{Variant.ToDescriptionString()}")
           .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
           .AddClass(Class)

@@ -1,5 +1,4 @@
-﻿// Button Base
-.mud-button-base-root {
+﻿.mud-button-root {
     color: inherit;
     border: 0;
     cursor: pointer;
@@ -20,24 +19,16 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-.mud-button-base-root::-moz-focus-inner {
+.mud-button-root::-moz-focus-inner {
     border-style: none;
 }
 
-.mud-button-base-root.mud-disabled {
+.mud-button-root.mud-disabled {
     cursor: default;
     pointer-events: none;
 }
 
-@media print {
-    .mud-button-base-root {
-        -webkit-print-color-adjust: exact;
-    }
-}
-
-// Button
-
-.mud-button-root {
+.mud-button {
     color: rgba(0, 0, 0, 0.87);
     padding: 6px 16px;
     font-size: 0.875rem;
@@ -52,22 +43,22 @@
     text-transform: uppercase;
 }
 
-.mud-button-root:hover {
+.mud-button:hover {
     text-decoration: none;
     background-color: rgba(0, 0, 0, 0.04);
 }
 
-.mud-button-root.mud-disabled {
+.mud-button.mud-disabled {
     color: rgba(0, 0, 0, 0.26);
 }
 
 @media (hover: none) {
-    .mud-button-root:hover {
+    .mud-button:hover {
         background-color: transparent;
     }
 }
 
-.mud-button-root:hover.mud-disabled {
+.mud-button:hover.mud-disabled {
     background-color: transparent;
 }
 
@@ -314,7 +305,7 @@
 
 // IconButton
 
-.mud-iconbutton-root {
+.mud-icon-button {
     flex: 0 0 auto;
     padding: 12px;
     overflow: visible;
@@ -324,83 +315,83 @@
     border-radius: 50%;
 }
 
-.mud-iconbutton-root.mud-disabled {
+.mud-icon-button.mud-disabled {
     color: rgba(0, 0, 0, 0.26);
     background-color: transparent;
 }
 
 @media (hover: none) {
-    .mud-iconbutton-root:hover {
+    .mud-icon-button:hover {
         background-color: transparent;
     }
 }
 
-.mud-iconbutton-edge-start {
+.mud-icon-button-edge-start {
     margin-left: -12px;
 }
 
-.mud-iconbutton-size-small.mud-iconbutton-edge-start {
+.mud-icon-button-size-small.mud-icon-button-edge-start {
     margin-left: -3px;
 }
 
-.mud-iconbutton-edge-end {
+.mud-icon-button-edge-end {
     margin-right: -12px;
 }
 
-.mud-iconbutton-size-small.mud-iconbutton-edge-end {
+.mud-icon-button-size-small.mud-icon-button-edge-end {
     margin-right: -3px;
 }
 
-.mud-iconbutton-color-inherit {
+.mud-icon-button-color-inherit {
     color: inherit;
 }
 
-.mud-iconbutton-color-inherit:hover {
+.mud-icon-button-color-inherit:hover {
     background-color: rgba(0, 0, 0, 0.04);
 }
 
-.mud-iconbutton-color-default {
+.mud-icon-button-color-default {
     color: rgba(0, 0, 0, 0.54);
 }
 
-.mud-iconbutton-color-default:hover {
+.mud-icon-button-color-default:hover {
     background-color: rgba(0, 0, 0, 0.04);
 }
 
-.mud-iconbutton-color-primary {
+.mud-icon-button-color-primary {
     color: #1976d2;
 }
 
-.mud-iconbutton-color-primary:hover {
+.mud-icon-button-color-primary:hover {
     background-color: rgba(25, 118, 210, 0.04);
 }
 
 @media (hover: none) {
-    .mud-iconbutton-color-primary:hover {
+    .mud-icon-button-color-primary:hover {
         background-color: transparent;
     }
 }
 
-.mud-iconbutton-color-secondary {
+.mud-icon-button-color-secondary {
     color: rgb(220, 0, 78);
 }
 
-.mud-iconbutton-color-secondary:hover {
+.mud-icon-button-color-secondary:hover {
     background-color: rgba(220, 0, 78, 0.04);
 }
 
 @media (hover: none) {
-    .mud-iconbutton-color-secondary:hover {
+    .mud-icon-button-color-secondary:hover {
         background-color: transparent;
     }
 }
 
-.mud-iconbutton-size-small {
+.mud-icon-button-size-small {
     padding: 3px;
     font-size: 1.125rem;
 }
 
-.mud-iconbutton-label {
+.mud-icon-button-label {
     width: 100%;
     display: flex;
     align-items: inherit;

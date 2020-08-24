@@ -1,5 +1,5 @@
 ﻿
-.mud-container-root {
+.mud-container {
     width: 100%;
     display: block;
     box-sizing: border-box;
@@ -10,7 +10,7 @@
 }
 
 @media (min-width:600px) {
-    .mud-container-root {
+    .mud-container {
         padding-left: 24px;
         padding-right: 24px;
     }

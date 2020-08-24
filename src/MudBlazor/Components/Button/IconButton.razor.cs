@@ -12,10 +12,10 @@ namespace MudBlazor
     public class ComponentBaseIconButton : ComponentBase
     {
         protected string Classname =>
-        new CssBuilder("mud-button-base-root mud-iconbutton-root")
-          .AddClass($"mud-iconbutton-color-{Color.ToDescriptionString()}")
-          .AddClass($"mud-iconbutton-size-{Size.ToDescriptionString()}", when: () => Size != Size.Medium)
-          .AddClass($"mud-iconbutton-edge-{Edge.ToDescriptionString()}", when: () => Edge != Edge.False)
+        new CssBuilder("mud-button-root mud-icon-button")
+          .AddClass($"mud-icon-button-color-{Color.ToDescriptionString()}")
+          .AddClass($"mud-icon-button-size-{Size.ToDescriptionString()}", when: () => Size != Size.Medium)
+          .AddClass($"mud-icon-button-edge-{Edge.ToDescriptionString()}", when: () => Edge != Edge.False)
           .AddClass(Class)
         .Build();
 
