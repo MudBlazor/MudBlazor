@@ -14,7 +14,7 @@
     new CssBuilder("mud-appbar")
       .AddClass($"mud-appbar-position-{Position.ToDescriptionString()}")
       .AddClass($"mud-appbar-drawer-open", DrawerOpen)
-      .AddClass($"mud-paper-elevation{Elevation.ToString()}")
+      .AddClass($"mud-elevation-{Elevation.ToString()}")
       .AddClass(Class)
     .Build();
 

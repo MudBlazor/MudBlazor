@@ -13,7 +13,7 @@
       .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
       .AddClass($"mud-drawer--open", DrawerOpen)
       .AddClass($"mud-drawer--closed", !DrawerOpen)
-      .AddClass($"mud-paper-elevation{Elevation.ToString()}")
+      .AddClass($"mud-elevation-{Elevation.ToString()}")
       .AddClass(Class)
     .Build();
 
