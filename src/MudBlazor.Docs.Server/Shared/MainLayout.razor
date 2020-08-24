@@ -2,12 +2,12 @@
 
 
 <Layout DrawerOpen="@_drawerOpen">
-    <AppBar Elevation="1">
+    <AppBar Elevation="99">
         <IconButton Icon="@Icons.Material_Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <AppBarSpacer />
         <IconButton Icon="@Icons.Brand_GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" />
     </AppBar>
-    <Drawer>
+    <Drawer Elevation="99">
         <DrawerHeader>
             <span class="mudblazor-brand">
                 MudBlazor

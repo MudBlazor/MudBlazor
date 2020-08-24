@@ -46,8 +46,8 @@
 
 .mudblazor-home-paper {
     padding: 20px;
-    background-color: #f5f5f5;
     min-height:350px;
+    min-width: 600px;
 }
 
 .mudblazor-home-paper-title {

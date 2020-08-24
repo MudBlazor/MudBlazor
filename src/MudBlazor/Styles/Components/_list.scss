@@ -19,7 +19,7 @@
 .mud-list-item > .mud-list-item, .mud-nested-list > .mud-list-item {
     width: 100%;
     padding: 8px 0 8px 24px;
-    color: rgba(0, 0, 0, 0.87);
+    color: var(--mud-theme-default);
     line-height: 1.75;
     font-weight: 500;
     letter-spacing: 0;
@@ -35,7 +35,7 @@
 
     &.active {
         font-weight: 500 !important;
-        color: #7467ef;
+        color: var(--mud-theme-primary);
     }
 }
 

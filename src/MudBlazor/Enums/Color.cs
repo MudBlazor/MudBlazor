@@ -21,6 +21,8 @@ namespace MudBlazor
         [Description("danger")]
         Danger,
         [Description("dark")]
-        Dark
+        Dark,
+        [Description("transparent")]
+        Transparent
     }
 }

@@ -15,10 +15,13 @@
       .AddClass($"mud-appbar-position-{Position.ToDescriptionString()}")
       .AddClass($"mud-appbar-drawer-open", DrawerOpen)
       .AddClass($"mud-elevation-{Elevation.ToString()}")
+      .AddClass($"mud-theme-{Color.ToDescriptionString()}")
       .AddClass(Class)
     .Build();
 
     [Parameter] public int Elevation { set; get; } = 4;
+
+    [Parameter] public Color Color { get; set; } = Color.Primary;
 
     [Parameter] public Position Position { get; set; } = Position.Fixed;
 

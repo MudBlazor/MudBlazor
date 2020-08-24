@@ -1,4 +1,22 @@
-﻿* {
+﻿:root {
+  --mud-theme-default: #555;
+  --mud-theme-primary: #594ae2;
+  --mud-theme-on-primary: #fff;
+  --mud-theme-secondary: #018786;
+  --mud-theme-info: #2196f3;
+  --mud-theme-success: #4caf50;
+  --mud-theme-warning: #ff9800;
+  --mud-theme-danger: #f44336;
+  --mud-theme-dark: #616161;
+  --mud-theme-background: #fafafa;
+  --mud-theme-surface: #fff;
+  --mud-theme-border-radius: 4px; }
+
+.mud-theme-primary {
+  color: var(--mud-theme-on-primary);
+  background-color: var(--mud-theme-primary); }
+
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0; }
@@ -13,13 +31,13 @@ strong, b {
 
 body {
   height: 100%;
-  color: rgba(0, 0, 0, 0.87);
+  color: var(--mud-theme-default);
   font-size: 0.875rem;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 400;
   line-height: 1.43;
   letter-spacing: 0.01071em;
-  background-color: #fff; }
+  background-color: var(--mud-theme-background); }
 
 a {
   color: rgba(0, 0, 0, 0.87); }
@@ -208,6 +226,9 @@ iframe {
 
 .mud-elevation-24 {
   box-shadow: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12); }
+
+.mud-elevation-99 {
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.06), 0 8px 10px 1px rgba(0, 0, 0, 0.042), 0 3px 14px 2px rgba(0, 0, 0, 0.036); }
 
 .mud-button-root {
   color: inherit;
@@ -962,10 +983,10 @@ iframe {
     flex-basis: 100%; } }
 
 .mud-paper {
-  color: rgba(0, 0, 0, 0.87);
-  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  background-color: #fff;
-  border-radius: 4px; }
+  color: var(--mud-theme-default);
+  background-color: var(--mud-theme-surface);
+  border-radius: var(--mud-theme-border-radius);
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
 
 .mud-paper-square {
   border-radius: 0px; }
@@ -1031,7 +1052,7 @@ iframe {
 .mud-list-item > .mud-list-item, .mud-nested-list > .mud-list-item {
   width: 100%;
   padding: 8px 0 8px 24px;
-  color: rgba(0, 0, 0, 0.87);
+  color: var(--mud-theme-default);
   line-height: 1.75;
   font-weight: 500;
   letter-spacing: 0;
@@ -1044,7 +1065,7 @@ iframe {
     background-color: rgba(0, 0, 0, 0.06); }
   .mud-list-item > .mud-list-item.active, .mud-nested-list > .mud-list-item.active {
     font-weight: 500 !important;
-    color: #7467ef; }
+    color: var(--mud-theme-primary); }
 
 .mud-nested-list > .mud-list {
   display: none; }
@@ -1071,9 +1092,7 @@ iframe {
   box-sizing: border-box;
   flex-shrink: 0;
   flex-direction: column;
-  transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms, width 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
-  color: #fff;
-  background-color: #594ae2; }
+  transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms, width 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms; }
 
 .mud-appbar-drawer-open {
   width: calc(100% - 240px);
@@ -1141,7 +1160,8 @@ iframe {
   outline: 0;
   z-index: 9;
   overflow-y: auto;
-  flex-direction: column; }
+  flex-direction: column;
+  background-color: var(--mud-theme-surface); }
   .mud-drawer.mud-drawer--open {
     transform: none;
     transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms; }
