@@ -1,5 +1,5 @@
 ﻿
-.mud-appbar-root {
+.mud-appbar {
     width: 100%;
     display: flex;
     z-index: 1100;
@@ -7,6 +7,8 @@
     flex-shrink: 0;
     flex-direction: column;
     transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms,width 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+    color: #fff;
+    background-color: #594ae2;
 }
 
 .mud-appbar-drawer-open {
@@ -42,28 +44,4 @@
 
 .mud-appbar-position-relative {
     position: relative;
-}
-
-.mud-appbar-color-default {
-    color: rgba(0, 0, 0, 0.87);
-    background-color: #f5f5f5;
-}
-
-.mud-appbar-color-primary {
-    color: #fff;
-    background-color: #594ae2;
-}
-
-.mud-appbar-color-secondary {
-    color: #fff;
-    background-color: rgb(220, 0, 78);
-}
-
-.mud-appbar-color-inherit {
-    color: inherit;
-}
-
-.mud-appbar-color-transparent {
-    color: inherit;
-    background-color: transparent;
 }
