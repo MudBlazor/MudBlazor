@@ -1,0 +1,9 @@
+﻿@namespace MudBlazor
+@inherits ComponentBaseButton
+
+
+<button type="button" class="@Classname" @onclick="OnClickHandler" href="@Link" disabled="@Disabled">
+    <span class="mud-button-label">
+        @ChildContent
+    </span>
+</button>
