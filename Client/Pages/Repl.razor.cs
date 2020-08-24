@@ -45,6 +45,10 @@
 
         public CodeEditor CodeEditorComponent { get; set; }
 
+        public IEnumerable<ComponentFile> ComponentFiles { get; set; } = Enumerable.Empty<ComponentFile>();
+
+        public IList<string> ComponentFileNames => this.ComponentFiles?.Select(cf => cf.Name).ToList() ?? new List<string>();
+
         public string SnippetContent { get; set; }
 
         public bool SaveSnippetPopupVisible { get; set; }
@@ -189,11 +193,17 @@
         {
             this.PageNotificationsComponent?.Clear();
 
+            this.ComponentFiles = new List<ComponentFile>
+            {
+                new ComponentFile { Name = "__Main.razor", Content = "<h1> Some Test Content</h1>" },
+                new ComponentFile { Name = "File2.razor", Content = "<h1> Some Test Content 2</h1>" }
+            };
+
             if (!string.IsNullOrWhiteSpace(this.SnippetId))
             {
                 try
                 {
-                    this.SnippetContent = await this.SnippetsService.GetSnippetContentAsync(this.SnippetId);
+                    this.ComponentFiles = await this.SnippetsService.GetSnippetContentAsync(this.SnippetId);
                 }
                 catch (ArgumentException)
                 {

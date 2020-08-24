@@ -25,6 +25,7 @@
     <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
 
     <div id="user-code-editor-container">
+        <TabManager Tabs="@ComponentFileNames"></TabManager>
         <CodeEditor @ref="@CodeEditorComponent" DefaultCode="@SnippetContent"></CodeEditor>
     </div>
     <div id="user-page-window-container">

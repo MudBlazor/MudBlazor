@@ -6,6 +6,7 @@
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
+    using BlazorRepl.Core;
     using Microsoft.Extensions.Options;
 
     public class SnippetsService
@@ -100,7 +101,7 @@
             throw new Exception("Something went wrong. Please try again later.");
         }
 
-        public async Task<string> GetSnippetContentAsync(string snippetId)
+        public async Task<IEnumerable<ComponentFile>> GetSnippetContentAsync(string snippetId)
         {
             if (string.IsNullOrWhiteSpace(snippetId) || snippetId.Length != SnippetIdLength)
             {
@@ -116,7 +117,7 @@
             var url = string.Format(this.snippetsOptions.ReadUrlFormat, yearFolder, monthFolder, dayAndHourFolder, id);
             var snippetContent = await this.httpClient.GetStringAsync(url);
 
-            return snippetContent;
+            return new List<ComponentFile> { new ComponentFile { Name = "__Main.razor", Content = snippetContent } };
         }
 
         private static string DecodeDateIdPart(string encodedPart)

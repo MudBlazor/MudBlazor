@@ -1,0 +1,20 @@
+﻿<div>
+    <ul class="nav nav-tabs">
+        @for (var i = 0; i < Tabs.Count; i++)
+        {
+            var tab = Tabs[i];
+            var activeClass = i == ActiveIndex ? "active" : string.Empty;
+
+            var currentIndex = i;
+            <li class="nav-item" @onclick="@(() => ActivateTabAsync(currentIndex))">
+                <a class="nav-link @activeClass">
+                    @tab
+                    @if (currentIndex != DefaultActiveIndex)
+                    {
+                        <span @onclick="@(() => CloseTabAsync(currentIndex))" @onclick:preventDefault>&times;</span>
+                    }
+                </a>
+            </li>
+        }
+    </ul>
+</div>
