@@ -16,9 +16,10 @@
 }
 
 .mud-drawer-header {
-    display:flex;
+    display: flex;
     min-height: 64px;
     align-items: center;
+    justify-content: center;
 }
 
 .mud-drawer--open {

@@ -7,6 +7,12 @@ namespace MudBlazor
         [Description("regular")]
         Regular,
         [Description("dense")]
-        Dense
+        Dense,
+        [Description("text")]
+        Text,
+        [Description("outlined")]
+        Outlined,
+        [Description("contained")]
+        Contained
     }
 }
