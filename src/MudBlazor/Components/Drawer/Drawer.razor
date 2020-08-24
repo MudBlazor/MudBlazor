@@ -1,24 +1,25 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
+@using MudBlazor.Extensions
 
-
-<div class="mud-drawer-root mud-drawer-docked">
-    <div class="@Classname">
-        @ChildContent
-    </div>
-</div>
+<aside class="@Classname">
+    @ChildContent
+</aside>
 
 @code {
 
     protected string Classname =>
-    new CssBuilder("mud-paper-root")
-      .AddClass($"mud-drawer-paper")
-      .AddClass($"mud-drawer-paper-anchor-left")
-      .AddClass($"mud-paper-elevation1")
+    new CssBuilder("mud-drawer")
+      .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
       .AddClass($"mud-drawer--open", DrawerOpen)
       .AddClass($"mud-drawer--closed", !DrawerOpen)
+      .AddClass($"mud-paper-elevation{Elevation.ToString()}")
       .AddClass(Class)
     .Build();
+
+    [Parameter] public int Elevation { set; get; } = 1;
+
+    [Parameter] public Anchor Anchor { get; set; }
 
     [Parameter] public string Class { get; set; }
 
