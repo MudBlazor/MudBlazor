@@ -1,7 +1,5 @@
 ﻿@inherits LayoutComponentBase
 
-@inject HttpClient Http
-
 <div class="main">
     <PageNotifications @ref="@PageNotificationsComponent"></PageNotifications>
     <CascadingValue Value="@PageNotificationsComponent">
@@ -10,14 +8,3 @@
         </div>
     </CascadingValue>
 </div>
-
-@code {
-    public PageNotifications PageNotificationsComponent { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await ComponentCompilationService.Init(Http);
-
-        await base.OnInitializedAsync();
-    }
-}
