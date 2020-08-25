@@ -8,6 +8,7 @@ namespace BlazorRepl.Client
     using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
 
     public class Program
     {
@@ -23,6 +24,8 @@ namespace BlazorRepl.Client
             builder.Services
                 .AddOptions<SnippetsOptions>()
                 .Configure<IConfiguration>((options, configuration) => configuration.GetSection("Snippets").Bind(options));
+
+            builder.Logging.Services.AddSingleton<ILoggerProvider, HandleCriticalUserComponentExceptionsLoggerProvider>();
 
             await builder.Build().RunAsync();
         }
