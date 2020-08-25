@@ -45,11 +45,11 @@
 
         public CodeEditor CodeEditorComponent { get; set; }
 
-        public IEnumerable<ComponentFile> ComponentFiles { get; set; } = Enumerable.Empty<ComponentFile>();
+        public ICollection<ComponentFile> ComponentFiles { get; set; } = new List<ComponentFile>();
 
         public IList<string> ComponentFileNames => this.ComponentFiles?.Select(cf => cf.Name).ToList() ?? new List<string>();
 
-        public string SnippetContent { get; set; }
+        public string CodeEditorContent { get; set; }
 
         public bool SaveSnippetPopupVisible { get; set; }
 
@@ -66,6 +66,38 @@
         public bool Loading { get; set; }
 
         public int UserComponentCodeStartLine => this.UserComponentCodePrefix.Count(ch => ch == '\n');
+
+        public void HandleTabActivate(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+
+            var componentFile = this.ComponentFiles.FirstOrDefault(cf => cf.Name == name);
+            if (componentFile == null)
+            {
+                return;
+            }
+
+            this.CodeEditorContent = componentFile.Content;
+        }
+
+        public void HandleTabClose(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+
+            var componentFile = this.ComponentFiles.FirstOrDefault(cf => cf.Name == name);
+            if (componentFile == null)
+            {
+                return;
+            }
+
+            this.ComponentFiles.Remove(componentFile);
+        }
 
         public async Task CompileAsync()
         {
@@ -196,14 +228,18 @@
             this.ComponentFiles = new List<ComponentFile>
             {
                 new ComponentFile { Name = "__Main.razor", Content = "<h1> Some Test Content</h1>" },
-                new ComponentFile { Name = "File2.razor", Content = "<h1> Some Test Content 2</h1>" }
+                new ComponentFile { Name = "File2.razor", Content = "<h1> Some Test Content 2</h1>" },
+                new ComponentFile { Name = "File3.razor", Content = "<h1> Some Test Content 3</h1>" },
+                new ComponentFile { Name = "File4.razor", Content = "<h1> Some Test Content 4</h1>" },
+                new ComponentFile { Name = "File5.razor", Content = "<h1> Some Test Content 5</h1>" },
+                new ComponentFile { Name = "File6.razor", Content = "<h1> Some Test Content 6</h1>" },
             };
 
             if (!string.IsNullOrWhiteSpace(this.SnippetId))
             {
                 try
                 {
-                    this.ComponentFiles = await this.SnippetsService.GetSnippetContentAsync(this.SnippetId);
+                    this.ComponentFiles = (await this.SnippetsService.GetSnippetContentAsync(this.SnippetId)).ToList();
                 }
                 catch (ArgumentException)
                 {
