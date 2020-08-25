@@ -16,5 +16,19 @@
                 </a>
             </li>
         }
+        @if (tabCreating)
+        {
+            <li class="nav-item">
+                <a class="nav-link">
+                    <input id="new-tab-input" @bind="@newTab" @onblur="@CreateTab"/>
+                </a>
+            </li>
+        }
+
+        <li class="nav-item" @onclick="@InitTabCreating">
+            <a class="nav-link">
+                <span class="icon-plus"></span>
+            </a>
+        </li>
     </ul>
 </div>

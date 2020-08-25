@@ -99,6 +99,16 @@
             this.ComponentFiles.Remove(componentFile);
         }
 
+        public void HandleTabCreate(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+
+            this.ComponentFiles.Add(new ComponentFile { Name = name, Content = string.Empty });
+        }
+
         public async Task CompileAsync()
         {
             this.Loading = true;
