@@ -249,7 +249,10 @@
             {
                 try
                 {
-                    this.ComponentFiles = (await this.SnippetsService.GetSnippetContentAsync(this.SnippetId)).ToList();
+                    this.ComponentFiles = (await this.SnippetsService
+                        .GetSnippetContentAsync(this.SnippetId))
+                        .Select(x => new ComponentFile { Name = x.Path, Content = x.Content })
+                        .ToList();
                 }
                 catch (ArgumentException)
                 {

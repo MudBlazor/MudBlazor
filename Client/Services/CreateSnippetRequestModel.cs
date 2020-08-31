@@ -4,6 +4,6 @@
 
     public class CreateSnippetRequestModel
     {
-        public IEnumerable<CreateSnippetFileRequestModel> Files { get; set; } = new List<CreateSnippetFileRequestModel>();
+        public IEnumerable<SnippetFile> Files { get; set; } = new List<SnippetFile>();
     }
 }

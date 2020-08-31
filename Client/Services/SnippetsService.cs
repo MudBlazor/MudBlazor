@@ -3,10 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.IO.Compression;
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
-    using BlazorRepl.Core;
     using Microsoft.Extensions.Options;
 
     public class SnippetsService
@@ -88,20 +88,17 @@
 
             var requestData = new CreateSnippetRequestModel
             {
-                Files = new[] { new CreateSnippetFileRequestModel { Content = content }, },
+                Files = new[] { new SnippetFile { Content = content }, },
             };
 
             var response = await this.httpClient.PostAsJsonAsync(this.snippetsOptions.CreateUrl, requestData);
-            if (response.IsSuccessStatusCode)
-            {
-                var id = await response.Content.ReadAsStringAsync();
-                return id;
-            }
+            response.EnsureSuccessStatusCode();
 
-            throw new Exception("Something went wrong. Please try again later.");
+            var id = await response.Content.ReadAsStringAsync();
+            return id;
         }
 
-        public async Task<IEnumerable<ComponentFile>> GetSnippetContentAsync(string snippetId)
+        public async Task<IEnumerable<SnippetFile>> GetSnippetContentAsync(string snippetId)
         {
             if (string.IsNullOrWhiteSpace(snippetId) || snippetId.Length != SnippetIdLength)
             {
@@ -111,13 +108,39 @@
             var yearFolder = DecodeDateIdPart(snippetId.Substring(0, 2));
             var monthFolder = DecodeDateIdPart(snippetId.Substring(2, 2));
             var dayAndHourFolder = DecodeDateIdPart(snippetId.Substring(4, 4));
-
             var id = snippetId.Substring(8);
 
             var url = string.Format(this.snippetsOptions.ReadUrlFormat, yearFolder, monthFolder, dayAndHourFolder, id);
-            var snippetContent = await this.httpClient.GetStringAsync(url);
+            var snippetResponse = await this.httpClient.GetAsync(url);
+            snippetResponse.EnsureSuccessStatusCode();
 
-            return new List<ComponentFile> { new ComponentFile { Name = "__Main.razor", Content = snippetContent } };
+            var snippetFiles = await ExtractSnippetFilesFromResponse(snippetResponse);
+            return snippetFiles;
+        }
+
+        private static async Task<IEnumerable<SnippetFile>> ExtractSnippetFilesFromResponse(HttpResponseMessage snippetResponse)
+        {
+            var result = new List<SnippetFile>();
+
+            if (snippetResponse.Headers.TryGetValues("x-ms-meta-zip", out _))
+            {
+                await using var zipFileStream = await snippetResponse.Content.ReadAsStreamAsync();
+                using var zipArchive = new ZipArchive(zipFileStream, ZipArchiveMode.Read);
+                foreach (var entry in zipArchive.Entries)
+                {
+                    using var streamReader = new StreamReader(entry.Open());
+
+                    result.Add(new SnippetFile { Path = entry.Name, Content = await streamReader.ReadToEndAsync() });
+                }
+            }
+            else
+            {
+                var fileContent = await snippetResponse.Content.ReadAsStringAsync();
+
+                result.Add(new SnippetFile { Path = "__Main.razor", Content = fileContent });
+            }
+
+            return result;
         }
 
         private static string DecodeDateIdPart(string encodedPart)
