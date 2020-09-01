@@ -20,8 +20,16 @@
 
     public class ComponentCompilationService
     {
-        private const string DefaultRootNamespace = "BlazorRepl.UserComponents";
         private const string WorkingDirectory = "/BlazorRepl/";
+        private const string DefaultRootNamespace = "BlazorRepl.UserComponents";
+        private const string DefaultImports = @"@using System.ComponentModel.DataAnnotations
+@using System.Linq
+@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop";
 
         // Creating the initial compilation + reading references is on the order of 250ms without caching
         // so making sure it doesn't happen for each run.
@@ -237,6 +245,7 @@
             RazorProjectEngine.Create(this.configuration, this.fileSystem, b =>
             {
                 b.SetRootNamespace(DefaultRootNamespace);
+                b.AddDefaultImports(DefaultImports);
 
                 // Features that use Roslyn are mandatory for components
                 CompilerFeatures.Register(b);
