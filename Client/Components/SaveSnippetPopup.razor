@@ -29,7 +29,7 @@
     else
     {
         <div class="snippet-link-wrapper">
-            <input type="text" class="form-control" @bind="SnippetLink" readonly />
+            <input type="text" class="form-control" @bind="SnippetLink" readonly="readonly" />
 
             <button class="btn btn-primary @CopyButtonIcon" @onclick="CopyLinkToClipboardAsync"></button>
         </div>
