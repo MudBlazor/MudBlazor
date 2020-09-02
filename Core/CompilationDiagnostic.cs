@@ -26,6 +26,15 @@
             }
 
             var mappedLineSpan = diagnostic.Location.GetMappedLineSpan();
+            var file = Path.GetFileName(mappedLineSpan.Path);
+            var line = mappedLineSpan.StartLinePosition.Line;
+
+            // TODO: Const
+            if (file != "__Main.razor")
+            {
+                // Make it 1-based if it's not the main component where we add @page directive line
+                line++;
+            }
 
             return new CompilationDiagnostic
             {
@@ -33,8 +42,8 @@
                 Code = diagnostic.Descriptor.Id,
                 Severity = diagnostic.Severity,
                 Description = diagnostic.GetMessage(),
-                File = Path.GetFileName(mappedLineSpan.Path),
-                Line = mappedLineSpan.StartLinePosition.Line,
+                File = file,
+                Line = line,
             };
         }
 

@@ -25,7 +25,11 @@
     <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
 
     <div id="user-code-editor-container">
-        <TabManager Tabs="@ComponentFileNames" OnTabActivate="@HandleTabActivate" OnTabClose="@HandleTabClose" OnTabCreate="@HandleTabCreate"></TabManager>
+        <TabManager Tabs="@ComponentFileNames"
+                    OnTabActivate="@HandleTabActivate"
+                    OnTabClose="@HandleTabClose"
+                    OnTabCreate="@HandleTabCreate"></TabManager>
+
         <CodeEditor @ref="@CodeEditorComponent" DefaultCode="@CodeEditorContent"></CodeEditor>
     </div>
     <div id="user-page-window-container">
@@ -33,6 +37,4 @@
     </div>
 </div>
 
-<ErrorList @bind-Show="@AreDiagnosticsShown"
-           Diagnostics="@Diagnostics"
-           UserComponentCodeStartLine="@UserComponentCodeStartLine"></ErrorList>
+<ErrorList @bind-Show="@AreDiagnosticsShown" Diagnostics="@Diagnostics"></ErrorList>

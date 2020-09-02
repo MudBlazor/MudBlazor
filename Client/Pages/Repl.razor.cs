@@ -13,9 +13,7 @@
 
     public partial class Repl : IDisposable
     {
-        private const string BasicUserComponentCodePrefix =
-    @"@page ""/__main""
-";
+        private const string BasicUserComponentCodePrefix = "@page \"/__main\"\n";
 
         private DotNetObjectReference<Repl> dotNetInstance;
         private string errorMessage;
@@ -56,8 +54,6 @@
         public string LoaderText { get; set; }
 
         public bool Loading { get; set; }
-
-        public int UserComponentCodeStartLine => this.UserComponentCodePrefix.Count(ch => ch == '\n');
 
         public void HandleTabActivate(string name)
         {
