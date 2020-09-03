@@ -228,9 +228,6 @@
                 new ComponentFile { Name = "__Main.razor", Content = "<h1> Some Test Content</h1>" },
                 new ComponentFile { Name = "File2.razor", Content = "<h1> Some Test Content 2</h1>" },
                 new ComponentFile { Name = "File3.razor", Content = "<h1> Some Test Content 3</h1>" },
-                new ComponentFile { Name = "File4.razor", Content = "<h1> Some Test Content 4</h1>" },
-                new ComponentFile { Name = "File5.razor", Content = "<h1> Some Test Content 5</h1>" },
-                new ComponentFile { Name = "File6.razor", Content = "<h1> Some Test Content 6</h1>" },
             };
 
             if (!string.IsNullOrWhiteSpace(this.SnippetId))

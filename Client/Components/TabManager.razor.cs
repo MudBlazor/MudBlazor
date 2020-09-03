@@ -6,12 +6,14 @@
     using System.Threading.Tasks;
     using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components;
+    using Microsoft.AspNetCore.Components.Web;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.JSInterop;
 
     public partial class TabManager : IDisposable
     {
         private const int DefaultActiveIndex = 0;
+        private const string EnterKey = "Enter";
 
         private bool tabCreating;
         private bool shouldFocusNewTabInput;
@@ -76,7 +78,7 @@
             this.shouldFocusNewTabInput = true;
         }
 
-        public async Task CreateTab()
+        public async Task CreateTabAsync()
         {
             //validation
             this.Tabs.Add(this.newTab);
@@ -89,6 +91,16 @@
             await this.OnTabCreate.InvokeAsync(newCreatedTab);
             // check why editor is not updated with the tab content (which is empty) maybe we cannot set empty content
             await this.ActivateTabAsync(index);
+        }
+
+        public Task OnKeyDownAsync(KeyboardEventArgs eventArgs)
+        {
+            if (eventArgs.Key == EnterKey)
+            {
+                return this.CreateTabAsync();
+            }
+
+            return Task.CompletedTask;
         }
 
         public void Dispose() => _ = this.JsRuntime.InvokeAsync<string>("App.TabManager.dispose");

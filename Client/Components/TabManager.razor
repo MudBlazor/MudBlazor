@@ -1,4 +1,4 @@
-﻿<div>
+﻿<div class="tabs-wrapper">
     <ul class="nav nav-tabs">
         @for (var i = 0; i < Tabs.Count; i++)
         {
@@ -6,12 +6,12 @@
             var activeClass = i == ActiveIndex ? "active" : string.Empty;
 
             var currentIndex = i;
-            <li class="nav-item" @onclick="@(() => ActivateTabAsync(currentIndex))">
-                <a class="nav-link @activeClass">
-                    @tab
+            <li class="nav-item tab" @onclick="@(() => ActivateTabAsync(currentIndex))">
+                <a class="nav-link @activeClass tab-name" title="@tab">
+                    <span class="tab-name-wrapper">@tab</span>
                     @if (currentIndex != DefaultActiveIndex)
                     {
-                        <span @onclick="@(() => CloseTabAsync(currentIndex))" @onclick:preventDefault>&times;</span>
+                        <span class="close-tab" @onclick="@(() => CloseTabAsync(currentIndex))" @onclick:preventDefault>&times;</span>
                     }
                 </a>
             </li>
@@ -19,8 +19,8 @@
         @if (tabCreating)
         {
             <li class="nav-item">
-                <a class="nav-link">
-                    <input id="new-tab-input" @bind="@newTab" @onblur="@CreateTab"/>
+                <a class="nav-link tab-input">
+                    <input id="new-tab-input" @bind="@newTab" @bind:event="oninput" @onblur="@CreateTabAsync" @onkeydown="@OnKeyDownAsync"/>
                 </a>
             </li>
         }

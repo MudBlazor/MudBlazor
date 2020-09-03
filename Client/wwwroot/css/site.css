@@ -392,3 +392,44 @@ app {
     right: 10px;
     width: 400px;
 }
+
+#new-tab-input {
+    height: 27px;
+    width: 160px;
+}
+
+.tab-name {
+    display: flex;
+    padding: 3px 10px;
+}
+
+.tab-input {
+    padding: 5px 10px;
+}
+
+.tab-name-wrapper {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+    display: inline-block;
+    white-space: nowrap;
+    padding-right: 5px;
+}
+
+.close-tab {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    line-height: initial;
+    padding-left: 3.5px;
+    margin-top: 8px;
+    border-radius: 10px;
+}
+
+    .close-tab:hover {
+        background-color: #BBB;
+    }
+
+.tabs-wrapper{
+    height: 38px;
+}
