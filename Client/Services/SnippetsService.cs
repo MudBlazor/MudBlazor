@@ -80,17 +80,15 @@
             this.snippetsOptions = snippetsOptions.Value;
         }
 
-        public async Task<string> SaveSnippetAsync(string content)
+        public async Task<string> SaveSnippetAsync(IEnumerable<CodeFile> codeFiles)
         {
-            if (string.IsNullOrWhiteSpace(content) || content.Trim().Length < SnippetContentMinLength)
-            {
-                throw new ArgumentException($"The snippet content should be at least {SnippetContentMinLength} symbols.", nameof(content));
-            }
+            // TODO: Validation
+            //if (string.IsNullOrWhiteSpace(content) || content.Trim().Length < SnippetContentMinLength)
+            //{
+            //    throw new ArgumentException($"The snippet content should be at least {SnippetContentMinLength} symbols.", nameof(content));
+            //}
 
-            var requestData = new CreateSnippetRequestModel
-            {
-                Files = new[] { new CodeFile { Content = content }, },
-            };
+            var requestData = new CreateSnippetRequestModel { Files = codeFiles };
 
             var response = await this.httpClient.PostAsJsonAsync(this.snippetsOptions.CreateUrl, requestData);
             response.EnsureSuccessStatusCode();

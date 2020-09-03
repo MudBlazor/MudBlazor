@@ -13,7 +13,7 @@
         }
 
         public ILogger CreateLogger(string categoryName) => new HandleCriticalUserComponentExceptionsLogger(this.jsRuntime);
-        
+
         public void Dispose()
         {
         }

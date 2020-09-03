@@ -32,7 +32,7 @@
             // TODO: Const
             if (file != "__Main.razor")
             {
-                // Make it 1-based if it's not the main component where we add @page directive line
+                // Make it 1-based. Skip the main component where we add @page directive line
                 line++;
             }
 

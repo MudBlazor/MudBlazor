@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components.Models;
     using BlazorRepl.Client.Services;
+    using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
 
@@ -67,7 +68,8 @@
             {
                 var content = await this.CodeEditorComponent.GetCodeAsync();
 
-                var snippetId = await this.SnippetsService.SaveSnippetAsync(content);
+                var snippetId = await this.SnippetsService.SaveSnippetAsync(
+                    new[] { new CodeFile { Path = "__Main.razor", Content = content } });
 
                 var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"repl/{snippetId}" };
                 var url = urlBuilder.Uri.ToString();
