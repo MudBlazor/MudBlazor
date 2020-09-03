@@ -22,7 +22,7 @@
         public SnippetsService SnippetsService { get; set; }
 
         [Inject]
-        public ComponentCompilationService CompilationService { get; set; }
+        public CompilationService CompilationService { get; set; }
 
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
@@ -35,9 +35,9 @@
 
         public CodeEditor CodeEditorComponent { get; set; }
 
-        public ICollection<ComponentFile> ComponentFiles { get; set; } = new List<ComponentFile>();
+        public ICollection<CodeFile> ComponentFiles { get; set; } = new List<CodeFile>();
 
-        public IList<string> ComponentFileNames => this.ComponentFiles?.Select(cf => cf.Name).ToList() ?? new List<string>();
+        public IList<string> ComponentFileNames => this.ComponentFiles?.Select(cf => cf.Path).ToList() ?? new List<string>();
 
         public string CodeEditorContent { get; set; }
 
@@ -62,7 +62,7 @@
                 return;
             }
 
-            var componentFile = this.ComponentFiles.FirstOrDefault(cf => cf.Name == name);
+            var componentFile = this.ComponentFiles.FirstOrDefault(cf => cf.Path == name);
             if (componentFile == null)
             {
                 return;
@@ -78,7 +78,7 @@
                 return;
             }
 
-            var componentFile = this.ComponentFiles.FirstOrDefault(cf => cf.Name == name);
+            var componentFile = this.ComponentFiles.FirstOrDefault(cf => cf.Path == name);
             if (componentFile == null)
             {
                 return;
@@ -94,7 +94,7 @@
                 return;
             }
 
-            this.ComponentFiles.Add(new ComponentFile { Name = name, Content = string.Empty });
+            this.ComponentFiles.Add(new CodeFile { Path = name, Content = string.Empty });
         }
 
         public async Task CompileAsync()
@@ -112,7 +112,7 @@
                 result = await this.CompilationService.CompileToAssembly(
                     new[]
                     {
-                        new ComponentFile { Name = "__Main.razor", Content = this.UserComponentCodePrefix + code },
+                        new CodeFile { Path = "__Main.razor", Content = this.UserComponentCodePrefix + code },
 //                        new ComponentFile
 //                        {
 //                            Name = "UserPage2.razor",
@@ -223,11 +223,11 @@
         {
             this.PageNotificationsComponent?.Clear();
 
-            this.ComponentFiles = new List<ComponentFile>
+            this.ComponentFiles = new List<CodeFile>
             {
-                new ComponentFile { Name = "__Main.razor", Content = "<h1> Some Test Content</h1>" },
-                new ComponentFile { Name = "File2.razor", Content = "<h1> Some Test Content 2</h1>" },
-                new ComponentFile { Name = "File3.razor", Content = "<h1> Some Test Content 3</h1>" },
+                new CodeFile { Path = "__Main.razor", Content = "<h1> Some Test Content</h1>" },
+                new CodeFile { Path = "File2.razor", Content = "<h1> Some Test Content 2</h1>" },
+                new CodeFile { Path = "File3.razor", Content = "<h1> Some Test Content 3</h1>" },
             };
 
             if (!string.IsNullOrWhiteSpace(this.SnippetId))
@@ -236,7 +236,6 @@
                 {
                     this.ComponentFiles = (await this.SnippetsService
                         .GetSnippetContentAsync(this.SnippetId))
-                        .Select(x => new ComponentFile { Name = x.Path, Content = x.Content })
                         .ToList();
                 }
                 catch (ArgumentException)

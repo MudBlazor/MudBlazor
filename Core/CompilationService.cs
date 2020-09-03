@@ -18,7 +18,7 @@
     using Microsoft.CodeAnalysis.Razor;
     using Microsoft.JSInterop;
 
-    public class ComponentCompilationService
+    public class CompilationService
     {
         private const string WorkingDirectory = "/BlazorRepl/";
         private const string DefaultRootNamespace = "BlazorRepl.UserComponents";
@@ -83,18 +83,18 @@
         }
 
         public async Task<CompileToAssemblyResult> CompileToAssembly(
-            IReadOnlyList<ComponentFile> componentFiles,
+            IReadOnlyList<CodeFile> codeFiles,
             string preset,
             Func<string, Task> updateStatusFunc) // TODO: try convert to event
         {
-            if (componentFiles == null)
+            if (codeFiles == null)
             {
-                throw new ArgumentNullException(nameof(componentFiles));
+                throw new ArgumentNullException(nameof(codeFiles));
             }
 
             var compilation = baseCompilation;
 
-            var cSharpResults = await this.CompileToCSharp(componentFiles, compilation, updateStatusFunc);
+            var cSharpResults = await this.CompileToCSharp(codeFiles, compilation, updateStatusFunc);
 
             await (updateStatusFunc?.Invoke("Compiling Assembly") ?? Task.CompletedTask);
             var result = CompileToAssembly(cSharpResults, compilation);
@@ -159,30 +159,30 @@
             return result;
         }
 
-        private static RazorProjectItem CreateRazorProjectItem(string cshtmlFileName, string cshtmlContent)
+        private static RazorProjectItem CreateRazorProjectItem(string fileName, string fileContent)
         {
-            var fullPath = WorkingDirectory + cshtmlFileName;
+            var fullPath = WorkingDirectory + fileName;
 
-            // FilePaths in Razor are always of the form '/a/b/c.cshtml'
-            var filePath = cshtmlFileName;
+            // FilePaths in Razor are always of the form '/a/b/c.razor'
+            var filePath = fileName;
             if (!filePath.StartsWith('/'))
             {
                 filePath = '/' + filePath;
             }
 
-            cshtmlContent = cshtmlContent.Replace("\r", string.Empty);
+            fileContent = fileContent.Replace("\r", string.Empty);
 
             return new VirtualProjectItem(
                 WorkingDirectory,
                 filePath,
                 fullPath,
-                cshtmlFileName,
+                fileName,
                 FileKinds.Component,
-                Encoding.UTF8.GetBytes(cshtmlContent.TrimStart()));
+                Encoding.UTF8.GetBytes(fileContent.TrimStart()));
         }
 
         private async Task<IReadOnlyList<CompileToCSharpResult>> CompileToCSharp(
-            IReadOnlyList<ComponentFile> componentFiles,
+            IReadOnlyList<CodeFile> codeFiles,
             CSharpCompilation compilation,
             Func<string, Task> updateStatusFunc)
         {
@@ -190,12 +190,12 @@
             var projectEngine = this.CreateRazorProjectEngine(Array.Empty<MetadataReference>());
 
             // Result of generating declarations
-            var declarations = new CompileToCSharpResult[componentFiles.Count];
-            for (var i = 0; i < componentFiles.Count; i++)
+            var declarations = new CompileToCSharpResult[codeFiles.Count];
+            for (var i = 0; i < codeFiles.Count; i++)
             {
-                var componentFile = componentFiles[i];
+                var codeFile = codeFiles[i];
 
-                var projectItem = CreateRazorProjectItem(componentFile.Name, componentFile.Content);
+                var projectItem = CreateRazorProjectItem(codeFile.Path, codeFile.Content);
 
                 var codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
                 var cSharpDocument = codeDocument.GetCSharpDocument();
@@ -222,7 +222,7 @@
             await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
 
             // Result of real code generation for the documents
-            var results = new CompileToCSharpResult[componentFiles.Count];
+            var results = new CompileToCSharpResult[codeFiles.Count];
             for (var i = 0; i < declarations.Length; i++)
             {
                 var declaration = declarations[i];

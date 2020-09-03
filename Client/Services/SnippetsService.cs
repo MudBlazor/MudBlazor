@@ -7,6 +7,7 @@
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
+    using BlazorRepl.Core;
     using Microsoft.Extensions.Options;
 
     public class SnippetsService
@@ -88,7 +89,7 @@
 
             var requestData = new CreateSnippetRequestModel
             {
-                Files = new[] { new SnippetFile { Content = content }, },
+                Files = new[] { new CodeFile { Content = content }, },
             };
 
             var response = await this.httpClient.PostAsJsonAsync(this.snippetsOptions.CreateUrl, requestData);
@@ -98,7 +99,7 @@
             return id;
         }
 
-        public async Task<IEnumerable<SnippetFile>> GetSnippetContentAsync(string snippetId)
+        public async Task<IEnumerable<CodeFile>> GetSnippetContentAsync(string snippetId)
         {
             if (string.IsNullOrWhiteSpace(snippetId) || snippetId.Length != SnippetIdLength)
             {
@@ -118,9 +119,9 @@
             return snippetFiles;
         }
 
-        private static async Task<IEnumerable<SnippetFile>> ExtractSnippetFilesFromResponse(HttpResponseMessage snippetResponse)
+        private static async Task<IEnumerable<CodeFile>> ExtractSnippetFilesFromResponse(HttpResponseMessage snippetResponse)
         {
-            var result = new List<SnippetFile>();
+            var result = new List<CodeFile>();
 
             if (snippetResponse.Headers.TryGetValues("x-ms-meta-zip", out _))
             {
@@ -130,14 +131,14 @@
                 {
                     using var streamReader = new StreamReader(entry.Open());
 
-                    result.Add(new SnippetFile { Path = entry.Name, Content = await streamReader.ReadToEndAsync() });
+                    result.Add(new CodeFile { Path = entry.FullName, Content = await streamReader.ReadToEndAsync() });
                 }
             }
             else
             {
                 var fileContent = await snippetResponse.Content.ReadAsStringAsync();
 
-                result.Add(new SnippetFile { Path = "__Main.razor", Content = fileContent });
+                result.Add(new CodeFile { Path = "__Main.razor", Content = fileContent });
             }
 
             return result;

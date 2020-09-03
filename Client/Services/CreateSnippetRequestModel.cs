@@ -1,9 +1,10 @@
 ﻿namespace BlazorRepl.Client.Services
 {
     using System.Collections.Generic;
+    using BlazorRepl.Core;
 
     public class CreateSnippetRequestModel
     {
-        public IEnumerable<SnippetFile> Files { get; set; } = new List<SnippetFile>();
+        public IEnumerable<CodeFile> Files { get; set; } = new List<CodeFile>();
     }
 }
