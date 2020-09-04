@@ -39,6 +39,9 @@
         [Parameter]
         public IEnumerable<CodeFile> CodeFiles { get; set; } = Enumerable.Empty<CodeFile>();
 
+        [Parameter]
+        public Func<Task> UpdateActiveCodeFileContentFunc { get; set; }
+
         public bool Loading { get; set; }
 
         public string SnippetLink { get; set; }
@@ -64,6 +67,8 @@
 
             try
             {
+                await (this.UpdateActiveCodeFileContentFunc?.Invoke() ?? Task.CompletedTask);
+
                 var snippetId = await this.SnippetsService.SaveSnippetAsync(this.CodeFiles);
 
                 var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"repl/{snippetId}" };

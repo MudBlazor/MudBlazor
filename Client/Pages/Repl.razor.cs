@@ -56,42 +56,6 @@
 
         public bool Loading { get; set; }
 
-        public async Task HandleTabActivateAsync(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return;
-            }
-
-            await this.UpdateActiveCodeFileContentAsync();
-
-            if (this.CodeFiles.TryGetValue(name, out var codeFile))
-            {
-                this.activeCodeFile = codeFile;
-            }
-        }
-
-        public void HandleTabClose(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return;
-            }
-
-            this.CodeFiles.Remove(name);
-        }
-
-        public void HandleTabCreate(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return;
-            }
-
-            // TODO: remove the white space
-            this.CodeFiles.Add(name, new CodeFile { Path = name, Content = " " });
-        }
-
         public async Task CompileAsync()
         {
             this.Loading = true;
@@ -214,6 +178,42 @@
             //    Convert.FromBase64String(DefaultUserPageAssemblyBytes));
 
             await base.OnInitializedAsync();
+        }
+
+        private async Task HandleTabActivateAsync(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+
+            await this.UpdateActiveCodeFileContentAsync();
+
+            if (this.CodeFiles.TryGetValue(name, out var codeFile))
+            {
+                this.activeCodeFile = codeFile;
+            }
+        }
+
+        private void HandleTabClose(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+
+            this.CodeFiles.Remove(name);
+        }
+
+        private void HandleTabCreate(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+
+            // TODO: remove the white space
+            this.CodeFiles.Add(name, new CodeFile { Path = name, Content = " " });
         }
 
         private async Task UpdateActiveCodeFileContentAsync()

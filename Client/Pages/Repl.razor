@@ -19,7 +19,8 @@
 
 <SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible"
                   InvokerId="save-snippet-btn"
-                  CodeFiles="@CodeFiles.Values"></SaveSnippetPopup>
+                  CodeFiles="@CodeFiles.Values"
+                  UpdateActiveCodeFileContentFunc="UpdateActiveCodeFileContentAsync"></SaveSnippetPopup>
 
 <div class="row flex" style="margin: 0">
     <ReplLoader Show="@Loading"
