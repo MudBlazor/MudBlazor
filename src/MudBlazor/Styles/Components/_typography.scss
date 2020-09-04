@@ -1,0 +1,179 @@
+﻿
+.mud-typography{
+    margin: 0;
+}
+
+.mud-typography-body2 {
+    font-size: 0.875rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.43;
+    letter-spacing: 0.01071em;
+}
+
+.mud-typography-body1 {
+    font-size: 1rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
+}
+
+.mud-typography-caption {
+    font-size: 0.75rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.66;
+    letter-spacing: 0.03333em;
+}
+
+.mud-typography-button {
+    font-size: 0.875rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 500;
+    line-height: 1.75;
+    letter-spacing: 0.02857em;
+    text-transform: uppercase;
+}
+
+.mud-typography-h1 {
+    font-size: 6rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 300;
+    line-height: 1.167;
+    letter-spacing: -0.01562em;
+}
+
+.mud-typography-h2 {
+    font-size: 3.75rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.00833em;
+}
+
+.mud-typography-h3 {
+    font-size: 3rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.167;
+    letter-spacing: 0em;
+}
+
+.mud-typography-h4 {
+    font-size: 2.125rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.235;
+    letter-spacing: 0.00735em;
+}
+
+.mud-typography-h5 {
+    font-size: 1.5rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.334;
+    letter-spacing: 0em;
+}
+
+.mud-typography-h6 {
+    font-size: 1.25rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 500;
+    line-height: 1.6;
+    letter-spacing: 0.0075em;
+}
+
+.mud-typography-subtitle1 {
+    font-size: 1rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.75;
+    letter-spacing: 0.00938em;
+}
+
+.mud-typography-subtitle2 {
+    font-size: 0.875rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 500;
+    line-height: 1.57;
+    letter-spacing: 0.00714em;
+}
+
+.mud-typography-overline {
+    font-size: 0.75rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 2.66;
+    letter-spacing: 0.08333em;
+    text-transform: uppercase;
+}
+
+.mud-typography-srOnly {
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+}
+
+.mud-typography-alignLeft {
+    text-align: left;
+}
+
+.mud-typography-alignCenter {
+    text-align: center;
+}
+
+.mud-typography-alignRight {
+    text-align: right;
+}
+
+.mud-typography-alignJustify {
+    text-align: justify;
+}
+
+.mud-typography-noWrap {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.mud-typography-gutterbottom {
+    margin-bottom: 0.35em;
+}
+
+.mud-typography-paragraph {
+    margin-bottom: 16px;
+}
+
+.mud-typography-colorInherit {
+    color: inherit;
+}
+
+.mud-typography-colorPrimary {
+    color: #1976d2;
+}
+
+.mud-typography-colorSecondary {
+    color: rgb(220, 0, 78);
+}
+
+.mud-typography-colorTextPrimary {
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.mud-typography-colorTextSecondary {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+.mud-typography-colorError {
+    color: #f44336;
+}
+
+.mud-typography-displayInline {
+    display: inline;
+}
+
+.mud-typography-displayBlock {
+    display: block;
+}
