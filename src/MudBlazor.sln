@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30406.217
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor", "src\MudBlazor\MudBlazor.csproj", "{FE5531F3-55F6-403D-BF48-3C904089B91D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor", "MudBlazor\MudBlazor.csproj", "{FE5531F3-55F6-403D-BF48-3C904089B91D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs.Server", "src\MudBlazor.Docs.Server\MudBlazor.Docs.Server.csproj", "{C6E907FB-1958-44CE-A525-16E50EE8D199}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs.Server", "MudBlazor.Docs.Server\MudBlazor.Docs.Server.csproj", "{C6E907FB-1958-44CE-A525-16E50EE8D199}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Docs.Client", "MudBlazor.Docs.Client\MudBlazor.Docs.Client.csproj", "{7EA59258-02F9-4DCF-AA93-37380DCB9904}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.Docs", "MudBlazor.Docs\MudBlazor.Docs.csproj", "{D90D463F-544F-47AF-8D19-617BB89D9A5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{C6E907FB-1958-44CE-A525-16E50EE8D199}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6E907FB-1958-44CE-A525-16E50EE8D199}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6E907FB-1958-44CE-A525-16E50EE8D199}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EA59258-02F9-4DCF-AA93-37380DCB9904}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EA59258-02F9-4DCF-AA93-37380DCB9904}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EA59258-02F9-4DCF-AA93-37380DCB9904}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EA59258-02F9-4DCF-AA93-37380DCB9904}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D90D463F-544F-47AF-8D19-617BB89D9A5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D90D463F-544F-47AF-8D19-617BB89D9A5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D90D463F-544F-47AF-8D19-617BB89D9A5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D90D463F-544F-47AF-8D19-617BB89D9A5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
