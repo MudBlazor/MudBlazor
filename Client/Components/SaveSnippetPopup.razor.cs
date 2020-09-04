@@ -1,6 +1,9 @@
 ﻿namespace BlazorRepl.Client.Components
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.Json;
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components.Models;
     using BlazorRepl.Client.Services;
@@ -34,7 +37,7 @@
         public string InvokerId { get; set; }
 
         [Parameter]
-        public CodeEditor CodeEditorComponent { get; set; }
+        public IEnumerable<CodeFile> CodeFiles { get; set; } = Enumerable.Empty<CodeFile>();
 
         public bool Loading { get; set; }
 
@@ -56,20 +59,12 @@
 
         public async Task SaveAsync()
         {
-            if (this.CodeEditorComponent == null)
-            {
-                throw new InvalidOperationException(
-                    $"Cannot use save snippet popup without specified {nameof(this.CodeEditorComponent)} parameter.");
-            }
 
             this.Loading = true;
 
             try
             {
-                var content = await this.CodeEditorComponent.GetCodeAsync();
-
-                var snippetId = await this.SnippetsService.SaveSnippetAsync(
-                    new[] { new CodeFile { Path = "__Main.razor", Content = content } });
+                var snippetId = await this.SnippetsService.SaveSnippetAsync(this.CodeFiles);
 
                 var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"repl/{snippetId}" };
                 var url = urlBuilder.Uri.ToString();
@@ -79,6 +74,7 @@
             }
             catch (ArgumentException)
             {
+                // TODO: Abstract message or get ex.Message?
                 this.PageNotificationsComponent.AddNotification(
                     NotificationType.Error,
                     content: "Snippet content should be at least 10 characters long.");

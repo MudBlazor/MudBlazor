@@ -17,6 +17,7 @@
 
         private DotNetObjectReference<Repl> dotNetInstance;
         private string errorMessage;
+        private CodeFile activeCodeFile;
 
         [Inject]
         public SnippetsService SnippetsService { get; set; }
@@ -35,11 +36,11 @@
 
         public CodeEditor CodeEditorComponent { get; set; }
 
-        public ICollection<CodeFile> ComponentFiles { get; set; } = new List<CodeFile>();
+        public IDictionary<string, CodeFile> CodeFiles { get; set; } = new Dictionary<string, CodeFile>();
 
-        public IList<string> ComponentFileNames => this.ComponentFiles?.Select(cf => cf.Path).ToList() ?? new List<string>();
+        public IList<string> CodeFileNames => this.CodeFiles.Keys.ToList();
 
-        public string CodeEditorContent { get; set; }
+        public string CodeEditorContent => this.activeCodeFile?.Content;
 
         public bool SaveSnippetPopupVisible { get; set; }
 
@@ -55,20 +56,19 @@
 
         public bool Loading { get; set; }
 
-        public void HandleTabActivate(string name)
+        public async Task HandleTabActivateAsync(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 return;
             }
 
-            var componentFile = this.ComponentFiles.FirstOrDefault(cf => cf.Path == name);
-            if (componentFile == null)
-            {
-                return;
-            }
+            await this.UpdateActiveCodeFileContentAsync();
 
-            this.CodeEditorContent = componentFile.Content;
+            if (this.CodeFiles.TryGetValue(name, out var codeFile))
+            {
+                this.activeCodeFile = codeFile;
+            }
         }
 
         public void HandleTabClose(string name)
@@ -78,13 +78,7 @@
                 return;
             }
 
-            var componentFile = this.ComponentFiles.FirstOrDefault(cf => cf.Path == name);
-            if (componentFile == null)
-            {
-                return;
-            }
-
-            this.ComponentFiles.Remove(componentFile);
+            this.CodeFiles.Remove(name);
         }
 
         public void HandleTabCreate(string name)
@@ -94,7 +88,8 @@
                 return;
             }
 
-            this.ComponentFiles.Add(new CodeFile { Path = name, Content = string.Empty });
+            // TODO: remove the white space
+            this.CodeFiles.Add(name, new CodeFile { Path = name, Content = " " });
         }
 
         public async Task CompileAsync()
@@ -107,55 +102,9 @@
             CompileToAssemblyResult result = null;
             try
             {
-                var code = await this.CodeEditorComponent.GetCodeAsync();
+                await this.UpdateActiveCodeFileContentAsync();
 
-                result = await this.CompilationService.CompileToAssembly(
-                    new[]
-                    {
-                        new CodeFile { Path = "__Main.razor", Content = this.UserComponentCodePrefix + code },
-//                        new ComponentFile
-//                        {
-//                            Name = "UserPage2.razor",
-//                            Content = @"
-//@using System.ComponentModel.DataAnnotations
-//@using System.Linq
-//@using System.Net.Http
-//@using System.Net.Http.Json
-//@using Microsoft.AspNetCore.Components.Forms
-//@using Microsoft.AspNetCore.Components.Routing
-//@using Microsoft.AspNetCore.Components.Web
-//@using Microsoft.JSInterop
-
-//<h1>Counter Demo</h1>
-
-//<button class=""btn btn-primary"" @onclick=""@Increment"">Increment</button>
-
-//<div>Counter: @Counter</div>
-
-//@code {
-//    public int Counter { get; set; }
-
-//    public void Increment()
-//    {
-//        if (Counter < 10)
-//        {
-//            Counter++;
-//        }
-//        else if (Counter < 100) 
-//        {
-//            Counter += 10;
-//        }
-//        else 
-//        {
-//            Counter += 100;
-//        }
-//    }
-//}",
-
-//                        },
-                    },
-                    this.Preset,
-                    this.UpdateLoaderTextAsync);
+                result = await this.CompilationService.CompileToAssembly(this.CodeFiles.Values, this.Preset, this.UpdateLoaderTextAsync);
 
                 this.Diagnostics = result.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
                 this.AreDiagnosticsShown = true;
@@ -223,20 +172,28 @@
         {
             this.PageNotificationsComponent?.Clear();
 
-            this.ComponentFiles = new List<CodeFile>
+            // TODO: Remove
+            this.CodeFiles = new Dictionary<string, CodeFile>
             {
-                new CodeFile { Path = "__Main.razor", Content = "<h1> Some Test Content</h1>" },
-                new CodeFile { Path = "File2.razor", Content = "<h1> Some Test Content 2</h1>" },
-                new CodeFile { Path = "File3.razor", Content = "<h1> Some Test Content 3</h1>" },
+                ["__Main.razor"] = new CodeFile { Path = "__Main.razor", Content = "<h1> Some Test Content</h1>" },
+                ["File2.razor"] = new CodeFile { Path = "File2.razor", Content = "<h1> Some Test Content 2</h1>" },
+                ["File3.razor"] = new CodeFile { Path = "File3.razor", Content = "<h1> Some Test Content 3</h1>" },
             };
+            this.activeCodeFile = this.CodeFiles.First().Value;
 
             if (!string.IsNullOrWhiteSpace(this.SnippetId))
             {
                 try
                 {
-                    this.ComponentFiles = (await this.SnippetsService
-                        .GetSnippetContentAsync(this.SnippetId))
-                        .ToList();
+                    this.CodeFiles = (await this.SnippetsService.GetSnippetContentAsync(this.SnippetId)).ToDictionary(f => f.Path, f => f);
+                    if (!this.CodeFiles.Any())
+                    {
+                        this.errorMessage = "No files in snippet.";
+                    }
+                    else
+                    {
+                        this.activeCodeFile = this.CodeFiles.First().Value;
+                    }
                 }
                 catch (ArgumentException)
                 {
@@ -248,6 +205,7 @@
                 }
             }
 
+            // TODO:
             //const string DefaultUserPageAssemblyBytes =
             //    "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AAAAABglAAAAAAAAAAAAAAAAX0NvckRsbE1haW4AbXNjb3JlZS5kbGwAAAAAAP8lACAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAADAAAADg1AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
 
@@ -256,6 +214,17 @@
             //    Convert.FromBase64String(DefaultUserPageAssemblyBytes));
 
             await base.OnInitializedAsync();
+        }
+
+        private async Task UpdateActiveCodeFileContentAsync()
+        {
+            if (this.activeCodeFile == null)
+            {
+                this.PageNotificationsComponent.AddNotification(NotificationType.Error, "No active file to update.");
+                return;
+            }
+
+            this.activeCodeFile.Content = await this.CodeEditorComponent.GetCodeAsync();
         }
 
         private Task UpdateLoaderTextAsync(string loaderText)

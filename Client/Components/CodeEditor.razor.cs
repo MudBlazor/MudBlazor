@@ -15,15 +15,15 @@
         public IJSRuntime JsRuntime { get; set; }
 
         [Parameter]
-        public string DefaultCode { get; set; }
+        public string Code { get; set; }
 
         public ValueTask<string> GetCodeAsync() => this.JsRuntime.InvokeAsync<string>("App.CodeEditor.getValue");
 
         public override Task SetParametersAsync(ParameterView parameters)
         {
-            if (parameters.TryGetValue<string>(nameof(this.DefaultCode), out var parameterValue))
+            if (parameters.TryGetValue<string>(nameof(this.Code), out var parameterValue))
             {
-                this.shouldReInitEditor = this.DefaultCode != parameterValue;
+                this.shouldReInitEditor = this.Code != parameterValue;
             }
 
             return base.SetParametersAsync(parameters);
@@ -33,11 +33,12 @@
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            // TODO: if should re-init => set value instead of calling init()
             if (firstRender || this.shouldReInitEditor)
             {
                 this.shouldReInitEditor = false;
 
-                await this.JsRuntime.InvokeVoidAsync("App.CodeEditor.init", EditorId, this.DefaultCode);
+                await this.JsRuntime.InvokeVoidAsync("App.CodeEditor.init", EditorId, this.Code);
             }
 
             await base.OnAfterRenderAsync(firstRender);

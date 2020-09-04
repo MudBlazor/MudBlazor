@@ -83,7 +83,7 @@
         }
 
         public async Task<CompileToAssemblyResult> CompileToAssembly(
-            IReadOnlyList<CodeFile> codeFiles,
+            ICollection<CodeFile> codeFiles,
             string preset,
             Func<string, Task> updateStatusFunc) // TODO: try convert to event
         {
@@ -120,7 +120,7 @@
         }
 
         private static CompileToAssemblyResult CompileToAssembly(
-            IReadOnlyList<CompileToCSharpResult> cSharpResults,
+            ICollection<CompileToCSharpResult> cSharpResults,
             CSharpCompilation compilation)
         {
             if (cSharpResults.Any(r => r.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error)))
@@ -128,11 +128,10 @@
                 return new CompileToAssemblyResult { Diagnostics = cSharpResults.SelectMany(r => r.Diagnostics).ToList() };
             }
 
-            var syntaxTrees = new SyntaxTree[cSharpResults.Count];
-            for (var i = 0; i < cSharpResults.Count; i++)
+            var syntaxTrees = new List<SyntaxTree>(cSharpResults.Count);
+            foreach (var cSharpResult in cSharpResults)
             {
-                var cSharpResult = cSharpResults[i];
-                syntaxTrees[i] = CSharpSyntaxTree.ParseText(cSharpResult.Code, cSharpParseOptions);
+                syntaxTrees.Add(CSharpSyntaxTree.ParseText(cSharpResult.Code, cSharpParseOptions));
             }
 
             var finalCompilation = compilation.AddSyntaxTrees(syntaxTrees);
@@ -181,8 +180,8 @@
                 Encoding.UTF8.GetBytes(fileContent.TrimStart()));
         }
 
-        private async Task<IReadOnlyList<CompileToCSharpResult>> CompileToCSharp(
-            IReadOnlyList<CodeFile> codeFiles,
+        private async Task<ICollection<CompileToCSharpResult>> CompileToCSharp(
+            ICollection<CodeFile> codeFiles,
             CSharpCompilation compilation,
             Func<string, Task> updateStatusFunc)
         {
@@ -190,22 +189,20 @@
             var projectEngine = this.CreateRazorProjectEngine(Array.Empty<MetadataReference>());
 
             // Result of generating declarations
-            var declarations = new CompileToCSharpResult[codeFiles.Count];
-            for (var i = 0; i < codeFiles.Count; i++)
+            var declarations = new List<CompileToCSharpResult>(codeFiles.Count);
+            foreach (var codeFile in codeFiles)
             {
-                var codeFile = codeFiles[i];
-
                 var projectItem = CreateRazorProjectItem(codeFile.Path, codeFile.Content);
 
                 var codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
                 var cSharpDocument = codeDocument.GetCSharpDocument();
 
-                declarations[i] = new CompileToCSharpResult
+                declarations.Add(new CompileToCSharpResult
                 {
                     ProjectItem = projectItem,
                     Code = cSharpDocument.GeneratedCode,
                     Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
-                };
+                });
             }
 
             // Result of doing 'temp' compilation
@@ -222,20 +219,18 @@
             await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
 
             // Result of real code generation for the documents
-            var results = new CompileToCSharpResult[codeFiles.Count];
-            for (var i = 0; i < declarations.Length; i++)
+            var results = new List<CompileToCSharpResult>(codeFiles.Count);
+            foreach (var declaration in declarations)
             {
-                var declaration = declarations[i];
-
                 var codeDocument = projectEngine.Process(declaration.ProjectItem);
                 var cSharpDocument = codeDocument.GetCSharpDocument();
 
-                results[i] = new CompileToCSharpResult
+                results.Add(new CompileToCSharpResult
                 {
                     ProjectItem = declaration.ProjectItem,
                     Code = cSharpDocument.GeneratedCode,
                     Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
-                };
+                });
             }
 
             return results;

@@ -67,8 +67,7 @@
 
             if (index == this.ActiveIndex)
             {
-                this.ActiveIndex = DefaultActiveIndex;
-                await this.OnTabActivate.InvokeAsync(this.Tabs[this.ActiveIndex]);
+                await this.ActivateTabAsync(DefaultActiveIndex);
             }
         }
 
@@ -80,7 +79,14 @@
 
         public async Task CreateTabAsync()
         {
-            //validation
+            if (string.IsNullOrWhiteSpace(this.newTab))
+            {
+                this.tabCreating = false;
+                this.newTab = null;
+                return;
+            }
+
+            // TODO: validation
             this.Tabs.Add(this.newTab);
 
             var newCreatedTab = this.newTab;
@@ -89,7 +95,7 @@
 
             var index = this.Tabs.Count - 1;
             await this.OnTabCreate.InvokeAsync(newCreatedTab);
-            // check why editor is not updated with the tab content (which is empty) maybe we cannot set empty content
+
             await this.ActivateTabAsync(index);
         }
 

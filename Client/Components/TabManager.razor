@@ -11,7 +11,11 @@
                     <span class="tab-name-wrapper">@tab</span>
                     @if (currentIndex != DefaultActiveIndex)
                     {
-                        <span class="close-tab" @onclick="@(() => CloseTabAsync(currentIndex))" @onclick:preventDefault>&times;</span>
+                        <span class="close-tab"
+                              @onclick="@(() => CloseTabAsync(currentIndex))"
+                              @onclick:preventDefault>
+                            &times;
+                        </span>
                     }
                 </a>
             </li>
@@ -20,7 +24,11 @@
         {
             <li class="nav-item">
                 <a class="nav-link tab-input">
-                    <input id="new-tab-input" @bind="@newTab" @bind:event="oninput" @onblur="@CreateTabAsync" @onkeydown="@OnKeyDownAsync"/>
+                    <input id="new-tab-input"
+                           @bind="@newTab"
+                           @bind:event="oninput"
+                           @onblur="@CreateTabAsync"
+                           @onkeydown="@OnKeyDownAsync" />
                 </a>
             </li>
         }

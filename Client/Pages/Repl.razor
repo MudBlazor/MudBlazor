@@ -19,22 +19,25 @@
 
 <SaveSnippetPopup @bind-Visible="@SaveSnippetPopupVisible"
                   InvokerId="save-snippet-btn"
-                  CodeEditorComponent="@CodeEditorComponent"></SaveSnippetPopup>
+                  CodeFiles="@CodeFiles.Values"></SaveSnippetPopup>
 
 <div class="row flex" style="margin: 0">
-    <ReplLoader Show="@Loading" Message="@LoaderText"></ReplLoader>
+    <ReplLoader Show="@Loading"
+                Message="@LoaderText"></ReplLoader>
 
     <div id="user-code-editor-container">
-        <TabManager Tabs="@ComponentFileNames"
-                    OnTabActivate="@HandleTabActivate"
+        <TabManager Tabs="@CodeFileNames"
+                    OnTabActivate="@HandleTabActivateAsync"
                     OnTabClose="@HandleTabClose"
                     OnTabCreate="@HandleTabCreate"></TabManager>
 
-        <CodeEditor @ref="@CodeEditorComponent" DefaultCode="@CodeEditorContent"></CodeEditor>
+        <CodeEditor @ref="@CodeEditorComponent"
+                    Code="@CodeEditorContent"></CodeEditor>
     </div>
     <div id="user-page-window-container">
         <iframe id="user-page-window" src="/__main" style="width: 100%; height: 100%"></iframe>
     </div>
 </div>
 
-<ErrorList @bind-Show="@AreDiagnosticsShown" Diagnostics="@Diagnostics"></ErrorList>
+<ErrorList @bind-Show="@AreDiagnosticsShown"
+           Diagnostics="@Diagnostics"></ErrorList>
