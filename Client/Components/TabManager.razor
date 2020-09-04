@@ -4,8 +4,8 @@
         {
             var tab = Tabs[i];
             var activeClass = i == ActiveIndex ? "active" : string.Empty;
-
             var currentIndex = i;
+
             <li class="nav-item tab" @onclick="@(() => ActivateTabAsync(currentIndex))">
                 <a class="nav-link @activeClass tab-name" title="@tab">
                     <span class="tab-name-wrapper">@tab</span>
@@ -13,7 +13,7 @@
                     {
                         <span class="close-tab"
                               @onclick="@(() => CloseTabAsync(currentIndex))"
-                              @onclick:preventDefault>
+                              @onclick:stopPropagation>
                             &times;
                         </span>
                     }
