@@ -61,7 +61,6 @@
 
         public async Task SaveAsync()
         {
-
             this.Loading = true;
 
             try
@@ -76,12 +75,9 @@
 
                 await this.JsRuntime.InvokeVoidAsync("App.changeDisplayUrl", url);
             }
-            catch (ArgumentException)
+            catch (InvalidOperationException ex)
             {
-                // TODO: Abstract message or get ex.Message?
-                this.PageNotificationsComponent.AddNotification(
-                    NotificationType.Error,
-                    content: "Snippet content should be at least 10 characters long.");
+                this.PageNotificationsComponent.AddNotification(NotificationType.Error, content: ex.Message);
             }
             catch (Exception)
             {

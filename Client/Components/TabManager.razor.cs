@@ -1,6 +1,5 @@
 ﻿namespace BlazorRepl.Client.Components
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components.Models;
@@ -40,7 +39,7 @@
 
         public int ActiveIndex { get; set; } = DefaultActiveIndex;
 
-        public string TabCreatingStyle => this.tabCreating ? string.Empty : "display: none;";
+        public string TabCreatingDisplayStyle => this.tabCreating ? string.Empty : "display: none;";
 
         public Task ActivateTabAsync(int activeIndex)
         {
@@ -135,7 +134,6 @@
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-
             if (this.shouldFocusNewTabInput)
             {
                 await this.JsRuntime.InvokeVoidAsync("App.focusElement", NewTabSelector);

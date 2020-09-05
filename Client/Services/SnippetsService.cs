@@ -81,11 +81,16 @@
 
         public async Task<string> SaveSnippetAsync(IEnumerable<CodeFile> codeFiles)
         {
-            // TODO: Validation
-            //if (string.IsNullOrWhiteSpace(content) || content.Trim().Length < SnippetContentMinLength)
-            //{
-            //    throw new ArgumentException($"The snippet content should be at least {SnippetContentMinLength} symbols.", nameof(content));
-            //}
+            if (codeFiles == null)
+            {
+                throw new ArgumentNullException(nameof(codeFiles));
+            }
+
+            var codeFilesValidationError = CodeFilesHelper.ValidateCodeFilesForSnippetCreation(codeFiles);
+            if (!string.IsNullOrWhiteSpace(codeFilesValidationError))
+            {
+                throw new InvalidOperationException(codeFilesValidationError);
+            }
 
             var requestData = new CreateSnippetRequestModel { Files = codeFiles };
 
