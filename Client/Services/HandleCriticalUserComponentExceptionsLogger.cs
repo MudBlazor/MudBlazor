@@ -28,7 +28,7 @@
             {
                 this.jsRuntime.InvokeVoidAsync(
                     "App.Repl.updateUserAssemblyInCacheStorage",
-                    Convert.FromBase64String(Constants.DefaultUserComponentsAssemblyBytes));
+                    Convert.FromBase64String(ClientConstants.DefaultUserComponentsAssemblyBytes));
             }
         }
 

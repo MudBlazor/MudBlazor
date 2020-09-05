@@ -29,8 +29,7 @@
             var file = Path.GetFileName(mappedLineSpan.Path);
             var line = mappedLineSpan.StartLinePosition.Line;
 
-            // TODO: Const
-            if (file != "__Main.razor")
+            if (file != CoreConstants.MainComponentFilePath)
             {
                 // Make it 1-based. Skip the main component where we add @page directive line
                 line++;

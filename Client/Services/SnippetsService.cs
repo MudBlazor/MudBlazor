@@ -136,7 +136,7 @@
             {
                 var fileContent = await snippetResponse.Content.ReadAsStringAsync();
 
-                result.Add(new CodeFile { Path = "__Main.razor", Content = fileContent });
+                result.Add(new CodeFile { Path = CoreConstants.MainComponentFilePath, Content = fileContent });
             }
 
             return result;
