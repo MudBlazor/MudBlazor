@@ -186,10 +186,9 @@
                 this.CodeFiles.Add(CoreConstants.MainComponentFilePath, this.activeCodeFile);
             }
 
-            // TODO:
-            //await this.JsRuntime.InvokeVoidAsync(
-            //    "App.Repl.updateUserAssemblyInCacheStorage",
-            //    Convert.FromBase64String(CoreConstants.DefaultUserComponentsAssemblyBytes));
+            await this.JsRuntime.InvokeVoidAsync(
+                "App.Repl.updateUserAssemblyInCacheStorage",
+                Convert.FromBase64String(CoreConstants.DefaultUserComponentsAssemblyBytes));
 
             await base.OnInitializedAsync();
         }
