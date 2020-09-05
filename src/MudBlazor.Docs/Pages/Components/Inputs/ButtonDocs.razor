@@ -1,16 +1,62 @@
 ﻿@page "/components/inputs/button"
 
-<Container>
-    <Typography Typo="Typo.h1">Test h1</Typography>
-    <Typography>Test default</Typography>
-    <h1>Contained Buttons</h1>
-    <h4>Contained buttons are high-emphasis, distinguished by their use of elevation and fill. They contain actions that are primary to your app.</h4>
-    <Button Variant="Variant.Contained">Default</Button>
-    <Button Variant="Variant.Contained" Color="Color.Primary">Primary</Button>
-    <Button Variant="Variant.Contained" Color="Color.Secondary">Secondary</Button>
-    <Button Variant="Variant.Contained" Disabled="true">Disabled</Button>
-</Container>
+
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Button</Typography>
+        <Typography Typo="Typo.h4">Contained Buttons</Typography>
+        <DocsShowcase Outlined="true">
+            <Button Variant="Variant.Contained">Default</Button>
+            <Button Variant="Variant.Contained" Color="Color.Primary">Primary</Button>
+            <Button Variant="Variant.Contained" Color="Color.Secondary">Secondary</Button>
+            <Button Variant="Variant.Contained" Disabled="true">Disabled</Button>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Contained" />
+        <Typography>You can remove the elevation with the disableElevation prop.</Typography>
+        <DocsShowcase Outlined="true">
+            <Button Variant="Variant.Contained" Color="Color.Primary" DisableElevation="true">Primary</Button>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_DisabledElevation" />
+        <Typography Typo="Typo.h4">Text Buttons</Typography>
+        <DocsShowcase Outlined="true">
+            <Button Variant="Variant.Text">Default</Button>
+            <Button Variant="Variant.Text" Color="Color.Primary">Primary</Button>
+            <Button Variant="Variant.Text" Color="Color.Secondary">Secondary</Button>
+            <Button Variant="Variant.Text" Disabled="true">Disabled</Button>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Text" />
+        <Typography Typo="Typo.h4">Outlined Buttons</Typography>
+        <DocsShowcase Outlined="true">
+            <Button Variant="Variant.Outlined">Default</Button>
+            <Button Variant="Variant.Outlined" Color="Color.Primary">Primary</Button>
+            <Button Variant="Variant.Outlined" Color="Color.Secondary">Secondary</Button>
+            <Button Variant="Variant.Outlined" Disabled="true">Disabled</Button>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Outlined" />
+    </Container>
+</DocsPage>
+
 
 @code {
-
+string Markdown_Contained = @"```html
+<Button Variant=""Variant.Contained"">Default</Button>
+<Button Variant=""Variant.Contained"" Color=""Color.Primary"">Primary</Button>
+<Button Variant=""Variant.Contained"" Color=""Color.Secondary"">Secondary</Button>
+<Button Variant=""Variant.Contained"" Disabled=""true"">Disabled</Button>
+```";
+string Markdown_DisabledElevation = @"```html
+<Button Variant=""Variant.Contained"" Color=""Color.Primary"" DisableElevation=""true"">Primary</Button>
+```";
+string Markdown_Text = @"```html
+<Button Variant=""Variant.Text"">Default</Button>
+<Button Variant=""Variant.Text"" Color=""Color.Primary"">Primary</Button>
+<Button Variant=""Variant.Text"" Color=""Color.Secondary"">Secondary</Button>
+<Button Variant=""Variant.Text"" Disabled=""true"">Disabled</Button>
+```";
+string Markdown_Outlined = @"```html
+<Button Variant=""Variant.Outlined"">Default</Button>
+<Button Variant=""Variant.Outlined"" Color=""Color.Primary"">Primary</Button>
+<Button Variant=""Variant.Outlined"" Color=""Color.Secondary"">Secondary</Button>
+<Button Variant=""Variant.Outlined"" Disabled=""true"">Disabled</Button>
+```";
 }

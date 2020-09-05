@@ -1,42 +1,35 @@
 ﻿@page "/components/surfaces/paper"
 
-<Container Class="mudblazor-docs-container">
-    <Typography Typo="Typo.h3">Paper</Typography>
-    <Typography Typo="Typo.h4">Component</Typography>
-    <DemoContainer>
-        <div class="docs-paper-demo">
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Paper</Typography>
+        <Typography Typo="Typo.h4">Component</Typography>
+        <DocsShowcase DarkenBackground="true">
             <Paper Elevation="0"></Paper>
             <Paper></Paper>
             <Paper Elevation="3"></Paper>
-        </div>
-    </DemoContainer>
-    <MarkdownSegment Class="mudblazor-markdown" Text="@(@"
-```html
-<Paper Elevation=""0""></Paper>
-<Paper></Paper>
-<Paper Elevation=""3""></Paper>
-```
-")">
-    </MarkdownSegment>
-    <Typography Typo="Typo.h4">Variants</Typography>
-    <Typography Typo="Typo.subtitle1">If you need an outlined surface or a square, use the variant property.</Typography>
-    <DemoContainer>
-        <div class="docs-paper-demo">
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Component" />
+        <Typography Typo="Typo.h4">Variants</Typography>
+        <Typography Typo="Typo.subtitle1">If you need an outlined surface or a square, use the variant property.</Typography>
+        <DocsShowcase DarkenBackground="true">
             <Paper Outlined="true" Elevation="0"></Paper>
             <Paper Outlined="true" Square="true" Elevation="0"></Paper>
             <Paper Square="true" Elevation="0"></Paper>
-        </div>
-    </DemoContainer>
-    <MarkdownSegment Class="mudblazor-markdown" Text="@(@"
-```html
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Variants" />
+    </Container>
+</DocsPage>
+
+@code {
+string Markdown_Component = @"```html
+<Paper Elevation=""0""></Paper>
+<Paper></Paper>
+<Paper Elevation=""3""></Paper>
+```";
+string Markdown_Variants = @"```html
 <Paper Outlined=""true""></Paper>
 <Paper Outlined=""true"" Square=""true""></Paper>
 <Paper Square=""true""></Paper>
-```
-")">
-    </MarkdownSegment>
-</Container>
-<Container Class="mudblazor-docs-container">
-    <Typography Typo="Typo.h3">Paper API</Typography>
-    <Typography Typo="Typo.h5">To Do...</Typography>
-</Container>
+```";
+}
