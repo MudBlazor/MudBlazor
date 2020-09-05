@@ -5,23 +5,28 @@
     <Typography Typo="Typo.h5">Use typography to present your design and content as clearly and efficiently as possible.</Typography>
     <Typography Typo="Typo.h4">General</Typography>
     <Typography Typo="Typo.body1">Mudblazors default font is Roboto and is not loaded automatically. The installation instructions include how to load the font. But in general the fastest and easiest way is to load it from Google Fonts as in the example bellow.</Typography>
-    <MarkdownCode Text="@(@"```<link rel=""stylesheet"" href=""https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"" />```")" />
-    <Typography Typo="Typo.h4">Component</Typography>
-    <Paper Class="mudblazor-paper-display" Elevation="0">
-        <Typography Typo="Typo.h1">h1. Heading</Typography>
-        <Typography Typo="Typo.h2">h2. Heading</Typography>
-        <Typography Typo="Typo.h3">h2. Heading</Typography>
-        <Typography Typo="Typo.h4">h3. Heading</Typography>
-        <Typography Typo="Typo.h5">h4. Heading</Typography>
-        <Typography Typo="Typo.h6">h5. Heading</Typography>
-        <Typography Typo="Typo.subtitle1">subtitle1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur</Typography>
-        <Typography Typo="Typo.subtitle2">subtitle2. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur</Typography>
-        <Typography Typo="Typo.body1">body1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.</Typography>
-        <Typography Typo="Typo.body2">body2. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.</Typography>
-        <Typography Typo="Typo.button">BUTTON TEXT</Typography>
-        <Typography Typo="Typo.caption">caption text</Typography>
-        <Typography Typo="Typo.overline">OVERLINE TEXT</Typography>
-    </Paper>
+    <MarkdownSegment Class="mudblazor-markdown" Text="@(@"
+```html
+<link href=""https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"" rel=""stylesheet"" />
+```
+")">
+    </MarkdownSegment>
+        <Typography Typo="Typo.h4">Component</Typography>
+        <Paper Class="mudblazor-paper-display" Elevation="0">
+            <Typography Typo="Typo.h1">h1. Heading</Typography>
+            <Typography Typo="Typo.h2">h2. Heading</Typography>
+            <Typography Typo="Typo.h3">h2. Heading</Typography>
+            <Typography Typo="Typo.h4">h3. Heading</Typography>
+            <Typography Typo="Typo.h5">h4. Heading</Typography>
+            <Typography Typo="Typo.h6">h5. Heading</Typography>
+            <Typography Typo="Typo.subtitle1">subtitle1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur</Typography>
+            <Typography Typo="Typo.subtitle2">subtitle2. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur</Typography>
+            <Typography Typo="Typo.body1">body1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.</Typography>
+            <Typography Typo="Typo.body2">body2. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur, neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum quasi quidem quibusdam.</Typography>
+            <Typography Typo="Typo.button">BUTTON TEXT</Typography>
+            <Typography Typo="Typo.caption">caption text</Typography>
+            <Typography Typo="Typo.overline">OVERLINE TEXT</Typography>
+        </Paper>
 </Container>
 
 @code {

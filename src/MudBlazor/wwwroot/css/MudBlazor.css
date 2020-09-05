@@ -1234,6 +1234,12 @@ iframe {
 .mud-float-right {
   float: right; }
 
+.mud-margin-top-1-5r {
+  margin-top: 1.5rem; }
+
+.mud-margin-top-2r {
+  margin-top: 2rem; }
+
 .mud-appbar {
   width: 100%;
   display: flex;
