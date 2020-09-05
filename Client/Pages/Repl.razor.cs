@@ -152,15 +152,6 @@
         {
             this.PageNotificationsComponent?.Clear();
 
-            // TODO: Remove
-            this.CodeFiles = new Dictionary<string, CodeFile>
-            {
-                ["__Main.razor"] = new CodeFile { Path = "__Main.razor", Content = "<h1> Some Test Content</h1>" },
-                ["File2.razor"] = new CodeFile { Path = "File2.razor", Content = "<h1> Some Test Content 2</h1>" },
-                ["File3.razor"] = new CodeFile { Path = "File3.razor", Content = "<h1> Some Test Content 3</h1>" },
-            };
-            this.activeCodeFile = this.CodeFiles.First().Value;
-
             if (!string.IsNullOrWhiteSpace(this.SnippetId))
             {
                 try
@@ -183,6 +174,16 @@
                 {
                     this.errorMessage = "Unable to get snippet content. Please try again later.";
                 }
+            }
+
+            if (!this.CodeFiles.Any())
+            {
+                this.activeCodeFile = new CodeFile
+                {
+                    Path = CoreConstants.MainComponentFilePath,
+                    Content = CoreConstants.MainComponentDefaultFileContent,
+                };
+                this.CodeFiles.Add(CoreConstants.MainComponentFilePath, this.activeCodeFile);
             }
 
             // TODO:
