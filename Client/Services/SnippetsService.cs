@@ -13,7 +13,6 @@
     public class SnippetsService
     {
         private const int SnippetIdLength = 18;
-        private const int SnippetContentMinLength = 10;
 
         private static readonly IDictionary<char, char> LetterToDigitIdMappings = new Dictionary<char, char>
         {
