@@ -246,6 +246,12 @@ app {
     background-color: #FFF;
 }
 
+.code-editor {
+    height: 100%;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         display: none;
@@ -393,6 +399,10 @@ app {
     width: 400px;
 }
 
+.nav-tabs > li {
+    height: 40px;
+}
+
 #new-tab-input {
     height: 27px;
     width: 160px;
@@ -405,6 +415,7 @@ app {
 .tab-name {
     display: flex;
     padding: 3px 10px;
+    height: 100%;
 }
 
 .tab-input {
@@ -432,10 +443,6 @@ app {
     .close-tab:hover {
         background-color: #BBB;
     }
-
-.tabs-wrapper {
-    height: 38px;
-}
 
 .new-tab-button {
     cursor: pointer;
