@@ -1,6 +1,6 @@
 ﻿[
   {
-    "outputFile": "wwwroot/css/MudBlazorDocs.css",
+    "outputFile": "wwwroot/MudBlazorDocs.css",
     "inputFile": "Style/MudBlazorDocs.scss"
   }
 ]

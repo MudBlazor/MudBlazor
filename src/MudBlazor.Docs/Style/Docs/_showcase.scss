@@ -1,0 +1,29 @@
+﻿.docs-showcase {
+    padding: 24px;
+    border-radius: 4px;
+    margin: auto;
+    display: flex;
+    outline: 0;
+    position: relative;
+    justify-content: center;
+    margin-bottom: 40px;
+    background-color: #fff;
+
+    & .mud-paper {
+        width: 128px;
+        height: 128px;
+        margin: 8px;
+    }
+
+    & > * {
+        margin: 8px;
+    }
+}
+
+.docs-showcase-darken {
+    background-color: #f5f5f5;
+}
+
+.docs-showcase-outlined {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}

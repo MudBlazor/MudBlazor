@@ -1,14 +1,30 @@
-﻿
-
-
-.mudblazor-paper-display {
-    padding: 25px 50px 25px 50px;
+﻿.mudblazor-brand {
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: #555;
 }
 
-.mudblazor-docs-container {
-    padding-top: 64px;
+.mud-container + .mud-container {
+    margin-bottom: 128px;
+}
+
+
+.mudblazor-main-content {
+    padding-top: 128px;
     padding-bottom: 64px;
-    &>.mud-typography-h4 {
-       margin-top:40px;
-    }
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+
+.credit-mat {
+    color: #5d2f91;
+}
+
+.credit-mui {
+    color: #1976d2;
+}
+
+.credit-awesome {
+    color: #e93488;
 }
