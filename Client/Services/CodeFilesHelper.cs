@@ -3,9 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
-
     using BlazorRepl.Core;
-
     using Microsoft.CodeAnalysis.CSharp;
 
     public static class CodeFilesHelper
@@ -69,15 +67,30 @@
                     return $"File '{codeFile.Path}' is duplicated.";
                 }
 
-                // TODO: Reuse with above
                 var extension = Path.GetExtension(codeFile.Path);
-                if (!ValidCodeFileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase))
+                if (!ValidCodeFileExtension.Equals(extension, StringComparison.Ordinal))
                 {
                     return $"File '{codeFile.Path}' has invalid extension: {extension}. Valid extensions: {ValidCodeFileExtension}";
                 }
 
-                // TODO: Validate valid identifier (reuse) + main component content >= 10 + etc
+                var fileName = codeFile.Path.Substring(0, codeFile.Path.Length - extension.Length);
+                if (!SyntaxFacts.IsValidIdentifier(fileName))
+                {
+                    return $"'{fileName}' is not a valid file name. It should be a valid C# identifier.";
+                }
+
+                if (codeFile.Path == CoreConstants.MainComponentFilePath)
+                {
+                    if (string.IsNullOrWhiteSpace(codeFile.Content) || codeFile.Path.Trim().Length < MainComponentFileContentMinLength)
+                    {
+                        return $"Main component content should be at least {MainComponentFileContentMinLength} characters long.";
+                    }
+
+                    containsMainComponent = true;
+                }
+
                 filePaths.Add(codeFile.Path);
+                index++;
             }
 
             if (!containsMainComponent)
