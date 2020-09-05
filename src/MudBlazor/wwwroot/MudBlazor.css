@@ -1178,19 +1178,19 @@ iframe {
   overflow: hidden;
   position: absolute; }
 
-.mud-typography-alignLeft {
+.mud-typography-align-left {
   text-align: left; }
 
-.mud-typography-alignCenter {
+.mud-typography-align-center {
   text-align: center; }
 
-.mud-typography-alignRight {
+.mud-typography-align-right {
   text-align: right; }
 
-.mud-typography-alignJustify {
+.mud-typography-align-justify {
   text-align: justify; }
 
-.mud-typography-noWrap {
+.mud-typography-nowrap {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis; }
