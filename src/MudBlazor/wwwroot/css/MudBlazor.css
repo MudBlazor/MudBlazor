@@ -8,7 +8,7 @@
   --mud-theme-warning: #ff9800;
   --mud-theme-danger: #f44336;
   --mud-theme-dark: #616161;
-  --mud-theme-background: #fafafa;
+  --mud-theme-background: #fff;
   --mud-theme-surface: #fff;
   --mud-theme-border-radius: 4px; }
 
@@ -1240,6 +1240,10 @@ iframe {
 .mud-margin-top-2r {
   margin-top: 2rem; }
 
+.mud-margin-top-bottom-2r {
+  margin-top: 2rem;
+  margin-bottom: 2rem; }
+
 .mud-appbar {
   width: 100%;
   display: flex;
@@ -1338,7 +1342,7 @@ iframe {
 
 .mud-main-content {
   flex: 1 1 auto;
-  overflow: hidden;
+  overflow: auto;
   padding-top: 64px; }
 
 .mud-main-drawer-closed {

@@ -1,0 +1,10 @@
+﻿.docs-paper-demo {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.docs-paper-demo > * {
+    width: 128px;
+    height: 128px;
+    margin: 8px;
+}

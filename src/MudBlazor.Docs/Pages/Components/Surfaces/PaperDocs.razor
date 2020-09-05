@@ -1,24 +1,42 @@
 ﻿@page "/components/surfaces/paper"
 
-<Container>
-    <h1>Paper</h1>
-
-    <Grid>
-        <Item>
-            <Paper Class="padding-20p">Paper</Paper>
-        </Item>
-        <Item>
-            <Paper Class="padding-20p" Elevation="0">Paper</Paper>
-        </Item>
-        <Item>
-            <Paper Class="padding-20p" Outlined="true" Elevation="0">Paper</Paper>
-        </Item>
-        <Item>
-            <Paper Class="padding-20p" Square="true">Paper</Paper>
-        </Item>
-    </Grid>
+<Container Class="mudblazor-docs-container">
+    <Typography Typo="Typo.h3">Paper</Typography>
+    <Typography Typo="Typo.h4">Component</Typography>
+    <DemoContainer>
+        <div class="docs-paper-demo">
+            <Paper Elevation="0"></Paper>
+            <Paper></Paper>
+            <Paper Elevation="3"></Paper>
+        </div>
+    </DemoContainer>
+    <MarkdownSegment Class="mudblazor-markdown" Text="@(@"
+```html
+<Paper Elevation=""0""></Paper>
+<Paper></Paper>
+<Paper Elevation=""3""></Paper>
+```
+")">
+    </MarkdownSegment>
+    <Typography Typo="Typo.h4">Variants</Typography>
+    <Typography Typo="Typo.subtitle1">If you need an outlined surface or a square, use the variant property.</Typography>
+    <DemoContainer>
+        <div class="docs-paper-demo">
+            <Paper Outlined="true" Elevation="0"></Paper>
+            <Paper Outlined="true" Square="true" Elevation="0"></Paper>
+            <Paper Square="true" Elevation="0"></Paper>
+        </div>
+    </DemoContainer>
+    <MarkdownSegment Class="mudblazor-markdown" Text="@(@"
+```html
+<Paper Outlined=""true""></Paper>
+<Paper Outlined=""true"" Square=""true""></Paper>
+<Paper Square=""true""></Paper>
+```
+")">
+    </MarkdownSegment>
 </Container>
-
-@code {
-
-}
+<Container Class="mudblazor-docs-container">
+    <Typography Typo="Typo.h3">Paper API</Typography>
+    <Typography Typo="Typo.h5">To Do...</Typography>
+</Container>
