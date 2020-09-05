@@ -1,9 +1,13 @@
 ﻿window.App = window.App || (function () {
     return {
-        reloadIFrame: function (id) {
+        reloadIFrame: function (id, url) {
             const iFrame = document.getElementById(id);
             if (iFrame) {
-                iFrame.contentWindow.location.reload();
+                if (url) {
+                    iFrame.src = url;
+                } else {
+                    iFrame.contentWindow.location.reload();
+                }
             }
         },
         changeDisplayUrl: function (url) {

@@ -14,6 +14,7 @@
     public partial class Repl : IDisposable
     {
         private const string MainComponentCodePrefix = "@page \"/__main\"\n";
+        private const string MainUserPagePath = "/__main";
 
         private DotNetObjectReference<Repl> dotNetInstance;
         private string errorMessage;
@@ -102,7 +103,7 @@
                 await this.JsRuntime.InvokeVoidAsync("App.Repl.updateUserAssemblyInCacheStorage", compilationResult.AssemblyBytes);
 
                 // TODO: Add error page in iframe
-                await this.JsRuntime.InvokeVoidAsync("App.reloadIFrame", "user-page-window");
+                await this.JsRuntime.InvokeVoidAsync("App.reloadIFrame", "user-page-window", MainUserPagePath);
             }
         }
 
