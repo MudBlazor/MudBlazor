@@ -46,26 +46,16 @@
 window.App.CodeEditor = window.App.CodeEditor || (function () {
     let _editor;
 
-    function initEditor(editorId, value, skipFallbackToDefaultValue) {
+    function initEditor(editorId, value) {
         if (!editorId) {
             return;
         }
 
         require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
         require(['vs/editor/editor.main'], () => {
-            let codeEditorValue = value;
-            if (!skipFallbackToDefaultValue && !value) {
-                codeEditorValue = `<h1>Hello World</h1>
-
-@code {
-
-}
-`;
-            }
-
             _editor = monaco.editor.create(document.getElementById(editorId), {
                 fontSize: '16px',
-                value: codeEditorValue,
+                value: value || '',
                 language: 'razor'
             });
         });
@@ -80,9 +70,7 @@ window.App.CodeEditor = window.App.CodeEditor || (function () {
     }
 
     return {
-        init: function (editorId, defaultValue) {
-            initEditor(editorId, defaultValue, false);
-        },
+        init: initEditor,
         initEditor: initEditor,
         getValue: getValue,
         setValue: setValue,
@@ -137,7 +125,7 @@ window.App.Repl = window.App.Repl || (function () {
             oldEditorElement.childNodes.forEach(c => oldEditorElement.removeChild(c));
         }
 
-        window.App.CodeEditor.initEditor(_editorId, value, true);
+        window.App.CodeEditor.initEditor(_editorId, value);
     }
 
     function onWindowResize() {

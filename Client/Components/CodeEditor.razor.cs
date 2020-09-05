@@ -2,6 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
+    using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
 
@@ -35,7 +36,10 @@
         {
             if (firstRender)
             {
-                await this.JsRuntime.InvokeVoidAsync("App.CodeEditor.init", EditorId, this.Code);
+                await this.JsRuntime.InvokeVoidAsync(
+                    "App.CodeEditor.init",
+                    EditorId,
+                    this.Code ?? CoreConstants.MainComponentDefaultFileContent);
             }
             else if (this.shouldReInitEditor)
             {
