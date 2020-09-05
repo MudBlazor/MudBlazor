@@ -21,18 +21,15 @@
             </li>
         }
 
-        @if (tabCreating)
-        {
-            <li class="nav-item">
-                <a class="nav-link tab-input">
-                    <input id="new-tab-input"
-                           @bind="@newTab"
-                           @bind:event="oninput"
-                           @onblur="@CreateTabAsync"
-                           @onkeydown="@OnKeyDownAsync" />
-                </a>
-            </li>
-        }
+        <li class="nav-item" style="@TabCreatingStyle">
+            <a class="nav-link tab-input">
+                <input id="new-tab-input"
+                       @bind="@newTab"
+                       @bind:event="oninput"
+                       @onblur="@CreateTabAsync"
+                       @onkeydown="@OnKeyDownAsync" />
+            </a>
+        </li>
 
         <li class="nav-item" @onclick="@InitTabCreating">
             <a class="nav-link">

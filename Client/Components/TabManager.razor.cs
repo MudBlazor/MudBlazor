@@ -9,10 +9,11 @@
     using Microsoft.AspNetCore.Components.Web;
     using Microsoft.JSInterop;
 
-    public partial class TabManager : IDisposable
+    public partial class TabManager
     {
         private const int DefaultActiveIndex = 0;
         private const string EnterKey = "Enter";
+        private const string NewTabSelector = "#new-tab-input";
 
         private bool tabCreating;
         private bool shouldFocusNewTabInput;
@@ -38,6 +39,8 @@
         public PageNotifications PageNotificationsComponent { get; set; }
 
         public int ActiveIndex { get; set; } = DefaultActiveIndex;
+
+        public string TabCreatingStyle => this.tabCreating ? string.Empty : "display: none;";
 
         public Task ActivateTabAsync(int activeIndex)
         {
@@ -96,15 +99,15 @@
 
             // TODO: Abstract to not use "code file" stuff
             var normalizedTab = CodeFilesHelper.NormalizeCodeFilePath(this.newTab, out var error);
-            if (!string.IsNullOrWhiteSpace(error))
+            if (!string.IsNullOrWhiteSpace(error) || this.Tabs.Contains(normalizedTab))
             {
                 if (this.previousInvalidTab != this.newTab)
                 {
-                    this.PageNotificationsComponent.AddNotification(NotificationType.Error, error);
+                    this.PageNotificationsComponent.AddNotification(NotificationType.Error, error ?? "File already exists.");
                     this.previousInvalidTab = this.newTab;
                 }
 
-                await this.JsRuntime.InvokeVoidAsync("App.focusElement", "#new-tab-input");
+                await this.JsRuntime.InvokeVoidAsync("App.focusElement", NewTabSelector);
                 return;
             }
 
@@ -130,18 +133,12 @@
             return Task.CompletedTask;
         }
 
-        public void Dispose() => _ = this.JsRuntime.InvokeAsync<string>("App.TabManager.dispose");
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
-            {
-                //await this.JsRuntime.InvokeVoidAsync("App.TabManager.init");
-            }
 
             if (this.shouldFocusNewTabInput)
             {
-                await this.JsRuntime.InvokeVoidAsync("App.focusElement", "#new-tab-input");
+                await this.JsRuntime.InvokeVoidAsync("App.focusElement", NewTabSelector);
 
                 this.shouldFocusNewTabInput = false;
             }
