@@ -17,6 +17,7 @@
         private bool tabCreating;
         private bool shouldFocusNewTabInput;
         private string newTab;
+        private string previousInvalidTab;
 
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
@@ -79,12 +80,17 @@
             this.shouldFocusNewTabInput = true;
         }
 
+        public void TerminateTabCreating()
+        {
+            this.tabCreating = false;
+            this.newTab = null;
+        }
+
         public async Task CreateTabAsync()
         {
             if (string.IsNullOrWhiteSpace(this.newTab))
             {
-                this.tabCreating = false;
-                this.newTab = null;
+                this.TerminateTabCreating();
                 return;
             }
 
@@ -92,15 +98,21 @@
             var normalizedTab = CodeFilesHelper.NormalizeCodeFilePath(this.newTab, out var error);
             if (!string.IsNullOrWhiteSpace(error))
             {
-                this.PageNotificationsComponent.AddNotification(NotificationType.Error, error);
+                if (this.previousInvalidTab != this.newTab)
+                {
+                    this.PageNotificationsComponent.AddNotification(NotificationType.Error, error);
+                    this.previousInvalidTab = this.newTab;
+                }
+
+                await this.JsRuntime.InvokeVoidAsync("App.focusElement", "#new-tab-input");
                 return;
             }
 
-            Console.WriteLine("normalized");
+            this.previousInvalidTab = null;
+
             this.Tabs.Add(normalizedTab);
 
-            this.newTab = null;
-            this.tabCreating = false;
+            this.TerminateTabCreating();
             var newTabIndex = this.Tabs.Count - 1;
 
             await this.OnTabCreate.InvokeAsync(normalizedTab);

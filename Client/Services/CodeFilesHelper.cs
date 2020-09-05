@@ -22,18 +22,20 @@
                 return null;
             }
 
-            var fileName = Path.GetFileNameWithoutExtension(path);
-            if (!SyntaxFacts.IsValidIdentifier(fileName))
-            {
-                error = $"'{fileName}' is not a valid file name. It should be a valid C# identifier.";
-                return null;
-            }
+            var trimmedPath = path.Trim();
 
-            var extension = Path.GetExtension(path);
+            var extension = Path.GetExtension(trimmedPath);
             if (!string.IsNullOrEmpty(extension) &&
                 !ValidCodeFileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase))
             {
                 error = $"Extension cannot be '{extension}'. Valid extensions: {ValidCodeFileExtension}";
+                return null;
+            }
+
+            var fileName = trimmedPath.Substring(0, trimmedPath.Length - extension.Length);
+            if (!SyntaxFacts.IsValidIdentifier(fileName))
+            {
+                error = $"'{fileName}' is not a valid file name. It should be a valid C# identifier.";
                 return null;
             }
 
