@@ -46,29 +46,26 @@
 window.App.CodeEditor = window.App.CodeEditor || (function () {
     let _editor;
 
-    function initEditor(editorId, defaultValue) {
+    function initEditor(editorId, value, skipFallbackToDefaultValue) {
         if (!editorId) {
             return;
         }
 
         require.config({ paths: { 'vs': 'lib/monaco-editor/min/vs' } });
         require(['vs/editor/editor.main'], () => {
-            const oldValue = getValue();
-            const oldEditorElement = document.getElementById(editorId);
-            if (oldEditorElement && oldEditorElement.childNodes) {
-                oldEditorElement.childNodes.forEach(c => oldEditorElement.removeChild(c));
-            }
-
-            const value = defaultValue || oldValue ||
-                `<h1>Hello World</h1>
+            let codeEditorValue = value;
+            if (!skipFallbackToDefaultValue && !value) {
+                codeEditorValue = `<h1>Hello World</h1>
 
 @code {
 
 }
 `;
+            }
+
             _editor = monaco.editor.create(document.getElementById(editorId), {
                 fontSize: '16px',
-                value: value,
+                value: codeEditorValue,
                 language: 'razor'
             });
         });
@@ -78,12 +75,17 @@ window.App.CodeEditor = window.App.CodeEditor || (function () {
         return _editor && _editor.getValue();
     }
 
+    function setValue(value) {
+        _editor && _editor.setValue(value || '');
+    }
+
     return {
         init: function (editorId, defaultValue) {
-            initEditor(editorId, defaultValue);
+            initEditor(editorId, defaultValue, false);
         },
         initEditor: initEditor,
         getValue: getValue,
+        setValue: setValue,
         dispose: function () {
             _editor = null;
         }
@@ -135,7 +137,7 @@ window.App.Repl = window.App.Repl || (function () {
             oldEditorElement.childNodes.forEach(c => oldEditorElement.removeChild(c));
         }
 
-        window.App.CodeEditor.initEditor(_editorId, value);
+        window.App.CodeEditor.initEditor(_editorId, value, true);
     }
 
     function onWindowResize() {

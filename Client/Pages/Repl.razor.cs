@@ -225,8 +225,7 @@
                 return;
             }
 
-            // TODO: remove the white space
-            this.CodeFiles.TryAdd(name, new CodeFile { Path = name, Content = " " });
+            this.CodeFiles.TryAdd(name, new CodeFile { Path = name });
         }
 
         private async Task UpdateActiveCodeFileContentAsync()

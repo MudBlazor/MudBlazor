@@ -136,9 +136,9 @@
         {
             if (this.shouldFocusNewTabInput)
             {
-                await this.JsRuntime.InvokeVoidAsync("App.focusElement", NewTabSelector);
-
                 this.shouldFocusNewTabInput = false;
+
+                await this.JsRuntime.InvokeVoidAsync("App.focusElement", NewTabSelector);
             }
 
             await base.OnAfterRenderAsync(firstRender);

@@ -33,12 +33,15 @@
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            // TODO: if should re-init => set value instead of calling init()
-            if (firstRender || this.shouldReInitEditor)
+            if (firstRender)
+            {
+                await this.JsRuntime.InvokeVoidAsync("App.CodeEditor.init", EditorId, this.Code);
+            }
+            else if (this.shouldReInitEditor)
             {
                 this.shouldReInitEditor = false;
 
-                await this.JsRuntime.InvokeVoidAsync("App.CodeEditor.init", EditorId, this.Code);
+                await this.JsRuntime.InvokeVoidAsync("App.CodeEditor.setValue", this.Code);
             }
 
             await base.OnAfterRenderAsync(firstRender);
