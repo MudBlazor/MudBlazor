@@ -1,10 +1,10 @@
 ﻿window.App = window.App || (function () {
     return {
-        reloadIFrame: function (id, url) {
+        reloadIFrame: function (id, newSrc) {
             const iFrame = document.getElementById(id);
             if (iFrame) {
-                if (url) {
-                    iFrame.src = url;
+                if (newSrc) {
+                    iFrame.src = newSrc;
                 } else {
                     iFrame.contentWindow.location.reload();
                 }
@@ -150,6 +150,7 @@ window.App.Repl = window.App.Repl || (function () {
         // CTRL + S
         if (e.ctrlKey && e.keyCode === 83) {
             e.preventDefault();
+
             if (_dotNetInstance && _dotNetInstance.invokeMethodAsync) {
                 throttle(() => _dotNetInstance.invokeMethodAsync('TriggerCompileAsync'), 1000, 'compile');
             }
@@ -160,6 +161,7 @@ window.App.Repl = window.App.Repl || (function () {
         const now = new Date();
         if (now - throttleLastTimeFuncNameMappings[id] >= timeFrame) {
             func();
+
             throttleLastTimeFuncNameMappings[id] = now;
         }
     }
