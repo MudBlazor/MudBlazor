@@ -2,12 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
-    using BlazorRepl.Core;
+    using BlazorRepl.Client.Components.Models;
+    using BlazorRepl.Client.Services;
     using Microsoft.AspNetCore.Components;
     using Microsoft.AspNetCore.Components.Web;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.JSInterop;
 
     public partial class TabManager : IDisposable
@@ -33,6 +32,9 @@
 
         [Parameter]
         public EventCallback<string> OnTabCreate { get; set; }
+
+        [CascadingParameter]
+        public PageNotifications PageNotificationsComponent { get; set; }
 
         public int ActiveIndex { get; set; } = DefaultActiveIndex;
 
@@ -86,17 +88,24 @@
                 return;
             }
 
-            // TODO: validation
-            this.Tabs.Add(this.newTab);
+            // TODO: Abstract to not use "code file" stuff
+            var normalizedTab = CodeFilesHelper.NormalizeCodeFilePath(this.newTab, out var error);
+            if (!string.IsNullOrWhiteSpace(error))
+            {
+                this.PageNotificationsComponent.AddNotification(NotificationType.Error, error);
+                return;
+            }
 
-            var newCreatedTab = this.newTab;
+            Console.WriteLine("normalized");
+            this.Tabs.Add(normalizedTab);
+
             this.newTab = null;
             this.tabCreating = false;
+            var newTabIndex = this.Tabs.Count - 1;
 
-            var index = this.Tabs.Count - 1;
-            await this.OnTabCreate.InvokeAsync(newCreatedTab);
+            await this.OnTabCreate.InvokeAsync(normalizedTab);
 
-            await this.ActivateTabAsync(index);
+            await this.ActivateTabAsync(newTabIndex);
         }
 
         public Task OnKeyDownAsync(KeyboardEventArgs eventArgs)

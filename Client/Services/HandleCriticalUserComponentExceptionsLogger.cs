@@ -1,6 +1,7 @@
 ﻿namespace BlazorRepl.Client.Services
 {
     using System;
+    using BlazorRepl.Core;
     using Microsoft.Extensions.Logging;
     using Microsoft.JSInterop;
 
@@ -28,7 +29,7 @@
             {
                 this.jsRuntime.InvokeVoidAsync(
                     "App.Repl.updateUserAssemblyInCacheStorage",
-                    Convert.FromBase64String(ClientConstants.DefaultUserComponentsAssemblyBytes));
+                    Convert.FromBase64String(CoreConstants.DefaultUserComponentsAssemblyBytes));
             }
         }
 

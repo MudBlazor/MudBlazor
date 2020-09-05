@@ -187,7 +187,7 @@
             // TODO:
             //await this.JsRuntime.InvokeVoidAsync(
             //    "App.Repl.updateUserAssemblyInCacheStorage",
-            //    Convert.FromBase64String(ClientConstants.DefaultUserComponentsAssemblyBytes));
+            //    Convert.FromBase64String(CoreConstants.DefaultUserComponentsAssemblyBytes));
 
             await base.OnInitializedAsync();
         }
