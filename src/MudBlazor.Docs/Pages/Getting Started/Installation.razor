@@ -1,0 +1,32 @@
+﻿@page "/getting-started/installation"
+
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Installation</Typography>
+        <Typography Typo="Typo.h4">Nuget</Typography>
+        <Typography>Find the package through NuGet Package Manager or install it with following command.</Typography>
+        <MarkdownSegment Text="@Markdown_Install_Package" />
+        <Typography>After the package is added you need to add the following in your _Imports.razor</Typography>
+        <MarkdownSegment Text="@Markdown_Install_Using" />
+        <Typography Typo="Typo.h4">Client Side</Typography>
+        <Typography>Add the following in your index.html's head section.</Typography>
+        <MarkdownSegment Text="@Markdown_Install_LinkFiles" />
+        <Typography Typo="Typo.h4">Server Side</Typography>
+        <Typography>Add the following in your _Host.cshtml's head section.</Typography>
+        <MarkdownSegment Text="@Markdown_Install_LinkFiles" />
+        <Button Variant="Variant.Text" Color="Color.Primary" Link="/getting-started/usage">Now go ahead and check out the usage docs</Button>
+    </Container>
+</DocsPage>
+
+@code {
+string Markdown_Install_Package = @"```html
+dotnet add package MudBlazor
+```";
+string Markdown_Install_Using = @"```html
+@using MudBlazor
+```";
+string Markdown_Install_LinkFiles = @"```html
+<link href=""https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"" rel=""stylesheet"" />
+<link href=""_content/MudBlazor/MudBlazor.min.css"" rel=""stylesheet"" />
+```";
+}
