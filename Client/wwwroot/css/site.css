@@ -398,6 +398,10 @@ app {
     width: 160px;
 }
 
+.tabs-wrapper .tab {
+    cursor: pointer;
+}
+
 .tab-name {
     display: flex;
     padding: 3px 10px;
@@ -417,7 +421,6 @@ app {
 }
 
 .close-tab {
-    cursor: pointer;
     width: 16px;
     height: 16px;
     line-height: initial;
@@ -430,6 +433,10 @@ app {
         background-color: #BBB;
     }
 
-.tabs-wrapper{
+.tabs-wrapper {
     height: 38px;
+}
+
+.new-tab-button {
+    cursor: pointer;
 }
