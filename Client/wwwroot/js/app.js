@@ -137,8 +137,11 @@ window.App.Repl = window.App.Repl || (function () {
     function setElementHeight(elementId) {
         const element = document.getElementById(elementId);
         if (element) {
-            // TODO: Abstract class name
-            const height = window.innerHeight - document.getElementsByClassName('repl-navbar')[0].offsetHeight;
+            // TODO: Abstract class names
+            const height =
+                window.innerHeight -
+                document.getElementsByClassName('repl-navbar')[0].offsetHeight -
+                document.getElementsByClassName('tabs-wrapper')[0].offsetHeight;
 
             element.style.height = `${height}px`;
         }
