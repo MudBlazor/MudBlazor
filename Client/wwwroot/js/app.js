@@ -45,6 +45,7 @@
 
 window.App.CodeEditor = window.App.CodeEditor || (function () {
     let _editor;
+    let _overrideValue;
 
     function initEditor(editorId, value) {
         if (!editorId) {
@@ -55,9 +56,11 @@ window.App.CodeEditor = window.App.CodeEditor || (function () {
         require(['vs/editor/editor.main'], () => {
             _editor = monaco.editor.create(document.getElementById(editorId), {
                 fontSize: '16px',
-                value: value || '',
+                value: _overrideValue || value || '',
                 language: 'razor'
             });
+
+            _overrideValue = null;
         });
     }
 
@@ -66,7 +69,11 @@ window.App.CodeEditor = window.App.CodeEditor || (function () {
     }
 
     function setValue(value) {
-        _editor && _editor.setValue(value || '');
+        if (_editor) {
+            _editor.setValue(value || '');
+        } else {
+            _overrideValue = value;
+        }
     }
 
     return {

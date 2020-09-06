@@ -11,7 +11,6 @@
         private const string EditorId = "user-code-editor";
 
         private bool hasCodeChanged;
-        private bool? isFirstCodeChange;
 
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
@@ -26,10 +25,6 @@
             if (parameters.TryGetValue<string>(nameof(this.Code), out var parameterValue))
             {
                 this.hasCodeChanged = this.Code != parameterValue;
-                if (this.hasCodeChanged)
-                {
-                    this.isFirstCodeChange = !this.isFirstCodeChange.HasValue;
-                }
             }
 
             return base.SetParametersAsync(parameters);
@@ -39,14 +34,14 @@
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (this.isFirstCodeChange == true)
+            if (firstRender)
             {
                 await this.JsRuntime.InvokeVoidAsync(
-                    "App.CodeEditor.init",
-                    EditorId,
-                    this.Code ?? CoreConstants.MainComponentDefaultFileContent);
+                   "App.CodeEditor.init",
+                   EditorId,
+                   this.Code ?? CoreConstants.MainComponentDefaultFileContent);
             }
-            else if (this.isFirstCodeChange == false)
+            else if (this.hasCodeChanged)
             {
                 await this.JsRuntime.InvokeVoidAsync("App.CodeEditor.setValue", this.Code);
             }
