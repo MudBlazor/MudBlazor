@@ -30,7 +30,7 @@
         <TabManager Tabs="@CodeFileNames"
                     OnTabActivate="@HandleTabActivateAsync"
                     OnTabClose="@HandleTabClose"
-                    OnTabCreate="@HandleTabCreateAsync"></TabManager>
+                    OnTabCreate="@HandleTabCreate"></TabManager>
 
         <CodeEditor @ref="@CodeEditorComponent"
                     Code="@CodeEditorContent"></CodeEditor>

@@ -221,7 +221,7 @@
             this.CodeFiles.Remove(name);
         }
 
-        private async Task HandleTabCreateAsync(string name)
+        private void HandleTabCreate(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -242,8 +242,6 @@
             }
 
             this.activeCodeFile.Content = await this.CodeEditorComponent.GetCodeAsync();
-
-            Console.WriteLine("New ActiveCode Content" + this.activeCodeFile.Content);
         }
 
         private Task UpdateLoaderTextAsync(string loaderText)
