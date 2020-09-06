@@ -76,13 +76,52 @@ window.App.CodeEditor = window.App.CodeEditor || (function () {
         }
     }
 
+    function focus() {
+        return _editor && _editor.focus();
+    }
+
     return {
         init: initEditor,
         initEditor: initEditor,
         getValue: getValue,
         setValue: setValue,
+        focus: focus,
         dispose: function () {
             _editor = null;
+        }
+    };
+}());
+
+window.App.TabManager = window.App.TabManager || (function () {
+    const ENTER_KEY_CODE = 13;
+
+    let _dotNetInstance;
+    let _newTabInput;
+
+    function onNewTabInputKeyDown(ev) {
+        if (ev.keyCode == ENTER_KEY_CODE) {
+            ev.preventDefault();
+
+            if (_dotNetInstance && _dotNetInstance.invokeMethodAsync) {
+                _dotNetInstance.invokeMethodAsync('CreateTabAsync');
+            }
+        }
+    }
+
+    return {
+        init: function (newTabInputSelector, dotNetInstance) {
+            _dotNetInstance = dotNetInstance;
+            _newTabInput = document.querySelector(newTabInputSelector);
+            if (_newTabInput) {
+                _newTabInput.addEventListener('keydown', onNewTabInputKeyDown);
+            }
+        },
+        dispose: function () {
+            _dotNetInstance = null;
+
+            if (_newTabInput) {
+                _newTabInput.removeEventListener('keydown', onNewTabInputKeyDown);
+            }
         }
     };
 }());

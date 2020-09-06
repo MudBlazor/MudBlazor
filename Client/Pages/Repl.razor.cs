@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components;
@@ -205,6 +206,8 @@
             if (this.CodeFiles.TryGetValue(name, out var codeFile))
             {
                 this.activeCodeFile = codeFile;
+
+                await this.CodeEditorComponent.FocusAsync();
             }
         }
 
@@ -218,14 +221,16 @@
             this.CodeFiles.Remove(name);
         }
 
-        private void HandleTabCreate(string name)
+        private async Task HandleTabCreateAsync(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
                 return;
             }
 
-            this.CodeFiles.TryAdd(name, new CodeFile { Path = name });
+            var nameWithoutExtension = Path.GetFileNameWithoutExtension(name);
+
+            this.CodeFiles.TryAdd(name, new CodeFile { Path = name, Content = $"<h1>{nameWithoutExtension}</h1>" });
         }
 
         private async Task UpdateActiveCodeFileContentAsync()
@@ -237,6 +242,8 @@
             }
 
             this.activeCodeFile.Content = await this.CodeEditorComponent.GetCodeAsync();
+
+            Console.WriteLine("New ActiveCode Content" + this.activeCodeFile.Content);
         }
 
         private Task UpdateLoaderTextAsync(string loaderText)

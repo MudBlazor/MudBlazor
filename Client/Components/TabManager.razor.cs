@@ -1,23 +1,23 @@
 ﻿namespace BlazorRepl.Client.Components
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components.Models;
     using BlazorRepl.Client.Services;
     using Microsoft.AspNetCore.Components;
-    using Microsoft.AspNetCore.Components.Web;
     using Microsoft.JSInterop;
 
-    public partial class TabManager
+    public partial class TabManager : IDisposable
     {
         private const int DefaultActiveIndex = 0;
-        private const string EnterKey = "Enter";
         private const string NewTabInputSelector = "#new-tab-input";
 
         private bool tabCreating;
         private bool shouldFocusNewTabInput;
         private string newTab;
         private string previousInvalidTab;
+        private DotNetObjectReference<TabManager> dotNetInstance;
 
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
@@ -88,7 +88,7 @@
             this.newTab = null;
         }
 
-        public async Task CreateTabAsync()
+        public async Task CreateTabAsyncInternal()
         {
             if (string.IsNullOrWhiteSpace(this.newTab))
             {
@@ -122,18 +122,30 @@
             await this.ActivateTabAsync(newTabIndex);
         }
 
-        public Task OnKeyDownAsync(KeyboardEventArgs eventArgs)
+        public void Dispose()
         {
-            if (eventArgs.Key == EnterKey)
-            {
-                return this.CreateTabAsync();
-            }
+            this.dotNetInstance?.Dispose();
 
-            return Task.CompletedTask;
+            _ = this.JsRuntime.InvokeVoidAsync("App.TabManager.dispose");
+        }
+
+        [JSInvokable]
+        public async Task CreateTabAsync()
+        {
+            await this.CreateTabAsyncInternal();
+
+            this.StateHasChanged();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if (firstRender)
+            {
+                this.dotNetInstance = DotNetObjectReference.Create(this);
+
+                await this.JsRuntime.InvokeVoidAsync("App.TabManager.init", "#new-tab-input", this.dotNetInstance);
+            }
+
             if (this.shouldFocusNewTabInput)
             {
                 this.shouldFocusNewTabInput = false;

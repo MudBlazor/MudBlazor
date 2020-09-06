@@ -26,8 +26,7 @@
                 <input id="new-tab-input"
                        @bind="@newTab"
                        @bind:event="oninput"
-                       @onblur="@CreateTabAsync"
-                       @onkeydown="@OnKeyDownAsync" />
+                       @onblur="@CreateTabAsyncInternal"/>
             </a>
         </li>
 
