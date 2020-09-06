@@ -2,16 +2,16 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.CodeAnalysis;
+    using Microsoft.AspNetCore.Razor.Language;
 
-    public class CompileToCSharpResult
+    internal class CompileToCSharpResult
     {
         public CompileToCSharpResult()
         {
             this.Diagnostics = Enumerable.Empty<CompilationDiagnostic>();
         }
 
-        public Compilation BaseCompilation { get; set; }
+        public RazorProjectItem ProjectItem { get; set; }
 
         public string Code { get; set; }
 

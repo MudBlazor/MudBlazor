@@ -15,7 +15,7 @@
 
         protected override async Task OnInitializedAsync()
         {
-            await ComponentCompilationService.Init(this.HttpClient);
+            await CompilationService.Init(this.HttpClient);
 
             await base.OnInitializedAsync();
         }

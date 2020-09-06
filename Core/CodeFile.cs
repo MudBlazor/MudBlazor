@@ -1,6 +1,6 @@
-﻿namespace BlazorRepl.Client.Services
+﻿namespace BlazorRepl.Core
 {
-    public class CreateSnippetFileRequestModel
+    public class CodeFile
     {
         public string Path { get; set; }
 

@@ -1,9 +1,12 @@
 ﻿namespace BlazorRepl.Client.Components
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using BlazorRepl.Client.Components.Models;
     using BlazorRepl.Client.Services;
+    using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
 
@@ -33,7 +36,10 @@
         public string InvokerId { get; set; }
 
         [Parameter]
-        public CodeEditor CodeEditorComponent { get; set; }
+        public IEnumerable<CodeFile> CodeFiles { get; set; } = Enumerable.Empty<CodeFile>();
+
+        [Parameter]
+        public Func<Task> UpdateActiveCodeFileContentFunc { get; set; }
 
         public bool Loading { get; set; }
 
@@ -55,19 +61,13 @@
 
         public async Task SaveAsync()
         {
-            if (this.CodeEditorComponent == null)
-            {
-                throw new InvalidOperationException(
-                    $"Cannot use save snippet popup without specified {nameof(this.CodeEditorComponent)} parameter.");
-            }
-
             this.Loading = true;
 
             try
             {
-                var content = await this.CodeEditorComponent.GetCodeAsync();
+                await (this.UpdateActiveCodeFileContentFunc?.Invoke() ?? Task.CompletedTask);
 
-                var snippetId = await this.SnippetsService.SaveSnippetAsync(content);
+                var snippetId = await this.SnippetsService.SaveSnippetAsync(this.CodeFiles);
 
                 var urlBuilder = new UriBuilder(this.NavigationManager.BaseUri) { Path = $"repl/{snippetId}" };
                 var url = urlBuilder.Uri.ToString();
@@ -75,11 +75,9 @@
 
                 await this.JsRuntime.InvokeVoidAsync("App.changeDisplayUrl", url);
             }
-            catch (ArgumentException)
+            catch (InvalidOperationException ex)
             {
-                this.PageNotificationsComponent.AddNotification(
-                    NotificationType.Error,
-                    content: "Snippet content should be at least 10 characters long.");
+                this.PageNotificationsComponent.AddNotification(NotificationType.Error, content: ex.Message);
             }
             catch (Exception)
             {

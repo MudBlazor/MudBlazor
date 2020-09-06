@@ -246,6 +246,12 @@ app {
     background-color: #FFF;
 }
 
+.code-editor {
+    height: 100%;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
         display: none;
@@ -391,4 +397,54 @@ app {
     top: 75px;
     right: 10px;
     width: 400px;
+}
+
+/* Tabs Manager */
+.nav-tabs > li {
+    height: 40px;
+}
+
+#new-tab-input {
+    height: 27px;
+    width: 160px;
+}
+
+.tabs-wrapper .tab {
+    cursor: pointer;
+}
+
+.tab-name {
+    display: flex;
+    padding: 3px 10px;
+    height: 100%;
+}
+
+.tab-input {
+    padding: 5px 10px;
+}
+
+.tab-name-wrapper {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+    display: inline-block;
+    white-space: nowrap;
+    padding-right: 5px;
+}
+
+.close-tab {
+    width: 16px;
+    height: 16px;
+    line-height: initial;
+    padding-left: 3.5px;
+    margin-top: 8px;
+    border-radius: 10px;
+}
+
+    .close-tab:hover {
+        background-color: #BBB;
+    }
+
+.new-tab-button {
+    cursor: pointer;
 }

@@ -19,7 +19,7 @@ namespace BlazorRepl.Client
 
             builder.Services.AddTransient(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddTransient<SnippetsService>();
-            builder.Services.AddSingleton(new ComponentCompilationService());
+            builder.Services.AddSingleton(new CompilationService());
 
             builder.Services
                 .AddOptions<SnippetsOptions>()

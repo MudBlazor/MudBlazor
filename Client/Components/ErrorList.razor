@@ -32,7 +32,7 @@
                         <th scope="col">Severity</th>
                         <th scope="col">Code</th>
                         <th scope="col">Description</th>
-                        @*<th scope="col">File</th>*@
+                        <th scope="col">File</th>
                         <th scope="col">Line</th>
                     </tr>
                 </thead>
@@ -43,8 +43,8 @@
                             <td>@diagnostic.Severity</td>
                             <td>@diagnostic.Code</td>
                             <td>@diagnostic.Description</td>
-                            @*<td>@diagnostic.Descriptor</td>*@
-                            <td>@(diagnostic.Line - UserComponentCodeStartLine + 1)</td>
+                            <td>@diagnostic.File</td>
+                            <td>@diagnostic.Line</td>
                         </tr>
                     }
                 </tbody>

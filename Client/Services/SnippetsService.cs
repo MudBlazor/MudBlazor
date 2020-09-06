@@ -3,15 +3,16 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.IO.Compression;
     using System.Net.Http;
     using System.Net.Http.Json;
     using System.Threading.Tasks;
+    using BlazorRepl.Core;
     using Microsoft.Extensions.Options;
 
     public class SnippetsService
     {
         private const int SnippetIdLength = 18;
-        private const int SnippetContentMinLength = 10;
 
         private static readonly IDictionary<char, char> LetterToDigitIdMappings = new Dictionary<char, char>
         {
@@ -78,29 +79,29 @@
             this.snippetsOptions = snippetsOptions.Value;
         }
 
-        public async Task<string> SaveSnippetAsync(string content)
+        public async Task<string> SaveSnippetAsync(IEnumerable<CodeFile> codeFiles)
         {
-            if (string.IsNullOrWhiteSpace(content) || content.Trim().Length < SnippetContentMinLength)
+            if (codeFiles == null)
             {
-                throw new ArgumentException($"The snippet content should be at least {SnippetContentMinLength} symbols.", nameof(content));
+                throw new ArgumentNullException(nameof(codeFiles));
             }
 
-            var requestData = new CreateSnippetRequestModel
+            var codeFilesValidationError = CodeFilesHelper.ValidateCodeFilesForSnippetCreation(codeFiles);
+            if (!string.IsNullOrWhiteSpace(codeFilesValidationError))
             {
-                Files = new[] { new CreateSnippetFileRequestModel { Content = content }, },
-            };
+                throw new InvalidOperationException(codeFilesValidationError);
+            }
+
+            var requestData = new CreateSnippetRequestModel { Files = codeFiles };
 
             var response = await this.httpClient.PostAsJsonAsync(this.snippetsOptions.CreateUrl, requestData);
-            if (response.IsSuccessStatusCode)
-            {
-                var id = await response.Content.ReadAsStringAsync();
-                return id;
-            }
+            response.EnsureSuccessStatusCode();
 
-            throw new Exception("Something went wrong. Please try again later.");
+            var id = await response.Content.ReadAsStringAsync();
+            return id;
         }
 
-        public async Task<string> GetSnippetContentAsync(string snippetId)
+        public async Task<IEnumerable<CodeFile>> GetSnippetContentAsync(string snippetId)
         {
             if (string.IsNullOrWhiteSpace(snippetId) || snippetId.Length != SnippetIdLength)
             {
@@ -110,13 +111,39 @@
             var yearFolder = DecodeDateIdPart(snippetId.Substring(0, 2));
             var monthFolder = DecodeDateIdPart(snippetId.Substring(2, 2));
             var dayAndHourFolder = DecodeDateIdPart(snippetId.Substring(4, 4));
-
             var id = snippetId.Substring(8);
 
             var url = string.Format(this.snippetsOptions.ReadUrlFormat, yearFolder, monthFolder, dayAndHourFolder, id);
-            var snippetContent = await this.httpClient.GetStringAsync(url);
+            var snippetResponse = await this.httpClient.GetAsync(url);
+            snippetResponse.EnsureSuccessStatusCode();
 
-            return snippetContent;
+            var snippetFiles = await ExtractSnippetFilesFromResponse(snippetResponse);
+            return snippetFiles;
+        }
+
+        private static async Task<IEnumerable<CodeFile>> ExtractSnippetFilesFromResponse(HttpResponseMessage snippetResponse)
+        {
+            var result = new List<CodeFile>();
+
+            if (snippetResponse.Headers.TryGetValues("x-ms-meta-zip", out _))
+            {
+                await using var zipFileStream = await snippetResponse.Content.ReadAsStreamAsync();
+                using var zipArchive = new ZipArchive(zipFileStream, ZipArchiveMode.Read);
+                foreach (var entry in zipArchive.Entries)
+                {
+                    using var streamReader = new StreamReader(entry.Open());
+
+                    result.Add(new CodeFile { Path = entry.FullName, Content = await streamReader.ReadToEndAsync() });
+                }
+            }
+            else
+            {
+                var fileContent = await snippetResponse.Content.ReadAsStringAsync();
+
+                result.Add(new CodeFile { Path = CoreConstants.MainComponentFilePath, Content = fileContent });
+            }
+
+            return result;
         }
 
         private static string DecodeDateIdPart(string encodedPart)

@@ -14,9 +14,6 @@
         public IReadOnlyCollection<CompilationDiagnostic> Diagnostics { get; set; } = Array.Empty<CompilationDiagnostic>();
 
         [Parameter]
-        public int UserComponentCodeStartLine { get; set; }
-
-        [Parameter]
         public bool Show { get; set; }
 
         [Parameter]
