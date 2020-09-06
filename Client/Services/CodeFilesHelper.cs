@@ -38,7 +38,7 @@
 
             if (char.IsLower(fileName[0]))
             {
-                error = $"'{fileName}' starts with a lowercase character. File names must start with an uppercase character or underscore.";
+                error = $"'{fileName}' starts with a lowercase character. File names must start with an uppercase character or _.";
                 return null;
             }
 
@@ -87,7 +87,7 @@
 
                 if (char.IsLower(fileName[0]))
                 {
-                    return $"'{fileName}' starts with a lowercase character. File names must start with an uppercase character or underscore.";
+                    return $"'{fileName}' starts with a lowercase character. File names must start with an uppercase character or _.";
                 }
 
                 if (codeFile.Path == CoreConstants.MainComponentFilePath)
