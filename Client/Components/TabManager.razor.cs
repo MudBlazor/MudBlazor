@@ -12,7 +12,7 @@
     {
         private const int DefaultActiveIndex = 0;
         private const string EnterKey = "Enter";
-        private const string NewTabSelector = "#new-tab-input";
+        private const string NewTabInputSelector = "#new-tab-input";
 
         private bool tabCreating;
         private bool shouldFocusNewTabInput;
@@ -106,7 +106,7 @@
                     this.previousInvalidTab = this.newTab;
                 }
 
-                await this.JsRuntime.InvokeVoidAsync("App.focusElement", NewTabSelector);
+                await this.JsRuntime.InvokeVoidAsync("App.focusElement", NewTabInputSelector);
                 return;
             }
 
@@ -138,7 +138,7 @@
             {
                 this.shouldFocusNewTabInput = false;
 
-                await this.JsRuntime.InvokeVoidAsync("App.focusElement", NewTabSelector);
+                await this.JsRuntime.InvokeVoidAsync("App.focusElement", NewTabInputSelector);
             }
 
             await base.OnAfterRenderAsync(firstRender);
