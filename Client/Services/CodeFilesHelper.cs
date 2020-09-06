@@ -92,7 +92,7 @@
 
                 if (codeFile.Path == CoreConstants.MainComponentFilePath)
                 {
-                    if (string.IsNullOrWhiteSpace(codeFile.Content) || codeFile.Path.Trim().Length < MainComponentFileContentMinLength)
+                    if (string.IsNullOrWhiteSpace(codeFile.Content) || codeFile.Content.Trim().Length < MainComponentFileContentMinLength)
                     {
                         return $"Main component content should be at least {MainComponentFileContentMinLength} characters long.";
                     }
