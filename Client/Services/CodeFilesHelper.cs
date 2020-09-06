@@ -32,7 +32,13 @@
             var fileName = trimmedPath.Substring(0, trimmedPath.Length - extension.Length);
             if (!SyntaxFacts.IsValidIdentifier(fileName))
             {
-                error = $"'{fileName}' is not a valid file name. It should be a valid C# identifier.";
+                error = $"'{fileName}' is not a valid file name. It must be a valid C# identifier.";
+                return null;
+            }
+
+            if (char.IsLower(fileName[0]))
+            {
+                error = $"'{fileName}' starts with a lowercase character. File names must start with an uppercase character or underscore.";
                 return null;
             }
 
@@ -76,7 +82,12 @@
                 var fileName = codeFile.Path.Substring(0, codeFile.Path.Length - extension.Length);
                 if (!SyntaxFacts.IsValidIdentifier(fileName))
                 {
-                    return $"'{fileName}' is not a valid file name. It should be a valid C# identifier.";
+                    return $"'{fileName}' is not a valid file name. It must be a valid C# identifier.";
+                }
+
+                if (char.IsLower(fileName[0]))
+                {
+                    return $"'{fileName}' starts with a lowercase character. File names must start with an uppercase character or underscore.";
                 }
 
                 if (codeFile.Path == CoreConstants.MainComponentFilePath)
