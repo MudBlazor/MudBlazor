@@ -1,0 +1,186 @@
+﻿@page "/components/surfaces/card"
+
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Card</Typography>
+        <Typography Typo="Typo.h4">Simple Card</Typography>
+        <DocsShowcase DarkenBackground="true">
+            <Card>
+                <CardContent>
+                    <Typography>Story of the day</Typography>
+                    <Typography Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</Typography>
+                </CardContent>
+                <CardActions>
+                    <Button Variant="Variant.Text">Learn More</Button>
+                </CardActions>
+            </Card>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Simple" />
+    </Container>
+    <Container>
+        <Typography Typo="Typo.h4">Outlined</Typography>
+        <DocsShowcase DarkenBackground="true">
+            <Card Outlined="true">
+                <CardContent>
+                    <Typography>Story of the day</Typography>
+                    <Typography Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</Typography>
+                </CardContent>
+                <CardActions>
+                    <Button Variant="Variant.Text">Learn More</Button>
+                </CardActions>
+            </Card>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Outlined" />
+    </Container>
+    <Container>
+        <Typography Typo="Typo.h4">Header</Typography>
+        <DocsShowcase DarkenBackground="true">
+            <Card>
+                <CardHeader>
+                    <CardHeaderContent>
+                        <Typography Typo="Typo.h6">The Story Book</Typography>
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+                        <IconButton Icon="@Icons.Material_Settings" Color="Color.Inherit" />
+                    </CardHeaderActions>
+                </CardHeader>
+                <CardContent>
+                    <Typography>This day everything happend.</Typography>
+                    <Typography Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</Typography>
+                </CardContent>
+                <CardActions>
+                    <Button Variant="Variant.Text">Read More</Button>
+                </CardActions>
+            </Card>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Header" />
+    </Container>
+    <Container>
+        <Typography Typo="Typo.h4">Media</Typography>
+        <DocsShowcase DarkenBackground="true">
+            <Card>
+                <CardMedia Image="_content/MudBlazor.Docs/images/content-template-door.png" Height="200" />
+                <CardContent>
+                    <Typography Typo="Typo.h5">Old Paint</Typography>
+                    <Typography Typo="Typo.body2">Old paint found on a stone house door.</Typography>
+                    <Typography Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</Typography>
+                </CardContent>
+                <CardActions>
+                    <Button Variant="Variant.Text" Color="Color.Primary">Share</Button>
+                    <Button Variant="Variant.Text" Color="Color.Primary">Learn More</Button>
+                </CardActions>
+            </Card>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Media" />
+    </Container>
+    <Container>
+        <Typography Typo="Typo.h4">Combined</Typography>
+        <DocsShowcase DarkenBackground="true">
+            <Card>
+                <CardHeader>
+                    <CardHeaderAvatar>
+                        <Avatar>I</Avatar>
+                    </CardHeaderAvatar>
+                    <CardHeaderContent>
+                        <Typography Typo="Typo.body1">Istra Croatia</Typography>
+                        <Typography Typo="Typo.body2">Peninsula in Europe</Typography>
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+                        <IconButton Icon="@Icons.Material_Settings" Color="Color.Default" />
+                    </CardHeaderActions>
+                </CardHeader>
+                <CardMedia Image="_content/MudBlazor.Docs/images/content-template-pilars.png" Height="250" />
+                <CardContent>
+                    <Typography Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</Typography>
+                </CardContent>
+                <CardActions>
+                    <IconButton Icon="@Icons.Material_Favorite" Color="Color.Default" />
+                    <IconButton Icon="@Icons.Material_Share" Color="Color.Default" />
+                </CardActions>
+            </Card>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Combined" />
+    </Container>
+</DocsPage>
+
+@code {
+string Markdown_Simple = @"```html
+<Card>
+    <CardContent>
+        <Typography>Story of the day</Typography>
+        <Typography Typo=""Typo.body2"">The quick, brown fox jumps over a lazy dog.</Typography>
+    </CardContent>
+    <CardActions>
+        <Button Variant=""Variant.Text"">Learn More</Button>
+    </CardActions>
+</Card>
+```";
+string Markdown_Outlined = @"```html
+<Card Outlined=""true"">
+    <CardContent>
+        <Typography>Story of the day</Typography>
+        <Typography Typo=""Typo.body2"">The quick, brown fox jumps over a lazy dog.</Typography>
+    </CardContent>
+    <CardActions>
+        <Button Variant=""Variant.Text"">Learn More</Button>
+    </CardActions>
+</Card>
+```";
+string Markdown_Header = @"```html
+<Card>
+    <CardHeader>
+        <CardHeaderContent>
+            <Typography Typo=""Typo.h6"">The Story Book</Typography>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <IconButton Icon=""@Icons.Material_Settings"" Color=""Color.Inherit"" />
+        </CardHeaderActions>
+    </CardHeader>
+    <CardContent>
+        <Typography>This day everything happend.</Typography>
+        <Typography Typo=""Typo.body2"">The quick, brown fox jumps over a lazy dog.</Typography>
+    </CardContent>
+    <CardActions>
+        <Button Variant=""Variant.Text"">Read More</Button>
+    </CardActions>
+</Card>
+```";
+string Markdown_Media = @"```html
+<Card>
+    <CardMedia Image=""_content/MudBlazor.Docs/images/content-template-door.png"" Height=""200"" />
+    <CardContent>
+        <Typography Typo=""Typo.h5"">Old Paint</Typography>
+        <Typography Typo=""Typo.body2"">Old paint found on a stone house door.</Typography>
+        <Typography Typo=""Typo.body2"">This photo was taken in a small village in Istra Croatia.</Typography>
+    </CardContent>
+    <CardActions>
+        <Button Variant=""Variant.Text"" Color=""Color.Primary"">Share</Button>
+        <Button Variant=""Variant.Text"" Color=""Color.Primary"">Learn More</Button>
+    </CardActions>
+</Card>
+```";
+string Markdown_Combined = @"```html
+<Card>
+    <CardHeader>
+        <CardHeaderAvatar>
+            <Avatar>I</Avatar>
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <Typography Typo=""Typo.body1"">Istra Croatia</Typography>
+            <Typography Typo=""Typo.body2"">Peninsula in Europe</Typography>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <IconButton Icon=""@Icons.Material_Settings"" Color=""Color.Default"" />
+        </CardHeaderActions>
+    </CardHeader>
+    <CardMedia Image=""_content/MudBlazor.Docs/images/content-template-pilars.png"" Height=""250"" />
+    <CardContent>
+        <Typography Typo=""Typo.body2"">This photo was taken in a small village in Istra Croatia.</Typography>
+    </CardContent>
+    <CardActions>
+        <IconButton Icon=""@Icons.Material_Favorite"" Color=""Color.Default"" />
+        <IconButton Icon=""@Icons.Material_Share"" Color=""Color.Default"" />
+    </CardActions>
+</Card>
+```";
+}
