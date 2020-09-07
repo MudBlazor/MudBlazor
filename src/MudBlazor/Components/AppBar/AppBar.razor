@@ -13,7 +13,8 @@
     protected string Classname =>
     new CssBuilder("mud-appbar")
       .AddClass($"mud-appbar-position-{Position.ToDescriptionString()}")
-      .AddClass($"mud-appbar-drawer-open", DrawerOpen)
+      .AddClass($"mud-appbar-drawer-open", LayoutState.DrawerOpen)
+      .AddClass($"mud-appbar-drawer-clipped", LayoutState.DrawerClipped)
       .AddClass($"mud-elevation-{Elevation.ToString()}")
       .AddClass($"mud-theme-{Color.ToDescriptionString()}")
       .AddClass(Class)
@@ -29,6 +30,6 @@
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    [CascadingParameter] bool DrawerOpen { get; set; }
+    [CascadingParameter] LayoutState LayoutState { get; set; }
 
 }

@@ -1277,6 +1277,9 @@ ul {
   transition: margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms, width 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
   margin-left: 240px; }
 
+.mud-appbar-drawer-clipped {
+  width: 100%; }
+
 .mud-appbar-position-fixed {
   top: 0;
   left: auto;
@@ -1356,8 +1359,10 @@ ul {
 .mud-drawer-header {
   display: flex;
   min-height: 64px;
-  align-items: center;
-  justify-content: center; }
+  padding: 12px 24px 12px 24px; }
+
+.mud-drawer-clipped {
+  padding-top: 64px; }
 
 .mud-main-content {
   flex: 1 1 auto;

@@ -11,8 +11,9 @@
     protected string Classname =>
     new CssBuilder("mud-drawer")
       .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
-      .AddClass($"mud-drawer--open", DrawerOpen)
-      .AddClass($"mud-drawer--closed", !DrawerOpen)
+      .AddClass($"mud-drawer--open", LayoutState.DrawerOpen)
+      .AddClass($"mud-drawer--closed", !LayoutState.DrawerOpen)
+      .AddClass($"mud-drawer-clipped", LayoutState.DrawerClipped)
       .AddClass($"mud-elevation-{Elevation.ToString()}")
       .AddClass(Class)
     .Build();
@@ -25,6 +26,6 @@
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    [CascadingParameter] bool DrawerOpen { get; set; }
+    [CascadingParameter] LayoutState LayoutState { get; set; }
 
 }
