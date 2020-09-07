@@ -235,6 +235,43 @@ ul {
 .mud-elevation-99 {
   box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.06), 0 8px 10px 1px rgba(0, 0, 0, 0.042), 0 3px 14px 2px rgba(0, 0, 0, 0.036); }
 
+.mud-avatar {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  font-size: 1.25rem;
+  align-items: center;
+  flex-shrink: 0;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  line-height: 1;
+  user-select: none;
+  border-radius: 50%;
+  justify-content: center; }
+
+.mud-avatar-color-default {
+  color: #fff;
+  background-color: #f44336; }
+
+.mud-avatar-rounded {
+  border-radius: 4px; }
+
+.mud-avatar-square {
+  border-radius: 0; }
+
+.mud-avatar-img {
+  color: transparent;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  text-align: center;
+  text-indent: 10000px; }
+
+.mud-avatar-fallback {
+  width: 75%;
+  height: 75%; }
+
 .mud-button-root {
   color: inherit;
   border: 0;
@@ -547,6 +584,40 @@ ul {
   display: flex;
   align-items: inherit;
   justify-content: inherit; }
+
+.mud-card {
+  overflow: hidden; }
+
+.mud-card-header {
+  display: flex;
+  padding: 16px;
+  align-items: center; }
+  .mud-card-header .mud-card-header-avatar {
+    flex: 0 0 auto;
+    margin-right: 16px; }
+  .mud-card-header .mud-card-header-content {
+    flex: 1 1 auto; }
+    .mud-card-header .mud-card-header-content .mud-typography {
+      margin-bottom: 0; }
+  .mud-card-header .mud-card-header-actions {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    margin-top: -8px;
+    margin-right: -8px; }
+
+.mud-card-media {
+  display: block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center; }
+
+.mud-card-content {
+  padding: 16px; }
+
+.mud-card-actions {
+  display: flex;
+  padding: 8px;
+  align-items: center; }
 
 .mud-grid {
   width: 100%;

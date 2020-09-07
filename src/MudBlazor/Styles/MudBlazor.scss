@@ -11,7 +11,9 @@
 @import 'core/reset';
 @import 'core/elevation';
 
+@import 'components/avatar';
 @import 'components/button';
+@import 'components/card';
 @import 'components/grid';
 @import 'components/paper';
 @import 'components/svgicon';
@@ -19,6 +21,7 @@
 @import 'components/list';
 @import 'components/link';
 @import 'components/typography';
+
 
 @import 'utilities/flex';
 @import 'utilities/float';
