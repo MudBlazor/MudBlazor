@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor
+
+<div class="mud-card-content">
+    @ChildContent
+</div>
+
+@code {
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+}

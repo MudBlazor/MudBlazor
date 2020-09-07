@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+
+
+<Paper Class="@Classname" Outlined="@Outlined" Square="@Square" Elevation="@Elevation">
+    @ChildContent
+</Paper>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("mud-card")
+      .AddClass(Class)
+    .Build();
+
+    [Parameter] public int Elevation { set; get; } = 1;
+
+    [Parameter] public bool Square { get; set; }
+
+    [Parameter] public bool Outlined { get; set; }
+
+    [Parameter] public string Class { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
