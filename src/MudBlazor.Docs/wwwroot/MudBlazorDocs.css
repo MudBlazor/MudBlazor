@@ -85,10 +85,6 @@
   justify-content: center;
   margin-bottom: 40px;
   background-color: #fff; }
-  .docs-showcase .mud-paper {
-    width: 128px;
-    height: 128px;
-    margin: 8px; }
   .docs-showcase > * {
     margin: 8px; }
 
@@ -100,6 +96,11 @@
 
 .docs-showcase-display-grid {
   display: grid; }
+
+.docs-showcase-paper-filler .mud-paper {
+  width: 128px;
+  height: 128px;
+  margin: 8px; }
 
 .docs-home {
   padding-top: 128px;
@@ -163,9 +164,6 @@
 .docs-page .mud-typography-h4 {
   margin-top: 52px; }
 
-.docs-page .mud-paper {
-  padding: 20px; }
-
 .docs-footer {
   padding: 48px 0px;
   margin-bottom: -64px; }
@@ -182,5 +180,5 @@
     .docs-footer ul li a {
       color: rgba(0, 0, 0, 0.64); }
 
-.docs-credit-paper {
+.docs-credit-card .mud-card-content {
   min-height: 180px; }
