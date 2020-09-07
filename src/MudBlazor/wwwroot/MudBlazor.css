@@ -152,6 +152,11 @@ iframe {
   height: 100%;
   width: 100%; }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
 .mud-elevation-0 {
   box-shadow: none; }
 
@@ -1075,6 +1080,17 @@ iframe {
 
 .mud-nested-list.expanded > .mud-list {
   display: block; }
+
+.mud-link-underline-none {
+  text-decoration: none; }
+
+.mud-link-underline-hover {
+  text-decoration: none; }
+  .mud-link-underline-hover:hover {
+    text-decoration: underline; }
+
+.mud-underline-always {
+  text-decoration: underline; }
 
 .mud-typography {
   margin: 0; }
