@@ -1,7 +1,9 @@
 ﻿.mudblazor-brand {
   font-size: 1.8rem;
   font-weight: 400;
-  color: #555; }
+  color: #555;
+  margin-left: auto;
+  margin-right: auto; }
 
 .mud-container + .mud-container {
   margin-bottom: 128px; }
@@ -20,6 +22,25 @@
 
 .credit-awesome {
   color: #e93488; }
+
+.docs-frame {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  height: 400px; }
+  .docs-frame .docs-frame-absolute {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    top: 0px;
+    right: auto;
+    width: 100%;
+    height: 100%; }
+    .docs-frame .docs-frame-absolute .docs-frame-inner-wrapper {
+      display: flex;
+      height: 100%;
+      overflow: auto;
+      flex-direction: column; }
 
 .MarkdownSection-Root {
   word-break: break-word; }
@@ -53,6 +74,32 @@
 
 .token.attr-value > .punctuation {
   color: #d0d0d0; }
+
+.docs-showcase {
+  padding: 24px;
+  border-radius: 4px;
+  margin: auto;
+  display: flex;
+  outline: 0;
+  position: relative;
+  justify-content: center;
+  margin-bottom: 40px;
+  background-color: #fff; }
+  .docs-showcase .mud-paper {
+    width: 128px;
+    height: 128px;
+    margin: 8px; }
+  .docs-showcase > * {
+    margin: 8px; }
+
+.docs-showcase-darken {
+  background-color: #f5f5f5; }
+
+.docs-showcase-outlined {
+  border: 1px solid rgba(0, 0, 0, 0.12); }
+
+.docs-showcase-display-grid {
+  display: grid; }
 
 .docs-home {
   padding-top: 128px;
@@ -108,6 +155,11 @@
   margin-bottom: 16px;
   margin-top: -10px; }
 
+.docs-drawer-page {
+  background-color: #fff;
+  padding: 20px;
+  padding-top: 86px; }
+
 .docs-page .mud-typography-h4 {
   margin-top: 52px; }
 
@@ -132,29 +184,3 @@
 
 .docs-credit-paper {
   min-height: 180px; }
-
-.docs-showcase {
-  padding: 24px;
-  border-radius: 4px;
-  margin: auto;
-  display: flex;
-  outline: 0;
-  position: relative;
-  justify-content: center;
-  margin-bottom: 40px;
-  background-color: #fff; }
-  .docs-showcase .mud-paper {
-    width: 128px;
-    height: 128px;
-    margin: 8px; }
-  .docs-showcase > * {
-    margin: 8px; }
-
-.docs-showcase-darken {
-  background-color: #f5f5f5; }
-
-.docs-showcase-outlined {
-  border: 1px solid rgba(0, 0, 0, 0.12); }
-
-.docs-showcase-display-grid {
-  display: grid; }

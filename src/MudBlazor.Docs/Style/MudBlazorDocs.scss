@@ -1,8 +1,10 @@
 ﻿@import 'core/base';
 
+@import 'components/frame';
 @import 'components/markdown';
+@import 'components/showcase';
 
 @import 'pages/home';
 
+@import 'docs/drawer';
 @import 'docs/page';
-@import 'docs/showcase';
