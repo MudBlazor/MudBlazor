@@ -1,31 +1,42 @@
 ﻿@page "/project/credit"
 
-<Container>
-    <Divider />
-    <Typography Typo="Typo.h4">Credits</Typography>
-    <Grid Class="mud-margin-top-bottom-2r">
-        <Item Class="mud-grid-grid-md-4">
-            <Paper Class="mudblazor-home-paper-credit" Elevation="99">
-                <Typography Class="credit-mat" Typo="Typo.h6">MatBlazor</Typography>
-                <Typography Typo="Typo.body2">Component library based on MDC Web.</Typography>
-                <Typography Typo="Typo.body2">First project i contributed too and the one Blazor project i learned the most from, and still do.</Typography>
-            </Paper>
-        </Item>
-        <Item Class="mud-grid-grid-md-4">
-            <Paper Class="mudblazor-home-paper-credit" Elevation="99">
-                <Typography Class="credit-awesome" Typo="Typo.h6">Awesome Blazor</Typography>
-                <Typography Typo="Typo.body2">My go to place to look for exampels, information and cool new implementations.</Typography>
-            </Paper>
-        </Item>
-        <Item Class="mud-grid-grid-md-4">
-            <Paper Class="mudblazor-home-paper-credit" Elevation="99">
-                <Typography Class="credit-mui" Typo="Typo.h6">Material-UI</Typography>
-                <Typography Typo="Typo.body2">React component library.</Typography>
-                <Typography Typo="Typo.body2">This is where the base design for MudBlazor comes from, a good list with components and what options they mey have.</Typography>
-            </Paper>
-        </Item>
-    </Grid>
-    <Typography Typo="Typo.body2">And a special thanks to all the developers at my day to day job for taking your time with an IT guy like me.</Typography>
-    <Typography Typo="Typo.body2">The last 2-3 years you have been there when wanted to know more about best practices or needed input, what to do or not to do, developing fundamentals and bugs i couldent solve my self.</Typography>
-    <Typography Typo="Typo.body2">Without you i would never been able to do this project today.</Typography>
-</Container>
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Credits</Typography>
+        <Grid Class="mud-margin-top-bottom-2r">
+            <Item Class="mud-grid-grid-md-4">
+                <Paper Class="docs-credit-paper" Elevation="99">
+                    <Typography Class="credit-mat" Typo="Typo.h6">MatBlazor</Typography>
+                    <Typography Typo="Typo.body2">Component library based on MDC Web.</Typography>
+                    <Typography Typo="Typo.body2">First project i contributed to and the one Blazor project i learned the most from, and still do.</Typography>
+                </Paper>
+            </Item>
+            <Item Class="mud-grid-grid-md-4">
+                <Paper Class="docs-credit-paper" Elevation="99">
+                    <Typography Class="credit-awesome" Typo="Typo.h6">Awesome Blazor</Typography>
+                    <Typography Typo="Typo.body2">My go to place to look for examples, information and cool new implementations.</Typography>
+                </Paper>
+            </Item>
+            <Item Class="mud-grid-grid-md-4">
+                <Paper Class="docs-credit-paper" Elevation="99">
+                    <Typography Class="credit-mui" Typo="Typo.h6">Material-UI</Typography>
+                    <Typography Typo="Typo.body2">React component library.</Typography>
+                    <Typography Typo="Typo.body2">This is where the base design for MudBlazor comes from, a good list with components and what options they may have.</Typography>
+                </Paper>
+            </Item>
+        </Grid>
+    </Container>
+    <Container>
+        <div Style="margin-top: 128px;"></div>
+    </Container>
+    <Divider/>
+    <Container>
+        <div Style="padding-top: 64px; padding-bottom: 128px;">
+            <Typography Typo="Typo.h4" Align="Align.Center">Special thanks</Typography>
+            <Typography Typo="Typo.body1" Align="Align.Center">To the developers at my day to day job for taking your time with an IT guy like me.</Typography>
+            <Typography Typo="Typo.body1" Align="Align.Center">The last 2-3 years you have been there when i wanted to know more about best practices, or when i needed input, what to do or not do, or solve bugs i couldn't solve myself.</Typography>
+            <Typography Typo="Typo.body1" Align="Align.Center">Without you, i would've never been able to do this project today.</Typography>
+        </div>
+    </Container>
+    <Footer />
+</DocsPage>

@@ -1,5 +1,51 @@
 ﻿@page "/getting-started/usage"
 
-<Container Class="mudblazor-docs-container">
-    <Typography Typo="Typo.h4">Usage</Typography>
-</Container>
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Usage</Typography>
+        <Typography>After your installation is done, you can find some examples here.</Typography>
+        <Typography Typo="Typo.h4">Quick Start</Typography>
+        <Typography>This is literally all you need in your views to use MudBlazor components.</Typography>
+        <MarkdownSegment Text="@Markdown_QuickStart" />
+        <DocsShowcase Outlined="true" DisplayGrid="true">
+            <Typography Typo="Typo.h6">MudBlazor is @Text</Typography>
+            <Button Variant="Variant.Contained" Color="Color.Primary" OnClick="ButtonOnClick">@ButtonText</Button>
+        </DocsShowcase>
+    </Container>
+    <Container>
+        <div style="padding-top:64px;">
+            <Typography Typo="Typo.h6" Align="Align.Center">Check out all the components in the menu to find out whats available and how to use them.</Typography>
+        </div>
+    </Container>
+    <Footer />
+</DocsPage>
+
+@code {
+    public string Text { get; set; } = "????";
+    public string ButtonText { get; set; } = "Click Me";
+    public int ButtonClicked { get; set; }
+
+    void ButtonOnClick()
+    {
+        ButtonClicked += 1;
+        Text = $"Awesome x {ButtonClicked}";
+        ButtonText = "Click Me Again";
+    }
+    string Markdown_QuickStart = @"```html
+<Typography Typo=""Typo.h6"">MudBlazor is @Text</Typography>
+<Button Variant=""Variant.Contained"" Color=""Color.Primary"" OnClick=""ButtonOnClick"">@ButtonText</Button>
+
+@code {
+    public string Text { get; set; } = ""????""
+    public string ButtonText { get; set; } = ""Click Me""
+    public int ButtonClicked { get; set; }
+
+    void ButtonOnClick()
+    {
+        ButtonClicked += 1;
+        Text = $""Awesome x {ButtonClicked}""
+        ButtonText = ""Click Me Again""
+    }
+}
+```";
+}

@@ -11,6 +11,7 @@
     new CssBuilder("docs-showcase")
     .AddClass($"docs-showcase-outlined", Outlined)
     .AddClass($"docs-showcase-darken", DarkenBackground)
+    .AddClass($"docs-showcase-display-grid", DisplayGrid)
     .Build();
 
     [Parameter] public RenderFragment ChildContent { get; set; }
@@ -18,4 +19,6 @@
     [Parameter] public bool DarkenBackground { get; set; }
 
     [Parameter] public bool Outlined { get; set; }
+
+    [Parameter] public bool DisplayGrid { get; set; }
 }
