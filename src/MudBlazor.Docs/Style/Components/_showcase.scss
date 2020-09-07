@@ -9,12 +9,6 @@
     margin-bottom: 40px;
     background-color: #fff;
 
-    & .mud-paper {
-        width: 128px;
-        height: 128px;
-        margin: 8px;
-    }
-
     & > * {
         margin: 8px;
     }
@@ -30,4 +24,12 @@
 
 .docs-showcase-display-grid {
     display: grid;
+}
+
+.docs-showcase-paper-filler {
+    & .mud-paper {
+        width: 128px;
+        height: 128px;
+        margin: 8px;
+    }
 }
