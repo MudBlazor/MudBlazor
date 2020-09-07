@@ -1,0 +1,43 @@
+﻿@page "/components/navigation/appbar"
+
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">App Bar</Typography>
+        <Typography Typo="Typo.h4">Simple App Bar</Typography>
+        <DocsShowcase DarkenBackground="true">
+            <AppBar Position="Position.Static">
+                <IconButton Icon="@Icons.Material_Menu" Color="Color.Inherit" Edge="Edge.Start" />
+                <AppBarSpacer />
+                <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
+            </AppBar>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Simple_AppBar" />
+        <Typography Typo="Typo.h4">Elevation</Typography>
+        <Typography>You can change the App Bar elevation, with values from 0-24</Typography>
+        <DocsShowcase DarkenBackground="true">
+            <AppBar Position="Position.Static" Elevation="0">
+                <IconButton Icon="@Icons.Material_Menu" Color="Color.Inherit" Edge="Edge.Start" />
+                <AppBarSpacer />
+                <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
+            </AppBar>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Elevation" />
+    </Container>
+</DocsPage>
+
+@code {
+string Markdown_Simple_AppBar = @"```html
+<AppBar Position=""Position.Static"">
+    <IconButton Icon=""@Icons.Material_Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
+    <AppBarSpacer />
+    <Button Variant=""Variant.Text"" Color=""Color.Inherit"">Login</Button>
+</AppBar>
+```";
+string Markdown_Elevation = @"```html
+<AppBar Position=""Position.Static"" Elevation=""0"">
+    <IconButton Icon=""@Icons.Material_Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
+    <AppBarSpacer />
+    <Button Variant=""Variant.Text"" Color=""Color.Inherit"">Login</Button>
+</AppBar>
+```";
+}
