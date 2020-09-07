@@ -12,7 +12,10 @@
     .AddClass($"docs-showcase-outlined", Outlined)
     .AddClass($"docs-showcase-darken", DarkenBackground)
     .AddClass($"docs-showcase-display-grid", DisplayGrid)
+    .AddClass(Class)
     .Build();
+
+    [Parameter] public string Class { get; set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 
