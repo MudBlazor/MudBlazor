@@ -312,6 +312,9 @@ ul {
 .mud-button-text-secondary {
   color: #dc004e; }
 
+.mud-button-text-inherit {
+  color: inherit; }
+
 .mud-button-text-secondary:hover {
   background-color: rgba(220, 0, 78, 0.04); }
 
@@ -1089,7 +1092,7 @@ ul {
   .mud-link-underline-hover:hover {
     text-decoration: underline; }
 
-.mud-underline-always {
+.mud-link-underline-always {
   text-decoration: underline; }
 
 .mud-typography {
