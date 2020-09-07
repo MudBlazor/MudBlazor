@@ -35,6 +35,7 @@
         // Creating the initial compilation + reading references is on the order of 250ms without caching
         // so making sure it doesn't happen for each run.
         private static CSharpCompilation baseCompilation;
+        private static IReadOnlyList<MetadataReference> baseCompilationReferences;
         private static CSharpParseOptions cSharpParseOptions;
 
         private readonly RazorProjectFileSystem fileSystem = new VirtualRazorProjectFileSystem();
@@ -80,6 +81,8 @@
                 basicReferenceAssemblies,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
+            baseCompilationReferences = baseCompilation.References.ToList();
+
             cSharpParseOptions = new CSharpParseOptions(LanguageVersion.Preview);
         }
 
@@ -93,12 +96,10 @@
                 throw new ArgumentNullException(nameof(codeFiles));
             }
 
-            var compilation = baseCompilation;
-
-            var cSharpResults = await this.CompileToCSharp(codeFiles, compilation, updateStatusFunc);
+            var cSharpResults = await this.CompileToCSharp(codeFiles, updateStatusFunc);
 
             await (updateStatusFunc?.Invoke("Compiling Assembly") ?? Task.CompletedTask);
-            var result = CompileToAssembly(cSharpResults, compilation);
+            var result = CompileToAssembly(cSharpResults);
 
             return result;
         }
@@ -120,9 +121,7 @@
             return streams;
         }
 
-        private static CompileToAssemblyResult CompileToAssembly(
-            ICollection<CompileToCSharpResult> cSharpResults,
-            CSharpCompilation compilation)
+        private static CompileToAssemblyResult CompileToAssembly(ICollection<CompileToCSharpResult> cSharpResults)
         {
             if (cSharpResults.Any(r => r.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error)))
             {
@@ -135,7 +134,7 @@
                 syntaxTrees.Add(CSharpSyntaxTree.ParseText(cSharpResult.Code, cSharpParseOptions));
             }
 
-            var finalCompilation = compilation.AddSyntaxTrees(syntaxTrees);
+            var finalCompilation = baseCompilation.AddSyntaxTrees(syntaxTrees);
 
             var compilationDiagnostics = finalCompilation.GetDiagnostics().Where(d => d.Severity > DiagnosticSeverity.Info);
 
@@ -183,25 +182,24 @@
 
         private async Task<ICollection<CompileToCSharpResult>> CompileToCSharp(
             ICollection<CodeFile> codeFiles,
-            CSharpCompilation compilation,
             Func<string, Task> updateStatusFunc)
         {
-            // For single phase compilation tests just use the base compilation's references.
-            // This will include the built -in Blazor components.
-            var projectEngine = this.CreateRazorProjectEngine(compilation.References.ToList());
-
             await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
+
+            // For single phase compilation just use the base compilation's references. This will include the built-in Blazor components.
+            var projectEngine = this.CreateRazorProjectEngine(baseCompilationReferences);
 
             var results = new List<CompileToCSharpResult>(codeFiles.Count);
             foreach (var codeFile in codeFiles)
             {
                 var projectItem = CreateRazorProjectItem(codeFile.Path, codeFile.Content);
                 var codeDocument = projectEngine.Process(projectItem);
+                var cSharpDocument = codeDocument.GetCSharpDocument();
 
                 results.Add(new CompileToCSharpResult
                 {
-                    Code = codeDocument.GetCSharpDocument().GeneratedCode,
-                    Diagnostics = codeDocument.GetCSharpDocument().Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
+                    Code = cSharpDocument.GeneratedCode,
+                    Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
                 });
             }
 
