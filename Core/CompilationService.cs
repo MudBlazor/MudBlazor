@@ -11,7 +11,6 @@
     using System.Runtime;
     using System.Text;
     using System.Threading.Tasks;
-
     using Microsoft.AspNetCore.Components.Routing;
     using Microsoft.AspNetCore.Razor.Language;
     using Microsoft.CodeAnalysis;
@@ -162,7 +161,7 @@
         {
             var fullPath = WorkingDirectory + fileName;
 
-            // FilePaths in Razor are always of the form '/a/b/c.razor'
+            // File paths in Razor are always of the form '/a/b/c.razor'
             var filePath = fileName;
             if (!filePath.StartsWith('/'))
             {
@@ -186,7 +185,6 @@
         {
             await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
 
-            // For single phase compilation just use the base compilation's references. This will include the built-in Blazor components.
             var projectEngine = this.CreateRazorProjectEngine(baseCompilationReferences);
 
             var results = new List<CompileToCSharpResult>(codeFiles.Count);
@@ -204,56 +202,6 @@
             }
 
             return results;
-
-            //// The first phase won't include any metadata references for component discovery. This mirrors what the build does.
-            //var projectEngine = this.CreateRazorProjectEngine(Array.Empty<MetadataReference>());
-
-            //// Result of generating declarations
-            //var declarations = new List<CompileToCSharpResult>(codeFiles.Count);
-            //foreach (var codeFile in codeFiles)
-            //{
-            //    var projectItem = CreateRazorProjectItem(codeFile.Path, codeFile.Content);
-
-            //    var codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
-            //    var cSharpDocument = codeDocument.GetCSharpDocument();
-
-            //    declarations.Add(new CompileToCSharpResult
-            //    {
-            //        ProjectItem = projectItem,
-            //        Code = cSharpDocument.GeneratedCode,
-            //        Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
-            //    });
-            //}
-
-            //// Result of doing 'temp' compilation
-            //var tempAssembly = CompileToAssembly(declarations, compilation);
-            //if (tempAssembly.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
-            //{
-            //    return new[] { new CompileToCSharpResult { Diagnostics = tempAssembly.Diagnostics } };
-            //}
-
-            //// Add the 'temp' compilation as a metadata reference
-            //var references = new List<MetadataReference>(compilation.References) { tempAssembly.Compilation.ToMetadataReference() };
-            //projectEngine = this.CreateRazorProjectEngine(references);
-
-            //await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
-
-            //// Result of real code generation for the documents
-            //var results = new List<CompileToCSharpResult>(codeFiles.Count);
-            //foreach (var declaration in declarations)
-            //{
-            //    var codeDocument = projectEngine.Process(declaration.ProjectItem);
-            //    var cSharpDocument = codeDocument.GetCSharpDocument();
-
-            //    results.Add(new CompileToCSharpResult
-            //    {
-            //        ProjectItem = declaration.ProjectItem,
-            //        Code = cSharpDocument.GeneratedCode,
-            //        Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
-            //    });
-            //}
-
-            //return results;
         }
 
         private RazorProjectEngine CreateRazorProjectEngine(IReadOnlyList<MetadataReference> references) =>

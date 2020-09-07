@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Microsoft.AspNetCore.Razor.Language;
 
     internal class CompileToCSharpResult
     {
@@ -10,8 +9,6 @@
         {
             this.Diagnostics = Enumerable.Empty<CompilationDiagnostic>();
         }
-
-        public RazorProjectItem ProjectItem { get; set; }
 
         public string Code { get; set; }
 

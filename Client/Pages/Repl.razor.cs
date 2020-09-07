@@ -2,16 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
-
     using BlazorRepl.Client.Components;
     using BlazorRepl.Client.Components.Models;
     using BlazorRepl.Client.Services;
     using BlazorRepl.Core;
-
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;
 
@@ -80,14 +77,10 @@
                     mainComponent.Content = MainComponentCodePrefix + originalMainComponentContent;
                 }
 
-                var sw = Stopwatch.StartNew();
-
                 compilationResult = await this.CompilationService.CompileToAssembly(
                     this.CodeFiles.Values,
                     this.Preset,
                     this.UpdateLoaderTextAsync);
-
-                Console.WriteLine(sw.Elapsed);
 
                 this.Diagnostics = compilationResult.Diagnostics.OrderByDescending(x => x.Severity).ThenBy(x => x.Code).ToList();
                 this.AreDiagnosticsShown = true;
