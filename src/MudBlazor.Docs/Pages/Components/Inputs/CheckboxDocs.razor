@@ -1,0 +1,40 @@
+﻿@page "/components/inputs/checkbox"
+
+
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Checkbox</Typography>
+        <Typography Typo="Typo.h4">Basic checkboxes</Typography>
+        <DocsShowcase Outlined="true">
+            <CheckBox Checked="@Basic_CheckBox1"></CheckBox>
+            <CheckBox Checked="@Basic_CheckBox2"></CheckBox>
+            <CheckBox Checked="@Basic_CheckBox3"></CheckBox>
+        </DocsShowcase>
+        <Typography>Checkbox1 is: @Basic_CheckBox1</Typography>
+        <Typography>Checkbox2 is: @Basic_CheckBox2</Typography>
+        <Typography>Checkbox3 is: @Basic_CheckBox3</Typography>
+        <MarkdownSegment Text="@Markdown_Basic" />
+    </Container>
+    <Container>
+        <Typography Typo="Typo.h4">Checkbox with label</Typography>
+        <DocsShowcase Outlined="true">
+            <CheckBox Checked="@Basic_CheckBox1" Label="Default"></CheckBox>
+            <CheckBox Checked="@Basic_CheckBox2" Label="Primary"></CheckBox>
+            <CheckBox Checked="@Basic_CheckBox3" Label="Secondary"></CheckBox>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Basic" />
+    </Container>
+
+</DocsPage>
+
+
+@code {
+
+    bool Basic_CheckBox1 { get; set; } = true;
+    bool Basic_CheckBox2 { get; set; } = false;
+    bool Basic_CheckBox3 { get; set; } = false;
+
+    string Markdown_Basic = @"```html
+
+```";
+}
