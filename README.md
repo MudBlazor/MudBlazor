@@ -1,15 +1,18 @@
+# ![MudBlazor](content/MudBlazor-GitHub.png)
+# Material Design components for Blazor
+Component Library based on material-ui and Material design. The goal is to do more CSS and Blazor and less Javascript.
+Simple and easy to use components that is highly customizable.
 
-# MudBlazor
-Blazor Component Library based on material-ui design. This is learning project for me and i wanted to change some stuff other librarys out there provided design vise.
-I want to make it easier to change the design/style and my goal is as little JS as possible.
 
 ## Documentation & Demo
 - [MudBlazor.com](https://mudblazor.com)
+
 
 ## Prerequisites
 
 - .NET Core 3.1
 - Visual Studio 2019 with the ASP.NET and Web development.
+
 
 ## Installation 
 
@@ -20,15 +23,8 @@ In `_Imports.razor`
 ```
 @using MudBlazor
 ```
-#### Client Side (WebAssembly)
-In `index.html` head section
-```
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-<link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
-```
 
-#### Server Side
-In `_Host.cshtml` head section
+Add the following link's in your head section. For **Client Side (WebAssembly)** you do that in `index.html` and for **Server Side** `_Host.cshtml`
 ```
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
 <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
