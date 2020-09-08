@@ -1,6 +1,6 @@
 # ![MudBlazor](content/MudBlazor-GitHub.png)
 # Material Design components for Blazor
-Component Library based on material-ui and Material design. The goal is to do more CSS and Blazor and less Javascript.
+Component Library based on material-ui and Material design. The goal is to do more Blazorm, CSS and less Javascript.
 Simple and easy to use components that is highly customizable.
 
 
