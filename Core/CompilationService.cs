@@ -43,7 +43,7 @@
             configurationName: "Blazor",
             extensions: Array.Empty<RazorExtension>());
 
-        public static async Task Init(HttpClient httpClient)
+        public static async Task InitAsync(HttpClient httpClient)
         {
             var basicReferenceAssemblyRoots = new[]
             {
@@ -62,7 +62,7 @@
                 .Distinct()
                 .ToList();
 
-            var assemblyStreams = await GetStreamFromHttp(httpClient, assemblyNames);
+            var assemblyStreams = await GetStreamFromHttpAsync(httpClient, assemblyNames);
 
             var allReferenceAssemblies = assemblyStreams.ToDictionary(a => a.Key, a => MetadataReference.CreateFromStream(a.Value));
 
@@ -85,7 +85,7 @@
             cSharpParseOptions = new CSharpParseOptions(LanguageVersion.Preview);
         }
 
-        public async Task<CompileToAssemblyResult> CompileToAssembly(
+        public async Task<CompileToAssemblyResult> CompileToAssemblyAsync(
             ICollection<CodeFile> codeFiles,
             string preset,
             Func<string, Task> updateStatusFunc) // TODO: try convert to event
@@ -95,7 +95,7 @@
                 throw new ArgumentNullException(nameof(codeFiles));
             }
 
-            var cSharpResults = await this.CompileToCSharp(codeFiles, updateStatusFunc);
+            var cSharpResults = await this.CompileToCSharpAsync(codeFiles, updateStatusFunc);
 
             await (updateStatusFunc?.Invoke("Compiling Assembly") ?? Task.CompletedTask);
             var result = CompileToAssembly(cSharpResults);
@@ -103,7 +103,7 @@
             return result;
         }
 
-        private static async Task<IDictionary<string, Stream>> GetStreamFromHttp(HttpClient httpClient, IEnumerable<string> assemblyNames)
+        private static async Task<IDictionary<string, Stream>> GetStreamFromHttpAsync(HttpClient httpClient, IEnumerable<string> assemblyNames)
         {
             var streams = new ConcurrentDictionary<string, Stream>();
 
@@ -179,7 +179,7 @@
                 Encoding.UTF8.GetBytes(fileContent.TrimStart()));
         }
 
-        private async Task<ICollection<CompileToCSharpResult>> CompileToCSharp(
+        private async Task<ICollection<CompileToCSharpResult>> CompileToCSharpAsync(
             ICollection<CodeFile> codeFiles,
             Func<string, Task> updateStatusFunc)
         {
