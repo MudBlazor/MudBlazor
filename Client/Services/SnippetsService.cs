@@ -117,11 +117,11 @@
             var snippetResponse = await this.httpClient.GetAsync(url);
             snippetResponse.EnsureSuccessStatusCode();
 
-            var snippetFiles = await ExtractSnippetFilesFromResponse(snippetResponse);
+            var snippetFiles = await ExtractSnippetFilesFromResponseAsync(snippetResponse);
             return snippetFiles;
         }
 
-        private static async Task<IEnumerable<CodeFile>> ExtractSnippetFilesFromResponse(HttpResponseMessage snippetResponse)
+        private static async Task<IEnumerable<CodeFile>> ExtractSnippetFilesFromResponseAsync(HttpResponseMessage snippetResponse)
         {
             var result = new List<CodeFile>();
 

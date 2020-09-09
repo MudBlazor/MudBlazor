@@ -77,7 +77,7 @@
                     mainComponent.Content = MainComponentCodePrefix + originalMainComponentContent;
                 }
 
-                compilationResult = await this.CompilationService.CompileToAssembly(
+                compilationResult = await this.CompilationService.CompileToAssemblyAsync(
                     this.CodeFiles.Values,
                     this.Preset,
                     this.UpdateLoaderTextAsync);
