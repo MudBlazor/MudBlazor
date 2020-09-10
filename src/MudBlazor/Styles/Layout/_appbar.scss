@@ -47,3 +47,30 @@
 .mud-appbar-position-relative {
     position: relative;
 }
+
+/// <summary>
+/// Bellow is the classes for theming
+/// </summary>
+.mud-appbar-color-default {
+    color: var(--mud-theme-on-default);
+    background-color: var(--mud-theme-color-default);
+}
+
+.mud-appbar-color-primary {
+    color: var(--mud-theme-on-primary);
+    background-color: var(--mud-theme-color-primary);
+}
+
+.mud-appbar-color-secondary {
+    color: var(--mud-theme-on-secondary);
+    background-color: var(--mud-theme-color-secondary);
+}
+
+.mud-appbar-color-inherit {
+    color: inherit;
+}
+
+.mud-appbar-color-transparent {
+    color: inherit;
+    background-color: transparent;
+}
