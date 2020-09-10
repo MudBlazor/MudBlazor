@@ -1,8 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
+    <Version>1.0.0</Version>
+    <Authors>Garderoben</Authors>
+    <Company>Gardnet</Company>
+    <Title>MudBlazor</Title>
+    <PackageTags>Blazor, MudBlazor, Material, Components</PackageTags>
+    <PackageProjectUrl>https://github.com/Garderoben/MudBlazor</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Garderoben/MudBlazor</RepositoryUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/Garderoben/MudBlazor/master/content/Nuget.png</PackageIconUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <IsPackable>true</IsPackable>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
+    <PackageId>MudBlazor</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
