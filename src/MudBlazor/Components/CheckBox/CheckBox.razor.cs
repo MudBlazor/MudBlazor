@@ -13,9 +13,11 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-button-root mud-icon-button mud-checkbox")
+            .AddClass($"mud-checkbox-{Color.ToDescriptionString()}")
           .AddClass(Class)
         .Build();
 
+        [Parameter] public Color Color { get; set; } = Color.Default;
         [Parameter] public string Label { get; set; }
 
         [Parameter] public bool Disabled { get; set; }
