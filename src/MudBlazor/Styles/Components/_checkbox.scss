@@ -20,3 +20,15 @@
     width: 100%;
     cursor: pointer;
 }
+
+.mud-checkbox-default {
+    color: (var(--mud-theme-text-color-default));
+}
+
+.mud-checkbox-primary {
+    color: var(--mud-theme-color-primary);
+}
+
+.mud-checkbox-secondary {
+    color: var(--mud-theme-color-secondary);
+}
