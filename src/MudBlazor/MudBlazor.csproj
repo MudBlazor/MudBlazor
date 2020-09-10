@@ -6,7 +6,7 @@
     <Company>Gardnet</Company>
     <Title>MudBlazor</Title>
     <PackageTags>Blazor, MudBlazor, Material, Components</PackageTags>
-    <PackageProjectUrl>https://github.com/Garderoben/MudBlazor</PackageProjectUrl>
+    <PackageProjectUrl>http://mudblazor.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Garderoben/MudBlazor</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/Garderoben/MudBlazor/master/content/Nuget.png</PackageIconUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
