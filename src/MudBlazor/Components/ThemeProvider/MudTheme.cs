@@ -35,11 +35,11 @@ namespace MudBlazor
             theme.AppendLine($"--mud-theme-color-secondary-darken: {BuildColor(Color_Secondary, ColorOption.Darken)};");
             theme.AppendLine($"--mud-theme-color-secondary-hover: {BuildColor(Color_Secondary, ColorOption.RgbA, 0.05)};");
 
-            theme.AppendLine($"--mud-theme-info: {Color_Info};");
-            theme.AppendLine($"--mud-theme-success: {Color_Success};");
-            theme.AppendLine($"--mud-theme-warning: {Color_Warning};");
-            theme.AppendLine($"--mud-theme-danger: {Color_Danger};");
-            theme.AppendLine($"--mud-theme-dark: {Color_Dark};");
+            theme.AppendLine($"--mud-theme-color-info: {Color_Info};");
+            theme.AppendLine($"--mud-theme-color-success: {Color_Success};");
+            theme.AppendLine($"--mud-theme-color-warning: {Color_Warning};");
+            theme.AppendLine($"--mud-theme-color-danger: {Color_Danger};");
+            theme.AppendLine($"--mud-theme-color-dark: {Color_Dark};");
 
             theme.AppendLine($"--mud-theme-border-radius-default: {BorderRadius_Default};");
         }
