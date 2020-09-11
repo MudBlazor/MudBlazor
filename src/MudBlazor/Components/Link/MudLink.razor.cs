@@ -26,6 +26,8 @@ namespace MudBlazor
 
         [Parameter] public string Href { get; set; }
 
+        [Parameter] public string Target { get; set; }
+
         [Parameter] public RenderFragment ChildContent { get; set; }
     }
 }
