@@ -678,304 +678,304 @@ ul {
 .mud-grid-spacing-xs-10 > .mud-grid-item {
   padding: 40px; }
 
-.mud-grid-grid-xs-auto {
+.mud-grid-item-xs-auto {
   flex-grow: 0;
   max-width: none;
   flex-basis: auto; }
 
-.mud-grid-grid-xs-true {
+.mud-grid-item-xs-true {
   flex-grow: 1;
   max-width: 100%;
   flex-basis: 0; }
 
-.mud-grid-grid-xs-1 {
+.mud-grid-item-xs-1 {
   flex-grow: 0;
   max-width: 8.333333%;
   flex-basis: 8.333333%; }
 
-.mud-grid-grid-xs-2 {
+.mud-grid-item-xs-2 {
   flex-grow: 0;
   max-width: 16.666667%;
   flex-basis: 16.666667%; }
 
-.mud-grid-grid-xs-3 {
+.mud-grid-item-xs-3 {
   flex-grow: 0;
   max-width: 25%;
   flex-basis: 25%; }
 
-.mud-grid-grid-xs-4 {
+.mud-grid-item-xs-4 {
   flex-grow: 0;
   max-width: 33.333333%;
   flex-basis: 33.333333%; }
 
-.mud-grid-grid-xs-5 {
+.mud-grid-item-xs-5 {
   flex-grow: 0;
   max-width: 41.666667%;
   flex-basis: 41.666667%; }
 
-.mud-grid-grid-xs-6 {
+.mud-grid-item-xs-6 {
   flex-grow: 0;
   max-width: 50%;
   flex-basis: 50%; }
 
-.mud-grid-grid-xs-7 {
+.mud-grid-item-xs-7 {
   flex-grow: 0;
   max-width: 58.333333%;
   flex-basis: 58.333333%; }
 
-.mud-grid-grid-xs-8 {
+.mud-grid-item-xs-8 {
   flex-grow: 0;
   max-width: 66.666667%;
   flex-basis: 66.666667%; }
 
-.mud-grid-grid-xs-9 {
+.mud-grid-item-xs-9 {
   flex-grow: 0;
   max-width: 75%;
   flex-basis: 75%; }
 
-.mud-grid-grid-xs-10 {
+.mud-grid-item-xs-10 {
   flex-grow: 0;
   max-width: 83.333333%;
   flex-basis: 83.333333%; }
 
-.mud-grid-grid-xs-11 {
+.mud-grid-item-xs-11 {
   flex-grow: 0;
   max-width: 91.666667%;
   flex-basis: 91.666667%; }
 
-.mud-grid-grid-xs-12 {
+.mud-grid-item-xs-12 {
   flex-grow: 0;
   max-width: 100%;
   flex-basis: 100%; }
 
 @media (min-width: 600px) {
-  .mud-grid-grid-sm-auto {
+  .mud-grid-item-sm-auto {
     flex-grow: 0;
     max-width: none;
     flex-basis: auto; }
-  .mud-grid-grid-sm-true {
+  .mud-grid-item-sm-true {
     flex-grow: 1;
     max-width: 100%;
     flex-basis: 0; }
-  .mud-grid-grid-sm-1 {
+  .mud-grid-item-sm-1 {
     flex-grow: 0;
     max-width: 8.333333%;
     flex-basis: 8.333333%; }
-  .mud-grid-grid-sm-2 {
+  .mud-grid-item-sm-2 {
     flex-grow: 0;
     max-width: 16.666667%;
     flex-basis: 16.666667%; }
-  .mud-grid-grid-sm-3 {
+  .mud-grid-item-sm-3 {
     flex-grow: 0;
     max-width: 25%;
     flex-basis: 25%; }
-  .mud-grid-grid-sm-4 {
+  .mud-grid-item-sm-4 {
     flex-grow: 0;
     max-width: 33.333333%;
     flex-basis: 33.333333%; }
-  .mud-grid-grid-sm-5 {
+  .mud-grid-item-sm-5 {
     flex-grow: 0;
     max-width: 41.666667%;
     flex-basis: 41.666667%; }
-  .mud-grid-grid-sm-6 {
+  .mud-grid-item-sm-6 {
     flex-grow: 0;
     max-width: 50%;
     flex-basis: 50%; }
-  .mud-grid-grid-sm-7 {
+  .mud-grid-item-sm-7 {
     flex-grow: 0;
     max-width: 58.333333%;
     flex-basis: 58.333333%; }
-  .mud-grid-grid-sm-8 {
+  .mud-grid-item-sm-8 {
     flex-grow: 0;
     max-width: 66.666667%;
     flex-basis: 66.666667%; }
-  .mud-grid-grid-sm-9 {
+  .mud-grid-item-sm-9 {
     flex-grow: 0;
     max-width: 75%;
     flex-basis: 75%; }
-  .mud-grid-grid-sm-10 {
+  .mud-grid-item-sm-10 {
     flex-grow: 0;
     max-width: 83.333333%;
     flex-basis: 83.333333%; }
-  .mud-grid-grid-sm-11 {
+  .mud-grid-item-sm-11 {
     flex-grow: 0;
     max-width: 91.666667%;
     flex-basis: 91.666667%; }
-  .mud-grid-grid-sm-12 {
+  .mud-grid-item-sm-12 {
     flex-grow: 0;
     max-width: 100%;
     flex-basis: 100%; } }
 
 @media (min-width: 960px) {
-  .mud-grid-grid-md-auto {
+  .mud-grid-item-md-auto {
     flex-grow: 0;
     max-width: none;
     flex-basis: auto; }
-  .mud-grid-grid-md-true {
+  .mud-grid-item-md-true {
     flex-grow: 1;
     max-width: 100%;
     flex-basis: 0; }
-  .mud-grid-grid-md-1 {
+  .mud-grid-item-md-1 {
     flex-grow: 0;
     max-width: 8.333333%;
     flex-basis: 8.333333%; }
-  .mud-grid-grid-md-2 {
+  .mud-grid-item-md-2 {
     flex-grow: 0;
     max-width: 16.666667%;
     flex-basis: 16.666667%; }
-  .mud-grid-grid-md-3 {
+  .mud-grid-item-md-3 {
     flex-grow: 0;
     max-width: 25%;
     flex-basis: 25%; }
-  .mud-grid-grid-md-4 {
+  .mud-grid-item-md-4 {
     flex-grow: 0;
     max-width: 33.333333%;
     flex-basis: 33.333333%; }
-  .mud-grid-grid-md-5 {
+  .mud-grid-item-md-5 {
     flex-grow: 0;
     max-width: 41.666667%;
     flex-basis: 41.666667%; }
-  .mud-grid-grid-md-6 {
+  .mud-grid-item-md-6 {
     flex-grow: 0;
     max-width: 50%;
     flex-basis: 50%; }
-  .mud-grid-grid-md-7 {
+  .mud-grid-item-md-7 {
     flex-grow: 0;
     max-width: 58.333333%;
     flex-basis: 58.333333%; }
-  .mud-grid-grid-md-8 {
+  .mud-grid-item-md-8 {
     flex-grow: 0;
     max-width: 66.666667%;
     flex-basis: 66.666667%; }
-  .mud-grid-grid-md-9 {
+  .mud-grid-item-md-9 {
     flex-grow: 0;
     max-width: 75%;
     flex-basis: 75%; }
-  .mud-grid-grid-md-10 {
+  .mud-grid-item-md-10 {
     flex-grow: 0;
     max-width: 83.333333%;
     flex-basis: 83.333333%; }
-  .mud-grid-grid-md-11 {
+  .mud-grid-item-md-11 {
     flex-grow: 0;
     max-width: 91.666667%;
     flex-basis: 91.666667%; }
-  .mud-grid-grid-md-12 {
+  .mud-grid-item-md-12 {
     flex-grow: 0;
     max-width: 100%;
     flex-basis: 100%; } }
 
 @media (min-width: 1280px) {
-  .mud-grid-grid-lg-auto {
+  .mud-grid-item-lg-auto {
     flex-grow: 0;
     max-width: none;
     flex-basis: auto; }
-  .mud-grid-grid-lg-true {
+  .mud-grid-item-lg-true {
     flex-grow: 1;
     max-width: 100%;
     flex-basis: 0; }
-  .mud-grid-grid-lg-1 {
+  .mud-grid-item-lg-1 {
     flex-grow: 0;
     max-width: 8.333333%;
     flex-basis: 8.333333%; }
-  .mud-grid-grid-lg-2 {
+  .mud-grid-item-lg-2 {
     flex-grow: 0;
     max-width: 16.666667%;
     flex-basis: 16.666667%; }
-  .mud-grid-grid-lg-3 {
+  .mud-grid-item-lg-3 {
     flex-grow: 0;
     max-width: 25%;
     flex-basis: 25%; }
-  .mud-grid-grid-lg-4 {
+  .mud-grid-item-lg-4 {
     flex-grow: 0;
     max-width: 33.333333%;
     flex-basis: 33.333333%; }
-  .mud-grid-grid-lg-5 {
+  .mud-grid-item-lg-5 {
     flex-grow: 0;
     max-width: 41.666667%;
     flex-basis: 41.666667%; }
-  .mud-grid-grid-lg-6 {
+  .mud-grid-item-lg-6 {
     flex-grow: 0;
     max-width: 50%;
     flex-basis: 50%; }
-  .mud-grid-grid-lg-7 {
+  .mud-grid-item-lg-7 {
     flex-grow: 0;
     max-width: 58.333333%;
     flex-basis: 58.333333%; }
-  .mud-grid-grid-lg-8 {
+  .mud-grid-item-lg-8 {
     flex-grow: 0;
     max-width: 66.666667%;
     flex-basis: 66.666667%; }
-  .mud-grid-grid-lg-9 {
+  .mud-grid-item-lg-9 {
     flex-grow: 0;
     max-width: 75%;
     flex-basis: 75%; }
-  .mud-grid-grid-lg-10 {
+  .mud-grid-item-lg-10 {
     flex-grow: 0;
     max-width: 83.333333%;
     flex-basis: 83.333333%; }
-  .mud-grid-grid-lg-11 {
+  .mud-grid-item-lg-11 {
     flex-grow: 0;
     max-width: 91.666667%;
     flex-basis: 91.666667%; }
-  .mud-grid-grid-lg-12 {
+  .mud-grid-item-lg-12 {
     flex-grow: 0;
     max-width: 100%;
     flex-basis: 100%; } }
 
 @media (min-width: 1920px) {
-  .mud-grid-grid-xl-auto {
+  .mud-grid-item-xl-auto {
     flex-grow: 0;
     max-width: none;
     flex-basis: auto; }
-  .mud-grid-grid-xl-true {
+  .mud-grid-item-xl-true {
     flex-grow: 1;
     max-width: 100%;
     flex-basis: 0; }
-  .mud-grid-grid-xl-1 {
+  .mud-grid-item-xl-1 {
     flex-grow: 0;
     max-width: 8.333333%;
     flex-basis: 8.333333%; }
-  .mud-grid-grid-xl-2 {
+  .mud-grid-item-xl-2 {
     flex-grow: 0;
     max-width: 16.666667%;
     flex-basis: 16.666667%; }
-  .mud-grid-grid-xl-3 {
+  .mud-grid-item-xl-3 {
     flex-grow: 0;
     max-width: 25%;
     flex-basis: 25%; }
-  .mud-grid-grid-xl-4 {
+  .mud-grid-item-xl-4 {
     flex-grow: 0;
     max-width: 33.333333%;
     flex-basis: 33.333333%; }
-  .mud-grid-grid-xl-5 {
+  .mud-grid-item-xl-5 {
     flex-grow: 0;
     max-width: 41.666667%;
     flex-basis: 41.666667%; }
-  .mud-grid-grid-xl-6 {
+  .mud-grid-item-xl-6 {
     flex-grow: 0;
     max-width: 50%;
     flex-basis: 50%; }
-  .mud-grid-grid-xl-7 {
+  .mud-grid-item-xl-7 {
     flex-grow: 0;
     max-width: 58.333333%;
     flex-basis: 58.333333%; }
-  .mud-grid-grid-xl-8 {
+  .mud-grid-item-xl-8 {
     flex-grow: 0;
     max-width: 66.666667%;
     flex-basis: 66.666667%; }
-  .mud-grid-grid-xl-9 {
+  .mud-grid-item-xl-9 {
     flex-grow: 0;
     max-width: 75%;
     flex-basis: 75%; }
-  .mud-grid-grid-xl-10 {
+  .mud-grid-item-xl-10 {
     flex-grow: 0;
     max-width: 83.333333%;
     flex-basis: 83.333333%; }
-  .mud-grid-grid-xl-11 {
+  .mud-grid-item-xl-11 {
     flex-grow: 0;
     max-width: 91.666667%;
     flex-basis: 91.666667%; }
-  .mud-grid-grid-xl-12 {
+  .mud-grid-item-xl-12 {
     flex-grow: 0;
     max-width: 100%;
     flex-basis: 100%; } }
