@@ -49,11 +49,11 @@ app, .mud-layout {
   right: 0.75rem;
   top: 0.5rem; }
 
-.mud-list-item {
+.mud-ripple {
   position: relative;
   overflow: hidden;
   transform: translate3d(0, 0, 0); }
-  .mud-list-item:after {
+  .mud-ripple:after {
     content: "";
     display: block;
     position: absolute;
@@ -68,10 +68,13 @@ app, .mud-layout {
     transform: scale(10, 10);
     opacity: 0;
     transition: transform .3s, opacity 1s; }
-  .mud-list-item:active:after {
+  .mud-ripple:active:after {
     transform: scale(0, 0);
     opacity: 0.1;
     transition: 0s; }
+
+.mud-ripple-icon:after {
+  transform: scale(7, 7); }
 
 a {
   text-decoration: none; }
@@ -444,19 +447,19 @@ ul {
     background-color: rgba(0, 0, 0, 0.04); }
 
 .mud-icon-button-color-default {
-  color: rgba(0, 0, 0, 0.54); }
+  color: var(--mud-theme-text-color-default); }
   .mud-icon-button-color-default:hover {
     background-color: rgba(0, 0, 0, 0.04); }
 
 .mud-icon-button-color-primary {
-  color: var(--mud-theme-primary); }
+  color: var(--mud-theme-color-primary); }
   .mud-icon-button-color-primary:hover {
-    background-color: rgba(25, 118, 210, 0.04); }
+    background-color: var(--mud-theme-color-primary-hover); }
 
 .mud-icon-button-color-secondary {
-  color: var(--mud-theme-secondary); }
+  color: var(--mud-theme-color-secondary); }
   .mud-icon-button-color-secondary:hover {
-    background-color: rgba(220, 0, 78, 0.04); }
+    background-color: var(--mud-theme-color-secondary-hover); }
 
 .mud-icon-button-label {
   width: 100%;
@@ -1038,6 +1041,8 @@ ul {
   margin: 0;
   padding: 0;
   list-style: none; }
+  .mud-list .mud-divider {
+    margin: 8px 0; }
 
 .mud-list > .mud-list-item, .mud-nested-list {
   width: 100%;
@@ -1052,18 +1057,21 @@ ul {
   padding: 8px 0 8px 24px;
   color: var(--mud-theme-default);
   line-height: 1.75;
-  font-weight: 500;
   letter-spacing: 0;
   justify-content: flex-start;
   text-transform: none;
   background-color: transparent;
   transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
   .mud-list-item > .mud-list-item:hover, .mud-nested-list > .mud-list-item:hover {
+    cursor: pointer;
     text-decoration: none;
     background-color: rgba(0, 0, 0, 0.06); }
   .mud-list-item > .mud-list-item.active, .mud-nested-list > .mud-list-item.active {
     font-weight: 500 !important;
-    color: var(--mud-theme-primary); }
+    color: var(--mud-theme-color-primary); }
+
+button.mud-list-item {
+  font-weight: 500; }
 
 .mud-nested-list > .mud-list {
   display: none; }
