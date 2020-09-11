@@ -1,0 +1,32 @@
+﻿@page "/components/data-display/list"
+
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Lists</Typography>
+        <Typography Typo="Typo.h4">Simple List</Typography>
+        <DocsShowcase DarkenBackground="true" Class="docs-showcase-list">
+            <List>
+                <ListItem>Inbox</ListItem>
+                <ListItem>Sent</ListItem>
+                <ListItem>Drafts</ListItem>
+                <Divider></Divider>
+                <ListItem>Spam</ListItem>
+                <ListItem>Bin</ListItem>
+            </List>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Simple" />
+    </Container>
+</DocsPage>
+
+@code {
+string Markdown_Simple = @"```html
+<List>
+    <ListItem>Inbox</ListItem>
+    <ListItem>Sent</ListItem>
+    <ListItem>Drafts</ListItem>
+    <Divider></Divider>
+    <ListItem>Spam</ListItem>
+    <ListItem>Bin</ListItem>
+</List>
+```";
+}
