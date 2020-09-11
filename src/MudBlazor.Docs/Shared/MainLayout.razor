@@ -1,13 +1,12 @@
 ﻿@inherits LayoutComponentBase
 
 <ThemeProvider/>
-    <MarkdownScripts />
+<MarkdownScripts />
+
     <Layout DrawerOpen="@_drawerOpen">
         <AppBar Elevation="99">
             <IconButton Icon="@Icons.Material_Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
             <AppBarSpacer />
-            @*<IconButton Icon="@Icons.Material_Invert_colors" Color="Color.Inherit" />
-            <IconButton Icon="@Icons.Material_Brightness_4" Color="Color.Inherit" />*@
             <IconButton Icon="@Icons.Brand_GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" />
         </AppBar>
         <Drawer Elevation="99">

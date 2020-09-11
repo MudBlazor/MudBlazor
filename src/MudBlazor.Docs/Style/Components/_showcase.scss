@@ -33,3 +33,26 @@
         margin: 8px;
     }
 }
+
+.docs-showcase-grid-paper-filler {
+    & .mud-paper {
+        padding: 16px;
+        text-align: center;
+    }
+}
+
+.docs-showcase-grid-spacing {
+    & .mud-paper {
+        width: 100px;
+        height: 140px;
+        text-align: center;
+    }
+
+    & .mud-paper.docs-spacing {
+        padding: 20px;
+        width: 100%;
+        height: 100px;
+        text-align: left;
+    }
+}
+
