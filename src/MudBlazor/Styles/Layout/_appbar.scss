@@ -52,17 +52,17 @@
 /// Bellow is the classes for theming
 /// </summary>
 .mud-appbar-color-default {
-    color: var(--mud-theme-on-default);
+    color: var(--mud-theme-color-on-default);
     background-color: var(--mud-theme-color-default);
 }
 
 .mud-appbar-color-primary {
-    color: var(--mud-theme-on-primary);
+    color: var(--mud-theme-color-on-primary);
     background-color: var(--mud-theme-color-primary);
 }
 
 .mud-appbar-color-secondary {
-    color: var(--mud-theme-on-secondary);
+    color: var(--mud-theme-color-on-secondary);
     background-color: var(--mud-theme-color-secondary);
 }
 

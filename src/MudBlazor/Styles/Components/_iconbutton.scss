@@ -22,10 +22,10 @@
 }
 
 .mud-icon-button-color-default {
-    color: var(--mud-theme-text-color-default);
+    color: var(--mud-theme-color-default);
 
     &:hover {
-        background-color: rgba(0, 0, 0, 0.04);
+        background-color: var(--mud-theme-color-default-hover);
     }
 }
 

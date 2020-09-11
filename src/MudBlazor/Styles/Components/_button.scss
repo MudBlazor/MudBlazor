@@ -58,7 +58,7 @@
     }
 
     &.mud-button-text-default {
-        color: var(--mud-theme-text-color-default);
+        color: var(--mud-theme-color-on-default);
 
         &:hover {
             background-color: var(--mud-theme-color-default-hover);
@@ -83,11 +83,11 @@
 }
 
 .mud-button-outlined {
-    border: 1px solid var(--mud-theme-color-default-darken);
+    color: var(--mud-theme-color-on-default);
+    border: 1px solid var(--mud-theme-color-default);
     padding: 5px 15px;
 
     &:hover {
-        border: 1px solid var(--mud-theme-color-default-darken);
         background-color: var(--mud-theme-color-default-hover);
     }
 
@@ -117,13 +117,13 @@
 }
 
 .mud-button-contained {
-    color: rgba(0, 0, 0, 0.87);
+    color: var(--mud-theme-color-on-default);
     box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
-    background-color: var(--mud-theme-on-default);
+    background-color: var(--mud-theme-color-default-lighten);
 
     &:hover {
         box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
-        background-color: #d5d5d5;
+        background-color: var(--mud-theme-color-default-darken)
     }
 
     &:disabled {
@@ -133,7 +133,7 @@
     }
 
     &.mud-button-contained-primary {
-        color: var(--mud-theme-on-primary);
+        color: var(--mud-theme-color-on-primary);
         background-color: var(--mud-theme-color-primary);
 
         &:hover {
@@ -142,7 +142,7 @@
     }
 
     &.mud-button-contained-secondary {
-        color: var(--mud-theme-on-secondary);
+        color: var(--mud-theme-color-on-secondary);
         background-color: var(--mud-theme-color-secondary);
 
         &:hover {
