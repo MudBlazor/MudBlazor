@@ -11,7 +11,7 @@
     protected string Classname =>
     new CssBuilder("mud-container")
       .AddClass($"mud-container-fixed", Fixed)
-      .AddClass($"mud-container-maxwidth-{MaxWidth.ToDescriptionString()}")
+      .AddClass($"mud-container-maxwidth-{MaxWidth.ToDescriptionString()}", !Fixed)
       .AddClass(Class)
     .Build();
 
