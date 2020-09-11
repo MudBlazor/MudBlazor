@@ -1,0 +1,45 @@
+﻿@page "/components/layout/container"
+
+
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Container</Typography>
+        <Typography>The container centers your content horizontally.</Typography>
+        <Typography Typo="Typo.h4">Fluid</Typography>
+        <Typography>You can set the max width with the MaxWidth enum.</Typography>
+        <DocsShowcase DarkenBackground="true" Class="docs-showcase-container">
+            <Paper Elevation="1" Square="true">
+                <Container MaxWidth="MaxWidth.Medium">
+                    
+                </Container>
+            </Paper>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Fluid" />
+    </Container>
+    <Container>
+        <Typography Typo="Typo.h4">Fixed</Typography>
+        <DocsShowcase DarkenBackground="true" Class="docs-showcase-container">
+            <Paper Elevation="1" Square="true">
+                <Container Fixed="true">
+
+                </Container>
+            </Paper>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Fixed" />
+    </Container>
+</DocsPage>
+
+
+@code {
+
+string Markdown_Fluid = @"```html
+<Container MaxWidth=""MaxWidth.Medium"">
+    your content
+</Container>
+```";
+string Markdown_Fixed = @"```html
+<Container Fixed=""true"">
+    your content
+</Container>
+```";
+}
