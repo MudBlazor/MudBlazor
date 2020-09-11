@@ -15,18 +15,18 @@ namespace MudBlazor.Utilities
 
             return MudColor.FromArgb(a, r, g, b);
         }
-        public static MudColor ColorLighten(MudColor rgbColor)
+        public static MudColor ColorLighten(MudColor rgbColor, int changeValue)
         {
-            byte R = (byte)(rgbColor.R - 25);
-            byte G = (byte)(rgbColor.G - 25);
-            byte B = (byte)(rgbColor.B - 25);
+            byte R = (byte)(rgbColor.R + changeValue);
+            byte G = (byte)(rgbColor.G + changeValue);
+            byte B = (byte)(rgbColor.B + changeValue);
             return MudColor.FromArgb(rgbColor.A, R, G, B);
         }
-        public static MudColor ColorDarken(MudColor rgbColor)
+        public static MudColor ColorDarken(MudColor rgbColor, int changeValue)
         {
-            byte R = (byte)(rgbColor.R - 25);
-            byte G = (byte)(rgbColor.G - 25);
-            byte B = (byte)(rgbColor.B - 25);
+            byte R = (byte)(rgbColor.R - changeValue);
+            byte G = (byte)(rgbColor.G - changeValue);
+            byte B = (byte)(rgbColor.B - changeValue);
             return MudColor.FromArgb(rgbColor.A, R, G, B);
         }
 
