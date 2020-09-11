@@ -12,30 +12,33 @@ namespace MudBlazor
     public class ComponentBaseCheckBox : ComponentBase
     {
         protected string Classname =>
-        new CssBuilder("mud-button-root mud-icon-button mud-checkbox")
+        new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-checkbox-{Color.ToDescriptionString()}")
+            .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple)
+            .AddClass($"mud-checkbox-disabled", Disabled)
           .AddClass(Class)
         .Build();
 
         [Parameter] public Color Color { get; set; } = Color.Default;
         [Parameter] public string Label { get; set; }
-
+        [Parameter] public bool DisableRipple { get; set; }
         [Parameter] public bool Disabled { get; set; }
-
         [Parameter] public string Class { get; set; }
+        [Parameter]
+        public EventCallback<bool> CheckedChanged { get; set; }
 
-        [Parameter] public bool Checked { get; set; }
-
-        public void CheckboxClicked(object aChecked)
+        private bool _checked;
+        [Parameter] public bool Checked
         {
-            if((bool)aChecked)
+            get => _checked;
+            set
             {
-                Checked = true;
-            }else
-            {
-                Checked = false;
-            }
-            StateHasChanged();
+                if (value != _checked)
+                {
+                    _checked = value;
+                    CheckedChanged.InvokeAsync(value);
+                }
+            }   
         }
     }
 }

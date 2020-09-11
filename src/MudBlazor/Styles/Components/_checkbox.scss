@@ -1,5 +1,11 @@
 ﻿.mud-checkbox {
-
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    margin-left: -11px;
+    margin-right: 16px;
+    vertical-align: middle;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .mud-checkbox-input {
@@ -22,13 +28,34 @@
 }
 
 .mud-checkbox-default {
-    color: (var(--mud-theme-text-color-default));
+    color: var(--mud-theme-color-default);
+
+    &:hover {
+        background-color: var(--mud-theme-color-default-hover);
+    }
 }
 
 .mud-checkbox-primary {
     color: var(--mud-theme-color-primary);
+
+    &:hover {
+        background-color: var(--mud-theme-color-primary-hover);
+    }
 }
 
 .mud-checkbox-secondary {
     color: var(--mud-theme-color-secondary);
+
+    &:hover {
+        background-color: var(--mud-theme-color-secondary-hover);
+    }
+}
+
+.mud-checkbox-disabled {
+    color: rgba(0, 0, 0, 0.26);
+
+    &:hover {
+        cursor:default;
+        background-color: transparent;
+    }
 }
