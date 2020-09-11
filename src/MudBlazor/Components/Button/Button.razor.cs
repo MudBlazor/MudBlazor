@@ -15,6 +15,7 @@ namespace MudBlazor
         new CssBuilder("mud-button-root mud-button")
           .AddClass($"mud-button-{Variant.ToDescriptionString()}")
           .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
+          .AddClass($"mud-ripple", !DisableRipple)
           .AddClass($"mud-button-disable-elevation", DisableElevation)
           .AddClass(Class)
         .Build();
@@ -34,6 +35,8 @@ namespace MudBlazor
         [Parameter] public bool Disabled { get; set; }
 
         [Parameter] public bool DisableElevation { get; set; }
+
+        [Parameter] public bool DisableRipple { get; set; }
 
         [Parameter] public string Link { get; set; }
 

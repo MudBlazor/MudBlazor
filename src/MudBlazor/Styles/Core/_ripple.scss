@@ -1,4 +1,4 @@
-﻿.mud-list-item {
+﻿.mud-ripple {
     position: relative;
     overflow: hidden;
     transform: translate3d(0, 0, 0);
@@ -26,3 +26,10 @@
         transition: 0s;
     }
 }
+
+.mud-ripple-icon {
+    &:after {
+        transform: scale(7,7);
+    }
+}
+
