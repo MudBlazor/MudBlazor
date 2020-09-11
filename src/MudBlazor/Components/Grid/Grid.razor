@@ -13,9 +13,14 @@
 
     protected string Classname =>
     new CssBuilder("mud-grid")
-      .AddClass("mud-grid-spacing-xs-3")
+      .AddClass($"mud-grid-spacing-xs-{Spacing.ToString()}")
+      .AddClass($"mud-grid-justify-xs-{Justify.ToDescriptionString()}")
       .AddClass(Class)
     .Build();
+
+    [Parameter] public int Spacing { set; get; } = 3;
+
+    [Parameter] public Justify Justify { get; set; } = Justify.FlexStart;
 
     [Parameter] public string Class { get; set; }
 

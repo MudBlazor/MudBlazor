@@ -2,8 +2,6 @@
 @using MudBlazor.Utilities
 @using MudBlazor.Extensions
 
-
-
 <div class="@Classname">
     @ChildContent
 </div>
@@ -12,11 +10,14 @@
 
     protected string Classname =>
     new CssBuilder("mud-grid-item")
+      .AddClass($"mud-grid-item-xs-{GridSize.ToDescriptionString()}")
       .AddClass(Class)
     .Build();
 
     [CascadingParameter]
     private Grid Parent { get; set; }
+
+    [Parameter] public GridSize GridSize { get; set; }
 
     [Parameter] public string Class { get; set; }
 
