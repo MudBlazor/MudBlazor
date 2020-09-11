@@ -117,6 +117,21 @@
   height: 100px;
   text-align: left; }
 
+.docs-showcase-list .mud-list {
+  padding: 10px 0;
+  width: 100%;
+  max-width: 360px;
+  background-color: #fff; }
+
+.docs-showcase-container .mud-paper {
+  height: 400px;
+  width: 100%;
+  background-color: #fff; }
+
+.docs-showcase-container .mud-container {
+  height: 100%;
+  background-color: #cfe8fc; }
+
 .docs-home {
   padding-top: 128px;
   padding-bottom: 128px;
@@ -173,6 +188,10 @@
 
 .docs-drawer-page {
   background-color: #fff;
+  padding: 20px;
+  padding-top: 86px; }
+
+.docs-theme-page {
   padding: 20px;
   padding-top: 86px; }
 

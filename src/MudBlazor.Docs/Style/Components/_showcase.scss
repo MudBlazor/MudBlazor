@@ -56,3 +56,24 @@
     }
 }
 
+.docs-showcase-list {
+    & .mud-list {
+        padding: 10px 0;
+        width: 100%;
+        max-width: 360px;
+        background-color: #fff;
+    }
+}
+
+.docs-showcase-container {
+    & .mud-paper {
+        height: 400px;
+        width: 100%;
+        background-color: #fff;
+    }
+
+    & .mud-container {
+        height:100%;
+        background-color: rgb(207, 232, 252);
+    }
+}
