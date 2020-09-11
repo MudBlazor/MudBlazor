@@ -3,11 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>Garderoben</Authors>
     <Company>Gardnet</Company>
     <Title>MudBlazor</Title>
     <PackageTags>Blazor, MudBlazor, Material, Components</PackageTags>
+    <Description>Component Library based on material-ui and Material design. The goal is to do more Blazor, CSS and less Javascript. Simple and easy to use components that is highly customizable.</Description>
     <PackageProjectUrl>http://mudblazor.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Garderoben/MudBlazor</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/Garderoben/MudBlazor/master/content/Nuget.png</PackageIconUrl>
