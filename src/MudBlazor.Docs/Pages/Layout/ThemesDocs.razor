@@ -1,0 +1,52 @@
+﻿@page "/components/layout/themes"
+
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">ThemeProvider</Typography>
+        <Typography>With the ThemeProvider you can change all the MudBlazor colors and some default values like border radius.</Typography>
+        <Typography Typo="Typo.h4">Default Theme</Typography>
+        <MarkdownSegment Text="@Markdown_ThemeProvider" />
+        <Typography>This should be added before all your code, in App.razor or at the top in your MainLayout.razor</Typography>
+        <Typography Typo="Typo.h4">Custom Theme</Typography>
+        <MarkdownSegment Text="@Markdown_CustomTheme" />
+    </Container>
+</DocsPage>
+
+@code {
+
+    MudTheme MyCoolDarkTheme = new MudTheme()
+    {
+        Color_Primary = "#304ffe",
+        Color_Secondary = "#1de9b6",
+        Color_Surface = "#282C34",
+        Color_Background = "#1c2025",
+        Color_Text_Default = "#e6e5e8"
+    };
+
+    MudTheme Theme2 = new MudTheme()
+    {
+        Color_Primary = "#304ffe",
+        Color_Secondary = "#1de9b6",
+        Color_Surface = "#282C34",
+        Color_Background = "#1c2025",
+        Color_Text_Default = "#e6e5e8"
+    };
+
+string Markdown_ThemeProvider = @"```html
+<ThemeProvider/>
+```";
+string Markdown_CustomTheme = @"```html
+<ThemeProvider Theme=""MyCoolDarkTheme""/>
+
+@code {
+    MudTheme MyCoolDarkTheme = new MudTheme()
+    {
+        Color_Primary = ""#304ffe"",
+        Color_Secondary = ""#1de9b6"",
+        Color_Surface = ""#282C34"",
+        Color_Background = ""#1c2025"",
+        Color_Text_Default = ""#e6e5e8""
+    };
+}
+```";
+}
