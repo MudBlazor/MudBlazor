@@ -27,7 +27,7 @@
     }
 }
 
-.mud-ripple-icon {
+.mud-ripple-icon, .mud-ripple-checkbox {
     &:after {
         transform: scale(7,7);
     }

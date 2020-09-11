@@ -15,25 +15,32 @@ namespace MudBlazor
             theme.AppendLine($"--mud-theme-surface: {Color_Surface};");
             theme.AppendLine($"--mud-theme-background: {Color_Background};");
 
-            theme.AppendLine($"--mud-theme-text-color-default: {BuildColor(Color_Text_Default, ColorOption.RgbA, 0.87)};");
+            theme.AppendLine($"--mud-theme-text-default: {BuildColor(Color_Text_Default, ColorOption.RgbA, 0.87)};");
+            theme.AppendLine($"--mud-theme-text-secondary: {BuildColor(Color_Text_Default, ColorOption.RgbA, 0.54)};");
 
-            theme.AppendLine($"--mud-theme-on-default: {Color_Default};");
-            theme.AppendLine($"--mud-theme-color-default: {BuildColor(Color_Default, ColorOption.Rgb)};");
-            theme.AppendLine($"--mud-theme-color-default-lighten: {BuildColor(Color_Default, ColorOption.Lighten)};");
-            theme.AppendLine($"--mud-theme-color-default-darken: {BuildColor(Color_Default, ColorOption.Darken)};");
-            theme.AppendLine($"--mud-theme-color-default-hover: {BuildColor(Color_Text_Default, ColorOption.RgbA, 0.05)};");
+            theme.AppendLine($"--mud-theme-color-default: {BuildColor(Color_Default, ColorOption.RgbA, 0.54)};");
+            theme.AppendLine($"--mud-theme-color-on-default: {BuildColor(Color_OnDefault, ColorOption.RgbA, 0.87)};");
+            theme.AppendLine($"--mud-theme-color-default-lighten: {BuildColor(Color_Default, ColorOption.RgbA, 0.1)};");
+            theme.AppendLine($"--mud-theme-color-default-darken: {BuildColor(Color_Default, ColorOption.RgbA, 0.2)};");
+            theme.AppendLine($"--mud-theme-color-default-hover: {BuildColor(Color_Default, ColorOption.RgbA, 0.04)};");
 
-            theme.AppendLine($"--mud-theme-on-primary: {Color_OnPrimary};");
+            
             theme.AppendLine($"--mud-theme-color-primary: {BuildColor(Color_Primary,ColorOption.Rgb)};");
+            theme.AppendLine($"--mud-theme-color-on-primary: {Color_OnPrimary};");
             theme.AppendLine($"--mud-theme-color-primary-lighten: {BuildColor(Color_Primary,ColorOption.Lighten)};");
             theme.AppendLine($"--mud-theme-color-primary-darken: {BuildColor(Color_Primary, ColorOption.Darken)};");
-            theme.AppendLine($"--mud-theme-color-primary-hover: {BuildColor(Color_Primary, ColorOption.RgbA, 0.05)};");
+            theme.AppendLine($"--mud-theme-color-primary-hover: {BuildColor(Color_Primary, ColorOption.RgbA, 0.06)};");
 
-            theme.AppendLine($"--mud-theme-on-secondary: {Color_OnPrimary};");
+            
             theme.AppendLine($"--mud-theme-color-secondary: {BuildColor(Color_Secondary, ColorOption.Rgb)};");
+            theme.AppendLine($"--mud-theme-color-on-secondary: {Color_OnSecondary};");
             theme.AppendLine($"--mud-theme-color-secondary-lighten: {BuildColor(Color_Secondary, ColorOption.Lighten)};");
             theme.AppendLine($"--mud-theme-color-secondary-darken: {BuildColor(Color_Secondary, ColorOption.Darken)};");
-            theme.AppendLine($"--mud-theme-color-secondary-hover: {BuildColor(Color_Secondary, ColorOption.RgbA, 0.05)};");
+            theme.AppendLine($"--mud-theme-color-secondary-hover: {BuildColor(Color_Secondary, ColorOption.RgbA, 0.06)};");
+
+            
+            
+            
 
             theme.AppendLine($"--mud-theme-color-info: {Color_Info};");
             theme.AppendLine($"--mud-theme-color-success: {Color_Success};");
@@ -55,10 +62,18 @@ namespace MudBlazor
             theme.AppendLine("</style>");
             return theme.ToString();
         }
-        public string BuildColor(string Hex, ColorOption ColorOption, [Optional] double alpha)
+
+        public string BuildColor(string Hex, ColorOption ColorOption, [Optional] double alpha, [Optional] int changevalue)
         {
             string CssVar = "";
-            MudColor Color = HexToRgb(Hex);
+            int ChangeValue = 25;
+
+            if(changevalue != 0)
+            {
+                ChangeValue = changevalue;
+            }
+
+            MudColor Color = ColorManager.FromHex(Hex);
 
             switch (ColorOption)
             {
@@ -70,31 +85,16 @@ namespace MudBlazor
                     CssVar = $"rgba({Color.R},{Color.G},{Color.B}, {Alpha})";
                     break;
                 case ColorOption.Lighten:
-                    Color = Lighten(Color);
+                    Color = ColorManager.ColorLighten(Color, ChangeValue);
                     CssVar = $"rgb({Color.R},{Color.G},{Color.B})";
                     break;
                 case ColorOption.Darken:
-                    Color = Darken(Color);
+                    Color = ColorManager.ColorDarken(Color, ChangeValue);
                     CssVar = $"rgb({Color.R},{Color.G},{Color.B})";
                     break;
             }
             return CssVar;
         }
-
-        public MudColor HexToRgb(string hex)
-        {
-            return ColorManager.FromHex(hex);
-        }
-
-        public MudColor Lighten(MudColor color)
-        {
-            return ColorManager.ColorLighten(color);
-        }
-        public MudColor Darken(MudColor color)
-        {
-            return ColorManager.ColorDarken(color);
-        }
-
         public enum ColorOption
         {
             Rgb,
