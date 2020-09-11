@@ -3,7 +3,7 @@ using System.Windows.Input;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 using MudBlazor.Extensions;
 
@@ -21,6 +21,8 @@ namespace MudBlazor
         .Build();
 
         [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
+
+        [Inject] public IJSRuntime JsRuntime { get; set; }
 
         [Parameter] public string Icon { get; set; }
 
@@ -40,6 +42,8 @@ namespace MudBlazor
 
         [Parameter] public string Link { get; set; }
 
+        [Parameter] public string Target { get; set; }
+
         [Parameter] public bool ForceLoad { get; set; }
 
         [Parameter] public ICommand Command { get; set; }
@@ -52,7 +56,10 @@ namespace MudBlazor
         {
             if (Link != null)
             {
-                UriHelper.NavigateTo(Link , ForceLoad);
+                if (string.IsNullOrWhiteSpace(Target))
+                    UriHelper.NavigateTo(Link , ForceLoad);
+                else
+                    await JsRuntime.InvokeAsync<object>("open", Link, Target);
             }
             else
             {
