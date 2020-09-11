@@ -22,7 +22,7 @@
 }
 
 .mud-icon-button-color-default {
-    color: rgba(0, 0, 0, 0.54);
+    color: var(--mud-theme-text-color-default);
 
     &:hover {
         background-color: rgba(0, 0, 0, 0.04);
@@ -30,18 +30,18 @@
 }
 
 .mud-icon-button-color-primary {
-    color: var(--mud-theme-primary);
+    color: var(--mud-theme-color-primary);
 
     &:hover {
-        background-color: rgba(25, 118, 210, 0.04);
+        background-color: var(--mud-theme-color-primary-hover);
     }
 }
 
 .mud-icon-button-color-secondary {
-    color: var(--mud-theme-secondary);
+    color: var(--mud-theme-color-secondary);
 
     &:hover {
-        background-color: rgba(220, 0, 78, 0.04);
+        background-color: var(--mud-theme-color-secondary-hover);
     }
 }
 
