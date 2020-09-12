@@ -38,29 +38,143 @@
         </DocsShowcase>
         <MarkdownSegment Text="@Markdown_Outlined" />
     </Container>
+    <Container>
+        <Typography Typo="Typo.h4">Sizes</Typography>
+        <DocsShowcase Outlined="true">
+            <Grid>
+                <Item GridSize="12">
+                    <Grid Spacing="2" Justify="Justify.Center">
+                        <Item>
+                            <Button Variant="Variant.Text" Size="Size.Small">Small</Button>
+                        </Item>
+                        <Item>
+                            <Button Variant="Variant.Text" Size="Size.Medium">Medium</Button>
+                        </Item>
+                        <Item>
+                            <Button Variant="Variant.Text" Size="Size.Large">Large</Button>
+                        </Item>
+                    </Grid>
+                </Item>
+                <Item GridSize="12">
+                    <Grid Spacing="2" Justify="Justify.Center">
+                        <Item>
+                            <Button Variant="Variant.Outlined" Size="Size.Small">Small</Button>
+                        </Item>
+                        <Item>
+                            <Button Variant="Variant.Outlined" Size="Size.Medium">Medium</Button>
+                        </Item>
+                        <Item>
+                            <Button Variant="Variant.Outlined" Size="Size.Large">Large</Button>
+                        </Item>
+                    </Grid>
+                </Item>
+                <Item GridSize="12">
+                    <Grid Spacing="2" Justify="Justify.Center">
+                        <Item>
+                            <Button Variant="Variant.Contained" Size="Size.Small">Small</Button>
+                        </Item>
+                        <Item>
+                            <Button Variant="Variant.Contained" Size="Size.Medium">Medium</Button>
+                        </Item>
+                        <Item>
+                            <Button Variant="Variant.Contained" Size="Size.Large">Large</Button>
+                        </Item>
+                    </Grid>
+                </Item>
+                <Item GridSize="12">
+                    <Grid Spacing="2" Justify="Justify.Center">
+                        <Item>
+                            <IconButton Icon="@Icons.Material_Delete" Size="Size.Small"></IconButton>
+                        </Item>
+                        <Item>
+                            <IconButton Icon="@Icons.Material_Delete" Size="Size.Medium"></IconButton>
+                        </Item>
+                        <Item>
+                            <IconButton Icon="@Icons.Material_Delete" Size="Size.Large"></IconButton>
+                        </Item>
+                    </Grid>
+                </Item>
+            </Grid>
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Sizes" />
+    </Container>
 </DocsPage>
 
 
-@code {
-string Markdown_Contained = @"```html
+@code { string Markdown_Contained = @"```html
 <Button Variant=""Variant.Contained"">Default</Button>
 <Button Variant=""Variant.Contained"" Color=""Color.Primary"">Primary</Button>
 <Button Variant=""Variant.Contained"" Color=""Color.Secondary"">Secondary</Button>
 <Button Variant=""Variant.Contained"" Disabled=""true"">Disabled</Button>
 ```";
-string Markdown_DisabledElevation = @"```html
+            string Markdown_DisabledElevation = @"```html
 <Button Variant=""Variant.Contained"" Color=""Color.Primary"" DisableElevation=""true"">Primary</Button>
 ```";
-string Markdown_Text = @"```html
+            string Markdown_Text = @"```html
 <Button Variant=""Variant.Text"">Default</Button>
 <Button Variant=""Variant.Text"" Color=""Color.Primary"">Primary</Button>
 <Button Variant=""Variant.Text"" Color=""Color.Secondary"">Secondary</Button>
 <Button Variant=""Variant.Text"" Disabled=""true"">Disabled</Button>
 ```";
-string Markdown_Outlined = @"```html
+            string Markdown_Outlined = @"```html
 <Button Variant=""Variant.Outlined"">Default</Button>
 <Button Variant=""Variant.Outlined"" Color=""Color.Primary"">Primary</Button>
 <Button Variant=""Variant.Outlined"" Color=""Color.Secondary"">Secondary</Button>
 <Button Variant=""Variant.Outlined"" Disabled=""true"">Disabled</Button>
 ```";
-}
+            string Markdown_Sizes = @"```html
+<Grid>
+    <Item GridSize=""12"">
+        <Grid Spacing=""2"" Justify=""Justify.Center"">
+            <Item>
+                <Button Variant=""Variant.Text"" Size=""Size.Small"">Small</Button>
+            </Item>
+            <Item>
+                <Button Variant=""Variant.Text"" Size=""Size.Medium"">Medium</Button>
+            </Item>
+            <Item>
+                <Button Variant=""Variant.Text"" Size=""Size.Large"">Large</Button>
+            </Item>
+        </Grid>
+    </Item>
+    <Item GridSize=""12"">
+        <Grid Spacing=""2"" Justify=""Justify.Center"">
+            <Item>
+                <Button Variant=""Variant.Outlined"" Size=""Size.Small"">Small</Button>
+            </Item>
+            <Item>
+                <Button Variant=""Variant.Outlined"" Size=""Size.Medium"">Medium</Button>
+            </Item>
+            <Item>
+                <Button Variant=""Variant.Outlined"" Size=""Size.Large"">Large</Button>
+            </Item>
+        </Grid>
+    </Item>
+    <Item GridSize=""12"">
+        <Grid Spacing=""2"" Justify=""Justify.Center"">
+            <Item>
+                <Button Variant=""Variant.Contained"" Size=""Size.Small"">Small</Button>
+            </Item>
+            <Item>
+                <Button Variant=""Variant.Contained"" Size=""Size.Medium"">Medium</Button>
+            </Item>
+            <Item>
+                <Button Variant=""Variant.Contained"" Size=""Size.Large"">Large</Button>
+            </Item>
+        </Grid>
+    </Item>
+    <Item GridSize=""12"">
+        <Grid Spacing=""2"" Justify=""Justify.Center"">
+            <Item>
+                <IconButton Icon=""@Icons.Material_Delete"" Size=""Size.Small""></IconButton>
+            </Item>
+            <Item>
+                <IconButton Icon=""@Icons.Material_Delete"" Size=""Size.Medium""></IconButton>
+            </Item>
+            <Item>
+                <IconButton Icon=""@Icons.Material_Delete"" Size=""Size.Large""></IconButton>
+            </Item>
+        </Grid>
+    </Item>
+</Grid>
+```"; }
