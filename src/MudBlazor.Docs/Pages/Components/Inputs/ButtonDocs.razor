@@ -98,6 +98,19 @@
         </DocsShowcase>
         <MarkdownSegment Text="@Markdown_Sizes" />
     </Container>
+    <Container>
+        <Typography Typo="Typo.h4">Buttons with icons and label</Typography>
+        <DocsShowcase Outlined="true">
+            <Button Variant="Variant.Contained" Icon="@Icons.Material.Delete" Color="Color.Secondary">Delete</Button>
+            <Button Variant="Variant.Contained" EndIcon="@Icons.Material.Send" Color="Color.Primary">Send</Button>
+            <Button Variant="Variant.Contained" Icon="@Icons.Material.CloudUpload">Upload</Button>
+            <Button Variant="Variant.Contained" Icon="@Icons.Material.Mic" Disabled="true">Talk</Button>
+            <Button Variant="Variant.Contained" Icon="@Icons.Material.Save" Color="Color.Primary" Size="Size.Small">Save</Button>
+            <Button Variant="Variant.Contained" Icon="@Icons.Material.Save" Color="Color.Primary" Size="Size.Large">Save</Button>
+        </DocsShowcase>
+        @*<MarkdownSegment Text="@Markdown_ButtonsWithIcons" />*@
+    </Container>
+
 </DocsPage>
 
 
@@ -140,26 +153,26 @@
     <Item GridSize=""12"">
         <Grid Spacing=""2"" Justify=""Justify.Center"">
             <Item>
-                <Button Variant=""Variant.Outlined"" Size=""Size.Small"">Small</Button>
+                <Button Variant=""Variant.Outlined"" Size=""Size.Small"" Color=""Color.Secondary"">Small</Button>
             </Item>
             <Item>
-                <Button Variant=""Variant.Outlined"" Size=""Size.Medium"">Medium</Button>
+                <Button Variant=""Variant.Outlined"" Size=""Size.Medium"" Color=""Color.Secondary"">Medium</Button>
             </Item>
             <Item>
-                <Button Variant=""Variant.Outlined"" Size=""Size.Large"">Large</Button>
+                <Button Variant=""Variant.Outlined"" Size=""Size.Large"" Color=""Color.Secondary"">Large</Button>
             </Item>
         </Grid>
     </Item>
     <Item GridSize=""12"">
         <Grid Spacing=""2"" Justify=""Justify.Center"">
             <Item>
-                <Button Variant=""Variant.Contained"" Size=""Size.Small"">Small</Button>
+                <Button Variant=""Variant.Contained"" Size=""Size.Small"" Color=""Color.Primary"">Small</Button>
             </Item>
             <Item>
-                <Button Variant=""Variant.Contained"" Size=""Size.Medium"">Medium</Button>
+                <Button Variant=""Variant.Contained"" Size=""Size.Medium"" Color=""Color.Primary"">Medium</Button>
             </Item>
             <Item>
-                <Button Variant=""Variant.Contained"" Size=""Size.Large"">Large</Button>
+                <Button Variant=""Variant.Contained"" Size=""Size.Large"" Color=""Color.Primary"">Large</Button>
             </Item>
         </Grid>
     </Item>
