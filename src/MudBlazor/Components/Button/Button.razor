@@ -2,15 +2,19 @@
 @inherits ComponentBaseButton
 
 <button type="button" class="@Classname" @onclick="OnClickHandler" href="@Link" disabled="@Disabled">
-    @if (!string.IsNullOrWhiteSpace(@Icon))
-    {
-        <Icon Icon="@Icon" IconSize="@ToIconSize(Size)"></Icon>
-    }
     <span class="mud-button-label">
+        @if (!string.IsNullOrWhiteSpace(StartIcon))
+        {
+            <span class="@IconClassname">
+                <Icon Icon="@StartIcon" Size="@Size"></Icon>
+            </span>
+        }
         @ChildContent
+        @if (!string.IsNullOrWhiteSpace(@EndIcon))
+        {
+            <span class="@IconClassname">
+                <Icon Icon="@EndIcon" Size="@Size"></Icon>
+            </span>
+        }
     </span>
-    @if (!string.IsNullOrWhiteSpace(@EndIcon))
-    {
-        <Icon Icon="@EndIcon" IconSize="@ToIconSize(Size)"></Icon>
-    }
 </button>

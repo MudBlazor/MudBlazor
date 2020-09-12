@@ -12,6 +12,18 @@
     & > * {
         margin: 8px;
     }
+
+    & > div {
+        & > * {
+            margin: 8px;
+        }
+    }
+}
+
+.docs-showcase-content-margin {
+    & > * {
+        margin: 8px;
+    }
 }
 
 .docs-showcase-darken {

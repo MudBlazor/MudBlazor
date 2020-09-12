@@ -101,12 +101,14 @@
     <Container>
         <Typography Typo="Typo.h4">Buttons with icons and label</Typography>
         <DocsShowcase Outlined="true">
-            <Button Variant="Variant.Contained" Icon="@Icons.Material.Delete" Color="Color.Secondary">Delete</Button>
-            <Button Variant="Variant.Contained" EndIcon="@Icons.Material.Send" Color="Color.Primary">Send</Button>
-            <Button Variant="Variant.Contained" Icon="@Icons.Material.CloudUpload">Upload</Button>
-            <Button Variant="Variant.Contained" Icon="@Icons.Material.Mic" Disabled="true">Talk</Button>
-            <Button Variant="Variant.Contained" Icon="@Icons.Material.Save" Color="Color.Primary" Size="Size.Small">Save</Button>
-            <Button Variant="Variant.Contained" Icon="@Icons.Material.Save" Color="Color.Primary" Size="Size.Large">Save</Button>
+            <div>
+                <Button Variant="Variant.Contained" StartIcon="@Icons.Material.Delete" Color="Color.Secondary">Delete</Button>
+                <Button Variant="Variant.Contained" EndIcon="@Icons.Material.Send" Color="Color.Primary">Send</Button>
+                <Button Variant="Variant.Contained" StartIcon="@Icons.Material.CloudUpload">Upload</Button>
+                <Button Variant="Variant.Contained" StartIcon="@Icons.Material.Mic" Disabled="true">Talk</Button>
+                <Button Variant="Variant.Contained" StartIcon="@Icons.Material.Save" Color="Color.Primary" Size="Size.Small">Save</Button>
+                <Button Variant="Variant.Contained" StartIcon="@Icons.Material.Save" Color="Color.Primary" Size="Size.Large">Save</Button>
+            </div>
         </DocsShowcase>
         @*<MarkdownSegment Text="@Markdown_ButtonsWithIcons" />*@
     </Container>

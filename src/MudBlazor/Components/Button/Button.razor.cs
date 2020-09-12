@@ -13,13 +13,21 @@ namespace MudBlazor
         new CssBuilder("mud-button-root mud-button")
           .AddClass($"mud-button-{Variant.ToDescriptionString()}")
           .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
-          .AddClass($"mud-button-{Variant.ToDescriptionString()}size-{Size.ToDescriptionString()}")
+          .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
           .AddClass($"mud-ripple", !DisableRipple)
           .AddClass($"mud-button-disable-elevation", DisableElevation)
           .AddClass(Class)
         .Build();
 
-        [Parameter] public string Icon { get; set; }
+        protected string IconClassname =>
+        new CssBuilder()
+          .AddClass($"mud-button-start-icon", !String.IsNullOrEmpty(StartIcon))
+          .AddClass($"mud-button-end-icon", !String.IsNullOrEmpty(EndIcon))
+          .AddClass($"mud-button-icon-size-{Size.ToDescriptionString()}")
+          .AddClass(Class)
+        .Build();
+
+        [Parameter] public string StartIcon { get; set; }
 
         [Parameter] public string EndIcon { get; set; }
 

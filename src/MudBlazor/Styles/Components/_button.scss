@@ -177,32 +177,32 @@
     border-color: currentColor;
 }
 
-.mud-button-textsize-small {
+.mud-button-text-size-small {
     padding: 4px 5px;
     font-size: 0.8125rem;
 }
 
-.mud-button-textsize-large {
+.mud-button-text-size-large {
     padding: 8px 11px;
     font-size: 0.9375rem;
 }
 
-.mud-button-outlinedsize-small {
+.mud-button-outlined-size-small {
     padding: 3px 9px;
     font-size: 0.8125rem;
 }
 
-.mud-button-outlinedsize-large {
+.mud-button-outlined-size-large {
     padding: 7px 21px;
     font-size: 0.9375rem;
 }
 
-.mud-button-containedsize-small {
+.mud-button-contained-size-small {
     padding: 4px 10px;
     font-size: 0.8125rem;
 }
 
-.mud-button-containedsize-large {
+.mud-button-contained-size-large {
     padding: 8px 22px;
     font-size: 0.9375rem;
 }
@@ -211,34 +211,34 @@
     width: 100%;
 }
 
-.mud-button-starticon {
+.mud-button-start-icon {
     display: inherit;
     margin-left: -4px;
     margin-right: 8px;
 }
 
-.mud-button-starticon.mud-button-iconsize-small {
+.mud-button-start-icon.mud-button-icon-size-small {
     margin-left: -2px;
 }
 
-.mud-button-endicon {
+.mud-button-end-icon {
     display: inherit;
     margin-left: 8px;
     margin-right: -4px;
 }
 
-.mud-button-endicon.mud-button-iconsize-small {
+.mud-button-end-icon.mud-button-icon-size-small {
     margin-right: -2px;
 }
 
-.mud-button-iconsize-small > *:first-child {
+.mud-button-icon-size-small > *:first-child {
     font-size: 18px;
 }
 
-.mud-button-iconsize-medium > *:first-child {
+.mud-button-icon-size-medium > *:first-child {
     font-size: 20px;
 }
 
-.mud-button-iconsize-large > *:first-child {
+.mud-button-icon-size-large > *:first-child {
     font-size: 22px;
 }
