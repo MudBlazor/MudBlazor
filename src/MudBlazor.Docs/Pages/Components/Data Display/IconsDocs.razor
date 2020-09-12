@@ -1,0 +1,54 @@
+﻿@page "/components/data-display/Icons"
+@using System.Reflection
+
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Icons</Typography>
+        <Typography Typo="Typo.h5">Guidance and suggestions for using icons with MudBlazor.</Typography>
+    </Container>
+    <Container>
+        <Typography Typo="Typo.h4">Material Icons</Typography>
+        <DocsIcons List="MudIconsMaterial" />
+    </Container>
+    <Container>
+        <Typography Typo="Typo.h4">Custom Icons</Typography>
+        <DocsIcons List="MudIconsCustom" />
+    </Container>
+</DocsPage>
+
+@code {
+
+    List<MudIcons> MudIconsMaterial;
+    List<MudIcons> MudIconsCustom;
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        MudIconsMaterial = GetIconsMaterial();
+        MudIconsCustom = GetIconsCustom();
+    }
+
+    public List<MudIcons> GetIconsMaterial()
+    {
+        var result = new List<MudIcons>();
+        var props = typeof(Icons.Material).GetProperties();
+
+        foreach (var prop in props)
+        {
+            result.Add(new MudIcons(prop.Name, prop.GetValue(prop).ToString()));
+        }
+        return result;
+    }
+
+    public List<MudIcons> GetIconsCustom()
+    {
+        var result = new List<MudIcons>();
+        var props = typeof(Icons.Custom).GetProperties();
+
+        foreach (var prop in props)
+        {
+            result.Add(new MudIcons(prop.Name, prop.GetValue(prop).ToString()));
+        }
+        return result;
+    }
+}
