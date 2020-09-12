@@ -39,16 +39,16 @@ namespace MudBlazor
         public static implicit operator GridSize(int i)
         {
             if (i < 1)
-                throw new InvalidCastException("GridSize must be > 0");
+                return new GridSize(1);
             if (i > 12)
-                throw new InvalidCastException("GridSize must be <= 12");
+                return new GridSize(12);
             return new GridSize(i);
         }
 
         public static implicit operator GridSize(string s)
         {
             if (s!="auto")
-                throw new InvalidCastException("Only 'auto' is supported as string typed GridSize");
+                return new GridSize("auto");
             return new GridSize(s);
         }
     }
