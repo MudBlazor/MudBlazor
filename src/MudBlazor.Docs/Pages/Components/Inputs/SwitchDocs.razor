@@ -1,0 +1,47 @@
+﻿@page "/components/inputs/switch"
+
+
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Switch</Typography>
+        <Typography Typo="Typo.h4">Basic switches</Typography>
+        <DocsShowcase Outlined="true">
+            <Switch @bind-Checked="@Basic_Switch1" />
+            <Switch @bind-Checked="@Basic_Switch2" Color="Color.Primary" />
+            <Switch @bind-Checked="@Basic_Switch2" Color="Color.Secondary" />
+            <Switch Disabled="true" />
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Basic" />
+    </Container>
+    <Container>
+        <Typography Typo="Typo.h4">Switch with label</Typography>
+        <DocsShowcase Outlined="true">
+            <Switch @bind-Checked="@Basic_Switch1" Label="Default" />
+            <Switch @bind-Checked="@Basic_Switch2" Label="Primary" Color="Color.Primary" />
+            <Switch @bind-Checked="@Basic_Switch2" Label="Secondary" Color="Color.Secondary" />
+            <Switch Disabled="true" Label="Disabled" />
+        </DocsShowcase>
+        <MarkdownSegment Text="@Markdown_Label" />
+    </Container>
+</DocsPage>
+
+
+@code {
+    public bool Basic_Switch1 { get; set; } = false;
+    public bool Basic_Switch2 { get; set; } = true;
+    public bool Basic_Switch3 { get; set; } = true;
+
+string Markdown_Basic = @"```html
+<CheckBox @bind-Checked=""@Basic_CheckBox1""></CheckBox>
+<CheckBox @bind-Checked=""@Basic_CheckBox2"" Color=""Color.Primary""></CheckBox>
+<CheckBox @bind-Checked=""@Basic_CheckBox1"" Color=""Color.Secondary""></CheckBox>
+<CheckBox @bind-Checked=""@Basic_CheckBox1"" Disabled=""true""></CheckBox>
+```";
+
+string Markdown_Label = @"```html
+<CheckBox @bind-Checked=""@Basic_CheckBox1""></CheckBox>
+<CheckBox @bind-Checked=""@Basic_CheckBox2"" Color=""Color.Primary""></CheckBox>
+<CheckBox @bind-Checked=""@Basic_CheckBox1"" Color=""Color.Secondary""></CheckBox>
+<CheckBox @bind-Checked=""@Basic_CheckBox1"" Disabled=""true""></CheckBox>
+```";
+}
