@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs
+
+<div class="docs-icon-panel">
+    <div class="docs-icon-panel-inner">
+        <Icon Icon="@Code" />
+        <Typography Typo="Typo.caption" GutterBottom="false">
+            @Name
+        </Typography>
+    </div>
+</div>
+
+@code {
+
+    [Parameter] public string Code { get; set; }
+
+    [Parameter] public string Name { get; set; }
+}
