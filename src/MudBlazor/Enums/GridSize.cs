@@ -1,38 +1,57 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace MudBlazor
 {
-    public enum GridSize
+    public struct GridSize
     {
-        [Description("false")]
-        False,
-        [Description("auto")]
-        Auto,
-        [Description("true")]
-        True,
-        [Description("1")]
-        One,
-        [Description("2")]
-        Two,
-        [Description("3")]
-        Three,
-        [Description("4")]
-        Four,
-        [Description("5")]
-        Five,
-        [Description("6")]
-        Six,
-        [Description("7")]
-        Seven,
-        [Description("8")]
-        Eight,
-        [Description("9")]
-        Nine,
-        [Description("10")]
-        Ten,
-        [Description("11")]
-        Eleven,
-        [Description("12")]
-        Twelve
+        public static bool False = false;
+        public static string Auto = "auto";
+        public static bool True = true;
+        public static int One = 1;
+        public static int Two = 2;
+        public static int Three = 3;
+        public static int Four = 4;
+        public static int Five = 5;
+        public static int Six = 6;
+        public static int Seven = 7;
+        public static int Eight = 8;
+        public static int Nine = 9;
+        public static int Ten = 10;
+        public static int Eleven = 11;
+        public static int Twelve = 12;
+
+        private GridSize(object value)
+        {
+            Value = value;
+        }
+
+        public object Value;
+
+        public override string ToString()
+        {
+            if (Value == null)
+                return "";
+            return Value.ToString();
+        }
+
+        public static implicit operator GridSize(bool b) => new GridSize(b);
+        public static implicit operator GridSize(int i)
+        {
+            if (i < 1)
+                throw new InvalidCastException("GridSize must be > 0");
+            if (i > 12)
+                throw new InvalidCastException("GridSize must be <= 12");
+            return new GridSize(i);
+        }
+
+        public static implicit operator GridSize(string s)
+        {
+            if (s!="auto")
+                throw new InvalidCastException("Only 'auto' is supported as string typed GridSize");
+            return new GridSize(s);
+        }
     }
+
+
 }
