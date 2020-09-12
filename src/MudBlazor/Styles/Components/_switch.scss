@@ -1,0 +1,123 @@
+﻿
+.mud-switch {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    margin-left: -11px;
+    margin-right: 16px;
+    vertical-align: middle;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mud-switch-span {
+    width: 58px;
+    height: 38px;
+    display: inline-flex;
+    padding: 12px;
+    z-index: 0;
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    vertical-align: middle;
+
+    & .mud-switch-track {
+        width: 100%;
+        height: 100%;
+        opacity: 0.38;
+        z-index: -1;
+        transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        border-radius: 7px;
+        background-color: #000;
+    }
+}
+
+.mud-switch-base {
+    padding: 9px;
+    top: 0;
+    left: 0;
+    color: #fafafa;
+    z-index: 1;
+    position: absolute;
+    transition: left 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+    &.mud-checked {
+        transform: translateX(20px);
+
+        & + .mud-switch-track {
+            opacity: 0.5;
+        }
+    }
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    &.mud-switch-disabled {
+        color: #bdbdbd;
+
+        & + .mud-switch-track {
+            opacity: 0.12;
+        }
+
+        &:hover {
+            cursor: default;
+            background-color: transparent;
+        }
+    }
+}
+
+.mud-switch-button {
+    display: flex;
+    align-items: inherit;
+    justify-content: inherit;
+
+    & .mud-switch-input {
+        top: 0;
+        left: 0;
+        width: 100%;
+        cursor: inherit;
+        height: 100%;
+        margin: 0;
+        opacity: 0;
+        padding: 0;
+        z-index: 1;
+        position: absolute;
+    }
+
+    & .mud-switch-thumb {
+        width: 20px;
+        height: 20px;
+        box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+        border-radius: 50%;
+        background-color: currentColor;
+    }
+}
+
+.mud-switch-primary {
+    &.mud-checked {
+        color: var(--mud-theme-color-primary);
+
+        &:hover {
+            background-color: var(--mud-theme-color-primary-hover);
+        }
+
+        & + .mud-switch-track {
+            background-color: var(--mud-theme-color-primary);
+        }
+    }
+}
+
+.mud-switch-secondary {
+    &.mud-checked {
+        color: var(--mud-theme-color-secondary);
+
+        &:hover {
+            background-color: var(--mud-theme-color-secondary-hover);
+        }
+
+        & + .mud-switch-track {
+            background-color: var(--mud-theme-color-secondary);
+        }
+    }
+}
