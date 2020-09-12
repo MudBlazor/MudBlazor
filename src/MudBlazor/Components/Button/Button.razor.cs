@@ -2,14 +2,12 @@
 using System.Windows.Input;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public class ComponentBaseButton : ComponentBase
+    public class ComponentBaseButton : CommonButtonBase
     {
         protected string Classname =>
         new CssBuilder("mud-button-root mud-button")
@@ -19,10 +17,6 @@ namespace MudBlazor
           .AddClass($"mud-button-disable-elevation", DisableElevation)
           .AddClass(Class)
         .Build();
-
-        [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
-
-        [Inject] public IJSRuntime JsRuntime { get; set; }
 
         [Parameter] public string Icon { get; set; }
 
@@ -40,37 +34,7 @@ namespace MudBlazor
 
         [Parameter] public bool DisableRipple { get; set; }
 
-        [Parameter] public string Link { get; set; }
-
-        [Parameter] public string Target { get; set; }
-
-        [Parameter] public bool ForceLoad { get; set; }
-
-        [Parameter] public ICommand Command { get; set; }
-
-        [Parameter] public object CommandParameter { get; set; }
-
-        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
-
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        protected async Task OnClickHandler(MouseEventArgs ev)
-        {
-            if (Link != null)
-            {
-                if (string.IsNullOrWhiteSpace(Target))
-                    UriHelper.NavigateTo(Link, ForceLoad);
-                else
-                    await JsRuntime.InvokeAsync<object>("open", Link, Target);
-            }
-            else
-            {
-                await OnClick.InvokeAsync(ev);
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
-            }
-        }
     }
 }
