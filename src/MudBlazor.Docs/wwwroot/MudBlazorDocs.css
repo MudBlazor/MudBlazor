@@ -195,6 +195,29 @@
   padding: 20px;
   padding-top: 86px; }
 
+.docs-icon-container {
+  margin-top: 20px; }
+  .docs-icon-container .mud-divider {
+    margin-bottom: 20px; }
+
+.docs-icon-panel {
+  height: 120px;
+  width: 100px;
+  padding: 20px 10px;
+  display: inline-block;
+  text-align: center; }
+  .docs-icon-panel .mud-typography {
+    margin-top: 10px; }
+
+.docs-icon-panel-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; }
+  .docs-icon-panel-inner .mud-svg-icon-root {
+    width: 1.5em;
+    height: 1.5em; }
+
 .docs-page .mud-typography-h4 {
   margin-top: 52px; }
 
