@@ -21,6 +21,8 @@ namespace MudBlazor
 
         [Parameter] public string Icon { get; set; }
 
+        [Parameter] public string EndIcon { get; set; }
+
         [Parameter] public Color Color { get; set; } = Color.Default;
 
         [Parameter] public Size Size { get; set; } = Size.Medium;

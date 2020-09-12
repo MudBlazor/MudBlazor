@@ -45,5 +45,20 @@ namespace MudBlazor
                 }
             }
         }
+
+        protected IconSize ToIconSize(Size size)
+        {
+            switch (size)
+            {
+                case Size.Small:
+                    return IconSize.Small;
+                default:
+                case Size.Medium:
+                    return IconSize.Default;
+                case Size.Large:
+                    return IconSize.Large;
+            }
+        }
+
     }
 }
