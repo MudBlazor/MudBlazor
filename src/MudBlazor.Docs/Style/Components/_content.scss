@@ -1,4 +1,4 @@
-﻿.docs-showcase {
+﻿.docs-content {
     padding: 24px;
     border-radius: 4px;
     margin: auto;
@@ -12,48 +12,36 @@
     & > * {
         margin: 8px;
     }
-
-    & > div {
-        & > * {
-            margin: 8px;
-        }
-    }
 }
 
-.docs-showcase-content-margin {
+.docs-content-row {
     & > * {
         margin: 8px;
     }
 }
 
-.docs-showcase-darken {
+.docs-content-darken {
     background-color: #f5f5f5;
 }
 
-.docs-showcase-outlined {
+.docs-content-outlined {
     border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
-.docs-showcase-display-grid {
+.docs-content-display-grid {
     display: grid;
 }
 
-.docs-showcase-paper-filler {
-    & .mud-paper {
-        width: 128px;
-        height: 128px;
-        margin: 8px;
-    }
-}
 
-.docs-showcase-grid-paper-filler {
+
+.docs-content-grid-paper-filler {
     & .mud-paper {
         padding: 16px;
         text-align: center;
     }
 }
 
-.docs-showcase-grid-spacing {
+.grid {
     & .mud-paper {
         width: 100px;
         height: 140px;
@@ -68,7 +56,7 @@
     }
 }
 
-.docs-showcase-list {
+.list {
     & .mud-list {
         padding: 10px 0;
         width: 100%;
@@ -77,7 +65,15 @@
     }
 }
 
-.docs-showcase-container {
+.paper-filler {
+    & .mud-paper {
+        width: 128px;
+        height: 128px;
+        margin: 8px;
+    }
+}
+
+.container {
     & .mud-paper {
         height: 400px;
         width: 100%;

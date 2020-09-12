@@ -5,7 +5,7 @@
         <Typography Typo="Typo.h3">Drawer</Typography>
         <Typography Typo="Typo.h4">Persistent drawer</Typography>
         <Typography>The drawer can be toggled open or closed. The drawer needs to be wrapped around the Layout component and the default state can be set by DrawerOpen parameter.</Typography>
-        <DocsShowcase DarkenBackground="true">
+        <DocsContent DarkenBackground="true">
             <DocsFrame>
                 <Layout DrawerOpen="@DocsDrawerOpen">
                     <AppBar Position="Position.Absolute" Elevation="0">
@@ -28,10 +28,10 @@
                     </MainContent>
                 </Layout>
             </DocsFrame>
-        </DocsShowcase>
+        </DocsContent>
         <MarkdownSegment Text="@Markdown_Drawer" />
         <Typography Typo="Typo.h4">Clipping</Typography>
-        <DocsShowcase DarkenBackground="true">
+        <DocsContent DarkenBackground="true">
             <DocsFrame>
                 <Layout DrawerOpen="@DocsDrawerOpen" DrawerClipped="true">
                     <AppBar Position="Position.Absolute" Elevation="0">
@@ -54,7 +54,7 @@
                     </MainContent>
                 </Layout>
             </DocsFrame>
-        </DocsShowcase>
+        </DocsContent>
         <MarkdownSegment Text="@Markdown_Clipping" />
     </Container>
 </DocsPage>

@@ -5,22 +5,22 @@
     <Container>
         <Typography Typo="Typo.h3">Switch</Typography>
         <Typography Typo="Typo.h4">Basic switches</Typography>
-        <DocsShowcase Outlined="true">
+        <DocsContent Outlined="true">
             <Switch @bind-Checked="@Basic_Switch1" />
             <Switch @bind-Checked="@Basic_Switch2" Color="Color.Primary" />
             <Switch @bind-Checked="@Basic_Switch2" Color="Color.Secondary" />
             <Switch Disabled="true" />
-        </DocsShowcase>
+        </DocsContent>
         <MarkdownSegment Text="@Markdown_Basic" />
     </Container>
     <Container>
         <Typography Typo="Typo.h4">Switch with label</Typography>
-        <DocsShowcase Outlined="true">
+        <DocsContent Outlined="true">
             <Switch @bind-Checked="@Basic_Switch1" Label="Default" />
             <Switch @bind-Checked="@Basic_Switch2" Label="Primary" Color="Color.Primary" />
             <Switch @bind-Checked="@Basic_Switch2" Label="Secondary" Color="Color.Secondary" />
             <Switch Disabled="true" Label="Disabled" />
-        </DocsShowcase>
+        </DocsContent>
         <MarkdownSegment Text="@Markdown_Label" />
     </Container>
 </DocsPage>

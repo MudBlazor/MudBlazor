@@ -75,7 +75,7 @@
 .token.attr-value > .punctuation {
   color: #d0d0d0; }
 
-.docs-showcase {
+.docs-content {
   padding: 24px;
   border-radius: 4px;
   margin: auto;
@@ -85,55 +85,53 @@
   justify-content: center;
   margin-bottom: 40px;
   background-color: #fff; }
-  .docs-showcase > * {
-    margin: 8px; }
-  .docs-showcase > div > * {
+  .docs-content > * {
     margin: 8px; }
 
-.docs-showcase-content-margin > * {
+.docs-content-row > * {
   margin: 8px; }
 
-.docs-showcase-darken {
+.docs-content-darken {
   background-color: #f5f5f5; }
 
-.docs-showcase-outlined {
+.docs-content-outlined {
   border: 1px solid rgba(0, 0, 0, 0.12); }
 
-.docs-showcase-display-grid {
+.docs-content-display-grid {
   display: grid; }
 
-.docs-showcase-paper-filler .mud-paper {
-  width: 128px;
-  height: 128px;
-  margin: 8px; }
-
-.docs-showcase-grid-paper-filler .mud-paper {
+.docs-content-grid-paper-filler .mud-paper {
   padding: 16px;
   text-align: center; }
 
-.docs-showcase-grid-spacing .mud-paper {
+.grid .mud-paper {
   width: 100px;
   height: 140px;
   text-align: center; }
 
-.docs-showcase-grid-spacing .mud-paper.docs-spacing {
+.grid .mud-paper.docs-spacing {
   padding: 20px;
   width: 100%;
   height: 100px;
   text-align: left; }
 
-.docs-showcase-list .mud-list {
+.list .mud-list {
   padding: 10px 0;
   width: 100%;
   max-width: 360px;
   background-color: #fff; }
 
-.docs-showcase-container .mud-paper {
+.paper-filler .mud-paper {
+  width: 128px;
+  height: 128px;
+  margin: 8px; }
+
+.container .mud-paper {
   height: 400px;
   width: 100%;
   background-color: #fff; }
 
-.docs-showcase-container .mud-container {
+.container .mud-container {
   height: 100%;
   background-color: #cfe8fc; }
 

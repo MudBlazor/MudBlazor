@@ -5,22 +5,22 @@
     <Container>
         <Typography Typo="Typo.h3">Checkbox</Typography>
         <Typography Typo="Typo.h4">Basic checkboxes</Typography>
-        <DocsShowcase Outlined="true">
+        <DocsContent Outlined="true">
             <CheckBox @bind-Checked="@Basic_CheckBox1"></CheckBox>
             <CheckBox @bind-Checked="@Basic_CheckBox2" Color="Color.Primary"></CheckBox>
             <CheckBox @bind-Checked="@Basic_CheckBox1" Color="Color.Secondary"></CheckBox>
             <CheckBox @bind-Checked="@Basic_CheckBox1" Disabled="true"></CheckBox>
-        </DocsShowcase>
+        </DocsContent>
         <MarkdownSegment Text="@Markdown_Basic" />
     </Container>
     <Container>
         <Typography Typo="Typo.h4">Checkbox with label</Typography>
-        <DocsShowcase Outlined="true">
+        <DocsContent Outlined="true">
             <CheckBox @bind-Checked="@Basic_CheckBox1" Label="Default"></CheckBox>
             <CheckBox @bind-Checked="@Basic_CheckBox2" Label="Primary" Color="Color.Primary"></CheckBox>
             <CheckBox @bind-Checked="@Basic_CheckBox3" Label="Secondary" Color="Color.Secondary"></CheckBox>
             <CheckBox @bind-Checked="@Basic_CheckBox1" Disabled="true" Label="Disabled"></CheckBox>
-        </DocsShowcase>
+        </DocsContent>
         <MarkdownSegment Text="@Markdown_Label" />
     </Container>
 </DocsPage>

@@ -5,7 +5,7 @@
     <Container>
         <Typography Typo="Typo.h3">Grid</Typography>
         <Typography Typo="Typo.h4">Spacing</Typography>
-        <DocsShowcase DarkenBackground="true" Class="docs-showcase-grid-spacing">
+        <DocsContent DarkenBackground="true" Class="grid">
             <Grid>
                 <Item GridSize="GridSize.Twelve">
                     <Grid Spacing="@spacing" Justify="Justify.Center">
@@ -27,11 +27,12 @@
                     </Paper>
                 </Item>
             </Grid>
-        </DocsShowcase>
+        </DocsContent>
         <MarkdownSegment Text="@Markdown_Spacing" />
-
+    </Container>
+        <Container>
         <Typography Typo="Typo.h4">Basic grid</Typography>
-        <DocsShowcase DarkenBackground="true" Class="docs-showcase-grid-paper-filler">
+        <DocsContent DarkenBackground="true" Class="grid">
             <Grid>
                 <Item GridSize="GridSize.Twelve">
                     <Paper>12</Paper>
@@ -55,7 +56,7 @@
                     <Paper>3</Paper>
                 </Item>
             </Grid>
-        </DocsShowcase>
+        </DocsContent>
         <MarkdownSegment Text="@Markdown_BasicGrid" />
     </Container>
 </DocsPage>
