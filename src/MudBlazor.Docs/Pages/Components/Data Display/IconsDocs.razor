@@ -8,7 +8,15 @@
     </Container>
     <Container>
         <Typography Typo="Typo.h4">Material Icons</Typography>
-        <DocsIcons List="MudIconsMaterial" />
+        @if (MudIconsMaterial != null)
+        {
+            <DocsIcons List="MudIconsMaterial" />
+        }
+        else
+        {
+            <Typography Typo="Typo.h5" Align="Align.Center">Loading...</Typography>
+        }
+
     </Container>
     <Container>
         <Typography Typo="Typo.h4">Custom Icons</Typography>
@@ -20,7 +28,7 @@
 
     List<MudIcons> MudIconsMaterial;
     List<MudIcons> MudIconsCustom;
-    
+
 
     protected override async Task OnInitializedAsync()
     {
