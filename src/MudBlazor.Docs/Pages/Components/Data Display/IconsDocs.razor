@@ -36,31 +36,31 @@
 
     protected override async Task OnInitializedAsync()
     {
-        LoadMaterialIconsAsync();
-        LoadCustomIconsAsync();
+        await LoadMaterialIcons();
+        await LoadCustomIcons();
     }
 
-    public void LoadMaterialIconsAsync()
+    public async Task LoadMaterialIcons()
     {
         var result = new List<MudIcons>();
-        var props = typeof(Icons.Material).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
 
-        foreach (var prop in props)
+        foreach (var prop in typeof(Icons.Material).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
         {
             result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
         }
+        await Task.WhenAll();
         MudIconsMaterial = result;
     }
 
-    public void LoadCustomIconsAsync()
+    public async Task LoadCustomIcons()
     {
         var result = new List<MudIcons>();
-        var props = typeof(Icons.Custom).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
 
-        foreach (var prop in props)
+        foreach (var prop in typeof(Icons.Custom).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
         {
             result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
         }
+        await Task.WhenAll();
         MudIconsCustom = result;
     }
 }
