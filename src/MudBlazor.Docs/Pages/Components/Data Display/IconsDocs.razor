@@ -38,11 +38,11 @@
     public List<MudIcons> GetIconsMaterial()
     {
         var result = new List<MudIcons>();
-        var props = typeof(Icons.Material).GetProperties();
+        var props = typeof(Icons.Material).GetProperties(BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy);
 
         foreach (var prop in props)
         {
-            result.Add(new MudIcons(prop.Name, prop.GetValue(prop).ToString()));
+            result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
         }
         return result;
     }
@@ -50,11 +50,11 @@
     public List<MudIcons> GetIconsCustom()
     {
         var result = new List<MudIcons>();
-        var props = typeof(Icons.Custom).GetProperties();
+        var props = typeof(Icons.Custom).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
 
         foreach (var prop in props)
         {
-            result.Add(new MudIcons(prop.Name, prop.GetValue(prop).ToString()));
+            result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
         }
         return result;
     }
