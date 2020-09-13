@@ -91,6 +91,9 @@
 .docs-content-row > * {
   margin: 8px; }
 
+.docs-content-full-width > * {
+  width: 100%; }
+
 .docs-content-darken {
   background-color: #f5f5f5; }
 

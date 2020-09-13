@@ -1,0 +1,22 @@
+﻿@page "/components/data-display/table"
+
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Table</Typography>
+        <Typography Typo="Typo.h4">
+            Simple Table
+        </Typography>
+        <DocsContent DarkenBackground="true" ContentFullWidth="true">
+            <DocsContentRow>
+                <Table></Table>
+            </DocsContentRow>
+        </DocsContent>
+        <MarkdownSegment Text="@Markdown_Simple" />
+    </Container>
+</DocsPage>
+
+@code {
+string Markdown_Simple = @"```html
+<Table></Table>
+```";
+}
