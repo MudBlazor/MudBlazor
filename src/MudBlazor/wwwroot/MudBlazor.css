@@ -1065,6 +1065,89 @@ ul {
   height: auto;
   align-self: stretch; }
 
+.mud-fab {
+  color: var(--mud-theme-color-on-default);
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  font-size: 0.875rem;
+  min-width: 0;
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  min-height: 36px;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 500;
+  line-height: 1.75;
+  border-radius: 50%;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
+  background-color: var(--mud-theme-color-default-lighten); }
+  .mud-fab:active {
+    box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12); }
+  .mud-fab:hover {
+    text-decoration: none;
+    background-color: var(--mud-theme-color-default-darken); }
+  .mud-fab:disabled {
+    color: rgba(0, 0, 0, 0.26);
+    box-shadow: none;
+    background-color: rgba(0, 0, 0, 0.12); }
+    .mud-fab:disabled:hover {
+      background-color: rgba(0, 0, 0, 0.12); }
+  .mud-fab:focus {
+    box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12); }
+
+.mud-fab-label {
+  width: 100%;
+  display: inherit;
+  align-items: inherit;
+  justify-content: inherit; }
+
+.mud-fab-primary {
+  color: var(--mud-theme-color-on-primary);
+  background-color: var(--mud-theme-color-primary); }
+  .mud-fab-primary:hover {
+    background-color: var(--mud-theme-color-primary-hover); }
+
+.mud-fab-secondary {
+  color: var(--mud-theme-color-on-secondary);
+  background-color: var(--mud-theme-color-secondary); }
+  .mud-fab-secondary:hover {
+    background-color: var(--mud-theme-color-secondary-hover); }
+
+.mud-fab-extended {
+  width: auto;
+  height: 48px;
+  padding: 0 16px;
+  min-width: 48px;
+  min-height: auto;
+  border-radius: 24px; }
+
+.mud-fab-extended.mud-fab-size-small {
+  width: auto;
+  height: 34px;
+  padding: 0 8px;
+  min-width: 34px;
+  border-radius: 17px; }
+
+.mud-fab-extended.mud-fab-size-medium {
+  width: auto;
+  height: 40px;
+  padding: 0 16px;
+  min-width: 40px;
+  border-radius: 20px; }
+
+.mud-fab-color-inherit {
+  color: inherit; }
+
+.mud-fab-size-small {
+  width: 40px;
+  height: 40px; }
+
+.mud-fab-size-medium {
+  width: 48px;
+  height: 48px; }
+
 .mud-list {
   width: 100%;
   margin: 0;
