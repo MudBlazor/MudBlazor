@@ -1,62 +1,74 @@
 ﻿@page "/components/navigation/drawer"
 
 <DocsPage>
-    <Container>
-        <Typography Typo="Typo.h3">Drawer</Typography>
-        <Typography Typo="Typo.h4">Persistent drawer</Typography>
-        <Typography>The drawer can be toggled open or closed. The drawer needs to be wrapped around the Layout component and the default state can be set by DrawerOpen parameter.</Typography>
-        <DocsContent DarkenBackground="true">
-            <DocsFrame>
-                <Layout DrawerOpen="@DocsDrawerOpen">
-                    <AppBar Position="Position.Absolute" Elevation="0">
-                        <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
-                        <AppBarSpacer />
-                        <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
-                    </AppBar>
-                    <Drawer>
-                        <DrawerHeader>
-                            <Typography Typo="Typo.h6">My App</Typography>
-                        </DrawerHeader>
-                        <List>
-                            <ListNavItem Href="#">Store</ListNavItem>
-                            <ListNavItem Href="#">Library</ListNavItem>
-                            <ListNavItem Href="#">Community</ListNavItem>
-                        </List>
-                    </Drawer>
-                    <MainContent Class="docs-drawer-page">
-                        <LoremIpsum />
-                    </MainContent>
-                </Layout>
-            </DocsFrame>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Drawer" />
-        <Typography Typo="Typo.h4">Clipping</Typography>
-        <DocsContent DarkenBackground="true">
-            <DocsFrame>
-                <Layout DrawerOpen="@DocsDrawerOpen" DrawerClipped="true">
-                    <AppBar Position="Position.Absolute" Elevation="0">
-                        <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
-                        <AppBarSpacer />
-                        <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
-                    </AppBar>
-                    <Drawer Anchor="Anchor.Right">
-                        <DrawerHeader>
-                            <Typography Typo="Typo.h6">My App</Typography>
-                        </DrawerHeader>
-                        <List>
-                            <ListNavItem Href="#">Store</ListNavItem>
-                            <ListNavItem Href="#">Library</ListNavItem>
-                            <ListNavItem Href="#">Community</ListNavItem>
-                        </List>
-                    </Drawer>
-                    <MainContent Class="docs-drawer-page">
-                        <LoremIpsum />
-                    </MainContent>
-                </Layout>
-            </DocsFrame>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Clipping" />
-    </Container>
+    <DocsPageHeader>
+        <Title>Drawer</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Persistent drawer</Title>
+                <Description>The drawer can be toggled open or closed. The drawer needs to be wrapped around the Layout component and the default state can be set by DrawerOpen parameter.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <DocsFrame>
+                    <Layout DrawerOpen="@DocsDrawerOpen">
+                        <AppBar Position="Position.Absolute" Elevation="0">
+                            <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
+                            <AppBarSpacer />
+                            <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
+                        </AppBar>
+                        <Drawer>
+                            <DrawerHeader>
+                                <Typography Typo="Typo.h6">My App</Typography>
+                            </DrawerHeader>
+                            <List>
+                                <ListNavItem Href="#">Store</ListNavItem>
+                                <ListNavItem Href="#">Library</ListNavItem>
+                                <ListNavItem Href="#">Community</ListNavItem>
+                            </List>
+                        </Drawer>
+                        <MainContent Class="docs-drawer-page">
+                            <LoremIpsum />
+                        </MainContent>
+                    </Layout>
+                </DocsFrame>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Drawer"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Clipping</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <DocsFrame>
+                    <Layout DrawerOpen="@DocsDrawerOpen" DrawerClipped="true">
+                        <AppBar Position="Position.Absolute" Elevation="0">
+                            <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
+                            <AppBarSpacer />
+                            <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
+                        </AppBar>
+                        <Drawer Anchor="Anchor.Right">
+                            <DrawerHeader>
+                                <Typography Typo="Typo.h6">My App</Typography>
+                            </DrawerHeader>
+                            <List>
+                                <ListNavItem Href="#">Store</ListNavItem>
+                                <ListNavItem Href="#">Library</ListNavItem>
+                                <ListNavItem Href="#">Community</ListNavItem>
+                            </List>
+                        </Drawer>
+                        <MainContent Class="docs-drawer-page">
+                            <LoremIpsum />
+                        </MainContent>
+                    </Layout>
+                </DocsFrame>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Clipping"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
 </DocsPage>
 
 @code {

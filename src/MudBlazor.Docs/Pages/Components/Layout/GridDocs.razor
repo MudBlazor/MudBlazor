@@ -1,0 +1,137 @@
+﻿@page "/components/layout/grid"
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Grid</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Spacing</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-grid-spacing">
+                <Grid>
+                    <Item GridSize="GridSize.Twelve">
+                        <Grid Spacing="@spacing" Justify="Justify.Center">
+                            <Item>
+                                <Paper />
+                            </Item>
+                            <Item>
+                                <Paper />
+                            </Item>
+                            <Item>
+                                <Paper />
+                            </Item>
+                        </Grid>
+                    </Item>
+                </Grid>
+                <Paper Class="demo-grid-paper" Elevation="0">
+                    <Button Color="Color.Primary" OnClick="@AddSpacing">Change Spacing</Button>
+                    <AppBarSpacer></AppBarSpacer>
+                    <Typography GutterBottom="false">Spacing: @spacing</Typography>
+                </Paper>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Spacing"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Basic grid</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-grid-basic">
+                <Grid>
+                    <Item GridSize="GridSize.Twelve">
+                        <Paper>12</Paper>
+                    </Item>
+                    <Item GridSize="GridSize.Six">
+                        <Paper>6</Paper>
+                    </Item>
+                    <Item GridSize="GridSize.Six">
+                        <Paper>6</Paper>
+                    </Item>
+                    <Item GridSize="GridSize.Three">
+                        <Paper>3</Paper>
+                    </Item>
+                    <Item GridSize="GridSize.Three">
+                        <Paper>3</Paper>
+                    </Item>
+                    <Item GridSize="GridSize.Three">
+                        <Paper>3</Paper>
+                    </Item>
+                    <Item GridSize="GridSize.Three">
+                        <Paper>3</Paper>
+                    </Item>
+                </Grid>
+            </SectionContent>
+            <SectionSource Code="@Markdown_BasicGrid"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
+@code {
+
+    public int spacing {get; set;} = 2;
+    void AddSpacing()
+    {
+        if (spacing >= 10)
+        {
+            spacing = 0;
+        }
+        else
+        {
+            spacing += 1;
+        }
+        StateHasChanged();
+    }
+
+string Markdown_Spacing = @"```html
+<Grid>
+    <Item GridSize=""GridSize.Twelve"">
+        <Grid Spacing=""@spacing"" Justify=""Justify.Center"">
+            <Item>
+                <Paper />
+            </Item>
+            <Item>
+                <Paper />
+            </Item>
+            <Item>
+                <Paper />
+            </Item>
+        </Grid>
+    </Item>
+    <Item GridSize=""GridSize.Twelve"">
+        <Paper Class=""docs-spacing"">
+            <Typography>Spacing: @spacing</Typography>
+            <Button Color=""Color.Primary"" OnClick=""@AddSpacing"">Change Spacing</Button>
+        </Paper>
+    </Item>
+</Grid>
+```";
+string Markdown_BasicGrid = @"```html
+<Grid>
+    <Item GridSize=""GridSize.Twelve"">
+        <Paper>12</Paper>
+    </Item>
+    <Item GridSize=""GridSize.Six"">
+        <Paper>6</Paper>
+    </Item>
+    <Item GridSize=""GridSize.Six"">
+        <Paper>6</Paper>
+    </Item>
+    <Item GridSize=""GridSize.Three"">
+        <Paper>3</Paper>
+    </Item>
+    <Item GridSize=""GridSize.Three"">
+        <Paper>3</Paper>
+    </Item>
+    <Item GridSize=""GridSize.Three"">
+        <Paper>3</Paper>
+    </Item>
+    <Item GridSize=""GridSize.Three"">
+        <Paper>3</Paper>
+    </Item>
+</Grid>
+```";
+}

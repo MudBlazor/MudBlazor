@@ -1,18 +1,22 @@
 ﻿@page "/components/data-display/table"
 
 <DocsPage>
-    <Container>
-        <Typography Typo="Typo.h3">Table</Typography>
-        <Typography Typo="Typo.h4">
-            Simple Table
-        </Typography>
-        <DocsContent DarkenBackground="true" ContentFullWidth="true">
-            <DocsContentRow>
+    <DocsPageHeader>
+        <Title>Table</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Simple Table</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
                 <Table></Table>
-            </DocsContentRow>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Simple" />
-    </Container>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Simple"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
 </DocsPage>
 
 @code {

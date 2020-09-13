@@ -1,84 +1,101 @@
 ﻿@page "/components/inputs/button"
 
-
 <DocsPage>
-    <Container>
-        <Typography Typo="Typo.h3">Button</Typography>
-        <Typography Typo="Typo.h4">Contained Buttons</Typography>
-        <DocsContent Outlined="true">
-            <Button Variant="Variant.Contained">Default</Button>
-            <Button Variant="Variant.Contained" Color="Color.Primary">Primary</Button>
-            <Button Variant="Variant.Contained" Color="Color.Secondary">Secondary</Button>
-            <Button Variant="Variant.Contained" Disabled="true">Disabled</Button>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Contained" />
-        <Typography>You can remove the elevation with the disableElevation prop.</Typography>
-        <DocsContent Outlined="true">
-            <Button Variant="Variant.Contained" Color="Color.Primary" DisableElevation="true">Primary</Button>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_DisabledElevation" />
-    </Container>
-    <Container>
-        <Typography Typo="Typo.h4">Text Buttons</Typography>
-        <DocsContent Outlined="true">
-            <Button Variant="Variant.Text">Default</Button>
-            <Button Variant="Variant.Text" Color="Color.Primary">Primary</Button>
-            <Button Variant="Variant.Text" Color="Color.Secondary">Secondary</Button>
-            <Button Variant="Variant.Text" Disabled="true">Disabled</Button>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Text" />
-    </Container>
-    <Container>
-        <Typography Typo="Typo.h4">Outlined Buttons</Typography>
-        <DocsContent Outlined="true">
-            <Button Variant="Variant.Outlined">Default</Button>
-            <Button Variant="Variant.Outlined" Color="Color.Primary">Primary</Button>
-            <Button Variant="Variant.Outlined" Color="Color.Secondary">Secondary</Button>
-            <Button Variant="Variant.Outlined" Disabled="true">Disabled</Button>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Outlined" />
-    </Container>
-    <Container>
-        <Typography Typo="Typo.h4">Sizes</Typography>
-        <DocsContent Outlined="true">
-            <DocsContentRow>
-                <Button Variant="Variant.Text" Size="Size.Small">Small</Button>
-                <Button Variant="Variant.Text" Size="Size.Medium">Medium</Button>
-                <Button Variant="Variant.Text" Size="Size.Large">Large</Button>
-            </DocsContentRow>
-            <DocsContentRow>
-                <Button Variant="Variant.Outlined" Size="Size.Small" Color="Color.Secondary">Small</Button>
-                <Button Variant="Variant.Outlined" Size="Size.Medium" Color="Color.Secondary">Medium</Button>
-                <Button Variant="Variant.Outlined" Size="Size.Large" Color="Color.Secondary">Large</Button>
-            </DocsContentRow>
-            <DocsContentRow>
-                <Button Variant="Variant.Contained" Size="Size.Small" Color="Color.Primary">Small</Button>
-                <Button Variant="Variant.Contained" Size="Size.Medium" Color="Color.Primary">Medium</Button>
-                <Button Variant="Variant.Contained" Size="Size.Large" Color="Color.Primary">Large</Button>
-            </DocsContentRow>
-            <DocsContentRow>
-                <IconButton Icon="@Icons.Material.Delete" Size="Size.Small"></IconButton>
-                <IconButton Icon="@Icons.Material.Delete" Size="Size.Medium"></IconButton>
-                <IconButton Icon="@Icons.Material.Delete" Size="Size.Large"></IconButton>
-            </DocsContentRow>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Sizes" />
-    </Container>
-    <Container>
-        <Typography Typo="Typo.h4">Buttons with icons and label</Typography>
-        <DocsContent Outlined="true">
-            <DocsContentRow>
+    <DocsPageHeader>
+        <Title>Button</Title>
+        <SubTitle>Some sub title</SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Contained Buttons</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <Button Variant="Variant.Contained">Default</Button>
+                <Button Variant="Variant.Contained" Color="Color.Primary">Primary</Button>
+                <Button Variant="Variant.Contained" Color="Color.Secondary">Secondary</Button>
+                <Button Variant="Variant.Contained" Disabled="true">Disabled</Button>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Contained"></SectionSource>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Text Buttons</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <Button Variant="Variant.Text">Default</Button>
+                <Button Variant="Variant.Text" Color="Color.Primary">Primary</Button>
+                <Button Variant="Variant.Text" Color="Color.Secondary">Secondary</Button>
+                <Button Variant="Variant.Text" Disabled="true">Disabled</Button>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Text"></SectionSource>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Outlined Buttons</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <Button Variant="Variant.Outlined">Default</Button>
+                <Button Variant="Variant.Outlined" Color="Color.Primary">Primary</Button>
+                <Button Variant="Variant.Outlined" Color="Color.Secondary">Secondary</Button>
+                <Button Variant="Variant.Outlined" Disabled="true">Disabled</Button>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Outlined"></SectionSource>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Sizes</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SectionContentRow>
+                    <Button Variant="Variant.Text" Size="Size.Small">Small</Button>
+                    <Button Variant="Variant.Text" Size="Size.Medium">Medium</Button>
+                    <Button Variant="Variant.Text" Size="Size.Large">Large</Button>
+                </SectionContentRow>
+                <SectionContentRow>
+                    <Button Variant="Variant.Outlined" Size="Size.Small" Color="Color.Secondary">Small</Button>
+                    <Button Variant="Variant.Outlined" Size="Size.Medium" Color="Color.Secondary">Medium</Button>
+                    <Button Variant="Variant.Outlined" Size="Size.Large" Color="Color.Secondary">Large</Button>
+                </SectionContentRow>
+                <SectionContentRow>
+                    <Button Variant="Variant.Contained" Size="Size.Small" Color="Color.Primary">Small</Button>
+                    <Button Variant="Variant.Contained" Size="Size.Medium" Color="Color.Primary">Medium</Button>
+                    <Button Variant="Variant.Contained" Size="Size.Large" Color="Color.Primary">Large</Button>
+                </SectionContentRow>
+                <SectionContentRow>
+                    <IconButton Icon="@Icons.Material.Delete" Size="Size.Small"></IconButton>
+                    <IconButton Icon="@Icons.Material.Delete" Size="Size.Medium"></IconButton>
+                    <IconButton Icon="@Icons.Material.Delete" Size="Size.Large"></IconButton>
+                </SectionContentRow>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Sizes"></SectionSource>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Buttons with icons and label</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
                 <Button Variant="Variant.Contained" StartIcon="@Icons.Material.Delete" Color="Color.Secondary">Delete</Button>
                 <Button Variant="Variant.Contained" EndIcon="@Icons.Material.Send" Color="Color.Primary">Send</Button>
                 <Button Variant="Variant.Contained" StartIcon="@Icons.Material.CloudUpload">Upload</Button>
                 <Button Variant="Variant.Contained" StartIcon="@Icons.Material.Mic" Disabled="true">Talk</Button>
                 <Button Variant="Variant.Contained" StartIcon="@Icons.Material.Save" Color="Color.Primary" Size="Size.Small">Save</Button>
                 <Button Variant="Variant.Contained" StartIcon="@Icons.Material.Save" Color="Color.Primary" Size="Size.Large">Save</Button>
-            </DocsContentRow>
-        </DocsContent>
-        @*<MarkdownSegment Text="@Markdown_ButtonsWithIcons" />*@
-    </Container>
+            </SectionContent>
+            <SectionSource Code="@Markdown_ButtonsWithIcons"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
 </DocsPage>
+
 
 
 @code { string Markdown_Contained = @"```html
@@ -87,74 +104,43 @@
 <Button Variant=""Variant.Contained"" Color=""Color.Secondary"">Secondary</Button>
 <Button Variant=""Variant.Contained"" Disabled=""true"">Disabled</Button>
 ```";
-            string Markdown_DisabledElevation = @"```html
+    string Markdown_DisabledElevation = @"```html
 <Button Variant=""Variant.Contained"" Color=""Color.Primary"" DisableElevation=""true"">Primary</Button>
 ```";
-            string Markdown_Text = @"```html
+    string Markdown_Text = @"```html
 <Button Variant=""Variant.Text"">Default</Button>
 <Button Variant=""Variant.Text"" Color=""Color.Primary"">Primary</Button>
 <Button Variant=""Variant.Text"" Color=""Color.Secondary"">Secondary</Button>
 <Button Variant=""Variant.Text"" Disabled=""true"">Disabled</Button>
 ```";
-            string Markdown_Outlined = @"```html
+    string Markdown_Outlined = @"```html
 <Button Variant=""Variant.Outlined"">Default</Button>
 <Button Variant=""Variant.Outlined"" Color=""Color.Primary"">Primary</Button>
 <Button Variant=""Variant.Outlined"" Color=""Color.Secondary"">Secondary</Button>
 <Button Variant=""Variant.Outlined"" Disabled=""true"">Disabled</Button>
 ```";
-            string Markdown_Sizes = @"```html
-<Grid>
-    <Item GridSize=""12"">
-        <Grid Spacing=""2"" Justify=""Justify.Center"">
-            <Item>
-                <Button Variant=""Variant.Text"" Size=""Size.Small"">Small</Button>
-            </Item>
-            <Item>
-                <Button Variant=""Variant.Text"" Size=""Size.Medium"">Medium</Button>
-            </Item>
-            <Item>
-                <Button Variant=""Variant.Text"" Size=""Size.Large"">Large</Button>
-            </Item>
-        </Grid>
-    </Item>
-    <Item GridSize=""12"">
-        <Grid Spacing=""2"" Justify=""Justify.Center"">
-            <Item>
-                <Button Variant=""Variant.Outlined"" Size=""Size.Small"" Color=""Color.Secondary"">Small</Button>
-            </Item>
-            <Item>
-                <Button Variant=""Variant.Outlined"" Size=""Size.Medium"" Color=""Color.Secondary"">Medium</Button>
-            </Item>
-            <Item>
-                <Button Variant=""Variant.Outlined"" Size=""Size.Large"" Color=""Color.Secondary"">Large</Button>
-            </Item>
-        </Grid>
-    </Item>
-    <Item GridSize=""12"">
-        <Grid Spacing=""2"" Justify=""Justify.Center"">
-            <Item>
-                <Button Variant=""Variant.Contained"" Size=""Size.Small"" Color=""Color.Primary"">Small</Button>
-            </Item>
-            <Item>
-                <Button Variant=""Variant.Contained"" Size=""Size.Medium"" Color=""Color.Primary"">Medium</Button>
-            </Item>
-            <Item>
-                <Button Variant=""Variant.Contained"" Size=""Size.Large"" Color=""Color.Primary"">Large</Button>
-            </Item>
-        </Grid>
-    </Item>
-    <Item GridSize=""12"">
-        <Grid Spacing=""2"" Justify=""Justify.Center"">
-            <Item>
-                <IconButton Icon=""@Icons.Material.Delete"" Size=""Size.Small""></IconButton>
-            </Item>
-            <Item>
-                <IconButton Icon=""@Icons.Material.Delete"" Size=""Size.Medium""></IconButton>
-            </Item>
-            <Item>
-                <IconButton Icon=""@Icons.Material.Delete"" Size=""Size.Large""></IconButton>
-            </Item>
-        </Grid>
-    </Item>
-</Grid>
-```"; }
+    string Markdown_Sizes = @"```html
+<Button Variant=""Variant.Text"" Size=""Size.Small"">Small</Button>
+<Button Variant=""Variant.Text"" Size=""Size.Medium"">Medium</Button>
+<Button Variant=""Variant.Text"" Size=""Size.Large"">Large</Button>
+<Button Variant=""Variant.Outlined"" Size=""Size.Small"" Color=""Color.Secondary"">Small</Button>
+<Button Variant=""Variant.Outlined"" Size=""Size.Medium"" Color=""Color.Secondary"">Medium</Button>
+<Button Variant=""Variant.Outlined"" Size=""Size.Large"" Color=""Color.Secondary"">Large</Button>
+<Button Variant=""Variant.Contained"" Size=""Size.Small"" Color=""Color.Primary"">Small</Button>
+<Button Variant=""Variant.Contained"" Size=""Size.Medium"" Color=""Color.Primary"">Medium</Button>
+<Button Variant=""Variant.Contained"" Size=""Size.Large"" Color=""Color.Primary"">Large</Button>
+<IconButton Icon=""@Icons.Material.Delete"" Size=""Size.Small""></IconButton>
+<IconButton Icon=""@Icons.Material.Delete"" Size=""Size.Medium""></IconButton>
+<IconButton Icon=""@Icons.Material.Delete"" Size=""Size.Large""></IconButton>
+```";
+    string Markdown_ButtonsWithIcons = @"```html
+<Button Variant=""Variant.Contained"" StartIcon=""@Icons.Material.Delete"" Color=""Color.Secondary"">Delete</Button>
+<Button Variant=""Variant.Contained"" EndIcon=""@Icons.Material.Send"" Color=""Color.Primary"">Send</Button>
+<Button Variant=""Variant.Contained"" StartIcon=""@Icons.Material.CloudUpload"">Upload</Button>
+<Button Variant=""Variant.Contained"" StartIcon=""@Icons.Material.Mic"" Disabled=""true"">Talk</Button>
+<Button Variant=""Variant.Contained"" StartIcon=""@Icons.Material.Save"" Color=""Color.Primary"" Size=""Size.Small"">Save</Button>
+<Button Variant=""Variant.Contained"" StartIcon=""@Icons.Material.Save"" Color=""Color.Primary"" Size=""Size.Large"">Save</Button>
+```";
+
+}
+

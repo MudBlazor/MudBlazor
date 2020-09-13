@@ -1,28 +1,40 @@
 ﻿@page "/components/navigation/appbar"
 
 <DocsPage>
-    <Container>
-        <Typography Typo="Typo.h3">App Bar</Typography>
-        <Typography Typo="Typo.h4">Simple App Bar</Typography>
-        <DocsContent DarkenBackground="true">
-            <AppBar Position="Position.Static">
-                <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" />
-                <AppBarSpacer />
-                <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
-            </AppBar>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Simple_AppBar" />
-        <Typography Typo="Typo.h4">Elevation</Typography>
-        <Typography>You can change the App Bar elevation, with values from 0-24</Typography>
-        <DocsContent DarkenBackground="true">
-            <AppBar Position="Position.Static" Elevation="0">
-                <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" />
-                <AppBarSpacer />
-                <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
-            </AppBar>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Elevation" />
-    </Container>
+    <DocsPageHeader>
+        <Title>App Bar</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Simple App Bar</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <AppBar Position="Position.Static">
+                    <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+                    <AppBarSpacer />
+                    <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
+                </AppBar>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Simple_AppBar"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Elevation</Title>
+                <Description>You can change the App Bar elevation, with values from 0-24</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <AppBar Position="Position.Static" Elevation="0">
+                    <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+                    <AppBarSpacer />
+                    <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
+                </AppBar>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Elevation"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
 </DocsPage>
 
 @code {

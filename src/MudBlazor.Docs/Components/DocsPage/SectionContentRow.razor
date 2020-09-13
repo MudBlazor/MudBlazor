@@ -1,0 +1,9 @@
+﻿@namespace MudBlazor.Docs
+
+<div class="docs-section-content-row">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

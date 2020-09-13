@@ -1,0 +1,32 @@
+﻿@page "/components/inputs/textfield"
+
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Text Field</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Basic Text Field's</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <TextField Label="Standard"></TextField>
+                <TextField Label="Filled"></TextField>
+                <TextField Label="Outlined"></TextField>
+            </SectionContent>
+            <SectionSource Code="@Markdown_TextField"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
+@code {
+
+
+string Markdown_TextField = @"```html
+
+```";
+
+}

@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.Docs
+@using MudBlazor.Utilities
+
+<div class="@Classname">
+    <MarkdownSegment Text="@Code"></MarkdownSegment>
+</div>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("docs-section-source")
+    .AddClass(Class)
+    .Build();
+
+    [Parameter] public string Class { get; set; }
+
+    [Parameter] public string Code { get; set; }
+}

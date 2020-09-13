@@ -1,25 +1,34 @@
 ﻿@page "/components/data-display/list"
 
 <DocsPage>
-    <Container>
-        <Typography Typo="Typo.h3">Lists</Typography>
-        <Typography Typo="Typo.h4">Simple List</Typography>
-        <DocsContent DarkenBackground="true" Class="list">
-            <List>
-                <ListItem>Inbox</ListItem>
-                <ListItem>Sent</ListItem>
-                <ListItem>Drafts</ListItem>
-                <Divider></Divider>
-                <ListItem>Spam</ListItem>
-                <ListItem>Bin</ListItem>
-            </List>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Simple" />
-    </Container>
+    <DocsPageHeader>
+        <Title>Lists</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title></Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
+                <List>
+                    <ListItem>Inbox</ListItem>
+                    <ListItem>Sent</ListItem>
+                    <ListItem>Drafts</ListItem>
+                    <Divider></Divider>
+                    <ListItem>Spam</ListItem>
+                    <ListItem>Bin</ListItem>
+                </List>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Simple"></SectionSource>
+        </DocsPageSection>
+        
+    </DocsPageContent>
 </DocsPage>
 
 @code {
-string Markdown_Simple = @"```html
+    string Markdown_Simple = @"```html
 <List>
     <ListItem>Inbox</ListItem>
     <ListItem>Sent</ListItem>

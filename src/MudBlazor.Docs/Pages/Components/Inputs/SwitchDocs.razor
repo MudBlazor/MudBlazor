@@ -1,28 +1,38 @@
 ﻿@page "/components/inputs/switch"
 
-
 <DocsPage>
-    <Container>
-        <Typography Typo="Typo.h3">Switch</Typography>
-        <Typography Typo="Typo.h4">Basic switches</Typography>
-        <DocsContent Outlined="true">
-            <Switch @bind-Checked="@Basic_Switch1" />
-            <Switch @bind-Checked="@Basic_Switch2" Color="Color.Primary" />
-            <Switch @bind-Checked="@Basic_Switch2" Color="Color.Secondary" />
-            <Switch Disabled="true" />
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Basic" />
-    </Container>
-    <Container>
-        <Typography Typo="Typo.h4">Switch with label</Typography>
-        <DocsContent Outlined="true">
-            <Switch @bind-Checked="@Basic_Switch1" Label="Default" />
-            <Switch @bind-Checked="@Basic_Switch2" Label="Primary" Color="Color.Primary" />
-            <Switch @bind-Checked="@Basic_Switch2" Label="Secondary" Color="Color.Secondary" />
-            <Switch Disabled="true" Label="Disabled" />
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Label" />
-    </Container>
+    <DocsPageHeader>
+        <Title>Switch</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Basic switches</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <Switch @bind-Checked="@Basic_Switch1" />
+                <Switch @bind-Checked="@Basic_Switch2" Color="Color.Primary" />
+                <Switch @bind-Checked="@Basic_Switch2" Color="Color.Secondary" />
+                <Switch Disabled="true" />
+            </SectionContent>
+            <SectionSource Code="@Markdown_Basic"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Switch with label</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <Switch @bind-Checked="@Basic_Switch1" Label="Default" />
+                <Switch @bind-Checked="@Basic_Switch2" Label="Primary" Color="Color.Primary" />
+                <Switch @bind-Checked="@Basic_Switch2" Label="Secondary" Color="Color.Secondary" />
+                <Switch Disabled="true" Label="Disabled" />
+            </SectionContent>
+            <SectionSource Code="@Markdown_Label"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
 </DocsPage>
 
 

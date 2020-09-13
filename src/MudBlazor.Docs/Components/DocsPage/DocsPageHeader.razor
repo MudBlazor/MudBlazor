@@ -1,0 +1,14 @@
+﻿@namespace MudBlazor.Docs
+
+<div class="docs-page-header">
+    <Typography Typo="Typo.h3">@Title</Typography>
+    <Typography Typo="Typo.h5">@SubTitle</Typography>
+    <Typography>@Description</Typography>
+</div>
+
+@code {
+    [Parameter] public RenderFragment Title { get; set; }
+    [Parameter] public RenderFragment SubTitle { get; set; }
+    [Parameter] public RenderFragment Description { get; set; }
+
+}

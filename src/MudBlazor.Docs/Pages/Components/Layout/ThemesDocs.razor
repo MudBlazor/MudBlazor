@@ -1,15 +1,27 @@
 ﻿@page "/components/layout/themes"
 
 <DocsPage>
-    <Container>
-        <Typography Typo="Typo.h3">ThemeProvider</Typography>
-        <Typography>With the ThemeProvider you can change all the MudBlazor colors and some default values like border radius.</Typography>
-        <Typography Typo="Typo.h4">Default Theme</Typography>
-        <MarkdownSegment Text="@Markdown_ThemeProvider" />
-        <Typography>This should be added before all your code, in App.razor or at the top in your MainLayout.razor</Typography>
-        <Typography Typo="Typo.h4">Custom Theme</Typography>
-        <MarkdownSegment Text="@Markdown_CustomTheme" />
-    </Container>
+    <DocsPageHeader>
+        <Title>ThemeProvider</Title>
+        <SubTitle></SubTitle>
+        <Description>With the ThemeProvider you can change all the MudBlazor colors and some default values like border radius.</Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Default Theme</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionSource Code="@Markdown_ThemeProvider"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Custom Theme</Title>
+                <Description>This should be added before all your code, in App.razor or at the top in your MainLayout.razor</Description>
+            </SectionHeader>
+            <SectionSource Code="@Markdown_CustomTheme"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
 </DocsPage>
 
 @code {
