@@ -4,7 +4,7 @@
     padding: 0;
 }
 
-html {
+html,svg {
     height: 100%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -16,7 +16,7 @@ strong, b {
 
 body {
     height: 100%;
-    color: var(--mud-theme-text-default);
+    color: var(--mud-theme-on-surface);
     font-size: 0.875rem;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 400;

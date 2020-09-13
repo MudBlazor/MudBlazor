@@ -3,7 +3,7 @@
   margin: 0;
   padding: 0; }
 
-html {
+html, svg {
   height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
@@ -13,7 +13,7 @@ strong, b {
 
 body {
   height: 100%;
-  color: var(--mud-theme-text-default);
+  color: var(--mud-theme-on-surface);
   font-size: 0.875rem;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 400;
@@ -1094,9 +1094,6 @@ ul {
   align-self: stretch; }
 
 .mud-fab {
-  color: var(--mud-theme-color-on-default);
-  width: 56px;
-  height: 56px;
   padding: 0;
   font-size: 0.875rem;
   min-width: 0;
@@ -1109,17 +1106,17 @@ ul {
   line-height: 1.75;
   border-radius: 50%;
   letter-spacing: 0.02857em;
-  text-transform: uppercase;
-  background-color: var(--mud-theme-color-default-lighten); }
+  text-transform: uppercase; }
   .mud-fab:active {
     box-shadow: 0px 7px 8px -4px rgba(0, 0, 0, 0.2), 0px 12px 17px 2px rgba(0, 0, 0, 0.14), 0px 5px 22px 4px rgba(0, 0, 0, 0.12); }
   .mud-fab:hover {
-    text-decoration: none;
-    background-color: var(--mud-theme-color-default-darken); }
+    text-decoration: none; }
   .mud-fab:disabled {
     color: rgba(0, 0, 0, 0.26);
     box-shadow: none;
-    background-color: rgba(0, 0, 0, 0.12); }
+    background-color: rgba(0, 0, 0, 0.12);
+    cursor: default;
+    pointer-events: none; }
     .mud-fab:disabled:hover {
       background-color: rgba(0, 0, 0, 0.12); }
   .mud-fab:focus {
@@ -1131,19 +1128,25 @@ ul {
   align-items: inherit;
   justify-content: inherit; }
 
+.mud-fab-default {
+  color: var(--mud-theme-color-on-default);
+  background-color: var(--mud-theme-color-default-lighten); }
+  .mud-fab-default:hover {
+    background-color: var(--mud-theme-color-default-darken); }
+
 .mud-fab-primary {
   color: var(--mud-theme-color-on-primary);
   background-color: var(--mud-theme-color-primary); }
   .mud-fab-primary:hover {
-    background-color: var(--mud-theme-color-primary-hover); }
+    background-color: var(--mud-theme-color-primary-darken); }
 
 .mud-fab-secondary {
   color: var(--mud-theme-color-on-secondary);
   background-color: var(--mud-theme-color-secondary); }
   .mud-fab-secondary:hover {
-    background-color: var(--mud-theme-color-secondary-hover); }
+    background-color: var(--mud-theme-color-secondary-darken); }
 
-.mud-fab-extended {
+.mud-fab-extended.mud-fab-size-large {
   width: auto;
   height: 48px;
   padding: 0 16px;
@@ -1154,7 +1157,7 @@ ul {
 .mud-fab-extended.mud-fab-size-small {
   width: auto;
   height: 34px;
-  padding: 0 8px;
+  padding: 0 10px;
   min-width: 34px;
   border-radius: 17px; }
 
@@ -1175,6 +1178,10 @@ ul {
 .mud-fab-size-medium {
   width: 48px;
   height: 48px; }
+
+.mud-fab-size-large {
+  width: 56px;
+  height: 56px; }
 
 .mud-list {
   width: 100%;
@@ -1469,7 +1476,7 @@ button.mud-list-item {
 .mud-typography-displayBlock {
   display: block; }
 
-.mud-table {
+table.mud-table {
   width: 100%;
   display: table;
   border-spacing: 0;

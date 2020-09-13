@@ -2,96 +2,97 @@
 @inherits ComponentBaseTable
 
 
-
-<Paper>
-    @*Top toolbar should be optional?*@
-    <ToolBar Class="mud-table-toolbar">
-        <Typography Typo="Typo.h6" GutterBottom="false" Class="mud-flex-1-1-100">
-            Some Table Title
-        </Typography>
-        @*
-            <TextField that dosent exist yet>Search</Select>
-        *@
-        <IconButton Icon="@Icons.Material.AddBox" />
-    </ToolBar>
-    <div class="mud-table-container">
-        <table class="mud-table">
-            <thead class="mud-table-head">
-                <tr class="mud-table-row">
-                    <th scope="col" class="mud-table-cell mud-table-cell-head">id</th>
-                    <th scope="col" class="mud-table-cell mud-table-cell-head">Name</th>
-                    <th scope="col" class="mud-table-cell mud-table-cell-head">Email</th>
-                    <th scope="col" class="mud-table-cell mud-table-cell-head">Gender</th>
-                    <th scope="col" class="mud-table-cell mud-table-cell-head">IP Address</th>
-                </tr>
-            </thead>
-            <tbody class="mud-table-body">
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell mud-table-cell-body">1</td>
-                    <td class="mud-table-cell mud-table-cell-body">Krishna</td>
-                    <td class="mud-table-cell mud-table-cell-body">kpartner0@usatoday.com</td>
-                    <td class="mud-table-cell mud-table-cell-body">Male</td>
-                    <td class="mud-table-cell mud-table-cell-body">28.25.250.202</td>
-                </tr>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell mud-table-cell-body">2</td>
-                    <td class="mud-table-cell mud-table-cell-body">Webb</td>
-                    <td class="mud-table-cell mud-table-cell-body">wstitle1@ning.com</td>
-                    <td class="mud-table-cell mud-table-cell-body">Male</td>
-                    <td class="mud-table-cell mud-table-cell-body">237.168.134.114</td>
-                </tr>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell mud-table-cell-body">3</td>
-                    <td class="mud-table-cell mud-table-cell-body">Nathanil</td>
-                    <td class="mud-table-cell mud-table-cell-body">nneal2@cyberchimps.com</td>
-                    <td class="mud-table-cell mud-table-cell-body">Male</td>
-                    <td class="mud-table-cell mud-table-cell-body">92.6.0.175</td>
-                </tr>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell mud-table-cell-body">4</td>
-                    <td class="mud-table-cell mud-table-cell-body">Adara</td>
-                    <td class="mud-table-cell mud-table-cell-body">alockwood3@patch.com</td>
-                    <td class="mud-table-cell mud-table-cell-body">Female</td>
-                    <td class="mud-table-cell mud-table-cell-body">182.174.217.152</td>
-                </tr>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell mud-table-cell-body">5</td>
-                    <td class="mud-table-cell mud-table-cell-body">Cecilius</td>
-                    <td class="mud-table-cell mud-table-cell-body">cchaplin4@shinystat.com</td>
-                    <td class="mud-table-cell mud-table-cell-body">Male</td>
-                    <td class="mud-table-cell mud-table-cell-body">195.124.144.18</td>
-                </tr>
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell mud-table-cell-body">6</td>
-                    <td class="mud-table-cell mud-table-cell-body">Cicely</td>
-                    <td class="mud-table-cell mud-table-cell-body">cemerine9@soup.io</td>
-                    <td class="mud-table-cell mud-table-cell-body">Female</td>
-                    <td class="mud-table-cell mud-table-cell-body">138.94.191.43</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    @*Pagination*@
-    <div class="mud-table-pagination">
-        <ToolBar Class="mud-table-pagination-toolbar">
-            <div class="mud-table-pagination-spacer"></div>
-            <Typography Typo="Typo.body2" Class="mud-table-pagination-caption" GutterBottom="false">
-                Rows per page:
+<div class="mud-table">
+    <Paper>
+        @*Top toolbar should be optional?*@
+        <ToolBar Class="mud-table-toolbar">
+            <Typography Typo="Typo.h6" GutterBottom="false" Class="mud-flex-1-1-100">
+                Some Table Title
             </Typography>
-            @*Start off Dummy Select*@
-            <div class="mud-input-base-root mud-input-base-root mud-table-pagination-select-root mud-table-pagination-input">
-                <div class="mud-table-pagination-select mud-input-base-input">
-                    5
-                </div>
-            </div>
-            @*End off Dummy Select*@
-            <Typography Typo="Typo.body2" Class="mud-table-pagination-caption" GutterBottom="false">
-                1-5 of 13
-            </Typography>
-            <div class="mud-table-pagination-actions">
-                <IconButton Icon="@Icons.Material.NavigateBefore" Disabled="true" />
-                <IconButton Icon="@Icons.Material.NavigateNext" />
-            </div>
+            @*
+                <TextField that dosent exist yet>Search</Select>
+            *@
+            <IconButton Icon="@Icons.Material.AddBox" />
         </ToolBar>
-    </div>
-</Paper>
+        <div class="mud-table-container">
+            <table class="mud-table">
+                <thead class="mud-table-head">
+                    <tr class="mud-table-row">
+                        <th scope="col" class="mud-table-cell mud-table-cell-head">id</th>
+                        <th scope="col" class="mud-table-cell mud-table-cell-head">Name</th>
+                        <th scope="col" class="mud-table-cell mud-table-cell-head">Email</th>
+                        <th scope="col" class="mud-table-cell mud-table-cell-head">Gender</th>
+                        <th scope="col" class="mud-table-cell mud-table-cell-head">IP Address</th>
+                    </tr>
+                </thead>
+                <tbody class="mud-table-body">
+                    <tr class="mud-table-row">
+                        <td class="mud-table-cell mud-table-cell-body">1</td>
+                        <td class="mud-table-cell mud-table-cell-body">Krishna</td>
+                        <td class="mud-table-cell mud-table-cell-body">kpartner0@usatoday.com</td>
+                        <td class="mud-table-cell mud-table-cell-body">Male</td>
+                        <td class="mud-table-cell mud-table-cell-body">28.25.250.202</td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td class="mud-table-cell mud-table-cell-body">2</td>
+                        <td class="mud-table-cell mud-table-cell-body">Webb</td>
+                        <td class="mud-table-cell mud-table-cell-body">wstitle1@ning.com</td>
+                        <td class="mud-table-cell mud-table-cell-body">Male</td>
+                        <td class="mud-table-cell mud-table-cell-body">237.168.134.114</td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td class="mud-table-cell mud-table-cell-body">3</td>
+                        <td class="mud-table-cell mud-table-cell-body">Nathanil</td>
+                        <td class="mud-table-cell mud-table-cell-body">nneal2@cyberchimps.com</td>
+                        <td class="mud-table-cell mud-table-cell-body">Male</td>
+                        <td class="mud-table-cell mud-table-cell-body">92.6.0.175</td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td class="mud-table-cell mud-table-cell-body">4</td>
+                        <td class="mud-table-cell mud-table-cell-body">Adara</td>
+                        <td class="mud-table-cell mud-table-cell-body">alockwood3@patch.com</td>
+                        <td class="mud-table-cell mud-table-cell-body">Female</td>
+                        <td class="mud-table-cell mud-table-cell-body">182.174.217.152</td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td class="mud-table-cell mud-table-cell-body">5</td>
+                        <td class="mud-table-cell mud-table-cell-body">Cecilius</td>
+                        <td class="mud-table-cell mud-table-cell-body">cchaplin4@shinystat.com</td>
+                        <td class="mud-table-cell mud-table-cell-body">Male</td>
+                        <td class="mud-table-cell mud-table-cell-body">195.124.144.18</td>
+                    </tr>
+                    <tr class="mud-table-row">
+                        <td class="mud-table-cell mud-table-cell-body">6</td>
+                        <td class="mud-table-cell mud-table-cell-body">Cicely</td>
+                        <td class="mud-table-cell mud-table-cell-body">cemerine9@soup.io</td>
+                        <td class="mud-table-cell mud-table-cell-body">Female</td>
+                        <td class="mud-table-cell mud-table-cell-body">138.94.191.43</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        @*Pagination*@
+        <div class="mud-table-pagination">
+            <ToolBar Class="mud-table-pagination-toolbar">
+                <div class="mud-table-pagination-spacer"></div>
+                <Typography Typo="Typo.body2" Class="mud-table-pagination-caption" GutterBottom="false">
+                    Rows per page:
+                </Typography>
+                @*Start off Dummy Select*@
+                <div class="mud-input-base-root mud-input-base-root mud-table-pagination-select-root mud-table-pagination-input">
+                    <div class="mud-table-pagination-select mud-input-base-input">
+                        5
+                    </div>
+                </div>
+                @*End off Dummy Select*@
+                <Typography Typo="Typo.body2" Class="mud-table-pagination-caption" GutterBottom="false">
+                    1-5 of 13
+                </Typography>
+                <div class="mud-table-pagination-actions">
+                    <IconButton Icon="@Icons.Material.NavigateBefore" Disabled="true" />
+                    <IconButton Icon="@Icons.Material.NavigateNext" />
+                </div>
+            </ToolBar>
+        </div>
+    </Paper>
+</div>
