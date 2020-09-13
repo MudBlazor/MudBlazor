@@ -1,8 +1,5 @@
 ﻿
 .mud-fab {
-    color: var(--mud-theme-color-on-default);
-    width: 56px;
-    height: 56px;
     padding: 0;
     font-size: 0.875rem;
     min-width: 0;
@@ -16,7 +13,6 @@
     border-radius: 50%;
     letter-spacing: 0.02857em;
     text-transform: uppercase;
-    background-color: var(--mud-theme-color-default-lighten);
 
     &:active {
         box-shadow: 0px 7px 8px -4px rgba(0,0,0,0.2),0px 12px 17px 2px rgba(0,0,0,0.14),0px 5px 22px 4px rgba(0,0,0,0.12);
@@ -24,13 +20,14 @@
 
     &:hover {
         text-decoration: none;
-        background-color: var(--mud-theme-color-default-darken);
     }
 
     &:disabled {
         color: rgba(0, 0, 0, 0.26);
         box-shadow: none;
         background-color: rgba(0, 0, 0, 0.12);
+        cursor: default;
+        pointer-events: none;
 
         &:hover {
             background-color: rgba(0, 0, 0, 0.12);
@@ -49,12 +46,22 @@
     justify-content: inherit;
 }
 
+.mud-fab-default {
+    color: var(--mud-theme-color-on-default);
+    background-color: var(--mud-theme-color-default-lighten);
+
+    &:hover {
+        background-color: var(--mud-theme-color-default-darken);
+    }
+}
+
+
 .mud-fab-primary {
     color: var(--mud-theme-color-on-primary);
     background-color: var(--mud-theme-color-primary);
 
     &:hover {
-        background-color: var(--mud-theme-color-primary-hover);
+        background-color: var(--mud-theme-color-primary-darken);
     }
 }
 
@@ -63,11 +70,11 @@
     background-color: var(--mud-theme-color-secondary);
 
     &:hover {
-        background-color: var(--mud-theme-color-secondary-hover);
+        background-color: var(--mud-theme-color-secondary-darken);
     }
 }
 
-.mud-fab-extended {
+.mud-fab-extended.mud-fab-size-large {
     width: auto;
     height: 48px;
     padding: 0 16px;
@@ -79,7 +86,7 @@
 .mud-fab-extended.mud-fab-size-small {
     width: auto;
     height: 34px;
-    padding: 0 8px;
+    padding: 0 10px;
     min-width: 34px;
     border-radius: 17px;
 }
@@ -104,4 +111,9 @@
 .mud-fab-size-medium {
     width: 48px;
     height: 48px;
+}
+
+.mud-fab-size-large {
+    width: 56px;
+    height: 56px;
 }

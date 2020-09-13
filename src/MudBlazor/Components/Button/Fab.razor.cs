@@ -11,7 +11,7 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-fab-root mud-fab")
-          .AddClass($"mud-fab-extended", Extended)
+          .AddClass($"mud-fab-extended", !String.IsNullOrEmpty(Label))
           .AddClass($"mud-fab-{Color.ToDescriptionString()}")
           .AddClass($"mud-fab-size-{Size.ToDescriptionString()}")
           .AddClass($"mud-ripple", !DisableRipple && !Disabled)
@@ -21,7 +21,11 @@ namespace MudBlazor
 
         [Parameter] public Color Color { get; set; } = Color.Default;
 
-        [Parameter] public Size Size { get; set; } = Size.Medium;
+        [Parameter] public Size Size { get; set; } = Size.Large;
+
+        [Parameter] public string Icon { get; set; }
+
+        [Parameter] public string Label { get; set; }
 
         [Parameter] public string Class { get; set; }
 
@@ -30,13 +34,10 @@ namespace MudBlazor
         /// <summary>
         /// Allow more content (i.e. an additional text label) instead of just a single icon
         /// </summary>
-        [Parameter] public bool Extended { get; set; }
 
         [Parameter] public bool DisableElevation { get; set; }
 
         [Parameter] public bool DisableRipple { get; set; }
-
-        [Parameter] public RenderFragment ChildContent { get; set; }
 
     }
 }
