@@ -1,4 +1,30 @@
-﻿.docs-frame {
+﻿.docs-page {
+    .mud-typography-h4 {
+        margin-top: 52px;
+    }
+}
+
+.docs-page-header {
+    & .mud-typography-h4 {
+        margin-top: 0px;
+    }
+
+    margin-bottom: 100px;
+}
+
+.docs-page-content {
+    
+}
+
+.docs-page-section {
+    margin-bottom: 50px;
+}
+
+
+
+
+
+.docs-frame {
     height: 100%;
     width: 100%;
     position: relative;

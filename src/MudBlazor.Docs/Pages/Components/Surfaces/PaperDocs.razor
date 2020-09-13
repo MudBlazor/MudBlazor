@@ -1,25 +1,38 @@
 ﻿@page "/components/surfaces/paper"
 
 <DocsPage>
-    <Container>
-        <Typography Typo="Typo.h3">Paper</Typography>
-        <Typography Typo="Typo.h4">Component</Typography>
-        <DocsContent DarkenBackground="true" Class="paper-filler">
-            <Paper Elevation="0"></Paper>
-            <Paper></Paper>
-            <Paper Elevation="3"></Paper>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Component" />
-        <Typography Typo="Typo.h4">Variants</Typography>
-        <Typography Typo="Typo.subtitle1">If you need an outlined surface or a square, use the variant property.</Typography>
-        <DocsContent DarkenBackground="true" Class="paper-filler">
-            <Paper Outlined="true"></Paper>
-            <Paper Outlined="true" Square="true"></Paper>
-            <Paper Square="true"></Paper>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Variants" />
-    </Container>
+    <DocsPageHeader>
+        <Title>Paper</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Component</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-paper">
+                <Paper Elevation="0"></Paper>
+                <Paper></Paper>
+                <Paper Elevation="3"></Paper>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Component"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Variants</Title>
+                <Description>If you need an outlined surface or a square, use the variant property.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-paper">
+                <Paper Outlined="true"></Paper>
+                <Paper Outlined="true" Square="true"></Paper>
+                <Paper Square="true"></Paper>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Variants"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
 </DocsPage>
+
 
 @code {
 string Markdown_Component = @"```html

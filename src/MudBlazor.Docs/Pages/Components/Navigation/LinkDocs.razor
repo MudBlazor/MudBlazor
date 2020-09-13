@@ -1,22 +1,36 @@
 ﻿@page "/components/navigation/link"
 
 <DocsPage>
-    <Container>
-        <Typography Typo="Typo.h3">Link</Typography>
-        <Typography Typo="Typo.h4">Simple Links</Typography>
-        <DocsContent Outlined="true">
-            <MudLink Href="#">Default</MudLink>
-            <MudLink Href="#" Typo="Typo.body2">Different Typography</MudLink>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Simple_Links" />
-        <Typography Typo="Typo.h4">Underlines</Typography>
-        <DocsContent Outlined="true">
-            <MudLink Href="#">Default</MudLink>
-            <MudLink Href="#" Underline="Underline.Always">Always</MudLink>
-            <MudLink Href="#" Underline="Underline.None">None</MudLink>
-        </DocsContent>
-        <MarkdownSegment Text="@Markdown_Underlines" />
-    </Container>
+    <DocsPageHeader>
+        <Title>Link</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Simple Links</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudLink Href="#">Default</MudLink>
+                <MudLink Href="#" Typo="Typo.body2">Different Typography</MudLink>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Simple_Links">
+            </SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Underlines</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudLink Href="#">Default</MudLink>
+                <MudLink Href="#" Underline="Underline.Always">Always</MudLink>
+                <MudLink Href="#" Underline="Underline.None">None</MudLink>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Underlines"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
 </DocsPage>
 
 @code {

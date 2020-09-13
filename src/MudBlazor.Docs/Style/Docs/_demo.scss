@@ -1,0 +1,69 @@
+﻿.demo-grid-spacing {
+    & .mud-paper {
+        width: 140px;
+        height: 140px;
+        text-align: center;
+    }
+
+    & .docs-section-content-inner {
+        width: 100%;
+    }
+
+    & .demo-grid-paper {
+        padding: 10px 20px;
+        width: 100% !important;
+        height: 50px !important;
+        align-items: center;
+        display: flex;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-top: 25px !important;
+    }
+}
+
+.demo-grid-basic {
+    & .mud-paper {
+        padding: 40px 20px;
+        width: 100%;
+        height: 100px;
+        text-align: center;
+    }
+}
+
+
+.demo-list {
+    & .mud-list {
+        padding: 10px 0;
+        width: 100%;
+        max-width: 360px;
+        background-color: #fff;
+    }
+}
+
+.demo-paper {
+    & .mud-paper {
+        width: 128px;
+        height: 128px;
+        margin: 8px;
+    }
+}
+
+.demo-container {
+
+    & .mud-container {
+        height: 100%;
+        background-color: rgb(207, 232, 252);
+    }
+
+    & .mud-paper {
+        height: 400px;
+        width: 100%;
+        background-color: #fff;
+    }
+}
+
+.demo-drawer {
+    background-color: #fff;
+    padding: 20px;
+    padding-top: 86px;
+}

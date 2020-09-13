@@ -1,23 +1,60 @@
 ﻿@page "/components/inputs/fab"
 
-
 <DocsPage>
-    <Container>
-        <Typography Typo="Typo.h3">Floating action button</Typography>
-        <Typography Typo="Typo.h4">FAB</Typography>
-        <DocsContent Outlined="true">
-            <Fab Color="Color.Primary"><Icon Icon="@Icons.Material.Add"></Icon></Fab>
-            <Fab Color="Color.Secondary"><Icon Icon="@Icons.Material.Edit"></Icon></Fab>
-            <Fab Extended="true"><Icon Icon="@Icons.Material.Navigation"></Icon>Navigation</Fab>
-            <Fab Disabled="true"><Icon Icon="@Icons.Material.Save"></Icon></Fab>
-        </DocsContent>
-        @*<MarkdownSegment Text="@Markdown_Fab" />*@
-    </Container>
+    <DocsPageHeader>
+        <Title>Floating action button</Title>
+        <SubTitle>A floating action button (FAB)</SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Simple FAB</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <Fab Color="Color.Primary" Icon="@Icons.Material.Add" />
+                <Fab Color="Color.Secondary" Icon="@Icons.Material.Edit" />
+                <Fab Icon="@Icons.Material.Navigation" Label="Navigation" />
+                <Fab Icon="@Icons.Material.Save" Disabled="true" />
+            </SectionContent>
+            <SectionSource Code="@Markdown_Simple"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Size</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SectionContentRow>
+                    <Fab Color="Color.Secondary" Icon="@Icons.Material.Add" Size="Size.Small" />
+                    <Fab Color="Color.Secondary" Icon="@Icons.Material.Add" Size="Size.Medium" />
+                    <Fab Color="Color.Secondary" Icon="@Icons.Material.Add" Size="Size.Large" />
+                </SectionContentRow>
+                <SectionContentRow>
+                    <Fab Color="Color.Primary" Icon="@Icons.Material.ShoppingCart" Size="Size.Small" Label="To cart" />
+                    <Fab Color="Color.Primary" Icon="@Icons.Material.ShoppingCart" Size="Size.Medium" Label="To cart" />
+                    <Fab Color="Color.Primary" Icon="@Icons.Material.ShoppingCart" Size="Size.Large" Label="To cart" />
+                </SectionContentRow>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Size"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
 </DocsPage>
 
+@code {
+    string Markdown_Simple = @"```html
+<Fab Color=""Color.Primary"" Icon=""@Icons.Material.Add""/>
+<Fab Color=""Color.Secondary"" Icon=""@Icons.Material.Edit""/>
+<Fab Icon=""@Icons.Material.Navigation"" Extended=""true"">Navigation</Fab>
+<Fab Icon=""@Icons.Material.Save"" Disabled=""true""></Fab>
+```";
+    string Markdown_Size = @"```html
+<Fab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Small"" />
+<Fab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Medium"" />
+<Fab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Large"" />
 
-@code { 
-    string Markdown_Fab = @"```html
-
+<Fab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Small"" Label=""Go to cart"" />
+<Fab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Medium"" Label=""Go to cart"" />
+<Fab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Large"" Label=""Go to cart"" />
 ```";
 }

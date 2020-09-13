@@ -2,11 +2,20 @@
 @using System.Reflection
 
 <DocsPage>
-    <Container>
-        <Typography Typo="Typo.h3">Icons</Typography>
-        <Typography Typo="Typo.h5">Guidance and suggestions for using icons with MudBlazor.</Typography>
-    </Container>
-    <Container>
+    <DocsPageHeader>
+        <Title>Icons</Title>
+        <SubTitle>Guidance and suggestions for using icons with MudBlazor.</SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <Typography Typo="Typo.h4">Custom Icons</Typography>
+        @if (MudIconsMaterial != null)
+        {
+            <DocsIcons List="MudIconsCustom" />
+        }
+        else
+        {
+            <Typography Typo="Typo.h5" Align="Align.Center">Loading...</Typography>
+        }
         <Typography Typo="Typo.h4">Material Icons</Typography>
         @if (MudIconsMaterial != null)
         {
@@ -16,11 +25,7 @@
         {
             <Typography Typo="Typo.h5" Align="Align.Center">Loading...</Typography>
         }
-    </Container>
-    <Container>
-        <Typography Typo="Typo.h4">Custom Icons</Typography>
-        <DocsIcons List="MudIconsCustom" />
-    </Container>
+    </DocsPageContent>
 </DocsPage>
 
 @code {
@@ -31,23 +36,23 @@
 
     protected override async Task OnInitializedAsync()
     {
-        MudIconsMaterial = GetIconsMaterial();
-        MudIconsCustom = GetIconsCustom();
+        LoadMaterialIconsAsync();
+        LoadCustomIconsAsync();
     }
 
-    public List<MudIcons> GetIconsMaterial()
+    public void LoadMaterialIconsAsync()
     {
         var result = new List<MudIcons>();
-        var props = typeof(Icons.Material).GetProperties(BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy);
+        var props = typeof(Icons.Material).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
 
         foreach (var prop in props)
         {
             result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
         }
-        return result;
+        MudIconsMaterial = result;
     }
 
-    public List<MudIcons> GetIconsCustom()
+    public void LoadCustomIconsAsync()
     {
         var result = new List<MudIcons>();
         var props = typeof(Icons.Custom).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
@@ -56,6 +61,6 @@
         {
             result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
         }
-        return result;
+        MudIconsCustom = result;
     }
 }

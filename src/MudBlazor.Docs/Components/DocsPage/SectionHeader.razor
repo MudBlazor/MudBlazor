@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.Docs
+@using MudBlazor.Utilities
+
+<div class="@Classname">
+    <Typography Typo="Typo.h4">@Title</Typography>
+    <Typography>@Description</Typography>
+</div>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("docs-section-header")
+    .AddClass(Class)
+    .Build();
+
+    [Parameter] public string Class { get; set; }
+
+    [Parameter] public RenderFragment Title { get; set; }
+    [Parameter] public RenderFragment Description { get; set; }
+
+}

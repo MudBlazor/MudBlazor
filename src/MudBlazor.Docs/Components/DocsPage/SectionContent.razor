@@ -1,0 +1,36 @@
+﻿@namespace MudBlazor.Docs
+@using MudBlazor.Utilities
+
+<div class="@Classname">
+    <div class="docs-section-content-inner">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("docs-section-content")
+    .AddClass($"docs-content-full-width", FullWidth)
+    .AddClass($"docs-section-content-display-grid", DisplayGrid)
+    .AddClass($"docs-section-content-outlined", Outlined)
+    .AddClass($"docs-section-content-darken", DarkenBackground)
+    .AddClass($"docs-display-flex", DisplayFlex)
+    .AddClass(Class)
+    .Build();
+
+    [Parameter] public string Class { get; set; }
+
+    [Parameter] public bool DisplayGrid { get; set; }
+
+    [Parameter] public bool DisplayFlex { get; set; }
+
+    [Parameter] public bool FullWidth { get; set; }
+
+    [Parameter] public bool DarkenBackground { get; set; }
+
+    [Parameter] public bool Outlined { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+}

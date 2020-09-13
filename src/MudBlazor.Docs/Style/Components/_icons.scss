@@ -10,7 +10,7 @@
 
 .docs-icon-panel {
     height: 120px;
-    width: 100px;
+    width: 16%;
     padding: 20px 10px;
     display: inline-block;
     text-align: center;
@@ -27,7 +27,6 @@
     justify-content: center;
 
     & .mud-svg-icon-root {
-        width: 1.5em;
-        height: 1.5em;
+        font-size: 40px;
     }
 }

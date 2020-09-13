@@ -1,11 +1,14 @@
 ﻿@import 'core/base';
+@import 'core/markdown';
 
-@import 'components/frame';
-@import 'components/markdown';
-@import 'components/content';
+@import 'layout/footer';
+
+@import 'docs/demo';
 
 @import 'pages/home';
+@import 'pages/credit';
 
-@import 'docs/drawer';
-@import 'docs/icons';
-@import 'docs/page';
+@import 'components/docspage';
+@import 'components/docssection';
+@import 'components/icons';
+
