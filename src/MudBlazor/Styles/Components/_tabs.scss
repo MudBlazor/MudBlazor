@@ -1,0 +1,32 @@
+﻿.mud-tabs {
+    background-color: #fff;
+}
+
+.mud-tabs-fixed {
+    width: 600px;
+}
+
+.mud-tabs-toolbar {
+    display: flex;
+    overflow: hidden;
+    min-height: 48px;
+    width: 100%;
+    background-color: #fff;
+    padding: 0 20px;
+    box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+
+    & > button {
+        width: 100%;
+        border-radius: 0px;
+    }
+
+    & > button.mud-button-text-primary {
+        border-bottom: 2px solid var(--mud-theme-color-primary);
+    }
+}
+
+.mud-tabs-panels {
+    padding:30px 20px;
+    min-height:200px;
+
+}

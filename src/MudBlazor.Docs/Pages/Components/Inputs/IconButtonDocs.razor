@@ -5,22 +5,22 @@
     <Container>
         <Typography Typo="Typo.h3">Icon Button</Typography>
         <Typography Typo="Typo.h4">Simple Icon Buttons</Typography>
-        <DocsShowcase Outlined="true">
-            <IconButton Icon="@Icons.Material_Delete"></IconButton>
-            <IconButton Icon="@Icons.Brand_GitHub" Color="Color.Primary"></IconButton>
-            <IconButton Icon="@Icons.Material_Favorite" Color="Color.Secondary"></IconButton>
-            <IconButton Icon="@Icons.Material_Share" Disabled="true"></IconButton>
-        </DocsShowcase>
+        <DocsContent Outlined="true">
+            <IconButton Icon="@Icons.Material.Delete"></IconButton>
+            <IconButton Icon="@Icons.Custom.GitHub" Color="Color.Primary"></IconButton>
+            <IconButton Icon="@Icons.Material.Favorite" Color="Color.Secondary"></IconButton>
+            <IconButton Icon="@Icons.Material.Share" Disabled="true"></IconButton>
+        </DocsContent>
         <MarkdownSegment Text="@Markdown_Simple" />
     </Container>
     <Container>
         <Typography Typo="Typo.h4">Toggle Icon Button</Typography>
-        <DocsShowcase Outlined="true">
-            <IconButton Icon="@Icons.Material_Delete"></IconButton>
-            <IconButton Icon="@Icons.Brand_GitHub" Color="Color.Primary"></IconButton>
-            <IconButton Icon="@Icons.Material_Favorite" Color="Color.Secondary"></IconButton>
-            <IconButton Icon="@Icons.Material_Share" Disabled="true"></IconButton>
-        </DocsShowcase>
+        <DocsContent Outlined="true">
+            <IconButton Icon="@Icons.Material.Delete"></IconButton>
+            <IconButton Icon="@Icons.Custom.GitHub" Color="Color.Primary"></IconButton>
+            <IconButton Icon="@Icons.Material.Favorite" Color="Color.Secondary"></IconButton>
+            <IconButton Icon="@Icons.Material.Share" Disabled="true"></IconButton>
+        </DocsContent>
         <MarkdownSegment Text="@Markdown_Toggle" />
     </Container>
 </DocsPage>
@@ -28,15 +28,15 @@
 
 @code {
 string Markdown_Simple = @"```html
-<IconButton Icon=""@Icons.Material_Delete""></IconButton>
-<IconButton Icon=""@Icons.Brand_GitHub"" Color=""Color.Primary""></IconButton>
-<IconButton Icon=""@Icons.Material_Favorite"" Color=""Color.Secondary""></IconButton>
-<IconButton Icon=""@Icons.Material_Share"" Disabled=""true""></IconButton>
+<IconButton Icon=""@Icons.Material.Delete""></IconButton>
+<IconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Primary""></IconButton>
+<IconButton Icon=""@Icons.Material.Favorite"" Color=""Color.Secondary""></IconButton>
+<IconButton Icon=""@Icons.Material.Share"" Disabled=""true""></IconButton>
 ```";
 string Markdown_Toggle = @"```html
-<IconButton Icon=""@Icons.Material_Delete""></IconButton>
-<IconButton Icon=""@Icons.Brand_GitHub"" Color=""Color.Primary""></IconButton>
-<IconButton Icon=""@Icons.Material_Favorite"" Color=""Color.Secondary""></IconButton>
-<IconButton Icon=""@Icons.Material_Share"" Disabled=""true""></IconButton>
+<IconButton Icon=""@Icons.Material.Delete""></IconButton>
+<IconButton Icon=""@Icons.Brand.GitHub"" Color=""Color.Primary""></IconButton>
+<IconButton Icon=""@Icons.Material.Favorite"" Color=""Color.Secondary""></IconButton>
+<IconButton Icon=""@Icons.Material.Share"" Disabled=""true""></IconButton>
 ```";
 }

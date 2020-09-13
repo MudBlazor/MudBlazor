@@ -9,6 +9,7 @@
 @import 'core/reset';
 @import 'core/elevation';
 
+@import 'components/toolbar';
 @import 'components/avatar';
 @import 'components/button';
 @import 'components/iconbutton';
@@ -18,9 +19,15 @@
 @import 'components/paper';
 @import 'components/svgicon';
 @import 'components/divider';
+@import 'components/fab';
 @import 'components/list';
 @import 'components/link';
+@import 'components/switch';
 @import 'components/typography';
+@import 'components/table';
+@import 'components/tabs';
+
+
 
 
 @import 'utilities/flex';
@@ -28,7 +35,6 @@
 @import 'utilities/margin';
 
 @import 'layout/appbar';
-@import 'layout/toolbar';
 @import 'layout/drawer';
 @import 'layout/main';
 @import 'layout/container';

@@ -66,8 +66,9 @@ namespace MudBlazor.Extensions
 
         public static string ToDescriptionString(this GridSize val)
         {
-            var attributes = (DescriptionAttribute[])val.GetType().GetField(val.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false);
-            return attributes.Length > 0 ? attributes[0].Description : string.Empty;
+            //var attributes = (DescriptionAttribute[])val.GetType().GetField(val.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false);
+            //return attributes.Length > 0 ? attributes[0].Description : string.Empty;
+            return val.ToString();
         }
 
         public static string ToDescriptionString(this Justify val)

@@ -8,10 +8,11 @@
 @code {
 
     protected string Classname =>
-    new CssBuilder("docs-showcase")
-    .AddClass($"docs-showcase-outlined", Outlined)
-    .AddClass($"docs-showcase-darken", DarkenBackground)
-    .AddClass($"docs-showcase-display-grid", DisplayGrid)
+    new CssBuilder("docs-content")
+    .AddClass($"docs-content-full-width", ContentFullWidth)
+    .AddClass($"docs-content-outlined", Outlined)
+    .AddClass($"docs-content-darken", DarkenBackground)
+    .AddClass($"docs-content-display-grid", DisplayGrid)
     .AddClass(Class)
     .Build();
 
@@ -22,6 +23,8 @@
     [Parameter] public bool DarkenBackground { get; set; }
 
     [Parameter] public bool Outlined { get; set; }
+
+    [Parameter] public bool ContentFullWidth { get; set; }
 
     [Parameter] public bool DisplayGrid { get; set; }
 }

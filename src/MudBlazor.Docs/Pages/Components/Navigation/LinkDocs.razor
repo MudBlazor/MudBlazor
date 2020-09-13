@@ -4,17 +4,17 @@
     <Container>
         <Typography Typo="Typo.h3">Link</Typography>
         <Typography Typo="Typo.h4">Simple Links</Typography>
-        <DocsShowcase Outlined="true">
+        <DocsContent Outlined="true">
             <MudLink Href="#">Default</MudLink>
-            <MudLink Href="#" Typo="Typo.body2">Diferent Typography</MudLink>
-        </DocsShowcase>
+            <MudLink Href="#" Typo="Typo.body2">Different Typography</MudLink>
+        </DocsContent>
         <MarkdownSegment Text="@Markdown_Simple_Links" />
         <Typography Typo="Typo.h4">Underlines</Typography>
-        <DocsShowcase Outlined="true">
+        <DocsContent Outlined="true">
             <MudLink Href="#">Default</MudLink>
             <MudLink Href="#" Underline="Underline.Always">Always</MudLink>
             <MudLink Href="#" Underline="Underline.None">None</MudLink>
-        </DocsShowcase>
+        </DocsContent>
         <MarkdownSegment Text="@Markdown_Underlines" />
     </Container>
 </DocsPage>
@@ -22,7 +22,7 @@
 @code {
 string Markdown_Simple_Links = @"```html
 <MudLink Href=""#"">Default</MudLink>
-<MudLink Href=""#"" Typo=""Typo.body2"">Diferent Typography</MudLink>
+<MudLink Href=""#"" Typo=""Typo.body2"">Different Typography</MudLink>
 ```";
 string Markdown_Underlines = @"```html
 <MudLink Href=""#"">Default</MudLink>

@@ -1,0 +1,27 @@
+﻿@page "/components/navigation/tabs"
+
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Tabs</Typography>
+        <Typography Typo="Typo.h4">Simple Tabs</Typography>
+        <DocsContent DarkenBackground="true">
+            <Tabs>
+                <TabPanel Text="Item 1">
+                    Item 1
+                </TabPanel>
+                <TabPanel Text="Item 2">
+                    Item 2
+                </TabPanel>
+                <TabPanel Text="Item 3">
+                    Item 3
+                </TabPanel>
+            </Tabs>
+        </DocsContent>
+        <MarkdownSegment Text="@Markdown_Simple" />
+    </Container>
+</DocsPage>
+
+@code {
+    string Markdown_Simple = @"```html
+```";
+}

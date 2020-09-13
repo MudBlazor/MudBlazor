@@ -4,10 +4,10 @@ namespace MudBlazor
 {
     public enum Size
     {
-        [Description("medium")]
-        Medium,
         [Description("small")]
         Small,
+        [Description("medium")]
+        Medium,
         [Description("large")]
         Large
     }
