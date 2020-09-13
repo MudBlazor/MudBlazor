@@ -66,6 +66,16 @@
     background-color: var(--mud-theme-color-secondary);
 }
 
+.mud-appbar-color-surface {
+    color: var(--mud-theme-on-surface);
+    background-color: var(--mud-theme-surface);
+}
+
+.mud-appbar-color-appbar {
+    color: var(--mud-theme-on-appbar);
+    background-color: var(--mud-theme-appbar);
+}
+
 .mud-appbar-color-inherit {
     color: inherit;
 }

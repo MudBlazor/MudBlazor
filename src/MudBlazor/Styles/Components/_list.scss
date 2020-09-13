@@ -23,7 +23,7 @@
 .mud-list-item > .mud-list-item, .mud-nested-list > .mud-list-item {
     width: 100%;
     padding: 8px 0 8px 24px;
-    color: var(--mud-theme-text-default);
+    color: inherit;
     line-height: 1.75;
     letter-spacing: 0;
     justify-content: flex-start;
@@ -34,7 +34,7 @@
     &:hover {
         cursor: pointer;
         text-decoration: none;
-        background-color: rgba(0, 0, 0, 0.06);
+        background-color: var(--mud-theme-color-default-hover);
     }
 
     &.active {

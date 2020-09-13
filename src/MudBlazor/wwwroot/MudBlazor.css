@@ -363,7 +363,7 @@ ul {
       background-color: var(--mud-theme-color-primary-hover); }
   .mud-button-outlined.mud-button-outlined-secondary {
     color: var(--mud-theme-color-secondary);
-    border: 1px solid rgba(220, 0, 78, 0.5); }
+    border: 1px solid var(--mud-theme-color-secondary); }
     .mud-button-outlined.mud-button-outlined-secondary:hover {
       border: 1px solid var(--mud-theme-color-secondary);
       background-color: var(--mud-theme-color-secondary-hover); }
@@ -1067,7 +1067,7 @@ ul {
   height: 1px;
   margin: 0;
   flex-shrink: 0;
-  background-color: rgba(0, 0, 0, 0.12); }
+  background-color: var(--mud-theme-border-color-default); }
 
 .mud-divider-absolute {
   left: 0;
@@ -1202,7 +1202,7 @@ ul {
 .mud-list-item > .mud-list-item, .mud-nested-list > .mud-list-item {
   width: 100%;
   padding: 8px 0 8px 24px;
-  color: var(--mud-theme-text-default);
+  color: inherit;
   line-height: 1.75;
   letter-spacing: 0;
   justify-content: flex-start;
@@ -1212,7 +1212,7 @@ ul {
   .mud-list-item > .mud-list-item:hover, .mud-nested-list > .mud-list-item:hover {
     cursor: pointer;
     text-decoration: none;
-    background-color: rgba(0, 0, 0, 0.06); }
+    background-color: var(--mud-theme-color-default-hover); }
   .mud-list-item > .mud-list-item.active, .mud-nested-list > .mud-list-item.active {
     font-weight: 500 !important;
     color: var(--mud-theme-color-primary); }
@@ -1228,6 +1228,9 @@ button.mud-list-item {
 
 .mud-nested-list.expanded > .mud-list {
   display: block; }
+
+.mud-link {
+  color: var(--mud-theme-text-default); }
 
 .mud-link-underline-none {
   text-decoration: none; }
@@ -1674,7 +1677,7 @@ table.mud-table {
   transform: rotate(180deg); }
 
 .mud-tabs {
-  background-color: #fff; }
+  background-color: var(--mud-theme-surface); }
 
 .mud-tabs-fixed {
   width: 600px; }
@@ -1684,7 +1687,7 @@ table.mud-table {
   overflow: hidden;
   min-height: 48px;
   width: 100%;
-  background-color: #fff;
+  background-color: var(--mud-theme-surface);
   padding: 0 20px;
   box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12); }
   .mud-tabs-toolbar > button {
@@ -1772,6 +1775,14 @@ table.mud-table {
   color: var(--mud-theme-color-on-secondary);
   background-color: var(--mud-theme-color-secondary); }
 
+.mud-appbar-color-surface {
+  color: var(--mud-theme-on-surface);
+  background-color: var(--mud-theme-surface); }
+
+.mud-appbar-color-appbar {
+  color: var(--mud-theme-on-appbar);
+  background-color: var(--mud-theme-appbar); }
+
 .mud-appbar-color-inherit {
   color: inherit; }
 
@@ -1789,7 +1800,8 @@ table.mud-table {
   z-index: 9;
   overflow-y: auto;
   flex-direction: column;
-  background-color: var(--mud-theme-surface); }
+  color: var(--mud-theme-on-drawer);
+  background-color: var(--mud-theme-drawer); }
   .mud-drawer.mud-drawer--open {
     transform: none;
     transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms; }

@@ -107,7 +107,7 @@
 
     &.mud-button-outlined-secondary {
         color: var(--mud-theme-color-secondary);
-        border: 1px solid rgba(220, 0, 78, 0.5);
+        border: 1px solid var(--mud-theme-color-secondary);
 
         &:hover {
             border: 1px solid var(--mud-theme-color-secondary);

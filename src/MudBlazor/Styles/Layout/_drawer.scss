@@ -8,7 +8,8 @@
     z-index: 9;
     overflow-y: auto;
     flex-direction: column;
-    background-color: var(--mud-theme-surface);
+    color: var(--mud-theme-on-drawer);
+    background-color: var(--mud-theme-drawer);
 
     &.mud-drawer--open {
         transform: none;
