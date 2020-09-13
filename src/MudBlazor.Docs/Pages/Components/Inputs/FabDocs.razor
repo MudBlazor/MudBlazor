@@ -1,0 +1,23 @@
+﻿@page "/components/inputs/fab"
+
+
+<DocsPage>
+    <Container>
+        <Typography Typo="Typo.h3">Floating action button</Typography>
+        <Typography Typo="Typo.h4">FAB</Typography>
+        <DocsContent Outlined="true">
+            <Fab Color="Color.Primary"><Icon Icon="@Icons.Material.Add"></Icon></Fab>
+            <Fab Color="Color.Secondary"><Icon Icon="@Icons.Material.Edit"></Icon></Fab>
+            <Fab Extended="true"><Icon Icon="@Icons.Material.Navigation"></Icon>Navigation</Fab>
+            <Fab Disabled="true"><Icon Icon="@Icons.Material.Save"></Icon></Fab>
+        </DocsContent>
+        @*<MarkdownSegment Text="@Markdown_Fab" />*@
+    </Container>
+</DocsPage>
+
+
+@code { 
+    string Markdown_Fab = @"```html
+
+```";
+}
