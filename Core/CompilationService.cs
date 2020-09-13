@@ -34,7 +34,6 @@
         // Creating the initial compilation + reading references is on the order of 250ms without caching
         // so making sure it doesn't happen for each run.
         private static CSharpCompilation baseCompilation;
-        private static IReadOnlyList<MetadataReference> baseCompilationReferences;
         private static CSharpParseOptions cSharpParseOptions;
 
         private readonly RazorProjectFileSystem fileSystem = new VirtualRazorProjectFileSystem();
@@ -79,8 +78,6 @@
                 Array.Empty<SyntaxTree>(),
                 basicReferenceAssemblies,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-
-            baseCompilationReferences = baseCompilation.References.ToList();
 
             cSharpParseOptions = new CSharpParseOptions(LanguageVersion.Preview);
         }
@@ -183,19 +180,48 @@
             ICollection<CodeFile> codeFiles,
             Func<string, Task> updateStatusFunc)
         {
-            await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
+            // The first phase won't include any metadata references for component discovery. This mirrors what the build does.
+            var projectEngine = this.CreateRazorProjectEngine(Array.Empty<MetadataReference>());
 
-            var projectEngine = this.CreateRazorProjectEngine(baseCompilationReferences);
-
-            var results = new List<CompileToCSharpResult>(codeFiles.Count);
+            // Result of generating declarations
+            var declarations = new List<CompileToCSharpResult>(codeFiles.Count);
             foreach (var codeFile in codeFiles)
             {
                 var projectItem = CreateRazorProjectItem(codeFile.Path, codeFile.Content);
-                var codeDocument = projectEngine.Process(projectItem);
+
+                var codeDocument = projectEngine.ProcessDeclarationOnly(projectItem);
+                var cSharpDocument = codeDocument.GetCSharpDocument();
+
+                declarations.Add(new CompileToCSharpResult
+                {
+                    ProjectItem = projectItem,
+                    Code = cSharpDocument.GeneratedCode,
+                    Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
+                });
+            }
+
+            // Result of doing 'temp' compilation
+            var tempAssembly = CompileToAssembly(declarations);
+            if (tempAssembly.Diagnostics.Any(d => d.Severity == DiagnosticSeverity.Error))
+            {
+                return new[] { new CompileToCSharpResult { Diagnostics = tempAssembly.Diagnostics } };
+            }
+
+            // Add the 'temp' compilation as a metadata reference
+            var references = new List<MetadataReference>(baseCompilation.References) { tempAssembly.Compilation.ToMetadataReference() };
+            projectEngine = this.CreateRazorProjectEngine(references);
+
+            await (updateStatusFunc?.Invoke("Preparing Project") ?? Task.CompletedTask);
+
+            var results = new List<CompileToCSharpResult>(codeFiles.Count);
+            foreach (var declaration in declarations)
+            {
+                var codeDocument = projectEngine.Process(declaration.ProjectItem);
                 var cSharpDocument = codeDocument.GetCSharpDocument();
 
                 results.Add(new CompileToCSharpResult
                 {
+                    ProjectItem = declaration.ProjectItem,
                     Code = cSharpDocument.GeneratedCode,
                     Diagnostics = cSharpDocument.Diagnostics.Select(CompilationDiagnostic.FromRazorDiagnostic).ToList(),
                 });
