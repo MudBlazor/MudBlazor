@@ -20,8 +20,9 @@
 
     public class CompilationService
     {
+        public const string DefaultRootNamespace = "BlazorRepl.UserComponents";
+
         private const string WorkingDirectory = "/BlazorRepl/";
-        private const string DefaultRootNamespace = "BlazorRepl.UserComponents";
         private const string DefaultImports = @"@using System.ComponentModel.DataAnnotations
 @using System.Linq
 @using System.Net.Http

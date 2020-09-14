@@ -25,7 +25,7 @@
             Exception exception,
             Func<TState, Exception, string> formatter)
         {
-            if (exception?.ToString()?.Contains("BlazorRepl.UserComponents") ?? false)
+            if (exception?.ToString()?.Contains(CompilationService.DefaultRootNamespace) ?? false)
             {
                 this.jsRuntime.InvokeVoidAsync(
                     "App.Repl.updateUserAssemblyInCacheStorage",
