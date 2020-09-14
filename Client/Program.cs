@@ -3,6 +3,7 @@ namespace BlazorRepl.Client
     using System;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using BlazorRepl.Client.Models;
     using BlazorRepl.Client.Services;
     using BlazorRepl.Core;
     using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

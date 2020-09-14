@@ -1,4 +1,4 @@
-﻿namespace BlazorRepl.Client.Components.Models
+﻿namespace BlazorRepl.Client.Models
 {
     public class PageNotification
     {

@@ -1,4 +1,4 @@
-﻿namespace BlazorRepl.Client.Services
+﻿namespace BlazorRepl.Client.Models
 {
     public class SnippetsOptions
     {

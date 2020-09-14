@@ -1,4 +1,4 @@
-﻿namespace BlazorRepl.Client.Services
+﻿namespace BlazorRepl.Client.Models
 {
     using System.Collections.Generic;
     using BlazorRepl.Core;

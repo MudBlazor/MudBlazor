@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using BlazorRepl.Client.Components.Models;
+    using BlazorRepl.Client.Models;
     using BlazorRepl.Client.Services;
     using Microsoft.AspNetCore.Components;
     using Microsoft.JSInterop;

@@ -1,7 +1,7 @@
 ﻿namespace BlazorRepl.Client.Components
 {
     using System.Collections.Generic;
-    using BlazorRepl.Client.Components.Models;
+    using BlazorRepl.Client.Models;
 
     public partial class PageNotifications
     {
