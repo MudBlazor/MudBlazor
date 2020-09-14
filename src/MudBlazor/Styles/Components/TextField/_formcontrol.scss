@@ -1,0 +1,25 @@
+﻿
+.mud-formcontrol {
+    border: 0;
+    margin: 0;
+    display: inline-flex;
+    padding: 0;
+    position: relative;
+    min-width: 0;
+    flex-direction: column;
+    vertical-align: top;
+}
+
+.mud-formcontrol-margin-normal {
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+.mud-formcontrol-margin-dense {
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+.mud-formcontrol-full-width {
+    width: 100%;
+}
