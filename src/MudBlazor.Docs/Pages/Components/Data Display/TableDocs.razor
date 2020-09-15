@@ -9,10 +9,67 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Simple Table</Title>
-                <Description></Description>
+                <Description>
+                    The &lt;SimpleTable&gt; component is a simple wrapper component around the &lt;table&gt; element.
+                    Inside the component you can use all the regular table elements such as &lt;thead&gt;, &lt;tbody&gt;, &lt;tr&gt;, &lt;td&gt;, etc.
+                </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
-                <Table></Table>
+                <SimpleTable>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Gender</th>
+                            <th>IP Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Krishna</td>
+                            <td>kpartner0@usatoday.com</td>
+                            <td>Male</td>
+                            <td>28.25.250.202</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Webb</td>
+                            <td>wstitle1@ning.com</td>
+                            <td>Male</td>
+                            <td>237.168.134.114</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Nathanil</td>
+                            <td>nneal2@cyberchimps.com</td>
+                            <td>Male</td>
+                            <td>92.6.0.175</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Adara</td>
+                            <td>alockwood3@patch.com</td>
+                            <td>Female</td>
+                            <td>182.174.217.152</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Cecilius</td>
+                            <td>cchaplin4@shinystat.com</td>
+                            <td>Male</td>
+                            <td>195.124.144.18</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Cicely</td>
+                            <td>cemerine9@soup.io</td>
+                            <td>Female</td>
+                            <td>138.94.191.43</td>
+                        </tr>
+                    </tbody>
+                </SimpleTable>
             </SectionContent>
             <SectionSource Code="@Markdown_Simple"></SectionSource>
         </DocsPageSection>
@@ -20,7 +77,62 @@
 </DocsPage>
 
 @code {
-string Markdown_Simple = @"```html
-<Table></Table>
+
+    string Markdown_Simple = @"```html
+<SimpleTable>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Gender</th>
+            <th>IP Address</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>Krishna</td>
+            <td>kpartner0@usatoday.com</td>
+            <td>Male</td>
+            <td>28.25.250.202</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Webb</td>
+            <td>wstitle1@ning.com</td>
+            <td>Male</td>
+            <td>237.168.134.114</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Nathanil</td>
+            <td>nneal2@cyberchimps.com</td>
+            <td>Male</td>
+            <td>92.6.0.175</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Adara</td>
+            <td>alockwood3@patch.com</td>
+            <td>Female</td>
+            <td>182.174.217.152</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Cecilius</td>
+            <td>cchaplin4@shinystat.com</td>
+            <td>Male</td>
+            <td>195.124.144.18</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>Cicely</td>
+            <td>cemerine9@soup.io</td>
+            <td>Female</td>
+            <td>138.94.191.43</td>
+        </tr>
+    </tbody>
+</SimpleTable>
 ```";
 }
