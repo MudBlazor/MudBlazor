@@ -13,6 +13,8 @@ namespace MudBlazor
         [Description("outlined")]
         Outlined,
         [Description("contained")]
-        Contained
+        Contained,
+        [Description("filled")]
+        Filled,
     }
 }

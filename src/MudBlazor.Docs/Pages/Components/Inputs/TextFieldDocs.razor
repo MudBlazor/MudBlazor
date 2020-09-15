@@ -13,11 +13,24 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <TextField Label="Standard"></TextField>
-                <TextField Label="Filled"></TextField>
-                <TextField Label="Outlined"></TextField>
+                <TextField Label="Standard" Variant="Variant.Text"></TextField>
+                <TextField Label="Filled" Variant="Variant.Filled"></TextField>
+                <TextField Label="Outlined" Variant="Variant.Outlined"></TextField>
             </SectionContent>
             <SectionSource Code="@Markdown_TextField"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Inputs</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudInput Value="Basic Input"></MudInput>
+                <MudInput Placeholder="Placeholder"></MudInput>
+                <MudInput Value="Disabled" Disabled="true"></MudInput>
+                <MudInput Value="Error" Error="true"></MudInput>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Input"></SectionSource>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
@@ -25,8 +38,10 @@
 @code {
 
 
-string Markdown_TextField = @"```html
+    string Markdown_TextField = @"```html
 
 ```";
+    string Markdown_Input = @"```html
 
+```";
 }
