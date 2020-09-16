@@ -1,5 +1,4 @@
-﻿@include inputplaceholder;
-
+﻿
 
 label + .mud-input-root {
     margin-top: 16px;
@@ -37,27 +36,6 @@ label + .mud-input-root {
 }
 
 .mud-input-underline {
-    &:after {
-        left: 0;
-        right: 0;
-        bottom: 0;
-        content: "";
-        position: absolute;
-        transform: scaleX(0);
-        transition: transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
-        border-bottom: 2px solid var(--mud-theme-color-primary);
-        pointer-events: none;
-    }
-
-    &:focus:after {
-        transform: scaleX(1);
-    }
-
-    &.mud-error:after {
-        transform: scaleX(1);
-        border-bottom-color: #f44336;
-    }
-
     &:before {
         left: 0;
         right: 0;
@@ -76,7 +54,28 @@ label + .mud-input-root {
     &.mud-disabled:before {
         border-bottom-style: dotted;
     }
+
+    &:after {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        content: "";
+        position: absolute;
+        transform: scaleX(0);
+        transition: transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+        border-bottom: 2px solid var(--mud-theme-color-primary);
+        pointer-events: none;
+    }
+
+    &.mud-error:after {
+        transform: scaleX(1);
+        border-bottom-color: var(--mud-theme-color-danger);
+    }
 }
+.mud-input-root:focus-within.mud-input-underline:after {
+    transform: scaleX(1);
+}
+
 
 .mud-input-root > input {
     &.mud-input {
@@ -129,5 +128,3 @@ label + .mud-input-root {
         }
     }
 }
-
-
