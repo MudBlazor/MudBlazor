@@ -13,9 +13,10 @@ namespace MudBlazor
         protected string Classname =>
        new CssBuilder("mud-text-field-label")
         .AddClass("mud-label-animated")
-            .AddClass($"mud-input-label-{Variant.ToDescriptionString()}")
-         .AddClass(Class)
+        .AddClass($"mud-input-label-{Variant.ToDescriptionString()}")
+        .AddClass(Class)
        .Build();
+
 
         [Parameter] public string Label { get; set; }
 
