@@ -3,6 +3,7 @@
     display: flex;
     position: relative;
     align-items: center;
+    min-height: 56px;
 }
 
 .mud-toolbar-gutters {
@@ -17,18 +18,14 @@
     }
 }
 
-.mud-toolbar-regular {
-    min-height: 56px;
-}
-
 @media (min-width:0px) and (orientation: landscape) {
-    .mud-toolbar-regular {
+    .mud-toolbar {
         min-height: 48px;
     }
 }
 
 @media (min-width:600px) {
-    .mud-toolbar-regular {
+    .mud-toolbar {
         min-height: 64px;
     }
 }
