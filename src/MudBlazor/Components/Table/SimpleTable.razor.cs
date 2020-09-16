@@ -6,15 +6,15 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class ComponentBaseSimpleTable : ComponentBase
+    public partial class SimpleTable : ComponentBase
     {
         protected string Classname =>
-        new CssBuilder()
+        new CssBuilder("mud-simple-table")
           .AddClass(Class)
+          .AddClass("mud-simple-table-dense", Dense)
         .Build();
         [Parameter] public string Class { get; set; }
 
-        // todo: implement
         [Parameter] public bool Dense { get; set; }
 
         // todo: implement

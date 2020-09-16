@@ -17,24 +17,53 @@
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <SimpleTable>
                     <thead>
-                        <tr>
-                            @foreach (var h in headings) {
-                                <th>@h</th>
-                            }
-                        </tr>
+                    <tr>
+                        @foreach (var h in headings) {
+                            <th>@h</th>
+                        }
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach (var row in rows) {
-                            <tr>
-                                @foreach (var x in row.Split()) {
-                                    <td>@x</td>
-                                }
-                            </tr>
-                        }
+                    @foreach (var row in rows) {
+                        <tr>
+                            @foreach (var x in row.Split()) {
+                                <td>@x</td>
+                            }
+                        </tr>
+                    }
                     </tbody>
                 </SimpleTable>
             </SectionContent>
             <SectionSource Code="@Markdown_Simple"></SectionSource>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Dense Table</Title>
+                <Description>
+                    Use Dense="true" to reduce the height of each row.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <SimpleTable Dense="true">
+                    <thead>
+                    <tr>
+                        @foreach (var h in headings) {
+                            <th>@h</th>
+                        }
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var row in rows) {
+                        <tr>
+                            @foreach (var x in row.Split()) {
+                                <td>@x</td>
+                            }
+                        </tr>
+                    }
+                    </tbody>
+                </SimpleTable>
+            </SectionContent>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
