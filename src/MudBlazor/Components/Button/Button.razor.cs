@@ -7,7 +7,7 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public class ComponentBaseButton : MudBaseButtonComponent
+    public class ComponentBaseButton : MudBaseButton
     {
         protected string Classname =>
         new CssBuilder("mud-button-root mud-button")

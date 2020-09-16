@@ -9,7 +9,7 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    public abstract class MudBaseButtonComponent : ComponentBase
+    public abstract class MudBaseButton : ComponentBase
     {
         [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
 
