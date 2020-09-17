@@ -14,7 +14,6 @@ namespace MudBlazor
          .AddClass(Class)
        .Build();
 
-        [Parameter] public string Class { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
     }
 }

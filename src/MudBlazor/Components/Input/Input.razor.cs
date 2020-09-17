@@ -21,8 +21,6 @@ namespace MudBlazor
          .AddClass(Class)
        .Build();
 
-        [Parameter] public string Class { get; set; }
-
         protected string InputType => new CssBuilder().AddClass(Type.ToDescriptionString()).Build();
     }
 }
