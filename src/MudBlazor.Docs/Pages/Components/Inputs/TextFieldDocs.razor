@@ -38,10 +38,15 @@
 @code {
 
 
-    string Markdown_TextField = @"```html
-
+string Markdown_TextField = @"```html
+<TextField Label=""Standard"" Variant=""Variant.Text""></TextField>
+<TextField Label=""Filled"" Variant=""Variant.Filled""></TextField>
+<TextField Label=""Outlined"" Variant=""Variant.Outlined""></TextField>
 ```";
-    string Markdown_Input = @"```html
-
+string Markdown_Input = @"```html
+<Input Value=""Basic Input"" />
+<Input Placeholder=""Placeholder"" />
+<Input Value=""Disabled"" Disabled=""true"" />
+<Input Value=""Error"" Error=""true"" />
 ```";
 }
