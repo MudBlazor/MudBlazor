@@ -51,6 +51,8 @@ namespace MudBlazor
             theme.AppendLine($"--mud-theme-color-dark: {Color_Dark};");
 
             theme.AppendLine($"--mud-theme-border-color-default: {Color_Border_Default};");
+            theme.AppendLine($"--mud-theme-border-color-outlines: {Color_Border_Outlines};");
+            theme.AppendLine($"--mud-theme-border-color-inputs: {Color_Border_Inputs};");
             theme.AppendLine($"--mud-theme-border-radius-default: {BorderRadius_Default};");
         }
 

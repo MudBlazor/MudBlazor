@@ -2,7 +2,7 @@
 {
     public class DefaultMudTheme
     {
-        public string Color_Text_Default { get; set; } = "#2f2f2f";
+        public string Color_Text_Default { get; set; } = "#6a6a6a";
 
         public string Color_OnSurface { get; set; } = "#444";
         public string Color_Surface { get; set; } = "#fff";
@@ -24,6 +24,8 @@
         public string Color_Dark { get; set; } = "#272c34";
         public string Color_Background_Grey { get; set; } = "#f5f5f5";
         public string Color_Border_Default { get; set; } = "#e0e0e0";
+        public string Color_Border_Outlines { get; set; } = "#c4c4c4";
+        public string Color_Border_Inputs { get; set; } = "#878787";
         public string BorderRadius_Default { get; set; } = "4px";
     }
 }
