@@ -17,6 +17,11 @@
                 <Button Variant="Variant.Filled" Disabled="true">Disabled</Button>
             </SectionContent>
             <SectionSource Code="@Markdown_Filled"></SectionSource>
+            <Typography>Elevation can be removed with the DisableElevation bool.</Typography>
+            <SectionContent Outlined="true">
+                <Button Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary">Disable elevation</Button>
+            </SectionContent>
+            <SectionSource Code="@Markdown_DisabledElevation"></SectionSource>
         </DocsPageSection>
 
         <DocsPageSection>
@@ -103,8 +108,8 @@
 <Button Variant=""Variant.Filled"" Color=""Color.Secondary"">Secondary</Button>
 <Button Variant=""Variant.Filled"" Disabled=""true"">Disabled</Button>
 ```";
-    string Markdown_DisabledElevation = @"```html
-<Button Variant=""Variant.Filled"" Color=""Color.Primary"" DisableElevation=""true"">Primary</Button>
+string Markdown_DisabledElevation = @"```html
+<Button Variant=""Variant.Filled"" DisableElevation=""true"" Color=""Color.Primary"">Disable elevation</Button>
 ```";
     string Markdown_Text = @"```html
 <Button Variant=""Variant.Text"">Default</Button>
