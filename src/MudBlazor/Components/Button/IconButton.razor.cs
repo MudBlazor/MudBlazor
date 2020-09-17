@@ -7,7 +7,7 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public class ComponentBaseIconButton : MudBaseButton
+    public partial class IconButton : MudBaseButton
     {
         protected string Classname =>
         new CssBuilder("mud-button-root mud-icon-button")
@@ -27,8 +27,6 @@ namespace MudBlazor
         [Parameter] public Size Size { get; set; } = Size.Medium;
 
         [Parameter] public Edge Edge { get; set; }
-
-        [Parameter] public string Class { get; set; }
 
         [Parameter] public bool DisableRipple { get; set; }
 

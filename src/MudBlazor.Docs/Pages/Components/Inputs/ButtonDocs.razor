@@ -97,6 +97,21 @@
             </SectionContent>
             <SectionSource Code="@Markdown_ButtonsWithIcons"></SectionSource>
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Customized Buttons</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <Button Variant="Variant.Filled"
+                        EndIcon="@Icons.Material.ArrowDownward"
+                        Style="background-color: yellowgreen; color: white; width: 200px; height: 60px;">
+                    Download Now
+                </Button>
+            </SectionContent>
+            <SectionSource Code="@Mardown_ButtonsCustomStyle"></SectionSource>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
 
@@ -108,7 +123,7 @@
 <Button Variant=""Variant.Filled"" Color=""Color.Secondary"">Secondary</Button>
 <Button Variant=""Variant.Filled"" Disabled=""true"">Disabled</Button>
 ```";
-string Markdown_DisabledElevation = @"```html
+    string Markdown_DisabledElevation = @"```html
 <Button Variant=""Variant.Filled"" DisableElevation=""true"" Color=""Color.Primary"">Disable elevation</Button>
 ```";
     string Markdown_Text = @"```html
@@ -144,6 +159,13 @@ string Markdown_DisabledElevation = @"```html
 <Button Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Mic"" Disabled=""true"">Talk</Button>
 <Button Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Save"" Color=""Color.Primary"" Size=""Size.Small"">Save</Button>
 <Button Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Save"" Color=""Color.Primary"" Size=""Size.Large"">Save</Button>
+```";
+    string Mardown_ButtonsCustomStyle = @"```html
+<Button Variant=""Variant.Filled"" 
+            EndIcon=""@Icons.Material.ArrowDownward"" 
+            Style=""background-color: yellowgreen; color: white; width: 200px; height: 60px;"">
+    Download Now
+</Button>
 ```";
 
 }

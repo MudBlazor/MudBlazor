@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor
-@inherits ComponentBaseIconButton
+@inherits MudBaseButton
 
 
-<button type="button" class="@Classname" @onclick="OnClickHandler" href="@Link" disabled="@Disabled">
+<button type="button" class="@Classname" style="@Style" @onclick="OnClickHandler" href="@Link" disabled="@Disabled">
     <span class="mud-icon-button-label">
         <Icon Icon="@Icon"/>
     </span>

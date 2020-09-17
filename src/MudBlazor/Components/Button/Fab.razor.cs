@@ -7,7 +7,7 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public class ComponentBaseFab : MudBaseButton
+    public partial class Fab : MudBaseButton
     {
         protected string Classname =>
         new CssBuilder("mud-fab-root mud-fab")
@@ -27,13 +27,7 @@ namespace MudBlazor
 
         [Parameter] public string Label { get; set; }
 
-        [Parameter] public string Class { get; set; }
-
         [Parameter] public bool Disabled { get; set; }
-
-        /// <summary>
-        /// Allow more content (i.e. an additional text label) instead of just a single icon
-        /// </summary>
 
         [Parameter] public bool DisableElevation { get; set; }
 
