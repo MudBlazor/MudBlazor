@@ -1,30 +1,37 @@
 ﻿@namespace MudBlazor
-@inherits ComponentBaseTable
-
+@typeparam THeader
+@typeparam TItem
+@inherits ComponentBaseTable<THeader, TItem>
 
 <div class="mud-table">
     <Paper>
-        @*Top toolbar should be optional?*@
-        <ToolBar Class="mud-table-toolbar">
-            <Typography Typo="Typo.h6" GutterBottom="false" Class="mud-flex-1-1-100">
-                Some Table Title
-            </Typography>
-            @*
-                <TextField that dosent exist yet>Search</Select>
-            *@
-            <IconButton Icon="@Icons.Material.AddBox" />
-        </ToolBar>
+        @if (!HideToolbar)
+        {
+            <ToolBar Class="mud-table-toolbar">
+                <Typography Typo="Typo.h6" GutterBottom="false" Class="mud-flex-1-1-100">
+                    @Title
+                </Typography>
+                @*
+                    <TextField that dosent exist yet>Search</Select>
+                *@
+                <IconButton Icon="@Icons.Material.AddBox" />
+            </ToolBar>
+        }
         <div class="mud-table-container">
             <table class="mud-table">
-                <thead class="mud-table-head">
-                    <tr class="mud-table-row">
-                        <th scope="col" class="mud-table-cell mud-table-cell-head">id</th>
-                        <th scope="col" class="mud-table-cell mud-table-cell-head">Name</th>
-                        <th scope="col" class="mud-table-cell mud-table-cell-head">Email</th>
-                        <th scope="col" class="mud-table-cell mud-table-cell-head">Gender</th>
-                        <th scope="col" class="mud-table-cell mud-table-cell-head">IP Address</th>
-                    </tr>
-                </thead>
+                @if (!HideHeader)
+                {
+                    <thead class="mud-table-head">
+                        <tr class="mud-table-row">
+                            @foreach (var header in Headers)
+                            {
+                                <th scope="col" class="mud-table-cell mud-table-cell-head">
+                                    @HeaderTemplate(header)
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                }
                 <tbody class="mud-table-body">
                     <tr class="mud-table-row">
                         <td class="mud-table-cell mud-table-cell-body">1</td>
