@@ -3,21 +3,25 @@
 <DocsPage>
     <DocsPageHeader>
         <Title>Button</Title>
-        <SubTitle>Some sub title</SubTitle>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Contained Buttons</Title>
+                <Title>Filled Buttons</Title>
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <Button Variant="Variant.Contained">Default</Button>
-                <Button Variant="Variant.Contained" Color="Color.Primary">Primary</Button>
-                <Button Variant="Variant.Contained" Color="Color.Secondary">Secondary</Button>
-                <Button Variant="Variant.Contained" Disabled="true">Disabled</Button>
+                <Button Variant="Variant.Filled">Default</Button>
+                <Button Variant="Variant.Filled" Color="Color.Primary">Primary</Button>
+                <Button Variant="Variant.Filled" Color="Color.Secondary">Secondary</Button>
+                <Button Variant="Variant.Filled" Disabled="true">Disabled</Button>
             </SectionContent>
-            <SectionSource Code="@Markdown_Contained"></SectionSource>
+            <SectionSource Code="@Markdown_Filled"></SectionSource>
+            <Typography>Elevation can be removed with the DisableElevation bool.</Typography>
+            <SectionContent Outlined="true">
+                <Button Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary">Disable elevation</Button>
+            </SectionContent>
+            <SectionSource Code="@Markdown_DisabledElevation"></SectionSource>
         </DocsPageSection>
 
         <DocsPageSection>
@@ -65,9 +69,9 @@
                     <Button Variant="Variant.Outlined" Size="Size.Large" Color="Color.Secondary">Large</Button>
                 </SectionContentRow>
                 <SectionContentRow>
-                    <Button Variant="Variant.Contained" Size="Size.Small" Color="Color.Primary">Small</Button>
-                    <Button Variant="Variant.Contained" Size="Size.Medium" Color="Color.Primary">Medium</Button>
-                    <Button Variant="Variant.Contained" Size="Size.Large" Color="Color.Primary">Large</Button>
+                    <Button Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary">Small</Button>
+                    <Button Variant="Variant.Filled" Size="Size.Medium" Color="Color.Primary">Medium</Button>
+                    <Button Variant="Variant.Filled" Size="Size.Large" Color="Color.Primary">Large</Button>
                 </SectionContentRow>
                 <SectionContentRow>
                     <IconButton Icon="@Icons.Material.Delete" Size="Size.Small"></IconButton>
@@ -84,12 +88,12 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <Button Variant="Variant.Contained" StartIcon="@Icons.Material.Delete" Color="Color.Secondary">Delete</Button>
-                <Button Variant="Variant.Contained" EndIcon="@Icons.Material.Send" Color="Color.Primary">Send</Button>
-                <Button Variant="Variant.Contained" StartIcon="@Icons.Material.CloudUpload">Upload</Button>
-                <Button Variant="Variant.Contained" StartIcon="@Icons.Material.Mic" Disabled="true">Talk</Button>
-                <Button Variant="Variant.Contained" StartIcon="@Icons.Material.Save" Color="Color.Primary" Size="Size.Small">Save</Button>
-                <Button Variant="Variant.Contained" StartIcon="@Icons.Material.Save" Color="Color.Primary" Size="Size.Large">Save</Button>
+                <Button Variant="Variant.Filled" StartIcon="@Icons.Material.Delete" Color="Color.Secondary">Delete</Button>
+                <Button Variant="Variant.Filled" EndIcon="@Icons.Material.Send" Color="Color.Primary">Send</Button>
+                <Button Variant="Variant.Filled" StartIcon="@Icons.Material.CloudUpload">Upload</Button>
+                <Button Variant="Variant.Filled" StartIcon="@Icons.Material.Mic" Disabled="true">Talk</Button>
+                <Button Variant="Variant.Filled" StartIcon="@Icons.Material.Save" Color="Color.Primary" Size="Size.Small">Save</Button>
+                <Button Variant="Variant.Filled" StartIcon="@Icons.Material.Save" Color="Color.Primary" Size="Size.Large">Save</Button>
             </SectionContent>
             <SectionSource Code="@Markdown_ButtonsWithIcons"></SectionSource>
         </DocsPageSection>
@@ -98,14 +102,14 @@
 
 
 
-@code { string Markdown_Contained = @"```html
-<Button Variant=""Variant.Contained"">Default</Button>
-<Button Variant=""Variant.Contained"" Color=""Color.Primary"">Primary</Button>
-<Button Variant=""Variant.Contained"" Color=""Color.Secondary"">Secondary</Button>
-<Button Variant=""Variant.Contained"" Disabled=""true"">Disabled</Button>
+@code { string Markdown_Filled = @"```html
+<Button Variant=""Variant.Filled"">Default</Button>
+<Button Variant=""Variant.Filled"" Color=""Color.Primary"">Primary</Button>
+<Button Variant=""Variant.Filled"" Color=""Color.Secondary"">Secondary</Button>
+<Button Variant=""Variant.Filled"" Disabled=""true"">Disabled</Button>
 ```";
-    string Markdown_DisabledElevation = @"```html
-<Button Variant=""Variant.Contained"" Color=""Color.Primary"" DisableElevation=""true"">Primary</Button>
+string Markdown_DisabledElevation = @"```html
+<Button Variant=""Variant.Filled"" DisableElevation=""true"" Color=""Color.Primary"">Disable elevation</Button>
 ```";
     string Markdown_Text = @"```html
 <Button Variant=""Variant.Text"">Default</Button>
@@ -126,20 +130,20 @@
 <Button Variant=""Variant.Outlined"" Size=""Size.Small"" Color=""Color.Secondary"">Small</Button>
 <Button Variant=""Variant.Outlined"" Size=""Size.Medium"" Color=""Color.Secondary"">Medium</Button>
 <Button Variant=""Variant.Outlined"" Size=""Size.Large"" Color=""Color.Secondary"">Large</Button>
-<Button Variant=""Variant.Contained"" Size=""Size.Small"" Color=""Color.Primary"">Small</Button>
-<Button Variant=""Variant.Contained"" Size=""Size.Medium"" Color=""Color.Primary"">Medium</Button>
-<Button Variant=""Variant.Contained"" Size=""Size.Large"" Color=""Color.Primary"">Large</Button>
+<Button Variant=""Variant.Filled"" Size=""Size.Small"" Color=""Color.Primary"">Small</Button>
+<Button Variant=""Variant.Filled"" Size=""Size.Medium"" Color=""Color.Primary"">Medium</Button>
+<Button Variant=""Variant.Filled"" Size=""Size.Large"" Color=""Color.Primary"">Large</Button>
 <IconButton Icon=""@Icons.Material.Delete"" Size=""Size.Small""></IconButton>
 <IconButton Icon=""@Icons.Material.Delete"" Size=""Size.Medium""></IconButton>
 <IconButton Icon=""@Icons.Material.Delete"" Size=""Size.Large""></IconButton>
 ```";
     string Markdown_ButtonsWithIcons = @"```html
-<Button Variant=""Variant.Contained"" StartIcon=""@Icons.Material.Delete"" Color=""Color.Secondary"">Delete</Button>
-<Button Variant=""Variant.Contained"" EndIcon=""@Icons.Material.Send"" Color=""Color.Primary"">Send</Button>
-<Button Variant=""Variant.Contained"" StartIcon=""@Icons.Material.CloudUpload"">Upload</Button>
-<Button Variant=""Variant.Contained"" StartIcon=""@Icons.Material.Mic"" Disabled=""true"">Talk</Button>
-<Button Variant=""Variant.Contained"" StartIcon=""@Icons.Material.Save"" Color=""Color.Primary"" Size=""Size.Small"">Save</Button>
-<Button Variant=""Variant.Contained"" StartIcon=""@Icons.Material.Save"" Color=""Color.Primary"" Size=""Size.Large"">Save</Button>
+<Button Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Delete"" Color=""Color.Secondary"">Delete</Button>
+<Button Variant=""Variant.Filled"" EndIcon=""@Icons.Material.Send"" Color=""Color.Primary"">Send</Button>
+<Button Variant=""Variant.Filled"" StartIcon=""@Icons.Material.CloudUpload"">Upload</Button>
+<Button Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Mic"" Disabled=""true"">Talk</Button>
+<Button Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Save"" Color=""Color.Primary"" Size=""Size.Small"">Save</Button>
+<Button Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Save"" Color=""Color.Primary"" Size=""Size.Large"">Save</Button>
 ```";
 
 }

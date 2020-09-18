@@ -10,7 +10,7 @@
     padding: 20px;
     border-radius: 4px;
     margin-bottom: 40px;
-    background-color: #fff;
+    background-color: var(--mud-theme-surface);
     margin: auto;
     display: flex;
     outline: 0;
@@ -40,11 +40,11 @@
     }
 
     &.docs-section-content-darken {
-        background-color: #f5f5f5;
+        background-color: var(--mud-theme-background-grey);
     }
 
     &.docs-section-content-outlined {
-        border: 1px solid rgba(0, 0, 0, 0.12);
+        border: 1px solid var(--mud-theme-border-color-default);
     }
 
     &.docs-section-content-display-grid {

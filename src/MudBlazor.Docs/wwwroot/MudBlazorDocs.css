@@ -1,7 +1,7 @@
 ﻿.mudblazor-brand {
   font-size: 1.8rem;
   font-weight: 400;
-  color: #555;
+  color: var(--mud-theme-on-surface);
   margin-left: auto;
   margin-right: auto; }
 
@@ -31,7 +31,7 @@
     overflow: auto;
     direction: ltr;
     border-radius: var(--mud-theme-border-radius-default);
-    background-color: #272c34;
+    background-color: var(--mud-theme-color-dark);
     -webkit-overflow-scrolling: touch; }
   .MarkdownSection-Root code {
     color: #fff;
@@ -69,16 +69,11 @@
     text-align: center; }
   .docs-footer ul li {
     padding: 6px 0; }
-    .docs-footer ul li a {
-      color: rgba(0, 0, 0, 0.64); }
 
 .demo-grid-spacing .mud-paper {
   width: 140px;
   height: 140px;
   text-align: center; }
-
-.demo-grid-spacing .docs-section-content-inner {
-  width: 100%; }
 
 .demo-grid-spacing .demo-grid-paper {
   padding: 10px 20px;
@@ -100,7 +95,7 @@
   padding: 10px 0;
   width: 100%;
   max-width: 360px;
-  background-color: #fff; }
+  background-color: var(--mud-theme-surface); }
 
 .demo-paper .mud-paper {
   width: 128px;
@@ -109,17 +104,21 @@
 
 .demo-container .mud-container {
   height: 100%;
-  background-color: #cfe8fc; }
+  background-color: rgba(89, 74, 226, 0.25); }
 
 .demo-container .mud-paper {
   height: 400px;
   width: 100%;
-  background-color: #fff; }
+  background-color: var(--mud-theme-surface); }
 
-.demo-drawer {
-  background-color: #fff;
+.demo-drawer .mud-main-content {
+  background-color: var(--mud-theme-surface);
   padding: 20px;
   padding-top: 86px; }
+
+.demo-textfield div .mud-formcontrol {
+  width: 25ch;
+  margin: 8px; }
 
 .docs-home {
   padding-top: 128px;
@@ -217,7 +216,7 @@
   padding: 20px;
   border-radius: 4px;
   margin-bottom: 40px;
-  background-color: #fff;
+  background-color: var(--mud-theme-surface);
   margin: auto;
   display: flex;
   outline: 0;
@@ -236,9 +235,9 @@
   .docs-section-content.docs-content-full-width > .docs-section-content-inner {
     width: 100%; }
   .docs-section-content.docs-section-content-darken {
-    background-color: #f5f5f5; }
+    background-color: var(--mud-theme-background-grey); }
   .docs-section-content.docs-section-content-outlined {
-    border: 1px solid rgba(0, 0, 0, 0.12); }
+    border: 1px solid var(--mud-theme-border-color-default); }
   .docs-section-content.docs-section-content-display-grid {
     display: grid; }
   .docs-section-content > .docs-section-content-inner > *:not(.mud-grid) {

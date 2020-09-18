@@ -4,15 +4,11 @@ namespace MudBlazor
 {
     public enum Variant
     {
-        [Description("regular")]
-        Regular,
-        [Description("dense")]
-        Dense,
         [Description("text")]
         Text,
+        [Description("filled")]
+        Filled,
         [Description("outlined")]
-        Outlined,
-        [Description("contained")]
-        Contained
+        Outlined
     }
 }

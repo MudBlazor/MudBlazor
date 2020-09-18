@@ -23,6 +23,12 @@ namespace MudBlazor
         [Description("dark")]
         Dark,
         [Description("transparent")]
-        Transparent
+        Transparent,
+        [Description("surface")]
+        Surface,
+        [Description("appbar")]
+        Appbar,
+        [Description("drawer")]
+        Drawer
     }
 }

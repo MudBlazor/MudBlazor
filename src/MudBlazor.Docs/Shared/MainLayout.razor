@@ -1,12 +1,13 @@
 ﻿@inherits LayoutComponentBase
 
-<ThemeProvider/>
+<ThemeProvider Theme="currentTheme"/>
 <MarkdownScripts />
 
     <Layout DrawerOpen="@_drawerOpen">
-        <AppBar Elevation="99">
+        <AppBar Elevation="99" Color="Color.Appbar">
             <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
             <AppBarSpacer />
+            <IconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
             <IconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
         </AppBar>
         <Drawer Elevation="99">
@@ -30,5 +31,44 @@
         {
             _drawerOpen = !_drawerOpen;
         }
+
+        protected override void OnInitialized()
+        {
+            currentTheme = defaultTheme;
+        }
+
+        void DarkMode()
+        {
+            if(currentTheme == defaultTheme)
+            {
+                currentTheme = darkTheme;
+            }
+            else
+            {
+                currentTheme = defaultTheme;
+            }
+        }
+
+        MudTheme currentTheme = new MudTheme();
+        MudTheme defaultTheme = new MudTheme();
+        MudTheme darkTheme = new MudTheme()
+        {
+            Color_Default = "#fff",
+            Color_OnDefault = "#fff",
+            Color_Background = "#1c2025",
+            Color_Surface = "#282C34",
+            Color_AppBar = "#282C34",
+            Color_OnAppBar = "#fff",
+            Color_Drawer = "#282C34",
+            Color_OnDrawer = "#adb0bb",
+            Color_OnSurface = "#adb0bb",
+            Color_Text_Default  = "#adb0bb",
+            Color_Secondary = "#E62C71",
+            Color_Dark = "#14171b",
+            Color_Background_Grey = "#14171b",
+            Color_Border_Default = "#282C34"
+        };
+
+
     }
 

@@ -3,7 +3,7 @@
     height: 1px;
     margin: 0;
     flex-shrink: 0;
-    background-color: rgba(0, 0, 0, 0.12);
+    background-color: var(--mud-theme-border-color-default);
 }
 
 .mud-divider-absolute {

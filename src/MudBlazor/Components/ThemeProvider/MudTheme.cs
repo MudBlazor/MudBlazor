@@ -14,8 +14,13 @@ namespace MudBlazor
             theme.AppendLine($"--mud-theme-on-surface: {Color_OnSurface};");
             theme.AppendLine($"--mud-theme-surface: {Color_Surface};");
             theme.AppendLine($"--mud-theme-background: {Color_Background};");
+            theme.AppendLine($"--mud-theme-background-grey: {Color_Background_Grey};");
+            theme.AppendLine($"--mud-theme-appbar: {Color_AppBar};");
+            theme.AppendLine($"--mud-theme-on-appbar: {Color_OnAppBar};");
+            theme.AppendLine($"--mud-theme-drawer: {Color_Drawer};");
+            theme.AppendLine($"--mud-theme-on-drawer: {Color_OnDrawer};");
 
-            theme.AppendLine($"--mud-theme-text-default: {BuildColor(Color_Text_Default, ColorOption.RgbA, 0.87)};");
+            theme.AppendLine($"--mud-theme-text-default: {Color_Text_Default};");
             theme.AppendLine($"--mud-theme-text-secondary: {BuildColor(Color_Text_Default, ColorOption.RgbA, 0.54)};");
 
             theme.AppendLine($"--mud-theme-color-default: {BuildColor(Color_Default, ColorOption.RgbA, 0.54)};");
@@ -38,9 +43,6 @@ namespace MudBlazor
             theme.AppendLine($"--mud-theme-color-secondary-darken: {BuildColor(Color_Secondary, ColorOption.Darken)};");
             theme.AppendLine($"--mud-theme-color-secondary-hover: {BuildColor(Color_Secondary, ColorOption.RgbA, 0.06)};");
 
-            
-            
-            
 
             theme.AppendLine($"--mud-theme-color-info: {Color_Info};");
             theme.AppendLine($"--mud-theme-color-success: {Color_Success};");
@@ -48,6 +50,9 @@ namespace MudBlazor
             theme.AppendLine($"--mud-theme-color-danger: {Color_Danger};");
             theme.AppendLine($"--mud-theme-color-dark: {Color_Dark};");
 
+            theme.AppendLine($"--mud-theme-border-color-default: {Color_Border_Default};");
+            theme.AppendLine($"--mud-theme-border-color-outlines: {Color_Border_Outlines};");
+            theme.AppendLine($"--mud-theme-border-color-inputs: {Color_Border_Inputs};");
             theme.AppendLine($"--mud-theme-border-radius-default: {BorderRadius_Default};");
         }
 

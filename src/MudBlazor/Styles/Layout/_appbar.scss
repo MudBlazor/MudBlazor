@@ -2,7 +2,7 @@
 .mud-appbar {
     width: 100%;
     display: flex;
-    z-index: 10;
+    z-index: 99;
     box-sizing: border-box;
     flex-shrink: 0;
     flex-direction: column;
@@ -64,6 +64,16 @@
 .mud-appbar-color-secondary {
     color: var(--mud-theme-color-on-secondary);
     background-color: var(--mud-theme-color-secondary);
+}
+
+.mud-appbar-color-surface {
+    color: var(--mud-theme-on-surface);
+    background-color: var(--mud-theme-surface);
+}
+
+.mud-appbar-color-appbar {
+    color: var(--mud-theme-on-appbar);
+    background-color: var(--mud-theme-appbar);
 }
 
 .mud-appbar-color-inherit {

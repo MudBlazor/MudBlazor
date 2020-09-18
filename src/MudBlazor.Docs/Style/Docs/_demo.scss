@@ -5,10 +5,6 @@
         text-align: center;
     }
 
-    & .docs-section-content-inner {
-        width: 100%;
-    }
-
     & .demo-grid-paper {
         padding: 10px 20px;
         width: 100% !important;
@@ -36,7 +32,7 @@
         padding: 10px 0;
         width: 100%;
         max-width: 360px;
-        background-color: #fff;
+        background-color: var(--mud-theme-surface);
     }
 }
 
@@ -49,21 +45,32 @@
 }
 
 .demo-container {
-
     & .mud-container {
         height: 100%;
-        background-color: rgb(207, 232, 252);
+        background-color: rgba(89,74,226, 0.25);
     }
 
     & .mud-paper {
         height: 400px;
         width: 100%;
-        background-color: #fff;
+        background-color: var(--mud-theme-surface);
     }
 }
 
 .demo-drawer {
-    background-color: #fff;
-    padding: 20px;
-    padding-top: 86px;
+    & .mud-main-content {
+        background-color: var(--mud-theme-surface);
+        padding: 20px;
+        padding-top: 86px;
+    }
+}
+
+.demo-textfield {
+
+    & div {
+        & .mud-formcontrol {
+            width: 25ch;
+            margin: 8px;
+        }
+    }
 }

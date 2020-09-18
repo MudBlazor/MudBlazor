@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor
+@inherits ComponentBaseTextField
+
+
+<FormControl HelperText="@HelperText">
+    <Input InputType="@InputType" Class="mud-input-formcontrol" Variant="@Variant" Value="@Value" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly" />
+    <InputLabel Class="mud-input-label-formcontrol" Variant="@Variant">
+        @Label
+    </InputLabel>
+</FormControl>
+
