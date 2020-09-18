@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor
+@inherits ComponentBaseMudSelectItem
+
+
+
+<ListItem @onclick="@(e => MudSelect.OnSelect(Value))">
+    @ChildContent
+</ListItem>
+
+

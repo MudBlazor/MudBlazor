@@ -1,0 +1,42 @@
+﻿@page "/components/inputs/select"
+
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Select</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Basic Selects's</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudSelect Label="Food" OnSelected="OnSelected">
+                    <MudSelectItem Value="pizza">Pizza</MudSelectItem>
+                    <MudSelectItem Value="burgers">Burgers</MudSelectItem>
+                    <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
+                </MudSelect>
+            </SectionContent>
+            <Typography>Selected item: @Item</Typography>
+            <SectionSource Code="@Markdown_Basic"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
+@code {
+
+    private string Item { get; set; } = "Nothing selected";
+
+    private void OnSelected(string selection)
+    {
+        Item = selection;
+    }
+
+
+    string Markdown_Basic = @"```html
+
+```";
+
+}
