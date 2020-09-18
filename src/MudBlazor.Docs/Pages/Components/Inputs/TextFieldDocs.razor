@@ -21,6 +21,18 @@
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
+                <Title>Form Props</Title>
+                <Description>Required, Disabled, Type, HelperText</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <TextField Label="With Helper" HelperText="Some helping Text" Variant="Variant.Text"></TextField>
+                <TextField Label="Disabled" Variant="Variant.Text" Disabled="true"></TextField>
+                <TextField Label="Password" Type="MudBlazor.Type.Password" Variant="Variant.Text"></TextField>
+            </SectionContent>
+            <SectionSource Code="@Markdown_FormProps"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
                 <Title>Inputs</Title>
                 <Description></Description>
             </SectionHeader>
@@ -38,12 +50,17 @@
 @code {
 
 
-string Markdown_TextField = @"```html
+    string Markdown_TextField = @"```html
 <TextField Label=""Standard"" Variant=""Variant.Text""></TextField>
 <TextField Label=""Filled"" Variant=""Variant.Filled""></TextField>
 <TextField Label=""Outlined"" Variant=""Variant.Outlined""></TextField>
 ```";
-string Markdown_Input = @"```html
+    string Markdown_FormProps = @"```html
+<TextField Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Text""></TextField>
+<TextField Label=""Disabled"" Variant=""Variant.Text"" Disabled=""true""></TextField>
+<TextField Label=""Password"" Type=""Type.Password"" Variant=""Variant.Text""></TextField>
+```";
+    string Markdown_Input = @"```html
 <Input Value=""Basic Input"" />
 <Input Placeholder=""Placeholder"" />
 <Input Value=""Disabled"" Disabled=""true"" />

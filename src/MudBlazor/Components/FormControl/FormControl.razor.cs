@@ -11,6 +11,7 @@ namespace MudBlazor
        .Build();
 
         [Parameter] public string Class { get; set; }
+        [Parameter] public string HelperText { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
     }
 }
