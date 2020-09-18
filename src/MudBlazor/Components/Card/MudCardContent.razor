@@ -1,11 +1,8 @@
 ﻿@namespace MudBlazor
+@inherits MudComponentBase
 
-<div class="mud-card-content">
+<div class="mud-card-content" style="@Style">
     @ChildContent
 </div>
 
-@code {
-
-    [Parameter] public RenderFragment ChildContent { get; set; }
-
-}
+@code { [Parameter] public RenderFragment ChildContent { get; set; } }
