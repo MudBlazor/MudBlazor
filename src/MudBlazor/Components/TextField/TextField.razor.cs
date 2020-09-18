@@ -14,6 +14,5 @@ namespace MudBlazor
        new CssBuilder().AddClass(Class)
        .Build();
 
-        [Parameter] public string Class { get; set; }
     }
 }

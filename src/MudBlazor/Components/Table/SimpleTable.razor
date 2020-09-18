@@ -1,12 +1,12 @@
 ﻿@namespace MudBlazor
-@inherits ComponentBaseSimpleTable
+@inherits MudComponentBase
 
-<div class="mud-simple-table">
-    <Paper>
+<div class="@Classname" style="@Style" >
+    <MudPaper>
         <div class="mud-simple-table-container">
             <table>
                 @ChildContent
             </table>
         </div>
-    </Paper>
+    </MudPaper>
 </div>

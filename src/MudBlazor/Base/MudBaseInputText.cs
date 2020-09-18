@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public abstract class MudBaseInputText : ComponentBase
+    public abstract class MudBaseInputText : MudComponentBase
     {
         private string _value;
 

@@ -1385,6 +1385,18 @@ button.mud-list-item {
   width: 100%;
   overflow-x: auto; }
 
+.mud-simple-table-dense table tbody tr td {
+  padding: 6px 24px 6px 16px; }
+
+.mud-simple-table-dense table theader tr th {
+  padding: 6px 24px 6px 16px; }
+
+.mud-simple-table-dense table tr th {
+  padding: 6px 24px 6px 16px; }
+
+.mud-simple-table-dense table tr td {
+  padding: 6px 24px 6px 16px; }
+
 /*
 .mud-table caption {
     color: rgba(0, 0, 0, 0.54);

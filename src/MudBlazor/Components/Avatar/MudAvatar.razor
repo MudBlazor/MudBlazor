@@ -1,7 +1,8 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
+@inherits MudComponentBase
 
-<div class="@Classname">
+<div class="@Classname" style="@Style">
     @ChildContent
 </div>
 
@@ -18,8 +19,6 @@
     [Parameter] public bool Square { get; set; }
 
     [Parameter] public bool Rounded { get; set; }
-
-    [Parameter] public string Class { get; set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 }

@@ -12,11 +12,11 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <AppBar Position="Position.Static">
-                    <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" />
-                    <AppBarSpacer />
-                    <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
-                </AppBar>
+                <MudAppBar Position="Position.Static">
+                    <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+                    <MudAppBarSpacer />
+                    <MudButton Variant="Variant.Text" Color="Color.Inherit">Login</MudButton>
+                </MudAppBar>
             </SectionContent>
             <SectionSource Code="@Markdown_Simple_AppBar"></SectionSource>
         </DocsPageSection>
@@ -26,11 +26,11 @@
                 <Description>You can change the App Bar elevation, with values from 0-24</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
-                <AppBar Position="Position.Static" Elevation="0">
-                    <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" />
-                    <AppBarSpacer />
-                    <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
-                </AppBar>
+                <MudAppBar Position="Position.Static" Elevation="0">
+                    <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+                    <MudAppBarSpacer />
+                    <MudButton Variant="Variant.Text" Color="Color.Inherit">Login</MudButton>
+                </MudAppBar>
             </SectionContent>
             <SectionSource Code="@Markdown_Elevation"></SectionSource>
         </DocsPageSection>
@@ -39,17 +39,17 @@
 
 @code {
 string Markdown_Simple_AppBar = @"```html
-<AppBar Position=""Position.Static"">
-    <IconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
-    <AppBarSpacer />
-    <Button Variant=""Variant.Text"" Color=""Color.Inherit"">Login</Button>
-</AppBar>
+<MudAppBar Position=""Position.Static"">
+    <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
+    <MudAppBarSpacer />
+    <MudButton Variant=""Variant.Text"" Color=""Color.Inherit"">Login</MudButton>
+</MudAppBar>
 ```";
 string Markdown_Elevation = @"```html
-<AppBar Position=""Position.Static"" Elevation=""0"">
-    <IconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
-    <AppBarSpacer />
-    <Button Variant=""Variant.Text"" Color=""Color.Inherit"">Login</Button>
-</AppBar>
+<MudAppBar Position=""Position.Static"" Elevation=""0"">
+    <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
+    <MudAppBarSpacer />
+    <MudButton Variant=""Variant.Text"" Color=""Color.Inherit"">Login</MudButton>
+</MudAppBar>
 ```";
 }

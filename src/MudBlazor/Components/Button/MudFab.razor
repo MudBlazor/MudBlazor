@@ -1,0 +1,9 @@
+﻿@namespace MudBlazor
+@inherits MudBaseButton
+
+<button type="button" class="@Classname" style="@Style" @onclick="OnClickHandler" href="@Link" disabled="@Disabled">
+    <span class="mud-fab-label">
+        <Icon Icon="@Icon"></Icon>
+        @Label
+    </span>
+</button>

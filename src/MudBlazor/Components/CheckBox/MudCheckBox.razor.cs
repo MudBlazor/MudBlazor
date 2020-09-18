@@ -9,7 +9,7 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public class ComponentBaseCheckBox : ComponentBase
+    public partial class MudCheckBox : MudComponentBase
     {
         protected string Classname =>
         new CssBuilder("mud-button-root mud-icon-button")
@@ -23,7 +23,7 @@ namespace MudBlazor
         [Parameter] public string Label { get; set; }
         [Parameter] public bool DisableRipple { get; set; }
         [Parameter] public bool Disabled { get; set; }
-        [Parameter] public string Class { get; set; }
+
         [Parameter]
         public EventCallback<bool> CheckedChanged { get; set; }
 

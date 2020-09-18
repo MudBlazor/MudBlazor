@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2011 - 2019 Ed Charbeneau
+// License: MIT
+// See https://github.com/EdCharbeneau
+
+using System;
 using System.Collections.Generic;
 
 namespace MudBlazor.Utilities
