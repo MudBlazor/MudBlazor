@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class AppBar :  MudComponentBase
+    public partial class MudAppBar :  MudComponentBase
     {
         protected string Classname =>
             new CssBuilder("mud-appbar")
