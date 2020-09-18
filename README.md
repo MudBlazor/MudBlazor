@@ -9,12 +9,12 @@
 ## Features
 - Write and run Blazor components
 - Save and share code snippets
+- Support multiple components
 - View build diagnostics
 - Hightlights and simple autocomplete for user code
 - Customize REPL page layout
 
 ## Future work
-- Support multiple components
 - Enable REPL page integration in external sites (iframe)
 - Support overriding configurations and introducing new services
 - Support installing NuGet packages
