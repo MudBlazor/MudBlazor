@@ -24,6 +24,7 @@
             </SectionContent>
             <SectionSource Code="@Markdown_Simple"></SectionSource>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Outlined</Title>
@@ -42,6 +43,7 @@
             </SectionContent>
             <SectionSource Code=@Markdown_Outlined></SectionSource>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Header</Title>
@@ -50,12 +52,12 @@
             <SectionContent DarkenBackground="true">
                 <MudCard>
                     <MudCardHeader>
-                        <MudCardHeaderContent>
+                        <CardHeaderContent>
                             <Typography Typo="Typo.h6">The Story Book</Typography>
-                        </MudCardHeaderContent>
-                        <MudCardHeaderActions>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
                             <MudIconButton Icon="@Icons.Material.Settings" Color="Color.Inherit" />
-                        </MudCardHeaderActions>
+                        </CardHeaderActions>
                     </MudCardHeader>
                     <MudCardContent>
                         <Typography>This day everything happend.</Typography>
@@ -69,6 +71,7 @@
             <SectionSource Code="@Markdown_Header">
             </SectionSource>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Media</Title>
@@ -90,6 +93,7 @@
             </SectionContent>
             <SectionSource Code="@Markdown_Media"></SectionSource>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Combined</Title>
@@ -98,16 +102,16 @@
             <SectionContent DarkenBackground="true">
                 <MudCard>
                     <MudCardHeader>
-                        <MudCardHeaderAvatar>
-                            <Avatar>I</Avatar>
-                        </MudCardHeaderAvatar>
-                        <MudCardHeaderContent>
+                        <CardHeaderAvatar>
+                            <MudAvatar>I</MudAvatar>
+                        </CardHeaderAvatar>
+                        <CardHeaderContent>
                             <Typography Typo="Typo.body1">Istra Croatia</Typography>
                             <Typography Typo="Typo.body2">Peninsula in Europe</Typography>
-                        </MudCardHeaderContent>
-                        <MudCardHeaderActions>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
                             <MudIconButton Icon="@Icons.Material.Settings" Color="Color.Default" />
-                        </MudCardHeaderActions>
+                        </CardHeaderActions>
                     </MudCardHeader>
                     <MudCardMedia Image="_content/MudBlazor.Docs/images/content-template-pilars.png" Height="250" />
                     <MudCardContent>
@@ -151,12 +155,12 @@ string Markdown_Outlined = @"```html
 string Markdown_Header = @"```html
 <MudCard>
     <MudCardHeader>
-        <MudCardHeaderContent>
+        <CardHeaderContent>
             <Typography Typo=""Typo.h6"">The Story Book</Typography>
-        </MudCardHeaderContent>
-        <MudCardHeaderActions>
-            <MudIconButton Icon=""@Icons.Material_Settings"" Color=""Color.Inherit"" />
-        </MudCardHeaderActions>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon=""@Icons.Material.Settings"" Color=""Color.Inherit"" />
+        </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
         <Typography>This day everything happend.</Typography>
@@ -183,26 +187,26 @@ string Markdown_Media = @"```html
 ```";
 string Markdown_Combined = @"```html
 <MudCard>
-    <MudCardHeader>
-        <MudCardHeaderAvatar>
-            <Avatar>I</Avatar>
-        </MudCardHeaderAvatar>
-        <MudCardHeaderContent>
-            <Typography Typo=""Typo.body1"">Istra Croatia</Typography>
-            <Typography Typo=""Typo.body2"">Peninsula in Europe</Typography>
-        </MudCardHeaderContent>
-        <MudCardHeaderActions>
-            <MudIconButton Icon=""@Icons.Material_Settings"" Color=""Color.Default"" />
-        </MudCardHeaderActions>
-    </MudCardHeader>
-    <MudCardMedia Image=""_content/MudBlazor.Docs/images/content-template-pilars.png"" Height=""250"" />
-    <MudCardContent>
-        <Typography Typo=""Typo.body2"">This photo was taken in a small village in Istra Croatia.</Typography>
-    </MudCardContent>
-    <MudCardActions>
-        <MudIconButton Icon=""@Icons.Material_Favorite"" Color=""Color.Default"" />
-        <MudIconButton Icon=""@Icons.Material_Share"" Color=""Color.Default"" />
-    </MudCardActions>
+<MudCardHeader>
+    <CardHeaderAvatar>
+        <MudAvatar>I</MudAvatar>
+    </CardHeaderAvatar>
+    <CardHeaderContent>
+        <Typography Typo=""Typo.body1"">Istra Croatia</Typography>
+        <Typography Typo=""Typo.body2"">Peninsula in Europe</Typography>
+    </CardHeaderContent>
+    <CardHeaderActions>
+        <MudIconButton Icon=""@Icons.Material.Settings"" Color=""Color.Default"" />
+    </CardHeaderActions>
+</MudCardHeader>
+<MudCardMedia Image=""_content/MudBlazor.Docs/images/content-template-pilars.png"" Height=""250"" />
+<MudCardContent>
+    <Typography Typo=""Typo.body2"">This photo was taken in a small village in Istra Croatia.</Typography>
+</MudCardContent>
+<MudCardActions>
+    <MudIconButton Icon=""@Icons.Material.Favorite"" Color=""Color.Default"" />
+    <MudIconButton Icon=""@Icons.Material.Share"" Color=""Color.Default"" />
+</MudCardActions>
 </MudCard>
 ```";
 }

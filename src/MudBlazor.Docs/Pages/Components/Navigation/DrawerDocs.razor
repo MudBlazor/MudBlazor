@@ -82,11 +82,11 @@
 
 string Markdown_Drawer = @"```html
 <Layout DrawerOpen=""@DocsDrawerOpen"">
-    <AppBar Position=""Position.Absolute"" Elevation=""0"">
+    <MudAppBar Position=""Position.Absolute"" Elevation=""0"">
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
-        <AppBarSpacer />
+        <MudAppBarSpacer />
         <Button Variant=""Variant.Text"" Color=""Color.Inherit"">Login</Button>
-    </AppBar>
+    </MudAppBar>
     <Drawer>
         <DrawerHeader>
             <Typography Typo=""Typo.h6"">My App</Typography>
@@ -113,11 +113,11 @@ string Markdown_Drawer = @"```html
 ```";
 string Markdown_Clipping = @"```html
 <Layout DrawerOpen=""@DocsDrawerOpen"" DrawerClipped=""true"">
-<AppBar Position=""Position.Absolute"" Elevation=""0"">
+<MudAppBar Position=""Position.Absolute"" Elevation=""0"">
     <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
-    <AppBarSpacer />
+    <MudAppBarSpacer />
     <Button Variant=""Variant.Text"" Color=""Color.Inherit"">Login</Button>
-</AppBar>
+</MudAppBar>
 <Drawer Anchor=""Anchor.Right"">
     <DrawerHeader>
         <Typography Typo=""Typo.h6"">My App</Typography>
