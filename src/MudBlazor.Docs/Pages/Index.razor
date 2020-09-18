@@ -7,7 +7,7 @@
         <div>
             <h1>MudBlazor</h1>
             <p>Blazor components for faster and easier web development.</p>
-            <Button Variant="Variant.Outlined" Color="Color.Primary" Link="/getting-started/installation">Get Started</Button>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Link="/getting-started/installation">Get Started</MudButton>
         </div>
     </div>
 </Container>
@@ -23,7 +23,7 @@
                 <MarkdownSegment Text="@Markdown_Install" />
                 <Typography Typo="Typo.subtitle1">Link the css file in your _Host.cshtml or index.html</Typography>
                 <MarkdownSegment  Text="@Markdown_Link" />
-                <Button Variant="Variant.Text" Color="Color.Primary" Link="/getting-started/installation">Read installation docs</Button>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Link="/getting-started/installation">Read installation docs</MudButton>
             </Paper>
         </Item>
         <Item GridSize="GridSize.Six">
@@ -36,7 +36,7 @@
                 <MarkdownSegment Text="@Markdown_Using" />
                 <Typography Typo="Typo.subtitle1">Usage</Typography>
                 <MarkdownSegment Text="@Markdown_Usage" />
-                <Button Variant="Variant.Text" Color="Color.Primary" Link="/getting-started/usage">Explore the docs</Button>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Link="/getting-started/usage">Explore the docs</MudButton>
             </Paper>
         </Item>
     </Grid>
@@ -61,6 +61,6 @@ string Markdown_Using = @"```html
 @using MudBlazor
 ```";
 string Markdown_Usage = @"```html
-<Button Color=""Color.Primary"">My Button</Button>
+<MudButton Color=""Color.Primary"">My Button</MudButton>
 ```";
 }

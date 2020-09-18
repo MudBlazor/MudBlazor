@@ -13,9 +13,9 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <AppBar Position="Position.Static">
-                    <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+                    <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" />
                     <AppBarSpacer />
-                    <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
+                    <MudButton Variant="Variant.Text" Color="Color.Inherit">Login</MudButton>
                 </AppBar>
             </SectionContent>
             <SectionSource Code="@Markdown_Simple_AppBar"></SectionSource>
@@ -27,9 +27,9 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <AppBar Position="Position.Static" Elevation="0">
-                    <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+                    <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" />
                     <AppBarSpacer />
-                    <Button Variant="Variant.Text" Color="Color.Inherit">Login</Button>
+                    <MudButton Variant="Variant.Text" Color="Color.Inherit">Login</MudButton>
                 </AppBar>
             </SectionContent>
             <SectionSource Code="@Markdown_Elevation"></SectionSource>
@@ -40,16 +40,16 @@
 @code {
 string Markdown_Simple_AppBar = @"```html
 <AppBar Position=""Position.Static"">
-    <IconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
+    <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
     <AppBarSpacer />
-    <Button Variant=""Variant.Text"" Color=""Color.Inherit"">Login</Button>
+    <MudButton Variant=""Variant.Text"" Color=""Color.Inherit"">Login</MudButton>
 </AppBar>
 ```";
 string Markdown_Elevation = @"```html
 <AppBar Position=""Position.Static"" Elevation=""0"">
-    <IconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
+    <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
     <AppBarSpacer />
-    <Button Variant=""Variant.Text"" Color=""Color.Inherit"">Login</Button>
+    <MudButton Variant=""Variant.Text"" Color=""Color.Inherit"">Login</MudButton>
 </AppBar>
 ```";
 }

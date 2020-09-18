@@ -9,7 +9,7 @@
         <MarkdownSegment Text="@Markdown_QuickStart" />
         <SectionContent Outlined="true" DisplayFlex="true">
             <Typography Typo="Typo.h6">MudBlazor is @Text</Typography>
-            <Button Variant="Variant.Filled" Color="Color.Primary" OnClick="ButtonOnClick">@ButtonText</Button>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ButtonOnClick">@ButtonText</MudButton>
         </SectionContent>
     </Container>
     <Container>
@@ -33,7 +33,7 @@
     }
     string Markdown_QuickStart = @"```html
 <Typography Typo=""Typo.h6"">MudBlazor is @Text</Typography>
-<Button Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ButtonOnClick"">@ButtonText</Button>
+<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ButtonOnClick"">@ButtonText</MudButton>
 
 @code {
     public string Text { get; set; } = ""????""

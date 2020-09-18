@@ -12,10 +12,10 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <Fab Color="Color.Primary" Icon="@Icons.Material.Add" />
-                <Fab Color="Color.Secondary" Icon="@Icons.Material.Edit" />
-                <Fab Icon="@Icons.Material.Navigation" Label="Navigation" />
-                <Fab Icon="@Icons.Material.Save" Disabled="true" />
+                <MudFab Color="Color.Primary" Icon="@Icons.Material.Add" />
+                <MudFab Color="Color.Secondary" Icon="@Icons.Material.Edit" />
+                <MudFab Icon="@Icons.Material.Navigation" Label="Navigation" />
+                <MudFab Icon="@Icons.Material.Save" Disabled="true" />
             </SectionContent>
             <SectionSource Code="@Markdown_Simple"></SectionSource>
         </DocsPageSection>
@@ -26,14 +26,14 @@
             </SectionHeader>
             <SectionContent Outlined="true">
                 <SectionContentRow>
-                    <Fab Color="Color.Secondary" Icon="@Icons.Material.Add" Size="Size.Small" />
-                    <Fab Color="Color.Secondary" Icon="@Icons.Material.Add" Size="Size.Medium" />
-                    <Fab Color="Color.Secondary" Icon="@Icons.Material.Add" Size="Size.Large" />
+                    <MudFab Color="Color.Secondary" Icon="@Icons.Material.Add" Size="Size.Small" />
+                    <MudFab Color="Color.Secondary" Icon="@Icons.Material.Add" Size="Size.Medium" />
+                    <MudFab Color="Color.Secondary" Icon="@Icons.Material.Add" Size="Size.Large" />
                 </SectionContentRow>
                 <SectionContentRow>
-                    <Fab Color="Color.Primary" Icon="@Icons.Material.ShoppingCart" Size="Size.Small" Label="To cart" />
-                    <Fab Color="Color.Primary" Icon="@Icons.Material.ShoppingCart" Size="Size.Medium" Label="To cart" />
-                    <Fab Color="Color.Primary" Icon="@Icons.Material.ShoppingCart" Size="Size.Large" Label="To cart" />
+                    <MudFab Color="Color.Primary" Icon="@Icons.Material.ShoppingCart" Size="Size.Small" Label="To cart" />
+                    <MudFab Color="Color.Primary" Icon="@Icons.Material.ShoppingCart" Size="Size.Medium" Label="To cart" />
+                    <MudFab Color="Color.Primary" Icon="@Icons.Material.ShoppingCart" Size="Size.Large" Label="To cart" />
                 </SectionContentRow>
             </SectionContent>
             <SectionSource Code="@Markdown_Size"></SectionSource>
@@ -43,18 +43,18 @@
 
 @code {
     string Markdown_Simple = @"```html
-<Fab Color=""Color.Primary"" Icon=""@Icons.Material.Add""/>
-<Fab Color=""Color.Secondary"" Icon=""@Icons.Material.Edit""/>
-<Fab Icon=""@Icons.Material.Navigation"" Extended=""true"">Navigation</Fab>
-<Fab Icon=""@Icons.Material.Save"" Disabled=""true""></Fab>
+<MudFab Color=""Color.Primary"" Icon=""@Icons.Material.Add""/>
+<MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Edit""/>
+<MudFab Icon=""@Icons.Material.Navigation"" Extended=""true"">Navigation</MudFab>
+<MudFab Icon=""@Icons.Material.Save"" Disabled=""true""></MudFab>
 ```";
     string Markdown_Size = @"```html
-<Fab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Small"" />
-<Fab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Medium"" />
-<Fab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Large"" />
+<MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Small"" />
+<MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Medium"" />
+<MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Large"" />
 
-<Fab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Small"" Label=""Go to cart"" />
-<Fab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Medium"" Label=""Go to cart"" />
-<Fab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Large"" Label=""Go to cart"" />
+<MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Small"" Label=""Go to cart"" />
+<MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Medium"" Label=""Go to cart"" />
+<MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Large"" Label=""Go to cart"" />
 ```";
 }

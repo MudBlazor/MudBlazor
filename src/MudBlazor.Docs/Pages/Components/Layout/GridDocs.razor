@@ -28,8 +28,8 @@
                     </Item>
                 </Grid>
                 <Paper Class="demo-grid-paper" Elevation="0">
-                    <Button Color="Color.Primary" OnClick="@AddSpacing">Change Spacing</Button>
-                    <AppBarSpacer></AppBarSpacer>
+                    <MudButton Color="Color.Primary" OnClick="@AddSpacing">Change Spacing</MudButton>
+                    <MudAppBarSpacer></MudAppBarSpacer>
                     <Typography GutterBottom="false">Spacing: @spacing</Typography>
                 </Paper>
             </SectionContent>
@@ -104,7 +104,7 @@ string Markdown_Spacing = @"```html
     <Item GridSize=""GridSize.Twelve"">
         <Paper Class=""docs-spacing"">
             <Typography>Spacing: @spacing</Typography>
-            <Button Color=""Color.Primary"" OnClick=""@AddSpacing"">Change Spacing</Button>
+            <MudButton Color=""Color.Primary"" OnClick=""@AddSpacing"">Change Spacing</MudButton>
         </Paper>
     </Item>
 </Grid>
