@@ -2313,7 +2313,7 @@ table.mud-table {
   transform: translate(14px, -6px) scale(0.75); }
 
 .mud-shrink + label.mud-input-label.mud-input-label-formcontrol {
-  color: var(--mud-theme-color-primary);
+  color: var(--mud-theme-text-default);
   transform: translate(0, 1.5px) scale(0.75);
   transform-origin: top left; }
 
@@ -2323,7 +2323,7 @@ table.mud-table {
     transform: translate(12px, 7px) scale(0.75); }
 
 .mud-shrink + label.mud-input-label.mud-input-label-formcontrol.mud-input-label-outlined {
-  color: var(--mud-theme-color-primary);
+  color: var(--mud-theme-text-default);
   transform: translate(14px, -6px) scale(0.75); }
 
 .mud-flex-grow-1 {
