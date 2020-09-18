@@ -2056,14 +2056,17 @@ table.mud-table {
   padding: 30px 20px;
   min-height: 200px; }
 
+.mud-select {
+  display: inline-flex; }
+
 .mud-select-icon {
   color: var(--mud-theme-text-default);
-  top: calc(50% - 6px);
+  top: calc(50% - 16px);
   right: 0;
   position: absolute; }
 
 .mud-select-menu {
-  z-index: 20;
+  z-index: 100;
   display: none;
   position: absolute;
   color: var(--mud-theme-text-color-default);
@@ -2074,6 +2077,16 @@ table.mud-table {
   min-height: 16px; }
   .mud-select-menu.mud-open {
     display: block; }
+
+.mud-select-overlay {
+  top: 0;
+  left: 0;
+  margin: 0px !important;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  background-color: transparent;
+  z-index: 99; }
 
 .mud-input {
   position: relative;
@@ -2376,7 +2389,7 @@ table.mud-table {
 .mud-appbar {
   width: 100%;
   display: flex;
-  z-index: 99;
+  z-index: 90;
   box-sizing: border-box;
   flex-shrink: 0;
   flex-direction: column;
@@ -2448,7 +2461,7 @@ table.mud-table {
   flex-shrink: 0;
   flex: 0 0 auto;
   outline: 0;
-  z-index: 98;
+  z-index: 89;
   overflow-y: auto;
   flex-direction: column;
   color: var(--mud-theme-on-drawer);

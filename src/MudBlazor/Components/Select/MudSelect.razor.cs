@@ -16,21 +16,24 @@ namespace MudBlazor
         [Parameter] public string Class { get; set; }
 
         [Parameter] public RenderFragment ChildContent { get; set; }
-        [Parameter] public EventCallback<string> OnSelected { get; set; }
+        [Parameter] public EventCallback<string> SelectedValue { get; set; }
 
         public bool isMenuOpen { get; set; }
 
         public async Task OnSelect(string value)
         {
-            isMenuOpen = false;
+            Value = value;
             StateHasChanged();
-            await OnSelected.InvokeAsync(value);
+            await SelectedValue.InvokeAsync(value);
         }
 
         public void ShowSelect()
         {
-            isMenuOpen = !isMenuOpen;
-            StateHasChanged();
+            if(!Disabled)
+            {
+                isMenuOpen = !isMenuOpen;
+                StateHasChanged();
+            }
         }
     }
 }

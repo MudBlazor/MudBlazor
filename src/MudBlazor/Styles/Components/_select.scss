@@ -1,18 +1,18 @@
 ﻿
 
 .mud-select {
-    
+    display: inline-flex;
 }
 
 .mud-select-icon {
     color: var(--mud-theme-text-default);
-    top: calc(50% - 6px);
+    top: calc(50% - 16px);
     right: 0;
     position: absolute;
 }
 
 .mud-select-menu {
-    z-index: 20;
+    z-index: 100;
     display: none;
     position: absolute;
     color: var(--mud-theme-text-color-default);
@@ -27,3 +27,13 @@
     }
 }
 
+.mud-select-overlay {
+    top: 0;
+    left: 0;
+    margin: 0px !important;
+    height:100%;
+    width:100%;
+    position: fixed;
+    background-color: transparent;
+    z-index: 99;
+}

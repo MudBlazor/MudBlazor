@@ -12,14 +12,30 @@
                 <Title>Basic Selects's</Title>
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <MudSelect Label="Food" OnSelected="OnSelected">
-                    <MudSelectItem Value="pizza">Pizza</MudSelectItem>
-                    <MudSelectItem Value="burgers">Burgers</MudSelectItem>
-                    <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
-                </MudSelect>
-            </SectionContent>
-            <Typography>Selected item: @Item</Typography>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                    <MudSelect Label="Food" SelectedValue="OnSelectedValue">
+                        <MudSelectItem Value="pizza">Pizza</MudSelectItem>
+                        <MudSelectItem Value="burgers">Burgers</MudSelectItem>
+                        <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
+                    </MudSelect>
+                    <MudSelect Label="Food" SelectedValue="OnSelectedValue" HelperText="With helper text">
+                        <MudSelectItem Value="pizza">Pizza</MudSelectItem>
+                        <MudSelectItem Value="burgers">Burgers</MudSelectItem>
+                        <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
+                    </MudSelect>
+
+                    <MudSelect SelectedValue="OnSelectedValue" HelperText="With no label">
+                        <MudSelectItem Value="pizza">Pizza</MudSelectItem>
+                        <MudSelectItem Value="burgers">Burgers</MudSelectItem>
+                        <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
+                    </MudSelect>
+
+                    <MudSelect Placeholder="Brands" SelectedValue="OnSelectedValue" HelperText="Disabled" Disabled="true">
+                        <MudSelectItem Value="volvo">Volvo</MudSelectItem>
+                        <MudSelectItem Value="saab">Saab</MudSelectItem>
+                        <MudSelectItem Value="scania">Scania</MudSelectItem>
+                    </MudSelect>
+        </SectionContent>
             <SectionSource Code="@Markdown_Basic"></SectionSource>
         </DocsPageSection>
     </DocsPageContent>
@@ -29,11 +45,10 @@
 
     private string Item { get; set; } = "Nothing selected";
 
-    private void OnSelected(string selection)
+    private void OnSelectedValue(string value)
     {
-        Item = selection;
+        Item = value;
     }
-
 
     string Markdown_Basic = @"```html
 
