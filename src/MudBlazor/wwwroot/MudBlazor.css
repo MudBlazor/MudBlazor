@@ -1217,6 +1217,30 @@ ul {
     .mud-formcontrol > .mud-input-label-formcontrol.mud-error {
       color: #f44336; }
 
+.mud-form-helpertext {
+  color: rgba(0, 0, 0, 0.54);
+  margin: 0;
+  font-size: 0.75rem;
+  margin-top: 3px;
+  text-align: left;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 400;
+  line-height: 1.66;
+  letter-spacing: 0.03333em; }
+
+.mud-form-helpertext.mud-disabled {
+  color: rgba(0, 0, 0, 0.38); }
+
+.mud-form-helpertext.mud-error {
+  color: #f44336; }
+
+.mud-form-helpertext-marginDense {
+  margin-top: 4px; }
+
+.mud-form-helpertext-contained {
+  margin-left: 14px;
+  margin-right: 14px; }
+
 .mud-list {
   width: 100%;
   margin: 0;
@@ -2300,6 +2324,20 @@ table.mud-table {
   color: var(--mud-theme-color-primary);
   transform: translate(14px, -6px) scale(0.75); }
 
+.mud-shrink + label.mud-input-label.mud-input-label-formcontrol {
+  color: var(--mud-theme-text-default);
+  transform: translate(0, 1.5px) scale(0.75);
+  transform-origin: top left; }
+
+.mud-shrink + label.mud-input-label.mud-input-label-formcontrol.mud-input-label-filled {
+  transform: translate(12px, 10px) scale(0.75); }
+  .mud-shrink + label.mud-input-label.mud-input-label-formcontrol.mud-input-label-filled.mud-input-label-margin-dense {
+    transform: translate(12px, 7px) scale(0.75); }
+
+.mud-shrink + label.mud-input-label.mud-input-label-formcontrol.mud-input-label-outlined {
+  color: var(--mud-theme-text-default);
+  transform: translate(14px, -6px) scale(0.75); }
+
 .mud-flex-grow-1 {
   flex-grow: 1; }
 
@@ -2325,7 +2363,7 @@ table.mud-table {
 .mud-appbar {
   width: 100%;
   display: flex;
-  z-index: 10;
+  z-index: 99;
   box-sizing: border-box;
   flex-shrink: 0;
   flex-direction: column;
@@ -2397,7 +2435,7 @@ table.mud-table {
   flex-shrink: 0;
   flex: 0 0 auto;
   outline: 0;
-  z-index: 9;
+  z-index: 98;
   overflow-y: auto;
   flex-direction: column;
   color: var(--mud-theme-on-drawer);

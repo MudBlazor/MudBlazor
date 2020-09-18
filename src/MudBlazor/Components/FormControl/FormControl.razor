@@ -7,5 +7,9 @@
 
 <div class="@Classname">
     @ChildContent
+    @if(!String.IsNullOrEmpty(HelperText))
+    {
+        <p class="mud-form-helpertext">@HelperText</p>
+    }
 </div>
 

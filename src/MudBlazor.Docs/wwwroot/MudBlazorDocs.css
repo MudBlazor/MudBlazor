@@ -116,6 +116,10 @@
   padding: 20px;
   padding-top: 86px; }
 
+.demo-textfield div .mud-formcontrol {
+  width: 25ch;
+  margin: 8px; }
+
 .docs-home {
   padding-top: 128px;
   padding-bottom: 128px;
