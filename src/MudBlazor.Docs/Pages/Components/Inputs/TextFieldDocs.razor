@@ -24,10 +24,25 @@
                 <Title>Form Props</Title>
                 <Description>Required, Disabled, Type, HelperText</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <TextField Label="With Helper" HelperText="Some helping Text" Variant="Variant.Text"></TextField>
-                <TextField Label="Disabled" Variant="Variant.Text" Disabled="true"></TextField>
-                <TextField Label="Password" Type="MudBlazor.Type.Password" Variant="Variant.Text"></TextField>
+            <SectionContent Outlined="true" Class="demo-textfield">
+                <div>
+                    <TextField Label="With Helper" HelperText="Some helping Text" Variant="Variant.Text"></TextField>
+                    <TextField Label="Disabled" Variant="Variant.Text" Disabled="true"></TextField>
+                    <TextField Label="Password" InputType="InputType.Password" Variant="Variant.Text"></TextField>
+                    <TextField Label="Read Only" Value="Can't change me" ReadOnly="true" Variant="Variant.Text"></TextField>
+                </div>
+                <div>
+                    <TextField Label="With Helper" HelperText="Some helping Text" Variant="Variant.Filled"></TextField>
+                    <TextField Label="Disabled" Variant="Variant.Filled" Disabled="true"></TextField>
+                    <TextField Label="Password" InputType="InputType.Password" Variant="Variant.Filled"></TextField>
+                    <TextField Label="Read Only" Value="Can't change me" ReadOnly="true" Variant="Variant.Filled"></TextField>
+                </div>
+                <div>
+                    <TextField Label="With Helper" HelperText="Some helping Text" Variant="Variant.Outlined"></TextField>
+                    <TextField Label="Disabled" Variant="Variant.Outlined" Disabled="true"></TextField>
+                    <TextField Label="Password" InputType="InputType.Password" Variant="Variant.Outlined"></TextField>
+                    <TextField Label="Read Only" Value="Can't change me" ReadOnly="true" Variant="Variant.Outlined"></TextField>
+                </div>
             </SectionContent>
             <SectionSource Code="@Markdown_FormProps"></SectionSource>
         </DocsPageSection>

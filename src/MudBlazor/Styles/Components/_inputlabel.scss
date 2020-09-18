@@ -47,8 +47,7 @@
 }
 
 
-
-.mud-input:focus-within + label {
+@mixin shrinks {
     &.mud-input-label.mud-input-label-formcontrol {
         color: var(--mud-theme-color-primary);
         transform: translate(0, 1.5px) scale(0.75);
@@ -68,3 +67,13 @@
         transform: translate(14px, -6px) scale(0.75);
     }
 }
+
+
+.mud-input:focus-within + label {
+    @include shrinks;
+}
+
+.mud-shrink + label {
+    @include shrinks;
+}
+

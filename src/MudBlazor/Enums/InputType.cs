@@ -2,7 +2,7 @@
 
 namespace MudBlazor
 {
-    public enum Type
+    public enum InputType
     {
         [Description("text")]
         Text,

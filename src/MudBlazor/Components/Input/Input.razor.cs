@@ -10,6 +10,7 @@ namespace MudBlazor
        new CssBuilder("mud-input")
          .AddClass($"mud-input-{Variant.ToDescriptionString()}")
          .AddClass("mud-input-underline", when: () => Variant != Variant.Outlined)
+         .AddClass("mud-shrink", when: () => !string.IsNullOrEmpty(Value))
          .AddClass("mud-disabled", Disabled)
          .AddClass("mud-error", Error)
          .AddClass(Class)
@@ -23,6 +24,6 @@ namespace MudBlazor
 
         [Parameter] public string Class { get; set; }
 
-        protected string InputType => new CssBuilder().AddClass(Type.ToDescriptionString()).Build();
+        protected string _InputType => new CssBuilder().AddClass(InputType.ToDescriptionString()).Build();
     }
 }

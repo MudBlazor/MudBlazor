@@ -64,3 +64,13 @@
         padding-top: 86px;
     }
 }
+
+.demo-textfield {
+
+    & div {
+        & .mud-formcontrol {
+            width: 25ch;
+            margin: 8px;
+        }
+    }
+}
