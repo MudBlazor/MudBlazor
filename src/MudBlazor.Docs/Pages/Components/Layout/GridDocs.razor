@@ -16,22 +16,22 @@
                     <Item GridSize="GridSize.Twelve">
                         <Grid Spacing="@spacing" Justify="Justify.Center">
                             <Item>
-                                <Paper />
+                                <MudPaper />
                             </Item>
                             <Item>
-                                <Paper />
+                                <MudPaper />
                             </Item>
                             <Item>
-                                <Paper />
+                                <MudPaper />
                             </Item>
                         </Grid>
                     </Item>
                 </Grid>
-                <Paper Class="demo-grid-paper" Elevation="0">
+                <MudPaper Class="demo-grid-paper" Elevation="0">
                     <MudButton Color="Color.Primary" OnClick="@AddSpacing">Change Spacing</MudButton>
                     <MudAppBarSpacer></MudAppBarSpacer>
                     <Typography GutterBottom="false">Spacing: @spacing</Typography>
-                </Paper>
+                </MudPaper>
             </SectionContent>
             <SectionSource Code="@Markdown_Spacing"></SectionSource>
         </DocsPageSection>
@@ -43,25 +43,25 @@
             <SectionContent DarkenBackground="true" FullWidth="true" Class="demo-grid-basic">
                 <Grid>
                     <Item GridSize="GridSize.Twelve">
-                        <Paper>12</Paper>
+                        <MudPaper>12</MudPaper>
                     </Item>
                     <Item GridSize="GridSize.Six">
-                        <Paper>6</Paper>
+                        <MudPaper>6</MudPaper>
                     </Item>
                     <Item GridSize="GridSize.Six">
-                        <Paper>6</Paper>
+                        <MudPaper>6</MudPaper>
                     </Item>
                     <Item GridSize="GridSize.Three">
-                        <Paper>3</Paper>
+                        <MudPaper>3</MudPaper>
                     </Item>
                     <Item GridSize="GridSize.Three">
-                        <Paper>3</Paper>
+                        <MudPaper>3</MudPaper>
                     </Item>
                     <Item GridSize="GridSize.Three">
-                        <Paper>3</Paper>
+                        <MudPaper>3</MudPaper>
                     </Item>
                     <Item GridSize="GridSize.Three">
-                        <Paper>3</Paper>
+                        <MudPaper>3</MudPaper>
                     </Item>
                 </Grid>
             </SectionContent>
@@ -91,46 +91,46 @@ string Markdown_Spacing = @"```html
     <Item GridSize=""GridSize.Twelve"">
         <Grid Spacing=""@spacing"" Justify=""Justify.Center"">
             <Item>
-                <Paper />
+                <MudPaper />
             </Item>
             <Item>
-                <Paper />
+                <MudPaper />
             </Item>
             <Item>
-                <Paper />
+                <MudPaper />
             </Item>
         </Grid>
     </Item>
     <Item GridSize=""GridSize.Twelve"">
-        <Paper Class=""docs-spacing"">
+        <MudPaper Class=""docs-spacing"">
             <Typography>Spacing: @spacing</Typography>
             <MudButton Color=""Color.Primary"" OnClick=""@AddSpacing"">Change Spacing</MudButton>
-        </Paper>
+        </MudPaper>
     </Item>
 </Grid>
 ```";
 string Markdown_BasicGrid = @"```html
 <Grid>
     <Item GridSize=""GridSize.Twelve"">
-        <Paper>12</Paper>
+        <MudPaper>12</MudPaper>
     </Item>
     <Item GridSize=""GridSize.Six"">
-        <Paper>6</Paper>
+        <MudPaper>6</MudPaper>
     </Item>
     <Item GridSize=""GridSize.Six"">
-        <Paper>6</Paper>
+        <MudPaper>6</MudPaper>
     </Item>
     <Item GridSize=""GridSize.Three"">
-        <Paper>3</Paper>
+        <MudPaper>3</MudPaper>
     </Item>
     <Item GridSize=""GridSize.Three"">
-        <Paper>3</Paper>
+        <MudPaper>3</MudPaper>
     </Item>
     <Item GridSize=""GridSize.Three"">
-        <Paper>3</Paper>
+        <MudPaper>3</MudPaper>
     </Item>
     <Item GridSize=""GridSize.Three"">
-        <Paper>3</Paper>
+        <MudPaper>3</MudPaper>
     </Item>
 </Grid>
 ```";
