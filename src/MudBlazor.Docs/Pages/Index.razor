@@ -1,7 +1,7 @@
 ﻿@page "/"
 
 
-<Container MaxWidth="MaxWidth.Medium">
+<MudContainer MaxWidth="MaxWidth.Medium">
     <div class="docs-home">
         <MudBlazorLogo/>
         <div>
@@ -10,8 +10,8 @@
             <MudButton Variant="Variant.Outlined" Color="Color.Primary" Link="/getting-started/installation">Get Started</MudButton>
         </div>
     </div>
-</Container>
-<Container>
+</MudContainer>
+<MudContainer>
     <Grid>
         <Item GridSize="GridSize.Six">
             <MudPaper Elevation="99" Class="docs-home-paper">
@@ -40,14 +40,14 @@
             </MudPaper>
         </Item>
     </Grid>
-</Container>
-<Container>
+</MudContainer>
+<MudContainer>
     <Typography Typo="Typo.h4" Align="Align.Center">Examples</Typography>
     <Typography Align="Align.Center">Use them as template for your project or just peak around see how we did stuff.</Typography>
     <div style="padding-top:64px; padding-bottom:64px;">
         <Typography Align="Align.Center">Comming soon...</Typography>
     </div>
-</Container>
+</MudContainer>
 <Footer />
 
 @code {
