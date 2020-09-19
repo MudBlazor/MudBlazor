@@ -16,5 +16,16 @@
     {
         <Typography GutterBottom="false">@Label</Typography>
     }
+    @if (ChildContent != null)
+    {
+        <Typography GutterBottom="false">
+            @ChildContent
+        </Typography>
+    }
 </label>
+
+@code
+{
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
 
