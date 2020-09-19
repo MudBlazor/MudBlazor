@@ -125,6 +125,7 @@
         public void Dispose()
         {
             this.dotNetInstance?.Dispose();
+            this.PageNotificationsComponent?.Dispose();
 
             _ = this.JsRuntime.InvokeVoidAsync("App.TabManager.dispose");
         }
