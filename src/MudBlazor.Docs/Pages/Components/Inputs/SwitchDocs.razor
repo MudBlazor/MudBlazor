@@ -12,10 +12,10 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <Switch @bind-Checked="@Basic_Switch1" />
-                <Switch @bind-Checked="@Basic_Switch2" Color="Color.Primary" />
-                <Switch @bind-Checked="@Basic_Switch2" Color="Color.Secondary" />
-                <Switch Disabled="true" />
+                <MudSwitch @bind-Checked="@Basic_Switch1" />
+                <MudSwitch @bind-Checked="@Basic_Switch2" Color="Color.Primary" />
+                <MudSwitch @bind-Checked="@Basic_Switch2" Color="Color.Secondary" />
+                <MudSwitch Disabled="true" />
             </SectionContent>
             <SectionSource Code="@Markdown_Basic"></SectionSource>
         </DocsPageSection>
@@ -25,10 +25,10 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <Switch @bind-Checked="@Basic_Switch1" Label="Default" />
-                <Switch @bind-Checked="@Basic_Switch2" Label="Primary" Color="Color.Primary" />
-                <Switch @bind-Checked="@Basic_Switch2" Label="Secondary" Color="Color.Secondary" />
-                <Switch Disabled="true" Label="Disabled" />
+                <MudSwitch @bind-Checked="@Basic_Switch1" Label="Default" />
+                <MudSwitch @bind-Checked="@Basic_Switch2" Label="Primary" Color="Color.Primary" />
+                <MudSwitch @bind-Checked="@Basic_Switch2" Label="Secondary" Color="Color.Secondary" />
+                <MudSwitch Disabled="true" Label="Disabled" />
             </SectionContent>
             <SectionSource Code="@Markdown_Label"></SectionSource>
         </DocsPageSection>
@@ -42,16 +42,16 @@
     public bool Basic_Switch3 { get; set; } = true;
 
 string Markdown_Basic = @"```html
-<Switch @bind-Checked=""@Basic_CheckBox1""></Switch>
-<Switch @bind-Checked=""@Basic_CheckBox2"" Color=""Color.Primary""></Switch>
-<Switch @bind-Checked=""@Basic_CheckBox1"" Color=""Color.Secondary""></Switch>
-<Switch @bind-Checked=""@Basic_CheckBox1"" Disabled=""true""></Switch>
+<MudSwitch @bind-Checked=""@Basic_CheckBox1""></MudSwitch>
+<MudSwitch @bind-Checked=""@Basic_CheckBox2"" Color=""Color.Primary""></MudSwitch>
+<MudSwitch @bind-Checked=""@Basic_CheckBox1"" Color=""Color.Secondary""></MudSwitch>
+<MudSwitch @bind-Checked=""@Basic_CheckBox1"" Disabled=""true""></MudSwitch>
 ```";
 
 string Markdown_Label = @"```html
-<Switch @bind-Checked=""@Basic_CheckBox1""></Switch>
-<Switch @bind-Checked=""@Basic_CheckBox2"" Color=""Color.Primary""></Switch>
-<Switch @bind-Checked=""@Basic_CheckBox1"" Color=""Color.Secondary""></Switch>
-<Switch @bind-Checked=""@Basic_CheckBox1"" Disabled=""true""></Switch>
+<MudSwitch @bind-Checked=""@Basic_CheckBox1""></MudSwitch>
+<MudSwitch @bind-Checked=""@Basic_CheckBox2"" Color=""Color.Primary""></MudSwitch>
+<MudSwitch @bind-Checked=""@Basic_CheckBox1"" Color=""Color.Secondary""></MudSwitch>
+<MudSwitch @bind-Checked=""@Basic_CheckBox1"" Disabled=""true""></MudSwitch>
 ```";
 }
