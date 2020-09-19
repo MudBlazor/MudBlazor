@@ -5,7 +5,7 @@ namespace MudBlazor
 {
     public partial class MudTablePager : ComponentBase
     {
-        [CascadingParameter] public MudTable Table { get; set; }
+        [CascadingParameter] public MudTableBase Table { get; set; }
 
         [Parameter] public bool DisableRowsPerPage { get; set; }
 

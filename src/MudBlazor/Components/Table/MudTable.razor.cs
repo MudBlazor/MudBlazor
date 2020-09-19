@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTable : MudComponentBase
+    public class MudTableBase : MudComponentBase
     {
         protected string Classname =>
         new CssBuilder("mud-table")
@@ -25,7 +25,7 @@ namespace MudBlazor
         [Parameter] public int RowsPerPage { get; set; } = 10;
         [Parameter] public RenderFragment ToolBarContent { get; set; }
         [Parameter] public RenderFragment HeaderContent { get; set; }
-        [Parameter] public RenderFragment BodyContent { get; set; }
+        //[Parameter] public RenderFragment<T> RowTemplate { get; set; } <-- see MudTable.razor
         [Parameter] public RenderFragment PagerContent { get; set; }
 
         public void NavigateTo(Page page)

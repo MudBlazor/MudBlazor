@@ -11,7 +11,7 @@
                 <Title>Table</Title>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
-                <MudTable>
+                <MudTable Items="rows" Dense="@dense">
                     <ToolBarContent>
                         <Typography Typo="Typo.h6" GutterBottom="false" Class="mud-flex-1-1-100">TestTitle</Typography>
                     </ToolBarContent>
@@ -21,24 +21,19 @@
                         <MudTableHeaderCell>Email</MudTableHeaderCell>
                         <MudTableHeaderCell>IP Address</MudTableHeaderCell>
                     </HeaderContent>
-                    <BodyContent>
+                    <RowTemplate>
                         <MudTableRow>
-                            <MudTableCell>1</MudTableCell>
-                            <MudTableCell>Bergit</MudTableCell>
-                            <MudTableCell>Bergit.Bengtsson@email.com</MudTableCell>
-                            <MudTableCell>127.0.0.1</MudTableCell>
+                            @foreach (var x in @context.Split())
+                            {
+                                <MudTableCell>@x</MudTableCell>
+                            }
                         </MudTableRow>
-                        <MudTableRow>
-                            <MudTableCell>1</MudTableCell>
-                            <MudTableCell>Bergit</MudTableCell>
-                            <MudTableCell>Bergit.Bengtsson@email.com</MudTableCell>
-                            <MudTableCell>127.0.0.1</MudTableCell>
-                        </MudTableRow>
-                    </BodyContent>
+                    </RowTemplate>
                     <PagerContent>
                         <MudTablePager />
                     </PagerContent>
                 </MudTable>
+                <MudSwitch @bind-Checked="@dense">Dense</MudSwitch>
             </SectionContent>
         </DocsPageSection>
         <DocsPageSection>
@@ -110,6 +105,7 @@
 </DocsPage>
 
 @code {
+    bool dense = false;
     string[] headings = {"ID", "Name", "Email", "Gender", "IP Address"};
 
     string[] rows = {

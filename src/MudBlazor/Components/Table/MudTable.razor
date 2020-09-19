@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor
-@inherits MudComponentBase
+@inherits MudTableBase
+@typeparam T
 
 <div class="@Classname" style="@Style">
     <CascadingValue Value="this">
@@ -19,12 +20,12 @@
                     </tr>
                     </thead>
                 }
-                @if (BodyContent != null)
-                {
-                    <tbody class="mud-table-body">
-                    @BodyContent
-                    </tbody>
-                }
+                <tbody class="mud-table-body">
+                    @foreach (var item in Items)
+                    {
+                        @RowTemplate(item)
+                    }
+                </tbody>
             </table>
         </div>
         @if (PagerContent != null)
@@ -35,3 +36,10 @@
         }
     </CascadingValue>
 </div>
+
+@code
+{
+    [Parameter] public RenderFragment<T> RowTemplate { get; set; }
+
+    [Parameter] public IEnumerable<T> Items { get; set; }
+}
