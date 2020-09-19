@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor
+
+<div class="mud-table">
+    @if (MudTableToolBar != null)
+    {
+    <ToolBar Class="mud-table-toolbar">
+        @MudTableToolBar
+    </ToolBar>
+    }
+    <div class="mud-table-container">
+        <table class="mud-table">
+            @if (MudTableHeader != null)
+            {
+                <thead class="mud-table-head">
+                    <tr class="mud-table-row">
+                        @MudTableHeader
+                    </tr>
+                </thead>
+            }
+            @if (MudTableBody != null)
+            {
+                <tbody class="mud-table-body">
+                    @MudTableBody
+                </tbody>
+            }
+        </table>
+    </div>
+    <div class="mud-table-pagination">
+        <CascadingValue Value="this">
+            @ChildContent
+        </CascadingValue>
+    </div>
+</div>

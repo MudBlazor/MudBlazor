@@ -8,6 +8,41 @@
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
+                <Title>Table</Title>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <MudTable>
+                    <MudTableToolBar>
+                        <Typography Typo="Typo.h6" GutterBottom="false" Class="mud-flex-1-1-100">TestTitle</Typography>
+                    </MudTableToolBar>
+                    <MudTableHeader>
+                        <MudTableHeaderCell>ID</MudTableHeaderCell>
+                        <MudTableHeaderCell>Name</MudTableHeaderCell>
+                        <MudTableHeaderCell>Email</MudTableHeaderCell>
+                        <MudTableHeaderCell>IP Address</MudTableHeaderCell>
+                    </MudTableHeader>
+                    <MudTableBody>
+                        <MudTableRow>
+                            <MudTableCell>1</MudTableCell>
+                            <MudTableCell>Bergit</MudTableCell>
+                            <MudTableCell>Bergit.Bengtsson@email.com</MudTableCell>
+                            <MudTableCell>127.0.0.1</MudTableCell>
+                        </MudTableRow>
+                        <MudTableRow>
+                            <MudTableCell>1</MudTableCell>
+                            <MudTableCell>Bergit</MudTableCell>
+                            <MudTableCell>Bergit.Bengtsson@email.com</MudTableCell>
+                            <MudTableCell>127.0.0.1</MudTableCell>
+                        </MudTableRow>
+                    </MudTableBody>
+                    <ChildContent>
+                        <MudTablePager />
+                    </ChildContent>
+                </MudTable>
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
                 <Title>Simple Table</Title>
                 <Description>
                     The &lt;SimpleTable&gt; component is a simple wrapper component around the &lt;table&gt; element.
@@ -17,26 +52,29 @@
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <SimpleTable>
                     <thead>
-                    <tr>
-                        @foreach (var h in headings) {
-                            <th>@h</th>
-                        }
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var row in rows) {
                         <tr>
-                            @foreach (var x in row.Split()) {
-                                <td>@x</td>
+                            @foreach (var h in headings)
+                            {
+                                <th>@h</th>
                             }
                         </tr>
-                    }
+                    </thead>
+                    <tbody>
+                        @foreach (var row in rows)
+                        {
+                            <tr>
+                                @foreach (var x in row.Split())
+                                {
+                                    <td>@x</td>
+                                }
+                            </tr>
+                        }
                     </tbody>
                 </SimpleTable>
             </SectionContent>
             <SectionSource Code="@Markdown_Simple"></SectionSource>
         </DocsPageSection>
-        
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Dense Table</Title>
@@ -47,20 +85,23 @@
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <SimpleTable Dense="true">
                     <thead>
-                    <tr>
-                        @foreach (var h in headings) {
-                            <th>@h</th>
-                        }
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var row in rows) {
                         <tr>
-                            @foreach (var x in row.Split()) {
-                                <td>@x</td>
+                            @foreach (var h in headings)
+                            {
+                                <th>@h</th>
                             }
                         </tr>
-                    }
+                    </thead>
+                    <tbody>
+                        @foreach (var row in rows)
+                        {
+                            <tr>
+                                @foreach (var x in row.Split())
+                                {
+                                    <td>@x</td>
+                                }
+                            </tr>
+                        }
                     </tbody>
                 </SimpleTable>
             </SectionContent>
