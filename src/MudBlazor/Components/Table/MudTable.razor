@@ -1,14 +1,14 @@
 ﻿@namespace MudBlazor
 
-<div class="mud-table">
+<div class="@Classname">
     @if (MudTableToolBar != null)
     {
-    <ToolBar Class="mud-table-toolbar">
-        @MudTableToolBar
-    </ToolBar>
+        <ToolBar Class="mud-table-toolbar">
+            @MudTableToolBar
+        </ToolBar>
     }
     <div class="mud-table-container">
-        <table class="mud-table">
+        <table class="mud-table-root">
             @if (MudTableHeader != null)
             {
                 <thead class="mud-table-head">

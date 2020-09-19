@@ -1846,8 +1846,12 @@ button.mud-list-item {
   background-color: var(--mud-theme-surface);
   border-radius: var(--mud-theme-border-radius-default);
   transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
+  .mud-table.mud-table-square {
+    border-radius: 0px; }
+  .mud-table.mud-table-outlined {
+    border: 1px solid rgba(0, 0, 0, 0.12); }
 
-table.mud-table {
+.mud-table-root {
   width: 100%;
   display: table;
   border-spacing: 0;
@@ -1988,20 +1992,14 @@ table.mud-table {
 .mud-table-pagination-caption {
   flex-shrink: 0; }
 
-.mud-table-pagination-select-root {
+.mud-table-pagination-select {
   margin-left: 8px;
   margin-right: 32px; }
-
-.mud-table-pagination-select {
-  text-align: right;
-  padding-left: 8px;
-  padding-right: 24px;
-  text-align-last: right; }
-
-.mud-table-pagination-input {
-  color: inherit;
-  font-size: inherit;
-  flex-shrink: 0; }
+  .mud-table-pagination-select .mud-formcontrol > div.mud-input {
+    margin-top: 0px;
+    border: none;
+    width: 50px;
+    font-size: inherit; }
 
 .mud-table-pagination-actions {
   flex-shrink: 0;
