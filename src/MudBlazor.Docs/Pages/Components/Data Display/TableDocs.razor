@@ -12,16 +12,16 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <MudTable>
-                    <MudTableToolBar>
+                    <ToolBarContent>
                         <Typography Typo="Typo.h6" GutterBottom="false" Class="mud-flex-1-1-100">TestTitle</Typography>
-                    </MudTableToolBar>
-                    <MudTableHeader>
+                    </ToolBarContent>
+                    <HeaderContent>
                         <MudTableHeaderCell>ID</MudTableHeaderCell>
                         <MudTableHeaderCell>Name</MudTableHeaderCell>
                         <MudTableHeaderCell>Email</MudTableHeaderCell>
                         <MudTableHeaderCell>IP Address</MudTableHeaderCell>
-                    </MudTableHeader>
-                    <MudTableBody>
+                    </HeaderContent>
+                    <BodyContent>
                         <MudTableRow>
                             <MudTableCell>1</MudTableCell>
                             <MudTableCell>Bergit</MudTableCell>
@@ -34,10 +34,10 @@
                             <MudTableCell>Bergit.Bengtsson@email.com</MudTableCell>
                             <MudTableCell>127.0.0.1</MudTableCell>
                         </MudTableRow>
-                    </MudTableBody>
-                    <ChildContent>
+                    </BodyContent>
+                    <PagerContent>
                         <MudTablePager />
-                    </ChildContent>
+                    </PagerContent>
                 </MudTable>
             </SectionContent>
         </DocsPageSection>

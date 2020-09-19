@@ -1,33 +1,37 @@
 ﻿@namespace MudBlazor
+@inherits MudComponentBase
 
-<div class="@Classname">
-    @if (MudTableToolBar != null)
-    {
-        <ToolBar Class="mud-table-toolbar">
-            @MudTableToolBar
-        </ToolBar>
-    }
-    <div class="mud-table-container">
-        <table class="mud-table-root">
-            @if (MudTableHeader != null)
-            {
-                <thead class="mud-table-head">
+<div class="@Classname" style="@Style">
+    <CascadingValue Value="this">
+        @if (ToolBarContent != null)
+        {
+            <ToolBar Class="mud-table-toolbar">
+                @ToolBarContent
+            </ToolBar>
+        }
+        <div class="mud-table-container">
+            <table class="mud-table-root">
+                @if (HeaderContent != null)
+                {
+                    <thead class="mud-table-head">
                     <tr class="mud-table-row">
-                        @MudTableHeader
+                        @HeaderContent
                     </tr>
-                </thead>
-            }
-            @if (MudTableBody != null)
-            {
-                <tbody class="mud-table-body">
-                    @MudTableBody
-                </tbody>
-            }
-        </table>
-    </div>
-    <div class="mud-table-pagination">
-        <CascadingValue Value="this">
-            @ChildContent
-        </CascadingValue>
-    </div>
+                    </thead>
+                }
+                @if (BodyContent != null)
+                {
+                    <tbody class="mud-table-body">
+                    @BodyContent
+                    </tbody>
+                }
+            </table>
+        </div>
+        @if (PagerContent != null)
+        {
+            <div class="mud-table-pagination">
+                    @PagerContent
+            </div>
+        }
+    </CascadingValue>
 </div>
