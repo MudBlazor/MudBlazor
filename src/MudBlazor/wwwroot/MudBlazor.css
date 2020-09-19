@@ -1903,21 +1903,21 @@ button.mud-list-item {
   font-size: 0.75rem;
   line-height: 1.3125rem; }
 
-.mud-table-cell-size-small {
+.mud-table.mud-table-dense .mud-table-container .mud-table-root > .mud-table-head .mud-table-row .mud-table-cell, .mud-table.mud-table-dense .mud-table-body .mud-table-row .mud-table-cell {
   padding: 6px 24px 6px 16px; }
 
-.mud-table-cell-size-small:last-child {
+.mud-table.mud-table-dense .mud-table-container .mud-table-root > .mud-table-head .mud-table-row .mud-table-cell:last-child, .mud-table.mud-table-dense .mud-table-body .mud-table-row .mud-table-cell:last-child {
   padding-right: 16px; }
 
-.mud-table-cell-size-small.mud-table-cell-padding-checkbox {
+.mud-table.mud-table-dense .mud-table-container .mud-table-root > .mud-table-head .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox, .mud-table.mud-table-dense .mud-table-body .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox {
   width: 24px;
   padding: 0 12px 0 16px; }
 
-.mud-table-cell-size-small.mud-table-cell-padding-checkbox:last-child {
+.mud-table.mud-table-dense .mud-table-container .mud-table-root > .mud-table-head .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox:last-child, .mud-table.mud-table-dense .mud-table-body .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox:last-child {
   padding-left: 12px;
   padding-right: 16px; }
 
-.mud-table-cell-size-small.mud-table-cell-padding-checkbox > * {
+.mud-table.mud-table-dense .mud-table-container .mud-table-root > .mud-table-head .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox > *, .mud-table.mud-table-dense .mud-table-body .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox > * {
   padding: 0; }
 
 .mud-table-cell-padding-checkbox {

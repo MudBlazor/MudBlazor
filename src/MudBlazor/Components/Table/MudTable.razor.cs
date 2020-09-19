@@ -10,6 +10,7 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-table")
+            .AddClass($"mud-table-dense", Dense)
            .AddClass($"mud-table-outlined", Outlined)
            .AddClass($"mud-table-square", Square)
            .AddClass($"mud-elevation-{Elevation.ToString()}", !Outlined)
