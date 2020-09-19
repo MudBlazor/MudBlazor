@@ -21,7 +21,6 @@ namespace MudBlazor
         [Parameter] public bool Square { get; set; }
         [Parameter] public bool Outlined { get; set; }
         [Parameter] public bool Dense { get; set; }
-        [Parameter] public string Title { get; set; }
         [Parameter] public bool FixedHeader { get; set; }
         [Parameter] public int RowsPerPage { get; set; } = 10;
         [Parameter] public RenderFragment ToolBarContent { get; set; }
