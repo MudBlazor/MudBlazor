@@ -1,10 +1,11 @@
 ﻿namespace BlazorRepl.Client.Components
 {
+    using System;
     using System.Collections.Generic;
     using System.Timers;
     using BlazorRepl.Client.Models;
 
-    public partial class PageNotifications
+    public partial class PageNotifications : IDisposable
     {
         private const double AutoCloseNotificationTimeoutMs = 7 * 1_000;
 
@@ -29,6 +30,14 @@
             this.notifications.Clear();
 
             this.StateHasChanged();
+        }
+
+        public void Dispose()
+        {
+            foreach (var timer in this.autoCloseNotificationTimers)
+            {
+                timer.Dispose();
+            }
         }
 
         private static string GetAlertClass(NotificationType type) =>
