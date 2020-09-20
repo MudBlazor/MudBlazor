@@ -10,7 +10,8 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-table")
-            .AddClass($"mud-table-dense", Dense)
+           .AddClass($"mud-table-dense", Dense)
+           .AddClass($"mud-table-hover", Hover)
            .AddClass($"mud-table-outlined", Outlined)
            .AddClass($"mud-table-square", Square)
            .AddClass($"mud-elevation-{Elevation.ToString()}", !Outlined)
@@ -21,6 +22,7 @@ namespace MudBlazor
         [Parameter] public bool Square { get; set; }
         [Parameter] public bool Outlined { get; set; }
         [Parameter] public bool Dense { get; set; }
+        [Parameter] public bool Hover { get; set; }
         [Parameter] public bool FixedHeader { get; set; }
         [Parameter] public int RowsPerPage { get; set; } = 10;
         [Parameter] public RenderFragment ToolBarContent { get; set; }
