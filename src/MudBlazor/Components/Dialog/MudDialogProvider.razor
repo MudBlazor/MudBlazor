@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor.Dialog
+
+<CascadingValue Value="this">
+    <CascadingValue Value="GlobalDialogOptions">
+        @foreach (var dialog in Dialogs)
+        {
+            @dialog.DialogInstance
+        }
+    </CascadingValue>
+</CascadingValue>
