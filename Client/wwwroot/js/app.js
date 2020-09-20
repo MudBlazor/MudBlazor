@@ -134,17 +134,27 @@ window.App.Repl = window.App.Repl || (function () {
     let _resultContainerId;
     let _editorId;
 
-    function setElementHeight(elementId) {
+    function setElementHeight(elementId, excludeTabsHeight) {
         const element = document.getElementById(elementId);
         if (element) {
-            // TODO: Abstract class names
-            const height =
-                window.innerHeight -
-                document.getElementsByClassName('repl-navbar')[0].offsetHeight -
-                document.getElementsByClassName('tabs-wrapper')[0].offsetHeight;
+            const oldHeight = element.style.height;
 
-            element.style.height = `${height}px`;
+            // TODO: Abstract class names
+            let height =
+                window.innerHeight -
+                document.getElementsByClassName('repl-navbar')[0].offsetHeight
+
+            if (excludeTabsHeight) {
+                height -= document.getElementsByClassName('tabs-wrapper')[0].offsetHeight;
+            }
+
+            const heightString = `${height}px`;
+            element.style.height = heightString;
+
+            return oldHeight !== heightString;
         }
+
+        return false;
     }
 
     function initReplSplitter() {
@@ -179,7 +189,7 @@ window.App.Repl = window.App.Repl || (function () {
 
     function onWindowResize() {
         setElementHeight(_resultContainerId);
-        setElementHeight(_editorContainerId);
+        setElementHeight(_editorContainerId, true);
         resetEditor();
     }
 
@@ -224,13 +234,18 @@ window.App.Repl = window.App.Repl || (function () {
 
             throttleLastTimeFuncNameMappings['compile'] = new Date();
 
-            setElementHeight(editorContainerId);
             setElementHeight(resultContainerId);
+            setElementHeight(editorContainerId, true);
 
             initReplSplitter();
 
             window.addEventListener('resize', onWindowResize);
             window.addEventListener('keydown', onKeyDown);
+        },
+        setCodeEditorContainerHeight: function () {
+            if (setElementHeight(_editorContainerId, true)) {
+                resetEditor();
+            }
         },
         updateUserAssemblyInCacheStorage: function (file) {
             const response = new Response(new Blob([base64ToArrayBuffer(file)], { type: 'application/octet-stream' }));

@@ -218,7 +218,7 @@
             this.CodeFiles.Remove(name);
         }
 
-        private void HandleTabCreate(string name)
+        private async Task HandleTabCreateAsync(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -228,6 +228,8 @@
             var nameWithoutExtension = Path.GetFileNameWithoutExtension(name);
 
             this.CodeFiles.TryAdd(name, new CodeFile { Path = name, Content = $"<h1>{nameWithoutExtension}</h1>" });
+
+            await this.JsRuntime.InvokeVoidAsync("App.Repl.setCodeEditorContainerHeight");
         }
 
         private async Task UpdateActiveCodeFileContentAsync()
