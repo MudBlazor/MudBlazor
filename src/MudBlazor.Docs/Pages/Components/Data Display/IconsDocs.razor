@@ -7,23 +7,23 @@
         <SubTitle>Guidance and suggestions for using icons with MudBlazor.</SubTitle>
     </DocsPageHeader>
     <DocsPageContent>
-        <Typography Typo="Typo.h4">Custom Icons</Typography>
+        <MudTypography Typo="Typo.h4">Custom Icons</MudTypography>
         @if (MudIconsMaterial != null)
         {
             <DocsIcons List="MudIconsCustom" />
         }
         else
         {
-            <Typography Typo="Typo.h5" Align="Align.Center">Loading...</Typography>
+            <MudTypography Typo="Typo.h5" Align="Align.Center">Loading...</MudTypography>
         }
-        <Typography Typo="Typo.h4">Material Icons</Typography>
+        <MudTypography Typo="Typo.h4">Material Icons</MudTypography>
         @if (MudIconsMaterial != null)
         {
             <DocsIcons List="MudIconsMaterial" />
         }
         else
         {
-            <Typography Typo="Typo.h5" Align="Align.Center">Loading...</Typography>
+            <MudTypography Typo="Typo.h5" Align="Align.Center">Loading...</MudTypography>
         }
     </DocsPageContent>
 </DocsPage>

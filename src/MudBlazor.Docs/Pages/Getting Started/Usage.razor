@@ -2,19 +2,19 @@
 
 <DocsPage>
     <MudContainer>
-        <Typography Typo="Typo.h3">Usage</Typography>
-        <Typography>After your installation is done, you can find some examples here.</Typography>
-        <Typography Typo="Typo.h4">Quick Start</Typography>
-        <Typography>This is literally all you need in your views to use MudBlazor components.</Typography>
+        <MudTypography Typo="Typo.h3">Usage</MudTypography>
+        <MudTypography>After your installation is done, you can find some examples here.</MudTypography>
+        <MudTypography Typo="Typo.h4">Quick Start</MudTypography>
+        <MudTypography>This is literally all you need in your views to use MudBlazor components.</MudTypography>
         <MarkdownSegment Text="@Markdown_QuickStart" />
         <SectionContent Outlined="true" DisplayFlex="true">
-            <Typography Typo="Typo.h6">MudBlazor is @Text</Typography>
+            <MudTypography Typo="Typo.h6">MudBlazor is @Text</MudTypography>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ButtonOnClick">@ButtonText</MudButton>
         </SectionContent>
     </MudContainer>
     <MudContainer>
         <div style="padding-top:64px;">
-            <Typography Typo="Typo.h6" Align="Align.Center">Check out all the components in the menu to find out whats available and how to use them.</Typography>
+            <MudTypography Typo="Typo.h6" Align="Align.Center">Check out all the components in the menu to find out whats available and how to use them.</MudTypography>
         </div>
     </MudContainer>
 </DocsPage>
@@ -32,7 +32,7 @@
         ButtonText = "Click Me Again";
     }
     string Markdown_QuickStart = @"```html
-<Typography Typo=""Typo.h6"">MudBlazor is @Text</Typography>
+<MudTypography Typo=""Typo.h6"">MudBlazor is @Text</MudTypography>
 <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ButtonOnClick"">@ButtonText</MudButton>
 
 @code {
