@@ -10,14 +10,14 @@
             <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
             <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
         </MudAppBar>
-        <Drawer Elevation="99">
-            <DrawerHeader>
+        <MudDrawer Elevation="99">
+            <MudDrawerHeader>
                 <span class="mudblazor-brand">
                     MudBlazor
                 </span>
-            </DrawerHeader>
+            </MudDrawerHeader>
             <NavMenu />
-        </Drawer>
+        </MudDrawer>
         <MainContent Class="mudblazor-main-content">
             @Body
         </MainContent>
