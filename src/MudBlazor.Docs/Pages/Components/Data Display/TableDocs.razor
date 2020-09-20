@@ -11,14 +11,15 @@
                 <Title>Table</Title>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
-                <MudTable Items="rows" Dense="@dense">
+                <MudTable Items="rows" Dense="@dense" Hover="@hover">
                     <ToolBarContent>
-                        <Typography Typo="Typo.h6" GutterBottom="false" Class="mud-flex-1-1-100">TestTitle</Typography>
+                        <Typography Typo="Typo.h6" GutterBottom="false" Class="mud-flex-1-1-100">Employees</Typography>
                     </ToolBarContent>
                     <HeaderContent>
                         <MudTableHeaderCell>ID</MudTableHeaderCell>
                         <MudTableHeaderCell>Name</MudTableHeaderCell>
                         <MudTableHeaderCell>Email</MudTableHeaderCell>
+                        <MudTableHeaderCell>Gender</MudTableHeaderCell>
                         <MudTableHeaderCell>IP Address</MudTableHeaderCell>
                     </HeaderContent>
                     <RowTemplate>
@@ -33,72 +34,8 @@
                         <MudTablePager />
                     </PagerContent>
                 </MudTable>
-                <MudSwitch @bind-Checked="@dense">Dense</MudSwitch>
-            </SectionContent>
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader>
-                <Title>Simple Table</Title>
-                <Description>
-                    The &lt;SimpleTable&gt; component is a simple wrapper component around the &lt;table&gt; element.
-                    Inside the component you can use all the regular table elements such as &lt;thead&gt;, &lt;tbody&gt;, &lt;tr&gt;, &lt;td&gt;, etc.
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
-                <SimpleTable>
-                    <thead>
-                        <tr>
-                            @foreach (var h in headings)
-                            {
-                                <th>@h</th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var row in rows)
-                        {
-                            <tr>
-                                @foreach (var x in row.Split())
-                                {
-                                    <td>@x</td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </SimpleTable>
-            </SectionContent>
-            <SectionSource Code="@Markdown_Simple"></SectionSource>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader>
-                <Title>Dense Table</Title>
-                <Description>
-                    Use Dense="true" to reduce the height of each row.
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
-                <SimpleTable Dense="true">
-                    <thead>
-                        <tr>
-                            @foreach (var h in headings)
-                            {
-                                <th>@h</th>
-                            }
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var row in rows)
-                        {
-                            <tr>
-                                @foreach (var x in row.Split())
-                                {
-                                    <td>@x</td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </SimpleTable>
+                <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
+                <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
             </SectionContent>
         </DocsPageSection>
     </DocsPageContent>
@@ -106,6 +43,7 @@
 
 @code {
     bool dense = false;
+    bool hover = true;
     string[] headings = {"ID", "Name", "Email", "Gender", "IP Address"};
 
     string[] rows = {
@@ -116,37 +54,7 @@
         @"5 Cecilius cchaplin4@shinystat.com Male 195.124.144.18",
         @"6 Cicely cemerine9@soup.io Female 138.94.191.43",
     };
-
-    string Markdown_Simple = @"```html
-@code {
-    string[] headings = {""ID"", ""Name"", ""Email"", ""Gender"", ""IP Address""};
-
-    string[] rows = {
-        @""1 Krishna kpartner0@usatoday.com Male 28.25.250.202"",
-        @""2 Webb wstitle1@ning.com Male 237.168.134.114"",
-        @""3 Nathanil nneal2@cyberchimps.com Male 92.6.0.175"",
-        @""4 Adara alockwood3@patch.com Female 182.174.217.152"",
-        @""5 Cecilius cchaplin4@shinystat.com Male 195.124.144.18"",
-        @""6 Cicely cemerine9@soup.io Female 138.94.191.43"",
-    };
-}}
-<SimpleTable>
-    <thead>
-        <tr>
-            @foreach (var h in headings) {
-                <th>@h</th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var row in rows) {
-            <tr>
-                @foreach (var x in row.Split()) {
-                    <td>@x</td>
-                }
-            </tr>
-        }
-    </tbody>
-</SimpleTable>
+    string Markdown_Table = @"```html
+// To Do
 ```";
 }
