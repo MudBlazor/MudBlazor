@@ -1,5 +1,5 @@
 ﻿@namespace MudBlazor
-
+@inherits MudComponentBase
 
 @if (Parent.ActivePanel == this)
 {
@@ -8,7 +8,7 @@
 
 @code {
 
-    [CascadingParameter] private Tabs Parent { get; set; }
+    [CascadingParameter] private MudTabs Parent { get; set; }
 
     [Parameter] public string Text { get; set; }
 
