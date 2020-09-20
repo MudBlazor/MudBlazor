@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor
+@inherits MudBaseButton
+
+<button type="button" class="@Classname" style="@Style" @onclick="OnClickHandler" href="@Link" disabled="@Disabled">
+    <span class="mud-button-label">
+        @if (!string.IsNullOrWhiteSpace(StartIcon))
+        {
+            <span class="@IconClassname">
+                <Icon Icon="@StartIcon" Size="@Size"></Icon>
+            </span>
+        }
+        @ChildContent
+        @if (!string.IsNullOrWhiteSpace(@EndIcon))
+        {
+            <span class="@IconClassname">
+                <Icon Icon="@EndIcon" Size="@Size"></Icon>
+            </span>
+        }
+    </span>
+</button>

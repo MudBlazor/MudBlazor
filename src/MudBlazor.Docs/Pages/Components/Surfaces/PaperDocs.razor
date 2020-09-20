@@ -12,9 +12,9 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-paper">
-                <Paper Elevation="0"></Paper>
-                <Paper></Paper>
-                <Paper Elevation="3"></Paper>
+                <MudPaper Elevation="0"></MudPaper>
+                <MudPaper></MudPaper>
+                <MudPaper Elevation="3"></MudPaper>
             </SectionContent>
             <SectionSource Code="@Markdown_Component"></SectionSource>
         </DocsPageSection>
@@ -24,9 +24,9 @@
                 <Description>If you need an outlined surface or a square, use the variant property.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-paper">
-                <Paper Outlined="true"></Paper>
-                <Paper Outlined="true" Square="true"></Paper>
-                <Paper Square="true"></Paper>
+                <MudPaper Outlined="true"></MudPaper>
+                <MudPaper Outlined="true" Square="true"></MudPaper>
+                <MudPaper Square="true"></MudPaper>
             </SectionContent>
             <SectionSource Code="@Markdown_Variants"></SectionSource>
         </DocsPageSection>
@@ -36,13 +36,13 @@
 
 @code {
 string Markdown_Component = @"```html
-<Paper Elevation=""0""></Paper>
-<Paper></Paper>
-<Paper Elevation=""3""></Paper>
+<MudPaper Elevation=""0""></MudPaper>
+<MudPaper></MudPaper>
+<MudPaper Elevation=""3""></MudPaper>
 ```";
 string Markdown_Variants = @"```html
-<Paper Outlined=""true""></Paper>
-<Paper Outlined=""true"" Square=""true""></Paper>
-<Paper Square=""true""></Paper>
+<MudPaper Outlined=""true""></MudPaper>
+<MudPaper Outlined=""true"" Square=""true""></MudPaper>
+<MudPaper Square=""true""></MudPaper>
 ```";
 }

@@ -1,7 +1,7 @@
 ﻿@page "/getting-started/usage"
 
 <DocsPage>
-    <Container>
+    <MudContainer>
         <Typography Typo="Typo.h3">Usage</Typography>
         <Typography>After your installation is done, you can find some examples here.</Typography>
         <Typography Typo="Typo.h4">Quick Start</Typography>
@@ -9,14 +9,14 @@
         <MarkdownSegment Text="@Markdown_QuickStart" />
         <SectionContent Outlined="true" DisplayFlex="true">
             <Typography Typo="Typo.h6">MudBlazor is @Text</Typography>
-            <Button Variant="Variant.Filled" Color="Color.Primary" OnClick="ButtonOnClick">@ButtonText</Button>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ButtonOnClick">@ButtonText</MudButton>
         </SectionContent>
-    </Container>
-    <Container>
+    </MudContainer>
+    <MudContainer>
         <div style="padding-top:64px;">
             <Typography Typo="Typo.h6" Align="Align.Center">Check out all the components in the menu to find out whats available and how to use them.</Typography>
         </div>
-    </Container>
+    </MudContainer>
 </DocsPage>
 <Footer />
 
@@ -33,7 +33,7 @@
     }
     string Markdown_QuickStart = @"```html
 <Typography Typo=""Typo.h6"">MudBlazor is @Text</Typography>
-<Button Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ButtonOnClick"">@ButtonText</Button>
+<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ButtonOnClick"">@ButtonText</MudButton>
 
 @code {
     public string Text { get; set; } = ""????""

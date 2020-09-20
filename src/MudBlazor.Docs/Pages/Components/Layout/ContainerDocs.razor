@@ -12,9 +12,9 @@
                 <Description>You can set the max width with the MaxWidth enum.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true" Class="demo-container">
-                <Paper>
-                    <Container MaxWidth="MaxWidth.Medium"></Container>
-                </Paper>
+                <MudPaper>
+                    <MudContainer MaxWidth="MaxWidth.Medium"></MudContainer>
+                </MudPaper>
             </SectionContent>
             <SectionSource Code="@Markdown_Fluid"></SectionSource>
         </DocsPageSection>
@@ -24,9 +24,9 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true"  Class="demo-container">
-                <Paper>
-                    <Container Fixed="true"></Container>
-                </Paper>
+                <MudPaper>
+                    <MudContainer Fixed="true"></MudContainer>
+                </MudPaper>
             </SectionContent>
             <SectionSource Code=@Markdown_Fixed></SectionSource>
         </DocsPageSection>
@@ -37,13 +37,13 @@
 @code {
 
 string Markdown_Fluid = @"```html
-<Container MaxWidth=""MaxWidth.Medium"">
+<MudContainer MaxWidth=""MaxWidth.Medium"">
     your content
-</Container>
+</MudContainer>
 ```";
 string Markdown_Fixed = @"```html
-<Container Fixed=""true"">
+<MudContainer Fixed=""true"">
     your content
-</Container>
+</MudContainer>
 ```";
 }

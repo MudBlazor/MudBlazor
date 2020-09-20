@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@inherits MudComponentBase;
+
+<div class="@Classname" style="@Style">
+    @ChildContent
+</div>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("mud-paper")
+      .AddClass($"mud-paper-outlined", Outlined)
+      .AddClass($"mud-paper-square", Square)
+      .AddClass($"mud-elevation-{Elevation.ToString()}", !Outlined)
+      .AddClass(Class)
+    .Build();
+
+    [Parameter] public int Elevation { set; get; } = 1;
+
+    [Parameter] public bool Square { get; set; }
+
+    [Parameter] public bool Outlined { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

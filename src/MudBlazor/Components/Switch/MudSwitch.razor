@@ -1,0 +1,31 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+
+<label class="mud-switch" style="@Style">
+    <span class="mud-switch-span">
+        <span class="@Classname">
+            <span class="mud-switch-button">
+                <input type="checkbox" class="mud-switch-input" @bind="@Checked" disabled="@Disabled" />
+                <span class="mud-switch-thumb"></span>
+            </span>
+        </span>
+        <span class="mud-switch-track"></span>
+    </span>
+    @if (!String.IsNullOrEmpty(Label))
+    {
+        <Typography GutterBottom="false">@Label</Typography>
+    }
+    @if (ChildContent != null)
+    {
+        <Typography GutterBottom="false">
+            @ChildContent
+        </Typography>
+    }
+</label>
+
+@code
+{
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
+

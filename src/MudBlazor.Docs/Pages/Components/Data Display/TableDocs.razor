@@ -8,131 +8,53 @@
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Simple Table</Title>
-                <Description>
-                    The &lt;SimpleTable&gt; component is a simple wrapper component around the &lt;table&gt; element.
-                    Inside the component you can use all the regular table elements such as &lt;thead&gt;, &lt;tbody&gt;, &lt;tr&gt;, &lt;td&gt;, etc.
-                </Description>
+                <Title>Table</Title>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
-                <SimpleTable>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Gender</th>
-                            <th>IP Address</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Krishna</td>
-                            <td>kpartner0@usatoday.com</td>
-                            <td>Male</td>
-                            <td>28.25.250.202</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Webb</td>
-                            <td>wstitle1@ning.com</td>
-                            <td>Male</td>
-                            <td>237.168.134.114</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Nathanil</td>
-                            <td>nneal2@cyberchimps.com</td>
-                            <td>Male</td>
-                            <td>92.6.0.175</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>Adara</td>
-                            <td>alockwood3@patch.com</td>
-                            <td>Female</td>
-                            <td>182.174.217.152</td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Cecilius</td>
-                            <td>cchaplin4@shinystat.com</td>
-                            <td>Male</td>
-                            <td>195.124.144.18</td>
-                        </tr>
-                        <tr>
-                            <td>6</td>
-                            <td>Cicely</td>
-                            <td>cemerine9@soup.io</td>
-                            <td>Female</td>
-                            <td>138.94.191.43</td>
-                        </tr>
-                    </tbody>
-                </SimpleTable>
+                <MudTable Items="rows" Dense="@dense" Hover="@hover">
+                    <ToolBarContent>
+                        <Typography Typo="Typo.h6" GutterBottom="false" Class="mud-flex-1-1-100">Employees</Typography>
+                    </ToolBarContent>
+                    <HeaderContent>
+                        <MudTableHeaderCell>ID</MudTableHeaderCell>
+                        <MudTableHeaderCell>Name</MudTableHeaderCell>
+                        <MudTableHeaderCell>Email</MudTableHeaderCell>
+                        <MudTableHeaderCell>Gender</MudTableHeaderCell>
+                        <MudTableHeaderCell>IP Address</MudTableHeaderCell>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTableRow>
+                            @foreach (var x in @context.Split())
+                            {
+                                <MudTableCell>@x</MudTableCell>
+                            }
+                        </MudTableRow>
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager />
+                    </PagerContent>
+                </MudTable>
+                <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
+                <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
             </SectionContent>
-            <SectionSource Code="@Markdown_Simple"></SectionSource>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
 
 @code {
+    bool dense = false;
+    bool hover = true;
+    string[] headings = {"ID", "Name", "Email", "Gender", "IP Address"};
 
-    string Markdown_Simple = @"```html
-<SimpleTable>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Gender</th>
-            <th>IP Address</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>1</td>
-            <td>Krishna</td>
-            <td>kpartner0@usatoday.com</td>
-            <td>Male</td>
-            <td>28.25.250.202</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Webb</td>
-            <td>wstitle1@ning.com</td>
-            <td>Male</td>
-            <td>237.168.134.114</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>Nathanil</td>
-            <td>nneal2@cyberchimps.com</td>
-            <td>Male</td>
-            <td>92.6.0.175</td>
-        </tr>
-        <tr>
-            <td>4</td>
-            <td>Adara</td>
-            <td>alockwood3@patch.com</td>
-            <td>Female</td>
-            <td>182.174.217.152</td>
-        </tr>
-        <tr>
-            <td>5</td>
-            <td>Cecilius</td>
-            <td>cchaplin4@shinystat.com</td>
-            <td>Male</td>
-            <td>195.124.144.18</td>
-        </tr>
-        <tr>
-            <td>6</td>
-            <td>Cicely</td>
-            <td>cemerine9@soup.io</td>
-            <td>Female</td>
-            <td>138.94.191.43</td>
-        </tr>
-    </tbody>
-</SimpleTable>
+    string[] rows = {
+        @"1 Krishna kpartner0@usatoday.com Male 28.25.250.202",
+        @"2 Webb wstitle1@ning.com Male 237.168.134.114",
+        @"3 Nathanil nneal2@cyberchimps.com Male 92.6.0.175",
+        @"4 Adara alockwood3@patch.com Female 182.174.217.152",
+        @"5 Cecilius cchaplin4@shinystat.com Male 195.124.144.18",
+        @"6 Cicely cemerine9@soup.io Female 138.94.191.43",
+    };
+    string Markdown_Table = @"```html
+// To Do
 ```";
 }

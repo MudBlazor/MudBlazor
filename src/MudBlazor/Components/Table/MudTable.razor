@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor
+@inherits MudTableBase
+@typeparam T
+
+<div class="@Classname" style="@Style">
+    <CascadingValue Value="this">
+        @if (ToolBarContent != null)
+        {
+            <ToolBar Class="mud-table-toolbar">
+                @ToolBarContent
+            </ToolBar>
+        }
+        <div class="mud-table-container">
+            <table class="mud-table-root">
+                @if (HeaderContent != null)
+                {
+                    <thead class="mud-table-head">
+                    <tr class="mud-table-row">
+                        @HeaderContent
+                    </tr>
+                    </thead>
+                }
+                <tbody class="mud-table-body">
+                    @foreach (var item in Items)
+                    {
+                        @RowTemplate(item)
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (PagerContent != null)
+        {
+            <div class="mud-table-pagination">
+                    @PagerContent
+            </div>
+        }
+    </CascadingValue>
+</div>
+
+@code
+{
+    [Parameter] public RenderFragment<T> RowTemplate { get; set; }
+
+    [Parameter] public IEnumerable<T> Items { get; set; }
+}

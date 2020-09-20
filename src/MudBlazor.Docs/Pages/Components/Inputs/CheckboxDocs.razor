@@ -12,10 +12,10 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <CheckBox @bind-Checked="@Basic_CheckBox1"></CheckBox>
-                <CheckBox @bind-Checked="@Basic_CheckBox2" Color="Color.Primary"></CheckBox>
-                <CheckBox @bind-Checked="@Basic_CheckBox1" Color="Color.Secondary"></CheckBox>
-                <CheckBox @bind-Checked="@Basic_CheckBox1" Disabled="true"></CheckBox>
+                <MudCheckBox @bind-Checked="@Basic_CheckBox1"></MudCheckBox>
+                <MudCheckBox @bind-Checked="@Basic_CheckBox2" Color="Color.Primary"></MudCheckBox>
+                <MudCheckBox @bind-Checked="@Basic_CheckBox1" Color="Color.Secondary"></MudCheckBox>
+                <MudCheckBox @bind-Checked="@Basic_CheckBox1" Disabled="true"></MudCheckBox>
             </SectionContent>
             <SectionSource Code="@Markdown_Basic"></SectionSource>
         </DocsPageSection>
@@ -25,10 +25,10 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <CheckBox @bind-Checked="@Basic_CheckBox1" Label="Default"></CheckBox>
-                <CheckBox @bind-Checked="@Basic_CheckBox2" Label="Primary" Color="Color.Primary"></CheckBox>
-                <CheckBox @bind-Checked="@Basic_CheckBox3" Label="Secondary" Color="Color.Secondary"></CheckBox>
-                <CheckBox @bind-Checked="@Basic_CheckBox1" Disabled="true" Label="Disabled"></CheckBox>
+                <MudCheckBox @bind-Checked="@Basic_CheckBox1" Label="Default"></MudCheckBox>
+                <MudCheckBox @bind-Checked="@Basic_CheckBox2" Label="Primary" Color="Color.Primary"></MudCheckBox>
+                <MudCheckBox @bind-Checked="@Basic_CheckBox3" Label="Secondary" Color="Color.Secondary"></MudCheckBox>
+                <MudCheckBox @bind-Checked="@Basic_CheckBox1" Disabled="true" Label="Disabled"></MudCheckBox>
             </SectionContent>
             <SectionSource Code="@Markdown_Label"></SectionSource>
         </DocsPageSection>
@@ -42,16 +42,16 @@
     public bool Basic_CheckBox3 { get; set; } = false;
 
 string Markdown_Basic = @"```html
-<CheckBox @bind-Checked=""@Basic_CheckBox1""></CheckBox>
-<CheckBox @bind-Checked=""@Basic_CheckBox2"" Color=""Color.Primary""></CheckBox>
-<CheckBox @bind-Checked=""@Basic_CheckBox1"" Color=""Color.Secondary""></CheckBox>
-<CheckBox @bind-Checked=""@Basic_CheckBox1"" Disabled=""true""></CheckBox>
+<MudCheckBox @bind-Checked=""@Basic_CheckBox1""></MudCheckBox>
+<MudCheckBox @bind-Checked=""@Basic_CheckBox2"" Color=""Color.Primary""></MudCheckBox>
+<MudCheckBox @bind-Checked=""@Basic_CheckBox1"" Color=""Color.Secondary""></MudCheckBox>
+<MudCheckBox @bind-Checked=""@Basic_CheckBox1"" Disabled=""true""></MudCheckBox>
 ```";
 
 string Markdown_Label = @"```html
-<CheckBox @bind-Checked=""@Basic_CheckBox1""></CheckBox>
-<CheckBox @bind-Checked=""@Basic_CheckBox2"" Color=""Color.Primary""></CheckBox>
-<CheckBox @bind-Checked=""@Basic_CheckBox1"" Color=""Color.Secondary""></CheckBox>
-<CheckBox @bind-Checked=""@Basic_CheckBox1"" Disabled=""true""></CheckBox>
+<MudCheckBox @bind-Checked=""@Basic_CheckBox1""></MudCheckBox>
+<MudCheckBox @bind-Checked=""@Basic_CheckBox2"" Color=""Color.Primary""></MudCheckBox>
+<MudCheckBox @bind-Checked=""@Basic_CheckBox1"" Color=""Color.Secondary""></MudCheckBox>
+<MudCheckBox @bind-Checked=""@Basic_CheckBox1"" Disabled=""true""></MudCheckBox>
 ```";
 }

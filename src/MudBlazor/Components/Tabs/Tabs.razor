@@ -5,7 +5,7 @@
         <div class="mud-tabs-toolbar">
             @foreach (TabPanel TabPanel in Panels)
             {
-                <Button Variant="Variant.Text" class="@GetActiveClass(TabPanel)" @onclick=@( () => ActivatePanel(TabPanel) )>@TabPanel.Text</Button>
+                <MudButton Variant="Variant.Text" class="@GetActiveClass(TabPanel)" @onclick=@( () => ActivatePanel(TabPanel) )>@TabPanel.Text</MudButton>
             }
         </div>
         <div class="mud-tabs-panels">

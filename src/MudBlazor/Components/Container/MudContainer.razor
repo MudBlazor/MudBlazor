@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@using MudBlazor.Extensions
+@inherits MudComponentBase
+
+<div class="@Classname" style="@Style">
+    @ChildContent
+</div>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("mud-container")
+      .AddClass($"mud-container-fixed", Fixed)
+      .AddClass($"mud-container-maxwidth-{MaxWidth.ToDescriptionString()}", !Fixed)
+      .AddClass(Class)
+    .Build();
+
+    [Parameter] public bool Fixed { get; set; } = false;
+
+    [Parameter] public MaxWidth MaxWidth { get; set; } = MaxWidth.Large;
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<div class="mud-card-header" style="@Style">
+    @if (CardHeaderAvatar != null)
+    {<div class="mud-card-header-avatar">@CardHeaderAvatar</div>}
+    @if (CardHeaderContent != null)
+    {<div class="mud-card-header-content">@CardHeaderContent</div>}
+    @if (CardHeaderActions != null)
+    {<div class="mud-card-header-actions">@CardHeaderActions</div>}
+</div>
+
+@code { [Parameter] public RenderFragment CardHeaderAvatar { get; set; }
+            [Parameter] public RenderFragment CardHeaderContent { get; set; }
+            [Parameter] public RenderFragment CardHeaderActions { get; set; } }

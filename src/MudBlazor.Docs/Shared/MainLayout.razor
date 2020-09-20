@@ -4,12 +4,12 @@
 <MarkdownScripts />
 
     <Layout DrawerOpen="@_drawerOpen">
-        <AppBar Elevation="99" Color="Color.Appbar">
-            <IconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-            <AppBarSpacer />
-            <IconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
-            <IconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
-        </AppBar>
+        <MudAppBar Elevation="99" Color="Color.Appbar">
+            <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+            <MudAppBarSpacer />
+            <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
+            <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
+        </MudAppBar>
         <Drawer Elevation="99">
             <DrawerHeader>
                 <span class="mudblazor-brand">
@@ -25,7 +25,7 @@
 
     @code {
 
-        bool _drawerOpen = true;
+        bool _drawerOpen = false;
 
         void DrawerToggle()
         {
