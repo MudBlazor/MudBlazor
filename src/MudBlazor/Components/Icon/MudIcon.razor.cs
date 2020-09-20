@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class ComponentBaseIcon : MudComponentBase
+    public partial class MudIcon : MudComponentBase
     {
         protected string Classname =>
         new CssBuilder("")

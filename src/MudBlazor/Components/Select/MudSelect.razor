@@ -7,7 +7,7 @@
         <InputLabel Class="mud-input-label-formcontrol" Variant="@Variant">
             @Label
         </InputLabel>
-        <Icon Class="mud-select-icon" Icon="@(isMenuOpen? @Icons.Material.ArrowDropUp : @Icons.Material.ArrowDropDown)"></Icon>
+        <MudIcon Class="mud-select-icon" Icon="@(isMenuOpen? @Icons.Material.ArrowDropUp : @Icons.Material.ArrowDropDown)"></MudIcon>
         <CascadingValue Value="@this">
             <div class="mud-select-menu @(isMenuOpen? "mud-open" : "")">
                 <MudList>
