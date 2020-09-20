@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
+@inherits MudComponentBase
 
-
-<div class="@Classname">
+<div class="@Classname" style="@Style">
     @ChildContent
 </div>
 
@@ -14,8 +14,6 @@
       .AddClass($"mud-main-drawer-closed", !LayoutState.DrawerOpen)
       .AddClass(Class)
     .Build();
-
-    [Parameter] public string Class { get; set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 
