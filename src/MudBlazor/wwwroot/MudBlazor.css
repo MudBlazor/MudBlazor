@@ -1306,15 +1306,16 @@ button.mud-list-item {
   display: table;
   border-spacing: 0;
   border-collapse: collapse; }
-
-.mud-simple-table thead {
-  display: table-header-group; }
-  .mud-simple-table thead tr {
+  .mud-simple-table table thead {
+    display: table-header-group; }
+  .mud-simple-table table tbody {
+    display: table-row-group; }
+  .mud-simple-table table * tr {
     color: inherit;
     display: table-row;
     outline: 0;
     vertical-align: middle; }
-    .mud-simple-table thead tr th {
+    .mud-simple-table table * tr > td, .mud-simple-table table * tr th {
       display: table-cell;
       padding: 16px;
       font-size: 0.875rem;
@@ -1324,287 +1325,21 @@ button.mud-list-item {
       line-height: 1.43;
       border-bottom: 1px solid #e0e0e0;
       letter-spacing: 0.01071em;
-      vertical-align: inherit;
+      vertical-align: inherit; }
+    .mud-simple-table table * tr > th {
       color: rgba(0, 0, 0, 0.87);
       font-weight: 500;
       line-height: 1.5rem; }
 
-.mud-simple-table tbody {
-  display: table-row-group; }
-  .mud-simple-table tbody tr {
-    color: inherit;
-    display: table-row;
-    outline: 0;
-    vertical-align: middle; }
-    .mud-simple-table tbody tr td {
-      display: table-cell;
-      padding: 16px;
-      font-size: 0.875rem;
-      text-align: left;
-      font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-      font-weight: 400;
-      line-height: 1.43;
-      border-bottom: 1px solid #e0e0e0;
-      letter-spacing: 0.01071em;
-      vertical-align: inherit;
-      color: rgba(0, 0, 0, 0.87); }
-    .mud-simple-table tbody tr th {
-      display: table-cell;
-      padding: 16px;
-      font-size: 0.875rem;
-      text-align: left;
-      font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-      font-weight: 400;
-      line-height: 1.43;
-      border-bottom: 1px solid #e0e0e0;
-      letter-spacing: 0.01071em;
-      vertical-align: inherit;
-      color: rgba(0, 0, 0, 0.87);
-      font-weight: 500;
-      line-height: 1.5rem; }
-
-.mud-simple-table tr {
-  color: inherit;
-  display: table-row;
-  outline: 0;
-  vertical-align: middle; }
-  .mud-simple-table tr td {
-    display: table-cell;
-    padding: 16px;
-    font-size: 0.875rem;
-    text-align: left;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    line-height: 1.43;
-    border-bottom: 1px solid #e0e0e0;
-    letter-spacing: 0.01071em;
-    vertical-align: inherit;
-    color: rgba(0, 0, 0, 0.87); }
-
-.mud-simple-table-container {
-  width: 100%;
-  overflow-x: auto; }
-
-.mud-simple-table-dense table tbody tr td {
+.mud-simple-table.mud-table-dense * tr td, .mud-simple-table.mud-table-dense * tr th {
   padding: 6px 24px 6px 16px; }
 
-.mud-simple-table-dense table theader tr th {
-  padding: 6px 24px 6px 16px; }
+.mud-simple-table.mud-table-dense * tr td, .mud-simple-table.mud-table-dense * tr th:last-child {
+  padding-right: 16px; }
 
-.mud-simple-table-dense table tr th {
-  padding: 6px 24px 6px 16px; }
+.mud-simple-table.mud-table-hover * tr:hover {
+  background-color: rgba(0, 0, 0, 0.04); }
 
-.mud-simple-table-dense table tr td {
-  padding: 6px 24px 6px 16px; }
-
-/*
-.mud-table caption {
-    color: rgba(0, 0, 0, 0.54);
-    padding: 16px;
-    font-size: 0.875rem;
-    text-align: left;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    line-height: 1.43;
-    caption-side: bottom;
-    letter-spacing: 0.01071em;
-}
-
-.mud-table-sticky-header {
-    border-collapse: separate;
-}
-
-
-
-.mud-table-toolbar {
-    padding-left: 16px;
-    padding-right: 8px;
-}
-
-
-
-
-.mud-table-cell-footer {
-    color: rgba(0, 0, 0, 0.54);
-    font-size: 0.75rem;
-    line-height: 1.3125rem;
-}
-
-.mud-table-cell-size-small {
-    padding: 6px 24px 6px 16px;
-}
-
-.mud-table-cell-size-small:last-child {
-    padding-right: 16px;
-}
-
-.mud-table-cell-size-small.mud-table-cell-padding-checkbox {
-    width: 24px;
-    padding: 0 12px 0 16px;
-}
-
-.mud-table-cell-size-small.mud-table-cell-padding-checkbox:last-child {
-    padding-left: 12px;
-    padding-right: 16px;
-}
-
-.mud-table-cell-size-small.mud-table-cell-padding-checkbox > * {
-    padding: 0;
-}
-
-.mud-table-cell-padding-checkbox {
-    width: 48px;
-    padding: 0 0 0 4px;
-}
-
-.mud-table-cell-padding-checkbox:last-child {
-    padding-left: 0;
-    padding-right: 4px;
-}
-
-.mud-table-cell-padding-none {
-    padding: 0;
-}
-
-.mud-table-cell-padding-none:last-child {
-    padding: 0;
-}
-
-.mud-table-cell-align-left {
-    text-align: left;
-}
-
-.mud-table-cell-align-center {
-    text-align: center;
-}
-
-.mud-table-cell-align-right {
-    text-align: right;
-    flex-direction: row-reverse;
-}
-
-.mud-table-cell-align-justify {
-    text-align: justify;
-}
-
-.mud-table-cell-sticky-header {
-    top: 0;
-    left: 0;
-    z-index: 2;
-    position: sticky;
-    background-color: #fff;
-}
-
-
-
-
-
-.mud-table-row.mud-table-row-hover:hover {
-    background-color: rgba(0, 0, 0, 0.04);
-}
-
-.mud-table-row.mud-selected, .mud-table-row.mud-selected:hover {
-    background-color: rgba(220, 0, 78, 0.08);
-}
-
-
-.mud-table-pagination {
-    color: rgba(0, 0, 0, 0.87);
-    overflow: auto;
-    font-size: 0.875rem;
-    display: initial;
-}
-
-.mud-table-pagination:last-child {
-    padding: 0;
-}
-
-.mud-table-pagination-toolbar{
-    min-height: 52px;
-    padding-right: 2px;
-}
-
-.mud-table-pagination-spacer{
-    flex: 1 1 100%;
-}
-
-.mud-table-pagination-caption {
-    flex-shrink: 0;
-}
-
-.mud-table-pagination-select-root {
-    margin-left: 8px;
-    margin-right: 32px;
-}
-
-.mud-table-pagination-select {
-    text-align: right;
-    padding-left: 8px;
-    padding-right: 24px;
-    text-align-last: right;
-}
-
-.mud-table-pagination-input {
-    color: inherit;
-    font-size: inherit;
-    flex-shrink: 0;
-}
-
-.mud-table-pagination-actions {
-    flex-shrink: 0;
-    margin-left: 20px;
-}
-
-
-.mud-table-sortlabel-root {
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    flex-direction: inherit;
-    justify-content: flex-start;
-}
-
-.mud-table-sortlabel-root:focus {
-    color: rgba(0, 0, 0, 0.54);
-}
-
-.mud-table-sortlabel-root:hover {
-    color: rgba(0, 0, 0, 0.54);
-}
-
-.mud-table-sortlabel-root.mud-table-sortlabel-active {
-    color: rgba(0, 0, 0, 0.87);
-}
-
-.mud-table-sortlabel-root.mud-table-sortlabel-active.mud-table-sortlabel-root.mud-table-sortlabel-active .mud-table-sortlabel-icon {
-    color: rgba(0, 0, 0, 0.54);
-    opacity: 1;
-}
-
-.mud-table-sortlabel-root:hover .mud-table-sortlabel-icon {
-    opacity: 0.5;
-}
-
-.mud-table-sortlabel-icon {
-    opacity: 0;
-    font-size: 18px;
-    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    margin-left: 4px;
-    user-select: none;
-    margin-right: 4px;
-}
-
-.mud-table-sortlabel-icon-direction-desc {
-    transform: rotate(0deg);
-}
-
-.mud-table-sortlabel-icon-direction-asc {
-    transform: rotate(180deg);
-}
-
-.mud-dummy-select {
-
-}*/
 .mud-switch {
   cursor: pointer;
   display: inline-flex;
@@ -1903,21 +1638,21 @@ button.mud-list-item {
   font-size: 0.75rem;
   line-height: 1.3125rem; }
 
-.mud-table.mud-table-dense .mud-table-container .mud-table-root > .mud-table-head .mud-table-row .mud-table-cell, .mud-table.mud-table-dense .mud-table-body .mud-table-row .mud-table-cell {
+.mud-table-dense * .mud-table-row .mud-table-cell {
   padding: 6px 24px 6px 16px; }
 
-.mud-table.mud-table-dense .mud-table-container .mud-table-root > .mud-table-head .mud-table-row .mud-table-cell:last-child, .mud-table.mud-table-dense .mud-table-body .mud-table-row .mud-table-cell:last-child {
+.mud-table-dense * .mud-table-row .mud-table-cell:last-child {
   padding-right: 16px; }
 
-.mud-table.mud-table-dense .mud-table-container .mud-table-root > .mud-table-head .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox, .mud-table.mud-table-dense .mud-table-body .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox {
+.mud-table-dense * .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox {
   width: 24px;
   padding: 0 12px 0 16px; }
 
-.mud-table.mud-table-dense .mud-table-container .mud-table-root > .mud-table-head .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox:last-child, .mud-table.mud-table-dense .mud-table-body .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox:last-child {
+.mud-table-dense * .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox:last-child {
   padding-left: 12px;
   padding-right: 16px; }
 
-.mud-table.mud-table-dense .mud-table-container .mud-table-root > .mud-table-head .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox > *, .mud-table.mud-table-dense .mud-table-body .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox > * {
+.mud-table-dense * .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox > * {
   padding: 0; }
 
 .mud-table-cell-padding-checkbox {
@@ -1967,11 +1702,8 @@ button.mud-list-item {
   outline: 0;
   vertical-align: middle; }
 
-.mud-table-row.mud-table-row-hover:hover {
+.mud-table-hover * .mud-table-body .mud-table-row:hover {
   background-color: rgba(0, 0, 0, 0.04); }
-
-.mud-table-row.mud-selected, .mud-table-row.mud-selected:hover {
-  background-color: rgba(220, 0, 78, 0.08); }
 
 .mud-table-pagination {
   color: rgba(0, 0, 0, 0.87);
@@ -2004,43 +1736,6 @@ button.mud-list-item {
 .mud-table-pagination-actions {
   flex-shrink: 0;
   margin-left: 20px; }
-
-.mud-table-sortlabel-root {
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  flex-direction: inherit;
-  justify-content: flex-start; }
-
-.mud-table-sortlabel-root:focus {
-  color: rgba(0, 0, 0, 0.54); }
-
-.mud-table-sortlabel-root:hover {
-  color: rgba(0, 0, 0, 0.54); }
-
-.mud-table-sortlabel-root.mud-table-sortlabel-active {
-  color: rgba(0, 0, 0, 0.87); }
-
-.mud-table-sortlabel-root.mud-table-sortlabel-active.mud-table-sortlabel-root.mud-table-sortlabel-active .mud-table-sortlabel-icon {
-  color: rgba(0, 0, 0, 0.54);
-  opacity: 1; }
-
-.mud-table-sortlabel-root:hover .mud-table-sortlabel-icon {
-  opacity: 0.5; }
-
-.mud-table-sortlabel-icon {
-  opacity: 0;
-  font-size: 18px;
-  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  margin-left: 4px;
-  user-select: none;
-  margin-right: 4px; }
-
-.mud-table-sortlabel-icon-direction-desc {
-  transform: rotate(0deg); }
-
-.mud-table-sortlabel-icon-direction-asc {
-  transform: rotate(180deg); }
 
 .mud-tabs {
   background-color: var(--mud-theme-surface); }
