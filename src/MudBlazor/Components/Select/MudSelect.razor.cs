@@ -10,7 +10,8 @@ namespace MudBlazor
     public class ComponentBaseMudSelect : MudBaseInputText
     {
         protected string Classname =>
-        new CssBuilder().AddClass(Class)
+        new CssBuilder("mud-select")
+        .AddClass(Class)
        .Build();
 
         [Parameter] public RenderFragment ChildContent { get; set; }

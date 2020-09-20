@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor
-@inherits ComponentBaseSwitch
+@inherits MudComponentBase
 
 
-<label class="mud-switch">
+<label class="mud-switch" style="@Style">
     <span class="mud-switch-span">
         <span class="@Classname">
             <span class="mud-switch-button">
@@ -16,5 +16,16 @@
     {
         <Typography GutterBottom="false">@Label</Typography>
     }
+    @if (ChildContent != null)
+    {
+        <Typography GutterBottom="false">
+            @ChildContent
+        </Typography>
+    }
 </label>
+
+@code
+{
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
 

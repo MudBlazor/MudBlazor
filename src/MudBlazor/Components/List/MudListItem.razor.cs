@@ -1,17 +1,16 @@
 ﻿using Microsoft.AspNetCore.Components;
-
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class ComponentBaseList : ComponentBase
+    public class ComponentBaseMudListItem : MudBaseSelectItem
     {
         protected string Classname =>
-        new CssBuilder("mud-list")
+        new CssBuilder("mud-list-item")
+          .AddClass($"mud-ripple", !DisableRipple)
           .AddClass(Class)
         .Build();
 
         [Parameter] public string Class { get; set; }
-        [Parameter] public RenderFragment ChildContent { get; set; }
     }
 }

@@ -3,15 +3,15 @@
 
 <ToolBar Class="mud-table-pagination-toolbar">
     <div class="mud-table-pagination-spacer"></div>
-    @if (!DisabelRowsPerPage)
+    @if (!DisableRowsPerPage)
     {
         <Typography Typo="Typo.body2" Class="mud-table-pagination-caption" GutterBottom="false">
             Rows per page:
         </Typography>
-        <MudSelect SelectedValue="SetRowsPerPage">
+        <MudSelect SelectedValue="SetRowsPerPage" Value="@Table.RowsPerPage.ToString()" Class="mud-table-pagination-select" DisabelUnderLine="true">
             @foreach (int rows in RowsPerPage)
             {
-                <MudSelectItem Value="@rows.ToString()">@rows.ToString().ToUpper();</MudSelectItem>
+                <MudSelectItem Value="@rows.ToString()">@rows.ToString().ToUpper()</MudSelectItem>
             }
         </MudSelect>
     }
