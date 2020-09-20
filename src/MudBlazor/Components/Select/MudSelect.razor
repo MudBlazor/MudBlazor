@@ -2,7 +2,7 @@
 @inherits ComponentBaseMudSelect
 
 <div class="@Classname" @onclick="@ShowSelect">
-    <FormControl HelperText="@HelperText">
+    <MudFormControl HelperText="@HelperText">
         <Input InputType="InputType.Text" Class="mud-input-formcontrol" Variant="@Variant" Value="@Value" DisabelUnderLine="@DisabelUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly" />
         <InputLabel Class="mud-input-label-formcontrol" Variant="@Variant">
             @Label
@@ -15,7 +15,7 @@
                 </MudList>
             </div>
         </CascadingValue>
-    </FormControl>
+    </MudFormControl>
 </div>
 
 @if (isMenuOpen)
