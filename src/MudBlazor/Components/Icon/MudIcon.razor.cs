@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class ComponentBaseIcon : ComponentBase
+    public partial class MudIcon : MudComponentBase
     {
         protected string Classname =>
         new CssBuilder("")
@@ -18,7 +18,6 @@ namespace MudBlazor
         [Parameter] public string Icon { get; set; }
         [Parameter] public bool WebFont { get; set; }
         [Parameter] public Size Size { get; set; } = Size.Medium;
-        [Parameter] public string Class { get; set; }
 
         [Parameter] public RenderFragment ChildContent { get; set; }
 

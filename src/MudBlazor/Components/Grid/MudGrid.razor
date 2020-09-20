@@ -1,10 +1,10 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
 @using MudBlazor.Extensions
-
+@inherits MudComponentBase
 
 <CascadingValue Value="this">
-    <div class="@Classname">
+    <div class="@Classname" style="@Style">
         @ChildContent
     </div>
 </CascadingValue>
@@ -21,8 +21,6 @@
     [Parameter] public int Spacing { set; get; } = 3;
 
     [Parameter] public Justify Justify { get; set; } = Justify.FlexStart;
-
-    [Parameter] public string Class { get; set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 

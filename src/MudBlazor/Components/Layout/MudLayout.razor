@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
+@inherits MudComponentBase
 
-
-<div class="@Classname">
+<div class="@Classname" style="@Style">
     <CascadingValue Value="@_layoutState">
             @ChildContent
     </CascadingValue>
@@ -14,8 +14,6 @@
     new CssBuilder("mud-layout")
         .AddClass(Class)
     .Build();
-
-    [Parameter] public string Class { get; set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 

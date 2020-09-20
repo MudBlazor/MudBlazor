@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 namespace MudBlazor
 {
-    public abstract class MudBaseSelectItem : ComponentBase
+    public abstract class MudBaseSelectItem : MudComponentBase
     {
         [Parameter] public bool Disabled { get; set; }
         [Parameter] public bool DisableRipple { get; set; }

@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor
-@inherits ComponentBaseInput
+@inherits MudBaseInputText
 
 
 
-<div class="@Classname">
+<div class="@Classname" style="@Style">
     <input type="@_InputType" class="@InputClassname" @bind="@Value" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" />
 </div>

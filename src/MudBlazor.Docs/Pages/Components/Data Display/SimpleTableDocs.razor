@@ -14,7 +14,7 @@
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
-                <SimpleTable>
+                <MudSimpleTable>
                     <thead>
                         <tr>
                             @foreach (var h in headings)
@@ -34,7 +34,7 @@
                             </tr>
                         }
                     </tbody>
-                </SimpleTable>
+                </MudSimpleTable>
             </SectionContent>
         </DocsPageSection>
         <DocsPageSection>
@@ -45,7 +45,7 @@
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
-                <SimpleTable Hover="true" Dense="@dense">
+                <MudSimpleTable Hover="true" Dense="@dense">
                     <thead>
                         <tr>
                             @foreach (var h in headings)
@@ -65,7 +65,7 @@
                             </tr>
                         }
                     </tbody>
-                </SimpleTable>
+                </MudSimpleTable>
                 <MudSwitch @bind-Checked="@dense">Dense</MudSwitch>
             </SectionContent>
             <SectionSource Code="@Markdown_Simple"></SectionSource>
@@ -100,7 +100,7 @@
         @""6 Cicely cemerine9@soup.io Female 138.94.191.43"",
     };
 }}
-<SimpleTable Hover=""true"" Dense=""@dense"">
+<MudSimpleTable Hover=""true"" Dense=""@dense"">
     <thead>
         <tr>
             @foreach (var h in headings)
@@ -120,6 +120,6 @@
             </tr>
         }
     </tbody>
-</SimpleTable>
+</MudSimpleTable>
 ```";
 }

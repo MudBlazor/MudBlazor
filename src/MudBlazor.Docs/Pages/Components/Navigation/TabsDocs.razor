@@ -12,17 +12,17 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true">
-                <Tabs>
-                    <TabPanel Text="Item 1">
+                <MudTabs>
+                    <MudTabPanel Text="Item 1">
                         Item 1
-                    </TabPanel>
-                    <TabPanel Text="Item 2">
+                    </MudTabPanel>
+                    <MudTabPanel Text="Item 2">
                         Item 2
-                    </TabPanel>
-                    <TabPanel Text="Item 3">
+                    </MudTabPanel>
+                    <MudTabPanel Text="Item 3">
                         Item 3
-                    </TabPanel>
-                </Tabs>
+                    </MudTabPanel>
+                </MudTabs>
             </SectionContent>
             <SectionSource Code="@Markdown_Simple"></SectionSource>
         </DocsPageSection>
@@ -31,16 +31,16 @@
 
 @code {
     string Markdown_Simple = @"```html
-<Tabs>
-  <TabPanel Text=""Item 1"">
+<MudTabs>
+  <MudTabPanel Text=""Item 1"">
       Item 1
-  </TabPanel>
-  <TabPanel Text=""Item 2"">
+  </MudTabPanel>
+  <MudTabPanel Text=""Item 2"">
       Item 2
-  </TabPanel>
-  <TabPanel Text=""Item 3"">
+  </MudTabPanel>
+  <MudTabPanel Text=""Item 3"">
       Item 3
-  </TabPanel>
-</Tabs>
+  </MudTabPanel>
+</MudTabs>
 ```";
 }

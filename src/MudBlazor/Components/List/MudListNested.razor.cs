@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class ComponentBaseMudListNested : ComponentBase
+    public partial class MudListNested : MudComponentBase
     {
         protected string Classname =>
         new CssBuilder("mud-nested-list")
@@ -18,7 +18,6 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
-        [Parameter] public string Class { get; set; }
         [Parameter] public string ClassItem { get; set; }
         [Parameter] public string Title { get; set; }
         [Parameter] public bool Disabled { get; set; }

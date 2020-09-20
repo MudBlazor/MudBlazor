@@ -6,7 +6,7 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public class ComponentBaseTypography : ComponentBase
+    public partial class MudText : MudComponentBase
     {
         protected string Classname =>
         new CssBuilder("mud-typography")
@@ -18,7 +18,6 @@ namespace MudBlazor
 
         [Parameter] public Typo Typo { get; set; } = Typo.body1;
         [Parameter] public Align Align { get; set; } = Align.Inherit;
-        [Parameter] public string Class { get; set; }
         [Parameter] public bool GutterBottom { get; set; } = true;
         [Parameter]  public RenderFragment ChildContent { get; set; }
     }

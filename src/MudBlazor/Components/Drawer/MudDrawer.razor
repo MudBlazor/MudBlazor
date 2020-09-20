@@ -1,8 +1,9 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
 @using MudBlazor.Extensions
+@inherits MudComponentBase
 
-<aside class="@Classname">
+<aside class="@Classname" style="@Style">
     @ChildContent
 </aside>
 
@@ -21,8 +22,6 @@
     [Parameter] public int Elevation { set; get; } = 1;
 
     [Parameter] public Anchor Anchor { get; set; }
-
-    [Parameter] public string Class { get; set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 
