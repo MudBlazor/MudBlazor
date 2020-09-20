@@ -79,4 +79,6 @@
     }
 
     protected override int NumPages => (int)Math.Ceiling(FilteredItems.Count() / (double) RowsPerPage);
+
+    public override int GetFilteredItemsCount() => FilteredItems.Count();
 }

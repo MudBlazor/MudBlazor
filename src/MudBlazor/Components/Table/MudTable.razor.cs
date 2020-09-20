@@ -62,5 +62,8 @@ namespace MudBlazor
         }
 
         protected abstract int NumPages { get; }
+
+        public abstract int GetFilteredItemsCount();
+
     }
 }
