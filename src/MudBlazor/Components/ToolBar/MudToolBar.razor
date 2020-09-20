@@ -1,8 +1,9 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
 @using MudBlazor.Extensions
+@inherits MudComponentBase
 
-<div class="@Classname">
+<div class="@Classname" style="@Style">
     @ChildContent
 </div>
 
@@ -18,8 +19,6 @@
     [Parameter] public bool Dense { get; set; }
 
     [Parameter] public bool DisableGutters { get; set; }
-
-    [Parameter] public string Class { get; set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 }
