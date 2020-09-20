@@ -1,13 +1,13 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
 @using MudBlazor.Extensions
+@inherits MudComponentBase
 
-<div class="@Classname">
+<div class="@Classname" style="@Style">
     @ChildContent
 </div>
 
-@code {
-
+@code { 
     protected string Classname =>
     new CssBuilder("mud-grid-item")
         .AddClass($"mud-grid-item-xs-{xs.ToString()}", xs != 0)
@@ -19,7 +19,7 @@
     .Build();
 
     [CascadingParameter]
-    private Grid Parent { get; set; }
+    private MudGrid Parent { get; set; }
 
     [Parameter] public int xs { get; set; }
     [Parameter] public int sm { get; set; }
@@ -39,5 +39,6 @@
             throw new ArgumentNullException(nameof(Parent), "Item must exist within a Grid");
         base.OnInitialized();
     }
+
 }
 

@@ -12,21 +12,21 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true" Class="demo-grid-spacing">
-                <Grid>
-                    <Item xs="12">
-                        <Grid Spacing="@spacing" Justify="Justify.Center">
-                            <Item>
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudGrid Spacing="@spacing" Justify="Justify.Center">
+                            <MudItem>
                                 <MudPaper />
-                            </Item>
-                            <Item>
+                            </MudItem>
+                            <MudItem>
                                 <MudPaper />
-                            </Item>
-                            <Item>
+                            </MudItem>
+                            <MudItem>
                                 <MudPaper />
-                            </Item>
-                        </Grid>
-                    </Item>
-                </Grid>
+                            </MudItem>
+                        </MudGrid>
+                    </MudItem>
+                </MudGrid>
                 <MudPaper Class="demo-grid-paper" Elevation="0">
                     <MudButton Color="Color.Primary" OnClick="@AddSpacing">Change Spacing</MudButton>
                     <MudAppBarSpacer></MudAppBarSpacer>
@@ -41,29 +41,29 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true" Class="demo-grid-basic">
-                <Grid>
-                    <Item xs="12">
+                <MudGrid>
+                    <MudItem xs="12">
                         <MudPaper>12</MudPaper>
-                    </Item>
-                    <Item xs="6">
+                    </MudItem>
+                    <MudItem xs="6">
                         <MudPaper>6</MudPaper>
-                    </Item>
-                    <Item xs="6">
+                    </MudItem>
+                    <MudItem xs="6">
                         <MudPaper>6</MudPaper>
-                    </Item>
-                    <Item xs="3">
+                    </MudItem>
+                    <MudItem xs="3">
                         <MudPaper>3</MudPaper>
-                    </Item>
-                    <Item xs="3">
+                    </MudItem>
+                    <MudItem xs="3">
                         <MudPaper>3</MudPaper>
-                    </Item>
-                    <Item xs="3">
+                    </MudItem>
+                    <MudItem xs="3">
                         <MudPaper>3</MudPaper>
-                    </Item>
-                    <Item xs="3">
+                    </MudItem>
+                    <MudItem xs="3">
                         <MudPaper>3</MudPaper>
-                    </Item>
-                </Grid>
+                    </MudItem>
+                </MudGrid>
             </SectionContent>
             <SectionSource Code="@Markdown_BasicGrid"></SectionSource>
         </DocsPageSection>
@@ -87,51 +87,51 @@
     }
 
 string Markdown_Spacing = @"```html
-<Grid>
-    <Item xs=""12"">
-        <Grid Spacing=""@spacing"" Justify=""Justify.Center"">
-            <Item>
+<MudGrid>
+    <MudItem xs=""12"">
+        <MudGrid Spacing=""@spacing"" Justify=""Justify.Center"">
+            <MudItem>
                 <MudPaper />
-            </Item>
-            <Item>
+            </MudItem>
+            <MudItem>
                 <MudPaper />
-            </Item>
-            <Item>
+            </MudItem>
+            <MudItem>
                 <MudPaper />
-            </Item>
-        </Grid>
-    </Item>
-    <Item xs=""12"">
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+    <MudItem xs=""12"">
         <MudPaper Class=""docs-spacing"">
             <Typography>Spacing: @spacing</Typography>
             <MudButton Color=""Color.Primary"" OnClick=""@AddSpacing"">Change Spacing</MudButton>
         </MudPaper>
-    </Item>
-</Grid>
+    </MudItem>
+</MudGrid>
 ```";
 string Markdown_BasicGrid = @"```html
-<Grid>
-    <Item xs=""12"">
+<MudGrid>
+    <MudItem xs=""12"">
         <MudPaper>12</MudPaper>
-    </Item>
-    <Item xs=""6"">
+    </MudItem>
+    <MudItem xs=""6"">
         <MudPaper>6</MudPaper>
-    </Item>
-    <Item xs=""6"">
+    </MudItem>
+    <MudItem xs=""6"">
         <MudPaper>6</MudPaper>
-    </Item>
-    <Item xs=""3"">
+    </MudItem>
+    <MudItem xs=""3"">
         <MudPaper>3</MudPaper>
-    </Item>
-    <Item xs=""3"">
+    </MudItem>
+    <MudItem xs=""3"">
         <MudPaper>3</MudPaper>
-    </Item>
-    <Item xs=""3"">
+    </MudItem>
+    <MudItem xs=""3"">
         <MudPaper>3</MudPaper>
-    </Item>
-    <Item xs=""3"">
+    </MudItem>
+    <MudItem xs=""3"">
         <MudPaper>3</MudPaper>
-    </Item>
-</Grid>
+    </MudItem>
+</MudGrid>
 ```";
 }
