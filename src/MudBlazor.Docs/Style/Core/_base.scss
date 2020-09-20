@@ -12,10 +12,19 @@
 
 
 .mudblazor-main-content {
-    padding-top: 128px;
+    padding-top: 64px;
     padding-bottom: 64px;
-    padding-left: 30px;
-    padding-right: 30px;
+}
+
+
+
+@media (min-width: 960px) {
+    .mudblazor-main-content {
+        padding-top: 128px;
+        padding-bottom: 64px;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
 }
 
 

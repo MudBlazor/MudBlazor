@@ -1,9 +1,45 @@
 ﻿.docs-home {
-    padding-top: 128px;
-    padding-bottom: 128px;
-    display: inline-flex;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 32px;
+    padding-bottom: 64px;
+}
 
-    & > div > h1 {
+
+.mudblazor-svg {
+    width: 215px;
+    height: 175px;
+    flex-shrink: 0;
+    margin-bottom: 16px;
+    margin-top: -10px;
+}
+
+@media (min-width: 960px){
+    .docs-home {
+        text-align: left;
+        align-items: flex-start;
+        flex-direction: row;
+        padding-top: 128px;
+        padding-bottom: 128px;
+    }
+
+    .mudblazor-svg {
+        width: 215px;
+        height: 175px;
+        margin-right: 64px;
+        flex-shrink: 0;
+        margin-bottom: 16px;
+        margin-top: -10px;
+    }
+}
+
+
+
+
+.docs-home-brand {
+    & h1 {
         font-weight: 300;
         margin-left: -12px;
         text-indent: .7rem;
@@ -15,7 +51,7 @@
         margin-bottom: 0.35em;
     }
 
-    & > div > p {
+    & p {
         font-size: 1.5rem;
         font-family: "Roboto", "Helvetica", "Arial", sans-serif;
         font-weight: 400;
@@ -24,10 +60,14 @@
         color: #594ae2;
     }
 
-    & > div > button {
+    & button {
         margin-top: 32px;
     }
 }
+
+
+
+
 
 .docs-home-paper {
     padding: 20px;
@@ -58,13 +98,4 @@
         letter-spacing: 0.0075em;
         margin: 0;
     }
-}
-
-.mudblazor-svg {
-    width: 215px;
-    height: 175px;
-    margin-right: 64px;
-    flex-shrink: 0;
-    margin-bottom: 16px;
-    margin-top: -10px;
 }
