@@ -5,9 +5,9 @@
     <div class="mud-table-pagination-spacer"></div>
     @if (!DisableRowsPerPage)
     {
-        <MudTypography Typo="Typo.body2" Class="mud-table-pagination-caption" GutterBottom="false">
+        <MudText Typo="Typo.body2" Class="mud-table-pagination-caption" GutterBottom="false">
             @RowsPerPageString
-        </MudTypography>
+        </MudText>
         <MudSelect SelectedValue="SetRowsPerPage" Value="@Table.RowsPerPage.ToString()" Class="mud-table-pagination-select" DisabelUnderLine="true">
             @foreach (int pageSize in PageSizeOptions)
             {
@@ -15,9 +15,9 @@
             }
         </MudSelect>
     }
-    <MudTypography Typo="Typo.body2" Class="mud-table-pagination-caption" GutterBottom="false">
+    <MudText Typo="Typo.body2" Class="mud-table-pagination-caption" GutterBottom="false">
         @Info
-    </MudTypography>
+    </MudText>
     <div class="mud-table-pagination-actions">
         <MudIconButton Icon="@Icons.Material.FirstPage" @onclick="@(() => Table.NavigateTo(Page.First))" />
         <MudIconButton Icon="@Icons.Material.NavigateBefore" @onclick="@(() => Table.NavigateTo(Page.Previous))" />

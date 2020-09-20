@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs.Client", "Mu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs", "MudBlazor.Docs\MudBlazor.Docs.csproj", "{D90D463F-544F-47AF-8D19-617BB89D9A5F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtilityTests", "Tests\UtilityTests\UtilityTests.csproj", "{BB70530E-9475-4A9C-9C1F-355B378B5982}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.UnitTests", "MudBlazor.UnitTests\MudBlazor.UnitTests.csproj", "{48315B33-F4EB-4FA9-BDDF-0BE7FC2A1C07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{D90D463F-544F-47AF-8D19-617BB89D9A5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D90D463F-544F-47AF-8D19-617BB89D9A5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D90D463F-544F-47AF-8D19-617BB89D9A5F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BB70530E-9475-4A9C-9C1F-355B378B5982}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BB70530E-9475-4A9C-9C1F-355B378B5982}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BB70530E-9475-4A9C-9C1F-355B378B5982}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BB70530E-9475-4A9C-9C1F-355B378B5982}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48315B33-F4EB-4FA9-BDDF-0BE7FC2A1C07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48315B33-F4EB-4FA9-BDDF-0BE7FC2A1C07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48315B33-F4EB-4FA9-BDDF-0BE7FC2A1C07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48315B33-F4EB-4FA9-BDDF-0BE7FC2A1C07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

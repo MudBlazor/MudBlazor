@@ -30,7 +30,7 @@
                 <MudPaper Class="demo-grid-paper" Elevation="0">
                     <MudButton Color="Color.Primary" OnClick="@AddSpacing">Change Spacing</MudButton>
                     <MudAppBarSpacer></MudAppBarSpacer>
-                    <MudTypography GutterBottom="false">Spacing: @spacing</MudTypography>
+                    <MudText GutterBottom="false">Spacing: @spacing</MudText>
                 </MudPaper>
             </SectionContent>
             <SectionSource Code="@Markdown_Spacing"></SectionSource>
@@ -103,7 +103,7 @@ string Markdown_Spacing = @"```html
     </MudItem>
     <MudItem xs=""12"">
         <MudPaper Class=""docs-spacing"">
-            <MudTypography>Spacing: @spacing</MudTypography>
+            <MudText>Spacing: @spacing</MudText>
             <MudButton Color=""Color.Primary"" OnClick=""@AddSpacing"">Change Spacing</MudButton>
         </MudPaper>
     </MudItem>
