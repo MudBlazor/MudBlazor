@@ -3,10 +3,10 @@
 
 <div class="@Classname" @onclick="@ShowSelect">
     <MudFormControl HelperText="@HelperText">
-        <Input InputType="InputType.Text" Class="mud-input-formcontrol" Variant="@Variant" Value="@Value" DisabelUnderLine="@DisabelUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly" />
-        <InputLabel Class="mud-input-label-formcontrol" Variant="@Variant">
+        <MudInput InputType="InputType.Text" Class="mud-input-formcontrol" Variant="@Variant" Value="@Value" DisabelUnderLine="@DisabelUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly" />
+        <MudInputLabel Class="mud-input-label-formcontrol" Variant="@Variant">
             @Label
-        </InputLabel>
+        </MudInputLabel>
         <MudIcon Class="mud-select-icon" Icon="@(isMenuOpen? @Icons.Material.ArrowDropUp : @Icons.Material.ArrowDropDown)"></MudIcon>
         <CascadingValue Value="@this">
             <div class="mud-select-menu @(isMenuOpen? "mud-open" : "")">
