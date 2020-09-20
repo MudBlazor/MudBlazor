@@ -1,0 +1,15 @@
+﻿<MudDialog ClassContent="demo-dialog-form">
+    <DialogContent>
+            <TextField Label="Email" InputType="InputType.Email" FullWidth="true"></TextField>
+            <TextField Label="Password" InputType="InputType.Password"FullWidth="true"></TextField>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" DisableElevation="true" @onclick="Close">Log in</MudButton>
+    </DialogContent>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Close() => MudDialog.Close(DialogResult.Ok(true));
+
+}

@@ -125,6 +125,30 @@
   width: 25ch;
   margin: 8px; }
 
+.demo-dialog-simple {
+  display: inline-flex; }
+  .demo-dialog-simple p {
+    align-self: center;
+    margin-left: 16px;
+    margin-right: 24px; }
+  .demo-dialog-simple * .mud-avatar-color-default {
+    color: #1e88e5;
+    background-color: #bbdefb; }
+  .demo-dialog-simple.demo-dialog-simple-gray * .mud-avatar-color-default {
+    color: #fff;
+    background-color: #bdbdbd; }
+
+.demo-dialog-form .mud-formcontrol {
+  width: 100%;
+  margin-bottom: 12px; }
+
+.demo-dialog-form button {
+  display: inline-flex;
+  margin-left: 25%;
+  margin-bottom: 16px;
+  margin-top: 24px;
+  width: 50%; }
+
 .docs-home {
   display: flex;
   text-align: center;

@@ -1,0 +1,38 @@
+﻿<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <MudList>
+            <MudListItem @onclick="Close" Class="demo-dialog-simple">
+                <MudAvatar>
+                    <Icon Icon="@Icons.Material.Person" />
+                </MudAvatar>
+                <Typography GutterBottom="false">
+                    coolusername@gmail.com
+                </Typography>
+            </MudListItem>
+            <MudListItem @onclick="Close" Class="demo-dialog-simple">
+                <MudAvatar>
+                    <Icon Icon="@Icons.Material.Person" />
+                </MudAvatar>
+                <Typography GutterBottom="false">
+                    notsocool@gmail.com
+                </Typography>
+            </MudListItem>
+            <MudListItem @onclick="Close" Class="demo-dialog-simple demo-dialog-simple-gray">
+                <MudAvatar>
+                    <Icon Icon="@Icons.Material.Add" />
+                </MudAvatar>
+                <Typography GutterBottom="false">
+                    Add account
+                </Typography>
+            </MudListItem>
+        </MudList>
+    </DialogContent>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void Close() => MudDialog.Close(DialogResult.Ok(true));
+
+}
