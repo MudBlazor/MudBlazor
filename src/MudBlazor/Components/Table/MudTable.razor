@@ -21,7 +21,7 @@
                     </thead>
                 }
                 <tbody class="mud-table-body">
-                    @foreach (var item in Items)
+                    @foreach (var item in CurrentPageItems)
                     {
                         @RowTemplate(item)
                     }
@@ -37,9 +37,46 @@
     </CascadingValue>
 </div>
 
+
 @code
 {
+    // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is in MudTableBase
+
+    /// <summary>
+    /// 
+    /// </summary>
     [Parameter] public RenderFragment<T> RowTemplate { get; set; }
 
     [Parameter] public IEnumerable<T> Items { get; set; }
+
+    [Parameter] public Func<T, bool> Filter { get; set; } = null;
+
+    protected IEnumerable<T> FilteredItems
+    {
+        get
+        {
+            if (Filter == null)
+                return Items;
+            return Items.Where(Filter);
+        }
+    }
+
+    protected IEnumerable<T> CurrentPageItems
+    {
+        get
+        {
+            if (@PagerContent == null) 
+                return FilteredItems; // we have no pagination
+            return GetItemsOfPage(CurrentPage, RowsPerPage);
+        }
+    }
+
+    protected IEnumerable<T> GetItemsOfPage(int n, int pageSize)
+    {
+        if (n < 0 || pageSize <=0)
+            return new T[0];
+        return FilteredItems.Skip(n * pageSize).Take(pageSize);
+    }
+
+    protected override int NumPages => (int)Math.Ceiling(FilteredItems.Count() / (double) RowsPerPage);
 }

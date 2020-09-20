@@ -1,4 +1,5 @@
 ﻿@page "/components/data-display/table"
+@using MudBlazor.Docs.Data
 
 <DocsPage>
     <DocsPageHeader>
@@ -8,26 +9,27 @@
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Table</Title>
+                <Title>Table with pagination</Title>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
-                <MudTable Items="rows" Dense="@dense" Hover="@hover">
+                <MudTable Items="@PeriodicTable.GetElements()" Dense="@dense" Hover="@hover">
                     <ToolBarContent>
-                        <Typography Typo="Typo.h6" GutterBottom="false" Class="mud-flex-1-1-100">Employees</Typography>
+                        <Typography Typo="Typo.h6" GutterBottom="false" Class="mud-flex-1-1-100">Periodic Elements</Typography>
                     </ToolBarContent>
                     <HeaderContent>
-                        <MudTableHeaderCell>ID</MudTableHeaderCell>
+                        <MudTableHeaderCell>Nr</MudTableHeaderCell>
+                        <MudTableHeaderCell>Sign</MudTableHeaderCell>
                         <MudTableHeaderCell>Name</MudTableHeaderCell>
-                        <MudTableHeaderCell>Email</MudTableHeaderCell>
-                        <MudTableHeaderCell>Gender</MudTableHeaderCell>
-                        <MudTableHeaderCell>IP Address</MudTableHeaderCell>
+                        <MudTableHeaderCell>Position</MudTableHeaderCell>
+                        <MudTableHeaderCell>Molar mass</MudTableHeaderCell>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTableRow>
-                            @foreach (var x in @context.Split())
-                            {
-                                <MudTableCell>@x</MudTableCell>
-                            }
+                        <MudTableRow @key="@context">
+                            <MudTableCell>@context.Number</MudTableCell>
+                            <MudTableCell>@context.Sign</MudTableCell>
+                            <MudTableCell>@context.Name</MudTableCell>
+                            <MudTableCell>@context.Position</MudTableCell>
+                            <MudTableCell>@context.Molar</MudTableCell>
                         </MudTableRow>
                     </RowTemplate>
                     <PagerContent>
@@ -44,6 +46,7 @@
 @code {
     bool dense = false;
     bool hover = true;
+    
     string[] headings = {"ID", "Name", "Email", "Gender", "IP Address"};
 
     string[] rows = {
@@ -54,6 +57,7 @@
         @"5 Cecilius cchaplin4@shinystat.com Male 195.124.144.18",
         @"6 Cicely cemerine9@soup.io Female 138.94.191.43",
     };
+
     string Markdown_Table = @"```html
 // To Do
 ```";
