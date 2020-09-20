@@ -1,0 +1,46 @@
+﻿@namespace MudBlazor
+@inherits MudTypography
+
+
+@switch (Typo)
+{
+    case Typo.h1:
+        <span class="@Classname" style="@Style">@ChildContent</span>
+        break;
+    case Typo.h2:
+        <span class="@Classname" style="@Style">@ChildContent</span>
+        break;
+    case Typo.h3:
+        <span class="@Classname" style="@Style">@ChildContent</span>
+        break;
+    case Typo.h4:
+        <span class="@Classname" style="@Style">@ChildContent</span>
+        break;
+    case Typo.h5:
+        <span class="@Classname" style="@Style">@ChildContent</span>
+        break;
+    case Typo.h6:
+        <span class="@Classname" style="@Style">@ChildContent</span>
+        break;
+    case Typo.subtitle1:
+        <span class="@Classname" style="@Style">@ChildContent</span>
+        break;
+    case Typo.subtitle2:
+        <span class="@Classname" style="@Style">@ChildContent</span>
+        break;
+    case Typo.body1:
+        <span class="@Classname" style="@Style">@ChildContent</span>
+        break;
+    case Typo.body2:
+        <span class="@Classname" style="@Style">@ChildContent</span>
+        break;
+    case Typo.button:
+        <span class="@Classname" style="@Style">@ChildContent</span>
+        break;
+    case Typo.caption:
+        <span class="@Classname" style="@Style">@ChildContent</span>
+        break;
+    case Typo.overline:
+        <span class="@Classname" style="@Style">@ChildContent</span>
+        break;
+}
