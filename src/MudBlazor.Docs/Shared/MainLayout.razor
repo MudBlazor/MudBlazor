@@ -3,7 +3,7 @@
 <ThemeProvider Theme="currentTheme"/>
 <MarkdownScripts />
 
-    <Layout DrawerOpen="@_drawerOpen">
+    <MudLayout DrawerOpen="@_drawerOpen">
         <MudAppBar Elevation="99" Color="Color.Appbar">
             <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
             <MudAppBarSpacer />
@@ -21,7 +21,7 @@
         <MainContent Class="mudblazor-main-content">
             @Body
         </MainContent>
-    </Layout>
+    </MudLayout>
 
     @code {
 

@@ -13,7 +13,7 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-drawer">
                 <DocsFrame>
-                    <Layout DrawerOpen="@DocsDrawerOpen">
+                    <MudLayout DrawerOpen="@DocsDrawerOpen">
                         <MudAppBar Position="Position.Absolute" Elevation="0">
                             <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
                             <MudAppBarSpacer />
@@ -32,7 +32,7 @@
                         <MainContent>
                             <LoremIpsum />
                         </MainContent>
-                    </Layout>
+                    </MudLayout>
                 </DocsFrame>
             </SectionContent>
             <SectionSource Code="@Markdown_Drawer"></SectionSource>
@@ -44,7 +44,7 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-drawer">
                 <DocsFrame>
-                    <Layout DrawerOpen="@DocsDrawerOpen" DrawerClipped="true">
+                    <MudLayout DrawerOpen="@DocsDrawerOpen" DrawerClipped="true">
                         <MudAppBar Position="Position.Absolute" Elevation="0">
                             <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
                             <MudAppBarSpacer />
@@ -63,7 +63,7 @@
                         <MainContent>
                             <LoremIpsum />
                         </MainContent>
-                    </Layout>
+                    </MudLayout>
                 </DocsFrame>
             </SectionContent>
             <SectionSource Code="@Markdown_Clipping"></SectionSource>
@@ -81,7 +81,7 @@
     }
 
 string Markdown_Drawer = @"```html
-<Layout DrawerOpen=""@DocsDrawerOpen"">
+<MudLayout DrawerOpen=""@DocsDrawerOpen"">
     <MudAppBar Position=""Position.Absolute"" Elevation=""0"">
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
         <MudAppBarSpacer />
@@ -100,7 +100,7 @@ string Markdown_Drawer = @"```html
     <MainContent Class=""docs-drawer-page"">
         <LoremIpsum />
     </MainContent>
-</Layout>
+</MudLayout>
 
 @code {
     bool DocsDrawerOpen = true;
@@ -112,7 +112,7 @@ string Markdown_Drawer = @"```html
 }
 ```";
 string Markdown_Clipping = @"```html
-<Layout DrawerOpen=""@DocsDrawerOpen"" DrawerClipped=""true"">
+<MudLayout DrawerOpen=""@DocsDrawerOpen"" DrawerClipped=""true"">
 <MudAppBar Position=""Position.Absolute"" Elevation=""0"">
     <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
     <MudAppBarSpacer />
@@ -131,7 +131,7 @@ string Markdown_Clipping = @"```html
 <MainContent Class=""docs-drawer-page"">
     <LoremIpsum />
 </MainContent>
-</Layout>
+</MudLayout>
 
 @code {
     bool DocsDrawerOpen = true;
