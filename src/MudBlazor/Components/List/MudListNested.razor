@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor
-@inherits ComponentBaseListNested
+@inherits ComponentBaseMudListNested
 
 <li class="@Classname" disabled="@Disabled">
     <button @onclick="ExpandedToggle" tabindex="0" class="@ClassnameItem">
         @Title
     </button>
-    <List>
+    <MudList>
         @ChildContent
-    </List>  
+    </MudList>  
 </li>
