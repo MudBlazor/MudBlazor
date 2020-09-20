@@ -9,7 +9,7 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public class ComponentBaseMudLink : ComponentBase
+    public partial class MudLink : MudComponentBase
     {
         protected string Classname =>
         new CssBuilder("mud-typography mud-link")
@@ -21,8 +21,6 @@ namespace MudBlazor
         [Parameter] public Typo Typo { get; set; } = Typo.body1;
 
         [Parameter] public Underline Underline { get; set; } = Underline.Hover;
-
-        [Parameter] public string Class { get; set; }
 
         [Parameter] public string Href { get; set; }
 
