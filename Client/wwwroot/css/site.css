@@ -125,6 +125,7 @@ app {
     max-height: 40%;
     overflow-y: visible;
     left: 1.5%;
+    background-color: #FFF;
 }
 
 .toggle-error-list-btn:focus {
@@ -150,6 +151,12 @@ app {
 }
 
 /* User Page */
+#user-page-window {
+    width: 100%;
+    height: 100%;
+    border-color: #EEE;
+}
+
 .user-page-loader {
     position: fixed;
     top: 43%;
@@ -228,7 +235,7 @@ app {
 /* Splitter */
 .flex {
     display: flex;
-    flex-direction: row;
+    flex-flow: row;
 }
 
 .gutter.gutter-horizontal {
