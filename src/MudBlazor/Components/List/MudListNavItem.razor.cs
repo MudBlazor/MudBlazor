@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class ComponentBaseListNavItem : MudBaseSelectItem
+    public class ComponentBaseMudListNavItem : MudBaseSelectItem
     {
         protected string Classname =>
         new CssBuilder("mud-list-item")

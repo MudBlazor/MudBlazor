@@ -10,9 +10,9 @@
         <Icon Class="mud-select-icon" Icon="@(isMenuOpen? @Icons.Material.ArrowDropUp : @Icons.Material.ArrowDropDown)"></Icon>
         <CascadingValue Value="@this">
             <div class="mud-select-menu @(isMenuOpen? "mud-open" : "")">
-                <List>
+                <MudList>
                     @ChildContent
-                </List>
+                </MudList>
             </div>
         </CascadingValue>
     </FormControl>
