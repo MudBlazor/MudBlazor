@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class ComponentBaseMudListNavItem : MudBaseSelectItem
+    public partial class MudListNavItem : MudBaseSelectItem
     {
         protected string Classname =>
         new CssBuilder("mud-list-item")
@@ -12,7 +12,6 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
-        [Parameter] public string Class { get; set; }
         [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
     }
 }

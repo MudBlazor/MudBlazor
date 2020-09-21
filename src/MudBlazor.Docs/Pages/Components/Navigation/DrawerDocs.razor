@@ -13,26 +13,26 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-drawer">
                 <DocsFrame>
-                    <Layout DrawerOpen="@DocsDrawerOpen">
+                    <MudLayout DrawerOpen="@DocsDrawerOpen">
                         <MudAppBar Position="Position.Absolute" Elevation="0">
                             <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
                             <MudAppBarSpacer />
                             <MudButton Variant="Variant.Text" Color="Color.Inherit">Login</MudButton>
                         </MudAppBar>
-                        <Drawer>
-                            <DrawerHeader>
-                                <Typography Typo="Typo.h6">My App</Typography>
-                            </DrawerHeader>
+                        <MudDrawer>
+                            <MudDrawerHeader>
+                                <MudText Typo="Typo.h6">My App</MudText>
+                            </MudDrawerHeader>
                             <MudList>
                                 <MudListNavItem Href="#">Store</MudListNavItem>
                                 <MudListNavItem Href="#">Library</MudListNavItem>
                                 <MudListNavItem Href="#">Community</MudListNavItem>
                             </MudList>
-                        </Drawer>
-                        <MainContent>
+                        </MudDrawer>
+                        <MudMainContent>
                             <LoremIpsum />
-                        </MainContent>
-                    </Layout>
+                        </MudMainContent>
+                    </MudLayout>
                 </DocsFrame>
             </SectionContent>
             <SectionSource Code="@Markdown_Drawer"></SectionSource>
@@ -44,26 +44,26 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-drawer">
                 <DocsFrame>
-                    <Layout DrawerOpen="@DocsDrawerOpen" DrawerClipped="true">
+                    <MudLayout DrawerOpen="@DocsDrawerOpen" DrawerClipped="true">
                         <MudAppBar Position="Position.Absolute" Elevation="0">
                             <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
                             <MudAppBarSpacer />
                             <MudButton Variant="Variant.Text" Color="Color.Inherit">Login</MudButton>
                         </MudAppBar>
-                        <Drawer Anchor="Anchor.Right">
-                            <DrawerHeader>
-                                <Typography Typo="Typo.h6">My App</Typography>
-                            </DrawerHeader>
+                        <MudDrawer Anchor="Anchor.Right">
+                            <MudDrawerHeader>
+                                <MudText Typo="Typo.h6">My App</MudText>
+                            </MudDrawerHeader>
                             <MudList>
                                 <MudListNavItem Href="#">Store</MudListNavItem>
                                 <MudListNavItem Href="#">Library</MudListNavItem>
                                 <MudListNavItem Href="#">Community</MudListNavItem>
                             </MudList>
-                        </Drawer>
-                        <MainContent>
+                        </MudDrawer>
+                        <MudMainContent>
                             <LoremIpsum />
-                        </MainContent>
-                    </Layout>
+                        </MudMainContent>
+                    </MudLayout>
                 </DocsFrame>
             </SectionContent>
             <SectionSource Code="@Markdown_Clipping"></SectionSource>
@@ -81,26 +81,26 @@
     }
 
 string Markdown_Drawer = @"```html
-<Layout DrawerOpen=""@DocsDrawerOpen"">
+<MudLayout DrawerOpen=""@DocsDrawerOpen"">
     <MudAppBar Position=""Position.Absolute"" Elevation=""0"">
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
         <MudAppBarSpacer />
         <Button Variant=""Variant.Text"" Color=""Color.Inherit"">Login</Button>
     </MudAppBar>
-    <Drawer>
-        <DrawerHeader>
-            <Typography Typo=""Typo.h6"">My App</Typography>
-        </DrawerHeader>
+    <MudDrawer>
+        <MudDrawerHeader>
+            <MudText Typo=""Typo.h6"">My App</MudText>
+        </MudDrawerHeader>
         <List>
             <ListNavItem Href=""#"">Store</ListNavItem>
             <ListNavItem Href=""#"">Library</ListNavItem>
             <ListNavItem Href=""#"">Community</ListNavItem>
         </List>
-    </Drawer>
-    <MainContent Class=""docs-drawer-page"">
+    </MudDrawer>
+    <MudMainContent Class=""docs-drawer-page"">
         <LoremIpsum />
-    </MainContent>
-</Layout>
+    </MudMainContent>
+</MudLayout>
 
 @code {
     bool DocsDrawerOpen = true;
@@ -112,26 +112,26 @@ string Markdown_Drawer = @"```html
 }
 ```";
 string Markdown_Clipping = @"```html
-<Layout DrawerOpen=""@DocsDrawerOpen"" DrawerClipped=""true"">
+<MudLayout DrawerOpen=""@DocsDrawerOpen"" DrawerClipped=""true"">
 <MudAppBar Position=""Position.Absolute"" Elevation=""0"">
     <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
     <MudAppBarSpacer />
     <Button Variant=""Variant.Text"" Color=""Color.Inherit"">Login</Button>
 </MudAppBar>
-<Drawer Anchor=""Anchor.Right"">
-    <DrawerHeader>
-        <Typography Typo=""Typo.h6"">My App</Typography>
-    </DrawerHeader>
+<MudDrawer Anchor=""Anchor.Right"">
+    <MudDrawerHeader>
+        <MudText Typo=""Typo.h6"">My App</MudText>
+    </MudDrawerHeader>
     <List>
         <ListNavItem Href=""#"">Store</ListNavItem>
         <ListNavItem Href=""#"">Library</ListNavItem>
         <ListNavItem Href=""#"">Community</ListNavItem>
     </List>
-</Drawer>
-<MainContent Class=""docs-drawer-page"">
+</MudDrawer>
+<MudMainContent Class=""docs-drawer-page"">
     <LoremIpsum />
-</MainContent>
-</Layout>
+</MudMainContent>
+</MudLayout>
 
 @code {
     bool DocsDrawerOpen = true;

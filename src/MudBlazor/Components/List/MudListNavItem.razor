@@ -1,10 +1,10 @@
 ﻿@namespace MudBlazor
-@inherits ComponentBaseMudListNavItem
+@inherits MudBaseSelectItem
 @using Microsoft.AspNetCore.Components.Routing
 
 
-<li class="@Classname" disabled="@Disabled">
-    <NavLink class="@Classname" href="@Href" Match="@Match" ActiveClass="active">
+<li class="@Classname" disabled="@Disabled" style="@Style">
+    <NavLink class="@Classname"  style="@Style" href="@Href" Match="@Match" ActiveClass="active">
         @ChildContent
     </NavLink>
 </li>

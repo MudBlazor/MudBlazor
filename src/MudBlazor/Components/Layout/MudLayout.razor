@@ -1,0 +1,48 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@inherits MudComponentBase
+
+<div class="@Classname" style="@Style">
+    <CascadingValue Value="@_layoutState">
+            @ChildContent
+    </CascadingValue>
+</div>
+
+@code {
+
+    protected string Classname =>
+    new CssBuilder("mud-layout")
+        .AddClass(Class)
+    .Build();
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    LayoutState _layoutState = new LayoutState();
+
+    [Parameter]
+    public bool DrawerOpen
+    {
+        get => _layoutState.DrawerOpen;
+        set
+        {
+            if (value != _layoutState.DrawerOpen)
+            {
+                _layoutState.DrawerOpen = value;
+                StateHasChanged();
+            }
+        }
+    }
+
+    [Parameter] public bool DrawerClipped
+    {
+        get => _layoutState.DrawerClipped;
+        set
+        {
+            if (value != _layoutState.DrawerClipped)
+            {
+                _layoutState.DrawerClipped = value;
+                StateHasChanged();
+            }
+        }
+    }
+}
