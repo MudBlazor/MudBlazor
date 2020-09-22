@@ -15,8 +15,7 @@
     }
     @if (Toast.State.ShowCloseIcon)
     {
-        @*<MudIconButton Icon="close" Dense="true" @onclick="CloseIconClicked"></MudIconButton>*@
-        <MudIconButton Icon="close" @onclick="CloseIconClicked"></MudIconButton>
+        <MudIconButton Icon="@Icons.Material.Close" @onclick="CloseIconClicked"></MudIconButton>
     }
     @if (Title.IsNonEmpty())
     {
