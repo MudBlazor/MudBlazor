@@ -1760,12 +1760,12 @@ button.mud-list-item {
   vertical-align: inherit; }
 
 .mud-table-cell-head {
-  color: rgba(0, 0, 0, 0.87);
+  color: var(--mud-theme-text-color-default);
   font-weight: 500;
   line-height: 1.5rem; }
 
 .mud-table-cell-body {
-  color: rgba(0, 0, 0, 0.87); }
+  color: var(--mud-theme-on-surface); }
 
 .mud-table-cell-footer {
   color: rgba(0, 0, 0, 0.54);
@@ -1840,7 +1840,7 @@ button.mud-list-item {
   background-color: rgba(0, 0, 0, 0.04); }
 
 .mud-table-pagination {
-  color: rgba(0, 0, 0, 0.87);
+  color: var(--mud-theme-on-surface);
   overflow: auto;
   font-size: 0.875rem;
   display: initial; }
