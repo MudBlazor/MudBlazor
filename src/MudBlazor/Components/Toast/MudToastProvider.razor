@@ -1,0 +1,15 @@
+﻿@*
+    Copyright (c) Alessandro Ghidini. All rights reserved.
+    Licensed under the MIT License. See License.txt in the project root for license information.
+    Changes and improvements copyright (c) The MudBlazor Team
+*@
+
+@namespace MudBlazor
+@inherits MudComponentBase
+
+<div id="mud-toast-container" class="@Classname" style="@Style">
+    @foreach (var toast in Toasts)
+    {
+        <MudToastElement @key="toast" Toast="@toast"></MudToastElement>
+    }
+</div>

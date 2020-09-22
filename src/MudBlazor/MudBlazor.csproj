@@ -32,6 +32,8 @@
 
   <ItemGroup>
     <None Include="compilerconfig.json" />
+    <None Include="Components\Toast\MudToastElement.razor" />
+    <None Include="Components\Toast\MudToastProvider.razor" />
   </ItemGroup>
 
 

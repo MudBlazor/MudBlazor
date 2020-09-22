@@ -1,0 +1,47 @@
+﻿@page "/components/feedback/toast"
+
+
+@inject MudBlazor.IToaster Toaster
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Toast</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Default Toast</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudButton @onclick="@(() => Toaster.Success("The reactor was fired up successfully"))">Success Toast</MudButton>
+                <MudButton @onclick="@(() => Toaster.Info("The reactor is running at optimum temperature"))">Info Toast</MudButton>
+                <MudButton @onclick="@(() => Toaster.Warning("The reactor temperature exceeds the optimal range"))">Warning Toast</MudButton>
+                <MudButton @onclick="@(() => Toaster.Error("Meltdown is imminent"))">Error Toast</MudButton>
+            </SectionContent>
+            @*<SectionSource Code="@Markdown_SimpleDialog"></SectionSource>*@
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>With Title</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudButton @onclick="@(() => Toaster.Info("Toast body text","Info"))">Info Toast</MudButton>
+                <MudButton @onclick="@(() => Toaster.Success("Toast body text","Success"))">Success Toast</MudButton>
+                <MudButton @onclick="@(() => Toaster.Warning("Toast body text","Warning"))">Warning Toast</MudButton>
+                <MudButton @onclick="@(() => Toaster.Error("Toast body text","Error"))">Error Toast</MudButton>
+            </SectionContent>
+            @*<SectionSource Code="@Markdown_FormDialog"></SectionSource>*@
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
+
+@code {
+
+
+}
+
+

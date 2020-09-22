@@ -1,0 +1,235 @@
+﻿// TODO: move these where they belong!
+$theme-color-info: #2196f3;
+$theme-color-success: #4caf50;
+$theme-color-warning: #ff9800;
+$theme-color-danger: #f44336;
+$theme-border-radius-default: 4px;
+$mud-elevation1: 0px 2px 1px -1px rgba(0, 0, 0, 0.06), 0px 1px 1px 0px rgba(0, 0, 0, 0.042), 0px 1px 3px 0px rgba(0, 0, 0, 0.036);
+$theme-elevation-toast: $mud-elevation1;
+
+.mud-toast-title {
+    font-weight: 500;
+}
+
+.mud-toaster > button {
+    float: right;
+}
+
+.mud-toast-message {
+    -ms-word-wrap: break-word;
+    word-wrap: break-word;
+    padding: 8px 0;
+    float: left;
+    line-height: 1.46;
+}
+
+.mud-toast-message a,
+.mud-toast-message label {
+    color: #FFF
+}
+
+.mud-toast-message a:hover {
+    color: #CCC;
+    text-decoration: none
+}
+
+
+
+.mud-toast-top-center {
+    top: 0;
+    right: 0;
+    width: 100%
+}
+
+.mud-toast-bottom-center {
+    bottom: 0;
+    right: 0;
+    width: 100%
+}
+
+.mud-toast-top-full-width {
+    top: 0;
+    right: 0;
+    width: 100%
+}
+
+.mud-toast-bottom-full-width {
+    bottom: 0;
+    right: 0;
+    width: 100%
+}
+
+.mud-toast-top-left {
+    top: 12px;
+    left: 12px
+}
+
+.mud-toast-top-right {
+    top: 12px;
+    right: 12px
+}
+
+.mud-toast-bottom-right {
+    right: 12px;
+    bottom: 12px
+}
+
+.mud-toast-bottom-left {
+    bottom: 12px;
+    left: 12px
+}
+
+#mud-toast-container {
+    position: fixed;
+    z-index: 999999;
+    pointer-events: none
+}
+
+#mud-toast-container * {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box
+}
+
+#mud-toast-container > div {
+    position: relative;
+    pointer-events: auto;
+    overflow: hidden;
+    margin-top: 16px;
+    padding: 6px 3px 6px 16px;
+    width: 300px;
+    border-radius: $theme-border-radius-default;
+    color: #FFF;
+    opacity: .8;
+    filter: alpha(opacity=80);
+    box-shadow: $theme-elevation-toast;
+}
+
+#mud-toast-container > div.rtl {
+    direction: rtl;
+    padding: 15px 50px 15px 15px;
+    background-position: right 15px center
+}
+
+#mud-toast-container > div:hover {
+    opacity: 1;
+    filter: alpha(opacity=100);
+    cursor: pointer
+}
+
+#mud-toast-container.mud-toast-bottom-center > div,
+#mud-toast-container.mud-toast-top-center > div {
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto
+}
+
+#mud-toast-container.mud-toast-bottom-full-width > div,
+#mud-toast-container.mud-toast-top-full-width > div {
+    width: 96%;
+    margin-left: auto;
+    margin-right: auto
+}
+
+.mud-toast {
+    background-color: #030303
+}
+
+.mud-toast-success {
+    background-color: $theme-color-success;
+}
+
+.mud-toast-error {
+    background-color: $theme-color-danger;
+}
+
+.mud-toast-info {
+    background-color: $theme-color-info;
+}
+
+.mud-toast-warning {
+    background-color: $theme-color-warning;
+}
+
+.mud-toast-progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 4px;
+    background-color: #000;
+    opacity: .4;
+    filter: alpha(opacity=40)
+}
+
+@media all and (max-width:240px) {
+    #mud-toast-container > div {
+        padding: 8px 8px 8px 50px;
+        width: 11em
+    }
+
+    #mud-toast-container > div.rtl {
+        padding: 8px 50px 8px 8px
+    }
+
+    #mud-toast-container .mud-toast-close-button {
+        right: -.2em;
+        top: -.2em
+    }
+
+    #mud-toast-container .rtl .mud-toast-close-button {
+        left: -.2em;
+        right: .2em
+    }
+}
+
+@media all and (min-width:241px) and (max-width:480px) {
+    #mud-toast-container > div {
+        padding: 8px 8px 8px 50px;
+        width: 18em
+    }
+
+    #mud-toast-container > div.rtl {
+        padding: 8px 50px 8px 8px
+    }
+
+    #mud-toast-container .mud-toast-close-button {
+        right: -.2em;
+        top: -.2em
+    }
+
+    #mud-toast-container .rtl .mud-toast-close-button {
+        left: -.2em;
+        right: .2em
+    }
+}
+
+@media all and (min-width:481px) and (max-width:768px) {
+    #mud-toast-container > div {
+        padding: 15px 15px 15px 50px;
+        width: 25em
+    }
+
+    #mud-toast-container > div.rtl {
+        padding: 15px 50px 15px 15px
+    }
+}
+
+
+/*Sotsera customizations*/
+
+.force-cursor {
+    cursor: pointer
+}
+
+#mud-toast-container .text-left {
+    text-align: left !important
+}
+
+#mud-toast-container .text-right {
+    text-align: right !important
+}
+
+#mud-toast-container .text-center {
+    text-align: center !important
+}
+
