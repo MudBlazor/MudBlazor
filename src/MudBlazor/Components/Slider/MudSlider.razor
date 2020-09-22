@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor
+@inherits ComponentBaseMudSlider
+
+
+
+
+<div class="mud-slider">
+    @if(ChildContent != null)
+    {
+        <MudText Typo="Typo.body1" GutterBottom="false">@ChildContent</MudText>
+    }
+    <input type="range" min="@Min" max="@Max" step="@Step" @bind-value="@Value" disabled="@Disabled">
+</div>
