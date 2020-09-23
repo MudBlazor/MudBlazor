@@ -32,12 +32,13 @@
 
   <ItemGroup>
     <None Include="compilerconfig.json" />
-    <None Include="Components\Toast\MudToastElement.razor" />
-    <None Include="Components\Toast\MudToastProvider.razor" />
+    <None Include="Components\Toast\MudSnackbarElement.razor" />
+    <None Include="Components\Toast\MudSnackbarProvider.razor" />
   </ItemGroup>
 
 
   <ItemGroup>
+    <Folder Include="Components\Snackbar\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

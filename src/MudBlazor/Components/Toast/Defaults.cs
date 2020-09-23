@@ -7,9 +7,9 @@ namespace MudBlazor
     {
         public static class Classes
         {
-            public const string Toast = "mud-toaster";
-            public const string ToastTitle = "mud-toast-title";
-            public const string ToastMessage = "mud-toast-message";
+            public const string Snackbar = "mud-toaster";
+            public const string SnackbarTitle = "mud-toast-title";
+            public const string SnackbarMessage = "mud-toast-message";
             public const string CloseIconClass = "mud-toast-close-button";
             public const string ProgressBarClass = "mud-toast-progress";
 

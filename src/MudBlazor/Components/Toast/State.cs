@@ -9,26 +9,26 @@ namespace MudBlazor
     {
         private string AnimationId { get; }
         public bool UserHasInteracted { get; set; }
-        public ToastOptions Options { get; }
-        public ToastState ToastState { get; set; }
+        public SnackbarOptions Options { get; }
+        public SnackbarState SnackbarState { get; set; }
         public DateTime TransitionStartTime { get; set; }
 
-        public State(ToastOptions options)
+        public State(SnackbarOptions options)
         {
             Options = options;
             AnimationId = $"toaster-{Guid.NewGuid()}";
-            ToastState = ToastState.Init;
+            SnackbarState = SnackbarState.Init;
         }
 
         private string Opacity => ((decimal) Options.MaximumOpacity / 100).ToPercentage();
         public bool ShowCloseIcon => Options.ShowCloseIcon;
         public string ProgressBarClass => Options.ProgressBarClass;
         public string CloseIconClass => Options.CloseIconClass;
-        public bool ShowProgressBar => Options.ShowProgressBar && ToastState.IsVisible() && !Options.RequireInteraction;
+        public bool ShowProgressBar => Options.ShowProgressBar && SnackbarState.IsVisible() && !Options.RequireInteraction;
 
         public bool EscapeHtml => Options.EscapeHtml;
-        public string ToastTitleClass => Options.ToastTitleClass;
-        public string ToastMessageClass => Options.ToastMessageClass;
+        public string SnackbarTitleClass => Options.SnackbarTitleClass;
+        public string SnackbarMessageClass => Options.SnackbarMessageClass;
 
         public string ProgressBarStyle
         {
@@ -44,17 +44,17 @@ namespace MudBlazor
             get
             {
                 const string template = "opacity: {0}; animation: {1}ms linear {2};";
-                switch (ToastState)
+                switch (SnackbarState)
                 {
-                    case ToastState.Showing:
+                    case SnackbarState.Showing:
                         var showingDuration = RemainingTransitionMilliseconds(Options.ShowTransitionDuration);
                         return string.Format(template, Opacity, showingDuration, AnimationId);
-                    case ToastState.Hiding:
+                    case SnackbarState.Hiding:
                         var hidingDuration = RemainingTransitionMilliseconds(Options.HideTransitionDuration);
                         return string.Format(template, 0, hidingDuration, AnimationId);
-                    case ToastState.MouseOver:
+                    case SnackbarState.MouseOver:
                         return "opacity: 1;";
-                    case ToastState.Visible:
+                    case SnackbarState.Visible:
                         return $"opacity: {Opacity};";
                     default:
                         return string.Empty;
@@ -62,12 +62,12 @@ namespace MudBlazor
             }
         }
 
-        public string ToastClass
+        public string SnackbarClass
         {
             get
             {
                 var forceCursor = Options.ShowCloseIcon ? "" : " force-cursor";
-                return $"{Options.ToastClass} {Options.ToastTypeClass}{forceCursor}";
+                return $"{Options.SnackbarClass} {Options.SnackbarTypeClass}{forceCursor}";
             }
         }
 
@@ -77,13 +77,13 @@ namespace MudBlazor
             {
                 var template = "@keyframes " + AnimationId + " {{from{{ {0}: {1}; }} to{{ {0}: {2}; }}}}";
 
-                switch (ToastState)
+                switch (SnackbarState)
                 {
-                    case ToastState.Showing:
+                    case SnackbarState.Showing:
                         return string.Format(template, "opacity", 0, Opacity);
-                    case ToastState.Hiding:
+                    case SnackbarState.Hiding:
                         return string.Format(template, "opacity", Opacity, 0);
-                    case ToastState.Visible:
+                    case SnackbarState.Visible:
                         return string.Format(template, "width", "100%", "0%");
                     default:
                         return string.Empty;
