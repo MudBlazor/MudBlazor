@@ -20,7 +20,7 @@
         public string Color_Info { get; set; } = "#2196f3";
         public string Color_Success { get; set; } = "#4caf50";
         public string Color_Warning { get; set; } = "#ff9800";
-        public string Color_Danger { get; set; } = "#FF4644";
+        public string Color_Danger { get; set; } = "#f44336";
         public string Color_Dark { get; set; } = "#272c34";
         public string Color_Background_Grey { get; set; } = "#f5f5f5";
         public string Color_Border_Default { get; set; } = "#e0e0e0";
