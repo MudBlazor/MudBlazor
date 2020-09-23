@@ -13,7 +13,9 @@ namespace MudBlazor
         SnackbarConfiguration Configuration { get; }
         
         event Action OnSnackbarsUpdated;
-        
+
+        void Default(string message, string title = null, Action<SnackbarOptions> configure = null);
+
         void Info(string message, string title = null, Action<SnackbarOptions> configure = null);
 
         void Success(string message, string title = null, Action<SnackbarOptions> configure = null);

@@ -12,7 +12,7 @@ namespace MudBlazor
             return services.AddScoped<IDialogService, DialogService>();
         }
 
-        public static IServiceCollection AddToaster(this IServiceCollection services, SnackbarConfiguration configuration)
+        public static IServiceCollection AddSnackbar(this IServiceCollection services, SnackbarConfiguration configuration)
         {
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
             services.TryAddScoped<ISnackbar>(builder => new Snackbars(configuration));
