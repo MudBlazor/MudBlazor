@@ -14,14 +14,14 @@
             <SectionContent Outlined="true">
                 <MudGrid>
                     <MudItem>
-                        <MudSlider>Volume</MudSlider>
+                        <MudSlider Value="50">Volume</MudSlider>
                         <MudSlider Disabled="true" Value="20">Disabled Slider</MudSlider>
                     </MudItem>
                     <MudItem>
                         <div class="demo-slider-filler"></div>
-                        <MudSlider />
+                        <MudSlider Value="50"/>
                         <div class="demo-slider-filler"></div>
-                        <MudSlider Disabled="true" />
+                        <MudSlider Value="50" Disabled="true" />
                     </MudItem>
                 </MudGrid>
             </SectionContent>
@@ -34,7 +34,7 @@
             </SectionHeader>
             <SectionContent Outlined="true">
                 <MudSlider Step="10" Value="70">Temperature</MudSlider>
-                <MudSlider Step="10" Disabled="true">Disabled</MudSlider>
+                <MudSlider Step="10" Value="50" Disabled="true">Disabled</MudSlider>
             </SectionContent>
             <SectionSource Code="@Markdown_CodeOne"></SectionSource>
         </DocsPageSection>

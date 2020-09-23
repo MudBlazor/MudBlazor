@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MudBlazor
 {
-    public class ComponentBaseMudSlider : MudComponentBase
+    public partial class MudSlider : MudComponentBase
     {
         protected string Classname =>
         new CssBuilder("mud-slider")
@@ -20,6 +20,7 @@ namespace MudBlazor
         [Parameter] public bool Disabled { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public EventCallback<int> ValueChanged { get; set; }
+
         [Parameter]
         public int Value
         {
@@ -34,12 +35,5 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnInitialized()
-        {
-            if (Value == 0)
-            {
-                Value = (Max - Min) / 2;
-            }
-        }
     }
 }
