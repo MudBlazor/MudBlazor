@@ -1,0 +1,35 @@
+﻿@page "/components/feedback/snackbar"
+
+
+@inject MudBlazor.ISnackbar Snackbar
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Snackbar</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Simple snackbars</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudButton @onclick="@(() => Snackbar.Default("The reactor type is RBMK-1000"))">Default Snackbar</MudButton>
+                <MudButton @onclick="@(() => Snackbar.Success("The reactor was fired up successfully"))">Success Snackbar</MudButton>
+                <MudButton @onclick="@(() => Snackbar.Info("The reactor is running at optimum temperature"))">Info Snackbar</MudButton>
+                <MudButton @onclick="@(() => Snackbar.Warning("The reactor temperature exceeds the optimal range"))">Warning Snackbar</MudButton>
+                <MudButton @onclick="@(() => Snackbar.Error("Meltdown is imminent"))">Error Snackbar</MudButton>
+            </SectionContent>
+            @*<SectionSource Code="@Markdown_SimpleDialog"></SectionSource>*@
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
+
+@code {
+
+
+}
+
+
