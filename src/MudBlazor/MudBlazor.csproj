@@ -29,16 +29,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
   </ItemGroup>
 
-
   <ItemGroup>
-    <None Include="compilerconfig.json" />
-    <None Include="Components\Toast\MudSnackbarElement.razor" />
-    <None Include="Components\Toast\MudSnackbarProvider.razor" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <Folder Include="Components\Snackbar\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
