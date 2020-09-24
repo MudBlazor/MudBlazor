@@ -57,7 +57,7 @@ namespace MudBlazor
             if (radio==null || radio.Checked)
                 return;
             foreach (var registered_radio in _radios.ToArray())
-                registered_radio.Checked = (registered_radio == radio);
+                registered_radio.SetChecked(registered_radio == radio);
             SelectedLabel = radio.Label;
             SelectedOption = radio.Option;
         }
@@ -70,7 +70,7 @@ namespace MudBlazor
             if (!string.IsNullOrWhiteSpace(radio.Label) && radio.Label == SelectedLabel 
                 || !string.IsNullOrWhiteSpace(radio.Option) && radio.Option == SelectedOption)
             {
-                radio.Checked = true;
+                radio.SetChecked( true);
                 SelectedLabel = radio.Label;
                 SelectedOption = radio.Option;
             }
