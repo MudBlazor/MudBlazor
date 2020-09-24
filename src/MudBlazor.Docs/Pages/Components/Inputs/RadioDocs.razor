@@ -12,10 +12,16 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <MudRadio @bind-Checked="@Basic_Radio1" Color="Color.Primary">Radio 1</MudRadio>
-                <MudRadio @bind-Checked="@Basic_Radio2" Color="Color.Secondary">Radio 2</MudRadio>
-                <MudRadio @bind-Checked="@Basic_Radio3">Radio 3</MudRadio>
-                <MudRadio @bind-Checked="@Basic_Radio4" Disabled="true">Radio 4</MudRadio>
+                <MudRadioGroup @bind-SelectedLabel="@SelectedLabel" @bind-SelectedOption="@SelectedOption">
+                    <MudRadio Color="Color.Primary" Label="Primary" Option="Radio 1"/>
+                    <MudRadio Color="Color.Secondary" Label="Secondary"  Option="Radio 2"/>
+                    <MudRadio Label="Normal"  Option="Radio 3"/>
+                    <MudRadio Label="Disabled" Disabled="true"  Option="Radio 4"/>
+                </MudRadioGroup>
+                <div>
+                    Selected label: @SelectedLabel, Selected option: @SelectedOption
+                </div>
+
             </SectionContent>
             <SectionSource Code="@Markdown_Simple"></SectionSource>
         </DocsPageSection>
@@ -25,10 +31,12 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <MudRadio Color="Color.Primary">Radio 1</MudRadio>
-                <MudRadio Color="Color.Secondary">Radio 2</MudRadio>
-                <MudRadio>Radio 3</MudRadio>
-                <MudRadio Disabled="true">Radio 4</MudRadio>
+                <MudRadioGroup>
+                    <MudRadio Color="Color.Primary">Radio 1</MudRadio>
+                    <MudRadio Color="Color.Secondary">Radio 2</MudRadio>
+                    <MudRadio>Radio 3</MudRadio>
+                    <MudRadio Disabled="true">Radio 4</MudRadio>
+                </MudRadioGroup>
             </SectionContent>
             <SectionSource Code="@Markdown_Simple"></SectionSource>
         </DocsPageSection>
@@ -37,10 +45,8 @@
 
 @code {
 
-    public bool Basic_Radio1 { get; set; } = true;
-    public bool Basic_Radio2 { get; set; } = false;
-    public bool Basic_Radio3 { get; set; } = false;
-    public bool Basic_Radio4 { get; set; } = false;
+    public string SelectedLabel { get; set; } = "Primary";
+    public string SelectedOption { get; set; }
 
     string Markdown_Simple = @"```html
 
