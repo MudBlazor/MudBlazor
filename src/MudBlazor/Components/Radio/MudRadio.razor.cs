@@ -11,6 +11,8 @@ namespace MudBlazor
 {
     public partial class MudRadio : MudComponentBase
     {
+        [CascadingParameter] public MudRadioGroup RadioGroup { get; set; }
+
         protected string Classname =>
         new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple)
@@ -27,13 +29,14 @@ namespace MudBlazor
 
         [Parameter] public Color Color { get; set; } = Color.Default;
         [Parameter] public string Label { get; set; }
+        [Parameter] public string Option { get; set; }
         [Parameter] public bool DisableRipple { get; set; }
         [Parameter] public bool Disabled { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
-        [Parameter] public EventCallback<bool> CheckedChanged { get; set; }
+        //[Parameter] public EventCallback<bool> CheckedChanged { get; set; }
 
         private bool _checked;
-        [Parameter] public bool Checked
+        internal bool Checked
         {
             get => _checked;
             set
@@ -41,9 +44,34 @@ namespace MudBlazor
                 if (value != _checked)
                 {
                     _checked = value;
-                    CheckedChanged.InvokeAsync(value);
+                    //CheckedChanged.InvokeAsync(value);
+                    StateHasChanged();
                 }
             }   
         }
+
+        public void Select()
+        {
+            if (RadioGroup == null)
+                return;
+            RadioGroup.SetSelectedRadio(this);
+        }
+
+        private void OnValueChanged(ChangeEventArgs args)
+        {
+            if (RadioGroup == null)
+                return;
+            if ((string) args.Value == "on")
+                RadioGroup.SetSelectedRadio(this);
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            if (RadioGroup == null)
+                return;
+            RadioGroup.RegisterRadio(this);
+        }
+
     }
 }
