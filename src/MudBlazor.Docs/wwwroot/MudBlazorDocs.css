@@ -145,6 +145,9 @@
   width: 100%;
   display: inline-block; }
 
+.demo-radio-inline {
+  display: inline-block; }
+
 .docs-home {
   display: flex;
   text-align: center;
