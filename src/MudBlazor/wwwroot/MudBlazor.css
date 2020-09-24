@@ -1604,6 +1604,21 @@ button.mud-list-item {
       background-color: var(--mud-theme-color-secondary-hover); }
   .mud-radio-color-secondary.mud-disabled {
     color: rgba(0, 0, 0, 0.26); }
+    .mud-radio-color-secondary.mud-disabled + p {
+      color: rgba(0, 0, 0, 0.26); }
+
+.mud-radio-label-placement-start {
+  margin-left: 16px;
+  margin-right: -11px;
+  flex-direction: row-reverse; }
+
+.mud-radio-label-placement-top {
+  margin-left: 16px;
+  flex-direction: column-reverse; }
+
+.mud-radio-label-placement-bottom {
+  margin-left: 16px;
+  flex-direction: column; }
 
 .mud-switch {
   cursor: pointer;
