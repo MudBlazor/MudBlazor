@@ -1,0 +1,51 @@
+﻿@page "/components/inputs/radio"
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Radio</Title>
+        <SubTitle>Radio buttons.</SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>xxxxxxxx</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudRadio @bind-Checked="@Basic_Radio1" Color="Color.Primary">Radio 1</MudRadio>
+                <MudRadio @bind-Checked="@Basic_Radio2" Color="Color.Secondary">Radio 2</MudRadio>
+                <MudRadio @bind-Checked="@Basic_Radio3">Radio 3</MudRadio>
+                <MudRadio @bind-Checked="@Basic_Radio4" Disabled="true">Radio 4</MudRadio>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Simple"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>xxxxxxxxx</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudRadio Color="Color.Primary">Radio 1</MudRadio>
+                <MudRadio Color="Color.Secondary">Radio 2</MudRadio>
+                <MudRadio>Radio 3</MudRadio>
+                <MudRadio Disabled="true">Radio 4</MudRadio>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Simple"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
+@code {
+
+    public bool Basic_Radio1 { get; set; } = true;
+    public bool Basic_Radio2 { get; set; } = false;
+    public bool Basic_Radio3 { get; set; } = false;
+    public bool Basic_Radio4 { get; set; } = false;
+
+    string Markdown_Simple = @"```html
+
+```";
+    string Markdown_Toggle = @"```html
+
+```";
+}
