@@ -10,6 +10,7 @@ namespace MudBlazor
          .AddClass(Class)
        .Build();
 
+        [Parameter] public string Label { get; set; }
         [Parameter] public string HelperText { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
     }
