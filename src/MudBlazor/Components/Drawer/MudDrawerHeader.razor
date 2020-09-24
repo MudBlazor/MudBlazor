@@ -6,13 +6,13 @@
 
 @if (LinkToIndex)
 {
-    <a class="@Classname" style="@Style" href="/">
+    <a @attributes="UserAttributes" class="@Classname" style="@Style" href="/">
         @ChildContent
     </a>
 }
 else
 {
-    <div class="@Classname" style="@Style">
+    <div @attributes="UserAttributes" class="@Classname" style="@Style">
         @ChildContent
     </div>
 }

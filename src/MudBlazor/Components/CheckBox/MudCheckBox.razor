@@ -5,7 +5,7 @@
 
 <label class="mud-checkbox">
     <span class="@Classname">
-        <input type="checkbox" class="mud-checkbox-input" @bind="@Checked" disabled="@Disabled" />
+        <input @attributes="UserAttributes" type="checkbox" class="mud-checkbox-input" @bind="@Checked" disabled="@Disabled" />
         @if (Checked)
         {
             <svg class="mud-svg-icon-root" focusable="false" viewBox="0 0 24 24" role="presentation" aria-hidden="true">

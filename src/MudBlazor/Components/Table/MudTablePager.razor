@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
+@inherits MudComponentBase
 
-
-<MudToolBar Class="mud-table-pagination-toolbar">
+<MudToolBar @attributes="UserAttributes" Class="mud-table-pagination-toolbar" Style="@Style">
     <div class="mud-table-pagination-spacer"></div>
     @if (!DisableRowsPerPage)
     {

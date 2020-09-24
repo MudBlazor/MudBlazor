@@ -7,5 +7,5 @@
     {
         <MudText Typo="Typo.body1" GutterBottom="false">@ChildContent</MudText>
     }
-    <input type="range" min="@Min" max="@Max" step="@Step" @bind-value="@Value" disabled="@Disabled"/>
+    <input @attributes="UserAttributes" type="range" min="@Min" max="@Max" step="@Step" @bind-value="@Value" disabled="@Disabled"/>
 </div>

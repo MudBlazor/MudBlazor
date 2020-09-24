@@ -3,7 +3,7 @@
 @using Microsoft.AspNetCore.Components.Routing
 
 
-<li class="@Classname" disabled="@Disabled" style="@Style">
+<li @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
     <NavLink class="@Classname"  style="@Style" href="@Href" Match="@Match" ActiveClass="active">
         @ChildContent
     </NavLink>

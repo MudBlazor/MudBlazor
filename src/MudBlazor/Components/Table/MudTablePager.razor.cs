@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MudBlazor
 {
-    public partial class MudTablePager : ComponentBase
+    public partial class MudTablePager : MudComponentBase
     {
         [CascadingParameter] public MudTableBase Table { get; set; }
 

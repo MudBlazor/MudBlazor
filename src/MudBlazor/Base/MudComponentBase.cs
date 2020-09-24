@@ -17,5 +17,7 @@ namespace MudBlazor
 
         [Parameter] public string Style { get; set; }
 
+        [Parameter(CaptureUnmatchedValues = true)]
+        public Dictionary<string, object> UserAttributes { get; set; }
     }
 }
