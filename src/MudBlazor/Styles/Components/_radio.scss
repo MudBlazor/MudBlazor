@@ -59,7 +59,7 @@
         }
     }
 
-    &.mud-disabled {
+    &.mud-disabled{
         color: rgba(0, 0, 0, 0.26);
     }
 }
@@ -94,5 +94,29 @@
 
     &.mud-disabled {
         color: rgba(0, 0, 0, 0.26);
+
+        + p {
+            color: rgba(0, 0, 0, 0.26);
+        }
+    }
+}
+
+
+
+.mud-radio-label-placement- {
+    &start {
+        margin-left: 16px;
+        margin-right: -11px;
+        flex-direction: row-reverse;
+    }
+
+    &top {
+        margin-left: 16px;
+        flex-direction: column-reverse;
+    }
+
+    &bottom {
+        margin-left: 16px;
+        flex-direction: column;
     }
 }

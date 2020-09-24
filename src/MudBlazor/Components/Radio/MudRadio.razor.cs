@@ -14,6 +14,12 @@ namespace MudBlazor
         [CascadingParameter] public MudRadioGroup RadioGroup { get; set; }
 
         protected string Classname =>
+        new CssBuilder("mud-radio")
+            .AddClass($"mud-radio-label-placement-{Placement.ToDescriptionString()}", when: () => Placement != Placement.End)
+          .AddClass(Class)
+        .Build();
+
+        protected string ButtonClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple)
             .AddClass($"mud-radio-color-{Color.ToDescriptionString()}")
@@ -28,12 +34,12 @@ namespace MudBlazor
             .Build();
 
         [Parameter] public Color Color { get; set; } = Color.Default;
+        [Parameter] public Placement Placement { get; set; } = Placement.End;
         [Parameter] public string Label { get; set; }
         [Parameter] public string Option { get; set; }
         [Parameter] public bool DisableRipple { get; set; }
         [Parameter] public bool Disabled { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
-        //[Parameter] public EventCallback<bool> CheckedChanged { get; set; }
 
         private bool _checked;
         internal bool Checked
@@ -44,7 +50,6 @@ namespace MudBlazor
                 if (value != _checked)
                 {
                     _checked = value;
-                    //CheckedChanged.InvokeAsync(value);
                     StateHasChanged();
                 }
             }   
