@@ -33,21 +33,27 @@ namespace MudBlazor
         [Parameter] public bool DisableRipple { get; set; }
         [Parameter] public bool Disabled { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
-        //[Parameter] public EventCallback<bool> CheckedChanged { get; set; }
+        [Parameter] public EventCallback<bool> CheckedChanged { get; set; }
 
         private bool _checked;
-        internal bool Checked
+        [Parameter]
+        public bool Checked
         {
             get => _checked;
             set
             {
                 if (value != _checked)
                 {
-                    _checked = value;
-                    //CheckedChanged.InvokeAsync(value);
-                    StateHasChanged();
+                    SetChecked(value);
                 }
             }   
+        }
+
+        internal void SetChecked(bool value)
+        {
+            _checked = value;
+            //StateHasChanged();
+            CheckedChanged.InvokeAsync(value);
         }
 
         public void Select()
