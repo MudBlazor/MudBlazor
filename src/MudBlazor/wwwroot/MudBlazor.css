@@ -1539,6 +1539,87 @@ button.mud-list-item {
       box-shadow: 0 0 0 1px white !important;
       transform: scale(4, 4); }
 
+.mud-radio {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  margin-left: -11px;
+  margin-right: 16px;
+  vertical-align: middle;
+  -webkit-tap-highlight-color: transparent; }
+
+.mud-radio-button {
+  width: 100%;
+  display: flex;
+  align-items: inherit;
+  justify-content: inherit; }
+  .mud-radio-button .mud-radio-input {
+    top: 0;
+    left: 0;
+    width: 100%;
+    cursor: inherit;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    padding: 0;
+    z-index: 1;
+    position: absolute; }
+  .mud-radio-button .mud-radio-icons {
+    display: flex;
+    position: relative; }
+
+.mud-radio-icons.mud-checked .mud-radio-icon-checked {
+  transform: scale(1);
+  transition: transform 150ms cubic-bezier(0, 0, 0.2, 1) 0ms; }
+
+.mud-radio-icon-checked {
+  left: 0;
+  position: absolute;
+  transform: scale(0);
+  transition: transform 150ms cubic-bezier(0.4, 0, 1, 1) 0ms; }
+
+.mud-radio-color-default {
+  color: var(--mud-theme-color-default); }
+  .mud-radio-color-default.mud-checked {
+    color: var(--mud-theme-color-default); }
+    .mud-radio-color-default.mud-checked:hover {
+      background-color: var(--mud-theme-color-default-hover); }
+  .mud-radio-color-default.mud-disabled {
+    color: rgba(0, 0, 0, 0.26); }
+
+.mud-radio-color-primary {
+  color: var(--mud-theme-color-primary); }
+  .mud-radio-color-primary.mud-checked {
+    color: var(--mud-theme-color-primary); }
+    .mud-radio-color-primary.mud-checked:hover {
+      background-color: var(--mud-theme-color-primary-hover); }
+  .mud-radio-color-primary.mud-disabled {
+    color: rgba(0, 0, 0, 0.26); }
+
+.mud-radio-color-secondary {
+  color: var(--mud-theme-color-secondary); }
+  .mud-radio-color-secondary.mud-checked {
+    color: var(--mud-theme-color-secondary); }
+    .mud-radio-color-secondary.mud-checked:hover {
+      background-color: var(--mud-theme-color-secondary-hover); }
+  .mud-radio-color-secondary.mud-disabled {
+    color: rgba(0, 0, 0, 0.26); }
+    .mud-radio-color-secondary.mud-disabled + p {
+      color: rgba(0, 0, 0, 0.26); }
+
+.mud-radio-label-placement-start {
+  margin-left: 16px;
+  margin-right: -11px;
+  flex-direction: row-reverse; }
+
+.mud-radio-label-placement-top {
+  margin-left: 16px;
+  flex-direction: column-reverse; }
+
+.mud-radio-label-placement-bottom {
+  margin-left: 16px;
+  flex-direction: column; }
+
 .mud-switch {
   cursor: pointer;
   display: inline-flex;

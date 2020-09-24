@@ -1,0 +1,71 @@
+﻿@page "/components/inputs/radio"
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Radio</Title>
+        <SubTitle>Radio buttons.</SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>RadioGroup</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                    <MudFormControl Label="Colors">
+                        <MudRadioGroup @bind-SelectedLabel="@SelectedLabel" @bind-SelectedOption="@SelectedOption">
+                            <MudRadio Color="Color.Primary" Option="Radio 1" >Primary</MudRadio>
+                            <MudRadio Color="Color.Secondary" Option="Radio 2">Secondary</MudRadio>
+                            <MudRadio Option="Radio 3">Default</MudRadio>
+                            <MudRadio Disabled="true" Option="Radio 4">Disabled</MudRadio>
+                        </MudRadioGroup>
+                    </MudFormControl> 
+            </SectionContent>
+            <SectionSource Code="@Markdown_RadioGroup"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Label placement</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudFormControl Label="Placement" Class="demo-radio-inline">
+                    <MudRadioGroup @bind-SelectedLabel="@SelectedLabel" @bind-SelectedOption="@SelectedOption">
+                        <MudRadio Placement="Placement.Bottom" Color="Color.Primary" Option="Radio 1">Bottom</MudRadio>
+                        <MudRadio Placement="Placement.Start" Color="Color.Primary" Option="Radio 2">Start</MudRadio>
+                        <MudRadio Placement="Placement.Top" Color="Color.Primary" Option="Radio 3">Top</MudRadio>
+                        <MudRadio Placement="Placement.End" Color="Color.Primary" Option="Radio 4">End</MudRadio>
+                    </MudRadioGroup>
+                </MudFormControl>
+            </SectionContent>
+            <SectionSource Code="@Markdown_Labelplacement"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
+@code {
+
+    public string SelectedLabel { get; set; } = "Primary";
+    public string SelectedOption { get; set; }
+
+string Markdown_RadioGroup = @"```html
+<MudFormControl Label=""Colors"">
+    <MudRadioGroup @bind-SelectedLabel=""@SelectedLabel"" @bind-SelectedOption=""@SelectedOption"">
+        <MudRadio Color=""Color.Primary"" Option=""Radio 1"" >Primary</MudRadio>
+        <MudRadio Color=""Color.Secondary"" Option=""Radio 2"">Secondary</MudRadio>
+        <MudRadio Option=""Radio 3"">Default</MudRadio>
+        <MudRadio Disabled=""true"" Option=""Radio 4"">Disabled</MudRadio>
+    </MudRadioGroup>
+</MudFormControl> 
+```";
+    string Markdown_Labelplacement = @"```html
+<MudFormControl Label=""Placement"">
+    <MudRadioGroup @bind-SelectedLabel=""@SelectedLabel"" @bind-SelectedOption=""@SelectedOption"">
+        <MudRadio Placement=""Placement.Bottom"" Color=""Color.Primary"" Option=""Radio 1"">Bottom</MudRadio>
+        <MudRadio Placement=""Placement.Start"" Color=""Color.Primary"" Option=""Radio 2"">Start</MudRadio>
+        <MudRadio Placement=""Placement.Top"" Color=""Color.Primary"" Option=""Radio 3"">Top</MudRadio>
+        <MudRadio Placement=""Placement.End"" Color=""Color.Primary"" Option=""Radio 4"">End</MudRadio>
+    </MudRadioGroup>
+</MudFormControl>
+```";
+}
