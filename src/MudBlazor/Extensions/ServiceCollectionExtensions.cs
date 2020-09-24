@@ -12,35 +12,26 @@ namespace MudBlazor
             return services.AddScoped<IDialogService, DialogService>();
         }
 
-        /// <summary>
-        /// Adds a singleton <see cref="IToaster"/> instance to the DI <see cref="IServiceCollection"/> with the specified <see cref="ToasterConfiguration"/>
-        /// </summary>
-        public static IServiceCollection AddToaster(this IServiceCollection services, ToasterConfiguration configuration)
+        public static IServiceCollection AddSnackbar(this IServiceCollection services, SnackbarConfiguration configuration)
         {
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-            services.TryAddScoped<IToaster>(builder => new Toaster(configuration));
+            services.TryAddScoped<ISnackbar>(builder => new Snackbars(configuration));
             return services;
         }
 
-        /// <summary>
-        /// Adds a singleton <see cref="IToaster"/> instance to the DI <see cref="IServiceCollection"/> with the default <see cref="ToasterConfiguration"/>
-        /// </summary>
-        public static IServiceCollection AddToaster(this IServiceCollection services)
+        public static IServiceCollection AddSnackbar(this IServiceCollection services)
         {
-            return AddToaster(services, new ToasterConfiguration());
+            return AddSnackbar(services, new SnackbarConfiguration());
         }
 
-        /// <summary>
-        /// Adds a singleton <see cref="IToaster"/> instance to the DI <see cref="IServiceCollection"/> with an action for configuring the default <see cref="ToasterConfiguration"/>
-        /// </summary>
-        public static IServiceCollection AddToaster(this IServiceCollection services, Action<ToasterConfiguration> configure)
+        public static IServiceCollection AddSnackbar(this IServiceCollection services, Action<SnackbarConfiguration> configure)
         {
             if (configure == null) throw new ArgumentNullException(nameof(configure));
 
-            var options = new ToasterConfiguration();
+            var options = new SnackbarConfiguration();
             configure(options);
 
-            return AddToaster(services, options);
+            return AddSnackbar(services, options);
         }
     }
 }

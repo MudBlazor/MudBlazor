@@ -29,14 +29,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
   </ItemGroup>
 
-
-  <ItemGroup>
-    <None Include="compilerconfig.json" />
-    <None Include="Components\Toast\MudToastElement.razor" />
-    <None Include="Components\Toast\MudToastProvider.razor" />
-  </ItemGroup>
-
-
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
