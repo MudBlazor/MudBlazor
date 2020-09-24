@@ -13,20 +13,15 @@
             </SectionHeader>
             <SectionContent Outlined="true">
                 <MudRadioGroup @bind-SelectedLabel="@SelectedLabel" @bind-SelectedOption="@SelectedOption">
-                    <MudRadio @bind-Checked="@Basic_CheckBox1" Color="Color.Primary" Label="Primary" Option="Radio 1"/>
-                    <MudRadio @bind-Checked="@Basic_CheckBox2" Color="Color.Secondary" Label="Secondary"  Option="Radio 2"/>
-                    <MudRadio @bind-Checked="@Basic_CheckBox3" Label="Normal"  Option="Radio 3"/>
-                    <MudRadio @bind-Checked="@Basic_CheckBox1" Label="Disabled" Disabled="true"  Option="Radio 4"/>
+                    <MudRadio Color="Color.Primary" Label="Primary" Option="Radio 1"/>
+                    <MudRadio Color="Color.Secondary" Label="Secondary"  Option="Radio 2"/>
+                    <MudRadio Label="Normal"  Option="Radio 3"/>
+                    <MudRadio Label="Disabled" Disabled="true"  Option="Radio 4"/>
                 </MudRadioGroup>
                 <div>
                     Selected label: @SelectedLabel, Selected option: @SelectedOption
                 </div>
-                <div>
-                    <MudCheckBox @bind-Checked="@Basic_CheckBox1"></MudCheckBox>
-                    <MudCheckBox @bind-Checked="@Basic_CheckBox2" Color="Color.Primary"></MudCheckBox>
-                    <MudCheckBox @bind-Checked="@Basic_CheckBox3" Color="Color.Secondary"></MudCheckBox>
-                    <MudCheckBox @bind-Checked="@Basic_CheckBox1" Disabled="true"></MudCheckBox>
-                </div>
+
             </SectionContent>
             <SectionSource Code="@Markdown_Simple"></SectionSource>
         </DocsPageSection>
@@ -52,9 +47,6 @@
 
     public string SelectedLabel { get; set; } = "Primary";
     public string SelectedOption { get; set; }
-    public bool Basic_CheckBox1 { get; set; } = true;
-    public bool Basic_CheckBox2 { get; set; } = false;
-    public bool Basic_CheckBox3 { get; set; } = false;
 
     string Markdown_Simple = @"```html
 
