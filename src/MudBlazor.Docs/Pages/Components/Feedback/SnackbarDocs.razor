@@ -15,20 +15,107 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <MudButton @onclick="@(() => Snackbar.Default("The reactor type is RBMK-1000"))">Default Snackbar</MudButton>
-                <MudButton @onclick="@(() => Snackbar.Success("The reactor was fired up successfully"))">Success Snackbar</MudButton>
-                <MudButton @onclick="@(() => Snackbar.Info("The reactor is running at optimum temperature"))">Info Snackbar</MudButton>
-                <MudButton @onclick="@(() => Snackbar.Warning("The reactor temperature exceeds the optimal range"))">Warning Snackbar</MudButton>
-                <MudButton @onclick="@(() => Snackbar.Error("Meltdown is imminent"))">Error Snackbar</MudButton>
+                <MudText></MudText>
+                <MudButton @onclick="@(() => Snackbar.Default("Simple snackbar"))">Open Simple snackbar</MudButton>
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Positioned snackbars</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudButton Color="Color.Primary" @onclick="@(() => ChangePosition("Top-Left", Defaults.Classes.Position.TopLeft))">Top-Left</MudButton>
+                <MudButton Color="Color.Primary" @onclick="@(() => ChangePosition("Top-Center", Defaults.Classes.Position.TopCenter))">Top-Center</MudButton>
+                <MudButton Color="Color.Primary" @onclick="@(() => ChangePosition("Top-Right", Defaults.Classes.Position.TopRight))">Top-Right</MudButton>
+                <MudButton Color="Color.Default" @onclick="@(() => ChangePosition("Bottom-Left", Defaults.Classes.Position.BottomLeft))">Bottom-Left</MudButton>
+                <MudButton Color="Color.Default" @onclick="@(() => ChangePosition("Bottom-Center", Defaults.Classes.Position.BottomCenter))">Bottom-Center</MudButton>
+                <MudButton Color="Color.Default" @onclick="@(() => ChangePosition("Bottom-Right", Defaults.Classes.Position.BottomRight))">Bottom-Right</MudButton>
             </SectionContent>
             @*<SectionSource Code="@Markdown_SimpleDialog"></SectionSource>*@
         </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Snackbars with Alert</Title>
+                <Description>Snackbars can take use of Alert component and show short alerts.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-snackbar-alerts">
+                <MudAlert Severity="Severity.Normal" Class="mud-elevation-6">
+                    The reactor type is RBMK-1000
+                </MudAlert>
+                <MudAlert Severity="Severity.Info" Class="mud-elevation-6">
+                    The reactor was fired up successfully
+                </MudAlert>
+                <MudAlert Severity="Severity.Success" Class="mud-elevation-6">
+                    The reactor is running at optimum temperature
+                </MudAlert>
+                <MudAlert Severity="Severity.Warning" Class="mud-elevation-6">
+                    The reactor is running at optimum temperature
+                </MudAlert>
+                <MudAlert Severity="Severity.Error" Class="mud-elevation-6">
+                    The reactor temperature exceeds the optimal range
+                </MudAlert>
+            </SectionContent>
+            @*<SectionSource Code="@Markdown_SimpleDialog"></SectionSource>*@
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Require Interacation</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                @if (ShowErrorLog)
+                {
+                    <MudText Color="Color.Danger" Typo="Typo.body1">##[error]</MudText>
+                    <MudText Color="Color.Danger" Typo="Typo.body2">Error: There was an error when attempting to execute the process '/opt/hostedtoolcache/dotnet/dotnet'.</MudText>
+                    <MudText Color="Color.Danger" Typo="Typo.body2">This may indicate the process failed to start. Error: spawn /opt/hostedtoolcache/dotnet/dotnet ENOENT</MudText>
+                    <div>
+                        <MudButton Variant="Variant.Filled" DisableElevation="true" StartIcon="@Icons.Material.ArrowBack" Size="Size.Small" @onclick="@OnShowErrorLog">Go back</MudButton>
+                    </div>
+                }
+                else
+                {
+                    <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" StartIcon="@Icons.Material.Build" @onclick="@(() => StartBuild())">Build Project</MudButton>
+                }
+            </SectionContent>
+            @*<SectionSource Code="@Markdown_SimpleDialog"></SectionSource>*@
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
 
 
 @code {
 
+    void ChangePosition(string message, string position)
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = position;
+        Snackbar.Default(message);
+    }
+
+    public bool ShowErrorLog { get; set; }
+
+    void StartBuild()
+    {
+        string ErrorMessage = "Build failed with exit code 1, click for more info.";
+        Snackbar.Add(SnackbarType.Error, ErrorMessage, config =>
+        {
+            config.RequireInteraction = true;
+            config.ShowCloseIcon = false;
+            config.Onclick = snackbar =>
+            {
+                OnShowErrorLog();
+                return Task.CompletedTask;
+            };
+        });
+    }
+
+    public void OnShowErrorLog()
+    {
+        ShowErrorLog =! ShowErrorLog;
+        StateHasChanged();
+    }
 
 }
 
