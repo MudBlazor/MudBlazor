@@ -21,12 +21,12 @@ steps:
   displayName: Build
   inputs:
     command: 'build'
-    projects: '*/*/*.csproj'
-    workingDirectory: '/src/'
+    projects: 'src/MudBlazor.sln'
+    arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
   displayName: Test
   inputs:
     command: 'test'
-    projects: '/src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj'
+    projects: 'src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj'
     testRunTitle: 'UnitTest'
