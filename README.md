@@ -1,8 +1,13 @@
 # ![MudBlazor](content/MudBlazor-GitHub.png)
 # Material Design components for Blazor
+![Azure DevOps builds (branch)](https://img.shields.io/azure-devops/build/gardnet-nu/4cba3d30-858f-4653-a80d-736a8adc5daf/1/master?label=azure%20pipelines&style=flat-square)
+[![GitHub](https://img.shields.io/github/license/garderoben/mudblazor?color=%23594ae2&style=flat-square)](https://github.com/Garderoben/MudBlazor/blob/master/LICENSE)
+[![Gitter](https://img.shields.io/gitter/room/MudBlazor/community?style=flat-square)](https://gitter.im/MudBlazor/community)
+[![GitHub Repo stars](https://img.shields.io/github/stars/garderoben/mudblazor?style=flat-square)](https://github.com/Garderoben/MudBlazor/stargazers)
+[![GitHub last commit](https://img.shields.io/github/last-commit/garderoben/mudblazor?style=flat-square)](https://github.com/Garderoben/MudBlazor)
+
 Component Library based on material-ui and Material design. The goal is to do more Blazor, CSS and less Javascript.
 Simple and easy to use components that is highly customizable.
-
 
 ## Documentation & Demo
 - [MudBlazor.com](https://mudblazor.com)
