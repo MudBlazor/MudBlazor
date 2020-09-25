@@ -1,8 +1,9 @@
 # ![MudBlazor](content/MudBlazor-GitHub.png)
 # Material Design components for Blazor
+[![Build Status](https://dev.azure.com/gardnet-nu/MudBlazor/_apis/build/status/Garderoben.MudBlazor?branchName=master)](https://dev.azure.com/gardnet-nu/MudBlazor/_build/latest?definitionId=1&branchName=master)
+
 Component Library based on material-ui and Material design. The goal is to do more Blazor, CSS and less Javascript.
 Simple and easy to use components that is highly customizable.
-
 
 ## Documentation & Demo
 - [MudBlazor.com](https://mudblazor.com)
