@@ -4,6 +4,12 @@
     color: var(--mud-theme-on-surface);
     margin-left: auto;
     margin-right: auto;
+
+    &:hover {
+        cursor: pointer;
+        color: var(--mud-theme-color-primary);
+        transition: color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1) 0ms;
+    }
 }
 
 .mud-container + .mud-container {
