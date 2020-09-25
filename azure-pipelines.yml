@@ -17,5 +17,16 @@ steps:
   inputs:
     version: '3.1.x'
 
-- script: dotnet build --configuration $(buildConfiguration) src/MudBlazor.sln
-  displayName: 'dotnet build $(buildConfiguration) MudBlazor'
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:
+    command: 'build'
+    projects: 'src/MudBlazor.sln'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: Test
+  inputs:
+    command: 'test'
+    projects: 'src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj'
+    testRunTitle: 'UnitTest'
