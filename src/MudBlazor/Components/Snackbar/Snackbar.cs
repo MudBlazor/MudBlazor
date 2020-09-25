@@ -15,7 +15,7 @@ namespace MudBlazor
         public event Action OnUpdate;
         public SnackbarType Type => State.Options.Type;
 
-        internal Snackbar(string title, string message, SnackbarOptions options)
+        internal Snackbar(string message, SnackbarOptions options)
         {
             Message = message;
             State = new State(options);

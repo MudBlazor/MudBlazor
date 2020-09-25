@@ -14,17 +14,17 @@ namespace MudBlazor
         
         event Action OnSnackbarsUpdated;
 
-        void Default(string message, string title = null, Action<SnackbarOptions> configure = null);
+        void Default(string message, Action<SnackbarOptions> configure = null);
 
-        void Info(string message, string title = null, Action<SnackbarOptions> configure = null);
+        void Info(string message, Action<SnackbarOptions> configure = null);
 
-        void Success(string message, string title = null, Action<SnackbarOptions> configure = null);
+        void Success(string message, Action<SnackbarOptions> configure = null);
         
-        void Warning(string message, string title = null, Action<SnackbarOptions> configure = null);
+        void Warning(string message, Action<SnackbarOptions> configure = null);
 
-        void Error(string message, string title = null, Action<SnackbarOptions> configure = null);
+        void Error(string message, Action<SnackbarOptions> configure = null);
 
-        void Add(SnackbarType type, string message, string title, Action<SnackbarOptions> configure);
+        void Add(SnackbarType type, string message, Action<SnackbarOptions> configure);
 
         void Clear();
 

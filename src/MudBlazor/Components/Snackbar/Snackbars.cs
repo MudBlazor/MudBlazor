@@ -26,29 +26,29 @@ namespace MudBlazor
             SnackBarList = new List<Snackbar>();
         }
 
-        public void Default(string message, string title = null, Action<SnackbarOptions> configure = null)
+        public void Default(string message, Action<SnackbarOptions> configure = null)
         {
-            Add(SnackbarType.Default, message, title, configure);
+            Add(SnackbarType.Default, message, configure);
         }
 
-        public void Info(string message, string title = null, Action<SnackbarOptions> configure = null)
+        public void Info(string message, Action<SnackbarOptions> configure = null)
         {
-            Add(SnackbarType.Info, message, title, configure);
+            Add(SnackbarType.Info, message, configure);
         }
 
-        public void Success(string message, string title = null, Action<SnackbarOptions> configure = null)
+        public void Success(string message, Action<SnackbarOptions> configure = null)
         {
-            Add(SnackbarType.Success, message, title, configure);
+            Add(SnackbarType.Success, message, configure);
         }
 
-        public void Warning(string message, string title = null, Action<SnackbarOptions> configure = null)
+        public void Warning(string message, Action<SnackbarOptions> configure = null)
         {
-            Add(SnackbarType.Warning, message, title, configure);
+            Add(SnackbarType.Warning, message, configure);
         }
 
-        public void Error(string message, string title = null, Action<SnackbarOptions> configure = null)
+        public void Error(string message, Action<SnackbarOptions> configure = null)
         {
-            Add(SnackbarType.Error, message, title, configure);
+            Add(SnackbarType.Error, message, configure);
         }
 
         public IEnumerable<Snackbar> ShownSnackbars
@@ -67,17 +67,16 @@ namespace MudBlazor
             }
         }
 
-        public void Add(SnackbarType type, string message, string title, Action<SnackbarOptions> configure)
+        public void Add(SnackbarType type, string message, Action<SnackbarOptions> configure)
         {
             if (message.IsEmpty()) return;
 
             message = message.Trimmed();
-            title = title.Trimmed();
 
             var options = new SnackbarOptions(type, Configuration);
             configure?.Invoke(options);
 
-            var toast = new Snackbar(title, message, options);
+            var toast = new Snackbar(message, options);
 
             SnackBarLock.EnterWriteLock();
             try
