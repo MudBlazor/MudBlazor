@@ -151,23 +151,15 @@
 }
 
 .mud-typography-color-primary {
-
+    color: var(--mud-theme-color-primary);
 }
 
 .mud-typography-color-secondary {
-   
+    color: var(--mud-theme-color-secondary);
 }
 
-.mud-typography-color-text-primary {
-  
-}
-
-.mud-typography-color-text-secondary {
-  
-}
-
-.mud-typography-color-error {
-    
+.mud-typography-color-danger {
+    color: var(--mud-theme-color-danger);
 }
 
 .mud-typography-display-inline {
