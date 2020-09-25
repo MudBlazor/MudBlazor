@@ -13,5 +13,9 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+- task: UseDotNet@2
+  inputs:
+    version: '3.1.x'
+
+- script: dotnet build --configuration $(buildConfiguration) src/MudBlazor.sln
+  displayName: 'dotnet build $(buildConfiguration) MudBlazor'
