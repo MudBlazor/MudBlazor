@@ -14,6 +14,7 @@ namespace MudBlazor
           .AddClass($"mud-color-text-{Color.ToDescriptionString()}")
           .AddClass("mud-typography-gutterbottom", GutterBottom)
           .AddClass($"mud-typography-align-{Align.ToDescriptionString()}", Align != Align.Inherit)
+          .AddClass("mud-typography-display-inline", Inline)
           .AddClass(Class)
         .Build();
 
@@ -22,5 +23,6 @@ namespace MudBlazor
         [Parameter] public Color Color { get; set; } = Color.Inherit;
         [Parameter] public bool GutterBottom { get; set; } = false;
         [Parameter]  public RenderFragment ChildContent { get; set; }
+        [Parameter] public bool Inline { get; set; }
     }
 }
