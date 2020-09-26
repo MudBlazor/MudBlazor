@@ -64,19 +64,17 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                @if (ShowErrorLog)
-                {
-                    <MudText Color="Color.Danger" Typo="Typo.body1">##[error]</MudText>
-                    <MudText Color="Color.Danger" Typo="Typo.body2">Error: There was an error when attempting to execute the process '/opt/hostedtoolcache/dotnet/dotnet'.</MudText>
-                    <MudText Color="Color.Danger" Typo="Typo.body2">This may indicate the process failed to start. Error: spawn /opt/hostedtoolcache/dotnet/dotnet ENOENT</MudText>
-                    <div>
-                        <MudButton Variant="Variant.Filled" DisableElevation="true" StartIcon="@Icons.Material.ArrowBack" Size="Size.Small" @onclick="@OnShowErrorLog">Go back</MudButton>
-                    </div>
-                }
-                else
-                {
-                    <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" StartIcon="@Icons.Material.Build" @onclick="@(() => StartBuild())">Build Project</MudButton>
-                }
+                <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" StartIcon="@Icons.Material.Build" @onclick="@(() => StartBuild())" Disabled="BuildAgainDisabled">Build Project</MudButton>
+                <MudButton Variant="Variant.Filled" DisableElevation="true"  @onclick="@OnShowBuildLog" Disabled="RunAgainDisabled">Run Again</MudButton>
+                <MudPaper Outlined="true" Class="demo-snackbar-output">
+                    @if (ShowBuildLog)
+                    {
+                        foreach (string line in BuildLogList)
+                        {
+                            <MudText Typo="Typo.caption">@line</MudText>
+                        }
+                    }
+                </MudPaper>
             </SectionContent>
             @*<SectionSource Code="@Markdown_SimpleDialog"></SectionSource>*@
         </DocsPageSection>
@@ -94,26 +92,31 @@
         Snackbar.Default(message);
     }
 
-    public bool ShowErrorLog { get; set; }
+    public bool ShowBuildLog { get; set; }
+    public List<string> BuildLogList = new List<string> { "Starting: Build", "dotnet build", "Build succeeded.", "Finishing: Build" };
+    public bool BuildAgainDisabled { get; set; } = false;
+    public bool RunAgainDisabled { get; set; } = true;
 
     void StartBuild()
     {
-        string ErrorMessage = "Build failed with exit code 1, click for more info.";
-        Snackbar.Add(SnackbarType.Error, ErrorMessage, config =>
+        string ErrorMessage = "Build succeeded, click for more information.";
+        Snackbar.Add(SnackbarType.Success, ErrorMessage, config =>
         {
             config.RequireInteraction = true;
             config.ShowCloseIcon = false;
             config.Onclick = snackbar =>
             {
-                OnShowErrorLog();
+                OnShowBuildLog();
                 return Task.CompletedTask;
             };
         });
     }
 
-    public void OnShowErrorLog()
+    public void OnShowBuildLog()
     {
-        ShowErrorLog =! ShowErrorLog;
+        BuildAgainDisabled = !BuildAgainDisabled;
+        RunAgainDisabled = !RunAgainDisabled;
+        ShowBuildLog = !ShowBuildLog;
         StateHasChanged();
     }
 
