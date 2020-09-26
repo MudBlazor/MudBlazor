@@ -8,6 +8,7 @@
 
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 using System;
 using System.Threading.Tasks;
@@ -25,10 +26,14 @@ namespace MudBlazor.Dialog
         [Parameter] public Guid Id { get; set; }
 
         private string Position { get; set; }
+        private string DialogMaxWidth { get; set; }
         private string Class { get; set; }
         private bool DisableBackdropClick { get; set; }
         private bool NoHeader { get; set; }
         private bool CloseButton { get; set; }
+        private bool FullScreen { get; set; }
+        private bool FullWidth { get; set; }
+
 
         protected override void OnInitialized()
         {
@@ -58,6 +63,7 @@ namespace MudBlazor.Dialog
         private void ConfigureInstance()
         {
             Position = SetPosition();
+            DialogMaxWidth = SetMaxWidth();
             Class = Classname;
             NoHeader = SetHideHeader();
             CloseButton = SetCloseButton();
@@ -80,27 +86,31 @@ namespace MudBlazor.Dialog
             {
                 position = DialogPosition.Center;
             }
+            return $"mud-dialog-{position.ToDescriptionString()}";
+        }
 
-            switch (position)
+        private string SetMaxWidth()
+        {
+            MaxWidth maxWidth;
+
+            if (Options.MaxWidth.HasValue)
             {
-                case DialogPosition.Center:
-                    return "mud-dialog-center";
-                case DialogPosition.TopLeft:
-                    return "mud-dialog-topleft";
-                case DialogPosition.TopRight:
-                    return "mud-dialog-topright";
-                case DialogPosition.BottomLeft:
-                    return "mud-dialog-bottomleft";
-                case DialogPosition.BottomRight:
-                    return "mud-dialog-bottomright";
-                case DialogPosition.Custom:
-                default:
-                    return "mud-dialog-center";
+                maxWidth = Options.MaxWidth.Value;
             }
+            else if (GlobalDialogOptions.MaxWidth.HasValue)
+            {
+                maxWidth = GlobalDialogOptions.MaxWidth.Value;
+            }
+            else
+            {
+                maxWidth = MaxWidth.Small;
+            }
+            return $"mud-dialog-width-{maxWidth.ToDescriptionString()}";
         }
 
         protected string Classname =>
         new CssBuilder("mud-dialog")
+            .AddClass(DialogMaxWidth)
         .Build();
 
         private bool SetHideHeader()
