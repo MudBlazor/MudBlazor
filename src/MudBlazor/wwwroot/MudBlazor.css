@@ -853,11 +853,13 @@ ul {
       right: 8px;
       position: absolute; }
   .mud-dialog .mud-dialog-content {
-    overflow-y: auto;
+    position: relative;
+    flex: 1 1 auto;
+    overflow-y: hidden;
     padding: 8px 24px;
     -webkit-overflow-scrolling: touch; }
     .mud-dialog .mud-dialog-content.mud-dialog-no-side-padding {
-      padding: 8px 0px; }
+      padding: 12px 0px; }
   .mud-dialog .mud-dialog-actions {
     flex: 0 0 auto;
     display: flex;
@@ -1516,7 +1518,8 @@ ul {
   position: relative;
   min-width: 0;
   flex-direction: column;
-  vertical-align: top; }
+  vertical-align: top;
+  margin-top: 4px; }
   .mud-formcontrol.mud-formcontrol-margin-normal {
     margin-top: 16px;
     margin-bottom: 8px; }
