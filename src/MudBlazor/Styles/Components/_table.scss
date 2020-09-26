@@ -60,6 +60,19 @@
     vertical-align: inherit;
 }
 
+.mud-table td {
+    display: table-cell;
+    padding: 16px;
+    font-size: 0.875rem;
+    text-align: left;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.43;
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
+    letter-spacing: 0.01071em;
+    vertical-align: inherit;
+}
+
 .mud-table-cell-head {
     color: var(--mud-theme-text-color-default);
     font-weight: 500;
@@ -81,17 +94,29 @@
         & .mud-table-cell {
             padding: 6px 24px 6px 16px;
         }
+
+        & td {
+            padding: 6px 24px 6px 16px;
+        }
+
         & .mud-table-cell:last-child {
             padding-right: 16px;
         }
+
+        & td:last-child {
+            padding-right: 16px;
+        }
+
         & .mud-table-cell.mud-table-cell-padding-checkbox {
             width: 24px;
             padding: 0 12px 0 16px;
         }
+
         & .mud-table-cell.mud-table-cell-padding-checkbox:last-child {
             padding-left: 12px;
             padding-right: 16px;
         }
+
         & .mud-table-cell.mud-table-cell-padding-checkbox > * {
             padding: 0;
         }

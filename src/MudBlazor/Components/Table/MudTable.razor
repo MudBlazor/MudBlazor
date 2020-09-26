@@ -23,7 +23,9 @@
                 <tbody class="mud-table-body">
                     @foreach (var item in CurrentPageItems)
                     {
-                        @RowTemplate(item)
+                        <MudTableRow Item="item" @key="item">
+                            @RowTemplate(item)
+                        </MudTableRow>
                     }
                 </tbody>
             </table>
@@ -51,6 +53,22 @@
 
     [Parameter] public Func<T, bool> Filter { get; set; } = null;
 
+    [Parameter]
+    public T SelectedItem
+    {
+        get => _selectedItem;
+        set
+        {
+            if (Object.ReferenceEquals( SelectedItem , value))
+                return;
+            _selectedItem = value;
+            SelectedItemChanged.InvokeAsync(value);
+        }
+    }
+    private T _selectedItem;
+
+    [Parameter] public EventCallback<T> SelectedItemChanged { get; set; }
+
     protected IEnumerable<T> FilteredItems
     {
         get
@@ -65,7 +83,7 @@
     {
         get
         {
-            if (@PagerContent == null) 
+            if (@PagerContent == null)
                 return FilteredItems; // we have no pagination
             return GetItemsOfPage(CurrentPage, RowsPerPage);
         }
@@ -81,4 +99,10 @@
     protected override int NumPages => (int)Math.Ceiling(FilteredItems.Count() / (double) RowsPerPage);
 
     public override int GetFilteredItemsCount() => FilteredItems.Count();
+
+    public override void SetSelectedItem(object item)
+    {
+        SelectedItem = (T) item;
+    }
+
 }

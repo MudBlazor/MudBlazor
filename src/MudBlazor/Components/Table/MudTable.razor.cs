@@ -65,5 +65,6 @@ namespace MudBlazor
 
         public abstract int GetFilteredItemsCount();
 
+        public abstract void SetSelectedItem(object item);
     }
 }

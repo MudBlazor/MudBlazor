@@ -1,9 +1,19 @@
 ﻿@namespace MudBlazor
 
-<tr class="mud-table-row">
+<tr class="mud-table-row" @onclick="@OnRowClicked">
     @ChildContent
 </tr>
 
 @code {
+    [CascadingParameter] public MudTableBase Table { get; set; }
+
     [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [Parameter] public object Item { get; set; }
+
+    public void OnRowClicked()
+    {
+        Table?.SetSelectedItem(Item);
+    }
+
 }

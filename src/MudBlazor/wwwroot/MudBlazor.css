@@ -2133,6 +2133,18 @@ button.mud-list-item {
   letter-spacing: 0.01071em;
   vertical-align: inherit; }
 
+.mud-table td {
+  display: table-cell;
+  padding: 16px;
+  font-size: 0.875rem;
+  text-align: left;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 400;
+  line-height: 1.43;
+  border-bottom: 1px solid #e0e0e0;
+  letter-spacing: 0.01071em;
+  vertical-align: inherit; }
+
 .mud-table-cell-head {
   color: var(--mud-theme-text-color-default);
   font-weight: 500;
@@ -2149,7 +2161,13 @@ button.mud-list-item {
 .mud-table-dense * .mud-table-row .mud-table-cell {
   padding: 6px 24px 6px 16px; }
 
+.mud-table-dense * .mud-table-row td {
+  padding: 6px 24px 6px 16px; }
+
 .mud-table-dense * .mud-table-row .mud-table-cell:last-child {
+  padding-right: 16px; }
+
+.mud-table-dense * .mud-table-row td:last-child {
   padding-right: 16px; }
 
 .mud-table-dense * .mud-table-row .mud-table-cell.mud-table-cell-padding-checkbox {
