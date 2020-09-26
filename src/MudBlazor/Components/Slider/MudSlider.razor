@@ -5,7 +5,7 @@
 <div class="@Classname" style="@Style">
     @if(ChildContent != null)
     {
-        <MudText Typo="Typo.body1" GutterBottom="false">@ChildContent</MudText>
+        <MudText Typo="Typo.body1">@ChildContent</MudText>
     }
     <input @attributes="UserAttributes" type="range" min="@Min" max="@Max" step="@Step" @bind-value="@Value" disabled="@Disabled"/>
 </div>

@@ -14,11 +14,11 @@
     </span>
     @if (!String.IsNullOrEmpty(Label))
     {
-        <MudText GutterBottom="false">@Label</MudText>
+        <MudText>@Label</MudText>
     }
     @if (ChildContent != null)
     {
-        <MudText GutterBottom="false">
+        <MudText>
             @ChildContent
         </MudText>
     }

@@ -20,7 +20,7 @@ namespace MudBlazor
         [Parameter] public Typo Typo { get; set; } = Typo.body1;
         [Parameter] public Align Align { get; set; } = Align.Inherit;
         [Parameter] public Color Color { get; set; } = Color.Inherit;
-        [Parameter] public bool GutterBottom { get; set; } = true;
+        [Parameter] public bool GutterBottom { get; set; } = false;
         [Parameter]  public RenderFragment ChildContent { get; set; }
     }
 }

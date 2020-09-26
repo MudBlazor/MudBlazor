@@ -5,7 +5,7 @@
     <div class="mud-table-pagination-spacer"></div>
     @if (!DisableRowsPerPage)
     {
-        <MudText Typo="Typo.body2" Class="mud-table-pagination-caption" GutterBottom="false">
+        <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
             @RowsPerPageString
         </MudText>
         <MudSelect SelectedValue="SetRowsPerPage" Value="@Table.RowsPerPage.ToString()" Class="mud-table-pagination-select" DisabelUnderLine="true">
@@ -15,7 +15,7 @@
             }
         </MudSelect>
     }
-    <MudText Typo="Typo.body2" Class="mud-table-pagination-caption" GutterBottom="false">
+    <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
         @Info
     </MudText>
     <div class="mud-table-pagination-actions">
