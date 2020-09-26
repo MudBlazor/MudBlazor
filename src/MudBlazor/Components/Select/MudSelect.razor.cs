@@ -10,7 +10,8 @@ namespace MudBlazor
     public class ComponentBaseMudSelect : MudBaseInputText
     {
         protected string Classname =>
-        new CssBuilder("mud-select")
+        new CssBuilder("mud-select mud-formcontrol")
+        .AddClass("mud-formcontrol-full-width", FullWidth)
         .AddClass(Class)
        .Build();
 
