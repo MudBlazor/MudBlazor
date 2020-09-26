@@ -2112,7 +2112,15 @@ button.mud-list-item {
   letter-spacing: 0.01071em; }
 
 .mud-table-sticky-header {
-  border-collapse: separate; }
+  border-collapse: separate;
+  /*display: inline-block;*/
+  overflow: auto; }
+  .mud-table-sticky-header th {
+    top: 0;
+    left: 0;
+    z-index: 2;
+    position: sticky;
+    background-color: #fff; }
 
 .mud-table-body {
   display: table-row-group; }
@@ -2207,13 +2215,6 @@ button.mud-list-item {
 
 .mud-table-cell-align-justify {
   text-align: justify; }
-
-.mud-table-cell-sticky-header {
-  top: 0;
-  left: 0;
-  z-index: 2;
-  position: sticky;
-  background-color: #fff; }
 
 .mud-table-container {
   width: 100%;

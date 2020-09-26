@@ -17,6 +17,7 @@ namespace MudBlazor
            .AddClass($"mud-table-hover", Hover)
            .AddClass($"mud-table-outlined", Outlined)
            .AddClass($"mud-table-square", Square)
+           .AddClass($"mud-table-sticky-header", FixedHeader)
            .AddClass($"mud-elevation-{Elevation.ToString()}", !Outlined)
           .AddClass(Class)
         .Build();
@@ -27,6 +28,7 @@ namespace MudBlazor
         [Parameter] public bool Dense { get; set; }
         [Parameter] public bool Hover { get; set; }
         [Parameter] public bool FixedHeader { get; set; }
+        [Parameter] public string Height { get; set; }
         [Parameter] public int RowsPerPage { get; set; } = 10;
         [Parameter] public int CurrentPage { get; set; } = 0;
 
@@ -66,5 +68,10 @@ namespace MudBlazor
         public abstract int GetFilteredItemsCount();
 
         public abstract void SetSelectedItem(object item);
+
+        protected string TableStyle 
+            => new StyleBuilder()
+                .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
+                .Build();
     }
 }

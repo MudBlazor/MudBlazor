@@ -35,6 +35,16 @@
 
 .mud-table-sticky-header {
     border-collapse: separate;
+    /*display: inline-block;*/
+    overflow: auto;
+
+    th {
+        top: 0;
+        left: 0;
+        z-index: 2;
+        position: sticky;
+        background-color: #fff;
+    }
 }
 
 .mud-table-body {
@@ -157,14 +167,6 @@
 
 .mud-table-cell-align-justify {
     text-align: justify;
-}
-
-.mud-table-cell-sticky-header {
-    top: 0;
-    left: 0;
-    z-index: 2;
-    position: sticky;
-    background-color: #fff;
 }
 
 .mud-table-container {
