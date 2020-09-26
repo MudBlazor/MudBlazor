@@ -13,10 +13,13 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-typography mud-link")
+           .AddClass($"mud-color-text-{Color.ToDescriptionString()}")
           .AddClass($"mud-link-underline-{Underline.ToDescriptionString()}")
           .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
           .AddClass(Class)
         .Build();
+
+        [Parameter] public Color Color { get; set; } = Color.Primary;
 
         [Parameter] public Typo Typo { get; set; } = Typo.body1;
 

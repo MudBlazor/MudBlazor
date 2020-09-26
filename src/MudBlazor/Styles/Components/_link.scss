@@ -1,20 +1,18 @@
 ﻿
 .mud-link {
-    color: var(--mud-theme-text-default);
-}
+    & .mud-link-underline-none {
+        text-decoration: none;
+    }
 
-.mud-link-underline-none {
-    text-decoration: none;
-}
+    & .mud-link-underline-hover {
+        text-decoration: none;
 
-.mud-link-underline-hover {
-    text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 
-    &:hover {
+    & .mud-link-underline-always {
         text-decoration: underline;
     }
-}
-
-.mud-link-underline-always {
-    text-decoration: underline;
 }
