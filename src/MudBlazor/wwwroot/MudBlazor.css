@@ -1550,12 +1550,13 @@ ul {
   color: rgba(0, 0, 0, 0.54);
   margin: 0;
   font-size: 0.75rem;
-  margin-top: 3px;
   text-align: left;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 400;
   line-height: 1.66;
-  letter-spacing: 0.03333em; }
+  letter-spacing: 0.03333em;
+  position: relative;
+  top: -22px; }
 
 .mud-form-helpertext.mud-disabled {
   color: rgba(0, 0, 0, 0.38); }
@@ -2270,7 +2271,8 @@ button.mud-list-item {
   min-height: 200px; }
 
 .mud-select {
-  display: inline-flex; }
+  display: inline-flex;
+  min-width: 50px; }
 
 .mud-select-icon {
   color: var(--mud-theme-text-default);
