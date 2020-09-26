@@ -2274,9 +2274,9 @@ button.mud-list-item {
 
 .mud-select-icon {
   color: var(--mud-theme-text-default);
-  top: calc(50% - 16px);
-  right: 0;
-  position: absolute; }
+  position: relative;
+  top: -28px;
+  left: calc(100% - 20px); }
 
 .mud-select-menu {
   z-index: 100;
