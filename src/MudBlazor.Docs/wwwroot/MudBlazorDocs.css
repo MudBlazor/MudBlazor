@@ -253,6 +253,18 @@
 .docs-page-section {
   margin-bottom: 50px; }
 
+.docs-code {
+  color: rgba(0, 0, 0, 0.87);
+  display: inline-block;
+  padding: 0 3px;
+  direction: ltr;
+  font-size: .85em;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  line-height: 1.4;
+  border-radius: 2px;
+  background-color: rgba(255, 229, 100, 0.2);
+  -webkit-font-smoothing: subpixel-antialiased; }
+
 .docs-frame {
   height: 100%;
   width: 100%;
