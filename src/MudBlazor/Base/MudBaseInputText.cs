@@ -22,6 +22,7 @@ namespace MudBlazor
 
         [Parameter] public InputType InputType { get; set; } = InputType.Text;
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
+        [Parameter] public Margin Margin { get; set; } = Margin.None;
 
         [Parameter] public EventCallback<string> ValueChanged { get; set; }
 
