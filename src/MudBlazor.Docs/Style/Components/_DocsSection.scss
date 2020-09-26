@@ -1,9 +1,9 @@
 ﻿.docs-section-header {
-    & .mud-typography-h4 {
-        font-size: 1.90rem;
-    }
-
     margin-bottom: 20px;
+
+    .mud-typography-h4 {
+        margin: 40px 0 16px;
+    }
 }
 
 .docs-section-content {

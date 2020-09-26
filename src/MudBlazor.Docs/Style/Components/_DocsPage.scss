@@ -5,6 +5,10 @@
 }
 
 .docs-page-header {
+
+    & h3 {
+        margin-bottom:16px;
+    }
     & .mud-typography-h4 {
         margin-top: 0px;
     }

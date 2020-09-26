@@ -156,6 +156,12 @@
   margin-top: 1rem !important;
   margin-bottom: 1rem !important; }
 
+.demo-snackbar-output {
+  min-width: 250px;
+  padding: 1.5rem; }
+  .demo-snackbar-output > .mud-typography-caption {
+    display: block; }
+
 .docs-home {
   display: flex;
   text-align: center;
@@ -250,6 +256,8 @@
 
 .docs-page-header {
   margin-bottom: 100px; }
+  .docs-page-header h3 {
+    margin-bottom: 16px; }
   .docs-page-header .mud-typography-h4 {
     margin-top: 0px; }
 
@@ -278,7 +286,7 @@
 .docs-section-header {
   margin-bottom: 20px; }
   .docs-section-header .mud-typography-h4 {
-    font-size: 1.90rem; }
+    margin: 40px 0 16px; }
 
 .docs-section-content {
   padding: 20px;

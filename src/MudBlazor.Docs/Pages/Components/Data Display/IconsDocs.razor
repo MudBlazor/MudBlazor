@@ -7,60 +7,157 @@
         <SubTitle>Guidance and suggestions for using icons with MudBlazor.</SubTitle>
     </DocsPageHeader>
     <DocsPageContent>
-        <MudText Typo="Typo.h4">Custom Icons</MudText>
-        @if (MudIconsMaterial != null)
-        {
-            <DocsIcons List="MudIconsCustom" />
-        }
-        else
-        {
-            <MudText Typo="Typo.h5" Align="Align.Center">Loading...</MudText>
-        }
-        <MudText Typo="Typo.h4">Material Icons</MudText>
-        @if (MudIconsMaterial != null)
-        {
-            <DocsIcons List="MudIconsMaterial" />
-        }
-        else
-        {
-            <MudText Typo="Typo.h5" Align="Align.Center">Loading...</MudText>
-        }
+        <DocsPageSection>
+            <MudText Typo="Typo.h6" GutterBottom="true">Out of the box</MudText>
+            <MudText>Mudblazor comes loaded with <MudLink Href="https://material.io/resources/icons/">Material Design icons</MudLink> in SVG format.</MudText>
+            <MudText>This can be used with the MudIcon component or other components that has icons.</MudText>
+            <MudText>The same component support Font icons but need to be loaded separately.</MudText>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>All icons that comes loaded by default</Title>
+                <Description>You can search the full list of the icons under <MudLink Href="/components/data-display/mudblazor-icons">MudBlazor Icons</MudLink> in the menu.</Description>
+            </SectionHeader>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Usage</Title>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudIcon Icon="@Icons.Material.Favorite" />
+                <MudIcon Icon="@Icons.Material.Api" />
+                <MudIcon Icon="@Icons.Material.AddCircle" />
+                <MudIcon Icon="@Icons.Custom.GitHub" />
+                <MudIcon Icon="@Icons.Custom.Google" />
+                <MudIcon Icon="@Icons.Custom.Reddit" />
+            </SectionContent>
+            <MudGrid>
+                <MudItem md="6">
+                    <SectionSource Code="@Markdown_UsageMaterial"></SectionSource>
+                </MudItem>
+                <MudItem md="6">
+                    <SectionSource Code="@Markdown_UsageCustom"></SectionSource>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Color</Title>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudIcon Icon="@Icons.Custom.Radioactive" Color="Color.Default" />
+                <MudIcon Icon="@Icons.Custom.Radioactive" Color="Color.Primary" />
+                <MudIcon Icon="@Icons.Custom.Radioactive" Color="Color.Secondary" />
+                <MudIcon Icon="@Icons.Custom.Radioactive" Color="Color.Success" />
+                <MudIcon Icon="@Icons.Custom.Radioactive" Color="Color.Info" />
+                <MudIcon Icon="@Icons.Custom.Radioactive" Color="Color.Warning" />
+                <MudIcon Icon="@Icons.Custom.Radioactive" Color="Color.Danger" />
+                <MudIcon Icon="@Icons.Custom.Radioactive" Color="Color.Dark" />
+            </SectionContent>
+            <SectionSource Code="@Markdown_Color"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Size</Title>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudIcon Icon="@Icons.Custom.Radioactive" Size="Size.Small" />
+                <MudIcon Icon="@Icons.Custom.Radioactive" />
+                <MudIcon Icon="@Icons.Custom.Radioactive" Size="Size.Large" />
+            </SectionContent>
+            <SectionSource Code="@Markdown_Size"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Font Icons</Title>
+                <Description>MudIcon component will display any icon font that support ligatures. This are not loaded by default, for example you can use <MudLink Color="Color.Secondary" Href="https://fontawesome.com/">Font Awesome</MudLink> or <MudLink Href="https://material.io/resources/icons/">Material Design icon font</MudLink> via Google Web Fonts.</Description>
+            </SectionHeader>
+            <SectionSource Code="@Markdown_WebFont"></SectionSource>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>
+                    Font Material icons
+                </Title>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+                <MudIcon FontIcon="accessibility" />
+                <MudIcon FontIcon="invert_colors" Color="Color.Primary" />
+                <MudIcon FontIcon="android" Color="Color.Success" />
+                <MudIcon FontIcon="settings" />
+                <MudIcon FontIcon="settings" Size="Size.Small" />
+                <MudIcon FontIcon="settings" Size="Size.Large" />
+            </SectionContent>
+            <SectionSource Code="@Markdown_WebFontMaterial"></SectionSource>
+        </DocsPageSection>
+         <DocsPageSection>
+            <SectionHeader>
+                <Title>
+                    Font Awesome
+                </Title>
+                <Description>With <MudLink Href="https://fontawesome.com/icons">Font Awesome</MudLink> icons you need to specify it with the ClassFont parameter.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <link href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" rel="stylesheet">
+                <MudIcon FontClass="fab fa-internet-explorer" Color="Color.Primary" />
+                <MudIcon FontClass="fab fa-angellist" Color="Color.Secondary" />
+                <MudIcon FontClass="fas fa-dragon" Color="Color.Success" />
+                <MudIcon FontClass="fas fa-toilet-paper-slash" />
+                <MudIcon FontClass="fas fa-toilet-paper-slash" Size="Size.Small" />
+                <MudIcon FontClass="fas fa-toilet-paper-slash" Size="Size.Large" />
+            </SectionContent>
+            <SectionSource Code="@Markdown_WebFontFontAwesome"></SectionSource>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
 
 @code {
 
-    List<MudIcons> MudIconsMaterial;
-    List<MudIcons> MudIconsCustom;
+    string Markdown_UsageMaterial = @"```html
+<MudIcon Icon=""@Icons.Material.Favorite"" />
+<MudIcon Icon=""@Icons.Material.Api"" />
+<MudIcon Icon=""@Icons.Material.AddCircle"" />
+```";
+    string Markdown_UsageCustom = @"```html
+<MudIcon Icon=""@Icons.Custom.GitHub"" />
+<MudIcon Icon=""@Icons.Custom.Google"" />
+<MudIcon Icon=""@Icons.Custom.Reddit"" />
+```";
+    string Markdown_Color = @"```html
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Default"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Primary"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Secondary"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Success"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Info"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Warning"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Danger"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Dark"" />
+```";
+    string Markdown_Size = @"```html
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Size=""Size.Small"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Size=""Size.Large"" />
+```";
+    string Markdown_WebFont = @"```html
+<link rel=""stylesheet"" href=""https://fonts.googleapis.com/icon?family=Material+Icons"" />
+```";
 
+    string Markdown_WebFontMaterial = @"```html
+<MudIcon FontIcon=""accessibility"" />
+<MudIcon FontIcon=""invert_colors"" Color=""Color.Primary"" />
+<MudIcon FontIcon=""android"" Color=""Color.Success"" />
+<MudIcon FontIcon=""settings"" />
+<MudIcon FontIcon=""settings"" Size=""Size.Small"" />
+<MudIcon FontIcon=""settings"" Size=""Size.Large"" />
+```";
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadMaterialIcons();
-        await LoadCustomIcons();
-    }
-
-    public async Task LoadMaterialIcons()
-    {
-        var result = new List<MudIcons>();
-
-        foreach (var prop in typeof(Icons.Material).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-        {
-            result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
-        }
-        await Task.WhenAll();
-        MudIconsMaterial = result;
-    }
-
-    public async Task LoadCustomIcons()
-    {
-        var result = new List<MudIcons>();
-
-        foreach (var prop in typeof(Icons.Custom).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-        {
-            result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
-        }
-        await Task.WhenAll();
-        MudIconsCustom = result;
-    }
+string Markdown_WebFontFontAwesome = @"```html
+<MudIcon FontClass=""fab fa-internet-explorer"" Color=""Color.Primary"" />
+<MudIcon FontClass=""fab fa-angellist"" Color=""Color.Secondary"" />
+<MudIcon FontClass=""fas fa-dragon"" Color=""Color.Success"" />
+<MudIcon FontClass=""fas fa-toilet-paper-slash"" />
+<MudIcon FontClass=""fas fa-toilet-paper-slash"" Size=""Size.Small"" />
+<MudIcon FontClass=""fas fa-toilet-paper-slash"" Size=""Size.Large"" />
+```";
 }

@@ -131,3 +131,11 @@
         margin-bottom: 1rem !important;
     }
 }
+
+.demo-snackbar-output {
+    min-width: 250px;
+    padding: 1.5rem;
+    & > .mud-typography-caption {
+        display:block;
+    }
+}
