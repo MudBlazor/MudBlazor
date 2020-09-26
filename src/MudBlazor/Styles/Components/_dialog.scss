@@ -80,12 +80,15 @@
     }
 
     & .mud-dialog-content {
-        overflow-y: auto;
+        position: relative;
+        flex: 1 1 auto;
+        overflow-y: hidden;
         padding: 8px 24px;
         -webkit-overflow-scrolling: touch;
 
+
         &.mud-dialog-no-side-padding {
-            padding: 8px 0px;
+            padding: 12px 0px;
         }
     }
 

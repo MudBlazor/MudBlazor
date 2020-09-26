@@ -2,7 +2,7 @@
 
 <div class="mud-dialog-container @Position">
     <div class="mud-dialog-overlay" @onclick="HandleBackgroundClick"></div>
-    <div id="_@Id.ToString("N")" class="mud-dialog">
+    <div id="_@Id.ToString("N")" class="@Classname">
         @if (!NoHeader)
         {
             <div class="mud-dialog-title">
