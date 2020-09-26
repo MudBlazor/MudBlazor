@@ -1,1 +1,19 @@
 ﻿
+
+
+
+
+$mud-theme-colors: default, primary, secondary, info, success, warning, danger, dark;
+
+@each $color in $mud-theme-colors {
+    .mud-color-#{$color} {
+        background-color: var(--mud-theme-color-#{$color});
+    }
+}
+
+@each $color in $mud-theme-colors {
+    .mud-color-text-#{$color} {
+        color: var(--mud-theme-color-#{$color});
+    }
+}
+

@@ -1,4 +1,52 @@
 ﻿@charset "UTF-8";
+.mud-color-default {
+  background-color: var(--mud-theme-color-default); }
+
+.mud-color-primary {
+  background-color: var(--mud-theme-color-primary); }
+
+.mud-color-secondary {
+  background-color: var(--mud-theme-color-secondary); }
+
+.mud-color-info {
+  background-color: var(--mud-theme-color-info); }
+
+.mud-color-success {
+  background-color: var(--mud-theme-color-success); }
+
+.mud-color-warning {
+  background-color: var(--mud-theme-color-warning); }
+
+.mud-color-danger {
+  background-color: var(--mud-theme-color-danger); }
+
+.mud-color-dark {
+  background-color: var(--mud-theme-color-dark); }
+
+.mud-color-text-default {
+  color: var(--mud-theme-color-default); }
+
+.mud-color-text-primary {
+  color: var(--mud-theme-color-primary); }
+
+.mud-color-text-secondary {
+  color: var(--mud-theme-color-secondary); }
+
+.mud-color-text-info {
+  color: var(--mud-theme-color-info); }
+
+.mud-color-text-success {
+  color: var(--mud-theme-color-success); }
+
+.mud-color-text-warning {
+  color: var(--mud-theme-color-warning); }
+
+.mud-color-text-danger {
+  color: var(--mud-theme-color-danger); }
+
+.mud-color-text-dark {
+  color: var(--mud-theme-color-dark); }
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -368,7 +416,7 @@ ul {
   margin-right: 12px; }
 
 .mud-alert-message {
-  padding: 8px 0; }
+  padding: 9px 0; }
 
 .mud-alert-action {
   display: flex;
@@ -1546,18 +1594,15 @@ button.mud-list-item {
 .mud-nested-list.expanded > .mud-list {
   display: block; }
 
-.mud-link {
-  color: var(--mud-theme-text-default); }
-
-.mud-link-underline-none {
+.mud-link .mud-link-underline-none {
   text-decoration: none; }
 
-.mud-link-underline-hover {
+.mud-link .mud-link-underline-hover {
   text-decoration: none; }
-  .mud-link-underline-hover:hover {
+  .mud-link .mud-link-underline-hover:hover {
     text-decoration: underline; }
 
-.mud-link-underline-always {
+.mud-link .mud-link-underline-always {
   text-decoration: underline; }
 
 .mud-simple-table table {
@@ -2019,6 +2064,9 @@ button.mud-list-item {
 
 .mud-typography-color-secondary {
   color: var(--mud-theme-color-secondary); }
+
+.mud-typography-color-success {
+  color: var(--mud-theme-color-success); }
 
 .mud-typography-color-danger {
   color: var(--mud-theme-color-danger); }
