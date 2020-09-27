@@ -2093,8 +2093,7 @@ button.mud-list-item {
     border: 1px solid rgba(0, 0, 0, 0.12); }
 
 .mud-table-container {
-  width: 100%;
-  overflow-x: auto; }
+  width: 100%; }
 
 .mud-table-root {
   width: 100%;
@@ -2160,6 +2159,9 @@ button.mud-list-item {
 .mud-table-dense * .mud-table-row .mud-table-cell:last-child {
   padding-right: 16px; }
 
+.mud-table-sticky-header .mud-table-container {
+  overflow-x: auto; }
+
 .mud-table-sticky-header * .mud-table-root {
   border-collapse: separate; }
   .mud-table-sticky-header * .mud-table-root .mud-table-head * .mud-table-cell:first-child {
@@ -2201,7 +2203,7 @@ button.mud-list-item {
   padding: 0; }
 
 .mud-table-pagination-toolbar {
-  min-height: 52px;
+  height: 52px;
   padding-right: 2px; }
 
 .mud-table-pagination-spacer {
@@ -2211,13 +2213,19 @@ button.mud-list-item {
   flex-shrink: 0; }
 
 .mud-table-pagination-select {
-  margin-left: 8px;
-  margin-right: 32px; }
-  .mud-table-pagination-select .mud-formcontrol > div.mud-input {
-    margin-top: 0px;
+  cursor: pointer;
+  margin-left: 10px;
+  margin-right: 30px; }
+  .mud-table-pagination-select .mud-input .mud-input-root {
+    max-width: 80px;
+    cursor: pointer;
+    margin-top: 2px;
     border: none;
-    width: 50px;
-    font-size: inherit; }
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.43;
+    letter-spacing: .01071em;
+    color: var(--mud-theme-on-surface); }
 
 .mud-table-pagination-actions {
   flex-shrink: 0;
