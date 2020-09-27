@@ -1,0 +1,63 @@
+﻿@page "/"
+
+<MudLayout DrawerOpen="@drawerOpen">
+    <MudAppBar Position="Position.Absolute" Elevation="0">
+        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
+        <MudText Typo="Typo.h6">@selectedType?.Name</MudText>
+        <MudAppBarSpacer />
+    </MudAppBar>
+    <MudDrawer>
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">TestComponents</MudText>
+        </MudDrawerHeader>
+        <MudList>
+            @foreach (var type in getTestComponenTypes())
+            {
+                <MudListItem OnClick="@(() => selectedType = type)">@type.Name</MudListItem>    
+            }
+        </MudList>
+    </MudDrawer>
+    <MudMainContent>
+
+        <MudPaper Elevation="5" Style="padding: 24px; margin: 24px;">
+            @if (@selectedType == null)
+            {
+                <span>Select a component</span>
+            }
+            else
+            {
+                @TestComponent()
+            }
+        </MudPaper>
+
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    bool drawerOpen = true;
+    Type selectedType = null;
+
+    void DocsDrawerToggle()
+    {
+        drawerOpen = !drawerOpen;
+    }
+
+    RenderFragment TestComponent() => builder =>
+    {
+        builder.OpenComponent(0, selectedType);
+        //builder.AddAttribute(1, "Title", "Some title");
+        builder.CloseComponent();
+    };
+
+    IEnumerable<Type> getTestComponenTypes()
+    {
+        foreach (var type in typeof(Program).Assembly.GetTypes())
+        {
+            if (!type.Name.Contains("Test"))
+                continue;
+            if (type.Name.StartsWith("<"))
+                continue;
+            yield return type;
+        }
+    }
+}

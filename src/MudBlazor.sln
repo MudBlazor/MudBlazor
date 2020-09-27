@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs", "MudBlazor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.UnitTests", "MudBlazor.UnitTests\MudBlazor.UnitTests.csproj", "{A550FD8B-1E2A-4D33-88A3-38DC0FC5C3BD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.UnitTestComponents", "MudBlazor.UnitTestComponents\MudBlazor.UnitTestComponents.csproj", "{E626F48E-BEFD-440A-9C5C-741371E8DFE1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MudBlazor.UnitTests.Viewer", "MudBlazor.UnitTests.Viewer\MudBlazor.UnitTests.Viewer.csproj", "{B85F3580-C866-4900-BBCE-820CD9E91D24}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{A550FD8B-1E2A-4D33-88A3-38DC0FC5C3BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A550FD8B-1E2A-4D33-88A3-38DC0FC5C3BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A550FD8B-1E2A-4D33-88A3-38DC0FC5C3BD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E626F48E-BEFD-440A-9C5C-741371E8DFE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E626F48E-BEFD-440A-9C5C-741371E8DFE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E626F48E-BEFD-440A-9C5C-741371E8DFE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E626F48E-BEFD-440A-9C5C-741371E8DFE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B85F3580-C866-4900-BBCE-820CD9E91D24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B85F3580-C866-4900-BBCE-820CD9E91D24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B85F3580-C866-4900-BBCE-820CD9E91D24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B85F3580-C866-4900-BBCE-820CD9E91D24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
