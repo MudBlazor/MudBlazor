@@ -10,28 +10,28 @@
                 @ToolBarContent
             </MudToolBar>
         }
-        <div class="mud-table-container">
-            <table class="mud-table-root" style="@TableStyle">
+        <div class="mud-table-container" style="@TableStyle">
+            <table class="mud-table-root">
                 @if (HeaderContent != null)
                 {
                     <thead class="mud-table-head">
-                    <tr class="mud-table-row">
-                        @HeaderContent
-                    </tr>
+                        <MudTr>
+                            @HeaderContent
+                        </MudTr>
                     </thead>
                 }
                 <tbody class="mud-table-body">
                     @foreach (var item in CurrentPageItems)
                     {
-                        <MudTableRow Item="item" @key="item">
+                        <MudTr Item="item" @key="item">
                             @if (MultiSelection)
                             {
-                                <MudTableCell>
+                                <MudTd>
                                     <MudCheckBox CheckedChanged="@((b) => { var x = item; OnRowCheckBoxChanged(b, x); })"></MudCheckBox>
-                                </MudTableCell>
+                                </MudTd>
                             }
                             @RowTemplate(item)
-                        </MudTableRow>
+                        </MudTr>
                     }
                 </tbody>
             </table>

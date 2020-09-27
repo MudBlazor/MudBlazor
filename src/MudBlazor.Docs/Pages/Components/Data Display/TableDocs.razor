@@ -26,18 +26,18 @@
                         <MudTextField @bind-Value="search_string" Placeholder="Search"></MudTextField>
                     </ToolBarContent>
                     <HeaderContent>
-                        <MudTableHeaderCell>Nr</MudTableHeaderCell>
-                        <MudTableHeaderCell>Sign</MudTableHeaderCell>
-                        <MudTableHeaderCell>Name</MudTableHeaderCell>
-                        <MudTableHeaderCell>Position</MudTableHeaderCell>
-                        <MudTableHeaderCell>Molar mass</MudTableHeaderCell>
+                        <MudTh>Nr</MudTh>
+                        <MudTh>Sign</MudTh>
+                        <MudTh>Name</MudTh>
+                        <MudTh>Position</MudTh>
+                        <MudTh>Molar mass</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTableCell>@context.Number</MudTableCell>
-                        <MudTableCell>@context.Sign</MudTableCell>
-                        <MudTableCell>@context.Name</MudTableCell>
-                        <MudTableCell>@context.Position</MudTableCell>
-                        <MudTableCell>@context.Molar</MudTableCell>
+                        <MudTd>@context.Number</MudTd>
+                        <MudTd>@context.Sign</MudTd>
+                        <MudTd>@context.Name</MudTd>
+                        <MudTd>@context.Position</MudTd>
+                        <MudTd>@context.Molar</MudTd>
                     </RowTemplate>
                     <PagerContent>
                         <MudTablePager />
@@ -59,18 +59,19 @@
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <MudTable Items="@PeriodicTable.GetElements()" MultiSelection="true" @bind-SelectedItems="selected_items">
                     <HeaderContent>
-                        <MudTableHeaderCell>Nr</MudTableHeaderCell>
-                        <MudTableHeaderCell>Sign</MudTableHeaderCell>
-                        <MudTableHeaderCell>Name</MudTableHeaderCell>
-                        <MudTableHeaderCell>Position</MudTableHeaderCell>
-                        <MudTableHeaderCell>Molar mass</MudTableHeaderCell>
+                        <MudTh>#</MudTh>
+                        <MudTh>Nr</MudTh>
+                        <MudTh>Sign</MudTh>
+                        <MudTh><MudTableSortLabel>Name</MudTableSortLabel></MudTh>
+                        <MudTh>Position</MudTh>
+                        <MudTh>Molar mass</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <td>@context.Number</td>
-                        <td>@context.Sign</td>
-                        <td>@context.Name</td>
-                        <td>@context.Position</td>
-                        <td>@context.Molar</td>
+                        <MudTd>@context.Number</MudTd>
+                        <MudTd>@context.Sign</MudTd>
+                        <MudTd>@context.Name</MudTd>
+                        <MudTd>@context.Position</MudTd>
+                        <MudTd>@context.Molar</MudTd>
                     </RowTemplate>
                     <PagerContent>
                         <MudTablePager PageSizeOptions="new List<int>(){50, 100}" />
@@ -88,20 +89,20 @@
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
-                <MudTable Items="@PeriodicTable.GetElements()" FixedHeader="true" Height="300px">
+                <MudTable Items="@PeriodicTable.GetElements()" FixedHeader="true" Height="400px">
                     <HeaderContent>
-                        <MudTableHeaderCell>Nr</MudTableHeaderCell>
-                        <MudTableHeaderCell>Sign</MudTableHeaderCell>
-                        <MudTableHeaderCell>Name</MudTableHeaderCell>
-                        <MudTableHeaderCell>Position</MudTableHeaderCell>
-                        <MudTableHeaderCell>Molar mass</MudTableHeaderCell>
+                        <MudTh>Nr</MudTh>
+                        <MudTh>Sign</MudTh>
+                        <MudTh>Name</MudTh>
+                        <MudTh>Position</MudTh>
+                        <MudTh>Molar mass</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <td>@context.Number</td>
-                        <td>@context.Sign</td>
-                        <td>@context.Name</td>
-                        <td>@context.Position</td>
-                        <td>@context.Molar</td>
+                        <MudTd>@context.Number</MudTd>
+                        <MudTd>@context.Sign</MudTd>
+                        <MudTd>@context.Name</MudTd>
+                        <MudTd>@context.Position</MudTd>
+                        <MudTd>@context.Molar</MudTd>
                     </RowTemplate>
                     <PagerContent>
                         <MudTablePager PageSizeOptions="new List<int>(){50, 100}" />
