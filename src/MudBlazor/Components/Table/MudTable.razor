@@ -16,6 +16,12 @@
                 {
                     <thead class="mud-table-head">
                         <MudTr>
+                            @if (MultiSelection)
+                            {
+                                <MudTd>
+                                    <MudCheckBox CheckedChanged="@OnHeaderCheckboxClicked"></MudCheckBox>
+                                </MudTd>
+                            }
                             @HeaderContent
                         </MudTr>
                     </thead>
@@ -150,4 +156,16 @@
     }
 
     private HashSet<T> _multi_selection=new HashSet<T>();
+
+    private void OnHeaderCheckboxClicked(bool value)
+    {
+        if (!value)
+            _multi_selection.Clear();
+        else
+        {
+            foreach (var item in FilteredItems)
+                _multi_selection.Add(item);
+        }
+        SelectedItemsChanged.InvokeAsync(SelectedItems);
+    }
 }
