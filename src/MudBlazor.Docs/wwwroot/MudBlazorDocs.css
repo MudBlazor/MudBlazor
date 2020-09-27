@@ -244,6 +244,9 @@
   letter-spacing: 0.0075em;
   margin: 0; }
 
+.docs-home-markdown pre {
+  padding: 16px 14px; }
+
 .docs-credit-card .mud-card-content {
   min-height: 180px; }
 
