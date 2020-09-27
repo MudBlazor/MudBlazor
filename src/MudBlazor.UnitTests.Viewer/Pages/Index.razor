@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using System.Reflection
 
 <MudLayout DrawerOpen="@drawerOpen">
     <MudAppBar Position="Position.Absolute" Elevation="0">
@@ -18,7 +19,10 @@
         </MudList>
     </MudDrawer>
     <MudMainContent>
-
+        
+        <MudText Style="padding-left: 24px; margin-left: 24px;">
+            @getDescription(selectedType)
+        </MudText>
         <MudPaper Elevation="5" Style="padding: 24px; margin: 24px;">
             @if (@selectedType == null)
             {
@@ -60,4 +64,20 @@
             yield return type;
         }
     }
+
+    private string getDescription(Type type)
+    {
+        if (type == null)
+            return "";
+        try
+        {
+            var field = type.GetField("__description__", BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField);
+            return (string)field.GetValue(null);
+        }
+        catch (Exception)
+        {
+            return "Description not found.";
+        }
+    }
+
 }
