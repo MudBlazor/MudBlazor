@@ -1,9 +1,11 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Utilities
 
-<td class="mud-table-cell mud-table-cell-body">
+<td class="mud-table-cell">
     @ChildContent
 </td>
 
 @code {
+
     [Parameter] public RenderFragment ChildContent { get; set; }
 }
