@@ -78,6 +78,10 @@
 .demo-dialog-simple {
     display: inline-flex;
 
+    & .mud-list .mud-list-item .mud-list-item {
+        display: inline-flex;
+    }
+
     & p {
         align-self: center;
         margin-left: 16px;
@@ -89,12 +93,10 @@
         background-color: #bbdefb;
     }
 
-    &.demo-dialog-simple-gray {
-        & * .mud-avatar-color-default {
-            color: #fff;
-            background-color: #bdbdbd;
-        }
-    }
+    .s-t-a-l-k-e-r {
+        color: #000;
+        background-color: rgba(255, 152,0, 0.8)
+     }
 }
 
 

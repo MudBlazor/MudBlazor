@@ -65,5 +65,26 @@
 }
 
 .docs-section-source {
-    margin-top: 20px;
+    .docs-content-toolbar {
+        width: 100%;
+        display: flex;
+
+        & > .mud-icon-button .mud-svg-icon-root {
+            font-size: 1.25rem;
+        }
+    }
+
+    .docs-section-markdown-segment {
+
+        &.docs-show-code {
+            display: block;
+        }
+
+        &.docs-hide-code {
+            display:none;
+        }
+    }
 }
+
+
+
