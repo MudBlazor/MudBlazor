@@ -7,7 +7,7 @@
     min-width: 0;
     flex-direction: column;
     vertical-align: top;
-    margin-top: 4px;
+    margin-top: 6px;
 
     &.mud-formcontrol-margin-normal {
         margin-top: 16px;
@@ -59,20 +59,18 @@
     }
 }
 
-
-
 .mud-form-helpertext {
     color: rgba(0, 0, 0, 0.54);
     margin: 0;
     font-size: 0.75rem;
+    margin-top: 3px;
     text-align: left;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 400;
     line-height: 1.66;
     letter-spacing: 0.03333em;
-    position: relative;
-    top: -22px;
 }
+
 
 .mud-form-helpertext.mud-disabled {
     color: rgba(0, 0, 0, 0.38);

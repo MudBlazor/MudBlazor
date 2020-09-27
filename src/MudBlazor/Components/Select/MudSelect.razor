@@ -1,9 +1,10 @@
 ﻿@namespace MudBlazor
 @inherits ComponentBaseMudSelect
 
-<div @attributes="UserAttributes" class="@Classname" @onclick="@ShowSelect">
-    <MudFormControl HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin">
-        <MudInput InputType="InputType.Text" Class="mud-input-formcontrol" Variant="@Variant" Value="@Value" DisabelUnderLine="@DisabelUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly" />
+
+
+<MudFormControl HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname">
+        <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisabelUnderLine="@DisabelUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly" @onclick="@ShowSelect" />
         <MudInputLabel Class="mud-input-label-formcontrol" Variant="@Variant">
             @Label
         </MudInputLabel>
@@ -15,8 +16,8 @@
                 </MudList>
             </div>
         </CascadingValue>
-    </MudFormControl>
-</div>
+</MudFormControl>
+
 
 @if (isMenuOpen)
 {

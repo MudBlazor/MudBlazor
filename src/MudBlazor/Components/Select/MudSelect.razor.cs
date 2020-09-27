@@ -10,8 +10,7 @@ namespace MudBlazor
     public class ComponentBaseMudSelect : MudBaseInputText
     {
         protected string Classname =>
-        new CssBuilder("mud-select mud-formcontrol")
-        .AddClass("mud-formcontrol-full-width", FullWidth)
+        new CssBuilder("mud-select")
         .AddClass(Class)
        .Build();
 
@@ -23,6 +22,7 @@ namespace MudBlazor
         public async Task OnSelect(string value)
         {
             Value = value;
+            isMenuOpen = false;
             StateHasChanged();
             await SelectedValue.InvokeAsync(value);
         }

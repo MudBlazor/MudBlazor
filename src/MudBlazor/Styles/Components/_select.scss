@@ -8,7 +8,7 @@
 .mud-select-icon {
     color: var(--mud-theme-text-default);
     position: relative;
-    top: -28px;
+    bottom: 30px;
     left: calc(100% - 20px);
 }
 
@@ -37,4 +37,8 @@
     position: fixed;
     background-color: transparent;
     z-index: 99;
+}
+
+.mud-select > .mud-form-helpertext {
+    margin-top: -21px;
 }

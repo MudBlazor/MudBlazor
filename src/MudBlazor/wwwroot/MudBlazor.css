@@ -1519,7 +1519,7 @@ ul {
   min-width: 0;
   flex-direction: column;
   vertical-align: top;
-  margin-top: 4px; }
+  margin-top: 6px; }
   .mud-formcontrol.mud-formcontrol-margin-normal {
     margin-top: 16px;
     margin-bottom: 8px; }
@@ -1550,13 +1550,12 @@ ul {
   color: rgba(0, 0, 0, 0.54);
   margin: 0;
   font-size: 0.75rem;
+  margin-top: 3px;
   text-align: left;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 400;
   line-height: 1.66;
-  letter-spacing: 0.03333em;
-  position: relative;
-  top: -22px; }
+  letter-spacing: 0.03333em; }
 
 .mud-form-helpertext.mud-disabled {
   color: rgba(0, 0, 0, 0.38); }
@@ -2277,7 +2276,7 @@ button.mud-list-item {
 .mud-select-icon {
   color: var(--mud-theme-text-default);
   position: relative;
-  top: -28px;
+  bottom: 30px;
   left: calc(100% - 20px); }
 
 .mud-select-menu {
@@ -2302,6 +2301,9 @@ button.mud-list-item {
   position: fixed;
   background-color: transparent;
   z-index: 99; }
+
+.mud-select > .mud-form-helpertext {
+  margin-top: -21px; }
 
 .mud-input {
   position: relative;
