@@ -24,14 +24,13 @@
     padding-right: 30px; } }
 
 .MarkdownSection-Root {
-  word-break: break-word; }
+  word-break: break-word;
+  background-color: var(--mud-theme-color-dark);
+  border-radius: var(--mud-theme-border-radius-default); }
   .MarkdownSection-Root pre {
-    margin: 8px 0px;
-    padding: 16px 14px;
+    padding: 16px;
     overflow: auto;
     direction: ltr;
-    border-radius: var(--mud-theme-border-radius-default);
-    background-color: var(--mud-theme-color-dark);
     -webkit-overflow-scrolling: touch; }
   .MarkdownSection-Root code {
     color: #fff;
@@ -41,20 +40,38 @@
     border-radius: 2px;
     -webkit-font-smoothing: subpixel-antialiased; }
 
-.token, .token .tag {
+.language-html .token, .language-html .token .tag {
   color: #31abab; }
 
-.token, .token .punctuation {
+.language-html .token, .language-html .token .punctuation {
   color: #979797; }
 
-.token, .token .attr-name {
+.language-html .token, .language-html .token .attr-name {
   color: #31abab; }
 
-.token, .token .attr-value {
+.language-html .token, .language-html .token .attr-value {
   color: #b3df75; }
 
-.token.attr-value > .punctuation {
+.language-html .token.attr-value > .punctuation {
   color: #d0d0d0; }
+
+.language-csharp .token.class-name {
+  color: #4ec9b0; }
+
+.language-csharp .token.keyword {
+  color: #569cd6; }
+
+.language-csharp .token.punctuation {
+  color: #cedcdc; }
+
+.language-csharp .token.operator {
+  color: #b4b4b4; }
+
+.language-csharp .token.string {
+  color: #d69d85; }
+
+.language-csharp .token.function {
+  color: #dcdcaa; }
 
 .docs-footer {
   padding: 48px 0px;
@@ -122,6 +139,8 @@
 
 .demo-dialog-simple {
   display: inline-flex; }
+  .demo-dialog-simple .mud-list .mud-list-item .mud-list-item {
+    display: inline-flex; }
   .demo-dialog-simple p {
     align-self: center;
     margin-left: 16px;
@@ -129,9 +148,9 @@
   .demo-dialog-simple * .mud-avatar-color-default {
     color: #1e88e5;
     background-color: #bbdefb; }
-  .demo-dialog-simple.demo-dialog-simple-gray * .mud-avatar-color-default {
-    color: #fff;
-    background-color: #bdbdbd; }
+  .demo-dialog-simple .s-t-a-l-k-e-r {
+    color: #000;
+    background-color: rgba(255, 152, 0, 0.8); }
 
 .demo-slider-filler {
   height: 26px;
@@ -313,6 +332,12 @@
 
 .docs-section-source {
   margin-top: 20px; }
+  .docs-section-source.docs-hide-source {
+    display: none; }
+
+.docs-content-toolbar > .mud-icon-button {
+  left: 100%;
+  padding: 8px; }
 
 .docs-icon-container {
   margin-top: 20px; }

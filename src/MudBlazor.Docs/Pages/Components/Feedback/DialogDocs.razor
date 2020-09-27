@@ -15,9 +15,14 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
+                <MudText Align="Align.Center" Typo="Typo.subtitle1">Selected User</MudText>
+                <MudText Align="Align.Center" Typo="Typo.subtitle2">@selectedUser</MudText>
                 <MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="OpenSimpleDialog">Open Simple Dialog</MudButton>
             </SectionContent>
-            @*<SectionSource Code="@Markdown_SimpleDialog"></SectionSource>*@
+                <MudIconButton Icon="@Icons.Material.Code" OnClick="ShowSimpleDialogSource" />
+                <MudIconButton Icon="@Icons.Material.FileCopy" />
+                <SectionSource Hide="@HideSourceSimpleDialog" Code="@Markdown_SimpleDialog_Dialog" />
+                <SectionSource Code="@Markdown_SimpleDialog" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
@@ -35,9 +40,25 @@
 
 @code {
 
-    void OpenSimpleDialog()
+    bool HideSourceSimpleDialog = true;
+
+    public void ShowSimpleDialogSource()
     {
-        Dialog.Show<SimpleDialog>("Choose Account");
+        HideSourceSimpleDialog = !HideSourceSimpleDialog;
+    }
+
+
+    string selectedUser = "No user selected";
+
+    async Task OpenSimpleDialog()
+    {
+        var userSelect = Dialog.Show<SimpleDialog>("Choose Account");
+        var result = await userSelect.Result;
+
+        if(!result.Cancelled)
+        {
+            selectedUser = result.Data.ToString() ?? string.Empty;
+        }
     }
     void OpenFormDialog()
     {
@@ -45,43 +66,71 @@
     }
 
 
-    string Markdown_SimpleDialog = @"```html
+    string Markdown_SimpleDialog = @"
+```html
+<MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenSimpleDialog"">
+    Open Simple Dialog
+</MudButton>
+```
+```csharp
+@code {
+    string selectedUser = ""No user selected"";
+
+    async Task OpenSimpleDialog()
+    {
+        var userSelect = Dialog.Show<SimpleDialog>(""Choose Account"");
+        var result = await userSelect.Result;
+
+        if(!result.Cancelled)
+        {
+            selectedUser = result.Data.ToString() ?? string.Empty;
+        }
+    }
+}
+```";
+    string Markdown_SimpleDialog_Dialog = @"
+```html
 <MudDialog DisableSidePadding=""true"">
     <DialogContent>
         <MudList>
-            <MudListItem @onclick=""Close"">
+            <MudListItem @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"">
                 <MudAvatar>
-                    <Icon Icon=""@Icons.Material.Person"" />
+                    <MudIcon Icon=""@Icons.Material.Person"" />
                 </MudAvatar>
-                <Typography GutterBottom=""false"">
+                <MudText>
                     coolusername@gmail.com
-                </Typography>
+                </MudText>
             </MudListItem>
-            <MudListItem @onclick=""Close"">
+            <MudListItem @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"">
                 <MudAvatar>
-                    <Icon Icon=""@Icons.Material.Person"" />
+                    <MudIcon Icon=""@Icons.Material.Person"" />
                 </MudAvatar>
-                <Typography GutterBottom=""false"">
+                <MudText>
                     notsocool@gmail.com
-                </Typography>
+                </MudText>
             </MudListItem>
-            <MudListItem @onclick=""Close"">
+            <MudListItem @onclick=""@(() => SelectUser(""strelok@gmail.com""))"">
                 <MudAvatar>
-                    <Icon Icon=""@Icons.Material.Add"" />
+                    <MudIcon Icon=""@Icons.Custom.Radioactive"" />
                 </MudAvatar>
-                <Typography GutterBottom=""false"">
-                    Add account
-                </Typography>
+                <MudText>
+                    strelok@gmail.com
+                </MudText>
             </MudListItem>
         </MudList>
     </DialogContent>
 </MudDialog>
+```
+```csharp
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-
-void OpenSimpleDialog()
-{
-    Dialog.Show<SimpleDialog>(""Choose Account"");
+    void SelectUser(string user)
+    {
+        MudDialog.Close(DialogResult.Ok(user));
+    }
 }
+
 ```";
     string Markdown_CodeTwo = @"```html
 

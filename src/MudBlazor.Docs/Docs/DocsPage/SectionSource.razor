@@ -9,10 +9,13 @@
 
     protected string Classname =>
     new CssBuilder("docs-section-source")
+    .AddClass("docs-hide-source", Hide)
     .AddClass(Class)
     .Build();
 
     [Parameter] public string Class { get; set; }
 
     [Parameter] public string Code { get; set; }
+
+    [Parameter] public bool Hide { get; set; }
 }

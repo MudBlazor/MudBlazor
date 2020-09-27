@@ -1,7 +1,7 @@
-﻿<MudDialog DisableSidePadding="true">
+﻿<MudDialog DisableSidePadding="true" ClassContent="demo-dialog-simple">
     <DialogContent>
         <MudList>
-            <MudListItem @onclick="Close" Class="demo-dialog-simple">
+            <MudListItem @onclick="@(() => SelectUser("notsocool@gmail.com"))">
                 <MudAvatar>
                     <MudIcon Icon="@Icons.Material.Person" />
                 </MudAvatar>
@@ -9,7 +9,7 @@
                     coolusername@gmail.com
                 </MudText>
             </MudListItem>
-            <MudListItem @onclick="Close" Class="demo-dialog-simple">
+            <MudListItem @onclick="@(() => SelectUser("notsocool@gmail.com"))">
                 <MudAvatar>
                     <MudIcon Icon="@Icons.Material.Person" />
                 </MudAvatar>
@@ -17,12 +17,12 @@
                     notsocool@gmail.com
                 </MudText>
             </MudListItem>
-            <MudListItem @onclick="Close" Class="demo-dialog-simple demo-dialog-simple-gray">
-                <MudAvatar>
-                    <MudIcon Icon="@Icons.Material.Add" />
+            <MudListItem @onclick="@(() => SelectUser("strelok@gmail.com"))">
+                <MudAvatar Class="s-t-a-l-k-e-r">
+                    <MudIcon Icon="@Icons.Custom.Radioactive" />
                 </MudAvatar>
                 <MudText>
-                    Add account
+                    strelok@gmail.com
                 </MudText>
             </MudListItem>
         </MudList>
@@ -33,6 +33,8 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    void Close() => MudDialog.Close(DialogResult.Ok(true));
-
+    void SelectUser(string user)
+    {
+        MudDialog.Close(DialogResult.Ok(user));
+    }
 }
