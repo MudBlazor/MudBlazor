@@ -36,8 +36,8 @@
                         <MudTableCell>@context.Number</MudTableCell>
                         <MudTableCell>@context.Sign</MudTableCell>
                         <MudTableCell>@context.Name</MudTableCell>
-                        <td>@context.Position</td>
-                        <td>@context.Molar</td>
+                        <MudTableCell>@context.Position</MudTableCell>
+                        <MudTableCell>@context.Molar</MudTableCell>
                     </RowTemplate>
                     <PagerContent>
                         <MudTablePager />
@@ -46,6 +46,37 @@
                 <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
                 <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
                 <MudText Inline="true">Selected: @selected_item?.Name</MudText>
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Multi-Selection</Title>
+                <Description>
+                    Setting <CodeInline>MultiSelection="true"</CodeInline> will enable selection check boxes for selecting multiple lines.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <MudTable Items="@PeriodicTable.GetElements()" MultiSelection="true" @bind-SelectedItems="selected_items">
+                    <HeaderContent>
+                        <MudTableHeaderCell>Nr</MudTableHeaderCell>
+                        <MudTableHeaderCell>Sign</MudTableHeaderCell>
+                        <MudTableHeaderCell>Name</MudTableHeaderCell>
+                        <MudTableHeaderCell>Position</MudTableHeaderCell>
+                        <MudTableHeaderCell>Molar mass</MudTableHeaderCell>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <td>@context.Number</td>
+                        <td>@context.Sign</td>
+                        <td>@context.Name</td>
+                        <td>@context.Position</td>
+                        <td>@context.Molar</td>
+                    </RowTemplate>
+                    <PagerContent>
+                        <MudTablePager PageSizeOptions="new List<int>(){50, 100}" />
+                    </PagerContent>
+                </MudTable>
+                <MudText Inline="true">Selected items: @(selected_items==null ? "" : string.Join(", ", selected_items.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
             </SectionContent>
         </DocsPageSection>
 
@@ -66,9 +97,9 @@
                         <MudTableHeaderCell>Molar mass</MudTableHeaderCell>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTableCell>@context.Number</MudTableCell>
-                        <MudTableCell>@context.Sign</MudTableCell>
-                        <MudTableCell>@context.Name</MudTableCell>
+                        <td>@context.Number</td>
+                        <td>@context.Sign</td>
+                        <td>@context.Name</td>
                         <td>@context.Position</td>
                         <td>@context.Molar</td>
                     </RowTemplate>
@@ -88,6 +119,7 @@
     bool fixed_header = false;
     string search_string = "";
     Element selected_item = null;
+    HashSet<Element> selected_items = null;
 
     bool FilterFunc(Element element)
     {

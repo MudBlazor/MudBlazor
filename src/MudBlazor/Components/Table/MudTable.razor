@@ -24,6 +24,12 @@
                     @foreach (var item in CurrentPageItems)
                     {
                         <MudTableRow Item="item" @key="item">
+                            @if (MultiSelection)
+                            {
+                                <MudTableCell>
+                                    <MudCheckBox CheckedChanged="@((b) => { var x = item; OnRowCheckBoxChanged(b, x); })"></MudCheckBox>
+                                </MudTableCell>
+                            }
                             @RowTemplate(item)
                         </MudTableRow>
                     }
@@ -69,6 +75,35 @@
 
     [Parameter] public EventCallback<T> SelectedItemChanged { get; set; }
 
+    [Parameter]
+    public HashSet<T> SelectedItems
+    {
+        get
+        {
+            if (!MultiSelection)
+                return new HashSet<T>(new T[] {_selectedItem});
+            else
+                return _multi_selection;
+        }
+        set
+        {
+            if (value == _multi_selection)
+                return;
+            if (value == null)
+            {
+                if (_multi_selection.Count == 0)
+                    return;
+                _multi_selection = new HashSet<T>();
+            }
+            else
+                _multi_selection = value;
+            SelectedItemsChanged.InvokeAsync(_multi_selection);
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    [Parameter] public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
+
     protected IEnumerable<T> FilteredItems
     {
         get
@@ -105,4 +140,14 @@
         SelectedItem = (T) item;
     }
 
+    private void OnRowCheckBoxChanged(bool value, object item)
+    {
+        if (value)
+            _multi_selection.Add((T) item);
+        else
+            _multi_selection.Remove((T) item);
+        SelectedItemsChanged.InvokeAsync(SelectedItems);
+    }
+
+    private HashSet<T> _multi_selection=new HashSet<T>();
 }

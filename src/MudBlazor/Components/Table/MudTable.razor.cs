@@ -31,6 +31,8 @@ namespace MudBlazor
         [Parameter] public string Height { get; set; }
         [Parameter] public int RowsPerPage { get; set; } = 10;
         [Parameter] public int CurrentPage { get; set; } = 0;
+        [Parameter] public bool MultiSelection { get; set; }
+
 
         [Parameter] public RenderFragment ToolBarContent { get; set; }
         [Parameter] public RenderFragment HeaderContent { get; set; }
