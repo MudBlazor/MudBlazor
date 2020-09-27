@@ -19,10 +19,7 @@
                 <MudText Align="Align.Center" Typo="Typo.subtitle2">@selectedUser</MudText>
                 <MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="OpenSimpleDialog">Open Simple Dialog</MudButton>
             </SectionContent>
-                <MudIconButton Icon="@Icons.Material.Code" OnClick="ShowSimpleDialogSource" />
-                <MudIconButton Icon="@Icons.Material.FileCopy" />
-                <SectionSource Hide="@HideSourceSimpleDialog" Code="@Markdown_SimpleDialog_Dialog" />
-                <SectionSource Code="@Markdown_SimpleDialog" />
+            <SectionSource Code="@Markdown_SimpleDialog" FullCode="@Markdown_SimpleDialog_Full"/>
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
@@ -88,7 +85,28 @@
     }
 }
 ```";
-    string Markdown_SimpleDialog_Dialog = @"
+    string Markdown_SimpleDialog_Full = @"
+```html
+<MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenSimpleDialog"">
+    Open Simple Dialog
+</MudButton>
+```
+```csharp
+@code {
+    string selectedUser = ""No user selected"";
+
+    async Task OpenSimpleDialog()
+    {
+        var userSelect = Dialog.Show<SimpleDialog>(""Choose Account"");
+        var result = await userSelect.Result;
+
+        if(!result.Cancelled)
+        {
+            selectedUser = result.Data.ToString() ?? string.Empty;
+        }
+    }
+}
+```
 ```html
 <MudDialog DisableSidePadding=""true"">
     <DialogContent>

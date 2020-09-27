@@ -330,14 +330,17 @@
 .docs-section-content-row > * {
   margin: 8px; }
 
-.docs-section-source {
-  margin-top: 20px; }
-  .docs-section-source.docs-hide-source {
-    display: none; }
+.docs-section-source .docs-content-toolbar {
+  width: 100%;
+  display: flex; }
+  .docs-section-source .docs-content-toolbar > .mud-icon-button .mud-svg-icon-root {
+    font-size: 1.25rem; }
 
-.docs-content-toolbar > .mud-icon-button {
-  left: 100%;
-  padding: 8px; }
+.docs-section-source .docs-section-markdown-segment.docs-show-code {
+  display: block; }
+
+.docs-section-source .docs-section-markdown-segment.docs-hide-code {
+  display: none; }
 
 .docs-icon-container {
   margin-top: 20px; }
