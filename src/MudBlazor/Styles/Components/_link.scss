@@ -1,10 +1,10 @@
 ﻿
 .mud-link {
-    & .mud-link-underline-none {
+    &.mud-link-underline-none {
         text-decoration: none;
     }
 
-    & .mud-link-underline-hover {
+    &.mud-link-underline-hover {
         text-decoration: none;
 
         &:hover {
@@ -12,7 +12,7 @@
         }
     }
 
-    & .mud-link-underline-always {
+    &.mud-link-underline-always {
         text-decoration: underline;
     }
 }
