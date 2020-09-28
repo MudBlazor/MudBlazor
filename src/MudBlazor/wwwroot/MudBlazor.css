@@ -2589,6 +2589,76 @@ button.mud-list-item {
   margin-top: 2rem;
   margin-bottom: 2rem; }
 
+/*$sizes: 0, 1px, 2px, 3px, 4px, 5px, 6px, 7px, 8px, 9px, 10px, 11px, 12px, 13px, 14px, 15px, 16px, auto;*/
+/*$sizes-n: 0, 1px, 2px, 3px, 4px, 5px, 6px, 7px, 8px, 9px, 10px, 11px, 12px, 13px, 14px, 15px, 16px, auto;*/
+.mud-py0 {
+  padding-top: 0px;
+  padding-bottom: 0px; }
+
+.mud-py1 {
+  padding-top: 1px;
+  padding-bottom: 1px; }
+
+.mud-py2 {
+  padding-top: 2px;
+  padding-bottom: 2px; }
+
+.mud-py3 {
+  padding-top: 3px;
+  padding-bottom: 3px; }
+
+.mud-py4 {
+  padding-top: 4px;
+  padding-bottom: 4px; }
+
+.mud-py5 {
+  padding-top: 5px;
+  padding-bottom: 5px; }
+
+.mud-py6 {
+  padding-top: 6px;
+  padding-bottom: 6px; }
+
+.mud-py7 {
+  padding-top: 7px;
+  padding-bottom: 7px; }
+
+.mud-py8 {
+  padding-top: 8px;
+  padding-bottom: 8px; }
+
+.mud-py9 {
+  padding-top: 9px;
+  padding-bottom: 9px; }
+
+.mud-py10 {
+  padding-top: 10px;
+  padding-bottom: 10px; }
+
+.mud-py11 {
+  padding-top: 11px;
+  padding-bottom: 11px; }
+
+.mud-py12 {
+  padding-top: 12px;
+  padding-bottom: 12px; }
+
+.mud-py13 {
+  padding-top: 13px;
+  padding-bottom: 13px; }
+
+.mud-py14 {
+  padding-top: 14px;
+  padding-bottom: 14px; }
+
+.mud-py15 {
+  padding-top: 15px;
+  padding-bottom: 15px; }
+
+.mud-py16 {
+  padding-top: 16px;
+  padding-bottom: 16px; }
+
 .mud-appbar {
   width: 100%;
   display: flex;
