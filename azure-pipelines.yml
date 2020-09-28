@@ -15,7 +15,7 @@ variables:
 steps:
 - task: UseDotNet@2
   inputs:
-    version: '3.1.x'
+    version: '3.1.8'
 
 - task: DotNetCoreCLI@2
   displayName: Build
@@ -30,3 +30,4 @@ steps:
     command: 'test'
     projects: 'src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj'
     testRunTitle: 'UnitTest'
+
