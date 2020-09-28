@@ -14,11 +14,8 @@ variables:
 
 steps:
 - task: UseDotNet@2
-  displayName: 'Use .NET Core sdk'
   inputs:
-    packageType: sdk
-    version: 3.1.402
-    installationPath: $(Agent.ToolsDirectory)/dotnet
+    version: 3.1.x
 
 
 - task: DotNetCoreCLI@2
@@ -34,4 +31,5 @@ steps:
     command: 'test'
     projects: 'src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj'
     testRunTitle: 'UnitTest'
+
 
