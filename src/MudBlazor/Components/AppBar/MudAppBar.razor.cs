@@ -12,8 +12,8 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-appbar")
                 .AddClass($"mud-appbar-position-{Position.ToDescriptionString()}")
-                .AddClass($"mud-appbar-drawer-open", LayoutState.DrawerOpen)
-                .AddClass($"mud-appbar-drawer-clipped", LayoutState.DrawerClipped)
+                .AddClass($"mud-appbar-drawer-open", LayoutState?.DrawerOpen)
+                .AddClass($"mud-appbar-drawer-clipped", LayoutState?.DrawerClipped)
                 .AddClass($"mud-elevation-{Elevation.ToString()}")
                 .AddClass($"mud-appbar-color-{Color.ToDescriptionString()}")
                 .AddClass(Class)
