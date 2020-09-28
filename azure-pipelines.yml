@@ -14,8 +14,12 @@ variables:
 
 steps:
 - task: UseDotNet@2
+  displayName: 'Use .NET Core sdk'
   inputs:
-    version: '3.1.8'
+    packageType: sdk
+    version: 3.1.402
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
 
 - task: DotNetCoreCLI@2
   displayName: Build
