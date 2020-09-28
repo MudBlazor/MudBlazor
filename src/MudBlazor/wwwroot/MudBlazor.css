@@ -1614,15 +1614,15 @@ button.mud-list-item {
 .mud-nested-list.expanded > .mud-list {
   display: block; }
 
-.mud-link .mud-link-underline-none {
+.mud-link.mud-link-underline-none {
   text-decoration: none; }
 
-.mud-link .mud-link-underline-hover {
+.mud-link.mud-link-underline-hover {
   text-decoration: none; }
-  .mud-link .mud-link-underline-hover:hover {
+  .mud-link.mud-link-underline-hover:hover {
     text-decoration: underline; }
 
-.mud-link .mud-link-underline-always {
+.mud-link.mud-link-underline-always {
   text-decoration: underline; }
 
 .mud-simple-table table {
