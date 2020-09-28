@@ -1,0 +1,50 @@
+﻿@namespace MudBlazor.Docs
+@using MudBlazor.Utilities
+
+<div class="docs-section-source">
+    @if (!NoToolbar)
+    {
+    <div class="docs-content-toolbar">
+        <div class="mud-flex-grow-1"></div>
+        <MudIconButton Icon="@Icons.Material.Code" OnClick="OnShowCode" />
+        <MudIconButton Icon="@Icons.Material.FileCopy" />
+        <MudIconButton Icon="@Icons.Material.Refresh" />
+    </div>
+    }
+
+    <div class="docs-section-markdown-segment @(ShowCode? "docs-show-code" : "docs-hide-code")">
+        <MarkdownSegment Text="@Snippets.GetCode(Code)" />
+    </div>
+    @if (!String.IsNullOrEmpty(FullCode))
+    {
+        <div class="docs-section-markdown-segment @(ShowFullCode? "docs-show-code" : "docs-hide-code")">
+            <MarkdownSegment Text="@Snippets.GetCode(FullCode)" />
+        </div>
+    }
+</div>
+
+@code {
+
+    [Parameter] public string Code { get; set; }
+
+    [Parameter] public string FullCode { get; set; }
+
+    [Parameter] public bool ShowCode { get; set; } = true;
+
+    [Parameter] public bool NoToolbar { get; set; }
+
+    private bool ShowFullCode;
+
+    public void OnShowCode()
+    {
+        if(!String.IsNullOrEmpty(Code) && String.IsNullOrEmpty(FullCode))
+        {
+            ShowCode = !ShowCode;
+        }
+        if(!String.IsNullOrEmpty(Code) && !String.IsNullOrEmpty(FullCode))
+        {
+            ShowCode = !ShowCode;
+            ShowFullCode = !ShowFullCode;
+        }
+    }
+}

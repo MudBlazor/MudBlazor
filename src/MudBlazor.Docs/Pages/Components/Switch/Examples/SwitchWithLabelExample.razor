@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.Docs
+
+<MudSwitch @bind-Checked="@Label_Switch1" Label="Default" />
+<MudSwitch @bind-Checked="@Label_Switch2" Label="Primary" Color="Color.Primary" />
+<MudSwitch @bind-Checked="@Label_Switch2" Label="Secondary" Color="Color.Secondary" />
+<MudSwitch Disabled="true" Label="Disabled" />
+
+@code{
+    public bool Label_Switch1 { get; set; } = false;
+    public bool Label_Switch2 { get; set; } = true;
+    public bool Label_Switch3 { get; set; } = true;
+}

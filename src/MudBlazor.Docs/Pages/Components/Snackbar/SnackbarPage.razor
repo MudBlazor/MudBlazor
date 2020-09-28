@@ -1,0 +1,125 @@
+﻿@page "/components/snackbar"
+
+
+@inject MudBlazor.ISnackbar Snackbar
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Snackbar</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Simple snackbars</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudText></MudText>
+                <MudButton @onclick="@(() => Snackbar.Default("Simple snackbar"))">Open Simple snackbar</MudButton>
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Positioned snackbars</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudButton Color="Color.Primary" @onclick="@(() => ChangePosition("Top-Left", Defaults.Classes.Position.TopLeft))">Top-Left</MudButton>
+                <MudButton Color="Color.Primary" @onclick="@(() => ChangePosition("Top-Center", Defaults.Classes.Position.TopCenter))">Top-Center</MudButton>
+                <MudButton Color="Color.Primary" @onclick="@(() => ChangePosition("Top-Right", Defaults.Classes.Position.TopRight))">Top-Right</MudButton>
+                <MudButton Color="Color.Default" @onclick="@(() => ChangePosition("Bottom-Left", Defaults.Classes.Position.BottomLeft))">Bottom-Left</MudButton>
+                <MudButton Color="Color.Default" @onclick="@(() => ChangePosition("Bottom-Center", Defaults.Classes.Position.BottomCenter))">Bottom-Center</MudButton>
+                <MudButton Color="Color.Default" @onclick="@(() => ChangePosition("Bottom-Right", Defaults.Classes.Position.BottomRight))">Bottom-Right</MudButton>
+            </SectionContent>
+            @*<SectionSource Code="@Markdown_SimpleDialog"></SectionSource>*@
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Snackbars with Alert</Title>
+                <Description>Snackbars can take use of Alert component and show short alerts.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-snackbar-alerts">
+                <MudAlert Severity="Severity.Normal" Class="mud-elevation-6">
+                    The reactor type is RBMK-1000
+                </MudAlert>
+                <MudAlert Severity="Severity.Info" Class="mud-elevation-6">
+                    The reactor was fired up successfully
+                </MudAlert>
+                <MudAlert Severity="Severity.Success" Class="mud-elevation-6">
+                    The reactor is running at optimum temperature
+                </MudAlert>
+                <MudAlert Severity="Severity.Warning" Class="mud-elevation-6">
+                    The reactor is running at optimum temperature
+                </MudAlert>
+                <MudAlert Severity="Severity.Error" Class="mud-elevation-6">
+                    The reactor temperature exceeds the optimal range
+                </MudAlert>
+            </SectionContent>
+            @*<SectionSource Code="@Markdown_SimpleDialog"></SectionSource>*@
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Require Interacation</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" StartIcon="@Icons.Material.Build" @onclick="@(() => StartBuild())" Disabled="BuildAgainDisabled">Build Project</MudButton>
+                <MudButton Variant="Variant.Filled" DisableElevation="true"  @onclick="@OnShowBuildLog" Disabled="RunAgainDisabled">Run Again</MudButton>
+                <MudPaper Outlined="true" Class="demo-snackbar-output">
+                    @if (ShowBuildLog)
+                    {
+                        foreach (string line in BuildLogList)
+                        {
+                            <MudText Typo="Typo.caption">@line</MudText>
+                        }
+                    }
+                </MudPaper>
+            </SectionContent>
+            @*<SectionSource Code="@Markdown_SimpleDialog"></SectionSource>*@
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+
+
+@code {
+
+    void ChangePosition(string message, string position)
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = position;
+        Snackbar.Default(message);
+    }
+
+    public bool ShowBuildLog { get; set; }
+    public List<string> BuildLogList = new List<string> { "Starting: Build", "dotnet build", "Build succeeded.", "Finishing: Build" };
+    public bool BuildAgainDisabled { get; set; } = false;
+    public bool RunAgainDisabled { get; set; } = true;
+
+    void StartBuild()
+    {
+        string ErrorMessage = "Build succeeded, click for more information.";
+        Snackbar.Add(SnackbarType.Success, ErrorMessage, config =>
+        {
+            config.RequireInteraction = true;
+            config.ShowCloseIcon = false;
+            config.Onclick = snackbar =>
+            {
+                OnShowBuildLog();
+                return Task.CompletedTask;
+            };
+        });
+    }
+
+    public void OnShowBuildLog()
+    {
+        BuildAgainDisabled = !BuildAgainDisabled;
+        RunAgainDisabled = !RunAgainDisabled;
+        ShowBuildLog = !ShowBuildLog;
+        StateHasChanged();
+    }
+
+}
+
+

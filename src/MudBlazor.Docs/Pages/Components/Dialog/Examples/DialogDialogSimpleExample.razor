@@ -1,0 +1,42 @@
+﻿@namespace MudBlazor.Docs
+
+<MudDialog DisableSidePadding="true" ClassContent="demo-dialog-simple">
+    <DialogContent>
+        <MudList>
+            <MudListItem @onclick="@(() => SelectUser("notsocool@gmail.com"))">
+                <MudAvatar>
+                    <MudIcon Icon="@Icons.Material.Person" />
+                </MudAvatar>
+                <MudText>
+                    coolusername@gmail.com
+                </MudText>
+            </MudListItem>
+            <MudListItem @onclick="@(() => SelectUser("notsocool@gmail.com"))">
+                <MudAvatar>
+                    <MudIcon Icon="@Icons.Material.Person" />
+                </MudAvatar>
+                <MudText>
+                    notsocool@gmail.com
+                </MudText>
+            </MudListItem>
+            <MudListItem @onclick="@(() => SelectUser("strelok@gmail.com"))">
+                <MudAvatar Class="s-t-a-l-k-e-r">
+                    <MudIcon Icon="@Icons.Custom.Radioactive" />
+                </MudAvatar>
+                <MudText>
+                    strelok@gmail.com
+                </MudText>
+            </MudListItem>
+        </MudList>
+    </DialogContent>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    void SelectUser(string user)
+    {
+        MudDialog.Close(DialogResult.Ok(user));
+    }
+}

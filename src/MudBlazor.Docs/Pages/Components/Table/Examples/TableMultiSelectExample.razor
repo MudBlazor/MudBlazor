@@ -1,0 +1,28 @@
+﻿@using MudBlazor.Docs.Data
+@namespace MudBlazor.Docs
+
+<MudTable Items="@PeriodicTable.GetElements()" MultiSelection="true" @bind-SelectedItems="selected_items" Hover="@hover">
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh><MudTableSortLabel>Name</MudTableSortLabel></MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Number</MudTd>
+        <MudTd>@context.Sign</MudTd>
+        <MudTd>@context.Name</MudTd>
+        <MudTd>@context.Position</MudTd>
+        <MudTd>@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new List<int>(){50, 100}" />
+    </PagerContent>
+</MudTable>
+<MudText Inline="true">Selected items: @(selected_items==null ? "" : string.Join(", ", selected_items.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
+
+@code {
+    bool hover = true;
+    HashSet<Element> selected_items = new HashSet<Element>();
+}

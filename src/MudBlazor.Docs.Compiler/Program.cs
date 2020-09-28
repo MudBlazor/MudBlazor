@@ -38,7 +38,7 @@ namespace MudBlazor.Docs.Compiler
                 {
                     var filename = Path.GetFileName(entry);
                     var component_name = Path.GetFileNameWithoutExtension(filename);
-                    if (!filename.Contains("Code"))
+                    if (!filename.Contains("Example"))
                         continue;
                     Console.WriteLine("Found code snippet: " + component_name);
                     w.WriteLine($"public const string {component_name} = @\"```html");
