@@ -10,6 +10,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs.Client", "MudBlazor.Docs.Client\MudBlazor.Docs.Client.csproj", "{7EA59258-02F9-4DCF-AA93-37380DCB9904}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.Docs", "MudBlazor.Docs\MudBlazor.Docs.csproj", "{D90D463F-544F-47AF-8D19-617BB89D9A5F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9C8D4838-969B-47E7-9A9F-94A29BD29677} = {9C8D4838-969B-47E7-9A9F-94A29BD29677}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MudBlazor.UnitTests", "MudBlazor.UnitTests\MudBlazor.UnitTests.csproj", "{A550FD8B-1E2A-4D33-88A3-38DC0FC5C3BD}"
 EndProject
