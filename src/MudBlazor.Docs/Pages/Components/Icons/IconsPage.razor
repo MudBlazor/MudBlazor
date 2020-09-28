@@ -1,0 +1,86 @@
+﻿@page "/components/Icons"
+@using System.Reflection
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Icons</Title>
+        <SubTitle>Guidance and suggestions for using icons with MudBlazor.</SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <MudText Typo="Typo.h6" GutterBottom="true">Out of the box</MudText>
+            <MudText>Mudblazor comes loaded with <MudLink Href="https://material.io/resources/icons/">Material Design icons</MudLink> in SVG format.</MudText>
+            <MudText>This can be used with the MudIcon component or other components that has icons.</MudText>
+            <MudText>The same component support Font icons but need to be loaded separately.</MudText>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>All icons that comes loaded by default</Title>
+                <Description>You can search the full list of the icons under <MudLink Href="/components/data-display/mudblazor-icons">MudBlazor Icons</MudLink> in the menu.</Description>
+            </SectionHeader>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Usage</Title>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <IconsUsageExample/>
+            </SectionContent>
+             <SectionSource Code="IconsUsageExample"/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Color</Title>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <IconsColorExample/>
+            </SectionContent>
+            <SectionSource Code="IconsColorExample"/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Size</Title>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+               <IconsSizeExample/>
+            </SectionContent>
+            <SectionSource Code="IconsSizeExample"/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Font Icons</Title>
+                <Description>MudIcon component will display any icon font that support ligatures. This are not loaded by default, for example you can use <MudLink Color="Color.Secondary" Href="https://fontawesome.com/">Font Awesome</MudLink> or <MudLink Href="https://material.io/resources/icons/">Material Design icon font</MudLink> via Google Web Fonts.</Description>
+            </SectionHeader>
+            <SectionSource Code="IconsFontIconsExample"/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>
+                    Font Material icons
+                </Title>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <IconsFontMaterialIconsExample/>
+            </SectionContent>
+            <SectionSource Code="IconsFontMaterialIconsExample"/>
+        </DocsPageSection>
+
+         <DocsPageSection>
+            <SectionHeader>
+                <Title>
+                    Font Awesome
+                </Title>
+                <Description>With <MudLink Href="https://fontawesome.com/icons">Font Awesome</MudLink> icons you need to specify it with the ClassFont parameter.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <IconsFontAwesomeExample/>
+            </SectionContent>
+            <SectionSource Code="IconsFontAwesomeExample"/>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

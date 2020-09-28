@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.Docs
+
+<MudFormControl Label="Placement" Class="demo-radio-inline">
+    <MudRadioGroup @bind-SelectedLabel="@SelectedLabel" @bind-SelectedOption="@SelectedOption">
+        <MudRadio Placement="Placement.Bottom" Color="Color.Primary" Option="Radio 1">Bottom</MudRadio>
+        <MudRadio Placement="Placement.Start" Color="Color.Primary" Option="Radio 2">Start</MudRadio>
+        <MudRadio Placement="Placement.Top" Color="Color.Primary" Option="Radio 3">Top</MudRadio>
+        <MudRadio Placement="Placement.End" Color="Color.Primary" Option="Radio 4">End</MudRadio>
+    </MudRadioGroup>
+</MudFormControl>
+
+@code {
+    public string SelectedLabel { get; set; } = "Primary";
+    public string SelectedOption { get; set; }
+}

@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseSelectItem
 
-<li class="@Classname" @onclick="OnClickHandler" style="@Style">
+<li @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" style="@Style">
     <div class="@Classname">
         @ChildContent
     </div>

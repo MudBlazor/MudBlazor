@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.Docs
+
+<MudCheckBox @bind-Checked="@Label_CheckBox1" Label="Default"></MudCheckBox>
+<MudCheckBox @bind-Checked="@Label_CheckBox2" Label="Primary" Color="Color.Primary"></MudCheckBox>
+<MudCheckBox @bind-Checked="@Label_CheckBox3" Label="Secondary" Color="Color.Secondary"></MudCheckBox>
+<MudCheckBox @bind-Checked="@Label_CheckBox1" Disabled="true" Label="Disabled"></MudCheckBox>
+
+@code {
+    public bool Label_CheckBox1 { get; set; } = true;
+    public bool Label_CheckBox2 { get; set; } = false;
+    public bool Label_CheckBox3 { get; set; } = false;
+}

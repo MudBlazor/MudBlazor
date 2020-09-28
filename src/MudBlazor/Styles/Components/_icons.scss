@@ -1,0 +1,43 @@
+﻿
+
+.mud-icon-root {
+    width: 1em;
+    height: 1em;
+    overflow: hidden;
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    user-select: none;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+}
+
+.mud-svg-icon-root {
+    fill: currentColor;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.mud-icon-size-small {
+    font-size: 1.25rem;
+}
+
+.mud-icon-size-medium {
+    font-size: 1.5rem;
+}
+
+.mud-icon-size-large {
+    font-size: 2.25rem;
+}

@@ -9,6 +9,7 @@
 @import 'core/reset';
 @import 'core/elevation';
 
+@import 'components/alert';
 @import 'components/toolbar';
 @import 'components/avatar';
 @import 'components/button';
@@ -18,13 +19,16 @@
 @import 'components/dialog';
 @import 'components/grid';
 @import 'components/paper';
-@import 'components/svgicon';
+@import 'components/icons';
 @import 'components/divider';
 @import 'components/fab';
 @import 'components/formcontrol';
 @import 'components/list';
 @import 'components/link';
 @import 'components/simpletable';
+@import 'components/slider';
+@import 'components/radio';
+@import 'components/snackbar';
 @import 'components/switch';
 @import 'components/typography';
 @import 'components/table';

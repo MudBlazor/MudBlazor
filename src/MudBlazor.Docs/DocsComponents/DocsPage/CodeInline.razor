@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs
+
+<code class="docs-code">
+    @Code
+    @ChildContent
+</code>
+
+@code
+{
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [Parameter] public string Code { get; set; }
+}

@@ -2,7 +2,7 @@
 @inherits MudTableBase
 @typeparam T
 
-<div class="@Classname" style="@Style">
+<div @attributes="UserAttributes" class="@Classname" style="@Style">
     <CascadingValue Value="this">
         @if (ToolBarContent != null)
         {
@@ -10,20 +10,34 @@
                 @ToolBarContent
             </MudToolBar>
         }
-        <div class="mud-table-container">
+        <div class="mud-table-container" style="@TableStyle">
             <table class="mud-table-root">
                 @if (HeaderContent != null)
                 {
                     <thead class="mud-table-head">
-                    <tr class="mud-table-row">
-                        @HeaderContent
-                    </tr>
+                        <MudTr>
+                            @if (MultiSelection)
+                            {
+                                <MudTd>
+                                    <MudCheckBox CheckedChanged="@OnHeaderCheckboxClicked"></MudCheckBox>
+                                </MudTd>
+                            }
+                            @HeaderContent
+                        </MudTr>
                     </thead>
                 }
                 <tbody class="mud-table-body">
                     @foreach (var item in CurrentPageItems)
                     {
-                        @RowTemplate(item)
+                        <MudTr Item="item" @key="item">
+                            @if (MultiSelection)
+                            {
+                                <MudTd>
+                                    <MudCheckBox CheckedChanged="@((b) => { var x = item; OnRowCheckBoxChanged(b, x); })"></MudCheckBox>
+                                </MudTd>
+                            }
+                            @RowTemplate(item)
+                        </MudTr>
                     }
                 </tbody>
             </table>
@@ -51,6 +65,51 @@
 
     [Parameter] public Func<T, bool> Filter { get; set; } = null;
 
+    [Parameter]
+    public T SelectedItem
+    {
+        get => _selectedItem;
+        set
+        {
+            if (Object.ReferenceEquals( SelectedItem , value))
+                return;
+            _selectedItem = value;
+            SelectedItemChanged.InvokeAsync(value);
+        }
+    }
+    private T _selectedItem;
+
+    [Parameter] public EventCallback<T> SelectedItemChanged { get; set; }
+
+    [Parameter]
+    public HashSet<T> SelectedItems
+    {
+        get
+        {
+            if (!MultiSelection)
+                return new HashSet<T>(new T[] {_selectedItem});
+            else
+                return _multi_selection;
+        }
+        set
+        {
+            if (value == _multi_selection)
+                return;
+            if (value == null)
+            {
+                if (_multi_selection.Count == 0)
+                    return;
+                _multi_selection = new HashSet<T>();
+            }
+            else
+                _multi_selection = value;
+            SelectedItemsChanged.InvokeAsync(_multi_selection);
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    [Parameter] public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
+
     protected IEnumerable<T> FilteredItems
     {
         get
@@ -65,7 +124,7 @@
     {
         get
         {
-            if (@PagerContent == null) 
+            if (@PagerContent == null)
                 return FilteredItems; // we have no pagination
             return GetItemsOfPage(CurrentPage, RowsPerPage);
         }
@@ -81,4 +140,32 @@
     protected override int NumPages => (int)Math.Ceiling(FilteredItems.Count() / (double) RowsPerPage);
 
     public override int GetFilteredItemsCount() => FilteredItems.Count();
+
+    public override void SetSelectedItem(object item)
+    {
+        SelectedItem = (T) item;
+    }
+
+    private void OnRowCheckBoxChanged(bool value, object item)
+    {
+        if (value)
+            _multi_selection.Add((T) item);
+        else
+            _multi_selection.Remove((T) item);
+        SelectedItemsChanged.InvokeAsync(SelectedItems);
+    }
+
+    private HashSet<T> _multi_selection=new HashSet<T>();
+
+    private void OnHeaderCheckboxClicked(bool value)
+    {
+        if (!value)
+            _multi_selection.Clear();
+        else
+        {
+            foreach (var item in FilteredItems)
+                _multi_selection.Add(item);
+        }
+        SelectedItemsChanged.InvokeAsync(SelectedItems);
+    }
 }

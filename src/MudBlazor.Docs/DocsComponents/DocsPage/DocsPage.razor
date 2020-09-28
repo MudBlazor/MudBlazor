@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.Docs
+
+<MudContainer MaxWidth="@MaxWidth">
+    <div class="docs-page">
+        @ChildContent
+    </div>
+</MudContainer>
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [Parameter] public MaxWidth MaxWidth { get; set; } = MaxWidth.Medium;
+}

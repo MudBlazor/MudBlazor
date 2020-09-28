@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor.Docs
+
+<DocsFrame>
+    <MudLayout DrawerOpen="@DocsDrawerOpen">
+        <MudAppBar Position="Position.Absolute" Elevation="0">
+            <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
+            <MudAppBarSpacer />
+            <MudButton Variant="Variant.Text" Color="Color.Inherit">Login</MudButton>
+        </MudAppBar>
+        <MudDrawer>
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">My App</MudText>
+            </MudDrawerHeader>
+            <MudList>
+                <MudListNavItem Href="#">Store</MudListNavItem>
+                <MudListNavItem Href="#">Library</MudListNavItem>
+                <MudListNavItem Href="#">Community</MudListNavItem>
+            </MudList>
+        </MudDrawer>
+        <MudMainContent>
+            <LoremIpsum />
+        </MudMainContent>
+    </MudLayout>
+</DocsFrame>
+
+@code{
+    bool DocsDrawerOpen = true;
+
+    void DocsDrawerToggle()
+    {
+        DocsDrawerOpen = !DocsDrawerOpen;
+    }
+}

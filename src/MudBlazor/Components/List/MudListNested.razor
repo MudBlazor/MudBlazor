@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<li class="@Classname" disabled="@Disabled" style="@Style">
+<li @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
     <button @onclick="ExpandedToggle" tabindex="0" class="@ClassnameItem">
         @Title
     </button>

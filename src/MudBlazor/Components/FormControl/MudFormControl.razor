@@ -5,9 +5,13 @@
 
 
 
-<div class="@Classname">
+<div @attributes="UserAttributes" class="@Classname" style="@Style">
+    @if (!String.IsNullOrEmpty(Label))
+    {
+        <MudText>@Label</MudText>
+    }
     @ChildContent
-    @if(!String.IsNullOrEmpty(HelperText))
+    @if (!String.IsNullOrEmpty(HelperText))
     {
         <p class="mud-form-helpertext">@HelperText</p>
     }

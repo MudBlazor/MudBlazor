@@ -1,0 +1,34 @@
+﻿@page "/components/drawer"
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Drawer</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Persistent drawer</Title>
+                <Description>The drawer can be toggled open or closed. The drawer needs to be wrapped around the Layout component and the default state can be set by DrawerOpen parameter.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-drawer">
+                <DrawerPersistentExample />
+            </SectionContent>
+            <DocsFrame>
+                <SectionSource Code="DrawerPersistentExample" />
+            </DocsFrame>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Clipping</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-drawer">
+                <DocsFrame>
+                    <DrawerClippingExample/>
+                </DocsFrame>
+            </SectionContent>
+            <SectionSource Code="DrawerClippingExample"></SectionSource>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

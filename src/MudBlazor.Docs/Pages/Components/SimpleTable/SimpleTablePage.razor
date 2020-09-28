@@ -1,0 +1,35 @@
+﻿@page "/components/simpletable"
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Simple Table</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Simple</Title>
+                <Description>
+                    Inside the component you can use all the regular table elements such as <CodeInline Code="<thead>" />, <CodeInline Code="<tbody>" />, <CodeInline Code="<tr>" />, <CodeInline Code="<th>" /> or <CodeInline Code="<td>" />.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <SimpleTableExample />
+            </SectionContent>
+            <SectionSource Code="SimpleTableExample" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Hover & Dense</Title>
+                <Description>
+                    Simple Table also supports hover and dense options.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <SimpleTableHoverDenseExample/>
+            </SectionContent>
+            <SectionSource Code="SimpleTableHoverDenseExample" ShowCode="false"/>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

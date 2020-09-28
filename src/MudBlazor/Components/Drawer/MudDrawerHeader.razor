@@ -3,9 +3,20 @@
 @inherits MudComponentBase
 
 
-<div class="@Classname" style="@Style">
-    @ChildContent
-</div>
+
+@if (LinkToIndex)
+{
+    <a @attributes="UserAttributes" class="@Classname" style="@Style" href="/">
+        @ChildContent
+    </a>
+}
+else
+{
+    <div @attributes="UserAttributes" class="@Classname" style="@Style">
+        @ChildContent
+    </div>
+}
+
 
 @code {
 
@@ -15,5 +26,6 @@
     .Build();
 
     [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool LinkToIndex { get; set; }
 
 }

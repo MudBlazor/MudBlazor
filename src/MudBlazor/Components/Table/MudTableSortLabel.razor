@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor
+
+<span class="mud-button-root mud-table-sort-label" @onclick="SortDirection">
+    <svg class="mud-svg-icon-root mud-table-sort-label-icon @(direction? "mud-direction-desc" : "mud-direction-asc")" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" />
+    </svg>
+    @ChildContent
+</span>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private bool direction;
+
+    public void SortDirection()
+    {
+        direction = !direction;
+    }
+}

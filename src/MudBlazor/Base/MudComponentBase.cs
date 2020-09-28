@@ -17,5 +17,12 @@ namespace MudBlazor
 
         [Parameter] public string Style { get; set; }
 
+        /// <summary>
+        /// Use this to attach any user data object to the component for your convenience.
+        /// </summary>
+        [Parameter] public object Tag { get; set; }
+
+        [Parameter(CaptureUnmatchedValues = true)]
+        public Dictionary<string, object> UserAttributes { get; set; }
     }
 }

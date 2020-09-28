@@ -22,6 +22,7 @@ namespace MudBlazor
         public async Task OnSelect(string value)
         {
             Value = value;
+            isMenuOpen = false;
             StateHasChanged();
             await SelectedValue.InvokeAsync(value);
         }

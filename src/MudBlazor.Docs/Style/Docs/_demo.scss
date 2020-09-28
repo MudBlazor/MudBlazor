@@ -78,6 +78,10 @@
 .demo-dialog-simple {
     display: inline-flex;
 
+    & .mud-list .mud-list-item .mud-list-item {
+        display: inline-flex;
+    }
+
     & p {
         align-self: center;
         margin-left: 16px;
@@ -89,26 +93,36 @@
         background-color: #bbdefb;
     }
 
-    &.demo-dialog-simple-gray {
-        & * .mud-avatar-color-default {
-            color: #fff;
-            background-color: #bdbdbd;
-        }
+    .s-t-a-l-k-e-r {
+        color: #000;
+        background-color: rgba(255, 152,0, 0.8)
+     }
+}
+
+
+
+.demo-slider-filler {
+    height: 26px;
+    width: 100%;
+    display: inline-block;
+}
+
+.demo-radio-inline {
+    display:inline-block;
+
+}
+
+.demo-snackbar-alerts {
+    & * .mud-alert {
+        margin-top: 1rem !important;
+        margin-bottom: 1rem !important;
     }
 }
 
-.demo-dialog-form {
-
-    & .mud-formcontrol {
-        width: 100%;
-        margin-bottom: 12px;
-    }
-
-    & button {
-        display: inline-flex;
-        margin-left: 25%;
-        margin-bottom: 16px;
-        margin-top: 24px;
-        width: 50%;
+.demo-snackbar-output {
+    min-width: 250px;
+    padding: 1.5rem;
+    & > .mud-typography-caption {
+        display:block;
     }
 }

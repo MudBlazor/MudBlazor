@@ -7,15 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Data\Elements.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="wwwroot\MudBlazorDocs.css" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Data\Elements.json" />
+    <EmbeddedResource Include="Models\Elements.json" />
   </ItemGroup>
 
 

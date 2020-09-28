@@ -12,6 +12,16 @@ namespace MudBlazor.Docs.Extensions
         public static void TryAddDocsViewServices(this IServiceCollection services)
         {
             services.AddMudBlazorDialog();
+            services.AddSnackbar(config =>
+            {
+                config.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+                config.PreventDuplicates = false;
+                config.NewestOnTop = false;
+                config.VisibleStateDuration = 10000;
+                config.HideTransitionDuration = 500;
+                config.ShowTransitionDuration = 500;
+            });
             services.TryAddMarkdownServices();
             services.TryAddDomHelpersServices(new CoreConfigBuilder().Build());
         }

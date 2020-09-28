@@ -2,13 +2,14 @@
 
 .mud-select {
     display: inline-flex;
+    min-width: 50px;
 }
 
 .mud-select-icon {
     color: var(--mud-theme-text-default);
-    top: calc(50% - 16px);
-    right: 0;
-    position: absolute;
+    position: relative;
+    bottom: 30px;
+    left: calc(100% - 20px);
 }
 
 .mud-select-menu {
@@ -36,4 +37,8 @@
     position: fixed;
     background-color: transparent;
     z-index: 99;
+}
+
+.mud-select > .mud-form-helpertext {
+    margin-top: -21px;
 }
