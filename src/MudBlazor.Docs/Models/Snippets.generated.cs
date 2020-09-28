@@ -159,6 +159,9 @@ public const string CheckboxBasicExample = @"```html
 <MudCheckBox @bind-Checked=""@Basic_CheckBox1"" Color=""Color.Secondary""></MudCheckBox>
 <MudCheckBox @bind-Checked=""@Basic_CheckBox1"" Disabled=""true""></MudCheckBox>
 
+```
+
+```csharp
 @code {
     public bool Basic_CheckBox1 { get; set; } = true;
     public bool Basic_CheckBox2 { get; set; } = false;
@@ -171,6 +174,9 @@ public const string CheckboxLabelExample = @"```html
 <MudCheckBox @bind-Checked=""@Label_CheckBox3"" Label=""Secondary"" Color=""Color.Secondary""></MudCheckBox>
 <MudCheckBox @bind-Checked=""@Label_CheckBox1"" Disabled=""true"" Label=""Disabled""></MudCheckBox>
 
+```
+
+```csharp
 @code {
     public bool Label_CheckBox1 { get; set; } = true;
     public bool Label_CheckBox2 { get; set; } = false;
@@ -207,6 +213,9 @@ public const string DialogDialogFormExample = @"```html
 </MudDialog>
 
 
+```
+
+```csharp
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
@@ -254,6 +263,9 @@ public const string DialogDialogSimpleExample = @"```html
 </MudDialog>
 
 
+```
+
+```csharp
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
@@ -268,6 +280,9 @@ public const string DialogFormExample = @"```html
 
 <MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenFormDialog"">Open Form Dialog</MudButton>
 
+```
+
+```csharp
 @code {
 
     void OpenFormDialog()
@@ -285,6 +300,9 @@ public const string DialogSimpleExample = @"```html
 <MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenSimpleDialog"">Open Simple Dialog</MudButton>
 
 
+```
+
+```csharp
 @code {
     bool HideSourceSimpleDialog = true;
 
@@ -437,6 +455,9 @@ public const string GridSpacingExample = @"```html
     <MudText>Spacing: @spacing</MudText>
 </MudPaper>
 
+```
+
+```csharp
 @code {
     public int spacing { get; set; } = 2;
     void AddSpacing()
@@ -549,6 +570,9 @@ public const string RadioGroupExample = @"```html
     </MudRadioGroup>
 </MudFormControl> 
 
+```
+
+```csharp
 @code {
     public string SelectedLabel { get; set; } = ""Primary"";
     public string SelectedOption { get; set; }
@@ -564,6 +588,9 @@ public const string RadioLabelPlacementExample = @"```html
     </MudRadioGroup>
 </MudFormControl>
 
+```
+
+```csharp
 @code {
     public string SelectedLabel { get; set; } = ""Primary"";
     public string SelectedOption { get; set; }
@@ -593,6 +620,9 @@ public const string SelectBasicExample = @"```html
     <MudSelectItem Value=""scania"">Scania</MudSelectItem>
 </MudSelect>
 
+```
+
+```csharp
 @code {
 
     private string Item { get; set; } = ""Nothing selected"";
@@ -627,6 +657,9 @@ public const string SimpleTableExample = @"```html
     </tbody>
 </MudSimpleTable>
 
+```
+
+```csharp
 @code {
     string[] headings = { ""ID"", ""Name"", ""Email"", ""Gender"", ""IP Address"" };
     string[] rows = {
@@ -663,6 +696,9 @@ public const string SimpleTableHoverDenseExample = @"```html
 </MudSimpleTable>
 <MudSwitch @bind-Checked=""@dense"">Dense</MudSwitch>
 
+```
+
+```csharp
 @code {
     bool dense;
     string[] headings = { ""ID"", ""Name"", ""Email"", ""Gender"", ""IP Address"" };
@@ -748,6 +784,9 @@ public const string TableExample = @"```html
 <MudSwitch @bind-Checked=""@dense"" Color=""Color.Secondary"">Dense</MudSwitch>
 <MudText Inline=""true"">Selected: @selected_item?.Name</MudText>
 
+```
+
+```csharp
 @code {
     bool dense = false;
     bool hover = true;
@@ -792,6 +831,9 @@ public const string TableFixedHeaderExample = @"```html
 </MudTable>
 <MudSwitch @bind-Checked=""@fixed_header"">Fixed Header</MudSwitch>
 
+```
+
+```csharp
 @code {
     bool fixed_header = true;
 }
@@ -818,6 +860,9 @@ public const string TableMultiSelectExample = @"```html
 </MudTable>
 <MudText Inline=""true"">Selected items: @(selected_items==null ? """" : string.Join("", "", selected_items.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
 
+```
+
+```csharp
 @code {
     bool hover = true;
     HashSet<Element> selected_items = new HashSet<Element>();
@@ -873,6 +918,9 @@ public const string TextFieldInputsExample = @"```html
 public const string ThemesCustomExample = @"```html
 <ThemeProvider Theme=""MyCoolDarkTheme"" />
 
+```
+
+```csharp
 @code {
 
     MudTheme MyCoolDarkTheme = new MudTheme()

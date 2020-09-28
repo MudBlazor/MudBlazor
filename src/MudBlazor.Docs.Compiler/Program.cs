@@ -42,7 +42,8 @@ namespace MudBlazor.Docs.Compiler
                         continue;
                     Console.WriteLine("Found code snippet: " + component_name);
                     w.WriteLine($"public const string {component_name} = @\"```html");
-                    w.WriteLine(EscapeComponentSource(entry));
+                    var escaped_src = EscapeComponentSource(entry);
+                    w.WriteLine(escaped_src.Replace("@code {", "```\n\n```csharp\n@code {"));
                     w.WriteLine("```\";");
                 }
                 w.WriteLine(
