@@ -700,7 +700,7 @@ public const string SimpleTableHoverDenseExample = @"```html
 
 ```csharp
 @code {
-    bool dense;
+    bool dense=true;
     string[] headings = { ""ID"", ""Name"", ""Email"", ""Gender"", ""IP Address"" };
     string[] rows = {
         @""1 Krishna kpartner0@usatoday.com Male 28.25.250.202"",
