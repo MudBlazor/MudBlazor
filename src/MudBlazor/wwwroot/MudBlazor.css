@@ -1605,11 +1605,21 @@ ul {
 button.mud-list-item {
   font-weight: 500; }
 
+.mud-nested-list .mud-list {
+  padding-top: 8px;
+  padding-bottom: 8px; }
+
 .mud-nested-list > .mud-list {
   display: none; }
   .mud-nested-list > .mud-list > .mud-list-item .mud-list-item {
     font-weight: 400;
-    padding-left: 48px; }
+    padding-left: 40px; }
+
+.mud-nested-list > .mud-list > .mud-nested-list button {
+  padding-left: 40px; }
+
+.mud-nested-list > .mud-list > .mud-nested-list .mud-list .mud-list-item .mud-list-item {
+  padding-left: 56px; }
 
 .mud-nested-list.expanded > .mud-list {
   display: block; }
