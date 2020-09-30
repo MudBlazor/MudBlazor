@@ -634,6 +634,16 @@ namespace MudBlazor.UnitTests.Components
                 var comp = ctx.RenderComponent<TextGeneralExample>();
         }
 
+
+        [Test]
+        public void ElevationUsageExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<ElevationUsageExample>();
+        }
+
     }
 }
 
