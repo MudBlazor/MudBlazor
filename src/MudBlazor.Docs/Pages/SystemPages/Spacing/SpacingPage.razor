@@ -3,28 +3,56 @@
 <DocsPage>
     <DocsPageHeader>
         <Title>Spacing</Title>
-            <SubTitle>
-                <MudText>Spacing is a way to modify padding or margin without creating new classes.</MudText>
-            </SubTitle>
+        <SubTitle>Spacing is a way to modify padding or margin without creating new classes.</SubTitle>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <MudText Typo="Typo.h5" GutterBottom="true">How it works</MudText>
-            <MudText>The propertys:</MudText>
-            <ul>
-                <li>m - for classes that set margin</li>
-                <li>p - for classes that set padding</li>
+            <MudText Typo="Typo.h4" GutterBottom="true">How it works</MudText>
+            <MudText>Use the <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> <b>property</b> and choose a <b>direction</b>. Then add <b>size</b>, ranging from 0 to 16.</MudText>
+            <MudText Class="pt-6 pb-2">The <b>propertys</b>:</MudText>
+            <ul class="mud-typography-body1">
+                <li><CodeInline>m</CodeInline> - for classes that set <CodeInline>margin</CodeInline></li>
+                <li><CodeInline>p</CodeInline> - for classes that set <CodeInline>padding</CodeInline></li>
             </ul>
-            <MudText>And direction the property applies to:</MudText>
-            <ul>
-                <li>t - for margin-top or padding-top</li>
-                <li>b - for margin-bottom or padding-bottom</li>
-                <li>l - for margin-left or padding-left</li>
-                <li>r - for margin-right or padding-right</li>
-                <li>x - for margin-left/padding-left and margin-right/padding-right</li>
-                <li>y - for margin-top/padding-top and margin-bottom/padding-bottom</li>
-                <li>a - for all 4 sides.</li>
+            <MudText Class="pt-6 pb-2">The <b>direction</b> property applies to:</MudText>
+            <ul class="mud-typography-body1">
+                <li><CodeInline>t</CodeInline> - for <CodeInline>margin-top</CodeInline> or <CodeInline>padding-top</CodeInline></li>
+                <li><CodeInline>b</CodeInline> - for <CodeInline>margin-bottom</CodeInline> or <CodeInline>padding-bottom</CodeInline></li>
+                <li><CodeInline>l</CodeInline> - for <CodeInline>margin-left</CodeInline> or <CodeInline>padding-left</CodeInline></li>
+                <li><CodeInline>r</CodeInline> - for <CodeInline>margin-right</CodeInline> or <CodeInline>padding-right</CodeInline></li>
+                <li><CodeInline>x</CodeInline> - for <CodeInline>margin-left/padding-left</CodeInline> and <CodeInline>margin-right/padding-right</CodeInline></li>
+                <li><CodeInline>y</CodeInline> - for <CodeInline>margin-top/padding-top</CodeInline> and <CodeInline>margin-bottom/padding-bottom</CodeInline></li>
+                <li><CodeInline>a</CodeInline> - for all 4 sides.</li>
             </ul>
+            <MudText Class="pt-6 pb-2">The <b>size</b> increase with an interval of 4 pixels:</MudText>
+            <ul class="mud-typography-body1">
+                <li><CodeInline>0</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>0</CodeInline></li>
+                <li><CodeInline>1</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>4px</CodeInline></li>
+                <li><CodeInline>2</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>8px</CodeInline></li>
+                <li><CodeInline>3</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>12px</CodeInline></li>
+                <li><CodeInline>4</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>16px</CodeInline></li>
+                <li><CodeInline>5</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>20px</CodeInline></li>
+                <li><CodeInline>6</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>24px</CodeInline></li>
+                <li><CodeInline>7</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>28px</CodeInline></li>
+                <li><CodeInline>8</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>32px</CodeInline></li>
+                <li><CodeInline>9</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>36px</CodeInline></li>
+                <li><CodeInline>10</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>40px</CodeInline></li>
+                <li><CodeInline>11</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>44px</CodeInline></li>
+                <li><CodeInline>12</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>48px</CodeInline></li>
+                <li><CodeInline>13</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>52px</CodeInline></li>
+                <li><CodeInline>14</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>56px</CodeInline></li>
+                <li><CodeInline>15</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>60px</CodeInline></li>
+                <li><CodeInline>16</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>64px</CodeInline></li>
+            </ul>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Examples</Title>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <SpacingExample/>
+            </SectionContent>
+            <SectionSource Code="SpacingExample" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
