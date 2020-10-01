@@ -1,8 +1,30 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseSelectItem
 
-<li @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" style="@Style">
-    <div class="@Classname">
-        @ChildContent
+<div @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" style="@Style">
+    @if (!String.IsNullOrEmpty(Avatar))
+    {
+        <div class="mud-list-item-avatar">
+            <MudAvatar>
+                <MudIcon Icon="@Avatar"></MudIcon>
+            </MudAvatar>
+        </div>
+    }else if (!String.IsNullOrEmpty(Icon))
+    {
+        <div class="mud-list-item-icon">
+            <MudIcon Icon="@Icon"></MudIcon>
+        </div>
+    }
+    <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
+        <MudText>
+            @if (String.IsNullOrEmpty(Text))
+            {
+                @ChildContent
+            }
+            else
+            {
+                @Text
+            }
+        </MudText>
     </div>
-</li>
+</div>

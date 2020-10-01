@@ -8,9 +8,11 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-list")
+           .AddClass("mud-list-padding", !DisablePadding)
           .AddClass(Class)
         .Build();
 
         [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter] public bool DisablePadding { get; set; }
     }
 }

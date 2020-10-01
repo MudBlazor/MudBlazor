@@ -5,7 +5,9 @@
     <button @onclick="ExpandedToggle" tabindex="0" class="@ClassnameItem">
         @Title
     </button>
-    <MudList>
-        @ChildContent
-    </MudList>  
+    <MudCollapse Expanded="@Expanded">
+        <MudList>
+            @ChildContent
+        </MudList>
+    </MudCollapse>
 </li>
