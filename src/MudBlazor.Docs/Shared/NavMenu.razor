@@ -1,59 +1,59 @@
 ﻿
-
-<MudList>
-    <MudListNavItem Match="NavLinkMatch.All" Href="">Home</MudListNavItem>
-    <MudListNested Title="Getting Started" Expanded="false">
-        <MudListNavItem Href="getting-started/installation">Installation</MudListNavItem>
-        <MudListNavItem Href="getting-started/usage">Usage</MudListNavItem>
-    </MudListNested>
-    <MudListNested Title="Components" Expanded="true">
-        <MudListNested Title="Layout" Expanded="true">
-            <MudListNavItem Href="components/container">Container</MudListNavItem>
-            <MudListNavItem Href="components/grid">Grid</MudListNavItem>
-            <MudListNavItem Href="components/themes">Themes</MudListNavItem>
-        </MudListNested>
-        <MudListNested Title="Inputs" Expanded="true">
-            <MudListNavItem Href="components/button">Button</MudListNavItem>
-            <MudListNavItem Href="components/iconbutton">IconButton</MudListNavItem>
-            <MudListNavItem Href="components/checkbox">Checkbox</MudListNavItem>
-            <MudListNavItem Href="components/fab">FAB</MudListNavItem>
-            <MudListNavItem Href="components/radio">Radio</MudListNavItem>
-            <MudListNavItem Href="components/select">Select</MudListNavItem>
-            <MudListNavItem Href="components/slider">Slider</MudListNavItem>
-            <MudListNavItem Href="components/switch">Switch</MudListNavItem>
-            <MudListNavItem Href="components/textfield">Text Field</MudListNavItem>
-        </MudListNested>
-        <MudListNested Title="Navigation" Expanded="true">
-            <MudListNavItem Href="components/appbar">AppBar</MudListNavItem>
-            <MudListNavItem Href="components/drawer">Drawer</MudListNavItem>
-            <MudListNavItem Href="components/link">Link</MudListNavItem>
-            <MudListNavItem Href="components/tabs">Tabs</MudListNavItem>
-        </MudListNested>
-        <MudListNested Title="Feedback" Expanded="true">
-            <MudListNavItem Href="components/dialog">Dialog</MudListNavItem>
-            <MudListNavItem Href="components/snackbar">Snackbar</MudListNavItem>
-        </MudListNested>
-        <MudListNested Title="Data Display" Expanded="true">
-            <MudListNavItem Href="components/card">Card</MudListNavItem>
-            <MudListNavItem Href="components/icons">Icons</MudListNavItem>
-            <MudListNavItem Href="components/mudblazor-icons">Mudblazor Icons</MudListNavItem>
-            <MudListNavItem Href="components/list">List</MudListNavItem>
-            <MudListNavItem Href="components/paper">Paper</MudListNavItem>
-            <MudListNavItem Href="components/table">Table</MudListNavItem>
-            <MudListNavItem Href="components/simpletable">Simple Table</MudListNavItem>
-            <MudListNavItem Href="components/typography">Typography</MudListNavItem>
-        </MudListNested>
-    </MudListNested>
+<MudNavMenu Class="mt-6">
+    <MudNavGroup Title="Getting Started" Expanded="false">
+        <MudNavLink Href="getting-started/installation">Installation</MudNavLink>
+        <MudNavLink Href="getting-started/usage">Usage</MudNavLink>
+    </MudNavGroup>
+    <MudNavGroup Title="Components" Expanded="true">
+        <MudNavGroup Title="Layout" Expanded="true">
+            <MudNavLink Href="components/container">Container</MudNavLink>
+            <MudNavLink Href="components/grid">Grid</MudNavLink>
+            <MudNavLink Href="components/themes">Themes</MudNavLink>
+        </MudNavGroup>
+        <MudNavGroup Title="Inputs" Expanded="true">
+            <MudNavLink Href="components/button">Button</MudNavLink>
+            <MudNavLink Href="components/iconbutton">IconButton</MudNavLink>
+            <MudNavLink Href="components/checkbox">Checkbox</MudNavLink>
+            <MudNavLink Href="components/fab">FAB</MudNavLink>
+            <MudNavLink Href="components/radio">Radio</MudNavLink>
+            <MudNavLink Href="components/select">Select</MudNavLink>
+            <MudNavLink Href="components/slider">Slider</MudNavLink>
+            <MudNavLink Href="components/switch">Switch</MudNavLink>
+            <MudNavLink Href="components/textfield">Text Field</MudNavLink>
+        </MudNavGroup>
+        <MudNavGroup Title="Navigation" Expanded="true">
+            <MudNavLink Href="components/appbar">AppBar</MudNavLink>
+            <MudNavLink Href="components/drawer">Drawer</MudNavLink>
+            <MudNavLink Href="components/link">Link</MudNavLink>
+            <MudNavLink Href="components/navmenu">Nav Menu</MudNavLink>
+            <MudNavLink Href="components/tabs">Tabs</MudNavLink>
+        </MudNavGroup>
+        <MudNavGroup Title="Feedback" Expanded="true">
+            <MudNavLink Href="components/dialog">Dialog</MudNavLink>
+            <MudNavLink Href="components/snackbar">Snackbar</MudNavLink>
+        </MudNavGroup>
+        <MudNavGroup Title="Data Display" Expanded="true">
+            <MudNavLink Href="components/card">Card</MudNavLink>
+            <MudNavLink Href="components/divider">Divider</MudNavLink>
+            <MudNavLink Href="components/icons">Icons</MudNavLink>
+            <MudNavLink Href="components/mudblazor-icons">Mudblazor Icons</MudNavLink>
+            <MudNavLink Href="components/list">List</MudNavLink>
+            <MudNavLink Href="components/paper">Paper</MudNavLink>
+            <MudNavLink Href="components/table">Table</MudNavLink>
+            <MudNavLink Href="components/simpletable">Simple Table</MudNavLink>
+            <MudNavLink Href="components/typography">Typography</MudNavLink>
+        </MudNavGroup>
+    </MudNavGroup>
     @*<MudListNested Title="Components API" Expanded="false">
-        <MudListNavItem Href="/nothinghere404">Nothing here...</MudListNavItem>
-    </MudListNested>*@
-    <MudListNested Title="System" Expanded="false">
+            <MudListNavItem Href="/nothinghere404">Nothing here...</MudListNavItem>
+        </MudListNested>*@
+    <MudNavGroup Title="System" Expanded="false">
         @*<MudListNavItem Href="system/colors">Colors</MudListNavItem>*@
-        <MudListNavItem Href="system/elevation">Elevation</MudListNavItem>
-        <MudListNavItem Href="system/spacing">Spacing</MudListNavItem>
+        <MudNavLink Href="system/elevation">Elevation</MudNavLink>
+        <MudNavLink Href="system/spacing">Spacing</MudNavLink>
         @*<MudListNavItem Href="system/transitions">Transitions</MudListNavItem>*@
-    </MudListNested>
-</MudList>
+    </MudNavGroup>
+</MudNavMenu>
 
 
 @code {

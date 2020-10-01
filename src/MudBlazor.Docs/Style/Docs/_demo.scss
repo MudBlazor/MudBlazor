@@ -27,9 +27,8 @@
 }
 
 
-.demo-list {
+.demo-list, .demo-divider {
     & .mud-list {
-        padding: 10px 0;
         width: 100%;
         max-width: 360px;
         background-color: var(--mud-theme-surface);
@@ -139,4 +138,9 @@
         float: left;
         margin: 25px !important;
     }
+}
+
+.demo-navmenu {
+    width: 200px;
+    background-color: var(--mud-theme-surface);
 }
