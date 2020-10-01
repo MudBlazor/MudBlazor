@@ -234,29 +234,14 @@ public const string DialogDialogSimpleExample = @"```html
 <MudDialog DisableSidePadding=""true"" ClassContent=""demo-dialog-simple"">
     <DialogContent>
         <MudList>
-            <MudListItem @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"">
-                <MudAvatar>
-                    <MudIcon Icon=""@Icons.Material.Person"" />
-                </MudAvatar>
-                <MudText>
-                    coolusername@gmail.com
-                </MudText>
+            <MudListItem Avatar=""@Icons.Material.Person"" @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"" Button=""true"">
+                coolusername@gmail.com
             </MudListItem>
-            <MudListItem @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"">
-                <MudAvatar>
-                    <MudIcon Icon=""@Icons.Material.Person"" />
-                </MudAvatar>
-                <MudText>
+            <MudListItem Avatar=""@Icons.Material.Person"" @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"" Button=""true"">
                     notsocool@gmail.com
-                </MudText>
             </MudListItem>
-            <MudListItem @onclick=""@(() => SelectUser(""strelok@gmail.com""))"">
-                <MudAvatar Class=""s-t-a-l-k-e-r"">
-                    <MudIcon Icon=""@Icons.Custom.Radioactive"" />
-                </MudAvatar>
-                <MudText>
+            <MudListItem Avatar=""@Icons.Custom.Radioactive"" AvatarClass=""s-t-a-l-k-e-r"" @onclick=""@(() => SelectUser(""strelok@gmail.com""))"" Button=""true"">
                     strelok@gmail.com
-                </MudText>
             </MudListItem>
         </MudList>
     </DialogContent>
@@ -826,7 +811,6 @@ public const string TableExample = @"```html
         <MudText Typo=""Typo.h6"" Class=""mud-flex-1-1-100"">Periodic Elements</MudText>
         <MudIcon Style=""margin-top: 20px; margin-right: 8px;"" Icon=""@Icons.Material.Search""></MudIcon>
         <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
-        <MudAppBarSpacer></MudAppBarSpacer>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Nr</MudTh>
