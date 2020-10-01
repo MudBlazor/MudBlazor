@@ -4,10 +4,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudListNavItem : MudBaseSelectItem
+    public partial class MudNavLink : MudBaseSelectItem
     {
         protected string Classname =>
-        new CssBuilder("mud-list-item")
+        new CssBuilder("mud-nav-item")
           .AddClass($"mud-ripple", !DisableRipple)
           .AddClass(Class)
         .Build();

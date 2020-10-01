@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<li @attributes="UserAttributes" class="mud-nav-group" disabled="@Disabled" style="@Style">
+    <button @onclick="ExpandedToggle" tabindex="0" class="@Classname">
+        @Title
+    </button>
+    <MudCollapse Expanded="@Expanded">
+        <MudNavMenu>
+            @ChildContent
+        </MudNavMenu>
+    </MudCollapse>
+</li>
