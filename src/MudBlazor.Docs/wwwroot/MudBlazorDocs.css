@@ -108,8 +108,7 @@
   height: 100px;
   text-align: center; }
 
-.demo-list .mud-list {
-  padding: 10px 0;
+.demo-list .mud-list, .demo-divider .mud-list {
   width: 100%;
   max-width: 360px;
   background-color: var(--mud-theme-surface); }
@@ -180,6 +179,10 @@
   align-items: center;
   float: left;
   margin: 25px !important; }
+
+.demo-navmenu {
+  width: 200px;
+  background-color: var(--mud-theme-surface); }
 
 .docs-home {
   display: flex;
@@ -287,15 +290,16 @@
   margin-bottom: 50px; }
 
 .docs-code {
-  color: rgba(0, 0, 0, 0.87);
+  color: var(--mud-theme-color-primary);
   display: inline-block;
-  padding: 0 3px;
+  padding: 0 5px;
   direction: ltr;
   font-size: .85em;
+  font-weight: 900;
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
   line-height: 1.4;
   border-radius: 2px;
-  background-color: rgba(255, 229, 100, 0.2);
+  background-color: var(--mud-theme-color-primary-hover);
   -webkit-font-smoothing: subpixel-antialiased; }
 
 .docs-frame {

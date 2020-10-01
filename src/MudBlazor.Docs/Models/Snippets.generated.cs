@@ -326,6 +326,32 @@ public const string DialogSimpleExample = @"```html
     }
 }
 ```";
+public const string DividerListExample = @"```html
+<MudList>
+    <MudListItem Button=""true"">Inbox</MudListItem>
+    <MudDivider />
+    <MudListItem Button=""true"">Sent</MudListItem>
+    <MudDivider />
+    <MudListItem Button=""true"">Drafts</MudListItem>
+    <MudDivider />
+    <MudListItem Button=""true"">Spam</MudListItem>
+</MudList>
+```";
+public const string InsertDividerExample = @"```html
+<MudList>
+    <MudListItem Avatar=""@Icons.Material.TrendingUp"">
+        Trending
+    </MudListItem>
+    <MudDivider Insert=""true"" />
+    <MudListItem Avatar=""@Icons.Material.StarRate"">
+        Most Stars
+    </MudListItem>
+    <MudDivider Insert=""true"" />
+    <MudListItem Avatar=""@Icons.Material.History"">
+        History
+    </MudListItem>
+</MudList>
+```";
 public const string DrawerClippingExample = @"```html
 <MudLayout DrawerOpen=""@DocsDrawerOpen"" DrawerClipped=""true"">
     <MudAppBar Position=""Position.Absolute"" Elevation=""0"">
@@ -337,11 +363,11 @@ public const string DrawerClippingExample = @"```html
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
-        <MudList>
-            <MudListNavItem Href=""#"">Store</MudListNavItem>
-            <MudListNavItem Href=""#"">Library</MudListNavItem>
-            <MudListNavItem Href=""#"">Community</MudListNavItem>
-        </MudList>
+        <MudNavMenu>
+            <MudNavLink Href=""#"">Store</MudNavLink>
+            <MudNavLink Href=""#"">Library</MudNavLink>
+            <MudNavLink Href=""#"">Community</MudNavLink>
+        </MudNavMenu>
     </MudDrawer>
     <MudMainContent>
         <LoremIpsum />
@@ -369,11 +395,11 @@ public const string DrawerPersistentExample = @"```html
             <MudDrawerHeader>
                 <MudText Typo=""Typo.h6"">My App</MudText>
             </MudDrawerHeader>
-            <MudList>
-                <MudListNavItem Href=""#"">Store</MudListNavItem>
-                <MudListNavItem Href=""#"">Library</MudListNavItem>
-                <MudListNavItem Href=""#"">Community</MudListNavItem>
-            </MudList>
+            <MudNavMenu>
+                <MudNavLink Href=""#"">Store</MudNavLink>
+                <MudNavLink Href=""#"">Library</MudNavLink>
+                <MudNavLink Href=""#"">Community</MudNavLink>
+            </MudNavMenu>
         </MudDrawer>
         <MudMainContent>
             <LoremIpsum />
@@ -540,15 +566,55 @@ public const string LinkUnderlineExample = @"```html
 <MudLink Href=""#"" Underline=""Underline.Always"">Always</MudLink>
 <MudLink Href=""#"" Underline=""Underline.None"">None</MudLink>
 ```";
+public const string ListFolderExample = @"```html
+<MudList>
+    <MudListItem Avatar=""@Icons.Material.Image"">
+        Photos
+    </MudListItem>
+    <MudListItem Avatar=""@Icons.Material.Work"">
+        Work
+    </MudListItem>
+    <MudListItem Avatar=""@Icons.Material.Umbrella"">
+        Vacation
+    </MudListItem>
+</MudList>
+```";
+public const string ListNestedExample = @"```html
+<MudList>
+    <MudListSubheader>
+        Nested List Items
+    </MudListSubheader>
+    <MudListItem Icon=""@Icons.Material.Send"" Button=""true"">
+        Sent mail
+    </MudListItem>
+    <MudListItem Icon=""@Icons.Material.Drafts"" Button=""true"">
+        Drafts
+    </MudListItem>
+    <MudListItem Icon=""@Icons.Material.Inbox"" Button=""true"">
+        Inbox
+    </MudListItem>
+</MudList>
+```";
 public const string ListSimpleExample = @"```html
 <MudList>
-    <MudListItem>Inbox</MudListItem>
-    <MudListItem>Sent</MudListItem>
-    <MudListItem>Drafts</MudListItem>
-    <MudDivider></MudDivider>
-    <MudListItem>Spam</MudListItem>
-    <MudListItem>Bin</MudListItem>
+    <MudListItem Text=""Inbox"" Icon=""@Icons.Material.Inbox"" Button=""true""/>
+    <MudListItem Text=""Sent"" Icon=""@Icons.Material.Send"" Button=""true""/>
+    <MudDivider />
+    <MudListItem Text=""Trash"" Button=""true""/>
+    <MudListItem Text=""Spam"" Button=""true""/>
 </MudList>
+```";
+public const string NavMenuExample = @"```html
+<MudNavMenu Class=""demo-navmenu"">
+    <MudNavLink Href=""/dashboard"">Dashboard</MudNavLink>
+    <MudNavLink Href=""/servers"">Servers</MudNavLink>
+    <MudNavLink Href=""/billing"">Billing</MudNavLink>
+    <MudNavGroup Title=""Settings"" Expanded=""true"">
+        <MudNavLink Href=""/users"">Users</MudNavLink>
+        <MudNavLink Href=""/security"">Security</MudNavLink>
+    </MudNavGroup>
+    <MudNavLink Href=""/about"">About</MudNavLink>
+</MudNavMenu>
 ```";
 public const string PaperComponentExample = @"```html
 <MudPaper Elevation=""0""></MudPaper>
@@ -985,6 +1051,20 @@ public const string ElevationUsageExample = @"```html
 <div class=""mud-elevation-23"">23</div>
 <div class=""mud-elevation-24"">24</div>
 <div class=""mud-elevation-99"">99</div>
+```";
+public const string SpacingExample = @"```html
+<MudPaper Class=""pa-6 mr-12"">
+    <MudText Typo=""Typo.subtitle2"">pa-6 & mr-12</MudText>
+</MudPaper>
+<MudPaper Class=""pa-6"">
+    <MudText Typo=""Typo.subtitle2"">pa-6</MudText>
+</MudPaper>
+<MudPaper Class=""px-4 py-1"">
+    <MudText Typo=""Typo.subtitle2"">px-4 & py-1</MudText>
+</MudPaper>
+<MudPaper Class=""pa-6 ml-6"">
+    <MudText Typo=""Typo.subtitle2"">pa-6 & ml-6</MudText>
+</MudPaper>
 ```";
     }
 }

@@ -468,7 +468,7 @@ ul {
 
 .mud-avatar-color-default {
   color: #fff;
-  background-color: #f44336; }
+  background-color: #bdbdbd; }
 
 .mud-avatar-rounded {
   border-radius: 4px; }
@@ -790,6 +790,24 @@ ul {
   .mud-checkbox-disabled:hover {
     cursor: default;
     background-color: transparent; }
+
+.mud-collapse-container {
+  max-height: 0;
+  transition: max-height 267ms ease-out;
+  overflow: hidden; }
+
+.mud-collapse-expanded {
+  max-height: 2000px;
+  transition: max-height 267ms ease-in; }
+
+.mud-collapse-hidden {
+  visibility: hidden; }
+
+.mud-collapse-wrapper {
+  display: flex; }
+
+.mud-collapse-wrapper-inner {
+  width: 100%; }
 
 .mud-dialog-container {
   display: flex;
@@ -1569,60 +1587,86 @@ ul {
   margin-right: 14px; }
 
 .mud-list {
-  width: 100%;
   margin: 0;
   padding: 0;
+  position: relative;
   list-style: none; }
-  .mud-list .mud-divider {
-    margin: 8px 0; }
+  .mud-list.mud-list-padding {
+    padding-top: 8px;
+    padding-bottom: 8px; }
 
-.mud-list > .mud-list-item, .mud-nested-list {
+.mud-list-item {
   width: 100%;
   display: flex;
+  position: relative;
+  box-sizing: border-box;
+  text-align: left;
+  align-items: center;
+  padding-top: 8px;
+  padding-bottom: 8px;
   justify-content: flex-start;
   text-decoration: none; }
-  .mud-list > .mud-list-item.mud-nested-list, .mud-nested-list.mud-nested-list {
-    display: block; }
 
-.mud-list-item > .mud-list-item, .mud-nested-list > .mud-list-item {
-  width: 100%;
-  padding: 8px 0 8px 24px;
+.mud-list-item-button {
   color: inherit;
-  line-height: 1.75;
-  letter-spacing: 0;
-  justify-content: flex-start;
-  text-transform: none;
+  border: 0;
+  cursor: pointer;
+  margin: 0;
+  outline: 0;
+  user-select: none;
+  border-radius: 0;
+  vertical-align: middle;
   background-color: transparent;
-  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
-  .mud-list-item > .mud-list-item:hover, .mud-nested-list > .mud-list-item:hover {
-    cursor: pointer;
-    text-decoration: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
+  .mud-list-item-button:hover {
     background-color: var(--mud-theme-color-default-hover); }
-  .mud-list-item > .mud-list-item.active, .mud-nested-list > .mud-list-item.active {
-    font-weight: 500 !important;
-    color: var(--mud-theme-color-primary); }
 
-button.mud-list-item {
-  font-weight: 500; }
+.mud-list-item-gutters {
+  padding-left: 16px;
+  padding-right: 16px; }
 
-.mud-nested-list .mud-list {
-  padding-top: 8px;
-  padding-bottom: 8px; }
+.mud-list-item-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-top: 4px;
+  margin-bottom: 4px; }
 
-.mud-nested-list > .mud-list {
-  display: none; }
-  .mud-nested-list > .mud-list > .mud-list-item .mud-list-item {
-    font-weight: 400;
-    padding-left: 40px; }
-
-.mud-nested-list > .mud-list > .mud-nested-list button {
-  padding-left: 40px; }
-
-.mud-nested-list > .mud-list > .mud-nested-list .mud-list .mud-list-item .mud-list-item {
+.mud-list-item-text-inset {
   padding-left: 56px; }
 
-.mud-nested-list.expanded > .mud-list {
-  display: block; }
+.mud-list-item-icon {
+  color: rgba(0, 0, 0, 0.54);
+  display: inline-flex;
+  min-width: 56px;
+  flex-shrink: 0; }
+
+.mud-list-subheader {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: 0.875rem;
+  box-sizing: border-box;
+  list-style: none;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 500;
+  line-height: 48px; }
+
+.mud-list-subheader-gutters {
+  padding-left: 16px;
+  padding-right: 16px; }
+
+.mud-list-subheader-inset {
+  padding-left: 72px; }
+
+.mud-list-subheader-sticky {
+  top: 0;
+  z-index: 1;
+  position: sticky;
+  background-color: inherit; }
+
+.mud-list-item-avatar {
+  min-width: 56px;
+  flex-shrink: 0; }
 
 .mud-link.mud-link-underline-none {
   text-decoration: none; }
@@ -1634,6 +1678,52 @@ button.mud-list-item {
 
 .mud-link.mud-link-underline-always {
   text-decoration: underline; }
+
+.mud-navmenu {
+  margin: 0;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  position: relative;
+  list-style: none; }
+
+.mud-nav-group {
+  width: 100%;
+  display: block;
+  justify-content: flex-start; }
+  .mud-nav-group > .mud-nav-link {
+    font-weight: 500; }
+  .mud-nav-group * .mud-navmenu .mud-nav-item .mud-nav-link {
+    padding-left: 40px; }
+
+.mud-nav-item {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  text-decoration: none; }
+
+.mud-nav-link {
+  width: 100%;
+  padding: 8px 0 8px 24px;
+  color: inherit;
+  line-height: 1.75;
+  letter-spacing: 0;
+  justify-content: flex-start;
+  text-transform: none;
+  background-color: transparent;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
+  .mud-nav-link:hover {
+    cursor: pointer;
+    text-decoration: none;
+    background-color: var(--mud-theme-color-default-hover); }
+  .mud-nav-link.active {
+    font-weight: 500 !important;
+    color: var(--mud-theme-color-primary); }
+
+.mud-nav-group * .mud-navmenu > .mud-nav-group .mud-nav-link {
+  padding-left: 40px; }
+
+.mud-nav-group * .mud-navmenu > .mud-nav-group * .mud-navmenu .mud-nav-item .mud-nav-link {
+  padding-left: 56px; }
 
 .mud-simple-table table {
   width: 100%;

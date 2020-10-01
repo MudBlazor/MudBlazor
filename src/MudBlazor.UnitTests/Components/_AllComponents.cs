@@ -236,6 +236,26 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void DividerListExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<DividerListExample>();
+        }
+
+
+        [Test]
+        public void InsertDividerExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<InsertDividerExample>();
+        }
+
+
+        [Test]
         public void DrawerClippingExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -396,12 +416,42 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void ListFolderExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<ListFolderExample>();
+        }
+
+
+        [Test]
+        public void ListNestedExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<ListNestedExample>();
+        }
+
+
+        [Test]
         public void ListSimpleExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 var comp = ctx.RenderComponent<ListSimpleExample>();
+        }
+
+
+        [Test]
+        public void NavMenuExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<NavMenuExample>();
         }
 
 
@@ -642,6 +692,16 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 var comp = ctx.RenderComponent<ElevationUsageExample>();
+        }
+
+
+        [Test]
+        public void SpacingExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<SpacingExample>();
         }
 
     }
