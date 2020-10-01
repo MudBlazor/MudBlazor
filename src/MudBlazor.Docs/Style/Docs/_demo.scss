@@ -126,3 +126,17 @@
         display:block;
     }
 }
+.demo-elevation > .docs-section-content-inner {
+
+    & > div {
+        width: 100px;
+        height: 100px;
+        background-color: var(--mud-theme-surface);
+        border-radius: var(--mud-theme-border-radius-default);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        float: left;
+        margin: 25px !important;
+    }
+}

@@ -1,13 +1,35 @@
-﻿
+﻿$spacing-values: ( "0": 0, "1": 4px, "2": 8px, "3": 12px, "4": 16px, "5": 20px, "6": 24px, "7": 28px, "8": 32px, "9": 36px, "10": 40px, "11": 44px, "12": 48px, "13": 52px, "14": 56px, "16": 64px, "auto": auto );
 
-/*$sizes: 0, 1px, 2px, 3px, 4px, 5px, 6px, 7px, 8px, 9px, 10px, 11px, 12px, 13px, 14px, 15px, 16px, auto;*/
-/*$sizes-n: 0, 1px, 2px, 3px, 4px, 5px, 6px, 7px, 8px, 9px, 10px, 11px, 12px, 13px, 14px, 15px, 16px, auto;*/
+@each $prop, $abbrev in (margin: m, padding: p) {
+    @each $name, $value in $spacing-values {
+        .#{$abbrev}t-#{$name} {
+            #{$prop}-top: $value !important;
+        }
 
-$sizes: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16;
+        .#{$abbrev}b-#{$name} {
+            #{$prop}-bottom: $value !important;
+        }
 
-@each $size in $sizes {
-    .mud-py#{$size} {
-        padding-top: #{$size}px;
-        padding-bottom: #{$size}px;
+        .#{$abbrev}l-#{$name} {
+            #{$prop}-left: $value !important;
+        }
+
+        .#{$abbrev}r-#{$name} {
+            #{$prop}-right: $value !important;
+        }
+
+        .#{$abbrev}x-#{$name} {
+            #{$prop}-left: $value !important;
+            #{$prop}-right: $value !important;
+        }
+
+        .#{$abbrev}y-#{$name} {
+            #{$prop}-top: $value !important;
+            #{$prop}-bottom: $value !important;
+        }
+
+        .#{$abbrev}a-#{$name} {
+            #{$prop}: $value !important;
+        }
     }
 }
