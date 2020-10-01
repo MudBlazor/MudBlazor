@@ -11,6 +11,8 @@
       .AddClass($"mud-divider-absolute" , Absolute)
       .AddClass($"mud-divider-flexitem", FlexItem)
       .AddClass($"mud-divider-light", Light)
+      .AddClass($"mud-divider-inset", Insert)
+      .AddClass($"mud-divider-vertical", Vertical)
       .AddClass(Class)
     .Build();
 
@@ -19,5 +21,9 @@
     [Parameter] public bool FlexItem { get; set; }
 
     [Parameter] public bool Light { get; set; }
+
+    [Parameter] public bool Insert { get; set; }
+
+    [Parameter] public bool Vertical { get; set; }
 
 }
