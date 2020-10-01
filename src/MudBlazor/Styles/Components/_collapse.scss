@@ -1,0 +1,22 @@
+﻿.mud-collapse-container {
+    max-height: 0;
+    transition: max-height 267ms ease-out;
+    overflow: hidden;
+}
+
+.mud-collapse-expanded {
+    max-height: 2000px;
+    transition: max-height 267ms ease-in;
+}
+
+.mud-collapse-hidden {
+    visibility: hidden;
+}
+
+.mud-collapse-wrapper {
+    display: flex;
+}
+
+.mud-collapse-wrapper-inner {
+    width: 100%;
+}

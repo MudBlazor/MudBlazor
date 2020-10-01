@@ -1,0 +1,14 @@
+﻿@namespace MudBlazor
+
+<div class="mud-collapse-container @(Expanded? "mud-collapse-expanded" : "")">
+    <div class="mud-collapse-wrapper">
+        <div class="mud-collapse-wrapper-inner">
+            @ChildContent
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool Expanded { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
