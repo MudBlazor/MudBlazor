@@ -3,7 +3,7 @@
     border-radius: var(--mud-theme-border-radius-default);
 
     & pre {
-        color: #fff;
+        color: #ededed;
         font-size: 1em;
         font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
         -webkit-font-smoothing: subpixel-antialiased;
@@ -18,32 +18,34 @@
         }
 
         & .htmlElementName {
-            color: #27b5b5;
+            color: #988ef1;
         }
 
         & .htmlAttributeName {
             color: #27b5b5;
         }
 
-        & .htmlOperator {
-            color: #d0d0d0;
+        & .htmlOperator, .quot {
+            color: #c8c8c8;
         }
 
         & .htmlAttributeValue {
-            color: #b4eb8f;
-            /*background-color:rgba(255,255,255, 0.15);*/
+            color: #ededed;
         }
 
         & .enum {
             color: #b4eb8f;
+            background-color: rgba(255,255,255,0.15);
         }
 
         & .enumValue {
-            color: white;
+            color: #ededed;
+            background-color: rgba(255,255,255,0.15);
         }
 
         & .keyword {
-            color: #569cd6;
+            color: #61afef;
+            background-color: rgba(255,255,255,0.15);
         }
     }
 
