@@ -1,16 +1,23 @@
 ﻿@namespace MudBlazor.Docs
 
-<MudList>
+<MudList Clickable="true">
     <MudListSubheader>
         Nested List Items
     </MudListSubheader>
-    <MudListItem Icon="@Icons.Material.Send" Button="true">
+    <MudListItem Icon="@Icons.Material.Send">
         Sent mail
     </MudListItem>
-    <MudListItem Icon="@Icons.Material.Drafts" Button="true">
+    <MudListItem Icon="@Icons.Material.Drafts">
         Drafts
     </MudListItem>
-    <MudListItem Icon="@Icons.Material.Inbox" Button="true">
-        Inbox
+    <MudListItem Icon="@Icons.Material.Inbox" Text="Inbox">
+        <NestedList>
+            <MudListItem Icon="@Icons.Material.StarRate">
+                Starred
+            </MudListItem>
+            <MudListItem Icon="@Icons.Material.WatchLater">
+                Snoozed
+            </MudListItem>
+        </NestedList>
     </MudListItem>
 </MudList>
