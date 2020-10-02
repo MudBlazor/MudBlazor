@@ -143,10 +143,10 @@ namespace MudBlazor.Docs.Compiler
                 return value;
             if (value == "true" || value == "false")
                 return $"<span class=\"keyword\">{value}</span>";
-            if (Regex.IsMatch(value, "^[A-Z][a-z]+[.][A-Z][a-z]+$"))
+            if (Regex.IsMatch(value, "^[A-Z][A-Za-z0-9]+[.][A-Za-z][A-Za-z0-9]+$"))
             {
                 var tokens = value.Split('.');
-                return $"<span class=\"enum\">{tokens[0]}</span>.<span class=\"enumValue\">{tokens[1]}</span>";
+                return $"<span class=\"enum\">{tokens[0]}</span><span class=\"enumValue\">.{tokens[1]}</span>";
             }
             return $"<span class=\"htmlAttributeValue\">{value}</span>";
         }
