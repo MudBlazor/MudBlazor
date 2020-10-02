@@ -23,7 +23,7 @@
     text-decoration: none;
 }
 
-.mud-list-item-button {
+.mud-list-item-clickable {
     color: inherit;
     border: 0;
     cursor: pointer;
@@ -75,7 +75,8 @@
     list-style: none;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 500;
-    line-height: 48px;
+    padding-top: 8px;
+    padding-bottom: 20px;
 }
 
 .mud-list-subheader-gutters {
@@ -98,4 +99,10 @@
 .mud-list-item-avatar {
     min-width: 56px;
     flex-shrink: 0;
+}
+
+.mud-nested-list {
+    & > .mud-list-item {
+        padding-left: 32px;
+    }
 }
