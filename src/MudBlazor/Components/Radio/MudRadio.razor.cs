@@ -15,6 +15,7 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-radio")
+            .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-radio-label-placement-{Placement.ToDescriptionString()}", when: () => Placement != Placement.End)
           .AddClass(Class)
         .Build();

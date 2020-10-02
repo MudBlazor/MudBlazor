@@ -752,6 +752,12 @@ ul {
   align-items: center;
   vertical-align: middle;
   -webkit-tap-highlight-color: transparent; }
+  .mud-checkbox.mud-disabled, .mud-checkbox .mud-disabled:hover {
+    cursor: default;
+    background-color: transparent; }
+    .mud-checkbox.mud-disabled *, .mud-checkbox .mud-disabled:hover * {
+      cursor: default;
+      color: rgba(0, 0, 0, 0.38); }
 
 .mud-checkbox-input {
   top: 0;
@@ -784,12 +790,6 @@ ul {
   color: var(--mud-theme-color-secondary); }
   .mud-checkbox-secondary:hover {
     background-color: var(--mud-theme-color-secondary-hover); }
-
-.mud-checkbox-disabled {
-  color: rgba(0, 0, 0, 0.26); }
-  .mud-checkbox-disabled:hover {
-    cursor: default;
-    background-color: transparent; }
 
 .mud-chip {
   border: none;
@@ -1864,6 +1864,11 @@ ul {
   margin-right: 16px;
   vertical-align: middle;
   -webkit-tap-highlight-color: transparent; }
+  .mud-radio.mud-disabled, .mud-radio .mud-disabled:hover {
+    cursor: default; }
+    .mud-radio.mud-disabled *, .mud-radio .mud-disabled:hover * {
+      cursor: default;
+      color: rgba(0, 0, 0, 0.38); }
 
 .mud-radio-button {
   width: 100%;
@@ -2014,6 +2019,9 @@ ul {
   margin-right: 16px;
   vertical-align: middle;
   -webkit-tap-highlight-color: transparent; }
+  .mud-switch.mud-disabled {
+    color: rgba(0, 0, 0, 0.38);
+    cursor: default; }
 
 .mud-switch-span {
   width: 58px;
@@ -2407,6 +2415,14 @@ ul {
   bottom: 30px;
   left: calc(100% - 20px); }
 
+.mud-disabled + .mud-input-label + .mud-select-icon {
+  color: rgba(0, 0, 0, 0.38); }
+
+.mud-select-input {
+  cursor: pointer; }
+  .mud-select-input:disabled {
+    cursor: default; }
+
 .mud-select-menu {
   z-index: 100;
   display: none;
@@ -2416,7 +2432,8 @@ ul {
   border-radius: var(--mud-theme-border-radius-default);
   box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
   min-width: 120px;
-  min-height: 16px; }
+  min-height: 16px;
+  margin-top: 16px; }
   .mud-select-menu.mud-open {
     display: block; }
 
@@ -2432,6 +2449,10 @@ ul {
 
 .mud-select > .mud-form-helpertext {
   margin-top: -21px; }
+
+.mud-select-list-item {
+  padding-top: 2px;
+  padding-bottom: 2px; }
 
 .mud-input {
   position: relative;
@@ -2523,7 +2544,7 @@ ul {
     position: relative; }
     .mud-input.mud-input-outlined.mud-error .mud-input-outlined-notched-outline {
       border-color: #f44336; }
-    .mud-input.mud-input-outlined:disabled .mud-input-outlined-notched-outline {
+    .mud-input.mud-input-outlined.mud-disabled .mud-input-root-outlined {
       border-color: rgba(0, 0, 0, 0.26); }
     .mud-input.mud-input-outlined.mud-input-outlined-color-secondary:focus .mud-input-outlined-notched-outline {
       border-color: #dc004e; }

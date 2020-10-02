@@ -4,6 +4,16 @@
     align-items: center;
     vertical-align: middle;
     -webkit-tap-highlight-color: transparent;
+
+    &.mud-disabled, .mud-disabled:hover {
+        cursor: default;
+        background-color: transparent;
+
+        & * {
+            cursor: default;
+            color: rgba(0,0,0,.38);
+        }
+    }
 }
 
 .mud-checkbox-input {
@@ -46,14 +56,5 @@
 
     &:hover {
         background-color: var(--mud-theme-color-secondary-hover);
-    }
-}
-
-.mud-checkbox-disabled {
-    color: rgba(0, 0, 0, 0.26);
-
-    &:hover {
-        cursor:default;
-        background-color: transparent;
     }
 }

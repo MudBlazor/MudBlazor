@@ -12,10 +12,15 @@ namespace MudBlazor
     public partial class MudCheckBox : MudComponentBase
     {
         protected string Classname =>
+        new CssBuilder("mud-checkbox")
+            .AddClass($"mud-disabled", Disabled)
+          .AddClass(Class)
+        .Build();
+        protected string CheckBoxClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-checkbox-{Color.ToDescriptionString()}")
             .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple)
-            .AddClass($"mud-checkbox-disabled", Disabled)
+            .AddClass($"mud-disabled", Disabled)
           .AddClass(Class)
         .Build();
 

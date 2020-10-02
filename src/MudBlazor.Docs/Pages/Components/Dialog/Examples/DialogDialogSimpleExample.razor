@@ -2,14 +2,14 @@
 
 <MudDialog DisableSidePadding="true" ClassContent="demo-dialog-simple">
     <DialogContent>
-        <MudList>
-            <MudListItem Avatar="@Icons.Material.Person" @onclick="@(() => SelectUser("notsocool@gmail.com"))" Button="true">
+        <MudList Clickable="true">
+            <MudListItem Avatar="@Icons.Material.Person" @onclick="@(() => SelectUser("notsocool@gmail.com"))">
                 coolusername@gmail.com
             </MudListItem>
-            <MudListItem Avatar="@Icons.Material.Person" @onclick="@(() => SelectUser("notsocool@gmail.com"))" Button="true">
+            <MudListItem Avatar="@Icons.Material.Person" @onclick="@(() => SelectUser("notsocool@gmail.com"))">
                     notsocool@gmail.com
             </MudListItem>
-            <MudListItem Avatar="@Icons.Custom.Radioactive" AvatarClass="s-t-a-l-k-e-r" @onclick="@(() => SelectUser("strelok@gmail.com"))" Button="true">
+            <MudListItem Avatar="@Icons.Custom.Radioactive" AvatarClass="s-t-a-l-k-e-r" @onclick="@(() => SelectUser("strelok@gmail.com"))">
                     strelok@gmail.com
             </MudListItem>
         </MudList>

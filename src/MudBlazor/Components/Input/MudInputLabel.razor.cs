@@ -11,6 +11,7 @@ namespace MudBlazor
          .AddClass("mud-input-label")
          .AddClass("mud-input-label-animated")
          .AddClass($"mud-input-label-{Variant.ToDescriptionString()}")
+         .AddClass($"mud-disabled", Disabled)
          .AddClass(Class)
        .Build();
 

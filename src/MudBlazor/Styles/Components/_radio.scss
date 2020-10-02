@@ -8,6 +8,16 @@
     margin-right: 16px;
     vertical-align: middle;
     -webkit-tap-highlight-color: transparent;
+
+    &.mud-disabled, .mud-disabled:hover {
+        cursor: default;
+
+        & * {
+            cursor: default;
+            color: rgba(0,0,0,.38);
+        }
+    }
+
 }
 
 .mud-radio-button {
