@@ -32,12 +32,15 @@
         width: 100%;
         max-width: 360px;
         background-color: var(--mud-theme-surface);
-    }
+    } 
+}
 
+.demo-divider-vertical {
     & .mud-paper {
         display: flex;
         padding-left: 5px;
         padding-right: 5px;
+
         & .mud-svg-icon-root {
             margin: 12px;
         }
