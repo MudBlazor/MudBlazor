@@ -27,7 +27,7 @@
   background-color: var(--mud-theme-color-dark);
   border-radius: var(--mud-theme-border-radius-default); }
   .mud-codeblock pre {
-    color: #fff;
+    color: #ededed;
     font-size: 1em;
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
     -webkit-font-smoothing: subpixel-antialiased;
@@ -37,20 +37,22 @@
   .mud-codeblock .html .htmlTagDelimiter {
     color: #979797; }
   .mud-codeblock .html .htmlElementName {
-    color: #27b5b5; }
+    color: #988ef1; }
   .mud-codeblock .html .htmlAttributeName {
     color: #27b5b5; }
-  .mud-codeblock .html .htmlOperator {
-    color: #d0d0d0; }
+  .mud-codeblock .html .htmlOperator, .mud-codeblock .html .quot {
+    color: #c8c8c8; }
   .mud-codeblock .html .htmlAttributeValue {
-    color: #b4eb8f;
-    /*background-color:rgba(255,255,255, 0.15);*/ }
+    color: #ededed; }
   .mud-codeblock .html .enum {
-    color: #b4eb8f; }
+    color: #b4eb8f;
+    background-color: rgba(255, 255, 255, 0.15); }
   .mud-codeblock .html .enumValue {
-    color: white; }
+    color: #ededed;
+    background-color: rgba(255, 255, 255, 0.15); }
   .mud-codeblock .html .keyword {
-    color: #569cd6; }
+    color: #61afef;
+    background-color: rgba(255, 255, 255, 0.15); }
   .mud-codeblock .csharp .keyword {
     color: #569cd6; }
   .mud-codeblock .csharp .string {
