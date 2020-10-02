@@ -1,6 +1,7 @@
 ﻿.mudblazor-brand {
-  font-size: 1.8rem;
-  font-weight: 400;
+  font-size: 1.9rem;
+  font-weight: 300;
+  letter-spacing: .1rem;
   color: var(--mud-theme-on-surface);
   margin-left: auto;
   margin-right: auto; }
@@ -22,6 +23,20 @@
     padding-bottom: 64px;
     padding-left: 30px;
     padding-right: 30px; } }
+
+::-webkit-scrollbar {
+  width: 5px;
+  z-index: 1; }
+
+::-webkit-scrollbar-track {
+  background: transparent; }
+
+::-webkit-scrollbar-thumb {
+  background: #c4c4c4;
+  border-radius: 1px; }
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a6a6a6; }
 
 .mud-codeblock {
   background-color: var(--mud-theme-color-dark);
