@@ -4,14 +4,14 @@
 
 
 <MudFormControl HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname">
-        <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisabelUnderLine="@DisabelUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly" @onclick="@ShowSelect" />
+        <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisabelUnderLine="@DisabelUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly" @onclick="@ShowSelect" Class="mud-select-input" />
         <MudInputLabel Class="mud-input-label-formcontrol" Variant="@Variant">
             @Label
         </MudInputLabel>
         <MudIcon Class="mud-select-icon" Icon="@(isMenuOpen? @Icons.Material.ArrowDropUp : @Icons.Material.ArrowDropDown)"></MudIcon>
         <CascadingValue Value="@this">
             <div class="mud-select-menu @(isMenuOpen? "mud-open" : "")">
-                <MudList>
+                <MudList Clickable="true">
                     @ChildContent
                 </MudList>
             </div>

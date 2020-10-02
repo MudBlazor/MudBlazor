@@ -12,6 +12,18 @@
     left: calc(100% - 20px);
 }
 
+.mud-disabled + .mud-input-label + .mud-select-icon {
+    color: rgba(0, 0, 0, 0.38);
+}
+
+.mud-select-input {
+    cursor: pointer;
+
+    &:disabled {
+        cursor: default;
+    }
+}
+
 .mud-select-menu {
     z-index: 100;
     display: none;
@@ -22,6 +34,7 @@
     box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2), 0px 8px 10px 1px rgba(0,0,0,0.14), 0px 3px 14px 2px rgba(0,0,0,0.12);
     min-width: 120px;
     min-height: 16px;
+    margin-top: 16px;
 
     &.mud-open {
         display: block;
@@ -41,4 +54,9 @@
 
 .mud-select > .mud-form-helpertext {
     margin-top: -21px;
+}
+
+.mud-select-list-item {
+    padding-top: 2px;
+    padding-bottom: 2px;
 }

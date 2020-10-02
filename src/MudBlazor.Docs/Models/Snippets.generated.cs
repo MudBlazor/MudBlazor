@@ -234,13 +234,13 @@ public const string DialogDialogSimpleExample = @"```html
 <MudDialog DisableSidePadding=""true"" ClassContent=""demo-dialog-simple"">
     <DialogContent>
         <MudList>
-            <MudListItem Avatar=""@Icons.Material.Person"" @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"" Button=""true"">
+            <MudListItem Avatar=""@Icons.Material.Person"" @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"">
                 coolusername@gmail.com
             </MudListItem>
-            <MudListItem Avatar=""@Icons.Material.Person"" @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"" Button=""true"">
+            <MudListItem Avatar=""@Icons.Material.Person"" @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"">
                     notsocool@gmail.com
             </MudListItem>
-            <MudListItem Avatar=""@Icons.Custom.Radioactive"" AvatarClass=""s-t-a-l-k-e-r"" @onclick=""@(() => SelectUser(""strelok@gmail.com""))"" Button=""true"">
+            <MudListItem Avatar=""@Icons.Custom.Radioactive"" AvatarClass=""s-t-a-l-k-e-r"" @onclick=""@(() => SelectUser(""strelok@gmail.com""))"">
                     strelok@gmail.com
             </MudListItem>
         </MudList>
@@ -316,11 +316,11 @@ public const string DividerInsertExample = @"```html
     <MudListItem Avatar=""@Icons.Material.TrendingUp"">
         Trending
     </MudListItem>
-    <MudDivider Insert=""true"" />
+    <MudDivider DividerType=""DividerType.Inset"" />
     <MudListItem Avatar=""@Icons.Material.StarRate"">
         Most Stars
     </MudListItem>
-    <MudDivider Insert=""true"" />
+    <MudDivider DividerType=""DividerType.Inset"" />
     <MudListItem Avatar=""@Icons.Material.History"">
         History
     </MudListItem>
