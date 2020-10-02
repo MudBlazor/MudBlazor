@@ -1,7 +1,8 @@
 ﻿.mudblazor-brand {
-  font-size: 1.9rem;
+  font-size: 1.7rem;
   font-weight: 300;
   letter-spacing: .1rem;
+  line-height: 1.5;
   color: var(--mud-theme-on-surface);
   margin-left: auto;
   margin-right: auto; }
@@ -62,12 +63,18 @@
   .mud-codeblock .html .enum {
     color: #b4eb8f;
     background-color: rgba(255, 255, 255, 0.15); }
-  .mud-codeblock .html .enumValue {
+  .mud-codeblock .html .enumValue, .mud-codeblock .html .sharpVariable {
     color: #ededed;
     background-color: rgba(255, 255, 255, 0.15); }
   .mud-codeblock .html .keyword {
     color: #61afef;
     background-color: rgba(255, 255, 255, 0.15); }
+  .mud-codeblock .html .atSign {
+    color: #000;
+    background-color: #d2d295; }
+  .mud-codeblock .csharp .atSign {
+    color: #000;
+    background-color: #d2d295; }
   .mud-codeblock .csharp .keyword {
     color: #569cd6; }
   .mud-codeblock .csharp .string {
