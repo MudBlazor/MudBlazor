@@ -38,7 +38,7 @@
             background-color: rgba(255,255,255,0.15);
         }
 
-        & .enumValue {
+        & .enumValue, .sharpVariable {
             color: #ededed;
             background-color: rgba(255,255,255,0.15);
         }
@@ -47,9 +47,19 @@
             color: #61afef;
             background-color: rgba(255,255,255,0.15);
         }
+
+        & .atSign {
+            color: #000;
+            background-color: #d2d295;
+        }
     }
 
     & .csharp {
+        & .atSign {
+            color: #000;
+            background-color: #d2d295;
+        }
+
         & .keyword {
             color: #569cd6;
         }
