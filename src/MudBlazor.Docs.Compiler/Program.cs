@@ -9,7 +9,7 @@ using ColorCode;
 
 namespace MudBlazor.Docs.Compiler
 {
-    class Program
+    public class Program
     {
         const string DocDir = "MudBlazor.Docs";
         const string SnippetsFile = "Snippets.generated.cs";
@@ -107,7 +107,9 @@ namespace MudBlazor.Docs.Compiler
                 //Console.WriteLine("Found code snippet: " + component_name);
                 var src = StripComponentSource(entry);
                 var blocks=src.Split("@code");
-                var html = formatter.GetHtmlString(blocks[0], Languages.Html).Replace("@", "&#64;");
+                // Note: the @ creates problems and thus we replace it with an unlikely placeholder and in the markup replace back.
+                var html = formatter.GetHtmlString(blocks[0].Replace("@", "PlaceholdeR"), Languages.Html).Replace("PlaceholdeR", "&#64;");
+                html = AttributePostprocessing(html);
                 using (var f = File.Open(markup_path, FileMode.Create))
                 using (var w = new StreamWriter(f))
                 {
@@ -123,6 +125,16 @@ namespace MudBlazor.Docs.Compiler
                     w.Flush();
                 }
             }
+        }
+
+        public static string AttributePostprocessing(string html)
+        {
+            return Regex.Replace(html, @"<span class=""htmlAttributeValue"">""(?'value'.*?)""</span>", new MatchEvaluator(
+                m =>
+                {
+                    return
+                        $@"<span class=""quot"">&quot;</span><span class=""htmlAttributeValue"">{m.Groups["value"]}</span><span class=""quot"">&quot;</span>";
+                }));
         }
 
 
@@ -177,4 +189,5 @@ namespace MudBlazor.UnitTests.Components
             }
         }
     }
+
 }
