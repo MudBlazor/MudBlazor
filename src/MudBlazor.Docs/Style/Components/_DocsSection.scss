@@ -74,14 +74,13 @@
         }
     }
 
-    .docs-section-markdown-segment {
-
+    & .docs-source-code {
         &.docs-show-code {
             display: block;
         }
 
         &.docs-hide-code {
-            display:none;
+            display: none;
         }
     }
 }

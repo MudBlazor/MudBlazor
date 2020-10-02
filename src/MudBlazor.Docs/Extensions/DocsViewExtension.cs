@@ -1,8 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Skclusive.Core.Component;
-using Skclusive.Markdown.Component;
-using Skclusive.Script.DomHelpers;
 using MudBlazor.Dialog;
 
 namespace MudBlazor.Docs.Extensions
@@ -22,8 +19,6 @@ namespace MudBlazor.Docs.Extensions
                 config.HideTransitionDuration = 500;
                 config.ShowTransitionDuration = 500;
             });
-            services.TryAddMarkdownServices();
-            services.TryAddDomHelpersServices(new CoreConfigBuilder().Build());
         }
     }
 }

@@ -1,75 +1,72 @@
 @inherits LayoutComponentBase
 
-<ThemeProvider Theme="currentTheme"/>
+<ThemeProvider Theme="currentTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
-<MarkdownScripts />
 
 
-    <MudLayout DrawerOpen="@_drawerOpen">
-        <MudAppBar Elevation="99" Color="Color.Appbar">
-            <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-            <MudAppBarSpacer />
-            <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
-            <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
-        </MudAppBar>
-        <MudDrawer Elevation="99">
-            <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
-                MudBlazor
-            </MudDrawerHeader>
-            <NavMenu />
-        </MudDrawer>
-        <MudMainContent Class="mudblazor-main-content">
-            @Body
-        </MudMainContent>
-    </MudLayout>
+<MudLayout DrawerOpen="@_drawerOpen">
+    <MudAppBar Elevation="99" Color="Color.Appbar">
+        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudAppBarSpacer />
+        <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
+        <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
+    </MudAppBar>
+    <MudDrawer Elevation="99">
+        <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
+            MudBlazor
+        </MudDrawerHeader>
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent Class="mudblazor-main-content">
+        @Body
+    </MudMainContent>
+</MudLayout>
 
-    @code {
+@code {
 
-        bool _drawerOpen = false;
+    bool _drawerOpen = false;
 
-        void DrawerToggle()
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    protected override void OnInitialized()
+    {
+        currentTheme = defaultTheme;
+    }
+
+    void DarkMode()
+    {
+        if (currentTheme == defaultTheme)
         {
-            _drawerOpen = !_drawerOpen;
+            currentTheme = darkTheme;
         }
-
-        protected override void OnInitialized()
+        else
         {
             currentTheme = defaultTheme;
         }
-
-        void DarkMode()
-        {
-            if(currentTheme == defaultTheme)
-            {
-                currentTheme = darkTheme;
-            }
-            else
-            {
-                currentTheme = defaultTheme;
-            }
-        }
-
-        MudTheme currentTheme = new MudTheme();
-        MudTheme defaultTheme = new MudTheme();
-        MudTheme darkTheme = new MudTheme()
-        {
-            Color_Default = "#fff",
-            Color_OnDefault = "#fff",
-            Color_Background = "#1c2025",
-            Color_Surface = "#282C34",
-            Color_AppBar = "#282C34",
-            Color_OnAppBar = "#fff",
-            Color_Drawer = "#282C34",
-            Color_OnDrawer = "#adb0bb",
-            Color_OnSurface = "#adb0bb",
-            Color_Text_Default  = "#adb0bb",
-            Color_Secondary = "#E62C71",
-            Color_Dark = "#14171b",
-            Color_Background_Grey = "#14171b",
-            Color_Border_Default = "#282C34"
-        };
-
-
     }
+
+    MudTheme currentTheme = new MudTheme();
+    MudTheme defaultTheme = new MudTheme();
+    MudTheme darkTheme = new MudTheme()
+    {
+        Color_Default = "#fff",
+        Color_OnDefault = "#fff",
+        Color_Background = "#1c2025",
+        Color_Surface = "#282C34",
+        Color_AppBar = "#282C34",
+        Color_OnAppBar = "#fff",
+        Color_Drawer = "#282C34",
+        Color_OnDrawer = "#adb0bb",
+        Color_OnSurface = "#adb0bb",
+        Color_Text_Default = "#adb0bb",
+        Color_Secondary = "#E62C71",
+        Color_Dark = "#14171b",
+        Color_Background_Grey = "#14171b",
+        Color_Border_Default = "#282C34"
+    };
+}
 

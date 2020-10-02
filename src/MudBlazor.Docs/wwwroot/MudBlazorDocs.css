@@ -23,55 +23,32 @@
     padding-left: 30px;
     padding-right: 30px; } }
 
-.MarkdownSection-Root {
-  word-break: break-word;
+.mud-codeblock {
   background-color: var(--mud-theme-color-dark);
   border-radius: var(--mud-theme-border-radius-default); }
-  .MarkdownSection-Root pre {
-    padding: 16px;
-    overflow: auto;
-    direction: ltr;
-    -webkit-overflow-scrolling: touch; }
-  .MarkdownSection-Root code {
+  .mud-codeblock pre {
     color: #fff;
-    display: inline-block;
     font-size: 1em;
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-    border-radius: 2px;
-    -webkit-font-smoothing: subpixel-antialiased; }
-
-.language-html .token, .language-html .token .tag {
-  color: #31abab; }
-
-.language-html .token, .language-html .token .punctuation {
-  color: #979797; }
-
-.language-html .token, .language-html .token .attr-name {
-  color: #31abab; }
-
-.language-html .token, .language-html .token .attr-value {
-  color: #b3df75; }
-
-.language-html .token.attr-value > .punctuation {
-  color: #d0d0d0; }
-
-.language-csharp .token.class-name {
-  color: #4ec9b0; }
-
-.language-csharp .token.keyword {
-  color: #569cd6; }
-
-.language-csharp .token.punctuation {
-  color: #cedcdc; }
-
-.language-csharp .token.operator {
-  color: #b4b4b4; }
-
-.language-csharp .token.string {
-  color: #d69d85; }
-
-.language-csharp .token.function {
-  color: #dcdcaa; }
+    -webkit-font-smoothing: subpixel-antialiased;
+    direction: ltr;
+    overflow: hidden;
+    padding: 16px; }
+  .mud-codeblock .html .htmlTagDelimiter {
+    color: #979797; }
+  .mud-codeblock .html .htmlElementName {
+    color: #27b5b5; }
+  .mud-codeblock .html .htmlAttributeName {
+    color: #27b5b5; }
+  .mud-codeblock .html .htmlOperator {
+    color: #d0d0d0; }
+  .mud-codeblock .html .htmlAttributeValue {
+    color: #b4eb8f;
+    /*background-color:rgba(255,255,255, 0.15);*/ }
+  .mud-codeblock .csharp .keyword {
+    color: #569cd6; }
+  .mud-codeblock .csharp .string {
+    color: #d69d85; }
 
 .docs-footer {
   padding: 48px 0px;
@@ -249,8 +226,6 @@
     display: flex;
     align-items: center;
     margin-bottom: 24px; }
-  .docs-home-paper > .MarkdownSection-Root {
-    margin-bottom: 20px; }
 
 .docs-home-title > svg {
   color: #594ae2;
@@ -265,7 +240,7 @@
   letter-spacing: 0.0075em;
   margin: 0; }
 
-.docs-home-markdown pre {
+.docs-home-code pre {
   padding: 16px 14px; }
 
 .docs-credit-card .mud-card-content {
@@ -373,10 +348,10 @@
   .docs-section-source .docs-content-toolbar > .mud-icon-button .mud-svg-icon-root {
     font-size: 1.25rem; }
 
-.docs-section-source .docs-section-markdown-segment.docs-show-code {
+.docs-section-source .docs-source-code.docs-show-code {
   display: block; }
 
-.docs-section-source .docs-section-markdown-segment.docs-hide-code {
+.docs-section-source .docs-source-code.docs-hide-code {
   display: none; }
 
 .docs-icon-container {

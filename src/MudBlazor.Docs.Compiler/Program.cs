@@ -107,7 +107,7 @@ namespace MudBlazor.Docs.Compiler
                 //Console.WriteLine("Found code snippet: " + component_name);
                 var src = StripComponentSource(entry);
                 var blocks=src.Split("@code");
-                var html = formatter.GetHtmlString(blocks[0], Languages.AspxCs).Replace("@", "&#64;");
+                var html = formatter.GetHtmlString(blocks[0], Languages.Html).Replace("@", "&#64;");
                 using (var f = File.Open(markup_path, FileMode.Create))
                 using (var w = new StreamWriter(f))
                 {

@@ -1,73 +1,47 @@
-﻿.MarkdownSection-Root {
-    word-break: break-word;
+﻿.mud-codeblock {
     background-color: var(--mud-theme-color-dark);
     border-radius: var(--mud-theme-border-radius-default);
 
     & pre {
-        padding: 16px;
-        overflow: auto;
-        direction: ltr;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    & code {
         color: #fff;
-        display: inline-block;
         font-size: 1em;
         font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-        border-radius: 2px;
         -webkit-font-smoothing: subpixel-antialiased;
+        direction: ltr;
+        overflow: hidden;
+        padding: 16px;
     }
-}
 
-.language-html {
-    .token {
-        &, .tag {
-            color: #31abab;
-        }
-
-        &, .punctuation {
+    & .html {
+        & .htmlTagDelimiter {
             color: #979797;
         }
 
-        &, .attr-name {
-            color: #31abab;
+        & .htmlElementName {
+            color: #27b5b5;
         }
 
-        &, .attr-value {
-            color: #b3df75;
+        & .htmlAttributeName {
+            color: #27b5b5;
+        }
+
+        & .htmlOperator {
+            color: #d0d0d0;
+        }
+
+        & .htmlAttributeValue {
+            color: #b4eb8f;
+            /*background-color:rgba(255,255,255, 0.15);*/
         }
     }
 
-    .token.attr-value > .punctuation {
-        color: #d0d0d0;
-    }
-}
-
-.language-csharp {
-    .token {
-        &.class-name {
-            color: #4ec9b0;
-        }
-
-        &.keyword {
+    & .csharp {
+        & .keyword {
             color: #569cd6;
         }
 
-        &.punctuation {
-            color: #cedcdc;
-        }
-
-        &.operator {
-            color: #b4b4b4;
-        }
-
-        &.string {
+        & .string {
             color: #d69d85;
-        }
-
-        &.function {
-            color: #dcdcaa;
         }
     }
 }

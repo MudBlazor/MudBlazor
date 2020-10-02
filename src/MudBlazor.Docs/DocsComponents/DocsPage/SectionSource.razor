@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs
 @using MudBlazor.Utilities
 
-<div class="docs-section-source">
+<div class="docs-section-source @Class">
     @if (!NoToolbar)
     {
     <div class="docs-content-toolbar">
@@ -12,14 +12,12 @@
     </div>
     }
 
-    <div class="docs-section-markdown-segment @(ShowCode? "docs-show-code" : "docs-hide-code")">
-        @*<MarkdownSegment Text="@Snippets.GetCode(Code)" />*@
+    <div class="docs-source-code @(ShowCode? "docs-show-code" : "docs-hide-code")">
         @CodeComponent()
     </div>
     @if (!String.IsNullOrEmpty(FullCode))
     {
-        <div class="docs-section-markdown-segment @(ShowFullCode? "docs-show-code" : "docs-hide-code")">
-            @*<MarkdownSegment Text="@Snippets.GetCode(FullCode)" />*@
+        <div class="docs-source-code @(ShowFullCode? "docs-show-code" : "docs-hide-code")">
             @FullCodeComponent()
         </div>
     }
@@ -30,6 +28,8 @@
     [Parameter] public string Code { get; set; }
 
     [Parameter] public string FullCode { get; set; }
+
+    [Parameter] public string Class { get; set; }
 
     [Parameter] public bool ShowCode { get; set; } = true;
 

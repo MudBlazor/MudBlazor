@@ -73,10 +73,6 @@
         align-items: center;
         margin-bottom: 24px;
     }
-
-    & > .MarkdownSection-Root {
-        margin-bottom: 20px;
-    }
 }
 
 .docs-home-title {
@@ -96,6 +92,6 @@
     }
 }
 
-.docs-home-markdown pre{
+.docs-home-code pre{
     padding: 16px 14px;
 }

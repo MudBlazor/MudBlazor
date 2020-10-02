@@ -4,16 +4,26 @@
     <MudContainer>
         <MudText Typo="Typo.h3">Installation</MudText>
         <MudText Typo="Typo.h4">Nuget</MudText>
-        <MudText GutterBottom="true">Find the package through NuGet Package Manager or install it with following command.</MudText>
-        <MarkdownSegment Text="@Markdown_Install_Package" />
-        <MudText Class="pt-6" GutterBottom="true">After the package is added you need to add the following in your _Imports.razor</MudText>
-        <MarkdownSegment Text="@Markdown_Install_Using" />
+        <MudText GutterBottom="true">
+            Find the package through NuGet Package Manager or install it with following command.
+        </MudText>
+        <SectionSource NoToolbar="true" Code="InstallExample" />
+        <MudText Class="pt-6" GutterBottom="true">
+            After the package is added you need to add the following in your _Imports.razor
+        </MudText>
+        <SectionSource NoToolbar="true" Code="UsingExample" />
+
+
         <MudText Typo="Typo.h4">Client Side</MudText>
-        <MudText GutterBottom="true">Add the following in your index.html's head section.</MudText>
-        <MarkdownSegment Text="@Markdown_Install_LinkFiles" />
+        <MudText GutterBottom="true">
+            Add the following in your <CodeInline>index.html</CodeInline>'s head section.
+        </MudText>
+        <SectionSource NoToolbar="true" Code="LinksExample" />
         <MudText Typo="Typo.h4">Server Side</MudText>
-        <MudText>Add the following in your _Host.cshtml's head section.</MudText>
-        <MarkdownSegment Text="@Markdown_Install_LinkFiles" />
+        <MudText>
+            Add the following in your <CodeInline>_Host.cshtml</CodeInline>'s head section.
+        </MudText>
+        <SectionSource NoToolbar="true" Code="LinksExample" />
         <MudText Class="pt-3">Now build and run your project and if you didn't get any errors, your good to go. Jump over to the usage guide to get started.</MudText>
     </MudContainer>
     <MudContainer>
@@ -21,16 +31,3 @@
     </MudContainer>
 </DocsPage>
 <Footer />
-
-@code {
-string Markdown_Install_Package = @"```html
-dotnet add package MudBlazor
-```";
-string Markdown_Install_Using = @"```html
-@using MudBlazor
-```";
-string Markdown_Install_LinkFiles = @"```html
-<link href=""https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"" rel=""stylesheet"" />
-<link href=""_content/MudBlazor/MudBlazor.min.css"" rel=""stylesheet"" />
-```";
-}
