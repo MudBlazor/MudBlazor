@@ -45,6 +45,12 @@
   .mud-codeblock .html .htmlAttributeValue {
     color: #b4eb8f;
     /*background-color:rgba(255,255,255, 0.15);*/ }
+  .mud-codeblock .html .enum {
+    color: #b4eb8f; }
+  .mud-codeblock .html .enumValue {
+    color: white; }
+  .mud-codeblock .html .keyword {
+    color: #569cd6; }
   .mud-codeblock .csharp .keyword {
     color: #569cd6; }
   .mud-codeblock .csharp .string {

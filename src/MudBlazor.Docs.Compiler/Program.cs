@@ -129,16 +129,30 @@ namespace MudBlazor.Docs.Compiler
 
         public static string AttributePostprocessing(string html)
         {
-            return Regex.Replace(html, @"<span class=""htmlAttributeValue"">""(?'value'.*?)""</span>", new MatchEvaluator(
+            return Regex.Replace(html, @"<span class=""htmlAttributeValue"">&quot;(?'value'.*?)&quot;</span>", new MatchEvaluator(
                 m =>
                 {
-                    return
-                        $@"<span class=""quot"">&quot;</span><span class=""htmlAttributeValue"">{m.Groups["value"]}</span><span class=""quot"">&quot;</span>";
+                    var value = m.Groups["value"].Value;
+                    return $@"<span class=""quot"">&quot;</span>{AttributeValuePostprocessing(value)}<span class=""quot"">&quot;</span>";
                 }));
         }
 
+        private static string AttributeValuePostprocessing(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return value;
+            if (value == "true" || value == "false")
+                return $"<span class=\"keyword\">{value}</span>";
+            if (Regex.IsMatch(value, "^[A-Z][a-z]+[.][A-Z][a-z]+$"))
+            {
+                var tokens = value.Split('.');
+                return $"<span class=\"enum\">{tokens[0]}</span>.<span class=\"enumValue\">{tokens[1]}</span>";
+            }
+            return $"<span class=\"htmlAttributeValue\">{value}</span>";
+        }
 
-        private static void CreateTestsFromExamples(string testPath, string docPath)
+
+    private static void CreateTestsFromExamples(string testPath, string docPath)
         {
             using (var f = File.Open(testPath, FileMode.Create))
             using (var w = new StreamWriter(f))
