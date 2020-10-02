@@ -311,18 +311,7 @@ public const string DialogSimpleExample = @"```html
     }
 }
 ```";
-public const string DividerListExample = @"```html
-<MudList>
-    <MudListItem Button=""true"">Inbox</MudListItem>
-    <MudDivider />
-    <MudListItem Button=""true"">Sent</MudListItem>
-    <MudDivider />
-    <MudListItem Button=""true"">Drafts</MudListItem>
-    <MudDivider />
-    <MudListItem Button=""true"">Spam</MudListItem>
-</MudList>
-```";
-public const string InsertDividerExample = @"```html
+public const string DividerInsertExample = @"```html
 <MudList>
     <MudListItem Avatar=""@Icons.Material.TrendingUp"">
         Trending
@@ -336,6 +325,46 @@ public const string InsertDividerExample = @"```html
         History
     </MudListItem>
 </MudList>
+```";
+public const string DividerListExample = @"```html
+<MudList Clickable=""true"">
+    <MudListItem>Inbox</MudListItem>
+    <MudDivider />
+    <MudListItem>Sent</MudListItem>
+    <MudDivider />
+    <MudListItem>Drafts</MudListItem>
+    <MudDivider />
+    <MudListItem>Spam</MudListItem>
+</MudList>
+```";
+public const string DividerMiddleExample = @"```html
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo=""Typo.h5"">Uranium-235</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText>This is the type of uranium used in the RBMK reactors.</MudText>
+        <MudDivider DividerType=""DividerType.Middle"" Class=""my-6""/>
+        <MudText GutterBottom=""true"">Select Reactor Type</MudText>
+        <MudChip Color=""Color.Secondary"">RBMK-1000</MudChip><MudChip>RBMK-1500</MudChip><MudChip>RBMKP-2400</MudChip>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant=""Variant.Text"" Color=""Color.Primary"">Read More</MudButton>
+    </MudCardActions>
+</MudCard>
+```";
+public const string DividerVerticalExample = @"```html
+<MudPaper Outlined=""true"">
+    <MudIcon Icon=""@Icons.Material.FormatAlignRight"" />
+    <MudIcon Icon=""@Icons.Material.FormatAlignCenter"" />
+    <MudIcon Icon=""@Icons.Material.FormatAlignLeft"" />
+    <MudDivider Vertical=""true"" FlexItem=""true"" />
+    <MudIcon Icon=""@Icons.Material.FormatBold"" />
+    <MudIcon Icon=""@Icons.Material.FormatItalic"" />
+    <MudIcon Icon=""@Icons.Material.FormatUnderlined"" />
+</MudPaper>
 ```";
 public const string DrawerClippingExample = @"```html
 <MudLayout DrawerOpen=""@DocsDrawerOpen"" DrawerClipped=""true"">
@@ -565,28 +594,35 @@ public const string ListFolderExample = @"```html
 </MudList>
 ```";
 public const string ListNestedExample = @"```html
-<MudList>
+<MudList Clickable=""true"">
     <MudListSubheader>
         Nested List Items
     </MudListSubheader>
-    <MudListItem Icon=""@Icons.Material.Send"" Button=""true"">
+    <MudListItem Icon=""@Icons.Material.Send"">
         Sent mail
     </MudListItem>
-    <MudListItem Icon=""@Icons.Material.Drafts"" Button=""true"">
+    <MudListItem Icon=""@Icons.Material.Drafts"">
         Drafts
     </MudListItem>
-    <MudListItem Icon=""@Icons.Material.Inbox"" Button=""true"">
-        Inbox
+    <MudListItem Icon=""@Icons.Material.Inbox"" Text=""Inbox"">
+        <NestedList>
+            <MudListItem Icon=""@Icons.Material.StarRate"">
+                Starred
+            </MudListItem>
+            <MudListItem Icon=""@Icons.Material.WatchLater"">
+                Snoozed
+            </MudListItem>
+        </NestedList>
     </MudListItem>
 </MudList>
 ```";
 public const string ListSimpleExample = @"```html
-<MudList>
-    <MudListItem Text=""Inbox"" Icon=""@Icons.Material.Inbox"" Button=""true""/>
-    <MudListItem Text=""Sent"" Icon=""@Icons.Material.Send"" Button=""true""/>
+<MudList Clickable=""true"">
+    <MudListItem Text=""Inbox"" Icon=""@Icons.Material.Inbox""/>
+    <MudListItem Text=""Sent"" Icon=""@Icons.Material.Send""/>
     <MudDivider />
-    <MudListItem Text=""Trash"" Button=""true""/>
-    <MudListItem Text=""Spam"" Button=""true""/>
+    <MudListItem Text=""Trash""/>
+    <MudListItem Text=""Spam""/>
 </MudList>
 ```";
 public const string NavMenuExample = @"```html

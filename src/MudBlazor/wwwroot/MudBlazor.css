@@ -791,6 +791,44 @@ ul {
     cursor: default;
     background-color: transparent; }
 
+.mud-chip {
+  border: none;
+  cursor: default;
+  height: 32px;
+  display: inline-flex;
+  outline: 0;
+  padding: 0;
+  font-size: 0.8125rem;
+  box-sizing: border-box;
+  transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  align-items: center;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  white-space: nowrap;
+  border-radius: 16px;
+  vertical-align: middle;
+  justify-content: center;
+  text-decoration: none;
+  margin: 4px; }
+
+.mud-chip-color-default {
+  color: var(--mud-theme-color-on-default);
+  background-color: var(--mud-theme-color-default-lighten); }
+
+.mud-chip-color-primary {
+  color: var(--mud-theme-color-on-primary);
+  background-color: var(--mud-theme-color-primary); }
+
+.mud-chip-color-secondary {
+  color: var(--mud-theme-color-on-secondary);
+  background-color: var(--mud-theme-color-secondary); }
+
+.mud-chip-label {
+  overflow: hidden;
+  white-space: nowrap;
+  padding-left: 12px;
+  padding-right: 12px;
+  text-overflow: ellipsis; }
+
 .mud-collapse-container {
   max-height: 0;
   transition: max-height 267ms ease-out;
@@ -1607,7 +1645,7 @@ ul {
   justify-content: flex-start;
   text-decoration: none; }
 
-.mud-list-item-button {
+.mud-list-item-clickable {
   color: inherit;
   border: 0;
   cursor: pointer;
@@ -1620,7 +1658,7 @@ ul {
   -webkit-appearance: none;
   -webkit-tap-highlight-color: transparent;
   transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
-  .mud-list-item-button:hover {
+  .mud-list-item-clickable:hover {
     background-color: var(--mud-theme-color-default-hover); }
 
 .mud-list-item-gutters {
@@ -1649,7 +1687,8 @@ ul {
   list-style: none;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 500;
-  line-height: 48px; }
+  padding-top: 8px;
+  padding-bottom: 20px; }
 
 .mud-list-subheader-gutters {
   padding-left: 16px;
@@ -1667,6 +1706,9 @@ ul {
 .mud-list-item-avatar {
   min-width: 56px;
   flex-shrink: 0; }
+
+.mud-nested-list > .mud-list-item {
+  padding-left: 32px; }
 
 .mud-link.mud-link-underline-none {
   text-decoration: none; }

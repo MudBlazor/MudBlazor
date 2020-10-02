@@ -236,6 +236,16 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void DividerInsertExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<DividerInsertExample>();
+        }
+
+
+        [Test]
         public void DividerListExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -246,12 +256,22 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void InsertDividerExample_Test()
+        public void DividerMiddleExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                var comp = ctx.RenderComponent<InsertDividerExample>();
+                var comp = ctx.RenderComponent<DividerMiddleExample>();
+        }
+
+
+        [Test]
+        public void DividerVerticalExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<DividerVerticalExample>();
         }
 
 
