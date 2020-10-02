@@ -108,8 +108,8 @@ namespace MudBlazor.Docs.Compiler
                 var src = StripComponentSource(entry);
                 var blocks=src.Split("@code");
                 // Note: the @ creates problems and thus we replace it with an unlikely placeholder and in the markup replace back.
-                var html = formatter.GetHtmlString(blocks[0].Replace("@", "PlaceholdeR"), Languages.Html).Replace("PlaceholdeR", "&#64;");
-                html = AttributePostprocessing(html);
+                var html = formatter.GetHtmlString(blocks[0].Replace("@", "PlaceholdeR"), Languages.Html).Replace("PlaceholdeR", "@");
+                html = AttributePostprocessing(html).Replace("@", "<span class=\"atSign\">&#64;</span>");
                 using (var f = File.Open(markup_path, FileMode.Create))
                 using (var w = new StreamWriter(f))
                 {
@@ -119,7 +119,7 @@ namespace MudBlazor.Docs.Compiler
                     w.WriteLine(html);
                     if (blocks.Length == 2)
                     {
-                        w.WriteLine(formatter.GetHtmlString("@code" + blocks[1], Languages.CSharp).Replace("@", "&#64;"));
+                        w.WriteLine(formatter.GetHtmlString("@code" + blocks[1], Languages.CSharp).Replace("@", "<span class=\"atSign\">&#64;</span>"));
                     }
                     w.WriteLine("</div>");
                     w.Flush();
@@ -143,10 +143,14 @@ namespace MudBlazor.Docs.Compiler
                 return value;
             if (value == "true" || value == "false")
                 return $"<span class=\"keyword\">{value}</span>";
-            if (Regex.IsMatch(value, "^[A-Z][a-z]+[.][A-Z][a-z]+$"))
+            if (Regex.IsMatch(value, "^[A-Z][A-Za-z0-9]+[.][A-Za-z][A-Za-z0-9]+$"))
             {
                 var tokens = value.Split('.');
-                return $"<span class=\"enum\">{tokens[0]}</span>.<span class=\"enumValue\">{tokens[1]}</span>";
+                return $"<span class=\"enum\">{tokens[0]}</span><span class=\"enumValue\">.{tokens[1]}</span>";
+            }
+            if (Regex.IsMatch(value, "^@[A-Za-z0-9]+$"))
+            {
+                return $"<span class=\"sharpVariable\">{value}</span>";
             }
             return $"<span class=\"htmlAttributeValue\">{value}</span>";
         }
@@ -202,6 +206,7 @@ namespace MudBlazor.UnitTests.Components
                 w.Flush();
             }
         }
+
     }
 
 }
