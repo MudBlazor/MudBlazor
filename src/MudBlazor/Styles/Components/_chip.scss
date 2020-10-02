@@ -1,0 +1,43 @@
+﻿
+.mud-chip {
+    border: none;
+    cursor: default;
+    height: 32px;
+    display: inline-flex;
+    outline: 0;
+    padding: 0;
+    font-size: 0.8125rem;
+    box-sizing: border-box;
+    transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    align-items: center;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    white-space: nowrap;
+    border-radius: 16px;
+    vertical-align: middle;
+    justify-content: center;
+    text-decoration: none;
+    margin: 4px
+}
+
+.mud-chip-color-default {
+    color: var(--mud-theme-color-on-default);
+    background-color: var(--mud-theme-color-default-lighten);
+}
+
+.mud-chip-color-primary {
+    color: var(--mud-theme-color-on-primary);
+    background-color: var(--mud-theme-color-primary);
+}
+
+.mud-chip-color-secondary {
+    color: var(--mud-theme-color-on-secondary);
+    background-color: var(--mud-theme-color-secondary);
+}
+
+.mud-chip-label {
+    overflow: hidden;
+    white-space: nowrap;
+    padding-left: 12px;
+    padding-right: 12px;
+    text-overflow: ellipsis;
+}
