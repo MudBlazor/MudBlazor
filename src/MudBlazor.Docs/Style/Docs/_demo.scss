@@ -33,6 +33,15 @@
         max-width: 360px;
         background-color: var(--mud-theme-surface);
     }
+
+    & .mud-paper {
+        display: flex;
+        padding-left: 5px;
+        padding-right: 5px;
+        & .mud-svg-icon-root {
+            margin: 12px;
+        }
+    }
 }
 
 .demo-paper {
@@ -144,3 +153,4 @@
     width: 200px;
     background-color: var(--mud-theme-surface);
 }
+

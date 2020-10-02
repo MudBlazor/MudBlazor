@@ -113,6 +113,13 @@
   max-width: 360px;
   background-color: var(--mud-theme-surface); }
 
+.demo-list .mud-paper, .demo-divider .mud-paper {
+  display: flex;
+  padding-left: 5px;
+  padding-right: 5px; }
+  .demo-list .mud-paper .mud-svg-icon-root, .demo-divider .mud-paper .mud-svg-icon-root {
+    margin: 12px; }
+
 .demo-paper .mud-paper {
   width: 128px;
   height: 128px;
