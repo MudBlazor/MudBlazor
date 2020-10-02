@@ -6,6 +6,8 @@ using System.Text;
 
 namespace MudBlazor.Docs.Models
 {
+
+    [Obsolete("We don'T need that any more")]
     public static partial class Snippets
     {
         public static string GetCode(string component)

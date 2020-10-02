@@ -1,0 +1,44 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="aspx-cs"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudSimpleTable</span> <span class="htmlAttributeName">Hover</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;true&quot;</span> <span class="htmlAttributeName">Dense</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;&#64;dense&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">thead</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">tr</span><span class="htmlTagDelimiter">&gt;</span>
+            &#64;foreach (var h in headings)
+            {
+                <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">th</span><span class="htmlTagDelimiter">&gt;</span>&#64;h<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">th</span><span class="htmlTagDelimiter">&gt;</span>
+            }
+        <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">tr</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">thead</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">tbody</span><span class="htmlTagDelimiter">&gt;</span>
+        &#64;foreach (var row in rows)
+        {
+            <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">tr</span><span class="htmlTagDelimiter">&gt;</span>
+                &#64;foreach (var x in row.Split())
+                {
+                    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">td</span><span class="htmlTagDelimiter">&gt;</span>&#64;x<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">td</span><span class="htmlTagDelimiter">&gt;</span>
+                }
+            <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">tr</span><span class="htmlTagDelimiter">&gt;</span>
+        }
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">tbody</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudSimpleTable</span><span class="htmlTagDelimiter">&gt;</span>
+&lt;MudSwitch &#64;bind-Checked=&quot;&#64;dense&quot;&gt;Dense<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudSwitch</span><span class="htmlTagDelimiter">&gt;</span>
+
+
+</pre></div>
+<div class="csharp"><pre>
+&#64;code {
+    <span class="keyword">bool</span> dense=<span class="keyword">true</span>;
+    <span class="keyword">string</span>[] headings = { <span class="string">&quot;ID&quot;</span>, <span class="string">&quot;Name&quot;</span>, <span class="string">&quot;Email&quot;</span>, <span class="string">&quot;Gender&quot;</span>, <span class="string">&quot;IP Address&quot;</span> };
+    <span class="keyword">string</span>[] rows = {
+        <span class="stringCSharpVerbatim">&#64;&quot;1 Krishna kpartner0&#64;usatoday.com Male 28.25.250.202&quot;</span>,
+        <span class="stringCSharpVerbatim">&#64;&quot;2 Webb wstitle1&#64;ning.com Male 237.168.134.114&quot;</span>,
+        <span class="stringCSharpVerbatim">&#64;&quot;3 Nathanil nneal2&#64;cyberchimps.com Male 92.6.0.175&quot;</span>,
+        <span class="stringCSharpVerbatim">&#64;&quot;4 Adara alockwood3&#64;patch.com Female 182.174.217.152&quot;</span>,
+        <span class="stringCSharpVerbatim">&#64;&quot;5 Cecilius cchaplin4&#64;shinystat.com Male 195.124.144.18&quot;</span>,
+        <span class="stringCSharpVerbatim">&#64;&quot;6 Cicely cemerine9&#64;soup.io Female 138.94.191.43&quot;</span>,
+    };
+}
+</pre></div>
+</div>

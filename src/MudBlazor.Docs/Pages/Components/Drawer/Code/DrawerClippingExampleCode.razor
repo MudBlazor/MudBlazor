@@ -1,0 +1,38 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="aspx-cs"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudLayout</span> <span class="htmlAttributeName">DrawerOpen</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;&#64;DocsDrawerOpen&quot;</span> <span class="htmlAttributeName">DrawerClipped</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;true&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudAppBar</span> <span class="htmlAttributeName">Position</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Position.Absolute&quot;</span> <span class="htmlAttributeName">Elevation</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;0&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudIconButton</span> <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;&#64;Icons.Material.Menu&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Color.Inherit&quot;</span> <span class="htmlAttributeName">Edge</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Edge.Start&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;&#64;((e) =&gt; DocsDrawerToggle())&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudAppBarSpacer</span> <span class="htmlTagDelimiter">/&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Variant.Text&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Color.Inherit&quot;</span><span class="htmlTagDelimiter">&gt;</span>Login<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudAppBar</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudDrawer</span> <span class="htmlAttributeName">Anchor</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Anchor.Right&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudDrawerHeader</span><span class="htmlTagDelimiter">&gt;</span>
+            <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Typo</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Typo.h6&quot;</span><span class="htmlTagDelimiter">&gt;</span>My App<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudDrawerHeader</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudNavMenu</span><span class="htmlTagDelimiter">&gt;</span>
+            <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudNavLink</span> <span class="htmlAttributeName">Href</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;#&quot;</span><span class="htmlTagDelimiter">&gt;</span>Store<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudNavLink</span><span class="htmlTagDelimiter">&gt;</span>
+            <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudNavLink</span> <span class="htmlAttributeName">Href</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;#&quot;</span><span class="htmlTagDelimiter">&gt;</span>Library<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudNavLink</span><span class="htmlTagDelimiter">&gt;</span>
+            <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudNavLink</span> <span class="htmlAttributeName">Href</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;#&quot;</span><span class="htmlTagDelimiter">&gt;</span>Community<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudNavLink</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudNavMenu</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudDrawer</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudMainContent</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">LoremIpsum</span> <span class="htmlTagDelimiter">/&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudMainContent</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudLayout</span><span class="htmlTagDelimiter">&gt;</span>
+
+
+</pre></div>
+<div class="csharp"><pre>
+&#64;code{
+    <span class="keyword">bool</span> DocsDrawerOpen = <span class="keyword">true</span>;
+
+    <span class="keyword">void</span> DocsDrawerToggle()
+    {
+        DocsDrawerOpen = !DocsDrawerOpen;
+    }
+}
+</pre></div>
+</div>

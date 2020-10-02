@@ -1,0 +1,58 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="aspx-cs"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTable</span> <span class="htmlAttributeName">Items</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;&#64;PeriodicTable.GetElements()&quot;</span> <span class="htmlAttributeName">Dense</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;&#64;dense&quot;</span> <span class="htmlAttributeName">Hover</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;&#64;hover&quot;</span> <span class="htmlAttributeName">Filter</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;new Func&lt;Element,bool&gt;(FilterFunc)&quot; &#64;bind-SelectedItem=&quot;selected_item&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">ToolBarContent</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Typo</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;Typo.h6&quot;</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;mud-flex-1-1-100&quot;</span><span class="htmlTagDelimiter">&gt;</span>Periodic Elements<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudIcon</span> <span class="htmlAttributeName">Style</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;margin-top: 20px; margin-right: 8px;&quot;</span> <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;&#64;Icons.Material.Search&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudIcon</span><span class="htmlTagDelimiter">&gt;</span>
+        &lt;MudTextField &#64;bind-Value=&quot;search_string&quot; Placeholder=&quot;Search&quot;&gt;<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTextField</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">ToolBarContent</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">HeaderContent</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTh</span><span class="htmlTagDelimiter">&gt;</span>Nr<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTh</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTh</span><span class="htmlTagDelimiter">&gt;</span>Sign<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTh</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTh</span><span class="htmlTagDelimiter">&gt;</span>Name<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTh</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTh</span><span class="htmlTagDelimiter">&gt;</span>Position<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTh</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTh</span><span class="htmlTagDelimiter">&gt;</span>Molar mass<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTh</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">HeaderContent</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">RowTemplate</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTd</span><span class="htmlTagDelimiter">&gt;</span>&#64;context.Number<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTd</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTd</span><span class="htmlTagDelimiter">&gt;</span>&#64;context.Sign<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTd</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTd</span><span class="htmlTagDelimiter">&gt;</span>&#64;context.Name<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTd</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTd</span><span class="htmlTagDelimiter">&gt;</span>&#64;context.Position<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTd</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTd</span><span class="htmlTagDelimiter">&gt;</span>&#64;context.Molar<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTd</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">RowTemplate</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">PagerContent</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTablePager</span> <span class="htmlTagDelimiter">/&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">PagerContent</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTable</span><span class="htmlTagDelimiter">&gt;</span>
+&lt;MudSwitch &#64;bind-Checked=&quot;&#64;hover&quot; Color=&quot;Color.Primary&quot;&gt;Hover<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudSwitch</span><span class="htmlTagDelimiter">&gt;</span>
+&lt;MudSwitch &#64;bind-Checked=&quot;&#64;dense&quot; Color=&quot;Color.Secondary&quot;&gt;Dense<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudSwitch</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Inline</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;true&quot;</span><span class="htmlTagDelimiter">&gt;</span>Selected: &#64;selected_item?.Name<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+
+
+</pre></div>
+<div class="csharp"><pre>
+&#64;code {
+    <span class="keyword">bool</span> dense = <span class="keyword">false</span>;
+    <span class="keyword">bool</span> hover = <span class="keyword">true</span>;
+    <span class="keyword">bool</span> fixed_header = <span class="keyword">false</span>;
+    <span class="keyword">string</span> search_string = <span class="string">&quot;&quot;</span>;
+    Element selected_item = <span class="keyword">null</span>;
+    HashSet&lt;Element&gt; selected_items = <span class="keyword">new</span> HashSet&lt;Element&gt;();
+
+    <span class="keyword">bool</span> FilterFunc(Element element)
+    {
+        <span class="keyword">if</span> (<span class="keyword">string</span>.IsNullOrWhiteSpace(search_string))
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        <span class="keyword">if</span> (element.Sign.Contains(search_string))
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        <span class="keyword">if</span> (element.Name.Contains(search_string))
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        <span class="keyword">if</span> ($<span class="string">&quot;{element.Number} {element.Position} {element.Molar}&quot;</span>.Contains(search_string))
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        <span class="keyword">return</span> <span class="keyword">false</span>;
+    }
+}
+</pre></div>
+</div>

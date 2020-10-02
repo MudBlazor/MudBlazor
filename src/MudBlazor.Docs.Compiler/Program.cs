@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using ColorCode;
+//using MarkdownSharp;
 
 namespace MudBlazor.Docs.Compiler
 {
@@ -27,13 +29,15 @@ namespace MudBlazor.Docs.Compiler
             //Console.WriteLine(path);
             //Console.WriteLine(src_path);
             //Console.WriteLine(doc_path);
-            CreateSnippets(snippets_path, doc_path);
+            //CreateSnippets(snippets_path, doc_path);
+            CreateHilitedCode( doc_path);
             var test_path = Directory.EnumerateFiles(src_path, TestsFile, SearchOption.AllDirectories).FirstOrDefault();
             if (test_path == null)
                 throw new InvalidOperationException("File not found: " + TestsFile);
             CreateTestsFromExamples(test_path, doc_path);
         }
 
+        [Obsolete("We don'T need that any more")]
         private static void CreateSnippets(string snippets_path, string doc_path)
         {
             using (var f = File.Open(snippets_path, FileMode.Create))
@@ -67,12 +71,58 @@ namespace MudBlazor.Docs.Compiler
             }
         }
 
+        [Obsolete("We don'T need that any more")]
         private static string EscapeComponentSource(string path)
         {
             var source = File.ReadAllText(path, Encoding.UTF8);
             source = Regex.Replace(source, "@using .+?\n", "");
             source = Regex.Replace(source, "@namespace .+?\n", "");
             return source.Replace("\"", "\"\"").Trim();
+        }
+
+        private static string StripComponentSource(string path)
+        {
+            var source = File.ReadAllText(path, Encoding.UTF8);
+            source = Regex.Replace(source, "@using .+?\n", "");
+            source = Regex.Replace(source, "@namespace .+?\n", "");
+            return source.Trim();
+        }
+
+        private static void CreateHilitedCode(string doc_path)
+        {
+            //Markdown markdown = new Markdown();
+            var formatter = new HtmlClassFormatter();
+            foreach (var entry in Directory.EnumerateFiles(doc_path, "*.razor", SearchOption.AllDirectories).ToArray())
+            {
+                if (entry.EndsWith("Code.razor"))
+                    continue;
+                var filename = Path.GetFileName(entry);
+                if (!filename.Contains(ExampleDiscriminator))
+                    continue;
+                //var component_name = Path.GetFileNameWithoutExtension(filename);
+                var markup_path = entry.Replace("Examples", "Code").Replace(".razor", "Code.razor");
+                var markup_dir = Path.GetDirectoryName(markup_path);
+                if (!Directory.Exists(markup_dir))
+                    Directory.CreateDirectory(markup_dir);
+                //Console.WriteLine("Found code snippet: " + component_name);
+                var src = StripComponentSource(entry);
+                var blocks=src.Split("@code");
+                var html = formatter.GetHtmlString(blocks[0], Languages.AspxCs).Replace("@", "&#64;");
+                using (var f = File.Open(markup_path, FileMode.Create))
+                using (var w = new StreamWriter(f))
+                {
+                    w.WriteLine("@* Auto-generated markup. Any changes will be overwritten *@");
+                    w.WriteLine("@namespace MudBlazor.Docs.Examples.Markup");
+                    w.WriteLine("<div class=\"mud-codeblock\">");
+                    w.WriteLine(html);
+                    if (blocks.Length == 2)
+                    {
+                        w.WriteLine(formatter.GetHtmlString("@code" + blocks[1], Languages.CSharp).Replace("@", "&#64;"));
+                    }
+                    w.WriteLine("</div>");
+                    w.Flush();
+                }
+            }
         }
 
 
@@ -100,6 +150,8 @@ namespace MudBlazor.UnitTests.Components
 ");
                 foreach (var entry in Directory.EnumerateFiles(docPath, "*.razor", SearchOption.AllDirectories))
                 {
+                    if (entry.EndsWith("Code.razor"))
+                        continue;
                     var filename = Path.GetFileName(entry);
                     var component_name = Path.GetFileNameWithoutExtension(filename);
                     if (!filename.Contains(ExampleDiscriminator))

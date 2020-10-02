@@ -1,0 +1,49 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="aspx-cs"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudDialog</span> <span class="htmlAttributeName">DisableSidePadding</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;true&quot;</span> <span class="htmlAttributeName">ClassContent</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;demo-dialog-simple&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">DialogContent</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudList</span><span class="htmlTagDelimiter">&gt;</span>
+            &lt;MudListItem &#64;onclick=&quot;&#64;(() =&gt; SelectUser(&quot;notsocool&#64;gmail.com&quot;))&quot;&gt;
+                <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudAvatar</span><span class="htmlTagDelimiter">&gt;</span>
+                    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudIcon</span> <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;&#64;Icons.Material.Person&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+                <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudAvatar</span><span class="htmlTagDelimiter">&gt;</span>
+                <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+                    coolusername&#64;gmail.com
+                <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+            <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudListItem</span><span class="htmlTagDelimiter">&gt;</span>
+            &lt;MudListItem &#64;onclick=&quot;&#64;(() =&gt; SelectUser(&quot;notsocool&#64;gmail.com&quot;))&quot;&gt;
+                <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudAvatar</span><span class="htmlTagDelimiter">&gt;</span>
+                    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudIcon</span> <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;&#64;Icons.Material.Person&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+                <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudAvatar</span><span class="htmlTagDelimiter">&gt;</span>
+                <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+                    notsocool&#64;gmail.com
+                <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+            <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudListItem</span><span class="htmlTagDelimiter">&gt;</span>
+            &lt;MudListItem &#64;onclick=&quot;&#64;(() =&gt; SelectUser(&quot;strelok&#64;gmail.com&quot;))&quot;&gt;
+                <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudAvatar</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;s-t-a-l-k-e-r&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+                    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudIcon</span> <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="htmlAttributeValue">&quot;&#64;Icons.Custom.Radioactive&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+                <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudAvatar</span><span class="htmlTagDelimiter">&gt;</span>
+                <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+                    strelok&#64;gmail.com
+                <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+            <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudListItem</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudList</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">DialogContent</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudDialog</span><span class="htmlTagDelimiter">&gt;</span>
+
+
+
+</pre></div>
+<div class="csharp"><pre>
+&#64;code {
+    [CascadingParameter] MudDialogInstance MudDialog { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="keyword">void</span> SelectUser(<span class="keyword">string</span> user)
+    {
+        MudDialog.Close(DialogResult.Ok(user));
+    }
+}
+</pre></div>
+</div>
