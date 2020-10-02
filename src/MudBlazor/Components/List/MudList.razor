@@ -2,5 +2,7 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    @ChildContent
+    <CascadingValue Value="@Clickable">
+        @ChildContent
+    </CascadingValue>
 </div>

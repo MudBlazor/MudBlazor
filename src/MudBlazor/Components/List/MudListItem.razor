@@ -1,5 +1,5 @@
 ﻿@namespace MudBlazor
-@inherits MudBaseSelectItem
+@inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" style="@Style">
     @if (!String.IsNullOrEmpty(Avatar))
@@ -9,7 +9,8 @@
                 <MudIcon Icon="@Avatar"></MudIcon>
             </MudAvatar>
         </div>
-    }else if (!String.IsNullOrEmpty(Icon))
+    }
+    else if (!String.IsNullOrEmpty(Icon))
     {
         <div class="mud-list-item-icon">
             <MudIcon Icon="@Icon"></MudIcon>
@@ -27,4 +28,23 @@
             }
         </MudText>
     </div>
+    @if (NestedList != null)
+    {
+        @if (Expanded)
+        {
+            <MudIcon Icon="@Icons.Material.ExpandLess"/>
+        }
+        else
+        {
+            <MudIcon Icon="@Icons.Material.ExpandMore"/>
+        }
+    }
 </div>
+@if (NestedList != null)
+{
+    <MudCollapse Expanded="@Expanded">
+        <MudList Clickable="@Clickable" DisablePadding="true" Class="mud-nested-list">
+            @NestedList
+        </MudList>
+    </MudCollapse>
+}

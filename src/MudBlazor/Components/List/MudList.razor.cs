@@ -13,6 +13,7 @@ namespace MudBlazor
         .Build();
 
         [Parameter] public RenderFragment ChildContent { get; set; }
+        [Parameter] public bool Clickable { get; set; }
         [Parameter] public bool DisablePadding { get; set; }
     }
 }
