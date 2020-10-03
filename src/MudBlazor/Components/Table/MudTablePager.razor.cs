@@ -6,7 +6,7 @@ namespace MudBlazor
 {
     public partial class MudTablePager : MudComponentBase
     {
-        [CascadingParameter] public MudTableBase Table { get; set; }
+        [CascadingParameter] public TableContext Context { get; set; }
 
         [Parameter] public bool DisableRowsPerPage { get; set; }
 
@@ -25,5 +25,7 @@ namespace MudBlazor
         {
             Table.SetRowsPerPage(int.Parse(size));
         }
+
+        public MudTableBase Table => Context?.Table;
     }
 }

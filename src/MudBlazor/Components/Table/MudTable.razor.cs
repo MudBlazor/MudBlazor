@@ -33,11 +33,12 @@ namespace MudBlazor
         [Parameter] public int CurrentPage { get; set; } = 0;
         [Parameter] public bool MultiSelection { get; set; }
 
-
         [Parameter] public RenderFragment ToolBarContent { get; set; }
         [Parameter] public RenderFragment HeaderContent { get; set; }
         //[Parameter] public RenderFragment<T> RowTemplate { get; set; } <-- see MudTable.razor
         [Parameter] public RenderFragment PagerContent { get; set; }
+
+        public abstract TableContext TableContext { get; }
 
         public void NavigateTo(Page page)
         {
@@ -75,5 +76,7 @@ namespace MudBlazor
             => new StyleBuilder()
                 .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
                 .Build();
+
+       
     }
 }

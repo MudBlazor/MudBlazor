@@ -1,19 +1,56 @@
 ﻿@namespace MudBlazor
+@implements IDisposable
 
 <tr class="mud-table-row" @onclick="@OnRowClicked">
+    @if (IsCheckable)
+    {
+        <MudTd>
+            <MudCheckBox @bind-Checked="IsChecked"></MudCheckBox>
+        </MudTd>
+    }
     @ChildContent
 </tr>
 
 @code {
-    [CascadingParameter] public MudTableBase Table { get; set; }
+    [CascadingParameter] public TableContext Context { get; set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 
     [Parameter] public object Item { get; set; }
 
+    [Parameter] public bool IsCheckable { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> IsCheckedChanged { get; set; }
+
+    private bool _checked;
+    [Parameter] public bool IsChecked
+    {
+        get => _checked;
+        set
+        {
+            if (value != _checked)
+            {
+                _checked = value;
+                IsCheckedChanged.InvokeAsync(value);
+            }
+        }
+    }
+
     public void OnRowClicked()
     {
-        Table?.SetSelectedItem(Item);
+        Context?.Table.SetSelectedItem(Item);
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        Context?.Add(this, Item);
+        return base.OnInitializedAsync();
+    }
+
+    public void Dispose()
+    {
+        Context?.Remove(this, Item);
     }
 
 }

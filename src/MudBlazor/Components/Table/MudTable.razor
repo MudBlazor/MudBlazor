@@ -1,9 +1,10 @@
 ﻿@namespace MudBlazor
 @inherits MudTableBase
+@using MudBlazor.Extensions
 @typeparam T
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    <CascadingValue Value="this">
+    <CascadingValue Value="Context">
         @if (ToolBarContent != null)
         {
             <MudToolBar Class="mud-table-toolbar">
@@ -18,9 +19,9 @@
                         <MudTr>
                             @if (MultiSelection)
                             {
-                                <MudTd>
+                                <MudTh>
                                     <MudCheckBox CheckedChanged="@OnHeaderCheckboxClicked"></MudCheckBox>
-                                </MudTd>
+                                </MudTh>
                             }
                             @HeaderContent
                         </MudTr>
@@ -29,13 +30,7 @@
                 <tbody class="mud-table-body">
                     @foreach (var item in CurrentPageItems)
                     {
-                        <MudTr Item="item" @key="item">
-                            @if (MultiSelection)
-                            {
-                                <MudTd>
-                                    <MudCheckBox CheckedChanged="@((b) => { var x = item; OnRowCheckBoxChanged(b, x); })"></MudCheckBox>
-                                </MudTd>
-                            }
+                        <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
                             @RowTemplate(item)
                         </MudTr>
                     }
@@ -89,21 +84,21 @@
             if (!MultiSelection)
                 return new HashSet<T>(new T[] {_selectedItem});
             else
-                return _multi_selection;
+                return Context.Selection;
         }
         set
         {
-            if (value == _multi_selection)
+            if (value == Context.Selection)
                 return;
             if (value == null)
             {
-                if (_multi_selection.Count == 0)
+                if (Context.Selection.Count == 0)
                     return;
-                _multi_selection = new HashSet<T>();
+                Context.Selection = new HashSet<T>();
             }
             else
-                _multi_selection = value;
-            SelectedItemsChanged.InvokeAsync(_multi_selection);
+                Context.Selection = value;
+            SelectedItemsChanged.InvokeAsync(Context.Selection);
             InvokeAsync(StateHasChanged);
         }
     }
@@ -143,29 +138,41 @@
 
     public override void SetSelectedItem(object item)
     {
-        SelectedItem = (T) item;
+        SelectedItem = item.As<T>();
     }
 
-    private void OnRowCheckBoxChanged(bool value, object item)
+    public override TableContext TableContext
+    {
+        get
+        {
+            Context.Table = this;
+            return Context;
+        }
+    }
+
+    // TableContext provides shared functionality between all table sub-components 
+    public TableContext<T> Context { get; } = new TableContext<T>();
+
+    private void OnRowCheckboxChanged(bool value, T item)
     {
         if (value)
-            _multi_selection.Add((T) item);
+            Context.Selection.Add(item);
         else
-            _multi_selection.Remove((T) item);
+            Context.Selection.Remove(item);
         SelectedItemsChanged.InvokeAsync(SelectedItems);
     }
-
-    private HashSet<T> _multi_selection=new HashSet<T>();
 
     private void OnHeaderCheckboxClicked(bool value)
     {
         if (!value)
-            _multi_selection.Clear();
+            Context.Selection.Clear();
         else
         {
             foreach (var item in FilteredItems)
-                _multi_selection.Add(item);
+                Context.Selection.Add(item);
         }
+        Context.UpdateRowCheckBoxes();
         SelectedItemsChanged.InvokeAsync(SelectedItems);
     }
+
 }

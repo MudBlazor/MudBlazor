@@ -74,10 +74,38 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
-        [Ignore("todo")]
+        //[Ignore("todo")]
         public void TableMultiSelection2()
         {
             // checking the header checkbox should select all items (all checkboxes on, all items in SelectedItems)
+            // setup
+            using var ctx = new Bunit.TestContext();
+            var comp = ctx.RenderComponent<TableMultiSelectionTest2>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+            var text = comp.FindComponent<MudText>();
+            var checkboxes = comp.FindComponents<MudCheckBox>().Select(x=>x.Instance).ToArray();
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(4); // <-- one header, three rows
+            var th = comp.FindAll("th").ToArray();
+            th.Length.Should().Be(2); //  one for the checkbox, one for the header
+            var td = comp.FindAll("td").ToArray();
+            td.Length.Should().Be(6); // two td per row for multi selection
+            var inputs = comp.FindAll("input").ToArray();
+            inputs.Length.Should().Be(4); // one checkbox per row + one for the header
+            table.SelectedItems.Count.Should().Be(0); // selected items should be empty
+            // click header checkbox and verify selection text
+            inputs[0].Change(true);
+            table.SelectedItems.Count.Should().Be(3);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4);
+            inputs = comp.FindAll("input").ToArray();
+            inputs[0].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+            comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
         }
     }
 }
