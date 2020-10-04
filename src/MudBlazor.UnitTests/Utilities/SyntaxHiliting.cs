@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests.Utilities
             // handle enums
             var source = "<span class=\"htmlAttributeValue\">&quot;Color.Primary&quot;</span>";
             var actual = Docs.Compiler.Program.AttributePostprocessing(source);
-            var expected = "<span class=\"quot\">&quot;</span><span class=\"enum\">Color</span>.<span class=\"enumValue\">Primary</span><span class=\"quot\">&quot;</span>";
+            var expected = "<span class=\"quot\">&quot;</span><span class=\"enum\">Color</span><span class=\"enumValue\">.Primary</span><span class=\"quot\">&quot;</span>";
             Assert.AreEqual(expected, actual);
         }
     }
