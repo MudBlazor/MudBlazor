@@ -10,7 +10,7 @@
         public string Color_AppBar { get; set; } = "#594ae2";
         public string Color_OnAppBar { get; set; } = "#fff";
         public string Color_Drawer { get; set; } = "#fff";
-        public string Color_OnDrawer { get; set; } = "#2f2f2f";
+        public string Color_OnDrawer { get; set; } = "#444";
         public string Color_Default { get; set; } = "#000";
         public string Color_OnDefault { get; set; } = "#000";
         public string Color_Primary { get; set; } = "#594ae2";
