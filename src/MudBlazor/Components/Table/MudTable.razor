@@ -16,13 +16,7 @@
                 @if (HeaderContent != null)
                 {
                     <thead class="mud-table-head">
-                        <MudTr>
-                            @if (MultiSelection)
-                            {
-                                <MudTh>
-                                    <MudCheckBox CheckedChanged="@OnHeaderCheckboxClicked"></MudCheckBox>
-                                </MudTh>
-                            }
+                        <MudTr IsHeader="true" IsCheckable="MultiSelection" IsCheckedChanged="@OnHeaderCheckboxClicked" @ref="TableContext.HeaderRow">
                             @HeaderContent
                         </MudTr>
                     </thead>
@@ -175,4 +169,14 @@
         SelectedItemsChanged.InvokeAsync(SelectedItems);
     }
 
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        TableContext.UpdateRowCheckBoxes();
+        return base.OnAfterRenderAsync(firstRender);
+    }
 }

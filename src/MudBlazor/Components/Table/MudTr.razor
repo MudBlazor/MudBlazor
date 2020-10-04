@@ -4,9 +4,18 @@
 <tr class="mud-table-row" @onclick="@OnRowClicked">
     @if (IsCheckable)
     {
-        <MudTd>
-            <MudCheckBox @bind-Checked="IsChecked"></MudCheckBox>
-        </MudTd>
+        if (IsHeader)
+        {
+            <MudTh>
+                <MudCheckBox @bind-Checked="IsChecked"></MudCheckBox>
+            </MudTh>
+        }
+        else
+        {
+            <MudTd>
+                <MudCheckBox @bind-Checked="IsChecked"></MudCheckBox>
+            </MudTd>
+        }
     }
     @ChildContent
 </tr>
@@ -19,6 +28,8 @@
     [Parameter] public object Item { get; set; }
 
     [Parameter] public bool IsCheckable { get; set; }
+
+    [Parameter] public bool IsHeader { get; set; }
 
     [Parameter]
     public EventCallback<bool> IsCheckedChanged { get; set; }
@@ -40,6 +51,8 @@
     public void OnRowClicked()
     {
         Context?.Table.SetSelectedItem(Item);
+        if (Context?.Table.MultiSelection == true && !IsHeader)
+            IsChecked = !IsChecked;
     }
 
     protected override Task OnInitializedAsync()
@@ -51,6 +64,17 @@
     public void Dispose()
     {
         Context?.Remove(this, Item);
+    }
+
+    public void SetChecked(bool b, bool notify)
+    {
+        if (notify)
+            IsChecked = b;
+        else
+        {
+            _checked = b;
+            InvokeAsync(StateHasChanged);
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using Bunit;
 using FluentAssertions;
@@ -71,11 +72,13 @@ namespace MudBlazor.UnitTests
             inputs[0].Change(false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
+            // row click
+            tr[1].Click();
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1 }");
         }
 
         [Test]
-        //[Ignore("todo")]
-        public void TableMultiSelection2()
+        public void TableMultiSelectionTest2()
         {
             // checking the header checkbox should select all items (all checkboxes on, all items in SelectedItems)
             // setup
@@ -107,5 +110,61 @@ namespace MudBlazor.UnitTests
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
             checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
         }
+
+        [Test]
+        public void TableMultiSelectionTest3()
+        {
+            // Initially the values bound to SelectedItems should be selected
+            // setup
+            using var ctx = new Bunit.TestContext();
+            var comp = ctx.RenderComponent<TableMultiSelectionTest3>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+            var text = comp.FindComponent<MudText>();
+            var checkboxes = comp.FindComponents<MudCheckBox>().Select(x => x.Instance).ToArray();
+            table.SelectedItems.Count.Should().Be(1); // selected items should be empty
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 1 }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(1);
+            checkboxes[0].Checked.Should().Be(false);
+            checkboxes[2].Checked.Should().Be(true);
+            // uncheck it
+            comp.InvokeAsync(() => { 
+                checkboxes[2].Checked = false;
+            });
+            comp.WaitForState(()=>checkboxes[2].Checked==false);
+            table.SelectedItems.Count.Should().Be(0);
+            comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
+        }
+
+        [Test]
+        public void TableMultiSelectionTest4()
+        {
+            //The checkboxes should all be checked on load, even the header checkbox.
+            // setup
+            using var ctx = new Bunit.TestContext();
+            var comp = ctx.RenderComponent<TableMultiSelectionTest4>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+            var text = comp.FindComponent<MudText>();
+            var checkboxes = comp.FindComponents<MudCheckBox>().Select(x => x.Instance).ToArray();
+            table.SelectedItems.Count.Should().Be(3); // selected items should be empty
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4);
+            // uncheck only row 1 => header checkbox should be off then
+            comp.InvokeAsync(() => {
+                checkboxes[2].Checked = false;
+            });
+            comp.WaitForState(() => checkboxes[2].Checked == false);
+            checkboxes[0].Checked.Should().Be(false); // header checkbox should be off
+            table.SelectedItems.Count.Should().Be(2);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 2 }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(2);
+        }
+        
     }
 }
