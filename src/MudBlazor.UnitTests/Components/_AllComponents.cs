@@ -746,6 +746,36 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void TooltipDelayedExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<TooltipDelayedExample>();
+        }
+
+
+        [Test]
+        public void TooltipPostionExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<TooltipPostionExample>();
+        }
+
+
+        [Test]
+        public void TooltipSimpleExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<TooltipSimpleExample>();
+        }
+
+
+        [Test]
         public void TextAlignmentExample_Test()
         {
                 using var ctx = new Bunit.TestContext();

@@ -375,7 +375,7 @@
 .docs-section-source .docs-content-toolbar {
   width: 100%;
   display: flex; }
-  .docs-section-source .docs-content-toolbar > .mud-icon-button .mud-svg-icon-root {
+  .docs-section-source .docs-content-toolbar > .mud-tooltip-root .mud-icon-button .mud-svg-icon-root {
     font-size: 1.25rem; }
 
 .docs-section-source .docs-source-code.docs-show-code {
