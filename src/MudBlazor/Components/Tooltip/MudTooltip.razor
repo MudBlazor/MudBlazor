@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@using MudBlazor.Extensions
+
+<div class="mud-tooltip-root">
+    @ChildContent
+    <span class="@Classname">
+        @Text
+    </span>
+</div>
+
+@code {
+
+    protected string Classname =>
+   new CssBuilder("mud-tooltip")
+        .AddClass($"mud-tooltip-transition-delayed", Delayed)
+     .AddClass($"mud-tooltip-placement-{Placement.ToDescriptionString()}")
+     .AddClass(Class)
+   .Build();
+
+    [Parameter] public string Text { get; set; }
+
+    [Parameter] public string Class { get; set; }
+
+    [Parameter] public bool Delayed { get; set; }
+
+    [Parameter] public Placement Placement { get; set; } = Placement.Bottom;
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
