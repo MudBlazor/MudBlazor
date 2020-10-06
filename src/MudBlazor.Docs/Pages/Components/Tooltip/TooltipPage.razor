@@ -1,0 +1,40 @@
+﻿@page "/components/tooltip"
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Tooltip</Title>
+        <SubTitle></SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Simple Tooltips</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Class="py-8">
+                <TooltipSimpleExample />
+            </SectionContent>
+            <SectionSource Code="TooltipSimpleExample" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Delayed Tooltips</Title>
+                <Description>The tooltip can be delayed with <CodeInline>Delayed</CodeInline> bool set to true.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Class="py-8">
+                <TooltipDelayedExample />
+            </SectionContent>
+            <SectionSource Code="TooltipDelayedExample" ShowCode="false" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Postioned Tooltips</Title>
+                <Description>With <CodeInline>Placement</CodeInline> enum you can change the default position of the tooltip.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Class="py-8">
+                <TooltipPostionExample />
+            </SectionContent>
+            <SectionSource Code="TooltipPostionExample" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
