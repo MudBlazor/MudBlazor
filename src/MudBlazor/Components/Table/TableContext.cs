@@ -37,6 +37,8 @@ namespace MudBlazor
                 HeaderRow.SetChecked(Selection.Count == Table.GetFilteredItemsCount(), notify:false);
         }
 
+
+
         public override void Add(MudTr row, object item)
         {
             var t = item.As<T>();
