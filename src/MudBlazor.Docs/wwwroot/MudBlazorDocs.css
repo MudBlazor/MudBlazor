@@ -41,15 +41,15 @@
 
 .mud-codeblock {
   background-color: var(--mud-theme-color-dark);
-  border-radius: var(--mud-theme-border-radius-default); }
+  border-radius: var(--mud-theme-border-radius-default);
+  padding: 16px; }
   .mud-codeblock pre {
     color: #ededed;
     font-size: 1em;
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
     -webkit-font-smoothing: subpixel-antialiased;
     direction: ltr;
-    overflow: hidden;
-    padding: 16px; }
+    overflow: hidden; }
   .mud-codeblock .html .htmlTagDelimiter {
     color: #979797; }
   .mud-codeblock .html .htmlElementName {
@@ -270,8 +270,8 @@
   letter-spacing: 0.0075em;
   margin: 0; }
 
-.docs-home-code pre {
-  padding: 16px 14px; }
+.docs-home-code .mud-codeblock {
+  padding: 16px 12px; }
 
 .docs-credit-card .mud-card-content {
   min-height: 180px; }

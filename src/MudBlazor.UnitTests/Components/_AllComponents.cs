@@ -76,6 +76,16 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void AppBarDenseExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AppBarDenseExample>();
+        }
+
+
+        [Test]
         public void AppBarElevationExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -342,6 +352,16 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 var comp = ctx.RenderComponent<DrawerClippingExample>();
+        }
+
+
+        [Test]
+        public void DrawerCombinedExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<DrawerCombinedExample>();
         }
 
 

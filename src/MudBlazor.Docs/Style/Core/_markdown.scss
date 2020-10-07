@@ -1,6 +1,7 @@
 ﻿.mud-codeblock {
     background-color: var(--mud-theme-color-dark);
     border-radius: var(--mud-theme-border-radius-default);
+    padding:16px;
 
     & pre {
         color: #ededed;
@@ -9,10 +10,10 @@
         -webkit-font-smoothing: subpixel-antialiased;
         direction: ltr;
         overflow: hidden;
-        padding: 16px;
     }
 
     & .html {
+
         & .htmlTagDelimiter {
             color: #979797;
         }
