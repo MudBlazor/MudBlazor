@@ -21,6 +21,8 @@ namespace MudBlazor
 
         [Parameter] public int Elevation { set; get; } = 4;
 
+        [Parameter] public bool Dense { get; set; }
+
         [Parameter] public Color Color { get; set; } = Color.Primary;
 
         [Parameter] public Position Position { get; set; } = Position.Fixed;
