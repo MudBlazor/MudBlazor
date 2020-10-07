@@ -17,7 +17,7 @@
         <MudTd>@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
-        <MudTablePager PageSizeOptions="new List<int>(){50, 100}" />
+        <MudTablePager PageSizeOptions="new int[]{50, 100}" />
     </PagerContent>
 </MudTable>
 <MudText Inline="true">Selected items: @(selected_items==null ? "" : string.Join(", ", selected_items.OrderBy(x=>x.Sign).Select(x=>x.Sign)))</MudText>
