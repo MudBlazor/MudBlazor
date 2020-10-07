@@ -1,6 +1,6 @@
 ﻿@page "/components/drawer"
 
-<DocsPage>
+<DocsPage MaxWidth="MaxWidth.Large">
     <DocsPageHeader>
         <Title>Drawer</Title>
         <SubTitle></SubTitle>
@@ -9,14 +9,12 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Persistent drawer</Title>
-                <Description>The drawer can be toggled open or closed. The drawer needs to be wrapped around the Layout component and the default state can be set by DrawerOpen parameter.</Description>
+                <Description>The drawer can be toggled open or closed. The drawer needs to be wrapped by the Layout component and the default state can be set by DrawerOpen parameter.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-drawer">
                 <DrawerPersistentExample />
             </SectionContent>
-            <DocsFrame>
-                <SectionSource Code="DrawerPersistentExample" />
-            </DocsFrame>
+            <SectionSource Code="DrawerPersistentExample" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
@@ -24,11 +22,19 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-drawer">
-                <DocsFrame>
-                    <DrawerClippingExample/>
-                </DocsFrame>
+                <DrawerClippingExample />
             </SectionContent>
-            <SectionSource Code="DrawerClippingExample"></SectionSource>
+            <SectionSource Code="DrawerClippingExample" ShowCode="false" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Combined</Title>
+                <Description>If you want to offer the users the choice of layout themself its possible to use <CodeInline>DrawerOpen</CodeInline> and <CodeInline>DrawerClipped</CodeInline> as separate or combined functions.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-drawer">
+                <DrawerCombinedExample />
+            </SectionContent>
+            <SectionSource Code="DrawerCombinedExample" ShowCode="false" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
