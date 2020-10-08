@@ -104,8 +104,8 @@
         get
         {
             if (Filter == null)
-                return Items;
-            return Items.Where(Filter);
+                return Context.Sort(Items);
+            return Context.Sort(Items.Where(Filter));
         }
     }
 
@@ -140,6 +140,7 @@
         get
         {
             Context.Table = this;
+            Context.TableStateHasChanged = this.StateHasChanged;
             return Context;
         }
     }

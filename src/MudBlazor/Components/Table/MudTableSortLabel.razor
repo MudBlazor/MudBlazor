@@ -1,19 +1,58 @@
 ﻿@namespace MudBlazor
+@typeparam T;
 
-<span class="mud-button-root mud-table-sort-label" @onclick="SortDirection">
-    <svg class="mud-svg-icon-root mud-table-sort-label-icon @(direction? "mud-direction-desc" : "mud-direction-asc")" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" />
+<span class="mud-button-root mud-table-sort-label" @onclick="ToggleSortDirection">
+    <svg class="mud-svg-icon-root mud-table-sort-label-icon @(_direction==SortDirection.Descending ? "mud-direction-desc" : "mud-direction-asc")" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+        @if (_direction != SortDirection.None)
+        {
+            <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/>
+        }
     </svg>
     @ChildContent
 </span>
 
 @code {
+    [CascadingParameter] public TableContext TableContext { get; set; }
+
+    public MudTableBase Table => TableContext?.Table;
+    public TableContext<T> Context => TableContext as TableContext<T>;
+
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    private bool direction;
+    [Parameter]
+    public SortDirection InitialDirection { get; set; } = SortDirection.None;
 
-    public void SortDirection()
+    private SortDirection _direction = SortDirection.None;
+
+    [Parameter]
+    public Func<T, object> SortBy { get; set; } = null;
+
+    public void ToggleSortDirection()
     {
-        direction = !direction;
+        if (SortBy == null)
+        {
+            _direction = SortDirection.None;
+            return;
+        }
+        if (_direction== SortDirection.None)
+            _direction = SortDirection.Ascending;
+        else if (_direction == SortDirection.Ascending)
+            _direction = SortDirection.Descending;
+        else
+            _direction = SortDirection.None;
+        Context?.SetSortFunc(_direction, SortBy);
     }
+
+    protected override Task OnInitializedAsync()
+    {
+        if (SortBy == null)
+            _direction = SortDirection.None;
+        else
+        {
+            _direction = InitialDirection;
+            Context?.SetSortFunc(_direction, SortBy);
+        }
+        return base.OnInitializedAsync();
+    }
+
 }
