@@ -11,45 +11,54 @@ namespace MudBlazor
     {
         protected virtual void GenerateTheme(StringBuilder theme)
         {
-            theme.AppendLine($"--mud-theme-on-surface: {Color_OnSurface};");
-            theme.AppendLine($"--mud-theme-surface: {Color_Surface};");
+            //Core Layout Surfaces
             theme.AppendLine($"--mud-theme-background: {Color_Background};");
             theme.AppendLine($"--mud-theme-background-grey: {Color_Background_Grey};");
+
+            theme.AppendLine($"--mud-theme-surface: {Color_Surface};");
+            theme.AppendLine($"--mud-theme-on-surface: {Color_On_Surface};");
+
             theme.AppendLine($"--mud-theme-appbar: {Color_AppBar};");
-            theme.AppendLine($"--mud-theme-on-appbar: {Color_OnAppBar};");
+            theme.AppendLine($"--mud-theme-on-appbar: {Color_On_AppBar};");
+
             theme.AppendLine($"--mud-theme-drawer: {Color_Drawer};");
-            theme.AppendLine($"--mud-theme-on-drawer: {Color_OnDrawer};");
+            theme.AppendLine($"--mud-theme-on-drawer: {Color_On_Drawer};");
 
+
+            //Text Only
             theme.AppendLine($"--mud-theme-text-default: {Color_Text_Default};");
-            theme.AppendLine($"--mud-theme-text-secondary: {BuildColor(Color_Text_Default, ColorOption.RgbA, 0.54)};");
-
-            theme.AppendLine($"--mud-theme-color-default: {BuildColor(Color_Default, ColorOption.RgbA, 0.54)};");
-            theme.AppendLine($"--mud-theme-color-on-default: {BuildColor(Color_OnDefault, ColorOption.RgbA, 0.87)};");
-            theme.AppendLine($"--mud-theme-color-default-lighten: {BuildColor(Color_Default, ColorOption.RgbA, 0.1)};");
-            theme.AppendLine($"--mud-theme-color-default-darken: {BuildColor(Color_Default, ColorOption.RgbA, 0.2)};");
-            theme.AppendLine($"--mud-theme-color-default-hover: {BuildColor(Color_Default, ColorOption.RgbA, 0.04)};");
-
-            
-            theme.AppendLine($"--mud-theme-color-primary: {BuildColor(Color_Primary,ColorOption.Rgb)};");
-            theme.AppendLine($"--mud-theme-color-on-primary: {Color_OnPrimary};");
-            theme.AppendLine($"--mud-theme-color-primary-lighten: {BuildColor(Color_Primary,ColorOption.Lighten)};");
-            theme.AppendLine($"--mud-theme-color-primary-darken: {BuildColor(Color_Primary, ColorOption.Darken)};");
-            theme.AppendLine($"--mud-theme-color-primary-hover: {BuildColor(Color_Primary, ColorOption.RgbA, 0.06)};");
-
-            
-            theme.AppendLine($"--mud-theme-color-secondary: {BuildColor(Color_Secondary, ColorOption.Rgb)};");
-            theme.AppendLine($"--mud-theme-color-on-secondary: {Color_OnSecondary};");
-            theme.AppendLine($"--mud-theme-color-secondary-lighten: {BuildColor(Color_Secondary, ColorOption.Lighten)};");
-            theme.AppendLine($"--mud-theme-color-secondary-darken: {BuildColor(Color_Secondary, ColorOption.Darken)};");
-            theme.AppendLine($"--mud-theme-color-secondary-hover: {BuildColor(Color_Secondary, ColorOption.RgbA, 0.06)};");
 
 
-            theme.AppendLine($"--mud-theme-color-info: {Color_Info};");
-            theme.AppendLine($"--mud-theme-color-success: {Color_Success};");
-            theme.AppendLine($"--mud-theme-color-warning: {Color_Warning};");
-            theme.AppendLine($"--mud-theme-color-danger: {Color_Danger};");
-            theme.AppendLine($"--mud-theme-color-dark: {Color_Dark};");
+            //Theme Main Colors
+            theme.AppendLine($"--mud-theme-default: {BuildColor(Color_Default, ColorOption.RgbA, 0.54)};");
+            theme.AppendLine($"--mud-theme-on-default: {BuildColor(Color_On_Default, ColorOption.RgbA, 0.87)};");
+            theme.AppendLine($"--mud-theme-default-lighten: {BuildColor(Color_Default, ColorOption.RgbA, 0.1)};");
+            theme.AppendLine($"--mud-theme-default-darken: {BuildColor(Color_Default, ColorOption.RgbA, 0.2)};");
+            theme.AppendLine($"--mud-theme-default-hover: {BuildColor(Color_Default, ColorOption.RgbA, 0.04)};");
 
+            theme.AppendLine($"--mud-theme-primary: {BuildColor(Color_Primary,ColorOption.Rgb)};");
+            theme.AppendLine($"--mud-theme-on-primary: {Color_On_Primary};");
+            theme.AppendLine($"--mud-theme-primary-lighten: {BuildColor(Color_Primary,ColorOption.Lighten)};");
+            theme.AppendLine($"--mud-theme-primary-darken: {BuildColor(Color_Primary, ColorOption.Darken)};");
+            theme.AppendLine($"--mud-theme-primary-hover: {BuildColor(Color_Primary, ColorOption.RgbA, 0.06)};");
+
+            theme.AppendLine($"--mud-theme-secondary: {BuildColor(Color_Secondary, ColorOption.Rgb)};");
+            theme.AppendLine($"--mud-theme-on-secondary: {Color_On_Secondary};");
+            theme.AppendLine($"--mud-theme-secondary-lighten: {BuildColor(Color_Secondary, ColorOption.Lighten)};");
+            theme.AppendLine($"--mud-theme-secondary-darken: {BuildColor(Color_Secondary, ColorOption.Darken)};");
+            theme.AppendLine($"--mud-theme-secondary-hover: {BuildColor(Color_Secondary, ColorOption.RgbA, 0.06)};");
+
+
+            //Theme Alert & Notification Colors
+            theme.AppendLine($"--mud-theme-info: {Color_Info};");
+            theme.AppendLine($"--mud-theme-success: {Color_Success};");
+            theme.AppendLine($"--mud-theme-warning: {Color_Warning};");
+            theme.AppendLine($"--mud-theme-danger: {Color_Danger};");
+            theme.AppendLine($"--mud-theme-dark: {Color_Dark};");
+            theme.AppendLine($"--mud-theme-on-alert: {Color_On_Alert};");
+
+
+            //Theme Border Colors & Radius, Todo remove or make less of them?
             theme.AppendLine($"--mud-theme-border-color-default: {Color_Border_Default};");
             theme.AppendLine($"--mud-theme-border-color-outlines: {Color_Border_Outlines};");
             theme.AppendLine($"--mud-theme-border-color-inputs: {Color_Border_Inputs};");
