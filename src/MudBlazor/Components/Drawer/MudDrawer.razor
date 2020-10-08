@@ -15,6 +15,7 @@
       .AddClass($"mud-drawer--open", LayoutState.DrawerOpen)
       .AddClass($"mud-drawer--closed", !LayoutState.DrawerOpen)
       .AddClass($"mud-drawer-clipped", LayoutState.DrawerClipped)
+      .AddClass($"mud-drawer-color-{Color.ToDescriptionString()}")
       .AddClass($"mud-elevation-{Elevation.ToString()}")
       .AddClass(Class)
     .Build();
@@ -22,6 +23,8 @@
     [Parameter] public int Elevation { set; get; } = 1;
 
     [Parameter] public Anchor Anchor { get; set; }
+
+    [Parameter] public Color Color { get; set; } = Color.Surface;
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 

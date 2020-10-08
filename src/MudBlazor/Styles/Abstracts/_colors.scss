@@ -1,19 +1,11 @@
-﻿
+﻿$mud-theme-props: default, primary, secondary, info, success, warning, danger,dark;
 
-
-
-
-$mud-theme-colors: default, primary, secondary, info, success, warning, danger, dark;
-
-@each $color in $mud-theme-colors {
+@each $color in $mud-theme-props {
     .mud-color-#{$color} {
-        background-color: var(--mud-theme-color-#{$color});
+        background-color: var(--mud-theme-#{$color});
     }
-}
 
-@each $color in $mud-theme-colors {
     .mud-color-text-#{$color} {
-        color: var(--mud-theme-color-#{$color});
+        color: var(--mud-theme-#{$color});
     }
 }
-

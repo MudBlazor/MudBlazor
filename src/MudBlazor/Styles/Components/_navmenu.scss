@@ -41,12 +41,12 @@
     &:hover {
         cursor: pointer;
         text-decoration: none;
-        background-color: var(--mud-theme-color-default-hover);
+        background-color: var(--mud-theme-default-hover);
     }
 
     &.active {
         font-weight: 500 !important;
-        color: var(--mud-theme-color-primary);
+        color: var(--mud-theme-primary);
     }
 }
 

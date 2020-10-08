@@ -6,10 +6,10 @@
     width: 100%;
 
     & > .mud-typography {
-        margin-top:10px;
+        margin-top: 10px;
     }
-        
-        & > input {
+
+    & > input {
         -webkit-appearance: none;
         position: relative;
         display: block;
@@ -41,7 +41,7 @@
             border-radius: 50%;
             height: 2px;
             width: 2px;
-            background-color: var(--mud-theme-color-primary);
+            background-color: var(--mud-theme-primary);
             transform: scale(6, 6);
             transition: box-shadow 0.2s;
         }

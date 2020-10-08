@@ -8,8 +8,6 @@
 
 html,svg {
     height: 100%;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 strong, b {
@@ -28,17 +26,11 @@ body {
 }
 
 a {
-    color: rgba(0, 0, 0, 0.87);
+    color: var(--mud-theme-text-default);
 }
 
 app, .mud-layout {
     width:100%;
     height: 100%;
     display: flex;
-}
-
-// Temp & Test
-
-.padding-20p {
-    padding: 20px;
 }

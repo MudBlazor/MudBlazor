@@ -59,13 +59,13 @@
 }
 
 .mud-radio-color-default {
-    color: var(--mud-theme-color-default);
+    color: var(--mud-theme-default);
 
     &.mud-checked {
-        color: var(--mud-theme-color-default);
+        color: var(--mud-theme-default);
 
         &:hover {
-            background-color: var(--mud-theme-color-default-hover);
+            background-color: var(--mud-theme-default-hover);
         }
     }
 
@@ -75,13 +75,13 @@
 }
 
 .mud-radio-color-primary {
-    color: var(--mud-theme-color-primary);
+    color: var(--mud-theme-primary);
 
     &.mud-checked {
-        color: var(--mud-theme-color-primary);
+        color: var(--mud-theme-primary);
 
         &:hover {
-            background-color: var(--mud-theme-color-primary-hover);
+            background-color: var(--mud-theme-primary-hover);
         }
     }
 
@@ -92,13 +92,13 @@
 
 
 .mud-radio-color-secondary {
-    color: var(--mud-theme-color-secondary);
+    color: var(--mud-theme-secondary);
 
     &.mud-checked {
-        color: var(--mud-theme-color-secondary);
+        color: var(--mud-theme-secondary);
 
         &:hover {
-            background-color: var(--mud-theme-color-secondary-hover);
+            background-color: var(--mud-theme-secondary-hover);
         }
     }
 

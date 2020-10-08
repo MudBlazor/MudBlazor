@@ -1,51 +1,51 @@
 ﻿@charset "UTF-8";
 .mud-color-default {
-  background-color: var(--mud-theme-color-default); }
-
-.mud-color-primary {
-  background-color: var(--mud-theme-color-primary); }
-
-.mud-color-secondary {
-  background-color: var(--mud-theme-color-secondary); }
-
-.mud-color-info {
-  background-color: var(--mud-theme-color-info); }
-
-.mud-color-success {
-  background-color: var(--mud-theme-color-success); }
-
-.mud-color-warning {
-  background-color: var(--mud-theme-color-warning); }
-
-.mud-color-danger {
-  background-color: var(--mud-theme-color-danger); }
-
-.mud-color-dark {
-  background-color: var(--mud-theme-color-dark); }
+  background-color: var(--mud-theme-default); }
 
 .mud-color-text-default {
-  color: var(--mud-theme-color-default); }
+  color: var(--mud-theme-default); }
+
+.mud-color-primary {
+  background-color: var(--mud-theme-primary); }
 
 .mud-color-text-primary {
-  color: var(--mud-theme-color-primary); }
+  color: var(--mud-theme-primary); }
+
+.mud-color-secondary {
+  background-color: var(--mud-theme-secondary); }
 
 .mud-color-text-secondary {
-  color: var(--mud-theme-color-secondary); }
+  color: var(--mud-theme-secondary); }
+
+.mud-color-info {
+  background-color: var(--mud-theme-info); }
 
 .mud-color-text-info {
-  color: var(--mud-theme-color-info); }
+  color: var(--mud-theme-info); }
+
+.mud-color-success {
+  background-color: var(--mud-theme-success); }
 
 .mud-color-text-success {
-  color: var(--mud-theme-color-success); }
+  color: var(--mud-theme-success); }
+
+.mud-color-warning {
+  background-color: var(--mud-theme-warning); }
 
 .mud-color-text-warning {
-  color: var(--mud-theme-color-warning); }
+  color: var(--mud-theme-warning); }
+
+.mud-color-danger {
+  background-color: var(--mud-theme-danger); }
 
 .mud-color-text-danger {
-  color: var(--mud-theme-color-danger); }
+  color: var(--mud-theme-danger); }
+
+.mud-color-dark {
+  background-color: var(--mud-theme-dark); }
 
 .mud-color-text-dark {
-  color: var(--mud-theme-color-dark); }
+  color: var(--mud-theme-dark); }
 
 * {
   box-sizing: border-box;
@@ -55,9 +55,7 @@
   -moz-osx-font-smoothing: grayscale; }
 
 html, svg {
-  height: 100%;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; }
+  height: 100%; }
 
 strong, b {
   font-weight: 700; }
@@ -73,15 +71,12 @@ body {
   background-color: var(--mud-theme-background); }
 
 a {
-  color: rgba(0, 0, 0, 0.87); }
+  color: var(--mud-theme-text-default); }
 
 app, .mud-layout {
   width: 100%;
   height: 100%;
   display: flex; }
-
-.padding-20p {
-  padding: 20px; }
 
 #blazor-error-ui {
   background: lightyellow;
@@ -580,60 +575,60 @@ ul {
   .mud-button-text.mud-button-text-inherit {
     color: inherit; }
   .mud-button-text.mud-button-text-default {
-    color: var(--mud-theme-color-on-default); }
+    color: var(--mud-theme-on-default); }
     .mud-button-text.mud-button-text-default:hover {
-      background-color: var(--mud-theme-color-default-hover); }
+      background-color: var(--mud-theme-default-hover); }
   .mud-button-text.mud-button-text-primary {
-    color: var(--mud-theme-color-primary); }
+    color: var(--mud-theme-primary); }
     .mud-button-text.mud-button-text-primary:hover {
-      background-color: var(--mud-theme-color-primary-hover); }
+      background-color: var(--mud-theme-primary-hover); }
   .mud-button-text.mud-button-text-secondary {
-    color: var(--mud-theme-color-secondary); }
+    color: var(--mud-theme-secondary); }
     .mud-button-text.mud-button-text-secondary:hover {
-      background-color: var(--mud-theme-color-secondary-hover); }
+      background-color: var(--mud-theme-secondary-hover); }
 
 .mud-button-outlined {
-  color: var(--mud-theme-color-on-default);
-  border: 1px solid var(--mud-theme-color-default);
+  color: var(--mud-theme-on-default);
+  border: 1px solid var(--mud-theme-default);
   padding: 5px 15px; }
   .mud-button-outlined:hover {
-    background-color: var(--mud-theme-color-default-hover); }
+    background-color: var(--mud-theme-default-hover); }
   .mud-button-outlined:disabled {
     border: 1px solid rgba(0, 0, 0, 0.12); }
   .mud-button-outlined.mud-button-outlined-primary {
-    color: var(--mud-theme-color-primary);
-    border: 1px solid var(--mud-theme-color-primary); }
+    color: var(--mud-theme-primary);
+    border: 1px solid var(--mud-theme-primary); }
     .mud-button-outlined.mud-button-outlined-primary:hover {
-      border: 1px solid var(--mud-theme-color-primary);
-      background-color: var(--mud-theme-color-primary-hover); }
+      border: 1px solid var(--mud-theme-primary);
+      background-color: var(--mud-theme-primary-hover); }
   .mud-button-outlined.mud-button-outlined-secondary {
-    color: var(--mud-theme-color-secondary);
-    border: 1px solid var(--mud-theme-color-secondary); }
+    color: var(--mud-theme-secondary);
+    border: 1px solid var(--mud-theme-secondary); }
     .mud-button-outlined.mud-button-outlined-secondary:hover {
-      border: 1px solid var(--mud-theme-color-secondary);
-      background-color: var(--mud-theme-color-secondary-hover); }
+      border: 1px solid var(--mud-theme-secondary);
+      background-color: var(--mud-theme-secondary-hover); }
 
 .mud-button-filled {
-  color: var(--mud-theme-color-on-default);
+  color: var(--mud-theme-on-default);
   box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-  background-color: var(--mud-theme-color-default-lighten); }
+  background-color: var(--mud-theme-default-lighten); }
   .mud-button-filled:hover {
     box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
-    background-color: var(--mud-theme-color-default-darken); }
+    background-color: var(--mud-theme-default-darken); }
   .mud-button-filled:disabled {
     color: rgba(0, 0, 0, 0.26);
     box-shadow: none;
     background-color: rgba(0, 0, 0, 0.12); }
   .mud-button-filled.mud-button-filled-primary {
-    color: var(--mud-theme-color-on-primary);
-    background-color: var(--mud-theme-color-primary); }
+    color: var(--mud-theme-on-primary);
+    background-color: var(--mud-theme-primary); }
     .mud-button-filled.mud-button-filled-primary:hover {
-      background-color: var(--mud-theme-color-primary-darken); }
+      background-color: var(--mud-theme-primary-darken); }
   .mud-button-filled.mud-button-filled-secondary {
-    color: var(--mud-theme-color-on-secondary);
-    background-color: var(--mud-theme-color-secondary); }
+    color: var(--mud-theme-on-secondary);
+    background-color: var(--mud-theme-secondary); }
     .mud-button-filled.mud-button-filled-secondary:hover {
-      background-color: var(--mud-theme-color-secondary-darken); }
+      background-color: var(--mud-theme-secondary-darken); }
 
 .mud-button-disable-elevation {
   box-shadow: none; }
@@ -720,19 +715,19 @@ ul {
     background-color: rgba(0, 0, 0, 0.04); }
 
 .mud-icon-button-color-default {
-  color: var(--mud-theme-color-default); }
+  color: var(--mud-theme-default); }
   .mud-icon-button-color-default:hover {
-    background-color: var(--mud-theme-color-default-hover); }
+    background-color: var(--mud-theme-default-hover); }
 
 .mud-icon-button-color-primary {
-  color: var(--mud-theme-color-primary); }
+  color: var(--mud-theme-primary); }
   .mud-icon-button-color-primary:hover {
-    background-color: var(--mud-theme-color-primary-hover); }
+    background-color: var(--mud-theme-primary-hover); }
 
 .mud-icon-button-color-secondary {
-  color: var(--mud-theme-color-secondary); }
+  color: var(--mud-theme-secondary); }
   .mud-icon-button-color-secondary:hover {
-    background-color: var(--mud-theme-color-secondary-hover); }
+    background-color: var(--mud-theme-secondary-hover); }
 
 .mud-icon-button-label {
   width: 100%;
@@ -819,19 +814,19 @@ ul {
   cursor: pointer; }
 
 .mud-checkbox-default {
-  color: var(--mud-theme-color-default); }
+  color: var(--mud-theme-default); }
   .mud-checkbox-default:hover {
-    background-color: var(--mud-theme-color-default-hover); }
+    background-color: var(--mud-theme-default-hover); }
 
 .mud-checkbox-primary {
-  color: var(--mud-theme-color-primary); }
+  color: var(--mud-theme-primary); }
   .mud-checkbox-primary:hover {
-    background-color: var(--mud-theme-color-primary-hover); }
+    background-color: var(--mud-theme-primary-hover); }
 
 .mud-checkbox-secondary {
-  color: var(--mud-theme-color-secondary); }
+  color: var(--mud-theme-secondary); }
   .mud-checkbox-secondary:hover {
-    background-color: var(--mud-theme-color-secondary-hover); }
+    background-color: var(--mud-theme-secondary-hover); }
 
 .mud-chip {
   border: none;
@@ -853,16 +848,16 @@ ul {
   margin: 4px; }
 
 .mud-chip-color-default {
-  color: var(--mud-theme-color-on-default);
-  background-color: var(--mud-theme-color-default-lighten); }
+  color: var(--mud-theme-on-default);
+  background-color: var(--mud-theme-default-lighten); }
 
 .mud-chip-color-primary {
-  color: var(--mud-theme-color-on-primary);
-  background-color: var(--mud-theme-color-primary); }
+  color: var(--mud-theme-on-primary);
+  background-color: var(--mud-theme-primary); }
 
 .mud-chip-color-secondary {
-  color: var(--mud-theme-color-on-secondary);
-  background-color: var(--mud-theme-color-secondary); }
+  color: var(--mud-theme-on-secondary);
+  background-color: var(--mud-theme-secondary); }
 
 .mud-chip-label {
   overflow: hidden;
@@ -1437,7 +1432,7 @@ ul {
     flex-basis: 100%; } }
 
 .mud-paper {
-  color: var(--mud-theme-text-color-default);
+  color: var(--mud-theme-on-surface);
   background-color: var(--mud-theme-surface);
   border-radius: var(--mud-theme-border-radius-default);
   transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
@@ -1552,22 +1547,22 @@ ul {
   justify-content: inherit; }
 
 .mud-fab-default {
-  color: var(--mud-theme-color-on-default);
-  background-color: var(--mud-theme-color-default-lighten); }
+  color: var(--mud-theme-on-default);
+  background-color: var(--mud-theme-default-lighten); }
   .mud-fab-default:hover {
-    background-color: var(--mud-theme-color-default-darken); }
+    background-color: var(--mud-theme-default-darken); }
 
 .mud-fab-primary {
-  color: var(--mud-theme-color-on-primary);
-  background-color: var(--mud-theme-color-primary); }
+  color: var(--mud-theme-on-primary);
+  background-color: var(--mud-theme-primary); }
   .mud-fab-primary:hover {
-    background-color: var(--mud-theme-color-primary-darken); }
+    background-color: var(--mud-theme-primary-darken); }
 
 .mud-fab-secondary {
-  color: var(--mud-theme-color-on-secondary);
-  background-color: var(--mud-theme-color-secondary); }
+  color: var(--mud-theme-on-secondary);
+  background-color: var(--mud-theme-secondary); }
   .mud-fab-secondary:hover {
-    background-color: var(--mud-theme-color-secondary-darken); }
+    background-color: var(--mud-theme-secondary-darken); }
 
 .mud-fab-extended.mud-fab-size-large {
   width: auto;
@@ -1701,7 +1696,7 @@ ul {
   -webkit-tap-highlight-color: transparent;
   transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
   .mud-list-item-clickable:hover {
-    background-color: var(--mud-theme-color-default-hover); }
+    background-color: var(--mud-theme-default-hover); }
 
 .mud-list-item-gutters {
   padding-left: 16px;
@@ -1798,10 +1793,10 @@ ul {
   .mud-nav-link:hover {
     cursor: pointer;
     text-decoration: none;
-    background-color: var(--mud-theme-color-default-hover); }
+    background-color: var(--mud-theme-default-hover); }
   .mud-nav-link.active {
     font-weight: 500 !important;
-    color: var(--mud-theme-color-primary); }
+    color: var(--mud-theme-primary); }
 
 .mud-nav-group * .mud-navmenu > .mud-nav-group .mud-nav-link {
   padding-left: 40px; }
@@ -1879,7 +1874,7 @@ ul {
       border-radius: 50%;
       height: 2px;
       width: 2px;
-      background-color: var(--mud-theme-color-primary);
+      background-color: var(--mud-theme-primary);
       transform: scale(6, 6);
       transition: box-shadow 0.2s; }
     .mud-slider > input:focus::-webkit-slider-thumb {
@@ -1943,29 +1938,29 @@ ul {
   transition: transform 150ms cubic-bezier(0.4, 0, 1, 1) 0ms; }
 
 .mud-radio-color-default {
-  color: var(--mud-theme-color-default); }
+  color: var(--mud-theme-default); }
   .mud-radio-color-default.mud-checked {
-    color: var(--mud-theme-color-default); }
+    color: var(--mud-theme-default); }
     .mud-radio-color-default.mud-checked:hover {
-      background-color: var(--mud-theme-color-default-hover); }
+      background-color: var(--mud-theme-default-hover); }
   .mud-radio-color-default.mud-disabled {
     color: rgba(0, 0, 0, 0.26); }
 
 .mud-radio-color-primary {
-  color: var(--mud-theme-color-primary); }
+  color: var(--mud-theme-primary); }
   .mud-radio-color-primary.mud-checked {
-    color: var(--mud-theme-color-primary); }
+    color: var(--mud-theme-primary); }
     .mud-radio-color-primary.mud-checked:hover {
-      background-color: var(--mud-theme-color-primary-hover); }
+      background-color: var(--mud-theme-primary-hover); }
   .mud-radio-color-primary.mud-disabled {
     color: rgba(0, 0, 0, 0.26); }
 
 .mud-radio-color-secondary {
-  color: var(--mud-theme-color-secondary); }
+  color: var(--mud-theme-secondary); }
   .mud-radio-color-secondary.mud-checked {
-    color: var(--mud-theme-color-secondary); }
+    color: var(--mud-theme-secondary); }
     .mud-radio-color-secondary.mud-checked:hover {
-      background-color: var(--mud-theme-color-secondary-hover); }
+      background-color: var(--mud-theme-secondary-hover); }
   .mud-radio-color-secondary.mud-disabled {
     color: rgba(0, 0, 0, 0.26); }
     .mud-radio-color-secondary.mud-disabled + p {
@@ -2004,13 +1999,13 @@ ul {
   .mud-snackbar.mud-snackbar-default {
     background-color: #313131; }
   .mud-snackbar.mud-snackbar-info {
-    background-color: var(--mud-theme-color-info); }
+    background-color: var(--mud-theme-info); }
   .mud-snackbar.mud-snackbar-success {
-    background-color: var(--mud-theme-color-success); }
+    background-color: var(--mud-theme-success); }
   .mud-snackbar.mud-snackbar-warning {
-    background-color: var(--mud-theme-color-warning); }
+    background-color: var(--mud-theme-warning); }
   .mud-snackbar.mud-snackbar-error {
-    background-color: var(--mud-theme-color-danger); }
+    background-color: var(--mud-theme-danger); }
   .mud-snackbar .mud-snackbar-content-message {
     padding: 8px 0; }
   .mud-snackbar .mud-snackbar-content-action {
@@ -2130,18 +2125,18 @@ ul {
     background-color: currentColor; }
 
 .mud-switch-primary.mud-checked {
-  color: var(--mud-theme-color-primary); }
+  color: var(--mud-theme-primary); }
   .mud-switch-primary.mud-checked:hover {
-    background-color: var(--mud-theme-color-primary-hover); }
+    background-color: var(--mud-theme-primary-hover); }
   .mud-switch-primary.mud-checked + .mud-switch-track {
-    background-color: var(--mud-theme-color-primary); }
+    background-color: var(--mud-theme-primary); }
 
 .mud-switch-secondary.mud-checked {
-  color: var(--mud-theme-color-secondary); }
+  color: var(--mud-theme-secondary); }
   .mud-switch-secondary.mud-checked:hover {
-    background-color: var(--mud-theme-color-secondary-hover); }
+    background-color: var(--mud-theme-secondary-hover); }
   .mud-switch-secondary.mud-checked + .mud-switch-track {
-    background-color: var(--mud-theme-color-secondary); }
+    background-color: var(--mud-theme-secondary); }
 
 .mud-typography {
   margin: 0; }
@@ -2423,29 +2418,62 @@ ul {
   flex-shrink: 0;
   margin-left: 20px; }
 
-.mud-tabs {
-  background-color: var(--mud-theme-surface); }
-
-.mud-tabs-fixed {
-  width: 600px; }
-
-.mud-tabs-toolbar {
+.mud-tabs .mud-tabs {
   display: flex;
   overflow: hidden;
   min-height: 48px;
+  background-color: var(--mud-theme-surface); }
+  .mud-tabs .mud-tabs.mud-tabs-rounded {
+    border-radius: var(--mud-theme-border-radius-default); }
+
+.mud-tabs-toolbar {
   width: 100%;
-  background-color: var(--mud-theme-surface);
-  padding: 0 20px;
-  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12); }
-  .mud-tabs-toolbar > button {
-    width: 100%;
-    border-radius: 0px; }
-  .mud-tabs-toolbar > button.mud-button-text-primary {
-    border-bottom: 2px solid var(--mud-theme-color-primary); }
+  flex: 1 1 auto;
+  display: inline-block;
+  position: relative;
+  white-space: nowrap; }
+  .mud-tabs-toolbar .mud-tabs-toolbar-wrapper {
+    width: max-content;
+    position: absolute;
+    display: flex; }
 
 .mud-tabs-panels {
-  padding: 30px 20px;
-  min-height: 200px; }
+  background-color: var(--mud-theme-surface);
+  padding: 24px; }
+
+.mud-tab {
+  min-width: 160px;
+  max-width: 360px;
+  display: inline-flex;
+  padding: 6px 12px;
+  min-height: 48px;
+  flex-shrink: 0;
+  font-weight: 500;
+  line-height: 1.75;
+  user-select: none;
+  white-space: normal;
+  letter-spacing: 0.02857em;
+  text-transform: uppercase;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
+  .mud-tab:hover {
+    cursor: pointer;
+    background-color: var(--mud-theme-default-hover); }
+  .mud-tab.mud-tab-active {
+    color: var(--mud-theme-primary); }
+    .mud-tab.mud-tab-active:hover {
+      background-color: var(--mud-theme-primary-hover); }
+
+.mud-tab-active-slider {
+  background: var(--mud-theme-primary);
+  height: 2px;
+  position: absolute;
+  left: 0;
+  top: 46px;
+  transition: left 0.3s cubic-bezier(0.64, 0.09, 0.08, 1);
+  will-change: left; }
 
 .mud-select {
   display: inline-flex;
@@ -2469,7 +2497,7 @@ ul {
   z-index: 100;
   display: none;
   position: absolute;
-  color: var(--mud-theme-text-color-default);
+  color: var(--mud-theme-on-surface);
   background-color: var(--mud-theme-surface);
   border-radius: var(--mud-theme-border-radius-default);
   box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
@@ -2537,13 +2565,13 @@ ul {
     position: absolute;
     transform: scaleX(0);
     transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-    border-bottom: 2px solid var(--mud-theme-color-primary);
+    border-bottom: 2px solid var(--mud-theme-primary);
     pointer-events: none; }
   .mud-input.mud-input-underline.mud-disabled:before {
     border-bottom-style: dotted; }
   .mud-input.mud-input-underline.mud-error:after {
     transform: scaleX(1);
-    border-bottom-color: var(--mud-theme-color-danger); }
+    border-bottom-color: var(--mud-theme-danger); }
   .mud-input.mud-input-filled {
     position: relative;
     transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
@@ -2573,7 +2601,7 @@ ul {
       position: absolute;
       transform: scaleX(0);
       transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-      border-bottom: 2px solid var(--mud-theme-color-primary);
+      border-bottom: 2px solid var(--mud-theme-primary);
       pointer-events: none; }
     .mud-input.mud-input-filled.mud-input-underline:hover:before {
       border-bottom: 1px solid rgba(0, 0, 0, 0.87); }
@@ -2695,7 +2723,7 @@ ul {
   .mud-input > input.mud-input-root-outlined:hover {
     border-color: var(--mud-theme-border-color-inputs); }
   .mud-input > input.mud-input-root-outlined:focus {
-    border-color: var(--mud-theme-color-primary); }
+    border-color: var(--mud-theme-primary); }
   .mud-input > input.mud-input-root-outlined.mud-input-root-outlined:-webkit-autofill {
     border-radius: inherit; }
   .mud-input > input.mud-input-root-outlined.mud-input-root-outlined-margin-dense {
@@ -2745,7 +2773,7 @@ ul {
     transform: translate(14px, 12px) scale(1); }
 
 .mud-input:focus-within + label.mud-input-label.mud-input-label-formcontrol {
-  color: var(--mud-theme-color-primary);
+  color: var(--mud-theme-primary);
   transform: translate(0, 1.5px) scale(0.75);
   transform-origin: top left; }
 
@@ -2755,7 +2783,7 @@ ul {
     transform: translate(12px, 7px) scale(0.75); }
 
 .mud-input:focus-within + label.mud-input-label.mud-input-label-formcontrol.mud-input-label-outlined {
-  color: var(--mud-theme-color-primary);
+  color: var(--mud-theme-primary);
   transform: translate(14px, -6px) scale(0.75); }
 
 .mud-shrink + label.mud-input-label.mud-input-label-formcontrol {
@@ -3618,16 +3646,16 @@ ul {
   position: relative; }
 
 .mud-appbar-color-default {
-  color: var(--mud-theme-color-on-default);
-  background-color: var(--mud-theme-color-default); }
+  color: var(--mud-theme-on-default);
+  background-color: var(--mud-theme-default); }
 
 .mud-appbar-color-primary {
-  color: var(--mud-theme-color-on-primary);
-  background-color: var(--mud-theme-color-primary); }
+  color: var(--mud-theme-on-primary);
+  background-color: var(--mud-theme-primary); }
 
 .mud-appbar-color-secondary {
-  color: var(--mud-theme-color-on-secondary);
-  background-color: var(--mud-theme-color-secondary); }
+  color: var(--mud-theme-on-secondary);
+  background-color: var(--mud-theme-secondary); }
 
 .mud-appbar-color-surface {
   color: var(--mud-theme-on-surface);
@@ -3653,9 +3681,7 @@ ul {
   outline: 0;
   z-index: 89;
   overflow-y: auto;
-  flex-direction: column;
-  color: var(--mud-theme-on-drawer);
-  background-color: var(--mud-theme-drawer); }
+  flex-direction: column; }
   .mud-drawer.mud-drawer--open {
     transform: none;
     transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms; }
@@ -3676,6 +3702,33 @@ ul {
 
 .mud-drawer-clipped {
   padding-top: 64px; }
+
+.mud-drawer-color-default {
+  color: var(--mud-theme-on-default);
+  background-color: var(--mud-theme-default); }
+
+.mud-drawer-color-primary {
+  color: var(--mud-theme-on-primary);
+  background-color: var(--mud-theme-primary); }
+
+.mud-drawer-color-secondary {
+  color: var(--mud-theme-on-secondary);
+  background-color: var(--mud-theme-secondary); }
+
+.mud-drawer-color-surface {
+  color: var(--mud-theme-on-surface);
+  background-color: var(--mud-theme-surface); }
+
+.mud-drawer-color-drawer {
+  color: var(--mud-theme-on-drawer);
+  background-color: var(--mud-theme-drawer); }
+
+.mud-drawer-color-inherit {
+  color: inherit; }
+
+.mud-drawer-color-transparent {
+  color: inherit;
+  background-color: transparent; }
 
 .mud-main-content {
   flex: 1 1 auto;

@@ -8,8 +8,6 @@
     z-index: 89;
     overflow-y: auto;
     flex-direction: column;
-    color: var(--mud-theme-on-drawer);
-    background-color: var(--mud-theme-drawer);
 
     &.mud-drawer--open {
         transform: none;
@@ -40,4 +38,41 @@
 
 .mud-drawer-clipped {
     padding-top: 64px;
+}
+
+/// <summary>
+/// Bellow is the classes for theming
+/// </summary>
+.mud-drawer-color-default {
+    color: var(--mud-theme-on-default);
+    background-color: var(--mud-theme-default);
+}
+
+.mud-drawer-color-primary {
+    color: var(--mud-theme-on-primary);
+    background-color: var(--mud-theme-primary);
+}
+
+.mud-drawer-color-secondary {
+    color: var(--mud-theme-on-secondary);
+    background-color: var(--mud-theme-secondary);
+}
+
+.mud-drawer-color-surface {
+    color: var(--mud-theme-on-surface);
+    background-color: var(--mud-theme-surface);
+}
+
+.mud-drawer-color-drawer {
+    color: var(--mud-theme-on-drawer);
+    background-color: var(--mud-theme-drawer);
+}
+
+.mud-drawer-color-inherit {
+    color: inherit;
+}
+
+.mud-drawer-color-transparent {
+    color: inherit;
+    background-color: transparent;
 }

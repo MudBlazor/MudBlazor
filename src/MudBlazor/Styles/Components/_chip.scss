@@ -20,18 +20,18 @@
 }
 
 .mud-chip-color-default {
-    color: var(--mud-theme-color-on-default);
-    background-color: var(--mud-theme-color-default-lighten);
+    color: var(--mud-theme-on-default);
+    background-color: var(--mud-theme-default-lighten);
 }
 
 .mud-chip-color-primary {
-    color: var(--mud-theme-color-on-primary);
-    background-color: var(--mud-theme-color-primary);
+    color: var(--mud-theme-on-primary);
+    background-color: var(--mud-theme-primary);
 }
 
 .mud-chip-color-secondary {
-    color: var(--mud-theme-color-on-secondary);
-    background-color: var(--mud-theme-color-secondary);
+    color: var(--mud-theme-on-secondary);
+    background-color: var(--mud-theme-secondary);
 }
 
 .mud-chip-label {

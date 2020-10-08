@@ -58,37 +58,37 @@
     }
 
     &.mud-button-text-default {
-        color: var(--mud-theme-color-on-default);
+        color: var(--mud-theme-on-default);
 
         &:hover {
-            background-color: var(--mud-theme-color-default-hover);
+            background-color: var(--mud-theme-default-hover);
         }
     }
 
     &.mud-button-text-primary {
-        color: var(--mud-theme-color-primary);
+        color: var(--mud-theme-primary);
 
         &:hover {
-            background-color: var(--mud-theme-color-primary-hover);
+            background-color: var(--mud-theme-primary-hover);
         }
     }
 
     &.mud-button-text-secondary {
-        color: var(--mud-theme-color-secondary);
+        color: var(--mud-theme-secondary);
 
         &:hover {
-            background-color: var(--mud-theme-color-secondary-hover);
+            background-color: var(--mud-theme-secondary-hover);
         }
     }
 }
 
 .mud-button-outlined {
-    color: var(--mud-theme-color-on-default);
-    border: 1px solid var(--mud-theme-color-default);
+    color: var(--mud-theme-on-default);
+    border: 1px solid var(--mud-theme-default);
     padding: 5px 15px;
 
     &:hover {
-        background-color: var(--mud-theme-color-default-hover);
+        background-color: var(--mud-theme-default-hover);
     }
 
     &:disabled {
@@ -96,34 +96,34 @@
     }
 
     &.mud-button-outlined-primary {
-        color: var(--mud-theme-color-primary);
-        border: 1px solid var(--mud-theme-color-primary);
+        color: var(--mud-theme-primary);
+        border: 1px solid var(--mud-theme-primary);
 
         &:hover {
-            border: 1px solid var(--mud-theme-color-primary);
-            background-color: var(--mud-theme-color-primary-hover);
+            border: 1px solid var(--mud-theme-primary);
+            background-color: var(--mud-theme-primary-hover);
         }
     }
 
     &.mud-button-outlined-secondary {
-        color: var(--mud-theme-color-secondary);
-        border: 1px solid var(--mud-theme-color-secondary);
+        color: var(--mud-theme-secondary);
+        border: 1px solid var(--mud-theme-secondary);
 
         &:hover {
-            border: 1px solid var(--mud-theme-color-secondary);
-            background-color: var(--mud-theme-color-secondary-hover);
+            border: 1px solid var(--mud-theme-secondary);
+            background-color: var(--mud-theme-secondary-hover);
         }
     }
 }
 
 .mud-button-filled {
-    color: var(--mud-theme-color-on-default);
+    color: var(--mud-theme-on-default);
     box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12);
-    background-color: var(--mud-theme-color-default-lighten);
+    background-color: var(--mud-theme-default-lighten);
 
     &:hover {
         box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
-        background-color: var(--mud-theme-color-default-darken);
+        background-color: var(--mud-theme-default-darken);
     }
 
     &:disabled {
@@ -133,20 +133,20 @@
     }
 
     &.mud-button-filled-primary {
-        color: var(--mud-theme-color-on-primary);
-        background-color: var(--mud-theme-color-primary);
+        color: var(--mud-theme-on-primary);
+        background-color: var(--mud-theme-primary);
 
         &:hover {
-            background-color: var(--mud-theme-color-primary-darken);
+            background-color: var(--mud-theme-primary-darken);
         }
     }
 
     &.mud-button-filled-secondary {
-        color: var(--mud-theme-color-on-secondary);
-        background-color: var(--mud-theme-color-secondary);
+        color: var(--mud-theme-on-secondary);
+        background-color: var(--mud-theme-secondary);
 
         &:hover {
-            background-color: var(--mud-theme-color-secondary-darken);
+            background-color: var(--mud-theme-secondary-darken);
         }
     }
 }
