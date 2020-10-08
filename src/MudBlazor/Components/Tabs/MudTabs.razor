@@ -2,20 +2,43 @@
 @inherits MudComponentBase
 
 
-<div class="mud-tabs">
+<div class="@TabsClassnames">
     <CascadingValue Value="this">
-        <div class="@Classname">
-            <div class="mud-tabs-toolbar">
-                <div class="mud-tabs-toolbar-wrapper">
-                    @foreach (MudTabPanel panel in Panels)
-                    {
-                        <div class="@GetTabClass(panel)" @onclick=@( () => ActivatePanel(panel) )>@panel.Text</div>
-                    }
-                    <div class="mud-tab-active-slider" style="width: calc(100% / @Panels.Count()); left: calc((100% / @Panels.Count()) * @ActivePanelIndex);"></div>
+        <div class="@ToolbarClassnames">
+            <div class="mud-tabs-toolbar-inner">
+                <div class="mud-tabs-toolbar-content">
+                    <div class="@WrapperClassnames">
+                        @foreach (MudTabPanel panel in Panels)
+                        {
+                        <div class="@GetTabClass(panel)" @onclick=@( () => ActivatePanel(panel) )>
+                            @if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
+                            {
+                                @panel.Text
+                            }
+                            else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
+                            {
+                                <MudIcon Icon="@panel.Icon"/>
+                            }
+                            else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
+                            {
+                                <MudIcon Icon="@panel.Icon" Class="mud-tab-icon-text"/>
+                                @panel.Text
+                            }
+                        </div>
+                        }
+                        @if (!Vertical)
+                        {
+                            <div class="mud-tab-slider mud-tab-slider-horizontal" style="width: calc(100% / @Panels.Count()); left: calc((100% / @Panels.Count()) * @ActivePanelIndex);"></div>
+                        }
+                        else
+                        {
+                            <div class="mud-tab-slider mud-tab-slider-vertical" style="height: calc(100% / @Panels.Count()); top: calc((100% / @Panels.Count()) * @ActivePanelIndex);"></div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="mud-tabs-panels">
+        <div class="@PanelsClassnames">
             @ChildContent
         </div>
     </CascadingValue>

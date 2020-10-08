@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-@if (Parent.ActivePanel == this)
+@if (Parent.ActivePanel == this && ChildContent != null)
 {
     @ChildContent
 }
@@ -11,6 +11,10 @@
     [CascadingParameter] private MudTabs Parent { get; set; }
 
     [Parameter] public string Text { get; set; }
+
+    [Parameter] public string Icon { get; set; }
+
+    [Parameter] public bool Disabled { get; set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 
