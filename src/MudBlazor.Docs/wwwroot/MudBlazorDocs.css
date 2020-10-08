@@ -198,6 +198,10 @@
   width: 200px;
   background-color: var(--mud-theme-surface); }
 
+.demo-tabs .mud-tabs-panels {
+  padding: 24px;
+  background-color: var(--mud-theme-surface); }
+
 .docs-home {
   display: flex;
   text-align: center;
