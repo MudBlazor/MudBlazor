@@ -11,6 +11,10 @@
     color: var(--mud-theme-primary);
     transition: color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
 
+.docs-nav-filler {
+  display: flex;
+  flex-grow: 1; }
+
 .mud-container + .mud-container {
   margin-bottom: 128px; }
 
