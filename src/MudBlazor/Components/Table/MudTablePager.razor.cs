@@ -10,7 +10,7 @@ namespace MudBlazor
 
         [Parameter] public bool DisableRowsPerPage { get; set; }
 
-        [Parameter] public List<int> PageSizeOptions { get; set; } = new List<int>() { 10, 25, 50, 100 };
+        [Parameter] public int[] PageSizeOptions { get; set; } = new int[] { 10, 25, 50, 100 };
 
         [Parameter] public string InfoFormat { get; set; } = "{first_item}-{last_item} of {all_items}";
 

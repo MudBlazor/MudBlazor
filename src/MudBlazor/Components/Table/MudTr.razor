@@ -52,7 +52,9 @@
     {
         Context?.Table.SetSelectedItem(Item);
         if (Context?.Table.MultiSelection == true && !IsHeader)
+        {
             IsChecked = !IsChecked;
+        }
     }
 
     protected override Task OnInitializedAsync()

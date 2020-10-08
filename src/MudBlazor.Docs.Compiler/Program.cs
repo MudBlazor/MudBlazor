@@ -55,8 +55,11 @@ namespace MudBlazor.Docs.Compiler
                 //Console.WriteLine("Found code snippet: " + component_name);
                 var src = StripComponentSource(entry);
                 var blocks=src.Split("@code");
+                var blocks0 = Regex.Replace(blocks[0], @"</?DocsFrame>", "")
+                    .Replace("@", "PlaceholdeR")
+                    .Trim();
                 // Note: the @ creates problems and thus we replace it with an unlikely placeholder and in the markup replace back.
-                var html = formatter.GetHtmlString(blocks[0].Replace("@", "PlaceholdeR"), Languages.Html).Replace("PlaceholdeR", "@");
+                var html = formatter.GetHtmlString(blocks0, Languages.Html).Replace("PlaceholdeR", "@");
                 html = AttributePostprocessing(html).Replace("@", "<span class=\"atSign\">&#64;</span>");
                 using (var f = File.Open(markup_path, FileMode.Create))
                 using (var w = new StreamWriter(f))
