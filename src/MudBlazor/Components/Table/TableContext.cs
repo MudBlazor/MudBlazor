@@ -9,6 +9,7 @@ namespace MudBlazor
     public abstract class TableContext
     {
         public MudTableBase Table { get; set; }
+        public Action TableStateHasChanged { get; set; }
         public abstract void Add(MudTr row, object item);
         public abstract void Remove(MudTr row, object item);
         public abstract void UpdateRowCheckBoxes();
@@ -37,8 +38,6 @@ namespace MudBlazor
                 HeaderRow.SetChecked(Selection.Count == Table.GetFilteredItemsCount(), notify:false);
         }
 
-
-
         public override void Add(MudTr row, object item)
         {
             var t = item.As<T>();
@@ -53,6 +52,32 @@ namespace MudBlazor
             if (ReferenceEquals(t, null))
                 return;
             Rows.Remove(t);
+        }
+
+        public SortDirection SortDirection {
+            get;
+            protected set;
+        }
+
+        public Func<T, object> SortBy { get; protected set; }
+
+        public void SetSortFunc(SortDirection direction, Func<T, object> sortBy)
+        {
+            SortDirection = direction;
+            SortBy = sortBy;
+            TableStateHasChanged();
+        }
+
+        public IEnumerable<T> Sort(IEnumerable<T> items)
+        {
+            if (items == null)
+                return items;
+            if (SortBy == null || SortDirection == SortDirection.None)
+                return items;
+            if (SortDirection==SortDirection.Ascending)
+                return items.OrderBy(item => SortBy(item));
+            else
+                return items.OrderByDescending(item => SortBy(item));
         }
 
     }
