@@ -3631,6 +3631,351 @@ ul {
 .pa-auto {
   padding: auto !important; }
 
+.mt-n1 {
+  margin-top: -4px !important; }
+
+.mb-n1 {
+  margin-bottom: -4px !important; }
+
+.ml-n1 {
+  margin-left: -4px !important; }
+
+.mr-n1 {
+  margin-right: -4px !important; }
+
+.mx-n1 {
+  margin-left: -4px !important;
+  margin-right: -4px !important; }
+
+.my-n1 {
+  margin-top: -4px !important;
+  margin-bottom: -4px !important; }
+
+.ma-n1 {
+  margin: -4px !important; }
+
+.mt-n2 {
+  margin-top: -8px !important; }
+
+.mb-n2 {
+  margin-bottom: -8px !important; }
+
+.ml-n2 {
+  margin-left: -8px !important; }
+
+.mr-n2 {
+  margin-right: -8px !important; }
+
+.mx-n2 {
+  margin-left: -8px !important;
+  margin-right: -8px !important; }
+
+.my-n2 {
+  margin-top: -8px !important;
+  margin-bottom: -8px !important; }
+
+.ma-n2 {
+  margin: -8px !important; }
+
+.mt-n3 {
+  margin-top: -12px !important; }
+
+.mb-n3 {
+  margin-bottom: -12px !important; }
+
+.ml-n3 {
+  margin-left: -12px !important; }
+
+.mr-n3 {
+  margin-right: -12px !important; }
+
+.mx-n3 {
+  margin-left: -12px !important;
+  margin-right: -12px !important; }
+
+.my-n3 {
+  margin-top: -12px !important;
+  margin-bottom: -12px !important; }
+
+.ma-n3 {
+  margin: -12px !important; }
+
+.mt-n4 {
+  margin-top: -16px !important; }
+
+.mb-n4 {
+  margin-bottom: -16px !important; }
+
+.ml-n4 {
+  margin-left: -16px !important; }
+
+.mr-n4 {
+  margin-right: -16px !important; }
+
+.mx-n4 {
+  margin-left: -16px !important;
+  margin-right: -16px !important; }
+
+.my-n4 {
+  margin-top: -16px !important;
+  margin-bottom: -16px !important; }
+
+.ma-n4 {
+  margin: -16px !important; }
+
+.mt-n5 {
+  margin-top: -20px !important; }
+
+.mb-n5 {
+  margin-bottom: -20px !important; }
+
+.ml-n5 {
+  margin-left: -20px !important; }
+
+.mr-n5 {
+  margin-right: -20px !important; }
+
+.mx-n5 {
+  margin-left: -20px !important;
+  margin-right: -20px !important; }
+
+.my-n5 {
+  margin-top: -20px !important;
+  margin-bottom: -20px !important; }
+
+.ma-n5 {
+  margin: -20px !important; }
+
+.mt-n6 {
+  margin-top: -24px !important; }
+
+.mb-n6 {
+  margin-bottom: -24px !important; }
+
+.ml-n6 {
+  margin-left: -24px !important; }
+
+.mr-n6 {
+  margin-right: -24px !important; }
+
+.mx-n6 {
+  margin-left: -24px !important;
+  margin-right: -24px !important; }
+
+.my-n6 {
+  margin-top: -24px !important;
+  margin-bottom: -24px !important; }
+
+.ma-n6 {
+  margin: -24px !important; }
+
+.mt-n7 {
+  margin-top: -28px !important; }
+
+.mb-n7 {
+  margin-bottom: -28px !important; }
+
+.ml-n7 {
+  margin-left: -28px !important; }
+
+.mr-n7 {
+  margin-right: -28px !important; }
+
+.mx-n7 {
+  margin-left: -28px !important;
+  margin-right: -28px !important; }
+
+.my-n7 {
+  margin-top: -28px !important;
+  margin-bottom: -28px !important; }
+
+.ma-n7 {
+  margin: -28px !important; }
+
+.mt-n8 {
+  margin-top: -32px !important; }
+
+.mb-n8 {
+  margin-bottom: -32px !important; }
+
+.ml-n8 {
+  margin-left: -32px !important; }
+
+.mr-n8 {
+  margin-right: -32px !important; }
+
+.mx-n8 {
+  margin-left: -32px !important;
+  margin-right: -32px !important; }
+
+.my-n8 {
+  margin-top: -32px !important;
+  margin-bottom: -32px !important; }
+
+.ma-n8 {
+  margin: -32px !important; }
+
+.mt-n9 {
+  margin-top: -36px !important; }
+
+.mb-n9 {
+  margin-bottom: -36px !important; }
+
+.ml-n9 {
+  margin-left: -36px !important; }
+
+.mr-n9 {
+  margin-right: -36px !important; }
+
+.mx-n9 {
+  margin-left: -36px !important;
+  margin-right: -36px !important; }
+
+.my-n9 {
+  margin-top: -36px !important;
+  margin-bottom: -36px !important; }
+
+.ma-n9 {
+  margin: -36px !important; }
+
+.mt-n10 {
+  margin-top: -40px !important; }
+
+.mb-n10 {
+  margin-bottom: -40px !important; }
+
+.ml-n10 {
+  margin-left: -40px !important; }
+
+.mr-n10 {
+  margin-right: -40px !important; }
+
+.mx-n10 {
+  margin-left: -40px !important;
+  margin-right: -40px !important; }
+
+.my-n10 {
+  margin-top: -40px !important;
+  margin-bottom: -40px !important; }
+
+.ma-n10 {
+  margin: -40px !important; }
+
+.mt-n11 {
+  margin-top: -44px !important; }
+
+.mb-n11 {
+  margin-bottom: -44px !important; }
+
+.ml-n11 {
+  margin-left: -44px !important; }
+
+.mr-n11 {
+  margin-right: -44px !important; }
+
+.mx-n11 {
+  margin-left: -44px !important;
+  margin-right: -44px !important; }
+
+.my-n11 {
+  margin-top: -44px !important;
+  margin-bottom: -44px !important; }
+
+.ma-n11 {
+  margin: -44px !important; }
+
+.mt-n12 {
+  margin-top: -48px !important; }
+
+.mb-n12 {
+  margin-bottom: -48px !important; }
+
+.ml-n12 {
+  margin-left: -48px !important; }
+
+.mr-n12 {
+  margin-right: -48px !important; }
+
+.mx-n12 {
+  margin-left: -48px !important;
+  margin-right: -48px !important; }
+
+.my-n12 {
+  margin-top: -48px !important;
+  margin-bottom: -48px !important; }
+
+.ma-n12 {
+  margin: -48px !important; }
+
+.mt-n13 {
+  margin-top: -52px !important; }
+
+.mb-n13 {
+  margin-bottom: -52px !important; }
+
+.ml-n13 {
+  margin-left: -52px !important; }
+
+.mr-n13 {
+  margin-right: -52px !important; }
+
+.mx-n13 {
+  margin-left: -52px !important;
+  margin-right: -52px !important; }
+
+.my-n13 {
+  margin-top: -52px !important;
+  margin-bottom: -52px !important; }
+
+.ma-n13 {
+  margin: -52px !important; }
+
+.mt-n14 {
+  margin-top: -56px !important; }
+
+.mb-n14 {
+  margin-bottom: -56px !important; }
+
+.ml-n14 {
+  margin-left: -56px !important; }
+
+.mr-n14 {
+  margin-right: -56px !important; }
+
+.mx-n14 {
+  margin-left: -56px !important;
+  margin-right: -56px !important; }
+
+.my-n14 {
+  margin-top: -56px !important;
+  margin-bottom: -56px !important; }
+
+.ma-n14 {
+  margin: -56px !important; }
+
+.mt-n16 {
+  margin-top: -64px !important; }
+
+.mb-n16 {
+  margin-bottom: -64px !important; }
+
+.ml-n16 {
+  margin-left: -64px !important; }
+
+.mr-n16 {
+  margin-right: -64px !important; }
+
+.mx-n16 {
+  margin-left: -64px !important;
+  margin-right: -64px !important; }
+
+.my-n16 {
+  margin-top: -64px !important;
+  margin-bottom: -64px !important; }
+
+.ma-n16 {
+  margin: -64px !important; }
+
 .mud-appbar {
   width: 100%;
   display: flex;
