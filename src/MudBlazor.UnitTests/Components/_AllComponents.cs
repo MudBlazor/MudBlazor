@@ -376,6 +376,36 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void ExpansionPanelDisabledExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<ExpansionPanelDisabledExample>();
+        }
+
+
+        [Test]
+        public void ExpansionPanelMultiExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<ExpansionPanelMultiExample>();
+        }
+
+
+        [Test]
+        public void ExpansionPanelSimpleExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<ExpansionPanelSimpleExample>();
+        }
+
+
+        [Test]
         public void FabSimpleExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
