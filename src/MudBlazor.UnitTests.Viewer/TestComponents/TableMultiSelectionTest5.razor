@@ -1,0 +1,22 @@
+﻿@using MudBlazor;
+@namespace MudBlazor.UnitTests
+
+<MudText>SelectedItems { @string.Join(", ", selected_items) }</MudText>
+<MudTable Items="items" @bind-SelectedItems="selected_items" MultiSelection="true" RowsPerPage="2">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="pageSizeOptions"/>
+    </PagerContent>
+</MudTable>
+
+@code {
+    public static string __description__ = "Multiselection should work with paging.";
+    int[] pageSizeOptions = new int[] {2};
+    int[] items = new int[]{0,1,2,3};
+    HashSet<int> selected_items=new HashSet<int>() { 0, 1, 2, 3 };
+}

@@ -9,6 +9,7 @@ namespace MudBlazor
 {
     public abstract class MudTableBase : MudComponentBase
     {
+        private int _currentPage = 0;
         // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is here in MudTableBase
 
         protected string Classname =>
@@ -30,7 +31,20 @@ namespace MudBlazor
         [Parameter] public bool FixedHeader { get; set; }
         [Parameter] public string Height { get; set; }
         [Parameter] public int RowsPerPage { get; set; } = 10;
-        [Parameter] public int CurrentPage { get; set; } = 0;
+
+        [Parameter]
+        public int CurrentPage
+        {
+            get => _currentPage;
+            set
+            {
+                if (_currentPage == value)
+                    return;
+                _currentPage = value;
+                InvokeAsync(StateHasChanged);
+            }
+        }
+
         [Parameter] public bool MultiSelection { get; set; }
 
         [Parameter] public RenderFragment ToolBarContent { get; set; }
@@ -57,7 +71,6 @@ namespace MudBlazor
                     CurrentPage = Math.Max(0, CurrentPage-1);
                     break;
             }
-            StateHasChanged();
         }
 
         public void SetRowsPerPage(int size)

@@ -5,6 +5,9 @@ using System.Reflection.Metadata;
 using System.Text;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
 
 
@@ -152,7 +155,7 @@ namespace MudBlazor.UnitTests
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
             var checkboxes = comp.FindComponents<MudCheckBox>().Select(x => x.Instance).ToArray();
-            table.SelectedItems.Count.Should().Be(3); // selected items should be empty
+            table.SelectedItems.Count.Should().Be(3); 
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
             checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4);
             // uncheck only row 1 => header checkbox should be off then
@@ -165,6 +168,34 @@ namespace MudBlazor.UnitTests
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 2 }");
             checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(2);
         }
-        
+
+        [Test]
+        public void TableMultiSelectionTest5()
+        {
+            // Paging should not influence multi-selection
+            // setup
+            using var ctx = new Bunit.TestContext();
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            var comp = ctx.RenderComponent<TableMultiSelectionTest5>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+            var text = comp.FindComponent<MudText>();
+            var checkboxes = comp.FindComponents<MudCheckBox>().Select(x => x.Instance).ToArray();
+            table.SelectedItems.Count.Should().Be(4); 
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2, 3 }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
+            // uncheck a row then switch to page 2 and both checkboxes on page 2 should be checked
+            comp.InvokeAsync(() => checkboxes[1].Checked = false);
+            comp.WaitForState(() => checkboxes[1].Checked == false);
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(1);
+            // switch page 
+            comp.InvokeAsync(() => table.CurrentPage = 1);
+            comp.WaitForState(() => table.CurrentPage == 1);
+            // now two checkboxes should be checked on page 2
+            checkboxes = comp.FindComponents<MudCheckBox>().Select(x => x.Instance).ToArray();
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(2);
+        }
     }
 }
