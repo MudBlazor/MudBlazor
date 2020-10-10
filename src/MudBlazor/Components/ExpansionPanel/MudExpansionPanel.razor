@@ -2,13 +2,13 @@
 @inherits MudComponentBase
 
 <div class="@Classname">
-    <div class="mud-expand-panel-header" @onclick=@( () => ExpandPanel())>
+    <div class="mud-expand-panel-header" @onclick=@( () => ToggleExpansion())>
         <div class="mud-expand-panel-text">
             @Text
         </div>
-        <MudIcon Icon="@Icons.Material.ExpandMore" class="@(Expanded? "mud-expand-panel-icon mud-transform" : "mud-expand-panel-icon")"/>
+        <MudIcon Icon="@Icons.Material.ExpandMore" class="@(IsExpanded? "mud-expand-panel-icon mud-transform" : "mud-expand-panel-icon")"/>
     </div>
-    <MudCollapse Expanded="@Expanded">
+    <MudCollapse Expanded="@IsExpanded">
         <div class="mud-expand-panel-content">
             @ChildContent
         </div>

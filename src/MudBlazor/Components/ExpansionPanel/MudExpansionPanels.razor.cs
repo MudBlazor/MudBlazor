@@ -13,37 +13,44 @@ namespace MudBlazor
         .Build();
 
         [Parameter] public bool Square { get; set; }
-        [Parameter] public bool MultipleExpand { get; set; }
+        [Parameter] public bool MultiExpansion { get; set; }
         [Parameter] public int Elevation { set; get; } = 1;
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        public bool ExpandedPanelSet { get; set; }
-        public int ExpandedPanelIndex { get; set; }
-        public List<MudExpandPanel> Panels = new List<MudExpandPanel>();
+        public List<MudExpansionPanel> Panels = new List<MudExpansionPanel>();
 
-        internal void AddPanel(MudExpandPanel expandPanel)
+        internal void AddPanel(MudExpansionPanel panel)
         {
-            Panels.Add(expandPanel);
+            Panels.Add(panel);
             StateHasChanged();
         }
 
-        internal void AddPreviousPanelClass(MudExpandPanel expandPanel)
+        public void RemovePanel(MudExpansionPanel panel)
         {
-            expandPanel.SetNextPanelExpanded();
+            Panels.Remove(panel);
             StateHasChanged();
         }
 
-        internal void SetExpandedPanel(int index)
+        public void UpdateAll()
         {
-            ExpandedPanelIndex = index;
-            ExpandedPanelSet = true;
+            MudExpansionPanel last = null;
+            foreach (var panel in Panels)
+            {
+                if (last != null)
+                    last.NextPanelExpanded = panel.IsExpanded;
+                last = panel;
+            }
         }
 
-        internal void ExpandPanel()
+        public void CloseAllExcept(MudExpansionPanel panel)
         {
-            Panels.ElementAt(ExpandedPanelIndex).SetExpanded();
-            Panels.ElementAt(ExpandedPanelIndex).SetPreviousPanelIndex();
-            StateHasChanged();
+            foreach (var p in Panels)
+            {
+                if (p == panel)
+                    continue;
+                p.Collapse(update_parent:false);
+            }
+            UpdateAll();
         }
     }
 }
