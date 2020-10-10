@@ -2001,10 +2001,12 @@ ul {
   height: 4px;
   overflow: hidden;
   position: relative; }
-  .mud-progress-linear.mud-progress-linear-color-primary {
-    background-color: rgba(89, 74, 226, 0.2); }
-  .mud-progress-linear.mud-progress-linear-color-secondary {
-    background-color: rgba(255, 69, 138, 0.2); }
+
+.mud-progress-linear-color-primary {
+  background-color: rgba(89, 74, 226, 0.2); }
+
+.mud-progress-linear-color-secondary {
+  background-color: rgba(255, 69, 138, 0.2); }
 
 .mud-progress-linear-buffer {
   background-color: transparent; }
@@ -2021,12 +2023,12 @@ ul {
 
 .mud-progress-linear-dashed-color-primary {
   background-size: 10px 10px;
-  background-image: radial-gradient(#a7caed 0%, #a7caed 16%, transparent 42%);
+  background-image: radial-gradient(#c3bdf4 0%, #9a91ed 16%, transparent 42%);
   background-position: 0 -23px; }
 
 .mud-progress-linear-dashed-color-secondary {
   background-size: 10px 10px;
-  background-image: radial-gradient(#f19ebb 0%, #f19ebb 16%, transparent 42%);
+  background-image: radial-gradient(#ff80af 0%, #ff4d8f 16%, transparent 42%);
   background-position: 0 -23px; }
 
 .mud-progress-linear-bar {
@@ -2043,16 +2045,13 @@ ul {
   .mud-progress-linear-bar.mud-progress-linear-2-indeterminate {
     width: auto;
     animation: mud-progress-linear-keyframes-indeterminate2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite; }
-
-.mud-progress-linear-bar-1-determinate {
-  transition: transform .4s linear; }
-
-.mud-progress-linear-bar-1-buffer {
-  z-index: 1;
-  transition: transform .4s linear; }
-
-.mud-progress-linear-bar-2-buffer {
-  transition: transform .4s linear; }
+  .mud-progress-linear-bar.mud-progress-linear-bar-1-determinate {
+    transition: transform .4s linear; }
+  .mud-progress-linear-bar.mud-progress-linear-bar-1-buffer {
+    z-index: 1;
+    transition: transform .4s linear; }
+  .mud-progress-linear-bar.mud-progress-linear-bar-2-buffer {
+    transition: transform .4s linear; }
 
 @-webkit-keyframes mud-progress-linear-keyframes-indeterminate1 {
   0% {

@@ -1,0 +1,43 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudProgressLinear</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Primary</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Buffer</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Value</span><span class="quot">&quot;</span> <span class="htmlAttributeName">BufferValue</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>BufferValue</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudProgressLinear</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Secondary</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Buffer</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Value</span><span class="quot">&quot;</span> <span class="htmlAttributeName">BufferValue</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>BufferValue</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code {
+    <span class="keyword">public</span> <span class="keyword">int</span> Value { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> BufferValue { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="keyword">public</span> <span class="keyword">async</span> <span class="keyword">void</span> StartTimerAsync()
+    {
+        <span class="keyword">if</span> (disposed)
+            <span class="keyword">return</span>;
+        Value = <span class="number">100</span>;
+        BufferValue = <span class="number">100</span>;
+        <span class="keyword">while</span> (Value &gt; <span class="number">0</span>)
+        {
+            Value = Value - <span class="number">4</span>;
+            BufferValue = BufferValue - <span class="number">5</span>;
+            StateHasChanged();
+            <span class="keyword">await</span> Task.Delay(<span class="number">500</span>);
+            <span class="keyword">if</span> (disposed)
+                <span class="keyword">return</span>;
+        }
+        Value = <span class="number">100</span>;
+        BufferValue = <span class="number">100</span>;
+        StartTimerAsync();
+    }
+    <span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> OnInitialized()
+        =&gt; StartTimerAsync();
+
+    <span class="keyword">bool</span> disposed;
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose()
+    {
+        disposed = <span class="keyword">true</span>;
+    }
+
+}
+</pre></div>
+</div>

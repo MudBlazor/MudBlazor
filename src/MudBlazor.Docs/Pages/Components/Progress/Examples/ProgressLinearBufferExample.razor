@@ -1,0 +1,38 @@
+﻿@namespace MudBlazor.Docs
+
+<MudProgressLinear Color="Color.Primary" Buffer="true" Value="@Value" BufferValue="@BufferValue" />
+<MudProgressLinear Color="Color.Secondary" Buffer="true" Value="@Value" BufferValue="@BufferValue" />
+
+@code {
+    public int Value { get; set; }
+    public int BufferValue { get; set; }
+
+    public async void StartTimerAsync()
+    {
+        if (disposed)
+            return;
+        Value = 100;
+        BufferValue = 100;
+        while (Value > 0)
+        {
+            Value = Value - 4;
+            BufferValue = BufferValue - 5;
+            StateHasChanged();
+            await Task.Delay(500);
+            if (disposed)
+                return;
+        }
+        Value = 100;
+        BufferValue = 100;
+        StartTimerAsync();
+    }
+    protected override void OnInitialized()
+        => StartTimerAsync();
+
+    bool disposed;
+    public void Dispose()
+    {
+        disposed = true;
+    }
+
+}

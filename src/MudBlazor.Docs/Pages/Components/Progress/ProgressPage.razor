@@ -37,12 +37,12 @@
             </SectionContent>
             <SectionSource Code="ProgressCircularInterminateExample" />
             <SectionHeader>
-                <SubTitle>Circular static</SubTitle>
+                <SubTitle>Circular determinate</SubTitle>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <ProgressCircularStaticExample />
+                <ProgressCircularDeterminateExample />
             </SectionContent>
-            <SectionSource Code="ProgressCircularStaticExample" />
+            <SectionSource Code="ProgressCircularDeterminateExample" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
@@ -56,10 +56,17 @@
             <SectionHeader>
                 <SubTitle>Linear determinate</SubTitle>
             </SectionHeader>
-            <SectionContent Outlined="true">
-               
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-progress">
+                <ProgressLinearDeterminateExample />
             </SectionContent>
-         
+            <SectionSource Code="ProgressLinearDeterminateExample" ShowCode="false"/>
+            <SectionHeader>
+                <SubTitle>Linear buffer</SubTitle>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-progress">
+                <ProgressLinearBufferExample />
+            </SectionContent>
+            <SectionSource Code="ProgressLinearBufferExample" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

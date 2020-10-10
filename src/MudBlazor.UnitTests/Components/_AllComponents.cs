@@ -636,6 +636,16 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void ProgressCircularDeterminateExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<ProgressCircularDeterminateExample>();
+        }
+
+
+        [Test]
         public void ProgressCircularInterminateExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -646,12 +656,22 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void ProgressCircularStaticExample_Test()
+        public void ProgressLinearBufferExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                var comp = ctx.RenderComponent<ProgressCircularStaticExample>();
+                var comp = ctx.RenderComponent<ProgressLinearBufferExample>();
+        }
+
+
+        [Test]
+        public void ProgressLinearDeterminateExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<ProgressLinearDeterminateExample>();
         }
 
 
