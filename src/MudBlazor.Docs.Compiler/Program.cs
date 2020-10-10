@@ -62,15 +62,19 @@ namespace MudBlazor.Docs.Compiler
                 var html = formatter.GetHtmlString(blocks0, Languages.Html).Replace("PlaceholdeR", "@");
                 html = AttributePostprocessing(html).Replace("@", "<span class=\"atSign\">&#64;</span>");
                 using (var f = File.Open(markup_path, FileMode.Create))
-                using (var w = new StreamWriter(f))
+                using (var w = new StreamWriter(f) { NewLine = "\r\n" })
                 {
                     w.WriteLine("@* Auto-generated markup. Any changes will be overwritten *@");
                     w.WriteLine("@namespace MudBlazor.Docs.Examples.Markup");
                     w.WriteLine("<div class=\"mud-codeblock\">");
-                    w.WriteLine(html);
+                    w.WriteLine(html.ToWindowsLineEndings());
                     if (blocks.Length == 2)
                     {
-                        w.WriteLine(formatter.GetHtmlString("@code" + blocks[1], Languages.CSharp).Replace("@", "<span class=\"atSign\">&#64;</span>"));
+                        w.WriteLine(
+                            formatter.GetHtmlString("@code" + blocks[1], Languages.CSharp)
+                                .Replace("@", "<span class=\"atSign\">&#64;</span>")
+                                .ToWindowsLineEndings()
+                        );
                     }
                     w.WriteLine("</div>");
                     w.Flush();
