@@ -163,3 +163,14 @@
         background-color: var(--mud-theme-surface);
     }
 }
+
+.demo-progress {
+    & .mud-progress-linear {
+        margin-top: 15px !important;
+        margin-bottom: 15px !important;
+    }
+
+    & .mud-progress-linear + .mud-progress-linear {
+        margin-top: 30px !important;
+    }
+}

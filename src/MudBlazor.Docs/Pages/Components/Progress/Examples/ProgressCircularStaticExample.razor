@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.Docs
+@using System;
+@using System.Threading;
+
+
+<MudProgressCircular Color="Color.Default" Static="true" Value="@Value" />
+<MudProgressCircular Color="Color.Primary" Static="true" Value="@Value" />
+<MudProgressCircular Color="Color.Secondary" Static="true" Value="@Value" />
+<MudProgressCircular Color="Color.Success" Static="true" Value="@Value" />
+<MudProgressCircular Color="Color.Info" Static="true" Value="@Value" />
+
+@code {
+    public int Value { get; set; }
+
+    public async void StartTimerAsync()
+    {
+        Value = 126;
+        while (Value > 0)
+        {
+            Value = Value - 3;
+            StateHasChanged();
+            await Task.Delay(1000);
+        }
+        Value = 126;
+        StartTimerAsync();
+    }
+    protected override void OnInitialized()
+        => StartTimerAsync();
+}
