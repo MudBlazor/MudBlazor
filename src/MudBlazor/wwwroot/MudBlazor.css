@@ -1511,6 +1511,71 @@ ul {
   height: auto;
   align-self: stretch; }
 
+.mud-expansion-panels {
+  border-radius: var(--mud-theme-border-radius-default); }
+  .mud-expansion-panels .mud-expansion-panels-square {
+    border-radius: 0px; }
+
+.mud-expand-panel {
+  flex: 1 0 100%;
+  max-width: 100%;
+  position: relative;
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  color: var(--mud-theme-on-surface);
+  background-color: var(--mud-theme-surface); }
+  .mud-expand-panel:first-child {
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit; }
+  .mud-expand-panel:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit; }
+  .mud-expand-panel.mud-panel-expanded {
+    margin: 16px 0;
+    border-radius: inherit;
+    border-bottom: none; }
+    .mud-expand-panel.mud-panel-expanded:first-child {
+      margin-top: 0; }
+    .mud-expand-panel.mud-panel-expanded:last-child {
+      margin-bottom: 0; }
+    .mud-expand-panel.mud-panel-expanded + .mud-expand-panel {
+      border-top-left-radius: inherit;
+      border-top-right-radius: inherit; }
+  .mud-expand-panel.mud-panel-next-expanded {
+    border-bottom: none;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit; }
+  .mud-expand-panel .mud-expand-panel-header {
+    width: 100%;
+    align-items: center;
+    display: flex;
+    font-size: .9375rem;
+    line-height: 1;
+    min-height: 48px;
+    outline: none;
+    padding: 16px 24px;
+    position: relative;
+    transition: min-height 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    user-select: none; }
+    .mud-expand-panel .mud-expand-panel-header:hover {
+      cursor: pointer; }
+    .mud-expand-panel .mud-expand-panel-header .mud-expand-panel-text {
+      flex: 1 1 auto; }
+    .mud-expand-panel .mud-expand-panel-header .mud-expand-panel-icon {
+      transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s; }
+      .mud-expand-panel .mud-expand-panel-header .mud-expand-panel-icon.mud-transform {
+        transform: rotate(-180deg); }
+  .mud-expand-panel .mud-expand-panel-content {
+    padding: 0 24px 16px;
+    flex: 1 1 auto;
+    max-width: 100%; }
+
+.mud-disabled > .mud-expand-panel-header {
+  color: rgba(0, 0, 0, 0.38); }
+  .mud-disabled > .mud-expand-panel-header:hover {
+    cursor: default; }
+
 .mud-fab {
   padding: 0;
   font-size: 0.875rem;
