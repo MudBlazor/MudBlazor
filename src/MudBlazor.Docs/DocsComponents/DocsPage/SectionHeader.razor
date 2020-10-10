@@ -3,6 +3,7 @@
 
 <div class="@Classname">
     <MudText Typo="Typo.h4">@Title</MudText>
+    <MudText Typo="Typo.h6">@SubTitle</MudText>
     <MudText>@Description</MudText>
 </div>
 
@@ -16,6 +17,7 @@
     [Parameter] public string Class { get; set; }
 
     [Parameter] public RenderFragment Title { get; set; }
+    [Parameter] public RenderFragment SubTitle { get; set; }
     [Parameter] public RenderFragment Description { get; set; }
 
 }
