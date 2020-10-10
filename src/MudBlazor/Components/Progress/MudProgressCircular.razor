@@ -1,0 +1,39 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities;
+@using MudBlazor.Extensions;
+
+<div class="@DivClassname" role="progressbar" style="width: 40px; height: 40px; transform: rotate(-90deg);" aria-valuenow="@Value">
+    <svg class="mud-progress-circular-svg" viewBox="22 22 44 44">
+        @if (Indeterminate)
+        {
+            <circle class="@SvgClassname" cx="44" cy="44" r="20.2" fill="none" stroke-width="@StrokeWidth"></circle>
+        }
+        else if (Static)
+        {
+    <circle class="@SvgClassname" cx="44" cy="44" r="20.2" fill="none" stroke-width="@StrokeWidth" style="stroke-dasharray: 126; stroke-dashoffset: @Value;"></circle>
+        }
+    </svg>
+</div>
+
+
+@code {
+    protected string DivClassname =>
+    new CssBuilder("mud-progress-circular")
+        .AddClass($"mud-color-text-{Color.ToDescriptionString()}")
+        .AddClass($"mud-progress-indeterminate", Indeterminate)
+        .AddClass($"mud-progress-static", Static)
+    .Build();
+
+    protected string SvgClassname =>
+        new CssBuilder("mud-progress-circular-circle")
+            .AddClass($"mud-progress-indeterminate", Indeterminate)
+        .AddClass($"mud-progress-static", Static)
+        .Build();
+
+    [Parameter] public Color Color { get; set; } = Color.Default;
+    [Parameter] public Size Size { get; set; } = Size.Medium;
+    [Parameter] public bool Indeterminate { get; set; }
+    [Parameter] public bool Static { get; set; }
+    [Parameter] public int Value { get; set; }
+    [Parameter] public int StrokeWidth { get; set; } = 3;
+}

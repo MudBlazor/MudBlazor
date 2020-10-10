@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities;
+@using MudBlazor.Extensions;
+
+<div class="@DivClassname" role="progressbar">
+    <div class="@LinearClassname mud-progress-linear-1-indeterminate"></div>
+    <div class="@LinearClassname mud-progress-linear-2-indeterminate"></div>
+</div>
+
+
+@code {
+    protected string DivClassname =>
+    new CssBuilder("mud-progress-linear")
+        .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}")
+    .Build();
+
+    protected string LinearClassname =>
+        new CssBuilder("mud-progress-linear-bar")
+            .AddClass($"mud-color-{Color.ToDescriptionString()}")
+            .AddClass($"mud-progress-indeterminate", Indeterminate)
+        .Build();
+
+    [Parameter] public Color Color { get; set; } = Color.Default;
+    [Parameter] public Size Size { get; set; } = Size.Medium;
+    [Parameter] public bool Indeterminate { get; set; }
+    [Parameter] public bool Static { get; set; }
+    [Parameter] public int Value { get; set; }
+    [Parameter] public int StrokeWidth { get; set; } = 3;
+}
