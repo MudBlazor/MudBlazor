@@ -276,6 +276,16 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void DialogDialogOptionExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<DialogDialogOptionExample>();
+        }
+
+
+        [Test]
         public void DialogDialogSimpleExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -292,6 +302,16 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 var comp = ctx.RenderComponent<DialogFormExample>();
+        }
+
+
+        [Test]
+        public void DialogOptionsExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<DialogOptionsExample>();
         }
 
 
