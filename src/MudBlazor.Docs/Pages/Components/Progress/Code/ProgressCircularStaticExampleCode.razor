@@ -2,11 +2,13 @@
 @namespace MudBlazor.Docs.Examples.Markup
 <div class="mud-codeblock">
 <div class="html"><pre>
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudProgressCircular</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Default</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Static</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Value</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudProgressCircular</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Primary</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Static</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Value</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudProgressCircular</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Secondary</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Static</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Value</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudProgressCircular</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Success</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Static</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Value</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudProgressCircular</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Info</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Static</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Value</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="atSign">&#64;</span>implements IDisposable;
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudProgressCircular</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Default</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Value</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudProgressCircular</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Primary</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Value</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudProgressCircular</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Secondary</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Value</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudProgressCircular</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Success</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Value</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudProgressCircular</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Info</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Value</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
 </pre></div>
 <div class="csharp"><pre>
 <span class="atSign">&#64;</span>code {
@@ -14,18 +16,29 @@
 
     <span class="keyword">public</span> <span class="keyword">async</span> <span class="keyword">void</span> StartTimerAsync()
     {
-        Value = <span class="number">126</span>;
-        <span class="keyword">while</span> (Value &gt; <span class="number">0</span>)
+        <span class="keyword">if</span> (disposed)
+            <span class="keyword">return</span>;
+        Value = <span class="number">0</span>;
+        <span class="keyword">while</span> (Value &lt; <span class="number">100</span>)
         {
-            Value = Value - <span class="number">3</span>;
+            Value = Value + <span class="number">4</span>;
             StateHasChanged();
-            <span class="keyword">await</span> Task.Delay(<span class="number">1000</span>);
+            <span class="keyword">await</span> Task.Delay(<span class="number">500</span>);
+            <span class="keyword">if</span> (disposed)
+                <span class="keyword">return</span>;
         }
-        Value = <span class="number">126</span>;
+        Value = <span class="number">0</span>;
         StartTimerAsync();
     }
     <span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> OnInitialized()
         =&gt; StartTimerAsync();
+
+    <span class="keyword">bool</span> disposed;
+    <span class="keyword">public</span> <span class="keyword">void</span> Dispose()
+    {
+        disposed = <span class="keyword">true</span>;
+    }
+
 }
 </pre></div>
 </div>

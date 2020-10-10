@@ -8,32 +8,70 @@
         {
             <circle class="@SvgClassname" cx="44" cy="44" r="20.2" fill="none" stroke-width="@StrokeWidth"></circle>
         }
-        else if (Static)
+        else
         {
-    <circle class="@SvgClassname" cx="44" cy="44" r="20.2" fill="none" stroke-width="@StrokeWidth" style="stroke-dasharray: 126; stroke-dashoffset: @Value;"></circle>
+    <circle class="@SvgClassname" cx="44" cy="44" r="20.2" fill="none" stroke-width="@StrokeWidth" style="stroke-dasharray: @MagicNumber; stroke-dashoffset: @_svg_value;"></circle>
         }
     </svg>
 </div>
 
 
 @code {
+    private const int MagicNumber=126; // weird, but required for the SVG to work
+
     protected string DivClassname =>
     new CssBuilder("mud-progress-circular")
         .AddClass($"mud-color-text-{Color.ToDescriptionString()}")
         .AddClass($"mud-progress-indeterminate", Indeterminate)
-        .AddClass($"mud-progress-static", Static)
+        .AddClass($"mud-progress-static", !Indeterminate)
     .Build();
 
     protected string SvgClassname =>
         new CssBuilder("mud-progress-circular-circle")
             .AddClass($"mud-progress-indeterminate", Indeterminate)
-        .AddClass($"mud-progress-static", Static)
+        .AddClass($"mud-progress-static", !Indeterminate)
         .Build();
 
     [Parameter] public Color Color { get; set; } = Color.Default;
     [Parameter] public Size Size { get; set; } = Size.Medium;
     [Parameter] public bool Indeterminate { get; set; }
-    [Parameter] public bool Static { get; set; }
-    [Parameter] public int Value { get; set; }
+
+    [Parameter] public double Minimum { get; set; } = 0.0;
+
+    [Parameter] public double Maximum { get; set; } = 100.0;
+
+    private int _svg_value;
+    private double _value;
+
+    [Parameter]
+    public double Value
+    {
+        get => _value;
+        set
+        {
+            if (_value.Equals( value))
+                return;
+            _value = value;
+            _svg_value = ToSvgValue(_value);
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private int ToSvgValue(double in_value)
+    {
+        var value = Math.Min(Math.Max(Minimum, in_value), Maximum);
+        // calculate fraction, which is a value between 0 and 1
+        var fraction=(value - Minimum) / (Maximum - Minimum);
+        // now project into the range of the SVG value (126 .. 0)
+        return (int)Math.Round(MagicNumber - MagicNumber * fraction);
+    }
+
     [Parameter] public int StrokeWidth { get; set; } = 3;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _svg_value = ToSvgValue(_value);
+    }
+
 }

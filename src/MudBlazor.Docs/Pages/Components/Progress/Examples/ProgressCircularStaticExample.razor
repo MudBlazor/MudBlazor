@@ -2,28 +2,40 @@
 @using System;
 @using System.Threading;
 
+@implements IDisposable;
 
-<MudProgressCircular Color="Color.Default" Static="true" Value="@Value" />
-<MudProgressCircular Color="Color.Primary" Static="true" Value="@Value" />
-<MudProgressCircular Color="Color.Secondary" Static="true" Value="@Value" />
-<MudProgressCircular Color="Color.Success" Static="true" Value="@Value" />
-<MudProgressCircular Color="Color.Info" Static="true" Value="@Value" />
+<MudProgressCircular Color="Color.Default" Value="@Value" />
+<MudProgressCircular Color="Color.Primary" Value="@Value" />
+<MudProgressCircular Color="Color.Secondary" Value="@Value" />
+<MudProgressCircular Color="Color.Success" Value="@Value" />
+<MudProgressCircular Color="Color.Info" Value="@Value" />
 
 @code {
     public int Value { get; set; }
 
     public async void StartTimerAsync()
     {
-        Value = 126;
-        while (Value > 0)
+        if (disposed)
+            return;
+        Value = 0;
+        while (Value < 100)
         {
-            Value = Value - 3;
+            Value = Value + 4;
             StateHasChanged();
-            await Task.Delay(1000);
+            await Task.Delay(500);
+            if (disposed)
+                return;
         }
-        Value = 126;
+        Value = 0;
         StartTimerAsync();
     }
     protected override void OnInitialized()
         => StartTimerAsync();
+
+    bool disposed;
+    public void Dispose()
+    {
+        disposed = true;
+    }
+
 }
