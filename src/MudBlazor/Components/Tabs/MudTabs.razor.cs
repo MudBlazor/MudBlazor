@@ -67,8 +67,11 @@ namespace MudBlazor
         }
         void ActivatePanel(MudTabPanel panel)
         {
-            ActivePanel = panel;
-            ActivePanelIndex = Panels.IndexOf(panel);
+            if(!panel.Disabled)
+            {
+                ActivePanel = panel;
+                ActivePanelIndex = Panels.IndexOf(panel);
+            }
         }
     }
 }
