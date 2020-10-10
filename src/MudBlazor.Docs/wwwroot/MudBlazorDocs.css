@@ -206,6 +206,13 @@
   padding: 24px;
   background-color: var(--mud-theme-surface); }
 
+.demo-progress .mud-progress-linear {
+  margin-top: 15px !important;
+  margin-bottom: 15px !important; }
+
+.demo-progress .mud-progress-linear + .mud-progress-linear {
+  margin-top: 30px !important; }
+
 .docs-home {
   display: flex;
   text-align: center;

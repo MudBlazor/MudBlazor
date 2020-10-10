@@ -626,6 +626,36 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void ProgressCircularInterminateExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<ProgressCircularInterminateExample>();
+        }
+
+
+        [Test]
+        public void ProgressCircularStaticExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<ProgressCircularStaticExample>();
+        }
+
+
+        [Test]
+        public void ProgressLinearInterminateExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<ProgressLinearInterminateExample>();
+        }
+
+
+        [Test]
         public void RadioGroupExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
