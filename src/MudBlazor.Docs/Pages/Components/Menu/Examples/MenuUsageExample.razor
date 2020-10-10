@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.Docs
+
+
+    <MudMenu Label="Open Menu">
+        <MudMenuItem>Enlist</MudMenuItem>
+        <MudMenuItem>Barracks</MudMenuItem>
+        <MudMenuItem>Armory</MudMenuItem>
+    </MudMenu>
+
+
+
+@code {
+
+    private string Item { get; set; } = "Nothing Clicked";
+
+    private void OnClick(string value)
+    {
+        Item = value;
+    }
+
+}

@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor
+@inherits ComponentBaseMudMenuItem
+
+
+
+<MudListItem @onclick="OnClickHandler" @onchange="@(e => MudMenu.OnClick())" href="@Link" disabled="@Disabled" Class="mud-select-list-item">
+    @ChildContent
+</MudListItem>
+
+

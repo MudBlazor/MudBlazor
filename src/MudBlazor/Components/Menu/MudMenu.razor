@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor
+@inherits ComponentBaseMudMenu
+
+
+<div class="@Classname">
+    <MudButton
+        StartIcon="@StartIcon"
+        EndIcon="@EndIcon"
+        Color="@Color"
+        Size="@Size"
+        Variant="@Variant"
+        Disabled="@Disabled"
+        DisableRipple="@DisableRipple"
+        DisableElevation="@DisableElevation"
+        @onclick="@ShowMenu">
+        @Label
+    </MudButton>
+    <CascadingValue Value="@this">
+        <div class="mud-select-menu @(isMenuOpen? "mud-open" : "")">
+            <MudList Clickable="true">
+                @ChildContent
+            </MudList>
+        </div>
+    </CascadingValue>
+</div>
+
+@if (isMenuOpen)
+{
+    <div class="mud-select-overlay" @onclick="@ShowMenu"></div>
+}
