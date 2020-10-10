@@ -1,0 +1,101 @@
+﻿
+.mud-expansion-panels {
+    border-radius: var(--mud-theme-border-radius-default);
+
+    .mud-expansion-panels-square {
+        border-radius: 0px;
+    }
+}
+
+.mud-expand-panel {
+    flex: 1 0 100%;
+    max-width: 100%;
+    position: relative;
+    transition: .3s cubic-bezier(.25,.8,.5,1);
+    border-bottom: 1px solid rgba(0,0,0,.12);
+    color: var(--mud-theme-on-surface);
+    background-color: var(--mud-theme-surface);
+
+    &:first-child {
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+    }
+
+    &:last-child {
+        border-bottom: none;
+        border-bottom-left-radius: inherit;
+        border-bottom-right-radius: inherit;
+    }
+
+    &.mud-panel-expanded {
+        margin: 16px 0;
+        border-radius: inherit;
+        border-bottom: none;
+
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        & + .mud-expand-panel {
+            border-top-left-radius: inherit;
+            border-top-right-radius: inherit;
+        }
+    }
+
+    &.mud-panel-next-expanded {
+        border-bottom: none;
+        border-bottom-left-radius: inherit;
+        border-bottom-right-radius: inherit;
+    }
+
+
+    & .mud-expand-panel-header {
+        width: 100%;
+        align-items: center;
+        display: flex;
+        font-size: .9375rem;
+        line-height: 1;
+        min-height: 48px;
+        outline: none;
+        padding: 16px 24px;
+        position: relative;
+        transition: min-height .3s cubic-bezier(.25,.8,.5,1);
+        user-select: none;
+
+        &:hover {
+            cursor: pointer;
+        }
+
+        & .mud-expand-panel-text {
+            flex: 1 1 auto;
+        }
+
+        & .mud-expand-panel-icon {
+            transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
+
+            &.mud-transform {
+                transform: rotate(-180deg);
+            }
+        }
+    }
+
+    & .mud-expand-panel-content {
+        padding: 0 24px 16px;
+        flex: 1 1 auto;
+        max-width: 100%;
+    }
+}
+
+.mud-disabled {
+    & > .mud-expand-panel-header {
+        color: rgba(0,0,0,.38);
+
+        &:hover {
+            cursor: default;
+        }
+    }
+}

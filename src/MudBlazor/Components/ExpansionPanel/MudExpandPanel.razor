@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<div class="@Classname">
+    <div class="mud-expand-panel-header" @onclick=@( () => ExpandPanel())>
+        <div class="mud-expand-panel-text">
+            @Text
+        </div>
+        <MudIcon Icon="@Icons.Material.ExpandMore" class="@(Expanded? "mud-expand-panel-icon mud-transform" : "mud-expand-panel-icon")"/>
+    </div>
+    <MudCollapse Expanded="@Expanded">
+        <div class="mud-expand-panel-content">
+            @ChildContent
+        </div>
+    </MudCollapse>
+</div>
