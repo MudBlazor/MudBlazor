@@ -174,3 +174,9 @@
         margin-top: 30px !important;
     }
 }
+
+.demo-menu {
+    & .docs-section-content-inner {
+        margin: 15px 0px;
+    }
+}
