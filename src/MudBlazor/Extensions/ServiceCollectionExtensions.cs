@@ -12,26 +12,26 @@ namespace MudBlazor
             return services.AddScoped<IDialogService, DialogService>();
         }
 
-        public static IServiceCollection AddSnackbar(this IServiceCollection services, SnackbarConfiguration configuration)
+        public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services, SnackbarConfiguration configuration)
         {
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
             services.TryAddScoped<ISnackbar>(builder => new Snackbars(configuration));
             return services;
         }
 
-        public static IServiceCollection AddSnackbar(this IServiceCollection services)
+        public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services)
         {
-            return AddSnackbar(services, new SnackbarConfiguration());
+            return AddMudBlazorSnackbar(services, new SnackbarConfiguration());
         }
 
-        public static IServiceCollection AddSnackbar(this IServiceCollection services, Action<SnackbarConfiguration> configure)
+        public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services, Action<SnackbarConfiguration> configure)
         {
             if (configure == null) throw new ArgumentNullException(nameof(configure));
 
             var options = new SnackbarConfiguration();
             configure(options);
 
-            return AddSnackbar(services, options);
+            return AddMudBlazorSnackbar(services, options);
         }
     }
 }

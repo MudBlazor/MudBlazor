@@ -9,7 +9,7 @@ namespace MudBlazor.Docs.Extensions
         public static void TryAddDocsViewServices(this IServiceCollection services)
         {
             services.AddMudBlazorDialog();
-            services.AddSnackbar(config =>
+            services.AddMudBlazorSnackbar(config =>
             {
                 config.PositionClass = Defaults.Classes.Position.BottomLeft;
 
