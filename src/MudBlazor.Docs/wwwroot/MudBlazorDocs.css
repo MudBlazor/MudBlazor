@@ -213,6 +213,9 @@
 .demo-progress .mud-progress-linear + .mud-progress-linear {
   margin-top: 30px !important; }
 
+.demo-menu .docs-section-content-inner {
+  margin: 15px 0px; }
+
 .docs-home {
   display: flex;
   text-align: center;
@@ -308,7 +311,8 @@
 
 .docs-page-header {
   margin-bottom: 100px; }
-  .docs-page-header h3 {
+  .docs-page-header .mud-typography-h3 {
+    font-size: 40px;
     margin-bottom: 16px; }
   .docs-page-header .mud-typography-h4 {
     margin-top: 0px; }
@@ -351,6 +355,7 @@
 .docs-section-header {
   margin-bottom: 20px; }
   .docs-section-header .mud-typography-h4 {
+    font-size: 30px;
     margin: 40px 0 16px; }
 
 .docs-section-content {

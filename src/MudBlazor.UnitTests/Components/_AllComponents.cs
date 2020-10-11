@@ -596,6 +596,36 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void MenuCustomizationExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<MenuCustomizationExample>();
+        }
+
+
+        [Test]
+        public void MenuIconButtonsExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<MenuIconButtonsExample>();
+        }
+
+
+        [Test]
+        public void MenuSimpleExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<MenuSimpleExample>();
+        }
+
+
+        [Test]
         public void MenuUsageExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
