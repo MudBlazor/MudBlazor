@@ -2,32 +2,64 @@
 
 <DocsPage MaxWidth="MaxWidth.Large">
     <MudContainer>
-        <MudText Typo="Typo.h3">Installation</MudText>
-        <MudText Typo="Typo.h4">Nuget</MudText>
+        <MudText Typo="Typo.h3" Class="mb-12">
+            Installation
+        </MudText>
+        <MudText Typo="Typo.h6" GutterBottom="true">
+            1. Install the package
+        </MudText>
         <MudText GutterBottom="true">
             Find the package through NuGet Package Manager or install it with following command.
         </MudText>
-        <SectionSource NoToolbar="true" Code="InstallExample" />
-        <MudText Class="pt-6" GutterBottom="true">
-            After the package is added you need to add the following in your _Imports.razor
+        <MarkdownInstallPackage />
+
+        <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-8">
+            2. Add Imports
         </MudText>
-        <SectionSource NoToolbar="true" Code="UsingExample" />
-
-
-        <MudText Typo="Typo.h4">Client Side</MudText>
         <MudText GutterBottom="true">
-            Add the following in your <CodeInline>index.html</CodeInline>'s head section.
+            After the package is added you need to add the following in your <CodeInline>_Imports.razor</CodeInline>
         </MudText>
-        <SectionSource NoToolbar="true" Code="LinksExample" />
-        <MudText Typo="Typo.h4">Server Side</MudText>
+        <MarkdownAddImports />
+
+        <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-8">3. Add CSS & Font references</MudText>
+        <MudText GutterBottom="true">
+            Add the following to your HTML head section, it's either <CodeInline>index.html</CodeInline> or <CodeInline>_Host.cshtml</CodeInline> depending on whether you're running WebAssembly or Server.
+        </MudText>
+        <MarkdownAddReferences />
+
+        <MudText GutterBottom="true" Class="mt-4">
+            <b class="mud-color-text-secondary">Note:</b> If you're installing on a fresh Blazor template make sure to remove everything in you're <CodeInline>site.css</CodeInline> and remove the <CodeInline>bootstrap.min.css</CodeInline> completely.
+        </MudText>
+
+        <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-8">
+            4. Register Services
+        </MudText>
+        <MudText Typo="Typo.h6" Style="font-size:1rem;">
+            For Blazor WebAssembly
+        </MudText>
+        <MudText GutterBottom="true">
+            Add the following to your <CodeInline>Program.Main</CodeInline>
+        </MudText>
+        <MarkdownRegisterServicesWebAssembly />
+        <MudText Typo="Typo.h6" Class="mt-4" Style="font-size:1rem;">
+            For Blazor Server
+        </MudText>
         <MudText>
-            Add the following in your <CodeInline>_Host.cshtml</CodeInline>'s head section.
+            Add the following in your <CodeInline>Startup.cs</CodeInline> under <CodeInline>ConfigureServices</CodeInline>
         </MudText>
-        <SectionSource NoToolbar="true" Code="LinksExample" />
-        <MudText Class="pt-3">Now build and run your project and if you didn't get any errors, your good to go. Jump over to the usage guide to get started.</MudText>
-    </MudContainer>
-    <MudContainer>
-        <div style="padding-top:64px;"></div>
+        <MarkdownRegisterServicesServer />
+
+        <MudText Typo="Typo.h6" GutterBottom="true" Class="mt-8">
+            5. Add Components
+        </MudText>
+        <MudText GutterBottom="true">
+            Add the following components to your <CodeInline>MainLayout.razor</CodeInline> or <CodeInline>App.razor</CodeInline> note that the <CodeInline>ThemeProvider</CodeInline> is essential for MudBlazor but the rest is optional.
+        </MudText>
+        <MarkdownAddComponents />
+
+        <MudText Class="mt-12" Align="Align.Center" Typo="Typo.h6" GutterBottom="true">Now build and run your project, if you didn't get any errors, your good to go.</MudText>
+        <MudText Class="mb-16" Align="Align.Center" Typo="Typo.h6">Jump over to the <MudLink Typo="Typo.h6" Href="/getting-started/usage">usage</MudLink> guide to get started.</MudText>
+
     </MudContainer>
 </DocsPage>
 <Footer />

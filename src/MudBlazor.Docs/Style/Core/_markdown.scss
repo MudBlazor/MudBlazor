@@ -1,7 +1,7 @@
 ﻿.mud-codeblock {
     background-color: var(--mud-theme-dark);
     border-radius: var(--mud-theme-border-radius-default);
-    padding:16px;
+    padding: 16px;
 
     & pre {
         color: #ededed;
@@ -32,6 +32,11 @@
 
         & .htmlAttributeValue {
             color: #ededed;
+        }
+
+        & .htmlLink {
+            color: #61afef;
+            text-decoration: underline;
         }
 
         & .enum {
@@ -67,6 +72,22 @@
 
         & .string {
             color: #d69d85;
+        }
+
+        & .function {
+            color: #dcdcaa;
+        }
+
+        & .class {
+            color: #4ec9b0
+        }
+
+        & .localVar {
+            color: #9cdcfe;
+        }
+
+        & .interface {
+            color: #b0d7a3;
         }
     }
 }

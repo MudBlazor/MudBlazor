@@ -73,6 +73,10 @@
         align-items: center;
         margin-bottom: 24px;
     }
+
+    & .mud-codeblock {
+        padding: 16px 12px;
+    }
 }
 
 .docs-home-title {
@@ -90,8 +94,4 @@
         letter-spacing: 0.0075em;
         margin: 0;
     }
-}
-
-.docs-home-code .mud-codeblock {
-    padding: 16px 12px;
 }
