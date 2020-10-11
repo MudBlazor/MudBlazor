@@ -5,19 +5,47 @@
     <DocsPageHeader>
         <Title>Menus</Title>
         <SubTitle>
-            The Menu component shows a menu at the position of the element used to activate it.
+            The component shows a menu at the position of the element used to activate it.
         </SubTitle>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Usage</Title>
+                <Title>Simple Menu</Title>
                 <Description></Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Outlined="true" Class="demo-menu">
+                <MenuSimpleExample />
+            </SectionContent>
+            <SectionSource Code="MenuSimpleExample" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Customization</Title>
+                <Description>The menu button gives you all options a regular button would do.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MenuCustomizationExample />
+            </SectionContent>
+            <SectionSource Code="MenuCustomizationExample" ShowCode="false" />
+            <SectionHeader>
+                <SubTitle>Icon Buttons</SubTitle>
+                <Description>If a Icon is supplied through the <CodeInline>Icon</CodeInline> property the menu button will display as an <CodeInline>IconButton</CodeInline></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MenuIconButtonsExample />
+            </SectionContent>
+            <SectionSource Code="MenuIconButtonsExample" ShowCode="true" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Usage</Title>
+                <Description>The menu items also acts like buttons, simply assign them a onclick event or a link.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
                 <MenuUsageExample />
             </SectionContent>
-            <SectionSource Code="MenuUsageExample" />
+            <SectionSource Code="MenuUsageExample" ShowCode="true" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

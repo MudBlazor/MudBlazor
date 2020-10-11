@@ -1,21 +1,15 @@
 ﻿@namespace MudBlazor.Docs
 
-
-    <MudMenu Label="Open Menu">
-        <MudMenuItem>Enlist</MudMenuItem>
-        <MudMenuItem>Barracks</MudMenuItem>
-        <MudMenuItem>Armory</MudMenuItem>
-    </MudMenu>
-
-
+<MudMenu Label="@Message" Color="Color.Primary">
+    <MudMenuItem Link="/components/button">Link</MudMenuItem>
+    <MudMenuItem OnClick="AddMessage">On Click</MudMenuItem>
+</MudMenu>
 
 @code {
+    string Message { get; set; } = "Open Usage Menu";
 
-    private string Item { get; set; } = "Nothing Clicked";
-
-    private void OnClick(string value)
+    void AddMessage()
     {
-        Item = value;
+        Message = "Menu Item clicked";
     }
-
 }
