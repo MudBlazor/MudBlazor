@@ -3,20 +3,26 @@
 
 
 <div class="@Classname">
-    <MudButton
-        StartIcon="@StartIcon"
-        EndIcon="@EndIcon"
-        Color="@Color"
-        Size="@Size"
-        Variant="@Variant"
-        Disabled="@Disabled"
-        DisableRipple="@DisableRipple"
-        DisableElevation="@DisableElevation"
-        @onclick="@ShowMenu">
-        @Label
-    </MudButton>
+    @if (String.IsNullOrEmpty(Icon))
+    {
+        <MudButton StartIcon="@StartIcon"
+            EndIcon="@EndIcon"
+            Color="@Color"
+            Size="@Size"
+            Variant="@Variant"
+            Disabled="@Disabled"
+            DisableRipple="@DisableRipple"
+            DisableElevation="@DisableElevation"
+            @onclick="@ShowMenu">
+            @Label
+        </MudButton>
+    }
+    else
+    {
+        <MudIconButton Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" @onclick="@ShowMenu"/>
+    }
     <CascadingValue Value="@this">
-        <div class="mud-select-menu @(isMenuOpen? "mud-open" : "")">
+        <div class="mud-menu-list @(isMenuOpen? "mud-open" : "")">
             <MudList Clickable="true">
                 @ChildContent
             </MudList>
@@ -26,5 +32,5 @@
 
 @if (isMenuOpen)
 {
-    <div class="mud-select-overlay" @onclick="@ShowMenu"></div>
+    <div class="mud-menu-overlay" @onclick="@ShowMenu"></div>
 }

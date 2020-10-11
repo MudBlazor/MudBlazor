@@ -17,6 +17,7 @@ namespace MudBlazor
         public bool isMenuOpen { get; set; }
 
         [Parameter] public string Label { get; set; }
+        [Parameter] public string Icon { get; set; }
         [Parameter] public string StartIcon { get; set; }
         [Parameter] public string EndIcon { get; set; }
         [Parameter] public Color Color { get; set; } = Color.Default;

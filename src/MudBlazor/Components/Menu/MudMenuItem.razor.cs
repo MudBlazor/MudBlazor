@@ -1,12 +1,44 @@
-﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Utilities;
+﻿using System.Threading.Tasks;
+using System.Windows.Input;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    public class ComponentBaseMudMenuItem : MudBaseButton
+    public class ComponentBaseMudMenuItem : MudComponentBase
     {
-        [Parameter] public RenderFragment ChildContent { get; set; }
         [CascadingParameter] public MudMenu MudMenu { get; set; }
+        [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public bool Disabled { get; set; }
+        [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
+        [Inject] public IJSRuntime JsRuntime { get; set; }
+        [Parameter] public string Link { get; set; }
+        [Parameter] public string Target { get; set; }
+        [Parameter] public bool ForceLoad { get; set; }
+        [Parameter] public ICommand Command { get; set; }
+        [Parameter] public object CommandParameter { get; set; }
+        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        protected async Task OnClickHandler(MouseEventArgs ev)
+        {
+            MudMenu.OnClick();
+
+            if (Link != null)
+            {
+                if (string.IsNullOrWhiteSpace(Target))
+                    UriHelper.NavigateTo(Link, ForceLoad);
+                else
+                    await JsRuntime.InvokeAsync<object>("open", Link, Target);
+            }
+            else
+            {
+                await OnClick.InvokeAsync(ev);
+                if (Command?.CanExecute(CommandParameter) ?? false)
+                {
+                    Command.Execute(CommandParameter);
+                }
+            }
+        }
     }
 }
