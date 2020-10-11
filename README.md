@@ -20,7 +20,10 @@ Simple and easy to use components that is highly customizable.
 
 
 ## Installation 
+#### Full installation instructions
+At mudblazor.com we have more in depth installation instructions, [available here.](https://mudblazor.com/getting-started/installation)
 
+#### Simplified installation instructions
 ```
 Install-Package MudBlazor
 ```
@@ -33,6 +36,11 @@ Add the following link's in your head section. For **Client Side (WebAssembly)**
 ```
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
 <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+```
+
+In `MainLayout.razor` or `App.razor`
+```
+<MudThemeProvider/>
 ```
 
 ## Usage
