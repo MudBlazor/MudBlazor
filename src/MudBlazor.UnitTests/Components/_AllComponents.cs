@@ -16,16 +16,6 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void TestExample_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                var comp = ctx.RenderComponent<TestExample>();
-        }
-
-
-        [Test]
         public void UsageExample_Test()
         {
                 using var ctx = new Bunit.TestContext();

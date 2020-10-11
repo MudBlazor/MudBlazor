@@ -3,7 +3,7 @@ using System.Text;
 
 namespace MudBlazor
 {
-    public class ComponentBaseThemeProvider : ComponentBase
+    public class ComponentBaseMudThemeProvider : ComponentBase
     {
         [Parameter] public MudTheme Theme { get; set; }
 
