@@ -7,8 +7,8 @@
     <Authors>Garderoben</Authors>
     <Company>Gardnet</Company>
     <Title>MudBlazor</Title>
-    <PackageTags>Blazor, MudBlazor, Material, Components</PackageTags>
-    <Description>Component Library based on material-ui and Material design. The goal is to do more Blazor, CSS and less Javascript. Simple and easy to use components that is highly customizable.</Description>
+    <PackageTags>Blazor, MudBlazor, Material, Components, Blazor Component, Blazor Library</PackageTags>
+    <Description>Blazor Component Library based on Material design. The goal is to do more with Blazor, utilizing CSS and keeping Javascript to a bare minimum.</Description>
     <PackageProjectUrl>http://mudblazor.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Garderoben/MudBlazor</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/Garderoben/MudBlazor/master/content/Nuget.png</PackageIconUrl>
