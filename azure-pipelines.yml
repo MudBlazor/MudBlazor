@@ -32,4 +32,10 @@ steps:
     projects: 'src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj'
     testRunTitle: 'UnitTest'
 
-
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.BinariesDirectory)'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
