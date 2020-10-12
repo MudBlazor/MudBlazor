@@ -1,5 +1,5 @@
 ﻿@using MudBlazor.Docs.Data
-@namespace MudBlazor.Docs
+@namespace MudBlazor.Docs.Examples
 
 <MudTable Items="@PeriodicTable.GetElements()" Dense="@dense" Hover="@hover" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selected_item">
     <ToolBarContent>

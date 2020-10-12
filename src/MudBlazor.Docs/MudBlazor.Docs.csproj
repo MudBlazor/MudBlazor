@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Models\Elements.json" />
+    <EmbeddedResource Include="Data\Elements.json" />
   </ItemGroup>
 
 
@@ -30,8 +30,39 @@
 
 
   <ItemGroup>
+    <Folder Include="Pages\Components\AppBar\Code\" />
     <Folder Include="Pages\Components\Button\Code\" />
+    <Folder Include="Pages\Components\Card\Code\" />
     <Folder Include="Pages\Components\Checkbox\Code\" />
+    <Folder Include="Pages\Components\Container\Code\" />
+    <Folder Include="Pages\Components\Dialog\Code\" />
+    <Folder Include="Pages\Components\Divider\Code\" />
+    <Folder Include="Pages\Components\Drawer\Code\" />
+    <Folder Include="Pages\Components\ExpansionPanel\Code\" />
+    <Folder Include="Pages\Components\Fab\Code\" />
+    <Folder Include="Pages\Components\Grid\Code\" />
+    <Folder Include="Pages\Components\IconButton\Code\" />
+    <Folder Include="Pages\Components\Icons\Code\" />
+    <Folder Include="Pages\Components\Link\Code\" />
+    <Folder Include="Pages\Components\List\Code\" />
+    <Folder Include="Pages\Components\Menu\Code\" />
+    <Folder Include="Pages\Components\NavMenu\Code\" />
+    <Folder Include="Pages\Components\Paper\Code\" />
+    <Folder Include="Pages\Components\Progress\Code\" />
+    <Folder Include="Pages\Components\Radio\Code\" />
+    <Folder Include="Pages\Components\Select\Code\" />
+    <Folder Include="Pages\Components\SimpleTable\Code\" />
+    <Folder Include="Pages\Components\Slider\Code\" />
+    <Folder Include="Pages\Components\Switch\Code\" />
+    <Folder Include="Pages\Components\Table\Code\" />
+    <Folder Include="Pages\Components\Tabs\Code\" />
+    <Folder Include="Pages\Components\TemplateComponent\Code\" />
+    <Folder Include="Pages\Components\TextField\Code\" />
+    <Folder Include="Pages\Components\Themes\Code\" />
+    <Folder Include="Pages\Components\Tooltip\Code\" />
+    <Folder Include="Pages\Components\Typography\Code\" />
+    <Folder Include="Pages\Getting Started\Code\" />
+    <Folder Include="Pages\SystemPages\Spacing\Code\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
