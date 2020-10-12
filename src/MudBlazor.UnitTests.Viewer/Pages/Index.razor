@@ -63,7 +63,7 @@
                 continue;
             yield return type;
         }
-        foreach (var type in typeof(MudBlazor.Docs.DocsPage).Assembly.GetTypes())
+        foreach (var type in typeof(MudBlazor.Docs.Components.DocsPage).Assembly.GetTypes())
         {
             if (!type.Name.Contains("Example"))
                 continue;
