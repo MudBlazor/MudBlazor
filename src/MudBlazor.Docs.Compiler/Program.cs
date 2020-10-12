@@ -122,7 +122,7 @@ namespace MudBlazor.Docs.Compiler
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using MudBlazor.UnitTests.Mocks;
-using MudBlazor.Docs;
+using MudBlazor.Docs.Examples;
 using MudBlazor.Dialog;
 
 namespace MudBlazor.UnitTests.Components
