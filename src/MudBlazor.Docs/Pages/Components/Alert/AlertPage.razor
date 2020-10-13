@@ -41,6 +41,7 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Dense</Title>
+                <Description>Taking up to much space? set the <CodeInline>Dense</CodeInline> property to true. It removes the vertical padding and lowers the horizontal.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true" Class="demo-alert-dense">
                 <MudGrid>
@@ -55,12 +56,12 @@
                     </MudItem>
                 </MudGrid>
             </SectionContent>
-            <SectionSource Code="AlertDenseExample" />
+            <SectionSource Code="AlertDenseExample" ShowCode="false" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
                 <Title>No Icons</Title>
-                <Description>You can disable the alert icons with the bool <CodeInline>NoIcon</CodeInline>.</Description>
+                <Description>You can disable the alert icons with the bool <CodeInline>NoIcon</CodeInline> set to true.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true" Class="demo-alert-noicon">
                 <MudGrid>
@@ -75,7 +76,37 @@
                     </MudItem>
                 </MudGrid>
             </SectionContent>
-            <SectionSource Code="AlertNoIconExample" />
+            <SectionSource Code="AlertNoIconExample" ShowCode="false" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Rounded and Square</Title>
+                <Description>By default the alert is set to rounded corners by your themes default value. If you need a square Alert but not change the theme you can the <CodeInline>Square</CodeInline> property to true.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert-noicon">
+                <MudGrid>
+                    <MudItem md="4" xs="12">
+                        <AlertSquareTextExample />
+                    </MudItem>
+                    <MudItem md="4" xs="12">
+                        <AlertSquareOutlineExample />
+                    </MudItem>
+                    <MudItem md="4" xs="12">
+                        <AlertSquareFilledExample />
+                    </MudItem>
+                </MudGrid>
+            </SectionContent>
+            <SectionSource Code="AlertSquareExample" ShowCode="false" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Elevation</Title>
+                <Description>The component also accept the <CodeInline>Elevation</CodeInline> property with a scale from 0 to 24.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <AlertElevationExample/>
+            </SectionContent>
+            <SectionSource Code="AlertElevationExample" ShowCode="true" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
