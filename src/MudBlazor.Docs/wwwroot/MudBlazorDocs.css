@@ -227,6 +227,15 @@
 .demo-menu .docs-section-content-inner {
   margin: 15px 0px; }
 
+.demo-alert .mud-alert + .mud-alert {
+  margin-top: 16px !important; }
+
+.demo-alert-dense .mud-alert + .mud-alert, .demo-alert-noicon .mud-alert + .mud-alert {
+  margin-top: 16px; }
+
+.demo-alert-dense .mud-alert + .mud-alert-outlined-info, .demo-alert-dense .mud-alert-outlined-success, .demo-alert-dense .mud-alert-outlined-warning, .demo-alert-dense .mud-alert-outlined-error, .demo-alert-noicon .mud-alert + .mud-alert-outlined-info, .demo-alert-noicon .mud-alert-outlined-success, .demo-alert-noicon .mud-alert-outlined-warning, .demo-alert-noicon .mud-alert-outlined-error {
+  margin-top: 14px !important; }
+
 .docs-home {
   display: flex;
   text-align: center;

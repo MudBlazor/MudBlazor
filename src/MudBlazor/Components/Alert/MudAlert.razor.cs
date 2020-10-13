@@ -11,21 +11,30 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-alert")
-          .AddClass($"mud-alert-filled-{Severity.ToDescriptionString()}")
+          .AddClass($"mud-alert-{Variant.ToDescriptionString()}-{Severity.ToDescriptionString()}")
+          .AddClass($"mud-dense", Dense)
+          .AddClass($"mud-square", Square)
+          .AddClass($"mud-elevation-{Elevation.ToString()}")
           .AddClass(Class)
         .Build();
 
+        [Parameter] public int Elevation { set; get; } = 0;
+        [Parameter] public bool Square { get; set; }
+        [Parameter] public bool Dense { get; set; }
+        [Parameter] public bool NoIcon { get; set; }
         [Parameter] public Severity Severity { get; set; } = Severity.Normal;
+        [Parameter] public Variant Variant { get; set; } = Variant.Text;
         [Parameter] public string Class { set; get; }
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         public string Icon;
+        public string variant;
         protected override void OnInitialized()
         {
             switch(Severity)
             {
                 case Severity.Normal:
-                    Icon = "M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7-.25c.22 0 .41.1.55.25.12.13.2.31.2.5 0 .41-.34.75-.75.75s-.75-.34-.75-.75c0-.19.08-.37.2-.5.14-.15.33-.25.55-.25zM19 19H5V5h14v14zM12 6c-1.65 0-3 1.35-3 3s1.35 3 3 3 3-1.35 3-3-1.35-3-3-3zm0 4c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-6 6.47V18h12v-1.53c0-2.5-3.97-3.58-6-3.58s-6 1.07-6 3.58zM8.31 16c.69-.56 2.38-1.12 3.69-1.12s3.01.56 3.69 1.12H8.31z";
+                    Icon = "M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zM5 7V5h14v2H5zm2 4h10v2H7zm0 4h7v2H7z";
                     break;
                 case Severity.Info:
                     Icon = "M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z";

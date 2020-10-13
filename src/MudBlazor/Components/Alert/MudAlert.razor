@@ -3,9 +3,12 @@
 
 
 <div class="@Classname">
-    <div class="mud-alert-icon">
-        <MudIcon Icon="@Icon"/>
-    </div>
+    @if (!NoIcon)
+    {
+        <div class="mud-alert-icon">
+            <MudIcon Icon="@Icon" />
+        </div>
+    }
     <div class="mud-alert-message">
         @ChildContent
     </div>

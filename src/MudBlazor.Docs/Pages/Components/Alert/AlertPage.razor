@@ -1,0 +1,87 @@
+﻿@page "/components/alert"
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Alert</Title>
+        <SubTitle>
+            An alert is used to notify the user about an important message without interrupting the ongoing task.
+        </SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Simple alerts</Title>
+                <Description>There is five severity levels that sets an icon and a color.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert">
+                <AlertSimpleExample />
+            </SectionContent>
+            <SectionSource Code="AlertSimpleExample" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Variants</Title>
+                <Description>The default variant is normal, addition to that outlined and filled is available.</Description>
+            </SectionHeader>
+            <SectionHeader>
+                <SubTitle>Outlined</SubTitle>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert">
+                <AlertOutlinedExample />
+            </SectionContent>
+            <SectionSource Code="AlertOutlinedExample" />
+            <SectionHeader>
+                <SubTitle>Filled</SubTitle>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert">
+                <AlertFilledExample />
+            </SectionContent>
+            <SectionSource Code="AlertFilledExample" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Dense</Title>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert-dense">
+                <MudGrid>
+                    <MudItem md="4" xs="12">
+                        <AlertDenseTextExample />
+                    </MudItem>
+                    <MudItem md="4" xs="12">
+                        <AlertDenseOutlinedExample />
+                    </MudItem>
+                    <MudItem md="4" xs="12">
+                        <AlertDenseFilledExample />
+                    </MudItem>
+                </MudGrid>
+            </SectionContent>
+            <SectionSource Code="AlertDenseExample" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>No Icons</Title>
+                <Description>You can disable the alert icons with the bool <CodeInline>NoIcon</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert-noicon">
+                <MudGrid>
+                    <MudItem md="4" xs="12">
+                        <AlertNoIconTextExample />
+                    </MudItem>
+                    <MudItem md="4" xs="12">
+                        <AlertNoIconOutlinedExample />
+                    </MudItem>
+                    <MudItem md="4" xs="12">
+                        <AlertNoIconFilledExample />
+                    </MudItem>
+                </MudGrid>
+            </SectionContent>
+            <SectionSource Code="AlertNoIconExample" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Snackbar Alerts</Title>
+                <Description>You can use the <MudLink Href="/components/snackbar">Snackbar</MudLink> to display Alerts.</Description>
+            </SectionHeader>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

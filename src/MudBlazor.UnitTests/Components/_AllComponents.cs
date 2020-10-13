@@ -26,6 +26,116 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void AlertDenseExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertDenseExample>();
+        }
+
+
+        [Test]
+        public void AlertDenseFilledExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertDenseFilledExample>();
+        }
+
+
+        [Test]
+        public void AlertDenseOutlinedExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertDenseOutlinedExample>();
+        }
+
+
+        [Test]
+        public void AlertDenseTextExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertDenseTextExample>();
+        }
+
+
+        [Test]
+        public void AlertFilledExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertFilledExample>();
+        }
+
+
+        [Test]
+        public void AlertNoIconExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertNoIconExample>();
+        }
+
+
+        [Test]
+        public void AlertNoIconFilledExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertNoIconFilledExample>();
+        }
+
+
+        [Test]
+        public void AlertNoIconOutlinedExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertNoIconOutlinedExample>();
+        }
+
+
+        [Test]
+        public void AlertNoIconTextExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertNoIconTextExample>();
+        }
+
+
+        [Test]
+        public void AlertOutlinedExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertOutlinedExample>();
+        }
+
+
+        [Test]
+        public void AlertSimpleExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertSimpleExample>();
+        }
+
+
+        [Test]
         public void AppBarDenseExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
