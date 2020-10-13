@@ -1941,7 +1941,8 @@ ul {
 .mud-slider {
   color: var(--mud-theme-on-surface);
   display: inline-block;
-  width: 100%; }
+  width: 100%;
+  user-select: none; }
   .mud-slider > .mud-typography {
     margin-top: 10px; }
   .mud-slider > input {
@@ -2221,6 +2222,14 @@ ul {
   box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12); }
   .mud-snackbar.mud-snackbar-default {
     background-color: #313131; }
+  .mud-snackbar.mud-snackbar-info {
+    background-color: var(--mud-theme-info); }
+  .mud-snackbar.mud-snackbar-success {
+    background-color: var(--mud-theme-success); }
+  .mud-snackbar.mud-snackbar-warning {
+    background-color: var(--mud-theme-warning); }
+  .mud-snackbar.mud-snackbar-error {
+    background-color: var(--mud-theme-danger); }
   .mud-snackbar .mud-snackbar-content-message {
     padding: 8px 0; }
   .mud-snackbar .mud-snackbar-content-action {

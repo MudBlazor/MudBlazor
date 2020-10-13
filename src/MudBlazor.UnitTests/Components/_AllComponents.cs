@@ -66,6 +66,16 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void AlertElevationExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertElevationExample>();
+        }
+
+
+        [Test]
         public void AlertFilledExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -132,6 +142,46 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 var comp = ctx.RenderComponent<AlertSimpleExample>();
+        }
+
+
+        [Test]
+        public void AlertSquareExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertSquareExample>();
+        }
+
+
+        [Test]
+        public void AlertSquareFilledExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertSquareFilledExample>();
+        }
+
+
+        [Test]
+        public void AlertSquareOutlineExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertSquareOutlineExample>();
+        }
+
+
+        [Test]
+        public void AlertSquareTextExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AlertSquareTextExample>();
         }
 
 
@@ -832,6 +882,16 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 var comp = ctx.RenderComponent<SliderBasicExample>();
+        }
+
+
+        [Test]
+        public void SliderMinMaxExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<SliderMinMaxExample>();
         }
 
 

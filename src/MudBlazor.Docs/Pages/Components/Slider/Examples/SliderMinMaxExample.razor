@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudSlider @bind-Value="value1" Min="20" Max="80">Value: @value1.ToString()</MudSlider>
+<MudSlider @bind-Value="value2" Min="0" Max="50">Value: @value2.ToString()</MudSlider>
+
+
+@code {
+    public int value1 = 50;
+    public int value2 = 50;
+}

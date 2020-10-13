@@ -4,6 +4,7 @@
     color: var(--mud-theme-on-surface);
     display: inline-block;
     width: 100%;
+    user-select: none;
 
     & > .mud-typography {
         margin-top: 10px;
