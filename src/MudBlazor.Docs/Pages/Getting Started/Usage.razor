@@ -1,21 +1,25 @@
 ﻿@page "/getting-started/usage"
 
 <DocsPage MaxWidth="MaxWidth.Large">
-    <MudContainer>
-        <MudText Typo="Typo.h3">Usage</MudText>
-        <MudText Typo="Typo.h5">After your installation is done, you can find some simple examples here.</MudText>
-        <MudText Typo="Typo.h4" GutterBottom="true">Quick Start</MudText>
-        <MudText GutterBottom="true">This is literally all you need in your views to use MudBlazor components.</MudText>
-        <SectionSource NoToolbar="true" Code="UsageExample" />
-        <SectionContent Outlined="true" DisplayFlex="true">
-           <UsageExample/>
-        </SectionContent>
-    </MudContainer>
-    <MudContainer>
-        <div style="padding-top:64px;">
-            <MudText Typo="Typo.h6" Align="Align.Center">Check out all the components in the menu to find out whats available and how to use them.</MudText>
-        </div>
-    </MudContainer>
+    <DocsPageHeader>
+        <Title>Usage</Title>
+        <SubTitle>After the installation is done, here's a quick example you can try out on your own.</SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Quick Start</Title>
+                <Description>This is literally all you need in your views to use MudBlazor components.</Description>
+            </SectionHeader>
+            <SectionSource NoToolbar="true" Code="UsageExample" />
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <UsageExample />
+            </SectionContent>
+        </DocsPageSection>
+        <DocsPageSection>
+            <MudText Typo="Typo.h6" Align="Align.Center" Class="my-16">Check out all the components in the menu to find out whats available and how to use them.</MudText>
+        </DocsPageSection>
+    </DocsPageContent>
 </DocsPage>
 <Footer />
 
