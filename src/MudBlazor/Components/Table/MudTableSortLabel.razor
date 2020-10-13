@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor
 @typeparam T;
+@implements IDisposable;
 
 <span class="mud-button-root mud-table-sort-label" @onclick="ToggleSortDirection">
     <svg class="mud-svg-icon-root mud-table-sort-label-icon @(_direction==SortDirection.Descending ? "mud-direction-desc" : "mud-direction-asc")" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
@@ -25,34 +26,54 @@
     private SortDirection _direction = SortDirection.None;
 
     [Parameter]
+    public SortDirection SortDirection {
+        get => _direction;
+        set
+        {
+            if (_direction == value)
+                return;
+            _direction = value;
+            SortDirectionChanged.InvokeAsync(_direction);
+            if (SortBy != null)
+                Context?.SetSortFunc(this);
+        }
+    }
+
+    [Parameter]
+    public EventCallback<SortDirection> SortDirectionChanged { get; set; }
+
+    [Parameter]
     public Func<T, object> SortBy { get; set; } = null;
 
     public void ToggleSortDirection()
     {
-        if (SortBy == null)
-        {
-            _direction = SortDirection.None;
-            return;
-        }
-        if (_direction== SortDirection.None)
-            _direction = SortDirection.Ascending;
-        else if (_direction == SortDirection.Ascending)
-            _direction = SortDirection.Descending;
+        if (SortDirection == SortDirection.None)
+            SortDirection = SortDirection.Ascending;
+        else if (SortDirection == SortDirection.Ascending)
+            SortDirection = SortDirection.Descending;
         else
-            _direction = SortDirection.None;
-        Context?.SetSortFunc(_direction, SortBy);
+            SortDirection = SortDirection.None;
     }
 
-    protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        if (SortBy == null)
-            _direction = SortDirection.None;
-        else
-        {
-            _direction = InitialDirection;
-            Context?.SetSortFunc(_direction, SortBy);
-        }
-        return base.OnInitializedAsync();
+        Context?.SortLabels.Add(this);
+        if (SortBy != null)
+            Context?.InitializeSorting();
+    }
+
+    public void Dispose()
+    {
+        Context?.SortLabels.Remove(this);
+    }
+
+    /// <summary>
+    /// Set sort direction but don't update Table sort order. This should only be called by Table
+    /// </summary>
+    internal void SetSortDirection(SortDirection dir)
+    {
+        _direction = dir;
+        StateHasChanged();
     }
 
 }

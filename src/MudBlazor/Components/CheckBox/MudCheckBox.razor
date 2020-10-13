@@ -1,8 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-
-
 <label class="@Classname">
     <span class="@CheckBoxClassname">
         @*note: stopping the click propagation is important here. otherwise checking the checkbox results in click events on its parent (i.e. table row), which is generally not what you would want*@

@@ -14,6 +14,8 @@ namespace MudBlazor
         public abstract void Remove(MudTr row, object item);
         public abstract void UpdateRowCheckBoxes();
         public MudTr HeaderRow { get; set; }
+
+        public abstract void InitializeSorting();
     }
 
     public class TableContext<T> : TableContext
@@ -21,6 +23,8 @@ namespace MudBlazor
         public HashSet<T> Selection = new HashSet<T>();
 
         public Dictionary<T, MudTr> Rows = new Dictionary<T, MudTr>();
+
+        public List<MudTableSortLabel<T>> SortLabels = new List<MudTableSortLabel<T>>();
 
         public override void UpdateRowCheckBoxes()
         {
@@ -54,6 +58,8 @@ namespace MudBlazor
             Rows.Remove(t);
         }
 
+        #region --> Sorting
+
         public SortDirection SortDirection {
             get;
             protected set;
@@ -61,10 +67,11 @@ namespace MudBlazor
 
         public Func<T, object> SortBy { get; protected set; }
 
-        public void SetSortFunc(SortDirection direction, Func<T, object> sortBy)
+        public void SetSortFunc(MudTableSortLabel<T> label)
         {
-            SortDirection = direction;
-            SortBy = sortBy;
+            SortDirection = label.SortDirection;
+            SortBy = label.SortBy;
+            UpdateSortLabels(label);
             TableStateHasChanged();
         }
 
@@ -79,6 +86,28 @@ namespace MudBlazor
             else
                 return items.OrderByDescending(item => SortBy(item));
         }
+
+        public override void InitializeSorting()
+        {
+            var initial_sortlabel = SortLabels.FirstOrDefault(x => x.InitialDirection != SortDirection.None);
+            if (initial_sortlabel == null)
+                return;
+            UpdateSortLabels(initial_sortlabel);
+            // this will trigger initial sorting of the table
+            initial_sortlabel.SortDirection = initial_sortlabel.InitialDirection;
+        }
+
+
+        private void UpdateSortLabels(MudTableSortLabel<T> label)
+        {
+            foreach (var x in SortLabels)
+            {
+                if (x != label)
+                    x.SetSortDirection(SortDirection.None);
+            }
+        }
+
+        #endregion
 
     }
 }
