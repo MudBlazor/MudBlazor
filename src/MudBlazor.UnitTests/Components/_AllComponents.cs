@@ -786,6 +786,16 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void TableSortingExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<TableSortingExample>();
+        }
+
+
+        [Test]
         public void TabsCenteredExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
