@@ -1,18 +1,18 @@
 ﻿@using MudBlazor.Docs.Models
+@using System.Text.RegularExpressions
+@using System.Reflection
 @namespace MudBlazor.Docs.Components
 
 
-<MudText Typo="Typo.h3">&lt;@Type.Name&gt; API</MudText>
+<MudText Typo="Typo.h3">@Type.ConvertToCSharpSource()</MudText>
 
 <MudText Typo="Typo.h6" Class="mt-5 mb-3">Properties</MudText>
 
 <MudTable Items="@Properties" Hover="true">
     <HeaderContent>
-        <MudTr>
-            <MudTh>Name</MudTh>
-            <MudTh>Type</MudTh>
-            <MudTh>Description</MudTh>
-        </MudTr>
+        <MudTh>Name</MudTh>
+        <MudTh>Type</MudTh>
+        <MudTh>Description</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd>@context.Name</MudTd>
@@ -27,13 +27,34 @@
 
     IEnumerable<ApiProperty> Properties {
         get {
-            foreach (var property_info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>())
+            foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>())
             {
-                var doc=property_info.GetDocumentation();
-                yield return new ApiProperty() { Name=property_info.Name, Type = property_info.PropertyType.Name, Description = doc };
+                var doc=info.GetDocumentation();
+                doc = Regex.Replace(doc??"", @"</?.+?>", "");
+                yield return new ApiProperty()
+                {
+                    Name=info.Name,
+                    Type = info.PropertyType.ConvertToCSharpSource(),
+                    Description = doc
+                };
             }
         }
     }
 
-
+    // TODO: document public methods later
+    //IEnumerable<ApiMethod> Methods {
+    //    get {
+    //        foreach (var info in Type.GetMethods(BindingFlags.Instance|BindingFlags.Public))
+    //        {
+    //            var doc=info.GetDocumentation();
+    //            doc = Regex.Replace(doc??"", @"</?.+?>", "");
+    //            yield return new ApiItem()
+    //            {
+    //                Name=info.Name, 
+    //                ReturnType = info.PropertyType.ConvertToCSharpSource(), 
+    //                Description = doc
+    //            };
+    //        }
+    //    }
+    //}
 }

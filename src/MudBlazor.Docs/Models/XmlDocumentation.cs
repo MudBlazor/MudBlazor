@@ -190,6 +190,50 @@ namespace MudBlazor.Docs.Models
 
 		#endregion
 
+        #region System.Type.ConvertToCSharpSource
+
+        /// <summary>Converts a <see cref="System.Type"/> into a <see cref="string"/> as it would appear in C# source code.</summary>
+        /// <param name="type">The <see cref="System.Type"/> to convert to a <see cref="string"/>.</param>
+        /// <param name="showGenericParameters">If the generic parameters are the generic types, whether they should be shown or not.</param>
+        /// <returns>The <see cref="string"/> as the <see cref="System.Type"/> would appear in C# source code.</returns>
+        public static string ConvertToCSharpSource(this Type type, bool showGenericParameters = false)
+        {
+            var genericParameters = new Queue<Type>();
+            foreach (var x in type.GetGenericArguments())
+                genericParameters.Enqueue(x);
+            return convertToCsharpSource(type);
+
+            string convertToCsharpSource(Type type)
+            {
+                _ = type ?? throw new ArgumentNullException(nameof(type));
+                string result = type.IsNested
+                    ? convertToCsharpSource(type.DeclaringType) + "."
+                    : ""; //: type.Namespace + ".";
+                result += Regex.Replace(type.Name, "`.*", string.Empty);
+                if (type.IsGenericType)
+                {
+                    result += "<";
+                    bool firstIteration = true;
+                    foreach (Type generic in type.GetGenericArguments())
+                    {
+                        if (genericParameters.Count <= 0)
+                        {
+                            break;
+                        }
+                        Type correctGeneric = genericParameters.Dequeue();
+                        result += (firstIteration ? string.Empty : ",") +
+                                  (correctGeneric.IsGenericParameter
+                                      ? (showGenericParameters ? (firstIteration ? string.Empty : " ") + correctGeneric.Name : string.Empty)
+                                      : (firstIteration ? string.Empty : " ") + ConvertToCSharpSource(correctGeneric));
+                        firstIteration = false;
+                    }
+                    result += ">";
+                }
+                return result;
+            }
+        }
+
+        #endregion
 
 		#region XML Code Documentation
 
