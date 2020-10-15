@@ -56,7 +56,7 @@
                     The reactor temperature exceeds the optimal range
                 </MudAlert>
             </SectionContent>
-            @*<SectionSource Code="@Markdown_SimpleDialog"></SectionSource>*@
+            @*<SectionSource Code="@Markdown_SimpleDialog"GitHubFolderName="Snackbar"></SectionSource>*@
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
@@ -65,7 +65,7 @@
             </SectionHeader>
             <SectionContent Outlined="true">
                 <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" StartIcon="@Icons.Material.Build" @onclick="@(() => StartBuild())" Disabled="BuildAgainDisabled">Build Project</MudButton>
-                <MudButton Variant="Variant.Filled" DisableElevation="true"  @onclick="@OnShowBuildLog" Disabled="RunAgainDisabled">Run Again</MudButton>
+                <MudButton Variant="Variant.Filled" DisableElevation="true" @onclick="@OnShowBuildLog" Disabled="RunAgainDisabled">Run Again</MudButton>
                 <MudPaper Outlined="true" Class="demo-snackbar-output">
                     @if (ShowBuildLog)
                     {
@@ -76,7 +76,7 @@
                     }
                 </MudPaper>
             </SectionContent>
-            @*<SectionSource Code="@Markdown_SimpleDialog"></SectionSource>*@
+            @*<SectionSource Code="@Markdown_SimpleDialog"GitHubFolderName="Snackbar"></SectionSource>*@
         </DocsPageSection>
 
     </DocsPageContent>
