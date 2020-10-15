@@ -20,7 +20,23 @@ namespace MudBlazor.Docs.Models
             {
                 Name = name,
                 Link = name.ToLower().Replace(" ", ""),
-                Component = component
+                Component = component,
+                IsNavGroup = false
+            };
+
+            _mudComponents.Add(componentItem);
+
+            return this;
+        }
+
+        public DocsComponents AddNavGroup(string name, bool expanded, DocsComponents groupItems)
+        {
+            var componentItem = new MudComponent
+            {
+                Name = name,
+                NavGroupExpanded = expanded,
+                GroupItems = groupItems,
+                IsNavGroup = true
             };
 
             _mudComponents.Add(componentItem);
