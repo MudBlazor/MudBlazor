@@ -3,15 +3,24 @@
 <div class="docs-section-source @Class">
     @if (!NoToolbar)
     {
-    <div class="docs-content-toolbar">
-        <div class="mud-flex-grow-1"></div>
-        <MudTooltip Text="@TooltipSourceCodeText" Placement="Placement.Top">
-            <MudIconButton Icon="@Icons.Material.Code" OnClick="OnShowCode" />
-        </MudTooltip>
-        <MudTooltip Text="Copy Code" Placement="Placement.Top">
-            <MudIconButton Icon="@Icons.Material.FileCopy" />
-        </MudTooltip>
-    </div>
+        <div class="docs-content-toolbar">
+            <div class="mud-flex-grow-1"></div>
+            <MudTooltip Text="@TooltipSourceCodeText" Placement="Placement.Top">
+                <MudIconButton Icon="@Icons.Material.Code" OnClick="OnShowCode" />
+            </MudTooltip>
+            <MudTooltip Text="Edit on TryMudBlazor" Placement="Placement.Top">
+                <MudIconButton Icon="@Icons.Material.Create" />
+            </MudTooltip>
+            <MudTooltip Text="Copy Code" Placement="Placement.Top">
+                <MudIconButton Icon="@Icons.Material.FileCopy" />
+            </MudTooltip>
+            @if (!String.IsNullOrEmpty(GitHubFolderName))
+            {
+                <MudTooltip Text="View the source on GitHub" Placement="Placement.Top">
+                    <MudIconButton Icon="@Icons.Custom.GitHub" Link="@GitHubSourceCode" Target="_blank" />
+                </MudTooltip>
+            }
+        </div>
     }
 
     <div class="docs-source-code @(ShowCode? "docs-show-code" : "docs-hide-code")">
@@ -33,9 +42,13 @@
 
     [Parameter] public string Class { get; set; }
 
+    [Parameter] public string GitHubFolderName { get; set; }
+
     [Parameter] public bool ShowCode { get; set; } = true;
 
     [Parameter] public bool NoToolbar { get; set; }
+
+    private string GitHubSourceCode { get; set; }
 
     public string TooltipSourceCodeText { get; set; }
 
@@ -48,7 +61,7 @@
 
     public void OnShowCode()
     {
-        if(!String.IsNullOrEmpty(Code) && String.IsNullOrEmpty(FullCode))
+        if (!String.IsNullOrEmpty(Code) && String.IsNullOrEmpty(FullCode))
         {
             ShowCode = !ShowCode;
             if (ShowCode)
@@ -60,7 +73,7 @@
                 TooltipSourceCodeText = showCodeExampleString;
             }
         }
-        if(!String.IsNullOrEmpty(Code) && !String.IsNullOrEmpty(FullCode))
+        if (!String.IsNullOrEmpty(Code) && !String.IsNullOrEmpty(FullCode))
         {
             ShowCode = !ShowCode;
             ShowFullCode = !ShowFullCode;
@@ -75,7 +88,7 @@
         }
     }
 
-    private Type CodeType=> Type.GetType("MudBlazor.Docs.Examples.Markup."+ Code + "Code");
+    private Type CodeType => Type.GetType("MudBlazor.Docs.Examples.Markup." + Code + "Code");
     private Type FullCodeType => Type.GetType("MudBlazor.Docs.Examples.Markup." + FullCode + "Code");
 
     RenderFragment CodeComponent() => builder =>
@@ -92,6 +105,11 @@
 
     protected override void OnInitialized()
     {
+        if (!String.IsNullOrEmpty(GitHubFolderName))
+        {
+            string GitHubLink = "https://github.com/";
+            GitHubSourceCode = $"{GitHubLink}Garderoben/MudBlazor/blob/master/src/MudBlazor.Docs/Pages/Components/{GitHubFolderName}/Examples/{Code}.razor";
+        }
         if (ShowCode)
         {
             TooltipSourceCodeText = hideCodeExampleString;
