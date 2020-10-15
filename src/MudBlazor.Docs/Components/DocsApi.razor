@@ -4,22 +4,34 @@
 @namespace MudBlazor.Docs.Components
 
 
-<MudText Typo="Typo.h4">@Type.ConvertToCSharpSource()</MudText>
 
-<MudText Typo="Typo.h6" Class="mt-5 mb-3">Properties</MudText>
+<DocsPage MaxWidth="MaxWidth.Large">
+    <DocsPageHeader>
+        <Title>@Type.ConvertToCSharpSource()</Title>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Properties</Title>
+            </SectionHeader>
+            <SectionContent Class="docs-content-api" FullWidth="true">
+                <MudTable Items="@Properties" Elevation="0" Class="mx-0">
+                    <HeaderContent>
+                        <MudTh>Name</MudTh>
+                        <MudTh>Type</MudTh>
+                        <MudTh>Description</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>@context.Name</MudTd>
+                        <MudTd>@context.Type</MudTd>
+                        <MudTd>@context.Description</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
 
-<MudTable Items="@Properties" Hover="true" Class="mb-16">
-    <HeaderContent>
-        <MudTh>Name</MudTh>
-        <MudTh>Type</MudTh>
-        <MudTh>Description</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Type</MudTd>
-        <MudTd>@context.Description</MudTd>
-    </RowTemplate>
-</MudTable>
 
 @code {
 

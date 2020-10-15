@@ -1,0 +1,24 @@
+﻿@page "/api/{component}"
+
+@if (ComponentType == null)
+{
+    <MudText>Loading Component</MudText>
+}
+else
+{
+    <DocsApi Type="@ComponentType"></DocsApi>
+}
+
+
+@code {
+    [Parameter] public string component { get; set; }
+
+    public Type ComponentType { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        var Assembly = typeof(MudComponentBase).Assembly;
+        ComponentType = Assembly.GetType(component);
+        StateHasChanged();
+    }
+}

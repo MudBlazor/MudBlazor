@@ -49,18 +49,68 @@
             <MudNavLink Href="components/typography">Typography</MudNavLink>
         </MudNavGroup>
     </MudNavGroup>
-    @*<MudListNested Title="Components API" Expanded="false">
-            <MudListNavItem Href="/nothinghere404">Nothing here...</MudListNavItem>
-        </MudListNested>*@
+    @*<MudNavGroup Title="Components" Expanded="true">
+            @foreach (var item in DocsComponents.ToList())
+            {
+                string href = $"components/{item.Link}";
+                <MudNavLink Href="@href">@item.Name</MudNavLink>
+            }
+        </MudNavGroup>*@
+    <MudNavGroup Title="Component API" Expanded="false">
+        @foreach (var item in DocsComponents.ToList())
+        {
+            string href = $"api/{item.Component.ToString()}";
+            <MudNavLink Href="@href">@item.Name</MudNavLink>
+        }
+    </MudNavGroup>
     <MudNavGroup Title="System" Expanded="false">
         @*<MudListNavItem Href="system/colors">Colors</MudListNavItem>*@
         <MudNavLink Href="system/elevation">Elevation</MudNavLink>
         <MudNavLink Href="system/spacing">Spacing</MudNavLink>
         @*<MudListNavItem Href="system/transitions">Transitions</MudListNavItem>*@
     </MudNavGroup>
+
+
 </MudNavMenu>
 <div class="docs-nav-filler"></div>
 
 @code {
+    DocsComponents DocsComponents = new DocsComponents();
 
+    protected override void OnInitialized()
+    {
+        DocsComponents.AddItem("Container", typeof(MudContainer))
+        .AddItem("Grid", typeof(MudGrid))
+        .AddItem("Themes", typeof(MudThemeProvider))
+        .AddItem("Button", typeof(MudButton))
+        .AddItem("IconButton", typeof(MudIconButton))
+        .AddItem("Checkbox", typeof(MudCheckBox))
+        .AddItem("FAB", typeof(MudFab))
+        .AddItem("Radio", typeof(MudRadio))
+        .AddItem("Select", typeof(MudSelect))
+        .AddItem("Slider", typeof(MudSlider))
+        .AddItem("Switch", typeof(MudSwitch))
+        .AddItem("Text Field", typeof(MudTextField))
+        .AddItem("Switch", typeof(MudSwitch))
+        .AddItem("AppBar", typeof(MudAppBar))
+        .AddItem("Drawer", typeof(MudDrawer))
+        .AddItem("Link", typeof(MudLink))
+        .AddItem("Menu", typeof(MudMenu))
+        .AddItem("Nav Menu", typeof(MudNavMenu))
+        .AddItem("Tabs", typeof(MudTabs))
+        .AddItem("Progress", typeof(MudProgressCircular))
+        .AddItem("Dialog", typeof(MudDialog))
+        .AddItem("Snackbar", typeof(MudSnackbarProvider))
+        .AddItem("Alert", typeof(MudAlert))
+        .AddItem("Card", typeof(MudCard))
+        .AddItem("Divider", typeof(MudDivider))
+        .AddItem("Expansion Panel", typeof(MudExpansionPanel))
+        .AddItem("Icons", typeof(MudIcon))
+        .AddItem("List", typeof(MudList))
+        .AddItem("Paper", typeof(MudPaper))
+        .AddItem("Table", typeof(MudTable<T>))
+        .AddItem("Simple Table", typeof(MudSimpleTable))
+        .AddItem("Tooltip", typeof(MudTooltip))
+        .AddItem("Typography", typeof(MudText));
+    }
 }

@@ -423,6 +423,10 @@
 .docs-section-source .docs-source-code.docs-hide-code {
   display: none; }
 
+.docs-content-api {
+  padding: 0px;
+  width: 100%; }
+
 .docs-icon-container {
   margin-top: 20px; }
   .docs-icon-container .mud-divider {
