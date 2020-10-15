@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>D:\MudBlazor.git\src\MudBlazor\MudBlazor.xml</DocumentationFile>
+    <DocumentationFile>MudBlazor.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
