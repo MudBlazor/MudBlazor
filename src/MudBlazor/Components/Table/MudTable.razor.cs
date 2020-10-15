@@ -33,6 +33,9 @@ namespace MudBlazor
         [Parameter] public string Height { get; set; }
         [Parameter] public int RowsPerPage { get; set; } = 10;
 
+        /// <summary>
+        /// The page index of the currently displayed page. Usually called by MudTablePager.
+        /// </summary>
         [Parameter]
         public int CurrentPage
         {
@@ -46,6 +49,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Set to true to enable selection of multiple rows with check boxes. 
+        /// </summary>
         [Parameter] public bool MultiSelection { get; set; }
 
         [Parameter] public RenderFragment ToolBarContent { get; set; }

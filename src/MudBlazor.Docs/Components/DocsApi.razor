@@ -1,0 +1,60 @@
+﻿@using MudBlazor.Docs.Models
+@using System.Text.RegularExpressions
+@using System.Reflection
+@namespace MudBlazor.Docs.Components
+
+
+<MudText Typo="Typo.h4">@Type.ConvertToCSharpSource()</MudText>
+
+<MudText Typo="Typo.h6" Class="mt-5 mb-3">Properties</MudText>
+
+<MudTable Items="@Properties" Hover="true" Class="mb-16">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Type</MudTh>
+        <MudTh>Description</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Name</MudTd>
+        <MudTd>@context.Type</MudTd>
+        <MudTd>@context.Description</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+
+    [Parameter] public Type Type { get; set; }
+
+    IEnumerable<ApiProperty> Properties {
+        get {
+            foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>())
+            {
+                var doc=info.GetDocumentation();
+                doc = Regex.Replace(doc??"", @"</?.+?>", "");
+                yield return new ApiProperty()
+                {
+                    Name=info.Name,
+                    Type = info.PropertyType.ConvertToCSharpSource(),
+                    Description = doc
+                };
+            }
+        }
+    }
+
+    // TODO: document public methods later
+    //IEnumerable<ApiMethod> Methods {
+    //    get {
+    //        foreach (var info in Type.GetMethods(BindingFlags.Instance|BindingFlags.Public))
+    //        {
+    //            var doc=info.GetDocumentation();
+    //            doc = Regex.Replace(doc??"", @"</?.+?>", "");
+    //            yield return new ApiItem()
+    //            {
+    //                Name=info.Name, 
+    //                ReturnType = info.PropertyType.ConvertToCSharpSource(), 
+    //                Description = doc
+    //            };
+    //        }
+    //    }
+    //}
+}

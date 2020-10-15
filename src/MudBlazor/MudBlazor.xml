@@ -1,0 +1,314 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MudBlazor</name>
+    </assembly>
+    <members>
+        <member name="P:MudBlazor.MudBaseButton.Link">
+            <summary>
+            If set to a URL, clicking the button will open the referenced document. Use Target to specify where
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseButton.Target">
+            <summary>
+            The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseButton.OnClick">
+            <summary>
+            Button click event.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudComponentBase.Class">
+            <summary>
+            User class names, separated by space
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudComponentBase.Style">
+            <summary>
+            User styles, applied on top of the component's own classes and styles
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudComponentBase.Tag">
+            <summary>
+            Use Tag to attach any user data object to the component for your convenience.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudComponentBase.UserAttributes">
+            <summary>
+            UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.
+            </summary>
+        </member>
+        <member name="T:MudBlazor.Snackbars">
+            <inheritdoc />
+        </member>
+        <member name="P:MudBlazor.MudTableBase.CurrentPage">
+            <summary>
+            The page index of the currently displayed page. Usually called by MudTablePager.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.MultiSelection">
+            <summary>
+            Set to true to enable selection of multiple rows with check boxes. 
+            </summary>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.Default(System.String)">
+            <summary>
+            Creates a CssBuilder used to define conditional CSS classes used in a component.
+            Call Build() to return the completed CSS Classes as a string. 
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.Empty">
+            <summary>
+            Creates an Empty CssBuilder used to define conditional CSS classes used in a component.
+            Call Build() to return the completed CSS Classes as a string. 
+            </summary>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.#ctor(System.String)">
+            <summary>
+            Creates a CssBuilder used to define conditional CSS classes used in a component.
+            Call Build() to return the completed CSS Classes as a string. 
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.AddValue(System.String)">
+            <summary>
+            Adds a raw string to the builder that will be concatenated with the next class or value added to the builder.
+            </summary>
+            <param name="value"></param>
+            <returns>CssBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.AddClass(System.String)">
+            <summary>
+            Adds a CSS Class to the builder with space separator.
+            </summary>
+            <param name="value">CSS Class to add</param>
+            <returns>CssBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.AddClass(System.String,System.Boolean)">
+            <summary>
+            Adds a conditional CSS Class to the builder with space separator.
+            </summary>
+            <param name="value">CSS Class to conditionally add.</param>
+            <param name="when">Condition in which the CSS Class is added.</param>
+            <returns>CssBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.AddClass(System.String,System.Nullable{System.Boolean})">
+            <summary>
+            Adds a conditional CSS Class to the builder with space separator.
+            </summary>
+            <param name="value">CSS Class to conditionally add.</param>
+            <param name="when">Nullable condition in which the CSS Class is added.</param>
+            <returns>CssBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.AddClass(System.String,System.Func{System.Boolean})">
+            <summary>
+            Adds a conditional CSS Class to the builder with space separator.
+            </summary>
+            <param name="value">CSS Class to conditionally add.</param>
+            <param name="when">Condition in which the CSS Class is added.</param>
+            <returns>CssBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.AddClass(System.Func{System.String},System.Boolean)">
+            <summary>
+            Adds a conditional CSS Class to the builder with space separator.
+            </summary>
+            <param name="value">Function that returns a CSS Class to conditionally add.</param>
+            <param name="when">Condition in which the CSS Class is added.</param>
+            <returns>CssBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.AddClass(System.Func{System.String},System.Func{System.Boolean})">
+            <summary>
+            Adds a conditional CSS Class to the builder with space separator.
+            </summary>
+            <param name="value">Function that returns a CSS Class to conditionally add.</param>
+            <param name="when">Condition in which the CSS Class is added.</param>
+            <returns>CssBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.AddClass(MudBlazor.Utilities.CssBuilder,System.Boolean)">
+            <summary>
+            Adds a conditional nested CssBuilder to the builder with space separator.
+            </summary>
+            <param name="value">CSS Class to conditionally add.</param>
+            <param name="when">Condition in which the CSS Class is added.</param>
+            <returns>CssBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.AddClass(MudBlazor.Utilities.CssBuilder,System.Func{System.Boolean})">
+            <summary>
+            Adds a conditional CSS Class to the builder with space separator.
+            </summary>
+            <param name="value">CSS Class to conditionally add.</param>
+            <param name="when">Condition in which the CSS Class is added.</param>
+            <returns>CssBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.AddClassFromAttributes(System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object})">
+            <summary>
+            Adds a conditional CSS Class when it exists in a dictionary to the builder with space separator.
+            Null safe operation.
+            </summary>
+            <param name="additionalAttributes">Additional Attribute splat parameters</param>
+            <returns>CssBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.CssBuilder.Build">
+            <summary>
+            Finalize the completed CSS Classes as a string.
+            </summary>
+            <returns>string</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.Default(System.String,System.String)">
+            <summary>
+            Creates a StyleBuilder used to define conditional in-line style used in a component. Call Build() to return the completed style as a string.
+            </summary>
+            <param name="prop"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.Default(System.String)">
+            <summary>
+            Creates a StyleBuilder used to define conditional in-line style used in a component. Call Build() to return the completed style as a string.
+            </summary>
+            <param name="prop"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.Empty">
+            <summary>
+            Creates a StyleBuilder used to define conditional in-line style used in a component. Call Build() to return the completed style as a string.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.#ctor(System.String,System.String)">
+            <summary>
+            Creates a StyleBuilder used to define conditional in-line style used in a component. Call Build() to return the completed style as a string.
+            </summary>
+            <param name="prop"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.AddStyle(System.String)">
+            <summary>
+            Adds a conditional in-line style to the builder with space separator and closing semicolon.
+            </summary>
+            <param name="style"></param>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.AddRaw(System.String)">
+            <summary>
+            Adds a raw string to the builder that will be concatenated with the next style or value added to the builder.
+            </summary>
+            <param name="prop"></param>
+            <param name="value"></param>
+            <returns>StyleBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.AddStyle(System.String,System.String)">
+            <summary>
+            Adds a conditional in-line style to the builder with space separator and closing semicolon..
+            </summary>
+            <param name="prop"></param>
+            <param name="value">Style to add</param>
+            <returns>StyleBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.AddStyle(System.String,System.String,System.Boolean)">
+            <summary>
+            Adds a conditional in-line style to the builder with space separator and closing semicolon..
+            </summary>
+            <param name="prop"></param>
+            <param name="value">Style to conditionally add.</param>
+            <param name="when">Condition in which the style is added.</param>
+            <returns>StyleBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.AddStyle(System.String,System.Func{System.String},System.Boolean)">
+            <summary>
+            Adds a conditional in-line style to the builder with space separator and closing semicolon..
+            </summary>
+            <param name="prop"></param>
+            <param name="value">Style to conditionally add.</param>
+            <param name="when">Condition in which the style is added.</param>
+            <returns></returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.AddStyle(System.String,System.String,System.Func{System.Boolean})">
+            <summary>
+            Adds a conditional in-line style to the builder with space separator and closing semicolon..
+            </summary>
+            <param name="prop"></param>
+            <param name="value">Style to conditionally add.</param>
+            <param name="when">Condition in which the style is added.</param>
+            <returns>StyleBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.AddStyle(System.String,System.Func{System.String},System.Func{System.Boolean})">
+            <summary>
+            Adds a conditional in-line style to the builder with space separator and closing semicolon..
+            </summary>
+            <param name="prop"></param>
+            <param name="value">Style to conditionally add.</param>
+            <param name="when">Condition in which the style is added.</param>
+            <returns>StyleBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.AddStyle(MudBlazor.Utilities.StyleBuilder)">
+            <summary>
+            Adds a conditional nested StyleBuilder to the builder with separator and closing semicolon.
+            </summary>
+            <param name="builder">Style Builder to conditionally add.</param>
+            <returns>StyleBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.AddStyle(MudBlazor.Utilities.StyleBuilder,System.Boolean)">
+            <summary>
+            Adds a conditional nested StyleBuilder to the builder with separator and closing semicolon.
+            </summary>
+            <param name="builder">Style Builder to conditionally add.</param>
+            <param name="when">Condition in which the style is added.</param>
+            <returns>StyleBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.AddStyle(MudBlazor.Utilities.StyleBuilder,System.Func{System.Boolean})">
+            <summary>
+            Adds a conditional in-line style to the builder with space separator and closing semicolon..
+            </summary>
+            <param name="builder">Style Builder to conditionally add.</param>
+            <param name="when">Condition in which the styles are added.</param>
+            <returns>StyleBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.AddStyle(System.String,System.Action{MudBlazor.Utilities.ValueBuilder},System.Boolean)">
+            <summary>
+            Adds a conditional in-line style to the builder with space separator and closing semicolon..
+            A ValueBuilder action defines a complex set of values for the property.
+            </summary>
+            <param name="prop"></param>
+            <param name="builder"></param>
+            <param name="when"></param>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.AddStyleFromAttributes(System.Collections.Generic.IReadOnlyDictionary{System.String,System.Object})">
+            <summary>
+            Adds a conditional in-line style when it exists in a dictionary to the builder with separator.
+            Null safe operation.
+            </summary>
+            <param name="additionalAttributes">Additional Attribute splat parameters</param>
+            <returns>StyleBuilder</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.StyleBuilder.Build">
+            <summary>
+            Finalize the completed Style as a string.
+            </summary>
+            <returns>string</returns>
+        </member>
+        <member name="M:MudBlazor.Utilities.ValueBuilder.AddValue(System.String,System.Boolean)">
+            <summary>
+            Adds a space separated conditional value to a property.
+            </summary>
+            <param name="value"></param>
+            <param name="when"></param>
+            <returns></returns>
+        </member>
+        <member name="P:MudBlazor.MudTable`1.RowTemplate">
+            <summary>
+            Defines how a table row looks like. Use MudTd to define the table cells and their content.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTable`1.Items">
+            <summary>
+            The data to display in the table. MudTable will render one row per item
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudTableSortLabel`1.SetSortDirection(MudBlazor.SortDirection)">
+            <summary>
+            Set sort direction but don't update Table sort order. This should only be called by Table
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -15,8 +15,14 @@ namespace MudBlazor
 
         [Inject] public IJSRuntime JsRuntime { get; set; }
 
+        /// <summary>
+        /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
+        /// </summary>
         [Parameter] public string Link { get; set; }
 
+        /// <summary>
+        /// The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// </summary>
         [Parameter] public string Target { get; set; }
 
         [Parameter] public bool ForceLoad { get; set; }
@@ -25,6 +31,9 @@ namespace MudBlazor
 
         [Parameter] public object CommandParameter { get; set; }
 
+        /// <summary>
+        /// Button click event.
+        /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         protected async Task OnClickHandler(MouseEventArgs ev)

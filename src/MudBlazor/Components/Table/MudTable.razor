@@ -46,10 +46,13 @@
     // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is in MudTableBase
 
     /// <summary>
-    /// 
+    /// Defines how a table row looks like. Use MudTd to define the table cells and their content.
     /// </summary>
     [Parameter] public RenderFragment<T> RowTemplate { get; set; }
 
+    /// <summary>
+    /// The data to display in the table. MudTable will render one row per item
+    /// </summary>
     [Parameter] public IEnumerable<T> Items { get; set; }
 
     [Parameter] public Func<T, bool> Filter { get; set; } = null;
