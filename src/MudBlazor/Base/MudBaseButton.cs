@@ -34,7 +34,7 @@ namespace MudBlazor
         /// <summary>
         /// Button click event.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> Click { get; set; }
+        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
@@ -47,7 +47,7 @@ namespace MudBlazor
             }
             else
             {
-                await Click.InvokeAsync(ev);
+                await OnClick.InvokeAsync(ev);
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
                     Command.Execute(CommandParameter);

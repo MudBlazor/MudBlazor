@@ -13,13 +13,13 @@
             Disabled="@Disabled"
             DisableRipple="@DisableRipple"
             DisableElevation="@DisableElevation"
-            @onclick="@ShowMenu">
+            @onclick="@ToggleMenu">
             @Label
         </MudButton>
     }
     else
     {
-        <MudIconButton Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" @onclick="@ShowMenu"/>
+        <MudIconButton Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" @onclick="@ToggleMenu"/>
     }
     <CascadingValue Value="@this">
         <div class="mud-menu-list @(isMenuOpen? "mud-open" : "")">
@@ -32,5 +32,5 @@
 
 @if (isMenuOpen)
 {
-    <div class="mud-menu-overlay" @onclick="@ShowMenu"></div>
+    <div class="mud-menu-overlay" @onclick="@ToggleMenu"></div>
 }

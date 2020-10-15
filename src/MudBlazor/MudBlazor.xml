@@ -14,7 +14,7 @@
             The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseButton.Click">
+        <member name="P:MudBlazor.MudBaseButton.OnClick">
             <summary>
             Button click event.
             </summary>
