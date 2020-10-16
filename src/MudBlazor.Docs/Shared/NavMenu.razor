@@ -1,4 +1,4 @@
-﻿@using System.Linq 
+﻿@using System.Linq
 
 <MudNavMenu Class="mt-4">
     <MudNavGroup Title="Getting Started" Expanded="false">
@@ -21,17 +21,10 @@
         }
     </MudNavGroup>
     <MudNavGroup Title="Component API" Expanded="false">
-        @foreach (var item in DocsComponents.ToList().OrderBy(i => i.Name))
+        @foreach (var item in DocsComponentsAPI.ToList().OrderBy(i => i.Name))
         {
-            if (item.IsNavGroup)
-            {
-                @foreach (var apiitem in item.GroupItems.ToList())
-                {
-                    string href = $"api/{apiitem.Component.ToString()}";
-                    <MudNavLink Href="@href">@apiitem.Name</MudNavLink>
-                }
-
-            }
+            string href = $"api/{item.Component.ToString()}";
+            <MudNavLink Href="@href">@item.Name</MudNavLink>
         }
     </MudNavGroup>
     <MudNavGroup Title="System" Expanded="false">
@@ -58,6 +51,7 @@
 
 @code {
     DocsComponents DocsComponents = new DocsComponents();
+    DocsComponents DocsComponentsAPI = new DocsComponents();
 
     protected override void OnInitialized()
     {
@@ -99,5 +93,16 @@
                             .AddItem("Simple Table", typeof(MudSimpleTable))
                             .AddItem("Tooltip", typeof(MudTooltip))
                             .AddItem("Typography", typeof(MudText)));
+
+        @foreach (var item in DocsComponents.ToList())
+        {
+            if (item.IsNavGroup)
+            {
+                @foreach (var ApiItem in item.GroupItems.ToList())
+                {
+                    DocsComponentsAPI.AddItem(ApiItem.Name, ApiItem.Component);
+                }
+            }
+        }
     }
 }
