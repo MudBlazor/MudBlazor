@@ -1,0 +1,64 @@
+﻿@page "/versions"
+
+<DocsPage MaxWidth="MaxWidth.Large">
+    <MudContainer>
+        <MudText Typo="Typo.h3" GutterBottom="true">Versions</MudText>
+    </MudContainer>
+    <MudContainer>
+        <MudText Typo="Typo.h4" GutterBottom="true">Latest Releases</MudText>
+        <MudText Class="my-4">List of our latest releases.</MudText>
+        <MudSimpleTable Elevation="0">
+            <tbody class="mb-16">
+                <tr>
+                    <td>v1.0.6</td>
+                    <td><MudLink Href="https://www.nuget.org/packages/MudBlazor/1.0.6">Nuget</MudLink></td>
+                    <td><MudChip Color="Color.Warning" Size="Size.Small">Prerelease</MudChip></td>
+                </tr>
+                <tr>
+                    <td>v1.0.5</td>
+                    <td><MudLink Href="https://www.nuget.org/packages/MudBlazor/1.0.5">Nuget</MudLink></td>
+                    <td><MudChip Color="Color.Warning" Size="Size.Small">Prerelease</MudChip></td>
+                </tr>
+                <tr>
+                    <td>v1.0.4</td>
+                    <td><MudLink Href="https://www.nuget.org/packages/MudBlazor/1.0.4">Nuget</MudLink></td>
+                    <td><MudChip Color="Color.Warning" Size="Size.Small">Prerelease</MudChip></td>
+                </tr>
+                <tr>
+                    <td>v1.0.3</td>
+                    <td><MudLink Href="https://www.nuget.org/packages/MudBlazor/1.0.3">Nuget</MudLink></td>
+                    <td><MudChip Color="Color.Warning" Size="Size.Small">Prerelease</MudChip></td>
+                </tr>
+                <tr>
+                    <td>v1.0.2</td>
+                    <td><MudLink Href="https://www.nuget.org/packages/MudBlazor/1.0.2">Nuget</MudLink></td>
+                    <td><MudChip Color="Color.Warning" Size="Size.Small">Prerelease</MudChip></td>
+                </tr>
+                <tr>
+                    <td>v1.0.1</td>
+                    <td><MudLink Href="https://www.nuget.org/packages/MudBlazor/1.0.1">Nuget</MudLink></td>
+                    <td><MudChip Color="Color.Warning" Size="Size.Small">Prerelease</MudChip></td>
+                </tr>
+                <tr>
+                    <td>v1.0.0</td>
+                    <td><MudLink Href="https://www.nuget.org/packages/MudBlazor/1.0.0">Nuget</MudLink></td>
+                    <td><MudChip Color="Color.Warning" Size="Size.Small">Prerelease</MudChip></td>
+                </tr>
+            </tbody>
+        </MudSimpleTable>
+    </MudContainer>
+    <MudContainer>
+        <MudText Typo="Typo.h4" GutterBottom="true">Development</MudText>
+        <MudText Class="my-4">Here you can download the source code. Documentation and code might be missing or wrong.</MudText>
+        <MudSimpleTable Elevation="0">
+            <tbody class="mb-16">
+                <tr>
+                    <td>master branch</td>
+                    <td><MudLink Href="https://github.com/Garderoben/MudBlazor/tree/master">Source code</MudLink></td>
+                    <td><MudChip Color="Color.Danger" Size="Size.Small">Development</MudChip></td>
+                </tr>
+            </tbody>
+        </MudSimpleTable>
+    </MudContainer>
+</DocsPage>
+<Footer />
