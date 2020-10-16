@@ -14,6 +14,21 @@
             The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBaseButton.ForceLoad">
+            <summary>
+            If true, force browser to redirect outside component router-space.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseButton.Command">
+            <summary>
+            Command executed when the user clicks on an element.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseButton.CommandParameter">
+            <summary>
+            Command parameter.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBaseButton.OnClick">
             <summary>
             Button click event.
@@ -38,6 +53,181 @@
             <summary>
             UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAlert.Elevation">
+            <summary>
+            The higher the number, the heavier the drop-shadow. 0 for no shadow.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAlert.Square">
+            <summary>
+            If true, rounded corners are disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAlert.Dense">
+            <summary>
+            If true, compact padding will be used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAlert.NoIcon">
+            <summary>
+            If true, no alert icon will be used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAlert.Severity">
+            <summary>
+            The severity of the alert. This defines the color and icon used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAlert.Variant">
+            <summary>
+            The variant to use.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAlert.Class">
+            <summary>
+            User class names, separated by space.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAlert.ChildContent">
+            <summary>
+            Child content of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAppBar.Elevation">
+            <summary>
+            The higher the number, the heavier the drop-shadow. 0 for no shadow.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAppBar.Dense">
+            <summary>
+            If true, compact padding will be used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAppBar.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAppBar.Position">
+            <summary>
+            The positioning type. The behavior of the different options is described in the MDN web docs. Note: sticky is not universally supported and will fall back to static when unavailable.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAppBar.ChildContent">
+            <summary>
+            Child content of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudButton.StartIcon">
+            <summary>
+            Icon placed before the text if set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudButton.EndIcon">
+            <summary>
+            Icon placed before the text if set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudButton.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudButton.Size">
+            <summary>
+            The Size of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudButton.Variant">
+            <summary>
+            The variant to use.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudButton.Disabled">
+            <summary>
+            If true, the button will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudButton.DisableElevation">
+            <summary>
+            If true, no drop-shadow will be used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudButton.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudButton.ChildContent">
+            <summary>
+            Child content of MudButton.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudFab.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudFab.Size">
+            <summary>
+            The Size of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudFab.Icon">
+            <summary>
+            If applied Icon will be added to the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudFab.Label">
+            <summary>
+            If applied the text will be added to the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudFab.Disabled">
+            <summary>
+            If true, the button will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudFab.DisableElevation">
+            <summary>
+            If true, no drop-shadow will be used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudFab.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudIconButton.Icon">
+            <summary>
+            The Icon that will be used in the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudIconButton.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudIconButton.Size">
+            <summary>
+            The Size of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudIconButton.Edge">
+            <summary>
+            If set uses a negative margin.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudIconButton.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudIconButton.Disabled">
+            <summary>
+            If true, the button will be disabled.
             </summary>
         </member>
         <member name="P:MudBlazor.MudChip.Color">
@@ -357,6 +547,81 @@
             <param name="value"></param>
             <param name="when"></param>
             <returns></returns>
+        </member>
+        <member name="P:MudBlazor.MudAvatar.Square">
+            <summary>
+            If true, border-radius is set to 0.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAvatar.Rounded">
+            <summary>
+            If true, border-radius is set to the themes default value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAvatar.Image">
+            <summary>
+            Link to image, if set a image will be displayed instead of text.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAvatar.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAvatar.Size">
+            <summary>
+            The Size of the MudAvatar.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAvatar.ChildContent">
+            <summary>
+            Child content of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCard.Elevation">
+            <summary>
+            The higher the number, the heavier the drop-shadow. 0 for no shadow.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCard.Square">
+            <summary>
+            If true, border-radius is set to 0.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCard.Outlined">
+            <summary>
+            If true, card will be outlined.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCard.ChildContent">
+            <summary>
+            Child content of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCardActions.ChildContent">
+            <summary>
+            Child content of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCardContent.ChildContent">
+            <summary>
+            Child content of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCardHeader.CardHeaderAvatar">
+            <summary>
+            If used renders child content of the CardHeaderAvatar.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCardHeader.CardHeaderContent">
+            <summary>
+            If used renders child content of the CardHeaderContent.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCardHeader.CardHeaderActions">
+            <summary>
+            If used renders child content of the CardHeaderActions.
+            </summary>
         </member>
         <member name="P:MudBlazor.MudTable`1.RowTemplate">
             <summary>
