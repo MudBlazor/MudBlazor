@@ -1,24 +1,48 @@
 ﻿
 .mud-avatar {
-    width: 40px;
-    height: 40px;
     display: flex;
     overflow: hidden;
     position: relative;
     font-size: 1.25rem;
     align-items: center;
     flex-shrink: 0;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     line-height: 1;
     user-select: none;
     border-radius: 50%;
     justify-content: center;
+
+    &.mud-avatar-small {
+        width: 24px;
+        height: 24px;
+    }
+
+    &.mud-avatar-medium {
+        width: 40px;
+        height: 40px;
+    }
+
+    &.mud-avatar-large {
+        width: 56px;
+        height: 56px;
+    }
 }
 
 .mud-avatar-color-default {
     color: #fff;
     background-color: #bdbdbd;
 }
+
+.mud-avatar-color-primary {
+    color: var(--mud-theme-on-primary);
+    background-color: var(--mud-theme-primary);
+}
+
+.mud-avatar-color-secondary {
+    color: var(--mud-theme-on-secondary);
+    background-color: var(--mud-theme-secondary);
+}
+
+
 
 .mud-avatar-rounded {
     border-radius: 4px;
