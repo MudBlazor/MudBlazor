@@ -27,22 +27,49 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
+        /// <summary>
+        /// Icon placed before the text if set.
+        /// </summary>
         [Parameter] public string StartIcon { get; set; }
 
+        /// <summary>
+        /// Icon placed before the text if set.
+        /// </summary>
         [Parameter] public string EndIcon { get; set; }
 
+        /// <summary>
+        /// The color of the component. It supports the theme colors.
+        /// </summary>
         [Parameter] public Color Color { get; set; } = Color.Default;
 
+        /// <summary>
+        /// The Size of the component.
+        /// </summary>
         [Parameter] public Size Size { get; set; } = Size.Medium;
 
+        /// <summary>
+        /// The variant to use.
+        /// </summary>
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
 
+        /// <summary>
+        /// If true, the button will be disabled.
+        /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
+        /// <summary>
+        /// If true, no drop-shadow will be used.
+        /// </summary>
         [Parameter] public bool DisableElevation { get; set; }
 
+        /// <summary>
+        /// If true, disables ripple effect.
+        /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
 
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
     }
