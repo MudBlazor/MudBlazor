@@ -53,14 +53,67 @@
         <member name="T:MudBlazor.Snackbars">
             <inheritdoc />
         </member>
+        <member name="P:MudBlazor.MudTableBase.Elevation">
+            <summary>
+            The higher the number, the heavier the drop-shadow. 0 for no shadow.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.Square">
+            <summary>
+            Set true to disable rounded corners
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.Dense">
+            <summary>
+            Set true for rows with a narrow height
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.Hover">
+            <summary>
+            Set true to see rows hover on mouse-over.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.FixedHeader">
+            <summary>
+            When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.Height">
+            <summary>
+            Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
+            attribute 'height' accepts, i.e. 500px. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.RowsPerPage">
+            <summary>
+            If the table has more items than this number, it will break the rows into pages of said size.
+            Note: requires a MudTablePager in PagerContent.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTableBase.CurrentPage">
             <summary>
             The page index of the currently displayed page. Usually called by MudTablePager.
+            Note: requires a MudTablePager in PagerContent.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTableBase.MultiSelection">
             <summary>
             Set to true to enable selection of multiple rows with check boxes. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.ToolBarContent">
+            <summary>
+            Optional. Add any kind of toolbar to this render fragment.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.HeaderContent">
+            <summary>
+            Add MudTh cells here to define the table header.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.PagerContent">
+            <summary>
+            Add MudTablePager here to enable breaking the rows in to multiple pages.
             </summary>
         </member>
         <member name="M:MudBlazor.Utilities.CssBuilder.Default(System.String)">
@@ -313,6 +366,31 @@
         <member name="P:MudBlazor.MudTable`1.Items">
             <summary>
             The data to display in the table. MudTable will render one row per item
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTable`1.Filter">
+            <summary>
+            A function that returns whether or not an item should be displayed in the table. You can use this to implement your own search function.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTable`1.SelectedItem">
+            <summary>
+            Returns the item which was last clicked on in single selection mode (that is, if MultiSelection is false)
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTable`1.SelectedItemChanged">
+            <summary>
+            Callback is called when a row has been clicked and returns the selected item.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTable`1.SelectedItems">
+            <summary>
+            If MultiSelection is true, this returns the currently selected items. You can bind this property and the initial content of the HashSet you bind it to will cause these rows to be selected initially.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTable`1.SelectedItemsChanged">
+            <summary>
+            Callback is called whenever items are selected or deselected in multi selection mode.
             </summary>
         </member>
         <member name="M:MudBlazor.MudTableSortLabel`1.SetSortDirection(MudBlazor.SortDirection)">
