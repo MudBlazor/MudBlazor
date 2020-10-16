@@ -1,16 +1,20 @@
 ﻿@page "/"
 
-<MudContainer MaxWidth="MaxWidth.Medium" Class="docs-home">
-    <MudBlazorLogo />
-    <div class="docs-home-brand">
-        <h1>MudBlazor</h1>
-        <p>Blazor components for faster and easier web development.</p>
-        <MudButton Variant="Variant.Outlined" Color="Color.Primary" Link="/getting-started/installation">Get Started</MudButton>
-    </div>
+<MudContainer Class="docs-home">
+    <MudGrid Spacing="0">
+        <MudItem xs="12" md="5">
+            <MudBlazorLogo />
+        </MudItem>
+        <MudItem xs="12" md="7">
+            <MudText Typo="Typo.h2" Color="Color.Primary" Class="mudblazor-text">MudBlazor</MudText>
+            <MudText Typo="Typo.h5" Color="Color.Primary" Class="mt-5">Blazor components for faster and easier web development.</MudText>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Class="mt-6" Link="/getting-started/installation">Get Started</MudButton>
+        </MudItem>
+    </MudGrid>
 </MudContainer>
-<MudContainer>
+<MudContainer Class="mt-16">
     <MudGrid>
-        <MudItem xs="12" md="6">
+        <MudItem xs="12" md="12" lg="6">
             <MudPaper Elevation="99" Class="docs-home-paper">
                 <div class="docs-home-title">
                     <MudIcon Icon="@Icons.Material.GetApp"/>
@@ -29,7 +33,7 @@
                 </MudButton>
             </MudPaper>
         </MudItem>
-        <MudItem xs="12" md="6">
+        <MudItem xs="12" md="12" lg="6">
             <MudPaper Elevation="99" Class="docs-home-paper">
                 <div class="docs-home-title">
                     <MudIcon Icon="@Icons.Material.Build" />
@@ -49,6 +53,22 @@
             </MudPaper>
         </MudItem>
     </MudGrid>
+</MudContainer>
+<MudContainer>
+    <MudDivider Class="my-16"/>
+</MudContainer>
+<MudContainer>
+    <MudGrid>
+        <MudItem xs="12" md="12" Class="docs-trymudblazor">
+            <MudText Typo="Typo.h2" Color="Color.Surface" Inline="true">Try</MudText>
+            <MudText Typo="Typo.h2" Color="Color.Primary" Inline="true">MudBlazor</MudText>
+            <MudText Typo="Typo.h6" Color="Color.Surface" Class="my-4">A playground for trying out MudBlazor components entirely in the browser.</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://try.mudblazor.com/">Go to Website</MudButton>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+<MudContainer>
+    <MudDivider Class="my-16" />
 </MudContainer>
 <MudContainer>
     <MudText Typo="Typo.h4" Align="Align.Center">Examples</MudText>
