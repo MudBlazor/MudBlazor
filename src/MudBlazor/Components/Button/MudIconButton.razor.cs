@@ -18,18 +18,34 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
+        /// <summary>
+        /// The Icon that will be used in the component.
+        /// </summary>
         [Parameter] public string Icon { get; set; }
 
-        [Parameter] public string ToggleIcon { get; set; }
-
+        /// <summary>
+        /// The color of the component. It supports the theme colors.
+        /// </summary>
         [Parameter] public Color Color { get; set; } = Color.Default;
 
+        /// <summary>
+        /// The Size of the component.
+        /// </summary>
         [Parameter] public Size Size { get; set; } = Size.Medium;
 
+        /// <summary>
+        /// If set uses a negative margin.
+        /// </summary>
         [Parameter] public Edge Edge { get; set; }
 
+        /// <summary>
+        /// If true, disables ripple effect.
+        /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
 
+        /// <summary>
+        /// If true, the button will be disabled.
+        /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
     }
