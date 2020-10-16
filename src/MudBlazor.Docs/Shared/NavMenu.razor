@@ -1,4 +1,5 @@
-﻿
+﻿@using System.Linq 
+
 <MudNavMenu Class="mt-4">
     <MudNavGroup Title="Getting Started" Expanded="false">
         <MudNavLink Href="getting-started/installation">Installation</MudNavLink>
@@ -20,7 +21,7 @@
         }
     </MudNavGroup>
     <MudNavGroup Title="Component API" Expanded="false">
-        @foreach (var item in DocsComponents.ToList())
+        @foreach (var item in DocsComponents.ToList().OrderBy(i => i.Name))
         {
             if (item.IsNavGroup)
             {
@@ -40,10 +41,9 @@
     <MudNavGroup Title="Customization" Expanded="false">
         <MudNavGroup Title="Theming" Expanded="true">
             <MudNavLink Href="customization/theming">Overview</MudNavLink>
-            <MudNavLink Href="customization/palette">Palette</MudNavLink>
-            <MudNavLink Href="customization/typography">Typography</MudNavLink>
+            <MudNavLink Href="customization/theme-colors">Theme Colors</MudNavLink>
+            <MudNavLink Href="customization/shapes">Shapes</MudNavLink>
         </MudNavGroup>
-        <MudNavLink Href="customization/color">Color</MudNavLink>
         <MudNavLink Href="customization/default-theme">Default Theme</MudNavLink>
     </MudNavGroup>
     <MudNavGroup Title="Discover More" Expanded="false">
