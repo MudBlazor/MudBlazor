@@ -94,6 +94,8 @@
     color: #9cdcfe; }
   .mud-codeblock .csharp .interface {
     color: #b0d7a3; }
+  .mud-codeblock .csharp .comment {
+    color: #57a64a; }
 
 .docs-footer {
   padding: 48px 0px;
