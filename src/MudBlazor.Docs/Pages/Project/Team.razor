@@ -6,94 +6,79 @@
         <MudText Typo="Typo.h6" Style="font-weight:400; line-height:1.2;">MudBlazor is not a one person show. We have a new project, in its early stages and just a few people working on it right now, but hoping more will join in an contribute further down the line.</MudText>
 
         <MudText Typo="Typo.h4" GutterBottom="true" Color="Color.Primary">Core Team</MudText>
-        <MudText Class="mb-4">The Core Team who guide, develop and direct the development of Mudblazor.</MudText>
-        <MudDivider Class="mb-5" />
+        <MudText Class="mb-8">The Core Team who guide, develop and direct the development of Mudblazor.</MudText>
         <MudGrid>
-            <MudItem md="12">
-                <div class="docs-team-card">
-                    <div class="docs-team-avatar">
-                        <MudAvatar Class="mt-1">J</MudAvatar>
-                    </div>
-                    <div class="docs-team-details">
-                        <div class="docs-person-title">
-                            <MudText Typo="Typo.h6" Class="mt-1 mr-3">Jonny Larsson</MudText>
-                            <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Default" />
-                            <MudIconButton Icon="@Icons.Custom.LinkedIn" Color="Color.Primary" />
-                        </div>
-                        <MudText Typo="Typo.subtitle1">Focus - MudBlazor/*</MudText>
-                        <div class="docs-details-row ">
-                            <MudIcon Icon="@Icons.Material.Work" Size="Size.Small"></MudIcon>
-                            <MudText Typo="Typo.body2" Inline="true">Founder</MudText>
-                        </div>
-                        <div class="docs-details-row ">
-                            <MudIcon Icon="@Icons.Material.Place" Size="Size.Small"></MudIcon>
-                            <MudText Typo="Typo.body2" Inline="true">Örebro, Sweden</MudText>
-                        </div>
-                        <div class="docs-details-row ">
-                            <MudIcon Icon="@Icons.Material.Translate" Size="Size.Small"></MudIcon>
-                            <MudText Typo="Typo.body2" Inline="true">Swedish, English</MudText>
-                        </div>
-                    </div>
-                </div>
-                <MudDivider Class="mt-5" />
+            <MudItem xs="12" md="6">
+                <MudCard Elevation="4">
+                    <MudCardHeader>
+                        <CardHeaderAvatar>
+                            <MudAvatar Image="https://media-exp1.licdn.com/dms/image/C4D03AQGNO7uV7fRi7Q/profile-displayphoto-shrink_200_200/0?e=1608163200&v=beta&t=rolCGCu34reGiqGU6ZRxVHI_cEHoVRvhtUSF9TffaN0" Size="Size.Large" Class="mud-elevation-4"/>
+                        </CardHeaderAvatar>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.body1">Jonny Larsson</MudText>
+                            <MudText Typo="Typo.body2">Creator</MudText>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+                            <MudIconButton Icon="@Icons.Custom.GitHub" Link="https://github.com/Garderoben" Color="Color.Surface" />
+                            <MudIconButton Icon="@Icons.Custom.LinkedIn" Link="https://www.linkedin.com/in/jonny-larsson-b72480161/" Color="Color.Primary" />
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudList>
+                            <MudListItem Icon="@Icons.Material.Place" Text="Örebro, Sweden" />
+                            <MudListItem Icon="@Icons.Material.Translate" Text="Swedish, English" />
+                        </MudList>
+                    </MudCardContent>
+                </MudCard>
             </MudItem>
-            <MudItem md="12">
-                <div class="docs-team-card">
-                    <div class="docs-team-avatar">
-                        <MudAvatar Class="mt-1">M</MudAvatar>
-                    </div>
-                    <div class="docs-team-details">
-                        <div class="docs-person-title">
-                            <MudText Typo="Typo.h6" Class="mt-1 mr-3">Meinrad Recheis</MudText>
-                            <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Default" />
-                            <MudIconButton Icon="@Icons.Custom.LinkedIn" Color="Color.Primary" />
-                        </div>
-                        <MudText Typo="Typo.subtitle1">Focus - MudBlazor/*</MudText>
-                        <div class="docs-details-row ">
-                            <MudIcon Icon="@Icons.Material.Work" Size="Size.Small"></MudIcon>
-                            <MudText Typo="Typo.body2" Inline="true">Co-Creator</MudText>
-                        </div>
-                        <MudText Typo="Typo.subtitle2"></MudText>
-                        <div class="docs-details-row ">
-                            <MudIcon Icon="@Icons.Material.Place" Size="Size.Small"></MudIcon>
-                            <MudText Typo="Typo.body2" Inline="true">Vienna, Austria</MudText>
-                        </div>
-                        <div class="docs-details-row ">
-                            <MudIcon Icon="@Icons.Material.Translate" Size="Size.Small"></MudIcon>
-                            <MudText Typo="Typo.body2" Inline="true">Austrian, English</MudText>
-                        </div>
-                    </div>
-                </div>
-                <MudDivider Class="mt-5" />
+            <MudItem xs="12" md="6">
+                <MudCard Elevation="4">
+                    <MudCardHeader>
+                        <CardHeaderAvatar>
+                            <MudAvatar Image="https://media-exp1.licdn.com/dms/image/C4E03AQHWnE_XxTpRHA/profile-displayphoto-shrink_200_200/0?e=1608163200&v=beta&t=fFn9m3wQLDb3KGhDuMwhFgjqoM9n59qJy46qdYhT1xs" Size="Size.Large" Class="mud-elevation-4" />
+                        </CardHeaderAvatar>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.body1">Meinrad Recheis</MudText>
+                            <MudText Typo="Typo.body2">Co-Creator</MudText>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+                            <MudIconButton Icon="@Icons.Custom.GitHub" Link="https://github.com/henon" Color="Color.Surface" Target="_blank" />
+                            <MudIconButton Icon="@Icons.Custom.LinkedIn" Link="https://www.linkedin.com/in/meinrad-recheis-6a9885171/" Color="Color.Primary" />
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudList>
+                            <MudListItem Icon="@Icons.Material.Place" Text="Vienna, Austria" />
+                            <MudListItem Icon="@Icons.Material.Translate" Text="German, Chinese, English" />
+                        </MudList>
+                    </MudCardContent>
+                </MudCard>
             </MudItem>
         </MudGrid>
-        <MudText Typo="Typo.h4" GutterBottom="true" Color="Color.Secondary">Contributors</MudText>
-        <MudText Class="mb-4">Fixing bugs, doing docs and adding new components. Contributors who actively working to improve MudBlazor.</MudText>
-        <MudDivider Class="mb-5" />
+        <MudText Typo="Typo.h4"Class="mt-16" GutterBottom="true" Color="Color.Secondary">Contributors</MudText>
+        <MudText Class="mb-8">Fixing bugs, doing docs and adding new components. Contributors who actively working to improve MudBlazor.</MudText>
         <MudGrid>
-            <MudItem md="12">
-                <div class="docs-team-card">
-                    <div class="docs-team-avatar">
-                        <MudAvatar Class="mt-1">R</MudAvatar>
-                    </div>
-                    <div class="docs-team-details">
-                        <div class="docs-person-title">
-                            <MudText Typo="Typo.h6" Class="mt-1 mr-3">Rasmus Wahlström</MudText>
-                            <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Default" />
-                            <MudIconButton Icon="@Icons.Custom.LinkedIn" Color="Color.Primary" />
-                        </div>
-                        <MudText Typo="Typo.subtitle1">Focus - Documentation and Texts</MudText>
-                        <div class="docs-details-row ">
-                            <MudIcon Icon="@Icons.Material.Place" Size="Size.Small"></MudIcon>
-                            <MudText Typo="Typo.body2" Inline="true">Norrköping, Sweden</MudText>
-                        </div>
-                        <div class="docs-details-row ">
-                            <MudIcon Icon="@Icons.Material.Translate" Size="Size.Small"></MudIcon>
-                            <MudText Typo="Typo.body2" Inline="true">Swedish, English</MudText>
-                        </div>
-                    </div>
-                </div>
-                <MudDivider Class="mt-5" />
+            <MudItem xs="12" md="6">
+                <MudCard Elevation="4">
+                    <MudCardHeader>
+                        <CardHeaderAvatar>
+                            <MudAvatar Image="https://avatars2.githubusercontent.com/u/71094850?s=460&u=66c16f5bb7d27dc751f6759a82a3a070c8c7fe4b&v=4" Size="Size.Large" Class="mud-elevation-4" />
+                        </CardHeaderAvatar>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.body1">Rasmus Wahlström</MudText>
+                            <MudText Typo="Typo.body2">Contributor</MudText>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+                            <MudIconButton Icon="@Icons.Custom.GitHub" Link="https://github.com/Lunees" Color="Color.Surface" Target="_blank" />
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudList>
+                            <MudListItem Icon="@Icons.Material.Place" Text="Norrköping, Sweden" />
+                            <MudListItem Icon="@Icons.Material.Translate" Text="Swedish, English" />
+                        </MudList>
+                    </MudCardContent>
+                </MudCard>
             </MudItem>
         </MudGrid>
     </MudContainer>
