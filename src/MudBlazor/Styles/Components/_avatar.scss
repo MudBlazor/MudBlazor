@@ -45,7 +45,7 @@
 
 
 .mud-avatar-rounded {
-    border-radius: 4px;
+    border-radius: var(--mud-theme-border-radius-default);
 }
 
 .mud-avatar-square {
