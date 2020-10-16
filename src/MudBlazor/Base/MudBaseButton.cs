@@ -25,10 +25,19 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Target { get; set; }
 
+        /// <summary>
+        /// If true, force browser to redirect outside component router-space.
+        /// </summary>
         [Parameter] public bool ForceLoad { get; set; }
 
+        /// <summary>
+        /// Command executed when the user clicks on an element.
+        /// </summary>
         [Parameter] public ICommand Command { get; set; }
 
+        /// <summary>
+        /// Command parameter.
+        /// </summary>
         [Parameter] public object CommandParameter { get; set; }
 
         /// <summary>
