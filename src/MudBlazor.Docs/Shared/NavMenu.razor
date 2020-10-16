@@ -4,7 +4,7 @@
         <MudNavLink Href="getting-started/installation">Installation</MudNavLink>
         <MudNavLink Href="getting-started/usage">Usage</MudNavLink>
     </MudNavGroup>
-    <MudNavGroup Title="Components" Expanded="true">
+    <MudNavGroup Title="Components" Expanded="false">
         @foreach (var item in DocsComponents.ToList())
         {
             if (item.IsNavGroup)
@@ -37,6 +37,22 @@
         <MudNavLink Href="system/elevation">Elevation</MudNavLink>
         <MudNavLink Href="system/spacing">Spacing</MudNavLink>
     </MudNavGroup>
+    <MudNavGroup Title="Customization" Expanded="false">
+        <MudNavGroup Title="Theming" Expanded="true">
+            <MudNavLink Href="customization/theming">Overview</MudNavLink>
+            <MudNavLink Href="customization/palette">Palette</MudNavLink>
+            <MudNavLink Href="customization/typography">Typography</MudNavLink>
+        </MudNavGroup>
+        <MudNavLink Href="customization/color">Color</MudNavLink>
+        <MudNavLink Href="customization/default-theme">Default Theme</MudNavLink>
+    </MudNavGroup>
+    <MudNavGroup Title="Discover More" Expanded="false">
+        <MudNavLink Href="project/about">About</MudNavLink>
+        <MudNavLink Href="project/team">Team</MudNavLink>
+        <MudNavLink Href="project/vision">Vision</MudNavLink>
+        <MudNavLink Href="project/credit">Credits</MudNavLink>
+    </MudNavGroup>
+    <MudNavLink Href="versions" Style="font-weight:500;">Versions</MudNavLink>
 </MudNavMenu>
 <div class="docs-nav-filler"></div>
 
