@@ -321,24 +321,6 @@
 .credit-blazored {
   color: #ff6600; }
 
-.docs-team-card {
-  display: flex; }
-  .docs-team-card .docs-team-avatar .mud-avatar {
-    height: 58px;
-    width: 58px; }
-  .docs-team-card .docs-team-details {
-    padding-left: 26px; }
-    .docs-team-card .docs-team-details .docs-person-title {
-      display: flex; }
-      .docs-team-card .docs-team-details .docs-person-title .mud-svg-icon-root {
-        font-size: 1.25rem; }
-    .docs-team-card .docs-team-details .docs-details-row {
-      padding: 6px 0px;
-      display: flex;
-      align-items: center; }
-      .docs-team-card .docs-team-details .docs-details-row .mud-svg-icon-root {
-        margin-right: 8px; }
-
 .docs-page .mud-typography-h4 {
   margin-top: 52px; }
 

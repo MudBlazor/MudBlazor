@@ -9,3 +9,14 @@
         color: var(--mud-theme-#{$color});
     }
 }
+
+@each $color in $mud-theme-props {
+    .mud-theme-color-#{$color} {
+        color: var(--mud-theme-on-#{$color});
+        background-color: var(--mud-theme-#{$color});
+    }
+}
+
+.mud-color-text-surface {
+    color: var(--mud-theme-on-surface);
+}

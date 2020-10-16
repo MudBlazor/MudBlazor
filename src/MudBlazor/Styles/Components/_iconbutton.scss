@@ -21,6 +21,14 @@
     }
 }
 
+.mud-icon-button-color-surface {
+    color: var(--mud-theme-on-surface);
+
+    &:hover {
+        background-color: var(--mud-theme-default-hover);
+    }
+}
+
 .mud-icon-button-color-default {
     color: var(--mud-theme-default);
 

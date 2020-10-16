@@ -40,6 +40,16 @@
             will be splatted onto the underlying HTML tag.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudChip.Color">
+            <summary>
+            The color of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.Size">
+            <summary>
+            The size of the button. small is equivalent to the dense button styling.
+            </summary>
+        </member>
         <member name="T:MudBlazor.Snackbars">
             <inheritdoc />
         </member>

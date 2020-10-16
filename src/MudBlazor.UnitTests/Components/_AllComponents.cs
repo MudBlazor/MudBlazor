@@ -216,6 +216,56 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void AvatarIconExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AvatarIconExample>();
+        }
+
+
+        [Test]
+        public void AvatarImageExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AvatarImageExample>();
+        }
+
+
+        [Test]
+        public void AvatarLetterExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AvatarLetterExample>();
+        }
+
+
+        [Test]
+        public void AvatarSizeExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AvatarSizeExample>();
+        }
+
+
+        [Test]
+        public void AvatarVariantsExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<AvatarVariantsExample>();
+        }
+
+
+        [Test]
         public void ButtonCustomizedExample_Test()
         {
                 using var ctx = new Bunit.TestContext();

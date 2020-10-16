@@ -48,9 +48,9 @@
     </MudNavGroup>
     <MudNavGroup Title="Discover More" Expanded="false">
         <MudNavLink Href="project/about">About</MudNavLink>
+        <MudNavLink Href="project/credit">Credits</MudNavLink>
         <MudNavLink Href="project/team">Team</MudNavLink>
         <MudNavLink Href="project/vision">Vision</MudNavLink>
-        <MudNavLink Href="project/credit">Credits</MudNavLink>
     </MudNavGroup>
     <MudNavLink Href="versions" Style="font-weight:500;">Versions</MudNavLink>
 </MudNavMenu>
@@ -87,6 +87,7 @@
                             .AddItem("Dialog", typeof(MudDialog))
                             .AddItem("Snackbar", typeof(MudSnackbarProvider)))
                     .AddNavGroup("Data Display", true, new DocsComponents()
+                            .AddItem("Avatar", typeof(MudAvatar))
                             .AddItem("Alert", typeof(MudAlert))
                             .AddItem("Card", typeof(MudCard))
                             .AddItem("Divider", typeof(MudDivider))
