@@ -2,7 +2,6 @@
 .mud-chip {
     border: none;
     cursor: default;
-    height: 32px;
     display: inline-flex;
     outline: 0;
     padding: 0;
@@ -16,7 +15,29 @@
     vertical-align: middle;
     justify-content: center;
     text-decoration: none;
-    margin: 4px
+    margin: 4px;
+
+    &.mud-chip-size-small {
+        height: 24px;
+
+        & > .mud-chip-label {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+    }
+
+    &.mud-chip-size-medium {
+        height: 32px;
+    }
+
+
+    & > .mud-chip-label {
+        overflow: hidden;
+        white-space: nowrap;
+        padding-left: 12px;
+        padding-right: 12px;
+        text-overflow: ellipsis;
+    }
 }
 
 .mud-chip-color-default {
@@ -34,10 +55,24 @@
     background-color: var(--mud-theme-secondary);
 }
 
-.mud-chip-label {
-    overflow: hidden;
-    white-space: nowrap;
-    padding-left: 12px;
-    padding-right: 12px;
-    text-overflow: ellipsis;
+.mud-chip-color-info {
+    color: var(--mud-theme-on-alert);
+    background-color: var(--mud-theme-info);
+}
+.mud-chip-color-success {
+    color: var(--mud-theme-on-alert);
+    background-color: var(--mud-theme-success);
+}
+.mud-chip-color-warning {
+    color: var(--mud-theme-on-alert);
+    background-color: var(--mud-theme-warning);
+}
+.mud-chip-color-danger {
+    color: var(--mud-theme-on-alert);
+    background-color: var(--mud-theme-danger);
+}
+
+.mud-chip-color-dark {
+    color: var(--mud-theme-on-alert);
+    background-color: var(--mud-theme-dark);
 }
