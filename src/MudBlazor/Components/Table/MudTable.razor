@@ -55,8 +55,14 @@
     /// </summary>
     [Parameter] public IEnumerable<T> Items { get; set; }
 
+    /// <summary>
+    /// A function that returns whether or not an item should be displayed in the table. You can use this to implement your own search function.
+    /// </summary>
     [Parameter] public Func<T, bool> Filter { get; set; } = null;
 
+    /// <summary>
+    /// Returns the item which was last clicked on in single selection mode (that is, if MultiSelection is false)
+    /// </summary>
     [Parameter]
     public T SelectedItem
     {
@@ -71,8 +77,14 @@
     }
     private T _selectedItem;
 
+    /// <summary>
+    /// Callback is called when a row has been clicked and returns the selected item.
+    /// </summary>
     [Parameter] public EventCallback<T> SelectedItemChanged { get; set; }
 
+    /// <summary>
+    /// If MultiSelection is true, this returns the currently selected items. You can bind this property and the initial content of the HashSet you bind it to will cause these rows to be selected initially.
+    /// </summary>
     [Parameter]
     public HashSet<T> SelectedItems
     {
@@ -100,6 +112,9 @@
         }
     }
 
+    /// <summary>
+    /// Callback is called whenever items are selected or deselected in multi selection mode.
+    /// </summary>
     [Parameter] public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
 
     protected IEnumerable<T> FilteredItems

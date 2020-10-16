@@ -24,17 +24,48 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
+        /// <summary>
+        /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
+        /// </summary>
         [Parameter] public int Elevation { set; get; } = 1;
+
+        /// <summary>
+        /// Set true to disable rounded corners
+        /// </summary>
         [Parameter] public bool Square { get; set; }
+
         [Parameter] public bool Outlined { get; set; }
+
+        /// <summary>
+        /// Set true for rows with a narrow height
+        /// </summary>
         [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
+        /// Set true to see rows hover on mouse-over.
+        /// </summary>
         [Parameter] public bool Hover { get; set; }
+
+        /// <summary>
+        /// When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.
+        /// </summary>
         [Parameter] public bool FixedHeader { get; set; }
+
+        /// <summary>
+        /// Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
+        /// attribute 'height' accepts, i.e. 500px. 
+        /// </summary>
         [Parameter] public string Height { get; set; }
+
+        /// <summary>
+        /// If the table has more items than this number, it will break the rows into pages of said size.
+        /// Note: requires a MudTablePager in PagerContent.
+        /// </summary>
         [Parameter] public int RowsPerPage { get; set; } = 10;
 
         /// <summary>
         /// The page index of the currently displayed page. Usually called by MudTablePager.
+        /// Note: requires a MudTablePager in PagerContent.
         /// </summary>
         [Parameter]
         public int CurrentPage
@@ -54,9 +85,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool MultiSelection { get; set; }
 
+        /// <summary>
+        /// Optional. Add any kind of toolbar to this render fragment.
+        /// </summary>
         [Parameter] public RenderFragment ToolBarContent { get; set; }
+
+        /// <summary>
+        /// Add MudTh cells here to define the table header.
+        /// </summary>
         [Parameter] public RenderFragment HeaderContent { get; set; }
+
         //[Parameter] public RenderFragment<T> RowTemplate { get; set; } <-- see MudTable.razor
+
+        /// <summary>
+        /// Add MudTablePager here to enable breaking the rows in to multiple pages.
+        /// </summary>
         [Parameter] public RenderFragment PagerContent { get; set; }
 
         public abstract TableContext TableContext { get; }
