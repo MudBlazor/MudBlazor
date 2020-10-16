@@ -5,4 +5,11 @@
     @ChildContent
 </div>
 
-@code { [Parameter] public RenderFragment ChildContent { get; set; } }
+@code {
+
+    /// <summary>
+    /// Child content of the component.
+    /// </summary>
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+}

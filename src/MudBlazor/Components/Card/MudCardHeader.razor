@@ -10,6 +10,19 @@
     {<div class="mud-card-header-actions">@CardHeaderActions</div>}
 </div>
 
-@code { [Parameter] public RenderFragment CardHeaderAvatar { get; set; }
-            [Parameter] public RenderFragment CardHeaderContent { get; set; }
-            [Parameter] public RenderFragment CardHeaderActions { get; set; } }
+@code {
+    /// <summary>
+    /// If used renders child content of the CardHeaderAvatar.
+    /// </summary>
+    [Parameter] public RenderFragment CardHeaderAvatar { get; set; }
+
+    /// <summary>
+    /// If used renders child content of the CardHeaderContent.
+    /// </summary>
+    [Parameter] public RenderFragment CardHeaderContent { get; set; }
+
+    /// <summary>
+    /// If used renders child content of the CardHeaderActions.
+    /// </summary>
+    [Parameter] public RenderFragment CardHeaderActions { get; set; }
+}
