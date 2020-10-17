@@ -25,7 +25,14 @@ else
       .AddClass(Class)
     .Build();
 
+    /// <summary>
+    /// Child content of component.
+    /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
+
+    /// <summary>
+    /// If true, the component will link to index page with an a element instead of div.
+    /// </summary>
     [Parameter] public bool LinkToIndex { get; set; }
 
 }
