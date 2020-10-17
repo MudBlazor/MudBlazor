@@ -17,16 +17,29 @@
       .AddClass(Class)
     .Build();
 
+    /// <summary>
+    /// Sets absolute postion to the component.
+    /// </summary>
     [Parameter] public bool Absolute { get; set; }
 
+    /// <summary>
+    /// If true, a vertical divider will have the correct height when used in flex container.
+    /// </summary>
     [Parameter] public bool FlexItem { get; set; }
 
+    /// <summary>
+    /// If true, the divider will have a lighter color.
+    /// </summary>
     [Parameter] public bool Light { get; set; }
 
-    [Parameter] public bool Insert { get; set; }
-
+    /// <summary>
+    /// If true, the divider is displayed vertically.
+    /// </summary>
     [Parameter] public bool Vertical { get; set; }
 
+    /// <summary>
+    /// The Divider type to use.
+    /// </summary>
     [Parameter] public DividerType DividerType { get; set; } = DividerType.FullWidth;
 
 }
