@@ -16,11 +16,23 @@
       .AddClass(Class)
     .Build();
 
+    /// <summary>
+    /// Child content of component.
+    /// </summary>
     [Parameter] public int Elevation { set; get; } = 1;
 
+    /// <summary>
+    /// If true, border-radius is set to 0.
+    /// </summary>
     [Parameter] public bool Square { get; set; }
 
+    /// <summary>
+    /// If true, card will be outlined.
+    /// </summary>
     [Parameter] public bool Outlined { get; set; }
 
+    /// <summary>
+    /// Child content of the component.
+    /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
 }
