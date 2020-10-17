@@ -18,12 +18,34 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
+        /// <summary>
+        /// If set will display an SVG Icon.
+        /// </summary>
         [Parameter] public string Icon { get; set; }
+
+        /// <summary>
+        /// If set will display Font Icon.
+        /// </summary>
         [Parameter] public string FontIcon { get; set; }
+
+        /// <summary>
+        /// Font Icon Class, only applies if Font Icon is used.
+        /// </summary>
         [Parameter] public string FontClass { get; set; }
+
+        /// <summary>
+        /// The Size of the icon.
+        /// </summary>
         [Parameter] public Size Size { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The color of the component. It supports the theme colors.
+        /// </summary>
         [Parameter] public Color Color { get; set; } = Color.Inherit;
 
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
     }
 }
