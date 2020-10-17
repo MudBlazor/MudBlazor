@@ -238,6 +238,9 @@
 .demo-alert-dense .mud-alert + .mud-alert-outlined-info, .demo-alert-dense .mud-alert-outlined-success, .demo-alert-dense .mud-alert-outlined-warning, .demo-alert-dense .mud-alert-outlined-error, .demo-alert-noicon .mud-alert + .mud-alert-outlined-info, .demo-alert-noicon .mud-alert-outlined-success, .demo-alert-noicon .mud-alert-outlined-warning, .demo-alert-noicon .mud-alert-outlined-error {
   margin-top: 14px !important; }
 
+.demo-skeleton-cards .docs-section-content-inner .mud-card:last-child {
+  margin-top: 36px; }
+
 .docs-home {
   padding-top: 32px;
   padding-bottom: 64px; }

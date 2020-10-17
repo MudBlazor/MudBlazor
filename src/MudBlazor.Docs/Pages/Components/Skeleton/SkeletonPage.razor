@@ -1,0 +1,48 @@
+﻿@page "/components/skeleton"
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Skeleton</Title>
+        <SubTitle>Display placerholder for your content while the data loads.</SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Variants</Title>
+                <Description>The component can take the shape of 3 different variants.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SkeletonVariantsExample />
+            </SectionContent>
+            <SectionSource Code="SkeletonVariantsExample" GitHubFolderName="Skeleton" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Animations</Title>
+                <Description>The default animation is puls but you can disable it or change to wave.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <SkeletonAnimationsExample />
+            </SectionContent>
+            <SectionSource Code="SkeletonAnimationsExample" GitHubFolderName="Skeleton" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Pulsate Example</Title>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-skeleton-cards">
+                <SkeletonPulsateExample />
+            </SectionContent>
+            <SectionSource Code="SkeletonPulsateExample" GitHubFolderName="Skeleton" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Wave Example</Title>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-skeleton-cards">
+                <SkeletonWaveExample />
+            </SectionContent>
+            <SectionSource Code="SkeletonWaveExample" GitHubFolderName="Skeleton" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

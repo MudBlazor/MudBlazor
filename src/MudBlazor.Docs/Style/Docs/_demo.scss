@@ -32,7 +32,7 @@
         width: 100%;
         max-width: 360px;
         background-color: var(--mud-theme-surface);
-    } 
+    }
 }
 
 .demo-divider-vertical {
@@ -107,7 +107,7 @@
     .s-t-a-l-k-e-r {
         color: #000;
         background-color: rgba(255, 152,0, 0.8)
-     }
+    }
 }
 
 
@@ -119,8 +119,7 @@
 }
 
 .demo-radio-inline {
-    display:inline-block;
-
+    display: inline-block;
 }
 
 .demo-snackbar-alerts {
@@ -133,10 +132,12 @@
 .demo-snackbar-output {
     min-width: 250px;
     padding: 1.5rem;
+
     & > .mud-typography-caption {
-        display:block;
+        display: block;
     }
 }
+
 .demo-elevation > .docs-section-content-inner {
 
     & > div {
@@ -194,5 +195,13 @@
 
     .mud-alert + .mud-alert-outlined-info, .mud-alert-outlined-success, .mud-alert-outlined-warning, .mud-alert-outlined-error {
         margin-top: 14px !important;
+    }
+}
+
+.demo-skeleton-cards {
+    & .docs-section-content-inner {
+        & .mud-card:last-child {
+            margin-top: 36px;
+        }
     }
 }
