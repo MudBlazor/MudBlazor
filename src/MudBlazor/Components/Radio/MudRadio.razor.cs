@@ -34,12 +34,35 @@ namespace MudBlazor
             .AddClass($"mud-checked", Checked)
             .Build();
 
+        /// <summary>
+        /// The color of the component. It supports the theme colors.
+        /// </summary>
         [Parameter] public Color Color { get; set; } = Color.Default;
+
+        /// <summary>
+        /// The position of the label.
+        /// </summary>
         [Parameter] public Placement Placement { get; set; } = Placement.End;
+
+        /// <summary>
+        /// The text/label will be displayed next to the switch if set.
+        /// </summary>
         [Parameter] public string Label { get; set; }
         [Parameter] public string Option { get; set; }
+
+        /// <summary>
+        /// If true, disables ripple effect.
+        /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
+
+        /// <summary>
+        /// If true, the button will be disabled.
+        /// </summary>
         [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private bool _checked;
