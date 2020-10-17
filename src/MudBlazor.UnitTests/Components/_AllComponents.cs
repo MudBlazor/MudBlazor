@@ -1256,6 +1256,16 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void BrowserResizeEventExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<BrowserResizeEventExample>();
+        }
+
+
+        [Test]
         public void ElevationUsageExample_Test()
         {
                 using var ctx = new Bunit.TestContext();

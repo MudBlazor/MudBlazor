@@ -1,0 +1,24 @@
+﻿@page "/system/breakpoints"
+
+<DocsPage MaxWidth="MaxWidth.Large">
+    <DocsPageHeader>
+        <Title>Breakpoints</Title>
+        <SubTitle>
+            <MudText>Media breakpoints or mobile breakpoints help you react to changing screen sizes. This page explores the different ways how you can use MudBlazor to adapt to the screen size.</MudText>
+        </SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Listening to browser window resize events</Title>
+                <Description>
+                    <MudText>Directly listening to the screen size change events is the most expensive way to adapt to a resizing browser window. Use this only if the other breakpoint methods don't work for you.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent>
+                <BrowserResizeEventExample />
+            </SectionContent>
+            <SectionSource Code="BrowserResizeEventExample" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

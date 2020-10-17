@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MudBlazor.Dialog;
+using MudBlazor.Services;
 
 namespace MudBlazor.Docs.Extensions
 {
@@ -8,6 +9,7 @@ namespace MudBlazor.Docs.Extensions
     {
         public static void TryAddDocsViewServices(this IServiceCollection services)
         {
+            services.AddMudBlazorResizeListener();
             services.AddMudBlazorDialog();
             services.AddMudBlazorSnackbar(config =>
             {

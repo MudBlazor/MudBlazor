@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MudBlazor.Dialog;
+using MudBlazor.Services;
 
 namespace MudBlazor
 {
@@ -33,5 +34,6 @@ namespace MudBlazor
 
             return AddMudBlazorSnackbar(services, options);
         }
+
     }
 }
