@@ -19,25 +19,9 @@ else
 
     protected override void OnParametersSet()
     {
-        try
-        {
-            if (SpecialCaseComponents.TryGetValue(component, out var type))
-            {
-                ComponentType = type;
-                return;
-            }
-            var type_name = $"MudBlazor.Mud{component.ToPascalCase()}";
-            var assembly = typeof(MudComponentBase).Assembly;
-            ComponentType = assembly.GetType(type_name);
-        }
-        finally {
-            StateHasChanged();
-        }
+        ComponentType = ApiLink.GetTypeFromComponentLink(component);
+        StateHasChanged();
     }
 
 
-    Dictionary<string, Type> SpecialCaseComponents = new Dictionary<string, Type>()
-    {
-        ["table"] = typeof(MudTable<T>),
-    };
 }
