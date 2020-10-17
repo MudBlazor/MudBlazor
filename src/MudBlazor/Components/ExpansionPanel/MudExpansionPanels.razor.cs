@@ -12,9 +12,24 @@ namespace MudBlazor
             .AddClass($"mud-expansion-panels-square", Square)
         .Build();
 
+        /// <summary>
+        /// If true, border-radius is set to 0.
+        /// </summary>
         [Parameter] public bool Square { get; set; }
+
+        /// <summary>
+        /// If true, multiple panels can be expanded at the same time.
+        /// </summary>
         [Parameter] public bool MultiExpansion { get; set; }
+
+        /// <summary>
+        /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
+        /// </summary>
         [Parameter] public int Elevation { set; get; } = 1;
+
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         public List<MudExpansionPanel> Panels = new List<MudExpansionPanel>();
