@@ -435,8 +435,116 @@
             List click event.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudRadio.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRadio.Placement">
+            <summary>
+            The position of the label.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRadio.Label">
+            <summary>
+            The text/label will be displayed next to the switch if set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRadio.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRadio.Disabled">
+            <summary>
+            If true, the button will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRadio.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSlider.Min">
+            <summary>
+            The minimum allowed value of the slider. Should not be equal to max.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSlider.Max">
+            <summary>
+            The maximum allowed value of the slider. Should not be equal to min.
+            </summary>
+            
+        </member>
+        <member name="P:MudBlazor.MudSlider.Step">
+            <summary>
+            How many steps the slider should take on eatch move.
+            </summary>
+            
+        </member>
+        <member name="P:MudBlazor.MudSlider.Disabled">
+            <summary>
+            If true, the slider will be disabled.
+            </summary>
+            
+        </member>
+        <member name="P:MudBlazor.MudSlider.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
         <member name="T:MudBlazor.Snackbars">
             <inheritdoc />
+        </member>
+        <member name="P:MudBlazor.MudSwitch.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSwitch.Label">
+            <summary>
+            The text/label will be displayed next to the switch if set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSwitch.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSwitch.Disabled">
+            <summary>
+            If true, the switch will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSimpleTable.Elevation">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSimpleTable.Hover">
+            <summary>
+            If true, the table row will shade on hover.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSimpleTable.Square">
+            <summary>
+            If true, border-radius is set to 0.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSimpleTable.Dense">
+            <summary>
+            If true, compact padding will be used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSimpleTable.Outlined">
+            <summary>
+            If true, card will be outlined.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSimpleTable.ChildContent">
+            <summary>
+            Child content of the component.
+            </summary>
         </member>
         <member name="P:MudBlazor.MudTableBase.Elevation">
             <summary>
@@ -499,6 +607,71 @@
         <member name="P:MudBlazor.MudTableBase.PagerContent">
             <summary>
             Add MudTablePager here to enable breaking the rows in to multiple pages.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabs.Rounded">
+            <summary>
+            If true, sets the border-radius to theme default.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabs.Border">
+            <summary>
+            If true, sets a border.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabs.Centered">
+            <summary>
+            If true, centers the tabitems.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabs.Vertical">
+            <summary>
+            If true, displays the MudTabs verticaly.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabs.Elevation">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabs.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabs.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudText.Typo">
+            <summary>
+            Applies the theme typography styles.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudText.Align">
+            <summary>
+            Set the text-align on the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudText.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudText.GutterBottom">
+            <summary>
+            If true, the text will have a bottom margin.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudText.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudText.Inline">
+            <summary>
+            If true, Sets display inine
             </summary>
         </member>
         <member name="M:MudBlazor.Utilities.CssBuilder.Default(System.String)">
@@ -913,6 +1086,46 @@
             Gets or sets the drawer clipped state.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudPaper.Elevation">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudPaper.Square">
+            <summary>
+            If true, border-radius is set to 0.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudPaper.Outlined">
+            <summary>
+            If true, card will be outlined.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudPaper.ChildContent">
+            <summary>
+            Child content of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudProgressCircular.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudProgressCircular.Size">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudProgressLinear.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudProgressLinear.Size">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudSkeleton.Width">
             <summary>
             With defined in string, needs px or % or equal prefix.
@@ -971,6 +1184,66 @@
         <member name="M:MudBlazor.MudTableSortLabel`1.SetSortDirection(MudBlazor.SortDirection)">
             <summary>
             Set sort direction but don't update Table sort order. This should only be called by Table
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabPanel.Text">
+            <summary>
+            Text will be displayed in the TabPanel as TabTitle.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabPanel.Icon">
+            <summary>
+            Icon placed before the text if set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabPanel.Disabled">
+            <summary>
+            If true, the tabpanel will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabPanel.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToolBar.Dense">
+            <summary>
+            If true, compact padding will be used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToolBar.DisableGutters">
+            <summary>
+            If true, disables gutter padding.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToolBar.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTooltip.Text">
+            <summary>
+            Sets the text to be displayed inside the tooltip.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTooltip.Class">
+            <summary>
+            User class names, separated by space
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTooltip.Delayed">
+            <summary>
+            If true, sets set a delay until tooltip is showed.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTooltip.Placement">
+            <summary>
+            Tooltip placement.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTooltip.ChildContent">
+            <summary>
+            Child content of component.
             </summary>
         </member>
     </members>
