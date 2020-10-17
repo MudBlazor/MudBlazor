@@ -24,10 +24,7 @@
     <MudNavGroup Title="Component API" Expanded="false">
         @foreach (var item in DocsComponentsAPI.ToList().OrderBy(i => i.Name))
         {
-            if (!SpecialCaseComponents.TryGetValue(item.Component, out var component))
-                component = item.Component.ToString().Replace("MudBlazor.Mud", "").ToKebabCase();
-            string href = $"api/{component}";
-            <MudNavLink Href="@href">@item.Name</MudNavLink>
+            <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Component)">@item.Name</MudNavLink>
         }
     </MudNavGroup>
     <MudNavGroup Title="System" Expanded="false">
@@ -55,11 +52,6 @@
 @code {
     DocsComponents DocsComponents = new DocsComponents();
     DocsComponents DocsComponentsAPI = new DocsComponents();
-
-    Dictionary<Type, string> SpecialCaseComponents = new Dictionary<Type, string>()
-    {
-        [typeof(MudTable<T>)] = "table",
-    };
 
     protected override void OnInitialized()
     {
