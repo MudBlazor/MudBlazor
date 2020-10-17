@@ -6,7 +6,7 @@
 
 
 <DocsPage MaxWidth="MaxWidth.Large">
-    <DocsPageHeader>
+    <DocsPageHeader ComponentLink="@ApiLink.GetComponentLinkFor(Type)">
         <Title>@Type.ConvertToCSharpSource()</Title>
     </DocsPageHeader>
     <DocsPageContent>
@@ -36,6 +36,7 @@
 @code {
 
     [Parameter] public Type Type { get; set; }
+
 
     IEnumerable<ApiProperty> Properties {
         get {

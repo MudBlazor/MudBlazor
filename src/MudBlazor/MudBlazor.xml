@@ -609,6 +609,28 @@
             Add MudTablePager here to enable breaking the rows in to multiple pages.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTablePager.DisableRowsPerPage">
+            <summary>
+            Set true to hide the part of the pager which allows to change the page size.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTablePager.PageSizeOptions">
+            <summary>
+            Define a list of available page size options for the user to choose from
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTablePager.InfoFormat">
+            <summary>
+            Format string for the display of the current page, which you can localize to your language. Available variables are:
+            {first_item}, {last_item} and {all_items} which will replaced with the indices of the page's first and last item as well as the total number of items.
+            Default: "{first_item}-{last_item} of {all_items}" which is transformed into "0-25 of 77". 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTablePager.RowsPerPageString">
+            <summary>
+            The localizable "Rows per page:" text.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTabs.Rounded">
             <summary>
             If true, sets the border-radius to theme default.

@@ -1,8 +1,10 @@
 ﻿@page "/api/{component}"
+@using MudBlazor.Docs.Extensions
+
 
 @if (ComponentType == null)
 {
-    <MudText>Loading Component</MudText>
+    <MudProgressCircular Indeterminate="true"></MudProgressCircular>
 }
 else
 {
@@ -17,8 +19,9 @@ else
 
     protected override void OnParametersSet()
     {
-        var Assembly = typeof(MudComponentBase).Assembly;
-        ComponentType = Assembly.GetType(component);
+        ComponentType = ApiLink.GetTypeFromComponentLink(component);
         StateHasChanged();
     }
+
+
 }

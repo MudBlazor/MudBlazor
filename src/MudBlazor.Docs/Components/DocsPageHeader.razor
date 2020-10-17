@@ -3,6 +3,14 @@
 <div class="docs-page-header">
     <MudText Typo="Typo.h3">@Title</MudText>
     <MudText Typo="Typo.h5">@SubTitle</MudText>
+    @if (!string.IsNullOrEmpty(Api))
+    {
+        <MudText Typo="Typo.body2">See <MudLink Href="@ApiLink">@Title API</MudLink> for more details.</MudText>
+    }
+    @if (!string.IsNullOrEmpty(ComponentLink))
+    {
+        <MudText Typo="Typo.body2">Check out the <MudLink Href="@ComponentLink">Examples</MudLink> for this component.</MudText>
+    }
     <MudText>@Description</MudText>
 </div>
 
@@ -10,5 +18,7 @@
     [Parameter] public RenderFragment Title { get; set; }
     [Parameter] public RenderFragment SubTitle { get; set; }
     [Parameter] public RenderFragment Description { get; set; }
-
+    [Parameter] public string Api { get; set; }
+    [Parameter] public string ComponentLink { get; set; }
+    private string ApiLink => $"/api/{Api}";
 }

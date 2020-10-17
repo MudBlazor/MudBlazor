@@ -1,4 +1,5 @@
 ﻿@using System.Linq
+@using MudBlazor.Docs.Extensions
 
 <MudNavMenu Class="mt-4">
     <MudNavGroup Title="Getting Started" Expanded="false">
@@ -23,8 +24,7 @@
     <MudNavGroup Title="Component API" Expanded="false">
         @foreach (var item in DocsComponentsAPI.ToList().OrderBy(i => i.Name))
         {
-            string href = $"api/{item.Component.ToString()}";
-            <MudNavLink Href="@href">@item.Name</MudNavLink>
+            <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Component)">@item.Name</MudNavLink>
         }
     </MudNavGroup>
     <MudNavGroup Title="System" Expanded="false">
