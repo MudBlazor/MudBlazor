@@ -18,16 +18,36 @@ namespace MudBlazor
         [Parameter] public string Avatar { get; set; }
         [Parameter] public string Href { get; set; }
         [Parameter] public string AvatarClass { get; set; }
+
+        /// <summary>
+        /// If true, disables ripple effect.
+        /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
         [Parameter] public string Icon { get; set; }
         [Parameter] public bool Inset { get; set; }
+
+        /// <summary>
+        /// If Nested list and If Expanded true expands the nested list, otherwise collapse it.
+        /// </summary>
         [Parameter] public bool Expanded { get; set; }
+
+        /// <summary>
+        /// Command parameter.
+        /// </summary>
         [Parameter] public object CommandParameter { get; set; }
+
+        /// <summary>
+        /// Command executed when the user clicks on an element.
+        /// </summary>
         [Parameter] public ICommand Command { get; set; }
         [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
         [CascadingParameter] bool Clickable { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public RenderFragment NestedList { get; set; }
+
+        /// <summary>
+        /// List click event.
+        /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
         
