@@ -9,6 +9,14 @@
 </div>
 
 @code {
+
+    /// <summary>
+    /// If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.
+    /// </summary>
     [Parameter] public bool Expanded { get; set; }
+
+    /// <summary>
+    /// Child content of component.
+    /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
 }
