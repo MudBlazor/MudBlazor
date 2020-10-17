@@ -32,7 +32,14 @@
         .AddClass($"mud-progress-static", !Indeterminate)
         .Build();
 
+    /// <summary>
+    /// The color of the component. It supports the theme colors.
+    /// </summary>
     [Parameter] public Color Color { get; set; } = Color.Default;
+
+    /// <summary>
+    /// The color of the component. It supports the theme colors.
+    /// </summary>
     [Parameter] public Size Size { get; set; } = Size.Medium;
     [Parameter] public bool Indeterminate { get; set; }
 
