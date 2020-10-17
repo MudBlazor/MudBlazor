@@ -10,12 +10,25 @@
 
     [CascadingParameter] private MudTabs Parent { get; set; }
 
+
+    /// <summary>
+    /// Text will be displayed in the TabPanel as TabTitle.
+    /// </summary>
     [Parameter] public string Text { get; set; }
 
+    /// <summary>
+    /// Icon placed before the text if set.
+    /// </summary>
     [Parameter] public string Icon { get; set; }
 
+    /// <summary>
+    /// If true, the tabpanel will be disabled.
+    /// </summary>
     [Parameter] public bool Disabled { get; set; }
 
+    /// <summary>
+    /// Child content of component.
+    /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
 
     protected override void OnInitialized()
