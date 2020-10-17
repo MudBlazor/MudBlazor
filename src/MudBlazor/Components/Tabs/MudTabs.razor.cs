@@ -32,12 +32,39 @@ namespace MudBlazor
             .AddClass($"mud-tabs-vertical", Vertical)
             .Build();
 
+        /// <summary>
+        /// If true, sets the border-radius to theme default.
+        /// </summary>
         [Parameter] public bool Rounded { get; set; }
+
+        /// <summary>
+        /// If true, sets a border.
+        /// </summary>
         [Parameter] public bool Border { get; set; }
+
+        /// <summary>
+        /// If true, centers the tabitems.
+        /// </summary>
         [Parameter] public bool Centered { get; set; }
+
+        /// <summary>
+        /// If true, displays the MudTabs verticaly.
+        /// </summary>
         [Parameter] public bool Vertical { get; set; }
+
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
         [Parameter] public int Elevation { set; get; } = 0;
+
+        /// <summary>
+        /// If true, disables ripple effect.
+        /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
+
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
 
