@@ -23,6 +23,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Size Size { get; set; } = Size.Medium;
 
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
     }
 }
