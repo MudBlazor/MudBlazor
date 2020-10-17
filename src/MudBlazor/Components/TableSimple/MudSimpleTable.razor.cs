@@ -18,14 +18,36 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
         [Parameter] public int Elevation { set; get; } = 1;
+
+        /// <summary>
+        /// If true, the table row will shade on hover.
+        /// </summary>
         [Parameter] public bool Hover { get; set; }
+
+        /// <summary>
+        /// If true, border-radius is set to 0.
+        /// </summary>
         [Parameter] public bool Square { get; set; }
+
+        /// <summary>
+        /// If true, compact padding will be used.
+        /// </summary>
         [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
+        /// If true, card will be outlined.
+        /// </summary>
         [Parameter] public bool Outlined { get; set; }
         // todo: implement
         [Parameter] public bool StickyHeader { get; set; }
 
+        /// <summary>
+        /// Child content of the component.
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
     }
