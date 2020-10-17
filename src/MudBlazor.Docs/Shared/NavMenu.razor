@@ -1,4 +1,5 @@
 ﻿@using System.Linq
+@using MudBlazor.Docs.Extensions
 
 <MudNavMenu Class="mt-4">
     <MudNavGroup Title="Getting Started" Expanded="false">
@@ -23,7 +24,9 @@
     <MudNavGroup Title="Component API" Expanded="false">
         @foreach (var item in DocsComponentsAPI.ToList().OrderBy(i => i.Name))
         {
-            string href = $"api/{item.Component.ToString()}";
+            if (!SpecialCaseComponents.TryGetValue(item.Component, out var component))
+                component = item.Component.ToString().Replace("MudBlazor.Mud", "").ToKebabCase();
+            string href = $"api/{component}";
             <MudNavLink Href="@href">@item.Name</MudNavLink>
         }
     </MudNavGroup>
@@ -52,6 +55,11 @@
 @code {
     DocsComponents DocsComponents = new DocsComponents();
     DocsComponents DocsComponentsAPI = new DocsComponents();
+
+    Dictionary<Type, string> SpecialCaseComponents = new Dictionary<Type, string>()
+    {
+        [typeof(MudTable<T>)] = "table",
+    };
 
     protected override void OnInitialized()
     {

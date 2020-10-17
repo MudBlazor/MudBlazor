@@ -1,8 +1,9 @@
 ﻿@page "/api/{component}"
+@using MudBlazor.Docs.Extensions
 
 @if (ComponentType == null)
 {
-    <MudText>Loading Component</MudText>
+    <MudProgressCircular Indeterminate="true"></MudProgressCircular>
 }
 else
 {
@@ -17,8 +18,25 @@ else
 
     protected override void OnParametersSet()
     {
-        var Assembly = typeof(MudComponentBase).Assembly;
-        ComponentType = Assembly.GetType(component);
-        StateHasChanged();
+        try
+        {
+            if (SpecialCaseComponents.TryGetValue(component, out var type))
+            {
+                ComponentType = type;
+                return;
+            }
+            var type_name = $"MudBlazor.Mud{component.ToPascalCase()}";
+            var assembly = typeof(MudComponentBase).Assembly;
+            ComponentType = assembly.GetType(type_name);
+        }
+        finally {
+            StateHasChanged();
+        }
     }
+
+
+    Dictionary<string, Type> SpecialCaseComponents = new Dictionary<string, Type>()
+    {
+        ["table"] = typeof(MudTable<T>),
+    };
 }
