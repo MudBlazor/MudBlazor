@@ -1,7 +1,7 @@
 ﻿@page "/components/table"
 
 <DocsPage MaxWidth="MaxWidth.Large">
-    <DocsPageHeader>
+    <DocsPageHeader Api="table">
         <Title>Table</Title>
         <SubTitle></SubTitle>
     </DocsPageHeader>
@@ -13,7 +13,7 @@
                     The <CodeInline>&lt;MudTable></CodeInline> component supports pagination, sorting and filtering of rows as well as single and multiple row selection. To tell the table how to render your data, define a <CodeInline>&lt;RowTemplate></CodeInline>
                     containing a <CodeInline>&lt;MudTableCell></CodeInline> or a <CodeInline>&lt;td></CodeInline> for every column.
                     <br /><br />
-                    Note: you can not fill this table in a conventional way, i.e. by defining multiple <CodeInline Code="<tr>" /> tags. See <MudLink Href="/components/data-display/simpletable">SimpleTable</MudLink> if you want that. Instead, you
+                    Note: you can not fill this table in a conventional way, i.e. by defining multiple <CodeInline Code="<tr>" /> tags. See <MudLink Href="/components/simpletable">SimpleTable</MudLink> if you want that. Instead, you
                     pass the collection of items to be displayed to the table's <CodeInline>Items</CodeInline> parameter.
                 </Description>
             </SectionHeader>
