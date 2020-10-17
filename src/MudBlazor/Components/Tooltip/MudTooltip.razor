@@ -18,13 +18,29 @@
      .AddClass(Class)
    .Build();
 
+    /// <summary>
+    /// Sets the text to be displayed inside the tooltip.
+    /// </summary>
     [Parameter] public string Text { get; set; }
 
+
+    /// <summary>
+    /// User class names, separated by space
+    /// </summary>
     [Parameter] public string Class { get; set; }
 
+    /// <summary>
+    /// If true, sets set a delay until tooltip is showed.
+    /// </summary>
     [Parameter] public bool Delayed { get; set; }
 
+    /// <summary>
+    /// Tooltip placement.
+    /// </summary>
     [Parameter] public Placement Placement { get; set; } = Placement.Bottom;
 
+    /// <summary>
+    /// Child content of component.
+    /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
 }
