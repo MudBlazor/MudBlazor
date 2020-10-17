@@ -926,6 +926,46 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void SkeletonAnimationsExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<SkeletonAnimationsExample>();
+        }
+
+
+        [Test]
+        public void SkeletonPulsateExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<SkeletonPulsateExample>();
+        }
+
+
+        [Test]
+        public void SkeletonVariantsExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<SkeletonVariantsExample>();
+        }
+
+
+        [Test]
+        public void SkeletonWaveExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                var comp = ctx.RenderComponent<SkeletonWaveExample>();
+        }
+
+
+        [Test]
         public void SliderBasicExample_Test()
         {
                 using var ctx = new Bunit.TestContext();

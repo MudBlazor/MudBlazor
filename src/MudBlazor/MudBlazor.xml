@@ -913,6 +913,26 @@
             Gets or sets the drawer clipped state.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudSkeleton.Width">
+            <summary>
+            With defined in string, needs px or % or equal prefix.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSkeleton.Height">
+            <summary>
+            Height defined in string, needs px or % or equal prefix.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSkeleton.SkeletonType">
+            <summary>
+            Shape of the skeleton that will be renderd.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSkeleton.Animation">
+            <summary>
+            Animation style, if false it will be disabled..
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTable`1.RowTemplate">
             <summary>
             Defines how a table row looks like. Use MudTd to define the table cells and their content.

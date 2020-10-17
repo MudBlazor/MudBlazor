@@ -71,3 +71,31 @@
         transform: scale(1);
     }
 }
+
+@-webkit-keyframes mud-skeleton-keyframes-pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes mud-skeleton-keyframes-wave {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    60% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
