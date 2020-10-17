@@ -19,6 +19,9 @@ namespace MudBlazor
             .AddClass($"mud-elevation-{Parent.Elevation.ToString()}")
         .Build();
 
+        /// <summary>
+        /// The text to be displayed in the expansion panel.
+        /// </summary>
         [Parameter] public string Text { get; set; }
 
         [Parameter]
@@ -38,7 +41,14 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// If true, the component will be disabled.
+        /// </summary>
         [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         public bool NextPanelExpanded
