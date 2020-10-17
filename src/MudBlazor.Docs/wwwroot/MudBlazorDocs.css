@@ -326,6 +326,12 @@
 .credit-blazored {
   color: #ff6600; }
 
+.docs-color-card {
+  padding: 16px;
+  display: flex; }
+  .docs-color-card p {
+    width: 100%; }
+
 .docs-page .mud-typography-h4 {
   margin-top: 52px; }
 

@@ -1,0 +1,106 @@
+﻿@page "/system/colors"
+@using System.Reflection
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Colors</Title>
+        <SubTitle>
+            Out of the box you get access to all colors in the <MudLink Typo="Typo.h5" Href="https://material.io/guidelines/style/color.html">Material Design spec</MudLink> through css classes and Blazor.
+        </SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Classes</Title>
+                <Description>
+                    <MudText>To Do...</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                @*<ElevationUsageExample />*@
+            </SectionContent>
+            @*<SectionSource Code="ElevationUsageExample" />*@
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Material colors</Title>
+                <Description>
+                    <MudText>Below is a list of the Material design color palette grouped by primary color</MudText>
+                </Description>
+            </SectionHeader>
+            <MudGrid Spacing="4">
+                @foreach (var color in MaterialColors)
+                {
+                    <MudItem md="6" lg="4" xs="12">
+                        <div class="mud-paper mud-paper-square docs-color-card" style="background-color:@color.Value;color:#fff">
+                            <MudText Align="Align.Left" Typo="Typo.h6">@color.Color</MudText>
+                        </div>
+                    @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
+                    {
+                        IsLightColor = false;
+                        if (shade.Name.Contains("Lighten5") || shade.Name.Contains("Lighten4") || shade.Name.Contains("Lighten3"))
+                        {
+                            IsLightColor = true;
+                        }
+                        <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:@shade.Value;@(IsLightColor? "color:#444" : "color:#fff")">
+                            <MudText Align="Align.Left">@shade.Name</MudText>
+                            <MudText Align="Align.Right">@shade.Value</MudText>
+                        </div>
+                    }
+                </MudItem>
+                }
+            </MudGrid>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
+@code {
+
+    List<MaterialColor> MaterialColors = new List<MaterialColor>();
+    List<MaterialColor> MaterialColorShades = new List<MaterialColor>();
+
+    public bool IsLightColor { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LoadColors();
+    }
+
+    public void LoadColors()
+    {
+        var shades = new List<MaterialColor>();
+        var colors = new List<MaterialColor>();
+
+        foreach (var prop in typeof(Colors).GetMembers(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+        {
+            if (prop.MemberType == MemberTypes.NestedType)
+            {
+                var Assembly = typeof(Colors).Assembly;
+                Type SubColorType = Assembly.GetType(prop.ToString());
+                string tempHex = "";
+                foreach (var color in SubColorType.GetProperties())
+                {
+                    var shadeColor = new MaterialColor
+                    {
+                        Color = prop.Name,
+                        Name = color.Name,
+                        Value = color.GetValue(SubColorType).ToString()
+                    };
+                    if(color.Name == "Default")
+                    {
+                        tempHex = shadeColor.Value;
+                    }
+                    shades.Add(shadeColor);
+                }
+                var materialColor = new MaterialColor
+                {
+                    Color = prop.Name,
+                    Value = tempHex
+                };
+                colors.Add(materialColor);
+            }
+        }
+        MaterialColors = colors;
+        MaterialColorShades = shades;
+    }
+}
