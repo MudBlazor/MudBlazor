@@ -15,10 +15,16 @@
         .AddClass(Class)
     .Build();
 
+    /// <summary>
+    /// Child content of component.
+    /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
 
     LayoutState _layoutState = new LayoutState();
 
+    /// <summary>
+    /// Gets or ets the drawer open state.
+    /// </summary>
     [Parameter]
     public bool DrawerOpen
     {
@@ -33,6 +39,9 @@
         }
     }
 
+    /// <summary>
+    /// Gets or sets the drawer clipped state.
+    /// </summary>
     [Parameter] public bool DrawerClipped
     {
         get => _layoutState.DrawerClipped;
