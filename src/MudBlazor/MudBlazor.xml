@@ -162,7 +162,7 @@
         </member>
         <member name="P:MudBlazor.MudButton.ChildContent">
             <summary>
-            Child content of MudButton.
+            Child content of component.
             </summary>
         </member>
         <member name="P:MudBlazor.MudFab.Color">
@@ -230,6 +230,36 @@
             If true, the button will be disabled.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudCheckBox.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCheckBox.Label">
+            <summary>
+            If applied the text will be added to the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCheckBox.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCheckBox.Disabled">
+            <summary>
+            If true, the checkbox will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCheckBox.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCheckBox.CheckedChanged">
+            <summary>
+            A callback when CheckedChanges.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudChip.Color">
             <summary>
             The color of the component.
@@ -238,6 +268,171 @@
         <member name="P:MudBlazor.MudChip.Size">
             <summary>
             The size of the button. small is equivalent to the dense button styling.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudExpansionPanel.Text">
+            <summary>
+            The text to be displayed in the expansion panel.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudExpansionPanel.Disabled">
+            <summary>
+            If true, the component will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudExpansionPanel.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudExpansionPanels.Square">
+            <summary>
+            If true, border-radius is set to 0.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudExpansionPanels.MultiExpansion">
+            <summary>
+            If true, multiple panels can be expanded at the same time.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudExpansionPanels.Elevation">
+            <summary>
+            The higher the number, the heavier the drop-shadow. 0 for no shadow.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudExpansionPanels.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudFormControl.Label">
+            <summary>
+            If string has value, label text will be added.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudFormControl.FullWidth">
+            <summary>
+            If true, the component will take up the full width of its container.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudFormControl.HelperText">
+            <summary>
+            If string has value, helper text will be added.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudFormControl.Margin">
+            <summary>
+            	If dense or normal, will adjust vertical spacing of this and contained components.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudFormControl.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudIcon.Icon">
+            <summary>
+            If set will display an SVG Icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudIcon.FontIcon">
+            <summary>
+            If set will display Font Icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudIcon.FontClass">
+            <summary>
+            Font Icon Class, only applies if Font Icon is used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudIcon.Size">
+            <summary>
+            The Size of the icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudIcon.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudIcon.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputLabel.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudLink.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudLink.Typo">
+            <summary>
+            Typography variant to use.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudLink.Underline">
+            <summary>
+            Controls when the link should have an underline.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudLink.Href">
+            <summary>
+            The URL, which is the actual link.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudLink.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudList.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudList.Clickable">
+            <summary>
+            Determens if the List will have clickable items.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudList.DisablePadding">
+            <summary>
+            If true, vertical padding will be removed from the list.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudListItem.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudListItem.Expanded">
+            <summary>
+            If Nested list and If Expanded true expands the nested list, otherwise collapse it.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudListItem.CommandParameter">
+            <summary>
+            Command parameter.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudListItem.Command">
+            <summary>
+            Command executed when the user clicks on an element.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudListItem.OnClick">
+            <summary>
+            List click event.
             </summary>
         </member>
         <member name="T:MudBlazor.Snackbars">
@@ -621,6 +816,101 @@
         <member name="P:MudBlazor.MudCardHeader.CardHeaderActions">
             <summary>
             If used renders child content of the CardHeaderActions.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCollapse.Expanded">
+            <summary>
+            If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCollapse.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudContainer.Fixed">
+            <summary>
+            Set the max-width to match the min-width of the current breakpoint. This is useful if you'd prefer to design for a fixed set of sizes instead of trying to accommodate a fully fluid viewport. It's fluid by default.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudContainer.MaxWidth">
+            <summary>
+            Determine the max-width of the container. The container width grows with the size of the screen. Set to false to disable maxWidth.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudContainer.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDivider.Absolute">
+            <summary>
+            Sets absolute postion to the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDivider.FlexItem">
+            <summary>
+            If true, a vertical divider will have the correct height when used in flex container.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDivider.Light">
+            <summary>
+            If true, the divider will have a lighter color.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDivider.Vertical">
+            <summary>
+            If true, the divider is displayed vertically.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDivider.DividerType">
+            <summary>
+            The Divider type to use.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDrawer.Elevation">
+            <summary>
+            The higher the number, the heavier the drop-shadow. 0 for no shadow.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDrawer.Anchor">
+            <summary>
+            Side from which the drawer will appear.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDrawer.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDrawer.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDrawerHeader.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDrawerHeader.LinkToIndex">
+            <summary>
+            If true, the component will link to index page with an a element instead of div.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudLayout.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudLayout.DrawerOpen">
+            <summary>
+            Gets or ets the drawer open state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudLayout.DrawerClipped">
+            <summary>
+            Gets or sets the drawer clipped state.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTable`1.RowTemplate">
