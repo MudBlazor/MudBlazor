@@ -1,7 +1,11 @@
-﻿$spacing-values: ( "0": 0, "1": 4px, "2": 8px, "3": 12px, "4": 16px, "5": 20px, "6": 24px, "7": 28px, "8": 32px, "9": 36px, "10": 40px, "11": 44px, "12": 48px, "13": 52px, "14": 56px, "16": 64px, "auto": auto );
-$spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n5": -20px, "n6": -24px, "n7": -28px, "n8": -32px, "n9": -36px, "n10": -40px, "n11": -44px, "n12": -48px, "n13": -52px, "n14": -56px, "n16": -64px );
- 
+﻿// Vuetify style responsive margin and padding
 
+$spacing-values: ( "0": 0, "1": 4px, "2": 8px, "3": 12px, "4": 16px, "5": 20px, "6": 24px, "7": 28px, "8": 32px, "9": 36px, "10": 40px, "11": 44px, "12": 48px, "13": 52px, "14": 56px, "16": 64px, "auto": auto );
+$spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n5": -20px, "n6": -24px, "n7": -28px, "n8": -32px, "n9": -36px, "n10": -40px, "n11": -44px, "n12": -48px, "n13": -52px, "n14": -56px, "n16": -64px );
+
+// XS and up
+
+// positive margins and padding
 @each $prop, $abbrev in (margin: m, padding: p) {
     @each $name, $value in $spacing-values {
         .#{$abbrev}t-#{$name} {
@@ -36,6 +40,7 @@ $spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n
     }
 }
 
+// negative margins
 @each $prop, $abbrev in (margin: m) {
     @each $name, $value in $spacing-negative-values {
         .#{$abbrev}t-#{$name} {
@@ -66,6 +71,302 @@ $spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n
 
         .#{$abbrev}a-#{$name} {
             #{$prop}: $value !important;
+        }
+    }
+}
+
+// SM
+
+@media (min-width:600px) {
+    // positive margins and padding
+    @each $prop, $abbrev in (margin: m, padding: p) {
+        @each $name, $value in $spacing-values {
+            .#{$abbrev}t-sm-#{$name} {
+                #{$prop}-top: $value !important;
+            }
+
+            .#{$abbrev}b-sm-#{$name} {
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}l-sm-#{$name} {
+                #{$prop}-left: $value !important;
+            }
+
+            .#{$abbrev}r-sm-#{$name} {
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}x-sm-#{$name} {
+                #{$prop}-left: $value !important;
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}y-sm-#{$name} {
+                #{$prop}-top: $value !important;
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}a-sm-#{$name} {
+                #{$prop}: $value !important;
+            }
+        }
+    }
+
+    // negative margins
+    @each $prop, $abbrev in (margin: m) {
+        @each $name, $value in $spacing-negative-values {
+            .#{$abbrev}t-sm-#{$name} {
+                #{$prop}-top: $value !important;
+            }
+
+            .#{$abbrev}b-sm-#{$name} {
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}l-sm-#{$name} {
+                #{$prop}-left: $value !important;
+            }
+
+            .#{$abbrev}r-sm-#{$name} {
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}x-sm-#{$name} {
+                #{$prop}-left: $value !important;
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}y-sm-#{$name} {
+                #{$prop}-top: $value !important;
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}a-sm-#{$name} {
+                #{$prop}: $value !important;
+            }
+        }
+    }
+}
+
+// MD
+
+@media (min-width:960px) {
+    // positive margins and padding
+    @each $prop, $abbrev in (margin: m, padding: p) {
+        @each $name, $value in $spacing-values {
+            .#{$abbrev}t-md-#{$name} {
+                #{$prop}-top: $value !important;
+            }
+
+            .#{$abbrev}b-md-#{$name} {
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}l-md-#{$name} {
+                #{$prop}-left: $value !important;
+            }
+
+            .#{$abbrev}r-md-#{$name} {
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}x-md-#{$name} {
+                #{$prop}-left: $value !important;
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}y-md-#{$name} {
+                #{$prop}-top: $value !important;
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}a-md-#{$name} {
+                #{$prop}: $value !important;
+            }
+        }
+    }
+
+    // negative margins
+    @each $prop, $abbrev in (margin: m) {
+        @each $name, $value in $spacing-negative-values {
+            .#{$abbrev}t-md-#{$name} {
+                #{$prop}-top: $value !important;
+            }
+
+            .#{$abbrev}b-md-#{$name} {
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}l-md-#{$name} {
+                #{$prop}-left: $value !important;
+            }
+
+            .#{$abbrev}r-md-#{$name} {
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}x-md-#{$name} {
+                #{$prop}-left: $value !important;
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}y-md-#{$name} {
+                #{$prop}-top: $value !important;
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}a-md-#{$name} {
+                #{$prop}: $value !important;
+            }
+        }
+    }
+}
+
+// LG
+
+@media (min-width:1280px) {
+    // positive margins and padding
+    @each $prop, $abbrev in (margin: m, padding: p) {
+        @each $name, $value in $spacing-values {
+            .#{$abbrev}t-lg-#{$name} {
+                #{$prop}-top: $value !important;
+            }
+
+            .#{$abbrev}b-lg-#{$name} {
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}l-lg-#{$name} {
+                #{$prop}-left: $value !important;
+            }
+
+            .#{$abbrev}r-lg-#{$name} {
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}x-lg-#{$name} {
+                #{$prop}-left: $value !important;
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}y-lg-#{$name} {
+                #{$prop}-top: $value !important;
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}a-lg-#{$name} {
+                #{$prop}: $value !important;
+            }
+        }
+    }
+
+    // negative margins
+    @each $prop, $abbrev in (margin: m) {
+        @each $name, $value in $spacing-negative-values {
+            .#{$abbrev}t-lg-#{$name} {
+                #{$prop}-top: $value !important;
+            }
+
+            .#{$abbrev}b-lg-#{$name} {
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}l-lg-#{$name} {
+                #{$prop}-left: $value !important;
+            }
+
+            .#{$abbrev}r-lg-#{$name} {
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}x-lg-#{$name} {
+                #{$prop}-left: $value !important;
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}y-lg-#{$name} {
+                #{$prop}-top: $value !important;
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}a-lg-#{$name} {
+                #{$prop}: $value !important;
+            }
+        }
+    }
+}
+
+// LG
+
+@media (min-width:1920px) {
+    // positive margins and padding
+    @each $prop, $abbrev in (margin: m, padding: p) {
+        @each $name, $value in $spacing-values {
+            .#{$abbrev}t-xl-#{$name} {
+                #{$prop}-top: $value !important;
+            }
+
+            .#{$abbrev}b-xl-#{$name} {
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}l-xl-#{$name} {
+                #{$prop}-left: $value !important;
+            }
+
+            .#{$abbrev}r-xl-#{$name} {
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}x-xl-#{$name} {
+                #{$prop}-left: $value !important;
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}y-xl-#{$name} {
+                #{$prop}-top: $value !important;
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}a-xl-#{$name} {
+                #{$prop}: $value !important;
+            }
+        }
+    }
+
+    // negative margins
+    @each $prop, $abbrev in (margin: m) {
+        @each $name, $value in $spacing-negative-values {
+            .#{$abbrev}t-xl-#{$name} {
+                #{$prop}-top: $value !important;
+            }
+
+            .#{$abbrev}b-xl-#{$name} {
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}l-xl-#{$name} {
+                #{$prop}-left: $value !important;
+            }
+
+            .#{$abbrev}r-xl-#{$name} {
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}x-xl-#{$name} {
+                #{$prop}-left: $value !important;
+                #{$prop}-right: $value !important;
+            }
+
+            .#{$abbrev}y-xl-#{$name} {
+                #{$prop}-top: $value !important;
+                #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}a-xl-#{$name} {
+                #{$prop}: $value !important;
+            }
         }
     }
 }
