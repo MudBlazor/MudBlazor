@@ -4,6 +4,12 @@
 
 <button @attributes="UserAttributes" type="button" class="@Classname" style="@Style" @onclick="OnClickHandler" href="@Link" disabled="@Disabled">
     <span class="mud-icon-button-label">
-        <MudIcon Icon="@Icon" Size="@Size"/>
+        @if (!String.IsNullOrEmpty(Icon))
+        {
+            <MudIcon Icon="@Icon" Size="@Size" />
+        }else
+        {
+            <MudText Typo="Typo.body2" Color="Color.Inherit">@ChildContent</MudText>
+        }
     </span>
 </button>
