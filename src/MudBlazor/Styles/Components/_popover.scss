@@ -1,0 +1,20 @@
+﻿
+.mud-popover-paper {
+    outline: 0;
+    position: absolute;
+    min-width: 16px;
+    min-height: 16px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.mud-popover-overlay {
+    top: 0;
+    left: 0;
+    margin: 0px !important;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    background-color: transparent;
+    z-index: 99;
+}

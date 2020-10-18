@@ -48,5 +48,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
+        /// <summary>
+        /// Child content of component, only shows if Icon is null or Empty.
+        /// </summary>
+        [Parameter] public RenderFragment ChildContent { get; set; }
+
     }
 }
