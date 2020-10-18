@@ -13,13 +13,13 @@
             <SectionHeader>
                 <Title>Classes</Title>
                 <Description>
-                    <MudText>To Do...</MudText>
+                    <MudText>Each color from the list gets converted to a background and text variant for using within your application.</MudText>
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                @*<ElevationUsageExample />*@
+                <ColorsClassExample />
             </SectionContent>
-            @*<SectionSource Code="ElevationUsageExample" />*@
+            <SectionSource Code="ColorsClassExample" ShowCode="false" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
@@ -35,20 +35,37 @@
                         <div class="mud-paper mud-paper-square docs-color-card" style="background-color:@color.Value;color:#fff">
                             <MudText Align="Align.Left" Typo="Typo.h6">@color.Color</MudText>
                         </div>
-                    @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
-                    {
-                        IsLightColor = false;
-                        if (shade.Name.Contains("Lighten5") || shade.Name.Contains("Lighten4") || shade.Name.Contains("Lighten3"))
+                        @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
                         {
-                            IsLightColor = true;
+                            IsLightColor = false;
+                            if (shade.Name.Contains("Lighten5") || shade.Name.Contains("Lighten4") || shade.Name.Contains("Lighten3"))
+                            {
+                                IsLightColor = true;
+                            }
+                            <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:@shade.Value;@(IsLightColor? "color:#444" : "color:#fff")">
+                                <MudText Align="Align.Left">@shade.Name</MudText>
+                                <MudText Align="Align.Right">@shade.Value</MudText>
+                            </div>
                         }
-                        <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:@shade.Value;@(IsLightColor? "color:#444" : "color:#fff")">
-                            <MudText Align="Align.Left">@shade.Name</MudText>
-                            <MudText Align="Align.Right">@shade.Value</MudText>
-                        </div>
-                    }
-                </MudItem>
+                    </MudItem>
                 }
+                <MudItem md="6" lg="4" xs="12">
+                    <div class="mud-paper mud-paper-square docs-color-card" style="background-color:#000;color:#fff">
+                        <MudText Align="Align.Left" Typo="Typo.h6">Shades</MudText>
+                    </div>
+                    <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:#000;color:#fff">
+                        <MudText Align="Align.Left">Black</MudText>
+                        <MudText Align="Align.Right">#00000</MudText>
+                    </div>
+                    <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:#fff;color:#444">
+                        <MudText Align="Align.Left">White</MudText>
+                        <MudText Align="Align.Right">#FFFFF</MudText>
+                    </div>
+                    <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:transparent;color:#444">
+                        <MudText Align="Align.Left">Transparent</MudText>
+                        <MudText Align="Align.Right"></MudText>
+                    </div>
+                </MudItem>
             </MudGrid>
         </DocsPageSection>
     </DocsPageContent>
@@ -86,7 +103,7 @@
                         Name = color.Name,
                         Value = color.GetValue(SubColorType).ToString()
                     };
-                    if(color.Name == "Default")
+                    if (color.Name == "Default")
                     {
                         tempHex = shadeColor.Value;
                     }
