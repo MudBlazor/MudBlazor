@@ -13,7 +13,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorResizeListener(this IServiceCollection services, Action<ResizeOptions> configure)
         {
-            services.AddScoped<ResizeListenerService>();
+            services.AddScoped<IResizeListenerService, ResizeListenerService>();
             services.Configure(configure);
             return services;
         }

@@ -385,6 +385,21 @@
             Child content of component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudHidden.Breakpoint">
+            <summary>
+            The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudHidden.Invert">
+            <summary>
+            Inverts the Breakpoint, so that the ChildContent is only rendered when the breakpoint matches the screen size.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudHidden.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudIcon.Icon">
             <summary>
             If set will display an SVG Icon.
@@ -746,10 +761,22 @@
             If true, Sets display inine
             </summary>
         </member>
+        <member name="T:MudBlazor.Breakpoint">
+            <summary>
+            Breakpoints describe certain user interfaces sizes or ranges. Use them in conjunction with MudHidden or ResizeListenerService
+            </summary>
+        </member>
         <member name="T:MudBlazor.Services.ResizeListenerService">
             <summary>
             This service listens to browser resize events and allows you to react to a changing window size in Blazor
             </summary>
+        </member>
+        <member name="M:MudBlazor.Services.ResizeListenerService.#ctor(Microsoft.JSInterop.IJSRuntime,Microsoft.Extensions.Options.IOptions{MudBlazor.Services.ResizeOptions})">
+            <summary>
+            
+            </summary>
+            <param name="jsRuntime"></param>
+            <param name="options"></param>
         </member>
         <member name="E:MudBlazor.Services.ResizeListenerService.OnResized">
             <summary>

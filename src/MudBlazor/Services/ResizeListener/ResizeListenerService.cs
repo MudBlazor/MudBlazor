@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-using MudBlazor.Services.ResizeListener;
+
 
 namespace MudBlazor.Services
 {
@@ -94,14 +94,11 @@ namespace MudBlazor.Services
         [JSInvokable]
         public void RaiseOnResized(BrowserWindowSize browserWindowSize)
         {
+            _windowSize = browserWindowSize;
             _onResized?.Invoke(this, browserWindowSize);
         }
 
         private BrowserWindowSize _windowSize;
-        private void OnWindowResized(object sender, BrowserWindowSize e)
-        {
-            this._windowSize=e;
-        }
 
         public Dictionary<Breakpoint, int> BreakpointDefinition { get; set; } = new Dictionary<Breakpoint, int>()
         {
@@ -114,8 +111,10 @@ namespace MudBlazor.Services
 
         public async Task<Breakpoint> GetBreakpoint( ) {
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
-            if (_onResized == null)
+            if (_onResized == null || _windowSize == null)
                 _windowSize = await GetBrowserWindowSize();
+            if (_windowSize == null)
+                return Breakpoint.Xs;
             if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Xl])
                 return Breakpoint.Xl;
             else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Lg])
@@ -131,8 +130,10 @@ namespace MudBlazor.Services
         public async Task<bool> IsMediaSize(Breakpoint breakpoint)
         {
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
-            if (_onResized == null)
-                _windowSize = await GetBrowserWindowSize(); 
+            if (_onResized == null || _windowSize == null)
+                _windowSize = await GetBrowserWindowSize();
+            if (_windowSize == null)
+                return false;
             if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Xl])
             {
                 if (breakpoint == Breakpoint.Xl || 
@@ -192,5 +193,8 @@ namespace MudBlazor.Services
 #nullable enable
         event EventHandler<BrowserWindowSize>? OnResized;
 #nullable disable
+        ValueTask<BrowserWindowSize> GetBrowserWindowSize();
+        Task<bool> IsMediaSize(Breakpoint breakpoint);
+        Task<Breakpoint> GetBreakpoint();
     }
 }

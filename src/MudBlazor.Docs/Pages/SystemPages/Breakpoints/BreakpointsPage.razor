@@ -4,10 +4,22 @@
     <DocsPageHeader>
         <Title>Breakpoints</Title>
         <SubTitle>
-            <MudText>Media breakpoints or mobile breakpoints help you react to changing screen sizes. This page explores the different ways how you can use MudBlazor to adapt to the screen size.</MudText>
+            <MudText>Media breakpoints or mobile breakpoints help you react to changing screen sizes in realtime. This page explores the different ways how you can adapt to varying screen sizes in MudBlazor.</MudText>
         </SubTitle>
     </DocsPageHeader>
     <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Hiding parts of the UI with &lt;MudHidden></Title>
+                <Description>
+                    <MudText>The following example shows all breakpoint options only if they match the screensize. Because it is more intuitive for this example we inverted all the breakpoints so that you can see them only if they match.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent>
+                <HiddenExample />
+            </SectionContent>
+            <SectionSource Code="HiddenExample" />
+        </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
                 <Title>Listening to browser window resize events</Title>
@@ -16,9 +28,9 @@
                 </Description>
             </SectionHeader>
             <SectionContent>
-                <BrowserResizeEventExample />
+                <BrowserResizeEventExample/>
             </SectionContent>
-            <SectionSource Code="BrowserResizeEventExample" />
+            <SectionSource Code="BrowserResizeEventExample"/>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
