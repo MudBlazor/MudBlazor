@@ -24,7 +24,7 @@ namespace MudBlazor
         [Parameter] public bool FullWidth { get; set; }
 
         /// <summary>
-        /// If string has value, helper text will be added.
+        /// If string has value, helpertext will be applied.
         /// </summary>
         [Parameter] public string HelperText { get; set; }
         /// <summary>
