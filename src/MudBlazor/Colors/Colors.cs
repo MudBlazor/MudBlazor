@@ -44,7 +44,7 @@ namespace MudBlazor
 
         public static class Purple
         {
-            public static string Default { get; } = "#C51162";
+            public static string Default { get; } = "#9C27B0";
             public static string Lighten5 { get; } = "#F3E5F5";
             public static string Lighten4 { get; } = "#E1BEE7";
             public static string Lighten3 { get; } = "#CE93D8";
@@ -308,20 +308,6 @@ namespace MudBlazor
             public static string Darken4 { get; } = "#3E2723";
         }
 
-        public static class Grey
-        {
-            public static string Default { get; } = "#9E9E9E";
-            public static string Lighten5 { get; } = "#FAFAFA";
-            public static string Lighten4 { get; } = "#F5F5F5";
-            public static string Lighten3 { get; } = "#EEEEEE";
-            public static string Lighten2 { get; } = "#E0E0E0";
-            public static string Lighten1 { get; } = "#BDBDBD";
-            public static string Darken1 { get; } = "#757575";
-            public static string Darken2 { get; } = "#616161";
-            public static string Darken3 { get; } = "#424242";
-            public static string Darken4 { get; } = "#212121";
-        }
-
         public static class BlueGrey
         {
             public static string Default { get; } = "#607D8B";
@@ -334,6 +320,19 @@ namespace MudBlazor
             public static string Darken2 { get; } = "#455A64";
             public static string Darken3 { get; } = "#37474F";
             public static string Darken4 { get; } = "#263238";
+        }
+        public static class Grey
+        {
+            public static string Default { get; } = "#9E9E9E";
+            public static string Lighten5 { get; } = "#FAFAFA";
+            public static string Lighten4 { get; } = "#F5F5F5";
+            public static string Lighten3 { get; } = "#EEEEEE";
+            public static string Lighten2 { get; } = "#E0E0E0";
+            public static string Lighten1 { get; } = "#BDBDBD";
+            public static string Darken1 { get; } = "#757575";
+            public static string Darken2 { get; } = "#616161";
+            public static string Darken3 { get; } = "#424242";
+            public static string Darken4 { get; } = "#212121";
         }
     }
 }
