@@ -1,0 +1,60 @@
+﻿.mud-picker {
+    z-index: 100;
+    display: none;
+    margin-top: 20px;
+
+    &.mud-picker-open {
+        display: block;
+        animation: mud-animation-fadein 251ms;
+    }
+}
+
+
+
+.mud-picker-container {
+    display: flex;
+    flex-direction: column;
+
+    &.mud-picker-container-landscape {
+        flex-direction: row;
+    }
+}
+
+.mud-picker-view {
+    display: flex;
+    max-width: 325px;
+    min-width: 310px;
+    min-height: 305px;
+    overflow: hidden;
+    flex-direction: column;
+    justify-content: center;
+
+    &.mud-picker-view-landscape {
+        padding: 0 8px;
+    }
+}
+
+
+.mud-picker-toolbar {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    color: var(--mud-theme-on-primary);
+    background-color: var(--mud-theme-primary);
+
+    .mud-picker-toolbar-landscape {
+        height: auto;
+        padding: 8px;
+        max-width: 150px;
+        justify-content: flex-start;
+    }
+
+
+    .mud-button-root {
+        padding: 0;
+        min-width: 16px;
+        text-transform: none;
+    }
+}

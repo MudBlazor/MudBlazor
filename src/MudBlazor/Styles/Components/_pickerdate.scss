@@ -1,0 +1,136 @@
+﻿
+.mud-picker-datepicker-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+
+    .mud-button-year {
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.75;
+        letter-spacing: 0.00938em;
+    }
+
+    .mud-button-date {
+        font-size: 2.125rem;
+        font-weight: 400;
+        line-height: 1.17;
+        letter-spacing: 0.00735em;
+    }
+}
+
+.mud-picker-datepicker-toolbar-landscape {
+    padding: 16px;
+}
+
+.mud-picker-datepicker-date-landscape {
+    margin-right: 16px;
+}
+
+
+.mud-picker-calendar-header-switch {
+    display: flex;
+    margin-top: 4px;
+    align-items: center;
+    margin-bottom: 8px;
+    justify-content: space-between;
+
+    & > .mud-icon-button {
+        z-index: 1;
+        background-color: var(--mud-theme-surface);
+    }
+
+    & .mud-picker-calendar-header-transition {
+        width: 100%;
+        height: 23px;
+        overflow: hidden;
+    }
+}
+
+
+.mud-picker-calendar-header-day {
+    display: flex;
+    max-height: 16px;
+    align-items: center;
+    justify-content: center;
+
+    .mud-day-label {
+        color: rgba(0, 0, 0, 0.38);
+        width: 36px;
+        margin: 0 2px;
+        text-align: center;
+    }
+}
+
+
+
+.mud-picker-slide-transition {
+    display: block;
+    position: relative;
+}
+
+.mud-picker-slide-transition > * {
+    top: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+}
+
+
+.mud-picker-calendar-transition{
+    margin-top: 12px;
+    min-height: 216px;
+}
+
+.mud-picker-calendar-progress-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mud-picker-calendar {
+    .mud-picker-calendar-week {
+        display: flex;
+        justify-content: center;
+
+        .mud-picker-calendar-day {
+            .mud-day {
+                color: var(--mud-theme-on-surface);
+                width: 36px;
+                height: 36px;
+                margin: 0 2px;
+                padding: 0;
+                font-size: 0.75rem;
+                font-weight: 500;
+
+                &.mud-hidden {
+                    opacity: 0;
+                    pointer-events: none;
+                }
+
+                &.mud-current {
+                    color: var(--mud-theme-primary);
+                    font-weight: 600;
+                }
+
+                &.mud-selected {
+                    color: var(--mud-theme-on-primary);
+                    font-weight: 500;
+                    background-color: var(--mud-theme-primary);
+
+                    &:hover {
+                        background-color: var(--mud-theme-primary-hover);
+                    }
+                }
+
+                &.mud-disabled {
+                    color: rgba(0, 0, 0, 0.38);
+                    pointer-events: none;
+                }
+            }
+        }
+    }
+}
+
+
