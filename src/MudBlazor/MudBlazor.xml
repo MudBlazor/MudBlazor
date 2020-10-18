@@ -34,6 +34,36 @@
             Button click event.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBasePicker.HelperText">
+            <summary>
+            If string has value, helpertext will be applied.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.Label">
+            <summary>
+            If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.Disabled">
+            <summary>
+            If true, the picker will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.DisableToolbar">
+            <summary>
+            Hide toolbar and show only date/time views.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.PickerVariant">
+            <summary>
+            Picker container option
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.InputVariant">
+            <summary>
+            InputVariant, if Picker is static this option will not change anything.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudComponentBase.Class">
             <summary>
             User class names, separated by space
@@ -230,6 +260,11 @@
             If true, the button will be disabled.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudIconButton.ChildContent">
+            <summary>
+            Child content of component, only shows if Icon is null or Empty.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudCheckBox.Color">
             <summary>
             The color of the component. It supports the theme colors.
@@ -273,6 +308,21 @@
         <member name="P:MudBlazor.MudChip.ChildContent">
             <summary>
             Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.MaxDate">
+            <summary>
+            Max selectable date.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.MinDate">
+            <summary>
+            Max selectable date.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.OpenTo">
+            <summary>
+            First view to show in the MudDatePicker.
             </summary>
         </member>
         <member name="P:MudBlazor.MudExpansionPanel.Text">
