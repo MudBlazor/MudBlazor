@@ -3447,16 +3447,6 @@ ul {
     display: block;
     animation: mud-animation-fadein 251ms; }
 
-.mud-menu-overlay {
-  top: 0;
-  left: 0;
-  margin: 0px !important;
-  height: 100%;
-  width: 100%;
-  position: fixed;
-  background-color: transparent;
-  z-index: 99; }
-
 .mud-menu-list-item {
   padding-top: 2px;
   padding-bottom: 2px; }
@@ -3517,6 +3507,160 @@ ul {
 
 .mud-nav-group * .mud-navmenu > .mud-nav-group * .mud-navmenu .mud-nav-item .mud-nav-link {
   padding-left: 56px; }
+
+.mud-picker {
+  z-index: 100;
+  display: none;
+  margin-top: 20px; }
+  .mud-picker.mud-picker-open {
+    display: block;
+    animation: mud-animation-fadein 251ms; }
+
+.mud-picker-container {
+  display: flex;
+  flex-direction: column; }
+  .mud-picker-container.mud-picker-container-landscape {
+    flex-direction: row; }
+
+.mud-picker-view {
+  display: flex;
+  max-width: 325px;
+  min-width: 310px;
+  min-height: 305px;
+  overflow: hidden;
+  flex-direction: column;
+  justify-content: center; }
+  .mud-picker-view.mud-picker-view-landscape {
+    padding: 0 8px; }
+
+.mud-picker-toolbar {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  color: var(--mud-theme-on-primary);
+  background-color: var(--mud-theme-primary); }
+  .mud-picker-toolbar .mud-picker-toolbar-landscape {
+    height: auto;
+    padding: 8px;
+    max-width: 150px;
+    justify-content: flex-start; }
+  .mud-picker-toolbar .mud-button-root {
+    padding: 0;
+    min-width: 16px;
+    text-transform: none; }
+
+.mud-picker-datepicker-toolbar {
+  align-items: flex-start;
+  flex-direction: column; }
+  .mud-picker-datepicker-toolbar .mud-button-year {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.75;
+    letter-spacing: 0.00938em; }
+  .mud-picker-datepicker-toolbar .mud-button-date {
+    font-size: 2.125rem;
+    font-weight: 400;
+    line-height: 1.17;
+    letter-spacing: 0.00735em; }
+
+.mud-picker-datepicker-toolbar-landscape {
+  padding: 16px; }
+
+.mud-picker-datepicker-date-landscape {
+  margin-right: 16px; }
+
+.mud-picker-calendar-header-switch {
+  display: flex;
+  margin-top: 4px;
+  align-items: center;
+  margin-bottom: 8px;
+  justify-content: space-between; }
+  .mud-picker-calendar-header-switch > .mud-icon-button {
+    z-index: 1;
+    background-color: var(--mud-theme-surface); }
+  .mud-picker-calendar-header-switch .mud-picker-calendar-header-transition {
+    width: 100%;
+    height: 23px;
+    overflow: hidden; }
+
+.mud-picker-calendar-header-day {
+  display: flex;
+  max-height: 16px;
+  align-items: center;
+  justify-content: center; }
+  .mud-picker-calendar-header-day .mud-day-label {
+    color: rgba(0, 0, 0, 0.38);
+    width: 36px;
+    margin: 0 2px;
+    text-align: center; }
+
+.mud-picker-slide-transition {
+  display: block;
+  position: relative; }
+
+.mud-picker-slide-transition > * {
+  top: 0;
+  left: 0;
+  right: 0;
+  position: absolute; }
+
+.mud-picker-calendar-transition {
+  margin-top: 12px;
+  min-height: 216px; }
+
+.mud-picker-calendar-progress-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+
+.mud-picker-calendar .mud-picker-calendar-week {
+  display: flex;
+  justify-content: center; }
+  .mud-picker-calendar .mud-picker-calendar-week .mud-picker-calendar-day .mud-day {
+    color: var(--mud-theme-on-surface);
+    width: 36px;
+    height: 36px;
+    margin: 0 2px;
+    padding: 0;
+    font-size: 0.75rem;
+    font-weight: 500; }
+    .mud-picker-calendar .mud-picker-calendar-week .mud-picker-calendar-day .mud-day.mud-hidden {
+      opacity: 0;
+      pointer-events: none; }
+    .mud-picker-calendar .mud-picker-calendar-week .mud-picker-calendar-day .mud-day.mud-current {
+      color: var(--mud-theme-primary);
+      font-weight: 600; }
+    .mud-picker-calendar .mud-picker-calendar-week .mud-picker-calendar-day .mud-day.mud-selected {
+      color: var(--mud-theme-on-primary);
+      font-weight: 500;
+      background-color: var(--mud-theme-primary); }
+      .mud-picker-calendar .mud-picker-calendar-week .mud-picker-calendar-day .mud-day.mud-selected:hover {
+        background-color: var(--mud-theme-primary-hover); }
+    .mud-picker-calendar .mud-picker-calendar-week .mud-picker-calendar-day .mud-day.mud-disabled {
+      color: rgba(0, 0, 0, 0.38);
+      pointer-events: none; }
+
+.mud-popover-paper {
+  outline: 0;
+  position: absolute;
+  min-width: 16px;
+  min-height: 16px;
+  overflow-x: hidden;
+  overflow-y: auto; }
+
+.mud-popover-overlay {
+  top: 0;
+  left: 0;
+  margin: 0px !important;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  background-color: transparent;
+  z-index: 99; }
 
 .mud-simple-table table {
   width: 100%;
