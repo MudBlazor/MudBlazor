@@ -230,6 +230,11 @@
             If true, the button will be disabled.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudIconButton.ChildContent">
+            <summary>
+            Child content of component, only shows if Icon is null or Empty.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudCheckBox.Color">
             <summary>
             The color of the component. It supports the theme colors.
