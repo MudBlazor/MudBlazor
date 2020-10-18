@@ -322,7 +322,7 @@
         </member>
         <member name="P:MudBlazor.MudFormControl.HelperText">
             <summary>
-            If string has value, helper text will be added.
+            If string has value, helpertext will be applied.
             </summary>
         </member>
         <member name="P:MudBlazor.MudFormControl.Margin">
