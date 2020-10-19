@@ -11,6 +11,7 @@ Simple and easy to use components that is highly customizable.
 
 ## Documentation & Demo
 - [MudBlazor.com](https://mudblazor.com)
+- [Try.MudBlazor.com](https://try.mudblazor.com/)
 
 
 ## Prerequisites
