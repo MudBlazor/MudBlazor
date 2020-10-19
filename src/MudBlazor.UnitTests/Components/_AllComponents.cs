@@ -473,6 +473,7 @@ namespace MudBlazor.UnitTests.Components
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<DatePickerBasicUsageExample>();
         }
 
@@ -1369,16 +1370,6 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void ColorsClassExample_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                var comp = ctx.RenderComponent<ColorsClassExample>();
-        }
-
-
-        [Test]
         public void BrowserResizeEventExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -1397,6 +1388,17 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<HiddenExample>();
+        }
+
+
+        [Test]
+        public void ColorsClassExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<ColorsClassExample>();
         }
 
 
