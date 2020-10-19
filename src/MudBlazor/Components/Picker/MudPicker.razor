@@ -3,7 +3,7 @@
 
 
 <div class="mud-picker-container">
-    @if (ToolBar != null)
+    @if (!DisableToolbar)
     {
         <MudToolBar Class="mud-picker-toolbar mud-picker-datepicker-toolbar">
             @ToolBar
@@ -17,6 +17,7 @@
 
 
 @code {
+    [Parameter] public bool DisableToolbar { get; set; }
     [Parameter] public RenderFragment ToolBar { get; set; }
     [Parameter] public RenderFragment PickerView { get; set; }
 }
