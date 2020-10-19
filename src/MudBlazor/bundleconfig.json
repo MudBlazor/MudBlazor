@@ -1,0 +1,9 @@
+[
+  {
+    "outputFileName": "wwwroot/MudBlazor.min.js",
+    "inputFiles": [
+      "TScripts/*.js"
+    ]
+  }
+]
+
