@@ -1,5 +1,7 @@
 ﻿@using MudBlazor.Utilities
 
+@inject IJSRuntime JSRuntime
+
 <div class="docs-section-source @Class">
     @if (!NoToolbar)
     {
@@ -10,13 +12,17 @@
         </MudTooltip>
         @if (!String.IsNullOrEmpty(SnippetId))
         {
-        <MudTooltip Text="Edit on TryMudBlazor" Placement="Placement.Top">
-            <MudIconButton Icon="@Icons.Material.Create" Link="@TryMudBlazorSnippetLink" Target="_blank"  />
-        </MudTooltip>
+            <MudTooltip Text="Edit on TryMudBlazor" Placement="Placement.Top">
+                <MudIconButton Icon="@Icons.Material.Create" Link="@TryMudBlazorSnippetLink" Target="_blank" />
+            </MudTooltip>
         }
-        <MudTooltip Text="Copy Code" Placement="Placement.Top">
-            <MudIconButton Icon="@Icons.Material.FileCopy" />
-        </MudTooltip>
+        @if (!String.IsNullOrEmpty(Code))
+        {
+            <MudTooltip Text="Copy Code" Placement="Placement.Top">
+                <MudIconButton Icon="@Icons.Material.FileCopy" @onclick="CopyTextToClipboard" />
+            </MudTooltip>
+        }
+
         @if (!String.IsNullOrEmpty(GitHubFolderName))
         {
             <MudTooltip Text="View the source on GitHub" Placement="Placement.Top">
@@ -65,6 +71,11 @@
     private string hideCodeExampleString { get; set; } = "Hide code example";
     private string showComponentCodeExampleString { get; set; } = "Show component code example";
     private string hideComponentCodeExampleString { get; set; } = "Hide component code example";
+
+    private async Task CopyTextToClipboard()
+    {
+        await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", Code);
+    }
 
     public void OnShowCode()
     {
