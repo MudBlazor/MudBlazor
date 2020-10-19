@@ -1,12 +1,15 @@
-﻿.docs-credit-card .mud-card-content {
-    min-height: 180px;
+﻿.docs-credit-card {
+    .mud-card-content {
+        min-height: 180px;
+     }
 }
 
-
-
-.credit-mat {
-    color: #5d2f91;
+.docs-awesome-coders {
+    .mud-card-header {
+        min-height: 110px;
+    }
 }
+
 
 .credit-mui {
     color: #1976d2;
