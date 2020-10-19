@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.InternalComponents.Picker
+
+
+
+<div class="mud-picker-container">
+    @if (ToolBar != null)
+    {
+        <MudToolBar Class="mud-picker-toolbar mud-picker-datepicker-toolbar">
+            @ToolBar
+        </MudToolBar>
+    }
+    <div class="mud-picker-view">
+        @PickerView
+    </div>
+</div>
+
+
+
+@code {
+    [Parameter] public RenderFragment ToolBar { get; set; }
+    [Parameter] public RenderFragment PickerView { get; set; }
+}

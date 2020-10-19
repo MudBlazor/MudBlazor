@@ -1,0 +1,39 @@
+﻿@using MudBlazor.Services
+@namespace  MudBlazor.Docs.Examples
+
+<MudCard Class="pa-5">
+    <MudText>Resize the window and see width and height change:<br /> 
+        Browser window is @(width)x@(height)px</MudText>
+</MudCard>
+
+@code
+{
+    [Inject] IResizeListenerService ResizeListener { get; set; }
+
+    int width = 0;
+    int height = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ResizeListener.OnResized += OnResized;
+        }
+        var size = await ResizeListener.GetBrowserWindowSize();
+        height = size.Height;
+        width = size.Width;
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void OnResized(object sender, BrowserWindowSize size)
+    {
+        width = size.Width;
+        height = size.Height;
+        InvokeAsync(StateHasChanged);
+    }
+}

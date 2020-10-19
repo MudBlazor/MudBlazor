@@ -34,6 +34,36 @@
             Button click event.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBasePicker.HelperText">
+            <summary>
+            If string has value, helpertext will be applied.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.Label">
+            <summary>
+            If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.Disabled">
+            <summary>
+            If true, the picker will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.DisableToolbar">
+            <summary>
+            Hide toolbar and show only date/time views.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.PickerVariant">
+            <summary>
+            Picker container option
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.InputVariant">
+            <summary>
+            InputVariant, if Picker is static this option will not change anything.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudComponentBase.Class">
             <summary>
             User class names, separated by space
@@ -280,6 +310,21 @@
             Child content of component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudDatePicker.MaxDate">
+            <summary>
+            Max selectable date.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.MinDate">
+            <summary>
+            Max selectable date.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.OpenTo">
+            <summary>
+            First view to show in the MudDatePicker.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudExpansionPanel.Text">
             <summary>
             The text to be displayed in the expansion panel.
@@ -336,6 +381,21 @@
             </summary>
         </member>
         <member name="P:MudBlazor.MudFormControl.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudHidden.Breakpoint">
+            <summary>
+            The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudHidden.Invert">
+            <summary>
+            Inverts the Breakpoint, so that the ChildContent is only rendered when the breakpoint matches the screen size.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudHidden.ChildContent">
             <summary>
             Child content of component.
             </summary>
@@ -700,6 +760,70 @@
             <summary>
             If true, Sets display inine
             </summary>
+        </member>
+        <member name="T:MudBlazor.Breakpoint">
+            <summary>
+            Breakpoints describe certain user interfaces sizes or ranges. Use them in conjunction with MudHidden or ResizeListenerService
+            </summary>
+        </member>
+        <member name="T:MudBlazor.Services.ResizeListenerService">
+            <summary>
+            This service listens to browser resize events and allows you to react to a changing window size in Blazor
+            </summary>
+        </member>
+        <member name="M:MudBlazor.Services.ResizeListenerService.#ctor(Microsoft.JSInterop.IJSRuntime,Microsoft.Extensions.Options.IOptions{MudBlazor.Services.ResizeOptions})">
+            <summary>
+            
+            </summary>
+            <param name="jsRuntime"></param>
+            <param name="options"></param>
+        </member>
+        <member name="E:MudBlazor.Services.ResizeListenerService.OnResized">
+            <summary>
+            Subscribe to the browsers resize() event.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.Services.ResizeListenerService.MatchMedia(System.String)">
+            <summary>
+            Determine if the Document matches the provided media query.
+            </summary>
+            <param name="mediaQuery"></param>
+            <returns>Returns true if matched.</returns>
+        </member>
+        <member name="M:MudBlazor.Services.ResizeListenerService.GetBrowserWindowSize">
+            <summary>
+            Get the current BrowserWindowSize, this includes the Height and Width of the document.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MudBlazor.Services.ResizeListenerService.RaiseOnResized(MudBlazor.Services.BrowserWindowSize)">
+            <summary>
+            Invoked by jsInterop, use the OnResized event handler to subscribe.
+            </summary>
+            <param name="browserWindowSize"></param>
+        </member>
+        <member name="P:MudBlazor.Services.ResizeOptions.ReportRate">
+            <summary>
+            Rate in milliseconds that the browsers `resize()` event should report a change.
+            Setting this value too low can cause poor application performance.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.Services.ResizeOptions.EnableLogging">
+            <summary>
+            Report resize events and media queries in the browser's console.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.Services.ResizeOptions.SuppressInitEvent">
+            <summary>
+            Suppress the first OnResized that is invoked when a new event handler is added.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.Services.ServiceCollectionExtensions.AddMudBlazorResizeListener(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{MudBlazor.Services.ResizeOptions})">
+            <summary>
+            Adds a ResizeListener as a Scoped instance.
+            </summary>
+            <param name="configure">Defines settings for this instance.</param>
+            <returns>Continues the IServiceCollection chain.</returns>
         </member>
         <member name="M:MudBlazor.Utilities.CssBuilder.Default(System.String)">
             <summary>

@@ -1,4 +1,4 @@
-@import 'abstracts/colors';
+﻿@import 'abstracts/colors';
 @import 'abstracts/variables';
 @import 'abstracts/mixins';
 
@@ -32,6 +32,8 @@
 @import 'components/menu';
 @import 'components/link';
 @import 'components/navmenu';
+@import 'components/picker';
+@import 'components/pickerdate';
 @import 'components/popover';
 @import 'components/simpletable';
 @import 'components/skeleton';
