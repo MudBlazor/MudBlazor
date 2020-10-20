@@ -7,11 +7,20 @@ using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public abstract class MudBasePicker : MudComponentBase
     {
+        protected string MudPickerClass =>
+        new CssBuilder("mud-picker")
+           .AddClass($"mud-picker-inline", PickerVariant == PickerVariant.Inline)
+          .AddClass($"mud-picker-input-button", !AllowKeyboardInput)
+          .AddClass($"mud-picker-input-text", AllowKeyboardInput )
+          .AddClass($"mud-disabled", Disabled)
+        .Build();
+
         private string _value;
         /// <summary>
         /// If string has value, helpertext will be applied.
@@ -44,9 +53,24 @@ namespace MudBlazor
         [Parameter] public Variant InputVariant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// If true, the pickers input icon will not be applied.
+        /// Sets if the icon will be att start or end, set to false to disable.
         /// </summary>
-        [Parameter] public bool HideInputIcon { get; set; }
+        [Parameter] public Adornment Adornment { get; set; } = Adornment.End;
+
+        /// <summary>
+        /// What orientation to render in when in PickerVariant Static Mode.
+        /// </summary>
+        [Parameter] public Orientation Orientation { get; set; } = Orientation.Portrait;
+
+        /// <summary>
+        /// Sets the Icon Size.
+        /// </summary>
+        [Parameter] public Size IconSize { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// Allows text input from keyboard.
+        /// </summary>
+        [Parameter] public bool AllowKeyboardInput { get; set; }
 
         [Parameter] public EventCallback<string> ValueChanged { get; set; }
 

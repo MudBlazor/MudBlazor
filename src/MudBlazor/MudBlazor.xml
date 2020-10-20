@@ -89,7 +89,16 @@
             Sets Start or End Adornment if not set to None.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "P:MudBlazor.MudBaseInputText.OnAdornmentClick" -->
+        <member name="P:MudBlazor.MudBaseInputText.IconSize">
+            <summary>
+            Sets the Icon Size.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.OnAdornmentClick">
+            <summary>
+            Button click event if set and Adornment used.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBaseInputText.InputType">
             <summary>
             Type of the input element. It should be a valid HTML5 input type.
@@ -133,6 +142,26 @@
         <member name="P:MudBlazor.MudBasePicker.InputVariant">
             <summary>
             InputVariant, if Picker is static this option will not change anything.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.Adornment">
+            <summary>
+            Sets if the icon will be att start or end, set to false to disable.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.Orientation">
+            <summary>
+            What orientation to render in when in PickerVariant Static Mode.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.IconSize">
+            <summary>
+            Sets the Icon Size.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.AllowKeyboardInput">
+            <summary>
+            Allows text input from keyboard.
             </summary>
         </member>
         <member name="P:MudBlazor.MudBaseSelectItem.Disabled">
@@ -424,6 +453,11 @@
         <member name="P:MudBlazor.MudDatePicker.OpenTo">
             <summary>
             First view to show in the MudDatePicker.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.InputIcon">
+            <summary>
+            Sets the Input Icon.
             </summary>
         </member>
         <member name="P:MudBlazor.MudExpansionPanel.Text">
