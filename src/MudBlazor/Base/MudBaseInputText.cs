@@ -65,9 +65,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Adornment Adornment { get; set; } = Adornment.None;
 
-
         /// <summary>
-        /// Button click event.
+        /// Button click event if set & Adornment used.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
         /// <summary>
