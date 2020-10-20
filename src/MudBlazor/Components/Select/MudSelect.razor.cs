@@ -7,24 +7,37 @@ using System.Threading.Tasks;
 
 namespace MudBlazor
 {
-    public class ComponentBaseMudSelect : MudBaseInputText
+    public partial class MudSelect : MudBaseInputText
     {
         protected string Classname =>
-        new CssBuilder("mud-select")
-        .AddClass(Class)
-       .Build();
+            new CssBuilder("mud-select")
+            .AddClass(Class)
+            .Build();
 
+        /// <summary>
+        /// Add the MudSelectItems here
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
-        [Parameter] public EventCallback<string> SelectedValue { get; set; }
 
-        public bool isMenuOpen { get; set; }
+        [Parameter] public EventCallback<HashSet<string>> SelectedValuesChanged { get; set; }
+
+        /// <summary>
+        /// Set of selected values. MultiSelection is true is required. This property is two-way bindable.
+        /// </summary>
+        [Parameter] public HashSet<string> SelectedValues {
+            get;
+            set;
+        }
+
+        internal bool isMenuOpen { get; set; }
 
         public async Task OnSelect(string value)
         {
             Value = value;
             isMenuOpen = false;
             StateHasChanged();
-            await SelectedValue.InvokeAsync(value);
+            SelectedValues = new HashSet<string>() {value};
+            await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
         public void ShowSelect()

@@ -392,7 +392,7 @@ public const string DialogDialogFormExample = @"<MudDialog>
     <DialogContent>
         <MudTextField Label=""Database name"" FullWidth=""true""></MudTextField>
         <MudTextField Label=""Database tags"" FullWidth=""true""></MudTextField>
-        <MudSelect FullWidth=""true"" Label=""Resource Group"" SelectedValue=""@OnSelectedValue"">
+        <MudSelect FullWidth=""true"" Label=""Resource Group"" ValueChanged=""@OnSelectedValue"">
             <MudSelectItem Value=""Prod"">Prod</MudSelectItem>
             <MudSelectItem Value=""Test"">Test</MudSelectItem>
         </MudSelect>
@@ -1146,29 +1146,30 @@ public const string RadioLabelPlacementExample = @"<MudFormControl Label=""Place
     public string SelectedOption { get; set; }
 }";
 
-public const string SelectBasicExample = @"<MudSelect Label=""Food"" SelectedValue=""OnSelectedValue"">
+public const string SelectBasicExample = @"<MudSelect Label=""Food"" ValueChanged=""OnSelectedValue"">
     <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
     <MudSelectItem Value=""burgers"">Burgers</MudSelectItem>
     <MudSelectItem Value=""hotdog"">Hot Dogs</MudSelectItem>
 </MudSelect>
-<MudSelect Label=""Food"" SelectedValue=""OnSelectedValue"" HelperText=""With helper text"">
-    <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
-    <MudSelectItem Value=""burgers"">Burgers</MudSelectItem>
-    <MudSelectItem Value=""hotdog"">Hot Dogs</MudSelectItem>
-</MudSelect>
-
-<MudSelect SelectedValue=""OnSelectedValue"" HelperText=""With no label"">
+<MudSelect Label=""Food"" ValueChanged=""OnSelectedValue"" HelperText=""With helper text"">
     <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
     <MudSelectItem Value=""burgers"">Burgers</MudSelectItem>
     <MudSelectItem Value=""hotdog"">Hot Dogs</MudSelectItem>
 </MudSelect>
 
-<MudSelect Placeholder=""Brands"" SelectedValue=""OnSelectedValue"" HelperText=""Disabled"" Disabled=""true"">
+<MudSelect ValueChanged=""OnSelectedValue"" HelperText=""With no label"">
+    <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
+    <MudSelectItem Value=""burgers"">Burgers</MudSelectItem>
+    <MudSelectItem Value=""hotdog"">Hot Dogs</MudSelectItem>
+</MudSelect>
+
+<MudSelect Placeholder=""Brands"" ValueChanged=""OnSelectedValue"" HelperText=""Disabled"" Disabled=""true"">
     <MudSelectItem Value=""volvo"">Volvo</MudSelectItem>
     <MudSelectItem Value=""saab"">Saab</MudSelectItem>
     <MudSelectItem Value=""scania"">Scania</MudSelectItem>
 </MudSelect>
 
+Selected value: @Item
 @code {
 
     private string Item { get; set; } = ""Nothing selected"";

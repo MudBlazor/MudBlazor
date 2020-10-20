@@ -3,9 +3,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class ComponentBaseMudSelectItem : MudBaseSelectItem
+    public partial class MudSelectItem : MudBaseSelectItem
     {
         [CascadingParameter] public MudSelect MudSelect { get; set; }
+
         [Parameter] public string Value { get; set; }
     }
 }
