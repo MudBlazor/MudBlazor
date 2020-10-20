@@ -9,4 +9,8 @@
     <PackageReference Include="ColorCode.HTML" Version="2.0.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
+  </ItemGroup>
+
 </Project>
