@@ -60,10 +60,16 @@ namespace MudBlazor
         /// Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
         /// </summary>
         [Parameter] public string AdornmentText { get; set; }
+
         /// <summary>
         /// Sets Start or End Adornment if not set to None.
         /// </summary>
         [Parameter] public Adornment Adornment { get; set; } = Adornment.None;
+
+        /// <summary>
+        /// Sets the Icon Size.
+        /// </summary>
+        [Parameter] public Size IconSize { get; set; } = Size.Small;
 
         /// <summary>
         /// Button click event if set and Adornment used.
