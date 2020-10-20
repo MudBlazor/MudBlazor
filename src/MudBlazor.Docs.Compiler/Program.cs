@@ -22,6 +22,7 @@ namespace MudBlazor.Docs.Compiler
             if (doc_path == null)
                 throw new InvalidOperationException("Directory not found: " + DocDir);
             CreateCodeSnippets(doc_path);
+            DocStringsGenerator.GenerateDocStrings(doc_path);
             CreateHilitedCode(doc_path);
             var test_path = Directory.EnumerateFiles(src_path, TestsFile, SearchOption.AllDirectories).FirstOrDefault();
             if (test_path == null)

@@ -42,7 +42,7 @@
         get {
             foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>())
             {
-                var doc=info.GetDocumentation();
+                var doc= DocStrings.GetPropertyDescription(Type,info.Name);
                 doc = Regex.Replace(doc??"", @"</?.+?>", "");
                 yield return new ApiProperty()
                 {
