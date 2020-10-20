@@ -47,6 +47,8 @@ public const string MudBaseInputText_AdornmentText = @"Text that will be used if
 
 public const string MudBaseInputText_Adornment = @"Sets Start or End Adornment if not set to None.";
 
+public const string MudBaseInputText_IconSize = @"Sets the Icon Size.";
+
 public const string MudBaseInputText_OnAdornmentClick = @"Button click event if set and Adornment used.";
 
 public const string MudBaseInputText_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
@@ -79,6 +81,18 @@ public const string MudBasePicker_DisableToolbar = @"Hide toolbar and show only 
 public const string MudBasePicker_PickerVariant = @"Picker container option";
 
 public const string MudBasePicker_InputVariant = @"InputVariant, if Picker is static this option will not change anything.";
+
+public const string MudBasePicker_Adornment = @"Sets if the icon will be att start or end, set to false to disable.";
+
+public const string MudBasePicker_Orientation = @"What orientation to render in when in PickerVariant Static Mode.";
+
+public const string MudBasePicker_IconSize = @"Sets the Icon Size.";
+
+public const string MudBasePicker_AllowKeyboardInput = @"Allows text input from keyboard.";
+
+public const string MudBasePicker_ValueChanged = @"";
+
+public const string MudBasePicker_Value = @"";
 
 public const string MudBasePicker_Class = @"User class names, separated by space";
 
@@ -324,6 +338,8 @@ public const string MudDatePicker_MinDate = @"Max selectable date.";
 
 public const string MudDatePicker_OpenTo = @"First view to show in the MudDatePicker.";
 
+public const string MudDatePicker_InputIcon = @"Sets the Input Icon.";
+
 public const string MudDatePicker_HelperText = @"If string has value, helpertext will be applied.";
 
 public const string MudDatePicker_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
@@ -335,6 +351,18 @@ public const string MudDatePicker_DisableToolbar = @"Hide toolbar and show only 
 public const string MudDatePicker_PickerVariant = @"Picker container option";
 
 public const string MudDatePicker_InputVariant = @"InputVariant, if Picker is static this option will not change anything.";
+
+public const string MudDatePicker_Adornment = @"Sets if the icon will be att start or end, set to false to disable.";
+
+public const string MudDatePicker_Orientation = @"What orientation to render in when in PickerVariant Static Mode.";
+
+public const string MudDatePicker_IconSize = @"Sets the Icon Size.";
+
+public const string MudDatePicker_AllowKeyboardInput = @"Allows text input from keyboard.";
+
+public const string MudDatePicker_ValueChanged = @"";
+
+public const string MudDatePicker_Value = @"";
 
 public const string MudDatePicker_Class = @"User class names, separated by space";
 
@@ -466,6 +494,8 @@ public const string MudInput_AdornmentText = @"Text that will be used if Adornme
 
 public const string MudInput_Adornment = @"Sets Start or End Adornment if not set to None.";
 
+public const string MudInput_IconSize = @"Sets the Icon Size.";
+
 public const string MudInput_OnAdornmentClick = @"Button click event if set and Adornment used.";
 
 public const string MudInput_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
@@ -510,6 +540,8 @@ public const string MudInputLabel_AdornmentIcon = @"Icon that will be used if Ad
 public const string MudInputLabel_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
 
 public const string MudInputLabel_Adornment = @"Sets Start or End Adornment if not set to None.";
+
+public const string MudInputLabel_IconSize = @"Sets the Icon Size.";
 
 public const string MudInputLabel_OnAdornmentClick = @"Button click event if set and Adornment used.";
 
@@ -811,6 +843,8 @@ public const string ComponentBaseMudSelect_AdornmentText = @"Text that will be u
 
 public const string ComponentBaseMudSelect_Adornment = @"Sets Start or End Adornment if not set to None.";
 
+public const string ComponentBaseMudSelect_IconSize = @"Sets the Icon Size.";
+
 public const string ComponentBaseMudSelect_OnAdornmentClick = @"Button click event if set and Adornment used.";
 
 public const string ComponentBaseMudSelect_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
@@ -1047,6 +1081,8 @@ public const string MudTextField_AdornmentIcon = @"Icon that will be used if Ado
 public const string MudTextField_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
 
 public const string MudTextField_Adornment = @"Sets Start or End Adornment if not set to None.";
+
+public const string MudTextField_IconSize = @"Sets the Icon Size.";
 
 public const string MudTextField_OnAdornmentClick = @"Button click event if set and Adornment used.";
 
@@ -1448,6 +1484,8 @@ public const string MudSelect_AdornmentText = @"Text that will be used if Adornm
 
 public const string MudSelect_Adornment = @"Sets Start or End Adornment if not set to None.";
 
+public const string MudSelect_IconSize = @"Sets the Icon Size.";
+
 public const string MudSelect_OnAdornmentClick = @"Button click event if set and Adornment used.";
 
 public const string MudSelect_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
@@ -1657,6 +1695,8 @@ public const string MudInputAdornment_Text = @"";
 public const string MudInputAdornment_Icon = @"";
 
 public const string MudInputAdornment_Edge = @"";
+
+public const string MudInputAdornment_Size = @"";
 
 public const string MudInputAdornment_AdornmentClick = @"";
 
