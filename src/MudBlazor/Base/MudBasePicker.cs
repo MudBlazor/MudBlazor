@@ -12,6 +12,7 @@ namespace MudBlazor
 {
     public abstract class MudBasePicker : MudComponentBase
     {
+        private string _value;
         /// <summary>
         /// If string has value, helpertext will be applied.
         /// </summary>
@@ -41,6 +42,27 @@ namespace MudBlazor
         /// InputVariant, if Picker is static this option will not change anything.
         /// </summary>
         [Parameter] public Variant InputVariant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// If true, the pickers input icon will not be applied.
+        /// </summary>
+        [Parameter] public bool HideInputIcon { get; set; }
+
+        [Parameter] public EventCallback<string> ValueChanged { get; set; }
+
+        [Parameter]
+        public string Value
+        {
+            get => _value;
+            set
+            {
+                if (value != _value)
+                {
+                    _value = value;
+                    ValueChanged.InvokeAsync(value);
+                }
+            }
+        }
 
         public bool isOpen { get; set; }
 

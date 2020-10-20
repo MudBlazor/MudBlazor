@@ -5,14 +5,14 @@
 <div class="mud-date-picker">
     @if (PickerVariant != PickerVariant.Static)
     {
-        <MudTextField Label="@Label" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="true" @onclick="OnOpen" Disabled="@Disabled"/>
+        <MudTextField Label="@Label" Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="true" @onclick="OnOpen" Disabled="@Disabled"/>
     }
     <CascadingValue Value="@this">
         <div class="mud-picker @(isOpen? "mud-picker-open" : "") mud-paper mud-elevation-8 mud-popover-paper">
             <MudPicker DisableToolbar="@DisableToolbar">
                 <ToolBar>
                     <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year">2020</MudButton>
-                    <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date">Sun, Oct 18</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date">Sun, Oct 19</MudButton>
                 </ToolBar>
                 <PickerView>
                     <div class="mud-picker-caledar-header">

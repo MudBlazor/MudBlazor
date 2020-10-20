@@ -20,6 +20,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Date;
 
+        /// <summary>
+        /// Sets the Input Icon.
+        /// </summary>
+        [Parameter] public string InputIcon { get; set; } = Icons.Material.Event;
     }
 
     
