@@ -34,6 +34,71 @@
             Button click event.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBaseInputText.Disabled">
+            <summary>
+            If true, the input element will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.ReadOnly">
+            <summary>
+            If true, the input will be read only.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.Error">
+            <summary>
+            If true, the label will be displayed in an error state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.FullWidth">
+            <summary>
+            If true, the input will take up the full width of its container.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.DisableUnderLine">
+            <summary>
+            If true, the input will not have an underline.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.Label">
+            <summary>
+            If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.Placeholder">
+            <summary>
+            The short hint displayed in the input before the user enters a value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.HelperText">
+            <summary>
+            If string has value, helpertext will be applied.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.Icon">
+            <summary>
+            Icon that will be used if Adornment is set to Start or End.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.Adornment">
+            <summary>
+            Sets Start or End Adornment if not set to None.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.InputType">
+            <summary>
+            Type of the input element. It should be a valid HTML5 input type.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.Variant">
+            <summary>
+            Variant to use.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.Margin">
+            <summary>
+             Will adjust vertical spacing. 
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBasePicker.HelperText">
             <summary>
             If string has value, helpertext will be applied.
@@ -62,6 +127,36 @@
         <member name="P:MudBlazor.MudBasePicker.InputVariant">
             <summary>
             InputVariant, if Picker is static this option will not change anything.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseSelectItem.Disabled">
+            <summary>
+            If true, the input element will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseSelectItem.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseSelectItem.Href">
+            <summary>
+            Link to a URL when clicked.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseSelectItem.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseSelectItem.CommandParameter">
+            <summary>
+            Command parameter.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseSelectItem.Command">
+            <summary>
+            Command executed when the user clicks on an element.
             </summary>
         </member>
         <member name="P:MudBlazor.MudComponentBase.Class">
@@ -475,9 +570,34 @@
             If true, vertical padding will be removed from the list.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudListItem.Avatar">
+            <summary>
+            Avatar to use if set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudListItem.Href">
+            <summary>
+            Link to a URL when clicked.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudListItem.AvatarClass">
+            <summary>
+            Avatar CSS Class to applie if Avtar is set.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudListItem.DisableRipple">
             <summary>
             If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudListItem.Icon">
+            <summary>
+            Icon to use if set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudListItem.Inset">
+            <summary>
+            If true, the List Subheader will be indented.
             </summary>
         </member>
         <member name="P:MudBlazor.MudListItem.Expanded">
