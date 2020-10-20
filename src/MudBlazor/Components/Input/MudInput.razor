@@ -7,11 +7,11 @@
 <div class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
     {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick"/>
+        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick"/>
     }
     <input @attributes="UserAttributes" type="@_InputType" class="@InputClassname" @bind="@Value" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" />
     @if (Adornment == Adornment.End)
     {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
+        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
     }
 </div>
