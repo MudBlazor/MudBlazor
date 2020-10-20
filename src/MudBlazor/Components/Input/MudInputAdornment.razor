@@ -1,0 +1,31 @@
+﻿@namespace MudBlazor.InternalComponents.InputAdornment
+
+
+
+<div class="@Class">
+    @if (!string.IsNullOrEmpty(Text))
+    {
+        <MudText>@Text</MudText>
+    }
+    else if (!string.IsNullOrEmpty(Icon))
+    {
+        @if (AdornmentClick.HasDelegate)
+        {
+            <MudIconButton Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" />
+        }
+        else
+        {
+            <MudIcon Icon="@Icon" Size="Size.Small"/>
+        }
+    }
+</div>
+
+
+@code {
+    [Parameter] public string Class { get; set; }
+    [Parameter] public string Text { get; set; }
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public Edge Edge { get; set; }
+
+    [Parameter] public EventCallback<MouseEventArgs> AdornmentClick { get; set; }
+}

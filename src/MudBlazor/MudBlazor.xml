@@ -74,14 +74,24 @@
             If string has value, helpertext will be applied.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInputText.Icon">
+        <member name="P:MudBlazor.MudBaseInputText.AdornmentIcon">
             <summary>
             Icon that will be used if Adornment is set to Start or End.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.AdornmentText">
+            <summary>
+            Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
             </summary>
         </member>
         <member name="P:MudBlazor.MudBaseInputText.Adornment">
             <summary>
             Sets Start or End Adornment if not set to None.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.OnAdornmentClick">
+            <summary>
+            Button click event.
             </summary>
         </member>
         <member name="P:MudBlazor.MudBaseInputText.InputType">

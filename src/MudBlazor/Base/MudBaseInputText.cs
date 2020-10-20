@@ -54,13 +54,22 @@ namespace MudBlazor
         /// <summary>
         /// Icon that will be used if Adornment is set to Start or End.
         /// </summary>
-        [Parameter] public string Icon { get; set; }
+        [Parameter] public string AdornmentIcon { get; set; }
 
+        /// <summary>
+        /// Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
+        /// </summary>
+        [Parameter] public string AdornmentText { get; set; }
         /// <summary>
         /// Sets Start or End Adornment if not set to None.
         /// </summary>
         [Parameter] public Adornment Adornment { get; set; } = Adornment.None;
 
+
+        /// <summary>
+        /// Button click event.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
         /// </summary>

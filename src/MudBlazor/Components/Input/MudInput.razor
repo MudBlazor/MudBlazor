@@ -1,20 +1,17 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseInputText
+@using MudBlazor.InternalComponents.InputAdornment
 
 
 
 <div class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
     {
-        <div class="@AdornmentClassname">
-            <MudText>Kg</MudText>
-        </div>
+        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick"/>
     }
     <input @attributes="UserAttributes" type="@_InputType" class="@InputClassname" @bind="@Value" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" />
     @if (Adornment == Adornment.End)
     {
-        <div class="@AdornmentClassname">
-            <MudText>Kg</MudText>
-        </div>
+        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
     }
 </div>
