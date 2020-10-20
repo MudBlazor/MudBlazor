@@ -2,13 +2,13 @@
 @inherits MudBasePicker
 @using MudBlazor.InternalComponents.Picker
 
-<div class="mud-date-picker">
+<div class="@MudPickerClass">
     @if (PickerVariant != PickerVariant.Static)
     {
-        <MudTextField Label="@Label" Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="true" @onclick="OnOpen" Disabled="@Disabled"/>
+        <MudTextField Label="@Label" Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="true" @onclick="OnOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize"/>
     }
     <CascadingValue Value="@this">
-        <div class="mud-picker @(isOpen? "mud-picker-open" : "") mud-paper mud-elevation-8 mud-popover-paper">
+        <div class="mud-picker-view @(isOpen? "mud-picker-open" : "") mud-paper mud-elevation-8 mud-popover-paper">
             <MudPicker DisableToolbar="@DisableToolbar">
                 <ToolBar>
                     <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year">2020</MudButton>
@@ -158,14 +158,10 @@
     </CascadingValue>
 </div>
 
-@if (PickerVariant != PickerVariant.Static)
+@if (PickerVariant == PickerVariant.Inline)
 {
     @if (isOpen)
     {
         <div class="mud-popover-overlay" @onclick="@OnClose"></div>
     }
-}
-
-@code {
-
 }

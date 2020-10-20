@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 using System;
 
 namespace MudBlazor
@@ -24,7 +25,6 @@ namespace MudBlazor
         /// Sets the Input Icon.
         /// </summary>
         [Parameter] public string InputIcon { get; set; } = Icons.Material.Event;
-    }
 
-    
+    }
 }

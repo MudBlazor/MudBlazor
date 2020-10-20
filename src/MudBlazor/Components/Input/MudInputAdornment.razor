@@ -11,11 +11,11 @@
     {
         @if (AdornmentClick.HasDelegate)
         {
-            <MudIconButton Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" />
+            <MudIconButton Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="Size.Medium" />
         }
         else
         {
-            <MudIcon Icon="@Icon" Size="Size.Small"/>
+            <MudIcon Icon="@Icon" Size="@Size"/>
         }
     }
 </div>
@@ -26,6 +26,7 @@
     [Parameter] public string Text { get; set; }
     [Parameter] public string Icon { get; set; }
     [Parameter] public Edge Edge { get; set; }
+    [Parameter] public Size Size { get; set; }
 
     [Parameter] public EventCallback<MouseEventArgs> AdornmentClick { get; set; }
 }

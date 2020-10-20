@@ -1,4 +1,36 @@
-﻿.mud-picker {
+﻿.mud-picker-inline {
+    display: inline-flex;
+
+    &.mud-picker-input-button {
+        & .mud-input, .mud-input .mud-input-root {
+            cursor: pointer
+        }
+
+        &.mud-disabled {
+            & .mud-input, .mud-input .mud-input-root {
+                cursor: default;
+            }
+        }
+    }
+
+    &.mud-picker-input-text {
+        cursor: text;
+
+        &:hover {
+            cursor: text;
+        }
+
+        &.mud-disabled {
+            cursor: default;
+
+            &:hover {
+                cursor: default;
+            }
+        }
+    }
+}
+
+.mud-picker-view {
     z-index: 100;
     display: none;
     margin-top: 20px;
@@ -9,7 +41,13 @@
     }
 }
 
-
+.mud-picker-static {
+    display: flex;
+    overflow: hidden;
+    min-width: 310px;
+    flex-direction: column;
+    background-color: var(--mud-theme-surface);
+}
 
 .mud-picker-container {
     display: flex;
@@ -20,7 +58,7 @@
     }
 }
 
-.mud-picker-view {
+.mud-picker-content {
     display: flex;
     max-width: 325px;
     min-width: 310px;
@@ -29,7 +67,7 @@
     flex-direction: column;
     justify-content: center;
 
-    &.mud-picker-view-landscape {
+    &.mud-picker-content-landscape {
         padding: 0 8px;
     }
 }
