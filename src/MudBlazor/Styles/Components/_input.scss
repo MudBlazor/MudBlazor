@@ -89,6 +89,24 @@
             background-color: rgba(0, 0, 0, 0.12);
         }
 
+        &.mud-input-adorned-start {
+            padding-left: 12px;
+        }
+
+        &.mud-input-adorned-end {
+            padding-right: 12px;
+        }
+
+        &.mud-input-multiline {
+            padding: 27px 12px 10px;
+
+            &.mud-input-margin-dense {
+                padding-top: 23px;
+                padding-bottom: 6px;
+            }
+        }
+
+
         &.mud-input-underline {
             &:before {
                 left: 0;
@@ -130,6 +148,10 @@
 
     &.mud-input-outlined {
         position: relative;
+        border-radius: 4px;
+        border-color: var(--mud-theme-border-color-outlines);
+        border-style: solid;
+        border-width: 1px;
 
         &.mud-error .mud-input-outlined-notched-outline {
             border-color: #f44336;
@@ -143,18 +165,18 @@
             border-color: rgb(220, 0, 78);
         }
 
-        &.mud-input-outlined-adorned-start {
+        &.mud-input-adorned-start {
             padding-left: 14px;
         }
 
-        &.mud-input-outlined-adorned-end {
+        &.mud-input-adorned-end {
             padding-right: 14px;
         }
 
-        &.mud-input-outlined-multiline {
+        &.mud-input-multiline {
             padding: 18.5px 14px;
 
-            &.mud-input-outlined-margin-dense {
+            &.mud-input-margin-dense {
                 padding-top: 10.5px;
                 padding-bottom: 10.5px;
             }
@@ -220,7 +242,7 @@
         &.mud-input-root-filled {
             padding: 27px 12px 10px;
 
-            &.mud-input-root-filled-margin-dense {
+            &.mud-input-root-margin-dense {
                 padding-top: 23px;
                 padding-bottom: 6px;
             }
@@ -230,25 +252,25 @@
                 border-top-right-radius: inherit;
             }
 
-            &.mud-input-root-filled-hidden-label {
+            &.mud-input-root-hidden-label {
                 padding-top: 18px;
                 padding-bottom: 19px;
 
-                &.mud-input-root-filled-margin-dense {
+                &.mud-input-root-margin-dense {
                     padding-top: 10px;
                     padding-bottom: 11px;
                 }
             }
 
-            &.mud-input-root-filled-multiline {
+            &.mud-input-root-multiline {
                 padding: 0;
             }
 
-            &.mud-input-root-filled-adorned-start {
+            &.mud-input-root-adorned-start {
                 padding-left: 0;
             }
 
-            &.mud-input-root-filled-adorned-end {
+            &.mud-input-root-adorned-end {
                 padding-right: 0;
             }
         }
@@ -257,10 +279,6 @@
 
     &.mud-input-root-outlined {
         padding: 18.5px 14px;
-        border-radius: 4px;
-        border-color: var(--mud-theme-border-color-outlines);
-        border-style: solid;
-        border-width: 1px;
 
         &:hover {
             border-color: var(--mud-theme-border-color-inputs);
@@ -270,25 +288,53 @@
             border-color: var(--mud-theme-primary);
         }
 
-        &.mud-input-root-outlined:-webkit-autofill {
+        &.mud-input-root:-webkit-autofill {
             border-radius: inherit;
         }
 
-        &.mud-input-root-outlined-margin-dense {
+        &.mud-input-root-margin-dense {
             padding-top: 10.5px;
             padding-bottom: 10.5px;
         }
 
-        &.mud-input-root-outlined-multiline {
+        &.mud-input-root-multiline {
             padding: 0;
         }
 
-        &.mud-input-root-outlined-adorned-start {
+        &.mud-input-root-adorned-start {
             padding-left: 0;
         }
 
-        &.mud-input-root-outlined-adorned-end {
+        &.mud-input-root-adorned-end {
             padding-right: 0;
         }
     }
+}
+
+
+
+.mud-input-adornment {
+    height: 0.01em;
+    display: flex;
+    max-height: 2em;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.mud-input-adornment-start {
+    &.mud-input-root-filled-shrink {
+        margin-top: 16px;
+    }
+}
+
+.mud-input-adornment-start {
+    margin-right: 8px;
+}
+
+.mud-input-adornment-end {
+    margin-left: 8px;
+}
+
+.mud-input-adornment-disable-pointerevents {
+    pointer-events: none;
 }
