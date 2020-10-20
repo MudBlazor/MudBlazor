@@ -15,15 +15,35 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
         [Parameter] public string Text { get; set; }
+
+        /// <summary>
+        /// Avatar to use if set.
+        /// </summary>
         [Parameter] public string Avatar { get; set; }
+
+        /// <summary>
+        /// Link to a URL when clicked.
+        /// </summary>
         [Parameter] public string Href { get; set; }
+
+        /// <summary>
+        /// Avatar CSS Class to applie if Avtar is set.
+        /// </summary>
         [Parameter] public string AvatarClass { get; set; }
 
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
+
+        /// <summary>
+        /// Icon to use if set.
+        /// </summary>
         [Parameter] public string Icon { get; set; }
+
+        /// <summary>
+        /// If true, the List Subheader will be indented.
+        /// </summary>
         [Parameter] public bool Inset { get; set; }
 
         /// <summary>
