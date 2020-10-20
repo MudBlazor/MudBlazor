@@ -15,7 +15,7 @@ namespace MudBlazor
         [Parameter] public bool ReadOnly { get; set; }
         [Parameter] public bool Error { get; set; }
         [Parameter] public bool FullWidth { get; set; }
-        [Parameter] public bool DisabelUnderLine { get; set; }
+        [Parameter] public bool DisableUnderLine { get; set; }
         [Parameter] public string Label { get; set; }
         [Parameter] public string Placeholder { get; set; }
         [Parameter] public string HelperText { get; set; }

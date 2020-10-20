@@ -9,7 +9,7 @@ namespace MudBlazor
         protected string Classname =>
        new CssBuilder("mud-input")
          .AddClass($"mud-input-{Variant.ToDescriptionString()}")
-         .AddClass("mud-input-underline", when: () => DisabelUnderLine == false && Variant != Variant.Outlined)
+         .AddClass("mud-input-underline", when: () => DisableUnderLine == false && Variant != Variant.Outlined)
          .AddClass("mud-shrink", when: () => !string.IsNullOrEmpty(Value))
          .AddClass("mud-disabled", Disabled)
          .AddClass("mud-error", Error)
