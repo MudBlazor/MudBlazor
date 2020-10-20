@@ -4,5 +4,17 @@
 
 
 <div class="@Classname" style="@Style">
+    @if (Adornment == Adornment.Start)
+    {
+        <div class="@AdornmentClassname">
+            <MudText>Kg</MudText>
+        </div>
+    }
     <input @attributes="UserAttributes" type="@_InputType" class="@InputClassname" @bind="@Value" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" />
+    @if (Adornment == Adornment.End)
+    {
+        <div class="@AdornmentClassname">
+            <MudText>Kg</MudText>
+        </div>
+    }
 </div>
