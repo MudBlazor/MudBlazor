@@ -1557,6 +1557,22 @@ public const string TabsVerticalExample = @"<MudTabs Vertical=""true"" Border=""
 
 public const string TemplateExample = @"";
 
+public const string TextFieldAdornmentsExample = @"<div>
+    <MudTextField Label=""Normal TextField"" Variant=""Variant.Text"" Adornment=""Adornment.Start""></MudTextField>
+    <MudTextField HelperText=""Weight"" Variant=""Variant.Text"" Adornment=""Adornment.End""></MudTextField>
+    <MudTextField Label=""Password"" Variant=""Variant.Text"" InputType=""InputType.Password"" Adornment=""Adornment.End""></MudTextField>
+</div>
+<div>
+    <MudTextField Label=""Normal TextField"" Variant=""Variant.Filled"" Adornment=""Adornment.Start""></MudTextField>
+    <MudTextField HelperText=""Weight"" Variant=""Variant.Filled"" Adornment=""Adornment.End""></MudTextField>
+    <MudTextField Label=""Password"" Variant=""Variant.Filled"" InputType=""InputType.Password"" Adornment=""Adornment.End""></MudTextField>
+</div>
+<div>
+    <MudTextField Label=""Normal TextField"" Variant=""Variant.Outlined"" Adornment=""Adornment.Start""></MudTextField>
+    <MudTextField HelperText=""Weight"" Variant=""Variant.Outlined"" Adornment=""Adornment.End""></MudTextField>
+    <MudTextField Label=""Password"" Variant=""Variant.Outlined"" InputType=""InputType.Password"" Adornment=""Adornment.End""></MudTextField>
+</div>";
+
 public const string TextFieldBasicExample = @"<MudTextField Label=""Standard"" Variant=""Variant.Text""></MudTextField>
 <MudTextField Label=""Filled"" Variant=""Variant.Filled""></MudTextField>
 <MudTextField Label=""Outlined"" Variant=""Variant.Outlined""></MudTextField>";
