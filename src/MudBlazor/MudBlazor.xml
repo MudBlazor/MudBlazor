@@ -89,11 +89,7 @@
             Sets Start or End Adornment if not set to None.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInputText.OnAdornmentClick">
-            <summary>
-            Button click event.
-            </summary>
-        </member>
+        <!-- Badly formed XML comment ignored for member "P:MudBlazor.MudBaseInputText.OnAdornmentClick" -->
         <member name="P:MudBlazor.MudBaseInputText.InputType">
             <summary>
             Type of the input element. It should be a valid HTML5 input type.
