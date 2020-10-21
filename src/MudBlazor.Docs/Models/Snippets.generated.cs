@@ -388,6 +388,12 @@ public const string DatePickerBasicUsageExample = @"<MudDatePicker Label=""Picke
 <MudDatePicker Label=""Only Calendar"" Value=""2020-10-19"" DisableToolbar=""true"" HelperText=""No header"" />
 <MudDatePicker Label=""Picker in dialog"" HelperText=""Not implemented yet"" Value=""2020-10-19"" Disabled=""true"" />";
 
+public const string DatePickerColorExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Value=""2020-10-19"" />
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Value=""2020-10-19"" />";
+
+public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""1"" Value=""2020-10-19"" />
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""12"" Value=""2020-10-19"" />";
+
 public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Value=""2020-10-19""/>
 <MudDatePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Value=""2020-10-19""/>";
 

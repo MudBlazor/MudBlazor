@@ -70,6 +70,12 @@ public const string MudBaseInputText_Tag = @"Use Tag to attach any user data obj
 public const string MudBaseInputText_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudBasePicker_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.";
+
+public const string MudBasePicker_Square = @"If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden with Rounded bool.";
+
+public const string MudBasePicker_Rounded = @"If true, border-radius is set to theme default when in Static Mode.";
+
 public const string MudBasePicker_HelperText = @"If string has value, helpertext will be applied.";
 
 public const string MudBasePicker_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
@@ -87,6 +93,8 @@ public const string MudBasePicker_Adornment = @"Sets if the icon will be att sta
 public const string MudBasePicker_Orientation = @"What orientation to render in when in PickerVariant Static Mode.";
 
 public const string MudBasePicker_IconSize = @"Sets the Icon Size.";
+
+public const string MudBasePicker_Color = @"The color of the toolbar, selected and active. It supports the theme colors.";
 
 public const string MudBasePicker_AllowKeyboardInput = @"Allows text input from keyboard.";
 
@@ -340,6 +348,12 @@ public const string MudDatePicker_OpenTo = @"First view to show in the MudDatePi
 
 public const string MudDatePicker_InputIcon = @"Sets the Input Icon.";
 
+public const string MudDatePicker_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.";
+
+public const string MudDatePicker_Square = @"If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden with Rounded bool.";
+
+public const string MudDatePicker_Rounded = @"If true, border-radius is set to theme default when in Static Mode.";
+
 public const string MudDatePicker_HelperText = @"If string has value, helpertext will be applied.";
 
 public const string MudDatePicker_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
@@ -357,6 +371,8 @@ public const string MudDatePicker_Adornment = @"Sets if the icon will be att sta
 public const string MudDatePicker_Orientation = @"What orientation to render in when in PickerVariant Static Mode.";
 
 public const string MudDatePicker_IconSize = @"Sets the Icon Size.";
+
+public const string MudDatePicker_Color = @"The color of the toolbar, selected and active. It supports the theme colors.";
 
 public const string MudDatePicker_AllowKeyboardInput = @"Allows text input from keyboard.";
 
@@ -1430,6 +1446,12 @@ public const string MudPicker_InputIcon = @"";
 
 public const string MudPicker_ToolBarClass = @"";
 
+public const string MudPicker_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.";
+
+public const string MudPicker_Square = @"If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden with Rounded bool.";
+
+public const string MudPicker_Rounded = @"If true, border-radius is set to theme default when in Static Mode.";
+
 public const string MudPicker_HelperText = @"If string has value, helpertext will be applied.";
 
 public const string MudPicker_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
@@ -1447,6 +1469,8 @@ public const string MudPicker_Adornment = @"Sets if the icon will be att start o
 public const string MudPicker_Orientation = @"What orientation to render in when in PickerVariant Static Mode.";
 
 public const string MudPicker_IconSize = @"Sets the Icon Size.";
+
+public const string MudPicker_Color = @"The color of the toolbar, selected and active. It supports the theme colors.";
 
 public const string MudPicker_AllowKeyboardInput = @"Allows text input from keyboard.";
 
@@ -1470,6 +1494,10 @@ public const string MudPickerContent_ChildContent = @"";
 public const string MudPickerToolbar_Class = @"";
 
 public const string MudPickerToolbar_DisableToolbar = @"";
+
+public const string MudPickerToolbar_Orientation = @"";
+
+public const string MudPickerToolbar_Color = @"";
 
 public const string MudPickerToolbar_ChildContent = @"";
 
