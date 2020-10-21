@@ -22,9 +22,15 @@ namespace MudBlazor
         [Parameter] public int Elevation { set; get; } = 8;
 
         /// <summary>
-        /// If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden.
+        /// If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden with Rounded bool.
         /// </summary>
         [Parameter] public bool Square { get; set; }
+
+        /// <summary>
+        /// If true, border-radius is set to theme default when in Static Mode.
+        /// </summary>
+        [Parameter] public bool Rounded { get; set; }
+
         /// <summary>
         /// If string has value, helpertext will be applied.
         /// </summary>
@@ -69,6 +75,11 @@ namespace MudBlazor
         /// Sets the Icon Size.
         /// </summary>
         [Parameter] public Size IconSize { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The color of the toolbar, selected and active. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
         /// Allows text input from keyboard.

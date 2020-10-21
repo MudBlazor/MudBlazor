@@ -1,6 +1,4 @@
-﻿
-
-.mud-picker-datepicker-toolbar {
+﻿.mud-picker-datepicker-toolbar {
     align-items: flex-start;
     flex-direction: column;
 
@@ -105,24 +103,25 @@
                 font-size: 0.75rem;
                 font-weight: 500;
 
+                &:hover {
+                    background-color: rgba(0, 0, 0, 0.08);
+                }
+
                 &.mud-hidden {
                     opacity: 0;
                     pointer-events: none;
                 }
 
                 &.mud-current {
-                    color: var(--mud-theme-primary);
                     font-weight: 600;
                 }
 
                 &.mud-selected {
-                    color: var(--mud-theme-on-primary);
                     font-weight: 500;
-                    background-color: var(--mud-theme-primary);
+                }
 
-                    &:hover {
-                        background-color: var(--mud-theme-primary-hover);
-                    }
+                .mud-typography {
+                    margin-top: 2px;
                 }
 
                 &.mud-disabled {

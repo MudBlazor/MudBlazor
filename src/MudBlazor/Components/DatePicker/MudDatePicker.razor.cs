@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 using System;
 
@@ -25,6 +26,11 @@ namespace MudBlazor
         /// Sets the Input Icon.
         /// </summary>
         [Parameter] public string InputIcon { get; set; } = Icons.Material.Event;
+
+
+
+        protected string CurrentDayClass => new CssBuilder("mud-day").AddClass("mud-current").AddClass($"mud-color-text-{Color.ToDescriptionString()}").Build();
+        protected string SelectedDayClass => new CssBuilder("mud-day").AddClass("mud-selected").AddClass($"mud-theme-color-{Color.ToDescriptionString()}").Build();
 
     }
 }

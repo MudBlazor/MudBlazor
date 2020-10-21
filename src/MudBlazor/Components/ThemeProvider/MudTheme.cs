@@ -51,10 +51,15 @@ namespace MudBlazor
 
             //Theme Alert & Notification Colors
             theme.AppendLine($"--mud-theme-info: {Color_Info};");
+            theme.AppendLine($"--mud-theme-on-info: {Color_On_Alert};");
             theme.AppendLine($"--mud-theme-success: {Color_Success};");
+            theme.AppendLine($"--mud-theme-on-success: {Color_On_Alert};");
             theme.AppendLine($"--mud-theme-warning: {Color_Warning};");
+            theme.AppendLine($"--mud-theme-on-warning: {Color_On_Alert};");
             theme.AppendLine($"--mud-theme-danger: {Color_Danger};");
+            theme.AppendLine($"--mud-theme-on-danger: {Color_On_Alert};");
             theme.AppendLine($"--mud-theme-dark: {Color_Dark};");
+            theme.AppendLine($"--mud-theme-on-dark: {Color_On_Alert};");
             theme.AppendLine($"--mud-theme-on-alert: {Color_On_Alert};");
 
 

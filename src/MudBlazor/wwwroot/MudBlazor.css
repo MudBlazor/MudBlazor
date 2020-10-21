@@ -3,81 +3,81 @@
   background-color: var(--mud-theme-default); }
 
 .mud-color-text-default {
-  color: var(--mud-theme-default); }
+  color: var(--mud-theme-default) !important; }
 
 .mud-color-primary {
   background-color: var(--mud-theme-primary); }
 
 .mud-color-text-primary {
-  color: var(--mud-theme-primary); }
+  color: var(--mud-theme-primary) !important; }
 
 .mud-color-secondary {
   background-color: var(--mud-theme-secondary); }
 
 .mud-color-text-secondary {
-  color: var(--mud-theme-secondary); }
+  color: var(--mud-theme-secondary) !important; }
 
 .mud-color-info {
   background-color: var(--mud-theme-info); }
 
 .mud-color-text-info {
-  color: var(--mud-theme-info); }
+  color: var(--mud-theme-info) !important; }
 
 .mud-color-success {
   background-color: var(--mud-theme-success); }
 
 .mud-color-text-success {
-  color: var(--mud-theme-success); }
+  color: var(--mud-theme-success) !important; }
 
 .mud-color-warning {
   background-color: var(--mud-theme-warning); }
 
 .mud-color-text-warning {
-  color: var(--mud-theme-warning); }
+  color: var(--mud-theme-warning) !important; }
 
 .mud-color-danger {
   background-color: var(--mud-theme-danger); }
 
 .mud-color-text-danger {
-  color: var(--mud-theme-danger); }
+  color: var(--mud-theme-danger) !important; }
 
 .mud-color-dark {
   background-color: var(--mud-theme-dark); }
 
 .mud-color-text-dark {
-  color: var(--mud-theme-dark); }
+  color: var(--mud-theme-dark) !important; }
 
 .mud-theme-color-default {
-  color: var(--mud-theme-on-default);
-  background-color: var(--mud-theme-default); }
+  color: var(--mud-theme-on-default) !important;
+  background-color: var(--mud-theme-default) !important; }
 
 .mud-theme-color-primary {
-  color: var(--mud-theme-on-primary);
-  background-color: var(--mud-theme-primary); }
+  color: var(--mud-theme-on-primary) !important;
+  background-color: var(--mud-theme-primary) !important; }
 
 .mud-theme-color-secondary {
-  color: var(--mud-theme-on-secondary);
-  background-color: var(--mud-theme-secondary); }
+  color: var(--mud-theme-on-secondary) !important;
+  background-color: var(--mud-theme-secondary) !important; }
 
 .mud-theme-color-info {
-  color: var(--mud-theme-on-info);
-  background-color: var(--mud-theme-info); }
+  color: var(--mud-theme-on-info) !important;
+  background-color: var(--mud-theme-info) !important; }
 
 .mud-theme-color-success {
-  color: var(--mud-theme-on-success);
-  background-color: var(--mud-theme-success); }
+  color: var(--mud-theme-on-success) !important;
+  background-color: var(--mud-theme-success) !important; }
 
 .mud-theme-color-warning {
-  color: var(--mud-theme-on-warning);
-  background-color: var(--mud-theme-warning); }
+  color: var(--mud-theme-on-warning) !important;
+  background-color: var(--mud-theme-warning) !important; }
 
 .mud-theme-color-danger {
-  color: var(--mud-theme-on-danger);
-  background-color: var(--mud-theme-danger); }
+  color: var(--mud-theme-on-danger) !important;
+  background-color: var(--mud-theme-danger) !important; }
 
 .mud-theme-color-dark {
-  color: var(--mud-theme-on-dark);
-  background-color: var(--mud-theme-dark); }
+  color: var(--mud-theme-on-dark) !important;
+  background-color: var(--mud-theme-dark) !important; }
 
 .mud-color-text-surface {
   color: var(--mud-theme-on-surface); }
@@ -3508,6 +3508,9 @@ ul {
 .mud-nav-group * .mud-navmenu > .mud-nav-group * .mud-navmenu .mud-nav-item .mud-nav-link {
   padding-left: 56px; }
 
+.mud-picker.mud-rounded {
+  border-radius: var(--mud-theme-border-radius-default); }
+
 .mud-picker-inline {
   display: inline-flex; }
   .mud-picker-inline.mud-picker-input-button .mud-input, .mud-picker-inline.mud-picker-input-button .mud-input .mud-input-root {
@@ -3531,9 +3534,13 @@ ul {
 
 .mud-picker-container {
   display: flex;
-  flex-direction: column; }
+  flex-direction: column;
+  border-radius: inherit; }
   .mud-picker-container.mud-picker-container-landscape {
     flex-direction: row; }
+  .mud-picker-container .mud-toolbar {
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit; }
 
 .mud-picker-view {
   z-index: 100;
@@ -3559,9 +3566,7 @@ ul {
   display: flex;
   align-items: center;
   flex-direction: row;
-  justify-content: center;
-  color: var(--mud-theme-on-primary);
-  background-color: var(--mud-theme-primary); }
+  justify-content: center; }
   .mud-picker-toolbar.mud-picker-toolbar-landscape {
     height: auto;
     padding: 8px;
@@ -3649,18 +3654,17 @@ ul {
     padding: 0;
     font-size: 0.75rem;
     font-weight: 500; }
+    .mud-picker-calendar .mud-picker-calendar-week .mud-picker-calendar-day .mud-day:hover {
+      background-color: rgba(0, 0, 0, 0.08); }
     .mud-picker-calendar .mud-picker-calendar-week .mud-picker-calendar-day .mud-day.mud-hidden {
       opacity: 0;
       pointer-events: none; }
     .mud-picker-calendar .mud-picker-calendar-week .mud-picker-calendar-day .mud-day.mud-current {
-      color: var(--mud-theme-primary);
       font-weight: 600; }
     .mud-picker-calendar .mud-picker-calendar-week .mud-picker-calendar-day .mud-day.mud-selected {
-      color: var(--mud-theme-on-primary);
-      font-weight: 500;
-      background-color: var(--mud-theme-primary); }
-      .mud-picker-calendar .mud-picker-calendar-week .mud-picker-calendar-day .mud-day.mud-selected:hover {
-        background-color: var(--mud-theme-primary-hover); }
+      font-weight: 500; }
+    .mud-picker-calendar .mud-picker-calendar-week .mud-picker-calendar-day .mud-day .mud-typography {
+      margin-top: 2px; }
     .mud-picker-calendar .mud-picker-calendar-week .mud-picker-calendar-day .mud-day.mud-disabled {
       color: rgba(0, 0, 0, 0.38);
       pointer-events: none; }

@@ -2,8 +2,8 @@
 @inherits MudBasePicker
 
 
-<MudPicker PickerVariant="@PickerVariant" Orientation="@Orientation" Label="@Label" Value="@Value" HelperText="@HelperText" InputVariant="@InputVariant" Disabled="@Disabled" Adornment="@Adornment" IconSize="@IconSize" InputIcon="@InputIcon">
-    <MudPickerToolbar Class="mud-picker-datepicker-toolbar" DisableToolbar="@DisableToolbar" Orientation="@Orientation">
+<MudPicker PickerVariant="@PickerVariant" Orientation="@Orientation" Label="@Label" Value="@Value" HelperText="@HelperText" InputVariant="@InputVariant" Disabled="@Disabled" Adornment="@Adornment" IconSize="@IconSize" InputIcon="@InputIcon" Elevation="@Elevation" Square="@Square" Rounded="@Rounded">
+    <MudPickerToolbar Class="mud-picker-datepicker-toolbar" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
         <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year">2020</MudButton>
         <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date">Sun, Oct 19</MudButton>
     </MudPickerToolbar>
@@ -99,10 +99,10 @@
                 </div>
                 <div class="mud-picker-calendar-week">
                     <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day mud-current">18</MudIconButton>
+                        <MudIconButton Class="@CurrentDayClass">18</MudIconButton>
                     </div>
                     <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day mud-selected">19</MudIconButton>
+                        <MudIconButton Class="@SelectedDayClass">19</MudIconButton>
                     </div>
                     <div role="presentation" class="mud-picker-calendar-day">
                         <MudIconButton Class="mud-day">20</MudIconButton>

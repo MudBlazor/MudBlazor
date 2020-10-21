@@ -1,4 +1,10 @@
-﻿.mud-picker-inline {
+﻿.mud-picker {
+    &.mud-rounded {
+        border-radius: var(--mud-theme-border-radius-default);
+    }
+}
+
+.mud-picker-inline {
     display: inline-flex;
 
     &.mud-picker-input-button {
@@ -40,12 +46,17 @@
 .mud-picker-container {
     display: flex;
     flex-direction: column;
+    border-radius: inherit;
 
     &.mud-picker-container-landscape {
         flex-direction: row;
     }
-}
 
+    & .mud-toolbar {
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+    }
+}
 
 .mud-picker-view {
     z-index: 100;
@@ -57,9 +68,6 @@
         animation: mud-animation-fadein 251ms;
     }
 }
-
-
-
 
 .mud-picker-content {
     display: flex;
@@ -75,15 +83,12 @@
     }
 }
 
-
 .mud-picker-toolbar {
     height: 100px;
     display: flex;
     align-items: center;
     flex-direction: row;
     justify-content: center;
-    color: var(--mud-theme-on-primary);
-    background-color: var(--mud-theme-primary);
 
     &.mud-picker-toolbar-landscape {
         height: auto;

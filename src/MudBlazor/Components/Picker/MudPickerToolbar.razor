@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
+@using MudBlazor.Extensions
 
 @if (!DisableToolbar)
 {
@@ -12,12 +13,14 @@
 @code {
     protected string Classnames =>
     new CssBuilder("mud-picker-toolbar")
-      .AddClass("mud-picker-toolbar-landscape" , Orientation == Orientation.Landscape)
+      .AddClass($"mud-theme-color-{Color.ToDescriptionString()}")
+      .AddClass("mud-picker-toolbar-landscape", Orientation == Orientation.Landscape)
       .AddClass(Class)
     .Build();
 
     [Parameter] public string Class { get; set; }
     [Parameter] public bool DisableToolbar { get; set; }
     [Parameter] public Orientation Orientation { get; set; }
+    [Parameter] public Color Color { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
 }

@@ -8,7 +8,7 @@
         <MudTextField Label="@Label" Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="true" @onclick="OnOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
     }
     <CascadingValue Value="@this">
-        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_elevation" Square="@_square">
+        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@Elevation" Square="@Square">
             <div class="@PickerContainerClass">
                 @ChildContent
             </div>
@@ -30,6 +30,8 @@
         new CssBuilder("mud-picker")
            .AddClass($"mud-picker-inline", PickerVariant == PickerVariant.Inline)
            .AddClass($"mud-picker-static", PickerVariant == PickerVariant.Static)
+           .AddClass($"mud-rounded", PickerVariant == PickerVariant.Static && !Square)
+           .AddClass($"mud-elevation-{StaticElevation.ToString()}", PickerVariant == PickerVariant.Static)
            .AddClass($"mud-picker-input-button", !AllowKeyboardInput && PickerVariant != PickerVariant.Static)
            .AddClass($"mud-picker-input-text", AllowKeyboardInput && PickerVariant != PickerVariant.Static)
            .AddClass($"mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
@@ -44,6 +46,7 @@
 
     protected string PickerContainerClass =>
     new CssBuilder("mud-picker-container")
+      .AddClass("mud-paper-square", Square)
       .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
     .Build();
 
@@ -52,29 +55,25 @@
     [Parameter] public string InputIcon { get; set; }
     [Parameter] public string ToolBarClass { get; set; }
 
-    private int _elevation;
-    private bool _square;
+    private int StaticElevation;
 
     protected override void OnInitialized()
     {
         if (PickerVariant == PickerVariant.Static)
         {
-            @if (Elevation == 8)
+            if (Elevation == 8)
             {
-                _elevation = 0;
+                StaticElevation = 0;
             }
             else
             {
-                _elevation = Elevation;
+                StaticElevation = Elevation;
             }
-            _square = true;
-        }
-        if (PickerVariant == PickerVariant.Inline)
-        {
-            _elevation = Elevation;
-            @if (Square)
+            Elevation = 0;
+
+            if (!Rounded)
             {
-                _square = Square;
+                Square = true;
             }
         }
     }

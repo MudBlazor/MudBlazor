@@ -479,6 +479,28 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void DatePickerColorExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<DatePickerColorExample>();
+        }
+
+
+        [Test]
+        public void DatePickerElevationExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<DatePickerElevationExample>();
+        }
+
+
+        [Test]
         public void DatePickerStaticExample_Test()
         {
                 using var ctx = new Bunit.TestContext();

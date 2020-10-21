@@ -121,7 +121,12 @@
         </member>
         <member name="P:MudBlazor.MudBasePicker.Square">
             <summary>
-            If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden.
+            If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden with Rounded bool.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.Rounded">
+            <summary>
+            If true, border-radius is set to theme default when in Static Mode.
             </summary>
         </member>
         <member name="P:MudBlazor.MudBasePicker.HelperText">
@@ -167,6 +172,11 @@
         <member name="P:MudBlazor.MudBasePicker.IconSize">
             <summary>
             Sets the Icon Size.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.Color">
+            <summary>
+            The color of the toolbar, selected and active. It supports the theme colors.
             </summary>
         </member>
         <member name="P:MudBlazor.MudBasePicker.AllowKeyboardInput">
