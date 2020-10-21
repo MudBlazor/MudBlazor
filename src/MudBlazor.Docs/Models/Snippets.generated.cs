@@ -1146,6 +1146,43 @@ public const string RadioLabelPlacementExample = @"<MudFormControl Label=""Place
     public string SelectedOption { get; set; }
 }";
 
+public const string MultiSelectExample = @"<div class=""flex-column"">
+    <MudSelect Label=""US States"" @bind-Value=""selected_value"" @bind-SelectedValues=""selected_options"" MultiSelection=""true"">
+        @foreach (var state in states)
+        {
+            <MudSelectItem Value=""@state"">@state</MudSelectItem>
+        }
+    </MudSelect>
+
+    <p>MudSelect.Value: ""@selected_value""</p>
+    <p>MudSelect.SelectedValues: HashSet&lt;string&gt; { @(string.Join("", "", selected_options.Select(x=>$""\""{x}\""""))) }</p>
+</div>
+
+@code {
+
+    private string selected_value { get; set; } = ""Nothing selected"";
+    private HashSet<string> selected_options = new HashSet<string>();
+
+    private string[] states =
+    {
+        ""Alabama"", ""Alaska"", ""American Samoa"", ""Arizona"",
+        ""Arkansas"", ""California"", ""Colorado"", ""Connecticut"",
+        ""Delaware"", ""District of Columbia"", ""Federated States of Micronesia"",
+        ""Florida"", ""Georgia"", ""Guam"", ""Hawaii"", ""Idaho"",
+        ""Illinois"", ""Indiana"", ""Iowa"", ""Kansas"", ""Kentucky"",
+        ""Louisiana"", ""Maine"", ""Marshall Islands"", ""Maryland"",
+        ""Massachusetts"", ""Michigan"", ""Minnesota"", ""Mississippi"",
+        ""Missouri"", ""Montana"", ""Nebraska"", ""Nevada"",
+        ""New Hampshire"", ""New Jersey"", ""New Mexico"", ""New York"",
+        ""North Carolina"", ""North Dakota"", ""Northern Mariana Islands"", ""Ohio"",
+        ""Oklahoma"", ""Oregon"", ""Palau"", ""Pennsylvania"", ""Puerto Rico"",
+        ""Rhode Island"", ""South Carolina"", ""South Dakota"", ""Tennessee"",
+        ""Texas"", ""Utah"", ""Vermont"", ""Virgin Island"", ""Virginia"",
+        ""Washington"", ""West Virginia"", ""Wisconsin"", ""Wyoming"",
+    };
+
+}";
+
 public const string SelectBasicExample = @"<MudSelect Label=""Food"" ValueChanged=""OnSelectedValue"">
     <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
     <MudSelectItem Value=""burgers"">Burgers</MudSelectItem>

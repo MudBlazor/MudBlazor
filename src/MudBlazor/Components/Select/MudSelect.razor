@@ -3,7 +3,7 @@
 
 
 <MudFormControl HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname">
-        <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly" @onclick="@ShowSelect" Class="mud-select-input" Error="@Error" />
+        <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly" @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" />
         <MudInputLabel Class="mud-input-label-formcontrol" Variant="@Variant">
             @Label
         </MudInputLabel>
@@ -20,5 +20,5 @@
 
 @if (isMenuOpen)
 {
-    <div class="mud-select-overlay" @onclick="@ShowSelect"></div>
+    <div class="mud-select-overlay" @onclick="@ToggleMenu"></div>
 }

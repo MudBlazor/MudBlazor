@@ -57,9 +57,9 @@ public const string MudBaseInputText_Variant = @"Variant to use.";
 
 public const string MudBaseInputText_Margin = @"Will adjust vertical spacing.";
 
-public const string MudBaseInputText_ValueChanged = @"";
+public const string MudBaseInputText_ValueChanged = @"Fired when the Value property changes.";
 
-public const string MudBaseInputText_Value = @"";
+public const string MudBaseInputText_Value = @"The value of this input element. This property is two-way bindable.";
 
 public const string MudBaseInputText_Class = @"User class names, separated by space";
 
@@ -504,9 +504,9 @@ public const string MudInput_Variant = @"Variant to use.";
 
 public const string MudInput_Margin = @"Will adjust vertical spacing.";
 
-public const string MudInput_ValueChanged = @"";
+public const string MudInput_ValueChanged = @"Fired when the Value property changes.";
 
-public const string MudInput_Value = @"";
+public const string MudInput_Value = @"The value of this input element. This property is two-way bindable.";
 
 public const string MudInput_Class = @"User class names, separated by space";
 
@@ -551,9 +551,9 @@ public const string MudInputLabel_Variant = @"Variant to use.";
 
 public const string MudInputLabel_Margin = @"Will adjust vertical spacing.";
 
-public const string MudInputLabel_ValueChanged = @"";
+public const string MudInputLabel_ValueChanged = @"Fired when the Value property changes.";
 
-public const string MudInputLabel_Value = @"";
+public const string MudInputLabel_Value = @"The value of this input element. This property is two-way bindable.";
 
 public const string MudInputLabel_Class = @"User class names, separated by space";
 
@@ -817,78 +817,82 @@ public const string MudRadioGroup_Tag = @"Use Tag to attach any user data object
 public const string MudRadioGroup_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string ComponentBaseMudSelect_ChildContent = @"";
+public const string MudSelect_ChildContent = @"Add the MudSelectItems here";
 
-public const string ComponentBaseMudSelect_SelectedValue = @"";
+public const string MudSelect_SelectedValuesChanged = @"Fires when SelectedValues changes.";
 
-public const string ComponentBaseMudSelect_Disabled = @"If true, the input element will be disabled.";
+public const string MudSelect_SelectedValues = @"Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.";
 
-public const string ComponentBaseMudSelect_ReadOnly = @"If true, the input will be read only.";
+public const string MudSelect_MultiSelection = @"If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown";
 
-public const string ComponentBaseMudSelect_Error = @"If true, the label will be displayed in an error state.";
+public const string MudSelect_Disabled = @"If true, the input element will be disabled.";
 
-public const string ComponentBaseMudSelect_FullWidth = @"If true, the input will take up the full width of its container.";
+public const string MudSelect_ReadOnly = @"If true, the input will be read only.";
 
-public const string ComponentBaseMudSelect_DisableUnderLine = @"If true, the input will not have an underline.";
+public const string MudSelect_Error = @"If true, the label will be displayed in an error state.";
 
-public const string ComponentBaseMudSelect_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
+public const string MudSelect_FullWidth = @"If true, the input will take up the full width of its container.";
 
-public const string ComponentBaseMudSelect_Placeholder = @"The short hint displayed in the input before the user enters a value.";
+public const string MudSelect_DisableUnderLine = @"If true, the input will not have an underline.";
 
-public const string ComponentBaseMudSelect_HelperText = @"If string has value, helpertext will be applied.";
+public const string MudSelect_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
 
-public const string ComponentBaseMudSelect_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
+public const string MudSelect_Placeholder = @"The short hint displayed in the input before the user enters a value.";
 
-public const string ComponentBaseMudSelect_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
+public const string MudSelect_HelperText = @"If string has value, helpertext will be applied.";
 
-public const string ComponentBaseMudSelect_Adornment = @"Sets Start or End Adornment if not set to None.";
+public const string MudSelect_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
 
-public const string ComponentBaseMudSelect_IconSize = @"Sets the Icon Size.";
+public const string MudSelect_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
 
-public const string ComponentBaseMudSelect_OnAdornmentClick = @"Button click event if set and Adornment used.";
+public const string MudSelect_Adornment = @"Sets Start or End Adornment if not set to None.";
 
-public const string ComponentBaseMudSelect_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
+public const string MudSelect_IconSize = @"Sets the Icon Size.";
 
-public const string ComponentBaseMudSelect_Variant = @"Variant to use.";
+public const string MudSelect_OnAdornmentClick = @"Button click event if set and Adornment used.";
 
-public const string ComponentBaseMudSelect_Margin = @"Will adjust vertical spacing.";
+public const string MudSelect_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
 
-public const string ComponentBaseMudSelect_ValueChanged = @"";
+public const string MudSelect_Variant = @"Variant to use.";
 
-public const string ComponentBaseMudSelect_Value = @"";
+public const string MudSelect_Margin = @"Will adjust vertical spacing.";
 
-public const string ComponentBaseMudSelect_Class = @"User class names, separated by space";
+public const string MudSelect_ValueChanged = @"Fired when the Value property changes.";
 
-public const string ComponentBaseMudSelect_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudSelect_Value = @"The value of this input element. This property is two-way bindable.";
 
-public const string ComponentBaseMudSelect_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+public const string MudSelect_Class = @"User class names, separated by space";
 
-public const string ComponentBaseMudSelect_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+public const string MudSelect_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudSelect_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudSelect_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string ComponentBaseMudSelectItem_Value = @"";
+public const string MudSelectItem_Value = @"A user-defined option that can be selected";
 
-public const string ComponentBaseMudSelectItem_Disabled = @"If true, the input element will be disabled.";
+public const string MudSelectItem_Disabled = @"If true, the input element will be disabled.";
 
-public const string ComponentBaseMudSelectItem_DisableRipple = @"If true, disables ripple effect.";
+public const string MudSelectItem_DisableRipple = @"If true, disables ripple effect.";
 
-public const string ComponentBaseMudSelectItem_Href = @"Link to a URL when clicked.";
+public const string MudSelectItem_Href = @"Link to a URL when clicked.";
 
-public const string ComponentBaseMudSelectItem_ChildContent = @"Child content of component.";
+public const string MudSelectItem_ChildContent = @"Child content of component.";
 
-public const string ComponentBaseMudSelectItem_CommandParameter = @"Command parameter.";
+public const string MudSelectItem_CommandParameter = @"Command parameter.";
 
-public const string ComponentBaseMudSelectItem_Command = @"Command executed when the user clicks on an element.";
+public const string MudSelectItem_Command = @"Command executed when the user clicks on an element.";
 
-public const string ComponentBaseMudSelectItem_OnClick = @"";
+public const string MudSelectItem_OnClick = @"";
 
-public const string ComponentBaseMudSelectItem_Class = @"User class names, separated by space";
+public const string MudSelectItem_Class = @"User class names, separated by space";
 
-public const string ComponentBaseMudSelectItem_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudSelectItem_Style = @"User styles, applied on top of the component's own classes and styles";
 
-public const string ComponentBaseMudSelectItem_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+public const string MudSelectItem_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
-public const string ComponentBaseMudSelectItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+public const string MudSelectItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudSlider_Min = @"The minimum allowed value of the slider. Should not be equal to max.";
@@ -1092,9 +1096,9 @@ public const string MudTextField_Variant = @"Variant to use.";
 
 public const string MudTextField_Margin = @"Will adjust vertical spacing.";
 
-public const string MudTextField_ValueChanged = @"";
+public const string MudTextField_ValueChanged = @"Fired when the Value property changes.";
 
-public const string MudTextField_Value = @"";
+public const string MudTextField_Value = @"The value of this input element. This property is two-way bindable.";
 
 public const string MudTextField_Class = @"User class names, separated by space";
 
@@ -1457,80 +1461,6 @@ public const string MudProgressLinear_Maximum = @"";
 public const string MudProgressLinear_Value = @"";
 
 public const string MudProgressLinear_BufferValue = @"";
-
-public const string MudSelect_ChildContent = @"";
-
-public const string MudSelect_SelectedValue = @"";
-
-public const string MudSelect_Disabled = @"If true, the input element will be disabled.";
-
-public const string MudSelect_ReadOnly = @"If true, the input will be read only.";
-
-public const string MudSelect_Error = @"If true, the label will be displayed in an error state.";
-
-public const string MudSelect_FullWidth = @"If true, the input will take up the full width of its container.";
-
-public const string MudSelect_DisableUnderLine = @"If true, the input will not have an underline.";
-
-public const string MudSelect_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
-
-public const string MudSelect_Placeholder = @"The short hint displayed in the input before the user enters a value.";
-
-public const string MudSelect_HelperText = @"If string has value, helpertext will be applied.";
-
-public const string MudSelect_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
-
-public const string MudSelect_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
-
-public const string MudSelect_Adornment = @"Sets Start or End Adornment if not set to None.";
-
-public const string MudSelect_IconSize = @"Sets the Icon Size.";
-
-public const string MudSelect_OnAdornmentClick = @"Button click event if set and Adornment used.";
-
-public const string MudSelect_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
-
-public const string MudSelect_Variant = @"Variant to use.";
-
-public const string MudSelect_Margin = @"Will adjust vertical spacing.";
-
-public const string MudSelect_ValueChanged = @"";
-
-public const string MudSelect_Value = @"";
-
-public const string MudSelect_Class = @"User class names, separated by space";
-
-public const string MudSelect_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudSelect_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudSelect_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudSelectItem_Value = @"";
-
-public const string MudSelectItem_Disabled = @"If true, the input element will be disabled.";
-
-public const string MudSelectItem_DisableRipple = @"If true, disables ripple effect.";
-
-public const string MudSelectItem_Href = @"Link to a URL when clicked.";
-
-public const string MudSelectItem_ChildContent = @"Child content of component.";
-
-public const string MudSelectItem_CommandParameter = @"Command parameter.";
-
-public const string MudSelectItem_Command = @"Command executed when the user clicks on an element.";
-
-public const string MudSelectItem_OnClick = @"";
-
-public const string MudSelectItem_Class = @"User class names, separated by space";
-
-public const string MudSelectItem_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudSelectItem_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudSelectItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
 
 public const string MudSkeleton_Width = @"With defined in string, needs px or % or equal prefix.";
 

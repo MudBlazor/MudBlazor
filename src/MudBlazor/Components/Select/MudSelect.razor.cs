@@ -2,6 +2,7 @@
 using MudBlazor.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,6 +10,8 @@ namespace MudBlazor
 {
     public partial class MudSelect : MudBaseInputText
     {
+        private HashSet<string> _selectedValues;
+
         protected string Classname =>
             new CssBuilder("mud-select")
             .AddClass(Class)
@@ -19,34 +22,66 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
+        /// <summary>
+        /// Fires when SelectedValues changes.
+        /// </summary>
         [Parameter] public EventCallback<HashSet<string>> SelectedValuesChanged { get; set; }
 
         /// <summary>
-        /// Set of selected values. MultiSelection is true is required. This property is two-way bindable.
+        /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
         /// </summary>
-        [Parameter] public HashSet<string> SelectedValues {
-            get;
-            set;
+        [Parameter]
+        public HashSet<string> SelectedValues
+        {
+            get
+            {
+                if (_selectedValues == null)
+                    _selectedValues = new HashSet<string>();
+                return _selectedValues;
+            }
+            set
+            {
+                // TODO: setting selection from outside
+                _selectedValues = value;
+            }
         }
+
+        /// <summary>
+        /// If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
+        /// </summary>
+        [Parameter] public bool MultiSelection { get; set; }
 
         internal bool isMenuOpen { get; set; }
 
-        public async Task OnSelect(string value)
+        public async Task SelectOption(string value)
         {
-            Value = value;
-            isMenuOpen = false;
+            if (!MultiSelection)
+            {
+                // single selection
+                Value = value;
+                isMenuOpen = false;
+                SelectedValues.Clear();
+                SelectedValues.Add(value);
+            }
+            else
+            {
+                // multi-selection: menu stays open
+                if (!SelectedValues.Contains(value))
+                    SelectedValues.Add(value);
+                else
+                    SelectedValues.Remove(value);
+                Value = string.Join(", ", SelectedValues);
+            }
             StateHasChanged();
-            SelectedValues = new HashSet<string>() {value};
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
 
-        public void ShowSelect()
+        public void ToggleMenu()
         {
-            if(!Disabled)
-            {
-                isMenuOpen = !isMenuOpen;
-                StateHasChanged();
-            }
+            if (Disabled)
+                return;
+            isMenuOpen = !isMenuOpen;
+            StateHasChanged();
         }
     }
 }
