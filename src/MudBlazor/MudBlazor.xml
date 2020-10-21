@@ -114,6 +114,16 @@
              Will adjust vertical spacing. 
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBaseInputText.ValueChanged">
+            <summary>
+            Fired when the Value property changes. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.Value">
+            <summary>
+            The value of this input element. This property is two-way bindable.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBasePicker.Elevation">
             <summary>
             The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.
@@ -708,6 +718,56 @@
         <member name="P:MudBlazor.MudRadio.ChildContent">
             <summary>
             Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelect.ChildContent">
+            <summary>
+            Add the MudSelectItems here
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelect.SelectedValuesChanged">
+            <summary>
+            Fires when SelectedValues changes.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelect.SelectedValues">
+            <summary>
+            Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelect.MultiSelection">
+            <summary>
+            If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
+            </summary>
+        </member>
+        <member name="T:MudBlazor.MudSelectItem">
+            <summary>
+            Represents an option of a select or multi-select. To be used inside MudSelect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelectItem.MudSelect">
+            <summary>
+            The parent select component
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelectItem.Value">
+            <summary>
+            A user-defined option that can be selected
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelectItem.MultiSelection">
+            <summary>
+            Mirrors the MultiSelection status of the parent select
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelectItem.IsSelected">
+            <summary>
+            Selected state of the option. Only works if the parent is a mulit-select
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelectItem.CheckBoxIcon">
+            <summary>
+            The checkbox icon reflects the multi-select option's state
             </summary>
         </member>
         <member name="P:MudBlazor.MudSlider.Min">

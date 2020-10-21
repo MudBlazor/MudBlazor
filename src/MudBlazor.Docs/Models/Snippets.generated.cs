@@ -401,7 +401,7 @@ public const string DialogDialogFormExample = @"<MudDialog>
     <DialogContent>
         <MudTextField Label=""Database name"" FullWidth=""true""></MudTextField>
         <MudTextField Label=""Database tags"" FullWidth=""true""></MudTextField>
-        <MudSelect FullWidth=""true"" Label=""Resource Group"" SelectedValue=""@OnSelectedValue"">
+        <MudSelect FullWidth=""true"" Label=""Resource Group"" ValueChanged=""@OnSelectedValue"">
             <MudSelectItem Value=""Prod"">Prod</MudSelectItem>
             <MudSelectItem Value=""Test"">Test</MudSelectItem>
         </MudSelect>
@@ -1155,29 +1155,67 @@ public const string RadioLabelPlacementExample = @"<MudFormControl Label=""Place
     public string SelectedOption { get; set; }
 }";
 
-public const string SelectBasicExample = @"<MudSelect Label=""Food"" SelectedValue=""OnSelectedValue"">
+public const string MultiSelectExample = @"<div class=""flex-column"">
+    <MudSelect Label=""US States"" MultiSelection=""true"" @bind-Value=""value"" @bind-SelectedValues=""options"" >
+        @foreach (var state in states)
+        {
+            <MudSelectItem Value=""@state"">@state</MudSelectItem>
+        }
+    </MudSelect>
+
+    <p><b>MudSelect.Value</b>: ""@value""</p>
+    <p><b>MudSelect.SelectedValues</b>: HashSet&lt;string&gt; { @(string.Join("", "", options.Select(x=>$""\""{x}\""""))) }</p>
+</div>
+
+@code {
+
+    private string value { get; set; } = ""Nothing selected"";
+    private HashSet<string> options { get; set; } = new HashSet<string>() { ""Alaska"" };
+
+    private string[] states =
+    {
+        ""Alabama"", ""Alaska"", ""American Samoa"", ""Arizona"",
+        ""Arkansas"", ""California"", ""Colorado"", ""Connecticut"",
+        ""Delaware"", ""District of Columbia"", ""Federated States of Micronesia"",
+        ""Florida"", ""Georgia"", ""Guam"", ""Hawaii"", ""Idaho"",
+        ""Illinois"", ""Indiana"", ""Iowa"", ""Kansas"", ""Kentucky"",
+        ""Louisiana"", ""Maine"", ""Marshall Islands"", ""Maryland"",
+        ""Massachusetts"", ""Michigan"", ""Minnesota"", ""Mississippi"",
+        ""Missouri"", ""Montana"", ""Nebraska"", ""Nevada"",
+        ""New Hampshire"", ""New Jersey"", ""New Mexico"", ""New York"",
+        ""North Carolina"", ""North Dakota"", ""Northern Mariana Islands"", ""Ohio"",
+        ""Oklahoma"", ""Oregon"", ""Palau"", ""Pennsylvania"", ""Puerto Rico"",
+        ""Rhode Island"", ""South Carolina"", ""South Dakota"", ""Tennessee"",
+        ""Texas"", ""Utah"", ""Vermont"", ""Virgin Island"", ""Virginia"",
+        ""Washington"", ""West Virginia"", ""Wisconsin"", ""Wyoming"",
+    };
+
+}";
+
+public const string SelectBasicExample = @"<MudSelect Label=""Food"" ValueChanged=""OnSelectedValue"">
     <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
     <MudSelectItem Value=""burgers"">Burgers</MudSelectItem>
     <MudSelectItem Value=""hotdog"">Hot Dogs</MudSelectItem>
 </MudSelect>
-<MudSelect Label=""Food"" SelectedValue=""OnSelectedValue"" HelperText=""With helper text"">
+<MudSelect Label=""Food"" ValueChanged=""OnSelectedValue"" HelperText=""With helper text"">
     <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
     <MudSelectItem Value=""burgers"">Burgers</MudSelectItem>
     <MudSelectItem Value=""hotdog"">Hot Dogs</MudSelectItem>
 </MudSelect>
 
-<MudSelect SelectedValue=""OnSelectedValue"" HelperText=""With no label"">
+<MudSelect ValueChanged=""OnSelectedValue"" HelperText=""With no label"">
     <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
     <MudSelectItem Value=""burgers"">Burgers</MudSelectItem>
     <MudSelectItem Value=""hotdog"">Hot Dogs</MudSelectItem>
 </MudSelect>
 
-<MudSelect Placeholder=""Brands"" SelectedValue=""OnSelectedValue"" HelperText=""Disabled"" Disabled=""true"">
+<MudSelect Placeholder=""Brands"" ValueChanged=""OnSelectedValue"" HelperText=""Disabled"" Disabled=""true"">
     <MudSelectItem Value=""volvo"">Volvo</MudSelectItem>
     <MudSelectItem Value=""saab"">Saab</MudSelectItem>
     <MudSelectItem Value=""scania"">Scania</MudSelectItem>
 </MudSelect>
 
+Selected value: @Item
 @code {
 
     private string Item { get; set; } = ""Nothing selected"";

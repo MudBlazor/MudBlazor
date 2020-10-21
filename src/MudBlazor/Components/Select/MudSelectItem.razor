@@ -1,9 +1,9 @@
 ﻿@namespace MudBlazor
-@inherits ComponentBaseMudSelectItem
+@inherits MudBaseSelectItem
 
 
 
-<MudListItem @onclick="@(e => MudSelect.OnSelect(Value))" Class="mud-select-list-item">
+<MudListItem @onclick="@OnClicked" Class="mud-select-list-item" Icon="@CheckBoxIcon">
     @ChildContent
 </MudListItem>
 

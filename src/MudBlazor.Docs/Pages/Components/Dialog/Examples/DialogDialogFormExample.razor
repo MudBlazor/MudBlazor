@@ -4,7 +4,7 @@
     <DialogContent>
         <MudTextField Label="Database name" FullWidth="true"></MudTextField>
         <MudTextField Label="Database tags" FullWidth="true"></MudTextField>
-        <MudSelect FullWidth="true" Label="Resource Group" SelectedValue="@OnSelectedValue">
+        <MudSelect FullWidth="true" Label="Resource Group" ValueChanged="@OnSelectedValue">
             <MudSelectItem Value="Prod">Prod</MudSelectItem>
             <MudSelectItem Value="Test">Test</MudSelectItem>
         </MudSelect>

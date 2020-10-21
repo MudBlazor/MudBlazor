@@ -90,8 +90,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
+        /// <summary>
+        /// Fired when the Value property changes. 
+        /// </summary>
         [Parameter] public EventCallback<string> ValueChanged { get; set; }
 
+        /// <summary>
+        /// The value of this input element. This property is two-way bindable.
+        /// </summary>
         [Parameter]
         public string Value
         {
