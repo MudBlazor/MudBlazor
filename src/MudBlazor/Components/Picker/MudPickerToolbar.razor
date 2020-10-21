@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+
+@if (!DisableToolbar)
+{
+    <MudToolBar Class="@Classnames">
+        @ChildContent
+    </MudToolBar>
+}
+
+
+@code {
+    protected string Classnames =>
+    new CssBuilder("mud-picker-toolbar")
+      .AddClass("mud-picker-toolbar-landscape" , Orientation == Orientation.Landscape)
+      .AddClass(Class)
+    .Build();
+
+    [Parameter] public string Class { get; set; }
+    [Parameter] public bool DisableToolbar { get; set; }
+    [Parameter] public Orientation Orientation { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

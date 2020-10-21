@@ -114,6 +114,16 @@
              Will adjust vertical spacing. 
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBasePicker.Elevation">
+            <summary>
+            The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.Square">
+            <summary>
+            If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBasePicker.HelperText">
             <summary>
             If string has value, helpertext will be applied.

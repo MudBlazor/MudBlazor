@@ -1424,6 +1424,55 @@ public const string MudPaper_Tag = @"Use Tag to attach any user data object to t
 public const string MudPaper_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudPicker_ChildContent = @"";
+
+public const string MudPicker_InputIcon = @"";
+
+public const string MudPicker_ToolBarClass = @"";
+
+public const string MudPicker_HelperText = @"If string has value, helpertext will be applied.";
+
+public const string MudPicker_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
+
+public const string MudPicker_Disabled = @"If true, the picker will be disabled.";
+
+public const string MudPicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
+
+public const string MudPicker_PickerVariant = @"Picker container option";
+
+public const string MudPicker_InputVariant = @"InputVariant, if Picker is static this option will not change anything.";
+
+public const string MudPicker_Adornment = @"Sets if the icon will be att start or end, set to false to disable.";
+
+public const string MudPicker_Orientation = @"What orientation to render in when in PickerVariant Static Mode.";
+
+public const string MudPicker_IconSize = @"Sets the Icon Size.";
+
+public const string MudPicker_AllowKeyboardInput = @"Allows text input from keyboard.";
+
+public const string MudPicker_ValueChanged = @"";
+
+public const string MudPicker_Value = @"";
+
+public const string MudPicker_Class = @"User class names, separated by space";
+
+public const string MudPicker_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudPicker_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudPicker_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudPickerContent_Class = @"";
+
+public const string MudPickerContent_ChildContent = @"";
+
+public const string MudPickerToolbar_Class = @"";
+
+public const string MudPickerToolbar_DisableToolbar = @"";
+
+public const string MudPickerToolbar_ChildContent = @"";
+
 public const string MudProgressCircular_Color = @"The color of the component. It supports the theme colors.";
 
 public const string MudProgressCircular_Size = @"The color of the component. It supports the theme colors.";
@@ -1681,12 +1730,6 @@ public const string MudTooltip_Delayed = @"If true, sets set a delay until toolt
 public const string MudTooltip_Placement = @"Tooltip placement.";
 
 public const string MudTooltip_ChildContent = @"Child content of component.";
-
-public const string MudPicker_DisableToolbar = @"";
-
-public const string MudPicker_ToolBar = @"";
-
-public const string MudPicker_PickerView = @"";
 
 public const string MudInputAdornment_Class = @"";
 

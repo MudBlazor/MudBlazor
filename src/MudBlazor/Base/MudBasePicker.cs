@@ -13,15 +13,18 @@ namespace MudBlazor
 {
     public abstract class MudBasePicker : MudComponentBase
     {
-        protected string MudPickerClass =>
-        new CssBuilder("mud-picker")
-           .AddClass($"mud-picker-inline", PickerVariant == PickerVariant.Inline)
-          .AddClass($"mud-picker-input-button", !AllowKeyboardInput)
-          .AddClass($"mud-picker-input-text", AllowKeyboardInput )
-          .AddClass($"mud-disabled", Disabled)
-        .Build();
+
 
         private string _value;
+        /// <summary>
+        /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.
+        /// </summary>
+        [Parameter] public int Elevation { set; get; } = 8;
+
+        /// <summary>
+        /// If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden.
+        /// </summary>
+        [Parameter] public bool Square { get; set; }
         /// <summary>
         /// If string has value, helpertext will be applied.
         /// </summary>

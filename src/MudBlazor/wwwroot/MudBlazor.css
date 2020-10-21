@@ -3523,6 +3523,18 @@ ul {
       .mud-picker-inline.mud-picker-input-text.mud-disabled:hover {
         cursor: default; }
 
+.mud-picker-static {
+  display: flex;
+  overflow: hidden;
+  min-width: 310px;
+  flex-direction: column; }
+
+.mud-picker-container {
+  display: flex;
+  flex-direction: column; }
+  .mud-picker-container.mud-picker-container-landscape {
+    flex-direction: row; }
+
 .mud-picker-view {
   z-index: 100;
   display: none;
@@ -3530,19 +3542,6 @@ ul {
   .mud-picker-view.mud-picker-open {
     display: block;
     animation: mud-animation-fadein 251ms; }
-
-.mud-picker-static {
-  display: flex;
-  overflow: hidden;
-  min-width: 310px;
-  flex-direction: column;
-  background-color: var(--mud-theme-surface); }
-
-.mud-picker-container {
-  display: flex;
-  flex-direction: column; }
-  .mud-picker-container.mud-picker-container-landscape {
-    flex-direction: row; }
 
 .mud-picker-content {
   display: flex;
@@ -3563,12 +3562,12 @@ ul {
   justify-content: center;
   color: var(--mud-theme-on-primary);
   background-color: var(--mud-theme-primary); }
-  .mud-picker-toolbar .mud-picker-toolbar-landscape {
+  .mud-picker-toolbar.mud-picker-toolbar-landscape {
     height: auto;
     padding: 8px;
     max-width: 150px;
     justify-content: flex-start; }
-  .mud-picker-toolbar .mud-button-root {
+  .mud-picker-toolbar.mud-button-root {
     padding: 0;
     min-width: 16px;
     text-transform: none; }

@@ -1,23 +1,81 @@
-﻿@namespace MudBlazor.InternalComponents.Picker
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@inherits MudBasePicker
 
-
-
-<div class="mud-picker-container">
-    @if (!DisableToolbar)
+<div class="@PickerClass">
+    @if (PickerVariant != PickerVariant.Static)
     {
-        <MudToolBar Class="mud-picker-toolbar mud-picker-datepicker-toolbar">
-            @ToolBar
-        </MudToolBar>
+        <MudTextField Label="@Label" Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="true" @onclick="OnOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
     }
-    <div class="mud-picker-content ">
-        @PickerView
-    </div>
+    <CascadingValue Value="@this">
+        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_elevation" Square="@_square">
+            <div class="@PickerContainerClass">
+                @ChildContent
+            </div>
+        </MudPaper>
+    </CascadingValue>
 </div>
-
+@if (PickerVariant == PickerVariant.Inline)
+{
+    @if (isOpen)
+    {
+        <div class="mud-popover-overlay" @onclick="@OnClose"></div>
+    }
+}
 
 
 @code {
-    [Parameter] public bool DisableToolbar { get; set; }
-    [Parameter] public RenderFragment ToolBar { get; set; }
-    [Parameter] public RenderFragment PickerView { get; set; }
+
+    protected string PickerClass =>
+        new CssBuilder("mud-picker")
+           .AddClass($"mud-picker-inline", PickerVariant == PickerVariant.Inline)
+           .AddClass($"mud-picker-static", PickerVariant == PickerVariant.Static)
+           .AddClass($"mud-picker-input-button", !AllowKeyboardInput && PickerVariant != PickerVariant.Static)
+           .AddClass($"mud-picker-input-text", AllowKeyboardInput && PickerVariant != PickerVariant.Static)
+           .AddClass($"mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
+        .Build();
+
+    protected string PickerPaperClass =>
+    new CssBuilder("mud-picker-paper")
+      .AddClass("mud-picker-view", PickerVariant == PickerVariant.Inline)
+      .AddClass("mud-picker-open", isOpen && PickerVariant == PickerVariant.Inline)
+      .AddClass("mud-popover-paper", PickerVariant == PickerVariant.Inline)
+    .Build();
+
+    protected string PickerContainerClass =>
+    new CssBuilder("mud-picker-container")
+      .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
+    .Build();
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    [Parameter] public string InputIcon { get; set; }
+    [Parameter] public string ToolBarClass { get; set; }
+
+    private int _elevation;
+    private bool _square;
+
+    protected override void OnInitialized()
+    {
+        if (PickerVariant == PickerVariant.Static)
+        {
+            @if (Elevation == 8)
+            {
+                _elevation = 0;
+            }
+            else
+            {
+                _elevation = Elevation;
+            }
+            _square = true;
+        }
+        if (PickerVariant == PickerVariant.Inline)
+        {
+            _elevation = Elevation;
+            @if (Square)
+            {
+                _square = Square;
+            }
+        }
+    }
 }

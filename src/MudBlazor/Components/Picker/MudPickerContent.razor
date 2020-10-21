@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+
+<div class="@Classnames">
+    @ChildContent
+</div>
+
+@code {
+    protected string Classnames =>
+    new CssBuilder("mud-picker-content")
+      .AddClass(Class)
+    .Build();
+
+    [Parameter] public string Class { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
