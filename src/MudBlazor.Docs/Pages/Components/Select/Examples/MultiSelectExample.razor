@@ -1,21 +1,21 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <div class="flex-column">
-    <MudSelect Label="US States" @bind-Value="selected_value" @bind-SelectedValues="selected_options" MultiSelection="true">
+    <MudSelect Label="US States" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options" >
         @foreach (var state in states)
         {
             <MudSelectItem Value="@state">@state</MudSelectItem>
         }
     </MudSelect>
 
-    <p>MudSelect.Value: "@selected_value"</p>
-    <p>MudSelect.SelectedValues: HashSet&lt;string&gt; { @(string.Join(", ", selected_options.Select(x=>$"\"{x}\""))) }</p>
+    <p><b>MudSelect.Value</b>: "@value"</p>
+    <p><b>MudSelect.SelectedValues</b>: HashSet&lt;string&gt; { @(string.Join(", ", options.Select(x=>$"\"{x}\""))) }</p>
 </div>
 
 @code {
 
-    private string selected_value { get; set; } = "Nothing selected";
-    private HashSet<string> selected_options = new HashSet<string>();
+    private string value { get; set; } = "Nothing selected";
+    private HashSet<string> options { get; set; } = new HashSet<string>() { "Alaska" };
 
     private string[] states =
     {

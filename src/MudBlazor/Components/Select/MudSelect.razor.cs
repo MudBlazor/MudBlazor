@@ -41,10 +41,20 @@ namespace MudBlazor
             }
             set
             {
-                // TODO: setting selection from outside
-                _selectedValues = value;
+                var set = value ?? new HashSet<string>();
+                if (SelectedValues.Count==set.Count && SelectedValues.All(x => set.Contains(x)))
+                    return;
+                _selectedValues = new HashSet<string>(set);
+                SelectionChangedFromOutside?.Invoke(_selectedValues);
+                if (!MultiSelection)
+                    Value = _selectedValues.FirstOrDefault();
+                else
+                    Value = string.Join(", ", SelectedValues);
+                SelectedValuesChanged.InvokeAsync(new HashSet<string>(SelectedValues));
             }
         }
+
+        internal event Action<HashSet<string>> SelectionChangedFromOutside;
 
         /// <summary>
         /// If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown

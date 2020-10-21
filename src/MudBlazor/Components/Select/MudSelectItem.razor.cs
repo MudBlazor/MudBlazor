@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -8,10 +10,35 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSelectItem : MudBaseSelectItem
     {
+        private MudSelect _parent;
+
         /// <summary>
         /// The parent select component
         /// </summary>
-        [CascadingParameter] public MudSelect MudSelect { get; set; }
+        [CascadingParameter]
+        public MudSelect MudSelect
+        {
+            get => _parent;
+            set
+            {
+                _parent = value;
+                if (_parent != null && _parent.MultiSelection)
+                {
+                    _parent.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
+                    InvokeAsync(()=>OnUpdateSelectionStateFromOutside(_parent.SelectedValues));
+                }
+            }
+        }
+
+        private void OnUpdateSelectionStateFromOutside(HashSet<string> selection)
+        {
+            if (selection==null)
+                return;
+            var old_is_selected = IsSelected;
+            IsSelected = selection.Contains(Value);
+            if (old_is_selected!=IsSelected)
+                InvokeAsync(StateHasChanged);
+        }
 
         /// <summary>
         /// A user-defined option that can be selected
@@ -56,5 +83,6 @@ namespace MudBlazor
             MudSelect?.SelectOption(Value);
             InvokeAsync(StateHasChanged);
         }
+
     }
 }
