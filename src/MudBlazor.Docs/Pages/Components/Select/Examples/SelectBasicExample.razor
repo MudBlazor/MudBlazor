@@ -5,13 +5,8 @@
     <MudSelectItem Value="burgers">Burgers</MudSelectItem>
     <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
 </MudSelect>
-<MudSelect Label="Food" ValueChanged="OnSelectedValue" HelperText="With helper text">
-    <MudSelectItem Value="pizza">Pizza</MudSelectItem>
-    <MudSelectItem Value="burgers">Burgers</MudSelectItem>
-    <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
-</MudSelect>
 
-<MudSelect ValueChanged="OnSelectedValue" HelperText="With no label">
+<MudSelect Label="Food" ValueChanged="OnSelectedValue" HelperText="With helper text">
     <MudSelectItem Value="pizza">Pizza</MudSelectItem>
     <MudSelectItem Value="burgers">Burgers</MudSelectItem>
     <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
@@ -22,8 +17,10 @@
     <MudSelectItem Value="saab">Saab</MudSelectItem>
     <MudSelectItem Value="scania">Scania</MudSelectItem>
 </MudSelect>
+<div class="flex-column mt-4 mb-n3">
+    Selected value: @Item
+</div>
 
-Selected value: @Item
 @code {
 
     private string Item { get; set; } = "Nothing selected";

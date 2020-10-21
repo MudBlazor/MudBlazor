@@ -525,27 +525,7 @@
             Child content of component.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudFormControl.Label">
-            <summary>
-            If string has value, label text will be added.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudFormControl.FullWidth">
-            <summary>
-            If true, the component will take up the full width of its container.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudFormControl.HelperText">
-            <summary>
-            If string has value, helpertext will be applied.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudFormControl.Margin">
-            <summary>
-            	If dense or normal, will adjust vertical spacing of this and contained components.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudFormControl.ChildContent">
+        <member name="P:MudBlazor.MudForm.ChildContent">
             <summary>
             Child content of component.
             </summary>
@@ -591,6 +571,31 @@
             </summary>
         </member>
         <member name="P:MudBlazor.MudIcon.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.Label">
+            <summary>
+            If string has value, label text will be added.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.FullWidth">
+            <summary>
+            If true, the component will take up the full width of its container.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.HelperText">
+            <summary>
+            If string has value, helpertext will be applied.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.Margin">
+            <summary>
+            	If dense or normal, will adjust vertical spacing of this and contained components.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.ChildContent">
             <summary>
             Child content of component.
             </summary>
@@ -723,6 +728,16 @@
         <member name="P:MudBlazor.MudSelect.ChildContent">
             <summary>
             Add the MudSelectItems here
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelect.OpenIcon">
+            <summary>
+            The Open Select Icon
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelect.CloseIcon">
+            <summary>
+            The Open Select Icon
             </summary>
         </member>
         <member name="P:MudBlazor.MudSelect.SelectedValuesChanged">

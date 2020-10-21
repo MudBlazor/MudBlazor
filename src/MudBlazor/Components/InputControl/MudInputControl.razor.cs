@@ -4,12 +4,12 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudFormControl : MudComponentBase
+    public partial class MudInputControl : MudComponentBase
     {
         protected string Classname =>
-       new CssBuilder("mud-formcontrol")
-          .AddClass($"mud-formcontrol-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
-         .AddClass("mud-formcontrol-full-width", FullWidth)
+       new CssBuilder("mud-input-control")
+          .AddClass($"mud-input-control-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+         .AddClass("mud-input-control-full-width", FullWidth)
          .AddClass(Class)
        .Build();
 

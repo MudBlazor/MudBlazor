@@ -3,7 +3,7 @@
     transform-origin: top left;
 }
 
-.mud-input-label-formcontrol {
+.mud-input-label-inputcontrol {
     top: 0;
     left: 0;
     position: absolute;
@@ -48,13 +48,13 @@
 
 
 .mud-input:focus-within + label {
-    &.mud-input-label.mud-input-label-formcontrol {
+    &.mud-input-label.mud-input-label-inputcontrol {
         color: var(--mud-theme-primary);
         transform: translate(0, 1.5px) scale(0.75);
         transform-origin: top left;
     }
 
-    &.mud-input-label.mud-input-label-formcontrol.mud-input-label-filled {
+    &.mud-input-label.mud-input-label-inputcontrol.mud-input-label-filled {
         transform: translate(12px, 10px) scale(0.75);
 
         &.mud-input-label-margin-dense {
@@ -62,20 +62,20 @@
         }
     }
 
-    &.mud-input-label.mud-input-label-formcontrol.mud-input-label-outlined {
+    &.mud-input-label.mud-input-label-inputcontrol.mud-input-label-outlined {
         color: var(--mud-theme-primary);
         transform: translate(14px, -6px) scale(0.75);
     }
 }
 
 .mud-shrink + label {
-    &.mud-input-label.mud-input-label-formcontrol {
+    &.mud-input-label.mud-input-label-inputcontrol {
         color: var(--mud-theme-text-default);
         transform: translate(0, 1.5px) scale(0.75);
         transform-origin: top left;
     }
 
-    &.mud-input-label.mud-input-label-formcontrol.mud-input-label-filled {
+    &.mud-input-label.mud-input-label-inputcontrol.mud-input-label-filled {
         transform: translate(12px, 10px) scale(0.75);
 
         &.mud-input-label-margin-dense {
@@ -83,7 +83,7 @@
         }
     }
 
-    &.mud-input-label.mud-input-label-formcontrol.mud-input-label-outlined {
+    &.mud-input-label.mud-input-label-inputcontrol.mud-input-label-outlined {
         color: var(--mud-theme-text-default);
         transform: translate(14px, -6px) scale(0.75);
     }

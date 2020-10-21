@@ -11,7 +11,7 @@ namespace MudBlazor
     public partial class MudTextField : MudBaseInputText
     {
         protected string Classname =>
-           new CssBuilder("mud-input-formcontrol").AddClass(Class)
+           new CssBuilder("mud-input-input-control").AddClass(Class)
            .Build();
 
     }

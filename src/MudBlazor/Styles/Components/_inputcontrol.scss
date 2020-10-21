@@ -1,4 +1,4 @@
-﻿.mud-formcontrol {
+﻿.mud-input-control {
     border: 0;
     margin: 0;
     display: inline-flex;
@@ -9,17 +9,17 @@
     vertical-align: top;
     margin-top: 6px;
 
-    &.mud-formcontrol-margin-normal {
+    &.mud-input-control-margin-normal {
         margin-top: 16px;
         margin-bottom: 8px;
     }
 
-    &.mud-formcontrol-margin-dense {
+    &.mud-input-control-margin-dense {
         margin-top: 8px;
         margin-bottom: 4px;
     }
 
-    &.mud-formcontrol-full-width {
+    &.mud-input-control-full-width {
         width: 100%;
     }
 
@@ -35,11 +35,10 @@
         }
     }
 
-    & > .mud-input-label-formcontrol {
+    & > .mud-input-label-inputcontrol {
         color: var(--mud-theme-text-default);
         padding: 0;
         font-size: 1rem;
-        font-family: "Roboto", "Helvetica", "Arial", sans-serif;
         font-weight: 400;
         line-height: 1;
         letter-spacing: 0.00938em;
@@ -59,32 +58,31 @@
     }
 }
 
-.mud-form-helpertext {
+.mud-input-helper-text {
     color: rgba(0, 0, 0, 0.54);
     margin: 0;
     font-size: 0.75rem;
     margin-top: 3px;
     text-align: left;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 400;
     line-height: 1.66;
     letter-spacing: 0.03333em;
 }
 
 
-.mud-form-helpertext.mud-disabled {
+.mud-input-helper-text.mud-disabled {
     color: rgba(0, 0, 0, 0.38);
 }
 
-.mud-form-helpertext.mud-error {
+.mud-input-helper-text.mud-error {
     color: #f44336;
 }
 
-.mud-form-helpertext-marginDense {
+.mud-input-helper-text-margin-dense {
     margin-top: 4px;
 }
 
-.mud-form-helpertext-contained {
+.mud-input-helper-text-contained {
     margin-left: 14px;
     margin-right: 14px;
 }

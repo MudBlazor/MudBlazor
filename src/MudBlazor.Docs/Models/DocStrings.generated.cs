@@ -433,23 +433,15 @@ public const string MudExpansionPanels_Tag = @"Use Tag to attach any user data o
 public const string MudExpansionPanels_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudFormControl_Label = @"If string has value, label text will be added.";
+public const string MudForm_ChildContent = @"Child content of component.";
 
-public const string MudFormControl_FullWidth = @"If true, the component will take up the full width of its container.";
+public const string MudForm_Class = @"User class names, separated by space";
 
-public const string MudFormControl_HelperText = @"If string has value, helpertext will be applied.";
+public const string MudForm_Style = @"User styles, applied on top of the component's own classes and styles";
 
-public const string MudFormControl_Margin = @"If dense or normal, will adjust vertical spacing of this and contained components.";
+public const string MudForm_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
-public const string MudFormControl_ChildContent = @"Child content of component.";
-
-public const string MudFormControl_Class = @"User class names, separated by space";
-
-public const string MudFormControl_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudFormControl_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudFormControl_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+public const string MudForm_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudHidden_Breakpoint = @"The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)";
@@ -486,6 +478,25 @@ public const string MudIcon_Style = @"User styles, applied on top of the compone
 public const string MudIcon_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
 public const string MudIcon_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudInputControl_Label = @"If string has value, label text will be added.";
+
+public const string MudInputControl_FullWidth = @"If true, the component will take up the full width of its container.";
+
+public const string MudInputControl_HelperText = @"If string has value, helpertext will be applied.";
+
+public const string MudInputControl_Margin = @"If dense or normal, will adjust vertical spacing of this and contained components.";
+
+public const string MudInputControl_ChildContent = @"Child content of component.";
+
+public const string MudInputControl_Class = @"User class names, separated by space";
+
+public const string MudInputControl_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudInputControl_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudInputControl_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudInput_Disabled = @"If true, the input element will be disabled.";
@@ -834,6 +845,10 @@ public const string MudRadioGroup_UserAttributes = @"UserAttributes carries all 
             will be splatted onto the underlying HTML tag.";
 
 public const string MudSelect_ChildContent = @"Add the MudSelectItems here";
+
+public const string MudSelect_OpenIcon = @"The Open Select Icon";
+
+public const string MudSelect_CloseIcon = @"The Open Select Icon";
 
 public const string MudSelect_SelectedValuesChanged = @"Fires when SelectedValues changes.";
 

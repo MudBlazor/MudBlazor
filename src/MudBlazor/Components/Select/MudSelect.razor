@@ -1,13 +1,12 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseInputText
 
-
-<MudFormControl HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname">
-        <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly" @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" />
-        <MudInputLabel Class="mud-input-label-formcontrol" Variant="@Variant">
+<MudInputControl HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname">
+        <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
+                  @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
+        <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant">
             @Label
         </MudInputLabel>
-        <MudIcon Class="mud-select-icon" Icon="@(isMenuOpen? @Icons.Material.ArrowDropUp : @Icons.Material.ArrowDropDown)"></MudIcon>
         <CascadingValue Value="@this">
             <div class="mud-select-menu @(isMenuOpen? "mud-open" : "")">
                 <MudList Clickable="true">
@@ -15,7 +14,7 @@
                 </MudList>
             </div>
         </CascadingValue>
-</MudFormControl>
+</MudInputControl>
 
 
 @if (isMenuOpen)

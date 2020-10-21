@@ -2,15 +2,15 @@
 
 <MudDialog>
     <DialogContent>
-        <MudTextField Label="Database name" FullWidth="true"></MudTextField>
-        <MudTextField Label="Database tags" FullWidth="true"></MudTextField>
-        <MudSelect FullWidth="true" Label="Resource Group" ValueChanged="@OnSelectedValue">
-            <MudSelectItem Value="Prod">Prod</MudSelectItem>
-            <MudSelectItem Value="Test">Test</MudSelectItem>
-        </MudSelect>
-        <MudFormControl FullWidth="true">
+        <MudForm>
+            <MudTextField Label="Database name" FullWidth="true"></MudTextField>
+            <MudTextField Label="Database tags" FullWidth="true"></MudTextField>
+            <MudSelect FullWidth="true" Label="Resource Group" ValueChanged="@OnSelectedValue">
+                <MudSelectItem Value="Prod">Prod</MudSelectItem>
+                <MudSelectItem Value="Test">Test</MudSelectItem>
+            </MudSelect>
             <MudCheckBox Label="Want to use SQL elastic pool?" Color="Color.Primary"></MudCheckBox>
-        </MudFormControl>
+        </MudForm>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>

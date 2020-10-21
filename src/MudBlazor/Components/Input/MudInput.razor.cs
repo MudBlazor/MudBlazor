@@ -11,7 +11,7 @@ namespace MudBlazor
          .AddClass($"mud-input-{Variant.ToDescriptionString()}")
          .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
          .AddClass("mud-input-underline", when: () => DisableUnderLine == false && Variant != Variant.Outlined)
-         .AddClass("mud-shrink", when: () => !string.IsNullOrEmpty(Value) || Adornment != Adornment.None)
+         .AddClass("mud-shrink", when: () => !string.IsNullOrEmpty(Value) || Adornment == Adornment.Start)
          .AddClass("mud-disabled", Disabled)
          .AddClass("mud-error", Error)
          .AddClass(Class)

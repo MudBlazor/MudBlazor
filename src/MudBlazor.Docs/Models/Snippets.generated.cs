@@ -399,15 +399,15 @@ public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""P
 
 public const string DialogDialogFormExample = @"<MudDialog>
     <DialogContent>
-        <MudTextField Label=""Database name"" FullWidth=""true""></MudTextField>
-        <MudTextField Label=""Database tags"" FullWidth=""true""></MudTextField>
-        <MudSelect FullWidth=""true"" Label=""Resource Group"" ValueChanged=""@OnSelectedValue"">
-            <MudSelectItem Value=""Prod"">Prod</MudSelectItem>
-            <MudSelectItem Value=""Test"">Test</MudSelectItem>
-        </MudSelect>
-        <MudFormControl FullWidth=""true"">
+        <MudForm>
+            <MudTextField Label=""Database name"" FullWidth=""true""></MudTextField>
+            <MudTextField Label=""Database tags"" FullWidth=""true""></MudTextField>
+            <MudSelect FullWidth=""true"" Label=""Resource Group"" ValueChanged=""@OnSelectedValue"">
+                <MudSelectItem Value=""Prod"">Prod</MudSelectItem>
+                <MudSelectItem Value=""Test"">Test</MudSelectItem>
+            </MudSelect>
             <MudCheckBox Label=""Want to use SQL elastic pool?"" Color=""Color.Primary""></MudCheckBox>
-        </MudFormControl>
+        </MudForm>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick=""Cancel"">Cancel</MudButton>
@@ -1127,45 +1127,49 @@ public const string ProgressLinearDeterminateExample = @"<MudProgressLinear Colo
 public const string ProgressLinearInterminateExample = @"<MudProgressLinear Color=""Color.Primary"" Indeterminate=""true""/>
 <MudProgressLinear Color=""Color.Secondary"" Indeterminate=""true""/>";
 
-public const string RadioGroupExample = @"<MudFormControl Label=""Colors"">
+public const string RadioGroupExample = @"<MudForm>
     <MudRadioGroup @bind-SelectedLabel=""@SelectedLabel"" @bind-SelectedOption=""@SelectedOption"">
         <MudRadio Color=""Color.Primary"" Option=""Radio 1"">Primary</MudRadio>
         <MudRadio Color=""Color.Secondary"" Option=""Radio 2"">Secondary</MudRadio>
         <MudRadio Option=""Radio 3"">Default</MudRadio>
         <MudRadio Disabled=""true"" Option=""Radio 4"">Disabled</MudRadio>
     </MudRadioGroup>
-</MudFormControl> 
+</MudForm> 
 
 @code {
     public string SelectedLabel { get; set; } = ""Primary"";
     public string SelectedOption { get; set; }
 }";
 
-public const string RadioLabelPlacementExample = @"<MudFormControl Label=""Placement"" Class=""demo-radio-inline"">
+public const string RadioLabelPlacementExample = @"<MudForm Class=""demo-radio-inline"">
     <MudRadioGroup @bind-SelectedLabel=""@SelectedLabel"" @bind-SelectedOption=""@SelectedOption"">
         <MudRadio Placement=""Placement.Bottom"" Color=""Color.Primary"" Option=""Radio 1"">Bottom</MudRadio>
         <MudRadio Placement=""Placement.Start"" Color=""Color.Primary"" Option=""Radio 2"">Start</MudRadio>
         <MudRadio Placement=""Placement.Top"" Color=""Color.Primary"" Option=""Radio 3"">Top</MudRadio>
         <MudRadio Placement=""Placement.End"" Color=""Color.Primary"" Option=""Radio 4"">End</MudRadio>
     </MudRadioGroup>
-</MudFormControl>
+</MudForm>
 
 @code {
     public string SelectedLabel { get; set; } = ""Primary"";
     public string SelectedOption { get; set; }
 }";
 
-public const string MultiSelectExample = @"<div class=""flex-column"">
-    <MudSelect Label=""US States"" MultiSelection=""true"" @bind-Value=""value"" @bind-SelectedValues=""options"" >
-        @foreach (var state in states)
-        {
-            <MudSelectItem Value=""@state"">@state</MudSelectItem>
-        }
-    </MudSelect>
-
-    <p><b>MudSelect.Value</b>: ""@value""</p>
-    <p><b>MudSelect.SelectedValues</b>: HashSet&lt;string&gt; { @(string.Join("", "", options.Select(x=>$""\""{x}\""""))) }</p>
-</div>
+public const string MultiSelectExample = @"<MudGrid>
+    <MudItem md=""12"" xs=""12"">
+        <MudSelect Label=""US States"" MultiSelection=""true"" @bind-Value=""value"" @bind-SelectedValues=""options"">
+            @foreach (var state in states)
+            {
+                <MudSelectItem Value=""@state"">@state</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem md=""12"" xs=""12"">
+        <MudText>MudSelect.Value: ""@value""</MudText>
+        <MudText>MudSelect.SelectedValues: HashSet&lt;string&gt; { @(string.Join("", "", options.Select(x=>$""\""{x}\""""))) }</MudText>
+    </MudItem>
+</MudGrid>
+   
 
 @code {
 
@@ -1197,13 +1201,8 @@ public const string SelectBasicExample = @"<MudSelect Label=""Food"" ValueChange
     <MudSelectItem Value=""burgers"">Burgers</MudSelectItem>
     <MudSelectItem Value=""hotdog"">Hot Dogs</MudSelectItem>
 </MudSelect>
-<MudSelect Label=""Food"" ValueChanged=""OnSelectedValue"" HelperText=""With helper text"">
-    <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
-    <MudSelectItem Value=""burgers"">Burgers</MudSelectItem>
-    <MudSelectItem Value=""hotdog"">Hot Dogs</MudSelectItem>
-</MudSelect>
 
-<MudSelect ValueChanged=""OnSelectedValue"" HelperText=""With no label"">
+<MudSelect Label=""Food"" ValueChanged=""OnSelectedValue"" HelperText=""With helper text"">
     <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
     <MudSelectItem Value=""burgers"">Burgers</MudSelectItem>
     <MudSelectItem Value=""hotdog"">Hot Dogs</MudSelectItem>
@@ -1214,8 +1213,10 @@ public const string SelectBasicExample = @"<MudSelect Label=""Food"" ValueChange
     <MudSelectItem Value=""saab"">Saab</MudSelectItem>
     <MudSelectItem Value=""scania"">Scania</MudSelectItem>
 </MudSelect>
+<div class=""flex-column mt-4 mb-n3"">
+    Selected value: @Item
+</div>
 
-Selected value: @Item
 @code {
 
     private string Item { get; set; } = ""Nothing selected"";

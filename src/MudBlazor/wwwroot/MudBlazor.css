@@ -3287,66 +3287,6 @@ ul {
   width: 56px;
   height: 56px; }
 
-.mud-formcontrol {
-  border: 0;
-  margin: 0;
-  display: inline-flex;
-  padding: 0;
-  position: relative;
-  min-width: 0;
-  flex-direction: column;
-  vertical-align: top;
-  margin-top: 6px; }
-  .mud-formcontrol.mud-formcontrol-margin-normal {
-    margin-top: 16px;
-    margin-bottom: 8px; }
-  .mud-formcontrol.mud-formcontrol-margin-dense {
-    margin-top: 8px;
-    margin-bottom: 4px; }
-  .mud-formcontrol.mud-formcontrol-full-width {
-    width: 100%; }
-  .mud-formcontrol > div.mud-input.mud-input-text {
-    margin-top: 16px; }
-  .mud-formcontrol > .mud-input-label-formcontrol {
-    color: var(--mud-theme-text-default);
-    padding: 0;
-    font-size: 1rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    line-height: 1;
-    letter-spacing: 0.00938em;
-    z-index: 0; }
-    .mud-formcontrol > .mud-input-label-formcontrol:after {
-      color: #1976d2; }
-    .mud-formcontrol > .mud-input-label-formcontrol.mud-disabled {
-      color: rgba(0, 0, 0, 0.38); }
-    .mud-formcontrol > .mud-input-label-formcontrol.mud-error {
-      color: #f44336; }
-
-.mud-form-helpertext {
-  color: rgba(0, 0, 0, 0.54);
-  margin: 0;
-  font-size: 0.75rem;
-  margin-top: 3px;
-  text-align: left;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-  font-weight: 400;
-  line-height: 1.66;
-  letter-spacing: 0.03333em; }
-
-.mud-form-helpertext.mud-disabled {
-  color: rgba(0, 0, 0, 0.38); }
-
-.mud-form-helpertext.mud-error {
-  color: #f44336; }
-
-.mud-form-helpertext-marginDense {
-  margin-top: 4px; }
-
-.mud-form-helpertext-contained {
-  margin-left: 14px;
-  margin-right: 14px; }
-
 .mud-list {
   margin: 0;
   padding: 0;
@@ -4551,19 +4491,6 @@ ul {
 .mud-border-right {
   border-right: 1px solid rgba(0, 0, 0, 0.12); }
 
-.mud-select {
-  display: inline-flex;
-  min-width: 50px; }
-
-.mud-select-icon {
-  color: var(--mud-theme-text-default);
-  position: relative;
-  bottom: 30px;
-  left: calc(100% - 20px); }
-
-.mud-disabled + .mud-input-label + .mud-select-icon {
-  color: rgba(0, 0, 0, 0.38); }
-
 .mud-select-input {
   cursor: pointer; }
   .mud-select-input:disabled {
@@ -4608,7 +4535,6 @@ ul {
   font-size: 1rem;
   box-sizing: border-box;
   align-items: center;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 400;
   line-height: 1.1876em;
   letter-spacing: 0.00938em;
@@ -4840,11 +4766,69 @@ ul {
 .mud-input-adornment-disable-pointerevents {
   pointer-events: none; }
 
+.mud-input-control {
+  border: 0;
+  margin: 0;
+  display: inline-flex;
+  padding: 0;
+  position: relative;
+  min-width: 0;
+  flex-direction: column;
+  vertical-align: top;
+  margin-top: 6px; }
+  .mud-input-control.mud-input-control-margin-normal {
+    margin-top: 16px;
+    margin-bottom: 8px; }
+  .mud-input-control.mud-input-control-margin-dense {
+    margin-top: 8px;
+    margin-bottom: 4px; }
+  .mud-input-control.mud-input-control-full-width {
+    width: 100%; }
+  .mud-input-control > div.mud-input.mud-input-text {
+    margin-top: 16px; }
+  .mud-input-control > .mud-input-label-inputcontrol {
+    color: var(--mud-theme-text-default);
+    padding: 0;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.00938em;
+    z-index: 0; }
+    .mud-input-control > .mud-input-label-inputcontrol:after {
+      color: #1976d2; }
+    .mud-input-control > .mud-input-label-inputcontrol.mud-disabled {
+      color: rgba(0, 0, 0, 0.38); }
+    .mud-input-control > .mud-input-label-inputcontrol.mud-error {
+      color: #f44336; }
+
+.mud-input-helper-text {
+  color: rgba(0, 0, 0, 0.54);
+  margin: 0;
+  font-size: 0.75rem;
+  margin-top: 3px;
+  text-align: left;
+  font-weight: 400;
+  line-height: 1.66;
+  letter-spacing: 0.03333em; }
+
+.mud-input-helper-text.mud-disabled {
+  color: rgba(0, 0, 0, 0.38); }
+
+.mud-input-helper-text.mud-error {
+  color: #f44336; }
+
+.mud-input-helper-text-margin-dense {
+  margin-top: 4px; }
+
+.mud-input-helper-text-contained {
+  margin-left: 14px;
+  margin-right: 14px; }
+
 .mud-input-label {
   display: block;
   transform-origin: top left; }
 
-.mud-input-label-formcontrol {
+.mud-input-label-inputcontrol {
   top: 0;
   left: 0;
   position: absolute;
@@ -4876,31 +4860,31 @@ ul {
   .mud-input-label-outlined.mud-input-label-margin-dense {
     transform: translate(14px, 12px) scale(1); }
 
-.mud-input:focus-within + label.mud-input-label.mud-input-label-formcontrol {
+.mud-input:focus-within + label.mud-input-label.mud-input-label-inputcontrol {
   color: var(--mud-theme-primary);
   transform: translate(0, 1.5px) scale(0.75);
   transform-origin: top left; }
 
-.mud-input:focus-within + label.mud-input-label.mud-input-label-formcontrol.mud-input-label-filled {
+.mud-input:focus-within + label.mud-input-label.mud-input-label-inputcontrol.mud-input-label-filled {
   transform: translate(12px, 10px) scale(0.75); }
-  .mud-input:focus-within + label.mud-input-label.mud-input-label-formcontrol.mud-input-label-filled.mud-input-label-margin-dense {
+  .mud-input:focus-within + label.mud-input-label.mud-input-label-inputcontrol.mud-input-label-filled.mud-input-label-margin-dense {
     transform: translate(12px, 7px) scale(0.75); }
 
-.mud-input:focus-within + label.mud-input-label.mud-input-label-formcontrol.mud-input-label-outlined {
+.mud-input:focus-within + label.mud-input-label.mud-input-label-inputcontrol.mud-input-label-outlined {
   color: var(--mud-theme-primary);
   transform: translate(14px, -6px) scale(0.75); }
 
-.mud-shrink + label.mud-input-label.mud-input-label-formcontrol {
+.mud-shrink + label.mud-input-label.mud-input-label-inputcontrol {
   color: var(--mud-theme-text-default);
   transform: translate(0, 1.5px) scale(0.75);
   transform-origin: top left; }
 
-.mud-shrink + label.mud-input-label.mud-input-label-formcontrol.mud-input-label-filled {
+.mud-shrink + label.mud-input-label.mud-input-label-inputcontrol.mud-input-label-filled {
   transform: translate(12px, 10px) scale(0.75); }
-  .mud-shrink + label.mud-input-label.mud-input-label-formcontrol.mud-input-label-filled.mud-input-label-margin-dense {
+  .mud-shrink + label.mud-input-label.mud-input-label-inputcontrol.mud-input-label-filled.mud-input-label-margin-dense {
     transform: translate(12px, 7px) scale(0.75); }
 
-.mud-shrink + label.mud-input-label.mud-input-label-formcontrol.mud-input-label-outlined {
+.mud-shrink + label.mud-input-label.mud-input-label-inputcontrol.mud-input-label-outlined {
   color: var(--mud-theme-text-default);
   transform: translate(14px, -6px) scale(0.75); }
 

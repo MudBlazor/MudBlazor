@@ -1,13 +1,12 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseInputText
 
-
-<MudFormControl HelperText="@HelperText" FullWidth="@FullWidth">
+<MudInputControl HelperText="@HelperText" FullWidth="@FullWidth">
     <MudInput @attributes="UserAttributes" InputType="@InputType" Class="@Classname" Style="@Style"
               Variant="@Variant" @bind-Value="@Value" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
               Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" />
-    <MudInputLabel Class="mud-input-label-formcontrol" Variant="@Variant" Disabled=@Disabled>
+    <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant" Disabled=@Disabled>
         @Label
     </MudInputLabel>
-</MudFormControl>
+</MudInputControl>
 

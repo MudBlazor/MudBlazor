@@ -23,6 +23,16 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
+        /// The Open Select Icon
+        /// </summary>
+        [Parameter] public string OpenIcon { get; set; } = Icons.Material.ArrowDropUp;
+
+        /// <summary>
+        /// The Open Select Icon
+        /// </summary>
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.ArrowDropDown;
+
+        /// <summary>
         /// Fires when SelectedValues changes.
         /// </summary>
         [Parameter] public EventCallback<HashSet<string>> SelectedValuesChanged { get; set; }
@@ -63,6 +73,8 @@ namespace MudBlazor
 
         internal bool isMenuOpen { get; set; }
 
+        public string CurrentIcon { get; set; }
+
         public async Task SelectOption(string value)
         {
             if (!MultiSelection)
@@ -70,6 +82,7 @@ namespace MudBlazor
                 // single selection
                 Value = value;
                 isMenuOpen = false;
+                IconContoller();
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
             }
@@ -91,7 +104,25 @@ namespace MudBlazor
             if (Disabled)
                 return;
             isMenuOpen = !isMenuOpen;
+            IconContoller();
             StateHasChanged();
+        }
+
+        public void IconContoller()
+        {
+            if (isMenuOpen)
+            {
+                CurrentIcon = OpenIcon;
+            }
+            else
+            {
+                CurrentIcon = CloseIcon;
+            }
+        }
+
+        protected override void OnInitialized()
+        {
+            IconContoller();
         }
     }
 }
