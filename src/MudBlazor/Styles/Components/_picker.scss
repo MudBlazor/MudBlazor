@@ -58,6 +58,15 @@
     }
 }
 
+.mud-picker-popover-paper {
+    outline: 0;
+    position: absolute;
+    min-width: 16px;
+    min-height: 16px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 .mud-picker-view {
     z-index: 100;
     display: none;

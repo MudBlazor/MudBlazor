@@ -8,16 +8,16 @@
             @Label
         </MudInputLabel>
         <CascadingValue Value="@this">
-            <div class="mud-select-menu @(isMenuOpen? "mud-open" : "")">
+            <MudPopover Open="@isOpen" MaxHeight="@MaxHeight">
                 <MudList Clickable="true">
                     @ChildContent
                 </MudList>
-            </div>
+            </MudPopover>
         </CascadingValue>
 </MudInputControl>
 
 
-@if (isMenuOpen)
+@if (isOpen)
 {
-    <div class="mud-select-overlay" @onclick="@ToggleMenu"></div>
+    <div class="mud-popover-overlay" @onclick="@ToggleMenu"></div>
 }

@@ -22,15 +22,15 @@
         <MudIconButton Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" @onclick="@ToggleMenu"/>
     }
     <CascadingValue Value="@this">
-        <div class="mud-menu-list @(isMenuOpen? "mud-open" : "")">
+        <MudPopover Open="@isOpen">
             <MudList Clickable="true">
                 @ChildContent
             </MudList>
-        </div>
+        </MudPopover>
     </CascadingValue>
 </div>
 
-@if (isMenuOpen)
+@if (isOpen)
 {
     <div class="mud-popover-overlay" @onclick="@ToggleMenu"></div>
 }

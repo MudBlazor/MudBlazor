@@ -14,7 +14,7 @@ namespace MudBlazor
         .AddClass(Class)
        .Build();
 
-        public bool isMenuOpen { get; set; }
+        public bool isOpen { get; set; }
 
         [Parameter] public string Label { get; set; }
         [Parameter] public string Icon { get; set; }
@@ -30,7 +30,7 @@ namespace MudBlazor
 
         public async Task CloseMenu()
         {
-            isMenuOpen = false;
+            isOpen = false;
             StateHasChanged();
         }
 
@@ -38,7 +38,7 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            isMenuOpen = false;
+            isOpen = false;
             StateHasChanged();
         }
 
@@ -46,7 +46,7 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            isMenuOpen = !isMenuOpen;
+            isOpen = !isOpen;
             StateHasChanged();
         }
     }

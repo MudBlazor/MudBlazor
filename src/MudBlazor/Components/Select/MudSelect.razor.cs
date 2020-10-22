@@ -71,7 +71,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool MultiSelection { get; set; }
 
-        internal bool isMenuOpen { get; set; }
+        /// <summary>
+        /// Sets the maxheight the select can have when open.
+        /// </summary>
+        [Parameter] public int MaxHeight { get; set; } = 300;
+
+        internal bool isOpen { get; set; }
 
         public string CurrentIcon { get; set; }
 
@@ -81,7 +86,7 @@ namespace MudBlazor
             {
                 // single selection
                 Value = value;
-                isMenuOpen = false;
+                isOpen = false;
                 IconContoller();
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
@@ -103,14 +108,14 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            isMenuOpen = !isMenuOpen;
+            isOpen = !isOpen;
             IconContoller();
             StateHasChanged();
         }
 
         public void IconContoller()
         {
-            if (isMenuOpen)
+            if (isOpen)
             {
                 CurrentIcon = OpenIcon;
             }

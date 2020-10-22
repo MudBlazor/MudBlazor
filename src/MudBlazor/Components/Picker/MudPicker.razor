@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @using MudBlazor.Utilities
 @inherits MudBasePicker
 
@@ -41,7 +41,7 @@
     new CssBuilder("mud-picker-paper")
       .AddClass("mud-picker-view", PickerVariant == PickerVariant.Inline)
       .AddClass("mud-picker-open", isOpen && PickerVariant == PickerVariant.Inline)
-      .AddClass("mud-popover-paper", PickerVariant == PickerVariant.Inline)
+      .AddClass("mud-picker-popover-paper", PickerVariant == PickerVariant.Inline)
     .Build();
 
     protected string PickerContainerClass =>

@@ -21,6 +21,11 @@
     padding-bottom: 8px;
     justify-content: flex-start;
     text-decoration: none;
+
+    &.mud-list-item-dense {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
 }
 
 .mud-list-item-clickable {
