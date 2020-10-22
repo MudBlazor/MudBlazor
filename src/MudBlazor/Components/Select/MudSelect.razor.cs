@@ -23,6 +23,11 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
+        /// If true, compact vertical padding will be applied to all select items.
+        /// </summary>
+        [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
         /// The Open Select Icon
         /// </summary>
         [Parameter] public string OpenIcon { get; set; } = Icons.Material.ArrowDropUp;
@@ -115,14 +120,14 @@ namespace MudBlazor
 
         public void IconContoller()
         {
-            if (isOpen)
-            {
-                CurrentIcon = OpenIcon;
-            }
-            else
-            {
-                CurrentIcon = CloseIcon;
-            }
+                if (isOpen)
+                {
+                    CurrentIcon = OpenIcon;
+                }
+                else
+                {
+                    CurrentIcon = CloseIcon;
+                }
         }
 
         protected override void OnInitialized()

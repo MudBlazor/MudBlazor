@@ -645,6 +645,16 @@
             If true, vertical padding will be removed from the list.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudList.Dense">
+            <summary>
+            If true, compact vertical padding will be applied to all list items.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudList.DisableGutters">
+            <summary>
+            If true, the left and right padding is removed on all list items.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudListItem.Avatar">
             <summary>
             Avatar to use if set.
@@ -763,6 +773,11 @@
         <member name="P:MudBlazor.MudSelect.ChildContent">
             <summary>
             Add the MudSelectItems here
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelect.Dense">
+            <summary>
+            If true, compact vertical padding will be applied to all select items.
             </summary>
         </member>
         <member name="P:MudBlazor.MudSelect.OpenIcon">

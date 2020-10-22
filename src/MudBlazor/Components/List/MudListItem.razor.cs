@@ -9,10 +9,10 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-list-item")
-          .AddClass("mud-list-item-dense", Dense)
-          .AddClass("mud-list-item-gutters", !DisableGutters)
-          .AddClass("mud-list-item-clickable", Clickable)
-          .AddClass($"mud-ripple", Clickable && !DisableRipple)
+          .AddClass("mud-list-item-dense", Dense && MudList.Dense)
+          .AddClass("mud-list-item-gutters", !DisableGutters && !MudList.DisableGutters)
+          .AddClass("mud-list-item-clickable", MudList.Clickable)
+          .AddClass($"mud-ripple", MudList.Clickable && !DisableRipple)
           .AddClass(Class)
         .Build();
         [Parameter] public string Text { get; set; }
@@ -72,7 +72,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public ICommand Command { get; set; }
         [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
-        [CascadingParameter] bool Clickable { get; set; }
+        [CascadingParameter] MudList MudList { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public RenderFragment NestedList { get; set; }
 
@@ -99,6 +99,20 @@ namespace MudBlazor
                 {
                     Command.Execute(CommandParameter);
                 }
+            }
+        }
+
+        public Typo textTypo { get; set; }
+
+        protected override void OnParametersSet()
+        {
+           if(Dense || MudList.Dense)
+           {
+                textTypo = Typo.body2;
+           }
+            else if(!Dense || !MudList.Dense)
+           {
+                textTypo = Typo.body1;
             }
         }
     }

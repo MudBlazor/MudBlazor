@@ -17,7 +17,7 @@
         </div>
     }
     <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
-        <MudText>
+        <MudText Typo="@textTypo">
             @if (String.IsNullOrEmpty(Text))
             {
                 @ChildContent
@@ -43,7 +43,7 @@
 @if (NestedList != null)
 {
     <MudCollapse Expanded="@Expanded">
-        <MudList Clickable="@Clickable" DisablePadding="true" Class="mud-nested-list">
+        <MudList Clickable="@MudList.Clickable" DisablePadding="true" Class="mud-nested-list">
             @NestedList
         </MudList>
     </MudCollapse>
