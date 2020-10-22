@@ -327,7 +327,12 @@
 }
 
 .mud-input-adornment-start {
-    margin-right: 8px;
+    &.mud-text {
+        margin-right: 8px;
+    }
+    &.mud-icon{
+
+    }
 }
 
 .mud-input-adornment-end {
