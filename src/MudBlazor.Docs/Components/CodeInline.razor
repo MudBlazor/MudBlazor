@@ -1,5 +1,5 @@
 ﻿
-<code class="docs-code">
+<code class="docs-code @(SecondaryColor? "docs-code-secondary": "docs-code-primary")">
     @Code
     @ChildContent
 </code>
@@ -9,4 +9,6 @@
     [Parameter] public RenderFragment ChildContent { get; set; }
 
     [Parameter] public string Code { get; set; }
+
+    [Parameter] public bool SecondaryColor { get; set; }
 }
