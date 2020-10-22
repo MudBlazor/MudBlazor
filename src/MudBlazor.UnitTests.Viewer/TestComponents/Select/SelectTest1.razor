@@ -1,0 +1,14 @@
+﻿@using MudBlazor;
+@namespace MudBlazor.UnitTests
+
+<MudSelect @bind-Value="value">
+    <MudSelectItem Value="1">1</MudSelectItem>
+    <MudSelectItem Value="2">2</MudSelectItem>
+    <MudSelectItem Value="3">3</MudSelectItem>
+</MudSelect>
+
+@code {
+    public static string __description__ = "Click should open the Menu and selecting a value should update the bindable value.";
+
+    string value=null;
+}

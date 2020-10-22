@@ -1,0 +1,19 @@
+﻿@using MudBlazor;
+@namespace MudBlazor.UnitTests
+
+<MudText>SelectedItems { @string.Join(", ", selected_items) }</MudText>
+<MudTable Items="items" @bind-SelectedItems="selected_items" MultiSelection="true">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "The checkboxes should all be checked on load, even the header checkbox.";
+
+    int[] items = new int[]{0,1,2};
+    HashSet<int> selected_items=new HashSet<int>() { 0, 1, 2 };
+}
