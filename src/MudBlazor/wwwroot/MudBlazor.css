@@ -3376,6 +3376,13 @@ ul {
 .mud-nested-list > .mud-list-item {
   padding-left: 32px; }
 
+.mud-menu {
+  width: max-content;
+  max-width: max-content; }
+
+.mud-menu-container {
+  max-width: max-content; }
+
 .mud-link.mud-link-underline-none {
   text-decoration: none; }
 
@@ -4387,8 +4394,11 @@ ul {
 
 .mud-table-pagination-select {
   cursor: pointer;
-  margin-left: 10px;
-  margin-right: 30px; }
+  margin-left: 10px !important;
+  margin-right: 10px !important;
+  margin-top: 0px !important; }
+  .mud-table-pagination-select .mud-select-input {
+    margin-top: 0px !important; }
   .mud-table-pagination-select .mud-input .mud-input-root {
     max-width: 80px;
     cursor: pointer;
