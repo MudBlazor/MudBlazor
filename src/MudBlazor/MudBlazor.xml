@@ -675,6 +675,16 @@
             If true, the List Subheader will be indented.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudListItem.Dense">
+            <summary>
+            If true, compact vertical padding will be used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudListItem.DisableGutters">
+            <summary>
+            If true, the left and right padding is removed.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudListItem.Expanded">
             <summary>
             If Nested list and If Expanded true expands the nested list, otherwise collapse it.
@@ -693,6 +703,31 @@
         <member name="P:MudBlazor.MudListItem.OnClick">
             <summary>
             List click event.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudPopover.Elevation">
+            <summary>
+            The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudPopover.Square">
+            <summary>
+            If true, border-radius is set to 0.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudPopover.MaxHeight">
+            <summary>
+            Sets the maxheight the popover can have when open.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudPopover.Open">
+            <summary>
+            If true, the popover is visible.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudPopover.ChildContent">
+            <summary>
+            Child content of the component.
             </summary>
         </member>
         <member name="P:MudBlazor.MudRadio.Color">
@@ -753,6 +788,11 @@
         <member name="P:MudBlazor.MudSelect.MultiSelection">
             <summary>
             If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelect.MaxHeight">
+            <summary>
+            Sets the maxheight the select can have when open.
             </summary>
         </member>
         <member name="T:MudBlazor.MudSelectItem">
@@ -1494,7 +1534,7 @@
         </member>
         <member name="P:MudBlazor.MudPaper.Elevation">
             <summary>
-            Child content of component.
+            The higher the number, the heavier the drop-shadow. 0 for no shadow set to 1 by default.
             </summary>
         </member>
         <member name="P:MudBlazor.MudPaper.Square">
@@ -1549,7 +1589,7 @@
         </member>
         <member name="P:MudBlazor.MudSkeleton.Animation">
             <summary>
-            Animation style, if false it will be disabled..
+            Animation style, if false it will be disabled.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTable`1.RowTemplate">

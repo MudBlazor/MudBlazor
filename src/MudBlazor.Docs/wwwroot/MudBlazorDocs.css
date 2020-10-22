@@ -164,7 +164,6 @@
   padding-top: 86px; }
 
 .demo-textfield div .mud-input-control {
-  width: 25ch;
   margin: 8px; }
 
 .demo-dialog-simple {
@@ -372,7 +371,6 @@
   margin-bottom: 50px; }
 
 .docs-code {
-  color: var(--mud-theme-primary);
   display: inline-block;
   padding: 0 5px;
   direction: ltr;
@@ -381,8 +379,13 @@
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
   line-height: 1.4;
   border-radius: 2px;
-  background-color: var(--mud-theme-primary-hover);
   -webkit-font-smoothing: subpixel-antialiased; }
+  .docs-code.docs-code-primary {
+    color: var(--mud-theme-primary);
+    background-color: var(--mud-theme-primary-hover); }
+  .docs-code.docs-code-secondary {
+    color: var(--mud-theme-secondary);
+    background-color: var(--mud-theme-secondary-hover); }
 
 .docs-frame {
   height: 100%;

@@ -3307,6 +3307,9 @@ ul {
   padding-bottom: 8px;
   justify-content: flex-start;
   text-decoration: none; }
+  .mud-list-item.mud-list-item-dense {
+    padding-top: 4px;
+    padding-bottom: 4px; }
 
 .mud-list-item-clickable {
   color: inherit;
@@ -3372,24 +3375,6 @@ ul {
 
 .mud-nested-list > .mud-list-item {
   padding-left: 32px; }
-
-.mud-menu-list {
-  z-index: 100;
-  display: none;
-  position: absolute;
-  color: var(--mud-theme-on-surface);
-  background-color: var(--mud-theme-surface);
-  border-radius: var(--mud-theme-border-radius-default);
-  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
-  min-width: 100px;
-  top: 0px; }
-  .mud-menu-list.mud-open {
-    display: block;
-    animation: mud-animation-fadein 251ms; }
-
-.mud-menu-list-item {
-  padding-top: 2px;
-  padding-bottom: 2px; }
 
 .mud-link.mud-link-underline-none {
   text-decoration: none; }
@@ -3481,6 +3466,14 @@ ul {
   .mud-picker-container .mud-toolbar {
     border-top-left-radius: inherit;
     border-top-right-radius: inherit; }
+
+.mud-picker-popover-paper {
+  outline: 0;
+  position: absolute;
+  min-width: 16px;
+  min-height: 16px;
+  overflow-x: hidden;
+  overflow-y: auto; }
 
 .mud-picker-view {
   z-index: 100;
@@ -3609,13 +3602,17 @@ ul {
       color: rgba(0, 0, 0, 0.38);
       pointer-events: none; }
 
-.mud-popover-paper {
+.mud-popover {
+  width: 100%;
   outline: 0;
+  z-index: 100;
+  display: none;
   position: absolute;
-  min-width: 16px;
-  min-height: 16px;
   overflow-x: hidden;
   overflow-y: auto; }
+  .mud-popover.mud-popover-open {
+    display: block;
+    animation: mud-animation-fadein 251ms; }
 
 .mud-popover-overlay {
   top: 0;
@@ -4496,36 +4493,8 @@ ul {
   .mud-select-input:disabled {
     cursor: default; }
 
-.mud-select-menu {
-  z-index: 100;
-  display: none;
-  position: absolute;
-  color: var(--mud-theme-on-surface);
-  background-color: var(--mud-theme-surface);
-  border-radius: var(--mud-theme-border-radius-default);
-  box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
-  min-width: 120px;
-  min-height: 16px;
-  margin-top: 16px; }
-  .mud-select-menu.mud-open {
-    display: block; }
-
-.mud-select-overlay {
-  top: 0;
-  left: 0;
-  margin: 0px !important;
-  height: 100%;
-  width: 100%;
-  position: fixed;
-  background-color: transparent;
-  z-index: 99; }
-
 .mud-select > .mud-form-helpertext {
   margin-top: -21px; }
-
-.mud-select-list-item {
-  padding-top: 2px;
-  padding-bottom: 2px; }
 
 .mud-input {
   position: relative;
@@ -4757,7 +4726,7 @@ ul {
 .mud-input-adornment-start.mud-input-root-filled-shrink {
   margin-top: 16px; }
 
-.mud-input-adornment-start {
+.mud-input-adornment-start.mud-text {
   margin-right: 8px; }
 
 .mud-input-adornment-end {
@@ -4769,10 +4738,11 @@ ul {
 .mud-input-control {
   border: 0;
   margin: 0;
-  display: inline-flex;
   padding: 0;
+  display: flex;
+  flex: 1 1 auto;
+  max-width: 100%;
   position: relative;
-  min-width: 0;
   flex-direction: column;
   vertical-align: top;
   margin-top: 6px; }

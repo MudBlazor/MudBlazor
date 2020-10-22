@@ -641,6 +641,10 @@ public const string MudListItem_Icon = @"Icon to use if set.";
 
 public const string MudListItem_Inset = @"If true, the List Subheader will be indented.";
 
+public const string MudListItem_Dense = @"If true, compact vertical padding will be used.";
+
+public const string MudListItem_DisableGutters = @"If true, the left and right padding is removed.";
+
 public const string MudListItem_Expanded = @"If Nested list and If Expanded true expands the nested list, otherwise collapse it.";
 
 public const string MudListItem_CommandParameter = @"Command parameter.";
@@ -800,6 +804,25 @@ public const string MudNavMenu_Tag = @"Use Tag to attach any user data object to
 public const string MudNavMenu_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudPopover_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default.";
+
+public const string MudPopover_Square = @"If true, border-radius is set to 0.";
+
+public const string MudPopover_MaxHeight = @"Sets the maxheight the popover can have when open.";
+
+public const string MudPopover_Open = @"If true, the popover is visible.";
+
+public const string MudPopover_ChildContent = @"Child content of the component.";
+
+public const string MudPopover_Class = @"User class names, separated by space";
+
+public const string MudPopover_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudPopover_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudPopover_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudRadio_Color = @"The color of the component. It supports the theme colors.";
 
 public const string MudRadio_Placement = @"The position of the label.";
@@ -855,6 +878,8 @@ public const string MudSelect_SelectedValuesChanged = @"Fires when SelectedValue
 public const string MudSelect_SelectedValues = @"Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.";
 
 public const string MudSelect_MultiSelection = @"If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown";
+
+public const string MudSelect_MaxHeight = @"Sets the maxheight the select can have when open.";
 
 public const string MudSelect_Disabled = @"If true, the input element will be disabled.";
 
@@ -1442,7 +1467,7 @@ public const string MudMenuItem_Tag = @"Use Tag to attach any user data object t
 public const string MudMenuItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudPaper_Elevation = @"Child content of component.";
+public const string MudPaper_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 1 by default.";
 
 public const string MudPaper_Square = @"If true, border-radius is set to 0.";
 
@@ -1560,7 +1585,7 @@ public const string MudSkeleton_Height = @"Height defined in string, needs px or
 
 public const string MudSkeleton_SkeletonType = @"Shape of the skeleton that will be renderd.";
 
-public const string MudSkeleton_Animation = @"Animation style, if false it will be disabled..";
+public const string MudSkeleton_Animation = @"Animation style, if false it will be disabled.";
 
 public const string MudSkeleton_Class = @"User class names, separated by space";
 
