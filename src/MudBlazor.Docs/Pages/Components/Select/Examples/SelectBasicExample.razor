@@ -1,25 +1,36 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect Label="Food" ValueChanged="OnSelectedValue">
-    <MudSelectItem Value="pizza">Pizza</MudSelectItem>
-    <MudSelectItem Value="burgers">Burgers</MudSelectItem>
-    <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
-</MudSelect>
 
-<MudSelect Label="Food" ValueChanged="OnSelectedValue" HelperText="With helper text">
-    <MudSelectItem Value="pizza">Pizza</MudSelectItem>
-    <MudSelectItem Value="burgers">Burgers</MudSelectItem>
-    <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
-</MudSelect>
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect Label="Food" ValueChanged="OnSelectedValue">
+            <MudSelectItem Value="pizza">Pizza</MudSelectItem>
+            <MudSelectItem Value="burgers">Burgers</MudSelectItem>
+            <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect Label="Food" ValueChanged="OnSelectedValue" HelperText="With helper text">
+            <MudSelectItem Value="pizza">Pizza</MudSelectItem>
+            <MudSelectItem Value="burgers">Burgers</MudSelectItem>
+            <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect Placeholder="Brands" ValueChanged="OnSelectedValue" HelperText="Disabled" Disabled="true">
+            <MudSelectItem Value="volvo">Volvo</MudSelectItem>
+            <MudSelectItem Value="saab">Saab</MudSelectItem>
+            <MudSelectItem Value="scania">Scania</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" md="12">
+        <MudText Class="mb-n3" Typo="Typo.body2">
+            Selected value: @Item
+        </MudText>
+    </MudItem>
+</MudGrid>
 
-<MudSelect Placeholder="Brands" ValueChanged="OnSelectedValue" HelperText="Disabled" Disabled="true">
-    <MudSelectItem Value="volvo">Volvo</MudSelectItem>
-    <MudSelectItem Value="saab">Saab</MudSelectItem>
-    <MudSelectItem Value="scania">Scania</MudSelectItem>
-</MudSelect>
-<div class="flex-column mt-4 mb-n3">
-    Selected value: @Item
-</div>
+
 
 @code {
 

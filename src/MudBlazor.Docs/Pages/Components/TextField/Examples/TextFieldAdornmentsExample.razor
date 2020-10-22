@@ -1,22 +1,38 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
+<MudGrid>
+    <MudItem xs="12" sm="12" md="12">
+        <MudTextField Label="Amount" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentText="Kr" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField Label="Amount" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.AttachMoney" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField HelperText="Weight" Variant="Variant.Text" Adornment="Adornment.End" AdornmentText="Kg" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField Label="Password" @bind-Value="Password" Variant="Variant.Text" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField Label="Amount" Variant="Variant.Filled" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.AttachMoney" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField HelperText="Weight" Variant="Variant.Filled" Adornment="Adornment.End" AdornmentText="Kg" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField Label="Password" @bind-Value="Password" Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField Label="Amount" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.AttachMoney" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField HelperText="Weight" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentText="Kg" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField Label="Password" @bind-Value="Password" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" />
+    </MudItem>
+</MudGrid>
 
-<div>
-    <MudTextField Label="Amount" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.AttachMoney" />
-    <MudTextField HelperText="Weight" Variant="Variant.Text" Adornment="Adornment.End" AdornmentText="Kg" />
-    <MudTextField Label="Password" @bind-Value="Password" Variant="Variant.Text" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" />
-</div>
-<div>
-    <MudTextField Label="Amount" Variant="Variant.Filled" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.AttachMoney" />
-    <MudTextField HelperText="Weight" Variant="Variant.Filled" Adornment="Adornment.End" AdornmentText="Kg" />
-    <MudTextField Label="Password" @bind-Value="Password" Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" />
-</div>
-<div>
-    <MudTextField Label="Amount" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.AttachMoney" />
-    <MudTextField HelperText="Weight" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentText="Kg" />
-    <MudTextField Label="Password" @bind-Value="Password" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick"/>
-</div>
- 
 
 @code {
     string Password = "superstrong123";
