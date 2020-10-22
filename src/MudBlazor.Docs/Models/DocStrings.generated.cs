@@ -618,6 +618,10 @@ public const string MudList_Clickable = @"Determens if the List will have clicka
 
 public const string MudList_DisablePadding = @"If true, vertical padding will be removed from the list.";
 
+public const string MudList_Dense = @"If true, compact vertical padding will be applied to all list items.";
+
+public const string MudList_DisableGutters = @"If true, the left and right padding is removed on all list items.";
+
 public const string MudList_Class = @"User class names, separated by space";
 
 public const string MudList_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -868,6 +872,8 @@ public const string MudRadioGroup_UserAttributes = @"UserAttributes carries all 
             will be splatted onto the underlying HTML tag.";
 
 public const string MudSelect_ChildContent = @"Add the MudSelectItems here";
+
+public const string MudSelect_Dense = @"If true, compact vertical padding will be applied to all select items.";
 
 public const string MudSelect_OpenIcon = @"The Open Select Icon";
 

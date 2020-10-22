@@ -893,6 +893,46 @@ public const string ListFolderExample = @"<MudList>
     </MudListItem>
 </MudList>";
 
+public const string ListInteractiveExample = @"<MudGrid>
+    <MudItem xs=""12"" md=""12"">
+        <MudCheckBox @bind-Checked=""@Dense"" Label=""Dense"" Color=""Color.Default"" />
+        <MudCheckBox @bind-Checked=""@Clickable"" Label=""Clickable"" Color=""Color.Primary"" />
+        <MudCheckBox @bind-Checked=""@Gutters"" Label=""Disable Gutters"" Color=""Color.Secondary"" />
+    </MudItem>
+    <MudItem xs=""12"" md=""6"">
+        <MudText Typo=""Typo.h6"" GutterBottom=""true"">Text only</MudText>
+        <MudList Clickable=""@Clickable"" Dense=""@Dense"" DisableGutters=""@Gutters"">
+            <MudListItem Text=""Single List Item"" />
+            <MudListItem Text=""Single List Item"" />
+            <MudListItem Text=""Single List Item"" />
+        </MudList>
+    </MudItem>
+    <MudItem xs=""12"" md=""6"">
+        <MudText Typo=""Typo.h6"" GutterBottom=""true"">Icons with text</MudText>
+        <MudList Clickable=""@Clickable"" Dense=""@Dense"" DisableGutters=""@Gutters"">
+            <MudListItem Text=""Single List Item"" Icon=""@Icons.Material.Bookmark"" />
+            <MudListItem Text=""Single List Item"" Icon=""@Icons.Material.Bookmark"" />
+            <MudListItem Text=""Single List Item"" Icon=""@Icons.Material.Bookmark"" />
+        </MudList>
+    </MudItem>
+    <MudItem xs=""12"" md=""6"">
+        <MudText Typo=""Typo.h6"" GutterBottom=""true"">Avatar with text</MudText>
+        <MudList Clickable=""@Clickable"" Dense=""@Dense"" DisableGutters=""@Gutters"">
+            <MudListItem Text=""Single List Item"" Avatar=""@Icons.Material.Image"" />
+            <MudListItem Text=""Single List Item"" Avatar=""@Icons.Material.Image"" />
+            <MudListItem Text=""Single List Item"" Avatar=""@Icons.Material.Image"" />
+        </MudList>
+    </MudItem>
+</MudGrid>
+
+
+
+@code {
+    public bool Dense { get; set; }
+    public bool Clickable { get; set; }
+    public bool Gutters { get; set; }
+}";
+
 public const string ListNestedExample = @"<MudList Clickable=""true"">
     <MudListSubheader>
         Nested List Items
@@ -1196,7 +1236,39 @@ public const string MultiSelectExample = @"<MudGrid>
 
 }";
 
-public const string SelectBasicExample = @"<MudGrid>
+public const string SelectDenseExample = @"<MudGrid>
+    <MudItem xs=""12"" md=""6"">
+        <MudSelect Label=""Dense"" Dense=""true"">
+            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs=""12"" md=""6"">
+        <MudSelect Label=""Normal"">
+            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+</MudGrid>";
+
+public const string SelectDisabledExample = @"<MudGrid>
+    <MudItem xs=""12"" md=""12"">
+        <MudSelect Label=""Disabled"" Disabled=""true"">
+            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+</MudGrid>";
+
+public const string SelectUsageExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudSelect Label=""Food"" ValueChanged=""OnSelectedValue"">
             <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
