@@ -853,6 +853,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void ListInteractiveExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<ListInteractiveExample>();
+        }
+
+
+        [Test]
         public void ListNestedExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -1040,13 +1051,35 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void SelectBasicExample_Test()
+        public void SelectDenseExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<SelectBasicExample>();
+                var comp = ctx.RenderComponent<SelectDenseExample>();
+        }
+
+
+        [Test]
+        public void SelectDisabledExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<SelectDisabledExample>();
+        }
+
+
+        [Test]
+        public void SelectUsageExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<SelectUsageExample>();
         }
 
 
