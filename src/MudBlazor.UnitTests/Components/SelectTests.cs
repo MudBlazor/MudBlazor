@@ -28,21 +28,21 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect>();
-            var menu = comp.Find("div.mud-select-menu");
+            var menu = comp.Find("div.mud-popover");
             var input =comp.Find("input");
             
             // check initial state
             select.Instance.Value.Should().BeNullOrEmpty();
-            menu.ClassList.Should().NotContain("mud-open");
+            menu.ClassList.Should().NotContain("mud-popover-open");
             // click and check if it has toggled the menu
             input.Click();
-            menu.ClassList.Should().Contain("mud-open");
+            menu.ClassList.Should().Contain("mud-popover-open");
 
             // now click an item and see the value change
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             // menu should be closed now
-            menu.ClassList.Should().NotContain("mud-open");
+            menu.ClassList.Should().NotContain("mud-popover-open");
             select.Instance.Value.Should().Be("2");
             // now we cheat and click the list without opening the menu ;)
             items[0].Click();
@@ -61,21 +61,21 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect>();
-            var menu = comp.Find("div.mud-select-menu");
+            var menu = comp.Find("div.mud-popover");
             var input = comp.Find("input");
 
             // check initial state
             select.Instance.Value.Should().BeNullOrEmpty();
-            menu.ClassList.Should().NotContain("mud-open");
+            menu.ClassList.Should().NotContain("mud-popover-open");
             // click and check if it has toggled the menu
             input.Click();
-            menu.ClassList.Should().Contain("mud-open");
+            menu.ClassList.Should().Contain("mud-popover-open");
 
             // now click an item and see the value change
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             // menu should still be open now!!
-            menu.ClassList.Should().Contain("mud-open");
+            menu.ClassList.Should().Contain("mud-popover-open");
             select.Instance.Value.Should().Be("2");
             items[0].Click();
             select.Instance.Value.Should().Be("2, 1");
