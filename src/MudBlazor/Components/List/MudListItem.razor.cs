@@ -9,7 +9,8 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-list-item")
-          .AddClass("mud-list-item-gutters")
+          .AddClass("mud-list-item-dense", Dense)
+          .AddClass("mud-list-item-gutters", !DisableGutters)
           .AddClass("mud-list-item-clickable", Clickable)
           .AddClass($"mud-ripple", Clickable && !DisableRipple)
           .AddClass(Class)
@@ -45,6 +46,16 @@ namespace MudBlazor
         /// If true, the List Subheader will be indented.
         /// </summary>
         [Parameter] public bool Inset { get; set; }
+
+        /// <summary>
+        /// If true, compact vertical padding will be used.
+        /// </summary>
+        [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
+        /// If true, the left and right padding is removed.
+        /// </summary>
+        [Parameter] public bool DisableGutters { get; set; }
 
         /// <summary>
         /// If Nested list and If Expanded true expands the nested list, otherwise collapse it.
