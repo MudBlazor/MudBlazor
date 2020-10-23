@@ -25,4 +25,11 @@
     <!--<Exec Command="$(SolutionDir)MudBlazor.Docs.Compiler\bin\Debug\netcoreapp3.1\MudBlazor.Docs.Compiler.exe" />-->
   </Target>
 
+  <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
+    <ItemGroup>
+      <FileWatch Include="**\*.razor;" Exclude="node_modules\**\*;obj\**\*;bin\**\*" />
+      <Watch Include="%(FileWatch.FullPath)" />
+    </ItemGroup>
+  </Target>
+  
 </Project>

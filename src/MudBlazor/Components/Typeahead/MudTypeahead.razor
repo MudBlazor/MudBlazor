@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<MudInputControl HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname">
+        <MudInput InputType="InputType.Text" Variant="@Variant" Value="@_textValue" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
+                  OnChange="OnInput" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
+        <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant">
+            @Label
+        </MudInputLabel>
+        <MudPopover Open="@isOpen" MaxHeight="@MaxHeight" style="margin-top: 50px">
+            <MudList Clickable="true" Dense="@Dense">
+                @if(Items != null && Items.Any()){
+                    @foreach (T item in Items)
+                    {
+                        <MudListItem OnClick="@(() => {SelectOption(item);})">
+                            @GetValue(item)
+                        </MudListItem>
+                    }
+                }
+            </MudList>
+        </MudPopover>
+</MudInputControl>
+
+
+@if (isOpen)
+{
+    <div class="mud-popover-overlay" @onclick="@ToggleMenu"></div>
+}

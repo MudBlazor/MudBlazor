@@ -1041,6 +1041,146 @@
             Child content of component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTypeahead`1.Disabled">
+            <summary>
+            If true, the input element will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.ReadOnly">
+            <summary>
+            If true, the input will be read only.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.Error">
+            <summary>
+            If true, the label will be displayed in an error state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.FullWidth">
+            <summary>
+            If true, the input will take up the full width of its container.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.DisableUnderLine">
+            <summary>
+            If true, the input will not have an underline.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.Label">
+            <summary>
+            If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.Placeholder">
+            <summary>
+            The short hint displayed in the input before the user enters a value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.HelperText">
+            <summary>
+            If string has value, helpertext will be applied.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.AdornmentIcon">
+            <summary>
+            Icon that will be used if Adornment is set to Start or End.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.AdornmentText">
+            <summary>
+            Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.Adornment">
+            <summary>
+            Sets Start or End Adornment if not set to None.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.IconSize">
+            <summary>
+            Sets the Icon Size.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.OnAdornmentClick">
+            <summary>
+            Button click event if set and Adornment used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.InputType">
+            <summary>
+            Type of the input element. It should be a valid HTML5 input type.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.Variant">
+            <summary>
+            Variant to use.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.Margin">
+            <summary>
+             Will adjust vertical spacing. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.Dense">
+            <summary>
+            If true, compact vertical padding will be applied to all select items.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.OpenIcon">
+            <summary>
+            The Open Select Icon
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.CloseIcon">
+            <summary>
+            The Open Select Icon
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.MaxHeight">
+            <summary>
+            Sets the maxheight the select can have when open.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.DisplayField">
+            <summary>
+            Field which will be displayed in the list
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.Data">
+            <summary>
+            Expression to get Data
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.Format">
+            <summary>
+            Set the format for values if no template
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.MaxItems">
+            <summary>
+            Maximum items to display, defaults to 10
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.MinCharacters">
+            <summary>
+            Minimum characters to initiate a search, defaults to 2
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.DebounceInterval">
+            <summary>
+            Debounce interval in milliseconds.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.ValueChanged">
+            <summary>
+            Fired when the Value property changes. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTypeahead`1.Value">
+            <summary>
+            The value of this input element. This property is two-way bindable.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudText.Typo">
             <summary>
             Applies the theme typography styles.

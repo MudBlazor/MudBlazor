@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTypeahead Label="Food" @bind-Value="Item" Data="Search" T="string" />
+    </MudItem>
+    <MudItem xs="12" md="12">
+        <MudText Class="mb-n3" Typo="Typo.body2">
+            Selected value: @Item
+        </MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string Item { get; set; } = "";
+    private List<string> list = new List<string>() { "Pizza", "Pasta", "Burgers" };
+
+    private Task<IEnumerable<string>> Search(string value)
+    {
+        return Task.FromResult(list.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+    }
+
+}
