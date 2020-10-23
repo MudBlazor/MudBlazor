@@ -399,14 +399,16 @@ public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""P
 
 public const string DialogDialogFormExample = @"<MudDialog>
     <DialogContent>
+        <MudText Class=""mt-2"">Note: Database creation can take up to 30 minutes.</MudText>
+        <MudText Class=""mb-2"">After database is created you will rescive a email to your cloud account.</MudText>
         <MudForm>
-            <MudTextField Label=""Database name"" FullWidth=""true""></MudTextField>
-            <MudTextField Label=""Database tags"" FullWidth=""true""></MudTextField>
+            <MudTextField Label=""Database name""></MudTextField>
+            <MudTextField Label=""Database tags""></MudTextField>
             <MudSelect FullWidth=""true"" Label=""Resource Group"" ValueChanged=""@OnSelectedValue"">
                 <MudSelectItem Value=""Prod"">Prod</MudSelectItem>
                 <MudSelectItem Value=""Test"">Test</MudSelectItem>
             </MudSelect>
-            <MudCheckBox Label=""Want to use SQL elastic pool?"" Color=""Color.Primary""></MudCheckBox>
+            <MudCheckBox Label=""Want to use SQL elastic pool?"" Color=""Color.Primary"" Class=""my-4""></MudCheckBox>
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -766,25 +768,25 @@ public const string FabSizeExample = @"<SectionContentRow>
 
 public const string GridBasicExample = @"<MudGrid>
     <MudItem xs=""12"">
-        <MudPaper>12</MudPaper>
+        <MudPaper>xs=12</MudPaper>
     </MudItem>
     <MudItem xs=""6"">
-        <MudPaper>6</MudPaper>
+        <MudPaper>xs=6</MudPaper>
     </MudItem>
     <MudItem xs=""6"">
-        <MudPaper>6</MudPaper>
+        <MudPaper>xs=6</MudPaper>
     </MudItem>
     <MudItem xs=""3"">
-        <MudPaper>3</MudPaper>
+        <MudPaper>xs=3</MudPaper>
     </MudItem>
     <MudItem xs=""3"">
-        <MudPaper>3</MudPaper>
+        <MudPaper>xs=3</MudPaper>
     </MudItem>
     <MudItem xs=""3"">
-        <MudPaper>3</MudPaper>
+        <MudPaper>xs=3</MudPaper>
     </MudItem>
     <MudItem xs=""3"">
-        <MudPaper>3</MudPaper>
+        <MudPaper>xs=3</MudPaper>
     </MudItem>
 </MudGrid>";
 
@@ -824,6 +826,123 @@ public const string GridSpacingExample = @"<MudGrid>
         StateHasChanged();
     }
 }";
+
+public const string GridWithBreakpointsExample = @"<MudGrid>
+    <MudItem xs=""12"">
+        <MudPaper>xs=12</MudPaper>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"">
+        <MudPaper>xs=12 sm=6</MudPaper>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"">
+        <MudPaper>xs=12 sm=6</MudPaper>
+    </MudItem>
+    <MudItem xs=""6"" sm=""3"">
+        <MudPaper>xs=6 sm=3</MudPaper>
+    </MudItem>
+    <MudItem xs=""6"" sm=""3"">
+        <MudPaper>xs=6 sm=3</MudPaper>
+    </MudItem>
+    <MudItem xs=""6"" sm=""3"">
+        <MudPaper>xs=6 sm=3</MudPaper>
+    </MudItem>
+    <MudItem xs=""6"" sm=""3"">
+        <MudPaper>xs=6 sm=3</MudPaper>
+    </MudItem>
+</MudGrid>";
+
+public const string BrowserResizeEventExample = @"<MudCard Class=""pa-5"">
+    <MudText>Resize the window and see width and height change:<br /> 
+        Browser window is @(width)x@(height)px</MudText>
+</MudCard>
+
+@code
+{
+    [Inject] IResizeListenerService ResizeListener { get; set; }
+
+    int width = 0;
+    int height = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ResizeListener.OnResized += OnResized;
+        }
+        var size = await ResizeListener.GetBrowserWindowSize();
+        height = size.Height;
+        width = size.Width;
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void OnResized(object sender, BrowserWindowSize size)
+    {
+        width = size.Width;
+        height = size.Height;
+        InvokeAsync(StateHasChanged);
+    }
+}";
+
+public const string HiddenExample = @"<MudHidden Breakpoint=""Breakpoint.Xl"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>XL</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.Lg"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>LG</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.Md"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>MD</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.Sm"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>SM</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.Xs"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>XS</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.LgAndUp"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>LG and Up</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.MdAndUp"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>MD and Up</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.SmAndUp"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>SM and Up</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.LgAndDown"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>LG and Down</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.MdAndDown"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>MD and Down</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.SmAndDown"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>SM and Down</MudText>
+    </MudCard>
+</MudHidden>";
 
 public const string IconButtonSimpleExample = @"<MudIconButton Icon=""@Icons.Material.Delete""></MudIconButton>
 <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Primary""></MudIconButton>
@@ -1926,99 +2045,6 @@ public const string TextGeneralExample = @"<MudText Typo=""Typo.h1"">h1. Heading
 <MudText Typo=""Typo.button"">BUTTON TEXT</MudText>
 <MudText Typo=""Typo.caption"">caption text</MudText>
 <MudText Typo=""Typo.overline"">OVERLINE TEXT</MudText>";
-
-public const string BrowserResizeEventExample = @"<MudCard Class=""pa-5"">
-    <MudText>Resize the window and see width and height change:<br /> 
-        Browser window is @(width)x@(height)px</MudText>
-</MudCard>
-
-@code
-{
-    [Inject] IResizeListenerService ResizeListener { get; set; }
-
-    int width = 0;
-    int height = 0;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            ResizeListener.OnResized += OnResized;
-        }
-        var size = await ResizeListener.GetBrowserWindowSize();
-        height = size.Height;
-        width = size.Width;
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
-    private void OnResized(object sender, BrowserWindowSize size)
-    {
-        width = size.Width;
-        height = size.Height;
-        InvokeAsync(StateHasChanged);
-    }
-}";
-
-public const string HiddenExample = @"<MudHidden Breakpoint=""Breakpoint.Xl"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>XL</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.Lg"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>LG</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.Md"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>MD</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.Sm"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>SM</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.Xs"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>XS</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.LgAndUp"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>LG and Up</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.MdAndUp"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>MD and Up</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.SmAndUp"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>SM and Up</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.LgAndDown"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>LG and Down</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.MdAndDown"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>MD and Down</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.SmAndDown"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>SM and Down</MudText>
-    </MudCard>
-</MudHidden>";
 
 public const string ColorsClassExample = @"<MudText>
     This is not set by any <strong class=""green-text text-accent-4"">MudTheme</strong> colors.

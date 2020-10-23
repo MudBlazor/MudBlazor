@@ -732,6 +732,39 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void GridWithBreakpointsExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<GridWithBreakpointsExample>();
+        }
+
+
+        [Test]
+        public void BrowserResizeEventExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<BrowserResizeEventExample>();
+        }
+
+
+        [Test]
+        public void HiddenExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<HiddenExample>();
+        }
+
+
+        [Test]
         public void IconButtonSimpleExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -1476,28 +1509,6 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<TextGeneralExample>();
-        }
-
-
-        [Test]
-        public void BrowserResizeEventExample_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<BrowserResizeEventExample>();
-        }
-
-
-        [Test]
-        public void HiddenExample_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<HiddenExample>();
         }
 
 
