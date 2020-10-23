@@ -194,6 +194,22 @@
             Allows text input from keyboard.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBasePicker.ValueChanged">
+            <summary>
+            Fired when the value changes.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.Value">
+            <summary>
+            The currently selected value represented as a string (two-way bindable)
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudBasePicker.StringValueChanged(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+        </member>
         <member name="P:MudBlazor.MudBaseSelectItem.Disabled">
             <summary>
             If true, the input element will be disabled.
@@ -488,6 +504,56 @@
         <member name="P:MudBlazor.MudDatePicker.InputIcon">
             <summary>
             Sets the Input Icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.Date">
+            <summary>
+            The currently selected date (two-way bindable). If null, then nothing was selected.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.DateChanged">
+            <summary>
+            Fired when the date changes.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.FirstDayOfWeek">
+            <summary>
+            Defines on which day the week starts. Defaults to DayOfWeek.Monday
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.PickerMonth">
+            <summary>
+            The current month of the date picker (two-way bindable). This changes when the user browses through the calender.
+            The month is represented as a DateTime which is always the first day of that month. You can also set this to define which month is initially shown. If not set, the current month is shown.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.PickerMonthChanged">
+            <summary>
+            Fired when the date changes.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudDatePicker.GetMonthStart">
+            <summary>
+            Get the first of the month to display
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MudBlazor.MudDatePicker.GetMonthEnd">
+            <summary>
+            Get the last of the month to display
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MudBlazor.MudDatePicker.GetWeek(System.Int32)">
+            <summary>
+            Gets the n-th week of the currently displayed month. 
+            </summary>
+            <param name="index">between 0 and 4</param>
+            <returns></returns>
+        </member>
+        <member name="M:MudBlazor.MudDatePicker.OnDayClicked(System.DateTime)">
+            <summary>
+            User clicked on a day
             </summary>
         </member>
         <member name="P:MudBlazor.MudExpansionPanel.Text">

@@ -28,121 +28,18 @@
         </div>
         <div class="mud-picker-calendar-transition mud-picker-slide-transition">
             <div class="mud-picker-calendar">
-                <div class="mud-picker-calendar-week">
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day mud-hidden">27</MudIconButton>
+                @for (int week = 0; week < 6; week++)
+                {
+                    <div class="mud-picker-calendar-week">
+                        @foreach (var day in GetWeek(week))
+                        {
+                            <div role="presentation" class="mud-picker-calendar-day">
+                                <MudIconButton Class="@GetDayClasses(day)" OnClick="@(() =>{ var d = day; OnDayClicked(d); })">@day.Day</MudIconButton>
+                            </div>
+                        }
                     </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day mud-hidden">28</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day mud-hidden">29</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day mud-hidden">30</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">1</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">2</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">3</MudIconButton>
-                    </div>
-                </div>
-                <div class="mud-picker-calendar-week">
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">4</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">5</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">6</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">7</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">8</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">9</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">10</MudIconButton>
-                    </div>
-                </div>
-                <div class="mud-picker-calendar-week">
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">11</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">12</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">13</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">14</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">15</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">16</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">17</MudIconButton>
-                    </div>
-                </div>
-                <div class="mud-picker-calendar-week">
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="@CurrentDayClass">18</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="@SelectedDayClass">19</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">20</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">21</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">22</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">23</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">24</MudIconButton>
-                    </div>
-                </div>
-                <div class="mud-picker-calendar-week">
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">25</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">26</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">27</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">28</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">29</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">30</MudIconButton>
-                    </div>
-                    <div role="presentation" class="mud-picker-calendar-day">
-                        <MudIconButton Class="mud-day">31</MudIconButton>
-                    </div>
-                </div>
+                }
+
             </div>
         </div>
     </MudPickerContent>
