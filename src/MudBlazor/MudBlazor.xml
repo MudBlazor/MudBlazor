@@ -518,7 +518,7 @@
         </member>
         <member name="P:MudBlazor.MudDatePicker.FirstDayOfWeek">
             <summary>
-            Defines on which day the week starts. Defaults to DayOfWeek.Monday
+            Defines on which day the week starts. Depends on the value of Culture. 
             </summary>
         </member>
         <member name="P:MudBlazor.MudDatePicker.PickerMonth">
@@ -530,6 +530,11 @@
         <member name="P:MudBlazor.MudDatePicker.PickerMonthChanged">
             <summary>
             Fired when the date changes.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.Culture">
+            <summary>
+            The display culture
             </summary>
         </member>
         <member name="M:MudBlazor.MudDatePicker.GetMonthStart">
@@ -554,6 +559,17 @@
         <member name="M:MudBlazor.MudDatePicker.OnDayClicked(System.DateTime)">
             <summary>
             User clicked on a day
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudDatePicker.GetAbbreviatedDayNames">
+            <summary>
+            return Mo, Tu, We, Th, Fr, Sa, Su in the right culture
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MudBlazor.MudDatePicker.Shift``1(``0[],System.Int32)">
+            <summary>
+            Shift array and cycle around from the end
             </summary>
         </member>
         <member name="P:MudBlazor.MudExpansionPanel.Text">

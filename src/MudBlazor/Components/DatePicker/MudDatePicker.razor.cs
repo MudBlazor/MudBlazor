@@ -4,6 +4,7 @@ using MudBlazor.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace MudBlazor
 {
@@ -54,9 +55,9 @@ namespace MudBlazor
         [Parameter] public EventCallback<DateTime?> DateChanged { get; set; }
 
         /// <summary>
-        /// Defines on which day the week starts. Defaults to DayOfWeek.Monday
+        /// Defines on which day the week starts. Depends on the value of Culture. 
         /// </summary>
-        [Parameter] public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Monday;
+        [Parameter] public DayOfWeek? FirstDayOfWeek { get; set; } = null;
 
         /// <summary>
         /// The current month of the date picker (two-way bindable). This changes when the user browses through the calender.
@@ -83,6 +84,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<DateTime?> PickerMonthChanged { get; set; }
 
+        /// <summary>
+        /// The display culture
+        /// </summary>
+        [Parameter] public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
+
 
 
         protected override void StringValueChanged(string value)
@@ -104,7 +110,14 @@ namespace MudBlazor
         /// Get the last of the month to display
         /// </summary>
         /// <returns></returns>
-        protected DateTime GetMonthEnd() => _picker_month == null ? DateTime.Today.EndOfMonth() : _picker_month.Value;
+        protected DateTime GetMonthEnd() => _picker_month == null ? DateTime.Today.EndOfMonth() : _picker_month.Value.EndOfMonth();
+
+        protected DayOfWeek GetFirstDayOfWeek()
+        {
+            if (FirstDayOfWeek.HasValue)
+                return FirstDayOfWeek.Value;
+            return Culture.DateTimeFormat.FirstDayOfWeek;
+        }
 
         /// <summary>
         /// Gets the n-th week of the currently displayed month. 
@@ -116,7 +129,7 @@ namespace MudBlazor
             if (index < 0 || index > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
             var month_first = GetMonthStart();
-            var week_first = month_first.AddDays(index*7).StartOfWeek(FirstDayOfWeek);
+            var week_first = month_first.AddDays(index*7).StartOfWeek(GetFirstDayOfWeek( ));
             for (int i = 0; i < 7; i++)
                 yield return week_first.AddDays(i);
         }
@@ -136,10 +149,68 @@ namespace MudBlazor
         /// <summary>
         /// User clicked on a day
         /// </summary>
-        private void OnDayClicked(DateTime dateTime)
+        protected void OnDayClicked(DateTime dateTime)
         {
             Date = dateTime;
             Close();
+        }
+
+        /// <summary>
+        /// return Mo, Tu, We, Th, Fr, Sa, Su in the right culture
+        /// </summary>
+        /// <returns></returns>
+        protected IEnumerable<string> GetAbbreviatedDayNames()
+        {
+            string[] dayNamesNormal = Culture.DateTimeFormat.AbbreviatedDayNames;
+            string[] dayNamesShifted = Shift(dayNamesNormal, (int)GetFirstDayOfWeek());
+            return dayNamesShifted;
+        }
+
+        /// <summary>
+        /// Shift array and cycle around from the end
+        /// </summary>
+        private static T[] Shift<T>(T[] array, int positions)
+        {
+            T[] copy = new T[array.Length];
+            Array.Copy(array, 0, copy, array.Length - positions, positions);
+            Array.Copy(array, positions, copy, 0, array.Length - positions);
+            return copy;
+        }
+
+        protected string GetMonthName()
+        {
+            return GetMonthStart().ToString(Culture.DateTimeFormat.YearMonthPattern, Culture);
+        }
+
+        protected string GetFormattedDateString()
+        {
+            if (Date == null)
+                return "";
+            return Date.Value.ToString("ddd, dd MMM", Culture);
+        }        
+        protected string GetFormattedYearString()
+        {
+            return GetMonthStart().ToString("yyyy", Culture);
+        }
+
+        private void OnPreviousMonthClick()
+        {
+            PickerMonth = GetMonthStart().AddDays(-1).StartOfMonth();
+        }
+
+        private void OnNextMonthClick()
+        {
+            PickerMonth = GetMonthEnd().AddDays(1);
+        }
+
+        private void OnYearClick()
+        {
+            
+        }
+
+        private void OnFormattedDateClick()
+        {
+            
         }
     }
 }

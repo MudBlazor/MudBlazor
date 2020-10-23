@@ -4,26 +4,23 @@
 
 <MudPicker PickerVariant="@PickerVariant" Orientation="@Orientation" Label="@Label" Value="@Value" HelperText="@HelperText" InputVariant="@InputVariant" Disabled="@Disabled" Adornment="@Adornment" IconSize="@IconSize" InputIcon="@InputIcon" Elevation="@Elevation" Square="@Square" Rounded="@Rounded">
     <MudPickerToolbar Class="mud-picker-datepicker-toolbar" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
-        <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year">2020</MudButton>
-        <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date">Sun, Oct 19</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year" OnClick="@OnYearClick">@GetFormattedYearString()</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="@OnFormattedDateClick">@GetFormattedDateString()</MudButton>
     </MudPickerToolbar>
     <MudPickerContent>
         <div class="mud-picker-calendar-header">
             <div class="mud-picker-calendar-header-switch">
-                <MudIconButton Icon="@Icons.Material.ChevronLeft" />
+                <MudIconButton Icon="@Icons.Material.ChevronLeft" OnClick="@OnPreviousMonthClick"/>
                 <div class="mud-picker-slide-transition mud-picker-calendar-header-transition">
-                    <MudText Typo="Typo.body1" Align="Align.Center">October 2020</MudText>
+                    <MudText Typo="Typo.body1" Align="Align.Center">@GetMonthName()</MudText>
                 </div>
-                <MudIconButton Icon="@Icons.Material.ChevronRight" />
+                <MudIconButton Icon="@Icons.Material.ChevronRight" OnClick="@OnNextMonthClick"/>
             </div>
             <div class="mud-picker-calendar-header-day">
-                <MudText Typo="Typo.caption" Class="mud-day-label">Su</MudText>
-                <MudText Typo="Typo.caption" Class="mud-day-label">Mo</MudText>
-                <MudText Typo="Typo.caption" Class="mud-day-label">Tu</MudText>
-                <MudText Typo="Typo.caption" Class="mud-day-label">We</MudText>
-                <MudText Typo="Typo.caption" Class="mud-day-label">Th</MudText>
-                <MudText Typo="Typo.caption" Class="mud-day-label">Fr</MudText>
-                <MudText Typo="Typo.caption" Class="mud-day-label">Sa</MudText>
+                @foreach (var dayname in GetAbbreviatedDayNames())
+                {
+                    <MudText Typo="Typo.caption" Class="mud-day-label">@dayname</MudText>
+                }
             </div>
         </div>
         <div class="mud-picker-calendar-transition mud-picker-slide-transition">
