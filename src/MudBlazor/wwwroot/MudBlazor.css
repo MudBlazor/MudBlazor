@@ -3620,6 +3620,14 @@ ul {
   .mud-popover.mud-popover-open {
     display: block;
     animation: mud-animation-fadein 251ms; }
+  .mud-popover.mud-popover-top {
+    bottom: 0; }
+    .mud-popover.mud-popover-top.mud-popover-offset-y {
+      bottom: 100%; }
+  .mud-popover.mud-popover-bottom {
+    top: 0; }
+    .mud-popover.mud-popover-bottom.mud-popover-offset-y {
+      top: 100%; }
 
 .mud-popover-overlay {
   top: 0;
@@ -4766,6 +4774,8 @@ ul {
     width: 100%; }
   .mud-input-control > div.mud-input.mud-input-text {
     margin-top: 16px; }
+  .mud-input-control > .mud-input-label-outlined.mud-input-label-inputcontrol {
+    line-height: 20px; }
   .mud-input-control > .mud-input-label-inputcontrol {
     color: var(--mud-theme-text-default);
     padding: 0;

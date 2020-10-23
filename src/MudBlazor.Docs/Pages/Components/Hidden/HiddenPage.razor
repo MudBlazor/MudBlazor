@@ -1,0 +1,35 @@
+﻿@page "/components/hidden"
+
+<DocsPage>
+    <DocsPageHeader>
+        <Title>Hidden</Title>
+        <SubTitle>Hiding parts of the UI with MudHidden</SubTitle>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <MudText>All elements are rendered unless <b>they are explicitly hidden.</b> You can use <MudLink Href="/system/breakpoints">MudBlazor's breakpoints</MudLink> combined with MudHidden to hide any content.</MudText>
+    </DocsPageContent>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>How it works</Title>
+                <Description>The following example shows all breakpoint options only if they match the screensize. Because it is more intuitive for this example we inverted all the breakpoints so that you can see them only if they match.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <HiddenExample />
+            </SectionContent>
+            <SectionSource Code="HiddenExample" GitHubFolderName="Hidden" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Listening to browser window resize events</Title>
+                <Description>
+                    <MudText>Directly listening to the screen size change events is the most expensive way to adapt to a resizing browser window. Use this only if the other breakpoint methods don't work for you.</MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true">
+                <BrowserResizeEventExample />
+            </SectionContent>
+            <SectionSource Code="BrowserResizeEventExample" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

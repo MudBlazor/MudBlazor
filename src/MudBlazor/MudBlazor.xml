@@ -810,6 +810,16 @@
             Sets the maxheight the select can have when open.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudSelect.Direction">
+            <summary>
+            Sets the direction the select menu should be.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelect.OffsetY">
+            <summary>
+            If true, the select menu will open either before or after the input.
+            </summary>
+        </member>
         <member name="T:MudBlazor.MudSelectItem">
             <summary>
             Represents an option of a select or multi-select. To be used inside MudSelect.
