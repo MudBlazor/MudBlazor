@@ -17,8 +17,6 @@ namespace MudBlazor
         private T _value;
         private string _textValue;
 
-        private HashSet<T> _selectedValues;
-
         protected string Classname =>
             new CssBuilder("mud-select")
             .AddClass(Class)
@@ -88,6 +86,7 @@ namespace MudBlazor
         /// Button click event if set and Adornment used.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
+
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
         /// </summary>

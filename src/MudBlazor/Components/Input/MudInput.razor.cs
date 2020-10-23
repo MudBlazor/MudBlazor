@@ -34,5 +34,8 @@ namespace MudBlazor
        .Build();
 
         protected string _InputType => new CssBuilder().AddClass(InputType.ToDescriptionString()).Build();
+
+        [Parameter]
+        public EventCallback<ChangeEventArgs> OnInput { get; set; }
     }
 }

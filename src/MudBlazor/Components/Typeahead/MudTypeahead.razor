@@ -4,7 +4,7 @@
 
 <MudInputControl HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname">
         <MudInput InputType="InputType.Text" Variant="@Variant" Value="@_textValue" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                  OnChange="OnInput" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
+                  OnInput="@OnInput" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
         <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant">
             @Label
         </MudInputLabel>
