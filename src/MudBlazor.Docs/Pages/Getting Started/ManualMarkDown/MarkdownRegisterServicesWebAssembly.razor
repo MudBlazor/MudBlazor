@@ -2,7 +2,7 @@
 
 <div class="mud-codeblock">
 <div class="csharp">
-<pre>
+    <pre>
 <span class="keyword">using</span> MudBlazor;
 <span class="keyword">using</span> MudBlazor.Dialog;
 
@@ -14,6 +14,7 @@
     <span class="localVar">builder</span>.Services.<span class="function">AddScoped</span>(<span class="localVar">sp</span> =&gt; <span class="keyword">new</span> <span class="class">HttpClient</span> { BaseAddress = <span class="keyword">new</span> <span class="class">Uri</span>(<span class="localVar">builder</span>.HostEnvironment.BaseAddress) });
     <span class="localVar">builder</span>.Services.<span class="function">AddMudBlazorDialog</span>();
     <span class="localVar">builder</span>.Services.<span class="function">AddMudBlazorSnackbar</span>();
+    <span class="localVar">builder</span>.Services.<span class="function">AddMudBlazorResizeListener</span>();
 
     <span class="keyword">await</span> <span class="localVar">builder</span>.<span class="function">Build</span>().<span class="function">RunAsync</span>();
 }
