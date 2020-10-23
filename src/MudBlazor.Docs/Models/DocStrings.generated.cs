@@ -816,6 +816,12 @@ public const string MudPopover_MaxHeight = @"Sets the maxheight the popover can 
 
 public const string MudPopover_Open = @"If true, the popover is visible.";
 
+public const string MudPopover_Direction = @"";
+
+public const string MudPopover_OffsetX = @"";
+
+public const string MudPopover_OffsetY = @"";
+
 public const string MudPopover_ChildContent = @"Child content of the component.";
 
 public const string MudPopover_Class = @"User class names, separated by space";
@@ -886,6 +892,12 @@ public const string MudSelect_SelectedValues = @"Set of selected values. If Mult
 public const string MudSelect_MultiSelection = @"If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown";
 
 public const string MudSelect_MaxHeight = @"Sets the maxheight the select can have when open.";
+
+public const string MudSelect_Direction = @"Sets the direction the select menu should be.";
+
+public const string MudSelect_OffsetY = @"If true, the select menu will open either before or after the input.";
+
+public const string MudSelect_OffsetX = @"";
 
 public const string MudSelect_Disabled = @"If true, the input element will be disabled.";
 

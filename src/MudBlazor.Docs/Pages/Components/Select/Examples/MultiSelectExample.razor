@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudGrid>
-    <MudItem xs="12" md="12" lg="12">
+    <MudItem xs="12" md="12">
         <MudSelect Label="US States" HelperText="Pick your favorite states" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options">
             @foreach (var state in states)
             {
@@ -9,9 +9,11 @@
             }
         </MudSelect>
     </MudItem>
-    <MudItem xs="12" md="12" lg="12">
-        <MudText>MudSelect.Value: "@value"</MudText>
-        <MudText>MudSelect.SelectedValues: HashSet&lt;string&gt; { @(string.Join(", ", options.Select(x=>$"\"{x}\""))) }</MudText>
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.body2">MudSelect.Value: "@value"</MudText>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.body2">MudSelect.SelectedValues: HashSet&lt;string&gt; { @(string.Join(", ", options.Select(x=>$"\"{x}\""))) }</MudText>
     </MudItem>
 </MudGrid>
    

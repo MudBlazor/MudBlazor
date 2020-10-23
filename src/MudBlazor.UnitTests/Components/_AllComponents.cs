@@ -1073,6 +1073,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void SelectInteractiveExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<SelectInteractiveExample>();
+        }
+
+
+        [Test]
         public void SelectUsageExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -1080,6 +1091,17 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<SelectUsageExample>();
+        }
+
+
+        [Test]
+        public void SelectVariantsExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<SelectVariantsExample>();
         }
 
 

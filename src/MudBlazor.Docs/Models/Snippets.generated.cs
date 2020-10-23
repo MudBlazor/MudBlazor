@@ -1196,17 +1196,19 @@ public const string RadioLabelPlacementExample = @"<MudForm Class=""demo-radio-i
 }";
 
 public const string MultiSelectExample = @"<MudGrid>
-    <MudItem xs=""12"" md=""12"" lg=""12"">
-        <MudSelect Label=""US States"" MultiSelection=""true"" @bind-Value=""value"" @bind-SelectedValues=""options"">
+    <MudItem xs=""12"" md=""12"">
+        <MudSelect Label=""US States"" HelperText=""Pick your favorite states"" MultiSelection=""true"" @bind-Value=""value"" @bind-SelectedValues=""options"">
             @foreach (var state in states)
             {
                 <MudSelectItem Value=""@state"">@state</MudSelectItem>
             }
         </MudSelect>
     </MudItem>
-    <MudItem xs=""12"" md=""12"" lg=""12"">
-        <MudText>MudSelect.Value: ""@value""</MudText>
-        <MudText>MudSelect.SelectedValues: HashSet&lt;string&gt; { @(string.Join("", "", options.Select(x=>$""\""{x}\""""))) }</MudText>
+    <MudItem xs=""12"" md=""6"">
+        <MudText Typo=""Typo.body2"">MudSelect.Value: ""@value""</MudText>
+    </MudItem>
+    <MudItem xs=""12"" md=""6"">
+        <MudText Typo=""Typo.body2"">MudSelect.SelectedValues: HashSet&lt;string&gt; { @(string.Join("", "", options.Select(x=>$""\""{x}\""""))) }</MudText>
     </MudItem>
 </MudGrid>
    
@@ -1236,37 +1238,77 @@ public const string MultiSelectExample = @"<MudGrid>
 
 }";
 
-public const string SelectDenseExample = @"<MudGrid>
-    <MudItem xs=""12"" md=""6"">
-        <MudSelect Label=""Dense"" Dense=""true"">
-            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
-            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
-            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
-            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
-            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
-            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
-        </MudSelect>
-    </MudItem>
-    <MudItem xs=""12"" md=""6"">
-        <MudSelect Label=""Normal"">
-            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
-            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
-            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
-            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
-            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
-            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
-        </MudSelect>
-    </MudItem>
-</MudGrid>";
+public const string SelectDenseExample = @"<MudSelect Label=""Dense"" Dense=""true"">
+    <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+    <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+    <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+</MudSelect>";
 
-public const string SelectDisabledExample = @"<MudGrid>
-    <MudItem xs=""12"" md=""12"">
-        <MudSelect Label=""Disabled"" Disabled=""true"">
-            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
-            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+public const string SelectDisabledExample = @"<MudSelect Label=""Disabled"" Disabled=""true"">
+    <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+    <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+</MudSelect>";
+
+public const string SelectInteractiveExample = @"<MudGrid>
+    <MudItem xs=""12"" md=""3"">
+        <MudForm>
+            <MudSwitch CheckedChanged=""@OnPostitionChange"" Color=""Color.Primary"" Label=""Open Top"" />
+            <MudSwitch @bind-Checked=""@OffsetY"" Color=""Color.Secondary"" Label=""Offset Y"" />
+            <MudSwitch @bind-Checked=""@Dense"" Color=""Color.Primary"" Label=""Dense"" />
+        </MudForm>
+    </MudItem>
+    <MudItem xs=""12"" md=""1"" />
+    <MudItem xs=""12"" md=""4"">
+        <MudSelect Label=""Variants"" Variant=""@_variant"" Direction=""@_direction"" Dense=""@Dense"" OffsetY=""@OffsetY"" ValueChanged=""OnSelectedValue"">
+            <MudSelectItem Value=""text"">Text</MudSelectItem>
+            <MudSelectItem Value=""filled"">Filled</MudSelectItem>
+            <MudSelectItem Value=""outlined"">Outlined</MudSelectItem>
         </MudSelect>
     </MudItem>
-</MudGrid>";
+    <MudItem xs=""12"" md=""4"" />
+</MudGrid>
+
+@code {
+
+    public bool OpenTop { get; set; }
+    public bool OffsetY { get; set; } = true;
+    public bool Dense { get; set; } = true;
+
+    public string variant { get; set; }
+
+    public Direction _direction {get; set;}
+    public Variant _variant { get; set; } = Variant.Filled;
+
+    protected void OnPostitionChange()
+    {
+        OpenTop = !OpenTop;
+
+        if (OpenTop)
+        {
+            _direction = Direction.Top;
+        }
+        else
+        {
+            _direction = Direction.Bottom;
+        }
+    }
+
+    private void OnSelectedValue(string value)
+    {
+        if(value == ""text"")
+        {
+            _variant = Variant.Text;
+        }
+        if (value == ""filled"")
+        {
+            _variant = Variant.Filled;
+        }
+        if (value == ""outlined"")
+        {
+            _variant = Variant.Outlined;
+        }
+    }
+}";
 
 public const string SelectUsageExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
@@ -1309,6 +1351,27 @@ public const string SelectUsageExample = @"<MudGrid>
     }
 
 }";
+
+public const string SelectVariantsExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSelect Label=""Text"">
+            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSelect Label=""Text"" Variant=""Variant.Filled"">
+            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSelect Label=""Text"" Variant=""Variant.Outlined"">
+            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+</MudGrid>";
 
 public const string SimpleTableExample = @"<MudSimpleTable>
     <thead>
