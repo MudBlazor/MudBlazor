@@ -65,7 +65,7 @@
         }
         foreach (var type in typeof(MudBlazor.Docs.Components.DocsPage).Assembly.GetTypes())
         {
-            if (!type.Name.Contains("Example"))
+            if (!type.Name.EndsWith("Example"))
                 continue;
             if (type.Name.StartsWith("<"))
                 continue;
