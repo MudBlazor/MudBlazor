@@ -36,6 +36,12 @@
         }
     }
 
+    & > .mud-input-label-outlined {
+        &.mud-input-label-inputcontrol {
+            line-height: 20px;
+        }
+    }
+
     & > .mud-input-label-inputcontrol {
         color: var(--mud-theme-text-default);
         padding: 0;

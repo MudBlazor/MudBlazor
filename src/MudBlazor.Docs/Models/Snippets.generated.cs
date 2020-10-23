@@ -399,14 +399,16 @@ public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""P
 
 public const string DialogDialogFormExample = @"<MudDialog>
     <DialogContent>
+        <MudText Class=""mt-2"">Note: Database creation can take up to 30 minutes.</MudText>
+        <MudText Class=""mb-2"">After database is created you will rescive a email to your cloud account.</MudText>
         <MudForm>
-            <MudTextField Label=""Database name"" FullWidth=""true""></MudTextField>
-            <MudTextField Label=""Database tags"" FullWidth=""true""></MudTextField>
+            <MudTextField Label=""Database name""></MudTextField>
+            <MudTextField Label=""Database tags""></MudTextField>
             <MudSelect FullWidth=""true"" Label=""Resource Group"" ValueChanged=""@OnSelectedValue"">
                 <MudSelectItem Value=""Prod"">Prod</MudSelectItem>
                 <MudSelectItem Value=""Test"">Test</MudSelectItem>
             </MudSelect>
-            <MudCheckBox Label=""Want to use SQL elastic pool?"" Color=""Color.Primary""></MudCheckBox>
+            <MudCheckBox Label=""Want to use SQL elastic pool?"" Color=""Color.Primary"" Class=""my-4""></MudCheckBox>
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -766,25 +768,25 @@ public const string FabSizeExample = @"<SectionContentRow>
 
 public const string GridBasicExample = @"<MudGrid>
     <MudItem xs=""12"">
-        <MudPaper>12</MudPaper>
+        <MudPaper>xs=12</MudPaper>
     </MudItem>
     <MudItem xs=""6"">
-        <MudPaper>6</MudPaper>
+        <MudPaper>xs=6</MudPaper>
     </MudItem>
     <MudItem xs=""6"">
-        <MudPaper>6</MudPaper>
+        <MudPaper>xs=6</MudPaper>
     </MudItem>
     <MudItem xs=""3"">
-        <MudPaper>3</MudPaper>
+        <MudPaper>xs=3</MudPaper>
     </MudItem>
     <MudItem xs=""3"">
-        <MudPaper>3</MudPaper>
+        <MudPaper>xs=3</MudPaper>
     </MudItem>
     <MudItem xs=""3"">
-        <MudPaper>3</MudPaper>
+        <MudPaper>xs=3</MudPaper>
     </MudItem>
     <MudItem xs=""3"">
-        <MudPaper>3</MudPaper>
+        <MudPaper>xs=3</MudPaper>
     </MudItem>
 </MudGrid>";
 
@@ -824,6 +826,123 @@ public const string GridSpacingExample = @"<MudGrid>
         StateHasChanged();
     }
 }";
+
+public const string GridWithBreakpointsExample = @"<MudGrid>
+    <MudItem xs=""12"">
+        <MudPaper>xs=12</MudPaper>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"">
+        <MudPaper>xs=12 sm=6</MudPaper>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"">
+        <MudPaper>xs=12 sm=6</MudPaper>
+    </MudItem>
+    <MudItem xs=""6"" sm=""3"">
+        <MudPaper>xs=6 sm=3</MudPaper>
+    </MudItem>
+    <MudItem xs=""6"" sm=""3"">
+        <MudPaper>xs=6 sm=3</MudPaper>
+    </MudItem>
+    <MudItem xs=""6"" sm=""3"">
+        <MudPaper>xs=6 sm=3</MudPaper>
+    </MudItem>
+    <MudItem xs=""6"" sm=""3"">
+        <MudPaper>xs=6 sm=3</MudPaper>
+    </MudItem>
+</MudGrid>";
+
+public const string BrowserResizeEventExample = @"<MudCard Class=""pa-5"">
+    <MudText>Resize the window and see width and height change:<br /> 
+        Browser window is @(width)x@(height)px</MudText>
+</MudCard>
+
+@code
+{
+    [Inject] IResizeListenerService ResizeListener { get; set; }
+
+    int width = 0;
+    int height = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ResizeListener.OnResized += OnResized;
+        }
+        var size = await ResizeListener.GetBrowserWindowSize();
+        height = size.Height;
+        width = size.Width;
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private void OnResized(object sender, BrowserWindowSize size)
+    {
+        width = size.Width;
+        height = size.Height;
+        InvokeAsync(StateHasChanged);
+    }
+}";
+
+public const string HiddenExample = @"<MudHidden Breakpoint=""Breakpoint.Xl"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>XL</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.Lg"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>LG</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.Md"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>MD</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.Sm"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>SM</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.Xs"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>XS</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.LgAndUp"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>LG and Up</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.MdAndUp"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>MD and Up</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.SmAndUp"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>SM and Up</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.LgAndDown"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>LG and Down</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.MdAndDown"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>MD and Down</MudText>
+    </MudCard>
+</MudHidden>
+<MudHidden Breakpoint=""Breakpoint.SmAndDown"" Invert=""true"">
+    <MudCard Class=""pa-5"">
+        <MudText>SM and Down</MudText>
+    </MudCard>
+</MudHidden>";
 
 public const string IconButtonSimpleExample = @"<MudIconButton Icon=""@Icons.Material.Delete""></MudIconButton>
 <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Primary""></MudIconButton>
@@ -892,6 +1011,46 @@ public const string ListFolderExample = @"<MudList>
         Vacation
     </MudListItem>
 </MudList>";
+
+public const string ListInteractiveExample = @"<MudGrid>
+    <MudItem xs=""12"" md=""12"">
+        <MudCheckBox @bind-Checked=""@Dense"" Label=""Dense"" Color=""Color.Default"" />
+        <MudCheckBox @bind-Checked=""@Clickable"" Label=""Clickable"" Color=""Color.Primary"" />
+        <MudCheckBox @bind-Checked=""@Gutters"" Label=""Disable Gutters"" Color=""Color.Secondary"" />
+    </MudItem>
+    <MudItem xs=""12"" md=""6"">
+        <MudText Typo=""Typo.h6"" GutterBottom=""true"">Text only</MudText>
+        <MudList Clickable=""@Clickable"" Dense=""@Dense"" DisableGutters=""@Gutters"">
+            <MudListItem Text=""Single List Item"" />
+            <MudListItem Text=""Single List Item"" />
+            <MudListItem Text=""Single List Item"" />
+        </MudList>
+    </MudItem>
+    <MudItem xs=""12"" md=""6"">
+        <MudText Typo=""Typo.h6"" GutterBottom=""true"">Icons with text</MudText>
+        <MudList Clickable=""@Clickable"" Dense=""@Dense"" DisableGutters=""@Gutters"">
+            <MudListItem Text=""Single List Item"" Icon=""@Icons.Material.Bookmark"" />
+            <MudListItem Text=""Single List Item"" Icon=""@Icons.Material.Bookmark"" />
+            <MudListItem Text=""Single List Item"" Icon=""@Icons.Material.Bookmark"" />
+        </MudList>
+    </MudItem>
+    <MudItem xs=""12"" md=""6"">
+        <MudText Typo=""Typo.h6"" GutterBottom=""true"">Avatar with text</MudText>
+        <MudList Clickable=""@Clickable"" Dense=""@Dense"" DisableGutters=""@Gutters"">
+            <MudListItem Text=""Single List Item"" Avatar=""@Icons.Material.Image"" />
+            <MudListItem Text=""Single List Item"" Avatar=""@Icons.Material.Image"" />
+            <MudListItem Text=""Single List Item"" Avatar=""@Icons.Material.Image"" />
+        </MudList>
+    </MudItem>
+</MudGrid>
+
+
+
+@code {
+    public bool Dense { get; set; }
+    public bool Clickable { get; set; }
+    public bool Gutters { get; set; }
+}";
 
 public const string ListNestedExample = @"<MudList Clickable=""true"">
     <MudListSubheader>
@@ -1156,17 +1315,19 @@ public const string RadioLabelPlacementExample = @"<MudForm Class=""demo-radio-i
 }";
 
 public const string MultiSelectExample = @"<MudGrid>
-    <MudItem xs=""12"" md=""12"" lg=""12"">
-        <MudSelect Label=""US States"" MultiSelection=""true"" @bind-Value=""value"" @bind-SelectedValues=""options"">
+    <MudItem xs=""12"" md=""12"">
+        <MudSelect Label=""US States"" HelperText=""Pick your favorite states"" MultiSelection=""true"" @bind-Value=""value"" @bind-SelectedValues=""options"">
             @foreach (var state in states)
             {
                 <MudSelectItem Value=""@state"">@state</MudSelectItem>
             }
         </MudSelect>
     </MudItem>
-    <MudItem xs=""12"" md=""12"" lg=""12"">
-        <MudText>MudSelect.Value: ""@value""</MudText>
-        <MudText>MudSelect.SelectedValues: HashSet&lt;string&gt; { @(string.Join("", "", options.Select(x=>$""\""{x}\""""))) }</MudText>
+    <MudItem xs=""12"" md=""6"">
+        <MudText Typo=""Typo.body2"">MudSelect.Value: ""@value""</MudText>
+    </MudItem>
+    <MudItem xs=""12"" md=""6"">
+        <MudText Typo=""Typo.body2"">MudSelect.SelectedValues: HashSet&lt;string&gt; { @(string.Join("", "", options.Select(x=>$""\""{x}\""""))) }</MudText>
     </MudItem>
 </MudGrid>
    
@@ -1196,7 +1357,79 @@ public const string MultiSelectExample = @"<MudGrid>
 
 }";
 
-public const string SelectBasicExample = @"<MudGrid>
+public const string SelectDenseExample = @"<MudSelect Label=""Dense"" Dense=""true"">
+    <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+    <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+    <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+</MudSelect>";
+
+public const string SelectDisabledExample = @"<MudSelect Label=""Disabled"" Disabled=""true"">
+    <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+    <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+</MudSelect>";
+
+public const string SelectInteractiveExample = @"<MudGrid>
+    <MudItem xs=""12"" md=""3"">
+        <MudForm>
+            <MudSwitch CheckedChanged=""@OnPostitionChange"" Color=""Color.Primary"" Label=""Open Top"" />
+            <MudSwitch @bind-Checked=""@OffsetY"" Color=""Color.Secondary"" Label=""Offset Y"" />
+            <MudSwitch @bind-Checked=""@Dense"" Color=""Color.Primary"" Label=""Dense"" />
+        </MudForm>
+    </MudItem>
+    <MudItem xs=""12"" md=""1"" />
+    <MudItem xs=""12"" md=""4"">
+        <MudSelect Label=""Variants"" Variant=""@_variant"" Direction=""@_direction"" Dense=""@Dense"" OffsetY=""@OffsetY"" ValueChanged=""OnSelectedValue"">
+            <MudSelectItem Value=""text"">Text</MudSelectItem>
+            <MudSelectItem Value=""filled"">Filled</MudSelectItem>
+            <MudSelectItem Value=""outlined"">Outlined</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs=""12"" md=""4"" />
+</MudGrid>
+
+@code {
+
+    public bool OpenTop { get; set; }
+    public bool OffsetY { get; set; } = true;
+    public bool Dense { get; set; } = true;
+
+    public string variant { get; set; }
+
+    public Direction _direction {get; set;}
+    public Variant _variant { get; set; } = Variant.Filled;
+
+    protected void OnPostitionChange()
+    {
+        OpenTop = !OpenTop;
+
+        if (OpenTop)
+        {
+            _direction = Direction.Top;
+        }
+        else
+        {
+            _direction = Direction.Bottom;
+        }
+    }
+
+    private void OnSelectedValue(string value)
+    {
+        if(value == ""text"")
+        {
+            _variant = Variant.Text;
+        }
+        if (value == ""filled"")
+        {
+            _variant = Variant.Filled;
+        }
+        if (value == ""outlined"")
+        {
+            _variant = Variant.Outlined;
+        }
+    }
+}";
+
+public const string SelectUsageExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudSelect Label=""Food"" ValueChanged=""OnSelectedValue"">
             <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
@@ -1237,6 +1470,27 @@ public const string SelectBasicExample = @"<MudGrid>
     }
 
 }";
+
+public const string SelectVariantsExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSelect Label=""Text"">
+            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSelect Label=""Text"" Variant=""Variant.Filled"">
+            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSelect Label=""Text"" Variant=""Variant.Outlined"">
+            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+</MudGrid>";
 
 public const string SimpleTableExample = @"<MudSimpleTable>
     <thead>
@@ -1791,99 +2045,6 @@ public const string TextGeneralExample = @"<MudText Typo=""Typo.h1"">h1. Heading
 <MudText Typo=""Typo.button"">BUTTON TEXT</MudText>
 <MudText Typo=""Typo.caption"">caption text</MudText>
 <MudText Typo=""Typo.overline"">OVERLINE TEXT</MudText>";
-
-public const string BrowserResizeEventExample = @"<MudCard Class=""pa-5"">
-    <MudText>Resize the window and see width and height change:<br /> 
-        Browser window is @(width)x@(height)px</MudText>
-</MudCard>
-
-@code
-{
-    [Inject] IResizeListenerService ResizeListener { get; set; }
-
-    int width = 0;
-    int height = 0;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            ResizeListener.OnResized += OnResized;
-        }
-        var size = await ResizeListener.GetBrowserWindowSize();
-        height = size.Height;
-        width = size.Width;
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
-    private void OnResized(object sender, BrowserWindowSize size)
-    {
-        width = size.Width;
-        height = size.Height;
-        InvokeAsync(StateHasChanged);
-    }
-}";
-
-public const string HiddenExample = @"<MudHidden Breakpoint=""Breakpoint.Xl"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>XL</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.Lg"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>LG</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.Md"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>MD</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.Sm"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>SM</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.Xs"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>XS</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.LgAndUp"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>LG and Up</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.MdAndUp"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>MD and Up</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.SmAndUp"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>SM and Up</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.LgAndDown"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>LG and Down</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.MdAndDown"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>MD and Down</MudText>
-    </MudCard>
-</MudHidden>
-<MudHidden Breakpoint=""Breakpoint.SmAndDown"" Invert=""true"">
-    <MudCard Class=""pa-5"">
-        <MudText>SM and Down</MudText>
-    </MudCard>
-</MudHidden>";
 
 public const string ColorsClassExample = @"<MudText>
     This is not set by any <strong class=""green-text text-accent-4"">MudTheme</strong> colors.

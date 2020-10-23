@@ -645,6 +645,16 @@
             If true, vertical padding will be removed from the list.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudList.Dense">
+            <summary>
+            If true, compact vertical padding will be applied to all list items.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudList.DisableGutters">
+            <summary>
+            If true, the left and right padding is removed on all list items.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudListItem.Avatar">
             <summary>
             Avatar to use if set.
@@ -765,6 +775,11 @@
             Add the MudSelectItems here
             </summary>
         </member>
+        <member name="P:MudBlazor.MudSelect.Dense">
+            <summary>
+            If true, compact vertical padding will be applied to all select items.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudSelect.OpenIcon">
             <summary>
             The Open Select Icon
@@ -793,6 +808,16 @@
         <member name="P:MudBlazor.MudSelect.MaxHeight">
             <summary>
             Sets the maxheight the select can have when open.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelect.Direction">
+            <summary>
+            Sets the direction the select menu should be.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelect.OffsetY">
+            <summary>
+            If true, the select menu will open either before or after the input.
             </summary>
         </member>
         <member name="T:MudBlazor.MudSelectItem">

@@ -3,7 +3,11 @@
 <DocsPage>
     <DocsPageHeader>
         <Title>Grid</Title>
-        <Description>The grid component helps keep layout consistent across various screen resolutions and sizes.</Description>
+        <Description>
+            The grid component helps keep layout consistent across various screen resolutions and sizes.<br />
+            Mudblazor comes with a 12 point grid system amd contains 5 types of breakpoints that are used for specific screen sizes.<br /><br />
+            Read more about <MudLink Href="/system/breakpoints">MudBlazor's breakpoints here.</MudLink>
+        </Description>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
@@ -19,12 +23,22 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Basic grid</Title>
-                <Description></Description>
+                <Description>The column widths apply at all breakpoints, xs and up.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true" Class="demo-grid-basic">
                 <GridBasicExample />
             </SectionContent>
             <SectionSource Code="GridBasicExample" ShowCode="false" GitHubFolderName="Grid" SnippetId="cYbObDYk17gusra149" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Grid with breakpoints</Title>
+                <Description>You can apply multiple column widths, causing the layout to change at the specific break point.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true" Class="demo-grid-basic">
+                <GridWithBreakpointsExample />
+            </SectionContent>
+            <SectionSource Code="GridWithBreakpointsExample" ShowCode="false" GitHubFolderName="Grid" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

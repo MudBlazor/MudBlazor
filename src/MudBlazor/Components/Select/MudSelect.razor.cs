@@ -23,6 +23,11 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
+        /// If true, compact vertical padding will be applied to all select items.
+        /// </summary>
+        [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
         /// The Open Select Icon
         /// </summary>
         [Parameter] public string OpenIcon { get; set; } = Icons.Material.ArrowDropUp;
@@ -74,7 +79,19 @@ namespace MudBlazor
         /// <summary>
         /// Sets the maxheight the select can have when open.
         /// </summary>
-        [Parameter] public int MaxHeight { get; set; } = 300;
+        [Parameter] public int? MaxHeight { get; set; }
+
+        /// <summary>
+        /// Sets the direction the select menu should be.
+        /// </summary>
+        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
+
+        /// <summary>
+        /// If true, the select menu will open either before or after the input.
+        /// </summary>
+        [Parameter] public bool OffsetY { get; set; }
+
+        [Parameter] public bool OffsetX { get; set; }
 
         internal bool isOpen { get; set; }
 
@@ -115,19 +132,23 @@ namespace MudBlazor
 
         public void IconContoller()
         {
-            if (isOpen)
-            {
-                CurrentIcon = OpenIcon;
-            }
-            else
-            {
-                CurrentIcon = CloseIcon;
-            }
+                if (isOpen)
+                {
+                    CurrentIcon = OpenIcon;
+                }
+                else
+                {
+                    CurrentIcon = CloseIcon;
+                }
         }
 
         protected override void OnInitialized()
         {
             IconContoller();
+            if(MultiSelection && MaxHeight == null)
+            {
+                MaxHeight = 300;
+            }
         }
     }
 }

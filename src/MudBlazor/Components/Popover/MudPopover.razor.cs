@@ -10,6 +10,9 @@ namespace MudBlazor
         protected string PopoverClass =>
            new CssBuilder("mud-popover")
             .AddClass("mud-popover-open", Open)
+            .AddClass($"mud-popover-{Direction.ToDescriptionString()}")
+            .AddClass("mud-popover-offset-y", OffsetY)
+            .AddClass("mud-popover-offset-x", OffsetX)
             .AddClass("mud-paper")
             .AddClass("mud-paper-square", Square)
             .AddClass($"mud-elevation-{Elevation.ToString()}")
@@ -41,6 +44,12 @@ namespace MudBlazor
         /// If true, the popover is visible.
         /// </summary>
         [Parameter] public bool Open { get; set; }
+
+        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
+
+        [Parameter] public bool OffsetX { get; set; }
+
+        [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>
         /// Child content of the component.

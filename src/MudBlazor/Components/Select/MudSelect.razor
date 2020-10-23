@@ -4,12 +4,12 @@
 <MudInputControl HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname">
         <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
                   @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
-        <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant">
+        <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant" Disabled=@Disabled>
             @Label
         </MudInputLabel>
         <CascadingValue Value="@this">
-            <MudPopover Open="@isOpen" MaxHeight="@MaxHeight">
-                <MudList Clickable="true">
+            <MudPopover Open="@isOpen" Class="mud-select-menu" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
+                <MudList Clickable="true" Dense="@Dense">
                     @ChildContent
                 </MudList>
             </MudPopover>

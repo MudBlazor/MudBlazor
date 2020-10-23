@@ -618,6 +618,10 @@ public const string MudList_Clickable = @"Determens if the List will have clicka
 
 public const string MudList_DisablePadding = @"If true, vertical padding will be removed from the list.";
 
+public const string MudList_Dense = @"If true, compact vertical padding will be applied to all list items.";
+
+public const string MudList_DisableGutters = @"If true, the left and right padding is removed on all list items.";
+
 public const string MudList_Class = @"User class names, separated by space";
 
 public const string MudList_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -812,6 +816,12 @@ public const string MudPopover_MaxHeight = @"Sets the maxheight the popover can 
 
 public const string MudPopover_Open = @"If true, the popover is visible.";
 
+public const string MudPopover_Direction = @"";
+
+public const string MudPopover_OffsetX = @"";
+
+public const string MudPopover_OffsetY = @"";
+
 public const string MudPopover_ChildContent = @"Child content of the component.";
 
 public const string MudPopover_Class = @"User class names, separated by space";
@@ -869,6 +879,8 @@ public const string MudRadioGroup_UserAttributes = @"UserAttributes carries all 
 
 public const string MudSelect_ChildContent = @"Add the MudSelectItems here";
 
+public const string MudSelect_Dense = @"If true, compact vertical padding will be applied to all select items.";
+
 public const string MudSelect_OpenIcon = @"The Open Select Icon";
 
 public const string MudSelect_CloseIcon = @"The Open Select Icon";
@@ -880,6 +892,12 @@ public const string MudSelect_SelectedValues = @"Set of selected values. If Mult
 public const string MudSelect_MultiSelection = @"If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown";
 
 public const string MudSelect_MaxHeight = @"Sets the maxheight the select can have when open.";
+
+public const string MudSelect_Direction = @"Sets the direction the select menu should be.";
+
+public const string MudSelect_OffsetY = @"If true, the select menu will open either before or after the input.";
+
+public const string MudSelect_OffsetX = @"";
 
 public const string MudSelect_Disabled = @"If true, the input element will be disabled.";
 
