@@ -10,6 +10,12 @@
 @import 'core/reset';
 @import 'core/elevation';
 
+@import 'charts/barhorizontal';
+@import 'charts/barvertical';
+@import 'charts/donut';
+@import 'charts/line';
+@import 'charts/pie';
+
 @import 'components/alert';
 @import 'components/toolbar';
 @import 'components/tooltip';
