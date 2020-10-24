@@ -10,12 +10,6 @@
 @import 'core/reset';
 @import 'core/elevation';
 
-@import 'charts/barhorizontal';
-@import 'charts/barvertical';
-@import 'charts/donut';
-@import 'charts/line';
-@import 'charts/pie';
-
 @import 'components/alert';
 @import 'components/toolbar';
 @import 'components/tooltip';
@@ -23,6 +17,7 @@
 @import 'components/button';
 @import 'components/iconbutton';
 @import 'components/card';
+@import 'components/charts';
 @import 'components/checkbox';
 @import 'components/chip';
 @import 'components/collapse';

@@ -302,6 +302,21 @@ public const string MudCardMedia_Tag = @"Use Tag to attach any user data object 
 public const string MudCardMedia_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudChartBase_InputData = @"";
+
+public const string MudChartBase_InputLabels = @"";
+
+public const string MudChartBase_ChartType = @"";
+
+public const string MudChartBase_Class = @"User class names, separated by space";
+
+public const string MudChartBase_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudChartBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudChartBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudCheckBox_Color = @"The color of the component. It supports the theme colors.";
 
 public const string MudCheckBox_Label = @"If applied the text will be added to the component.";
@@ -1281,6 +1296,21 @@ public const string MudCardHeader_Tag = @"Use Tag to attach any user data object
 public const string MudCardHeader_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudChart_InputData = @"";
+
+public const string MudChart_InputLabels = @"";
+
+public const string MudChart_ChartType = @"";
+
+public const string MudChart_Class = @"User class names, separated by space";
+
+public const string MudChart_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudChart_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudChart_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudCollapse_Expanded = @"If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.";
 
 public const string MudCollapse_ChildContent = @"Child content of component.";
@@ -1774,6 +1804,66 @@ public const string MudDialogProvider_CloseButton = @"";
 public const string MudDialogProvider_DisableBackdropClick = @"";
 
 public const string MudDialogProvider_Position = @"";
+
+public const string DonutBase_InputData = @"";
+
+public const string DonutBase_InputLabels = @"";
+
+public const string DonutBase_ChartType = @"";
+
+public const string DonutBase_Class = @"User class names, separated by space";
+
+public const string DonutBase_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string DonutBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string DonutBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string PieBase_InputData = @"";
+
+public const string PieBase_InputLabels = @"";
+
+public const string PieBase_ChartType = @"";
+
+public const string PieBase_Class = @"User class names, separated by space";
+
+public const string PieBase_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string PieBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string PieBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string Donut_InputData = @"";
+
+public const string Donut_InputLabels = @"";
+
+public const string Donut_ChartType = @"";
+
+public const string Donut_Class = @"User class names, separated by space";
+
+public const string Donut_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string Donut_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string Donut_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string Pie_InputData = @"";
+
+public const string Pie_InputLabels = @"";
+
+public const string Pie_ChartType = @"";
+
+public const string Pie_Class = @"User class names, separated by space";
+
+public const string Pie_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string Pie_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string Pie_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
 
     }
 }
