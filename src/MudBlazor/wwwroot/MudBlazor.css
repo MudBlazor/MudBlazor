@@ -3545,11 +3545,18 @@ ul {
   justify-content: space-between; }
   .mud-picker-calendar-header-switch > .mud-icon-button {
     z-index: 1;
+    padding: 8px;
+    margin: 6px;
     background-color: var(--mud-theme-surface); }
+    .mud-picker-calendar-header-switch > .mud-icon-button:hover {
+      background-color: var(--mud-theme-default-hover); }
   .mud-picker-calendar-header-switch .mud-picker-calendar-header-transition {
     width: 100%;
     height: 23px;
     overflow: hidden; }
+    .mud-picker-calendar-header-switch .mud-picker-calendar-header-transition:hover .mud-typography {
+      cursor: pointer;
+      font-weight: 500; }
 
 .mud-picker-calendar-header-day {
   display: flex;

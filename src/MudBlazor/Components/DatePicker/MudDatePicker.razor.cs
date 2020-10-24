@@ -6,11 +6,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
+using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
     public partial class MudDatePicker : MudBasePicker
     {
+        [Inject] IJSRuntime JsRuntime { get; set; }
         /// <summary>
         /// Max selectable date.
         /// </summary>
@@ -217,7 +219,15 @@ namespace MudBlazor
         {
             OpenTo = OpenTo.Year;
             StateHasChanged();
-            // "#year"+GetMonthStart().Year
+            ScrollToYear();
+        }
+
+        public async void ScrollToYear()
+        {
+            string id = $"year{GetMonthStart().Year.ToString()}";
+            await Task.Delay(100);
+            await JsRuntime.InvokeVoidAsync("blazorHelpers.scrollToFragment", id);
+            StateHasChanged();
         }
 
         private int GetMinYear()

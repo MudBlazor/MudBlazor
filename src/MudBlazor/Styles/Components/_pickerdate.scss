@@ -33,15 +33,29 @@
     margin-bottom: 8px;
     justify-content: space-between;
 
+
     & > .mud-icon-button {
         z-index: 1;
+        padding: 8px;
+        margin: 6px;
         background-color: var(--mud-theme-surface);
+
+        &:hover {
+            background-color: var(--mud-theme-default-hover);
+        }
     }
 
     & .mud-picker-calendar-header-transition {
         width: 100%;
         height: 23px;
         overflow: hidden;
+
+        &:hover {
+            & .mud-typography {
+                cursor: pointer;
+                font-weight: 500;
+            }
+        }
     }
 }
 
