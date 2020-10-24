@@ -10,48 +10,15 @@
     <MudPickerContent>
         @if (OpenTo == OpenTo.Year)
         {
-        <div class="mud-picker-year-container">
-            <div class="mud-picker-year">
-                <MudText Typo="Typo.subtitle1">2016</MudText>
+            <div class="mud-picker-year-container">
+                @for(int i=GetMinYear(); i <= GetMaxYear(); i++)
+                {
+                    var year = i;
+                    <div class="mud-picker-year" id="@("year"+year)" @onclick="@(()=>OnYearClicked(year))">
+                        <MudText Typo="Typo.subtitle1" Class="@GetYearClasses(year)">@year</MudText>
+                    </div>
+                }
             </div>
-            <div class="mud-picker-year">
-                <MudText Typo="Typo.subtitle1">2017</MudText>
-            </div>
-            <div class="mud-picker-year">
-                <MudText Typo="Typo.subtitle1">2018</MudText>
-            </div>
-            <div class="mud-picker-year">
-                <MudText Typo="Typo.subtitle1">2019</MudText>
-            </div>
-            <div class="mud-picker-year">
-                <MudText Typo="Typo.subtitle1">2019</MudText>
-            </div>
-            <div class="mud-picker-year">
-                <MudText Typo="Typo.subtitle1">2019</MudText>
-            </div>
-            <div class="mud-picker-year">
-                <MudText Typo="Typo.h5" Class="mud-picker-year-selected mud-color-text-primary">2020</MudText>
-            </div>
-            <div class="mud-picker-year">
-                <MudText Typo="Typo.subtitle1">2021</MudText>
-            </div>
-            <div class="mud-picker-year">
-                <MudText Typo="Typo.subtitle1">2022</MudText>
-            </div>
-            <div class="mud-picker-year">
-                <MudText Typo="Typo.subtitle1">2023</MudText>
-            </div>
-            <div class="mud-picker-year">
-                <MudText Typo="Typo.subtitle1">2024</MudText>
-            </div>
-            <div class="mud-picker-year">
-                <MudText Typo="Typo.subtitle1">2026</MudText>
-            </div>
-            <div class="mud-picker-year">
-                <MudText Typo="Typo.subtitle1">2027</MudText>
-            </div>
- 
-        </div>
         }
         else if (OpenTo == OpenTo.Month)
         {

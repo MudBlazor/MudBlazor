@@ -205,12 +205,47 @@ namespace MudBlazor
 
         private void OnYearClick()
         {
-            
+            OpenTo = OpenTo.Year;
+            StateHasChanged();
+            // "#year"+GetMonthStart().Year
+        }
+
+        private int GetMinYear()
+        {
+            if (MinDate.HasValue)
+                return MinDate.Value.Year;
+            return DateTime.Today.Year - 100;
+        }
+
+        private int GetMaxYear()
+        {
+            if (MaxDate.HasValue)
+                return MaxDate.Value.Year;
+            return DateTime.Today.Year + 100;
+        }
+
+        private string GetYearClasses(int year)
+        {
+            if (year == GetMonthStart().Year)
+                return "mud-picker-year-selected mud-color-text-primary";
+            return null;
         }
 
         private void OnFormattedDateClick()
         {
             
+        }
+
+        //private string GetInlineJavaScript()
+        //{
+        //    return $"document.getElementById('year{GetMonthStart().Year}').scrollIntoView({{ behavior: 'smooth'}})";
+        //}
+
+        private void OnYearClicked(int year)
+        {
+            OpenTo = OpenTo.Date;
+            var current = GetMonthStart();
+            PickerMonth = new DateTime(year, current.Month,  1);
         }
     }
 }
