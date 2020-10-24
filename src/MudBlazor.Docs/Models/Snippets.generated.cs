@@ -397,6 +397,47 @@ public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=
 public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Value=""2020-10-19""/>
 <MudDatePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Value=""2020-10-19""/>";
 
+public const string DialogBodyScrollableExample = @"<MudDialog DisableSidePadding=""true"">
+    <DialogContent>
+        <MudContainer Style=""max-height: 300px; overflow-y: scroll"">
+            <MudText Class=""mb-5"" Typo=""Typo.body1"">Copyright (c) 2020 - The MudBlazor Team and Contributors</MudText>
+            @if (Loading)
+            {
+                <MudProgressCircular Indeterminate=""true""></MudProgressCircular>
+            }
+            else
+            {
+                <MudText Style=""white-space: pre-wrap;"">@LicenseText</MudText>
+            }
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color=""Color.Primary"" OnClick=""Ok"">Accept</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Loading = true;
+        var bytes = await new WebClient().DownloadDataTaskAsync(new Uri(""https://raw.githubusercontent.com/Garderoben/MudBlazor/master/LICENSE""));
+        LicenseText = Encoding.UTF8.GetString(bytes);
+        Loading = false;
+        await base.OnInitializedAsync();
+    }
+
+    string LicenseText;
+    bool Loading = false;
+
+    void Ok()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}";
+
 public const string DialogDialogFormExample = @"<MudDialog>
     <DialogContent>
         <MudText Class=""mt-2"">Note: Database creation can take up to 30 minutes.</MudText>
@@ -514,6 +555,32 @@ public const string DialogOptionsExample = @"@inject IDialogService Dialog
         var Parameters = new DialogParameters();
         Parameters.Add(""Message"", ""This dialog has the backdrop click disabled and the user need to take an action within the dialog."");
         var userSelect = Dialog.Show<DialogDialogOptionExample>(""With no backdrop click"", Parameters, Options);
+    }
+}";
+
+public const string DialogScrollableExample = @"@inject IDialogService Dialog
+
+<MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenSimpleDialog"">Scrollable Dialog</MudButton>
+
+@code {
+    bool HideSourceSimpleDialog = true;
+
+    public void ShowSimpleDialogSource()
+    {
+        HideSourceSimpleDialog = !HideSourceSimpleDialog;
+    }
+
+    bool license_accepted = false;
+
+    async Task OpenSimpleDialog()
+    {
+        var userSelect = Dialog.Show<DialogBodyScrollableExample>(""MudBlazor License"");
+        var result = await userSelect.Result;
+
+        if (!result.Cancelled)
+        {
+            license_accepted = (bool)(result.Data ?? false);
+        }
     }
 }";
 

@@ -399,6 +399,15 @@ public const string MudDialog_ClassContent = @"";
 
 public const string MudDialog_ClassActions = @"";
 
+public const string MudDialog_Class = @"User class names, separated by space";
+
+public const string MudDialog_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudDialog_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudDialog_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudExpansionPanel_Text = @"The text to be displayed in the expansion panel.";
 
 public const string MudExpansionPanel_IsExpanded = @"";
