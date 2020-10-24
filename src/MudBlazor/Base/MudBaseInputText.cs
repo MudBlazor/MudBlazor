@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
@@ -114,6 +115,14 @@ namespace MudBlazor
             }
         }
 
+        protected override Task OnInitializedAsync()
+        {
+            _initialHelperText = HelperText;
+            return base.OnInitializedAsync();
+        }
+
+        
+
         #region --> Blazor EditForm validation support
 
         /// <summary>
@@ -130,11 +139,19 @@ namespace MudBlazor
 
         private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
         {
-            foreach (var message in EditContext.GetValidationMessages(_fieldIdentifier))
+            Error = !EditContext.Validate();
+            if (Error)
             {
-                HelperText = message;
-                // todo: how to deal with multiple error messages?
-                break;
+                foreach (var message in EditContext.GetValidationMessages(_fieldIdentifier))
+                {
+                    HelperText = message;
+                    // todo: how to deal with multiple error messages?
+                    break;
+                }
+            }
+            else
+            {
+                HelperText = _initialHelperText;
             }
             StateHasChanged();
         }
@@ -143,6 +160,7 @@ namespace MudBlazor
         /// Points to a field of the model for which validation messages should be displayed.
         /// </summary>
         private FieldIdentifier _fieldIdentifier;
+        private string _initialHelperText;
 
         protected override void OnParametersSet()
         {
