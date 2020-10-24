@@ -1,10 +1,6 @@
-﻿// Copyright (c) 2020 Jonny Larsson
-// License: MIT
-// See https://github.com/Garderoben/MudBlazor
-// Modified version of Blazored Modal
-// Copyright (c) 2019 Blazored
-// License: MIT
-// See https://github.com/Blazored
+﻿// License: MIT
+// Copyright (c) 2019 Blazored - See https://github.com/Blazored
+// Copyright (c) 2020 Jonny Larsson - Modifications for MudBlazor, see https://github.com/Garderoben/MudBlazor
 
 
 using Microsoft.AspNetCore.Components;
@@ -13,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDialog
+    public partial class MudDialog : MudComponentBase
     {
         protected string ContentClass =>
         new CssBuilder("mud-dialog-content")

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MudBlazor
 {
-    public partial class MudSelect : MudBaseInputText
+    public partial class MudSelect : MudBaseInput
     {
         private HashSet<string> _selectedValues;
 
@@ -150,5 +150,43 @@ namespace MudBlazor
                 MaxHeight = 300;
             }
         }
+
+        // todo: pull down into generic child like with TextField
+
+        private string _value;
+        private bool _settingValue;
+        /// <summary>
+        /// Fired when the Value property changes. 
+        /// </summary>
+        [Parameter] public EventCallback<string> ValueChanged { get; set; }
+
+        /// <summary>
+        /// The value of this input element. This property is two-way bindable.
+        /// </summary>
+        [Parameter]
+        public string Value
+        {
+            get => _value;
+            set
+            {
+                if (object.Equals(value, _value))
+                    return;
+                if (_settingValue)
+                    return;
+                _settingValue = true;
+                try
+                {
+                    _value = value;
+                    //GenericValueChanged(value);
+                    //ValidateValue(value);
+                    ValueChanged.InvokeAsync(value);
+                }
+                finally
+                {
+                    _settingValue = false;
+                }
+            }
+        }
+
     }
 }

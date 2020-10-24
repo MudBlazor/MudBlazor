@@ -129,7 +129,7 @@
     &:disabled {
         color: rgba(0, 0, 0, 0.26);
         box-shadow: none;
-        background-color: rgba(0, 0, 0, 0.12);
+        background-color: rgba(0, 0, 0, 0.12) !important;
     }
 
     &.mud-button-filled-primary {
@@ -147,6 +147,15 @@
 
         &:hover {
             background-color: var(--mud-theme-secondary-darken);
+        }
+    }
+
+    &.mud-button-filled-danger {
+        color: var(--mud-theme-on-alert);
+        background-color: var(--mud-theme-danger);
+
+        &:hover {
+            background-color: #da1a0c;
         }
     }
 }

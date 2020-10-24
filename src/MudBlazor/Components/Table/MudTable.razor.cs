@@ -95,6 +95,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment HeaderContent { get; set; }
 
+        /// <summary>
+        /// Specifies a group of one or more columns in a table for formatting.
+        /// Ex:
+        /// table
+        ///     colgroup
+        ///        col span="2" style="background-color:red"
+        ///        col style="background-color:yellow"
+        ///      colgroup
+        ///      header
+        ///      body
+        /// table
+        /// </summary>
+        [Parameter] public RenderFragment ColGroup { get; set; }
+
         //[Parameter] public RenderFragment<T> RowTemplate { get; set; } <-- see MudTable.razor
 
         /// <summary>

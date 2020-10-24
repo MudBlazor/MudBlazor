@@ -3,8 +3,14 @@
 @using Microsoft.AspNetCore.Components.Routing
 
 
-<li @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
+<div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
     <NavLink class="mud-nav-link" style="@Style" href="@Href" Match="@Match" ActiveClass="active">
-        @ChildContent
+        @if (!String.IsNullOrEmpty(Icon))
+        {
+            <MudIcon Icon="@Icon" Class="mud-nav-link-icon"></MudIcon>
+        }
+        <div Class="mud-nav-link-text">
+            @ChildContent
+        </div>
     </NavLink>
-</li>
+</div>

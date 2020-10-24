@@ -1,10 +1,7 @@
 ﻿@page "/components/datepicker"
 
 <DocsPage>
-    <DocsPageHeader>
-        <Title>Date Picker</Title>
-        <SubTitle></SubTitle>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Date Picker"/>
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
@@ -25,6 +22,16 @@
                 <DatePickerStaticExample />
             </SectionContent>
             <SectionSource Code="DatePickerStaticExample" GitHubFolderName="DatePicker" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Different views</Title>
+                <Description>By default it opens to Date, but can be set to Year or Month.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <DatePickeViewsExample />
+            </SectionContent>
+            <SectionSource Code="DatePickeViewsExample" GitHubFolderName="DatePicker" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>

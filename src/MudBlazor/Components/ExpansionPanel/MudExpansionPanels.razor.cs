@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +44,11 @@ namespace MudBlazor
         public void RemovePanel(MudExpansionPanel panel)
         {
             Panels.Remove(panel);
-            StateHasChanged();
+            try
+            {
+                StateHasChanged();
+            }
+            catch(InvalidOperationException) { /* this happens on page reload, probably a Blazor bug */ }
         }
 
         public void UpdateAll()
@@ -67,5 +72,7 @@ namespace MudBlazor
             }
             UpdateAll();
         }
+
+     
     }
 }

@@ -86,8 +86,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool AllowKeyboardInput { get; set; }
 
+        /// <summary>
+        /// Fired when the value changes.
+        /// </summary>
         [Parameter] public EventCallback<string> ValueChanged { get; set; }
 
+        /// <summary>
+        /// The currently selected value represented as a string (two-way bindable)
+        /// </summary>
         [Parameter]
         public string Value
         {
@@ -97,22 +103,38 @@ namespace MudBlazor
                 if (value != _value)
                 {
                     _value = value;
+                    StringValueChanged(_value);
                     ValueChanged.InvokeAsync(value);
                 }
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        protected virtual void StringValueChanged(string value)
+        {
+            /* to be overridden by descendants */
+        }
+
         public bool isOpen { get; set; }
 
-        public void OnOpen()
+        public void ToggleOpen()
         {
             isOpen = !isOpen;
             StateHasChanged();
         }
 
-        public void OnClose()
+        public void Close()
         {
             isOpen = false;
+            StateHasChanged();
+        }
+
+        public void Open()
+        {
+            isOpen = true;
             StateHasChanged();
         }
     }

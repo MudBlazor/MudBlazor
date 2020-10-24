@@ -60,7 +60,7 @@
         }
 
         &.mud-error {
-            color: #f44336;
+            color: #f44336 !important;
         }
     }
 }
@@ -82,7 +82,7 @@
 }
 
 .mud-input-helper-text.mud-error {
-    color: #f44336;
+    color: #f44336 !important;
 }
 
 .mud-input-helper-text-margin-dense {

@@ -111,14 +111,28 @@
 
     RenderFragment CodeComponent() => builder =>
     {
-        builder.OpenComponent(0, CodeType);
-        builder.CloseComponent();
+        try
+        {
+            builder.OpenComponent(0, CodeType);
+            builder.CloseComponent();
+        }
+        catch (Exception e)
+        {
+            // todo: log this
+        }
     };
 
     RenderFragment FullCodeComponent() => builder =>
     {
-        builder.OpenComponent(0, FullCodeType);
-        builder.CloseComponent();
+        try
+        {
+            builder.OpenComponent(0, FullCodeType);
+            builder.CloseComponent();
+        }
+        catch (Exception e)
+        {
+        // todo: log this
+        }
     };
 
     protected override void OnInitialized()
