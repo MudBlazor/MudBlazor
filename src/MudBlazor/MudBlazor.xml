@@ -537,6 +537,11 @@
             The display culture
             </summary>
         </member>
+        <member name="F:MudBlazor.MudDatePicker.Picker">
+            <summary>
+            Reference to the Picker, initialized via @ref
+            </summary>
+        </member>
         <member name="M:MudBlazor.MudDatePicker.GetMonthStart">
             <summary>
             Get the first of the month to display

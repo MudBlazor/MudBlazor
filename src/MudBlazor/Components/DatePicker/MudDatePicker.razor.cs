@@ -90,6 +90,10 @@ namespace MudBlazor
         [Parameter] public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
 
 
+        /// <summary>
+        /// Reference to the Picker, initialized via @ref
+        /// </summary>
+        private MudPicker Picker;
 
         protected override void StringValueChanged(string value)
         {
@@ -152,7 +156,7 @@ namespace MudBlazor
         protected void OnDayClicked(DateTime dateTime)
         {
             Date = dateTime;
-            Close();
+            Picker.Close();
         }
 
         /// <summary>
