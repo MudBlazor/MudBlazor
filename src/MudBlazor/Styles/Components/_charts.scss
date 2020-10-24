@@ -1,4 +1,31 @@
 ﻿.mud-chart {
+    display: flex;
+
+    &.mud-chart-legend-bottom {
+        flex-direction: column;
+    }
+
+    &.mud-chart-legend-top {
+        flex-direction: column-reverse;
+    }
+
+    &.mud-chart-legend-right {
+        flex-direction: row;
+
+        & .mud-chart-legend {
+            flex-direction: column;
+        }
+    }
+
+    &.mud-chart-legend-left {
+        flex-direction: row-reverse;
+
+        & .mud-chart-legend {
+            flex-direction: column;
+        }
+    }
+
+
     & .mud-chart-donut, .mud-chart-pie {
         display: flex;
         margin: auto;
@@ -6,6 +33,8 @@
 
     & .mud-chart-legend {
         display: flex;
+        padding: 10px 0px;
+        margin: auto;
 
         & .mud-chart-legend-item {
             display: block;

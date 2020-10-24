@@ -1,21 +1,21 @@
 ﻿@namespace MudBlazor.Charts
 @inherits PieBase
 
-<div class="mud-chart">
-    <svg class="mud-chart-pie" width="80%" height="80%" viewBox="-1 -1 2 2" style="transform: rotate(-90deg);">
-        @foreach (var item in Segments.ToList())
-        {
-            <path class="@($"mud-chart-fill-color-{item.Index.ToString()}")" d="@item.D"></path>
-        }
-    </svg>
-    <div class="mud-chart-legend">
-        @foreach (var item in Legends.ToList())
-        {
-            <div class="mud-chart-legend-item">
-                <span class="@($"mud-chart-legend-marker mud-chart-marker-color-{item.Index.ToString()}")"></span>
-                <MudText Typo="Typo.body2" Inline="true">@($"{item.Labels}  ({item.Data}%)")</MudText>
-            </div>
-        }
-    </div>
+
+<svg class="mud-chart-pie" width="@MudChartParent.Width" height="@MudChartParent.Height" viewBox="-1 -1 2 2" style="transform: rotate(-90deg);">
+    @foreach (var item in Segments.ToList())
+    {
+        <path class="@($"mud-chart-fill-color-{item.Index.ToString()}")" d="@item.D"></path>
+    }
+</svg>
+<div class="mud-chart-legend">
+    @foreach (var item in Legends.ToList())
+    {
+        <div class="mud-chart-legend-item">
+            <span class="@($"mud-chart-legend-marker mud-chart-marker-color-{item.Index.ToString()}")"></span>
+            <MudText Typo="Typo.body2" Inline="true">@item.Labels @(MudChartParent.DisplayLegendItemValues? $"({item.Data}%)": "")</MudText>
+        </div>
+    }
 </div>
+
 

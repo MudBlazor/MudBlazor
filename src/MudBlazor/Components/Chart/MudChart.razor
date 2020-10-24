@@ -3,12 +3,14 @@
 @inherits MudChartBase
 
 <CascadingValue Value="@this">
-    @if (ChartType == ChartType.Donut)
-    {
-        <Donut InputData="@InputData" InputLabels="@InputLabels"></Donut>
-    }
-    @if (ChartType == ChartType.Pie)
-    {
-        <Pie InputData="@InputData" InputLabels="@InputLabels"></Pie>
-    }
+    <div class="@Classname">
+        @if (ChartType == ChartType.Donut)
+        {
+            <Donut InputData="@InputData" InputLabels="@InputLabels"></Donut>
+        }
+        @if (ChartType == ChartType.Pie)
+        {
+            <Pie InputData="@InputData" InputLabels="@InputLabels"></Pie>
+        }
+    </div>
 </CascadingValue>

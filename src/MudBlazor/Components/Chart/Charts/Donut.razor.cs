@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts.Models;
 
 namespace MudBlazor.Charts
 {
     public class DonutBase : MudChartBase
     {
+        [CascadingParameter] public MudChart MudChartParent { get; set; }
+
         public List<ChartSegment> Segments = new List<ChartSegment>();
         public List<ChartLegend> Legends = new List<ChartLegend>();
 

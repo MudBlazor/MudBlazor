@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MudBlazor.Charts;
+using MudBlazor.Utilities;
+using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
@@ -12,10 +14,36 @@ namespace MudBlazor
 
         [Parameter] public string InputLabels { get; set; }
 
+        protected string Classname =>
+        new CssBuilder("mud-chart")
+           .AddClass($"mud-chart-legend-{LegendDirection.ToDescriptionString()}")
+          .AddClass(Class)
+        .Build();
 
-
-        // Mud Stuff
+        /// <summary>
+        /// The Type of the chart.
+        /// </summary>
         [Parameter] public ChartType ChartType { get; set; }
+
+        /// <summary>
+        /// The Width of the chart, end with % or px.
+        /// </summary>
+        [Parameter] public string Width { get; set; } = "80%";
+
+        /// <summary>
+        /// The Height of the chart, end with % or px.
+        /// </summary>
+        [Parameter] public string Height { get; set; } = "80%";
+
+        /// <summary>
+        /// The placment direction of the legend if used.
+        /// </summary>
+        [Parameter] public Direction LegendDirection { get; set; } = Direction.Bottom;
+
+        /// <summary>
+        /// If true, the Data Values will be displayed next to the Legend Labels.
+        /// </summary>
+        [Parameter] public bool DisplayLegendItemValues { get; set; }
 
     }
     public enum ChartType
