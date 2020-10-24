@@ -247,7 +247,7 @@ namespace MudBlazor
         private string GetYearClasses(int year)
         {
             if (year == GetMonthStart().Year)
-                return "mud-picker-year-selected mud-color-text-primary";
+                return $"mud-picker-year-selected mud-color-text-{Color.ToDescriptionString()}";
             return null;
         }
         private Typo GetYearTypo(int year)
@@ -289,7 +289,7 @@ namespace MudBlazor
         private string GetMonthClasses(DateTime month)
         {
             if (GetMonthStart() == month)
-                return "mud-picker-month-selected mud-color-text-primary";
+                return $"mud-picker-month-selected mud-color-text-{Color.ToDescriptionString()}";
             return null;
         }
 
