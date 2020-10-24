@@ -5,7 +5,7 @@
 <div class="@PickerClass">
     @if (PickerVariant != PickerVariant.Static)
     {
-        <MudTextField Label="@Label" Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="true" @onclick="OnOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
+        <MudTextField Label="@Label" Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="true" @onclick="ToggleOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
     }
     <CascadingValue Value="@this">
         <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@Elevation" Square="@Square">
@@ -19,7 +19,7 @@
 {
     @if (isOpen)
     {
-        <div class="mud-popover-overlay" @onclick="@OnClose"></div>
+        <div class="mud-popover-overlay" @onclick="@Close"></div>
     }
 }
 

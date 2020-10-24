@@ -4,6 +4,8 @@ namespace MudBlazor.Docs.Models
     public static partial class DocStrings
     {
 
+public const string MudBaseButton_ButtonType = @"The button Type (Button, Submit, Refresh)";
+
 public const string MudBaseButton_Link = @"If set to a URL, clicking the button will open the referenced document. Use Target to specify where";
 
 public const string MudBaseButton_Target = @"The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | framename";
@@ -98,9 +100,9 @@ public const string MudBasePicker_Color = @"The color of the toolbar, selected a
 
 public const string MudBasePicker_AllowKeyboardInput = @"Allows text input from keyboard.";
 
-public const string MudBasePicker_ValueChanged = @"";
+public const string MudBasePicker_ValueChanged = @"Fired when the value changes.";
 
-public const string MudBasePicker_Value = @"";
+public const string MudBasePicker_Value = @"The currently selected value represented as a string (two-way bindable)";
 
 public const string MudBasePicker_Class = @"User class names, separated by space";
 
@@ -196,6 +198,8 @@ public const string MudButton_DisableRipple = @"If true, disables ripple effect.
 
 public const string MudButton_ChildContent = @"Child content of component.";
 
+public const string MudButton_ButtonType = @"The button Type (Button, Submit, Refresh)";
+
 public const string MudButton_Link = @"If set to a URL, clicking the button will open the referenced document. Use Target to specify where";
 
 public const string MudButton_Target = @"The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | framename";
@@ -231,6 +235,8 @@ public const string MudFab_DisableElevation = @"If true, no drop-shadow will be 
 
 public const string MudFab_DisableRipple = @"If true, disables ripple effect.";
 
+public const string MudFab_ButtonType = @"The button Type (Button, Submit, Refresh)";
+
 public const string MudFab_Link = @"If set to a URL, clicking the button will open the referenced document. Use Target to specify where";
 
 public const string MudFab_Target = @"The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | framename";
@@ -265,6 +271,8 @@ public const string MudIconButton_DisableRipple = @"If true, disables ripple eff
 public const string MudIconButton_Disabled = @"If true, the button will be disabled.";
 
 public const string MudIconButton_ChildContent = @"Child content of component, only shows if Icon is null or Empty.";
+
+public const string MudIconButton_ButtonType = @"The button Type (Button, Submit, Refresh)";
 
 public const string MudIconButton_Link = @"If set to a URL, clicking the button will open the referenced document. Use Target to specify where";
 
@@ -348,6 +356,21 @@ public const string MudDatePicker_OpenTo = @"First view to show in the MudDatePi
 
 public const string MudDatePicker_InputIcon = @"Sets the Input Icon.";
 
+public const string MudDatePicker_Date = @"The currently selected date (two-way bindable). If null, then nothing was selected.";
+
+public const string MudDatePicker_DateChanged = @"Fired when the date changes.";
+
+public const string MudDatePicker_FirstDayOfWeek = @"Defines on which day the week starts. Depends on the value of Culture.";
+
+public const string MudDatePicker_PickerMonth = @"The current month of the date picker (two-way bindable). This changes when the user browses through the calender.
+            The month is represented as a DateTime which is always the first day of that month. You can also set this to define which month is initially shown. If not set, the current month is shown.";
+
+public const string MudDatePicker_PickerMonthChanged = @"Fired when the date changes.";
+
+public const string MudDatePicker_Culture = @"The display culture";
+
+public const string MudDatePicker_ClosingDelay = @"Milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.";
+
 public const string MudDatePicker_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.";
 
 public const string MudDatePicker_Square = @"If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden with Rounded bool.";
@@ -376,9 +399,9 @@ public const string MudDatePicker_Color = @"The color of the toolbar, selected a
 
 public const string MudDatePicker_AllowKeyboardInput = @"Allows text input from keyboard.";
 
-public const string MudDatePicker_ValueChanged = @"";
+public const string MudDatePicker_ValueChanged = @"Fired when the value changes.";
 
-public const string MudDatePicker_Value = @"";
+public const string MudDatePicker_Value = @"The currently selected value represented as a string (two-way bindable)";
 
 public const string MudDatePicker_Class = @"User class names, separated by space";
 
@@ -715,6 +738,8 @@ public const string ComponentBaseMudMenu_Disabled = @"";
 public const string ComponentBaseMudMenu_DisableRipple = @"";
 
 public const string ComponentBaseMudMenu_ChildContent = @"";
+
+public const string ComponentBaseMudMenu_ButtonType = @"The button Type (Button, Submit, Refresh)";
 
 public const string ComponentBaseMudMenu_Link = @"If set to a URL, clicking the button will open the referenced document. Use Target to specify where";
 
@@ -1448,6 +1473,8 @@ public const string MudMenu_DisableRipple = @"";
 
 public const string MudMenu_ChildContent = @"";
 
+public const string MudMenu_ButtonType = @"The button Type (Button, Submit, Refresh)";
+
 public const string MudMenu_Link = @"If set to a URL, clicking the button will open the referenced document. Use Target to specify where";
 
 public const string MudMenu_Target = @"The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | framename";
@@ -1545,9 +1572,9 @@ public const string MudPicker_Color = @"The color of the toolbar, selected and a
 
 public const string MudPicker_AllowKeyboardInput = @"Allows text input from keyboard.";
 
-public const string MudPicker_ValueChanged = @"";
+public const string MudPicker_ValueChanged = @"Fired when the value changes.";
 
-public const string MudPicker_Value = @"";
+public const string MudPicker_Value = @"The currently selected value represented as a string (two-way bindable)";
 
 public const string MudPicker_Class = @"User class names, separated by space";
 

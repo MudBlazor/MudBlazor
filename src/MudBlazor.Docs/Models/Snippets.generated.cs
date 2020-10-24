@@ -397,6 +397,10 @@ public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=
 public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Value=""2020-10-19""/>
 <MudDatePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Value=""2020-10-19""/>";
 
+public const string DatePickeViewsExample = @"<MudDatePicker Label=""Year"" OpenTo=""OpenTo.Year"" Value=""2020-10-19""/>
+<MudDatePicker Label=""Month"" OpenTo=""OpenTo.Month"" Value=""2020-10-19"" />
+<MudDatePicker Label=""Date""  Value=""2020-10-19"" />";
+
 public const string DialogBodyScrollableExample = @"<MudDialog DisableSidePadding=""true"">
     <DialogContent>
         <MudContainer Style=""max-height: 300px; overflow-y: scroll"">
