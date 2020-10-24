@@ -8,36 +8,125 @@
         <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="@OnFormattedDateClick">@GetFormattedDateString()</MudButton>
     </MudPickerToolbar>
     <MudPickerContent>
-        <div class="mud-picker-calendar-header">
-            <div class="mud-picker-calendar-header-switch">
-                <MudIconButton Icon="@Icons.Material.ChevronLeft" OnClick="@OnPreviousMonthClick"/>
-                <div class="mud-picker-slide-transition mud-picker-calendar-header-transition">
-                    <MudText Typo="Typo.body1" Align="Align.Center">@GetMonthName()</MudText>
-                </div>
-                <MudIconButton Icon="@Icons.Material.ChevronRight" OnClick="@OnNextMonthClick"/>
+        @if (OpenTo == OpenTo.Year)
+        {
+        <div class="mud-picker-year-container">
+            <div class="mud-picker-year">
+                <MudText Typo="Typo.subtitle1">2016</MudText>
             </div>
-            <div class="mud-picker-calendar-header-day">
-                @foreach (var dayname in GetAbbreviatedDayNames())
-                {
-                    <MudText Typo="Typo.caption" Class="mud-day-label">@dayname</MudText>
-                }
+            <div class="mud-picker-year">
+                <MudText Typo="Typo.subtitle1">2017</MudText>
+            </div>
+            <div class="mud-picker-year">
+                <MudText Typo="Typo.subtitle1">2018</MudText>
+            </div>
+            <div class="mud-picker-year">
+                <MudText Typo="Typo.subtitle1">2019</MudText>
+            </div>
+            <div class="mud-picker-year">
+                <MudText Typo="Typo.subtitle1">2019</MudText>
+            </div>
+            <div class="mud-picker-year">
+                <MudText Typo="Typo.subtitle1">2019</MudText>
+            </div>
+            <div class="mud-picker-year">
+                <MudText Typo="Typo.h5" Class="mud-picker-year-selected mud-color-text-primary">2020</MudText>
+            </div>
+            <div class="mud-picker-year">
+                <MudText Typo="Typo.subtitle1">2021</MudText>
+            </div>
+            <div class="mud-picker-year">
+                <MudText Typo="Typo.subtitle1">2022</MudText>
+            </div>
+            <div class="mud-picker-year">
+                <MudText Typo="Typo.subtitle1">2023</MudText>
+            </div>
+            <div class="mud-picker-year">
+                <MudText Typo="Typo.subtitle1">2024</MudText>
+            </div>
+            <div class="mud-picker-year">
+                <MudText Typo="Typo.subtitle1">2026</MudText>
+            </div>
+            <div class="mud-picker-year">
+                <MudText Typo="Typo.subtitle1">2027</MudText>
+            </div>
+ 
+        </div>
+        }
+        else if (OpenTo == OpenTo.Month)
+        {
+        <div class="mud-picker-month-container">
+            <div class="mud-picker-month">
+                <MudText Typo="Typo.subtitle1">Jan</MudText>
+            </div>
+            <div class="mud-picker-month">
+                <MudText Typo="Typo.subtitle1">Feb</MudText>
+            </div>
+            <div class="mud-picker-month">
+                <MudText Typo="Typo.subtitle1">Mar</MudText>
+            </div>
+            <div class="mud-picker-month">
+                <MudText Typo="Typo.subtitle1">Apr</MudText>
+            </div>
+            <div class="mud-picker-month">
+                <MudText Typo="Typo.subtitle1">May</MudText>
+            </div>
+            <div class="mud-picker-month">
+                <MudText Typo="Typo.subtitle1">Jun</MudText>
+            </div>
+            <div class="mud-picker-month">
+                <MudText Typo="Typo.subtitle1">Jul</MudText>
+            </div>
+            <div class="mud-picker-month">
+                <MudText Typo="Typo.subtitle1">Aug</MudText>
+            </div>
+            <div class="mud-picker-month">
+                <MudText Typo="Typo.subtitle1">Sep</MudText>
+            </div>
+            <div class="mud-picker-month">
+                <MudText Typo="Typo.h5" Class="mud-picker-month-selected mud-color-text-primary">Oct</MudText>
+            </div>
+            <div class="mud-picker-month">
+                <MudText Typo="Typo.subtitle1">Nov</MudText>
+            </div>
+            <div class="mud-picker-month">
+                <MudText Typo="Typo.subtitle1">Dec</MudText>
             </div>
         </div>
-        <div class="mud-picker-calendar-transition mud-picker-slide-transition">
-            <div class="mud-picker-calendar">
-                @for (int week = 0; week < 6; week++)
-                {
-                    <div class="mud-picker-calendar-week">
-                        @foreach (var day in GetWeek(week))
-                        {
-                            <div role="presentation" class="mud-picker-calendar-day">
-                                <MudIconButton Class="@GetDayClasses(day)" OnClick="@(() =>{ var d = day; OnDayClicked(d); })">@day.Day</MudIconButton>
-                            </div>
-                        }
+        }
+        else
+        {
+            <div class="mud-picker-calendar-header">
+                <div class="mud-picker-calendar-header-switch">
+                    <MudIconButton Icon="@Icons.Material.ChevronLeft" OnClick="@OnPreviousMonthClick" />
+                    <div class="mud-picker-slide-transition mud-picker-calendar-header-transition">
+                        <MudText Typo="Typo.body1" Align="Align.Center">@GetMonthName()</MudText>
                     </div>
-                }
-
+                    <MudIconButton Icon="@Icons.Material.ChevronRight" OnClick="@OnNextMonthClick" />
+                </div>
+                <div class="mud-picker-calendar-header-day">
+                    @foreach (var dayname in GetAbbreviatedDayNames())
+                    {
+                        <MudText Typo="Typo.caption" Class="mud-day-label">@dayname</MudText>
+                    }
+                </div>
             </div>
-        </div>
+            <div class="mud-picker-calendar-transition mud-picker-slide-transition">
+                <div class="mud-picker-calendar">
+                    @for (int week = 0; week < 6; week++)
+                    {
+                        <div class="mud-picker-calendar-week">
+                            @foreach (var day in GetWeek(week))
+                            {
+                                <div role="presentation" class="mud-picker-calendar-day">
+                                    <MudIconButton Class="@GetDayClasses(day)" OnClick="@(() =>{ var d = day; OnDayClicked(d); })">@day.Day</MudIconButton>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                </div>
+            </div>
+        }
     </MudPickerContent>
 </MudPicker>

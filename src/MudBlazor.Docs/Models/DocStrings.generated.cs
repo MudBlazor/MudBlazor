@@ -98,9 +98,9 @@ public const string MudBasePicker_Color = @"The color of the toolbar, selected a
 
 public const string MudBasePicker_AllowKeyboardInput = @"Allows text input from keyboard.";
 
-public const string MudBasePicker_ValueChanged = @"";
+public const string MudBasePicker_ValueChanged = @"Fired when the value changes.";
 
-public const string MudBasePicker_Value = @"";
+public const string MudBasePicker_Value = @"The currently selected value represented as a string (two-way bindable)";
 
 public const string MudBasePicker_Class = @"User class names, separated by space";
 
@@ -348,6 +348,19 @@ public const string MudDatePicker_OpenTo = @"First view to show in the MudDatePi
 
 public const string MudDatePicker_InputIcon = @"Sets the Input Icon.";
 
+public const string MudDatePicker_Date = @"The currently selected date (two-way bindable). If null, then nothing was selected.";
+
+public const string MudDatePicker_DateChanged = @"Fired when the date changes.";
+
+public const string MudDatePicker_FirstDayOfWeek = @"Defines on which day the week starts. Depends on the value of Culture.";
+
+public const string MudDatePicker_PickerMonth = @"The current month of the date picker (two-way bindable). This changes when the user browses through the calender.
+            The month is represented as a DateTime which is always the first day of that month. You can also set this to define which month is initially shown. If not set, the current month is shown.";
+
+public const string MudDatePicker_PickerMonthChanged = @"Fired when the date changes.";
+
+public const string MudDatePicker_Culture = @"The display culture";
+
 public const string MudDatePicker_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.";
 
 public const string MudDatePicker_Square = @"If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden with Rounded bool.";
@@ -376,9 +389,9 @@ public const string MudDatePicker_Color = @"The color of the toolbar, selected a
 
 public const string MudDatePicker_AllowKeyboardInput = @"Allows text input from keyboard.";
 
-public const string MudDatePicker_ValueChanged = @"";
+public const string MudDatePicker_ValueChanged = @"Fired when the value changes.";
 
-public const string MudDatePicker_Value = @"";
+public const string MudDatePicker_Value = @"The currently selected value represented as a string (two-way bindable)";
 
 public const string MudDatePicker_Class = @"User class names, separated by space";
 
@@ -1536,9 +1549,9 @@ public const string MudPicker_Color = @"The color of the toolbar, selected and a
 
 public const string MudPicker_AllowKeyboardInput = @"Allows text input from keyboard.";
 
-public const string MudPicker_ValueChanged = @"";
+public const string MudPicker_ValueChanged = @"Fired when the value changes.";
 
-public const string MudPicker_Value = @"";
+public const string MudPicker_Value = @"The currently selected value represented as a string (two-way bindable)";
 
 public const string MudPicker_Class = @"User class names, separated by space";
 
