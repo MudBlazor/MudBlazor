@@ -4,6 +4,11 @@
         <name>MudBlazor</name>
     </assembly>
     <members>
+        <member name="P:MudBlazor.MudBaseButton.ButtonType">
+            <summary>
+            The button Type (Button, Submit, Refresh)
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBaseButton.Link">
             <summary>
             If set to a URL, clicking the button will open the referenced document. Use Target to specify where
