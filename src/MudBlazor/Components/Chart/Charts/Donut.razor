@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.Charts
+@inherits DonutBase
+
+<div class="mud-chart">
+    <svg class="mud-chart-donut" width="80%" height="80%" viewBox="0 0 42 42">
+        <circle class="mud-donut-ring" cx="21" cy="21" r="15.915"></circle>
+        @foreach (var item in Segments.ToList())
+        {
+            <circle class="@($"mud-donut-segment mud-chart-stroke-color-{item.Index.ToString()}")" cx="@item.Cx" cy="@item.Cy" r="@item.R" stroke-dasharray="@item.StrokeDashArray" stroke-dashoffset="@item.StrokeDashOffset"></circle>
+        }
+        <circle class="mud-donut-hole" cx="21" cy="21" r="14"></circle>
+    </svg>
+    <div class="mud-chart-legend">
+        @foreach (var item in Legends.ToList())
+        {
+            <div class="mud-chart-legend-item">
+                <span class="@($"mud-chart-legend-marker mud-chart-marker-color-{item.Index.ToString()}")"></span>
+                <MudText Typo="Typo.body2" Inline="true">@($"{item.Labels}  ({item.Data}%)")</MudText>
+            </div>
+        }
+    </div>
+</div>
+
