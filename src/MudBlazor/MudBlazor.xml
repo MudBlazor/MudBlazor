@@ -537,6 +537,11 @@
             The display culture
             </summary>
         </member>
+        <member name="P:MudBlazor.MudDatePicker.ClosingDelay">
+            <summary>
+            Milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.
+            </summary>
+        </member>
         <member name="F:MudBlazor.MudDatePicker.Picker">
             <summary>
             Reference to the Picker, initialized via @ref

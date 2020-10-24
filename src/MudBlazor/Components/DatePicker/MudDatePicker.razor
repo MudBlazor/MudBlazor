@@ -15,51 +15,21 @@
                 {
                     var year = i;
                     <div class="mud-picker-year" id="@("year"+year)" @onclick="@(()=>OnYearClicked(year))">
-                        <MudText Typo="Typo.subtitle1" Class="@GetYearClasses(year)">@year</MudText>
+                        <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@year</MudText>
                     </div>
                 }
             </div>
         }
         else if (OpenTo == OpenTo.Month)
         {
-        <div class="mud-picker-month-container">
-            <div class="mud-picker-month">
-                <MudText Typo="Typo.subtitle1">Jan</MudText>
+            <div class="mud-picker-month-container">
+                @foreach (var month in GetAllMonths())
+                {
+                    <div class="mud-picker-month" @onclick="@(()=>OnMonthSelected(month))">
+                        <MudText Typo="@GetMonthTypo(month)" Class="@GetMonthClasses(month)">@GetAbbreviatedMontName(month)</MudText>
+                    </div>
+                }
             </div>
-            <div class="mud-picker-month">
-                <MudText Typo="Typo.subtitle1">Feb</MudText>
-            </div>
-            <div class="mud-picker-month">
-                <MudText Typo="Typo.subtitle1">Mar</MudText>
-            </div>
-            <div class="mud-picker-month">
-                <MudText Typo="Typo.subtitle1">Apr</MudText>
-            </div>
-            <div class="mud-picker-month">
-                <MudText Typo="Typo.subtitle1">May</MudText>
-            </div>
-            <div class="mud-picker-month">
-                <MudText Typo="Typo.subtitle1">Jun</MudText>
-            </div>
-            <div class="mud-picker-month">
-                <MudText Typo="Typo.subtitle1">Jul</MudText>
-            </div>
-            <div class="mud-picker-month">
-                <MudText Typo="Typo.subtitle1">Aug</MudText>
-            </div>
-            <div class="mud-picker-month">
-                <MudText Typo="Typo.subtitle1">Sep</MudText>
-            </div>
-            <div class="mud-picker-month">
-                <MudText Typo="Typo.h5" Class="mud-picker-month-selected mud-color-text-primary">Oct</MudText>
-            </div>
-            <div class="mud-picker-month">
-                <MudText Typo="Typo.subtitle1">Nov</MudText>
-            </div>
-            <div class="mud-picker-month">
-                <MudText Typo="Typo.subtitle1">Dec</MudText>
-            </div>
-        </div>
         }
         else
         {
@@ -67,7 +37,7 @@
                 <div class="mud-picker-calendar-header-switch">
                     <MudIconButton Icon="@Icons.Material.ChevronLeft" OnClick="@OnPreviousMonthClick" />
                     <div class="mud-picker-slide-transition mud-picker-calendar-header-transition">
-                        <MudText Typo="Typo.body1" Align="Align.Center">@GetMonthName()</MudText>
+                        <MudText Typo="Typo.body1" Align="Align.Center" @onclick="OnMonthClicked">@GetMonthName()</MudText>
                     </div>
                     <MudIconButton Icon="@Icons.Material.ChevronRight" OnClick="@OnNextMonthClick" />
                 </div>

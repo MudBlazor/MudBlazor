@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -89,6 +90,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
 
+        /// <summary>
+        /// Milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.
+        /// </summary>
+        [Parameter] public int ClosingDelay { get; set; } = 100;
 
         /// <summary>
         /// Reference to the Picker, initialized via @ref
@@ -153,9 +158,10 @@ namespace MudBlazor
         /// <summary>
         /// User clicked on a day
         /// </summary>
-        protected void OnDayClicked(DateTime dateTime)
+        protected async void OnDayClicked(DateTime dateTime)
         {
             Date = dateTime;
+            await Task.Delay(ClosingDelay);
             Picker.Close();
         }
 
@@ -234,6 +240,12 @@ namespace MudBlazor
                 return "mud-picker-year-selected mud-color-text-primary";
             return null;
         }
+        private Typo GetYearTypo(int year)
+        {
+            if (year == GetMonthStart().Year)
+                return Typo.h5;
+            return Typo.subtitle1;
+        }
 
         private void OnFormattedDateClick()
         {
@@ -250,6 +262,44 @@ namespace MudBlazor
             OpenTo = OpenTo.Date;
             var current = GetMonthStart();
             PickerMonth = new DateTime(year, current.Month,  1);
+        }
+
+        private IEnumerable<DateTime> GetAllMonths()
+        {
+            var current = GetMonthStart();
+            for (int i = 1; i <= 12; i++)
+                yield return new DateTime(current.Year, i, 1);
+        }
+
+        private string GetAbbreviatedMontName(in DateTime month)
+        {
+            return Culture.DateTimeFormat.AbbreviatedMonthNames[month.Month-1];
+        }
+
+        private string GetMonthClasses(DateTime month)
+        {
+            if (GetMonthStart() == month)
+                return "mud-picker-month-selected mud-color-text-primary";
+            return null;
+        }
+
+        private Typo GetMonthTypo(in DateTime month)
+        {
+            if (GetMonthStart() == month)
+                return Typo.h5;
+            return Typo.subtitle1;
+        }
+
+        private void OnMonthClicked()
+        {
+            OpenTo = OpenTo.Month;
+            StateHasChanged();
+        }
+
+        private void OnMonthSelected(in DateTime month)
+        {
+            OpenTo = OpenTo.Date;
+            PickerMonth = month;
         }
     }
 }

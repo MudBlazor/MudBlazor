@@ -361,6 +361,8 @@ public const string MudDatePicker_PickerMonthChanged = @"Fired when the date cha
 
 public const string MudDatePicker_Culture = @"The display culture";
 
+public const string MudDatePicker_ClosingDelay = @"Milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.";
+
 public const string MudDatePicker_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.";
 
 public const string MudDatePicker_Square = @"If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden with Rounded bool.";
