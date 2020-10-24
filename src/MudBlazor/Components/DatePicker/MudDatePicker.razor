@@ -14,7 +14,7 @@
             @for (int i = GetMinYear(); i <= GetMaxYear(); i++)
             {
                 var year = i;
-                <div class="mud-picker-year" id="@("year"+year)" @onclick="@(()=>OnYearClicked(year))">
+                <div class="mud-picker-year" id="@(_componentId+year)" @onclick="@(()=>OnYearClicked(year))">
                     <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@year</MudText>
                 </div>
             }

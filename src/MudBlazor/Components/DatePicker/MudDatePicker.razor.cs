@@ -215,17 +215,28 @@ namespace MudBlazor
             PickerMonth = GetMonthEnd().AddDays(1);
         }
 
-        private void OnYearClick()
+        private async void OnYearClick()
         {
             OpenTo = OpenTo.Year;
+            //await InvokeAsync(StateHasChanged);
             StateHasChanged();
-            ScrollToYear();
+            _scrollToYearAfterRender = true;
         }
+
+        /// <summary>
+        /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
+        /// </summary>
+        private string _componentId = Guid.NewGuid().ToString();
+
+        /// <summary>
+        /// Is set to true to scroll to the actual year after the next render
+        /// </summary>
+        private bool _scrollToYearAfterRender = false;
 
         public async void ScrollToYear()
         {
-            string id = $"year{GetMonthStart().Year.ToString()}";
-            await Task.Delay(100);
+            _scrollToYearAfterRender = false;
+            string id = $"{_componentId}{GetMonthStart().Year.ToString()}";
             await JsRuntime.InvokeVoidAsync("blazorHelpers.scrollToFragment", id);
             StateHasChanged();
         }
@@ -259,13 +270,8 @@ namespace MudBlazor
 
         private void OnFormattedDateClick()
         {
-            
+            // todo: raise an event the user can handdle
         }
-
-        //private string GetInlineJavaScript()
-        //{
-        //    return $"document.getElementById('year{GetMonthStart().Year}').scrollIntoView({{ behavior: 'smooth'}})";
-        //}
 
         private void OnYearClicked(int year)
         {
@@ -311,5 +317,18 @@ namespace MudBlazor
             OpenTo = OpenTo.Date;
             PickerMonth = month;
         }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender && OpenTo == OpenTo.Year)
+            {
+                ScrollToYear();
+                return;
+            }
+            if (_scrollToYearAfterRender)
+                ScrollToYear();
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
     }
 }

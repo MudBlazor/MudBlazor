@@ -582,6 +582,16 @@
             Shift array and cycle around from the end
             </summary>
         </member>
+        <member name="F:MudBlazor.MudDatePicker._componentId">
+            <summary>
+            We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
+            </summary>
+        </member>
+        <member name="F:MudBlazor.MudDatePicker._scrollToYearAfterRender">
+            <summary>
+            Is set to true to scroll to the actual year after the next render
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudExpansionPanel.Text">
             <summary>
             The text to be displayed in the expansion panel.
