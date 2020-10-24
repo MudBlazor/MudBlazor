@@ -6,9 +6,8 @@
           <span class="htmlAttributeName">InputData</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">25,32,28,15</span><span class="quot">&quot;</span> <span class="htmlAttributeName">InputLabels</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Item 1,Item 2,Item 3,Item 4</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
 <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChart</span><span class="htmlTagDelimiter">&gt;</span>
 
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudDivider</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">my-2</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
 
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudSelect</span> <span class="htmlAttributeName">Label</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Legend Placement</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Variant</span><span class="enumValue">.Filled</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OffsetY</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ValueChanged</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">OnSelectedValue</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudSelect</span> <span class="htmlAttributeName">Label</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Legend Placement</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Variant</span><span class="enumValue">.Outlined</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OffsetY</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ValueChanged</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">OnSelectedValue</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">mt-4</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
     <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudSelectItem</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">top</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Top<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudSelectItem</span><span class="htmlTagDelimiter">&gt;</span>
     <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudSelectItem</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">left</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Left<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudSelectItem</span><span class="htmlTagDelimiter">&gt;</span>
     <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudSelectItem</span> <span class="htmlAttributeName">Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">right</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Right<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudSelectItem</span><span class="htmlTagDelimiter">&gt;</span>
@@ -25,16 +24,14 @@
         <span class="keyword">if</span> (value == <span class="string">&quot;top&quot;</span>)
         {
             legendDirection = Direction.Top;
-        }
-        <span class="keyword">if</span> (value == <span class="string">&quot;Left&quot;</span>)
+        }<span class="keyword">else</span> <span class="keyword">if</span> (value == <span class="string">&quot;left&quot;</span>)
         {
             legendDirection = Direction.Left;
-        }
-        <span class="keyword">if</span> (value == <span class="string">&quot;right&quot;</span>)
+        }<span class="keyword">else</span> <span class="keyword">if</span> (value == <span class="string">&quot;right&quot;</span>)
         {
             legendDirection = Direction.Right;
         }
-        <span class="keyword">if</span> (value == <span class="string">&quot;bottom&quot;</span>)
+        <span class="keyword">else</span> <span class="keyword">if</span> (value == <span class="string">&quot;bottom&quot;</span>)
         {
             legendDirection = Direction.Bottom;
         }
