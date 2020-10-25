@@ -12,5 +12,9 @@
         {
             <Pie InputData="@InputData" InputLabels="@InputLabels"></Pie>
         }
+        @if (ChartType == ChartType.Line)
+        {
+            <Line ChartSeries="@ChartSeries"></Line>
+        }
     </div>
 </CascadingValue>

@@ -14,9 +14,13 @@ namespace MudBlazor
 
         [Parameter] public string InputLabels { get; set; }
 
+        [Parameter] public string XAxisLabels { get; set; }
+
+        [Parameter] public List<ChartSeries> ChartSeries { get; set; }
+
         protected string Classname =>
         new CssBuilder("mud-chart")
-           .AddClass($"mud-chart-legend-{LegendDirection.ToDescriptionString()}")
+           .AddClass($"mud-chart-legend-{LegendPosition.ToDescriptionString()}")
           .AddClass(Class)
         .Build();
 
@@ -38,7 +42,7 @@ namespace MudBlazor
         /// <summary>
         /// The placment direction of the legend if used.
         /// </summary>
-        [Parameter] public Direction LegendDirection { get; set; } = Direction.Bottom;
+        [Parameter] public LegendPosition LegendPosition { get; set; } = LegendPosition.Bottom;
 
         /// <summary>
         /// If true, the Data Values will be displayed next to the Legend Labels.

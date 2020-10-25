@@ -539,7 +539,7 @@
             The Height of the chart, end with % or px.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudChartBase.LegendDirection">
+        <member name="P:MudBlazor.MudChartBase.LegendPosition">
             <summary>
             The placment direction of the legend if used.
             </summary>

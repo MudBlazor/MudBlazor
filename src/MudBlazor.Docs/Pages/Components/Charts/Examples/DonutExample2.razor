@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChart ChartType="ChartType.Donut" LegendDirection="@legendDirection" Width="80%" Height="80%"
+<MudChart ChartType="ChartType.Donut" LegendPosition="@LegendPosition" Width="80%" Height="80%"
           InputData="25,32,28,15" InputLabels="Item 1,Item 2,Item 3,Item 4">
 </MudChart>
 
 
-<MudSelect Label="Legend Placement" Variant="Variant.Outlined" OffsetY="true" ValueChanged="OnSelectedValue" Class="mt-4">
+<MudSelect Label="Legend Position" Variant="Variant.Outlined" OffsetY="true" Dense="true" ValueChanged="OnSelectedValue" Class="mt-4">
     <MudSelectItem Value="top">Top</MudSelectItem>
     <MudSelectItem Value="left">Left</MudSelectItem>
     <MudSelectItem Value="right">Right</MudSelectItem>
@@ -14,23 +14,23 @@
 
 @code {
 
-    public Direction legendDirection { get; set; } = Direction.Bottom;
+    public LegendPosition LegendPosition { get; set; } = LegendPosition.Bottom;
 
     private void OnSelectedValue(string value)
     {
         if (value == "top")
         {
-            legendDirection = Direction.Top;
+            LegendPosition = LegendPosition.Top;
         }else if (value == "left")
         {
-            legendDirection = Direction.Left;
+            LegendPosition = LegendPosition.Left;
         }else if (value == "right")
         {
-            legendDirection = Direction.Right;
+            LegendPosition = LegendPosition.Right;
         }
         else if (value == "bottom")
         {
-            legendDirection = Direction.Bottom;
+            LegendPosition = LegendPosition.Bottom;
         }
     }
 }
