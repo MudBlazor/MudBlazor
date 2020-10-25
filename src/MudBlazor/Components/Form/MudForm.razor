@@ -3,6 +3,8 @@
 
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    @ChildContent
+    <CascadingValue Value="@this">
+        @ChildContent
+    </CascadingValue>
 </div>
 

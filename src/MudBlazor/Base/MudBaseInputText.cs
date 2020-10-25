@@ -122,6 +122,18 @@ namespace MudBlazor
             }
         }
 
+        #region --> MudForm validation support
+
+        [CascadingParameter] public MudForm ParentForm { get; set; }
+
+        protected override Task OnInitializedAsync()
+        {
+            ParentForm?.Add(this);
+            return base.OnInitializedAsync();
+        }
+
+        #endregion
+
         #region --> Blazor EditForm validation support
 
         /// <summary>
@@ -200,6 +212,7 @@ namespace MudBlazor
 
         void IDisposable.Dispose()
         {
+            ParentForm?.Remove(this);
             DetachValidationStateChangedListener();
             Dispose(disposing: true);
         }

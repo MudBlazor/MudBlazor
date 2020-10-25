@@ -472,6 +472,8 @@ public const string MudExpansionPanels_UserAttributes = @"UserAttributes carries
 
 public const string MudForm_ChildContent = @"Child content of component.";
 
+public const string MudForm_IsValidChanged = @"Raised when IsValid changes.";
+
 public const string MudForm_Class = @"User class names, separated by space";
 
 public const string MudForm_Style = @"User styles, applied on top of the component's own classes and styles";

@@ -674,6 +674,16 @@
             Child content of component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudForm.IsValid">
+            <summary>
+            Validaton status. True if the form is valid
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudForm.IsValidChanged">
+            <summary>
+            Raised when IsValid changes.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudHidden.Breakpoint">
             <summary>
             The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)
