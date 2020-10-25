@@ -28,7 +28,7 @@ namespace MudBlazor.Charts
         {
 
             //string[] inputLabels = InputLabels.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            string[] xAxisinputLabels = XAxisLabels.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            //string[] xAxisinputLabels = XAxisLabels.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
             Series = MudChartParent.ChartSeries;
 
@@ -36,7 +36,7 @@ namespace MudBlazor.Charts
 
             double maxY = 0.0;
             int numValues = 0;
-            int numXLabels = xAxisinputLabels.Length;
+            int numXLabels = XAxisLabels.Length;
             foreach (var item in Series)
             {
                 if(numValues < item.Data.Length)

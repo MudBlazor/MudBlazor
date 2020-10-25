@@ -2,23 +2,32 @@
 @namespace MudBlazor.Docs.Examples.Markup
 <div class="mud-codeblock">
 <div class="html"><pre>
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChart</span> <span class="htmlAttributeName">ChartSeries</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Series</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ChartType</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">ChartType</span><span class="enumValue">.Line</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChart</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="atSign">&#64;</span>if (Series == null)
+{
+
+}
+else
+{
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChart</span> <span class="htmlAttributeName">ChartType</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">ChartType</span><span class="enumValue">.Line</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ChartSeries</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Series</span><span class="quot">&quot;</span> <span class="htmlAttributeName">XAxisLabels</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>XAxisLabels</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Width</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">650</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Height</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">350</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChart</span><span class="htmlTagDelimiter">&gt;</span>
+}
 </pre></div>
 <div class="csharp"><pre>
 <span class="atSign">&#64;</span>code {
 
     <span class="keyword">public</span> List&lt;ChartSeries&gt; Series = <span class="keyword">new</span> List&lt;ChartSeries&gt;();
+    <span class="keyword">public</span> <span class="keyword">string</span>[] XAxisLabels = {<span class="string">&quot;Jan&quot;</span>, <span class="string">&quot;Feb&quot;</span>, <span class="string">&quot;Mar&quot;</span>, <span class="string">&quot;Apr&quot;</span>, <span class="string">&quot;May&quot;</span>, <span class="string">&quot;Jun&quot;</span>, <span class="string">&quot;Jul&quot;</span>, <span class="string">&quot;Aug&quot;</span>, <span class="string">&quot;Sep&quot;</span> };
 
     <span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> OnInitialized()
     {
-        <span class="keyword">int</span>[] mySerieData1 = { <span class="number">10</span>, <span class="number">41</span>, <span class="number">35</span>, <span class="number">51</span>, <span class="number">49</span>, <span class="number">62</span>, <span class="number">69</span>, <span class="number">91</span>, <span class="number">148</span> };
-        <span class="keyword">int</span>[] mySerieData2 = { <span class="number">90</span>, <span class="number">79</span>, <span class="number">72</span>, <span class="number">69</span>, <span class="number">62</span>, <span class="number">62</span>, <span class="number">55</span>, <span class="number">65</span>, <span class="number">70</span> };
+        <span class="keyword">double</span>[] mySerieData1 = { <span class="number">90</span>, <span class="number">79</span>, <span class="number">72</span>, <span class="number">69</span>, <span class="number">62</span>, <span class="number">62</span>, <span class="number">55</span>, <span class="number">65</span>, <span class="number">70</span> };
+        <span class="keyword">double</span>[] mySerieData2 = { <span class="number">10</span>, <span class="number">41</span>, <span class="number">35</span>, <span class="number">51</span>, <span class="number">49</span>, <span class="number">62</span>, <span class="number">69</span>, <span class="number">91</span>, <span class="number">148</span> };
 
         ChartSeries Serie1 = <span class="keyword">new</span> ChartSeries() { Name = <span class="string">&quot;Serie 1&quot;</span>, Data = mySerieData1 };
         Series.Add(Serie1);
 
         ChartSeries Serie2 = <span class="keyword">new</span> ChartSeries() { Name = <span class="string">&quot;Serie 2&quot;</span>, Data = mySerieData2 };
         Series.Add(Serie2);
+        StateHasChanged();
     }
 }
 </pre></div>

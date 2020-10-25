@@ -1,3 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChart ChartType="ChartType.Pie" InputData="25,32,11,15,17" InputLabels="Item 1,Item 2,Item 3,Item 4, Item 5" />
+<MudChart ChartType="ChartType.Pie" InputData="@data" InputLabels="@labels" />
+
+@code {
+    public double[] data = { 25, 32, 28, 15 };
+    public string[] labels = { "Item 1", "Item 2", "Item 3", "Item 4" };
+}

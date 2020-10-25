@@ -22,71 +22,66 @@ namespace MudBlazor.Charts
 
         protected override void OnInitialized()
         {
-            string[] inputData = InputData.Split(',');
-            string[] inputLabels = InputLabels.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
             double x, y;
             double px = 0, py = 0;
-            double TotalPercent = 0;
-            string Radius = PieRadius.ToString();
-            for (int icounter = 0; icounter < inputData.Length; icounter++)
+            double totalPercent = 0;
+            string radius = PieRadius.ToString();
+            for (int icounter = 0; icounter < InputData.Length; icounter++)
             {
-                double data = 0;
-                bool isDouble2 = double.TryParse(inputData[icounter], out data);
-                double Percent = data / 100;
+                double data = InputData[icounter];
+                double percent = data / 100;
 
-                TotalPercent = TotalPercent + Percent;
-                x = PieRadius * Math.Cos(2 * Math.PI * TotalPercent);
-                y = PieRadius * Math.Sin(2 * Math.PI * TotalPercent);
-                SvgPath Path = null;
+                totalPercent = totalPercent + percent;
+                x = PieRadius * Math.Cos(2 * Math.PI * totalPercent);
+                y = PieRadius * Math.Sin(2 * Math.PI * totalPercent);
+                SvgPath path = null;
                 if (icounter == 0)
                 {
-                    Path = new SvgPath()
+                    path = new SvgPath()
                     {
                         Index = icounter,
-                        Data = $"M {Radius.ToString(CultureInfo.InvariantCulture)} 0 A {Radius.ToString(CultureInfo.InvariantCulture)} {Radius.ToString(CultureInfo.InvariantCulture)} 0 0 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
+                        Data = $"M {radius.ToString(CultureInfo.InvariantCulture)} 0 A {radius.ToString(CultureInfo.InvariantCulture)} {radius.ToString(CultureInfo.InvariantCulture)} 0 0 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
                     };
                 }
                 else
                 {
-                    if (Percent > 0.5)
+                    if (percent > 0.5)
                     {
-                        Path = new SvgPath()
+                        path = new SvgPath()
                         {
                             Index = icounter,
-                            Data = $"M {px.ToString(CultureInfo.InvariantCulture)} {py.ToString(CultureInfo.InvariantCulture)} A {Radius} {Radius.ToString(CultureInfo.InvariantCulture)} 0 1 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
+                            Data = $"M {px.ToString(CultureInfo.InvariantCulture)} {py.ToString(CultureInfo.InvariantCulture)} A {radius} {radius.ToString(CultureInfo.InvariantCulture)} 0 1 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
                         };
                     }
                     else
                     {
-                        Path = new SvgPath()
+                        path = new SvgPath()
                         {
                             Index = icounter,
-                            Data = $"M {px.ToString(CultureInfo.InvariantCulture)} {py.ToString(CultureInfo.InvariantCulture)} A {Radius.ToString(CultureInfo.InvariantCulture)} {Radius.ToString(CultureInfo.InvariantCulture)} 0 0 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
+                            Data = $"M {px.ToString(CultureInfo.InvariantCulture)} {py.ToString(CultureInfo.InvariantCulture)} A {radius.ToString(CultureInfo.InvariantCulture)} {radius.ToString(CultureInfo.InvariantCulture)} 0 0 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
                         };
                     }
                 }
-                Paths.Add(Path);
+                Paths.Add(path);
                 px = x; py = y;
             }
 
-            int Counter = 0;
-            foreach (string dataString in inputData)
+            int counter = 0;
+            foreach (double data in InputData)
             {
-                double Data = double.Parse(dataString);
-                string Labels = "";
-                if (Counter < inputLabels.Length)
+                string labels = "";
+                if (counter < InputLabels.Length)
                 {
-                    Labels = inputLabels[Counter];
+                    labels = InputLabels[counter];
                 }
                 SvgLegend Legend = new SvgLegend()
                 {
-                    Index = Counter,
-                    Labels = Labels,
-                    Data = Data.ToString()
+                    Index = counter,
+                    Labels = labels,
+                    Data = data.ToString(CultureInfo.InvariantCulture)
                 };
                 Legends.Add(Legend);
-                Counter += 1;
+                counter += 1;
             }
         }
     }

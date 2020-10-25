@@ -15,50 +15,44 @@ namespace MudBlazor.Charts
 
         protected override void OnInitialized()
         {
-            double CounterClockwiseOffset = 25;
-            double TotalPercent = 0;
-            double Offset = CounterClockwiseOffset;
+            double counterClockwiseOffset = 25;
+            double totalPercent = 0;
+            double offset = counterClockwiseOffset;
 
-            string[] inputData = InputData.Split(',');
-            string[] inputLabels = InputLabels.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-            int Counter = 0;
-            foreach (string dataString in inputData)
+            int counter = 0;
+            foreach (double data in InputData)
             {
-                double Data = 0;
-                bool isDouble2 = double.TryParse(dataString, out Data);
+                double percent = data;
+                double reversePercent = 100 - percent;
+                offset = 100 - totalPercent + counterClockwiseOffset;
+                totalPercent = totalPercent + percent;
 
-                double Percent = Data;
-                double ReversePercent = 100 - Percent;
-                Offset = 100 - TotalPercent + CounterClockwiseOffset;
-                TotalPercent = TotalPercent + Percent;
-
-                SvgCircle Circle = new SvgCircle()
+                var circle = new SvgCircle()
                 {
-                    Index = Counter,
+                    Index = counter,
                     CX = 21,
                     CY = 21,
                     Radius = 15.915,
-                    StrokeDashArray = $"{Percent.ToString(CultureInfo.InvariantCulture)} {ReversePercent.ToString(CultureInfo.InvariantCulture)}",
-                    StrokeDashOffset = Offset
+                    StrokeDashArray = $"{percent.ToString(CultureInfo.InvariantCulture)} {reversePercent.ToString(CultureInfo.InvariantCulture)}",
+                    StrokeDashOffset = offset
                 };
-                Circles.Add(Circle);
+                Circles.Add(circle);
 
 
-                string Labels = "";
-                if (Counter < inputLabels.Length)
+                string labels = "";
+                if (counter < InputLabels.Length)
                 {
-                    Labels = inputLabels[Counter];
+                    labels = InputLabels[counter];
                 }
                 SvgLegend Legend = new SvgLegend()
                 {
-                    Index = Counter,
-                    Labels = Labels,
-                    Data = Data.ToString()
+                    Index = counter,
+                    Labels = labels,
+                    Data = data.ToString()
                 };
                 Legends.Add(Legend);
 
-                Counter += 1;
+                counter += 1;
             }
         }
     }

@@ -10,11 +10,11 @@ namespace MudBlazor
 {
     public class MudChartBase : MudComponentBase
     {
-        [Parameter] public string InputData { get; set; }
+        [Parameter] public double[] InputData { get; set; }
 
-        [Parameter] public string InputLabels { get; set; }
+        [Parameter] public string[] InputLabels { get; set; }
 
-        [Parameter] public string XAxisLabels { get; set; }
+        [Parameter] public string[] XAxisLabels { get; set; }
 
         [Parameter] public List<ChartSeries> ChartSeries { get; set; }
 

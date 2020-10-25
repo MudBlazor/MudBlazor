@@ -8,6 +8,6 @@ namespace MudBlazor
     {
         public string Name { get; set; }
 
-        public int[] Data { get; set; }
+        public double[] Data { get; set; }
     }
 }

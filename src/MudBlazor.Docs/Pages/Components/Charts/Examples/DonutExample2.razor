@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudChart ChartType="ChartType.Donut" LegendPosition="@LegendPosition" Width="80%" Height="80%"
-          InputData="25,32,28,15" InputLabels="Item 1,Item 2,Item 3,Item 4">
+          InputData="@data" InputLabels="@labels">
 </MudChart>
 
 
@@ -13,6 +13,8 @@
 </MudSelect>
 
 @code {
+    public double[] data = { 25, 32, 28, 15 };
+    public string[] labels = { "Item 1", "Item 2", "Item 3", "Item 4" };
 
     public LegendPosition LegendPosition { get; set; } = LegendPosition.Bottom;
 
