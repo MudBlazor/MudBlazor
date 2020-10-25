@@ -3,7 +3,7 @@ window.blazorHelpers = {
         var element = document.getElementById(elementId);
 
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'start' });
+            element.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'start' });
         }
     }
 };
