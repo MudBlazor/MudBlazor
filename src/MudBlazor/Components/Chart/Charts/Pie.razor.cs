@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Charts.Models;
+using MudBlazor.Charts.SVG.Models;
 
 namespace MudBlazor.Charts
 {
@@ -10,8 +10,8 @@ namespace MudBlazor.Charts
     {
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 
-        public List<ChartSegment> Segments = new List<ChartSegment>();
-        public List<ChartLegend> Legends = new List<ChartLegend>();
+        public List<SvgPath> Paths = new List<SvgPath>();
+        public List<SvgLegend> Legends = new List<SvgLegend>();
 
         private double PieRadius = 1;
         private void GetCoordinatesForPercent(double percent, out double x, out double y)
@@ -38,35 +38,35 @@ namespace MudBlazor.Charts
                 TotalPercent = TotalPercent + Percent;
                 x = PieRadius * Math.Cos(2 * Math.PI * TotalPercent);
                 y = PieRadius * Math.Sin(2 * Math.PI * TotalPercent);
-                ChartSegment Segment = null;
+                SvgPath Path = null;
                 if (icounter == 0)
                 {
-                    Segment = new ChartSegment()
+                    Path = new SvgPath()
                     {
                         Index = icounter,
-                        D = $"M {Radius.ToString(CultureInfo.InvariantCulture)} 0 A {Radius.ToString(CultureInfo.InvariantCulture)} {Radius.ToString(CultureInfo.InvariantCulture)} 0 0 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
+                        Data = $"M {Radius.ToString(CultureInfo.InvariantCulture)} 0 A {Radius.ToString(CultureInfo.InvariantCulture)} {Radius.ToString(CultureInfo.InvariantCulture)} 0 0 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
                     };
                 }
                 else
                 {
                     if (Percent > 0.5)
                     {
-                        Segment = new ChartSegment()
+                        Path = new SvgPath()
                         {
                             Index = icounter,
-                            D = $"M {px.ToString(CultureInfo.InvariantCulture)} {py.ToString(CultureInfo.InvariantCulture)} A {Radius} {Radius.ToString(CultureInfo.InvariantCulture)} 0 1 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
+                            Data = $"M {px.ToString(CultureInfo.InvariantCulture)} {py.ToString(CultureInfo.InvariantCulture)} A {Radius} {Radius.ToString(CultureInfo.InvariantCulture)} 0 1 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
                         };
                     }
                     else
                     {
-                        Segment = new ChartSegment()
+                        Path = new SvgPath()
                         {
                             Index = icounter,
-                            D = $"M {px.ToString(CultureInfo.InvariantCulture)} {py.ToString(CultureInfo.InvariantCulture)} A {Radius.ToString(CultureInfo.InvariantCulture)} {Radius.ToString(CultureInfo.InvariantCulture)} 0 0 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
+                            Data = $"M {px.ToString(CultureInfo.InvariantCulture)} {py.ToString(CultureInfo.InvariantCulture)} A {Radius.ToString(CultureInfo.InvariantCulture)} {Radius.ToString(CultureInfo.InvariantCulture)} 0 0 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
                         };
                     }
                 }
-                Segments.Add(Segment);
+                Paths.Add(Path);
                 px = x; py = y;
             }
 
@@ -79,7 +79,7 @@ namespace MudBlazor.Charts
                 {
                     Labels = inputLabels[Counter];
                 }
-                ChartLegend Legend = new ChartLegend()
+                SvgLegend Legend = new SvgLegend()
                 {
                     Index = Counter,
                     Labels = Labels,

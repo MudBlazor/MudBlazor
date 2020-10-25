@@ -1,40 +1,38 @@
 ﻿@namespace MudBlazor.Charts
-@inherits DonutBase
-
-<svg width="90%" height="90%" viewBox="0 0 450 420">
-    <rect width="100%" height="100%" fill="white"></rect>
-    <path d="M 0 350 L 450 350 M 25 350 L 25 0" fill="red" stroke="gray" stroke-width="0.3"></path>
-    <path d="M 25 300 L 450 300" fill="none" stroke="gray" stroke-width="0.3"></path>
-    <path d="M 25 250 L 450 250" fill="none" stroke="gray" stroke-width="0.3"></path>
-    <path d="M 25 200 L 450 200" fill="none" stroke="gray" stroke-width="0.3"></path>
-    <path d="M 25 150 L 450 150" fill="none" stroke="gray" stroke-width="0.3"></path>
-    <path d="M 25 100 L 450 100" fill="none" stroke="gray" stroke-width="0.3"></path>
-    <path d="M 25 50 L 450 50" fill="none" stroke="gray" stroke-width="0.3"></path>
-    <path d="M 30 250 L 130 120 L 230 150 L 330 80 L 430 200" fill="none" stroke="#27A844" stroke-width="2.5"></path>
-
-    <path d="M 30 230 L 130 170 L 230 120 L 330 100 L 430 130" fill="none" stroke="#ce4b99" stroke-width="2.5"></path>
+@using System.Globalization;
+@inherits LineBase
 
 
-    <text class="normal" x="330" y="295" fill="Bluwk">Male</text>
-    <text class="normal" x="330" y="275" fill="Bluw">Female</text>
-
-    <path d="M 375 290 L 395 290" fill="none" stroke="#27A844" stroke-width="2.5"></path>
-    <path d="M 395 270 L 415 270" fill="none" stroke="#ce4b99" stroke-width="2.5"></path>
-
-
-
-    <text class="small" x="30" y="375" fill="Black">Jan</text>
-    <text class="small" x="130" y="375" fill="Black">Feb</text>
-    <text class="small" x="230" y="375" fill="Black">Mar</text>
-    <text class="small" x="330" y="375" fill="Black">Apr</text>
-    <text class="small" x="430" y="375" fill="Black">May</text>
-
-    <text class="small" x="0" y="300" fill="Black">10</text>
-    <text class="small" x="0" y="250" fill="Black">20</text>
-    <text class="small" x="0" y="200" fill="Black">30</text>
-    <text class="small" x="0" y="150" fill="Black">40</text>
-    <text class="small" x="0" y="100" fill="Black">50</text>
-    <text class="small" x="0" y="50" fill="Black">60</text>
-
-
+<svg class="mud-chart-line" width="@MudChartParent.Width" height="@MudChartParent.Height" viewBox="0 0 650 350">
+    @foreach (var horizontalLine in HorizontalLines)
+    {
+        <path stroke="gray" stroke-width="0.3" d="@horizontalLine.Data"></path>
+    }
+    @foreach (var horizontalLineValue in HorizontalValues)
+    {
+        @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' fill='Black'>{horizontalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
+    }
+    @foreach (var verticalLine in VerticalLines)
+    {
+        <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
+    }
 </svg>
+
+
+<MudGrid>
+    <MudItem>
+        <MudText Typo="Typo.body2">@Test1</MudText>
+    </MudItem>
+    <MudItem>
+        <MudText Typo="Typo.body2">@Test2</MudText>
+    </MudItem>
+    <MudItem>
+        <MudText Typo="Typo.body2">@Test3</MudText>
+    </MudItem>
+    <MudItem>
+        <MudText Typo="Typo.body2">@Test4</MudText>
+    </MudItem>
+    <MudItem>
+        <MudText Typo="Typo.body2">@Test5</MudText>
+    </MudItem>
+</MudGrid>

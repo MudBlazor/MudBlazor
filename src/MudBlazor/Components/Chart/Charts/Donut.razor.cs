@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Charts.Models;
+using MudBlazor.Charts.SVG.Models;
 
 namespace MudBlazor.Charts
 {
@@ -10,8 +10,8 @@ namespace MudBlazor.Charts
     {
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 
-        public List<ChartSegment> Segments = new List<ChartSegment>();
-        public List<ChartLegend> Legends = new List<ChartLegend>();
+        public List<SvgCircle> Circles = new List<SvgCircle>();
+        public List<SvgLegend> Legends = new List<SvgLegend>();
 
         protected override void OnInitialized()
         {
@@ -33,16 +33,16 @@ namespace MudBlazor.Charts
                 Offset = 100 - TotalPercent + CounterClockwiseOffset;
                 TotalPercent = TotalPercent + Percent;
 
-                ChartSegment Segment = new ChartSegment()
+                SvgCircle Circle = new SvgCircle()
                 {
                     Index = Counter,
-                    Cx = 21.ToString(CultureInfo.InvariantCulture),
-                    Cy = 21.ToString(CultureInfo.InvariantCulture),
-                    R = 15.915.ToString(CultureInfo.InvariantCulture),
+                    CX = 21,
+                    CY = 21,
+                    Radius = 15.915,
                     StrokeDashArray = $"{Percent.ToString(CultureInfo.InvariantCulture)} {ReversePercent.ToString(CultureInfo.InvariantCulture)}",
-                    StrokeDashOffset = Offset.ToString()
+                    StrokeDashOffset = Offset
                 };
-                Segments.Add(Segment);
+                Circles.Add(Circle);
 
 
                 string Labels = "";
@@ -50,7 +50,7 @@ namespace MudBlazor.Charts
                 {
                     Labels = inputLabels[Counter];
                 }
-                ChartLegend Legend = new ChartLegend()
+                SvgLegend Legend = new SvgLegend()
                 {
                     Index = Counter,
                     Labels = Labels,

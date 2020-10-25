@@ -354,13 +354,17 @@ public const string MudChartBase_InputData = @"";
 
 public const string MudChartBase_InputLabels = @"";
 
+public const string MudChartBase_XAxisLabels = @"";
+
+public const string MudChartBase_ChartSeries = @"";
+
 public const string MudChartBase_ChartType = @"The Type of the chart.";
 
 public const string MudChartBase_Width = @"The Width of the chart, end with % or px.";
 
 public const string MudChartBase_Height = @"The Height of the chart, end with % or px.";
 
-public const string MudChartBase_LegendDirection = @"The placment direction of the legend if used.";
+public const string MudChartBase_LegendPosition = @"The placment direction of the legend if used.";
 
 public const string MudChartBase_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
 
@@ -1582,13 +1586,17 @@ public const string MudChart_InputData = @"";
 
 public const string MudChart_InputLabels = @"";
 
+public const string MudChart_XAxisLabels = @"";
+
+public const string MudChart_ChartSeries = @"";
+
 public const string MudChart_ChartType = @"The Type of the chart.";
 
 public const string MudChart_Width = @"The Width of the chart, end with % or px.";
 
 public const string MudChart_Height = @"The Height of the chart, end with % or px.";
 
-public const string MudChart_LegendDirection = @"The placment direction of the legend if used.";
+public const string MudChart_LegendPosition = @"The placment direction of the legend if used.";
 
 public const string MudChart_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
 
@@ -2118,13 +2126,17 @@ public const string DonutBase_InputData = @"";
 
 public const string DonutBase_InputLabels = @"";
 
+public const string DonutBase_XAxisLabels = @"";
+
+public const string DonutBase_ChartSeries = @"";
+
 public const string DonutBase_ChartType = @"The Type of the chart.";
 
 public const string DonutBase_Width = @"The Width of the chart, end with % or px.";
 
 public const string DonutBase_Height = @"The Height of the chart, end with % or px.";
 
-public const string DonutBase_LegendDirection = @"The placment direction of the legend if used.";
+public const string DonutBase_LegendPosition = @"The placment direction of the legend if used.";
 
 public const string DonutBase_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
 
@@ -2141,13 +2153,17 @@ public const string LineBase_InputData = @"";
 
 public const string LineBase_InputLabels = @"";
 
+public const string LineBase_XAxisLabels = @"";
+
+public const string LineBase_ChartSeries = @"";
+
 public const string LineBase_ChartType = @"The Type of the chart.";
 
 public const string LineBase_Width = @"The Width of the chart, end with % or px.";
 
 public const string LineBase_Height = @"The Height of the chart, end with % or px.";
 
-public const string LineBase_LegendDirection = @"The placment direction of the legend if used.";
+public const string LineBase_LegendPosition = @"The placment direction of the legend if used.";
 
 public const string LineBase_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
 
@@ -2164,13 +2180,17 @@ public const string PieBase_InputData = @"";
 
 public const string PieBase_InputLabels = @"";
 
+public const string PieBase_XAxisLabels = @"";
+
+public const string PieBase_ChartSeries = @"";
+
 public const string PieBase_ChartType = @"The Type of the chart.";
 
 public const string PieBase_Width = @"The Width of the chart, end with % or px.";
 
 public const string PieBase_Height = @"The Height of the chart, end with % or px.";
 
-public const string PieBase_LegendDirection = @"The placment direction of the legend if used.";
+public const string PieBase_LegendPosition = @"The placment direction of the legend if used.";
 
 public const string PieBase_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
 
@@ -2187,13 +2207,17 @@ public const string Donut_InputData = @"";
 
 public const string Donut_InputLabels = @"";
 
+public const string Donut_XAxisLabels = @"";
+
+public const string Donut_ChartSeries = @"";
+
 public const string Donut_ChartType = @"The Type of the chart.";
 
 public const string Donut_Width = @"The Width of the chart, end with % or px.";
 
 public const string Donut_Height = @"The Height of the chart, end with % or px.";
 
-public const string Donut_LegendDirection = @"The placment direction of the legend if used.";
+public const string Donut_LegendPosition = @"The placment direction of the legend if used.";
 
 public const string Donut_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
 
@@ -2210,13 +2234,17 @@ public const string Line_InputData = @"";
 
 public const string Line_InputLabels = @"";
 
+public const string Line_XAxisLabels = @"";
+
+public const string Line_ChartSeries = @"";
+
 public const string Line_ChartType = @"The Type of the chart.";
 
 public const string Line_Width = @"The Width of the chart, end with % or px.";
 
 public const string Line_Height = @"The Height of the chart, end with % or px.";
 
-public const string Line_LegendDirection = @"The placment direction of the legend if used.";
+public const string Line_LegendPosition = @"The placment direction of the legend if used.";
 
 public const string Line_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
 
@@ -2233,13 +2261,17 @@ public const string Pie_InputData = @"";
 
 public const string Pie_InputLabels = @"";
 
+public const string Pie_XAxisLabels = @"";
+
+public const string Pie_ChartSeries = @"";
+
 public const string Pie_ChartType = @"The Type of the chart.";
 
 public const string Pie_Width = @"The Width of the chart, end with % or px.";
 
 public const string Pie_Height = @"The Height of the chart, end with % or px.";
 
-public const string Pie_LegendDirection = @"The placment direction of the legend if used.";
+public const string Pie_LegendPosition = @"The placment direction of the legend if used.";
 
 public const string Pie_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
 

@@ -3,9 +3,9 @@
 
 
 <svg class="mud-chart-pie" width="@MudChartParent.Width" height="@MudChartParent.Height" viewBox="-1 -1 2 2" style="transform: rotate(-90deg);">
-    @foreach (var item in Segments.ToList())
+    @foreach (var item in Paths.ToList())
     {
-        <path class="@($"mud-chart-fill-color-{item.Index.ToString()}")" d="@item.D"></path>
+        <path class="@($"mud-chart-fill-color-{item.Index.ToString()}")" d="@item.Data"></path>
     }
 </svg>
 <div class="mud-chart-legend">

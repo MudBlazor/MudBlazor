@@ -2470,7 +2470,7 @@ ul {
     flex-direction: row-reverse; }
     .mud-chart.mud-chart-legend-left .mud-chart-legend {
       flex-direction: column; }
-  .mud-chart .mud-chart-donut, .mud-chart .mud-chart-pie {
+  .mud-chart .mud-chart-donut, .mud-chart .mud-chart-pie, .mud-chart mud-chart-line {
     display: flex;
     margin: auto; }
   .mud-chart .mud-chart-legend {

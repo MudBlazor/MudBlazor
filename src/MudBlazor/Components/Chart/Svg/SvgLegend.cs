@@ -1,7 +1,7 @@
 ﻿
-namespace MudBlazor.Charts.Models
+namespace MudBlazor.Charts.SVG.Models
 {
-    public class ChartLegend
+    public class SvgLegend
     {
         public int Index { get; set; }
         public string Labels { get; set; }

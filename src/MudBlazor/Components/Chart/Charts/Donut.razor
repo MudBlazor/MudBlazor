@@ -1,12 +1,13 @@
 ﻿@namespace MudBlazor.Charts
+@using System.Globalization
 @inherits DonutBase
 
 
 <svg class="mud-chart-donut" width="@MudChartParent.Width" height="@MudChartParent.Height" viewBox="0 0 42 42">
     <circle class="mud-donut-ring" cx="21" cy="21" r="15.915"></circle>
-    @foreach (var item in Segments.ToList())
+    @foreach (var item in Circles.ToList())
     {
-        <circle class="@($"mud-donut-segment mud-chart-stroke-color-{item.Index.ToString()}")" cx="@item.Cx" cy="@item.Cy" r="@item.R" stroke-dasharray="@item.StrokeDashArray" stroke-dashoffset="@item.StrokeDashOffset"></circle>
+        <circle class="@($"mud-donut-segment mud-chart-stroke-color-{item.Index.ToString()}")" cx="@item.CX.ToString(CultureInfo.InvariantCulture)" cy="@item.CY.ToString(CultureInfo.InvariantCulture)" r="@item.Radius.ToString(CultureInfo.InvariantCulture)" stroke-dasharray="@item.StrokeDashArray" stroke-dashoffset="@item.StrokeDashOffset.ToString(CultureInfo.InvariantCulture)"></circle>
     }
     <circle class="mud-donut-hole" cx="21" cy="21" r="14"></circle>
 </svg>
