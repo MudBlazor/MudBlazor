@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
@@ -139,20 +141,11 @@ namespace MudBlazor
 
         private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
         {
-            Error = !EditContext.Validate();
-            if (Error)
-            {
-                foreach (var message in EditContext.GetValidationMessages(_fieldIdentifier))
-                {
-                    HelperText = message;
-                    // todo: how to deal with multiple error messages?
-                    break;
-                }
-            }
-            else
-            {
-                HelperText = _initialHelperText;
-            }
+            if (EditContext == null)
+                return;
+            var error_msgs = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
+            Error = error_msgs.Length > 0;
+            HelperText = (Error ? error_msgs[0] : _initialHelperText);
             StateHasChanged();
         }
 
@@ -160,6 +153,17 @@ namespace MudBlazor
         /// Points to a field of the model for which validation messages should be displayed.
         /// </summary>
         private FieldIdentifier _fieldIdentifier;
+
+        /// <summary>
+        /// To find out whether or not For parameter has changed we keep a separate reference
+        /// </summary>
+        private Expression<Func<string>>? _currentFor;
+
+        /// <summary>
+        /// To find out whether or not EditContext parameter has changed we keep a separate reference
+        /// </summary>
+        private EditContext? _currentEditContext;
+
         private string _initialHelperText;
 
         protected override void OnParametersSet()
@@ -168,15 +172,24 @@ namespace MudBlazor
                 return;
             if (For == null)
                 return;
-            _fieldIdentifier = FieldIdentifier.Create(For);
-            EditContext.OnValidationStateChanged += OnValidationStateChanged;
+            if (For != _currentFor)
+            {
+                _fieldIdentifier = FieldIdentifier.Create(For);
+                _currentFor = For;
+            }
+            if (EditContext != _currentEditContext)
+            {
+                DetachValidationStateChangedListener();
+                EditContext.OnValidationStateChanged += OnValidationStateChanged;
+                _currentEditContext = EditContext;
+            }
         }
 
         private void DetachValidationStateChangedListener()
         {
-            if (EditContext != null)
+            if (_currentEditContext != null)
             {
-                EditContext.OnValidationStateChanged -= OnValidationStateChanged;
+                _currentEditContext.OnValidationStateChanged -= OnValidationStateChanged;
             }
         }
 

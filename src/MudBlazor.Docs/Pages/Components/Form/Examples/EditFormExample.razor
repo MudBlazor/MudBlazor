@@ -1,0 +1,65 @@
+﻿@using System.ComponentModel.DataAnnotations
+@namespace MudBlazor.Docs.Examples
+
+<EditForm Model="@model"  OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <MudText Color="@Color.Danger">
+        <ValidationSummary />
+    </MudText>
+    <MudGrid Style="max-width: 400px">
+        <MudItem xs="12">
+            <MudTextField Label="First name" HelperText="Max. 8 characters" @bind-Value="model.Username" For="@(() => model.Username)" />
+        </MudItem>
+        <MudItem xs="12">
+            <MudTextField Label="Email" @bind-Value="model.Email" For="@(() => model.Email)" />
+        </MudItem>
+        <MudItem xs="12">
+            <MudTextField Label="Password" HelperText="Choose a strong password" @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password" />
+        </MudItem>
+        <MudItem xs="12">
+            <MudTextField Label="Password" HelperText="Repeat the password" @bind-Value="model.Password2" For="@(() => model.Password2)" InputType="InputType.Password" />
+        </MudItem>
+        <MudItem xs="12">
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Register</MudButton>
+        </MudItem>
+        <MudItem xs="12">
+            @if (success)
+            {
+                <MudText Color="Color.Success" Typo="Typo.h4">Registered</MudText>
+            }
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+
+
+@code {
+    RegisterAccountForm model = new RegisterAccountForm();
+    bool success;
+
+    public class RegisterAccountForm
+    {
+        [Required]
+        [StringLength(8, ErrorMessage = "Name length can't be more than 8.")]
+        public string Username { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [Compare(nameof(Password2))]
+        public string Password { get; set; }
+
+        [Required]
+        public string Password2 { get; set; }
+
+    }
+
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+
+}

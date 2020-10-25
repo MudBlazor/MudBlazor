@@ -41,7 +41,7 @@ public const string MudBaseInputText_Label = @"If string has value the label tex
 
 public const string MudBaseInputText_Placeholder = @"The short hint displayed in the input before the user enters a value.";
 
-public const string MudBaseInputText_HelperText = @"If string has value, helpertext will be applied.";
+public const string MudBaseInputText_HelperText = @"The HelperText will be displayed below the text field.";
 
 public const string MudBaseInputText_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
 
@@ -62,6 +62,9 @@ public const string MudBaseInputText_Margin = @"Will adjust vertical spacing.";
 public const string MudBaseInputText_ValueChanged = @"Fired when the Value property changes.";
 
 public const string MudBaseInputText_Value = @"The value of this input element. This property is two-way bindable.";
+
+public const string MudBaseInputText_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
+            Currently only string fields are supported.";
 
 public const string MudBaseInputText_Class = @"User class names, separated by space";
 
@@ -545,7 +548,7 @@ public const string MudInput_Label = @"If string has value the label text will b
 
 public const string MudInput_Placeholder = @"The short hint displayed in the input before the user enters a value.";
 
-public const string MudInput_HelperText = @"If string has value, helpertext will be applied.";
+public const string MudInput_HelperText = @"The HelperText will be displayed below the text field.";
 
 public const string MudInput_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
 
@@ -566,6 +569,9 @@ public const string MudInput_Margin = @"Will adjust vertical spacing.";
 public const string MudInput_ValueChanged = @"Fired when the Value property changes.";
 
 public const string MudInput_Value = @"The value of this input element. This property is two-way bindable.";
+
+public const string MudInput_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
+            Currently only string fields are supported.";
 
 public const string MudInput_Class = @"User class names, separated by space";
 
@@ -592,7 +598,7 @@ public const string MudInputLabel_Label = @"If string has value the label text w
 
 public const string MudInputLabel_Placeholder = @"The short hint displayed in the input before the user enters a value.";
 
-public const string MudInputLabel_HelperText = @"If string has value, helpertext will be applied.";
+public const string MudInputLabel_HelperText = @"The HelperText will be displayed below the text field.";
 
 public const string MudInputLabel_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
 
@@ -613,6 +619,9 @@ public const string MudInputLabel_Margin = @"Will adjust vertical spacing.";
 public const string MudInputLabel_ValueChanged = @"Fired when the Value property changes.";
 
 public const string MudInputLabel_Value = @"The value of this input element. This property is two-way bindable.";
+
+public const string MudInputLabel_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
+            Currently only string fields are supported.";
 
 public const string MudInputLabel_Class = @"User class names, separated by space";
 
@@ -947,7 +956,7 @@ public const string MudSelect_Label = @"If string has value the label text will 
 
 public const string MudSelect_Placeholder = @"The short hint displayed in the input before the user enters a value.";
 
-public const string MudSelect_HelperText = @"If string has value, helpertext will be applied.";
+public const string MudSelect_HelperText = @"The HelperText will be displayed below the text field.";
 
 public const string MudSelect_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
 
@@ -968,6 +977,9 @@ public const string MudSelect_Margin = @"Will adjust vertical spacing.";
 public const string MudSelect_ValueChanged = @"Fired when the Value property changes.";
 
 public const string MudSelect_Value = @"The value of this input element. This property is two-way bindable.";
+
+public const string MudSelect_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
+            Currently only string fields are supported.";
 
 public const string MudSelect_Class = @"User class names, separated by space";
 
@@ -1186,7 +1198,7 @@ public const string MudTextField_Label = @"If string has value the label text wi
 
 public const string MudTextField_Placeholder = @"The short hint displayed in the input before the user enters a value.";
 
-public const string MudTextField_HelperText = @"If string has value, helpertext will be applied.";
+public const string MudTextField_HelperText = @"The HelperText will be displayed below the text field.";
 
 public const string MudTextField_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
 
@@ -1207,6 +1219,9 @@ public const string MudTextField_Margin = @"Will adjust vertical spacing.";
 public const string MudTextField_ValueChanged = @"Fired when the Value property changes.";
 
 public const string MudTextField_Value = @"The value of this input element. This property is two-way bindable.";
+
+public const string MudTextField_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
+            Currently only string fields are supported.";
 
 public const string MudTextField_Class = @"User class names, separated by space";
 

@@ -76,7 +76,7 @@
         </member>
         <member name="P:MudBlazor.MudBaseInputText.HelperText">
             <summary>
-            If string has value, helpertext will be applied.
+            The HelperText will be displayed below the text field.
             </summary>
         </member>
         <member name="P:MudBlazor.MudBaseInputText.AdornmentIcon">
@@ -128,6 +128,38 @@
             <summary>
             The value of this input element. This property is two-way bindable.
             </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.EditContext">
+            <summary>
+            This is the form validation context for Blazor's <EditForm></EditForm> component
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.For">
+            <summary>
+            Specify an expression which returns the model's field for which validation messages should be displayed.
+            Currently only string fields are supported.
+            </summary>
+        </member>
+        <member name="F:MudBlazor.MudBaseInputText._fieldIdentifier">
+            <summary>
+            Points to a field of the model for which validation messages should be displayed.
+            </summary>
+        </member>
+        <member name="F:MudBlazor.MudBaseInputText._currentFor">
+            <summary>
+            To find out whether or not For parameter has changed we keep a separate reference
+            </summary>
+        </member>
+        <member name="F:MudBlazor.MudBaseInputText._currentEditContext">
+            <summary>
+            To find out whether or not EditContext parameter has changed we keep a separate reference
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudBaseInputText.Dispose(System.Boolean)">
+            <summary>
+            Called to dispose this instance.
+            </summary>
+            <param name="disposing"><see langword="true"/> if called within <see cref="M:System.IDisposable.Dispose"/>.</param>
         </member>
         <member name="P:MudBlazor.MudBasePicker.Elevation">
             <summary>
