@@ -843,16 +843,16 @@ public const string EditFormExample = @"<EditForm Model=""@model""  OnValidSubmi
         <ValidationSummary />
     </MudText>
     <MudGrid Style=""max-width: 400px"">
-        <MudItem xs=""12"" Class=""pa-0"">
+        <MudItem xs=""12"" Class=""py-0"">
             <MudTextField Label=""First name"" HelperText=""Max. 8 characters"" @bind-Value=""model.Username"" For=""@(() => model.Username)"" />
         </MudItem>
-        <MudItem xs=""12"" Class=""pa-0"">
+        <MudItem xs=""12"" Class=""py-0"">
             <MudTextField Label=""Email"" @bind-Value=""model.Email"" For=""@(() => model.Email)"" />
         </MudItem>
-        <MudItem xs=""12"" Class=""pa-0"">
+        <MudItem xs=""12"" Class=""py-0"">
             <MudTextField Label=""Password"" HelperText=""Choose a strong password"" @bind-Value=""model.Password"" For=""@(() => model.Password)"" InputType=""InputType.Password"" />
         </MudItem>
-        <MudItem xs=""12"" Class=""pa-0"">
+        <MudItem xs=""12"" Class=""py-0"">
             <MudTextField Label=""Password"" HelperText=""Repeat the password"" @bind-Value=""model.Password2"" For=""@(() => model.Password2)"" InputType=""InputType.Password"" />
         </MudItem>
         <MudItem xs=""12"">
@@ -861,7 +861,11 @@ public const string EditFormExample = @"<EditForm Model=""@model""  OnValidSubmi
         <MudItem xs=""12"">
             @if (success)
             {
-                <MudText Color=""Color.Success"" Typo=""Typo.h4"">Registered</MudText>
+                <MudText Color=""Color.Success"" Typo=""Typo.h4"">Success</MudText>
+            }
+            else
+            {
+                <MudText>Fill out the form correctly to see the success message.</MudText>
             }
         </MudItem>
     </MudGrid>
@@ -883,6 +887,7 @@ public const string EditFormExample = @"<EditForm Model=""@model""  OnValidSubmi
 
         [Required]
         [Compare(nameof(Password2))]
+        [StringLength(30, ErrorMessage = ""Password must be at least 8 characters long."", MinimumLength = 8)]
         public string Password { get; set; }
 
         [Required]
