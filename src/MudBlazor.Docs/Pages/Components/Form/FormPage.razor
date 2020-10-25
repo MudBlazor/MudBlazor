@@ -1,0 +1,29 @@
+﻿@page "/components/form"
+
+
+<DocsPage>
+    <DocsPageHeader >
+        <Title>Form Validation</Title>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>EditForm</Title>
+                <Description>
+                    In Blazor form validation can be done using <MudLink Href="https://docs.microsoft.com/en-us/aspnet/core/mvc/models/validation?view=aspnetcore-3.1">data annotations</MudLink>. MudBlazor's input components support
+                    Blazor's form validation if you put them into a <CodeInline>&lt;EditForm&gt;</CodeInline>. The following example shows a very simple use case. If you want to learn more please check out
+                    <MudLink Href="https://docs.microsoft.com/en-us/aspnet/core/blazor/forms-validation?view=aspnetcore-3.1">ASP.NET Core Blazor forms and validation</MudLink> on the official Blazor documentation.
+                    <br /><br />
+                    Note: for EditForm validation to work make sure to set <CodeInline>ButtonType="ButtonType.Submit"</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer>
+                    <EditFormExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="true" Code="EditFormExample" GitHubFolderName="Form" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+

@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public abstract class MudBaseInputText : MudComponentBase
+    public abstract class MudBaseInputText : MudComponentBase, IDisposable
     {
         private string _value;
 
@@ -47,9 +52,14 @@ namespace MudBlazor
         [Parameter] public string Placeholder { get; set; }
 
         /// <summary>
-        /// If string has value, helpertext will be applied.
+        /// The HelperText will be displayed below the text field.
         /// </summary>
         [Parameter] public string HelperText { get; set; }
+
+        /// <summary>
+        /// The ErrorText that will be displayed if Error true
+        /// </summary>
+        [Parameter] public string ErrorText { get; set; }
 
         /// <summary>
         /// Icon that will be used if Adornment is set to Start or End.
@@ -111,5 +121,89 @@ namespace MudBlazor
                 }
             }
         }
+
+        #region --> Blazor EditForm validation support
+
+        /// <summary>
+        /// This is the form validation context for Blazor's <EditForm></EditForm> component
+        /// </summary>
+        [CascadingParameter] EditContext EditContext { get; set; } = default!;
+
+        /// <summary>
+        /// Specify an expression which returns the model's field for which validation messages should be displayed.
+        /// Currently only string fields are supported.
+        /// </summary>
+        [Parameter] public Expression<Func<string>>? For { get; set; }
+
+
+        private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
+        {
+            if (EditContext == null)
+                return;
+            var error_msgs = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
+            Error = error_msgs.Length > 0;
+            ErrorText = (Error ? error_msgs[0] : null);
+            StateHasChanged();
+        }
+
+        /// <summary>
+        /// Points to a field of the model for which validation messages should be displayed.
+        /// </summary>
+        private FieldIdentifier _fieldIdentifier;
+
+        /// <summary>
+        /// To find out whether or not For parameter has changed we keep a separate reference
+        /// </summary>
+        private Expression<Func<string>>? _currentFor;
+
+        /// <summary>
+        /// To find out whether or not EditContext parameter has changed we keep a separate reference
+        /// </summary>
+        private EditContext? _currentEditContext;
+
+        protected override void OnParametersSet()
+        {
+            if (EditContext == null)
+                return;
+            if (For == null)
+                return;
+            if (For != _currentFor)
+            {
+                _fieldIdentifier = FieldIdentifier.Create(For);
+                _currentFor = For;
+            }
+            if (EditContext != _currentEditContext)
+            {
+                DetachValidationStateChangedListener();
+                EditContext.OnValidationStateChanged += OnValidationStateChanged;
+                _currentEditContext = EditContext;
+            }
+        }
+
+        private void DetachValidationStateChangedListener()
+        {
+            if (_currentEditContext != null)
+            {
+                _currentEditContext.OnValidationStateChanged -= OnValidationStateChanged;
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Called to dispose this instance.
+        /// </summary>
+        /// <param name="disposing"><see langword="true"/> if called within <see cref="IDisposable.Dispose"/>.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+        }
+
+        void IDisposable.Dispose()
+        {
+            DetachValidationStateChangedListener();
+            Dispose(disposing: true);
+        }
+
+
     }
 }

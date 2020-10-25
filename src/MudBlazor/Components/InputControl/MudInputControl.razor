@@ -1,19 +1,35 @@
 ﻿@namespace MudBlazor
-@inherits MudComponentBase
+@inherits MudBaseInputText
 
 
 
 
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
+    @ControlInput
     @if (!String.IsNullOrEmpty(Label))
     {
-        <MudText>@Label</MudText>
+        <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant" Disabled=@Disabled Error="@Error">
+            @Label
+        </MudInputLabel>
     }
-    @ChildContent
     @if (!String.IsNullOrEmpty(HelperText))
     {
-        <p class="mud-input-helper-text">@HelperText</p>
+        <p class="@HelperClass">
+            @if (Error)
+            {
+                @ErrorText
+            }
+            else
+            {
+                @HelperText
+            }
+        </p>
     }
+    else if (String.IsNullOrEmpty(HelperText) && Error)
+    {
+        <p class="@HelperClass">@ErrorText</p>
+    }
+    @ControlChild
 </div>
 

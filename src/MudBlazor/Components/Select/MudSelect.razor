@@ -1,12 +1,12 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseInputText
 
-<MudInputControl HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname">
+<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled">
+    <ControlInput>
         <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
                   @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
-        <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant" Disabled=@Disabled>
-            @Label
-        </MudInputLabel>
+    </ControlInput>
+    <ControlChild>
         <CascadingValue Value="@this">
             <MudPopover Open="@isOpen" Class="mud-select-menu" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
                 <MudList Clickable="true" Dense="@Dense">
@@ -14,6 +14,7 @@
                 </MudList>
             </MudPopover>
         </CascadingValue>
+    </ControlChild>
 </MudInputControl>
 
 

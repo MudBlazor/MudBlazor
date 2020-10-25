@@ -4903,6 +4903,8 @@ ul {
   color: var(--mud-theme-primary);
   transform: translate(0, 1.5px) scale(0.75);
   transform-origin: top left; }
+  .mud-input:focus-within + label.mud-input-label.mud-input-label-inputcontrol.mud-error {
+    color: #f44336; }
 
 .mud-input:focus-within + label.mud-input-label.mud-input-label-inputcontrol.mud-input-label-filled {
   transform: translate(12px, 10px) scale(0.75); }
