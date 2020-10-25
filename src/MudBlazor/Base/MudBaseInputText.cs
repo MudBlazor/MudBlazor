@@ -122,14 +122,6 @@ namespace MudBlazor
             }
         }
 
-        protected override Task OnInitializedAsync()
-        {
-            _initialHelperText = HelperText;
-            return base.OnInitializedAsync();
-        }
-
-        
-
         #region --> Blazor EditForm validation support
 
         /// <summary>
@@ -150,7 +142,7 @@ namespace MudBlazor
                 return;
             var error_msgs = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
             Error = error_msgs.Length > 0;
-            HelperText = (Error ? error_msgs[0] : _initialHelperText);
+            ErrorText = (Error ? error_msgs[0] : null);
             StateHasChanged();
         }
 
@@ -168,8 +160,6 @@ namespace MudBlazor
         /// To find out whether or not EditContext parameter has changed we keep a separate reference
         /// </summary>
         private EditContext? _currentEditContext;
-
-        private string _initialHelperText;
 
         protected override void OnParametersSet()
         {

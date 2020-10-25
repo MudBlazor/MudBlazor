@@ -843,16 +843,16 @@ public const string EditFormExample = @"<EditForm Model=""@model""  OnValidSubmi
         <ValidationSummary />
     </MudText>
     <MudGrid Style=""max-width: 400px"">
-        <MudItem xs=""12"">
+        <MudItem xs=""12"" Class=""pa-0"">
             <MudTextField Label=""First name"" HelperText=""Max. 8 characters"" @bind-Value=""model.Username"" For=""@(() => model.Username)"" />
         </MudItem>
-        <MudItem xs=""12"">
+        <MudItem xs=""12"" Class=""pa-0"">
             <MudTextField Label=""Email"" @bind-Value=""model.Email"" For=""@(() => model.Email)"" />
         </MudItem>
-        <MudItem xs=""12"">
+        <MudItem xs=""12"" Class=""pa-0"">
             <MudTextField Label=""Password"" HelperText=""Choose a strong password"" @bind-Value=""model.Password"" For=""@(() => model.Password)"" InputType=""InputType.Password"" />
         </MudItem>
-        <MudItem xs=""12"">
+        <MudItem xs=""12"" Class=""pa-0"">
             <MudTextField Label=""Password"" HelperText=""Repeat the password"" @bind-Value=""model.Password2"" For=""@(() => model.Password2)"" InputType=""InputType.Password"" />
         </MudItem>
         <MudItem xs=""12"">
@@ -866,8 +866,6 @@ public const string EditFormExample = @"<EditForm Model=""@model""  OnValidSubmi
         </MudItem>
     </MudGrid>
 </EditForm>
-
-
 
 @code {
     RegisterAccountForm model = new RegisterAccountForm();
