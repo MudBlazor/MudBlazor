@@ -57,6 +57,11 @@ namespace MudBlazor
         [Parameter] public string HelperText { get; set; }
 
         /// <summary>
+        /// The ErrorText that will be displayed if Error true
+        /// </summary>
+        [Parameter] public string ErrorText { get; set; }
+
+        /// <summary>
         /// Icon that will be used if Adornment is set to Start or End.
         /// </summary>
         [Parameter] public string AdornmentIcon { get; set; }

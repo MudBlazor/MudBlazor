@@ -53,6 +53,10 @@
         color: var(--mud-theme-primary);
         transform: translate(0, 1.5px) scale(0.75);
         transform-origin: top left;
+
+        &.mud-error {
+            color: #f44336;
+        }
     }
 
     &.mud-input-label.mud-input-label-inputcontrol.mud-input-label-filled {

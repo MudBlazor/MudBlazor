@@ -79,6 +79,11 @@
             The HelperText will be displayed below the text field.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBaseInputText.ErrorText">
+            <summary>
+            The ErrorText that will be displayed if Error true
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBaseInputText.AdornmentIcon">
             <summary>
             Icon that will be used if Adornment is set to Start or End.
@@ -714,29 +719,14 @@
             Child content of component.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudInputControl.Label">
-            <summary>
-            If string has value, label text will be added.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudInputControl.FullWidth">
-            <summary>
-            If true, the component will take up the full width of its container.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudInputControl.HelperText">
-            <summary>
-            If string has value, helpertext will be applied.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudInputControl.Margin">
-            <summary>
-            	If dense or normal, will adjust vertical spacing of this and contained components.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudInputControl.ChildContent">
+        <member name="P:MudBlazor.MudInputControl.ControlChild">
             <summary>
             Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.ControlInput">
+            <summary>
+            Should be the Input
             </summary>
         </member>
         <member name="P:MudBlazor.MudInputLabel.ChildContent">
