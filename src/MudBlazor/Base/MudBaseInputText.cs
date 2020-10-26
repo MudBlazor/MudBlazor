@@ -122,23 +122,51 @@ namespace MudBlazor
             {
                 if (value != _value)
                 {
-                    var old_value = _value;
                     _value = value;
-                    Validate(old_value, value);
+                    ValidateValue(value);
                     ValueChanged.InvokeAsync(value);
                 }
             }
         }
 
         /// <summary>
+        /// Fired when the Value property changes. 
+        /// </summary>
+        [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
+
+        protected virtual void OnBlurred(FocusEventArgs obj)
+        {
+            ValidateValue(Value);
+            OnBlur.InvokeAsync(obj);
+        }
+
+        /// <summary>
         /// If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
         /// If it is sub-component, it will NOT do form validation!!
         /// </summary>
-        [CascadingParameter(Name = "Standalone")] 
+        [CascadingParameter(Name = "Standalone")]
         private bool Standalone { get; set; } = true;
 
         #region --> MudForm validation support
 
+        /// <summary>
+        /// A validation func or a validation attribute. Supported types are:
+        /// Func<string, bool> ... will output the standard error message "Invalid" if false
+        /// Func<string, string> ... outputs the result as error message, no error if null
+        /// Func<string, IEnumerable<string>> ... outputs all the returned error messages, no error if empty
+        /// System.ComponentModel.DataAnnotations.ValidationAttribute instances
+        /// </summary>
+        [Parameter] public object Validation { get; set; }
+
+        /// <summary>
+        /// If true, this form input is required to be filled out.
+        /// </summary>
+        [Parameter] public bool Required { get; set; }
+
+        /// <summary>
+        /// Set an error text that will be displayed if the input is not filled out but required!
+        /// </summary>
+        [Parameter] public string RequiredError { get; set; } = "Required";
 
         [CascadingParameter] MudForm Form { get; set; }
 
@@ -151,13 +179,105 @@ namespace MudBlazor
             return base.OnInitializedAsync();
         }
 
-        protected virtual void Validate(string old_value, string new_value)
+        internal List<string> ValidationErrors = new List<string>();
+
+        /// <summary>
+        /// Causes this component to validate its value
+        /// </summary>
+        public void Validate() => ValidateValue(_value);
+
+        protected virtual void ValidateValue(string value)
         {
             if (Form == null || !Standalone)
                 return;
-            Form.Update(this);
+            ValidationErrors = new List<string>();
+            try
+            {
+                if (Required && string.IsNullOrWhiteSpace(value))
+                {
+                    ValidationErrors.Add(RequiredError);
+                    return;
+                }
+                if (Validation is ValidationAttribute)
+                    ValidateWithAttribute(Validation as ValidationAttribute, value);
+                else if (Validation is Func<string, bool>)
+                    ValidateWithFunc(Validation as Func<string, bool>, value);
+                else if (Validation is Func<string, string>)
+                    ValidateWithFunc(Validation as Func<string, string>, value);
+                else if (Validation is Func<string, IEnumerable<string>>)
+                    ValidateWithFunc(Validation as Func<string, IEnumerable<string>>, value);
+            }
+            finally
+            {
+                // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
+                // if Error and ErrorText are set by the user, setting them here will have no effect. 
+                Error = ValidationErrors.Count > 0;
+                ErrorText = ValidationErrors.FirstOrDefault();
+                Form.Update(this);
+            }
         }
 
+        protected virtual void ValidateWithAttribute(ValidationAttribute attr, string value)
+        {
+            if (attr.IsValid(value))
+                return;
+            ValidationErrors.Add(attr.ErrorMessage);
+        }
+
+        protected virtual void ValidateWithFunc(Func<string, bool> func, string value)
+        {
+            try
+            {
+                if (func(value))
+                    return;
+                ValidationErrors.Add("Invalid");
+            }
+            catch (Exception e)
+            {
+                ValidationErrors.Add("Error in validation func: " + e.Message);
+            }
+        }
+
+        protected virtual void ValidateWithFunc(Func<string, string> func, string value)
+        {
+            try
+            {
+                var error = func(value);
+                if (error == null)
+                    return;
+                ValidationErrors.Add(error);
+            }
+            catch (Exception e)
+            {
+                ValidationErrors.Add("Error in validation func: " + e.Message);
+            }
+        }
+
+        protected virtual void ValidateWithFunc(Func<string, IEnumerable<string>> func, string value)
+        {
+            try
+            {
+                foreach(var error in func(value))
+                    ValidationErrors.Add(error);
+            }
+            catch (Exception e)
+            {
+                ValidationErrors.Add("Error in validation func: " + e.Message);
+            }
+        }
+
+        public void Reset()
+        {
+            _value = null;
+            ResetValidation();
+        }
+
+        public void ResetValidation()
+        {
+            Error = false;
+            ValidationErrors.Clear();
+            StateHasChanged();
+        }
 
         #endregion
 
@@ -245,7 +365,6 @@ namespace MudBlazor
             DetachValidationStateChangedListener();
             Dispose(disposing: true);
         }
-
 
     }
 }

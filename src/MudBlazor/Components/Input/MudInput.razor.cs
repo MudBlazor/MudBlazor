@@ -2,6 +2,7 @@
 using MudBlazor.Utilities;
 using MudBlazor.Extensions;
 using System;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
@@ -34,7 +35,7 @@ namespace MudBlazor
        .Build();
 
         protected string _InputType => new CssBuilder().AddClass(InputType.ToDescriptionString()).Build();
-        
+
 
     }
 }

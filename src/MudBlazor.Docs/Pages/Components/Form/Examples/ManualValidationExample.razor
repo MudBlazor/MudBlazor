@@ -1,7 +1,7 @@
 ﻿@using System.Text.RegularExpressions
 @namespace MudBlazor.Docs.Examples
 
-<MudForm IsValidChanged="@OnIsValidChanged">
+<MudForm @bind-IsValid="@success">
     <MudGrid Style="max-width: 400px">
         <MudItem xs="12" Class="py-0">
             <MudTextField Label="Password" HelperText="Enter your new password" Immediate="true"
@@ -42,12 +42,6 @@
             error2 = true;
             error_text2 = "The passwords do not match!";
         }
-        StateHasChanged();
-    }
-
-    public void OnIsValidChanged(bool is_valid)
-    {
-        success = is_valid;
         StateHasChanged();
     }
 

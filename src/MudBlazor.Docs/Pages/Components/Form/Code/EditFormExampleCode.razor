@@ -52,11 +52,11 @@
         <span class="keyword">public</span> <span class="keyword">string</span> Email { <span class="keyword">get</span>; <span class="keyword">set</span>; }
 
         [Required]
-        [Compare(nameof(Password2))]
         [StringLength(<span class="number">30</span>, ErrorMessage = <span class="string">&quot;Password must be at least 8 characters long.&quot;</span>, MinimumLength = <span class="number">8</span>)]
         <span class="keyword">public</span> <span class="keyword">string</span> Password { <span class="keyword">get</span>; <span class="keyword">set</span>; }
 
         [Required]
+        [Compare(nameof(Password))]
         <span class="keyword">public</span> <span class="keyword">string</span> Password2 { <span class="keyword">get</span>; <span class="keyword">set</span>; }
 
     }
