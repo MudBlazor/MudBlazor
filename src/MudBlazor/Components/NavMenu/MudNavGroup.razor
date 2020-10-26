@@ -1,13 +1,20 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<li @attributes="UserAttributes" class="mud-nav-group" disabled="@Disabled" style="@Style">
+<div @attributes="UserAttributes" class="mud-nav-group" disabled="@Disabled" style="@Style">
     <button @onclick="ExpandedToggle" tabindex="0" class="@Classname">
-        @Title
+        @if (!String.IsNullOrEmpty(Icon))
+        {
+            <MudIcon Icon="@Icon" Class="mud-nav-link-icon"></MudIcon>
+        }
+        <div Class="mud-nav-link-text">
+            @Title
+        </div>
+        <MudIcon Icon="@Icons.Material.ArrowDropDown" class="@(Expanded? "mud-nav-link-expand-icon mud-transform" : "mud-nav-link-expand-icon")" />
     </button>
     <MudCollapse Expanded="@Expanded">
         <MudNavMenu>
             @ChildContent
         </MudNavMenu>
     </MudCollapse>
-</li>
+</div>
