@@ -4,7 +4,7 @@
 @typeparam T
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    <CascadingValue Value="TableContext">
+    <CascadingValue Value="TableContext" IsFixed="true">
         @if (ToolBarContent != null)
         {
             <MudToolBar Class="mud-table-toolbar">

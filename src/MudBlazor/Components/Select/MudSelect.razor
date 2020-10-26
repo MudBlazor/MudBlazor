@@ -7,7 +7,7 @@
                   @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
     </ControlInput>
     <ControlChild>
-        <CascadingValue Value="@this">
+        <CascadingValue Value="@this" IsFixed="true">
             <MudPopover Open="@isOpen" Class="mud-select-menu" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
                 <MudList Clickable="true" Dense="@Dense">
                     @ChildContent
