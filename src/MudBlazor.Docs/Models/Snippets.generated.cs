@@ -906,11 +906,11 @@ public const string EditFormExample = @"<EditForm Model=""@model""  OnValidSubmi
 public const string ManualValidationExample = @"<MudForm IsValidChanged=""@OnIsValidChanged"">
     <MudGrid Style=""max-width: 400px"">
         <MudItem xs=""12"" Class=""py-0"">
-            <MudTextField Label=""Password"" HelperText=""Enter your new password""
+            <MudTextField Label=""Password"" HelperText=""Enter your new password"" Immediate=""true""
                           Error=""@error1"" ErrorText=""@error_text1"" ValueChanged=""@(x => { pw1 = x; Validate(); })"" InputType=""InputType.Password"" />
         </MudItem>
         <MudItem xs=""12"" Class=""py-0"">
-            <MudTextField Label=""Password"" HelperText=""Enter the password again""
+            <MudTextField Label=""Password"" HelperText=""Enter the password again"" Immediate=""true""
                           Error=""@error2"" ErrorText=""@error_text2"" ValueChanged=""@(x => { pw2 = x; Validate(); })"" InputType=""InputType.Password"" />
         </MudItem>
         <MudItem xs=""12"">

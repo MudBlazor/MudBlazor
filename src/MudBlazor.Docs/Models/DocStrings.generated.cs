@@ -35,6 +35,9 @@ public const string MudBaseInputText_Error = @"If true, the label will be displa
 
 public const string MudBaseInputText_FullWidth = @"If true, the input will take up the full width of its container.";
 
+public const string MudBaseInputText_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
+
 public const string MudBaseInputText_DisableUnderLine = @"If true, the input will not have an underline.";
 
 public const string MudBaseInputText_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
@@ -531,6 +534,9 @@ public const string MudInputControl_Error = @"If true, the label will be display
 
 public const string MudInputControl_FullWidth = @"If true, the input will take up the full width of its container.";
 
+public const string MudInputControl_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
+
 public const string MudInputControl_DisableUnderLine = @"If true, the input will not have an underline.";
 
 public const string MudInputControl_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
@@ -580,6 +586,9 @@ public const string MudInput_ReadOnly = @"If true, the input will be read only."
 public const string MudInput_Error = @"If true, the label will be displayed in an error state.";
 
 public const string MudInput_FullWidth = @"If true, the input will take up the full width of its container.";
+
+public const string MudInput_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
 
 public const string MudInput_DisableUnderLine = @"If true, the input will not have an underline.";
 
@@ -632,6 +641,9 @@ public const string MudInputLabel_ReadOnly = @"If true, the input will be read o
 public const string MudInputLabel_Error = @"If true, the label will be displayed in an error state.";
 
 public const string MudInputLabel_FullWidth = @"If true, the input will take up the full width of its container.";
+
+public const string MudInputLabel_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
 
 public const string MudInputLabel_DisableUnderLine = @"If true, the input will not have an underline.";
 
@@ -993,6 +1005,9 @@ public const string MudSelect_Error = @"If true, the label will be displayed in 
 
 public const string MudSelect_FullWidth = @"If true, the input will take up the full width of its container.";
 
+public const string MudSelect_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
+
 public const string MudSelect_DisableUnderLine = @"If true, the input will not have an underline.";
 
 public const string MudSelect_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
@@ -1236,6 +1251,9 @@ public const string MudTextField_ReadOnly = @"If true, the input will be read on
 public const string MudTextField_Error = @"If true, the label will be displayed in an error state.";
 
 public const string MudTextField_FullWidth = @"If true, the input will take up the full width of its container.";
+
+public const string MudTextField_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
 
 public const string MudTextField_DisableUnderLine = @"If true, the input will not have an underline.";
 

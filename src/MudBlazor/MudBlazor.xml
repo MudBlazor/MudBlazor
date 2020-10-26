@@ -59,6 +59,12 @@
             If true, the input will take up the full width of its container.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBaseInputText.Immediate">
+            <summary>
+            If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBaseInputText.DisableUnderLine">
             <summary>
             If true, the input will not have an underline.

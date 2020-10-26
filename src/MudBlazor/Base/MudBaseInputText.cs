@@ -37,6 +37,12 @@ namespace MudBlazor
         [Parameter] public bool FullWidth { get; set; }
 
         /// <summary>
+        /// If true, the input will update the Value immediately on typing.
+        /// If false, the Value is updated only on Enter.
+        /// </summary>
+        [Parameter] public bool Immediate { get; set; }
+
+        /// <summary>
         /// If true, the input will not have an underline.
         /// </summary>
         [Parameter] public bool DisableUnderLine { get; set; }
