@@ -369,6 +369,28 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void FabSimpleExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<FabSimpleExample>();
+        }
+
+
+        [Test]
+        public void FabSizeExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<FabSizeExample>();
+        }
+
+
+        [Test]
         public void CardCombinedExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -717,28 +739,6 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<ExpansionPanelSimpleExample>();
-        }
-
-
-        [Test]
-        public void FabSimpleExample_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<FabSimpleExample>();
-        }
-
-
-        [Test]
-        public void FabSizeExample_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<FabSizeExample>();
         }
 
 

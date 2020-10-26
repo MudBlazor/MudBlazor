@@ -839,11 +839,15 @@ public const string ComponentBaseMudMenuItem_UserAttributes = @"UserAttributes c
 
 public const string MudNavGroup_Title = @"";
 
+public const string MudNavGroup_Icon = @"Icon to use if set.";
+
 public const string MudNavGroup_Disabled = @"";
 
 public const string MudNavGroup_DisableRipple = @"";
 
 public const string MudNavGroup_Expanded = @"";
+
+public const string MudNavGroup_ExpandIcon = @"If true, adds expand-icon at the end of the NavGroup. Set to true by default.";
 
 public const string MudNavGroup_ChildContent = @"";
 

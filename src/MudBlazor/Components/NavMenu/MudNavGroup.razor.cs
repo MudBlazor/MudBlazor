@@ -20,6 +20,11 @@ namespace MudBlazor
         [Parameter] public bool Disabled { get; set; }
         [Parameter] public bool DisableRipple { get; set; }
         [Parameter] public bool Expanded { get; set; }
+
+        /// <summary>
+        /// If true, adds expand-icon at the end of the NavGroup. Set to true by default.
+        /// </summary>
+        [Parameter] public bool ExpandIcon { get; set; } = true;
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         protected void ExpandedToggle()

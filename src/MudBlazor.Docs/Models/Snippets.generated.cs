@@ -280,6 +280,22 @@ public const string ButtonTextExample = @"<MudButton Variant=""Variant.Text"">De
 <MudButton Variant=""Variant.Text"" Color=""Color.Secondary"">Secondary</MudButton>
 <MudButton Variant=""Variant.Text"" Disabled=""true"">Disabled</MudButton>";
 
+public const string FabSimpleExample = @"<MudFab Color=""Color.Primary"" Icon=""@Icons.Material.Add"" />
+<MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Edit"" />
+<MudFab Icon=""@Icons.Material.Navigation"" Label=""Navigation"" />
+<MudFab Icon=""@Icons.Material.Save"" Disabled=""true"" />";
+
+public const string FabSizeExample = @"<SectionContentRow>
+    <MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Small"" />
+    <MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Medium"" />
+    <MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Large"" />
+</SectionContentRow>
+<SectionContentRow>
+    <MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Small"" Label=""To cart"" />
+    <MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Medium"" Label=""To cart"" />
+    <MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Large"" Label=""To cart"" />
+</SectionContentRow>";
+
 public const string CardCombinedExample = @"<MudCard>
     <MudCardHeader>
         <CardHeaderAvatar>
@@ -821,22 +837,6 @@ public const string ExpansionPanelSimpleExample = @"<MudExpansionPanels>
     </MudExpansionPanel>
 </MudExpansionPanels>";
 
-public const string FabSimpleExample = @"<MudFab Color=""Color.Primary"" Icon=""@Icons.Material.Add"" />
-<MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Edit"" />
-<MudFab Icon=""@Icons.Material.Navigation"" Label=""Navigation"" />
-<MudFab Icon=""@Icons.Material.Save"" Disabled=""true"" />";
-
-public const string FabSizeExample = @"<SectionContentRow>
-    <MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Small"" />
-    <MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Medium"" />
-    <MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Large"" />
-</SectionContentRow>
-<SectionContentRow>
-    <MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Small"" Label=""To cart"" />
-    <MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Medium"" Label=""To cart"" />
-    <MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Large"" Label=""To cart"" />
-</SectionContentRow>";
-
 public const string EditFormExample = @"<EditForm Model=""@model""  OnValidSubmit=""OnValidSubmit"">
     <DataAnnotationsValidator />
     <MudText Color=""@Color.Danger"">
@@ -1302,7 +1302,7 @@ public const string NavMenuIconExample = @"<MudNavMenu Class=""demo-navmenu"">
     <MudNavLink Href=""/dashboard"" Icon=""@Icons.Material.Dashboard"">Dashboard</MudNavLink>
     <MudNavLink Href=""/servers"" Icon=""@Icons.Material.Storage"">Servers</MudNavLink>
     <MudNavLink Href=""/billing"" Icon=""@Icons.Material.Receipt"">Billing</MudNavLink>
-    <MudNavGroup Title=""Settings"" Expanded=""true"">
+    <MudNavGroup Title=""Settings"" Icon=""@Icons.Material.Settings"" Expanded=""true"">
         <MudNavLink Href=""/users""  Icon=""@Icons.Material.People"">Users</MudNavLink>
         <MudNavLink Href=""/security"" Icon=""@Icons.Material.Security"">Security</MudNavLink>
     </MudNavGroup>
