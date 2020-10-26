@@ -117,6 +117,7 @@ namespace MudBlazor
                 if (value != _value)
                 {
                     _value = value;
+                    Validate();
                     ValueChanged.InvokeAsync(value);
                 }
             }
@@ -124,13 +125,21 @@ namespace MudBlazor
 
         #region --> MudForm validation support
 
-        [CascadingParameter] public MudForm ParentForm { get; set; }
+        [CascadingParameter] MudForm Form { get; set; }
 
         protected override Task OnInitializedAsync()
         {
-            ParentForm?.Add(this);
+            Form?.Add(this);
             return base.OnInitializedAsync();
         }
+
+        private void Validate()
+        {
+            if (Form == null)
+                return;
+            Form.Update(this);
+        }
+
 
         #endregion
 
@@ -212,7 +221,7 @@ namespace MudBlazor
 
         void IDisposable.Dispose()
         {
-            ParentForm?.Remove(this);
+            //ParentForm?.Remove(this);
             DetachValidationStateChangedListener();
             Dispose(disposing: true);
         }

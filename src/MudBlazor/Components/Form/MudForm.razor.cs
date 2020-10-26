@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -7,7 +8,6 @@ namespace MudBlazor
 {
     public partial class MudForm : MudComponentBase
     {
-        private bool _valid;
 
         protected string Classname =>
             new CssBuilder("mud-form")
@@ -25,8 +25,9 @@ namespace MudBlazor
         public bool IsValid
         {
             get => _valid;
-            set => _valid = value;
+            private set => _valid = value;
         }
+        private bool _valid;
 
         /// <summary>
         /// Raised when IsValid changes.
@@ -44,6 +45,25 @@ namespace MudBlazor
         public void Remove(MudBaseInputText formControl)
         {
             _formControls.Remove(formControl);
+        }
+
+        private bool _update_required;
+        public void Update(MudBaseInputText formControl)
+        {
+            _update_required=true;
+        }
+
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (_update_required)
+            {
+                _update_required = false;
+                var old_valid = _valid;
+                IsValid = _formControls.All(x => x.Error == false);
+                if (old_valid != _valid)
+                    IsValidChanged.InvokeAsync(_valid);
+            }
+            return base.OnAfterRenderAsync(firstRender);
         }
     }
 }
