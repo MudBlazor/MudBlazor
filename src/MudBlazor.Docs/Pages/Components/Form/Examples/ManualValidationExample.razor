@@ -2,26 +2,25 @@
 @namespace MudBlazor.Docs.Examples
 
 <MudForm @bind-IsValid="@success">
-    <MudGrid Style="max-width: 400px">
-        <MudItem xs="12" Class="py-0">
+
+    <MudCard Class="demo-form-manual">
+        <MudCardContent>
             <MudTextField Label="Password" HelperText="Enter your new password" Immediate="true"
                           Error="@error1" ErrorText="@error_text1" ValueChanged="@(x => { pw1 = x; Validate(); })" InputType="InputType.Password" />
-        </MudItem>
-        <MudItem xs="12" Class="py-0">
             <MudTextField Label="Password" HelperText="Enter the password again" Immediate="true"
                           Error="@error2" ErrorText="@error_text2" ValueChanged="@(x => { pw2 = x; Validate(); })" InputType="InputType.Password" />
-        </MudItem>
-        <MudItem xs="12">
-            @if (success)
-            {
-                <MudText Color="Color.Success" Typo="Typo.h4">Success</MudText>
-            }
-            else
-            {
-                <MudText>Enter the same password twice to see the success message.</MudText>
-            }
-        </MudItem>
-    </MudGrid>
+        </MudCardContent>
+    </MudCard>
+    <MudText Typo="Typo.body2" Align="Align.Center" Class="my-4">
+        @if (success)
+        {
+            <MudText Color="Color.Success" Align="Align.Center" Typo="Typo.body2">Success</MudText>
+        }
+        else
+        {
+            <MudText Align="Align.Center" Typo="Typo.body2">Enter the same password twice to see the success message.</MudText>
+        }
+    </MudText>
 </MudForm>
 
 @code {

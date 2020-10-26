@@ -837,38 +837,38 @@ public const string ExpansionPanelSimpleExample = @"<MudExpansionPanels>
     </MudExpansionPanel>
 </MudExpansionPanels>";
 
-public const string EditFormExample = @"<EditForm Model=""@model""  OnValidSubmit=""OnValidSubmit"">
+public const string EditFormExample = @"<EditForm Model=""@model"" OnValidSubmit=""OnValidSubmit"">
     <DataAnnotationsValidator />
-    <MudText Color=""@Color.Danger"">
-        <ValidationSummary />
-    </MudText>
-    <MudGrid Style=""max-width: 400px"">
-        <MudItem xs=""12"" Class=""py-0"">
+    <MudCard Class=""demo-form"">
+        <MudCardContent>
             <MudTextField Label=""First name"" HelperText=""Max. 8 characters"" @bind-Value=""model.Username"" For=""@(() => model.Username)"" />
-        </MudItem>
-        <MudItem xs=""12"" Class=""py-0"">
             <MudTextField Label=""Email"" @bind-Value=""model.Email"" For=""@(() => model.Email)"" />
-        </MudItem>
-        <MudItem xs=""12"" Class=""py-0"">
             <MudTextField Label=""Password"" HelperText=""Choose a strong password"" @bind-Value=""model.Password"" For=""@(() => model.Password)"" InputType=""InputType.Password"" />
-        </MudItem>
-        <MudItem xs=""12"" Class=""py-0"">
             <MudTextField Label=""Password"" HelperText=""Repeat the password"" @bind-Value=""model.Password2"" For=""@(() => model.Password2)"" InputType=""InputType.Password"" />
-        </MudItem>
-        <MudItem xs=""12"">
-            <MudButton ButtonType=""ButtonType.Submit"" Variant=""Variant.Filled"" Color=""Color.Primary"">Register</MudButton>
-        </MudItem>
-        <MudItem xs=""12"">
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton ButtonType=""ButtonType.Submit"" Variant=""Variant.Filled"" Color=""Color.Primary"" Class=""demo-form-button"">Register</MudButton>
+        </MudCardActions>
+    </MudCard>
+
+    <MudText Typo=""Typo.body2"" Align=""Align.Center"" Class=""my-4"">
+        Fill out the form correctly to see the success message.
+    </MudText>
+
+    <MudExpansionPanels>
+        <MudExpansionPanel Text=""Show Validation Summary"">
             @if (success)
             {
-                <MudText Color=""Color.Success"" Typo=""Typo.h4"">Success</MudText>
+                <MudText Color=""Color.Success"">Success</MudText>
             }
             else
             {
-                <MudText>Fill out the form correctly to see the success message.</MudText>
+                <MudText Color=""@Color.Danger"">
+                    <ValidationSummary />
+                </MudText>
             }
-        </MudItem>
-    </MudGrid>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
 </EditForm>
 
 @code {
@@ -904,26 +904,25 @@ public const string EditFormExample = @"<EditForm Model=""@model""  OnValidSubmi
 }";
 
 public const string ManualValidationExample = @"<MudForm @bind-IsValid=""@success"">
-    <MudGrid Style=""max-width: 400px"">
-        <MudItem xs=""12"" Class=""py-0"">
+
+    <MudCard Class=""demo-form-manual"">
+        <MudCardContent>
             <MudTextField Label=""Password"" HelperText=""Enter your new password"" Immediate=""true""
                           Error=""@error1"" ErrorText=""@error_text1"" ValueChanged=""@(x => { pw1 = x; Validate(); })"" InputType=""InputType.Password"" />
-        </MudItem>
-        <MudItem xs=""12"" Class=""py-0"">
             <MudTextField Label=""Password"" HelperText=""Enter the password again"" Immediate=""true""
                           Error=""@error2"" ErrorText=""@error_text2"" ValueChanged=""@(x => { pw2 = x; Validate(); })"" InputType=""InputType.Password"" />
-        </MudItem>
-        <MudItem xs=""12"">
-            @if (success)
-            {
-                <MudText Color=""Color.Success"" Typo=""Typo.h4"">Success</MudText>
-            }
-            else
-            {
-                <MudText>Enter the same password twice to see the success message.</MudText>
-            }
-        </MudItem>
-    </MudGrid>
+        </MudCardContent>
+    </MudCard>
+    <MudText Typo=""Typo.body2"" Align=""Align.Center"" Class=""my-4"">
+        @if (success)
+        {
+            <MudText Color=""Color.Success"" Align=""Align.Center"" Typo=""Typo.body2"">Success</MudText>
+        }
+        else
+        {
+            <MudText Align=""Align.Center"" Typo=""Typo.body2"">Enter the same password twice to see the success message.</MudText>
+        }
+    </MudText>
 </MudForm>
 
 @code {
@@ -950,42 +949,39 @@ public const string ManualValidationExample = @"<MudForm @bind-IsValid=""@succes
 }";
 
 public const string MudFormExample = @"<MudForm @ref=""form"" @bind-IsValid=""@success"" @bind-Errors=""@errors"">
-    @foreach (var error in errors)
-    {
-        <MudText Color=""@Color.Danger"">@error</MudText>
-    }
-    <MudGrid Style=""max-width: 500px"">
-        <MudItem xs=""12"" Class=""py-0"">
+
+    <MudCard Class=""demo-form"">
+        <MudCardContent>
             <MudTextField Label=""Username"" Required=""true"" RequiredError=""User name is required!"" />
-        </MudItem>
-        <MudItem xs=""12"" Class=""py-0"">
-            <MudTextField Label=""Email"" Required=""true"" RequiredError=""Email is required!"" 
-                          Validation=""@(new EmailAddressAttribute(){ ErrorMessage = ""The email address is invalid""})"" />
-        </MudItem>
-        <MudItem xs=""12"" Class=""py-0"">
-            <MudTextField Label=""Password"" HelperText=""Choose a strong password"" @ref=""pwField1"" 
-                          InputType=""InputType.Password"" 
-                          Validation=""@(new Func<string, IEnumerable<string>>(PasswordStrength))""/>
-        </MudItem>
-        <MudItem xs=""12"" Class=""py-0"">
-            <MudTextField Label=""Password"" HelperText=""Repeat the password"" InputType=""InputType.Password"" 
-                          Validation=""@(new Func<string, string>(PasswordMatch))"" Required=""true""
-                          RequiredError=""Password is required!"" />
-        </MudItem>
-        <MudItem xs=""12"">
-            <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" Disabled=""@(!success)"">Register</MudButton>
-        </MudItem>
-        <MudItem xs=""12"">
-            @if (!success) {
-                <MudText>Fill out the form correctly to enable the Button.</MudText>
+            <MudTextField Label=""Email"" Required=""true"" RequiredError=""Email is required!""
+                Validation=""@(new EmailAddressAttribute(){ ErrorMessage = ""The email address is invalid""})"" />
+            <MudTextField Label=""Password"" HelperText=""Choose a strong password"" @ref=""pwField1""
+                InputType=""InputType.Password""
+                Validation=""@(new Func<string, IEnumerable<string>>(PasswordStrength))"" />
+            <MudTextField 
+                Label=""Password"" HelperText=""Repeat the password"" InputType=""InputType.Password""
+                Validation=""@(new Func<string, string>(PasswordMatch))"" Required=""true""
+                RequiredError=""Password is required!"" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" Disabled=""@(!success)"" Class=""demo-form-button"">Register</MudButton>
+        </MudCardActions>
+    </MudCard>
+
+    <MudPaper Class=""demo-form-paper"">
+        <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""@form.Validate"">Validate</MudButton>
+        <MudButton Variant=""Variant.Filled"" Color=""Color.Secondary"" OnClick=""@form.Reset"" Class=""mx-2"">Reset</MudButton>
+        <MudButton Variant=""Variant.Filled"" OnClick=""@form.ResetValidation"">Reset Validation</MudButton>
+    </MudPaper>
+
+    <MudExpansionPanels>
+        <MudExpansionPanel Text=""Show Errors"">
+            @foreach (var error in errors)
+            {
+                <MudText Color=""@Color.Danger"">@error</MudText>
             }
-        </MudItem>
-        <MudItem xs=""12"">
-            <MudButton Class=""mr-3"" Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""@form.Validate"">Validate</MudButton>
-            <MudButton Class=""mr-3"" Variant=""Variant.Filled"" Color=""Color.Secondary"" OnClick=""@form.Reset"">Reset</MudButton>
-            <MudButton Class=""mr-3"" Variant=""Variant.Filled"" OnClick=""@form.ResetValidation"">Reset Validation</MudButton>
-        </MudItem>
-    </MudGrid>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
 </MudForm>
 
 @code {

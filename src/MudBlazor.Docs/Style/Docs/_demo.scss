@@ -217,3 +217,24 @@
         }
     }
 }
+
+.demo-form-manual {
+    width: 400px;
+    padding-bottom: 20px;
+}
+
+.demo-form{
+    max-width:400px;
+    & .demo-form-button{
+        margin-left: auto;
+    }
+}
+
+.demo-form-paper {
+    max-width: 400px;
+    padding: 16px;
+    justify-content: center;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+}

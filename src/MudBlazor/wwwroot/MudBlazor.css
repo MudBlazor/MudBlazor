@@ -2209,7 +2209,7 @@ ul {
   .mud-button-filled:disabled {
     color: rgba(0, 0, 0, 0.26);
     box-shadow: none;
-    background-color: rgba(0, 0, 0, 0.12); }
+    background-color: rgba(0, 0, 0, 0.12) !important; }
   .mud-button-filled.mud-button-filled-primary {
     color: var(--mud-theme-on-primary);
     background-color: var(--mud-theme-primary); }
@@ -4846,7 +4846,7 @@ ul {
     .mud-input-control > .mud-input-label-inputcontrol.mud-disabled {
       color: rgba(0, 0, 0, 0.38); }
     .mud-input-control > .mud-input-label-inputcontrol.mud-error {
-      color: #f44336; }
+      color: #f44336 !important; }
 
 .mud-input-helper-text {
   color: rgba(0, 0, 0, 0.54);
@@ -4862,7 +4862,7 @@ ul {
   color: rgba(0, 0, 0, 0.38); }
 
 .mud-input-helper-text.mud-error {
-  color: #f44336; }
+  color: #f44336 !important; }
 
 .mud-input-helper-text-margin-dense {
   margin-top: 4px; }
