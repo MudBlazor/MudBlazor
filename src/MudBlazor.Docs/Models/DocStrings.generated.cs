@@ -35,6 +35,9 @@ public const string MudBaseInputText_Error = @"If true, the label will be displa
 
 public const string MudBaseInputText_FullWidth = @"If true, the input will take up the full width of its container.";
 
+public const string MudBaseInputText_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
+
 public const string MudBaseInputText_DisableUnderLine = @"If true, the input will not have an underline.";
 
 public const string MudBaseInputText_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
@@ -64,6 +67,14 @@ public const string MudBaseInputText_Margin = @"Will adjust vertical spacing.";
 public const string MudBaseInputText_ValueChanged = @"Fired when the Value property changes.";
 
 public const string MudBaseInputText_Value = @"The value of this input element. This property is two-way bindable.";
+
+public const string MudBaseInputText_OnBlur = @"Fired when the Value property changes.";
+
+public const string MudBaseInputText_Validation = @"";
+
+public const string MudBaseInputText_Required = @"If true, this form input is required to be filled out.";
+
+public const string MudBaseInputText_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
 
 public const string MudBaseInputText_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -472,6 +483,14 @@ public const string MudExpansionPanels_UserAttributes = @"UserAttributes carries
 
 public const string MudForm_ChildContent = @"Child content of component.";
 
+public const string MudForm_IsValid = @"Validation status. True if the form is valid and without errors. This parameter is readonly.";
+
+public const string MudForm_IsValidChanged = @"Raised when IsValid changes.";
+
+public const string MudForm_Errors = @"Validation error messages";
+
+public const string MudForm_ErrorsChanged = @"";
+
 public const string MudForm_Class = @"User class names, separated by space";
 
 public const string MudForm_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -529,6 +548,9 @@ public const string MudInputControl_Error = @"If true, the label will be display
 
 public const string MudInputControl_FullWidth = @"If true, the input will take up the full width of its container.";
 
+public const string MudInputControl_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
+
 public const string MudInputControl_DisableUnderLine = @"If true, the input will not have an underline.";
 
 public const string MudInputControl_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
@@ -559,6 +581,14 @@ public const string MudInputControl_ValueChanged = @"Fired when the Value proper
 
 public const string MudInputControl_Value = @"The value of this input element. This property is two-way bindable.";
 
+public const string MudInputControl_OnBlur = @"Fired when the Value property changes.";
+
+public const string MudInputControl_Validation = @"";
+
+public const string MudInputControl_Required = @"If true, this form input is required to be filled out.";
+
+public const string MudInputControl_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+
 public const string MudInputControl_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
 
@@ -578,6 +608,9 @@ public const string MudInput_ReadOnly = @"If true, the input will be read only."
 public const string MudInput_Error = @"If true, the label will be displayed in an error state.";
 
 public const string MudInput_FullWidth = @"If true, the input will take up the full width of its container.";
+
+public const string MudInput_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
 
 public const string MudInput_DisableUnderLine = @"If true, the input will not have an underline.";
 
@@ -609,6 +642,14 @@ public const string MudInput_ValueChanged = @"Fired when the Value property chan
 
 public const string MudInput_Value = @"The value of this input element. This property is two-way bindable.";
 
+public const string MudInput_OnBlur = @"Fired when the Value property changes.";
+
+public const string MudInput_Validation = @"";
+
+public const string MudInput_Required = @"If true, this form input is required to be filled out.";
+
+public const string MudInput_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+
 public const string MudInput_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
 
@@ -630,6 +671,9 @@ public const string MudInputLabel_ReadOnly = @"If true, the input will be read o
 public const string MudInputLabel_Error = @"If true, the label will be displayed in an error state.";
 
 public const string MudInputLabel_FullWidth = @"If true, the input will take up the full width of its container.";
+
+public const string MudInputLabel_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
 
 public const string MudInputLabel_DisableUnderLine = @"If true, the input will not have an underline.";
 
@@ -660,6 +704,14 @@ public const string MudInputLabel_Margin = @"Will adjust vertical spacing.";
 public const string MudInputLabel_ValueChanged = @"Fired when the Value property changes.";
 
 public const string MudInputLabel_Value = @"The value of this input element. This property is two-way bindable.";
+
+public const string MudInputLabel_OnBlur = @"Fired when the Value property changes.";
+
+public const string MudInputLabel_Validation = @"";
+
+public const string MudInputLabel_Required = @"If true, this form input is required to be filled out.";
+
+public const string MudInputLabel_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
 
 public const string MudInputLabel_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -997,6 +1049,9 @@ public const string MudSelect_Error = @"If true, the label will be displayed in 
 
 public const string MudSelect_FullWidth = @"If true, the input will take up the full width of its container.";
 
+public const string MudSelect_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
+
 public const string MudSelect_DisableUnderLine = @"If true, the input will not have an underline.";
 
 public const string MudSelect_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
@@ -1026,6 +1081,14 @@ public const string MudSelect_Margin = @"Will adjust vertical spacing.";
 public const string MudSelect_ValueChanged = @"Fired when the Value property changes.";
 
 public const string MudSelect_Value = @"The value of this input element. This property is two-way bindable.";
+
+public const string MudSelect_OnBlur = @"Fired when the Value property changes.";
+
+public const string MudSelect_Validation = @"";
+
+public const string MudSelect_Required = @"If true, this form input is required to be filled out.";
+
+public const string MudSelect_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
 
 public const string MudSelect_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -1241,6 +1304,9 @@ public const string MudTextField_Error = @"If true, the label will be displayed 
 
 public const string MudTextField_FullWidth = @"If true, the input will take up the full width of its container.";
 
+public const string MudTextField_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
+
 public const string MudTextField_DisableUnderLine = @"If true, the input will not have an underline.";
 
 public const string MudTextField_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
@@ -1270,6 +1336,14 @@ public const string MudTextField_Margin = @"Will adjust vertical spacing.";
 public const string MudTextField_ValueChanged = @"Fired when the Value property changes.";
 
 public const string MudTextField_Value = @"The value of this input element. This property is two-way bindable.";
+
+public const string MudTextField_OnBlur = @"Fired when the Value property changes.";
+
+public const string MudTextField_Validation = @"";
+
+public const string MudTextField_Required = @"If true, this form input is required to be filled out.";
+
+public const string MudTextField_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
 
 public const string MudTextField_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";

@@ -7,7 +7,7 @@
     {
         <MudTextField Label="@Label" Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="true" @onclick="ToggleOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
     }
-    <CascadingValue Value="@this">
+    <CascadingValue Value="@this" IsFixed="true">
         <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@Elevation" Square="@Square">
             <div class="@PickerContainerClass">
                 @ChildContent

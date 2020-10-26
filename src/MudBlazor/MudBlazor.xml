@@ -59,6 +59,12 @@
             If true, the input will take up the full width of its container.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBaseInputText.Immediate">
+            <summary>
+            If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBaseInputText.DisableUnderLine">
             <summary>
             If true, the input will not have an underline.
@@ -132,6 +138,33 @@
         <member name="P:MudBlazor.MudBaseInputText.Value">
             <summary>
             The value of this input element. This property is two-way bindable.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.OnBlur">
+            <summary>
+            Fired when the Value property changes. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.Standalone">
+            <summary>
+            If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
+            If it is sub-component, it will NOT do form validation!!
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:MudBlazor.MudBaseInputText.Validation" -->
+        <member name="P:MudBlazor.MudBaseInputText.Required">
+            <summary>
+            If true, this form input is required to be filled out.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInputText.RequiredError">
+            <summary>
+            Set an error text that will be displayed if the input is not filled out but required!
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudBaseInputText.Validate">
+            <summary>
+            Causes this component to validate its value
             </summary>
         </member>
         <member name="P:MudBlazor.MudBaseInputText.EditContext">
@@ -672,6 +705,42 @@
         <member name="P:MudBlazor.MudForm.ChildContent">
             <summary>
             Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudForm.IsValid">
+            <summary>
+            Validation status. True if the form is valid and without errors. This parameter is readonly.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudForm.IsValidChanged">
+            <summary>
+            Raised when IsValid changes.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudForm.Errors">
+            <summary>
+            Validation error messages
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudForm.Update(MudBlazor.MudBaseInputText)">
+            <summary>
+            Called by any input of the form to signal that its value changed. 
+            </summary>
+            <param name="formControl"></param>
+        </member>
+        <member name="M:MudBlazor.MudForm.Validate">
+            <summary>
+            Force a validation of all form controls, even if they haven't been touched by the user yet
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudForm.Reset">
+            <summary>
+            Reset all form controls and reset their validation state
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudForm.ResetValidation">
+            <summary>
+            Reset the validation state but keep the values
             </summary>
         </member>
         <member name="P:MudBlazor.MudHidden.Breakpoint">

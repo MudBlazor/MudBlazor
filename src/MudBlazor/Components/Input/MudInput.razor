@@ -9,7 +9,8 @@
     {
         <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick"/>
     }
-    <input @attributes="UserAttributes" type="@_InputType" class="@InputClassname" @bind="@Value" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" />
+    <input @attributes="UserAttributes" type="@_InputType" class="@InputClassname" @bind-value="@Value" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
+            placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="OnBlurred"/>
     @if (Adornment == Adornment.End)
     {
         <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />

@@ -1,21 +1,23 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseInputText
 
-<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled">
-    <ControlInput>
-        <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                  @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
-    </ControlInput>
-    <ControlChild>
-        <CascadingValue Value="@this">
-            <MudPopover Open="@isOpen" Class="mud-select-menu" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
-                <MudList Clickable="true" Dense="@Dense">
-                    @ChildContent
-                </MudList>
-            </MudPopover>
-        </CascadingValue>
-    </ControlChild>
-</MudInputControl>
+<CascadingValue Name="Standalone" Value="false" IsFixed="true">
+    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled">
+        <ControlInput>
+                <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
+                          @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
+        </ControlInput>
+        <ControlChild>
+            <CascadingValue Value="@this" IsFixed="true">
+                <MudPopover Open="@isOpen" Class="mud-select-menu" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
+                    <MudList Clickable="true" Dense="@Dense">
+                        @ChildContent
+                    </MudList>
+                </MudPopover>
+            </CascadingValue>
+        </ControlChild>
+    </MudInputControl>
+</CascadingValue>
 
 
 @if (isOpen)

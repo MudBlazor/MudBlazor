@@ -21,7 +21,7 @@
     {
         <MudIconButton Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" @onclick="@ToggleMenu"/>
     }
-    <CascadingValue Value="@this">
+    <CascadingValue Value="@this" IsFixed="true">
         <MudPopover Open="@isOpen" Class="mud-menu-container">
             <MudList Clickable="true">
                 @ChildContent

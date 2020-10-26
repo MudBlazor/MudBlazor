@@ -886,11 +886,11 @@ public const string EditFormExample = @"<EditForm Model=""@model""  OnValidSubmi
         public string Email { get; set; }
 
         [Required]
-        [Compare(nameof(Password2))]
         [StringLength(30, ErrorMessage = ""Password must be at least 8 characters long."", MinimumLength = 8)]
         public string Password { get; set; }
 
         [Required]
+        [Compare(nameof(Password))]
         public string Password2 { get; set; }
 
     }
@@ -899,6 +899,123 @@ public const string EditFormExample = @"<EditForm Model=""@model""  OnValidSubmi
     {
         success = true;
         StateHasChanged();
+    }
+
+}";
+
+public const string ManualValidationExample = @"<MudForm @bind-IsValid=""@success"">
+    <MudGrid Style=""max-width: 400px"">
+        <MudItem xs=""12"" Class=""py-0"">
+            <MudTextField Label=""Password"" HelperText=""Enter your new password"" Immediate=""true""
+                          Error=""@error1"" ErrorText=""@error_text1"" ValueChanged=""@(x => { pw1 = x; Validate(); })"" InputType=""InputType.Password"" />
+        </MudItem>
+        <MudItem xs=""12"" Class=""py-0"">
+            <MudTextField Label=""Password"" HelperText=""Enter the password again"" Immediate=""true""
+                          Error=""@error2"" ErrorText=""@error_text2"" ValueChanged=""@(x => { pw2 = x; Validate(); })"" InputType=""InputType.Password"" />
+        </MudItem>
+        <MudItem xs=""12"">
+            @if (success)
+            {
+                <MudText Color=""Color.Success"" Typo=""Typo.h4"">Success</MudText>
+            }
+            else
+            {
+                <MudText>Enter the same password twice to see the success message.</MudText>
+            }
+        </MudItem>
+    </MudGrid>
+</MudForm>
+
+@code {
+    bool success, error1, error2;
+    string pw1, pw2, error_text1, error_text2;
+
+    public void Validate()
+    {
+        error1 = false;
+        error2 = false;
+        if (string.IsNullOrEmpty(pw1))
+        {
+            error1 = true;
+            error_text1 = ""Password required"";
+        }
+        if (pw1 != pw2)
+        {
+            error2 = true;
+            error_text2 = ""The passwords do not match!"";
+        }
+        StateHasChanged();
+    }
+
+}";
+
+public const string MudFormExample = @"<MudForm @ref=""form"" @bind-IsValid=""@success"" @bind-Errors=""@errors"">
+    @foreach (var error in errors)
+    {
+        <MudText Color=""@Color.Danger"">@error</MudText>
+    }
+    <MudGrid Style=""max-width: 500px"">
+        <MudItem xs=""12"" Class=""py-0"">
+            <MudTextField Label=""Username"" Required=""true"" RequiredError=""User name is required!"" />
+        </MudItem>
+        <MudItem xs=""12"" Class=""py-0"">
+            <MudTextField Label=""Email"" Required=""true"" RequiredError=""Email is required!"" 
+                          Validation=""@(new EmailAddressAttribute(){ ErrorMessage = ""The email address is invalid""})"" />
+        </MudItem>
+        <MudItem xs=""12"" Class=""py-0"">
+            <MudTextField Label=""Password"" HelperText=""Choose a strong password"" @ref=""pwField1"" 
+                          InputType=""InputType.Password"" 
+                          Validation=""@(new Func<string, IEnumerable<string>>(PasswordStrength))""/>
+        </MudItem>
+        <MudItem xs=""12"" Class=""py-0"">
+            <MudTextField Label=""Password"" HelperText=""Repeat the password"" InputType=""InputType.Password"" 
+                          Validation=""@(new Func<string, string>(PasswordMatch))"" Required=""true""
+                          RequiredError=""Password is required!"" />
+        </MudItem>
+        <MudItem xs=""12"">
+            <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" Disabled=""@(!success)"">Register</MudButton>
+        </MudItem>
+        <MudItem xs=""12"">
+            @if (!success) {
+                <MudText>Fill out the form correctly to enable the Button.</MudText>
+            }
+        </MudItem>
+        <MudItem xs=""12"">
+            <MudButton Class=""mr-3"" Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""@form.Validate"">Validate</MudButton>
+            <MudButton Class=""mr-3"" Variant=""Variant.Filled"" Color=""Color.Secondary"" OnClick=""@form.Reset"">Reset</MudButton>
+            <MudButton Class=""mr-3"" Variant=""Variant.Filled"" OnClick=""@form.ResetValidation"">Reset Validation</MudButton>
+        </MudItem>
+    </MudGrid>
+</MudForm>
+
+@code {
+    bool success;
+    string[] errors={};
+    MudTextField pwField1;
+    MudForm form;
+
+    private IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return ""Password is required!"";
+            yield break;
+        }
+        if (pw.Length < 8)
+            yield return ""Password must be at least of length 8"";
+        if (!Regex.IsMatch(pw, @""[A-Z]""))
+            yield return ""Password must contain at least one capital letter"";
+        if (!Regex.IsMatch(pw, @""[a-z]""))
+            yield return ""Password must contain at least one lowercase letter"";
+        if (!Regex.IsMatch(pw, @""[0-9]""))
+            yield return ""Password must contain at least one digit"";
+    }
+
+    private string PasswordMatch(string arg)
+    {
+        if (pwField1.Value != arg)
+            return ""Passwords don't match"";
+        return null;
     }
 
 }";
