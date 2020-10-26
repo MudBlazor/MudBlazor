@@ -844,6 +844,16 @@
             List click event.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudNavGroup.Icon">
+            <summary>
+            Icon to use if set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudNavLink.Icon">
+            <summary>
+            Icon to use if set.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudPopover.Elevation">
             <summary>
             The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default.

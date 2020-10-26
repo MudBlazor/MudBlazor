@@ -1298,6 +1298,17 @@ public const string NavMenuExample = @"<MudNavMenu Class=""demo-navmenu"">
     <MudNavLink Href=""/about"">About</MudNavLink>
 </MudNavMenu>";
 
+public const string NavMenuIconExample = @"<MudNavMenu Class=""demo-navmenu"">
+    <MudNavLink Href=""/dashboard"" Icon=""@Icons.Material.Dashboard"">Dashboard</MudNavLink>
+    <MudNavLink Href=""/servers"" Icon=""@Icons.Material.Storage"">Servers</MudNavLink>
+    <MudNavLink Href=""/billing"" Icon=""@Icons.Material.Receipt"">Billing</MudNavLink>
+    <MudNavGroup Title=""Settings"" Expanded=""true"">
+        <MudNavLink Href=""/users""  Icon=""@Icons.Material.People"">Users</MudNavLink>
+        <MudNavLink Href=""/security"" Icon=""@Icons.Material.Security"">Security</MudNavLink>
+    </MudNavGroup>
+    <MudNavLink Href=""/about"">About</MudNavLink>
+</MudNavMenu>";
+
 public const string PaperComponentExample = @"<MudPaper Elevation=""0""></MudPaper>
 <MudPaper></MudPaper>
 <MudPaper Elevation=""3""></MudPaper>";

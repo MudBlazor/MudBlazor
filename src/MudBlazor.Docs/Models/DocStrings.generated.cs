@@ -856,6 +856,8 @@ public const string MudNavGroup_Tag = @"Use Tag to attach any user data object t
 public const string MudNavGroup_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudNavLink_Icon = @"Icon to use if set.";
+
 public const string MudNavLink_Match = @"";
 
 public const string MudNavLink_Disabled = @"If true, the input element will be disabled.";

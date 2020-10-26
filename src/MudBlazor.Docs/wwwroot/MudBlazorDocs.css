@@ -1,6 +1,6 @@
 ﻿.mudblazor-brand {
   font-size: 1.7rem;
-  font-weight: 300;
+  font-weight: 400;
   letter-spacing: .1rem;
   line-height: 1.5;
   color: var(--mud-theme-on-surface);
@@ -211,7 +211,7 @@
   margin: 25px !important; }
 
 .demo-navmenu {
-  width: 200px;
+  width: 250px;
   background-color: var(--mud-theme-surface); }
 
 .demo-tabs .mud-tabs-panels {
