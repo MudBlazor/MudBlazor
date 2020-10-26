@@ -3,8 +3,10 @@
 
 <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled">
     <ControlInput>
-        <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                  @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
+        <CascadingValue Name="Standalone" Value="false" IsFixed="true">
+            <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
+                      @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
+        </CascadingValue>
     </ControlInput>
     <ControlChild>
         <CascadingValue Value="@this" IsFixed="true">

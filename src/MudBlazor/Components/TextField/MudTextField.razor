@@ -3,8 +3,10 @@
 
 <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled">
     <ControlInput>
-        <MudInput @attributes="UserAttributes" InputType="@InputType" Class="@Classname" Style="@Style" Variant="@Variant" @bind-Value="@Value" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                  Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" />
+        <CascadingValue Name="Standalone" Value="false" IsFixed="true">
+            <MudInput @attributes="UserAttributes" InputType="@InputType" Class="@Classname" Style="@Style" Variant="@Variant" @bind-Value="@Value" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
+                      Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" />
+        </CascadingValue>
     </ControlInput>
 </MudInputControl>
 

@@ -122,26 +122,38 @@ namespace MudBlazor
             {
                 if (value != _value)
                 {
+                    var old_value = _value;
                     _value = value;
-                    Validate();
+                    Validate(old_value, value);
                     ValueChanged.InvokeAsync(value);
                 }
             }
         }
 
+        /// <summary>
+        /// If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
+        /// If it is sub-component, it will NOT do form validation!!
+        /// </summary>
+        [CascadingParameter(Name = "Standalone")] 
+        private bool Standalone { get; set; } = true;
+
         #region --> MudForm validation support
+
 
         [CascadingParameter] MudForm Form { get; set; }
 
         protected override Task OnInitializedAsync()
         {
-            Form?.Add(this);
+            if (Standalone)
+            {
+                Form?.Add(this);
+            }
             return base.OnInitializedAsync();
         }
 
-        private void Validate()
+        protected virtual void Validate(string old_value, string new_value)
         {
-            if (Form == null)
+            if (Form == null || !Standalone)
                 return;
             Form.Update(this);
         }
@@ -193,6 +205,8 @@ namespace MudBlazor
             if (EditContext == null)
                 return;
             if (For == null)
+                return;
+            if (!Standalone)
                 return;
             if (For != _currentFor)
             {

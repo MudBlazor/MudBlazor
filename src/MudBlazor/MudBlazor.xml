@@ -140,6 +140,12 @@
             The value of this input element. This property is two-way bindable.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBaseInputText.Standalone">
+            <summary>
+            If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
+            If it is sub-component, it will NOT do form validation!!
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBaseInputText.EditContext">
             <summary>
             This is the form validation context for Blazor's <EditForm></EditForm> component
