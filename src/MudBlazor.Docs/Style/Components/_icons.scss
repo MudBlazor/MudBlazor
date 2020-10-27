@@ -1,5 +1,5 @@
 ﻿
-.docs-icon-container{
+.docs-icon-container {
     margin-top: 20px;
 
     & .mud-divider {
@@ -10,7 +10,7 @@
 
 .docs-icon-panel {
     height: 120px;
-    width: 16%;
+    width: 19%;
     padding: 20px 10px;
     display: inline-block;
     text-align: center;
@@ -28,5 +28,11 @@
 
     & .mud-svg-icon-root {
         font-size: 40px;
+    }
+}
+
+.docs-icon-material-container {
+    & .mud-input-control {
+        background-color: var(--mud-theme-surface);
     }
 }
