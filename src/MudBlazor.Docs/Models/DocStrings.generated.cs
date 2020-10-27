@@ -1359,6 +1359,53 @@ public const string MudTextField_UserAttributes = @"UserAttributes carries all a
 
 public const string ComponentBaseMudThemeProvider_Theme = @"";
 
+public const string MudTimePicker_OpenTo = @"First view to show in the MudDatePicker.";
+
+public const string MudTimePicker_AmPm = @"If true, sets 12 hour selection clock.";
+
+public const string MudTimePicker_InputIcon = @"Sets the Input Icon.";
+
+public const string MudTimePicker_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.";
+
+public const string MudTimePicker_Square = @"If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden with Rounded bool.";
+
+public const string MudTimePicker_Rounded = @"If true, border-radius is set to theme default when in Static Mode.";
+
+public const string MudTimePicker_HelperText = @"If string has value, helpertext will be applied.";
+
+public const string MudTimePicker_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
+
+public const string MudTimePicker_Disabled = @"If true, the picker will be disabled.";
+
+public const string MudTimePicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
+
+public const string MudTimePicker_PickerVariant = @"Picker container option";
+
+public const string MudTimePicker_InputVariant = @"InputVariant, if Picker is static this option will not change anything.";
+
+public const string MudTimePicker_Adornment = @"Sets if the icon will be att start or end, set to false to disable.";
+
+public const string MudTimePicker_Orientation = @"What orientation to render in when in PickerVariant Static Mode.";
+
+public const string MudTimePicker_IconSize = @"Sets the Icon Size.";
+
+public const string MudTimePicker_Color = @"The color of the toolbar, selected and active. It supports the theme colors.";
+
+public const string MudTimePicker_AllowKeyboardInput = @"Allows text input from keyboard.";
+
+public const string MudTimePicker_ValueChanged = @"Fired when the value changes.";
+
+public const string MudTimePicker_Value = @"The currently selected value represented as a string (two-way bindable)";
+
+public const string MudTimePicker_Class = @"User class names, separated by space";
+
+public const string MudTimePicker_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudTimePicker_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudTimePicker_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudText_Typo = @"Applies the theme typography styles.";
 
 public const string MudText_Align = @"Set the text-align on the component.";
