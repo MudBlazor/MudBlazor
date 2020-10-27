@@ -3698,6 +3698,29 @@ ul {
   cursor: default;
   margin: 0 4px 0 2px; }
 
+.mud-picker-timepicker-toolbar.mud-picker-timepicker-toolbar-landscape {
+  flex-wrap: wrap; }
+  .mud-picker-timepicker-toolbar.mud-picker-timepicker-toolbar-landscape .mud-timepicker-hourminute .mud-timepicker-button {
+    font-size: 3rem;
+    font-weight: 400;
+    line-height: 1.04;
+    letter-spacing: 0em; }
+  .mud-picker-timepicker-toolbar.mud-picker-timepicker-toolbar-landscape .mud-timepicker-ampm {
+    display: flex;
+    margin-left: 20px;
+    margin-right: -20px;
+    flex-direction: column; }
+    .mud-picker-timepicker-toolbar.mud-picker-timepicker-toolbar-landscape .mud-timepicker-ampm .mud-timepicker-button {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.75;
+      letter-spacing: 0.00938em; }
+  .mud-picker-timepicker-toolbar.mud-picker-timepicker-toolbar-landscape .mud-timepicker-separator {
+    font-size: 3rem;
+    font-weight: 400;
+    line-height: 1.04;
+    letter-spacing: 0em; }
+
 .mud-picker-time-container {
   margin: 16px 0 8px;
   display: flex;
@@ -3718,13 +3741,6 @@ ul {
       user-select: none;
       touch-actions: none;
       pointer-events: auto; }
-    .mud-picker-time-container .mud-picker-time-clock .mud-picker-time-clock-inner-mask {
-      width: 200px;
-      height: 200px;
-      position: relative;
-      border-radius: 50%;
-      pointer-events: none;
-      background-color: rgba(255, 25, 25, 0.25); }
     .mud-picker-time-container .mud-picker-time-clock .mud-picker-time-clock-pin {
       top: 50%;
       left: 50%;
@@ -3739,34 +3755,21 @@ ul {
       height: 35%;
       bottom: 0;
       position: absolute;
-      transform-origin: center bottom 0px;
-      /*            &.debug-hour {
-                background-color: rgba(20, 255, 20, 0.46);
-            }*/ }
+      transform-origin: center bottom 0px; }
     .mud-picker-time-container .mud-picker-time-clock .mud-picker-time-stick-outer {
       left: calc(50% - 1px);
       width: 3px;
       height: 35%;
       bottom: 35%;
       position: absolute;
-      transform-origin: center bottom 0px;
-      /*            &.debug-hour {
-                background-color: rgba(255, 20, 20, 0.46);
-            }*/ }
+      transform-origin: center bottom 0px; }
     .mud-picker-time-container .mud-picker-time-clock .mud-picker-time-stick {
       left: calc(50% - 1px);
       width: 3px;
       height: 100%;
       bottom: 50%;
       position: absolute;
-      transform-origin: center bottom 0px;
-      /*            &.debug-hour {
-                background-color: rgba(255, 20, 20, 0.46);
-            }
-
-            &.debug-minute {
-                background-color: rgba(20, 255, 20, 0.46);
-            }*/ }
+      transform-origin: center bottom 0px; }
     .mud-picker-time-container .mud-picker-time-clock .mud-picker-time-clock-pointer {
       left: calc(50% - 1px);
       width: 2px;

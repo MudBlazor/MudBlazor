@@ -41,6 +41,40 @@
         cursor: default;
         margin: 0 4px 0 2px;
     }
+
+    &.mud-picker-timepicker-toolbar-landscape {
+        flex-wrap: wrap;
+
+        .mud-timepicker-hourminute {
+            .mud-timepicker-button {
+                font-size: 3rem;
+                font-weight: 400;
+                line-height: 1.04;
+                letter-spacing: 0em;
+            }
+        }
+
+        .mud-timepicker-ampm {
+            display: flex;
+            margin-left: 20px;
+            margin-right: -20px;
+            flex-direction: column;
+
+            .mud-timepicker-button {
+                font-size: 18px;
+                font-weight: 400;
+                line-height: 1.75;
+                letter-spacing: 0.00938em;
+            }
+        }
+
+        .mud-timepicker-separator {
+            font-size: 3rem;
+            font-weight: 400;
+            line-height: 1.04;
+            letter-spacing: 0em;
+        }
+    }
 }
 
 .mud-picker-time-container {
@@ -67,15 +101,6 @@
             pointer-events: auto;
         }
 
-        .mud-picker-time-clock-inner-mask {
-            width: 200px;
-            height: 200px;
-            position: relative;
-            border-radius: 50%;
-            pointer-events: none;
-            background-color: rgba(255, 25, 25, 0.25);
-        }
-
         .mud-picker-time-clock-pin {
             top: 50%;
             left: 50%;
@@ -93,10 +118,6 @@
             bottom: 0;
             position: absolute;
             transform-origin: center bottom 0px;
-
-/*            &.debug-hour {
-                background-color: rgba(20, 255, 20, 0.46);
-            }*/
         }
 
         .mud-picker-time-stick-outer {
@@ -106,10 +127,6 @@
             bottom: 35%;
             position: absolute;
             transform-origin: center bottom 0px;
-
-/*            &.debug-hour {
-                background-color: rgba(255, 20, 20, 0.46);
-            }*/
         }
 
         .mud-picker-time-stick {
@@ -119,14 +136,6 @@
             bottom: 50%;
             position: absolute;
             transform-origin: center bottom 0px;
-
-/*            &.debug-hour {
-                background-color: rgba(255, 20, 20, 0.46);
-            }
-
-            &.debug-minute {
-                background-color: rgba(20, 255, 20, 0.46);
-            }*/
         }
 
         .mud-picker-time-clock-pointer {

@@ -3,11 +3,11 @@
 
 
 <MudPicker @ref="Picker" PickerVariant="@PickerVariant" Orientation="@Orientation" Label="@Label" Value="@Value" HelperText="@HelperText" InputVariant="@InputVariant" Disabled="@Disabled" Adornment="@Adornment" IconSize="@IconSize" InputIcon="@InputIcon" Elevation="@Elevation" Square="@Square" Rounded="@Rounded">
-    <MudPickerToolbar Class="mud-picker-timepicker-toolbar" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
+    <MudPickerToolbar Class="@ToolbarClass" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
         <div class="mud-timepicker-hourminute">
-            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-timepicker-button" OnClick="@OnHourClick">@Hour</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-timepicker-button" OnClick="@OnHourClick">@TimeSet.Hour</MudButton>
             <MudText Typo="Typo.h2" Class="mud-timepicker-separator">:</MudText>
-            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-timepicker-button" OnClick="@OnMinutesClick">@Minute</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-timepicker-button" OnClick="@OnMinutesClick">@TimeSet.Minute</MudButton>
         </div>
         @if (AmPm)
         {
@@ -20,9 +20,9 @@
     <MudPickerContent>
         <div class="mud-picker-time-container">
             <div class="mud-picker-time-clock">
-                <div role="menu" tabindex="-1" class="mud-picker-time-clock-mask" @onmousedown="@OnMouseDownHandler" @onmouseup="@OnMouseUpHandler">
+                <div role="menu" tabindex="-1" class="mud-picker-time-clock-mask" @onmousedown="@OnMouseDown" @onmouseup="@OnMouseUp">
                     <div class="@GetClockPinColor()"></div>
-                    <div class="@GetClockPointerColor()" style="height: 40%; transform: rotateZ(30deg);">
+                    <div class="@GetClockPointerColor()" style="height: @GetPointerHeight(); transform: @GetPointerRotation()">
                         <div class="@GetClockPointerThumbColor()"></div>
                     </div>
                     @if (OpenTo == OpenTo.Hours)
@@ -41,18 +41,18 @@
                             <MudText Class="mud-clock-number" Style="transform: translate(-94.4px, 59.5px);">10</MudText>
                             <MudText Class="mud-clock-number" Style="transform: translate(-54.5px, 19.6px);">11</MudText>
                             <MudText Class="mud-clock-number" Style="transform: translate(0px, 5px);">12</MudText>
-                            <div class="mud-picker-time-stick debug-hour" style="transform: rotateZ(30deg);" @onmouseover="@(() => OnMouseOverHour("1"))"></div>
-                            <div class="mud-picker-time-stick debug-hour" style="transform: rotateZ(60deg);" @onmouseover="@(() => OnMouseOverHour("2"))"></div>
-                            <div class="mud-picker-time-stick debug-hour" style="transform: rotateZ(90deg);" @onmouseover="@(() => OnMouseOverHour("3"))"></div>
-                            <div class="mud-picker-time-stick debug-hour" style="transform: rotateZ(120deg);" @onmouseover="@(() => OnMouseOverHour("4"))"></div>
-                            <div class="mud-picker-time-stick debug-hour" style="transform: rotateZ(150deg);" @onmouseover="@(() => OnMouseOverHour("5"))"></div>
-                            <div class="mud-picker-time-stick debug-hour" style="transform: rotateZ(180deg);" @onmouseover="@(() => OnMouseOverHour("6"))"></div>
-                            <div class="mud-picker-time-stick debug-hour" style="transform: rotateZ(210deg);" @onmouseover="@(() => OnMouseOverHour("7"))"></div>
-                            <div class="mud-picker-time-stick debug-hour" style="transform: rotateZ(240deg);" @onmouseover="@(() => OnMouseOverHour("8"))"></div>
-                            <div class="mud-picker-time-stick debug-hour" style="transform: rotateZ(270deg);" @onmouseover="@(() => OnMouseOverHour("9"))"></div>
-                            <div class="mud-picker-time-stick debug-hour" style="transform: rotateZ(300deg);" @onmouseover="@(() => OnMouseOverHour("10"))"></div>
-                            <div class="mud-picker-time-stick debug-hour" style="transform: rotateZ(330deg);" @onmouseover="@(() => OnMouseOverHour("11"))"></div>
-                            <div class="mud-picker-time-stick debug-hour" style="transform: rotateZ(0deg);" @onmouseover="@(() => OnMouseOverHour("12"))"></div>
+                            <div class="mud-picker-time-stick" style="transform: rotateZ(30deg);" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 30, Height = 40, Hour = 1 }))"></div>
+                            <div class="mud-picker-time-stick" style="transform: rotateZ(60deg);" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 60, Height = 40, Hour = 2 }))"></div>
+                            <div class="mud-picker-time-stick" style="transform: rotateZ(90deg);" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 90, Height = 40, Hour = 3 }))"></div>
+                            <div class="mud-picker-time-stick" style="transform: rotateZ(120deg);" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 120, Height = 40, Hour = 4 }))"></div>
+                            <div class="mud-picker-time-stick" style="transform: rotateZ(150deg);" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 150, Height = 40, Hour = 5 }))"></div>
+                            <div class="mud-picker-time-stick" style="transform: rotateZ(180deg);" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 180, Height = 40, Hour = 6 }))"></div>
+                            <div class="mud-picker-time-stick" style="transform: rotateZ(210deg);" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 210, Height = 40, Hour = 7 }))"></div>
+                            <div class="mud-picker-time-stick" style="transform: rotateZ(240deg);" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 240, Height = 40, Hour = 8 }))"></div>
+                            <div class="mud-picker-time-stick" style="transform: rotateZ(270deg);" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 270, Height = 40, Hour = 9 }))"></div>
+                            <div class="mud-picker-time-stick" style="transform: rotateZ(300deg);" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 300, Height = 40, Hour = 10 }))"></div>
+                            <div class="mud-picker-time-stick" style="transform: rotateZ(330deg);" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 330, Height = 40, Hour = 11 }))"></div>
+                            <div class="mud-picker-time-stick" style="transform: rotateZ(0deg);" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 0, Height = 40, Hour = 12 }))"></div>
                         }
                         else
                         {
@@ -82,52 +82,52 @@
                             <MudText Class="mud-clock-number" Typo="Typo.body2" Style="transform: translate(-37px, 50px);">11</MudText>
 
                             <div class="mud-picker-time-stick" style="transform: rotateZ(30deg);">
-                                <div class="mud-picker-time-stick-inner debug-hour" @onmouseover="@(() => OnMouseOverHour("01"))"></div>
-                                <div class="mud-picker-time-stick-outer debug-hour" @onmouseover="@(() => OnMouseOverHour("13"))"></div>
+                                <div class="mud-picker-time-stick-inner" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 30, Height = 26, Hour = 1 }))"></div>
+                                <div class="mud-picker-time-stick-outer" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 30, Height = 40, Hour = 13 }))"></div>
                             </div>
                             <div class="mud-picker-time-stick" style="transform: rotateZ(60deg);">
-                                <div class="mud-picker-time-stick-inner debug-hour" @onmouseover="@(() => OnMouseOverHour("02"))"></div>
-                                <div class="mud-picker-time-stick-outer debug-hour" @onmouseover="@(() => OnMouseOverHour("14"))"></div>
+                                <div class="mud-picker-time-stick-inner" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 60, Height = 26, Hour = 2 }))"></div>
+                                <div class="mud-picker-time-stick-outer" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 60, Height = 40, Hour = 14 }))"></div>
                             </div>
                             <div class="mud-picker-time-stick" style="transform: rotateZ(90deg);">
-                                <div class="mud-picker-time-stick-inner debug-hour" @onmouseover="@(() => OnMouseOverHour("03"))"></div>
-                                <div class="mud-picker-time-stick-outer debug-hour" @onmouseover="@(() => OnMouseOverHour("15"))"></div>
+                                <div class="mud-picker-time-stick-inner" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 90, Height = 26, Hour = 3 }))"></div>
+                                <div class="mud-picker-time-stick-outer" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 90, Height = 40, Hour = 15 }))"></div>
                             </div>
                             <div class="mud-picker-time-stick" style="transform: rotateZ(120deg);">
-                                <div class="mud-picker-time-stick-inner debug-hour" @onmouseover="@(() => OnMouseOverHour("04"))"></div>
-                                <div class="mud-picker-time-stick-outer debug-hour" @onmouseover="@(() => OnMouseOverHour("16"))"></div>
+                                <div class="mud-picker-time-stick-inner" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 120, Height = 26, Hour = 4 }))"></div>
+                                <div class="mud-picker-time-stick-outer" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 120, Height = 40, Hour = 16 }))"></div>
                             </div>
                             <div class="mud-picker-time-stick" style="transform: rotateZ(150deg);">
-                                <div class="mud-picker-time-stick-inner debug-hour" @onmouseover="@(() => OnMouseOverHour("05"))"></div>
-                                <div class="mud-picker-time-stick-outer debug-hour" @onmouseover="@(() => OnMouseOverHour("17"))"></div>
+                                <div class="mud-picker-time-stick-inner" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 150, Height = 26, Hour = 5 }))"></div>
+                                <div class="mud-picker-time-stick-outer" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 150, Height = 40, Hour = 17 }))"></div>
                             </div>
                             <div class="mud-picker-time-stick" style="transform: rotateZ(180deg);">
-                                <div class="mud-picker-time-stick-inner debug-hour" @onmouseover="@(() => OnMouseOverHour("06"))"></div>
-                                <div class="mud-picker-time-stick-outer debug-hour" @onmouseover="@(() => OnMouseOverHour("18"))"></div>
+                                <div class="mud-picker-time-stick-inner" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 180, Height = 26, Hour = 6 }))"></div>
+                                <div class="mud-picker-time-stick-outer" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 180, Height = 40, Hour = 18 }))"></div>
                             </div>
                             <div class="mud-picker-time-stick" style="transform: rotateZ(210deg);">
-                                <div class="mud-picker-time-stick-inner debug-hour" @onmouseover="@(() => OnMouseOverHour("07"))"></div>
-                                <div class="mud-picker-time-stick-outer debug-hour" @onmouseover="@(() => OnMouseOverHour("19"))"></div>
+                                <div class="mud-picker-time-stick-inner" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 210, Height = 26, Hour = 7 }))"></div>
+                                <div class="mud-picker-time-stick-outer" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 210, Height = 40, Hour = 19 }))"></div>
                             </div>
                             <div class="mud-picker-time-stick" style="transform: rotateZ(240deg);">
-                                <div class="mud-picker-time-stick-inner debug-hour" @onmouseover="@(() => OnMouseOverHour("08"))"></div>
-                                <div class="mud-picker-time-stick-outer debug-hour" @onmouseover="@(() => OnMouseOverHour("20"))"></div>
+                                <div class="mud-picker-time-stick-inner" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 240, Height = 26, Hour = 8 }))"></div>
+                                <div class="mud-picker-time-stick-outer" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 240, Height = 40, Hour = 20 }))"></div>
                             </div>
                             <div class="mud-picker-time-stick" style="transform: rotateZ(270deg);">
-                                <div class="mud-picker-time-stick-inner debug-hour" @onmouseover="@(() => OnMouseOverHour("09"))"></div>
-                                <div class="mud-picker-time-stick-outer debug-hour" @onmouseover="@(() => OnMouseOverHour("21"))"></div>
+                                <div class="mud-picker-time-stick-inner" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 270, Height = 26, Hour = 9 }))"></div>
+                                <div class="mud-picker-time-stick-outer" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 270, Height = 40, Hour = 21 }))"></div>
                             </div>
                             <div class="mud-picker-time-stick" style="transform: rotateZ(300deg);">
-                                <div class="mud-picker-time-stick-inner debug-hour" @onmouseover="@(() => OnMouseOverHour("10"))"></div>
-                                <div class="mud-picker-time-stick-outer debug-hour" @onmouseover="@(() => OnMouseOverHour("22"))"></div>
+                                <div class="mud-picker-time-stick-inner" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 300, Height = 26, Hour = 10 }))"></div>
+                                <div class="mud-picker-time-stick-outer" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 300, Height = 40, Hour = 22 }))"></div>
                             </div>
                             <div class="mud-picker-time-stick" style="transform: rotateZ(330deg);">
-                                <div class="mud-picker-time-stick-inner debug-hour" @onmouseover="@(() => OnMouseOverHour("11"))"></div>
-                                <div class="mud-picker-time-stick-outer debug-hour" @onmouseover="@(() => OnMouseOverHour("23"))"></div>
+                                <div class="mud-picker-time-stick-inner" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 330, Height = 26, Hour = 11 }))"></div>
+                                <div class="mud-picker-time-stick-outer" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 330, Height = 40, Hour = 23 }))"></div>
                             </div>
                             <div class="mud-picker-time-stick" style="transform: rotateZ(0deg);">
-                                <div class="mud-picker-time-stick-inner debug-hour" @onmouseover="@(() => OnMouseOverHour("12"))"></div>
-                                <div class="mud-picker-time-stick-outer debug-hour" @onmouseover="@(() => OnMouseOverHour("00"))"></div>
+                                <div class="mud-picker-time-stick-inner" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 0, Height = 26, Hour = 12 }))"></div>
+                                <div class="mud-picker-time-stick-outer" @onmouseover="@(() => OnMouseOverHour(new SetTime { Degrees = 0, Height = 40, Hour = 00 }))"></div>
                             </div>
                         }
 
@@ -146,103 +146,69 @@
                         <MudText Class="mud-clock-number" Style="transform: translate(-94.4px, 59.5px);">50</MudText>
                         <MudText Class="mud-clock-number" Style="transform: translate(-54.5px, 19.6px);">55</MudText>
                         <MudText Class="mud-clock-number" Style="transform: translate(0px, 5px);">00</MudText>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(0deg);" @onmouseover="@(() => OnMouseOverMinute("00"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(6deg);" @onmouseover="@(() => OnMouseOverMinute("01"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(13.5deg);" @onmouseover="@(() => OnMouseOverMinute("02"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(19.5deg);" @onmouseover="@(() => OnMouseOverMinute("03"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(25.5deg);" @onmouseover="@(() => OnMouseOverMinute("04"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(31.5deg);" @onmouseover="@(() => OnMouseOverMinute("05"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(37.5deg);" @onmouseover="@(() => OnMouseOverMinute("06"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(43.5deg);" @onmouseover="@(() => OnMouseOverMinute("07"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(49.5deg);" @onmouseover="@(() => OnMouseOverMinute("08"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(55.5deg);" @onmouseover="@(() => OnMouseOverMinute("09"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(61.5deg);" @onmouseover="@(() => OnMouseOverMinute("10"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(67.5deg);" @onmouseover="@(() => OnMouseOverMinute("11"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(73.5deg);" @onmouseover="@(() => OnMouseOverMinute("12"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(79.5deg);" @onmouseover="@(() => OnMouseOverMinute("13"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(85.5deg);" @onmouseover="@(() => OnMouseOverMinute("14"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(91.5deg);" @onmouseover="@(() => OnMouseOverMinute("15"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(97.5deg);" @onmouseover="@(() => OnMouseOverMinute("16"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(103.5deg);" @onmouseover="@(() => OnMouseOverMinute("17"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(109.5deg);" @onmouseover="@(() => OnMouseOverMinute("18"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(115.5deg);" @onmouseover="@(() => OnMouseOverMinute("19"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(121.5deg);" @onmouseover="@(() => OnMouseOverMinute("20"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(127.5deg);" @onmouseover="@(() => OnMouseOverMinute("21"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(133.5deg);" @onmouseover="@(() => OnMouseOverMinute("22"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(139.5deg);" @onmouseover="@(() => OnMouseOverMinute("23"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(145.5deg);" @onmouseover="@(() => OnMouseOverMinute("24"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(151.5deg);" @onmouseover="@(() => OnMouseOverMinute("25"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(157.5deg);" @onmouseover="@(() => OnMouseOverMinute("26"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(163.5deg);" @onmouseover="@(() => OnMouseOverMinute("27"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(169.5deg);" @onmouseover="@(() => OnMouseOverMinute("28"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(175.5deg);" @onmouseover="@(() => OnMouseOverMinute("29"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(181.5deg);" @onmouseover="@(() => OnMouseOverMinute("30"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(187.5deg);" @onmouseover="@(() => OnMouseOverMinute("31"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(193.5deg);" @onmouseover="@(() => OnMouseOverMinute("32"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(199.5deg);" @onmouseover="@(() => OnMouseOverMinute("33"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(205.5deg);" @onmouseover="@(() => OnMouseOverMinute("34"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(211.5deg);" @onmouseover="@(() => OnMouseOverMinute("35"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(217.5deg);" @onmouseover="@(() => OnMouseOverMinute("36"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(223.5deg);" @onmouseover="@(() => OnMouseOverMinute("37"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(229.5deg);" @onmouseover="@(() => OnMouseOverMinute("38"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(235.5deg);" @onmouseover="@(() => OnMouseOverMinute("39"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(241.5deg);" @onmouseover="@(() => OnMouseOverMinute("40"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(247.5deg);" @onmouseover="@(() => OnMouseOverMinute("41"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(253.5deg);" @onmouseover="@(() => OnMouseOverMinute("42"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(259.5deg);" @onmouseover="@(() => OnMouseOverMinute("43"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(265.5deg);" @onmouseover="@(() => OnMouseOverMinute("44"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(271.5deg);" @onmouseover="@(() => OnMouseOverMinute("45"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(277.5deg);" @onmouseover="@(() => OnMouseOverMinute("46"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(283.5deg);" @onmouseover="@(() => OnMouseOverMinute("47"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(289.5deg);" @onmouseover="@(() => OnMouseOverMinute("48"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(295.5deg);" @onmouseover="@(() => OnMouseOverMinute("49"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(301.5deg);" @onmouseover="@(() => OnMouseOverMinute("50"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(307.5deg);" @onmouseover="@(() => OnMouseOverMinute("51"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(313.5deg);" @onmouseover="@(() => OnMouseOverMinute("52"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(319.5deg);" @onmouseover="@(() => OnMouseOverMinute("53"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(325.5deg);" @onmouseover="@(() => OnMouseOverMinute("54"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(331.5deg);" @onmouseover="@(() => OnMouseOverMinute("55"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(337.5deg);" @onmouseover="@(() => OnMouseOverMinute("56"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(343.5deg);" @onmouseover="@(() => OnMouseOverMinute("57"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(349.5deg);" @onmouseover="@(() => OnMouseOverMinute("58"))"></div>
-                        <div class="mud-picker-time-stick debug-minute" style="transform: rotateZ(355.5deg);" @onmouseover="@(() => OnMouseOverMinute("59"))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(0deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 0, Minute = 00 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(6deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 6, Minute = 1 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(12deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 12, Minute = 2 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(18deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 18, Minute = 3 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(24deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 24, Minute = 4 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(30deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 30, Minute = 5 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(36deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 36, Minute = 6 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(42deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 42, Minute = 7 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(48deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 48, Minute = 8 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(54deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 54, Minute = 9 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(60deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 60, Minute = 10 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(66deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 66, Minute = 11 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(72deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 72, Minute = 12 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(78deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 78, Minute = 13 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(84deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 84, Minute = 14 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(90deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 90, Minute = 15 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(96deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 96, Minute = 16 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(102deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 102, Minute = 17 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(108deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 108, Minute = 18 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(114deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 114, Minute = 19 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(120deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 120, Minute = 20 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(126deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 126, Minute = 21 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(132deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 132, Minute = 22 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(138deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 138, Minute = 23 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(144deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 144, Minute = 24 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(150deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 150, Minute = 25 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(156deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 156, Minute = 26 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(162deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 162, Minute = 27 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(168deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 168, Minute = 28 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(174deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 174, Minute = 29 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(180deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 180, Minute = 30 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(186deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 186, Minute = 31 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(192deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 192, Minute = 32 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(198deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 198, Minute = 33 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(204deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 204, Minute = 34 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(210deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 210, Minute = 35 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(216deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 216, Minute = 36 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(222deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 222, Minute = 37 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(228deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 228, Minute = 38 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(234deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 234, Minute = 39 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(240deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 240, Minute = 40 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(246deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 246, Minute = 41 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(252deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 252, Minute = 42 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(258deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 258, Minute = 43 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(264deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 264, Minute = 44 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(270deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 270, Minute = 45 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(276deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 276, Minute = 46 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(282deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 282, Minute = 47 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(288deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 288, Minute = 48 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(294deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 294, Minute = 49 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(300deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 300, Minute = 50 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(306deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 306, Minute = 51 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(312deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 312, Minute = 52 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(318deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 318, Minute = 53 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(324deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 324, Minute = 54 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(330deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 330, Minute = 55 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(336deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 336, Minute = 56 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(342deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 342, Minute = 57 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(348deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 348, Minute = 58 }))"></div>
+                        <div class="mud-picker-time-stick" style="transform: rotateZ(354deg);" @onmouseover="@(() => OnMouseOverMinute(new SetTime { Degrees = 354, Minute = 59 }))"></div>
                     }
                 </div>
             </div>
         </div>
     </MudPickerContent>
 </MudPicker>
-
-@code {
-
-    public string Hour { get; set; } = "13";
-    public string Minute { get; set; } = "37";
-
-    public bool MouseDown { get; set; }
-
-    private void OnMouseDownHandler(MouseEventArgs e)
-    {
-        MouseDown = true;
-    }
-
-    private void OnMouseUpHandler(MouseEventArgs e)
-    {
-        MouseDown = false;
-    }
-
-    private void OnMouseOverHour(string value)
-    {
-        @if (MouseDown)
-        {
-            Hour = value;
-        }
-    }
-
-    private void OnMouseOverMinute(string minute)
-    {
-        @if (MouseDown)
-        {
-            Minute = minute;
-        }
-    }
-}
