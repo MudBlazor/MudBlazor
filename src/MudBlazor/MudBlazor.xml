@@ -1284,6 +1284,16 @@
             Sets the Input Icon.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTimePicker.Time">
+            <summary>
+            The currently selected time (two-way bindable). If null, then nothing was selected.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTimePicker.TimeChanged">
+            <summary>
+            Fired when the date changes.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudText.Typo">
             <summary>
             Applies the theme typography styles.

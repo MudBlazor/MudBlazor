@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
@@ -34,6 +35,79 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string InputIcon { get; set; } = Icons.Material.Event;
 
+        protected TimeSpan? _time;
+
+        /// <summary>
+        /// The currently selected time (two-way bindable). If null, then nothing was selected.
+        /// </summary>
+        [Parameter]
+        public TimeSpan? Time
+        {
+            get => _time;
+            set
+            {
+                if (value == _time)
+                    return;
+                _time = value;
+                Value = AmPm ? _time.ToAmPmString() : _time.ToIsoString();
+                InvokeAsync(StateHasChanged);
+                TimeChanged.InvokeAsync(value);
+            }
+        }
+
+        /// <summary>
+        /// Fired when the date changes.
+        /// </summary>
+        [Parameter] public EventCallback<TimeSpan?> TimeChanged { get; set; }
+
+        protected override void StringValueChanged(string value)
+        {
+               Time = ParseTimeValue(value);
+        }
+
+        private TimeSpan? ParseTimeValue(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+            bool pm = false;
+            var value1 = value.Trim();
+            var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
+            if (m.Success)
+            {
+                AmPm = true; // <-- this is kind of a hack, but we need to make sure it is set or else the string value might be converted to 24h format.
+                pm = m.Value.ToLower() == "pm";
+                value1 = Regex.Replace(value, "(AM|am|PM|pm)", "").Trim();
+            }
+
+            if (TimeSpan.TryParse(value1, out var time))
+            {
+                if (pm)
+                    time = new TimeSpan(time.Hours + 12, time.Minutes, 0);
+                return time;
+            }
+                
+            return null;
+        }
+
+        private string getHourString()
+        {
+            if (_time == null)
+                return "--";
+            var h=AmPm ? _time.Value.ToAmPmHour() : _time.Value.Hours;
+            return Math.Min(23, Math.Max(0, h)).ToString(CultureInfo.InvariantCulture);
+        }
+
+        private string getMinuteString()
+        {
+            if (_time == null)
+                return "--";
+            return $"{Math.Min(59, Math.Max(0, _time.Value.Minutes)):D2}";
+        }
+
+        private void UpdateTime()
+        {
+            Time = new TimeSpan(TimeSet.Hour, TimeSet.Minute, 0);
+        }
 
         private async void OnHourClick()
         {
@@ -44,6 +118,22 @@ namespace MudBlazor
         private async void OnMinutesClick()
         {
             OpenTo = OpenTo.Minutes;
+            StateHasChanged();
+        }
+
+        private void OnAmClicked()
+        {
+            TimeSet.Hour = TimeSet.Hour % 12;
+            UpdateTime();
+            StateHasChanged();
+        }
+
+        private void OnPmClicked()
+        {
+            if (TimeSet.Hour < 12)
+                TimeSet.Hour = TimeSet.Hour + 12;
+            TimeSet.Hour = TimeSet.Hour % 12;
+            UpdateTime();
             StateHasChanged();
         }
 
@@ -69,32 +159,44 @@ namespace MudBlazor
 
         private string GetPointerRotation()
         {
-            return $"rotateZ({TimeSet.Degrees.ToString()}deg);";
+            double deg = 0;
+            if (OpenTo == OpenTo.Hours)
+                deg = (TimeSet.Hour * 30) % 360;
+            if (OpenTo == OpenTo.Minutes)
+                deg = (TimeSet.Minute * 6) % 360;
+            return $"rotateZ({deg}deg);";
         }
 
         private string GetPointerHeight()
         {
-            return $"{TimeSet.Height.ToString()}%;";
+            int height = 40;
+            if (OpenTo == OpenTo.Minutes)
+                height = 40;
+            if (OpenTo == OpenTo.Hours)
+            {
+                if (!AmPm && TimeSet.Hour > 0 && TimeSet.Hour < 13)
+                    height = 26;
+                else
+                    height = 40;
+            }
+            return $"{height}%;";
         }
 
         private SetTime TimeSet = new SetTime();
 
         protected override void OnInitialized()
         {
+            if (_time == null)
+            {
+                TimeSet.Hour = 0;
+                TimeSet.Minute = 0;
+                return;
+            }
             if (AmPm)
-            {
-                TimeSet.Hour = 1;
-                TimeSet.Minute = 37;
-                TimeSet.Degrees = 30;
-                TimeSet.Height = 40;
-            }
-            else
-            {
-                TimeSet.Hour = 13;
-                TimeSet.Minute = 37;
-                TimeSet.Degrees = 30;
-                TimeSet.Height = 40;
-            }
+                TimeSet.Hour = _time.Value.ToAmPmHour();
+            else 
+                TimeSet.Hour = _time.Value.Hours;
+            TimeSet.Minute = _time.Value.Minutes;
         }
 
         public bool MouseDown { get; set; }
@@ -113,9 +215,8 @@ namespace MudBlazor
         {
             if(MouseDown)
             {
-                TimeSet.Degrees = setTime.Degrees;
-                TimeSet.Height = setTime.Height;
                 TimeSet.Hour = setTime.Hour;
+                UpdateTime();
             }
         }
 
@@ -123,16 +224,17 @@ namespace MudBlazor
         {
             if(MouseDown)
             {
-                TimeSet.Degrees = setTime.Degrees;
-                TimeSet.Height = 40;
                 TimeSet.Minute = setTime.Minute;
+                UpdateTime();
             }
         }
 
         private class SetTime
         {
+            [Obsolete("not needed, calculated on the fly")]
             public int Degrees { get; set; }
 
+            [Obsolete("not needed, calculated on the fly")]
             public int Height { get; set; }
 
             public int Hour { get; set; }

@@ -5,15 +5,15 @@
 <MudPicker @ref="Picker" PickerVariant="@PickerVariant" Orientation="@Orientation" Label="@Label" Value="@Value" HelperText="@HelperText" InputVariant="@InputVariant" Disabled="@Disabled" Adornment="@Adornment" IconSize="@IconSize" InputIcon="@InputIcon" Elevation="@Elevation" Square="@Square" Rounded="@Rounded">
     <MudPickerToolbar Class="@ToolbarClass" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
         <div class="mud-timepicker-hourminute">
-            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-timepicker-button" OnClick="@OnHourClick">@TimeSet.Hour</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-timepicker-button" OnClick="@OnHourClick">@getHourString()</MudButton>
             <MudText Typo="Typo.h2" Class="mud-timepicker-separator">:</MudText>
-            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-timepicker-button" OnClick="@OnMinutesClick">@TimeSet.Minute</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-timepicker-button" OnClick="@OnMinutesClick">@getMinuteString()</MudButton>
         </div>
         @if (AmPm)
         {
             <div class="mud-timepicker-ampm">
-                <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-timepicker-button">AM</MudButton>
-                <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-timepicker-button">PM</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-timepicker-button" OnClick="@OnAmClicked">AM</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-timepicker-button" OnClick="@OnPmClicked">PM</MudButton>
             </div>
         }
     </MudPickerToolbar>
