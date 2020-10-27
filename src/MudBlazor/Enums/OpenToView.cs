@@ -5,6 +5,8 @@ namespace MudBlazor
     {
         Date,
         Year,
-        Month
+        Month,
+        Hours,
+        Minutes
     }
 }

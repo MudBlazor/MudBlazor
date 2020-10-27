@@ -1264,6 +1264,26 @@
             Child content of component.
             </summary>
         </member>
+        <member name="F:MudBlazor.MudTimePicker.Picker">
+            <summary>
+            Reference to the Picker, initialized via @ref
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTimePicker.OpenTo">
+            <summary>
+            First view to show in the MudDatePicker.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTimePicker.AmPm">
+            <summary>
+            If true, sets 12 hour selection clock.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTimePicker.InputIcon">
+            <summary>
+            Sets the Input Icon.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudText.Typo">
             <summary>
             Applies the theme typography styles.
