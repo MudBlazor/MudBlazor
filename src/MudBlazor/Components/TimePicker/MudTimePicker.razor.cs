@@ -49,7 +49,16 @@ namespace MudBlazor
                 if (value == _time)
                     return;
                 _time = value;
-                Value = AmPm ? _time.ToAmPmString() : _time.ToIsoString();
+                // to avoid an update loop we set flag _setting_value
+                _setting_value = true;
+                try
+                {
+                    Value = AmPm ? _time.ToAmPmString() : _time.ToIsoString();
+                }
+                finally
+                {
+                    _setting_value = false;
+                }
                 InvokeAsync(StateHasChanged);
                 TimeChanged.InvokeAsync(value);
             }
@@ -60,9 +69,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<TimeSpan?> TimeChanged { get; set; }
 
+        private bool _setting_value = false;
         protected override void StringValueChanged(string value)
         {
-               Time = ParseTimeValue(value);
+            if (_setting_value)
+                return;
+            Time = ParseTimeValue(value);
         }
 
         private TimeSpan? ParseTimeValue(string value)
@@ -85,7 +97,7 @@ namespace MudBlazor
                     time = new TimeSpan(time.Hours + 12, time.Minutes, 0);
                 return time;
             }
-                
+
             return null;
         }
 
@@ -93,7 +105,7 @@ namespace MudBlazor
         {
             if (_time == null)
                 return "--";
-            var h=AmPm ? _time.Value.ToAmPmHour() : _time.Value.Hours;
+            var h = AmPm ? _time.Value.ToAmPmHour() : _time.Value.Hours;
             return Math.Min(23, Math.Max(0, h)).ToString(CultureInfo.InvariantCulture);
         }
 
@@ -145,7 +157,7 @@ namespace MudBlazor
 
         private string GetClockPinColor()
         {
-           return $"mud-picker-time-clock-pin mud-color-{Color.ToDescriptionString()}";
+            return $"mud-picker-time-clock-pin mud-color-{Color.ToDescriptionString()}";
         }
         private string GetClockPointerColor()
         {
@@ -194,7 +206,7 @@ namespace MudBlazor
             }
             if (AmPm)
                 TimeSet.Hour = _time.Value.ToAmPmHour();
-            else 
+            else
                 TimeSet.Hour = _time.Value.Hours;
             TimeSet.Minute = _time.Value.Minutes;
         }
@@ -213,7 +225,7 @@ namespace MudBlazor
 
         private void OnMouseOverHour(SetTime setTime)
         {
-            if(MouseDown)
+            if (MouseDown)
             {
                 TimeSet.Hour = setTime.Hour;
                 UpdateTime();
@@ -222,7 +234,7 @@ namespace MudBlazor
 
         private void OnMouseOverMinute(SetTime setTime)
         {
-            if(MouseDown)
+            if (MouseDown)
             {
                 TimeSet.Minute = setTime.Minute;
                 UpdateTime();
