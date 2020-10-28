@@ -1243,6 +1243,17 @@ public const string MudTableBase_ToolBarContent = @"Optional. Add any kind of to
 
 public const string MudTableBase_HeaderContent = @"Add MudTh cells here to define the table header.";
 
+public const string MudTableBase_ColGroup = @"Specifies a group of one or more columns in a table for formatting.
+            Ex:
+            table
+                colgroup
+                   col span=""2"" style=""background-color:red""
+                   col style=""background-color:yellow""
+                 colgroup
+                 header
+                 body
+            table";
+
 public const string MudTableBase_PagerContent = @"Add MudTablePager here to enable breaking the rows in to multiple pages.";
 
 public const string MudTableBase_Class = @"User class names, separated by space";
@@ -1841,6 +1852,17 @@ public const string MudTable___MultiSelection = @"Set to true to enable selectio
 public const string MudTable___ToolBarContent = @"Optional. Add any kind of toolbar to this render fragment.";
 
 public const string MudTable___HeaderContent = @"Add MudTh cells here to define the table header.";
+
+public const string MudTable___ColGroup = @"Specifies a group of one or more columns in a table for formatting.
+            Ex:
+            table
+                colgroup
+                   col span=""2"" style=""background-color:red""
+                   col style=""background-color:yellow""
+                 colgroup
+                 header
+                 body
+            table";
 
 public const string MudTable___PagerContent = @"Add MudTablePager here to enable breaking the rows in to multiple pages.";
 

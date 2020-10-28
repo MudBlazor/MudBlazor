@@ -1950,6 +1950,38 @@ public const string SwitchWithLabelExample = @"<MudSwitch @bind-Checked=""@Label
     public bool Label_Switch3 { get; set; } = true;
 }";
 
+public const string TableColGroupExample = @"<MudTable Items=""@PeriodicTable.GetElements()"">
+    <ColGroup>
+        <colgroup>
+            <col style=""width: 60px;"" />
+            <col />
+            <col style=""width: 60%;"" />
+            <col style=""width: 60px;""/>
+            <col />
+        </colgroup>
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Number</MudTd>
+        <MudTd>@context.Sign</MudTd>
+        <MudTd>@context.Name</MudTd>
+        <MudTd>@context.Position</MudTd>
+        <MudTd>@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+}";
+
 public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"" Class=""mud-flex-1-1-100"">Periodic Elements</MudText>
