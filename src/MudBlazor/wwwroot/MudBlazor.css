@@ -3670,6 +3670,8 @@ ul {
   padding: 0;
   min-width: 16px;
   text-transform: none; }
+  .mud-picker-timepicker-toolbar .mud-timepicker-button.mud-timepicker-toolbar-text {
+    color: rgba(255, 255, 255, 0.54); }
   .mud-picker-timepicker-toolbar .mud-timepicker-button:hover {
     background-color: var(--mud-theme-default-hover); }
 

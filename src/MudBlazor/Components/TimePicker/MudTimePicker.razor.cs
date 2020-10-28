@@ -150,9 +150,28 @@ namespace MudBlazor
         }
 
         protected string ToolbarClass =>
-        new CssBuilder()
-          .AddClass($"mud-picker-timepicker-toolbar")
+        new CssBuilder("mud-picker-timepicker-toolbar")
           .AddClass($"mud-picker-timepicker-toolbar-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
+        .Build();
+
+        protected string HoursButtonClass =>
+        new CssBuilder("mud-timepicker-button")
+          .AddClass($"mud-timepicker-toolbar-text", OpenTo == OpenTo.Minutes)
+        .Build();
+
+        protected string MinuteButtonClass =>
+        new CssBuilder("mud-timepicker-button")
+          .AddClass($"mud-timepicker-toolbar-text", OpenTo == OpenTo.Hours)
+        .Build();
+
+        protected string AmButtonClass =>
+        new CssBuilder("mud-timepicker-button")
+          //.AddClass($"mud-timepicker-toolbar-text", TimeSet.Hour > 0 && TimeSet.Hour < 13)
+        .Build();
+
+        protected string PmButtonClass =>
+        new CssBuilder("mud-timepicker-button")
+          //.AddClass($"mud-timepicker-toolbar-text", TimeSet.Hour == 0 && TimeSet.Hour > 12)
         .Build();
 
         private string GetClockPinColor()
