@@ -135,16 +135,19 @@ namespace MudBlazor
 
         private void OnAmClicked()
         {
-            TimeSet.Hour = TimeSet.Hour % 12;
+            if (TimeSet.Hour == 0 || TimeSet.Hour==12)
+                TimeSet.Hour = 12;  // <--- "12:-- am" is "12:--" in 24h
+            else
+                TimeSet.Hour = TimeSet.Hour % 12;
             UpdateTime();
             StateHasChanged();
         }
 
         private void OnPmClicked()
         {
-            if (TimeSet.Hour < 12)
+            if (TimeSet.Hour > 0 && TimeSet.Hour <= 12) // <--- "12:-- pm" is "00:--" in 24h
                 TimeSet.Hour = TimeSet.Hour + 12;
-            TimeSet.Hour = TimeSet.Hour % 12;
+            TimeSet.Hour = TimeSet.Hour % 24;
             UpdateTime();
             StateHasChanged();
         }
