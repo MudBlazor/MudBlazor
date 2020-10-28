@@ -174,18 +174,30 @@ namespace MudBlazor
 
         private string GetClockPointerThumbColor()
         {
-            double deg = 0;
-            if (OpenTo == OpenTo.Hours)
-                deg = (TimeSet.Hour * 30) % 360;
-            if (OpenTo == OpenTo.Minutes)
-                deg = (TimeSet.Minute * 6) % 360;
+            double deg = GetDeg();
             if (deg % 30 == 0)
             {
                 return $"mud-picker-time-clock-pointer-thumb mud-onclock-text mud-onclock-primary mud-color-{Color.ToDescriptionString()}";
             }
             else
             {
-                return $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-color-border-{Color.ToDescriptionString()}";
+                return $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-color-text-{Color.ToDescriptionString()}";
+            }
+        }
+
+        private string GetNumberColor(int value)
+        {
+            if(OpenTo == OpenTo.Hours && TimeSet.Hour == value)
+            {
+                return $"mud-clock-number mud-theme-color-{Color.ToDescriptionString()}";
+            }
+            else if (OpenTo == OpenTo.Minutes && TimeSet.Minute == value)
+            {
+                return $"mud-clock-number mud-theme-color-{Color.ToDescriptionString()}";
+            }
+            else
+            {
+                return $"mud-clock-number";
             }
         }
 
@@ -206,7 +218,6 @@ namespace MudBlazor
                 deg = (TimeSet.Hour * 30) % 360;
             if (OpenTo == OpenTo.Minutes)
                 deg = (TimeSet.Minute * 6) % 360;
-            TimeSet.Degrees = deg;
             return $"rotateZ({deg}deg);";
         }
 

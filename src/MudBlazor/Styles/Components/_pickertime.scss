@@ -44,6 +44,8 @@
 
     &.mud-picker-timepicker-toolbar-landscape {
         flex-wrap: wrap;
+        width: 150px;
+        justify-content: center;
 
         .mud-timepicker-hourminute {
             .mud-timepicker-button {
@@ -202,12 +204,11 @@
             transform-origin: center bottom 0px;
 
             &.mud-picker-time-clock-pointer-animation {
-                transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,height 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+                transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,height 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
             }
 
             .mud-picker-time-clock-pointer-thumb {
                 position: absolute;
-                box-sizing: content-box;
                 border-radius: 100%;
 
                 &.mud-onclock-text {
@@ -216,16 +217,15 @@
                     width: 28px;
                     height: 28px;
                     border: none;
-                    mix-blend-mode: lighten;
                     background-color: inherit
                 }
 
                 &.mud-onclock-minute {
                     background: transparent;
                     border: 2px solid;
-                    width: 6px;
-                    height: 6px;
-                    top: -10px;
+                    width: 10px;
+                    height: 10px;
+                    top: -9px;
                     left: -4px;
                 }
             }
@@ -234,6 +234,7 @@
         .mud-clock-number {
             left: calc((100% - 32px) / 2);
             color: rgba(0, 0, 0, 0.87);
+            background-color: transparent !important;
             width: 32px;
             height: 32px;
             display: inline-flex;
@@ -242,6 +243,8 @@
             user-select: none;
             border-radius: 50%;
             justify-content: center;
+            transition-duration: 120ms;
+            transition-property: color;
         }
     }
 }

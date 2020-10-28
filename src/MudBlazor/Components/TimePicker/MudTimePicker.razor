@@ -29,18 +29,18 @@
                     {
                         @if (AmPm)
                         {
-                            <MudText Class="mud-clock-number" Style="transform: translate(55px, 19.6px);">1</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(94.4px, 59.5px);">2</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(109px, 114px);">3</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(94.4px, 168.5px);">4</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(54.5px, 208.4px);">5</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(0px, 223px);">6</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(-54.5px, 208.4px);">7</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(-94.4px, 168.5px);">8</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(-109px, 114px);">9</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(-94.4px, 59.5px);">10</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(-54.5px, 19.6px);">11</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(0px, 5px);">12</MudText>
+                            <MudText Class="@GetNumberColor(1)" Style="transform: translate(55px, 19.6px);">1</MudText>
+                            <MudText Class="@GetNumberColor(2)" Style="transform: translate(94.4px, 59.5px);">2</MudText>
+                            <MudText Class="@GetNumberColor(3)" Style="transform: translate(109px, 114px);">3</MudText>
+                            <MudText Class="@GetNumberColor(4)" Style="transform: translate(94.4px, 168.5px);">4</MudText>
+                            <MudText Class="@GetNumberColor(5)" Style="transform: translate(54.5px, 208.4px);">5</MudText>
+                            <MudText Class="@GetNumberColor(6)" Style="transform: translate(0px, 223px);">6</MudText>
+                            <MudText Class="@GetNumberColor(7)" Style="transform: translate(-54.5px, 208.4px);">7</MudText>
+                            <MudText Class="@GetNumberColor(8)" Style="transform: translate(-94.4px, 168.5px);">8</MudText>
+                            <MudText Class="@GetNumberColor(9)" Style="transform: translate(-109px, 114px);">9</MudText>
+                            <MudText Class="@GetNumberColor(10)" Style="transform: translate(-94.4px, 59.5px);">10</MudText>
+                            <MudText Class="@GetNumberColor(11)" Style="transform: translate(-54.5px, 19.6px);">11</MudText>
+                            <MudText Class="@GetNumberColor(12)" Style="transform: translate(0px, 5px);">12</MudText>
                             <div class="mud-picker-stick mud-hour" style="transform: rotateZ(30deg);" @onclick="@(() => OnMouseClickHour(1))" @onmouseover="@(() => OnMouseOverHour(1))"></div>
                             <div class="mud-picker-stick mud-hour" style="transform: rotateZ(60deg);" @onclick="@(() => OnMouseClickHour(2))" @onmouseover="@(() => OnMouseOverHour(2))"></div>
                             <div class="mud-picker-stick mud-hour" style="transform: rotateZ(90deg);" @onclick="@(() => OnMouseClickHour(3))" @onmouseover="@(() => OnMouseOverHour(3))"></div>
@@ -56,30 +56,30 @@
                         }
                         else
                         {
-                            <MudText Class="mud-clock-number" Style="transform: translate(55px, 19.6px);">13</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(94.4px, 59.5px);">14</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(109px, 114px);">15</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(94.4px, 168.5px);">16</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(54.5px, 208.4px);">17</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(0px, 223px);">18</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(-54.5px, 208.4px);">19</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(-94.4px, 168.5px);">20</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(-109px, 114px);">21</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(-94.4px, 59.5px);">22</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(-54.5px, 19.6px);">23</MudText>
-                            <MudText Class="mud-clock-number" Style="transform: translate(0px, 5px);">00</MudText>
-                            <MudText Class="mud-clock-number" Typo="Typo.body2" Style="transform: translate(0px, 40px);">12</MudText>
-                            <MudText Class="mud-clock-number" Typo="Typo.body2" Style="transform: translate(36.9px, 49.9px);">01</MudText>
-                            <MudText Class="mud-clock-number" Typo="Typo.body2" Style="transform: translate(64px, 77px);">02</MudText>
-                            <MudText Class="mud-clock-number" Typo="Typo.body2" Style="transform: translate(74px, 114px);">03</MudText>
-                            <MudText Class="mud-clock-number" Typo="Typo.body2" Style="transform: translate(64px, 151px);">04</MudText>
-                            <MudText Class="mud-clock-number" Typo="Typo.body2" Style="transform: translate(37px, 178px);">05</MudText>
-                            <MudText Class="mud-clock-number" Typo="Typo.body2" Style="transform: translate(0px, 188px);">06</MudText>
-                            <MudText Class="mud-clock-number" Typo="Typo.body2" Style="transform: translate(-37px, 178px);">07</MudText>
-                            <MudText Class="mud-clock-number" Typo="Typo.body2" Style="transform: translate(-64px, 151px);">08</MudText>
-                            <MudText Class="mud-clock-number" Typo="Typo.body2" Style="transform: translate(-74px, 114px);">09</MudText>
-                            <MudText Class="mud-clock-number" Typo="Typo.body2" Style="transform: translate(-64px, 77px);">10</MudText>
-                            <MudText Class="mud-clock-number" Typo="Typo.body2" Style="transform: translate(-37px, 50px);">11</MudText>
+                            <MudText Class="@GetNumberColor(13)" Style="transform: translate(55px, 19.6px);">13</MudText>
+                            <MudText Class="@GetNumberColor(14)" Style="transform: translate(94.4px, 59.5px);">14</MudText>
+                            <MudText Class="@GetNumberColor(15)" Style="transform: translate(109px, 114px);">15</MudText>
+                            <MudText Class="@GetNumberColor(16)" Style="transform: translate(94.4px, 168.5px);">16</MudText>
+                            <MudText Class="@GetNumberColor(17)" Style="transform: translate(54.5px, 208.4px);">17</MudText>
+                            <MudText Class="@GetNumberColor(18)" Style="transform: translate(0px, 223px);">18</MudText>
+                            <MudText Class="@GetNumberColor(19)" Style="transform: translate(-54.5px, 208.4px);">19</MudText>
+                            <MudText Class="@GetNumberColor(20)" Style="transform: translate(-94.4px, 168.5px);">20</MudText>
+                            <MudText Class="@GetNumberColor(21)" Style="transform: translate(-109px, 114px);">21</MudText>
+                            <MudText Class="@GetNumberColor(22)" Style="transform: translate(-94.4px, 59.5px);">22</MudText>
+                            <MudText Class="@GetNumberColor(23)" Style="transform: translate(-54.5px, 19.6px);">23</MudText>
+                            <MudText Class="@GetNumberColor(00)" Style="transform: translate(0px, 5px);">00</MudText>
+                            <MudText Class="@GetNumberColor(12)" Typo="Typo.body2" Style="transform: translate(0px, 40px);">12</MudText>
+                            <MudText Class="@GetNumberColor(01)" Typo="Typo.body2" Style="transform: translate(36.9px, 49.9px);">01</MudText>
+                            <MudText Class="@GetNumberColor(02)" Typo="Typo.body2" Style="transform: translate(64px, 77px);">02</MudText>
+                            <MudText Class="@GetNumberColor(03)" Typo="Typo.body2" Style="transform: translate(74px, 114px);">03</MudText>
+                            <MudText Class="@GetNumberColor(04)" Typo="Typo.body2" Style="transform: translate(64px, 151px);">04</MudText>
+                            <MudText Class="@GetNumberColor(05)" Typo="Typo.body2" Style="transform: translate(37px, 178px);">05</MudText>
+                            <MudText Class="@GetNumberColor(06)" Typo="Typo.body2" Style="transform: translate(0px, 188px);">06</MudText>
+                            <MudText Class="@GetNumberColor(07)" Typo="Typo.body2" Style="transform: translate(-37px, 178px);">07</MudText>
+                            <MudText Class="@GetNumberColor(08)" Typo="Typo.body2" Style="transform: translate(-64px, 151px);">08</MudText>
+                            <MudText Class="@GetNumberColor(09)" Typo="Typo.body2" Style="transform: translate(-74px, 114px);">09</MudText>
+                            <MudText Class="@GetNumberColor(10)" Typo="Typo.body2" Style="transform: translate(-64px, 77px);">10</MudText>
+                            <MudText Class="@GetNumberColor(11)" Typo="Typo.body2" Style="transform: translate(-37px, 50px);">11</MudText>
 
                             <div class="mud-picker-stick" style="transform: rotateZ(30deg);">
                                 <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(1))" @onmouseover="@(() => OnMouseOverHour(1))"></div>
@@ -134,18 +134,18 @@
                     }
                     else if (OpenTo == OpenTo.Minutes)
                     {
-                        <MudText Class="mud-clock-number" Style="transform: translate(55px, 19.6px);">05</MudText>
-                        <MudText Class="mud-clock-number" Style="transform: translate(94.4px, 59.5px);">10</MudText>
-                        <MudText Class="mud-clock-number" Style="transform: translate(109px, 114px);">15</MudText>
-                        <MudText Class="mud-clock-number" Style="transform: translate(94.4px, 168.5px);">20</MudText>
-                        <MudText Class="mud-clock-number" Style="transform: translate(54.5px, 208.4px);">25</MudText>
-                        <MudText Class="mud-clock-number" Style="transform: translate(0px, 223px);">30</MudText>
-                        <MudText Class="mud-clock-number" Style="transform: translate(-54.5px, 208.4px);">35</MudText>
-                        <MudText Class="mud-clock-number" Style="transform: translate(-94.4px, 168.5px);">40</MudText>
-                        <MudText Class="mud-clock-number" Style="transform: translate(-109px, 114px);">45</MudText>
-                        <MudText Class="mud-clock-number" Style="transform: translate(-94.4px, 59.5px);">50</MudText>
-                        <MudText Class="mud-clock-number" Style="transform: translate(-54.5px, 19.6px);">55</MudText>
-                        <MudText Class="mud-clock-number" Style="transform: translate(0px, 5px);">00</MudText>
+                        <MudText Class="@GetNumberColor(05)" Style="transform: translate(55px, 19.6px);">05</MudText>
+                        <MudText Class="@GetNumberColor(10)" Style="transform: translate(94.4px, 59.5px);">10</MudText>
+                        <MudText Class="@GetNumberColor(15)" Style="transform: translate(109px, 114px);">15</MudText>
+                        <MudText Class="@GetNumberColor(20)" Style="transform: translate(94.4px, 168.5px);">20</MudText>
+                        <MudText Class="@GetNumberColor(25)" Style="transform: translate(54.5px, 208.4px);">25</MudText>
+                        <MudText Class="@GetNumberColor(30)" Style="transform: translate(0px, 223px);">30</MudText>
+                        <MudText Class="@GetNumberColor(35)" Style="transform: translate(-54.5px, 208.4px);">35</MudText>
+                        <MudText Class="@GetNumberColor(40)" Style="transform: translate(-94.4px, 168.5px);">40</MudText>
+                        <MudText Class="@GetNumberColor(45)" Style="transform: translate(-109px, 114px);">45</MudText>
+                        <MudText Class="@GetNumberColor(50)" Style="transform: translate(-94.4px, 59.5px);">50</MudText>
+                        <MudText Class="@GetNumberColor(55)" Style="transform: translate(-54.5px, 19.6px);">55</MudText>
+                        <MudText Class="@GetNumberColor(00)" Style="transform: translate(0px, 5px);">00</MudText>
                         <div class="mud-picker-stick mud-minute" style="transform: rotateZ(0deg);" @onclick="@(() => OnMouseClickMinute(00))" @onmouseover="@(() => OnMouseOverMinute(00))"></div>
                         <div class="mud-picker-stick mud-minute" style="transform: rotateZ(6deg);" @onclick="@(() => OnMouseClickMinute(1))" @onmouseover="@(() => OnMouseOverMinute(1))"></div>
                         <div class="mud-picker-stick mud-minute" style="transform: rotateZ(12deg);" @onclick="@(() => OnMouseClickMinute(2))" @onmouseover="@(() => OnMouseOverMinute(2))"></div>
