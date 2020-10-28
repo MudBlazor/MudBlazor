@@ -1,5 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 
-<MudTimePicker PickerVariant="PickerVariant.Static" Value="03:37 PM" AmPm="true" />
-<MudTimePicker PickerVariant="PickerVariant.Static" Orientation="Orientation.Landscape" Value="13:37" />
+<MudTimePicker PickerVariant="PickerVariant.Static" @bind-Time="time" AmPm="true" />
+<MudTimePicker PickerVariant="PickerVariant.Static" Orientation="Orientation.Landscape" @bind-Time="time"/>
+
+@code{
+
+    TimeSpan? time = new TimeSpan(13, 37, 00);
+
+}
