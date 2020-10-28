@@ -111,31 +111,87 @@
             border-radius: 50%;
         }
 
-        .mud-picker-time-stick-inner {
+        .mud-picker-stick-inner {
             left: calc(50% - 1px);
             width: 3px;
             height: 35%;
             bottom: 0;
             position: absolute;
             transform-origin: center bottom 0px;
+
+            &.mud-hour {
+                &:after {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    transform: translate(-50%,-50%);
+                    height: 48px;
+                    width: 48px;
+                    top: -60%;
+                    border-radius: 50%;
+                    background-color: inherit;
+                }
+            }
         }
 
-        .mud-picker-time-stick-outer {
+        .mud-picker-stick-outer {
             left: calc(50% - 1px);
-            width: 3px;
+            width: 0;
             height: 35%;
             bottom: 35%;
             position: absolute;
             transform-origin: center bottom 0px;
+
+            &.mud-hour {
+                &:after {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    transform: translate(-50%,-50%);
+                    height: 48px;
+                    width: 62px;
+                    top: -20px;
+                    border-radius: 50%;
+                    background-color: inherit;
+                }
+            }
         }
 
-        .mud-picker-time-stick {
+        .mud-picker-stick {
             left: calc(50% - 1px);
             width: 3px;
-            height: 100%;
+            height: 50%;
             bottom: 50%;
             position: absolute;
             transform-origin: center bottom 0px;
+
+            &.mud-hour {
+                &:after {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    transform: translate(-50%,-50%);
+                    height: 62px;
+                    width: 62px;
+                    top: 20px;
+                    border-radius: 50%;
+                    background-color: inherit;
+                }
+            }
+
+            &.mud-minute {
+                &:after {
+                    content: "";
+                    position: absolute;
+                    left: 50%;
+                    transform: translate(-50%,-50%);
+                    height: 44px;
+                    width: 15px;
+                    top: 20px;
+                    border-radius: 50%;
+                    background-color: inherit;
+                }
+            }
         }
 
         .mud-picker-time-clock-pointer {
@@ -150,13 +206,28 @@
             }
 
             .mud-picker-time-clock-pointer-thumb {
-                top: -20px;
-                left: -13px;
-                width: 28px;
-                height: 28px;
                 position: absolute;
                 box-sizing: content-box;
                 border-radius: 100%;
+
+                &.mud-onclock-text {
+                    top: -19px;
+                    left: -13px;
+                    width: 28px;
+                    height: 28px;
+                    border: none;
+                    mix-blend-mode: lighten;
+                    background-color: inherit
+                }
+
+                &.mud-onclock-minute {
+                    background: transparent;
+                    border: 2px solid;
+                    width: 6px;
+                    height: 6px;
+                    top: -10px;
+                    left: -4px;
+                }
             }
         }
 

@@ -161,12 +161,42 @@ namespace MudBlazor
         }
         private string GetClockPointerColor()
         {
-            return $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-color-{Color.ToDescriptionString()}";
+            if (MouseDown)
+            {
+                return $"mud-picker-time-clock-pointer mud-color-{Color.ToDescriptionString()}";
+            }
+            else
+            {
+                return $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-color-{Color.ToDescriptionString()}";
+            }
+            
         }
 
         private string GetClockPointerThumbColor()
         {
-            return $"mud-picker-time-clock-pointer-thumb mud-color-{Color.ToDescriptionString()}";
+            double deg = 0;
+            if (OpenTo == OpenTo.Hours)
+                deg = (TimeSet.Hour * 30) % 360;
+            if (OpenTo == OpenTo.Minutes)
+                deg = (TimeSet.Minute * 6) % 360;
+            if (deg % 30 == 0)
+            {
+                return $"mud-picker-time-clock-pointer-thumb mud-onclock-text mud-onclock-primary mud-color-{Color.ToDescriptionString()}";
+            }
+            else
+            {
+                return $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-color-border-{Color.ToDescriptionString()}";
+            }
+        }
+
+        private double GetDeg()
+        {
+            double deg = 0;
+            if (OpenTo == OpenTo.Hours)
+                deg = (TimeSet.Hour * 30) % 360;
+            if (OpenTo == OpenTo.Minutes)
+                deg = (TimeSet.Minute * 6) % 360;
+            return deg;
         }
 
         private string GetPointerRotation()
@@ -176,6 +206,7 @@ namespace MudBlazor
                 deg = (TimeSet.Hour * 30) % 360;
             if (OpenTo == OpenTo.Minutes)
                 deg = (TimeSet.Minute * 6) % 360;
+            TimeSet.Degrees = deg;
             return $"rotateZ({deg}deg);";
         }
 
@@ -223,35 +254,43 @@ namespace MudBlazor
             MouseDown = false;
         }
 
-        private void OnMouseOverHour(SetTime setTime)
+        private void OnMouseOverHour(int value)
         {
             if (MouseDown)
             {
-                TimeSet.Hour = setTime.Hour;
+                TimeSet.Hour = value;
                 UpdateTime();
             }
         }
 
-        private void OnMouseOverMinute(SetTime setTime)
+        private void OnMouseClickHour(int value)
+        {
+            TimeSet.Hour = value;
+            UpdateTime();
+        }
+
+        private void OnMouseOverMinute(int value)
         {
             if (MouseDown)
             {
-                TimeSet.Minute = setTime.Minute;
+                TimeSet.Minute = value;
                 UpdateTime();
             }
+        }
+
+        private void OnMouseClickMinute(int value)
+        {
+            TimeSet.Minute = value;
+            UpdateTime();
         }
 
         private class SetTime
         {
-            [Obsolete("not needed, calculated on the fly")]
-            public int Degrees { get; set; }
-
-            [Obsolete("not needed, calculated on the fly")]
-            public int Height { get; set; }
-
             public int Hour { get; set; }
 
             public int Minute { get; set; }
+
+            public double Degrees { get; set; }
         }
     }
 }

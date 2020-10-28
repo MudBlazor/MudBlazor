@@ -8,6 +8,10 @@
     .mud-color-text-#{$color} {
         color: var(--mud-theme-#{$color}) !important;
     }
+
+    .mud-color-border-#{$color} {
+        color: var(--mud-theme-#{$color}) !important;
+    }
 }
 
 @each $color in $mud-theme-props {
