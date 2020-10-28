@@ -1278,6 +1278,11 @@
             Child content of component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTabs.TabPanelClass">
+            <summary>
+            Custom class/classes for TabPanel
+            </summary>
+        </member>
         <member name="F:MudBlazor.MudTimePicker.Picker">
             <summary>
             Reference to the Picker, initialized via @ref
