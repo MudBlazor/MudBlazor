@@ -2260,8 +2260,12 @@ public const string ThemesCustomExample = @"<MudThemeProvider Theme=""MyCoolDark
 
 public const string ThemesDefaultExample = @"<MudThemeProvider />";
 
-public const string TimePickerBasicUsageExample = @"<MudTimePicker Label=""12 hours"" Value=""03:37 PM"" AmPm=""true""/>
-<MudTimePicker Label=""24 hours"" Value=""13:37"" />";
+public const string TimePickerBasicUsageExample = @"<MudTimePicker Label=""12 hours"" AmPm=""true"" @bind-Time=""time""/>
+<MudTimePicker Label=""24 hours"" @bind-Time=""time""/>
+
+@code{
+    TimeSpan? time = new TimeSpan(00, 45, 00);
+}";
 
 public const string TimePickerColorExample = @"<MudTimePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Value=""03:37 PM"" AmPm=""true"" />
 <MudTimePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Value=""13:37""/>";
@@ -2269,8 +2273,12 @@ public const string TimePickerColorExample = @"<MudTimePicker PickerVariant=""Pi
 public const string TimePickerElevationExample = @"<MudTimePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Elevation=""1"" Value=""03:37 PM"" AmPm=""true"" />
 <MudTimePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Elevation=""12"" Value=""13:37"" />";
 
-public const string TimePickerStaticExample = @"<MudTimePicker PickerVariant=""PickerVariant.Static"" Value=""03:37 PM"" AmPm=""true"" />
-<MudTimePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Value=""13:37"" />";
+public const string TimePickerStaticExample = @"<MudTimePicker PickerVariant=""PickerVariant.Static"" @bind-Time=""time"" AmPm=""true"" />
+<MudTimePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" @bind-Time=""time""/>
+
+@code{
+    TimeSpan? time = new TimeSpan(13, 37, 00);
+}";
 
 public const string TimePickerViewsExample = @"<MudTimePicker Label=""Minutes"" Value=""13:37"" OpenTo=""OpenTo.Minutes"" />";
 

@@ -1365,6 +1365,10 @@ public const string MudTimePicker_AmPm = @"If true, sets 12 hour selection clock
 
 public const string MudTimePicker_InputIcon = @"Sets the Input Icon.";
 
+public const string MudTimePicker_Time = @"The currently selected time (two-way bindable). If null, then nothing was selected.";
+
+public const string MudTimePicker_TimeChanged = @"Fired when the date changes.";
+
 public const string MudTimePicker_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.";
 
 public const string MudTimePicker_Square = @"If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden with Rounded bool.";

@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 
 namespace MudBlazor
 {
@@ -54,6 +55,7 @@ namespace MudBlazor
                 try
                 {
                     Value = AmPm ? _time.ToAmPmString() : _time.ToIsoString();
+                    UpdateTimeSetFromTime();
                 }
                 finally
                 {
@@ -135,17 +137,14 @@ namespace MudBlazor
 
         private void OnAmClicked()
         {
-            if (TimeSet.Hour == 0 || TimeSet.Hour==12)
-                TimeSet.Hour = 12;  // <--- "12:-- am" is "12:--" in 24h
-            else
-                TimeSet.Hour = TimeSet.Hour % 12;
+            TimeSet.Hour = TimeSet.Hour % 12;  // "12:-- am" is "00:--" in 24h
             UpdateTime();
             StateHasChanged();
         }
 
         private void OnPmClicked()
         {
-            if (TimeSet.Hour > 0 && TimeSet.Hour <= 12) // <--- "12:-- pm" is "00:--" in 24h
+            if (TimeSet.Hour <= 12) // "12:-- pm" is "12:--" in 24h
                 TimeSet.Hour = TimeSet.Hour + 12;
             TimeSet.Hour = TimeSet.Hour % 24;
             UpdateTime();
@@ -169,13 +168,16 @@ namespace MudBlazor
 
         protected string AmButtonClass =>
         new CssBuilder("mud-timepicker-button")
-          .AddClass($"mud-timepicker-toolbar-text", !(TimeSet.Hour >= 00 && TimeSet.Hour < 12)) // am is 00:00 to 11:59 
+          .AddClass($"mud-timepicker-toolbar-text", !IsAm) // gray it out
         .Build();
 
         protected string PmButtonClass =>
         new CssBuilder("mud-timepicker-button")
-          .AddClass($"mud-timepicker-toolbar-text", !(TimeSet.Hour >= 12 && TimeSet.Hour < 24)) // pm is 12:00 to 23:59
+          .AddClass($"mud-timepicker-toolbar-text", !IsPm) // gray it out
         .Build();
+
+        private bool IsAm => TimeSet.Hour >= 00 && TimeSet.Hour < 12; // am is 00:00 to 11:59 
+        private bool IsPm => TimeSet.Hour >= 12 && TimeSet.Hour < 24; // pm is 12:00 to 23:59 
 
         private string GetClockPinColor()
         {
@@ -209,18 +211,23 @@ namespace MudBlazor
 
         private string GetNumberColor(int value)
         {
-            if(OpenTo == OpenTo.Hours && TimeSet.Hour == value)
+            if(OpenTo == OpenTo.Hours)
             {
-                return $"mud-clock-number mud-theme-color-{Color.ToDescriptionString()}";
+                var h = TimeSet.Hour;
+                if (AmPm)
+                {
+                    h = TimeSet.Hour % 12;
+                    if (TimeSet.Hour % 12 == 0)
+                        h = 12;
+                }
+                if (h==value)
+                    return $"mud-clock-number mud-theme-color-{Color.ToDescriptionString()}";
             }
             else if (OpenTo == OpenTo.Minutes && TimeSet.Minute == value)
             {
                 return $"mud-clock-number mud-theme-color-{Color.ToDescriptionString()}";
             }
-            else
-            {
-                return $"mud-clock-number";
-            }
+            return $"mud-clock-number";
         }
 
         private double GetDeg()
@@ -262,16 +269,19 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            UpdateTimeSetFromTime();
+        }
+
+
+        private void UpdateTimeSetFromTime()
+        {
             if (_time == null)
             {
                 TimeSet.Hour = 0;
                 TimeSet.Minute = 0;
                 return;
             }
-            if (AmPm)
-                TimeSet.Hour = _time.Value.ToAmPmHour();
-            else
-                TimeSet.Hour = _time.Value.Hours;
+            TimeSet.Hour = _time.Value.Hours;
             TimeSet.Minute = _time.Value.Minutes;
         }
 
@@ -298,7 +308,15 @@ namespace MudBlazor
 
         private void OnMouseClickHour(int value)
         {
-            TimeSet.Hour = value;
+            var h = value;
+            if (AmPm)
+            {
+                if (IsAm && value == 12)
+                    h = 0;
+                else if (IsPm && value < 12)
+                    h = value + 12;
+            }
+            TimeSet.Hour = h;
             UpdateTime();
         }
 
