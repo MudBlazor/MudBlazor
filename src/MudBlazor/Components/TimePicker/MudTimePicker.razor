@@ -1,0 +1,214 @@
+﻿@namespace MudBlazor
+@inherits MudBasePicker
+
+
+<MudPicker @ref="Picker" PickerVariant="@PickerVariant" Orientation="@Orientation" Label="@Label" Value="@Value" HelperText="@HelperText" InputVariant="@InputVariant" Disabled="@Disabled" Adornment="@Adornment" IconSize="@IconSize" InputIcon="@InputIcon" Elevation="@Elevation" Square="@Square" Rounded="@Rounded">
+    <MudPickerToolbar Class="@ToolbarClass" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
+        <div class="mud-timepicker-hourminute">
+            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@HoursButtonClass" OnClick="@OnHourClick">@getHourString()</MudButton>
+            <MudText Typo="Typo.h2" Class="mud-timepicker-separator">:</MudText>
+            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@MinuteButtonClass" OnClick="@OnMinutesClick">@getMinuteString()</MudButton>
+        </div>
+        @if (AmPm)
+        {
+            <div class="mud-timepicker-ampm">
+                <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@AmButtonClass" OnClick="@OnAmClicked">AM</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@PmButtonClass" OnClick="@OnPmClicked">PM</MudButton>
+            </div>
+        }
+    </MudPickerToolbar>
+    <MudPickerContent>
+        <div class="mud-picker-time-container">
+            <div class="mud-picker-time-clock">
+                <div role="menu" tabindex="-1" class="mud-picker-time-clock-mask" @onmousedown="@OnMouseDown" @onmouseup="@OnMouseUp">
+                    <div class="@GetClockPinColor()"></div>
+                    <div class="@GetClockPointerColor()" style="height: @GetPointerHeight(); transform: @GetPointerRotation()">
+                        <div class="@GetClockPointerThumbColor()"></div>
+                    </div>
+                    @if (OpenTo == OpenTo.Hours)
+                    {
+                        @if (AmPm)
+                        {
+                            <MudText Class="@GetNumberColor(1)" Style="transform: translate(55px, 19.6px);">1</MudText>
+                            <MudText Class="@GetNumberColor(2)" Style="transform: translate(94.4px, 59.5px);">2</MudText>
+                            <MudText Class="@GetNumberColor(3)" Style="transform: translate(109px, 114px);">3</MudText>
+                            <MudText Class="@GetNumberColor(4)" Style="transform: translate(94.4px, 168.5px);">4</MudText>
+                            <MudText Class="@GetNumberColor(5)" Style="transform: translate(54.5px, 208.4px);">5</MudText>
+                            <MudText Class="@GetNumberColor(6)" Style="transform: translate(0px, 223px);">6</MudText>
+                            <MudText Class="@GetNumberColor(7)" Style="transform: translate(-54.5px, 208.4px);">7</MudText>
+                            <MudText Class="@GetNumberColor(8)" Style="transform: translate(-94.4px, 168.5px);">8</MudText>
+                            <MudText Class="@GetNumberColor(9)" Style="transform: translate(-109px, 114px);">9</MudText>
+                            <MudText Class="@GetNumberColor(10)" Style="transform: translate(-94.4px, 59.5px);">10</MudText>
+                            <MudText Class="@GetNumberColor(11)" Style="transform: translate(-54.5px, 19.6px);">11</MudText>
+                            <MudText Class="@GetNumberColor(12)" Style="transform: translate(0px, 5px);">12</MudText>
+                            <div class="mud-picker-stick mud-hour" style="transform: rotateZ(30deg);" @onclick="@(() => OnMouseClickHour(1))" @onmouseover="@(() => OnMouseOverHour(1))"></div>
+                            <div class="mud-picker-stick mud-hour" style="transform: rotateZ(60deg);" @onclick="@(() => OnMouseClickHour(2))" @onmouseover="@(() => OnMouseOverHour(2))"></div>
+                            <div class="mud-picker-stick mud-hour" style="transform: rotateZ(90deg);" @onclick="@(() => OnMouseClickHour(3))" @onmouseover="@(() => OnMouseOverHour(3))"></div>
+                            <div class="mud-picker-stick mud-hour" style="transform: rotateZ(120deg);" @onclick="@(() => OnMouseClickHour(4))" @onmouseover="@(() => OnMouseOverHour(4))"></div>
+                            <div class="mud-picker-stick mud-hour" style="transform: rotateZ(150deg);" @onclick="@(() => OnMouseClickHour(5))" @onmouseover="@(() => OnMouseOverHour(5))"></div>
+                            <div class="mud-picker-stick mud-hour" style="transform: rotateZ(180deg);" @onclick="@(() => OnMouseClickHour(6))" @onmouseover="@(() => OnMouseOverHour(6))"></div>
+                            <div class="mud-picker-stick mud-hour" style="transform: rotateZ(210deg);" @onclick="@(() => OnMouseClickHour(7))" @onmouseover="@(() => OnMouseOverHour(7))"></div>
+                            <div class="mud-picker-stick mud-hour" style="transform: rotateZ(240deg);" @onclick="@(() => OnMouseClickHour(8))" @onmouseover="@(() => OnMouseOverHour(8))"></div>
+                            <div class="mud-picker-stick mud-hour" style="transform: rotateZ(270deg);" @onclick="@(() => OnMouseClickHour(9))" @onmouseover="@(() => OnMouseOverHour(9))"></div>
+                            <div class="mud-picker-stick mud-hour" style="transform: rotateZ(300deg);" @onclick="@(() => OnMouseClickHour(10))" @onmouseover="@(() => OnMouseOverHour(10))"></div>
+                            <div class="mud-picker-stick mud-hour" style="transform: rotateZ(330deg);" @onclick="@(() => OnMouseClickHour(11))" @onmouseover="@(() => OnMouseOverHour(11))"></div>
+                            <div class="mud-picker-stick mud-hour" style="transform: rotateZ(0deg);" @onclick="@(() => OnMouseClickHour(12))" @onmouseover="@(() => OnMouseOverHour(12))"></div>
+                        }
+                        else
+                        {
+                            <MudText Class="@GetNumberColor(13)" Style="transform: translate(55px, 19.6px);">13</MudText>
+                            <MudText Class="@GetNumberColor(14)" Style="transform: translate(94.4px, 59.5px);">14</MudText>
+                            <MudText Class="@GetNumberColor(15)" Style="transform: translate(109px, 114px);">15</MudText>
+                            <MudText Class="@GetNumberColor(16)" Style="transform: translate(94.4px, 168.5px);">16</MudText>
+                            <MudText Class="@GetNumberColor(17)" Style="transform: translate(54.5px, 208.4px);">17</MudText>
+                            <MudText Class="@GetNumberColor(18)" Style="transform: translate(0px, 223px);">18</MudText>
+                            <MudText Class="@GetNumberColor(19)" Style="transform: translate(-54.5px, 208.4px);">19</MudText>
+                            <MudText Class="@GetNumberColor(20)" Style="transform: translate(-94.4px, 168.5px);">20</MudText>
+                            <MudText Class="@GetNumberColor(21)" Style="transform: translate(-109px, 114px);">21</MudText>
+                            <MudText Class="@GetNumberColor(22)" Style="transform: translate(-94.4px, 59.5px);">22</MudText>
+                            <MudText Class="@GetNumberColor(23)" Style="transform: translate(-54.5px, 19.6px);">23</MudText>
+                            <MudText Class="@GetNumberColor(00)" Style="transform: translate(0px, 5px);">00</MudText>
+                            <MudText Class="@GetNumberColor(12)" Typo="Typo.body2" Style="transform: translate(0px, 40px);">12</MudText>
+                            <MudText Class="@GetNumberColor(01)" Typo="Typo.body2" Style="transform: translate(36.9px, 49.9px);">01</MudText>
+                            <MudText Class="@GetNumberColor(02)" Typo="Typo.body2" Style="transform: translate(64px, 77px);">02</MudText>
+                            <MudText Class="@GetNumberColor(03)" Typo="Typo.body2" Style="transform: translate(74px, 114px);">03</MudText>
+                            <MudText Class="@GetNumberColor(04)" Typo="Typo.body2" Style="transform: translate(64px, 151px);">04</MudText>
+                            <MudText Class="@GetNumberColor(05)" Typo="Typo.body2" Style="transform: translate(37px, 178px);">05</MudText>
+                            <MudText Class="@GetNumberColor(06)" Typo="Typo.body2" Style="transform: translate(0px, 188px);">06</MudText>
+                            <MudText Class="@GetNumberColor(07)" Typo="Typo.body2" Style="transform: translate(-37px, 178px);">07</MudText>
+                            <MudText Class="@GetNumberColor(08)" Typo="Typo.body2" Style="transform: translate(-64px, 151px);">08</MudText>
+                            <MudText Class="@GetNumberColor(09)" Typo="Typo.body2" Style="transform: translate(-74px, 114px);">09</MudText>
+                            <MudText Class="@GetNumberColor(10)" Typo="Typo.body2" Style="transform: translate(-64px, 77px);">10</MudText>
+                            <MudText Class="@GetNumberColor(11)" Typo="Typo.body2" Style="transform: translate(-37px, 50px);">11</MudText>
+
+                            <div class="mud-picker-stick" style="transform: rotateZ(30deg);">
+                                <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(1))" @onmouseover="@(() => OnMouseOverHour(1))"></div>
+                                <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(13))" @onmouseover="@(() => OnMouseOverHour(13))"></div>
+                            </div>
+                            <div class="mud-picker-stick" style="transform: rotateZ(60deg);">
+                                <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(2))" @onmouseover="@(() => OnMouseOverHour(2))"></div>
+                                <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(14))" @onmouseover="@(() => OnMouseOverHour(14))"></div>
+                            </div>
+                            <div class="mud-picker-stick" style="transform: rotateZ(90deg);">
+                                <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(3))" @onmouseover="@(() => OnMouseOverHour(3))"></div>
+                                <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(15))" @onmouseover="@(() => OnMouseOverHour(15))"></div>
+                            </div>
+                            <div class="mud-picker-stick" style="transform: rotateZ(120deg);">
+                                <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(4))" @onmouseover="@(() => OnMouseOverHour(4))"></div>
+                                <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(16))" @onmouseover="@(() => OnMouseOverHour(16))"></div>
+                            </div>
+                            <div class="mud-picker-stick" style="transform: rotateZ(150deg);">
+                                <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(5))" @onmouseover="@(() => OnMouseOverHour(5))"></div>
+                                <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(17))" @onmouseover="@(() => OnMouseOverHour(17))"></div>
+                            </div>
+                            <div class="mud-picker-stick" style="transform: rotateZ(180deg);">
+                                <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(6))" @onmouseover="@(() => OnMouseOverHour(6))"></div>
+                                <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(18))" @onmouseover="@(() => OnMouseOverHour(18))"></div>
+                            </div>
+                            <div class="mud-picker-stick" style="transform: rotateZ(210deg);">
+                                <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(7))" @onmouseover="@(() => OnMouseOverHour(7))"></div>
+                                <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(19))" @onmouseover="@(() => OnMouseOverHour(19))"></div>
+                            </div>
+                            <div class="mud-picker-stick" style="transform: rotateZ(240deg);">
+                                <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(8))" @onmouseover="@(() => OnMouseOverHour(8))"></div>
+                                <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(20))" @onmouseover="@(() => OnMouseOverHour(20))"></div>
+                            </div>
+                            <div class="mud-picker-stick" style="transform: rotateZ(270deg);">
+                                <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(9))" @onmouseover="@(() => OnMouseOverHour(9))"></div>
+                                <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(21))" @onmouseover="@(() => OnMouseOverHour(21))"></div>
+                            </div>
+                            <div class="mud-picker-stick" style="transform: rotateZ(300deg);">
+                                <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(10))" @onmouseover="@(() => OnMouseOverHour(10))"></div>
+                                <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(22))" @onmouseover="@(() => OnMouseOverHour(22))"></div>
+                            </div>
+                            <div class="mud-picker-stick" style="transform: rotateZ(330deg);">
+                                <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(11))" @onmouseover="@(() => OnMouseOverHour(11))"></div>
+                                <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(23))" @onmouseover="@(() => OnMouseOverHour(23))"></div>
+                            </div>
+                            <div class="mud-picker-stick" style="transform: rotateZ(0deg);">
+                                <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(12))" @onmouseover="@(() => OnMouseOverHour(12))"></div>
+                                <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(00))" @onmouseover="@(() => OnMouseOverHour(00))"></div>
+                            </div>
+                        }
+
+                    }
+                    else if (OpenTo == OpenTo.Minutes)
+                    {
+                        <MudText Class="@GetNumberColor(05)" Style="transform: translate(55px, 19.6px);">05</MudText>
+                        <MudText Class="@GetNumberColor(10)" Style="transform: translate(94.4px, 59.5px);">10</MudText>
+                        <MudText Class="@GetNumberColor(15)" Style="transform: translate(109px, 114px);">15</MudText>
+                        <MudText Class="@GetNumberColor(20)" Style="transform: translate(94.4px, 168.5px);">20</MudText>
+                        <MudText Class="@GetNumberColor(25)" Style="transform: translate(54.5px, 208.4px);">25</MudText>
+                        <MudText Class="@GetNumberColor(30)" Style="transform: translate(0px, 223px);">30</MudText>
+                        <MudText Class="@GetNumberColor(35)" Style="transform: translate(-54.5px, 208.4px);">35</MudText>
+                        <MudText Class="@GetNumberColor(40)" Style="transform: translate(-94.4px, 168.5px);">40</MudText>
+                        <MudText Class="@GetNumberColor(45)" Style="transform: translate(-109px, 114px);">45</MudText>
+                        <MudText Class="@GetNumberColor(50)" Style="transform: translate(-94.4px, 59.5px);">50</MudText>
+                        <MudText Class="@GetNumberColor(55)" Style="transform: translate(-54.5px, 19.6px);">55</MudText>
+                        <MudText Class="@GetNumberColor(00)" Style="transform: translate(0px, 5px);">00</MudText>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(0deg);" @onclick="@(() => OnMouseClickMinute(00))" @onmouseover="@(() => OnMouseOverMinute(00))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(6deg);" @onclick="@(() => OnMouseClickMinute(1))" @onmouseover="@(() => OnMouseOverMinute(1))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(12deg);" @onclick="@(() => OnMouseClickMinute(2))" @onmouseover="@(() => OnMouseOverMinute(2))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(18deg);" @onclick="@(() => OnMouseClickMinute(3))" @onmouseover="@(() => OnMouseOverMinute(3))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(24deg);" @onclick="@(() => OnMouseClickMinute(4))" @onmouseover="@(() => OnMouseOverMinute(4))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(30deg);" @onclick="@(() => OnMouseClickMinute(5))" @onmouseover="@(() => OnMouseOverMinute(5))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(36deg);" @onclick="@(() => OnMouseClickMinute(6))" @onmouseover="@(() => OnMouseOverMinute(6))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(42deg);" @onclick="@(() => OnMouseClickMinute(7))" @onmouseover="@(() => OnMouseOverMinute(7))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(48deg);" @onclick="@(() => OnMouseClickMinute(8))" @onmouseover="@(() => OnMouseOverMinute(8))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(54deg);" @onclick="@(() => OnMouseClickMinute(9))" @onmouseover="@(() => OnMouseOverMinute(9))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(60deg);" @onclick="@(() => OnMouseClickMinute(10))" @onmouseover="@(() => OnMouseOverMinute(10))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(66deg);" @onclick="@(() => OnMouseClickMinute(11))" @onmouseover="@(() => OnMouseOverMinute(11))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(72deg);" @onclick="@(() => OnMouseClickMinute(12))" @onmouseover="@(() => OnMouseOverMinute(12))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(78deg);" @onclick="@(() => OnMouseClickMinute(13))" @onmouseover="@(() => OnMouseOverMinute(13))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(84deg);" @onclick="@(() => OnMouseClickMinute(14))" @onmouseover="@(() => OnMouseOverMinute(14))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(90deg);" @onclick="@(() => OnMouseClickMinute(15))" @onmouseover="@(() => OnMouseOverMinute(15))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(96deg);" @onclick="@(() => OnMouseClickMinute(16))" @onmouseover="@(() => OnMouseOverMinute(16))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(102deg);" @onclick="@(() => OnMouseClickMinute(17))" @onmouseover="@(() => OnMouseOverMinute(17))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(108deg);" @onclick="@(() => OnMouseClickMinute(18))" @onmouseover="@(() => OnMouseOverMinute(18))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(114deg);" @onclick="@(() => OnMouseClickMinute(19))" @onmouseover="@(() => OnMouseOverMinute(19))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(120deg);" @onclick="@(() => OnMouseClickMinute(20))" @onmouseover="@(() => OnMouseOverMinute(20))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(126deg);" @onclick="@(() => OnMouseClickMinute(21))" @onmouseover="@(() => OnMouseOverMinute(21))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(132deg);" @onclick="@(() => OnMouseClickMinute(22))" @onmouseover="@(() => OnMouseOverMinute(22))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(138deg);" @onclick="@(() => OnMouseClickMinute(23))" @onmouseover="@(() => OnMouseOverMinute(23))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(144deg);" @onclick="@(() => OnMouseClickMinute(24))" @onmouseover="@(() => OnMouseOverMinute(24))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(150deg);" @onclick="@(() => OnMouseClickMinute(25))" @onmouseover="@(() => OnMouseOverMinute(25))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(156deg);" @onclick="@(() => OnMouseClickMinute(26))" @onmouseover="@(() => OnMouseOverMinute(26))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(162deg);" @onclick="@(() => OnMouseClickMinute(27))" @onmouseover="@(() => OnMouseOverMinute(27))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(168deg);" @onclick="@(() => OnMouseClickMinute(28))" @onmouseover="@(() => OnMouseOverMinute(28))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(174deg);" @onclick="@(() => OnMouseClickMinute(29))" @onmouseover="@(() => OnMouseOverMinute(29))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(180deg);" @onclick="@(() => OnMouseClickMinute(30))" @onmouseover="@(() => OnMouseOverMinute(30))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(186deg);" @onclick="@(() => OnMouseClickMinute(31))" @onmouseover="@(() => OnMouseOverMinute(31))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(192deg);" @onclick="@(() => OnMouseClickMinute(32))" @onmouseover="@(() => OnMouseOverMinute(32))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(198deg);" @onclick="@(() => OnMouseClickMinute(33))" @onmouseover="@(() => OnMouseOverMinute(33))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(204deg);" @onclick="@(() => OnMouseClickMinute(34))" @onmouseover="@(() => OnMouseOverMinute(34))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(210deg);" @onclick="@(() => OnMouseClickMinute(35))" @onmouseover="@(() => OnMouseOverMinute(35))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(216deg);" @onclick="@(() => OnMouseClickMinute(36))" @onmouseover="@(() => OnMouseOverMinute(36))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(222deg);" @onclick="@(() => OnMouseClickMinute(37))" @onmouseover="@(() => OnMouseOverMinute(37))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(228deg);" @onclick="@(() => OnMouseClickMinute(38))" @onmouseover="@(() => OnMouseOverMinute(38))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(234deg);" @onclick="@(() => OnMouseClickMinute(39))" @onmouseover="@(() => OnMouseOverMinute(39))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(240deg);" @onclick="@(() => OnMouseClickMinute(40))" @onmouseover="@(() => OnMouseOverMinute(40))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(246deg);" @onclick="@(() => OnMouseClickMinute(41))" @onmouseover="@(() => OnMouseOverMinute(41))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(252deg);" @onclick="@(() => OnMouseClickMinute(42))" @onmouseover="@(() => OnMouseOverMinute(42))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(258deg);" @onclick="@(() => OnMouseClickMinute(43))" @onmouseover="@(() => OnMouseOverMinute(43))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(264deg);" @onclick="@(() => OnMouseClickMinute(44))" @onmouseover="@(() => OnMouseOverMinute(44))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(270deg);" @onclick="@(() => OnMouseClickMinute(45))" @onmouseover="@(() => OnMouseOverMinute(45))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(276deg);" @onclick="@(() => OnMouseClickMinute(46))" @onmouseover="@(() => OnMouseOverMinute(46))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(282deg);" @onclick="@(() => OnMouseClickMinute(47))" @onmouseover="@(() => OnMouseOverMinute(47))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(288deg);" @onclick="@(() => OnMouseClickMinute(48))" @onmouseover="@(() => OnMouseOverMinute(48))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(294deg);" @onclick="@(() => OnMouseClickMinute(49))" @onmouseover="@(() => OnMouseOverMinute(49))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(300deg);" @onclick="@(() => OnMouseClickMinute(50))" @onmouseover="@(() => OnMouseOverMinute(50))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(306deg);" @onclick="@(() => OnMouseClickMinute(51))" @onmouseover="@(() => OnMouseOverMinute(51))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(312deg);" @onclick="@(() => OnMouseClickMinute(52))" @onmouseover="@(() => OnMouseOverMinute(52))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(318deg);" @onclick="@(() => OnMouseClickMinute(53))" @onmouseover="@(() => OnMouseOverMinute(53))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(324deg);" @onclick="@(() => OnMouseClickMinute(54))" @onmouseover="@(() => OnMouseOverMinute(54))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(330deg);" @onclick="@(() => OnMouseClickMinute(55))" @onmouseover="@(() => OnMouseOverMinute(55))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(336deg);" @onclick="@(() => OnMouseClickMinute(56))" @onmouseover="@(() => OnMouseOverMinute(56))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(342deg);" @onclick="@(() => OnMouseClickMinute(57))" @onmouseover="@(() => OnMouseOverMinute(57))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(348deg);" @onclick="@(() => OnMouseClickMinute(58))" @onmouseover="@(() => OnMouseOverMinute(58))"></div>
+                        <div class="mud-picker-stick mud-minute" style="transform: rotateZ(354deg);" @onclick="@(() => OnMouseClickMinute(59))" @onmouseover="@(() => OnMouseOverMinute(59))"></div>
+                    }
+                </div>
+            </div>
+        </div>
+    </MudPickerContent>
+</MudPicker>

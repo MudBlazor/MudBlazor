@@ -1546,6 +1546,61 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void TimePickerBasicUsageExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TimePickerBasicUsageExample>();
+        }
+
+
+        [Test]
+        public void TimePickerColorExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TimePickerColorExample>();
+        }
+
+
+        [Test]
+        public void TimePickerElevationExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TimePickerElevationExample>();
+        }
+
+
+        [Test]
+        public void TimePickerStaticExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TimePickerStaticExample>();
+        }
+
+
+        [Test]
+        public void TimePickerViewsExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TimePickerViewsExample>();
+        }
+
+
+        [Test]
         public void TooltipDelayedExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
