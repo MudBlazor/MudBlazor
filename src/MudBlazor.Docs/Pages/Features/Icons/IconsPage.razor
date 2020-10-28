@@ -1,10 +1,11 @@
-﻿@page "/components/mudblazor-icons"
+﻿@page "/features/icons"
 @using System.Reflection
 
-<DocsPage>
+<DocsPage MaxWidth="MaxWidth.Large">
     <DocsPageHeader>
         <Title>Mudblazor Icons</Title>
         <SubTitle>Over 1200 Material Design icons and a few custom ones.</SubTitle>
+        <Description>To use this icons, or want to load your own check out how on the <MudLink Href="/components/icons">component's Icon Page</MudLink></Description>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
@@ -12,7 +13,7 @@
                 <Title>Custom Icons</Title>
             </SectionHeader>
             <MudDivider />
-            <SectionContent DarkenBackground="true" FullWidth="true">
+            <SectionContent FullWidth="true">
                 @if (MudIconsMaterial != null)
                 {
                     <DocsIcons List="MudIconsCustom" />
@@ -27,11 +28,11 @@
             <SectionHeader>
                 <Title>Material Icons</Title>
             </SectionHeader>
-            <SectionContent Class="docs-icon-material-container" DarkenBackground="true" FullWidth="true">
+            <SectionContent Class="docs-icon-material-container" FullWidth="true">
                 <MudRadioGroup SelectedOption="@SelectedIconType" SelectedOptionChanged="HandleSelectedOptionChanged">
                     @foreach (var item in IconTypes)
                     {
-                        <MudRadio Option="@item.Key">@item.Key</MudRadio>
+                        <MudRadio Option="@item.Key" Color="Color.Primary">@item.Key</MudRadio>
                     }
                 </MudRadioGroup>
                 <MudTextField Immediate="true" @bind-Value="SearchText" Variant="Variant.Outlined" Placeholder="Search icons..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Search" />
