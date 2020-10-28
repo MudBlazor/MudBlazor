@@ -287,16 +287,25 @@ namespace MudBlazor
 
         public bool MouseDown { get; set; }
 
+        /// <summary>
+        /// Sets Mouse Down bool to true if mouse is inside the clock mask.
+        /// </summary>
         private void OnMouseDown(MouseEventArgs e)
         {
             MouseDown = true;
         }
 
+        /// <summary>
+        /// Sets Mouse Down bool to false if mouse is inside the clock mask.
+        /// </summary>
         private void OnMouseUp(MouseEventArgs e)
         {
             MouseDown = false;
         }
 
+        /// <summary>
+        /// If MouseDown is true enabels "dragging" effect on the clock pin/stick.
+        /// </summary>
         private void OnMouseOverHour(int value)
         {
             if (MouseDown)
@@ -306,6 +315,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// On click for the hour "sticks", sets the houre.
+        /// </summary>
         private void OnMouseClickHour(int value)
         {
             var h = value;
@@ -320,6 +332,9 @@ namespace MudBlazor
             UpdateTime();
         }
 
+        /// <summary>
+        /// On click for the minutes "sticks", sets the minute.
+        /// </summary>
         private void OnMouseOverMinute(int value)
         {
             if (MouseDown)
@@ -329,6 +344,9 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// On click for the minute "sticks", sets the minute.
+        /// </summary>
         private void OnMouseClickMinute(int value)
         {
             TimeSet.Minute = value;
@@ -341,7 +359,6 @@ namespace MudBlazor
 
             public int Minute { get; set; }
 
-            public double Degrees { get; set; }
         }
     }
 }

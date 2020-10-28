@@ -1294,6 +1294,36 @@
             Fired when the date changes.
             </summary>
         </member>
+        <member name="M:MudBlazor.MudTimePicker.OnMouseDown(Microsoft.AspNetCore.Components.Web.MouseEventArgs)">
+            <summary>
+            Sets Mouse Down bool to true if mouse is inside the clock mask.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudTimePicker.OnMouseUp(Microsoft.AspNetCore.Components.Web.MouseEventArgs)">
+            <summary>
+            Sets Mouse Down bool to false if mouse is inside the clock mask.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudTimePicker.OnMouseOverHour(System.Int32)">
+            <summary>
+            If MouseDown is true enabels "dragging" effect on the clock pin/stick.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudTimePicker.OnMouseClickHour(System.Int32)">
+            <summary>
+            On click for the hour "sticks", sets the houre.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudTimePicker.OnMouseOverMinute(System.Int32)">
+            <summary>
+            On click for the minutes "sticks", sets the minute.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudTimePicker.OnMouseClickMinute(System.Int32)">
+            <summary>
+            On click for the minute "sticks", sets the minute.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudText.Typo">
             <summary>
             Applies the theme typography styles.
