@@ -94,7 +94,7 @@ namespace MudBlazor
             if (TimeSpan.TryParse(value1, out var time))
             {
                 if (pm)
-                    time = new TimeSpan(time.Hours + 12, time.Minutes, 0);
+                    time = new TimeSpan((time.Hours + 12)%24, time.Minutes, 0);
                 return time;
             }
 
@@ -169,12 +169,12 @@ namespace MudBlazor
 
         protected string AmButtonClass =>
         new CssBuilder("mud-timepicker-button")
-          //.AddClass($"mud-timepicker-toolbar-text", TimeSet.Hour > 0 && TimeSet.Hour < 13)
+          .AddClass($"mud-timepicker-toolbar-text", !(TimeSet.Hour >= 00 && TimeSet.Hour < 12)) // am is 00:00 to 11:59 
         .Build();
 
         protected string PmButtonClass =>
         new CssBuilder("mud-timepicker-button")
-          //.AddClass($"mud-timepicker-toolbar-text", TimeSet.Hour == 0 && TimeSet.Hour > 12)
+          .AddClass($"mud-timepicker-toolbar-text", !(TimeSet.Hour >= 12 && TimeSet.Hour < 24)) // pm is 12:00 to 23:59
         .Build();
 
         private string GetClockPinColor()
