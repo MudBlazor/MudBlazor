@@ -13,6 +13,10 @@
         }
         <div class="mud-table-container" style="@TableStyle">
             <table class="mud-table-root">
+                @if (ColGroup != null)
+                {
+                    @ColGroup
+                }
                 @if (HeaderContent != null)
                 {
                     <thead class="mud-table-head">

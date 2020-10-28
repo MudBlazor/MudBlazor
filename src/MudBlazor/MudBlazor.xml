@@ -1202,6 +1202,20 @@
             Add MudTh cells here to define the table header.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTableBase.ColGroup">
+            <summary>
+            Specifies a group of one or more columns in a table for formatting.
+            Ex:
+            table
+                colgroup
+                   col span="2" style="background-color:red"
+                   col style="background-color:yellow"
+                 colgroup
+                 header
+                 body
+            table
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTableBase.PagerContent">
             <summary>
             Add MudTablePager here to enable breaking the rows in to multiple pages.
