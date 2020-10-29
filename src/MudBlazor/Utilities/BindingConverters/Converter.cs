@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace MudBlazor
 {
@@ -6,7 +7,11 @@ namespace MudBlazor
     {
         public Func<T, U> SetFunc { get; set; } 
         public Func<U, T> GetFunc { get; set; }
+        
+        public Action<string> OnError { get; set; }
 
+        public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
+        
         public U Set(T value)
         {
             if (SetFunc==null)

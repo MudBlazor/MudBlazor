@@ -10,8 +10,7 @@ namespace MudBlazor
     public class DateConverter : Converter<DateTime?>
     {
         public string DateFormat { get; set; }="yyyy-MM-dd";
-        public CultureInfo Culture { get; set; } = CultureInfo.InvariantCulture;
-        
+
         public DateConverter(string format)
         {
             DateFormat = format;
@@ -25,8 +24,9 @@ namespace MudBlazor
             {
                 return DateTime.ParseExact(arg, DateFormat, Culture);
             }
-            catch (FormatException)
+            catch (FormatException e)
             {
+                OnError?.Invoke(e.Message);
                 return null;
             }
         }
@@ -39,8 +39,9 @@ namespace MudBlazor
             {
                 return arg.Value.ToString( DateFormat, Culture);
             }
-            catch (FormatException)
+            catch (FormatException e)
             {
+                OnError?.Invoke(e.Message);
                 return null;
             }
         }
