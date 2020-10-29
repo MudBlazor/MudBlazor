@@ -1,12 +1,10 @@
 ﻿@using Toolbelt.Blazor.HeadElement
+@using MudBlazor.Docs.Extensions
 
 @*html head (for server prerendering)*@
 <Title>@GetTitle()</Title>
 <Meta Name="description" Content="@SubTitle" />
-@if (!string.IsNullOrEmpty(Keywords))
-{
-    <Meta Name="keywords" Content="@GetKeywords()"/>
-}
+<Meta Name="keywords" Content="@GetKeywords()"/>
 <Meta Property="og:title" Content="@GetTitle()" />
 <Meta Name="twitter:title" Content="@GetTitle()" />
 @if (!string.IsNullOrEmpty(SubTitle))
@@ -37,7 +35,7 @@
     [Parameter] public string ComponentLink { get; set; }
     private string ApiLink => $"/api/{Api}";
 
-    string GetTitle() => $"MudBlazor - {Title}";
+    string GetTitle() => $"{Title} - MudBlazor";
 
     string GetSubTitle()
     {
@@ -46,5 +44,5 @@
         return SubTitle.TrimEnd('.') + ".";
     }
     
-    string GetKeywords() => "mudblazor, blazor, component, " + @Keywords + ", material design";
+    string GetKeywords() => $"{Title}, Mud{Api.ToPascalCase()}, {Keywords}, mudblazor, blazor, component, material design";
 }

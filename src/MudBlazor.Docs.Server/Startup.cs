@@ -47,6 +47,7 @@ namespace MudBlazor.Docs.Server
                 app.UseHsts();
             }
 
+            app.UseHeadElementServerPrerendering();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
