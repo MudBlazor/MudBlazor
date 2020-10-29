@@ -52,12 +52,12 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<string[]> ErrorsChanged { get; set; }
 
-        internal void Add(MudBaseInputText formControl)
+        internal void Add(IFormComponent formControl)
         {
             _formControls[formControl]=false; // false means fresh, not yet validated!
         }
 
-        internal void Remove(MudBaseInputText formControl)
+        internal void Remove(IFormComponent formControl)
         {
             _formControls.Remove(formControl);
         }
