@@ -1,7 +1,9 @@
 ﻿@namespace MudBlazor
 
-<th scope="col" class="mud-table-cell">@ChildContent</th>
+<th scope="col" class="mud-table-cell" style="@Style">@ChildContent</th>
 
 @code {
     [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public string Style { get; set; }
+
 }

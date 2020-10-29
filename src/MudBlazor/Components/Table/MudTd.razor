@@ -1,11 +1,12 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
 
-<td class="mud-table-cell">
+<td class="mud-table-cell" style="@Style">
     @ChildContent
 </td>
 
 @code {
 
     [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public string Style { get; set; }
 }
