@@ -392,6 +392,64 @@ public const string CheckboxLabelExample = @"<MudCheckBox @bind-Checked=""@Label
     public bool Label_CheckBox3 { get; set; } = false;
 }";
 
+public const string ChipBasicExample = @"<MudChip>Default</MudChip>
+<MudChip Color=""Color.Primary"">Primary</MudChip>
+<MudChip Color=""Color.Secondary"">Secondary</MudChip>
+<MudChip Color=""Color.Info"">Info</MudChip>
+<MudChip Color=""Color.Success"">Success</MudChip>
+<MudChip Color=""Color.Warning"">Warning</MudChip>
+<MudChip Color=""Color.Danger"">Danger</MudChip>
+<MudChip Color=""Color.Dark"">Dark</MudChip>
+<MudDivider />
+<MudChip Disabled=""true"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Primary"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Secondary"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Info"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Success"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Warning"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Danger"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Dark"">Disabled</MudChip>";
+
+public const string ChipClosableExample = @"<MudChip Color=""Color.Default"" OnClose=""CloseChip"">Closable</MudChip>
+<MudChip Color=""Color.Danger"" OnClose=""CloseChip"">Closable</MudChip>
+<MudChip Color=""Color.Primary"" OnClose=""CloseChip"" CloseIcon=""@Icons.Material.AlarmAdd"">Closable</MudChip>
+<MudChip Color=""Color.Success"" OnClose=""CloseChip"" CloseIcon=""@Icons.Material.AlarmOn"">Closable</MudChip>
+
+@code {
+    void CloseChip(){
+        // Code..
+    }
+}";
+
+public const string ChipIconExample = @"<MudChip Icon=""@Icons.Material.Extension"" Color=""Color.Dark"">Extensions</MudChip>
+<MudChip Icon=""@Icons.Material.Person"" Color=""Color.Primary"" >Account</MudChip>
+<MudChip Icon=""@Icons.Material.FlightTakeoff"" Color=""Color.Secondary"" >Your flight times</MudChip>
+<MudChip Icon=""@Icons.Material.VerifiedUser"" Color=""Color.Info"">Verified User</MudChip>";
+
+public const string ChipLabelExample = @"<MudChip Label=""true"">Default</MudChip>
+<MudChip Icon=""@Icons.Custom.MudBlazor"" Label=""true"" Color=""Color.Primary"">MudBlazor</MudChip>
+<MudChip Icon=""@Icons.Custom.Twitter"" Label=""true"" Color=""Color.Info"" OnClose=""CloseChip"">New Tweets</MudChip>
+<MudChip Icon=""@Icons.Custom.Radioactive"" Label=""true"" Color=""Color.Warning"" Style=""color:black;"">Radioactive Areas</MudChip>
+
+@code {
+    void CloseChip()
+    {
+        // Code..
+    }
+}";
+
+public const string ChipOutlinedExample = @"<MudChip Variant=""Variant.Outlined"">Default</MudChip>
+<MudChip Color=""Color.Primary"" Variant=""Variant.Outlined"">Primary</MudChip>
+<MudChip Color=""Color.Secondary"" Variant=""Variant.Outlined"">Secondary</MudChip>
+<MudChip Color=""Color.Info"" Variant=""Variant.Outlined"">Info</MudChip>
+<MudChip Icon=""@Icons.Material.Storage"" Label=""true"" Color=""Color.Dark"" Variant=""Variant.Outlined"">Server Storage</MudChip>
+<MudChip Icon=""@Icons.Custom.Twitter"" Label=""true"" Color=""Color.Info"" Variant=""Variant.Outlined"">New Tweets</MudChip>
+<MudChip Icon=""@Icons.Custom.Radioactive"" Label=""true"" Color=""Color.Warning"" Variant=""Variant.Outlined"">Radioactive Areas</MudChip>";
+
+public const string ChipSizeExample = @"<MudChip Size=""Size.Small"">Small</MudChip>
+<MudChip Size=""Size.Medium"">Small</MudChip>
+<MudChip Size=""Size.Large"">Small</MudChip>";
+
 public const string ContainedFixedExample = @"<MudPaper>
     <MudContainer Fixed=""true""></MudContainer>
 </MudPaper>";
