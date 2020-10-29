@@ -39,6 +39,48 @@
             Button click event.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBaseInput`1.ValueChanged">
+            <summary>
+            Fired when the Value property changes. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Value">
+            <summary>
+            The value of this input element. This property is two-way bindable.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Standalone">
+            <summary>
+            If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
+            If it is sub-component, it will NOT do form validation!!
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Required">
+            <summary>
+            If true, this form input is required to be filled out.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.RequiredError">
+            <summary>
+            Set an error text that will be displayed if the input is not filled out but required!
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.ErrorText">
+            <summary>
+            The ErrorText that will be displayed if Error true
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Error">
+            <summary>
+            If true, the label will be displayed in an error state.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:MudBlazor.MudBaseInput`1.Validation" -->
+        <member name="M:MudBlazor.MudBaseInput`1.Validate">
+            <summary>
+            Causes this component to validate its value
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBaseInputText.Disabled">
             <summary>
             If true, the input element will be disabled.
@@ -47,11 +89,6 @@
         <member name="P:MudBlazor.MudBaseInputText.ReadOnly">
             <summary>
             If true, the input will be read only.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.Error">
-            <summary>
-            If true, the label will be displayed in an error state.
             </summary>
         </member>
         <member name="P:MudBlazor.MudBaseInputText.FullWidth">
@@ -83,11 +120,6 @@
         <member name="P:MudBlazor.MudBaseInputText.HelperText">
             <summary>
             The HelperText will be displayed below the text field.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.ErrorText">
-            <summary>
-            The ErrorText that will be displayed if Error true
             </summary>
         </member>
         <member name="P:MudBlazor.MudBaseInputText.AdornmentIcon">
@@ -130,41 +162,9 @@
              Will adjust vertical spacing. 
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInputText.ValueChanged">
-            <summary>
-            Fired when the Value property changes. 
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.Value">
-            <summary>
-            The value of this input element. This property is two-way bindable.
-            </summary>
-        </member>
         <member name="P:MudBlazor.MudBaseInputText.OnBlur">
             <summary>
             Fired when the Value property changes. 
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.Standalone">
-            <summary>
-            If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
-            If it is sub-component, it will NOT do form validation!!
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "P:MudBlazor.MudBaseInputText.Validation" -->
-        <member name="P:MudBlazor.MudBaseInputText.Required">
-            <summary>
-            If true, this form input is required to be filled out.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.RequiredError">
-            <summary>
-            Set an error text that will be displayed if the input is not filled out but required!
-            </summary>
-        </member>
-        <member name="M:MudBlazor.MudBaseInputText.Validate">
-            <summary>
-            Causes this component to validate its value
             </summary>
         </member>
         <member name="P:MudBlazor.MudBaseInputText.EditContext">
@@ -588,17 +588,12 @@
         </member>
         <member name="P:MudBlazor.MudDatePicker.DateChanged">
             <summary>
-            Fired when the date changes.
+            Fired when the DateFormat changes.
             </summary>
         </member>
         <member name="P:MudBlazor.MudDatePicker.DateFormat">
             <summary>
             String Format for selected date view
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudDatePicker.DateFormatChanged">
-            <summary>
-            Fired when the DateFormat changes.
             </summary>
         </member>
         <member name="P:MudBlazor.MudDatePicker.FirstDayOfWeek">
@@ -732,7 +727,7 @@
             Validation error messages
             </summary>
         </member>
-        <member name="M:MudBlazor.MudForm.Update(MudBlazor.MudBaseInputText)">
+        <member name="M:MudBlazor.MudForm.Update(MudBlazor.Interfaces.IFormComponent)">
             <summary>
             Called by any input of the form to signal that its value changed. 
             </summary>
