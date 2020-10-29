@@ -299,7 +299,7 @@ public const string FabSizeExample = @"<SectionContentRow>
 public const string CardCombinedExample = @"<MudCard>
     <MudCardHeader>
         <CardHeaderAvatar>
-            <MudAvatar>I</MudAvatar>
+            <MudAvatar Color=""Color.Secondary"">I</MudAvatar>
         </CardHeaderAvatar>
         <CardHeaderContent>
             <MudText Typo=""Typo.body1"">Istra Croatia</MudText>
@@ -325,7 +325,7 @@ public const string CardHeaderExample = @"<MudCard>
             <MudText Typo=""Typo.h6"">The Story Book</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
-            <MudIconButton Icon=""@Icons.Material.Settings"" Color=""Color.Inherit"" />
+            <MudIconButton Icon=""@Icons.Material.Settings"" Color=""Color.Default"" />
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
@@ -333,7 +333,7 @@ public const string CardHeaderExample = @"<MudCard>
         <MudText Typo=""Typo.body2"">The quick, brown fox jumps over a lazy dog.</MudText>
     </MudCardContent>
     <MudCardActions>
-        <MudButton Variant=""Variant.Text"">Read More</MudButton>
+        <MudButton Variant=""Variant.Text"" Color=""Color.Primary"">Read More</MudButton>
     </MudCardActions>
 </MudCard>";
 
@@ -356,7 +356,7 @@ public const string CardOutlinedExample = @"<MudCard Outlined=""true"">
         <MudText Typo=""Typo.body2"">The quick, brown fox jumps over a lazy dog.</MudText>
     </MudCardContent>
     <MudCardActions>
-        <MudButton Variant=""Variant.Text"">Learn More</MudButton>
+        <MudButton Variant=""Variant.Text"" Color=""Color.Primary"">Learn More</MudButton>
     </MudCardActions>
 </MudCard>";
 
@@ -366,7 +366,7 @@ public const string CardSimpleExample = @"<MudCard>
         <MudText Typo=""Typo.body2"">The quick, brown fox jumps over a lazy dog.</MudText>
     </MudCardContent>
     <MudCardActions>
-        <MudButton Variant=""Variant.Text"">Learn More</MudButton>
+        <MudButton Variant=""Variant.Text"" Color=""Color.Primary"">Learn More</MudButton>
     </MudCardActions>
 </MudCard>";
 
@@ -447,8 +447,8 @@ public const string ChipOutlinedExample = @"<MudChip Variant=""Variant.Outlined"
 <MudChip Icon=""@Icons.Custom.Radioactive"" Label=""true"" Color=""Color.Warning"" Variant=""Variant.Outlined"">Radioactive Areas</MudChip>";
 
 public const string ChipSizeExample = @"<MudChip Size=""Size.Small"">Small</MudChip>
-<MudChip Size=""Size.Medium"">Small</MudChip>
-<MudChip Size=""Size.Large"">Small</MudChip>";
+<MudChip Size=""Size.Medium"">Medium</MudChip>
+<MudChip Size=""Size.Large"">Large</MudChip>";
 
 public const string ContainedFixedExample = @"<MudPaper>
     <MudContainer Fixed=""true""></MudContainer>

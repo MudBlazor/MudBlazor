@@ -2439,7 +2439,8 @@ ul {
   vertical-align: middle;
   justify-content: center;
   text-decoration: none;
-  line-height: normal; }
+  line-height: normal;
+  margin: 4px; }
   .mud-chip.mud-disabled {
     opacity: 0.5;
     pointer-events: none; }
