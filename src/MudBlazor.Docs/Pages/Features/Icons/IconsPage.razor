@@ -93,6 +93,11 @@
         {
             result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
         }
+        foreach (var prop in typeof(FileFormats).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+        {
+            result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
+        }
+
         await Task.WhenAll();
         MudIconsCustom = result;
     }
