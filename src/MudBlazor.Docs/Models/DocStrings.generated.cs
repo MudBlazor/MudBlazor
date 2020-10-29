@@ -353,7 +353,37 @@ public const string MudChip_Color = @"The color of the component.";
 
 public const string MudChip_Size = @"The size of the button. small is equivalent to the dense button styling.";
 
+public const string MudChip_Variant = @"The variant to use.";
+
+public const string MudChip_Avatar = @"Avatar Icon, Overrides the regular Icon if set.";
+
+public const string MudChip_AvatarClass = @"Avatar CSS Class, appends to Chips default avatar classes.";
+
+public const string MudChip_Label = @"Removes circle edges and applys theme default.";
+
+public const string MudChip_Disabled = @"If true, the chip will be displayed in disabled state and no events possible.";
+
+public const string MudChip_Icon = @"Sets the Icon to use.";
+
+public const string MudChip_CloseIcon = @"Overrides the default close icon, only shown if OnClose is set.";
+
+public const string MudChip_DisableRipple = @"If true, disables ripple effect, ripple effect is only applied to clickable chips.";
+
 public const string MudChip_ChildContent = @"Child content of component.";
+
+public const string MudChip_Link = @"If set to a URL, clicking the button will open the referenced document. Use Target to specify where";
+
+public const string MudChip_Target = @"The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | framename";
+
+public const string MudChip_ForceLoad = @"If true, force browser to redirect outside component router-space.";
+
+public const string MudChip_Command = @"Command executed when the user clicks on an element.";
+
+public const string MudChip_CommandParameter = @"Command parameter.";
+
+public const string MudChip_OnClick = @"Chip click event, if set the chip focus, hover and click effects are applied.";
+
+public const string MudChip_OnClose = @"Chip delete event, if set the delete icon will be visible.";
 
 public const string MudChip_Class = @"User class names, separated by space";
 
@@ -1944,7 +1974,11 @@ public const string MudTableSortLabel___SortBy = @"";
 
 public const string MudTd_ChildContent = @"";
 
+public const string MudTd_Style = @"";
+
 public const string MudTh_ChildContent = @"";
+
+public const string MudTh_Style = @"";
 
 public const string MudTr_ChildContent = @"";
 
