@@ -56,14 +56,14 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Fired when the DateFormat changes.
+        /// </summary>
+        [Parameter] public EventCallback<DateTime?> DateChanged { get; set; }
+
+        /// <summary>
         /// String Format for selected date view
         /// </summary>
         [Parameter] public string DateFormat { get; set; }
-
-        /// <summary>
-        /// Fired when the DateFormat changes.
-        /// </summary>
-        [Parameter] public EventCallback<string> DateFormatChanged { get; set; }
 
         /// <summary>
         /// Defines on which day the week starts. Depends on the value of Culture. 
