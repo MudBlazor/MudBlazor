@@ -1940,7 +1940,11 @@ public const string MudTableSortLabel___SortBy = @"";
 
 public const string MudTd_ChildContent = @"";
 
+public const string MudTd_Style = @"";
+
 public const string MudTh_ChildContent = @"";
+
+public const string MudTh_Style = @"";
 
 public const string MudTr_ChildContent = @"";
 
