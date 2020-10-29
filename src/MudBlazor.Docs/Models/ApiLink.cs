@@ -20,6 +20,8 @@ namespace MudBlazor.Docs.Models
         {
             if (!SpecialCaseComponents.TryGetValue(type, out var component))
                 component = type.ToString().Replace("MudBlazor.Mud", "").ToLowerInvariant(); //.ToKebabCase();
+            if (ComponentLinkTranslation.ContainsKey(component))
+                component = ComponentLinkTranslation[component];
             string href = $"/components/{component}";
             return href;
         }
@@ -42,6 +44,11 @@ namespace MudBlazor.Docs.Models
             [typeof(MudTable<T>)] = "table",
         };
 
+        private static Dictionary<string, string> ComponentLinkTranslation = new Dictionary<string, string>()
+        {
+            ["icon"]="icons",
+            ["chip"]="chips",
+        };
 
         private static Dictionary<string, Type> InverseSpecialCase =
             SpecialCaseComponents.ToDictionary(pair => pair.Value, pair => pair.Key);
