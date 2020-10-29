@@ -1298,6 +1298,8 @@ public const string MudTabs_DisableRipple = @"If true, disables ripple effect.";
 
 public const string MudTabs_ChildContent = @"Child content of component.";
 
+public const string MudTabs_TabPanelClass = @"Custom class/classes for TabPanel";
+
 public const string MudTabs_Class = @"User class names, separated by space";
 
 public const string MudTabs_Style = @"User styles, applied on top of the component's own classes and styles";

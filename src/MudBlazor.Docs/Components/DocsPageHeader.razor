@@ -1,24 +1,50 @@
-﻿
+﻿@using Toolbelt.Blazor.HeadElement
+
+@*html head (for server prerendering)*@
+<Title>@GetTitle()</Title>
+<Meta Name="description" Content="@SubTitle" />
+@if (!string.IsNullOrEmpty(Keywords))
+{
+    <Meta Name="keywords" Content="@GetKeywords()"/>
+}
+<Meta Property="og:title" Content="@GetTitle()" />
+<Meta Name="twitter:title" Content="@GetTitle()" />
+@if (!string.IsNullOrEmpty(SubTitle))
+{
+    <Meta Property="og:description" Content="@SubTitle" />
+    <Meta Name="twitter:description" Content="@SubTitle" />
+}
 
 <div class="docs-page-header">
     <MudText Typo="Typo.h3">@Title</MudText>
-    <MudText Typo="Typo.h5">@SubTitle</MudText>
+    <MudText>@GetSubTitle() @Description</MudText>
     @if (!string.IsNullOrEmpty(Api))
     {
-        <MudText Typo="Typo.body2">See <MudLink Href="@ApiLink">@Title API</MudLink> for more details.</MudText>
+        <MudText Typo="Typo.body2" Class="my-3">See <MudLink Href="@ApiLink">@Title API</MudLink> for parameter documentation.</MudText>
     }
     @if (!string.IsNullOrEmpty(ComponentLink))
     {
         <MudText Typo="Typo.body2">Check out the <MudLink Href="@ComponentLink">Examples</MudLink> for this component.</MudText>
-    }
-    <MudText>@Description</MudText>
+    }        
 </div>
 
 @code {
-    [Parameter] public RenderFragment Title { get; set; }
-    [Parameter] public RenderFragment SubTitle { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string SubTitle { get; set; }
+    [Parameter] public string Keywords { get; set; }
     [Parameter] public RenderFragment Description { get; set; }
     [Parameter] public string Api { get; set; }
     [Parameter] public string ComponentLink { get; set; }
     private string ApiLink => $"/api/{Api}";
+
+    string GetTitle() => $"MudBlazor - {Title}";
+
+    string GetSubTitle()
+    {
+        if (string.IsNullOrEmpty(SubTitle))
+            return "";
+        return SubTitle.TrimEnd('.') + ".";
+    }
+    
+    string GetKeywords() => "mudblazor, blazor, component, " + @Keywords + ", material design";
 }
