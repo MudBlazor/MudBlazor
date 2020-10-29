@@ -376,6 +376,10 @@ public const string MudDatePicker_Date = @"The currently selected date (two-way 
 
 public const string MudDatePicker_DateChanged = @"Fired when the date changes.";
 
+public const string MudDatePicker_DateFormat = @"String Format for selected date view";
+
+public const string MudDatePicker_DateFormatChanged = @"Fired when the DateFormat changes.";
+
 public const string MudDatePicker_FirstDayOfWeek = @"Defines on which day the week starts. Depends on the value of Culture.";
 
 public const string MudDatePicker_PickerMonth = @"The current month of the date picker (two-way bindable). This changes when the user browses through the calender.
@@ -1297,6 +1301,8 @@ public const string MudTabs_Elevation = @"Child content of component.";
 public const string MudTabs_DisableRipple = @"If true, disables ripple effect.";
 
 public const string MudTabs_ChildContent = @"Child content of component.";
+
+public const string MudTabs_TabPanelClass = @"Custom class/classes for TabPanel";
 
 public const string MudTabs_Class = @"User class names, separated by space";
 

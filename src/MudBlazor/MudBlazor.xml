@@ -591,6 +591,16 @@
             Fired when the date changes.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudDatePicker.DateFormat">
+            <summary>
+            String Format for selected date view
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.DateFormatChanged">
+            <summary>
+            Fired when the DateFormat changes.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudDatePicker.FirstDayOfWeek">
             <summary>
             Defines on which day the week starts. Depends on the value of Culture. 
