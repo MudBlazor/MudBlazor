@@ -3546,8 +3546,7 @@ ul {
   padding-left: 32px; }
 
 .mud-menu {
-  width: max-content;
-  max-width: max-content; }
+  display: inline-flex; }
 
 .mud-menu-container {
   max-width: max-content; }
@@ -4034,14 +4033,10 @@ ul {
   .mud-popover.mud-popover-open {
     display: block;
     animation: mud-animation-fadein 251ms; }
-  .mud-popover.mud-popover-top {
-    bottom: 0; }
-    .mud-popover.mud-popover-top.mud-popover-offset-y {
-      bottom: 100%; }
-  .mud-popover.mud-popover-bottom {
-    top: 0; }
-    .mud-popover.mud-popover-bottom.mud-popover-offset-y {
-      top: 100%; }
+  .mud-popover.mud-popover-top.mud-popover-offset-y {
+    bottom: 100%; }
+  .mud-popover.mud-popover-bottom.mud-popover-offset-y {
+    top: 100%; }
 
 .mud-popover-overlay {
   top: 0;

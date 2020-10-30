@@ -1066,6 +1066,11 @@
             List click event.
             </summary>
         </member>
+        <member name="P:MudBlazor.ComponentBaseMudMenu.Dense">
+            <summary>
+            If true, compact vertical padding will be applied to all menu items.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudNavGroup.Icon">
             <summary>
             Icon to use if set.

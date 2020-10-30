@@ -806,6 +806,8 @@ public const string ComponentBaseMudMenu_Size = @"";
 
 public const string ComponentBaseMudMenu_Variant = @"";
 
+public const string ComponentBaseMudMenu_Dense = @"If true, compact vertical padding will be applied to all menu items.";
+
 public const string ComponentBaseMudMenu_DisableElevation = @"";
 
 public const string ComponentBaseMudMenu_Disabled = @"";
@@ -1702,6 +1704,8 @@ public const string MudMenu_Color = @"";
 public const string MudMenu_Size = @"";
 
 public const string MudMenu_Variant = @"";
+
+public const string MudMenu_Dense = @"If true, compact vertical padding will be applied to all menu items.";
 
 public const string MudMenu_DisableElevation = @"";
 

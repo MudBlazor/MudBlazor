@@ -1557,6 +1557,12 @@ public const string MenuSimpleExample = @"<MudMenu Label=""Open Menu"">
     <MudMenuItem>Enlist</MudMenuItem>
     <MudMenuItem>Barracks</MudMenuItem>
     <MudMenuItem>Armory</MudMenuItem>
+</MudMenu>
+
+<MudMenu Label=""Open Dense Menu"" Dense=""true"">
+    <MudMenuItem>Dense Stuff</MudMenuItem>
+    <MudMenuItem>Stuff is Dense</MudMenuItem>
+    <MudMenuItem>Soo Dense</MudMenuItem>
 </MudMenu>";
 
 public const string MenuUsageExample = @"<MudMenu Label=""@Message"" Color=""Color.Primary"">
@@ -2188,6 +2194,7 @@ public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElement
         <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
     </ToolBarContent>
     <HeaderContent>
+        <MudTh>Menu</MudTh>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
         <MudTh>Name</MudTh>
@@ -2195,6 +2202,13 @@ public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElement
         <MudTh>Molar mass</MudTh>
     </HeaderContent>
     <RowTemplate>
+        <MudTd>
+            <MudMenu @key=""@context"" Icon=""@Icons.Material.MoreVert"">
+                <MudMenuItem>Test</MudMenuItem>
+                <MudMenuItem>Test</MudMenuItem>
+                <MudMenuItem>Test</MudMenuItem>
+            </MudMenu>
+        </MudTd>
         <MudTd>@context.Number</MudTd>
         <MudTd>@context.Sign</MudTd>
         <MudTd>@context.Name</MudTd>
