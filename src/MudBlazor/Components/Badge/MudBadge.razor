@@ -5,13 +5,16 @@
     @ChildContent
     <span class="mud-badge-wrapper">
         <span class="@BadgeClass">
-            @if (!String.IsNullOrEmpty(Icon))
+            @if (!Dot)
             {
-                <MudIcon Icon="@Icon" Class="mud-icon-badge" />
-            }
-            else
-            {
-                @content
+                @if (!String.IsNullOrEmpty(Icon))
+                {
+                    <MudIcon Icon="@Icon" Class="mud-icon-badge" />
+                }
+                else
+                {
+                    @content
+                }
             }
         </span>
     </span>

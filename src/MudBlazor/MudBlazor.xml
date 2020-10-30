@@ -426,6 +426,11 @@
             Overlaps the childcontent on top of the content.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBadge.Bordered">
+            <summary>
+            Applies a border around the badge.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBadge.Icon">
             <summary>
             Sets the Icon to use in the badge.

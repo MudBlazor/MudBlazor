@@ -30,30 +30,40 @@
             transition: .3s cubic-bezier(.25,.8,.5,1);
             white-space: nowrap;
 
-            &.mud-badge-dot {
-                border-radius: 4.5px;
-                height: 9px;
-                min-width: 0;
-                padding: 0;
-                width: 9px;
-            }
-
-            &.mud-badge-icon {
+            &.mud-badge-bordered {
                 border-color: inherit;
                 border-style: solid;
                 border-width: 2px;
-                border-radius: 100%;
+                padding: 3px 4px;
+
+                &.mud-badge-icon {
+                    padding: 4px 6px;
+
+                    & .mud-icon-badge {
+                        margin-left: -4px;
+                        margin-top: -4px;
+                    }
+                }
+            }
+
+            &.mud-badge-icon {
                 width: 20px;
                 height: 20px;
 
                 & .mud-icon-badge {
                     color: inherit;
                     font-size: 12px;
-                    margin-left: -4px;
-                    margin-top: -4px;
+                    margin-left: -2px;
                 }
             }
 
+            &.mud-badge-dot {
+                border-radius: 50%;
+                height: 9px;
+                min-width: 0;
+                padding: 0;
+                width: 9px;
+            }
 
             &.mud-badge-top {
                 top: auto;
@@ -64,12 +74,30 @@
                 }
             }
 
+            &.mud-badge-bottom {
+                bottom: auto;
+                top: calc(100% - 4px);
+
+                &.mud-badge-overlap {
+                    top: calc(100% - 12px);
+                }
+            }
+
             &.mud-badge-right {
                 right: auto;
                 left: calc(100% - 4px);
 
                 &.mud-badge-overlap {
                     left: calc(100% - 12px);
+                }
+            }
+
+            &.mud-badge-left {
+                left: auto;
+                right: calc(100% - 4px);
+
+                &.mud-badge-overlap {
+                    right: calc(100% - 12px);
                 }
             }
         }

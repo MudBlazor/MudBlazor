@@ -1,17 +1,27 @@
 ﻿@page "/components/badge"
 
 <DocsPage>
-    <DocsPageHeader Title="Badge" Api="badge" />
+    <DocsPageHeader Title="Badge" />
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
-                <Title></Title>
+                <Title>Usage</Title>
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true" Class="demo-badge">
                 <BadgeBasicExample />
             </SectionContent>
-            <SectionSource Code="BadgeBasicExample" GitHubFolderName="Badge" />
+            <SectionSource ShowCode="false" Code="BadgeBasicExample" GitHubFolderName="Badge" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Playground</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <BadgeInteractiveExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="BadgeInteractiveExample" GitHubFolderName="Badge" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

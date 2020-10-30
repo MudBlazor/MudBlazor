@@ -206,6 +206,8 @@ public const string MudBadge_Dot = @"Reduces the size of the badge and hide any 
 
 public const string MudBadge_Overlap = @"Overlaps the childcontent on top of the content.";
 
+public const string MudBadge_Bordered = @"Applies a border around the badge.";
+
 public const string MudBadge_Icon = @"Sets the Icon to use in the badge.";
 
 public const string MudBadge_Max = @"Max lenght of content to show.";
