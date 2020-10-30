@@ -1103,6 +1103,51 @@
             Child content of component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudRating.ItemClass">
+            <summary>
+            User class names, separated by space
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.Size">
+            <summary>
+            The Size of the icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.Disabled">
+            <summary>
+            If true, the controls will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.Size">
+            <summary>
+            The Size of the icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.Disabled">
+            <summary>
+            If true, the controls will be disabled.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudSelect.ChildContent">
             <summary>
             Add the MudSelectItems here

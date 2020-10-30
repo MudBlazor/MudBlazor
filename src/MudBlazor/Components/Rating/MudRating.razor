@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+
+<span class="@Classname">
+    <CascadingValue Value="this" >
+        @for (int i = 1; i <= MaxValue; i++)
+        {
+            <MudRatingItem Class="@ItemClass" ItemValue="@i" DisableRipple="DisableRipple" Disabled="Disabled" Color="Color" Size="Size" ItemClicked="HandleItemClicked" ItemHovered="HandleItemHovered"/>
+        }
+    </CascadingValue>
+</span>

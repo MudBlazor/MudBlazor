@@ -1076,6 +1076,64 @@ public const string MudRadioGroup_Tag = @"Use Tag to attach any user data object
 public const string MudRadioGroup_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudRating_ItemClass = @"User class names, separated by space";
+
+public const string MudRating_Name = @"";
+
+public const string MudRating_MaxValue = @"";
+
+public const string MudRating_FullIcon = @"";
+
+public const string MudRating_EmptyIcon = @"";
+
+public const string MudRating_Color = @"The color of the component. It supports the theme colors.";
+
+public const string MudRating_Size = @"The Size of the icon.";
+
+public const string MudRating_DisableRipple = @"If true, disables ripple effect.";
+
+public const string MudRating_Disabled = @"If true, the controls will be disabled.";
+
+public const string MudRating_SelectedValueChanged = @"";
+
+public const string MudRating_SelectedValue = @"";
+
+public const string MudRating_HoveredValueChanged = @"";
+
+public const string MudRating_Class = @"User class names, separated by space";
+
+public const string MudRating_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudRating_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudRating_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudRatingItem_ItemValue = @"";
+
+public const string MudRatingItem_Size = @"The Size of the icon.";
+
+public const string MudRatingItem_Color = @"The color of the component. It supports the theme colors.";
+
+public const string MudRatingItem_DisableRipple = @"If true, disables ripple effect.";
+
+public const string MudRatingItem_Disabled = @"If true, the controls will be disabled.";
+
+public const string MudRatingItem_HoveredValue = @"";
+
+public const string MudRatingItem_ItemClicked = @"";
+
+public const string MudRatingItem_ItemHovered = @"";
+
+public const string MudRatingItem_Class = @"User class names, separated by space";
+
+public const string MudRatingItem_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudRatingItem_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudRatingItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudSelect_ChildContent = @"Add the MudSelectItems here";
 
 public const string MudSelect_Dense = @"If true, compact vertical padding will be applied to all select items.";
