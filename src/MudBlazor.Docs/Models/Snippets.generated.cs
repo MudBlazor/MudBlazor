@@ -249,7 +249,7 @@ public const string BadgeBasicExample = @"<MudBadge Content=""3"" Color=""Color.
 
 public const string BadgeInteractiveExample = @"<MudGrid>
     <MudItem md=""8"" Class=""mud-text-align-center my-auto"">
-        <MudBadge Content=""3"" Color=""Color.Primary"" Overlap=""@Overlap"" Bottom=""@Bottom"" Left=""@Left"" Dot=""@Dot"" Bordered=""@Bordered"">
+        <MudBadge Content=""@BadgeContent"" Color=""Color.Primary"" Overlap=""@Overlap"" Bottom=""@Bottom"" Left=""@Left"" Dot=""@Dot"" Bordered=""@Bordered"" Icon=""@BadgeIcon"">
             @if (SelectedTestComponent == ""MudIcon"")
             {
                 <MudIcon Icon=""@Icons.Custom.MudBlazor"" Color=""Color.Default"" Size=""Size.Large"" />
@@ -269,23 +269,26 @@ public const string BadgeInteractiveExample = @"<MudGrid>
         </MudBadge>
     </MudItem>
     <MudItem md=""4"">
-        <MudCard Style=""min-height:500px;"">
-            <MudCardHeader>
-                <CardHeaderContent>
-                    <MudSelect Label=""Test Component"" Variant=""Variant.Outlined"" Dense=""true"" Value=""@SelectedTestComponent"" ValueChanged=""OnSelectedTestComponent"">
-                        <MudSelectItem Value=""MudIcon"">MudIcon</MudSelectItem>
-                        <MudSelectItem Value=""MudButton"">MudButton</MudSelectItem>
-                        <MudSelectItem Value=""MudIconButton"">MudIconButton</MudSelectItem>
-                        <MudSelectItem Value=""MudText"">MudText</MudSelectItem>
-                    </MudSelect>
-                </CardHeaderContent>
-            </MudCardHeader>
+        <MudCard>
             <MudCardContent>
+                <MudSelect Label=""Test Component"" Dense=""true"" OffsetY=""true"" Value=""@SelectedTestComponent"" ValueChanged=""OnSelectedTestComponent"" Class=""mb-4"">
+                    <MudSelectItem Value=""MudIcon"">MudIcon</MudSelectItem>
+                    <MudSelectItem Value=""MudButton"">MudButton</MudSelectItem>
+                    <MudSelectItem Value=""MudIconButton"">MudIconButton</MudSelectItem>
+                    <MudSelectItem Value=""MudText"">MudText</MudSelectItem>
+                </MudSelect>
+                <MudText Typo=""Typo.subtitle2"" GutterBottom=""true"">Badge Options</MudText>
                 <MudCheckBox @bind-Checked=""@Bottom"" Label=""Bottom"" Color=""Color.Primary"" Style=""width:100%;"" />
                 <MudCheckBox @bind-Checked=""@Dot"" Label=""Dot"" Color=""Color.Primary"" Style=""width:100%;"" />
                 <MudCheckBox @bind-Checked=""@Left"" Label=""Left"" Color=""Color.Primary"" Style=""width:100%;"" />
                 <MudCheckBox @bind-Checked=""@Overlap"" Label=""Overlap"" Color=""Color.Primary"" Style=""width:100%;"" />
                 <MudCheckBox @bind-Checked=""@Bordered"" Label=""Bordered"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudCheckBox CheckedChanged=""AddIcon"" Label=""Icon"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudText Typo=""Typo.subtitle2"" Class=""my-2"">Badge Content</MudText>
+                <div style=""display: flex;"">
+                    <MudButton OnClick=""AddValue"" Variant=""Variant.Filled"" Size=""Size.Small"" Color=""Color.Primary"" Style=""width:100%;"" Class=""mr-1"">Add @AddNumber</MudButton>
+                    <MudButton OnClick=""ClearContent"" Variant=""Variant.Filled"" Size=""Size.Small"" Color=""Color.Secondary"" Style=""width:100%;"" Class=""ml-1"">Clear</MudButton>
+                </div>
             </MudCardContent>
         </MudCard>
     </MudItem>
@@ -297,16 +300,48 @@ public const string BadgeInteractiveExample = @"<MudGrid>
     public bool Left { get; set; }
     public bool Overlap { get; set; }
     public bool Bordered { get; set; }
-
-
-    public string ComponentIcon { get; set; } = Icons.Custom.MudBlazor;
+    public string BadgeIcon { get; set; }
 
     public string SelectedTestComponent { get; set; } = ""MudIcon"";
+    public string AddNumber { get; set; } = ""1"";
 
+    public int? BadgeContent { get; set; }
 
-    private void OnSelectedTestComponent(string value)
+    public void OnSelectedTestComponent(string value)
     {
         SelectedTestComponent = value;
+    }
+
+    public void AddIcon()
+    {
+        if (String.IsNullOrEmpty(BadgeIcon))
+        {
+            BadgeIcon = Icons.Custom.Radioactive;
+        }
+        else
+        {
+            BadgeIcon = null;
+        }
+    }
+
+    public void AddValue()
+    {
+        if(BadgeContent == null)
+        {
+            AddNumber = ""25"";
+            BadgeContent = 1;
+        }
+        else
+        {
+            BadgeContent += 25;
+        }
+    }
+
+    public void ClearContent()
+    {
+        AddNumber = ""1"";
+        BadgeContent = null;
+        StateHasChanged();
     }
 }";
 
@@ -2367,21 +2402,32 @@ public const string TextFieldBasicExample = @"<MudGrid>
 </MudGrid>";
 
 public const string TextFieldBindingExample = @"<MudGrid>
-    <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField @bind-Value=""@i"" Label=""Binding int""></MudTextField>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField @bind-Value=""@element.Name"" Label=""Name""/>
     </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField @bind-Value=""@d"" Label=""Binding double"" ></MudTextField>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField @bind-Value=""@element.Molar"" Label=""Molar""/>
     </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField @bind-Value=""@date"" Label=""Binding DateTime"" Variant=""Variant.Outlined""></MudTextField>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField @bind-Value=""@element.Number"" Label=""Number""/>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField T=""DateTime"" Converter=""@(Converters.DateFormat(""yyyy/MM/dd""))"" @bind-Value=""@updatedon"" Label=""Last Update""/>
     </MudItem>
 </MudGrid>
+<div>
+    <MudText Typo=""@MudBlazor.Typo.h6"">Data:</MudText>
+    <MudText>Name: @element.Name</MudText>
+    <MudText>Molar: @element.Molar</MudText>
+    <MudText>Number: @element.Number</MudText>
+    <MudText>Last Update: @updatedon </MudText>
+</div>
+
 
 @code {
-    int i = 17;
-    double d = Math.PI;
-    DateTime date = DateTime.Today;
+    DateTime updatedon = DateTime.Today;
+    Data.Element element = new Data.Element { Group = """", Name = ""Hydrogen"", Molar = 1.00794, Number = 1 };
+
 }";
 
 public const string TextFieldFormPropsExample = @"<MudGrid>
