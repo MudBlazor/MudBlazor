@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace MudBlazor.Utilities
+namespace MudBlazor
 {
     public static class Converters
     {

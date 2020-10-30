@@ -2,19 +2,30 @@
 
 
 <MudGrid>
-    <MudItem xs="12" sm="6" md="4">
-        <MudTextField @bind-Value="@i" Label="Binding int"></MudTextField>
+    <MudItem xs="12" sm="6" md="3">
+        <MudTextField @bind-Value="@element.Name" Label="Name"/>
     </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudTextField @bind-Value="@d" Label="Binding double" ></MudTextField>
+    <MudItem xs="12" sm="6" md="3">
+        <MudTextField @bind-Value="@element.Molar" Label="Molar"/>
     </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudTextField @bind-Value="@date" Label="Binding DateTime" Variant="Variant.Outlined"></MudTextField>
+    <MudItem xs="12" sm="6" md="3">
+        <MudTextField @bind-Value="@element.Number" Label="Number"/>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudTextField T="DateTime" Converter="@(Converters.DateFormat("yyyy/MM/dd"))" @bind-Value="@updatedon" Label="Last Update"/>
     </MudItem>
 </MudGrid>
+<div>
+    <MudText Typo="@MudBlazor.Typo.h6">Data:</MudText>
+    <MudText>Name: @element.Name</MudText>
+    <MudText>Molar: @element.Molar</MudText>
+    <MudText>Number: @element.Number</MudText>
+    <MudText>Last Update: @updatedon </MudText>
+</div>
+
 
 @code {
-    int i = 17;
-    double d = Math.PI;
-    DateTime date = DateTime.Today;
+    DateTime updatedon = DateTime.Today;
+    Data.Element element = new Data.Element { Group = "", Name = "Hydrogen", Molar = 1.00794, Number = 1 };
+
 }

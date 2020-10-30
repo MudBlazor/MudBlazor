@@ -1604,6 +1604,21 @@
             <param name="configure">Defines settings for this instance.</param>
             <returns>Continues the IServiceCollection chain.</returns>
         </member>
+        <member name="T:MudBlazor.NullableDateConverter">
+            <summary>
+            A ready made DateTime? to string binding converter with configurable date format and culture
+            </summary>
+        </member>
+        <member name="T:MudBlazor.DateConverter">
+            <summary>
+            A ready made DateTime to string binding converter with configurable date format and culture
+            </summary>
+        </member>
+        <member name="T:MudBlazor.DefaultConverter`1">
+            <summary>
+            A universal T to string binding converter
+            </summary>
+        </member>
         <member name="M:MudBlazor.Utilities.CssBuilder.Default(System.String)">
             <summary>
             Creates a CssBuilder used to define conditional CSS classes used in a component.
@@ -1845,16 +1860,6 @@
             <param name="value"></param>
             <param name="when"></param>
             <returns></returns>
-        </member>
-        <member name="T:MudBlazor.DateConverter">
-            <summary>
-            A ready made DateTime? to string binding converter with configurable date format and culture
-            </summary>
-        </member>
-        <member name="T:MudBlazor.DefaultConverter`1">
-            <summary>
-            A universal T to string binding converter
-            </summary>
         </member>
         <member name="P:MudBlazor.MudAvatar.Square">
             <summary>
