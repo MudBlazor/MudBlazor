@@ -1,7 +1,11 @@
-﻿
-using MudBlazor;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-public class MudTextField : MudGenericTextField<string>
+namespace MudBlazor
 {
-    // empty on purpose
+    public class MudTextField : MudGenericTextField<string>
+    {
+        // keep this empty!
+    }
 }

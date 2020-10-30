@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
-    public partial class MudInput<T> : MudBaseInput<T>
+    public partial class MudInput : MudBaseInput
     {
         protected string Classname =>
            new CssBuilder("mud-input")
@@ -36,62 +36,41 @@ namespace MudBlazor
 
         protected string _InputType => new CssBuilder().AddClass(InputType.ToDescriptionString()).Build();
 
-        private string _text;
-        private Converter<T> _converter = new DefaultConverter<T>();
 
-        [Parameter] public string Text
+        // todo: pull down into generic child like with TextField
+
+        private string _value;
+        private bool _settingValue;
+        /// <summary>
+        /// Fired when the Value property changes. 
+        /// </summary>
+        [Parameter] public EventCallback<string> ValueChanged { get; set; }
+
+        /// <summary>
+        /// The value of this input element. This property is two-way bindable.
+        /// </summary>
+        [Parameter]
+        public string Value
         {
-            get => _text;
+            get => _value;
             set
             {
-                if (_text == value)
+                if (object.Equals(value, _value))
                     return;
-                // update loop protection!
-                if (_settingText) 
+                if (_settingValue)
                     return;
-                _settingText=true;
+                _settingValue = true;
                 try
                 {
-                    _text = value;
-                    StringValueChanged(value);
-                    TextChanged.InvokeAsync(value);
+                    _value = value;
+                    //GenericValueChanged(value);
+                    //ValidateValue(value);
+                    ValueChanged.InvokeAsync(value);
                 }
                 finally
                 {
-                    _settingText=false;
+                    _settingValue = false;
                 }
-            }
-        }
-        
-        [Parameter] public EventCallback<string> TextChanged { get; set; }
-        
-        /// <summary>
-        /// Text change hook for descendants  
-        /// </summary>
-        /// <param name="value"></param>
-        protected virtual void StringValueChanged(string text)
-        {
-            Value=Converter.Get(text);
-        }
-
-        protected override void GenericValueChanged(T value)
-        {
-            Text = Converter.Set(value);
-        }
-
-        private bool _settingText;
-        bool _settingValue;
-
-        [Parameter]
-        public Converter<T> Converter
-        {
-            get => _converter;
-            set
-            {
-                if (_converter == value)
-                    return;
-                _converter = value;
-                Text = Converter.Set(Value);
             }
         }
     }

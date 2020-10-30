@@ -39,171 +39,123 @@
             Button click event.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.ValueChanged">
-            <summary>
-            Fired when the Value property changes. 
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInput`1.Value">
-            <summary>
-            The value of this input element. This property is two-way bindable.
-            </summary>
-        </member>
-        <member name="M:MudBlazor.MudBaseInput`1.GenericValueChanged(`0)">
-            <summary>
-            Value change hook for descendants
-            </summary>
-            <param name="value"></param>
-        </member>
-        <member name="P:MudBlazor.MudBaseInput`1.Standalone">
+        <member name="P:MudBlazor.MudBaseInput.Standalone">
             <summary>
             If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
             If it is sub-component, it will NOT do form validation!!
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.Required">
+        <member name="P:MudBlazor.MudBaseInput.Required">
             <summary>
             If true, this form input is required to be filled out.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.RequiredError">
+        <member name="P:MudBlazor.MudBaseInput.RequiredError">
             <summary>
             Set an error text that will be displayed if the input is not filled out but required!
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.ErrorText">
+        <member name="P:MudBlazor.MudBaseInput.ErrorText">
             <summary>
             The ErrorText that will be displayed if Error true
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.Error">
+        <member name="P:MudBlazor.MudBaseInput.Error">
             <summary>
             If true, the label will be displayed in an error state.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "P:MudBlazor.MudBaseInput`1.Validation" -->
-        <member name="M:MudBlazor.MudBaseInput`1.Validate">
-            <summary>
-            Causes this component to validate its value
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInput`1.Disabled">
+        <member name="P:MudBlazor.MudBaseInput.Disabled">
             <summary>
             If true, the input element will be disabled.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.ReadOnly">
+        <member name="P:MudBlazor.MudBaseInput.ReadOnly">
             <summary>
             If true, the input will be read only.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.FullWidth">
+        <member name="P:MudBlazor.MudBaseInput.FullWidth">
             <summary>
             If true, the input will take up the full width of its container.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.Immediate">
+        <member name="P:MudBlazor.MudBaseInput.Immediate">
             <summary>
             If true, the input will update the Value immediately on typing.
             If false, the Value is updated only on Enter.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.DisableUnderLine">
+        <member name="P:MudBlazor.MudBaseInput.DisableUnderLine">
             <summary>
             If true, the input will not have an underline.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.Label">
+        <member name="P:MudBlazor.MudBaseInput.Label">
             <summary>
             If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.Placeholder">
+        <member name="P:MudBlazor.MudBaseInput.Placeholder">
             <summary>
             The short hint displayed in the input before the user enters a value.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.HelperText">
+        <member name="P:MudBlazor.MudBaseInput.HelperText">
             <summary>
             The HelperText will be displayed below the text field.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.AdornmentIcon">
+        <member name="P:MudBlazor.MudBaseInput.AdornmentIcon">
             <summary>
             Icon that will be used if Adornment is set to Start or End.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.AdornmentText">
+        <member name="P:MudBlazor.MudBaseInput.AdornmentText">
             <summary>
             Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.Adornment">
+        <member name="P:MudBlazor.MudBaseInput.Adornment">
             <summary>
             Sets Start or End Adornment if not set to None.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.IconSize">
+        <member name="P:MudBlazor.MudBaseInput.IconSize">
             <summary>
             Sets the Icon Size.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.OnAdornmentClick">
+        <member name="P:MudBlazor.MudBaseInput.OnAdornmentClick">
             <summary>
             Button click event if set and Adornment used.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.InputType">
+        <member name="P:MudBlazor.MudBaseInput.InputType">
             <summary>
             Type of the input element. It should be a valid HTML5 input type.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.Variant">
+        <member name="P:MudBlazor.MudBaseInput.Variant">
             <summary>
             Variant to use.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.Margin">
+        <member name="P:MudBlazor.MudBaseInput.Margin">
             <summary>
              Will adjust vertical spacing. 
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.OnBlur">
+        <member name="M:MudBlazor.MudBaseInput.StringValueChanged(System.String)">
+            <summary>
+            Text change hook for descendants  
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput.OnBlur">
             <summary>
             Fired when the Value property changes. 
             </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInput`1.EditContext">
-            <summary>
-            This is the form validation context for Blazor's <EditForm></EditForm> component
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInput`1.For">
-            <summary>
-            Specify an expression which returns the model's field for which validation messages should be displayed.
-            Currently only string fields are supported.
-            </summary>
-        </member>
-        <member name="F:MudBlazor.MudBaseInput`1._fieldIdentifier">
-            <summary>
-            Points to a field of the model for which validation messages should be displayed.
-            </summary>
-        </member>
-        <member name="F:MudBlazor.MudBaseInput`1._currentFor">
-            <summary>
-            To find out whether or not For parameter has changed we keep a separate reference
-            </summary>
-        </member>
-        <member name="F:MudBlazor.MudBaseInput`1._currentEditContext">
-            <summary>
-            To find out whether or not EditContext parameter has changed we keep a separate reference
-            </summary>
-        </member>
-        <member name="M:MudBlazor.MudBaseInput`1.Dispose(System.Boolean)">
-            <summary>
-            Called to dispose this instance.
-            </summary>
-            <param name="disposing"><see langword="true"/> if called within <see cref="M:System.IDisposable.Dispose"/>.</param>
         </member>
         <member name="P:MudBlazor.MudBasePicker.Elevation">
             <summary>
@@ -924,11 +876,15 @@
             If true, the input element will be disabled.
             </summary>
         </member>
-        <member name="M:MudBlazor.MudInput`1.StringValueChanged(System.String)">
+        <member name="P:MudBlazor.MudInput.ValueChanged">
             <summary>
-            Text change hook for descendants  
+            Fired when the Value property changes. 
             </summary>
-            <param name="value"></param>
+        </member>
+        <member name="P:MudBlazor.MudInput.Value">
+            <summary>
+            The value of this input element. This property is two-way bindable.
+            </summary>
         </member>
         <member name="P:MudBlazor.MudInputLabel.ChildContent">
             <summary>
@@ -1180,6 +1136,16 @@
             If true, the select menu will open either before or after the input.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudSelect.ValueChanged">
+            <summary>
+            Fired when the Value property changes. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelect.Value">
+            <summary>
+            The value of this input element. This property is two-way bindable.
+            </summary>
+        </member>
         <member name="T:MudBlazor.MudSelectItem">
             <summary>
             Represents an option of a select or multi-select. To be used inside MudSelect.
@@ -1429,6 +1395,60 @@
             <summary>
             Custom class/classes for TabPanel
             </summary>
+        </member>
+        <member name="P:MudBlazor.MudGenericTextField`1.ValueChanged">
+            <summary>
+            Fired when the Value property changes. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudGenericTextField`1.Value">
+            <summary>
+            The value of this input element. This property is two-way bindable.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudGenericTextField`1.GenericValueChanged(`0)">
+            <summary>
+            Value change hook for descendants
+            </summary>
+            <param name="value"></param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:MudBlazor.MudGenericTextField`1.Validation" -->
+        <member name="M:MudBlazor.MudGenericTextField`1.Validate">
+            <summary>
+            Causes this component to validate its value
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudGenericTextField`1.EditContext">
+            <summary>
+            This is the form validation context for Blazor's <EditForm></EditForm> component
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudGenericTextField`1.For">
+            <summary>
+            Specify an expression which returns the model's field for which validation messages should be displayed.
+            Currently only string fields are supported.
+            </summary>
+        </member>
+        <member name="F:MudBlazor.MudGenericTextField`1._fieldIdentifier">
+            <summary>
+            Points to a field of the model for which validation messages should be displayed.
+            </summary>
+        </member>
+        <member name="F:MudBlazor.MudGenericTextField`1._currentFor">
+            <summary>
+            To find out whether or not For parameter has changed we keep a separate reference
+            </summary>
+        </member>
+        <member name="F:MudBlazor.MudGenericTextField`1._currentEditContext">
+            <summary>
+            To find out whether or not EditContext parameter has changed we keep a separate reference
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudGenericTextField`1.Dispose(System.Boolean)">
+            <summary>
+            Called to dispose this instance.
+            </summary>
+            <param name="disposing"><see langword="true"/> if called within <see cref="M:System.IDisposable.Dispose"/>.</param>
         </member>
         <member name="F:MudBlazor.MudTimePicker.Picker">
             <summary>

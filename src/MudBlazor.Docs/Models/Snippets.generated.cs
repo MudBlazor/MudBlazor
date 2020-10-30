@@ -520,7 +520,7 @@ public const string DialogBodyScrollableExample = @"<MudDialog DisableSidePaddin
 public const string DialogDialogFormExample = @"<MudDialog>
     <DialogContent>
         <MudText Class=""mt-2"">Note: Database creation can take up to 30 minutes.</MudText>
-        <MudText Class=""mb-2"">After database is created you will rescive a email to your cloud account.</MudText>
+        <MudText Class=""mb-2"">After database is created you will resceive a email to your cloud account.</MudText>
         <MudForm>
             <MudTextField Label=""Database name""></MudTextField>
             <MudTextField Label=""Database tags""></MudTextField>

@@ -14,53 +14,8 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public abstract class MudBaseInput<TValue> : MudComponentBase, IFormComponent, IDisposable
+    public abstract class MudBaseInput : MudComponentBase
     {
-
-        private TValue _value;
-
-        /// <summary>
-        /// Fired when the Value property changes. 
-        /// </summary>
-        [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
-
-        /// <summary>
-        /// The value of this input element. This property is two-way bindable.
-        /// </summary>
-        [Parameter]
-        public TValue Value
-        {
-            get => _value;
-            set
-            {
-                if (object.Equals(value, _value))
-                    return;
-                if (_settingValue)
-                    return;
-                _settingValue = true;
-                try
-                {
-                    _value = value;
-                    GenericValueChanged(value);
-                    ValidateValue(value);
-                    ValueChanged.InvokeAsync(value);
-                }
-                finally
-                {
-                    _settingValue = false;
-                }
-            }
-        }
-
-        private bool _settingValue;
-        
-        /// <summary>
-        /// Value change hook for descendants
-        /// </summary>
-        /// <param name="value"></param>
-        protected virtual void GenericValueChanged(TValue value) {
-                /* to be overridden by descendants who need to react here */
-        }
 
         /// <summary>
         /// If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
@@ -91,120 +46,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Error { get; set; }
 
-        #region Validation
-
-        public List<string> ValidationErrors { get; set; } = new List<string>();
-
-        /// <summary>
-        /// A validation func or a validation attribute. Supported types are:
-        /// Func<string, bool> ... will output the standard error message "Invalid" if false
-        /// Func<string, string> ... outputs the result as error message, no error if null
-        /// Func<string, IEnumerable<string>> ... outputs all the returned error messages, no error if empty
-        /// System.ComponentModel.DataAnnotations.ValidationAttribute instances
-        /// </summary>
-        [Parameter] public object Validation { get; set; }
-
-
-        /// <summary>
-        /// Causes this component to validate its value
-        /// </summary>
-        public void Validate() => ValidateValue(Value);
-
-        internal virtual void ValidateValue(TValue value)
-        {
-            if (Form == null || !Standalone)
-                return;
-            ValidationErrors = new List<string>();
-            try
-            {
-                if (Required && value == null)
-                {
-                    ValidationErrors.Add(RequiredError);
-                    return;
-                }
-                if (Validation is ValidationAttribute)
-                    ValidateWithAttribute(Validation as ValidationAttribute, value);
-                else if (Validation is Func<TValue, bool>)
-                    ValidateWithFunc(Validation as Func<TValue, bool>, value);
-                else if (Validation is Func<TValue, string>)
-                    ValidateWithFunc(Validation as Func<TValue, string>, value);
-                else if (Validation is Func<TValue, IEnumerable<string>>)
-                    ValidateWithFunc(Validation as Func<TValue, IEnumerable<string>>, value);
-            }
-            finally
-            {
-                // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
-                // if Error and ErrorText are set by the user, setting them here will have no effect. 
-                Error = ValidationErrors.Count > 0;
-                ErrorText = ValidationErrors.FirstOrDefault();
-                Form.Update(this);
-            }
-        }
-
-        protected virtual void ValidateWithAttribute(ValidationAttribute attr, TValue value)
-        {
-            if (attr.IsValid(value))
-                return;
-            ValidationErrors.Add(attr.ErrorMessage);
-        }
-
-        protected virtual void ValidateWithFunc(Func<TValue, bool> func, TValue value)
-        {
-            try
-            {
-                if (func(value))
-                    return;
-                ValidationErrors.Add("Invalid");
-            }
-            catch (Exception e)
-            {
-                ValidationErrors.Add("Error in validation func: " + e.Message);
-            }
-        }
-
-        protected virtual void ValidateWithFunc(Func<TValue, string> func, TValue value)
-        {
-            try
-            {
-                var error = func(value);
-                if (error == null)
-                    return;
-                ValidationErrors.Add(error);
-            }
-            catch (Exception e)
-            {
-                ValidationErrors.Add("Error in validation func: " + e.Message);
-            }
-        }
-
-        protected virtual void ValidateWithFunc(Func<TValue, IEnumerable<string>> func, TValue value)
-        {
-            try
-            {
-                foreach (var error in func(value))
-                    ValidationErrors.Add(error);
-            }
-            catch (Exception e)
-            {
-                ValidationErrors.Add("Error in validation func: " + e.Message);
-            }
-        }
-
-        public void Reset()
-        {
-            _value = default;
-            ResetValidation();
-        }
-
-        public void ResetValidation()
-        {
-            Error = false;
-            ValidationErrors.Clear();
-            StateHasChanged();
-        }
-
-        #endregion
-        
         /// <summary>
         /// If true, the input element will be disabled.
         /// </summary>
@@ -285,6 +126,44 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
+        private bool _settingText;
+        private string _text;
+        [Parameter]
+        public string Text
+        {
+            get => _text;
+            set
+            {
+                if (_text == value)
+                    return;
+                // update loop protection!
+                if (_settingText)
+                    return;
+                _settingText = true;
+                try
+                {
+                    _text = value;
+                    StringValueChanged(value);
+                    TextChanged.InvokeAsync(value);
+                }
+                finally
+                {
+                    _settingText = false;
+                }
+            }
+        }
+
+        [Parameter] public EventCallback<string> TextChanged { get; set; }
+
+        /// <summary>
+        /// Text change hook for descendants  
+        /// </summary>
+        /// <param name="value"></param>
+        protected virtual void StringValueChanged(string text)
+        {
+            /* can be overwritten by descendants */
+        }
+
         /// <summary>
         /// Fired when the Value property changes. 
         /// </summary>
@@ -292,102 +171,8 @@ namespace MudBlazor
 
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
-            ValidateValue(Value);
             OnBlur.InvokeAsync(obj);
         }
 
-        protected override Task OnInitializedAsync()
-        {
-            if (Standalone)
-            {
-                Form?.Add(this);
-            }
-            return base.OnInitializedAsync();
-        }
-
-        #region --> Blazor EditForm validation support
-
-        /// <summary>
-        /// This is the form validation context for Blazor's <EditForm></EditForm> component
-        /// </summary>
-        [CascadingParameter] EditContext EditContext { get; set; } = default!;
-
-        /// <summary>
-        /// Specify an expression which returns the model's field for which validation messages should be displayed.
-        /// Currently only string fields are supported.
-        /// </summary>
-        [Parameter] public Expression<Func<TValue>>? For { get; set; }
-
-
-        private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
-        {
-            if (EditContext == null)
-                return;
-            var error_msgs = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
-            Error = error_msgs.Length > 0;
-            ErrorText = (Error ? error_msgs[0] : null);
-            StateHasChanged();
-        }
-
-        /// <summary>
-        /// Points to a field of the model for which validation messages should be displayed.
-        /// </summary>
-        private FieldIdentifier _fieldIdentifier;
-
-        /// <summary>
-        /// To find out whether or not For parameter has changed we keep a separate reference
-        /// </summary>
-        private Expression<Func<TValue>>? _currentFor;
-
-        /// <summary>
-        /// To find out whether or not EditContext parameter has changed we keep a separate reference
-        /// </summary>
-        private EditContext? _currentEditContext;
-
-        protected override void OnParametersSet()
-        {
-            if (EditContext == null)
-                return;
-            if (For == null)
-                return;
-            if (!Standalone)
-                return;
-            if (For != _currentFor)
-            {
-                _fieldIdentifier = FieldIdentifier.Create(For);
-                _currentFor = For;
-            }
-            if (EditContext != _currentEditContext)
-            {
-                DetachValidationStateChangedListener();
-                EditContext.OnValidationStateChanged += OnValidationStateChanged;
-                _currentEditContext = EditContext;
-            }
-        }
-
-        private void DetachValidationStateChangedListener()
-        {
-            if (_currentEditContext != null)
-            {
-                _currentEditContext.OnValidationStateChanged -= OnValidationStateChanged;
-            }
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Called to dispose this instance.
-        /// </summary>
-        /// <param name="disposing"><see langword="true"/> if called within <see cref="IDisposable.Dispose"/>.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-        }
-
-        void IDisposable.Dispose()
-        {
-            //ParentForm?.Remove(this);
-            DetachValidationStateChangedListener();
-            Dispose(disposing: true);
-        }
     }
 }

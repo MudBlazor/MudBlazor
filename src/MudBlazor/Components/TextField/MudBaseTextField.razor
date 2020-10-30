@@ -1,0 +1,14 @@
+﻿@namespace MudBlazor
+
+@inherits MudBaseInput
+
+<CascadingValue Name="Standalone" Value="false" IsFixed="true">
+    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled">
+        <InputContent>
+            <MudInput @attributes="UserAttributes" InputType="@InputType" Class="@Classname" Style="@Style" Variant="@Variant" @bind-Value="@Text" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
+                      Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate"
+                      OnBlur="@OnBlurred" />
+        </InputContent>
+    </MudInputControl>
+</CascadingValue>
+
