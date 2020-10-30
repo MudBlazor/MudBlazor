@@ -238,3 +238,12 @@
     margin-bottom: 16px;
     text-align: center;
 }
+
+.demo-badge {
+    .docs-section-content-inner {
+        & > * {
+            margin: 20px !important;
+            align-self: center;
+        }
+    }
+}

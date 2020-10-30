@@ -14,7 +14,6 @@ using MudBlazor.Interfaces;
 namespace MudBlazor
 {
 
-
     public class MudTextField<T> : MudBaseTextField, IFormComponent, IDisposable
     {
         private T _value;
@@ -90,9 +89,9 @@ namespace MudBlazor
 
         /// <summary>
         /// A validation func or a validation attribute. Supported types are:
-        /// Func<string, bool> ... will output the standard error message "Invalid" if false
-        /// Func<string, string> ... outputs the result as error message, no error if null
-        /// Func<string, IEnumerable<string>> ... outputs all the returned error messages, no error if empty
+        /// Func<T, bool> ... will output the standard error message "Invalid" if false
+        /// Func<T, string> ... outputs the result as error message, no error if null
+        /// Func<T, IEnumerable<string>> ... outputs all the returned error messages, no error if empty
         /// System.ComponentModel.DataAnnotations.ValidationAttribute instances
         /// </summary>
         [Parameter]

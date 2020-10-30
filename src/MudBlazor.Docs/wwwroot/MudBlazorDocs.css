@@ -263,6 +263,10 @@
   margin-bottom: 16px;
   text-align: center; }
 
+.demo-badge .docs-section-content-inner > * {
+  margin: 20px !important;
+  align-self: center; }
+
 .docs-home {
   padding-top: 32px;
   padding-bottom: 64px; }

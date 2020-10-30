@@ -231,6 +231,85 @@ public const string AvatarVariantsExample = @"<MudAvatar Square=""true"">
     <MudIcon Icon=""@Icons.Material.Comment"" />
 </MudAvatar>";
 
+public const string BadgeBasicExample = @"<MudBadge Content=""3"" Color=""Color.Primary"" Overlap=""true"">
+    <MudIcon Icon=""@Icons.Material.Email"" Color=""Color.Default""/>
+</MudBadge>
+
+<MudBadge Content=""100"" Color=""Color.Primary"" Overlap=""true"">
+    <MudIcon Icon=""@Icons.Material.Email"" Color=""Color.Default""/>
+</MudBadge>
+
+<MudBadge Icon=""@Icons.Material.Lock"" Color=""Color.Danger"" Overlap=""true"" Bordered=""true"">
+    <MudButton Color=""Color.Danger"" Variant=""Variant.Filled"" DisableElevation=""true"">Security Issues</MudButton>
+</MudBadge>
+
+<MudBadge Dot=""true"" Color=""Color.Info"">
+    <MudText>Bug Reports</MudText>
+</MudBadge>";
+
+public const string BadgeInteractiveExample = @"<MudGrid>
+    <MudItem md=""8"" Class=""mud-text-align-center my-auto"">
+        <MudBadge Content=""3"" Color=""Color.Primary"" Overlap=""@Overlap"" Bottom=""@Bottom"" Left=""@Left"" Dot=""@Dot"" Bordered=""@Bordered"">
+            @if (SelectedTestComponent == ""MudIcon"")
+            {
+                <MudIcon Icon=""@Icons.Custom.MudBlazor"" Color=""Color.Default"" Size=""Size.Large"" />
+            }
+            else if (SelectedTestComponent == ""MudButton"")
+            {
+                <MudButton Color=""Color.Primary"" Variant=""Variant.Filled"">MudButton</MudButton>
+            }
+            else if (SelectedTestComponent == ""MudIconButton"")
+            {
+                <MudIconButton Icon=""@Icons.Material.Email"" Color=""Color.Default"" />
+            }
+            else if (SelectedTestComponent == ""MudText"")
+            {
+                <MudText>MudText</MudText>
+            }
+        </MudBadge>
+    </MudItem>
+    <MudItem md=""4"">
+        <MudCard Style=""min-height:500px;"">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudSelect Label=""Test Component"" Variant=""Variant.Outlined"" Dense=""true"" Value=""@SelectedTestComponent"" ValueChanged=""OnSelectedTestComponent"">
+                        <MudSelectItem Value=""MudIcon"">MudIcon</MudSelectItem>
+                        <MudSelectItem Value=""MudButton"">MudButton</MudSelectItem>
+                        <MudSelectItem Value=""MudIconButton"">MudIconButton</MudSelectItem>
+                        <MudSelectItem Value=""MudText"">MudText</MudSelectItem>
+                    </MudSelect>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudCheckBox @bind-Checked=""@Bottom"" Label=""Bottom"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudCheckBox @bind-Checked=""@Dot"" Label=""Dot"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudCheckBox @bind-Checked=""@Left"" Label=""Left"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudCheckBox @bind-Checked=""@Overlap"" Label=""Overlap"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudCheckBox @bind-Checked=""@Bordered"" Label=""Bordered"" Color=""Color.Primary"" Style=""width:100%;"" />
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public bool Bottom { get; set; }
+    public bool Dot { get; set; }
+    public bool Left { get; set; }
+    public bool Overlap { get; set; }
+    public bool Bordered { get; set; }
+
+
+    public string ComponentIcon { get; set; } = Icons.Custom.MudBlazor;
+
+    public string SelectedTestComponent { get; set; } = ""MudIcon"";
+
+
+    private void OnSelectedTestComponent(string value)
+    {
+        SelectedTestComponent = value;
+    }
+}";
+
 public const string ButtonCustomizedExample = @"<MudButton Variant=""Variant.Filled"" EndIcon=""@Icons.Material.ArrowDownward"" Style=""background-color: yellowgreen; color: white; width: 200px; height: 60px;"">
     Download Now
 </MudButton>";
