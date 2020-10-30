@@ -522,8 +522,8 @@ public const string DialogDialogFormExample = @"<MudDialog>
         <MudText Class=""mt-2"">Note: Database creation can take up to 30 minutes.</MudText>
         <MudText Class=""mb-2"">After database is created you will resceive a email to your cloud account.</MudText>
         <MudForm>
-            <MudTextField Label=""Database name""></MudTextField>
-            <MudTextField Label=""Database tags""></MudTextField>
+            <MudTextField T=""string"" Label=""Database name""></MudTextField>
+            <MudTextField T=""string"" Label=""Database tags""></MudTextField>
             <MudSelect FullWidth=""true"" Label=""Resource Group"" ValueChanged=""@OnSelectedValue"">
                 <MudSelectItem Value=""Prod"">Prod</MudSelectItem>
                 <MudSelectItem Value=""Test"">Test</MudSelectItem>
@@ -966,9 +966,9 @@ public const string ManualValidationExample = @"<MudForm @bind-IsValid=""@succes
 
     <MudCard Class=""demo-form-manual"">
         <MudCardContent>
-            <MudTextField Label=""Password"" HelperText=""Enter your new password"" Immediate=""true""
+            <MudTextField T=""string"" Label=""Password"" HelperText=""Enter your new password"" Immediate=""true""
                           Error=""@error1"" ErrorText=""@error_text1"" ValueChanged=""@(x => { pw1 = x; Validate(); })"" InputType=""InputType.Password"" />
-            <MudTextField Label=""Password"" HelperText=""Enter the password again"" Immediate=""true""
+            <MudTextField T=""string"" Label=""Password"" HelperText=""Enter the password again"" Immediate=""true""
                           Error=""@error2"" ErrorText=""@error_text2"" ValueChanged=""@(x => { pw2 = x; Validate(); })"" InputType=""InputType.Password"" />
         </MudCardContent>
     </MudCard>
@@ -1011,13 +1011,13 @@ public const string MudFormExample = @"<MudForm @ref=""form"" @bind-IsValid=""@s
 
     <MudCard Class=""demo-form"">
         <MudCardContent>
-            <MudTextField Label=""Username"" Required=""true"" RequiredError=""User name is required!"" />
-            <MudTextField Label=""Email"" Required=""true"" RequiredError=""Email is required!""
+            <MudTextField T=""string"" Label=""Username"" Required=""true"" RequiredError=""User name is required!"" />
+            <MudTextField T=""string"" Label=""Email"" Required=""true"" RequiredError=""Email is required!""
                 Validation=""@(new EmailAddressAttribute(){ ErrorMessage = ""The email address is invalid""})"" />
-            <MudTextField Label=""Password"" HelperText=""Choose a strong password"" @ref=""pwField1""
+            <MudTextField T=""string"" Label=""Password"" HelperText=""Choose a strong password"" @ref=""pwField1""
                 InputType=""InputType.Password""
                 Validation=""@(new Func<string, IEnumerable<string>>(PasswordStrength))"" />
-            <MudTextField 
+            <MudTextField T=""string""
                 Label=""Password"" HelperText=""Repeat the password"" InputType=""InputType.Password""
                 Validation=""@(new Func<string, string>(PasswordMatch))"" Required=""true""
                 RequiredError=""Password is required!"" />
@@ -1046,7 +1046,7 @@ public const string MudFormExample = @"<MudForm @ref=""form"" @bind-IsValid=""@s
 @code {
     bool success;
     string[] errors={};
-    MudTextField pwField1;
+    MudTextField<string> pwField1;
     MudForm form;
 
     private IEnumerable<string> PasswordStrength(string pw)
@@ -2221,34 +2221,34 @@ public const string TemplateExample = @"";
 
 public const string TextFieldAdornmentsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""12"" md=""12"">
-        <MudTextField Label=""Amount"" Variant=""Variant.Text"" Adornment=""Adornment.Start"" AdornmentText=""Kr"" />
+        <MudTextField T=""string"" Label=""Amount"" Variant=""Variant.Text"" Adornment=""Adornment.Start"" AdornmentText=""Kr"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Amount"" Variant=""Variant.Text"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
+        <MudTextField T=""string"" Label=""Amount"" Variant=""Variant.Text"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField HelperText=""Weight"" Variant=""Variant.Text"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
+        <MudTextField T=""string"" HelperText=""Weight"" Variant=""Variant.Text"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Text"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
+        <MudTextField T=""string"" Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Text"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Amount"" Variant=""Variant.Filled"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
+        <MudTextField T=""string"" Label=""Amount"" Variant=""Variant.Filled"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField HelperText=""Weight"" Variant=""Variant.Filled"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
+        <MudTextField T=""string"" HelperText=""Weight"" Variant=""Variant.Filled"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Filled"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
+        <MudTextField T=""string"" Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Filled"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Amount"" Variant=""Variant.Outlined"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
+        <MudTextField T=""string"" Label=""Amount"" Variant=""Variant.Outlined"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField HelperText=""Weight"" Variant=""Variant.Outlined"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
+        <MudTextField T=""string"" HelperText=""Weight"" Variant=""Variant.Outlined"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Outlined"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
+        <MudTextField T=""string"" Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Outlined"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
     </MudItem>
 </MudGrid>
 
@@ -2277,54 +2277,72 @@ public const string TextFieldAdornmentsExample = @"<MudGrid>
 
 public const string TextFieldBasicExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Standard"" Variant=""Variant.Text""></MudTextField>
+        <MudTextField T=""string"" Label=""Standard"" Variant=""Variant.Text""></MudTextField>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Filled"" Variant=""Variant.Filled""></MudTextField>
+        <MudTextField T=""string"" Label=""Filled"" Variant=""Variant.Filled""></MudTextField>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Outlined"" Variant=""Variant.Outlined""></MudTextField>
+        <MudTextField T=""string"" Label=""Outlined"" Variant=""Variant.Outlined""></MudTextField>
     </MudItem>
 </MudGrid>";
 
+public const string TextFieldBindingExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField @bind-Value=""@i"" Label=""Binding int""></MudTextField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField @bind-Value=""@d"" Label=""Binding double"" ></MudTextField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField @bind-Value=""@date"" Label=""Binding DateTime"" Variant=""Variant.Outlined""></MudTextField>
+    </MudItem>
+</MudGrid>
+
+@code {
+    int i = 17;
+    double d = Math.PI;
+    DateTime date = DateTime.Today;
+}";
+
 public const string TextFieldFormPropsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Text"" />
+        <MudTextField T=""string"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Text"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Disabled"" Variant=""Variant.Text"" Disabled=""true"" />
+        <MudTextField T=""string"" Label=""Disabled"" Variant=""Variant.Text"" Disabled=""true"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Text"" />
+        <MudTextField T=""string"" Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Text"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Read Only"" Value=""Can't change me"" ReadOnly=""true"" Variant=""Variant.Text"" />
-    </MudItem>
-
-    <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Filled"" />
-    </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Disabled"" Variant=""Variant.Filled"" Disabled=""true"" />
-    </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Filled"" />
-    </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Read Only"" Value=""Can't change me"" ReadOnly=""true"" Variant=""Variant.Filled"" />
+        <MudTextField T=""string"" Label=""Read Only"" Text=""Can't change me"" ReadOnly=""true"" Variant=""Variant.Text"" />
     </MudItem>
 
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Outlined"" />
+        <MudTextField T=""string"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Filled"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Disabled"" Variant=""Variant.Outlined"" Disabled=""true"" />
+        <MudTextField T=""string"" Label=""Disabled"" Variant=""Variant.Filled"" Disabled=""true"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Outlined"" />
+        <MudTextField T=""string"" Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Filled"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Read Only"" Value=""Can't change me"" ReadOnly=""true"" Variant=""Variant.Outlined"" />
+        <MudTextField T=""string"" Label=""Read Only"" Text=""Can't change me"" ReadOnly=""true"" Variant=""Variant.Filled"" />
+    </MudItem>
+
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField T=""string"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Outlined"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField T=""string"" Label=""Disabled"" Variant=""Variant.Outlined"" Disabled=""true"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField T=""string"" Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Outlined"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField T=""string"" Label=""Read Only"" Value=""@(""Can't change me"")"" ReadOnly=""true"" Variant=""Variant.Outlined"" />
     </MudItem>
 </MudGrid>";
 

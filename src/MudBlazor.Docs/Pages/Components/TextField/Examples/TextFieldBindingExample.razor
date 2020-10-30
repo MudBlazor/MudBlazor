@@ -3,13 +3,18 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField T="string" Label="Standard"></MudTextField>
+        <MudTextField @bind-Value="@i" Label="Binding int"></MudTextField>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField T="int" Label="Filled" ></MudTextField>
+        <MudTextField @bind-Value="@d" Label="Binding double" ></MudTextField>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField T="DateTime" Label="Outlined" Variant="Variant.Outlined"></MudTextField>
+        <MudTextField @bind-Value="@date" Label="Binding DateTime" Variant="Variant.Outlined"></MudTextField>
     </MudItem>
 </MudGrid>
 
+@code {
+    int i = 17;
+    double d = Math.PI;
+    DateTime date = DateTime.Today;
+}
