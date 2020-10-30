@@ -1,10 +1,7 @@
 ﻿@using Toolbelt.Blazor.HeadElement
 @using MudBlazor.Docs.Extensions
 @using Microsoft.AspNetCore.Components
-@using MudBlazor
 @using MudBlazor.Docs.Models
-@using MudBlazor.Docs.Pages.Api
-
 
 @*html head (for server prerendering)*@
 <Title>@GetTitle()</Title>
@@ -21,24 +18,40 @@
 <div class="docs-page-header">
     <MudText Typo="Typo.h3">@Title</MudText>
     <MudText>@GetSubTitle() @Description</MudText>
-    @if (!string.IsNullOrEmpty(Api))
+    @if (!IsApiPage && GetComponentTypeName()!=null)
     {
-        <MudText Typo="Typo.body2" Class="my-3">See <MudLink Href="@ApiLink">@Title API</MudLink> for parameter documentation.</MudText>
+        <MudText Typo="Typo.body2" Class="my-3">See <MudLink Href="@GetApiLink()">@Title API</MudLink> for parameter documentation.</MudText>
     }
-    @if (!string.IsNullOrEmpty(ComponentLink))
+    @if (IsApiPage && !string.IsNullOrEmpty(ComponentLink))
     {
         <MudText Typo="Typo.body2">Check out the <MudLink Href="@ComponentLink">Examples</MudLink> for this component.</MudText>
     }        
 </div>
 
 @code {
+
+
+    [Inject] public NavigationManager NavigationManager {get; set;}    
+
     [Parameter] public string Title { get; set; }
     [Parameter] public string SubTitle { get; set; }
     [Parameter] public string Keywords { get; set; }
     [Parameter] public RenderFragment Description { get; set; }
-    [Parameter] public string Api { get; set; }
     [Parameter] public string ComponentLink { get; set; }
-    private string ApiLink => $"/api/{Api}";
+    
+    [Obsolete("Todo: remove from all pages, then remove here")]
+    [Parameter] public string Api { get; set; }
+    
+    private string GetApiLink() => $"/api/{GetComponentName()}";
+
+    private string GetComponentName()
+    {
+        return NavigationManager.Uri.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+    }
+
+    private bool IsApiPage => NavigationManager.Uri.ToString().Contains("/api/");
+    
+    private string GetComponentTypeName() => ApiLink.GetTypeFromComponentLink( GetComponentName())?.Name;
 
     string GetTitle() => $"{Title} - MudBlazor";
 
@@ -49,5 +62,5 @@
         return SubTitle.TrimEnd('.') + ".";
     }
     
-    string GetKeywords() => $"{Title}, Mud{Api.ToPascalCase()}, {Keywords}, mudblazor, blazor, component, material design";
+    string GetKeywords() => $"{Title}, {GetComponentTypeName()}, {Keywords}, mudblazor, blazor, component, material design";
 }

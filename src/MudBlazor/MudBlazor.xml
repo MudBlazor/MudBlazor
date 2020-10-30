@@ -359,6 +359,56 @@
             Child content of the component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBadge.Color">
+            <summary>
+            The color of the badge.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Bottom">
+            <summary>
+            Aligns the badge to bottom.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Left">
+            <summary>
+            Aligns the badge to left.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Dot">
+            <summary>
+            Reduces the size of the badge and hide any of its content.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Overlap">
+            <summary>
+            Overlaps the childcontent on top of the content.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Bordered">
+            <summary>
+            Applies a border around the badge.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Icon">
+            <summary>
+            Sets the Icon to use in the badge.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Max">
+            <summary>
+            Max lenght of content to show.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Content">
+            <summary>
+            Content you want as text inside the badge.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.ChildContent">
+            <summary>
+            Child content of component, the content that the badge will apply to.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudButton.StartIcon">
             <summary>
             Icon placed before the text if set.
