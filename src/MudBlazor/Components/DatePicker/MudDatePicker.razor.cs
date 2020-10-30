@@ -46,16 +46,24 @@ namespace MudBlazor
                 if (value == _date)
                     return;
                 _date = value;
-                Value = _date.ToIsoDateString();
+                if ((!string.IsNullOrEmpty(DateFormat)) && _date.HasValue)
+                    Value = _date.Value.ToString(DateFormat);
+                else
+                    Value = _date.ToIsoDateString();
                 InvokeAsync(StateHasChanged);
                 DateChanged.InvokeAsync(value);
             }
         }
 
         /// <summary>
-        /// Fired when the date changes.
+        /// Fired when the DateFormat changes.
         /// </summary>
         [Parameter] public EventCallback<DateTime?> DateChanged { get; set; }
+
+        /// <summary>
+        /// String Format for selected date view
+        /// </summary>
+        [Parameter] public string DateFormat { get; set; }
 
         /// <summary>
         /// Defines on which day the week starts. Depends on the value of Culture. 

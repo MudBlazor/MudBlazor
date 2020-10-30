@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
-    public partial class MudTextField : MudBaseInputText
+    public partial class MudBaseTextField : MudBaseInput
     {
         protected string Classname =>
            new CssBuilder("mud-input-input-control").AddClass(Class)

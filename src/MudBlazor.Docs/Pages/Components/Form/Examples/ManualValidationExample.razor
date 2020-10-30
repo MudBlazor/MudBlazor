@@ -5,9 +5,9 @@
 
     <MudCard Class="demo-form-manual">
         <MudCardContent>
-            <MudTextField Label="Password" HelperText="Enter your new password" Immediate="true"
+            <MudTextField T="string" Label="Password" HelperText="Enter your new password" Immediate="true"
                           Error="@error1" ErrorText="@error_text1" ValueChanged="@(x => { pw1 = x; Validate(); })" InputType="InputType.Password" />
-            <MudTextField Label="Password" HelperText="Enter the password again" Immediate="true"
+            <MudTextField T="string" Label="Password" HelperText="Enter the password again" Immediate="true"
                           Error="@error2" ErrorText="@error_text2" ValueChanged="@(x => { pw2 = x; Validate(); })" InputType="InputType.Password" />
         </MudCardContent>
     </MudCard>
