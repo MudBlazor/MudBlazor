@@ -42,6 +42,7 @@ namespace MudBlazor.Docs.Models
         static Dictionary<Type, string> SpecialCaseComponents = new Dictionary<Type, string>()
         {
             [typeof(MudTable<T>)] = "table",
+            [typeof(MudTextField<T>)] = "text-field",
         };
 
         private static Dictionary<string, string> ComponentLinkTranslation = new Dictionary<string, string>()

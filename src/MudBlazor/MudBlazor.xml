@@ -49,6 +49,12 @@
             The value of this input element. This property is two-way bindable.
             </summary>
         </member>
+        <member name="M:MudBlazor.MudBaseInput`1.GenericValueChanged(`0)">
+            <summary>
+            Value change hook for descendants
+            </summary>
+            <param name="value"></param>
+        </member>
         <member name="P:MudBlazor.MudBaseInput`1.Standalone">
             <summary>
             If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
@@ -868,19 +874,80 @@
             Child content of component.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudInputControl.ControlChild">
+        <member name="P:MudBlazor.MudInputControl.ChildContent">
             <summary>
             Child content of component.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudInputControl.ControlInput">
+        <member name="P:MudBlazor.MudInputControl.InputContent">
             <summary>
             Should be the Input
             </summary>
         </member>
+        <member name="P:MudBlazor.MudInputControl.Margin">
+            <summary>
+             Will adjust vertical spacing. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.Error">
+            <summary>
+            If true, the label will be displayed in an error state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.ErrorText">
+            <summary>
+            The ErrorText that will be displayed if Error true
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.HelperText">
+            <summary>
+            The HelperText will be displayed below the text field.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.FullWidth">
+            <summary>
+            If true, the input will take up the full width of its container.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.Label">
+            <summary>
+            If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.Variant">
+            <summary>
+            Variant can be Text, Filled or Outlined.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.Disabled">
+            <summary>
+            If true, the input element will be disabled.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudInput`1.StringValueChanged(System.String)">
+            <summary>
+            Text change hook for descendants  
+            </summary>
+            <param name="value"></param>
+        </member>
         <member name="P:MudBlazor.MudInputLabel.ChildContent">
             <summary>
             Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputLabel.Disabled">
+            <summary>
+            If true, the input element will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputLabel.Error">
+            <summary>
+            If true, the label will be displayed in an error state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputLabel.Variant">
+            <summary>
+            Variant to use.
             </summary>
         </member>
         <member name="P:MudBlazor.MudLink.Color">
@@ -1758,6 +1825,16 @@
             <param name="value"></param>
             <param name="when"></param>
             <returns></returns>
+        </member>
+        <member name="T:MudBlazor.DateConverter">
+            <summary>
+            A ready made DateTime? to string binding converter with configurable date format and culture
+            </summary>
+        </member>
+        <member name="T:MudBlazor.DefaultConverter`1">
+            <summary>
+            A universal T to string binding converter
+            </summary>
         </member>
         <member name="P:MudBlazor.MudAvatar.Square">
             <summary>

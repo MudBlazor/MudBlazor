@@ -33,13 +33,33 @@ namespace MudBlazor
             get => _value;
             set
             {
-                if (!object.Equals(value,_value))
+                if (object.Equals(value, _value))
+                    return;
+                if (_settingValue)
+                    return;
+                _settingValue = true;
+                try
                 {
                     _value = value;
+                    GenericValueChanged(value);
                     ValidateValue(value);
                     ValueChanged.InvokeAsync(value);
                 }
+                finally
+                {
+                    _settingValue = false;
+                }
             }
+        }
+
+        private bool _settingValue;
+        
+        /// <summary>
+        /// Value change hook for descendants
+        /// </summary>
+        /// <param name="value"></param>
+        protected virtual void GenericValueChanged(TValue value) {
+                /* to be overridden by descendants who need to react here */
         }
 
         /// <summary>

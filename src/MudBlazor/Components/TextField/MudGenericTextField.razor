@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor
-@inherits MudBaseInputText
+@inherits MudBaseInput<T>
+@typeparam T;
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
     <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled">

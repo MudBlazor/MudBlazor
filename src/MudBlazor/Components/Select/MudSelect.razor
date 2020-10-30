@@ -3,11 +3,11 @@
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
     <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled">
-        <ControlInput>
+        <InputContent>
                 <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
                           @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
-        </ControlInput>
-        <ControlChild>
+        </InputContent>
+        <ChildContent>
             <CascadingValue Value="@this" IsFixed="true">
                 <MudPopover Open="@isOpen" Class="mud-select-menu" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
                     <MudList Clickable="true" Dense="@Dense">
@@ -15,7 +15,7 @@
                     </MudList>
                 </MudPopover>
             </CascadingValue>
-        </ControlChild>
+        </ChildContent>
     </MudInputControl>
 </CascadingValue>
 
