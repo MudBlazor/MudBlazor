@@ -15,7 +15,7 @@ namespace MudBlazor
 {
 
 
-    public class MudGenericTextField<T> : MudBaseTextField, IFormComponent, IDisposable
+    public class MudTextField<T> : MudBaseTextField, IFormComponent, IDisposable
     {
         private T _value;
 

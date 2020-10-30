@@ -6,13 +6,13 @@
 
     <MudCard Class="demo-form">
         <MudCardContent>
-            <MudTextField Label="Username" Required="true" RequiredError="User name is required!" />
-            <MudTextField Label="Email" Required="true" RequiredError="Email is required!"
+            <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!" />
+            <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
                 Validation="@(new EmailAddressAttribute(){ ErrorMessage = "The email address is invalid"})" />
-            <MudTextField Label="Password" HelperText="Choose a strong password" @ref="pwField1"
+            <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pwField1"
                 InputType="InputType.Password"
                 Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" />
-            <MudTextField 
+            <MudTextField T="string"
                 Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
                 Validation="@(new Func<string, string>(PasswordMatch))" Required="true"
                 RequiredError="Password is required!" />
@@ -41,7 +41,7 @@
 @code {
     bool success;
     string[] errors={};
-    MudTextField pwField1;
+    MudTextField<string> pwField1;
     MudForm form;
 
     private IEnumerable<string> PasswordStrength(string pw)

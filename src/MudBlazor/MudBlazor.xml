@@ -1396,55 +1396,55 @@
             Custom class/classes for TabPanel
             </summary>
         </member>
-        <member name="P:MudBlazor.MudGenericTextField`1.ValueChanged">
+        <member name="P:MudBlazor.MudTextField`1.ValueChanged">
             <summary>
             Fired when the Value property changes. 
             </summary>
         </member>
-        <member name="P:MudBlazor.MudGenericTextField`1.Value">
+        <member name="P:MudBlazor.MudTextField`1.Value">
             <summary>
             The value of this input element. This property is two-way bindable.
             </summary>
         </member>
-        <member name="M:MudBlazor.MudGenericTextField`1.GenericValueChanged(`0)">
+        <member name="M:MudBlazor.MudTextField`1.GenericValueChanged(`0)">
             <summary>
             Value change hook for descendants
             </summary>
             <param name="value"></param>
         </member>
-        <!-- Badly formed XML comment ignored for member "P:MudBlazor.MudGenericTextField`1.Validation" -->
-        <member name="M:MudBlazor.MudGenericTextField`1.Validate">
+        <!-- Badly formed XML comment ignored for member "P:MudBlazor.MudTextField`1.Validation" -->
+        <member name="M:MudBlazor.MudTextField`1.Validate">
             <summary>
             Causes this component to validate its value
             </summary>
         </member>
-        <member name="P:MudBlazor.MudGenericTextField`1.EditContext">
+        <member name="P:MudBlazor.MudTextField`1.EditContext">
             <summary>
             This is the form validation context for Blazor's <EditForm></EditForm> component
             </summary>
         </member>
-        <member name="P:MudBlazor.MudGenericTextField`1.For">
+        <member name="P:MudBlazor.MudTextField`1.For">
             <summary>
             Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.
             </summary>
         </member>
-        <member name="F:MudBlazor.MudGenericTextField`1._fieldIdentifier">
+        <member name="F:MudBlazor.MudTextField`1._fieldIdentifier">
             <summary>
             Points to a field of the model for which validation messages should be displayed.
             </summary>
         </member>
-        <member name="F:MudBlazor.MudGenericTextField`1._currentFor">
+        <member name="F:MudBlazor.MudTextField`1._currentFor">
             <summary>
             To find out whether or not For parameter has changed we keep a separate reference
             </summary>
         </member>
-        <member name="F:MudBlazor.MudGenericTextField`1._currentEditContext">
+        <member name="F:MudBlazor.MudTextField`1._currentEditContext">
             <summary>
             To find out whether or not EditContext parameter has changed we keep a separate reference
             </summary>
         </member>
-        <member name="M:MudBlazor.MudGenericTextField`1.Dispose(System.Boolean)">
+        <member name="M:MudBlazor.MudTextField`1.Dispose(System.Boolean)">
             <summary>
             Called to dispose this instance.
             </summary>
