@@ -35,6 +35,8 @@ namespace MudBlazor.Docs.Models
         /// </summary>
         public static Type GetTypeFromComponentLink(string component)
         {
+            if (string.IsNullOrEmpty(component))
+                return null;
             if (InverseSpecialCase.TryGetValue(component, out var type))
                 return type;
             var assembly = typeof(MudComponentBase).Assembly;
