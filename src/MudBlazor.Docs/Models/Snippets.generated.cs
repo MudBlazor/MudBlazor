@@ -249,7 +249,7 @@ public const string BadgeBasicExample = @"<MudBadge Content=""3"" Color=""Color.
 
 public const string BadgeInteractiveExample = @"<MudGrid>
     <MudItem md=""8"" Class=""mud-text-align-center my-auto"">
-        <MudBadge Content=""3"" Color=""Color.Primary"" Overlap=""@Overlap"" Bottom=""@Bottom"" Left=""@Left"" Dot=""@Dot"" Bordered=""@Bordered"">
+        <MudBadge Content=""@BadgeContent"" Color=""Color.Primary"" Overlap=""@Overlap"" Bottom=""@Bottom"" Left=""@Left"" Dot=""@Dot"" Bordered=""@Bordered"" Icon=""@BadgeIcon"">
             @if (SelectedTestComponent == ""MudIcon"")
             {
                 <MudIcon Icon=""@Icons.Custom.MudBlazor"" Color=""Color.Default"" Size=""Size.Large"" />
@@ -269,23 +269,26 @@ public const string BadgeInteractiveExample = @"<MudGrid>
         </MudBadge>
     </MudItem>
     <MudItem md=""4"">
-        <MudCard Style=""min-height:500px;"">
-            <MudCardHeader>
-                <CardHeaderContent>
-                    <MudSelect Label=""Test Component"" Variant=""Variant.Outlined"" Dense=""true"" Value=""@SelectedTestComponent"" ValueChanged=""OnSelectedTestComponent"">
-                        <MudSelectItem Value=""MudIcon"">MudIcon</MudSelectItem>
-                        <MudSelectItem Value=""MudButton"">MudButton</MudSelectItem>
-                        <MudSelectItem Value=""MudIconButton"">MudIconButton</MudSelectItem>
-                        <MudSelectItem Value=""MudText"">MudText</MudSelectItem>
-                    </MudSelect>
-                </CardHeaderContent>
-            </MudCardHeader>
+        <MudCard>
             <MudCardContent>
+                <MudSelect Label=""Test Component"" Dense=""true"" OffsetY=""true"" Value=""@SelectedTestComponent"" ValueChanged=""OnSelectedTestComponent"" Class=""mb-4"">
+                    <MudSelectItem Value=""MudIcon"">MudIcon</MudSelectItem>
+                    <MudSelectItem Value=""MudButton"">MudButton</MudSelectItem>
+                    <MudSelectItem Value=""MudIconButton"">MudIconButton</MudSelectItem>
+                    <MudSelectItem Value=""MudText"">MudText</MudSelectItem>
+                </MudSelect>
+                <MudText Typo=""Typo.subtitle2"" GutterBottom=""true"">Badge Options</MudText>
                 <MudCheckBox @bind-Checked=""@Bottom"" Label=""Bottom"" Color=""Color.Primary"" Style=""width:100%;"" />
                 <MudCheckBox @bind-Checked=""@Dot"" Label=""Dot"" Color=""Color.Primary"" Style=""width:100%;"" />
                 <MudCheckBox @bind-Checked=""@Left"" Label=""Left"" Color=""Color.Primary"" Style=""width:100%;"" />
                 <MudCheckBox @bind-Checked=""@Overlap"" Label=""Overlap"" Color=""Color.Primary"" Style=""width:100%;"" />
                 <MudCheckBox @bind-Checked=""@Bordered"" Label=""Bordered"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudCheckBox CheckedChanged=""AddIcon"" Label=""Icon"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudText Typo=""Typo.subtitle2"" Class=""my-2"">Badge Content</MudText>
+                <div style=""display: flex;"">
+                    <MudButton OnClick=""AddValue"" Variant=""Variant.Filled"" Size=""Size.Small"" Color=""Color.Primary"" Style=""width:100%;"" Class=""mr-1"">Add @AddNumber</MudButton>
+                    <MudButton OnClick=""ClearContent"" Variant=""Variant.Filled"" Size=""Size.Small"" Color=""Color.Secondary"" Style=""width:100%;"" Class=""ml-1"">Clear</MudButton>
+                </div>
             </MudCardContent>
         </MudCard>
     </MudItem>
@@ -297,16 +300,48 @@ public const string BadgeInteractiveExample = @"<MudGrid>
     public bool Left { get; set; }
     public bool Overlap { get; set; }
     public bool Bordered { get; set; }
-
-
-    public string ComponentIcon { get; set; } = Icons.Custom.MudBlazor;
+    public string BadgeIcon { get; set; }
 
     public string SelectedTestComponent { get; set; } = ""MudIcon"";
+    public string AddNumber { get; set; } = ""1"";
 
+    public int? BadgeContent { get; set; }
 
-    private void OnSelectedTestComponent(string value)
+    public void OnSelectedTestComponent(string value)
     {
         SelectedTestComponent = value;
+    }
+
+    public void AddIcon()
+    {
+        if (String.IsNullOrEmpty(BadgeIcon))
+        {
+            BadgeIcon = Icons.Custom.Radioactive;
+        }
+        else
+        {
+            BadgeIcon = null;
+        }
+    }
+
+    public void AddValue()
+    {
+        if(BadgeContent == null)
+        {
+            AddNumber = ""25"";
+            BadgeContent = 1;
+        }
+        else
+        {
+            BadgeContent += 25;
+        }
+    }
+
+    public void ClearContent()
+    {
+        AddNumber = ""1"";
+        BadgeContent = null;
+        StateHasChanged();
     }
 }";
 
@@ -1698,18 +1733,46 @@ public const string RadioGroupExample = @"<MudForm>
     public string SelectedOption { get; set; }
 }";
 
-public const string RadioLabelPlacementExample = @"<MudForm Class=""demo-radio-inline"">
-    <MudRadioGroup @bind-SelectedLabel=""@SelectedLabel"" @bind-SelectedOption=""@SelectedOption"">
-        <MudRadio Placement=""Placement.Bottom"" Color=""Color.Primary"" Option=""Radio 1"">Bottom</MudRadio>
-        <MudRadio Placement=""Placement.Start"" Color=""Color.Primary"" Option=""Radio 2"">Start</MudRadio>
-        <MudRadio Placement=""Placement.Top"" Color=""Color.Primary"" Option=""Radio 3"">Top</MudRadio>
-        <MudRadio Placement=""Placement.End"" Color=""Color.Primary"" Option=""Radio 4"">End</MudRadio>
-    </MudRadioGroup>
-</MudForm>
+public const string RadioLabelPlacementExample = @"<MudGrid>
+    <MudItem xs=""12"" md=""2"">
+        <MudRadioGroup SelectedOptionChanged=""@OnRadioSelect"" SelectedOption=""@SelectedOption"">
+            <MudRadio Color=""Color.Primary"" Option=""1"">Bottom</MudRadio>
+            <MudRadio Color=""Color.Primary"" Option=""2"">Start</MudRadio>
+            <MudRadio Color=""Color.Primary"" Option=""3"">Top</MudRadio>
+            <MudRadio Color=""Color.Primary"" Option=""4"">End</MudRadio>
+        </MudRadioGroup>
+    </MudItem>
+    <MudItem xs=""12"" md=""8"" Class=""mud-text-align-center my-auto"">
+        <MudRadioGroup>
+            <MudRadio Placement=""@LabelPlacement"" Color=""Color.Secondary"">Label Placement</MudRadio>
+        </MudRadioGroup>
+    </MudItem>
+    <MudItem xs=""12"" md=""2"" Style=""width:100%""></MudItem>
+</MudGrid>
 
 @code {
-    public string SelectedLabel { get; set; } = ""Primary"";
     public string SelectedOption { get; set; }
+
+    public Placement LabelPlacement { get; set; } = Placement.End;
+
+    public void OnRadioSelect(string value)
+    {
+        switch (value)
+        {
+            case ""1"":
+                LabelPlacement = Placement.Bottom;
+                break;
+            case ""2"":
+                LabelPlacement = Placement.Start;
+                break;
+            case ""3"":
+                LabelPlacement = Placement.Top;
+                break;
+            case ""4"":
+                LabelPlacement = Placement.End;
+                break;
+        }
+    }
 }";
 
 public const string MultiSelectExample = @"<MudGrid>
