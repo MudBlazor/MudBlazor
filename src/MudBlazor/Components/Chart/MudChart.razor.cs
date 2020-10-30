@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using MudBlazor.Charts;
@@ -57,6 +58,12 @@ namespace MudBlazor
         {
             var total = InputData.Sum();
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
+        }
+
+
+        protected string ToS(double d)
+        {
+            return d.ToString(CultureInfo.InvariantCulture);
         }
     }
 

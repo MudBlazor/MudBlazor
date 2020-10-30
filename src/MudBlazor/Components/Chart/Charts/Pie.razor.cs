@@ -13,11 +13,11 @@ namespace MudBlazor.Charts
         public List<SvgPath> Paths = new List<SvgPath>();
         public List<SvgLegend> Legends = new List<SvgLegend>();
 
-        private double PieRadius = 1;
+        private double radius = 1;
         private void GetCoordinatesForPercent(double percent, out double x, out double y)
         {
-            x = PieRadius * Math.Cos(2 * Math.PI * percent);
-            y = PieRadius * Math.Sin(2 * Math.PI * percent);
+            x = radius * Math.Cos(2 * Math.PI * percent);
+            y = radius * Math.Sin(2 * Math.PI * percent);
         }
 
         protected override void OnInitialized()
@@ -25,22 +25,22 @@ namespace MudBlazor.Charts
             double x, y;
             double px = 0, py = 0;
             double totalPercent = 0;
-            string radius = PieRadius.ToString();
-            for (int icounter = 0; icounter < InputData.Length; icounter++)
+            var radius = this.radius;
+            var ndata = GetNormalizedData();
+            for (int icounter = 0; icounter < ndata.Length; icounter++)
             {
-                double data = InputData[icounter];
-                double percent = data / 100;
+                double percent = ndata[icounter];
 
                 totalPercent = totalPercent + percent;
-                x = PieRadius * Math.Cos(2 * Math.PI * totalPercent);
-                y = PieRadius * Math.Sin(2 * Math.PI * totalPercent);
+                x = this.radius * Math.Cos(2 * Math.PI * totalPercent);
+                y = this.radius * Math.Sin(2 * Math.PI * totalPercent);
                 SvgPath path = null;
                 if (icounter == 0)
                 {
                     path = new SvgPath()
                     {
                         Index = icounter,
-                        Data = $"M {radius.ToString(CultureInfo.InvariantCulture)} 0 A {radius.ToString(CultureInfo.InvariantCulture)} {radius.ToString(CultureInfo.InvariantCulture)} 0 0 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
+                        Data = $"M {ToS(radius)} 0 A {ToS(radius)} {ToS(radius)} 0 0 1 {ToS(x)} {ToS(y)} L 0 0"
                     };
                 }
                 else
@@ -50,7 +50,7 @@ namespace MudBlazor.Charts
                         path = new SvgPath()
                         {
                             Index = icounter,
-                            Data = $"M {px.ToString(CultureInfo.InvariantCulture)} {py.ToString(CultureInfo.InvariantCulture)} A {radius} {radius.ToString(CultureInfo.InvariantCulture)} 0 1 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
+                            Data = $"M {ToS(px)} {ToS(py)} A {ToS(radius)} {ToS(radius)} 0 1 1 {ToS(x)} {ToS(y)} L 0 0"
                         };
                     }
                     else
@@ -58,7 +58,7 @@ namespace MudBlazor.Charts
                         path = new SvgPath()
                         {
                             Index = icounter,
-                            Data = $"M {px.ToString(CultureInfo.InvariantCulture)} {py.ToString(CultureInfo.InvariantCulture)} A {radius.ToString(CultureInfo.InvariantCulture)} {radius.ToString(CultureInfo.InvariantCulture)} 0 0 1 {x.ToString(CultureInfo.InvariantCulture)} {y.ToString(CultureInfo.InvariantCulture)} L 0 0"
+                            Data = $"M {ToS(px)} {ToS(py)} A {ToS(radius)} {ToS(radius)} 0 0 1 {ToS(x)} {ToS(y)} L 0 0"
                         };
                     }
                 }
@@ -67,8 +67,9 @@ namespace MudBlazor.Charts
             }
 
             int counter = 0;
-            foreach (double data in InputData)
+            foreach (double data in ndata)
             {
+                var percent = data * 100;
                 string labels = "";
                 if (counter < InputLabels.Length)
                 {
@@ -78,7 +79,7 @@ namespace MudBlazor.Charts
                 {
                     Index = counter,
                     Labels = labels,
-                    Data = data.ToString(CultureInfo.InvariantCulture)
+                    Data = ToS(percent)
                 };
                 Legends.Add(Legend);
                 counter += 1;
