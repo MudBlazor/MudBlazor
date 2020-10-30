@@ -196,6 +196,33 @@ public const string MudAppBar_Tag = @"Use Tag to attach any user data object to 
 public const string MudAppBar_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudBadge_Color = @"The color of the badge.";
+
+public const string MudBadge_Bottom = @"Aligns the badge to bottom.";
+
+public const string MudBadge_Left = @"Aligns the badge to left.";
+
+public const string MudBadge_Dot = @"Reduces the size of the badge and hide any of its content.";
+
+public const string MudBadge_Overlap = @"Overlaps the childcontent on top of the content.";
+
+public const string MudBadge_Icon = @"Sets the Icon to use in the badge.";
+
+public const string MudBadge_Max = @"Max lenght of content to show.";
+
+public const string MudBadge_Content = @"Content you want as text inside the badge.";
+
+public const string MudBadge_ChildContent = @"Child content of component, the content that the badge will apply to.";
+
+public const string MudBadge_Class = @"User class names, separated by space";
+
+public const string MudBadge_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudBadge_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudBadge_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudButton_StartIcon = @"Icon placed before the text if set.";
 
 public const string MudButton_EndIcon = @"Icon placed before the text if set.";

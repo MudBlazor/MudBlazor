@@ -1999,6 +1999,63 @@ ul {
   margin-right: -8px;
   padding-left: 16px; }
 
+.mud-badge, .mud-badge-badge {
+  display: inline-block;
+  line-height: 1; }
+
+.mud-badge {
+  position: relative; }
+  .mud-badge .mud-badge-wrapper {
+    flex: 0 1;
+    height: 100%;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: 100%; }
+    .mud-badge .mud-badge-wrapper .mud-badge-badge {
+      border-radius: 10px;
+      font-size: 12px;
+      height: 20px;
+      letter-spacing: 0;
+      min-width: 20px;
+      padding: 4px 6px;
+      pointer-events: auto;
+      position: absolute;
+      text-align: center;
+      text-indent: 0;
+      top: auto;
+      transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+      white-space: nowrap; }
+      .mud-badge .mud-badge-wrapper .mud-badge-badge.mud-badge-dot {
+        border-radius: 4.5px;
+        height: 9px;
+        min-width: 0;
+        padding: 0;
+        width: 9px; }
+      .mud-badge .mud-badge-wrapper .mud-badge-badge.mud-badge-icon {
+        border-color: inherit;
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 100%;
+        width: 20px;
+        height: 20px; }
+        .mud-badge .mud-badge-wrapper .mud-badge-badge.mud-badge-icon .mud-icon-badge {
+          color: inherit;
+          font-size: 12px;
+          margin-left: -4px;
+          margin-top: -4px; }
+      .mud-badge .mud-badge-wrapper .mud-badge-badge.mud-badge-top {
+        top: auto;
+        bottom: calc(100% - 4px); }
+        .mud-badge .mud-badge-wrapper .mud-badge-badge.mud-badge-top.mud-badge-overlap {
+          bottom: calc(100% - 12px); }
+      .mud-badge .mud-badge-wrapper .mud-badge-badge.mud-badge-right {
+        right: auto;
+        left: calc(100% - 4px); }
+        .mud-badge .mud-badge-wrapper .mud-badge-badge.mud-badge-right.mud-badge-overlap {
+          left: calc(100% - 12px); }
+
 .mud-toolbar {
   display: flex;
   position: relative;
@@ -2220,6 +2277,11 @@ ul {
     background-color: var(--mud-theme-secondary); }
     .mud-button-filled.mud-button-filled-secondary:hover {
       background-color: var(--mud-theme-secondary-darken); }
+  .mud-button-filled.mud-button-filled-danger {
+    color: var(--mud-theme-on-alert);
+    background-color: var(--mud-theme-danger); }
+    .mud-button-filled.mud-button-filled-danger:hover {
+      background-color: #da1a0c; }
 
 .mud-button-disable-elevation {
   box-shadow: none; }

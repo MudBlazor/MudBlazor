@@ -231,6 +231,22 @@ public const string AvatarVariantsExample = @"<MudAvatar Square=""true"">
     <MudIcon Icon=""@Icons.Material.Comment"" />
 </MudAvatar>";
 
+public const string BadgeBasicExample = @"<MudBadge Content=""3"" Color=""Color.Primary"" Overlap=""true"">
+    <MudIcon Icon=""@Icons.Material.Email"" Color=""Color.Default""/>
+</MudBadge>
+
+<MudBadge Content=""100"" Color=""Color.Primary"" Overlap=""true"">
+    <MudIcon Icon=""@Icons.Material.Email"" Color=""Color.Default""/>
+</MudBadge>
+
+<MudBadge Icon=""@Icons.Material.Lock"" Color=""Color.Danger"" Overlap=""true"">
+    <MudButton Color=""Color.Danger"" Variant=""Variant.Filled"" DisableElevation=""true"">Security Issues</MudButton>
+</MudBadge>
+
+<MudBadge Dot=""true"" Color=""Color.Info"">
+    <MudText>Bug Reports</MudText>
+</MudBadge>";
+
 public const string ButtonCustomizedExample = @"<MudButton Variant=""Variant.Filled"" EndIcon=""@Icons.Material.ArrowDownward"" Style=""background-color: yellowgreen; color: white; width: 200px; height: 60px;"">
     Download Now
 </MudButton>";
