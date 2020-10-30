@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<label class="@Classname">
+<label class="@Classname" style="@Style">
     <span class="@CheckBoxClassname">
         @*note: stopping the click propagation is important here. otherwise checking the checkbox results in click events on its parent (i.e. table row), which is generally not what you would want*@
         <input @attributes="UserAttributes" type="checkbox" class="mud-checkbox-input" @bind="@Checked" disabled="@Disabled" @onclick:stopPropagation="true"/>
