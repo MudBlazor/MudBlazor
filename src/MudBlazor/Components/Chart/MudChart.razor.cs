@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using MudBlazor.Charts;
 using MudBlazor.Utilities;
@@ -49,7 +50,16 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool DisplayLegendItemValues { get; set; }
 
+        /// <summary>
+        /// Scales the input data to the range between 0 and 1
+        /// </summary>
+        protected double[] GetNormalizedData()
+        {
+            var total = InputData.Sum();
+            return InputData.Select(x => Math.Abs(x) / total).ToArray();
+        }
     }
+
     public enum ChartType
     {
         Donut,

@@ -20,9 +20,9 @@ namespace MudBlazor.Charts
             double offset = counterClockwiseOffset;
 
             int counter = 0;
-            foreach (double data in InputData)
+            foreach (double data in GetNormalizedData())
             {
-                double percent = data;
+                double percent = data*100;
                 double reversePercent = 100 - percent;
                 offset = 100 - totalPercent + counterClockwiseOffset;
                 totalPercent = totalPercent + percent;
@@ -55,5 +55,6 @@ namespace MudBlazor.Charts
                 counter += 1;
             }
         }
+
     }
 }
