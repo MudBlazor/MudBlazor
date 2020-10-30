@@ -2194,7 +2194,6 @@ public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElement
         <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Menu</MudTh>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
         <MudTh>Name</MudTh>
@@ -2202,13 +2201,6 @@ public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElement
         <MudTh>Molar mass</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>
-            <MudMenu @key=""@context"" Icon=""@Icons.Material.MoreVert"">
-                <MudMenuItem>Test</MudMenuItem>
-                <MudMenuItem>Test</MudMenuItem>
-                <MudMenuItem>Test</MudMenuItem>
-            </MudMenu>
-        </MudTd>
         <MudTd>@context.Number</MudTd>
         <MudTd>@context.Sign</MudTd>
         <MudTd>@context.Name</MudTd>
