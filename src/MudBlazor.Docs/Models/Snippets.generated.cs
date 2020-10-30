@@ -2055,6 +2055,67 @@ public const string TableFixedHeaderExample = @"<MudTable Items=""@PeriodicTable
     bool fixed_header = true;
 }";
 
+public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"">
+    <ToolBarContent>
+        <MudText Typo=""Typo.h6"" Class=""mud-flex-1-1-100"">Periodic Elements</MudText>
+        <MudIcon Style=""margin-top: 20px; margin-right: 8px;"" Icon=""@Icons.Material.Search""></MudIcon>
+        <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Number</MudTd>
+        <MudTd>@context.Sign</MudTd>
+        <MudTd>@context.Name</MudTd>
+        <MudTd>@context.Position</MudTd>
+        <MudTd>@context.Molar</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd>@context.Number</MudTd>
+        <MudTd>
+            <MudTextField @bind-Value=""@context.Sign"" />
+        </MudTd>
+        <MudTd>
+            <MudTextField @bind-Value=""@context.Name"" />
+        </MudTd>
+        <MudTd>@context.Position</MudTd>
+        <MudTd>@context.Molar</MudTd>
+    </RowEditingTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+<MudSwitch @bind-Checked=""@hover"" Color=""Color.Primary"">Hover</MudSwitch>
+<MudSwitch @bind-Checked=""@dense"" Color=""Color.Secondary"">Dense</MudSwitch>
+<MudText Inline=""true"">Selected: @selected_item?.Name</MudText>
+
+@code {
+    bool dense = false;
+    bool hover = true;
+    bool fixed_header = false;
+    string search_string = """";
+    Element selected_item = null;
+    HashSet<Element> selected_items = new HashSet<Element>();
+
+    bool FilterFunc(Element element)
+    {
+        if (string.IsNullOrWhiteSpace(search_string))
+            return true;
+        if (element.Sign.Contains(search_string))
+            return true;
+        if (element.Name.Contains(search_string))
+            return true;
+        if ($""{element.Number} {element.Position} {element.Molar}"".Contains(search_string))
+            return true;
+        return false;
+    }
+}";
+
 public const string TableMultiSelectExample = @"<MudTable Items=""@PeriodicTable.GetElements()"" MultiSelection=""true"" @bind-SelectedItems=""selected_items"" Hover=""@hover"">
     <HeaderContent>
         <MudTh>Nr</MudTh>

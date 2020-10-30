@@ -116,6 +116,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment PagerContent { get; set; }
 
+        /// <summary>
+        /// Defines if Table generates RowEditingTemplate for SelectedItem Row for inline input data.
+        /// </summary>
+        [Parameter] public bool InlineEdit { get; set; } = false;
+
         public abstract TableContext TableContext { get; }
 
         public void NavigateTo(Page page)
@@ -153,7 +158,6 @@ namespace MudBlazor
             => new StyleBuilder()
                 .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
                 .Build();
-
 
         protected override void OnParametersSet()
         {

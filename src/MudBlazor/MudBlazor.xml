@@ -1221,6 +1221,11 @@
             Add MudTablePager here to enable breaking the rows in to multiple pages.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTableBase.InlineEdit">
+            <summary>
+            Defines if Table generates RowEditingTemplate for SelectedItem Row for inline input data.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTablePager.DisableRowsPerPage">
             <summary>
             Set true to hide the part of the pager which allows to change the page size.
@@ -1847,6 +1852,11 @@
         <member name="P:MudBlazor.MudTable`1.RowTemplate">
             <summary>
             Defines how a table row looks like. Use MudTd to define the table cells and their content.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTable`1.RowEditingTemplate">
+            <summary>
+            Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTable`1.Items">
