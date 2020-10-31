@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+
+<span  class="@Classname" @onmouseover="HandleMouseOver" @onclick="HandleClick" @onmouseout="HandleMouseOut" >
+    <svg viewBox="0 0 24 24" aria-hidden="true" >
+        <path d="@ItemIcon" />
+    </svg>
+    <input class="mud-rating-input" type="checkbox" value="@ItemValue" name="@Rating.Name" disabled="@Disabled" checked="@(IsChecked)" @attributes="UserAttributes"/>
+</span>
