@@ -30,9 +30,9 @@ namespace MudBlazor.Charts
                 var circle = new SvgCircle()
                 {
                     Index = counter,
-                    CX = 21,
-                    CY = 21,
-                    Radius = 15.915,
+                    CX = 20,
+                    CY = 20,
+                    Radius = 15,
                     StrokeDashArray = $"{percent.ToString(CultureInfo.InvariantCulture)} {reversePercent.ToString(CultureInfo.InvariantCulture)}",
                     StrokeDashOffset = offset
                 };

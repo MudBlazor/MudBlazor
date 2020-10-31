@@ -10,66 +10,34 @@ namespace MudBlazor.Charts
     {
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 
-        public List<SvgPath> Paths = new List<SvgPath>();
+        public List<SvgCircle> Circles = new List<SvgCircle>();
         public List<SvgLegend> Legends = new List<SvgLegend>();
-
-        private double radius = 1;
-        private void GetCoordinatesForPercent(double percent, out double x, out double y)
-        {
-            x = radius * Math.Cos(2 * Math.PI * percent);
-            y = radius * Math.Sin(2 * Math.PI * percent);
-        }
 
         protected override void OnInitialized()
         {
-            double x, y;
-            double px = 0, py = 0;
+            double counterClockwiseOffset = 25;
             double totalPercent = 0;
-            var radius = this.radius;
-            var ndata = GetNormalizedData();
-            for (int icounter = 0; icounter < ndata.Length; icounter++)
-            {
-                double percent = ndata[icounter];
-
-                totalPercent = totalPercent + percent;
-                x = this.radius * Math.Cos(2 * Math.PI * totalPercent);
-                y = this.radius * Math.Sin(2 * Math.PI * totalPercent);
-                SvgPath path = null;
-                if (icounter == 0)
-                {
-                    path = new SvgPath()
-                    {
-                        Index = icounter,
-                        Data = $"M {ToS(radius)} 0 A {ToS(radius)} {ToS(radius)} 0 0 1 {ToS(x)} {ToS(y)} L 0 0"
-                    };
-                }
-                else
-                {
-                    if (percent > 0.5)
-                    {
-                        path = new SvgPath()
-                        {
-                            Index = icounter,
-                            Data = $"M {ToS(px)} {ToS(py)} A {ToS(radius)} {ToS(radius)} 0 1 1 {ToS(x)} {ToS(y)} L 0 0"
-                        };
-                    }
-                    else
-                    {
-                        path = new SvgPath()
-                        {
-                            Index = icounter,
-                            Data = $"M {ToS(px)} {ToS(py)} A {ToS(radius)} {ToS(radius)} 0 0 1 {ToS(x)} {ToS(y)} L 0 0"
-                        };
-                    }
-                }
-                Paths.Add(path);
-                px = x; py = y;
-            }
+            double offset = counterClockwiseOffset;
 
             int counter = 0;
-            foreach (double data in ndata)
+            foreach (double data in GetNormalizedData())
             {
-                var percent = data * 100;
+                double percent = data * 100;
+                double reversePercent = 100 - percent;
+                offset = 100 - totalPercent + counterClockwiseOffset;
+                totalPercent = totalPercent + percent;
+
+                var circle = new SvgCircle()
+                {
+                    Index = counter,
+                    CX = 10,
+                    CY = 10,
+                    Radius = 5,
+                    StrokeDashArray = $"calc({percent.ToString(CultureInfo.InvariantCulture)} * 31.4 / 100) 31.4",
+                };
+                Circles.Add(circle);
+
+
                 string labels = "";
                 if (counter < InputLabels.Length)
                 {
@@ -79,9 +47,10 @@ namespace MudBlazor.Charts
                 {
                     Index = counter,
                     Labels = labels,
-                    Data = ToS(percent)
+                    Data = data.ToString()
                 };
                 Legends.Add(Legend);
+
                 counter += 1;
             }
         }
