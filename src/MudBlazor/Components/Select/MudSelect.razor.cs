@@ -172,9 +172,13 @@ namespace MudBlazor
 
         public void CheckGenericTypeMatch(object select_item)
         {
+            if (select_item is MudSelectItemString && typeof(T) == typeof(string))
+                return;
             var itemT=select_item.GetType().GenericTypeArguments[0];
             if (itemT != typeof(T))
                 throw new GenericTypeMismatchException("MudSelect", "MudSelectItem", typeof(T), itemT);
         }
     }
+
+    public class MudSelectString : MudSelect<string> {}
 }

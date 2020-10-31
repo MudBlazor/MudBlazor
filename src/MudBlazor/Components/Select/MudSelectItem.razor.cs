@@ -91,6 +91,7 @@ namespace MudBlazor
             InvokeAsync(StateHasChanged);
         }
 
-
     }
+
+    public class MudSelectItemString : MudSelectItem<string> { }
 }

@@ -39,4 +39,6 @@ namespace MudBlazor
 
    
     }
+
+    public class MudInputString : MudInput<string> {}
 }

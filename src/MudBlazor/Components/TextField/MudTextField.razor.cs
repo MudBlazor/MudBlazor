@@ -15,4 +15,6 @@ namespace MudBlazor
            .Build();
 
     }
+
+    public class MudTextFieldString : MudTextField<string> {}
 }
