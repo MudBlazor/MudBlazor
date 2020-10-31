@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Components.Select;
 using MudBlazor.Utilities.Exceptions;
 
@@ -73,6 +74,9 @@ namespace MudBlazor
 
         private Func<T, string> _toStringFunc = x => x?.ToString();
 
+        /// <summary>
+        /// Converts selected values from T to string
+        /// </summary>
         [Parameter]
         public Func<T, string> ToStringFunc
         {
@@ -96,6 +100,8 @@ namespace MudBlazor
         /// </summary>
         protected T LookupValue(string arg)
         {
+            if (arg==null)
+                return default(T);
             if (_lookup.TryGetValue(arg, out var value))
                 return value;
             return default(T);
@@ -251,6 +257,16 @@ namespace MudBlazor
         {
             _items.Remove(item);
             RemoveFromLookup(item);
+        }
+
+        /// <summary>
+        /// Input, referenced via @ref
+        /// </summary>
+        private MudInput<string> input;
+
+        private void OnInputBurred(FocusEventArgs obj)
+        {
+            StringValueChanged(@input.Value);
         }
     }
 

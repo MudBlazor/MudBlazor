@@ -1215,6 +1215,11 @@
             Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudSelect`1.ToStringFunc">
+            <summary>
+            Converts selected values from T to string
+            </summary>
+        </member>
         <member name="M:MudBlazor.MudSelect`1.LookupValue(System.String)">
             <summary>
             LookupValue is used to find the value for a given input text by looking it up in the string -> value lookup.
@@ -1238,6 +1243,11 @@
         <member name="P:MudBlazor.MudSelect`1.OffsetY">
             <summary>
             If true, the select menu will open either before or after the input.
+            </summary>
+        </member>
+        <member name="F:MudBlazor.MudSelect`1.input">
+            <summary>
+            Input, referenced via @ref
             </summary>
         </member>
         <member name="T:MudBlazor.MudSelectItem`1">
