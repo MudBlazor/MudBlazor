@@ -501,6 +501,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void LineExample2_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<LineExample2>();
+        }
+
+
+        [Test]
         public void PieExample1_Test()
         {
                 using var ctx = new Bunit.TestContext();

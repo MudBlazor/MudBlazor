@@ -32,8 +32,8 @@ namespace MudBlazor.Charts
                     Index = counter,
                     CX = 20,
                     CY = 20,
-                    Radius = 15,
-                    StrokeDashArray = $"{percent.ToString(CultureInfo.InvariantCulture)} {reversePercent.ToString(CultureInfo.InvariantCulture)}",
+                    Radius = 15.91549430918954,
+                    StrokeDashArray = $"{ToS(percent)} {ToS(reversePercent)}",
                     StrokeDashOffset = offset
                 };
                 Circles.Add(circle);

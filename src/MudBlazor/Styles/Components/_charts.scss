@@ -3,6 +3,9 @@
 
     &.mud-chart-legend-bottom {
         flex-direction: column;
+        .mud-chart-legend{
+            margin-top:10px;
+        }
     }
 
     &.mud-chart-legend-top {

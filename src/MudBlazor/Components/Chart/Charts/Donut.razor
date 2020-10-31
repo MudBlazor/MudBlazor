@@ -8,10 +8,14 @@
     @foreach (var item in Circles.ToList())
     {
         <circle class="@($"mud-donut-segment mud-chart-stroke-color-{item.Index.ToString()}")" 
-                cx="@item.CX.ToString(CultureInfo.InvariantCulture)" 
-                cy="@item.CY.ToString(CultureInfo.InvariantCulture)" r="15.91549430918954" stroke-dasharray="@item.StrokeDashArray" stroke-dashoffset="@item.StrokeDashOffset.ToString(CultureInfo.InvariantCulture)"></circle>
+                cx="@ToS(item.CX)" 
+                cy="@ToS(item.CY)"
+                r="@ToS(item.Radius)"
+                stroke-dasharray="@item.StrokeDashArray"
+                stroke-dashoffset="@ToS(item.StrokeDashOffset)">
+        </circle>
     }
-    <circle class="mud-donut-hole" cx="21" cy="21" r="15.91549430918954"></circle>
+    <circle class="mud-donut-hole" cx="21" cy="21" r="13.4"></circle>
 </svg>
 <div class="mud-chart-legend">
     @foreach (var item in Legends.ToList())

@@ -14,22 +14,15 @@ namespace MudBlazor.Charts
         public List<SvgText> HorizontalValues = new List<SvgText>();
 
         public List<SvgPath> VerticalLines = new List<SvgPath>();
-        
+        public List<SvgText> VerticalValues = new List<SvgText>();
+
         public List<SvgLegend> Legends = new List<SvgLegend>();
         public List<ChartSeries> Series = new List<ChartSeries>();
 
-        public string Test1 { get; set; }
-        public string Test2 { get; set; }
-        public string Test3 { get; set; }
-        public string Test4 { get; set; }
-        public string Test5 { get; set; }
+        public List<SvgPath> ChartLines = new List<SvgPath>();
 
         protected override void OnInitialized()
         {
-
-            //string[] inputLabels = InputLabels.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            //string[] xAxisinputLabels = XAxisLabels.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
             Series = MudChartParent.ChartSeries;
 
             int SeriesCount = Series.Count;
@@ -55,23 +48,20 @@ namespace MudBlazor.Charts
             double boundHeight = 350.0;
             double boundWidth = 650.0;
 
-            double gridYUnits = 10;
-            double gridXUnits = 10;
+            double gridYUnits = MudChartParent.ChartOptions.YAxisTicks;
+            double gridXUnits = 30;
 
-            int numVerticalLines = numValues;
+            int numVerticalLines = numValues - 1;
 
             int numHorizontalLines = ((int)(maxY / gridYUnits)) + 1;
 
             double verticalStartSpace = 25.0;
-            double horizontalStartSpace = 25.0;
+            double horizontalStartSpace = 30.0;
             double verticalEndSpace = 25.0;
-            double horizontalEndSpace = 25.0;
+            double horizontalEndSpace = 30.0;
 
             double verticalSpace = (boundHeight - verticalStartSpace - verticalEndSpace) / (numHorizontalLines);
             double horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / (numVerticalLines);
-
-            double totalGridWidth = ((double)(numVerticalLines - 1)) * horizontalSpace;
-            double totalGridHeight = ((double)(numHorizontalLines - 1)) * verticalSpace;
 
             //Horizontal Grid Lines
             double y = verticalStartSpace;
@@ -81,53 +71,90 @@ namespace MudBlazor.Charts
                 SvgPath Line = new SvgPath()
                 {
                     Index = counter,
-                    Data = $"M {horizontalStartSpace.ToString(CultureInfo.InvariantCulture)} {(boundHeight - y).ToString(CultureInfo.InvariantCulture)} L {(boundWidth - horizontalEndSpace).ToString(CultureInfo.InvariantCulture)} {(boundHeight - y).ToString(CultureInfo.InvariantCulture)}"
+                    Data = $"M {ToS(horizontalStartSpace)} {ToS((boundHeight - y))} L {ToS((boundWidth - horizontalEndSpace))} {ToS((boundHeight - y))}"
                 };
                 HorizontalLines.Add(Line);
 
-                SvgText LineValue = new SvgText() { X = (horizontalStartSpace - 2), Y = (boundHeight - y), Value = startGridY.ToString(CultureInfo.InvariantCulture) };
+                SvgText LineValue = new SvgText() { X = (horizontalStartSpace - 10), Y = (boundHeight - y + 5), Value = ToS(startGridY) };
                 HorizontalValues.Add(LineValue);
 
-                y = y + verticalSpace;
                 startGridY = startGridY + gridYUnits;
+                y = y + verticalSpace;
             }
 
             //Vertical Grid Lines
             double x = horizontalStartSpace;
             double startGridX = 0;
-            int xLabelsCounter = 0;
             for (int counter = 0; counter <= numVerticalLines; counter++)
             {
 
                 SvgPath Line = new SvgPath()
                 {
                     Index = counter,
-                    Data = $"M {x.ToString(CultureInfo.InvariantCulture)} {(boundHeight - verticalStartSpace).ToString(CultureInfo.InvariantCulture)} L {x.ToString(CultureInfo.InvariantCulture)} {verticalEndSpace.ToString(CultureInfo.InvariantCulture)}"
+                    Data = $"M {ToS(x)} {ToS((boundHeight - verticalStartSpace))} L {ToS(x)} {ToS(verticalEndSpace)}"
                 };
                 VerticalLines.Add(Line);
 
-                //not required. just need number of grid lines
-                startGridX = startGridX + gridXUnits;
+                string xLabels = "";
+                if(counter < numXLabels)
+                {
+                    xLabels = XAxisLabels[counter];
+                }
 
+                SvgText LineValue = new SvgText() { X = x, Y = boundHeight -2, Value = xLabels };
+                VerticalValues.Add(LineValue);
+
+                startGridX = startGridX + gridXUnits;
                 x = x + horizontalSpace;
             }
 
+
+            //Chart Lines
+            int colorcounter = 0;
             foreach (var item in Series)
             {
                 string chartLine = "";
                 double gridValueX = 0;
                 double gridValueY = 0;
                 bool firstTime = true;
+
+                foreach(var line in item.Data)
+                {
+                    if (firstTime)
+                    {
+                        chartLine = chartLine + "M ";
+                        firstTime = false;
+                        gridValueX = horizontalStartSpace;
+                        gridValueY = verticalStartSpace;
+                        double gridValue = ((double)line) * verticalSpace / gridYUnits;
+                        gridValueY = boundHeight - (gridValueY + gridValue);
+                        chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
+                    }
+                    else
+                    {
+                        chartLine = chartLine + " L ";
+                        gridValueX = gridValueX + horizontalSpace;
+                        gridValueY = verticalStartSpace;
+
+                        double gridValue = ((double)line) * verticalSpace / gridYUnits;
+                        gridValueY = boundHeight - (gridValueY + gridValue);
+                        chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
+                    }
+                }
+                SvgPath Line = new SvgPath()
+                {
+                    Index = colorcounter,
+                    Data = chartLine
+                };
+                SvgLegend Legend = new SvgLegend()
+                {
+                    Index = colorcounter,
+                    Labels = item.Name
+                };
+                colorcounter = colorcounter + 1;
+                ChartLines.Add(Line);
+                Legends.Add(Legend);
             }
-
-
-
-            //Test
-            Test1 = $"MaxY is: {maxY}";
-            Test2 = $"Number of Values is: {numValues}";
-            Test3 = $"Number of XLabels is: {numXLabels}";
-            Test4 = $"Number of VerticalLines: {numVerticalLines}";
-            Test5 = $"Number of HorizontalLines: {numHorizontalLines}";
         }
     }
 }

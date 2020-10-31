@@ -358,6 +358,8 @@ public const string MudChartBase_XAxisLabels = @"";
 
 public const string MudChartBase_ChartSeries = @"";
 
+public const string MudChartBase_ChartOptions = @"";
+
 public const string MudChartBase_ChartType = @"The Type of the chart.";
 
 public const string MudChartBase_Width = @"The Width of the chart, end with % or px.";
@@ -1590,6 +1592,8 @@ public const string MudChart_XAxisLabels = @"";
 
 public const string MudChart_ChartSeries = @"";
 
+public const string MudChart_ChartOptions = @"";
+
 public const string MudChart_ChartType = @"The Type of the chart.";
 
 public const string MudChart_Width = @"The Width of the chart, end with % or px.";
@@ -2130,6 +2134,8 @@ public const string DonutBase_XAxisLabels = @"";
 
 public const string DonutBase_ChartSeries = @"";
 
+public const string DonutBase_ChartOptions = @"";
+
 public const string DonutBase_ChartType = @"The Type of the chart.";
 
 public const string DonutBase_Width = @"The Width of the chart, end with % or px.";
@@ -2156,6 +2162,8 @@ public const string LineBase_InputLabels = @"";
 public const string LineBase_XAxisLabels = @"";
 
 public const string LineBase_ChartSeries = @"";
+
+public const string LineBase_ChartOptions = @"";
 
 public const string LineBase_ChartType = @"The Type of the chart.";
 
@@ -2184,6 +2192,8 @@ public const string PieBase_XAxisLabels = @"";
 
 public const string PieBase_ChartSeries = @"";
 
+public const string PieBase_ChartOptions = @"";
+
 public const string PieBase_ChartType = @"The Type of the chart.";
 
 public const string PieBase_Width = @"The Width of the chart, end with % or px.";
@@ -2210,6 +2220,8 @@ public const string Donut_InputLabels = @"";
 public const string Donut_XAxisLabels = @"";
 
 public const string Donut_ChartSeries = @"";
+
+public const string Donut_ChartOptions = @"";
 
 public const string Donut_ChartType = @"The Type of the chart.";
 
@@ -2238,6 +2250,8 @@ public const string Line_XAxisLabels = @"";
 
 public const string Line_ChartSeries = @"";
 
+public const string Line_ChartOptions = @"";
+
 public const string Line_ChartType = @"The Type of the chart.";
 
 public const string Line_Width = @"The Width of the chart, end with % or px.";
@@ -2264,6 +2278,8 @@ public const string Pie_InputLabels = @"";
 public const string Pie_XAxisLabels = @"";
 
 public const string Pie_ChartSeries = @"";
+
+public const string Pie_ChartOptions = @"";
 
 public const string Pie_ChartType = @"The Type of the chart.";
 

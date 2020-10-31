@@ -2460,6 +2460,8 @@ ul {
   display: flex; }
   .mud-chart.mud-chart-legend-bottom {
     flex-direction: column; }
+    .mud-chart.mud-chart-legend-bottom .mud-chart-legend {
+      margin-top: 10px; }
   .mud-chart.mud-chart-legend-top {
     flex-direction: column-reverse; }
   .mud-chart.mud-chart-legend-right {
