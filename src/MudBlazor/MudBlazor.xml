@@ -1240,7 +1240,7 @@
             Represents an option of a select or multi-select. To be used inside MudSelect.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelectItem`1.MudSelect">
+        <member name="P:MudBlazor.MudSelectItem`1.IMudSelect">
             <summary>
             The parent select component
             </summary>

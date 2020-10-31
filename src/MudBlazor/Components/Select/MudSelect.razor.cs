@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MudBlazor.Components.Select;
+using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
-    public partial class MudSelect<T> : MudBaseInput<T>
+    public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect
     {
         private HashSet<T> _selectedValues;
 
@@ -69,6 +71,22 @@ namespace MudBlazor
             }
         }
 
+        protected override void StringValueChanged(string text)
+        {
+            // when multiselection is true, we don't update the value when the text changes
+            if (MultiSelection)
+                return;
+            base.StringValueChanged(text);
+        }
+
+        protected override void GenericValueChanged(T value)
+        {
+            // when multiselection is true, we don't update the text when the value changes
+            if (MultiSelection)
+                return;
+            base.GenericValueChanged(value);
+        }
+
         internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
         /// <summary>
@@ -97,8 +115,9 @@ namespace MudBlazor
 
         public string CurrentIcon { get; set; }
 
-        public async Task SelectOption(T value)
+        public async Task SelectOption(object obj)
         {
+            var value = (T) obj;
             if (!MultiSelection)
             {
                 // single selection
@@ -151,7 +170,11 @@ namespace MudBlazor
             }
         }
 
-      
-
+        public void CheckGenericTypeMatch(object select_item)
+        {
+            var itemT=select_item.GetType().GenericTypeArguments[0];
+            if (itemT != typeof(T))
+                throw new GenericTypeMismatchException("MudSelect", "MudSelectItem", typeof(T), itemT);
+        }
     }
 }

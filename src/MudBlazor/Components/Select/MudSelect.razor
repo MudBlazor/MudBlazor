@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor
 @typeparam T
+@using MudBlazor.Components.Select
 @inherits MudBaseInput<T>
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
@@ -9,7 +10,7 @@
                           @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
         </InputContent>
         <ChildContent>
-            <CascadingValue Value="@this" IsFixed="true">
+            <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                 <MudPopover Open="@isOpen" Class="mud-select-menu" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
                     <MudList Clickable="true" Dense="@Dense">
                         @ChildContent

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Components.Select;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -10,25 +11,30 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSelectItem<T> : MudBaseSelectItem
     {
-        private MudSelect<T> _parent;
+        private IMudSelect _parent;
 
         /// <summary>
         /// The parent select component
         /// </summary>
         [CascadingParameter]
-        public MudSelect<T> MudSelect
+        internal IMudSelect IMudSelect
         {
             get => _parent;
             set
             {
                 _parent = value;
+                if (_parent == null)
+                    return;
+                _parent.CheckGenericTypeMatch(this);
                 if (_parent != null && _parent.MultiSelection)
                 {
-                    _parent.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
-                    InvokeAsync(()=>OnUpdateSelectionStateFromOutside(_parent.SelectedValues));
+                    MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
+                    InvokeAsync(()=>OnUpdateSelectionStateFromOutside(MudSelect.SelectedValues));
                 }
             }
         }
+
+        internal MudSelect<T> MudSelect => (MudSelect<T>) IMudSelect;
 
         private void OnUpdateSelectionStateFromOutside(HashSet<T> selection)
         {
@@ -80,9 +86,11 @@ namespace MudBlazor
         {
             if (MultiSelection)
                 IsSelected = !IsSelected;
+            
             MudSelect?.SelectOption(Value);
             InvokeAsync(StateHasChanged);
         }
+
 
     }
 }
