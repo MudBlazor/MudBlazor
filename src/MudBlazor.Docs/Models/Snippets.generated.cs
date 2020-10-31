@@ -1828,6 +1828,52 @@ public const string RatingSimpleExample = @"<MudForm class="""">
     };
 }";
 
+public const string RatingSimpleExample = @"<MudForm class="""">
+
+    <h3>Default</h3>
+    <MudRating />
+    <h3>More Values</h3>
+    <MudRating Value=""5"" MaxValue=""10"" />
+    <h3>Disabled</h3>
+    <MudRating Disabled=""true"" />
+    <h3>Custom Icons, Color</h3>
+    <MudRating FullIcon=""@Icons.Material.Favorite"" EmptyIcon=""@Icons.Material.FavoriteBorder"" Color=""Color.Secondary"" />
+    <div class=""d-flex flex-column my-6"">
+        <h3>Size</h3>
+        <MudRating Size=""Size.Small"" />
+        <MudRating Size=""Size.Medium"" />
+        <MudRating Size=""Size.Large"" />
+    </div>
+    <div class=""d-flex flex-column align-center my-6"">
+        <h3>Hover feedback</h3>
+        @*<MudRating @bind-SelectedValue=""selectedVal"" HoveredValueChanged=""HandleHoveredValueChanged"" /> BUG: bind loop*@
+        <MudRating SelectedValueChanged=""HandleSelectedValueChanged"" HoveredValueChanged=""HandleHoveredValueChanged"" />
+        <MudText Typo=""Typo.subtitle1"" Class=""deep-purple-text"">@GetLabelText()</MudText>
+        <h5 class=""mt-4"">Selected value @selectedVal</h5>
+        <h5>Active value @activeVal</h5>
+    </div>
+
+</MudForm>
+
+@code {
+    private int selectedVal = 0;
+    private int? activeVal;
+
+    private void HandleSelectedValueChanged(int val) => selectedVal = val;
+
+    private void HandleHoveredValueChanged(int? val) => activeVal = val;
+
+    private string GetLabelText() => (activeVal ?? selectedVal) switch
+    {
+        1 => ""Very bad"",
+        2 => ""Bad"",
+        3 => ""Sufficient"",
+        4 => ""Good"",
+        5 => ""Awesome!"",
+        _ => ""Rate our product!""
+    };
+}";
+
 public const string MultiSelectExample = @"<MudGrid>
     <MudItem xs=""12"" md=""12"">
         <MudSelect Label=""US States"" HelperText=""Pick your favorite states"" MultiSelection=""true"" @bind-Value=""value"" @bind-SelectedValues=""options"">
