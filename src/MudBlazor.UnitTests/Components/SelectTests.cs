@@ -76,13 +76,13 @@ namespace MudBlazor.UnitTests
             items[1].Click();
             // menu should still be open now!!
             menu.ClassList.Should().Contain("mud-popover-open");
-            select.Instance.Value.Should().Be("2");
+            select.Instance.Text.Should().Be("2");
             items[0].Click();
-            select.Instance.Value.Should().Be("2, 1");
+            select.Instance.Text.Should().Be("2, 1");
             items[2].Click();
-            select.Instance.Value.Should().Be("2, 1, 3");
+            select.Instance.Text.Should().Be("2, 1, 3");
             items[0].Click();
-            select.Instance.Value.Should().Be("2, 3");
+            select.Instance.Text.Should().Be("2, 3");
             select.Instance.SelectedValues.Count.Should().Be(2);
             select.Instance.SelectedValues.Should().Contain("2");
             select.Instance.SelectedValues.Should().Contain("3");
