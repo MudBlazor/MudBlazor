@@ -466,7 +466,7 @@ namespace MudBlazor.Docs.Compiler
 		public static string GetDocumentation(this PropertyInfo propertyInfo)
 		{
 			LoadXmlDocumentation(propertyInfo.DeclaringType.Assembly);
-			string key = "P:" + XmlDocumentationKeyHelper(propertyInfo.DeclaringType.FullName, propertyInfo.Name);
+			string key = "P:" + XmlDocumentationKeyHelper(propertyInfo.DeclaringType.FullName ?? propertyInfo.ReflectedType.FullName, propertyInfo.Name);
 			loadedXmlDocumentation.TryGetValue(key, out string documentation);
 			return documentation;
 		}
