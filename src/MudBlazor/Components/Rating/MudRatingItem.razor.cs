@@ -107,18 +107,21 @@ namespace MudBlazor
         // rating item lose hover
         private void HandleMouseOut(MouseEventArgs e)
         {
+            if (Disabled) return;
             IsActive = false;
             ItemHovered.InvokeAsync(null);
         }
 
         private void HandleMouseOver(MouseEventArgs e)
         {
+            if (Disabled) return;
             IsActive = true;
             ItemHovered.InvokeAsync(ItemValue);
         }
 
         private void HandleClick(MouseEventArgs e)
         {
+            if (Disabled) return;
             IsActive = false;
             if (Rating.SelectedValue == ItemValue)
             {
