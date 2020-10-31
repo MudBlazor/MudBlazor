@@ -994,29 +994,31 @@ public const string MudRadioGroup_Tag = @"Use Tag to attach any user data object
 public const string MudRadioGroup_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudRating_ItemClass = @"User class names, separated by space";
+public const string MudRating_RatingItemsClass = @"User class names for RatingItems, separated by space";
 
-public const string MudRating_Name = @"";
+public const string MudRating_RatingItemsStyle = @"User styles for RatingItems.";
 
-public const string MudRating_MaxValue = @"";
+public const string MudRating_Name = @"Input name. If not initialized, name will be random guid.";
 
-public const string MudRating_FullIcon = @"";
+public const string MudRating_MaxValue = @"Max value and how many elements to click will be generated. Default: 5";
 
-public const string MudRating_EmptyIcon = @"";
+public const string MudRating_FullIcon = @"Selected or hovered icon. Default @Icons.Material.Star";
+
+public const string MudRating_EmptyIcon = @"Non selected item icon. Default @Icons.Material.StarBorder";
 
 public const string MudRating_Color = @"The color of the component. It supports the theme colors.";
 
-public const string MudRating_Size = @"The Size of the icon.";
+public const string MudRating_Size = @"The Size of the icons.";
 
 public const string MudRating_DisableRipple = @"If true, disables ripple effect.";
 
 public const string MudRating_Disabled = @"If true, the controls will be disabled.";
 
-public const string MudRating_SelectedValueChanged = @"";
+public const string MudRating_SelectedValueChanged = @"Fires when SelectedValue changes.";
 
-public const string MudRating_SelectedValue = @"";
+public const string MudRating_SelectedValue = @"Selected value. This property is two-way bindable.";
 
-public const string MudRating_HoveredValueChanged = @"";
+public const string MudRating_HoveredValueChanged = @"Fires when hovered value change. Value will be null if no rating item is hovered.";
 
 public const string MudRating_Class = @"User class names, separated by space";
 
@@ -1027,7 +1029,7 @@ public const string MudRating_Tag = @"Use Tag to attach any user data object to 
 public const string MudRating_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudRatingItem_ItemValue = @"";
+public const string MudRatingItem_ItemValue = @"This rating item value;";
 
 public const string MudRatingItem_Size = @"The Size of the icon.";
 
@@ -1037,11 +1039,9 @@ public const string MudRatingItem_DisableRipple = @"If true, disables ripple eff
 
 public const string MudRatingItem_Disabled = @"If true, the controls will be disabled.";
 
-public const string MudRatingItem_HoveredValue = @"";
+public const string MudRatingItem_ItemClicked = @"Fires when element clicked.";
 
-public const string MudRatingItem_ItemClicked = @"";
-
-public const string MudRatingItem_ItemHovered = @"";
+public const string MudRatingItem_ItemHovered = @"Fires when element hovered.";
 
 public const string MudRatingItem_Class = @"User class names, separated by space";
 

@@ -1782,38 +1782,50 @@ public const string RadioLabelPlacementExample = @"<MudGrid>
     }
 }";
 
-public const string RatingSimpleExample = @"<MudForm class="""">
+public const string BasicRatingExample = @"<MudRating SelectedValue=""2"" />";
 
-    <h3>Default</h3>
-    <MudRating />
-    <h3>More Values</h3>
-    <MudRating Value=""5"" MaxValue=""10"" />
-    <h3>Disabled</h3>
-    <MudRating Disabled=""true"" />
-    <h3>Custom Icons, Color</h3>
-    <MudRating FullIcon=""@Icons.Material.Favorite"" EmptyIcon=""@Icons.Material.FavoriteBorder"" Color=""Color.Secondary"" />
-    <div class=""d-flex flex-column my-6"">
-        <h3>Size</h3>
-        <MudRating Size=""Size.Small"" />
-        <MudRating Size=""Size.Medium"" />
-        <MudRating Size=""Size.Large"" />
-    </div>
-    <div class=""d-flex flex-column align-center my-6"">
-        <h3>Hover feedback</h3>
-        @*<MudRating @bind-SelectedValue=""selectedVal"" HoveredValueChanged=""HandleHoveredValueChanged"" /> BUG: bind loop*@
-        <MudRating SelectedValueChanged=""HandleSelectedValueChanged"" HoveredValueChanged=""HandleHoveredValueChanged"" />
-        <MudText Typo=""Typo.subtitle1"" Class=""deep-purple-text"">@GetLabelText()</MudText>
-        <h5 class=""mt-4"">Selected value @selectedVal</h5>
-        <h5>Active value @activeVal</h5>
-    </div>
+public const string RaitngIconsAndColorExample = @"<MudGrid Spacing=""1"" Class=""d-flex flex-column"">
+        <MudItem>
+            <MudRating SelectedValue=""2"" FullIcon=""@Icons.Material.Visibility"" EmptyIcon=""@Icons.Material.VisibilityOff"" />
+        </MudItem>
+        <MudItem>
+            <MudRating SelectedValue=""2"" FullIcon=""@Icons.Material.Favorite"" EmptyIcon=""@Icons.Material.FavoriteBorder"" Color=""Color.Secondary"" />
+        </MudItem>
+    </MudGrid>";
 
-</MudForm>
+public const string RaitngMaxValueExample = @"<MudGrid Spacing=""1"" Class=""d-flex flex-column"">
+        <MudItem>
+            <MudRating SelectedValue=""1"" MaxValue=""3"" />
+        </MudItem>
+        <MudItem>
+            <MudRating SelectedValue=""2"" />
+        </MudItem>
+        <MudItem>
+            <MudRating SelectedValue=""3"" MaxValue=""10"" />
+        </MudItem>
+    </MudGrid>";
+
+public const string RaitngSizesExample = @"<MudGrid Spacing=""1"" Class=""d-flex flex-column"">
+        <MudItem>
+            <MudRating SelectedValue=""2"" Size=""Size.Small"" />
+        </MudItem>
+        <MudItem>
+            <MudRating SelectedValue=""2"" Size=""Size.Medium"" />
+        </MudItem>
+        <MudItem>
+            <MudRating SelectedValue=""2"" Size=""Size.Large"" />
+        </MudItem>
+    </MudGrid>";
+
+public const string RatingBindingsExample = @"<div class=""d-flex flex-column align-center"">
+    <MudRating @bind-SelectedValue=""selectedVal"" HoveredValueChanged=""HandleHoveredValueChanged"" />
+    <MudText Typo=""Typo.subtitle2"" Class=""deep-purple-text mt-2"">@GetLabelText()</MudText>
+</div>
+
 
 @code {
     private int selectedVal = 0;
     private int? activeVal;
-
-    private void HandleSelectedValueChanged(int val) => selectedVal = val;
 
     private void HandleHoveredValueChanged(int? val) => activeVal = val;
 
@@ -1828,16 +1840,20 @@ public const string RatingSimpleExample = @"<MudForm class="""">
     };
 }";
 
-public const string RatingSimpleExample = @"<MudForm class="""">
+public const string RatingDisabledExample = @"<MudRating Disabled=""true"" SelectedValue=""2"" />";
+
+public const string RatingTestExample = @"@*I delete this file later*@
+
+<MudForm>
 
     <h3>Default</h3>
-    <MudRating />
+    <MudRating SelectedValue=""2"" />
     <h3>More Values</h3>
-    <MudRating Value=""5"" MaxValue=""10"" />
+    <MudRating SelectedValue=""5"" MaxValue=""10"" />
     <h3>Disabled</h3>
-    <MudRating Disabled=""true"" />
+    <MudRating SelectedValue=""2"" Disabled=""true"" />
     <h3>Custom Icons, Color</h3>
-    <MudRating FullIcon=""@Icons.Material.Favorite"" EmptyIcon=""@Icons.Material.FavoriteBorder"" Color=""Color.Secondary"" />
+    <MudRating SelectedValue=""2"" FullIcon=""@Icons.Material.Favorite"" EmptyIcon=""@Icons.Material.FavoriteBorder"" Color=""Color.Secondary"" />
     <div class=""d-flex flex-column my-6"">
         <h3>Size</h3>
         <MudRating Size=""Size.Small"" />
@@ -1846,11 +1862,18 @@ public const string RatingSimpleExample = @"<MudForm class="""">
     </div>
     <div class=""d-flex flex-column align-center my-6"">
         <h3>Hover feedback</h3>
-        @*<MudRating @bind-SelectedValue=""selectedVal"" HoveredValueChanged=""HandleHoveredValueChanged"" /> BUG: bind loop*@
-        <MudRating SelectedValueChanged=""HandleSelectedValueChanged"" HoveredValueChanged=""HandleHoveredValueChanged"" />
+        <MudRating @bind-SelectedValue=""selectedVal"" HoveredValueChanged=""HandleHoveredValueChanged"" />
         <MudText Typo=""Typo.subtitle1"" Class=""deep-purple-text"">@GetLabelText()</MudText>
-        <h5 class=""mt-4"">Selected value @selectedVal</h5>
-        <h5>Active value @activeVal</h5>
+    </div>
+
+    <div class=""d-flex flex-column align-center my-12"">
+        <h3>Normal</h3>
+        <MudRating SelectedValue=""2"" />
+    </div>
+
+    <div class=""d-flex flex-column align-center my-12"">
+        <h3>Custom styles</h3>
+        <MudRating SelectedValue=""2"" Style=""transform: rotate(25deg);"" RatingItemsStyle=""padding: 0 15px; box-sizing: content-box;"" />
     </div>
 
 </MudForm>
@@ -2286,7 +2309,6 @@ public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElement
         <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>Menu</MudTh>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
         <MudTh>Name</MudTh>
@@ -2294,13 +2316,6 @@ public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElement
         <MudTh>Molar mass</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>
-            <MudMenu @key=""@context"" Icon=""@Icons.Material.MoreVert"">
-                <MudMenuItem>Test</MudMenuItem>
-                <MudMenuItem>Test</MudMenuItem>
-                <MudMenuItem>Test</MudMenuItem>
-            </MudMenu>
-        </MudTd>
         <MudTd>@context.Number</MudTd>
         <MudTd>@context.Sign</MudTd>
         <MudTd>@context.Name</MudTd>

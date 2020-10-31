@@ -2,11 +2,11 @@
 @inherits MudComponentBase
 
 
-<span class="@Classname">
+<span @attributes="UserAttributes" class="@ClassName" style="@Style" >
     <CascadingValue Value="this" >
         @for (int i = 1; i <= MaxValue; i++)
         {
-            <MudRatingItem Class="@ItemClass" ItemValue="@i" DisableRipple="DisableRipple" Disabled="Disabled" Color="Color" Size="Size" ItemClicked="HandleItemClicked" ItemHovered="HandleItemHovered"/>
+            <MudRatingItem Class="@RatingItemsClass" Style="@RatingItemsStyle" ItemValue="@i" DisableRipple="DisableRipple" Disabled="Disabled" Color="Color" Size="Size" ItemClicked="HandleItemClicked" ItemHovered="HandleItemHovered"/>
         }
     </CascadingValue>
 </span>

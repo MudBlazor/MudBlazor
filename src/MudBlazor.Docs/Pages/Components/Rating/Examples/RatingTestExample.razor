@@ -1,15 +1,17 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudForm class="">
+@*I delete this file later*@
+
+<MudForm>
 
     <h3>Default</h3>
-    <MudRating />
+    <MudRating SelectedValue="2" />
     <h3>More Values</h3>
-    <MudRating Value="5" MaxValue="10" />
+    <MudRating SelectedValue="5" MaxValue="10" />
     <h3>Disabled</h3>
-    <MudRating Disabled="true" />
+    <MudRating SelectedValue="2" Disabled="true" />
     <h3>Custom Icons, Color</h3>
-    <MudRating FullIcon="@Icons.Material.Favorite" EmptyIcon="@Icons.Material.FavoriteBorder" Color="Color.Secondary" />
+    <MudRating SelectedValue="2" FullIcon="@Icons.Material.Favorite" EmptyIcon="@Icons.Material.FavoriteBorder" Color="Color.Secondary" />
     <div class="d-flex flex-column my-6">
         <h3>Size</h3>
         <MudRating Size="Size.Small" />
@@ -18,11 +20,18 @@
     </div>
     <div class="d-flex flex-column align-center my-6">
         <h3>Hover feedback</h3>
-        @*<MudRating @bind-SelectedValue="selectedVal" HoveredValueChanged="HandleHoveredValueChanged" /> BUG: bind loop*@
-        <MudRating SelectedValueChanged="HandleSelectedValueChanged" HoveredValueChanged="HandleHoveredValueChanged" />
+        <MudRating @bind-SelectedValue="selectedVal" HoveredValueChanged="HandleHoveredValueChanged" />
         <MudText Typo="Typo.subtitle1" Class="deep-purple-text">@GetLabelText()</MudText>
-        <h5 class="mt-4">Selected value @selectedVal</h5>
-        <h5>Active value @activeVal</h5>
+    </div>
+
+    <div class="d-flex flex-column align-center my-12">
+        <h3>Normal</h3>
+        <MudRating SelectedValue="2" />
+    </div>
+
+    <div class="d-flex flex-column align-center my-12">
+        <h3>Custom styles</h3>
+        <MudRating SelectedValue="2" Style="transform: rotate(25deg);" RatingItemsStyle="padding: 0 15px; box-sizing: content-box;" />
     </div>
 
 </MudForm>

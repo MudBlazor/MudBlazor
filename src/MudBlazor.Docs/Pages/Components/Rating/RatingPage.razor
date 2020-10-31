@@ -1,19 +1,87 @@
 ﻿@page "/components/rating"
 
 <DocsPage>
-    <DocsPageHeader Title="Rating" SubTitle="Ratings provide insight regarding others’ opinions and experiences with a product. Collecting user feedback via ratings is a simple analytic that can provide a lot of feedback to your product or application.">
+    <DocsPageHeader Title="Rating" SubTitle="Ratings provide insight regarding others’ opinions and experiences with a product.">
+        <Description>Collecting user feedback via ratings is a simple analytic that can provide a lot of feedback to your product or application.</Description>
     </DocsPageHeader>
     <DocsPageContent>
-        <DocsPageSection>
+
+        @*<DocsPageSection>
             <SectionHeader>
-                <Title>Rating</Title>
+                <Title>Test Rating</Title>
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <RatingSimpleExample />
+                <RatingTestExample />
             </SectionContent>
-            <SectionSource Code="RatingSimpleExample" GitHubFolderName="Rating" SnippetId="todo" />
+        </DocsPageSection>*@
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Basic Rating</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <BasicRatingExample />
+            </SectionContent>
+            <SectionSource Code="BasicRatingExample" GitHubFolderName="Rating" SnippetId="todo" />
         </DocsPageSection>
-        
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Disabled</Title>
+                <Description>A disabled component cannot change its state. Use the <CodeInline>Disabled</CodeInline> parameter to disable a component.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <RatingDisabledExample />
+            </SectionContent>
+            <SectionSource Code="RatingDisabledExample" GitHubFolderName="Rating" SnippetId="todo" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Sizes</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <RaitngSizesExample />
+            </SectionContent>
+            <SectionSource Code="RaitngSizesExample" GitHubFolderName="Rating" SnippetId="todo" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Max value</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <RaitngMaxValueExample />
+            </SectionContent>
+            <SectionSource Code="RaitngMaxValueExample" GitHubFolderName="Rating" SnippetId="todo" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Icons and color</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <RaitngIconsAndColorExample />
+            </SectionContent>
+            <SectionSource Code="RaitngIconsAndColorExample" GitHubFolderName="Rating" SnippetId="todo" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Events and value binding</Title>
+                <Description> The <CodeInline>MudRating</CodeInline> component provides value binding and events for changed selected value or hover. E.g you can display a label on hover to help users pick the correct rating value, using parameters like <CodeInline>HoveredValueChanged</CodeInline> <CodeInline>SelectedValueChanged</CodeInline> <CodeInline>bind-SelectedValue</CodeInline></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <RatingBindingsExample />
+            </SectionContent>
+            <SectionSource Code="RatingBindingsExample" GitHubFolderName="Rating" SnippetId="todo" />
+        </DocsPageSection>
+
+
     </DocsPageContent>
 </DocsPage>

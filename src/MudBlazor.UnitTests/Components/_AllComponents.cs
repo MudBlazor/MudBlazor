@@ -1238,13 +1238,79 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void RatingSimpleExample_Test()
+        public void BasicRatingExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<RatingSimpleExample>();
+                var comp = ctx.RenderComponent<BasicRatingExample>();
+        }
+
+
+        [Test]
+        public void RaitngIconsAndColorExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<RaitngIconsAndColorExample>();
+        }
+
+
+        [Test]
+        public void RaitngMaxValueExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<RaitngMaxValueExample>();
+        }
+
+
+        [Test]
+        public void RaitngSizesExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<RaitngSizesExample>();
+        }
+
+
+        [Test]
+        public void RatingBindingsExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<RatingBindingsExample>();
+        }
+
+
+        [Test]
+        public void RatingDisabledExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<RatingDisabledExample>();
+        }
+
+
+        [Test]
+        public void RatingTestExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<RatingTestExample>();
         }
 
 
