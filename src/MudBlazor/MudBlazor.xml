@@ -1215,6 +1215,11 @@
             Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
             </summary>
         </member>
+        <member name="M:MudBlazor.MudSelect`1.LookupValue(System.String)">
+            <summary>
+            LookupValue is used to find the value for a given input text by looking it up in the string -> value lookup.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudSelect`1.MultiSelection">
             <summary>
             If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown

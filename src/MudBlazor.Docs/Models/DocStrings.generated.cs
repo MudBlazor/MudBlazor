@@ -1089,6 +1089,8 @@ public const string MudSelect_SelectedValuesChanged = @"Fires when SelectedValue
 
 public const string MudSelect_SelectedValues = @"Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.";
 
+public const string MudSelect_ToStringFunc = @"";
+
 public const string MudSelect_MultiSelection = @"If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown";
 
 public const string MudSelect_MaxHeight = @"Sets the maxheight the select can have when open.";
@@ -1175,6 +1177,8 @@ public const string MudSelectString_CloseIcon = @"The Open Select Icon";
 public const string MudSelectString_SelectedValuesChanged = @"Fires when SelectedValues changes.";
 
 public const string MudSelectString_SelectedValues = @"Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.";
+
+public const string MudSelectString_ToStringFunc = @"";
 
 public const string MudSelectString_MultiSelection = @"If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown";
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Components.Select;
@@ -9,7 +10,7 @@ namespace MudBlazor
     /// <summary>
     /// Represents an option of a select or multi-select. To be used inside MudSelect.
     /// </summary>
-    public partial class MudSelectItem<T> : MudBaseSelectItem
+    public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
         private IMudSelect _parent;
 
@@ -91,6 +92,13 @@ namespace MudBlazor
             InvokeAsync(StateHasChanged);
         }
 
+        public void Dispose()
+        {
+            try
+            {
+                MudSelect?.Remove(this);
+            } catch(Exception) {}
+        }
     }
 
     public class MudSelectItemString : MudSelectItem<string> { }
