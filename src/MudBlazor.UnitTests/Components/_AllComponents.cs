@@ -1249,6 +1249,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void SelectCustomConverterExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<SelectCustomConverterExample>();
+        }
+
+
+        [Test]
         public void SelectDenseExample_Test()
         {
                 using var ctx = new Bunit.TestContext();

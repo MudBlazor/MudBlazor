@@ -27,60 +27,71 @@ public const string MudBaseButton_Tag = @"Use Tag to attach any user data object
 public const string MudBaseButton_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudBaseInput_Required = @"If true, this form input is required to be filled out.";
+public const string MudBaseInput___Required = @"If true, this form input is required to be filled out.";
 
-public const string MudBaseInput_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+public const string MudBaseInput___RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
 
-public const string MudBaseInput_ErrorText = @"The ErrorText that will be displayed if Error true";
+public const string MudBaseInput___ErrorText = @"The ErrorText that will be displayed if Error true";
 
-public const string MudBaseInput_Error = @"If true, the label will be displayed in an error state.";
+public const string MudBaseInput___Error = @"If true, the label will be displayed in an error state.";
 
-public const string MudBaseInput_Disabled = @"If true, the input element will be disabled.";
+public const string MudBaseInput___Disabled = @"If true, the input element will be disabled.";
 
-public const string MudBaseInput_ReadOnly = @"If true, the input will be read only.";
+public const string MudBaseInput___ReadOnly = @"If true, the input will be read only.";
 
-public const string MudBaseInput_FullWidth = @"If true, the input will take up the full width of its container.";
+public const string MudBaseInput___FullWidth = @"If true, the input will take up the full width of its container.";
 
-public const string MudBaseInput_Immediate = @"If true, the input will update the Value immediately on typing.
+public const string MudBaseInput___Immediate = @"If true, the input will update the Value immediately on typing.
             If false, the Value is updated only on Enter.";
 
-public const string MudBaseInput_DisableUnderLine = @"If true, the input will not have an underline.";
+public const string MudBaseInput___DisableUnderLine = @"If true, the input will not have an underline.";
 
-public const string MudBaseInput_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
+public const string MudBaseInput___Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
 
-public const string MudBaseInput_Placeholder = @"The short hint displayed in the input before the user enters a value.";
+public const string MudBaseInput___Placeholder = @"The short hint displayed in the input before the user enters a value.";
 
-public const string MudBaseInput_HelperText = @"The HelperText will be displayed below the text field.";
+public const string MudBaseInput___HelperText = @"The HelperText will be displayed below the text field.";
 
-public const string MudBaseInput_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
+public const string MudBaseInput___AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
 
-public const string MudBaseInput_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
+public const string MudBaseInput___AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
 
-public const string MudBaseInput_Adornment = @"Sets Start or End Adornment if not set to None.";
+public const string MudBaseInput___Adornment = @"Sets Start or End Adornment if not set to None.";
 
-public const string MudBaseInput_IconSize = @"Sets the Icon Size.";
+public const string MudBaseInput___IconSize = @"Sets the Icon Size.";
 
-public const string MudBaseInput_OnAdornmentClick = @"Button click event if set and Adornment used.";
+public const string MudBaseInput___OnAdornmentClick = @"Button click event if set and Adornment used.";
 
-public const string MudBaseInput_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
+public const string MudBaseInput___InputType = @"Type of the input element. It should be a valid HTML5 input type.";
 
-public const string MudBaseInput_Variant = @"Variant to use.";
+public const string MudBaseInput___Variant = @"Variant to use.";
 
-public const string MudBaseInput_Margin = @"Will adjust vertical spacing.";
+public const string MudBaseInput___Margin = @"Will adjust vertical spacing.";
 
-public const string MudBaseInput_Text = @"";
+public const string MudBaseInput___Text = @"";
 
-public const string MudBaseInput_TextChanged = @"";
+public const string MudBaseInput___TextChanged = @"";
 
-public const string MudBaseInput_OnBlur = @"Fired when the Value property changes.";
+public const string MudBaseInput___OnBlur = @"Fired when the Value property changes.";
 
-public const string MudBaseInput_Class = @"User class names, separated by space";
+public const string MudBaseInput___ValueChanged = @"Fired when the Value property changes.";
 
-public const string MudBaseInput_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudBaseInput___Value = @"The value of this input element. This property is two-way bindable.";
 
-public const string MudBaseInput_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+public const string MudBaseInput___Converter = @"";
 
-public const string MudBaseInput_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+public const string MudBaseInput___Validation = @"";
+
+public const string MudBaseInput___For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
+            Currently only string fields are supported.";
+
+public const string MudBaseInput___Class = @"User class names, separated by space";
+
+public const string MudBaseInput___Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudBaseInput___Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudBaseInput___UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudBasePicker_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.";
@@ -621,64 +632,136 @@ public const string MudInputControl_Tag = @"Use Tag to attach any user data obje
 public const string MudInputControl_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudInput_ValueChanged = @"Fired when the Value property changes.";
+public const string MudInput___Required = @"";
 
-public const string MudInput_Value = @"The value of this input element. This property is two-way bindable.";
+public const string MudInput___RequiredError = @"";
 
-public const string MudInput_Required = @"If true, this form input is required to be filled out.";
+public const string MudInput___ErrorText = @"";
 
-public const string MudInput_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+public const string MudInput___Error = @"";
 
-public const string MudInput_ErrorText = @"The ErrorText that will be displayed if Error true";
+public const string MudInput___Disabled = @"";
 
-public const string MudInput_Error = @"If true, the label will be displayed in an error state.";
+public const string MudInput___ReadOnly = @"";
 
-public const string MudInput_Disabled = @"If true, the input element will be disabled.";
+public const string MudInput___FullWidth = @"";
 
-public const string MudInput_ReadOnly = @"If true, the input will be read only.";
+public const string MudInput___Immediate = @"";
 
-public const string MudInput_FullWidth = @"If true, the input will take up the full width of its container.";
+public const string MudInput___DisableUnderLine = @"";
 
-public const string MudInput_Immediate = @"If true, the input will update the Value immediately on typing.
+public const string MudInput___Label = @"";
+
+public const string MudInput___Placeholder = @"";
+
+public const string MudInput___HelperText = @"";
+
+public const string MudInput___AdornmentIcon = @"";
+
+public const string MudInput___AdornmentText = @"";
+
+public const string MudInput___Adornment = @"";
+
+public const string MudInput___IconSize = @"";
+
+public const string MudInput___OnAdornmentClick = @"";
+
+public const string MudInput___InputType = @"";
+
+public const string MudInput___Variant = @"";
+
+public const string MudInput___Margin = @"";
+
+public const string MudInput___Text = @"";
+
+public const string MudInput___TextChanged = @"";
+
+public const string MudInput___OnBlur = @"";
+
+public const string MudInput___ValueChanged = @"";
+
+public const string MudInput___Value = @"";
+
+public const string MudInput___Converter = @"";
+
+public const string MudInput___Validation = @"";
+
+public const string MudInput___For = @"";
+
+public const string MudInput___Class = @"User class names, separated by space";
+
+public const string MudInput___Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudInput___Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudInput___UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudInputString_Required = @"If true, this form input is required to be filled out.";
+
+public const string MudInputString_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+
+public const string MudInputString_ErrorText = @"The ErrorText that will be displayed if Error true";
+
+public const string MudInputString_Error = @"If true, the label will be displayed in an error state.";
+
+public const string MudInputString_Disabled = @"If true, the input element will be disabled.";
+
+public const string MudInputString_ReadOnly = @"If true, the input will be read only.";
+
+public const string MudInputString_FullWidth = @"If true, the input will take up the full width of its container.";
+
+public const string MudInputString_Immediate = @"If true, the input will update the Value immediately on typing.
             If false, the Value is updated only on Enter.";
 
-public const string MudInput_DisableUnderLine = @"If true, the input will not have an underline.";
+public const string MudInputString_DisableUnderLine = @"If true, the input will not have an underline.";
 
-public const string MudInput_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
+public const string MudInputString_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
 
-public const string MudInput_Placeholder = @"The short hint displayed in the input before the user enters a value.";
+public const string MudInputString_Placeholder = @"The short hint displayed in the input before the user enters a value.";
 
-public const string MudInput_HelperText = @"The HelperText will be displayed below the text field.";
+public const string MudInputString_HelperText = @"The HelperText will be displayed below the text field.";
 
-public const string MudInput_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
+public const string MudInputString_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
 
-public const string MudInput_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
+public const string MudInputString_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
 
-public const string MudInput_Adornment = @"Sets Start or End Adornment if not set to None.";
+public const string MudInputString_Adornment = @"Sets Start or End Adornment if not set to None.";
 
-public const string MudInput_IconSize = @"Sets the Icon Size.";
+public const string MudInputString_IconSize = @"Sets the Icon Size.";
 
-public const string MudInput_OnAdornmentClick = @"Button click event if set and Adornment used.";
+public const string MudInputString_OnAdornmentClick = @"Button click event if set and Adornment used.";
 
-public const string MudInput_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
+public const string MudInputString_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
 
-public const string MudInput_Variant = @"Variant to use.";
+public const string MudInputString_Variant = @"Variant to use.";
 
-public const string MudInput_Margin = @"Will adjust vertical spacing.";
+public const string MudInputString_Margin = @"Will adjust vertical spacing.";
 
-public const string MudInput_Text = @"";
+public const string MudInputString_Text = @"";
 
-public const string MudInput_TextChanged = @"";
+public const string MudInputString_TextChanged = @"";
 
-public const string MudInput_OnBlur = @"Fired when the Value property changes.";
+public const string MudInputString_OnBlur = @"Fired when the Value property changes.";
 
-public const string MudInput_Class = @"User class names, separated by space";
+public const string MudInputString_ValueChanged = @"Fired when the Value property changes.";
 
-public const string MudInput_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudInputString_Value = @"The value of this input element. This property is two-way bindable.";
 
-public const string MudInput_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+public const string MudInputString_Converter = @"";
 
-public const string MudInput_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+public const string MudInputString_Validation = @"";
+
+public const string MudInputString_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
+            Currently only string fields are supported.";
+
+public const string MudInputString_Class = @"User class names, separated by space";
+
+public const string MudInputString_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudInputString_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudInputString_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudInputLabel_ChildContent = @"Child content of component.";
@@ -994,111 +1077,230 @@ public const string MudRadioGroup_Tag = @"Use Tag to attach any user data object
 public const string MudRadioGroup_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudSelect_ChildContent = @"Add the MudSelectItems here";
+public const string MudSelect___ChildContent = @"Add the MudSelectItems here";
 
-public const string MudSelect_Dense = @"If true, compact vertical padding will be applied to all select items.";
+public const string MudSelect___Dense = @"If true, compact vertical padding will be applied to all select items.";
 
-public const string MudSelect_OpenIcon = @"The Open Select Icon";
+public const string MudSelect___OpenIcon = @"The Open Select Icon";
 
-public const string MudSelect_CloseIcon = @"The Open Select Icon";
+public const string MudSelect___CloseIcon = @"The Open Select Icon";
 
-public const string MudSelect_SelectedValuesChanged = @"Fires when SelectedValues changes.";
+public const string MudSelect___SelectedValuesChanged = @"Fires when SelectedValues changes.";
 
-public const string MudSelect_SelectedValues = @"Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.";
+public const string MudSelect___SelectedValues = @"Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.";
 
-public const string MudSelect_MultiSelection = @"If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown";
+public const string MudSelect___MultiSelection = @"If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown";
 
-public const string MudSelect_MaxHeight = @"Sets the maxheight the select can have when open.";
+public const string MudSelect___MaxHeight = @"Sets the maxheight the select can have when open.";
 
-public const string MudSelect_Direction = @"Sets the direction the select menu should be.";
+public const string MudSelect___Direction = @"Sets the direction the select menu should be.";
 
-public const string MudSelect_OffsetY = @"If true, the select menu will open either before or after the input.";
+public const string MudSelect___OffsetY = @"If true, the select menu will open either before or after the input.";
 
-public const string MudSelect_OffsetX = @"";
+public const string MudSelect___OffsetX = @"";
 
-public const string MudSelect_ValueChanged = @"Fired when the Value property changes.";
+public const string MudSelect___Required = @"";
 
-public const string MudSelect_Value = @"The value of this input element. This property is two-way bindable.";
+public const string MudSelect___RequiredError = @"";
 
-public const string MudSelect_Required = @"If true, this form input is required to be filled out.";
+public const string MudSelect___ErrorText = @"";
 
-public const string MudSelect_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+public const string MudSelect___Error = @"";
 
-public const string MudSelect_ErrorText = @"The ErrorText that will be displayed if Error true";
+public const string MudSelect___Disabled = @"";
 
-public const string MudSelect_Error = @"If true, the label will be displayed in an error state.";
+public const string MudSelect___ReadOnly = @"";
 
-public const string MudSelect_Disabled = @"If true, the input element will be disabled.";
+public const string MudSelect___FullWidth = @"";
 
-public const string MudSelect_ReadOnly = @"If true, the input will be read only.";
+public const string MudSelect___Immediate = @"";
 
-public const string MudSelect_FullWidth = @"If true, the input will take up the full width of its container.";
+public const string MudSelect___DisableUnderLine = @"";
 
-public const string MudSelect_Immediate = @"If true, the input will update the Value immediately on typing.
-            If false, the Value is updated only on Enter.";
+public const string MudSelect___Label = @"";
 
-public const string MudSelect_DisableUnderLine = @"If true, the input will not have an underline.";
+public const string MudSelect___Placeholder = @"";
 
-public const string MudSelect_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
+public const string MudSelect___HelperText = @"";
 
-public const string MudSelect_Placeholder = @"The short hint displayed in the input before the user enters a value.";
+public const string MudSelect___AdornmentIcon = @"";
 
-public const string MudSelect_HelperText = @"The HelperText will be displayed below the text field.";
+public const string MudSelect___AdornmentText = @"";
 
-public const string MudSelect_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
+public const string MudSelect___Adornment = @"";
 
-public const string MudSelect_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
+public const string MudSelect___IconSize = @"";
 
-public const string MudSelect_Adornment = @"Sets Start or End Adornment if not set to None.";
+public const string MudSelect___OnAdornmentClick = @"";
 
-public const string MudSelect_IconSize = @"Sets the Icon Size.";
+public const string MudSelect___InputType = @"";
 
-public const string MudSelect_OnAdornmentClick = @"Button click event if set and Adornment used.";
+public const string MudSelect___Variant = @"";
 
-public const string MudSelect_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
+public const string MudSelect___Margin = @"";
 
-public const string MudSelect_Variant = @"Variant to use.";
+public const string MudSelect___Text = @"";
 
-public const string MudSelect_Margin = @"Will adjust vertical spacing.";
+public const string MudSelect___TextChanged = @"";
 
-public const string MudSelect_Text = @"";
+public const string MudSelect___OnBlur = @"";
 
-public const string MudSelect_TextChanged = @"";
+public const string MudSelect___ValueChanged = @"";
 
-public const string MudSelect_OnBlur = @"Fired when the Value property changes.";
+public const string MudSelect___Value = @"";
 
-public const string MudSelect_Class = @"User class names, separated by space";
+public const string MudSelect___Converter = @"";
 
-public const string MudSelect_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudSelect___Validation = @"";
 
-public const string MudSelect_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+public const string MudSelect___For = @"";
 
-public const string MudSelect_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+public const string MudSelect___Class = @"User class names, separated by space";
+
+public const string MudSelect___Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudSelect___Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudSelect___UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudSelectItem_Value = @"A user-defined option that can be selected";
+public const string MudSelectString_ChildContent = @"Add the MudSelectItems here";
 
-public const string MudSelectItem_Disabled = @"If true, the input element will be disabled.";
+public const string MudSelectString_Dense = @"If true, compact vertical padding will be applied to all select items.";
 
-public const string MudSelectItem_DisableRipple = @"If true, disables ripple effect.";
+public const string MudSelectString_OpenIcon = @"The Open Select Icon";
 
-public const string MudSelectItem_Href = @"Link to a URL when clicked.";
+public const string MudSelectString_CloseIcon = @"The Open Select Icon";
 
-public const string MudSelectItem_ChildContent = @"Child content of component.";
+public const string MudSelectString_SelectedValuesChanged = @"Fires when SelectedValues changes.";
 
-public const string MudSelectItem_CommandParameter = @"Command parameter.";
+public const string MudSelectString_SelectedValues = @"Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.";
 
-public const string MudSelectItem_Command = @"Command executed when the user clicks on an element.";
+public const string MudSelectString_MultiSelection = @"If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown";
 
-public const string MudSelectItem_OnClick = @"";
+public const string MudSelectString_MaxHeight = @"Sets the maxheight the select can have when open.";
 
-public const string MudSelectItem_Class = @"User class names, separated by space";
+public const string MudSelectString_Direction = @"Sets the direction the select menu should be.";
 
-public const string MudSelectItem_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudSelectString_OffsetY = @"If true, the select menu will open either before or after the input.";
 
-public const string MudSelectItem_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+public const string MudSelectString_OffsetX = @"";
 
-public const string MudSelectItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+public const string MudSelectString_Required = @"If true, this form input is required to be filled out.";
+
+public const string MudSelectString_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+
+public const string MudSelectString_ErrorText = @"The ErrorText that will be displayed if Error true";
+
+public const string MudSelectString_Error = @"If true, the label will be displayed in an error state.";
+
+public const string MudSelectString_Disabled = @"If true, the input element will be disabled.";
+
+public const string MudSelectString_ReadOnly = @"If true, the input will be read only.";
+
+public const string MudSelectString_FullWidth = @"If true, the input will take up the full width of its container.";
+
+public const string MudSelectString_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
+
+public const string MudSelectString_DisableUnderLine = @"If true, the input will not have an underline.";
+
+public const string MudSelectString_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
+
+public const string MudSelectString_Placeholder = @"The short hint displayed in the input before the user enters a value.";
+
+public const string MudSelectString_HelperText = @"The HelperText will be displayed below the text field.";
+
+public const string MudSelectString_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
+
+public const string MudSelectString_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
+
+public const string MudSelectString_Adornment = @"Sets Start or End Adornment if not set to None.";
+
+public const string MudSelectString_IconSize = @"Sets the Icon Size.";
+
+public const string MudSelectString_OnAdornmentClick = @"Button click event if set and Adornment used.";
+
+public const string MudSelectString_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
+
+public const string MudSelectString_Variant = @"Variant to use.";
+
+public const string MudSelectString_Margin = @"Will adjust vertical spacing.";
+
+public const string MudSelectString_Text = @"";
+
+public const string MudSelectString_TextChanged = @"";
+
+public const string MudSelectString_OnBlur = @"Fired when the Value property changes.";
+
+public const string MudSelectString_ValueChanged = @"Fired when the Value property changes.";
+
+public const string MudSelectString_Value = @"The value of this input element. This property is two-way bindable.";
+
+public const string MudSelectString_Converter = @"";
+
+public const string MudSelectString_Validation = @"";
+
+public const string MudSelectString_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
+            Currently only string fields are supported.";
+
+public const string MudSelectString_Class = @"User class names, separated by space";
+
+public const string MudSelectString_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudSelectString_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudSelectString_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudSelectItem___Value = @"A user-defined option that can be selected";
+
+public const string MudSelectItem___Disabled = @"If true, the input element will be disabled.";
+
+public const string MudSelectItem___DisableRipple = @"If true, disables ripple effect.";
+
+public const string MudSelectItem___Href = @"Link to a URL when clicked.";
+
+public const string MudSelectItem___ChildContent = @"Child content of component.";
+
+public const string MudSelectItem___CommandParameter = @"Command parameter.";
+
+public const string MudSelectItem___Command = @"Command executed when the user clicks on an element.";
+
+public const string MudSelectItem___OnClick = @"";
+
+public const string MudSelectItem___Class = @"User class names, separated by space";
+
+public const string MudSelectItem___Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudSelectItem___Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudSelectItem___UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudSelectItemString_Value = @"A user-defined option that can be selected";
+
+public const string MudSelectItemString_Disabled = @"If true, the input element will be disabled.";
+
+public const string MudSelectItemString_DisableRipple = @"If true, disables ripple effect.";
+
+public const string MudSelectItemString_Href = @"Link to a URL when clicked.";
+
+public const string MudSelectItemString_ChildContent = @"Child content of component.";
+
+public const string MudSelectItemString_CommandParameter = @"Command parameter.";
+
+public const string MudSelectItemString_Command = @"Command executed when the user clicks on an element.";
+
+public const string MudSelectItemString_OnClick = @"";
+
+public const string MudSelectItemString_Class = @"User class names, separated by space";
+
+public const string MudSelectItemString_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudSelectItemString_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudSelectItemString_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudSlider_Min = @"The minimum allowed value of the slider. Should not be equal to max.";
@@ -1283,119 +1485,61 @@ public const string MudTabs_Tag = @"Use Tag to attach any user data object to th
 public const string MudTabs_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudBaseTextField_Required = @"If true, this form input is required to be filled out.";
+public const string MudTextField___Required = @"";
 
-public const string MudBaseTextField_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+public const string MudTextField___RequiredError = @"";
 
-public const string MudBaseTextField_ErrorText = @"The ErrorText that will be displayed if Error true";
+public const string MudTextField___ErrorText = @"";
 
-public const string MudBaseTextField_Error = @"If true, the label will be displayed in an error state.";
+public const string MudTextField___Error = @"";
 
-public const string MudBaseTextField_Disabled = @"If true, the input element will be disabled.";
+public const string MudTextField___Disabled = @"";
 
-public const string MudBaseTextField_ReadOnly = @"If true, the input will be read only.";
+public const string MudTextField___ReadOnly = @"";
 
-public const string MudBaseTextField_FullWidth = @"If true, the input will take up the full width of its container.";
+public const string MudTextField___FullWidth = @"";
 
-public const string MudBaseTextField_Immediate = @"If true, the input will update the Value immediately on typing.
-            If false, the Value is updated only on Enter.";
+public const string MudTextField___Immediate = @"";
 
-public const string MudBaseTextField_DisableUnderLine = @"If true, the input will not have an underline.";
+public const string MudTextField___DisableUnderLine = @"";
 
-public const string MudBaseTextField_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
+public const string MudTextField___Label = @"";
 
-public const string MudBaseTextField_Placeholder = @"The short hint displayed in the input before the user enters a value.";
+public const string MudTextField___Placeholder = @"";
 
-public const string MudBaseTextField_HelperText = @"The HelperText will be displayed below the text field.";
+public const string MudTextField___HelperText = @"";
 
-public const string MudBaseTextField_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
+public const string MudTextField___AdornmentIcon = @"";
 
-public const string MudBaseTextField_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
+public const string MudTextField___AdornmentText = @"";
 
-public const string MudBaseTextField_Adornment = @"Sets Start or End Adornment if not set to None.";
+public const string MudTextField___Adornment = @"";
 
-public const string MudBaseTextField_IconSize = @"Sets the Icon Size.";
+public const string MudTextField___IconSize = @"";
 
-public const string MudBaseTextField_OnAdornmentClick = @"Button click event if set and Adornment used.";
+public const string MudTextField___OnAdornmentClick = @"";
 
-public const string MudBaseTextField_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
+public const string MudTextField___InputType = @"";
 
-public const string MudBaseTextField_Variant = @"Variant to use.";
+public const string MudTextField___Variant = @"";
 
-public const string MudBaseTextField_Margin = @"Will adjust vertical spacing.";
-
-public const string MudBaseTextField_Text = @"";
-
-public const string MudBaseTextField_TextChanged = @"";
-
-public const string MudBaseTextField_OnBlur = @"Fired when the Value property changes.";
-
-public const string MudBaseTextField_Class = @"User class names, separated by space";
-
-public const string MudBaseTextField_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudBaseTextField_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudBaseTextField_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudTextField___ValueChanged = @"Fired when the Value property changes.";
-
-public const string MudTextField___Value = @"The value of this input element. This property is two-way bindable.";
-
-public const string MudTextField___Converter = @"";
-
-public const string MudTextField___Validation = @"";
-
-public const string MudTextField___For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
-            Currently only string fields are supported.";
-
-public const string MudTextField___Required = @"If true, this form input is required to be filled out.";
-
-public const string MudTextField___RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
-
-public const string MudTextField___ErrorText = @"The ErrorText that will be displayed if Error true";
-
-public const string MudTextField___Error = @"If true, the label will be displayed in an error state.";
-
-public const string MudTextField___Disabled = @"If true, the input element will be disabled.";
-
-public const string MudTextField___ReadOnly = @"If true, the input will be read only.";
-
-public const string MudTextField___FullWidth = @"If true, the input will take up the full width of its container.";
-
-public const string MudTextField___Immediate = @"If true, the input will update the Value immediately on typing.
-            If false, the Value is updated only on Enter.";
-
-public const string MudTextField___DisableUnderLine = @"If true, the input will not have an underline.";
-
-public const string MudTextField___Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
-
-public const string MudTextField___Placeholder = @"The short hint displayed in the input before the user enters a value.";
-
-public const string MudTextField___HelperText = @"The HelperText will be displayed below the text field.";
-
-public const string MudTextField___AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
-
-public const string MudTextField___AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
-
-public const string MudTextField___Adornment = @"Sets Start or End Adornment if not set to None.";
-
-public const string MudTextField___IconSize = @"Sets the Icon Size.";
-
-public const string MudTextField___OnAdornmentClick = @"Button click event if set and Adornment used.";
-
-public const string MudTextField___InputType = @"Type of the input element. It should be a valid HTML5 input type.";
-
-public const string MudTextField___Variant = @"Variant to use.";
-
-public const string MudTextField___Margin = @"Will adjust vertical spacing.";
+public const string MudTextField___Margin = @"";
 
 public const string MudTextField___Text = @"";
 
 public const string MudTextField___TextChanged = @"";
 
-public const string MudTextField___OnBlur = @"Fired when the Value property changes.";
+public const string MudTextField___OnBlur = @"";
+
+public const string MudTextField___ValueChanged = @"";
+
+public const string MudTextField___Value = @"";
+
+public const string MudTextField___Converter = @"";
+
+public const string MudTextField___Validation = @"";
+
+public const string MudTextField___For = @"";
 
 public const string MudTextField___Class = @"User class names, separated by space";
 
@@ -1404,6 +1548,73 @@ public const string MudTextField___Style = @"User styles, applied on top of the 
 public const string MudTextField___Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
 public const string MudTextField___UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudTextFieldString_Required = @"If true, this form input is required to be filled out.";
+
+public const string MudTextFieldString_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+
+public const string MudTextFieldString_ErrorText = @"The ErrorText that will be displayed if Error true";
+
+public const string MudTextFieldString_Error = @"If true, the label will be displayed in an error state.";
+
+public const string MudTextFieldString_Disabled = @"If true, the input element will be disabled.";
+
+public const string MudTextFieldString_ReadOnly = @"If true, the input will be read only.";
+
+public const string MudTextFieldString_FullWidth = @"If true, the input will take up the full width of its container.";
+
+public const string MudTextFieldString_Immediate = @"If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.";
+
+public const string MudTextFieldString_DisableUnderLine = @"If true, the input will not have an underline.";
+
+public const string MudTextFieldString_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
+
+public const string MudTextFieldString_Placeholder = @"The short hint displayed in the input before the user enters a value.";
+
+public const string MudTextFieldString_HelperText = @"The HelperText will be displayed below the text field.";
+
+public const string MudTextFieldString_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
+
+public const string MudTextFieldString_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
+
+public const string MudTextFieldString_Adornment = @"Sets Start or End Adornment if not set to None.";
+
+public const string MudTextFieldString_IconSize = @"Sets the Icon Size.";
+
+public const string MudTextFieldString_OnAdornmentClick = @"Button click event if set and Adornment used.";
+
+public const string MudTextFieldString_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
+
+public const string MudTextFieldString_Variant = @"Variant to use.";
+
+public const string MudTextFieldString_Margin = @"Will adjust vertical spacing.";
+
+public const string MudTextFieldString_Text = @"";
+
+public const string MudTextFieldString_TextChanged = @"";
+
+public const string MudTextFieldString_OnBlur = @"Fired when the Value property changes.";
+
+public const string MudTextFieldString_ValueChanged = @"Fired when the Value property changes.";
+
+public const string MudTextFieldString_Value = @"The value of this input element. This property is two-way bindable.";
+
+public const string MudTextFieldString_Converter = @"";
+
+public const string MudTextFieldString_Validation = @"";
+
+public const string MudTextFieldString_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
+            Currently only string fields are supported.";
+
+public const string MudTextFieldString_Class = @"User class names, separated by space";
+
+public const string MudTextFieldString_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudTextFieldString_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudTextFieldString_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string ComponentBaseMudThemeProvider_Theme = @"";
