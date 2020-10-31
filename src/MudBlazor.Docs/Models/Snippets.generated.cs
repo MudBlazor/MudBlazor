@@ -1827,11 +1827,19 @@ public const string MultiSelectExample = @"<MudGrid>
 
 public const string SelectCustomConverterExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect @bind-Value=""@pizza"" Label=""Select your pizza"" Variant=""Variant.Outlined"">
+        <MudSelect T=""Pizza"" @bind-Value=""@pizza"" Label=""Select your pizza"" Variant=""Variant.Outlined"" Converter=""@converter"">
             <MudSelectItem Value=""@(new Pizza() { Name=""Margarita""})"">Margarita</MudSelectItem>
             <MudSelectItem Value=""@(new Pizza() { Name=""Diavolo""})"">Diavolo</MudSelectItem>
         </MudSelect>
     </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        @if(pizza==null) {
+            <MudText Class=""mt-5"">Nothing selected yet.</MudText>
+        }        
+        else {
+            <MudText Class=""mt-5"">Pizza: @pizza.Name</MudText>
+        }
+    </MudItem>    
 </MudGrid>
 
 @code {
@@ -1841,6 +1849,16 @@ public const string SelectCustomConverterExample = @"<MudGrid>
     {
         public string Name { get; set; }
     }
+
+    // converts Pizza to string so the select can show the selected value.
+    Converter<Pizza> converter = new Converter<Pizza>
+    {
+        SetFunc = pizza => pizza?.Name,
+        GetFunc = s =>
+        {
+            return null; // for this example we don't need to convert back
+        }
+    };
 
 }";
 
