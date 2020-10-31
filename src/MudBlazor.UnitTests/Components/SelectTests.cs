@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var select = comp.FindComponent<MudSelect>();
+            var select = comp.FindComponent<MudSelect<string>>();
             var menu = comp.Find("div.mud-popover");
             var input =comp.Find("input");
             
@@ -60,8 +60,8 @@ namespace MudBlazor.UnitTests
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var select = comp.FindComponent<MudSelect>();
-            var menu = comp.Find("div.mud-popover");
+            var select = comp.FindComponent<MudSelect<string>>();
+                var menu = comp.Find("div.mud-popover");
             var input = comp.Find("input");
 
             // check initial state

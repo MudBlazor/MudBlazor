@@ -2,21 +2,21 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect Label="Text">
-            <MudSelectItem Value="foo">Foo</MudSelectItem>
-            <MudSelectItem Value="bar">Bar</MudSelectItem>
+        <MudSelect T="string" Label="Text">
+            <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
+            <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect Label="Text" Variant="Variant.Filled">
-            <MudSelectItem Value="foo">Foo</MudSelectItem>
-            <MudSelectItem Value="bar">Bar</MudSelectItem>
+        <MudSelect T="string" Label="Text" Variant="Variant.Filled">
+            <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
+            <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect Label="Text" Variant="Variant.Outlined">
-            <MudSelectItem Value="foo">Foo</MudSelectItem>
-            <MudSelectItem Value="bar">Bar</MudSelectItem>
+        <MudSelect T="string" Label="Text" Variant="Variant.Outlined">
+            <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
+            <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
         </MudSelect>
     </MudItem>
 </MudGrid>

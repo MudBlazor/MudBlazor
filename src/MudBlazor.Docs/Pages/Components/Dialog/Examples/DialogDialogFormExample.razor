@@ -7,9 +7,9 @@
         <MudForm>
             <MudTextField T="string" Label="Database name"></MudTextField>
             <MudTextField T="string" Label="Database tags"></MudTextField>
-            <MudSelect FullWidth="true" Label="Resource Group" ValueChanged="@OnSelectedValue">
-                <MudSelectItem Value="Prod">Prod</MudSelectItem>
-                <MudSelectItem Value="Test">Test</MudSelectItem>
+            <MudSelect T="string" FullWidth="true" Label="Resource Group" ValueChanged="@OnSelectedValue">
+                <MudSelectItem T="string" Value="@("Prod")">Prod</MudSelectItem>
+                <MudSelectItem T="string" Value="@("Test")">Test</MudSelectItem>
             </MudSelect>
             <MudCheckBox Label="Want to use SQL elastic pool?" Color="Color.Primary" Class="my-4"></MudCheckBox>
         </MudForm>

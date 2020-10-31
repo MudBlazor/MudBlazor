@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace MudBlazor
 {
-    public partial class MudSelect : MudBaseInput
+    public partial class MudSelect<T> : MudBaseInput<T>
     {
-        private HashSet<string> _selectedValues;
+        private HashSet<T> _selectedValues;
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -40,36 +40,36 @@ namespace MudBlazor
         /// <summary>
         /// Fires when SelectedValues changes.
         /// </summary>
-        [Parameter] public EventCallback<HashSet<string>> SelectedValuesChanged { get; set; }
+        [Parameter] public EventCallback<HashSet<T>> SelectedValuesChanged { get; set; }
 
         /// <summary>
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
         /// </summary>
         [Parameter]
-        public HashSet<string> SelectedValues
+        public HashSet<T> SelectedValues
         {
             get
             {
                 if (_selectedValues == null)
-                    _selectedValues = new HashSet<string>();
+                    _selectedValues = new HashSet<T>();
                 return _selectedValues;
             }
             set
             {
-                var set = value ?? new HashSet<string>();
+                var set = value ?? new HashSet<T>();
                 if (SelectedValues.Count==set.Count && SelectedValues.All(x => set.Contains(x)))
                     return;
-                _selectedValues = new HashSet<string>(set);
+                _selectedValues = new HashSet<T>(set);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
                     Value = _selectedValues.FirstOrDefault();
                 else
-                    Value = string.Join(", ", SelectedValues);
-                SelectedValuesChanged.InvokeAsync(new HashSet<string>(SelectedValues));
+                    Text = string.Join(", ", SelectedValues.Select(x=> Converter.Set(x)));
+                SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
             }
         }
 
-        internal event Action<HashSet<string>> SelectionChangedFromOutside;
+        internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
         /// <summary>
         /// If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
@@ -97,7 +97,7 @@ namespace MudBlazor
 
         public string CurrentIcon { get; set; }
 
-        public async Task SelectOption(string value)
+        public async Task SelectOption(T value)
         {
             if (!MultiSelection)
             {
@@ -115,7 +115,7 @@ namespace MudBlazor
                     SelectedValues.Add(value);
                 else
                     SelectedValues.Remove(value);
-                Value = string.Join(", ", SelectedValues);
+                Text = string.Join(", ", SelectedValues.Select(x=>Converter.Set(x)));
             }
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
@@ -151,42 +151,7 @@ namespace MudBlazor
             }
         }
 
-        // todo: pull down into generic child like with TextField
-
-        private string _value;
-        private bool _settingValue;
-        /// <summary>
-        /// Fired when the Value property changes. 
-        /// </summary>
-        [Parameter] public EventCallback<string> ValueChanged { get; set; }
-
-        /// <summary>
-        /// The value of this input element. This property is two-way bindable.
-        /// </summary>
-        [Parameter]
-        public string Value
-        {
-            get => _value;
-            set
-            {
-                if (object.Equals(value, _value))
-                    return;
-                if (_settingValue)
-                    return;
-                _settingValue = true;
-                try
-                {
-                    _value = value;
-                    //GenericValueChanged(value);
-                    //ValidateValue(value);
-                    ValueChanged.InvokeAsync(value);
-                }
-                finally
-                {
-                    _settingValue = false;
-                }
-            }
-        }
+      
 
     }
 }

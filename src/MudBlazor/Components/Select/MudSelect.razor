@@ -1,10 +1,11 @@
 ﻿@namespace MudBlazor
-@inherits MudBaseInput
+@typeparam T
+@inherits MudBaseInput<T>
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
     <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled">
         <InputContent>
-                <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Value" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
+                <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Text" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
                           @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
         </InputContent>
         <ChildContent>

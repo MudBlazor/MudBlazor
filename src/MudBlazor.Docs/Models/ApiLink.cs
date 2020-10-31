@@ -53,6 +53,7 @@ namespace MudBlazor.Docs.Models
         {
             [typeof(MudTable<T>)] = "table",
             [typeof(MudTextField<T>)] = "textfield",
+            [typeof(MudSelect<T>)] = "select",
         };
 
         private static Dictionary<string, string> ComponentLinkTranslation = new Dictionary<string, string>()

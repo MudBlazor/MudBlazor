@@ -8,15 +8,15 @@ namespace MudBlazor
     /// <summary>
     /// Represents an option of a select or multi-select. To be used inside MudSelect.
     /// </summary>
-    public partial class MudSelectItem : MudBaseSelectItem
+    public partial class MudSelectItem<T> : MudBaseSelectItem
     {
-        private MudSelect _parent;
+        private MudSelect<T> _parent;
 
         /// <summary>
         /// The parent select component
         /// </summary>
         [CascadingParameter]
-        public MudSelect MudSelect
+        public MudSelect<T> MudSelect
         {
             get => _parent;
             set
@@ -30,7 +30,7 @@ namespace MudBlazor
             }
         }
 
-        private void OnUpdateSelectionStateFromOutside(HashSet<string> selection)
+        private void OnUpdateSelectionStateFromOutside(HashSet<T> selection)
         {
             if (selection==null)
                 return;
@@ -43,7 +43,7 @@ namespace MudBlazor
         /// <summary>
         /// A user-defined option that can be selected
         /// </summary>
-        [Parameter] public string Value { get; set; }
+        [Parameter] public T Value { get; set; }
 
         /// <summary>
         /// Mirrors the MultiSelection status of the parent select

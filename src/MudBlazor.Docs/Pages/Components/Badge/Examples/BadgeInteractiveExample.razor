@@ -26,11 +26,11 @@
     <MudItem md="4">
         <MudCard>
             <MudCardContent>
-                <MudSelect Label="Test Component" Dense="true" OffsetY="true" Value="@SelectedTestComponent" ValueChanged="OnSelectedTestComponent" Class="mb-4">
-                    <MudSelectItem Value="MudIcon">MudIcon</MudSelectItem>
-                    <MudSelectItem Value="MudButton">MudButton</MudSelectItem>
-                    <MudSelectItem Value="MudIconButton">MudIconButton</MudSelectItem>
-                    <MudSelectItem Value="MudText">MudText</MudSelectItem>
+                <MudSelect  T="string" Label="Test Component" Dense="true" OffsetY="true" Value="@SelectedTestComponent" ValueChanged="OnSelectedTestComponent" Class="mb-4">
+                    <MudSelectItem T="string"  Value="@("MudIcon")">MudIcon</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("MudButton")">MudButton</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("MudIconButton")">MudIconButton</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("MudText")">MudText</MudSelectItem>
                 </MudSelect>
                 <MudText Typo="Typo.subtitle2" GutterBottom="true">Badge Options</MudText>
                 <MudCheckBox @bind-Checked="@Bottom" Label="Bottom" Color="Color.Primary" Style="width:100%;" />
