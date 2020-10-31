@@ -148,6 +148,23 @@ namespace MudBlazor.UnitTests
             group.Instance.SelectedValue.Should().Be(2);
         }
 
+        [Test]
+        public void RatingTest5()
+        {
+            // Initialized MaxValue by parameter should equal rating items count.
+            // setup
+            using var ctx = new Bunit.TestContext();
+            var comp = ctx.RenderComponent<RatingTest5>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var group = comp.FindComponent<MudRating>();
+            var ratingItemsSpans = comp.FindAll("span.mud-rating-item").ToArray();
+            // check initial state
+            group.Instance.SelectedValue.Should().Be(0);
+            Assert.AreEqual(ratingItemsSpans.Length, 12);
+        }
+
 
     }
 }
