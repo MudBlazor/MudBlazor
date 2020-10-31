@@ -3,12 +3,10 @@
 @inherits PieBase
 
 
-<svg class="mud-chart-donut" width="@MudChartParent.Width" height="@MudChartParent.Height" viewBox="0 0 20 20">
-    @*<circle r="10" cx="10" cy="10" fill="blueviolet" />
-    <circle r="5" cx="10" cy="10" fill="transparent" stroke-width="10" stroke-dasharray="calc(35 * 31.4 / 100) 31.4" transform="rotate(-90) translate(-20)" />*@
-    @foreach (var item in Circles.ToList())
+<svg class="mud-chart-pie" width="@MudChartParent.Width" height="@MudChartParent.Height" viewBox="-1 -1 2 2" style="transform: rotate(-90deg);">
+    @foreach (var item in Paths.ToList())
     {
-        <circle class="@($"mud-chart-stroke-color-{item.Index.ToString()}")" r="5" cx="10" cy="10" fill="transparent" stroke-width="10" stroke-dasharray="@item.StrokeDashArray" transform="rotate(-90) translate(-20)"></circle>
+        <path class="@($"mud-chart-fill-color-{item.Index.ToString()}")" d="@item.Data"></path>
     }
 </svg>
 <div class="mud-chart-legend">
@@ -20,5 +18,6 @@
         </div>
     }
 </div>
+
 
 

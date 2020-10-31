@@ -10,34 +10,35 @@ namespace MudBlazor.Charts
     {
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 
-        public List<SvgCircle> Circles = new List<SvgCircle>();
+        public List<SvgPath> Paths = new List<SvgPath>();
         public List<SvgLegend> Legends = new List<SvgLegend>();
 
         protected override void OnInitialized()
         {
-            double counterClockwiseOffset = 25;
-            double totalPercent = 0;
-            double offset = counterClockwiseOffset;
+            double startx, starty, endx, endy;
+            var ndata = GetNormalizedData();
+            double cumulativeRadians = 0;
+            for (int i = 0; i < ndata.Length; i++)
+            {
+                double data = ndata[i];
+                startx = Math.Cos(cumulativeRadians);
+                starty = Math.Sin(cumulativeRadians);
+                cumulativeRadians += 2 * Math.PI * data;
+                endx = Math.Cos(cumulativeRadians);
+                endy = Math.Sin(cumulativeRadians);
+                var largeArcFlag = data > 0.5 ? 1 : 0;
+                SvgPath path = new SvgPath()
+                {
+                    Index = i,
+                    Data = $"M {ToS(startx)} {ToS(starty)} A 1 1 0 {ToS(largeArcFlag)} 1 {ToS(endx)} {ToS(endy)} L 0 0"
+                };
+                Paths.Add(path);
+            }
 
             int counter = 0;
-            foreach (double data in GetNormalizedData())
+            foreach (double data in ndata)
             {
-                double percent = data * 100;
-                double reversePercent = 100 - percent;
-                offset = 100 - totalPercent + counterClockwiseOffset;
-                totalPercent = totalPercent + percent;
-
-                var circle = new SvgCircle()
-                {
-                    Index = counter,
-                    CX = 10,
-                    CY = 10,
-                    Radius = 5,
-                    StrokeDashArray = $"calc({percent.ToString(CultureInfo.InvariantCulture)} * 31.4 / 100) 31.4",
-                };
-                Circles.Add(circle);
-
-
+                var percent = data * 100;
                 string labels = "";
                 if (counter < InputLabels.Length)
                 {
@@ -47,10 +48,9 @@ namespace MudBlazor.Charts
                 {
                     Index = counter,
                     Labels = labels,
-                    Data = data.ToString()
+                    Data = ToS(Math.Round(percent,1))
                 };
                 Legends.Add(Legend);
-
                 counter += 1;
             }
         }
