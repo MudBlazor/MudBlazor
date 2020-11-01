@@ -2631,6 +2631,34 @@ public const string ColorsClassExample = @"<MudText>
     But rather css classes based on <strong class=""purple-text text-accent-3"">Material Design</strong> color pallet.
 </MudText>";
 
+public const string TurkeyTestExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""en-US"" Variant=""Variant.Outlined"" Culture=""@en"" @bind-Value=""date"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""de-AT"" Variant=""Variant.Outlined"" Culture=""@de"" @bind-Value=""date""></MudTextField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""cn-ZH"" Variant=""Variant.Outlined"" Culture=""@cn"" @bind-Value=""date""></MudTextField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""en-US: dddd, MMM dd"" Variant=""Variant.Outlined"" Converter=""@Converters.DateFormat(""dddd, MMM dd"", en)"" @bind-Value=""date"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""de-AT: dddd, dd. MM."" Variant=""Variant.Outlined"" Converter=""@Converters.DateFormat(""dddd, dd. MM."", de)"" @bind-Value=""date""></MudTextField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""cn-ZH: yy年MM月dd日"" Variant=""Variant.Outlined"" Converter=""@Converters.DateFormat(""yyyy年MM月dd日"", cn)"" @bind-Value=""date""></MudTextField>
+    </MudItem>
+</MudGrid>
+
+@code {
+    CultureInfo en = @CultureInfo.GetCultureInfo(""en-US"");
+    CultureInfo de = CultureInfo.GetCultureInfo(""de-AT"");
+    CultureInfo cn = CultureInfo.GetCultureInfo(""cn-ZH"");
+    DateTime date = DateTime.Now;
+}";
+
 public const string ElevationUsageExample = @"<div class=""mud-elevation-0"">0</div>
 <div class=""mud-elevation-1"">1</div>
 <div class=""mud-elevation-2"">2</div>

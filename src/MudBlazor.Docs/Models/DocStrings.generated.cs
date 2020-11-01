@@ -80,6 +80,8 @@ public const string MudBaseInput_Value = @"The value of this input element. This
 
 public const string MudBaseInput_Converter = @"";
 
+public const string MudBaseInput_Culture = @"";
+
 public const string MudBaseInput_Validation = @"";
 
 public const string MudBaseInput_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
@@ -684,6 +686,8 @@ public const string MudInput_Value = @"";
 
 public const string MudInput_Converter = @"";
 
+public const string MudInput_Culture = @"";
+
 public const string MudInput_Validation = @"";
 
 public const string MudInput_For = @"";
@@ -749,6 +753,8 @@ public const string MudInputString_ValueChanged = @"Fired when the Value propert
 public const string MudInputString_Value = @"The value of this input element. This property is two-way bindable.";
 
 public const string MudInputString_Converter = @"";
+
+public const string MudInputString_Culture = @"";
 
 public const string MudInputString_Validation = @"";
 
@@ -1153,6 +1159,8 @@ public const string MudSelect_Value = @"";
 
 public const string MudSelect_Converter = @"";
 
+public const string MudSelect_Culture = @"";
+
 public const string MudSelect_Validation = @"";
 
 public const string MudSelect_For = @"";
@@ -1242,6 +1250,8 @@ public const string MudSelectString_ValueChanged = @"Fired when the Value proper
 public const string MudSelectString_Value = @"The value of this input element. This property is two-way bindable.";
 
 public const string MudSelectString_Converter = @"";
+
+public const string MudSelectString_Culture = @"";
 
 public const string MudSelectString_Validation = @"";
 
@@ -1541,6 +1551,8 @@ public const string MudTextField_Value = @"";
 
 public const string MudTextField_Converter = @"";
 
+public const string MudTextField_Culture = @"";
+
 public const string MudTextField_Validation = @"";
 
 public const string MudTextField_For = @"";
@@ -1606,6 +1618,8 @@ public const string MudTextFieldString_ValueChanged = @"Fired when the Value pro
 public const string MudTextFieldString_Value = @"The value of this input element. This property is two-way bindable.";
 
 public const string MudTextFieldString_Converter = @"";
+
+public const string MudTextFieldString_Culture = @"";
 
 public const string MudTextFieldString_Validation = @"";
 

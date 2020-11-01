@@ -18,7 +18,7 @@
     "MudBlazor.Demo.ServerApp": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "components/textfield",
+      "launchUrl": "features/converters",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
