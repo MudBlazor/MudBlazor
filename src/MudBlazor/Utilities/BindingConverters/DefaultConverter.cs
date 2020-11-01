@@ -50,70 +50,70 @@ namespace MudBlazor
                 {
                     if (sbyte.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number");
+                    UpdateGetError("Not a valid number (sbyte)");
                 }
                 // byte
                 else if (typeof(T) == typeof(byte) || typeof(T) == typeof(byte?))
                 {
                     if (byte.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number");
+                    UpdateGetError("Not a valid number (byte)");
                 }
                 // short
                 else if (typeof(T) == typeof(short) || typeof(T) == typeof(short?))
                 {
                     if (short.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number");
+                    UpdateGetError("Not a valid number (short)");
                 }
                 // ushort
                 else if (typeof(T) == typeof(ushort) || typeof(T) == typeof(ushort?))
                 {
                     if (ushort.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number");
+                    UpdateGetError("Not a valid number (ushort)");
                 }
                 // int
                 else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
                 {
                     if (int.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number");
+                    UpdateGetError("Not a valid number (int)");
                 }
                 // uint
                 else if (typeof(T) == typeof(uint) || typeof(T) == typeof(uint?))
                 {
                     if (uint.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number");
+                    UpdateGetError("Not a valid number (uint)");
                 }
                 // long
                 else if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
                 {
                     if (long.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number");
+                    UpdateGetError("Not a valid number (long)");
                 }
                 // ulong
                 else if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
                 {
                     if (ulong.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number");
+                    UpdateGetError("Not a valid number (ulong)");
                 }
                 // float
                 else if (typeof(T) == typeof(float) || typeof(T) == typeof(float?))
                 {
                     if (float.TryParse(value, NumberStyles.Any, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number");
+                    UpdateGetError("Not a valid number (float)");
                 }
                 // double
                 else if (typeof(T) == typeof(double) || typeof(T) == typeof(double?))
                 {
                     if (double.TryParse(value, NumberStyles.Any, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number");
+                    UpdateGetError("Not a valid number (double)");
                 }
                 // decimal
                 else if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
@@ -123,13 +123,20 @@ namespace MudBlazor
                     UpdateGetError("Not a valid number");
                 }
                 // guid
-                else if (typeof(T) == typeof(Guid))
+                else if (typeof(T) == typeof(Guid) || typeof(T) == typeof(Guid?))
                 {
                     if (Guid.TryParse(value, out var parsedValue))
                         return (T)(object)parsedValue;
                     UpdateGetError("Not a valid GUID");
                 }
                 // enum
+                else if (IsNullableEnum(typeof(T)))
+                {
+                    var enum_type = Nullable.GetUnderlyingType(typeof(T));
+                    if (Enum.TryParse(enum_type, value, out var parsedValue))
+                        return (T)parsedValue;
+                    UpdateGetError("Not a value of " + enum_type.Name);
+                }
                 else if (typeof(T).IsEnum)
                 {
                     if (Enum.TryParse(typeof(T), value, out var parsedValue))
@@ -243,7 +250,17 @@ namespace MudBlazor
                     var value = (Guid) (object) arg;
                     return value.ToString();
                 }
+                else if (typeof(T) == typeof(Guid?))
+                {
+                    var value = (Guid?)(object)arg;
+                    return value.Value.ToString();
+                }
                 // enum
+                else if(IsNullableEnum(typeof(T))) 
+                {
+                    var value = (Enum)(object)arg;
+                    return value.ToString();
+                }
                 else if (typeof(T).IsEnum)
                 {
                     var value = (Enum) (object) arg;
@@ -278,6 +295,12 @@ namespace MudBlazor
                 UpdateSetError("Conversion error: "+e.Message);
                 return null;
             }
+        }
+
+        public static bool IsNullableEnum(Type t)
+        {
+            Type u = Nullable.GetUnderlyingType(t);
+            return (u != null) && u.IsEnum;
         }
     }
 }

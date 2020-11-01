@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
+using System.Globalization;
 
 namespace MudBlazor
 {
@@ -238,6 +239,19 @@ namespace MudBlazor
                     return;
                 _converter.OnError = OnConversionError;
                 Text = Converter.Set(Value);
+            }
+        }
+
+        [Parameter]
+        public CultureInfo Culture
+        {
+            get => _converter?.Culture;
+            set
+            {
+                if (_converter == null)
+                    _converter = new DefaultConverter<T> { Culture = value };
+                else
+                    _converter.Culture = value;
             }
         }
 
