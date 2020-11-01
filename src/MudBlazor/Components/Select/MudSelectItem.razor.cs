@@ -94,10 +94,10 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            try
-            {
-                MudSelect?.Remove(this);
-            } catch(Exception) {}
+            //try
+            //{
+            //    MudSelect?.Remove(this);
+            //} catch(Exception) {}
         }
     }
 
