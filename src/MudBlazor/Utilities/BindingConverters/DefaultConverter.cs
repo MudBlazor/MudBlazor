@@ -120,7 +120,7 @@ namespace MudBlazor
                 {
                     if (decimal.TryParse(value, NumberStyles.Any, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number");
+                    UpdateGetError("Not a valid number (decimal)");
                 }
                 // guid
                 else if (typeof(T) == typeof(Guid) || typeof(T) == typeof(Guid?))
@@ -155,7 +155,7 @@ namespace MudBlazor
                 {
                     if (TimeSpan.TryParse(value, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid date time");
+                    UpdateGetError("Not a valid time span");
                 }
                 else
                 {

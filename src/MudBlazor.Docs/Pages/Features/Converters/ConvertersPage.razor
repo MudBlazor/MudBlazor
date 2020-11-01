@@ -8,7 +8,7 @@
             <MudText Typo="Typo.h5" GutterBottom="true" Class="my-4">DefaultConverter&lt;T&gt;</MudText>
             <MudText>
                 The default converter converts all primitive types and their nullable variants to and from <CodeInline>string</CodeInline>.
-                Edit the textfields below to see how the default converter handles different values depending on the type. But if the default conversion doesn't suit you you can replace the converter with your own.
+                Edit the textfields below to see how the default converter handles different values depending on the type. 
             </MudText>
             <div class="d-flex flex-row mt-5">
                 <MudSwitch Color="Color.Primary" @bind-Checked="@nullable">Nullable variants</MudSwitch>
@@ -102,6 +102,27 @@
                             <td><MudText Inline="true">@ToS(nchar_value) </MudText></td>
                         </tr>
                         <tr>
+                            <td><CodeInline>float?</CodeInline></td>
+                            <td>
+                                <MudTextField T="float?" @bind-Value="@nfloat_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(nfloat_value) </MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>double?</CodeInline></td>
+                            <td>
+                                <MudTextField T="double?" @bind-Value="@ndouble_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(ndouble_value) </MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>decimal?</CodeInline></td>
+                            <td>
+                                <MudTextField T="decimal?" @bind-Value="@ndecimal_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(ndecimal_value) </MudText></td>
+                        </tr>
+                        <tr>
                             <td><CodeInline>DateTime?</CodeInline></td>
                             <td>
                                 <MudTextField T="DateTime?" @bind-Value="@ndatetime_value" Class="mt-n1" Immediate="true" />
@@ -127,10 +148,10 @@
                             <td>
                                 <MudTextField T="StringSplitOptions?" @bind-Value="@nenum_value" Class="mt-n1" Immediate="true" />
                                 @*<MudSelect T="StringSplitOptions?" @bind-Value="@nenum_value" Class="mt-n2" Immediate="true">
-                                <MudSelectItem T="StringSplitOptions?" Value="null">(Nothing selected)</MudSelectItem>
-                                <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.None">None</MudSelectItem>
-                                <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.RemoveEmptyEntries">RemoveEmptyEntries</MudSelectItem>
-                            </MudSelect>*@
+                        <MudSelectItem T="StringSplitOptions?" Value="null">(Nothing selected)</MudSelectItem>
+                        <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.None">None</MudSelectItem>
+                        <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.RemoveEmptyEntries">RemoveEmptyEntries</MudSelectItem>
+                    </MudSelect>*@
                             </td>
                             <td><MudText Inline="true">@ToS(nenum_value)</MudText></td>
                         </tr>
@@ -214,6 +235,27 @@
                             <td><MudText Inline="true">@char_value</MudText></td>
                         </tr>
                         <tr>
+                            <td><CodeInline>float</CodeInline></td>
+                            <td>
+                                <MudTextField T="float" @bind-Value="@float_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(float_value) </MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>double</CodeInline></td>
+                            <td>
+                                <MudTextField T="double" @bind-Value="@double_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(double_value) </MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>decimal</CodeInline></td>
+                            <td>
+                                <MudTextField T="decimal" @bind-Value="@decimal_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(decimal_value) </MudText></td>
+                        </tr>
+                        <tr>
                             <td><CodeInline>DateTime</CodeInline></td>
                             <td>
                                 <MudTextField T="DateTime" @bind-Value="@datetime_value" Class="mt-n1" Immediate="true" />
@@ -239,9 +281,9 @@
                             <td>
                                 <MudTextField T="StringSplitOptions" @bind-Value="@enum_value" Class="mt-n1" Immediate="true" />
                                 @*<MudSelect T="StringSplitOptions" @bind-Value="@enum_value" Class="mt-n2" Immediate="true">
-                                <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.None"></MudSelectItem>
-                                <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.RemoveEmptyEntries"></MudSelectItem>
-                            </MudSelect>*@
+                        <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.None"></MudSelectItem>
+                        <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.RemoveEmptyEntries"></MudSelectItem>
+                    </MudSelect>*@
                             </td>
                             <td><MudText Inline="true">@enum_value</MudText></td>
                         </tr>
@@ -268,6 +310,12 @@
                 long? nlong_value = -9_000_000_000;
                 ulong ulong_value = 9_000_000_000;
                 ulong? nulong_value = 9_000_000_000;
+                float float_value = (float)Math.PI;
+                double double_value = Math.PI;
+                decimal decimal_value = 99.99m;
+                float? nfloat_value = (float)Math.PI;
+                double? ndouble_value = Math.PI;
+                decimal? ndecimal_value = 99.99m;
                 Guid guid_value = Guid.NewGuid();
                 Guid? nguid_value = Guid.NewGuid();
                 DateTime datetime_value = DateTime.Now;
