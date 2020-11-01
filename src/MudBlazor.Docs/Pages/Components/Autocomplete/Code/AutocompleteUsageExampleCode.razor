@@ -1,0 +1,44 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudGrid</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudItem</span> <span class="htmlAttributeName">xs</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">12</span><span class="quot">&quot;</span> <span class="htmlAttributeName">sm</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">6</span><span class="quot">&quot;</span> <span class="htmlAttributeName">md</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">4</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudAutocomplete</span> <span class="htmlAttributeName">T</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">string</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Label</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">US States</span><span class="quot">&quot;</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>bind-Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">value</span><span class="quot">&quot;</span> <span class="htmlAttributeName">SearchFunc</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Search</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudItem</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudItem</span> <span class="htmlAttributeName">xs</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">12</span><span class="quot">&quot;</span> <span class="htmlAttributeName">md</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">12</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">mb-n3</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Typo</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Typo</span><span class="enumValue">.body2</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+            Selected value: <span class="atSign">&#64;</span>value
+        <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudItem</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudGrid</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code {
+    <span class="keyword">private</span> <span class="keyword">string</span> value;
+    <span class="keyword">private</span> <span class="keyword">string</span>[] states =
+    {
+        <span class="string">&quot;Alabama&quot;</span>, <span class="string">&quot;Alaska&quot;</span>, <span class="string">&quot;American Samoa&quot;</span>, <span class="string">&quot;Arizona&quot;</span>,
+        <span class="string">&quot;Arkansas&quot;</span>, <span class="string">&quot;California&quot;</span>, <span class="string">&quot;Colorado&quot;</span>, <span class="string">&quot;Connecticut&quot;</span>,
+        <span class="string">&quot;Delaware&quot;</span>, <span class="string">&quot;District of Columbia&quot;</span>, <span class="string">&quot;Federated States of Micronesia&quot;</span>,
+        <span class="string">&quot;Florida&quot;</span>, <span class="string">&quot;Georgia&quot;</span>, <span class="string">&quot;Guam&quot;</span>, <span class="string">&quot;Hawaii&quot;</span>, <span class="string">&quot;Idaho&quot;</span>,
+        <span class="string">&quot;Illinois&quot;</span>, <span class="string">&quot;Indiana&quot;</span>, <span class="string">&quot;Iowa&quot;</span>, <span class="string">&quot;Kansas&quot;</span>, <span class="string">&quot;Kentucky&quot;</span>,
+        <span class="string">&quot;Louisiana&quot;</span>, <span class="string">&quot;Maine&quot;</span>, <span class="string">&quot;Marshall Islands&quot;</span>, <span class="string">&quot;Maryland&quot;</span>,
+        <span class="string">&quot;Massachusetts&quot;</span>, <span class="string">&quot;Michigan&quot;</span>, <span class="string">&quot;Minnesota&quot;</span>, <span class="string">&quot;Mississippi&quot;</span>,
+        <span class="string">&quot;Missouri&quot;</span>, <span class="string">&quot;Montana&quot;</span>, <span class="string">&quot;Nebraska&quot;</span>, <span class="string">&quot;Nevada&quot;</span>,
+        <span class="string">&quot;New Hampshire&quot;</span>, <span class="string">&quot;New Jersey&quot;</span>, <span class="string">&quot;New Mexico&quot;</span>, <span class="string">&quot;New York&quot;</span>,
+        <span class="string">&quot;North Carolina&quot;</span>, <span class="string">&quot;North Dakota&quot;</span>, <span class="string">&quot;Northern Mariana Islands&quot;</span>, <span class="string">&quot;Ohio&quot;</span>,
+        <span class="string">&quot;Oklahoma&quot;</span>, <span class="string">&quot;Oregon&quot;</span>, <span class="string">&quot;Palau&quot;</span>, <span class="string">&quot;Pennsylvania&quot;</span>, <span class="string">&quot;Puerto Rico&quot;</span>,
+        <span class="string">&quot;Rhode Island&quot;</span>, <span class="string">&quot;South Carolina&quot;</span>, <span class="string">&quot;South Dakota&quot;</span>, <span class="string">&quot;Tennessee&quot;</span>,
+        <span class="string">&quot;Texas&quot;</span>, <span class="string">&quot;Utah&quot;</span>, <span class="string">&quot;Vermont&quot;</span>, <span class="string">&quot;Virgin Island&quot;</span>, <span class="string">&quot;Virginia&quot;</span>,
+        <span class="string">&quot;Washington&quot;</span>, <span class="string">&quot;West Virginia&quot;</span>, <span class="string">&quot;Wisconsin&quot;</span>, <span class="string">&quot;Wyoming&quot;</span>,
+    };
+
+    <span class="keyword">private</span> Task&lt;IEnumerable&lt;<span class="keyword">string</span>&gt;&gt; Search(<span class="keyword">string</span> value)
+    {
+        <span class="keyword">return</span> Task.FromResult(states.Where(x =&gt; x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+    }
+
+}
+</pre></div>
+</div>

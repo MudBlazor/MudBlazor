@@ -128,7 +128,7 @@ namespace MudBlazor
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
         private bool _settingText;
-        private string _text;
+        protected string _text;
         [Parameter]
         public string Text
         {
@@ -165,9 +165,6 @@ namespace MudBlazor
             Value = Converter.Get(text);
         }
 
-        /// <summary>
-        /// Fired when the Value property changes. 
-        /// </summary>
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
         protected virtual void OnBlurred(FocusEventArgs obj)
@@ -175,6 +172,18 @@ namespace MudBlazor
             ValidateValue(Value);
             OnBlur.InvokeAsync(obj);
         }
+
+        [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
+
+        protected virtual void onKeyDown(KeyboardEventArgs obj) => OnKeyDown.InvokeAsync(obj);
+
+        [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
+
+        protected virtual void onKeyPress(KeyboardEventArgs obj) => OnKeyPress.InvokeAsync(obj);
+
+        [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
+
+        protected virtual void onKeyUp(KeyboardEventArgs obj) => OnKeyUp.InvokeAsync(obj);
 
 
         private T _value;

@@ -72,7 +72,13 @@ public const string MudBaseInput_Text = @"";
 
 public const string MudBaseInput_TextChanged = @"";
 
-public const string MudBaseInput_OnBlur = @"Fired when the Value property changes.";
+public const string MudBaseInput_OnBlur = @"";
+
+public const string MudBaseInput_OnKeyDown = @"";
+
+public const string MudBaseInput_OnKeyPress = @"";
+
+public const string MudBaseInput_OnKeyUp = @"";
 
 public const string MudBaseInput_ValueChanged = @"Fired when the Value property changes.";
 
@@ -202,6 +208,100 @@ public const string MudAppBar_Style = @"User styles, applied on top of the compo
 public const string MudAppBar_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
 public const string MudAppBar_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudAutocomplete_Dense = @"If true, compact vertical padding will be applied to all select items.";
+
+public const string MudAutocomplete_OpenIcon = @"The Open Select Icon";
+
+public const string MudAutocomplete_CloseIcon = @"The Open Select Icon";
+
+public const string MudAutocomplete_MaxHeight = @"Sets the maxheight the select can have when open.";
+
+public const string MudAutocomplete_ToStringExpression = @"Defines how values are displayed in the drop-down list";
+
+public const string MudAutocomplete_SearchFunc = @"The SearchFunc returns a list of items matching the typed text";
+
+public const string MudAutocomplete_Format = @"Set the format for values in the list if no template";
+
+public const string MudAutocomplete_MaxItems = @"Maximum items to display, defaults to 10.
+            Set null to display all";
+
+public const string MudAutocomplete_MinCharacters = @"Minimum characters to initiate a search, defaults to 2";
+
+public const string MudAutocomplete_DebounceInterval = @"Debounce interval in milliseconds.";
+
+public const string MudAutocomplete_Required = @"";
+
+public const string MudAutocomplete_RequiredError = @"";
+
+public const string MudAutocomplete_ErrorText = @"";
+
+public const string MudAutocomplete_Error = @"";
+
+public const string MudAutocomplete_Disabled = @"";
+
+public const string MudAutocomplete_ReadOnly = @"";
+
+public const string MudAutocomplete_FullWidth = @"";
+
+public const string MudAutocomplete_Immediate = @"";
+
+public const string MudAutocomplete_DisableUnderLine = @"";
+
+public const string MudAutocomplete_Label = @"";
+
+public const string MudAutocomplete_Placeholder = @"";
+
+public const string MudAutocomplete_HelperText = @"";
+
+public const string MudAutocomplete_AdornmentIcon = @"";
+
+public const string MudAutocomplete_AdornmentText = @"";
+
+public const string MudAutocomplete_Adornment = @"";
+
+public const string MudAutocomplete_IconSize = @"";
+
+public const string MudAutocomplete_OnAdornmentClick = @"";
+
+public const string MudAutocomplete_InputType = @"";
+
+public const string MudAutocomplete_Variant = @"";
+
+public const string MudAutocomplete_Margin = @"";
+
+public const string MudAutocomplete_Text = @"";
+
+public const string MudAutocomplete_TextChanged = @"";
+
+public const string MudAutocomplete_OnBlur = @"";
+
+public const string MudAutocomplete_OnKeyDown = @"";
+
+public const string MudAutocomplete_OnKeyPress = @"";
+
+public const string MudAutocomplete_OnKeyUp = @"";
+
+public const string MudAutocomplete_ValueChanged = @"";
+
+public const string MudAutocomplete_Value = @"";
+
+public const string MudAutocomplete_Converter = @"";
+
+public const string MudAutocomplete_Culture = @"";
+
+public const string MudAutocomplete_Validation = @"";
+
+public const string MudAutocomplete_For = @"";
+
+public const string MudAutocomplete_Class = @"User class names, separated by space";
+
+public const string MudAutocomplete_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudAutocomplete_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudAutocomplete_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudBadge_Color = @"The color of the badge.";
@@ -680,6 +780,12 @@ public const string MudInput_TextChanged = @"";
 
 public const string MudInput_OnBlur = @"";
 
+public const string MudInput_OnKeyDown = @"";
+
+public const string MudInput_OnKeyPress = @"";
+
+public const string MudInput_OnKeyUp = @"";
+
 public const string MudInput_ValueChanged = @"";
 
 public const string MudInput_Value = @"";
@@ -746,7 +852,13 @@ public const string MudInputString_Text = @"";
 
 public const string MudInputString_TextChanged = @"";
 
-public const string MudInputString_OnBlur = @"Fired when the Value property changes.";
+public const string MudInputString_OnBlur = @"";
+
+public const string MudInputString_OnKeyDown = @"";
+
+public const string MudInputString_OnKeyPress = @"";
+
+public const string MudInputString_OnKeyUp = @"";
 
 public const string MudInputString_ValueChanged = @"Fired when the Value property changes.";
 
@@ -1153,6 +1265,12 @@ public const string MudSelect_TextChanged = @"";
 
 public const string MudSelect_OnBlur = @"";
 
+public const string MudSelect_OnKeyDown = @"";
+
+public const string MudSelect_OnKeyPress = @"";
+
+public const string MudSelect_OnKeyUp = @"";
+
 public const string MudSelect_ValueChanged = @"";
 
 public const string MudSelect_Value = @"";
@@ -1243,7 +1361,13 @@ public const string MudSelectString_Text = @"";
 
 public const string MudSelectString_TextChanged = @"";
 
-public const string MudSelectString_OnBlur = @"Fired when the Value property changes.";
+public const string MudSelectString_OnBlur = @"";
+
+public const string MudSelectString_OnKeyDown = @"";
+
+public const string MudSelectString_OnKeyPress = @"";
+
+public const string MudSelectString_OnKeyUp = @"";
 
 public const string MudSelectString_ValueChanged = @"Fired when the Value property changes.";
 
@@ -1545,6 +1669,12 @@ public const string MudTextField_TextChanged = @"";
 
 public const string MudTextField_OnBlur = @"";
 
+public const string MudTextField_OnKeyDown = @"";
+
+public const string MudTextField_OnKeyPress = @"";
+
+public const string MudTextField_OnKeyUp = @"";
+
 public const string MudTextField_ValueChanged = @"";
 
 public const string MudTextField_Value = @"";
@@ -1611,7 +1741,13 @@ public const string MudTextFieldString_Text = @"";
 
 public const string MudTextFieldString_TextChanged = @"";
 
-public const string MudTextFieldString_OnBlur = @"Fired when the Value property changes.";
+public const string MudTextFieldString_OnBlur = @"";
+
+public const string MudTextFieldString_OnKeyDown = @"";
+
+public const string MudTextFieldString_OnKeyPress = @"";
+
+public const string MudTextFieldString_OnKeyUp = @"";
 
 public const string MudTextFieldString_ValueChanged = @"Fired when the Value property changes.";
 

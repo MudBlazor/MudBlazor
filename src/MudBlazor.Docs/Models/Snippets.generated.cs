@@ -199,6 +199,44 @@ public const string AppBarSimpleExample = @"<MudAppBar Position=""Position.Stati
     <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
 </MudAppBar>";
 
+public const string AutocompleteUsageExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudAutocomplete T=""string"" Label=""US States"" @bind-Value=""value"" SearchFunc=""@Search"" />
+    </MudItem>
+    <MudItem xs=""12"" md=""12"">
+        <MudText Class=""mb-n3"" Typo=""Typo.body2"">
+            Selected value: @value
+        </MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string value;
+    private string[] states =
+    {
+        ""Alabama"", ""Alaska"", ""American Samoa"", ""Arizona"",
+        ""Arkansas"", ""California"", ""Colorado"", ""Connecticut"",
+        ""Delaware"", ""District of Columbia"", ""Federated States of Micronesia"",
+        ""Florida"", ""Georgia"", ""Guam"", ""Hawaii"", ""Idaho"",
+        ""Illinois"", ""Indiana"", ""Iowa"", ""Kansas"", ""Kentucky"",
+        ""Louisiana"", ""Maine"", ""Marshall Islands"", ""Maryland"",
+        ""Massachusetts"", ""Michigan"", ""Minnesota"", ""Mississippi"",
+        ""Missouri"", ""Montana"", ""Nebraska"", ""Nevada"",
+        ""New Hampshire"", ""New Jersey"", ""New Mexico"", ""New York"",
+        ""North Carolina"", ""North Dakota"", ""Northern Mariana Islands"", ""Ohio"",
+        ""Oklahoma"", ""Oregon"", ""Palau"", ""Pennsylvania"", ""Puerto Rico"",
+        ""Rhode Island"", ""South Carolina"", ""South Dakota"", ""Tennessee"",
+        ""Texas"", ""Utah"", ""Vermont"", ""Virgin Island"", ""Virginia"",
+        ""Washington"", ""West Virginia"", ""Wisconsin"", ""Wyoming"",
+    };
+
+    private Task<IEnumerable<string>> Search(string value)
+    {
+        return Task.FromResult(states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+    }
+
+}";
+
 public const string AvatarIconExample = @"<MudAvatar>
     <MudIcon Icon=""@Icons.Material.AccessAlarm""/>
 </MudAvatar>
