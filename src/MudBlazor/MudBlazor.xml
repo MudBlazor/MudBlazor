@@ -1253,6 +1253,116 @@
             Child content of component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudRating.ClassName">
+            <summary>
+            Space separated class names
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.RatingItemsClass">
+            <summary>
+            User class names for RatingItems, separated by space
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.RatingItemsStyle">
+            <summary>
+            User styles for RatingItems.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.Name">
+            <summary>
+            Input name. If not initialized, name will be random guid.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.MaxValue">
+            <summary>
+            Max value and how many elements to click will be generated. Default: 5
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.FullIcon">
+            <summary>
+            Selected or hovered icon. Default @Icons.Material.Star
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.EmptyIcon">
+            <summary>
+            Non selected item icon. Default @Icons.Material.StarBorder
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.Size">
+            <summary>
+            The Size of the icons.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.Disabled">
+            <summary>
+            If true, the controls will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.SelectedValueChanged">
+            <summary>
+            Fires when SelectedValue changes.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.SelectedValue">
+            <summary>
+            Selected value. This property is two-way bindable.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.HoveredValueChanged">
+            <summary>
+            Fires when hovered value change. Value will be null if no rating item is hovered.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.ClassName">
+            <summary>
+            Space separated class names
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.ItemValue">
+            <summary>
+            This rating item value;
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.Size">
+            <summary>
+            The Size of the icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.Disabled">
+            <summary>
+            If true, the controls will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.ItemClicked">
+            <summary>
+            Fires when element clicked.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.ItemHovered">
+            <summary>
+            Fires when element hovered.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudSelect`1.ChildContent">
             <summary>
             Add the MudSelectItems here

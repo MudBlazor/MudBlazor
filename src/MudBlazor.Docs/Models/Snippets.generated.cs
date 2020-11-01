@@ -1857,7 +1857,7 @@ public const string RaitngSizesExample = @"<MudGrid Spacing=""1"" Class=""d-flex
 
 public const string RatingBindingsExample = @"<div class=""d-flex flex-column align-center"">
     <MudRating @bind-SelectedValue=""selectedVal"" HoveredValueChanged=""HandleHoveredValueChanged"" />
-    <MudText Typo=""Typo.subtitle2"" Class=""deep-purple-text mt-2"">@GetLabelText()</MudText>
+    <MudText Typo=""Typo.subtitle2"" Class=""deep-purple-text mt-2"">@LabelText</MudText>
 </div>
 
 
@@ -1867,7 +1867,7 @@ public const string RatingBindingsExample = @"<div class=""d-flex flex-column al
 
     private void HandleHoveredValueChanged(int? val) => activeVal = val;
 
-    private string GetLabelText() => (activeVal ?? selectedVal) switch
+    private string LabelText => (activeVal ?? selectedVal) switch
     {
         1 => ""Very bad"",
         2 => ""Bad"",
