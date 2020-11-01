@@ -234,8 +234,58 @@ namespace MudBlazor
                 if (_converter == value)
                     return;
                 _converter = value;
+                if (_converter == null)
+                    return;
+                _converter.OnError = OnConversionError;
                 Text = Converter.Set(Value);
             }
+        }
+
+        protected virtual void OnConversionError(string error)
+        {
+            /* to be overridden */
+        }
+
+        /// <summary>
+        /// True if the conversion from string to T failed
+        /// </summary>
+        public bool ConversionError
+        {
+            get
+            {
+                if (_converter == null)
+                    return false;
+                return _converter.GetError;
+            }
+        }
+
+        /// <summary>
+        /// The error message of the conversion error from string to T. Null otherwise
+        /// </summary>
+        public string ConversionErrorMessage
+        {
+            get
+            {
+                if (_converter == null)
+                    return null;
+                return _converter.GetErrorMessage;
+            }
+        }
+
+        /// <summary>
+        /// True if the input has any of the following errors: An error set from outside, a conversion error or
+        /// one or more validation errors
+        /// </summary>
+        public bool HasErrors => Error || ConversionError || ValidationErrors.Count > 0;
+
+        public string GetErrorText()
+        {
+            // ErrorText is either set from outside or the first validation error
+            if (!string.IsNullOrWhiteSpace(ErrorText))
+                return ErrorText; 
+            if (!string.IsNullOrWhiteSpace(ConversionErrorMessage))
+                return ConversionErrorMessage;
+            return null;
         }
 
         #region Validation
@@ -360,7 +410,8 @@ namespace MudBlazor
             {
                 Form?.Add(this);
             }
-
+            if (_converter != null)
+                _converter.OnError = OnConversionError;
             return base.OnInitializedAsync();
         }
 

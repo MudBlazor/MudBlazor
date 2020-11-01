@@ -42,7 +42,7 @@ namespace MudBlazor
                         return (T)(object)true;
                     if (lowerValue == "false")
                         return (T)(object)false;
-                    OnError?.Invoke("Not a valid boolean");
+                    UpdateGetError("Not a valid boolean");
                     return default(T);
                 }
                 // sbyte
@@ -50,113 +50,116 @@ namespace MudBlazor
                 {
                     if (sbyte.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid number");
+                    UpdateGetError("Not a valid number");
                 }
                 // byte
                 else if (typeof(T) == typeof(byte) || typeof(T) == typeof(byte?))
                 {
                     if (byte.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid number");
+                    UpdateGetError("Not a valid number");
                 }
                 // short
                 else if (typeof(T) == typeof(short) || typeof(T) == typeof(short?))
                 {
                     if (short.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid number");
+                    UpdateGetError("Not a valid number");
                 }
                 // ushort
                 else if (typeof(T) == typeof(ushort) || typeof(T) == typeof(ushort?))
                 {
                     if (ushort.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid number");
+                    UpdateGetError("Not a valid number");
                 }
                 // int
                 else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
                 {
                     if (int.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid number");
+                    UpdateGetError("Not a valid number");
                 }
                 // uint
                 else if (typeof(T) == typeof(uint) || typeof(T) == typeof(uint?))
                 {
                     if (uint.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid number");
+                    UpdateGetError("Not a valid number");
                 }
                 // long
                 else if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
                 {
                     if (long.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid number");
+                    UpdateGetError("Not a valid number");
                 }
                 // ulong
                 else if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
                 {
                     if (ulong.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid number");
+                    UpdateGetError("Not a valid number");
                 }
                 // float
                 else if (typeof(T) == typeof(float) || typeof(T) == typeof(float?))
                 {
                     if (float.TryParse(value, NumberStyles.Any, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid number");
+                    UpdateGetError("Not a valid number");
                 }
                 // double
                 else if (typeof(T) == typeof(double) || typeof(T) == typeof(double?))
                 {
                     if (double.TryParse(value, NumberStyles.Any, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid number");
+                    UpdateGetError("Not a valid number");
                 }
                 // decimal
                 else if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
                 {
                     if (decimal.TryParse(value, NumberStyles.Any, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid number");
+                    UpdateGetError("Not a valid number");
                 }
                 // guid
                 else if (typeof(T) == typeof(Guid))
                 {
                     if (Guid.TryParse(value, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid GUID");
+                    UpdateGetError("Not a valid GUID");
                 }
                 // enum
                 else if (typeof(T).IsEnum)
                 {
                     if (Enum.TryParse(typeof(T), value, out var parsedValue))
                         return (T)parsedValue;
-                    OnError?.Invoke("Not a value of " + typeof(T).Name);
+                    UpdateGetError("Not a value of " + typeof(T).Name);
                 }
                 // datetime
                 else if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
                 {
                     if (DateTime.TryParse(value, Culture,  DateTimeStyles.None, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid date time");
+                    UpdateGetError("Not a valid date time");
                 }
                 // timespan
                 else if (typeof(T) == typeof(TimeSpan) || typeof(T) == typeof(TimeSpan?))
                 {
                     if (TimeSpan.TryParse(value, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    OnError?.Invoke("Not a valid date time");
+                    UpdateGetError("Not a valid date time");
+                }
+                else
+                {
+                    UpdateGetError($"Conversion to type {typeof(T)} not implemented");
                 }
             }
             catch (Exception e)
             {
-                OnError?.Invoke("Conversion error: "+e.Message);
+                UpdateGetError("Conversion error: "+e.Message);
                 return default(T);
             }
-            OnError?.Invoke($"Conversion to type {typeof(T)} not implemented");
             return default(T);
         }
 
@@ -272,7 +275,7 @@ namespace MudBlazor
             }
             catch (FormatException e)
             {
-                OnError?.Invoke("Conversion error: "+e.Message);
+                UpdateSetError("Conversion error: "+e.Message);
                 return null;
             }
         }

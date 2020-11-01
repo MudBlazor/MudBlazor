@@ -26,7 +26,7 @@ namespace MudBlazor
             }
             catch (FormatException e)
             {
-                OnError?.Invoke(e.Message);
+                UpdateGetError(e.Message);
                 return null;
             }
         }
@@ -41,7 +41,7 @@ namespace MudBlazor
             }
             catch (FormatException e)
             {
-                OnError?.Invoke(e.Message);
+                UpdateSetError(e.Message);
                 return null;
             }
         }
@@ -69,22 +69,20 @@ namespace MudBlazor
             }
             catch (FormatException e)
             {
-                OnError?.Invoke(e.Message);
+                UpdateGetError(e.Message);
                 return default;
             }
         }
 
         private string OnSet(DateTime arg)
         {
-            if (arg == null)
-                return null;
             try
             {
                 return arg.ToString(DateFormat, Culture);
             }
             catch (FormatException e)
             {
-                OnError?.Invoke(e.Message);
+                UpdateSetError(e.Message);
                 return null;
             }
         }
