@@ -1,6 +1,6 @@
 ﻿.mudblazor-brand {
   font-size: 1.7rem;
-  font-weight: 300;
+  font-weight: 400;
   letter-spacing: .1rem;
   line-height: 1.5;
   color: var(--mud-theme-on-surface);
@@ -211,7 +211,7 @@
   margin: 25px !important; }
 
 .demo-navmenu {
-  width: 200px;
+  width: 250px;
   background-color: var(--mud-theme-surface); }
 
 .demo-tabs .mud-tabs-panels {
@@ -245,6 +245,27 @@
     margin-right: 25px; }
   .demo-datetime-margin .docs-section-content-inner .mud-picker:last-child {
     margin-left: 25px; } }
+
+.demo-form-manual {
+  width: 400px;
+  padding-bottom: 20px; }
+
+.demo-form {
+  max-width: 400px; }
+  .demo-form .demo-form-button {
+    margin-left: auto; }
+
+.demo-form-paper {
+  max-width: 400px;
+  padding: 16px;
+  justify-content: center;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  text-align: center; }
+
+.demo-badge .docs-section-content-inner > * {
+  margin: 20px !important;
+  align-self: center; }
 
 .docs-home {
   padding-top: 32px;
@@ -469,7 +490,7 @@
 
 .docs-icon-panel {
   height: 120px;
-  width: 16%;
+  width: 19%;
   padding: 20px 10px;
   display: inline-block;
   text-align: center; }
@@ -483,3 +504,6 @@
   justify-content: center; }
   .docs-icon-panel-inner .mud-svg-icon-root {
     font-size: 40px; }
+
+.docs-icon-material-container .mud-input-control {
+  background-color: var(--mud-theme-surface); }

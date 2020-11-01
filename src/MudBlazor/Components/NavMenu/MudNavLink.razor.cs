@@ -12,6 +12,11 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
+
+        /// <summary>
+        /// Icon to use if set.
+        /// </summary>
+        [Parameter] public string Icon { get; set; }
         [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
     }
 }

@@ -6,29 +6,30 @@
     @if (String.IsNullOrEmpty(Icon))
     {
         <MudButton StartIcon="@StartIcon"
-            EndIcon="@EndIcon"
-            Color="@Color"
-            Size="@Size"
-            Variant="@Variant"
-            Disabled="@Disabled"
-            DisableRipple="@DisableRipple"
-            DisableElevation="@DisableElevation"
-            @onclick="@ToggleMenu">
+                   EndIcon="@EndIcon"
+                   Color="@Color"
+                   Size="@Size"
+                   Variant="@Variant"
+                   Disabled="@Disabled"
+                   DisableRipple="@DisableRipple"
+                   DisableElevation="@DisableElevation"
+                   @onclick="@ToggleMenu">
             @Label
         </MudButton>
     }
     else
     {
-        <MudIconButton Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" @onclick="@ToggleMenu"/>
+        <MudIconButton Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" @onclick="@ToggleMenu" />
     }
     <CascadingValue Value="@this">
         <MudPopover Open="@isOpen" Class="mud-menu-container">
-            <MudList Clickable="true">
+            <MudList Clickable="true" Dense="@Dense">
                 @ChildContent
             </MudList>
         </MudPopover>
     </CascadingValue>
 </div>
+
 
 @if (isOpen)
 {

@@ -153,7 +153,7 @@
 }
 
 .demo-navmenu {
-    width: 200px;
+    width: 250px;
     background-color: var(--mud-theme-surface);
 }
 
@@ -214,6 +214,36 @@
             & .mud-picker:last-child {
                 margin-left: 25px;
             }
+        }
+    }
+}
+
+.demo-form-manual {
+    width: 400px;
+    padding-bottom: 20px;
+}
+
+.demo-form{
+    max-width:400px;
+    & .demo-form-button{
+        margin-left: auto;
+    }
+}
+
+.demo-form-paper {
+    max-width: 400px;
+    padding: 16px;
+    justify-content: center;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.demo-badge {
+    .docs-section-content-inner {
+        & > * {
+            margin: 20px !important;
+            align-self: center;
         }
     }
 }

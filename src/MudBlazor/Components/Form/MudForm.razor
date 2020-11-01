@@ -2,7 +2,9 @@
 @inherits MudComponentBase
 
 
-<div @attributes="UserAttributes" class="@Classname" style="@Style">
-    @ChildContent
-</div>
+<form class="@Classname" style="@Style">
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+</form>
 

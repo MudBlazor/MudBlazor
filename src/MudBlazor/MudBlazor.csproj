@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
-    <Version>1.0.8</Version>
+    <Version>1.0.9</Version>
     <Authors>Garderoben</Authors>
     <Company>Gardnet</Company>
     <Title>MudBlazor</Title>
@@ -24,6 +24,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="bundleconfig.json" />
+    <Content Remove="compilerconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
   </ItemGroup>
@@ -32,6 +37,7 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
+
   <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
     <ItemGroup>
       <FileWatch Include="**\*.razor;" Exclude="node_modules\**\*;obj\**\*;bin\**\*" />
@@ -39,4 +45,13 @@
     </ItemGroup>
   </Target>
   
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="bundleconfig.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Include="compilerconfig.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

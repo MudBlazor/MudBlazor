@@ -1,0 +1,32 @@
+﻿@using MudBlazor.Docs.Data
+@namespace MudBlazor.Docs.Examples
+
+<MudTable Items="@PeriodicTable.GetElements()">
+    <ColGroup>
+        <col style="width: 60px;" />
+        <col />
+        <col style="width: 60%;" />
+        <col style="width: 60px;" />
+        <col />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh Style="text-align:center">Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Number</MudTd>
+        <MudTd>@context.Sign</MudTd>
+        <MudTd>@context.Name</MudTd>
+        <MudTd>@context.Position</MudTd>
+        <MudTd Style="text-align:right">@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+}

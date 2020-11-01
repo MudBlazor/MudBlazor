@@ -1,7 +1,6 @@
 ﻿
 <code class="docs-code @(SecondaryColor? "docs-code-secondary": "docs-code-primary")">
-    @Code
-    @ChildContent
+    @if (Tag) {<span>&lt;</span>}@Code@ChildContent@if (Tag) {<span>&gt;</span>}
 </code>
 
 @code
@@ -11,4 +10,6 @@
     [Parameter] public string Code { get; set; }
 
     [Parameter] public bool SecondaryColor { get; set; }
+
+    [Parameter] public bool Tag { get; set; }
 }

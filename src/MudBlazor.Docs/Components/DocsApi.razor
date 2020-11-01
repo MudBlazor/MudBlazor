@@ -6,8 +6,8 @@
 
 
 <DocsPage MaxWidth="MaxWidth.Large">
-    <DocsPageHeader ComponentLink="@ApiLink.GetComponentLinkFor(Type)">
-        <Title>@Type.ConvertToCSharpSource()</Title>
+    <DocsPageHeader ComponentLink="@ApiLink.GetComponentLinkFor(Type)"
+                    Title="@Type.ConvertToCSharpSource()" SubTitle="API documentation">
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
@@ -22,7 +22,7 @@
                         <MudTh>Description</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd>@context.Name</MudTd>
+                        <MudTd><CodeInline>@context.Name</CodeInline></MudTd>
                         <MudTd>@context.Type</MudTd>
                         <MudTd>@context.Description</MudTd>
                     </RowTemplate>

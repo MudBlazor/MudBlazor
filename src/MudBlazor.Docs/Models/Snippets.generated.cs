@@ -231,6 +231,120 @@ public const string AvatarVariantsExample = @"<MudAvatar Square=""true"">
     <MudIcon Icon=""@Icons.Material.Comment"" />
 </MudAvatar>";
 
+public const string BadgeBasicExample = @"<MudBadge Content=""3"" Color=""Color.Primary"" Overlap=""true"">
+    <MudIcon Icon=""@Icons.Material.Email"" Color=""Color.Default""/>
+</MudBadge>
+
+<MudBadge Content=""100"" Color=""Color.Primary"" Overlap=""true"">
+    <MudIcon Icon=""@Icons.Material.Email"" Color=""Color.Default""/>
+</MudBadge>
+
+<MudBadge Icon=""@Icons.Material.Lock"" Color=""Color.Danger"" Overlap=""true"" Bordered=""true"">
+    <MudButton Color=""Color.Danger"" Variant=""Variant.Filled"" DisableElevation=""true"">Security Issues</MudButton>
+</MudBadge>
+
+<MudBadge Dot=""true"" Color=""Color.Info"">
+    <MudText>Bug Reports</MudText>
+</MudBadge>";
+
+public const string BadgeInteractiveExample = @"<MudGrid>
+    <MudItem md=""8"" Class=""mud-text-align-center my-auto"">
+        <MudBadge Content=""@BadgeContent"" Color=""Color.Primary"" Overlap=""@Overlap"" Bottom=""@Bottom"" Left=""@Left"" Dot=""@Dot"" Bordered=""@Bordered"" Icon=""@BadgeIcon"">
+            @if (SelectedTestComponent == ""MudIcon"")
+            {
+                <MudIcon Icon=""@Icons.Custom.MudBlazor"" Color=""Color.Default"" Size=""Size.Large"" />
+            }
+            else if (SelectedTestComponent == ""MudButton"")
+            {
+                <MudButton Color=""Color.Primary"" Variant=""Variant.Filled"">MudButton</MudButton>
+            }
+            else if (SelectedTestComponent == ""MudIconButton"")
+            {
+                <MudIconButton Icon=""@Icons.Material.Email"" Color=""Color.Default"" />
+            }
+            else if (SelectedTestComponent == ""MudText"")
+            {
+                <MudText>MudText</MudText>
+            }
+        </MudBadge>
+    </MudItem>
+    <MudItem md=""4"">
+        <MudCard>
+            <MudCardContent>
+                <MudSelect  T=""string"" Label=""Test Component"" Dense=""true"" OffsetY=""true"" Value=""@SelectedTestComponent"" ValueChanged=""OnSelectedTestComponent"" Class=""mb-4"">
+                    <MudSelectItem T=""string""  Value=""@(""MudIcon"")"">MudIcon</MudSelectItem>
+                    <MudSelectItem T=""string"" Value=""@(""MudButton"")"">MudButton</MudSelectItem>
+                    <MudSelectItem T=""string"" Value=""@(""MudIconButton"")"">MudIconButton</MudSelectItem>
+                    <MudSelectItem T=""string"" Value=""@(""MudText"")"">MudText</MudSelectItem>
+                </MudSelect>
+                <MudText Typo=""Typo.subtitle2"" GutterBottom=""true"">Badge Options</MudText>
+                <MudCheckBox @bind-Checked=""@Bottom"" Label=""Bottom"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudCheckBox @bind-Checked=""@Dot"" Label=""Dot"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudCheckBox @bind-Checked=""@Left"" Label=""Left"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudCheckBox @bind-Checked=""@Overlap"" Label=""Overlap"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudCheckBox @bind-Checked=""@Bordered"" Label=""Bordered"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudCheckBox CheckedChanged=""AddIcon"" Label=""Icon"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudText Typo=""Typo.subtitle2"" Class=""my-2"">Badge Content</MudText>
+                <div style=""display: flex;"">
+                    <MudButton OnClick=""AddValue"" Variant=""Variant.Filled"" Size=""Size.Small"" Color=""Color.Primary"" Style=""width:100%;"" Class=""mr-1"">Add @AddNumber</MudButton>
+                    <MudButton OnClick=""ClearContent"" Variant=""Variant.Filled"" Size=""Size.Small"" Color=""Color.Secondary"" Style=""width:100%;"" Class=""ml-1"">Clear</MudButton>
+                </div>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public bool Bottom { get; set; }
+    public bool Dot { get; set; }
+    public bool Left { get; set; }
+    public bool Overlap { get; set; }
+    public bool Bordered { get; set; }
+    public string BadgeIcon { get; set; }
+
+    public string SelectedTestComponent { get; set; } = ""MudIcon"";
+    public string AddNumber { get; set; } = ""1"";
+
+    public int? BadgeContent { get; set; }
+
+    public void OnSelectedTestComponent(string value)
+    {
+        SelectedTestComponent = value;
+    }
+
+    public void AddIcon()
+    {
+        if (String.IsNullOrEmpty(BadgeIcon))
+        {
+            BadgeIcon = Icons.Custom.Radioactive;
+        }
+        else
+        {
+            BadgeIcon = null;
+        }
+    }
+
+    public void AddValue()
+    {
+        if(BadgeContent == null)
+        {
+            AddNumber = ""25"";
+            BadgeContent = 1;
+        }
+        else
+        {
+            BadgeContent += 25;
+        }
+    }
+
+    public void ClearContent()
+    {
+        AddNumber = ""1"";
+        BadgeContent = null;
+        StateHasChanged();
+    }
+}";
+
 public const string ButtonCustomizedExample = @"<MudButton Variant=""Variant.Filled"" EndIcon=""@Icons.Material.ArrowDownward"" Style=""background-color: yellowgreen; color: white; width: 200px; height: 60px;"">
     Download Now
 </MudButton>";
@@ -280,10 +394,26 @@ public const string ButtonTextExample = @"<MudButton Variant=""Variant.Text"">De
 <MudButton Variant=""Variant.Text"" Color=""Color.Secondary"">Secondary</MudButton>
 <MudButton Variant=""Variant.Text"" Disabled=""true"">Disabled</MudButton>";
 
+public const string FabSimpleExample = @"<MudFab Color=""Color.Primary"" Icon=""@Icons.Material.Add"" />
+<MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Edit"" />
+<MudFab Icon=""@Icons.Material.Navigation"" Label=""Navigation"" />
+<MudFab Icon=""@Icons.Material.Save"" Disabled=""true"" />";
+
+public const string FabSizeExample = @"<SectionContentRow>
+    <MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Small"" />
+    <MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Medium"" />
+    <MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Large"" />
+</SectionContentRow>
+<SectionContentRow>
+    <MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Small"" Label=""To cart"" />
+    <MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Medium"" Label=""To cart"" />
+    <MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Large"" Label=""To cart"" />
+</SectionContentRow>";
+
 public const string CardCombinedExample = @"<MudCard>
     <MudCardHeader>
         <CardHeaderAvatar>
-            <MudAvatar>I</MudAvatar>
+            <MudAvatar Color=""Color.Secondary"">I</MudAvatar>
         </CardHeaderAvatar>
         <CardHeaderContent>
             <MudText Typo=""Typo.body1"">Istra Croatia</MudText>
@@ -309,7 +439,7 @@ public const string CardHeaderExample = @"<MudCard>
             <MudText Typo=""Typo.h6"">The Story Book</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
-            <MudIconButton Icon=""@Icons.Material.Settings"" Color=""Color.Inherit"" />
+            <MudIconButton Icon=""@Icons.Material.Settings"" Color=""Color.Default"" />
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
@@ -317,7 +447,7 @@ public const string CardHeaderExample = @"<MudCard>
         <MudText Typo=""Typo.body2"">The quick, brown fox jumps over a lazy dog.</MudText>
     </MudCardContent>
     <MudCardActions>
-        <MudButton Variant=""Variant.Text"">Read More</MudButton>
+        <MudButton Variant=""Variant.Text"" Color=""Color.Primary"">Read More</MudButton>
     </MudCardActions>
 </MudCard>";
 
@@ -340,7 +470,7 @@ public const string CardOutlinedExample = @"<MudCard Outlined=""true"">
         <MudText Typo=""Typo.body2"">The quick, brown fox jumps over a lazy dog.</MudText>
     </MudCardContent>
     <MudCardActions>
-        <MudButton Variant=""Variant.Text"">Learn More</MudButton>
+        <MudButton Variant=""Variant.Text"" Color=""Color.Primary"">Learn More</MudButton>
     </MudCardActions>
 </MudCard>";
 
@@ -350,7 +480,7 @@ public const string CardSimpleExample = @"<MudCard>
         <MudText Typo=""Typo.body2"">The quick, brown fox jumps over a lazy dog.</MudText>
     </MudCardContent>
     <MudCardActions>
-        <MudButton Variant=""Variant.Text"">Learn More</MudButton>
+        <MudButton Variant=""Variant.Text"" Color=""Color.Primary"">Learn More</MudButton>
     </MudCardActions>
 </MudCard>";
 
@@ -376,6 +506,64 @@ public const string CheckboxLabelExample = @"<MudCheckBox @bind-Checked=""@Label
     public bool Label_CheckBox3 { get; set; } = false;
 }";
 
+public const string ChipBasicExample = @"<MudChip>Default</MudChip>
+<MudChip Color=""Color.Primary"">Primary</MudChip>
+<MudChip Color=""Color.Secondary"">Secondary</MudChip>
+<MudChip Color=""Color.Info"">Info</MudChip>
+<MudChip Color=""Color.Success"">Success</MudChip>
+<MudChip Color=""Color.Warning"">Warning</MudChip>
+<MudChip Color=""Color.Danger"">Danger</MudChip>
+<MudChip Color=""Color.Dark"">Dark</MudChip>
+<MudDivider />
+<MudChip Disabled=""true"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Primary"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Secondary"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Info"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Success"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Warning"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Danger"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Dark"">Disabled</MudChip>";
+
+public const string ChipClosableExample = @"<MudChip Color=""Color.Default"" OnClose=""CloseChip"">Closable</MudChip>
+<MudChip Color=""Color.Danger"" OnClose=""CloseChip"">Closable</MudChip>
+<MudChip Color=""Color.Primary"" OnClose=""CloseChip"" CloseIcon=""@Icons.Material.AlarmAdd"">Closable</MudChip>
+<MudChip Color=""Color.Success"" OnClose=""CloseChip"" CloseIcon=""@Icons.Material.AlarmOn"">Closable</MudChip>
+
+@code {
+    void CloseChip(){
+        // Code..
+    }
+}";
+
+public const string ChipIconExample = @"<MudChip Icon=""@Icons.Material.Extension"" Color=""Color.Dark"">Extensions</MudChip>
+<MudChip Icon=""@Icons.Material.Person"" Color=""Color.Primary"" >Account</MudChip>
+<MudChip Icon=""@Icons.Material.FlightTakeoff"" Color=""Color.Secondary"" >Your flight times</MudChip>
+<MudChip Icon=""@Icons.Material.VerifiedUser"" Color=""Color.Info"">Verified User</MudChip>";
+
+public const string ChipLabelExample = @"<MudChip Label=""true"">Default</MudChip>
+<MudChip Icon=""@Icons.Custom.MudBlazor"" Label=""true"" Color=""Color.Primary"">MudBlazor</MudChip>
+<MudChip Icon=""@Icons.Custom.Twitter"" Label=""true"" Color=""Color.Info"" OnClose=""CloseChip"">New Tweets</MudChip>
+<MudChip Icon=""@Icons.Custom.Radioactive"" Label=""true"" Color=""Color.Warning"" Style=""color:black;"">Radioactive Areas</MudChip>
+
+@code {
+    void CloseChip()
+    {
+        // Code..
+    }
+}";
+
+public const string ChipOutlinedExample = @"<MudChip Variant=""Variant.Outlined"">Default</MudChip>
+<MudChip Color=""Color.Primary"" Variant=""Variant.Outlined"">Primary</MudChip>
+<MudChip Color=""Color.Secondary"" Variant=""Variant.Outlined"">Secondary</MudChip>
+<MudChip Color=""Color.Info"" Variant=""Variant.Outlined"">Info</MudChip>
+<MudChip Icon=""@Icons.Material.Storage"" Label=""true"" Color=""Color.Dark"" Variant=""Variant.Outlined"">Server Storage</MudChip>
+<MudChip Icon=""@Icons.Custom.Twitter"" Label=""true"" Color=""Color.Info"" Variant=""Variant.Outlined"">New Tweets</MudChip>
+<MudChip Icon=""@Icons.Custom.Radioactive"" Label=""true"" Color=""Color.Warning"" Variant=""Variant.Outlined"">Radioactive Areas</MudChip>";
+
+public const string ChipSizeExample = @"<MudChip Size=""Size.Small"">Small</MudChip>
+<MudChip Size=""Size.Medium"">Medium</MudChip>
+<MudChip Size=""Size.Large"">Large</MudChip>";
+
 public const string ContainedFixedExample = @"<MudPaper>
     <MudContainer Fixed=""true""></MudContainer>
 </MudPaper>";
@@ -386,6 +574,7 @@ public const string ContainerFluidExample = @"<MudPaper>
 
 public const string DatePickerBasicUsageExample = @"<MudDatePicker Label=""Picker in menu"" Value=""2020-10-19""/>
 <MudDatePicker Label=""Only Calendar"" Value=""2020-10-19"" DisableToolbar=""true"" HelperText=""No header"" />
+<MudDatePicker Label=""Date Format"" HelperText=""For custom cultures"" DateFormat=""dd/MM/yyyy"" Date=""@(new System.DateTime(2020,10,19))"" />
 <MudDatePicker Label=""Picker in dialog"" HelperText=""Not implemented yet"" Value=""2020-10-19"" Disabled=""true"" />";
 
 public const string DatePickerColorExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Value=""2020-10-19"" />
@@ -397,16 +586,61 @@ public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=
 public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Value=""2020-10-19""/>
 <MudDatePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Value=""2020-10-19""/>";
 
+public const string DatePickeViewsExample = @"<MudDatePicker Label=""Year"" OpenTo=""OpenTo.Year"" Value=""2020-10-19""/>
+<MudDatePicker Label=""Month"" OpenTo=""OpenTo.Month"" Value=""2020-10-19"" />
+<MudDatePicker Label=""Date""  Value=""2020-10-19"" />";
+
+public const string DialogBodyScrollableExample = @"<MudDialog DisableSidePadding=""true"">
+    <DialogContent>
+        <MudContainer Style=""max-height: 300px; overflow-y: scroll"">
+            <MudText Class=""mb-5"" Typo=""Typo.body1"">Copyright (c) 2020 - The MudBlazor Team and Contributors</MudText>
+            @if (Loading)
+            {
+                <MudProgressCircular Indeterminate=""true""></MudProgressCircular>
+            }
+            else
+            {
+                <MudText Style=""white-space: pre-wrap;"">@LicenseText</MudText>
+            }
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color=""Color.Primary"" OnClick=""Ok"">Accept</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Loading = true;
+        var bytes = await new WebClient().DownloadDataTaskAsync(new Uri(""https://raw.githubusercontent.com/Garderoben/MudBlazor/master/LICENSE""));
+        LicenseText = Encoding.UTF8.GetString(bytes);
+        Loading = false;
+        await base.OnInitializedAsync();
+    }
+
+    string LicenseText;
+    bool Loading = false;
+
+    void Ok()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}";
+
 public const string DialogDialogFormExample = @"<MudDialog>
     <DialogContent>
         <MudText Class=""mt-2"">Note: Database creation can take up to 30 minutes.</MudText>
-        <MudText Class=""mb-2"">After database is created you will rescive a email to your cloud account.</MudText>
+        <MudText Class=""mb-2"">After database is created you will resceive a email to your cloud account.</MudText>
         <MudForm>
-            <MudTextField Label=""Database name""></MudTextField>
-            <MudTextField Label=""Database tags""></MudTextField>
-            <MudSelect FullWidth=""true"" Label=""Resource Group"" ValueChanged=""@OnSelectedValue"">
-                <MudSelectItem Value=""Prod"">Prod</MudSelectItem>
-                <MudSelectItem Value=""Test"">Test</MudSelectItem>
+            <MudTextField T=""string"" Label=""Database name""></MudTextField>
+            <MudTextField T=""string"" Label=""Database tags""></MudTextField>
+            <MudSelect T=""string"" FullWidth=""true"" Label=""Resource Group"" ValueChanged=""@OnSelectedValue"">
+                <MudSelectItem T=""string"" Value=""@(""Prod"")"">Prod</MudSelectItem>
+                <MudSelectItem T=""string"" Value=""@(""Test"")"">Test</MudSelectItem>
             </MudSelect>
             <MudCheckBox Label=""Want to use SQL elastic pool?"" Color=""Color.Primary"" Class=""my-4""></MudCheckBox>
         </MudForm>
@@ -514,6 +748,32 @@ public const string DialogOptionsExample = @"@inject IDialogService Dialog
         var Parameters = new DialogParameters();
         Parameters.Add(""Message"", ""This dialog has the backdrop click disabled and the user need to take an action within the dialog."");
         var userSelect = Dialog.Show<DialogDialogOptionExample>(""With no backdrop click"", Parameters, Options);
+    }
+}";
+
+public const string DialogScrollableExample = @"@inject IDialogService Dialog
+
+<MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenSimpleDialog"">Scrollable Dialog</MudButton>
+
+@code {
+    bool HideSourceSimpleDialog = true;
+
+    public void ShowSimpleDialogSource()
+    {
+        HideSourceSimpleDialog = !HideSourceSimpleDialog;
+    }
+
+    bool license_accepted = false;
+
+    async Task OpenSimpleDialog()
+    {
+        var userSelect = Dialog.Show<DialogBodyScrollableExample>(""MudBlazor License"");
+        var result = await userSelect.Result;
+
+        if (!result.Cancelled)
+        {
+            license_accepted = (bool)(result.Data ?? false);
+        }
     }
 }";
 
@@ -750,21 +1010,184 @@ public const string ExpansionPanelSimpleExample = @"<MudExpansionPanels>
     </MudExpansionPanel>
 </MudExpansionPanels>";
 
-public const string FabSimpleExample = @"<MudFab Color=""Color.Primary"" Icon=""@Icons.Material.Add"" />
-<MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Edit"" />
-<MudFab Icon=""@Icons.Material.Navigation"" Label=""Navigation"" />
-<MudFab Icon=""@Icons.Material.Save"" Disabled=""true"" />";
+public const string EditFormExample = @"<EditForm Model=""@model"" OnValidSubmit=""OnValidSubmit"">
+    <DataAnnotationsValidator />
+    <MudCard Class=""demo-form"">
+        <MudCardContent>
+            <MudTextField Label=""First name"" HelperText=""Max. 8 characters"" @bind-Value=""model.Username"" For=""@(() => model.Username)"" />
+            <MudTextField Label=""Email"" @bind-Value=""model.Email"" For=""@(() => model.Email)"" />
+            <MudTextField Label=""Password"" HelperText=""Choose a strong password"" @bind-Value=""model.Password"" For=""@(() => model.Password)"" InputType=""InputType.Password"" />
+            <MudTextField Label=""Password"" HelperText=""Repeat the password"" @bind-Value=""model.Password2"" For=""@(() => model.Password2)"" InputType=""InputType.Password"" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton ButtonType=""ButtonType.Submit"" Variant=""Variant.Filled"" Color=""Color.Primary"" Class=""demo-form-button"">Register</MudButton>
+        </MudCardActions>
+    </MudCard>
 
-public const string FabSizeExample = @"<SectionContentRow>
-    <MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Small"" />
-    <MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Medium"" />
-    <MudFab Color=""Color.Secondary"" Icon=""@Icons.Material.Add"" Size=""Size.Large"" />
-</SectionContentRow>
-<SectionContentRow>
-    <MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Small"" Label=""To cart"" />
-    <MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Medium"" Label=""To cart"" />
-    <MudFab Color=""Color.Primary"" Icon=""@Icons.Material.ShoppingCart"" Size=""Size.Large"" Label=""To cart"" />
-</SectionContentRow>";
+    <MudText Typo=""Typo.body2"" Align=""Align.Center"" Class=""my-4"">
+        Fill out the form correctly to see the success message.
+    </MudText>
+
+    <MudExpansionPanels>
+        <MudExpansionPanel Text=""Show Validation Summary"">
+            @if (success)
+            {
+                <MudText Color=""Color.Success"">Success</MudText>
+            }
+            else
+            {
+                <MudText Color=""@Color.Danger"">
+                    <ValidationSummary />
+                </MudText>
+            }
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</EditForm>
+
+@code {
+    RegisterAccountForm model = new RegisterAccountForm();
+    bool success;
+
+    public class RegisterAccountForm
+    {
+        [Required]
+        [StringLength(8, ErrorMessage = ""Name length can't be more than 8."")]
+        public string Username { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [StringLength(30, ErrorMessage = ""Password must be at least 8 characters long."", MinimumLength = 8)]
+        public string Password { get; set; }
+
+        [Required]
+        [Compare(nameof(Password))]
+        public string Password2 { get; set; }
+
+    }
+
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+
+}";
+
+public const string ManualValidationExample = @"<MudForm @bind-IsValid=""@success"">
+
+    <MudCard Class=""demo-form-manual"">
+        <MudCardContent>
+            <MudTextField T=""string"" Label=""Password"" HelperText=""Enter your new password"" Immediate=""true""
+                          Error=""@error1"" ErrorText=""@error_text1"" ValueChanged=""@(x => { pw1 = x; Validate(); })"" InputType=""InputType.Password"" />
+            <MudTextField T=""string"" Label=""Password"" HelperText=""Enter the password again"" Immediate=""true""
+                          Error=""@error2"" ErrorText=""@error_text2"" ValueChanged=""@(x => { pw2 = x; Validate(); })"" InputType=""InputType.Password"" />
+        </MudCardContent>
+    </MudCard>
+    <MudText Typo=""Typo.body2"" Align=""Align.Center"" Class=""my-4"">
+        @if (success)
+        {
+            <MudText Color=""Color.Success"" Align=""Align.Center"" Typo=""Typo.body2"">Success</MudText>
+        }
+        else
+        {
+            <MudText Align=""Align.Center"" Typo=""Typo.body2"">Enter the same password twice to see the success message.</MudText>
+        }
+    </MudText>
+</MudForm>
+
+@code {
+    bool success, error1, error2;
+    string pw1, pw2, error_text1, error_text2;
+
+    public void Validate()
+    {
+        error1 = false;
+        error2 = false;
+        if (string.IsNullOrEmpty(pw1))
+        {
+            error1 = true;
+            error_text1 = ""Password required"";
+        }
+        if (pw1 != pw2)
+        {
+            error2 = true;
+            error_text2 = ""The passwords do not match!"";
+        }
+        StateHasChanged();
+    }
+
+}";
+
+public const string MudFormExample = @"<MudForm @ref=""form"" @bind-IsValid=""@success"" @bind-Errors=""@errors"">
+
+    <MudCard Class=""demo-form"">
+        <MudCardContent>
+            <MudTextField T=""string"" Label=""Username"" Required=""true"" RequiredError=""User name is required!"" />
+            <MudTextField T=""string"" Label=""Email"" Required=""true"" RequiredError=""Email is required!""
+                Validation=""@(new EmailAddressAttribute(){ ErrorMessage = ""The email address is invalid""})"" />
+            <MudTextField T=""string"" Label=""Password"" HelperText=""Choose a strong password"" @ref=""pwField1""
+                InputType=""InputType.Password""
+                Validation=""@(new Func<string, IEnumerable<string>>(PasswordStrength))"" />
+            <MudTextField T=""string""
+                Label=""Password"" HelperText=""Repeat the password"" InputType=""InputType.Password""
+                Validation=""@(new Func<string, string>(PasswordMatch))"" Required=""true""
+                RequiredError=""Password is required!"" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" Disabled=""@(!success)"" Class=""demo-form-button"">Register</MudButton>
+        </MudCardActions>
+    </MudCard>
+
+    <MudPaper Class=""demo-form-paper"">
+        <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""@form.Validate"">Validate</MudButton>
+        <MudButton Variant=""Variant.Filled"" Color=""Color.Secondary"" OnClick=""@form.Reset"" Class=""mx-2"">Reset</MudButton>
+        <MudButton Variant=""Variant.Filled"" OnClick=""@form.ResetValidation"">Reset Validation</MudButton>
+    </MudPaper>
+
+    <MudExpansionPanels>
+        <MudExpansionPanel Text=""Show Errors"">
+            @foreach (var error in errors)
+            {
+                <MudText Color=""@Color.Danger"">@error</MudText>
+            }
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</MudForm>
+
+@code {
+    bool success;
+    string[] errors={};
+    MudTextField<string> pwField1;
+    MudForm form;
+
+    private IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return ""Password is required!"";
+            yield break;
+        }
+        if (pw.Length < 8)
+            yield return ""Password must be at least of length 8"";
+        if (!Regex.IsMatch(pw, @""[A-Z]""))
+            yield return ""Password must contain at least one capital letter"";
+        if (!Regex.IsMatch(pw, @""[a-z]""))
+            yield return ""Password must contain at least one lowercase letter"";
+        if (!Regex.IsMatch(pw, @""[0-9]""))
+            yield return ""Password must contain at least one digit"";
+    }
+
+    private string PasswordMatch(string arg)
+    {
+        if (pwField1.Value != arg)
+            return ""Passwords don't match"";
+        return null;
+    }
+
+}";
 
 public const string GridBasicExample = @"<MudGrid>
     <MudItem xs=""12"">
@@ -1134,6 +1557,12 @@ public const string MenuSimpleExample = @"<MudMenu Label=""Open Menu"">
     <MudMenuItem>Enlist</MudMenuItem>
     <MudMenuItem>Barracks</MudMenuItem>
     <MudMenuItem>Armory</MudMenuItem>
+</MudMenu>
+
+<MudMenu Label=""Open Dense Menu"" Dense=""true"">
+    <MudMenuItem>Dense Stuff</MudMenuItem>
+    <MudMenuItem>Stuff is Dense</MudMenuItem>
+    <MudMenuItem>Soo Dense</MudMenuItem>
 </MudMenu>";
 
 public const string MenuUsageExample = @"<MudMenu Label=""@Message"" Color=""Color.Primary"">
@@ -1157,6 +1586,17 @@ public const string NavMenuExample = @"<MudNavMenu Class=""demo-navmenu"">
     <MudNavGroup Title=""Settings"" Expanded=""true"">
         <MudNavLink Href=""/users"">Users</MudNavLink>
         <MudNavLink Href=""/security"">Security</MudNavLink>
+    </MudNavGroup>
+    <MudNavLink Href=""/about"">About</MudNavLink>
+</MudNavMenu>";
+
+public const string NavMenuIconExample = @"<MudNavMenu Class=""demo-navmenu"">
+    <MudNavLink Href=""/dashboard"" Icon=""@Icons.Material.Dashboard"">Dashboard</MudNavLink>
+    <MudNavLink Href=""/servers"" Icon=""@Icons.Material.Storage"">Servers</MudNavLink>
+    <MudNavLink Href=""/billing"" Icon=""@Icons.Material.Receipt"">Billing</MudNavLink>
+    <MudNavGroup Title=""Settings"" Icon=""@Icons.Material.Settings"" Expanded=""true"">
+        <MudNavLink Href=""/users""  Icon=""@Icons.Material.People"">Users</MudNavLink>
+        <MudNavLink Href=""/security"" Icon=""@Icons.Material.Security"">Security</MudNavLink>
     </MudNavGroup>
     <MudNavLink Href=""/about"">About</MudNavLink>
 </MudNavMenu>";
@@ -1300,26 +1740,54 @@ public const string RadioGroupExample = @"<MudForm>
     public string SelectedOption { get; set; }
 }";
 
-public const string RadioLabelPlacementExample = @"<MudForm Class=""demo-radio-inline"">
-    <MudRadioGroup @bind-SelectedLabel=""@SelectedLabel"" @bind-SelectedOption=""@SelectedOption"">
-        <MudRadio Placement=""Placement.Bottom"" Color=""Color.Primary"" Option=""Radio 1"">Bottom</MudRadio>
-        <MudRadio Placement=""Placement.Start"" Color=""Color.Primary"" Option=""Radio 2"">Start</MudRadio>
-        <MudRadio Placement=""Placement.Top"" Color=""Color.Primary"" Option=""Radio 3"">Top</MudRadio>
-        <MudRadio Placement=""Placement.End"" Color=""Color.Primary"" Option=""Radio 4"">End</MudRadio>
-    </MudRadioGroup>
-</MudForm>
+public const string RadioLabelPlacementExample = @"<MudGrid>
+    <MudItem xs=""12"" md=""2"">
+        <MudRadioGroup SelectedOptionChanged=""@OnRadioSelect"" SelectedOption=""@SelectedOption"">
+            <MudRadio Color=""Color.Primary"" Option=""1"">Bottom</MudRadio>
+            <MudRadio Color=""Color.Primary"" Option=""2"">Start</MudRadio>
+            <MudRadio Color=""Color.Primary"" Option=""3"">Top</MudRadio>
+            <MudRadio Color=""Color.Primary"" Option=""4"">End</MudRadio>
+        </MudRadioGroup>
+    </MudItem>
+    <MudItem xs=""12"" md=""8"" Class=""mud-text-align-center my-auto"">
+        <MudRadioGroup>
+            <MudRadio Placement=""@LabelPlacement"" Color=""Color.Secondary"">Label Placement</MudRadio>
+        </MudRadioGroup>
+    </MudItem>
+    <MudItem xs=""12"" md=""2"" Style=""width:100%""></MudItem>
+</MudGrid>
 
 @code {
-    public string SelectedLabel { get; set; } = ""Primary"";
     public string SelectedOption { get; set; }
+
+    public Placement LabelPlacement { get; set; } = Placement.End;
+
+    public void OnRadioSelect(string value)
+    {
+        switch (value)
+        {
+            case ""1"":
+                LabelPlacement = Placement.Bottom;
+                break;
+            case ""2"":
+                LabelPlacement = Placement.Start;
+                break;
+            case ""3"":
+                LabelPlacement = Placement.Top;
+                break;
+            case ""4"":
+                LabelPlacement = Placement.End;
+                break;
+        }
+    }
 }";
 
 public const string MultiSelectExample = @"<MudGrid>
     <MudItem xs=""12"" md=""12"">
-        <MudSelect Label=""US States"" HelperText=""Pick your favorite states"" MultiSelection=""true"" @bind-Value=""value"" @bind-SelectedValues=""options"">
+        <MudSelect T=""string"" Label=""US States"" HelperText=""Pick your favorite states"" MultiSelection=""true"" @bind-Value=""value"" @bind-SelectedValues=""options"">
             @foreach (var state in states)
             {
-                <MudSelectItem Value=""@state"">@state</MudSelectItem>
+                <MudSelectItem T=""string"" Value=""@state"">@state</MudSelectItem>
             }
         </MudSelect>
     </MudItem>
@@ -1357,15 +1825,43 @@ public const string MultiSelectExample = @"<MudGrid>
 
 }";
 
-public const string SelectDenseExample = @"<MudSelect Label=""Dense"" Dense=""true"">
-    <MudSelectItem Value=""foo"">Foo</MudSelectItem>
-    <MudSelectItem Value=""bar"">Bar</MudSelectItem>
-    <MudSelectItem Value=""foo"">Foo</MudSelectItem>
+public const string SelectCustomConverterExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSelect T=""Pizza"" @bind-Value=""@pizza"" Label=""Select your pizza"" Variant=""Variant.Outlined"" ToStringFunc=""@converter"" OffsetY=""true"">
+            <MudSelectItem Value=""@(new Pizza() { Name=""Margarita""})"">Margarita</MudSelectItem>
+            <MudSelectItem Value=""@(new Pizza() { Name=""Diavolo""})"">Diavolo</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        @if(pizza==null) {
+            <MudText Class=""mt-5"">Nothing selected yet.</MudText>
+        }        
+        else {
+            <MudText Class=""mt-5"">Pizza: @pizza.Name</MudText>
+        }
+    </MudItem>    
+</MudGrid>
+
+@code {
+    Pizza pizza;
+
+    public class Pizza
+    {
+        public string Name { get; set; }
+    }
+
+    Func<Pizza,string> converter = p => p?.Name;
+}";
+
+public const string SelectDenseExample = @"<MudSelect T=""string"" Label=""Dense"" Dense=""true"">
+    <MudSelectItem T=""string"" Value=""@(""foo"")"">Foo</MudSelectItem>
+    <MudSelectItem T=""string"" Value=""@(""bar"")"">Bar</MudSelectItem>
+    <MudSelectItem T=""string"" Value=""@(""baz"")"">Baz</MudSelectItem>
 </MudSelect>";
 
-public const string SelectDisabledExample = @"<MudSelect Label=""Disabled"" Disabled=""true"">
-    <MudSelectItem Value=""foo"">Foo</MudSelectItem>
-    <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+public const string SelectDisabledExample = @"<MudSelect T=""string"" Label=""Disabled"" Disabled=""true"">
+    <MudSelectItem T=""string"" Value=""@(""foo"")"">Foo</MudSelectItem>
+    <MudSelectItem T=""string"" Value=""@(""bar"")"">Bar</MudSelectItem>
 </MudSelect>";
 
 public const string SelectInteractiveExample = @"<MudGrid>
@@ -1378,10 +1874,10 @@ public const string SelectInteractiveExample = @"<MudGrid>
     </MudItem>
     <MudItem xs=""12"" md=""1"" />
     <MudItem xs=""12"" md=""4"">
-        <MudSelect Label=""Variants"" Variant=""@_variant"" Direction=""@_direction"" Dense=""@Dense"" OffsetY=""@OffsetY"" ValueChanged=""OnSelectedValue"">
-            <MudSelectItem Value=""text"">Text</MudSelectItem>
-            <MudSelectItem Value=""filled"">Filled</MudSelectItem>
-            <MudSelectItem Value=""outlined"">Outlined</MudSelectItem>
+        <MudSelect T=""string"" Label=""Variants"" Variant=""@_variant"" Direction=""@_direction"" Dense=""@Dense"" OffsetY=""@OffsetY"" ValueChanged=""OnSelectedValue"">
+            <MudSelectItem T=""string"" Value=""@(""text"")"">Text</MudSelectItem>
+            <MudSelectItem T=""string"" Value=""@(""filled"")"">Filled</MudSelectItem>
+            <MudSelectItem T=""string"" Value=""@(""outlined"")"">Outlined</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" md=""4"" />
@@ -1431,24 +1927,24 @@ public const string SelectInteractiveExample = @"<MudGrid>
 
 public const string SelectUsageExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect Label=""Food"" ValueChanged=""OnSelectedValue"">
-            <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
-            <MudSelectItem Value=""burgers"">Burgers</MudSelectItem>
-            <MudSelectItem Value=""hotdog"">Hot Dogs</MudSelectItem>
+        <MudSelect T=""string"" Label=""Food"" ValueChanged=""OnSelectedValue"">
+            <MudSelectItem Value=""@(""pizza"")"">Pizza</MudSelectItem>
+            <MudSelectItem Value=""@(""burgers"")"">Burgers</MudSelectItem>
+            <MudSelectItem Value=""@(""hotdog"")"">Hot Dogs</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect Label=""Food"" ValueChanged=""OnSelectedValue"" HelperText=""With helper text"">
-            <MudSelectItem Value=""pizza"">Pizza</MudSelectItem>
-            <MudSelectItem Value=""burgers"">Burgers</MudSelectItem>
-            <MudSelectItem Value=""hotdog"">Hot Dogs</MudSelectItem>
+        <MudSelect T=""string"" Label=""Food"" ValueChanged=""OnSelectedValue"" HelperText=""With helper text"">
+            <MudSelectItem Value=""@(""pizza"")"">Pizza</MudSelectItem>
+            <MudSelectItem Value=""@(""burgers"")"">Burgers</MudSelectItem>
+            <MudSelectItem Value=""@(""hotdog"")"">Hot Dogs</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect Placeholder=""Brands"" ValueChanged=""OnSelectedValue"" HelperText=""Disabled"" Disabled=""true"">
-            <MudSelectItem Value=""volvo"">Volvo</MudSelectItem>
-            <MudSelectItem Value=""saab"">Saab</MudSelectItem>
-            <MudSelectItem Value=""scania"">Scania</MudSelectItem>
+        <MudSelect T=""string"" Placeholder=""Brands"" ValueChanged=""OnSelectedValue"" HelperText=""Disabled"" Disabled=""true"">
+            <MudSelectItem Value=""@(""volvo"")"">Volvo</MudSelectItem>
+            <MudSelectItem Value=""@(""saab"")"">Saab</MudSelectItem>
+            <MudSelectItem Value=""@(""scania"")"">Scania</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
@@ -1464,30 +1960,31 @@ public const string SelectUsageExample = @"<MudGrid>
 
     private string Item { get; set; } = ""Nothing selected"";
 
+
     private void OnSelectedValue(string value)
     {
         Item = value;
-    }
+}
 
 }";
 
 public const string SelectVariantsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect Label=""Text"">
-            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
-            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+        <MudSelectString Label=""Text"">
+            <MudSelectItemString Value=""foo"">Foo</MudSelectItemString>
+            <MudSelectItemString Value=""bar"">Bar</MudSelectItemString>
+        </MudSelectString>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSelect T=""string"" Label=""Text"" Variant=""Variant.Filled"">
+            <MudSelectItem Value=""@(""foo"")"">Foo</MudSelectItem>
+            <MudSelectItem Value=""@(""bar"")"">Bar</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect Label=""Text"" Variant=""Variant.Filled"">
-            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
-            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
-        </MudSelect>
-    </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect Label=""Text"" Variant=""Variant.Outlined"">
-            <MudSelectItem Value=""foo"">Foo</MudSelectItem>
-            <MudSelectItem Value=""bar"">Bar</MudSelectItem>
+        <MudSelect T=""double"" Label=""Text"" Variant=""Variant.Outlined"">
+            <MudSelectItem Value=""4.50"">4.50</MudSelectItem>
+            <MudSelectItem Value=""21.99"">21.99</MudSelectItem>
         </MudSelect>
     </MudItem>
 </MudGrid>";
@@ -1689,6 +2186,36 @@ public const string SwitchWithLabelExample = @"<MudSwitch @bind-Checked=""@Label
     public bool Label_Switch3 { get; set; } = true;
 }";
 
+public const string TableColGroupExample = @"<MudTable Items=""@PeriodicTable.GetElements()"">
+    <ColGroup>
+        <col style=""width: 60px;"" />
+        <col />
+        <col style=""width: 60%;"" />
+        <col style=""width: 60px;"" />
+        <col />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh Style=""text-align:center"">Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Number</MudTd>
+        <MudTd>@context.Sign</MudTd>
+        <MudTd>@context.Name</MudTd>
+        <MudTd>@context.Position</MudTd>
+        <MudTd Style=""text-align:right"">@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+}";
+
 public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"" Class=""mud-flex-1-1-100"">Periodic Elements</MudText>
@@ -1871,34 +2398,34 @@ public const string TemplateExample = @"";
 
 public const string TextFieldAdornmentsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""12"" md=""12"">
-        <MudTextField Label=""Amount"" Variant=""Variant.Text"" Adornment=""Adornment.Start"" AdornmentText=""Kr"" />
+        <MudTextField T=""string"" Label=""Amount"" Variant=""Variant.Text"" Adornment=""Adornment.Start"" AdornmentText=""Kr"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Amount"" Variant=""Variant.Text"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
+        <MudTextField T=""string"" Label=""Amount"" Variant=""Variant.Text"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField HelperText=""Weight"" Variant=""Variant.Text"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
+        <MudTextField T=""string"" HelperText=""Weight"" Variant=""Variant.Text"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Text"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
+        <MudTextField T=""string"" Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Text"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Amount"" Variant=""Variant.Filled"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
+        <MudTextField T=""string"" Label=""Amount"" Variant=""Variant.Filled"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField HelperText=""Weight"" Variant=""Variant.Filled"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
+        <MudTextField T=""string"" HelperText=""Weight"" Variant=""Variant.Filled"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Filled"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
+        <MudTextField T=""string"" Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Filled"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Amount"" Variant=""Variant.Outlined"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
+        <MudTextField T=""string"" Label=""Amount"" Variant=""Variant.Outlined"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField HelperText=""Weight"" Variant=""Variant.Outlined"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
+        <MudTextField T=""string"" HelperText=""Weight"" Variant=""Variant.Outlined"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Outlined"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
+        <MudTextField T=""string"" Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Outlined"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
     </MudItem>
 </MudGrid>
 
@@ -1927,61 +2454,90 @@ public const string TextFieldAdornmentsExample = @"<MudGrid>
 
 public const string TextFieldBasicExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Standard"" Variant=""Variant.Text""></MudTextField>
+        <MudTextField T=""string"" Label=""Standard"" Variant=""Variant.Text""></MudTextField>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Filled"" Variant=""Variant.Filled""></MudTextField>
+        <MudTextField T=""string"" Label=""Filled"" Variant=""Variant.Filled""></MudTextField>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""Outlined"" Variant=""Variant.Outlined""></MudTextField>
+        <MudTextField T=""string"" Label=""Outlined"" Variant=""Variant.Outlined""></MudTextField>
     </MudItem>
 </MudGrid>";
+
+public const string TextFieldBindingExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField @bind-Value=""@element.Name"" Label=""Name""/>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField @bind-Value=""@element.Molar"" Label=""Molar""/>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField @bind-Value=""@element.Number"" Label=""Number""/>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField T=""DateTime"" Converter=""@(Converters.DateFormat(""yyyy/MM/dd""))"" @bind-Value=""@updatedon"" Label=""Last Update""/>
+    </MudItem>
+</MudGrid>
+<div>
+    <MudText Typo=""@MudBlazor.Typo.h6"">Data:</MudText>
+    <MudText>Name: @element.Name</MudText>
+    <MudText>Molar: @element.Molar</MudText>
+    <MudText>Number: @element.Number</MudText>
+    <MudText>Last Update: @updatedon </MudText>
+</div>
+
+
+@code {
+    DateTime updatedon = DateTime.Today;
+    Data.Element element = new Data.Element { Group = """", Name = ""Hydrogen"", Molar = 1.00794, Number = 1 };
+
+}";
 
 public const string TextFieldFormPropsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Text"" />
+        <MudTextField T=""string"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Text"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Disabled"" Variant=""Variant.Text"" Disabled=""true"" />
+        <MudTextField T=""string"" Label=""Disabled"" Variant=""Variant.Text"" Disabled=""true"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Text"" />
+        <MudTextField T=""string"" Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Text"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Read Only"" Value=""Can't change me"" ReadOnly=""true"" Variant=""Variant.Text"" />
-    </MudItem>
-
-    <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Filled"" />
-    </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Disabled"" Variant=""Variant.Filled"" Disabled=""true"" />
-    </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Filled"" />
-    </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Read Only"" Value=""Can't change me"" ReadOnly=""true"" Variant=""Variant.Filled"" />
+        <MudTextField T=""string"" Label=""Read Only"" Text=""Can't change me"" ReadOnly=""true"" Variant=""Variant.Text"" />
     </MudItem>
 
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Outlined"" />
+        <MudTextField T=""string"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Filled"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Disabled"" Variant=""Variant.Outlined"" Disabled=""true"" />
+        <MudTextField T=""string"" Label=""Disabled"" Variant=""Variant.Filled"" Disabled=""true"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Outlined"" />
+        <MudTextField T=""string"" Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Filled"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField Label=""Read Only"" Value=""Can't change me"" ReadOnly=""true"" Variant=""Variant.Outlined"" />
+        <MudTextField T=""string"" Label=""Read Only"" Text=""Can't change me"" ReadOnly=""true"" Variant=""Variant.Filled"" />
+    </MudItem>
+
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField T=""string"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Outlined"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField T=""string"" Label=""Disabled"" Variant=""Variant.Outlined"" Disabled=""true"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField T=""string"" Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Outlined"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""3"">
+        <MudTextField T=""string"" Label=""Read Only"" Value=""@(""Can't change me"")"" ReadOnly=""true"" Variant=""Variant.Outlined"" />
     </MudItem>
 </MudGrid>";
 
-public const string TextFieldInputsExample = @"<MudInput Value=""Basic Input"" />
-<MudInput Placeholder=""Placeholder"" />
-<MudInput Value=""Disabled"" Disabled=""true"" />
-<MudInput Value=""Error"" Error=""true"" />";
+public const string TextFieldInputsExample = @"<MudInput Value=""@(""Basic Input"")"" />
+<MudInput T=""string"" Placeholder=""Placeholder"" />
+<MudInput Value=""@(""Disabled"")"" Disabled=""true"" />
+<MudInput Value=""@(""Error"")"" Error=""true"" />";
 
 public const string ThemesCustomExample = @"<MudThemeProvider Theme=""MyCoolDarkTheme"" />
 
@@ -1998,6 +2554,28 @@ public const string ThemesCustomExample = @"<MudThemeProvider Theme=""MyCoolDark
 }";
 
 public const string ThemesDefaultExample = @"<MudThemeProvider />";
+
+public const string TimePickerBasicUsageExample = @"<MudTimePicker Label=""12 hours"" AmPm=""true"" @bind-Time=""time""/>
+<MudTimePicker Label=""24 hours"" @bind-Time=""time""/>
+
+@code{
+    TimeSpan? time = new TimeSpan(00, 45, 00);
+}";
+
+public const string TimePickerColorExample = @"<MudTimePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Value=""03:37 PM"" AmPm=""true"" />
+<MudTimePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Value=""13:37""/>";
+
+public const string TimePickerElevationExample = @"<MudTimePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Elevation=""1"" Value=""03:37 PM"" AmPm=""true"" />
+<MudTimePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Elevation=""12"" Value=""13:37"" />";
+
+public const string TimePickerStaticExample = @"<MudTimePicker PickerVariant=""PickerVariant.Static"" @bind-Time=""time"" AmPm=""true"" />
+<MudTimePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" @bind-Time=""time""/>
+
+@code{
+    TimeSpan? time = new TimeSpan(13, 37, 00);
+}";
+
+public const string TimePickerViewsExample = @"<MudTimePicker Label=""Minutes"" Value=""13:37"" OpenTo=""OpenTo.Minutes"" />";
 
 public const string TooltipDelayedExample = @"<MudTooltip Text=""Delete"" Delayed=""true"">
     <MudIconButton Icon=""@Icons.Material.Delete"" />
@@ -2052,6 +2630,55 @@ public const string ColorsClassExample = @"<MudText>
 <MudText>
     But rather css classes based on <strong class=""purple-text text-accent-3"">Material Design</strong> color pallet.
 </MudText>";
+
+public const string SpecialConverterExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSwitch Color=""Color.Primary"" @bind-Checked=""@state"">Flip the switch</MudSwitch>
+    </MudItem>
+    
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""Switch state"" Variant=""Variant.Outlined"" Converter=""@converter"" @bind-Value=""@state"" Immediate=""true""/>
+    </MudItem>
+
+</MudGrid>
+
+@code {
+    bool state = true;
+
+    Converter<bool> converter = new Converter<bool>
+    {
+        SetFunc = value => value ? ""ON"" : ""OFF"",
+        GetFunc = text => (text ?? """").ToLowerInvariant() == ""on"",
+    };
+}";
+
+public const string TurkeyTestExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""en-US"" Variant=""Variant.Outlined"" Culture=""@en"" @bind-Value=""date"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""de-AT"" Variant=""Variant.Outlined"" Culture=""@de"" @bind-Value=""date""></MudTextField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""cn-ZH"" Variant=""Variant.Outlined"" Culture=""@cn"" @bind-Value=""date""></MudTextField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""en-US: dddd, MMM dd"" Variant=""Variant.Outlined"" Converter=""@Converters.DateFormat(""dddd, MMM dd"", en)"" @bind-Value=""date"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""de-AT: dddd, dd. MM."" Variant=""Variant.Outlined"" Converter=""@Converters.DateFormat(""dddd, dd. MM."", de)"" @bind-Value=""date""></MudTextField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""cn-ZH: yy年MM月dd日"" Variant=""Variant.Outlined"" Converter=""@Converters.DateFormat(""yyyy年MM月dd日"", cn)"" @bind-Value=""date""></MudTextField>
+    </MudItem>
+</MudGrid>
+
+@code {
+    CultureInfo en = @CultureInfo.GetCultureInfo(""en-US"");
+    CultureInfo de = CultureInfo.GetCultureInfo(""de-AT"");
+    CultureInfo cn = CultureInfo.GetCultureInfo(""cn-ZH"");
+    DateTime date = DateTime.Now;
+}";
 
 public const string ElevationUsageExample = @"<div class=""mud-elevation-0"">0</div>
 <div class=""mud-elevation-1"">1</div>

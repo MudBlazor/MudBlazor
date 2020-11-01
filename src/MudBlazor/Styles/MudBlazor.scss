@@ -11,6 +11,7 @@
 @import 'core/elevation';
 
 @import 'components/alert';
+@import 'components/badge';
 @import 'components/toolbar';
 @import 'components/tooltip';
 @import 'components/avatar';
@@ -34,6 +35,7 @@
 @import 'components/navmenu';
 @import 'components/picker';
 @import 'components/pickerdate';
+@import 'components/pickertime';
 @import 'components/popover';
 @import 'components/simpletable';
 @import 'components/skeleton';
@@ -52,7 +54,7 @@
 
 @import 'utilities/flex';
 @import 'utilities/float';
-@import 'utilities/margin';
+@import 'utilities/align';
 @import 'utilities/spacing';
 
 @import 'layout/appbar';

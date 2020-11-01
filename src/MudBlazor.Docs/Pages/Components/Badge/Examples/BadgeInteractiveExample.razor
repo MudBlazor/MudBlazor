@@ -1,0 +1,101 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+
+<MudGrid>
+    <MudItem md="8" Class="mud-text-align-center my-auto">
+        <MudBadge Content="@BadgeContent" Color="Color.Primary" Overlap="@Overlap" Bottom="@Bottom" Left="@Left" Dot="@Dot" Bordered="@Bordered" Icon="@BadgeIcon">
+            @if (SelectedTestComponent == "MudIcon")
+            {
+                <MudIcon Icon="@Icons.Custom.MudBlazor" Color="Color.Default" Size="Size.Large" />
+            }
+            else if (SelectedTestComponent == "MudButton")
+            {
+                <MudButton Color="Color.Primary" Variant="Variant.Filled">MudButton</MudButton>
+            }
+            else if (SelectedTestComponent == "MudIconButton")
+            {
+                <MudIconButton Icon="@Icons.Material.Email" Color="Color.Default" />
+            }
+            else if (SelectedTestComponent == "MudText")
+            {
+                <MudText>MudText</MudText>
+            }
+        </MudBadge>
+    </MudItem>
+    <MudItem md="4">
+        <MudCard>
+            <MudCardContent>
+                <MudSelect  T="string" Label="Test Component" Dense="true" OffsetY="true" Value="@SelectedTestComponent" ValueChanged="OnSelectedTestComponent" Class="mb-4">
+                    <MudSelectItem T="string"  Value="@("MudIcon")">MudIcon</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("MudButton")">MudButton</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("MudIconButton")">MudIconButton</MudSelectItem>
+                    <MudSelectItem T="string" Value="@("MudText")">MudText</MudSelectItem>
+                </MudSelect>
+                <MudText Typo="Typo.subtitle2" GutterBottom="true">Badge Options</MudText>
+                <MudCheckBox @bind-Checked="@Bottom" Label="Bottom" Color="Color.Primary" Style="width:100%;" />
+                <MudCheckBox @bind-Checked="@Dot" Label="Dot" Color="Color.Primary" Style="width:100%;" />
+                <MudCheckBox @bind-Checked="@Left" Label="Left" Color="Color.Primary" Style="width:100%;" />
+                <MudCheckBox @bind-Checked="@Overlap" Label="Overlap" Color="Color.Primary" Style="width:100%;" />
+                <MudCheckBox @bind-Checked="@Bordered" Label="Bordered" Color="Color.Primary" Style="width:100%;" />
+                <MudCheckBox CheckedChanged="AddIcon" Label="Icon" Color="Color.Primary" Style="width:100%;" />
+                <MudText Typo="Typo.subtitle2" Class="my-2">Badge Content</MudText>
+                <div style="display: flex;">
+                    <MudButton OnClick="AddValue" Variant="Variant.Filled" Size="Size.Small" Color="Color.Primary" Style="width:100%;" Class="mr-1">Add @AddNumber</MudButton>
+                    <MudButton OnClick="ClearContent" Variant="Variant.Filled" Size="Size.Small" Color="Color.Secondary" Style="width:100%;" Class="ml-1">Clear</MudButton>
+                </div>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public bool Bottom { get; set; }
+    public bool Dot { get; set; }
+    public bool Left { get; set; }
+    public bool Overlap { get; set; }
+    public bool Bordered { get; set; }
+    public string BadgeIcon { get; set; }
+
+    public string SelectedTestComponent { get; set; } = "MudIcon";
+    public string AddNumber { get; set; } = "1";
+
+    public int? BadgeContent { get; set; }
+
+    public void OnSelectedTestComponent(string value)
+    {
+        SelectedTestComponent = value;
+    }
+
+    public void AddIcon()
+    {
+        if (String.IsNullOrEmpty(BadgeIcon))
+        {
+            BadgeIcon = Icons.Custom.Radioactive;
+        }
+        else
+        {
+            BadgeIcon = null;
+        }
+    }
+
+    public void AddValue()
+    {
+        if(BadgeContent == null)
+        {
+            AddNumber = "25";
+            BadgeContent = 1;
+        }
+        else
+        {
+            BadgeContent += 25;
+        }
+    }
+
+    public void ClearContent()
+    {
+        AddNumber = "1";
+        BadgeContent = null;
+        StateHasChanged();
+    }
+}

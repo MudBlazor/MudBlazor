@@ -292,6 +292,28 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void BadgeBasicExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<BadgeBasicExample>();
+        }
+
+
+        [Test]
+        public void BadgeInteractiveExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<BadgeInteractiveExample>();
+        }
+
+
+        [Test]
         public void ButtonCustomizedExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -365,6 +387,28 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<ButtonTextExample>();
+        }
+
+
+        [Test]
+        public void FabSimpleExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<FabSimpleExample>();
+        }
+
+
+        [Test]
+        public void FabSizeExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<FabSizeExample>();
         }
 
 
@@ -446,6 +490,72 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void ChipBasicExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<ChipBasicExample>();
+        }
+
+
+        [Test]
+        public void ChipClosableExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<ChipClosableExample>();
+        }
+
+
+        [Test]
+        public void ChipIconExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<ChipIconExample>();
+        }
+
+
+        [Test]
+        public void ChipLabelExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<ChipLabelExample>();
+        }
+
+
+        [Test]
+        public void ChipOutlinedExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<ChipOutlinedExample>();
+        }
+
+
+        [Test]
+        public void ChipSizeExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<ChipSizeExample>();
+        }
+
+
+        [Test]
         public void ContainedFixedExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -512,6 +622,28 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void DatePickeViewsExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<DatePickeViewsExample>();
+        }
+
+
+        [Test]
+        public void DialogBodyScrollableExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<DialogBodyScrollableExample>();
+        }
+
+
+        [Test]
         public void DialogDialogFormExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -563,6 +695,17 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<DialogOptionsExample>();
+        }
+
+
+        [Test]
+        public void DialogScrollableExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<DialogScrollableExample>();
         }
 
 
@@ -688,24 +831,35 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void FabSimpleExample_Test()
+        public void EditFormExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<FabSimpleExample>();
+                var comp = ctx.RenderComponent<EditFormExample>();
         }
 
 
         [Test]
-        public void FabSizeExample_Test()
+        public void ManualValidationExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<FabSizeExample>();
+                var comp = ctx.RenderComponent<ManualValidationExample>();
+        }
+
+
+        [Test]
+        public void MudFormExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<MudFormExample>();
         }
 
 
@@ -974,6 +1128,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void NavMenuIconExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<NavMenuIconExample>();
+        }
+
+
+        [Test]
         public void PaperComponentExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -1080,6 +1245,17 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<MultiSelectExample>();
+        }
+
+
+        [Test]
+        public void SelectCustomConverterExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<SelectCustomConverterExample>();
         }
 
 
@@ -1271,6 +1447,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void TableColGroupExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TableColGroupExample>();
+        }
+
+
+        [Test]
         public void TableExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -1414,6 +1601,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void TextFieldBindingExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TextFieldBindingExample>();
+        }
+
+
+        [Test]
         public void TextFieldFormPropsExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -1454,6 +1652,61 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<ThemesDefaultExample>();
+        }
+
+
+        [Test]
+        public void TimePickerBasicUsageExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TimePickerBasicUsageExample>();
+        }
+
+
+        [Test]
+        public void TimePickerColorExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TimePickerColorExample>();
+        }
+
+
+        [Test]
+        public void TimePickerElevationExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TimePickerElevationExample>();
+        }
+
+
+        [Test]
+        public void TimePickerStaticExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TimePickerStaticExample>();
+        }
+
+
+        [Test]
+        public void TimePickerViewsExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TimePickerViewsExample>();
         }
 
 
@@ -1520,6 +1773,28 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<ColorsClassExample>();
+        }
+
+
+        [Test]
+        public void SpecialConverterExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<SpecialConverterExample>();
+        }
+
+
+        [Test]
+        public void TurkeyTestExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TurkeyTestExample>();
         }
 
 

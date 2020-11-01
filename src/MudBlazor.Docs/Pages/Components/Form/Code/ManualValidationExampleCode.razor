@@ -1,0 +1,51 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudForm</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>bind-IsValid</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>success</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudCard</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">demo-form-manual</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudCardContent</span><span class="htmlTagDelimiter">&gt;</span>
+            <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTextField</span> <span class="htmlAttributeName">T</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">string</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Label</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Password</span><span class="quot">&quot;</span> <span class="htmlAttributeName">HelperText</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Enter your new password</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Immediate</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span>
+                          <span class="htmlAttributeName">Error</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>error1</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ErrorText</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>error_text1</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ValueChanged</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>(x =&gt; { pw1 = x; Validate(); })</span><span class="quot">&quot;</span> <span class="htmlAttributeName">InputType</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">InputType</span><span class="enumValue">.Password</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+            <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTextField</span> <span class="htmlAttributeName">T</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">string</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Label</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Password</span><span class="quot">&quot;</span> <span class="htmlAttributeName">HelperText</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Enter the password again</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Immediate</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span>
+                          <span class="htmlAttributeName">Error</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>error2</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ErrorText</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>error_text2</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ValueChanged</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>(x =&gt; { pw2 = x; Validate(); })</span><span class="quot">&quot;</span> <span class="htmlAttributeName">InputType</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">InputType</span><span class="enumValue">.Password</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+        <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudCardContent</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudCard</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Typo</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Typo</span><span class="enumValue">.body2</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Align</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Align</span><span class="enumValue">.Center</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">my-4</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="atSign">&#64;</span>if (success)
+        {
+            <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Success</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Align</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Align</span><span class="enumValue">.Center</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Typo</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Typo</span><span class="enumValue">.body2</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Success<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+        }
+        else
+        {
+            <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Align</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Align</span><span class="enumValue">.Center</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Typo</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Typo</span><span class="enumValue">.body2</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Enter the same password twice to see the success message.<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+        }
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudForm</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code {
+    <span class="keyword">bool</span> success, error1, error2;
+    <span class="keyword">string</span> pw1, pw2, error_text1, error_text2;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> Validate()
+    {
+        error1 = <span class="keyword">false</span>;
+        error2 = <span class="keyword">false</span>;
+        <span class="keyword">if</span> (<span class="keyword">string</span>.IsNullOrEmpty(pw1))
+        {
+            error1 = <span class="keyword">true</span>;
+            error_text1 = <span class="string">&quot;Password required&quot;</span>;
+        }
+        <span class="keyword">if</span> (pw1 != pw2)
+        {
+            error2 = <span class="keyword">true</span>;
+            error_text2 = <span class="string">&quot;The passwords do not match!&quot;</span>;
+        }
+        StateHasChanged();
+    }
+
+}
+</pre></div>
+</div>

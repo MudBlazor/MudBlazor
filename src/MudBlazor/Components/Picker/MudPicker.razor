@@ -5,10 +5,10 @@
 <div class="@PickerClass">
     @if (PickerVariant != PickerVariant.Static)
     {
-        <MudTextField Label="@Label" Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="true" @onclick="OnOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
+        <MudTextField Label="@Label" Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="true" @onclick="ToggleOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
     }
-    <CascadingValue Value="@this">
-        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@Elevation" Square="@Square">
+    <CascadingValue Value="@this" IsFixed="true">
+        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@PickerElevation" Square="@PickerSquare">
             <div class="@PickerContainerClass">
                 @ChildContent
             </div>
@@ -19,7 +19,7 @@
 {
     @if (isOpen)
     {
-        <div class="mud-popover-overlay" @onclick="@OnClose"></div>
+        <div class="mud-popover-overlay" @onclick="@Close"></div>
     }
 }
 
@@ -30,8 +30,8 @@
         new CssBuilder("mud-picker")
            .AddClass($"mud-picker-inline", PickerVariant == PickerVariant.Inline)
            .AddClass($"mud-picker-static", PickerVariant == PickerVariant.Static)
-           .AddClass($"mud-rounded", PickerVariant == PickerVariant.Static && !Square)
-           .AddClass($"mud-elevation-{StaticElevation.ToString()}", PickerVariant == PickerVariant.Static)
+           .AddClass($"mud-rounded", PickerVariant == PickerVariant.Static && !PickerSquare)
+           .AddClass($"mud-elevation-{PickerElevation.ToString()}", PickerVariant == PickerVariant.Static)
            .AddClass($"mud-picker-input-button", !AllowKeyboardInput && PickerVariant != PickerVariant.Static)
            .AddClass($"mud-picker-input-text", AllowKeyboardInput && PickerVariant != PickerVariant.Static)
            .AddClass($"mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
@@ -46,7 +46,7 @@
 
     protected string PickerContainerClass =>
     new CssBuilder("mud-picker-container")
-      .AddClass("mud-paper-square", Square)
+      .AddClass("mud-paper-square", PickerSquare)
       .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
     .Build();
 
@@ -55,7 +55,8 @@
     [Parameter] public string InputIcon { get; set; }
     [Parameter] public string ToolBarClass { get; set; }
 
-    private int StaticElevation;
+    private bool PickerSquare { get; set; }
+    private int PickerElevation { get; set; }
 
     protected override void OnInitialized()
     {
@@ -63,18 +64,22 @@
         {
             if (Elevation == 8)
             {
-                StaticElevation = 0;
+                PickerElevation = 0;
             }
             else
             {
-                StaticElevation = Elevation;
+                PickerElevation = Elevation;
             }
-            Elevation = 0;
 
             if (!Rounded)
             {
-                Square = true;
+                PickerSquare = true;
             }
+        }
+        else
+        {
+            PickerSquare = Square;
+            PickerElevation = Elevation;
         }
     }
 }

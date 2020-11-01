@@ -11,6 +11,7 @@ namespace MudBlazor
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
             .AddClass($"mud-tabs-vertical", Vertical)
+            .AddClass(Class)
             .Build();
 
         protected string ToolbarClassnames => 
@@ -30,6 +31,7 @@ namespace MudBlazor
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
             .AddClass($"mud-tabs-vertical", Vertical)
+            .AddClass(TabPanelClass)
             .Build();
 
         /// <summary>
@@ -66,6 +68,12 @@ namespace MudBlazor
         /// Child content of component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// Custom class/classes for TabPanel
+        /// </summary>
+        [Parameter] public string TabPanelClass { get; set; }
+
 
 
         public MudTabPanel ActivePanel { get; set; }

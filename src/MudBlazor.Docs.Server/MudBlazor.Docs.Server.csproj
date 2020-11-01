@@ -1,9 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.0.0-rc.1" />
+    <PackageReference Include="Toolbelt.Blazor.HeadElement.ServerPrerendering" Version="1.2.2" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Docs\MudBlazor.Docs.csproj" />

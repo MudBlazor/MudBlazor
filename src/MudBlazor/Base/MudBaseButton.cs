@@ -16,6 +16,11 @@ namespace MudBlazor
         [Inject] public IJSRuntime JsRuntime { get; set; }
 
         /// <summary>
+        /// The button Type (Button, Submit, Refresh)
+        /// </summary>
+        [Parameter] public ButtonType ButtonType { get; set; }
+
+        /// <summary>
         /// If set to a URL, clicking the button will open the referenced document. Use Target to specify where
         /// </summary>
         [Parameter] public string Link { get; set; }

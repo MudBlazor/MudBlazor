@@ -1,0 +1,334 @@
+﻿@page "/features/converters"
+
+<DocsPage MaxWidth="MaxWidth.Large">
+    <DocsPageHeader Title="Converters" SubTitle="Converters are essential for binding input elements to your model.">
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <MudText Typo="Typo.h5" GutterBottom="true" Class="my-4">DefaultConverter&lt;T&gt;</MudText>
+            <MudText>
+                The default converter converts all primitive types and their nullable variants to and from <CodeInline>string</CodeInline>.
+                Edit the textfields below to see how the default converter handles different values depending on the type. But if the default conversion doesn't suit you you can replace the converter with your own.
+            </MudText>
+            <div class="d-flex flex-row mt-5">
+                <MudSwitch Color="Color.Primary" @bind-Checked="@nullable">Nullable variants</MudSwitch>
+                <MudSwitch Color="Color.Secondary" @bind-Checked="@unsigned">Unsigned variants</MudSwitch>
+            </div>
+            <MudSimpleTable Elevation="0" Hover="false" Class="mt-4" Dense="false">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Input</th>
+                        <th>Resulting value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (nullable)
+                    {
+                        @if (unsigned)
+                        {
+                            <tr>
+                                <td><CodeInline>byte?</CodeInline></td>
+                                <td>
+                                    <MudTextField T="byte?" @bind-Value="@nbyte_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@ToS(nbyte_value)</MudText></td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>ushort?</CodeInline></td>
+                                <td>
+                                    <MudTextField T="ushort?" @bind-Value="@nushort_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@ToS(nushort_value)</MudText></td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>uint?</CodeInline></td>
+                                <td>
+                                    <MudTextField T="uint?" @bind-Value="@nuint_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@ToS(nuint_value)</MudText></td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>ulong?</CodeInline></td>
+                                <td>
+                                    <MudTextField T="ulong?" @bind-Value="@nulong_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@ToS(nulong_value)</MudText></td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td><CodeInline>sbyte?</CodeInline></td>
+                                <td>
+                                    <MudTextField T="sbyte?" @bind-Value="@nsbyte_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@ToS(nsbyte_value)</MudText></td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>short?</CodeInline></td>
+                                <td>
+                                    <MudTextField T="short?" @bind-Value="@nshort_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@ToS(nshort_value)</MudText></td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>int?</CodeInline></td>
+                                <td>
+                                    <MudTextField T="int?" @bind-Value="@nint_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@ToS(nint_value)</MudText></td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>long?</CodeInline></td>
+                                <td>
+                                    <MudTextField T="long?" @bind-Value="@nlong_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@ToS(nlong_value)</MudText></td>
+                            </tr>
+                        }
+                        <tr>
+                            <td><CodeInline>bool?</CodeInline></td>
+                            <td>
+                                <MudTextField T="bool?" @bind-Value="@nbool_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(nbool_value)</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>char?</CodeInline></td>
+                            <td>
+                                <MudTextField T="char?" @bind-Value="@nchar_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(nchar_value) </MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>DateTime?</CodeInline></td>
+                            <td>
+                                <MudTextField T="DateTime?" @bind-Value="@ndatetime_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(ndatetime_value) </MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>TimeSpan?</CodeInline></td>
+                            <td>
+                                <MudTextField T="TimeSpan?" @bind-Value="@ntimespan_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(ntimespan_value)</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>Guid?</CodeInline></td>
+                            <td>
+                                <MudTextField T="Guid?" @bind-Value="@nguid_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@nguid_value</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>Enum?</CodeInline></td>
+                            <td>
+                                <MudTextField T="StringSplitOptions?" @bind-Value="@nenum_value" Class="mt-n1" Immediate="true" />
+                                @*<MudSelect T="StringSplitOptions?" @bind-Value="@nenum_value" Class="mt-n2" Immediate="true">
+                                <MudSelectItem T="StringSplitOptions?" Value="null">(Nothing selected)</MudSelectItem>
+                                <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.None">None</MudSelectItem>
+                                <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.RemoveEmptyEntries">RemoveEmptyEntries</MudSelectItem>
+                            </MudSelect>*@
+                            </td>
+                            <td><MudText Inline="true">@ToS(nenum_value)</MudText></td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @if (unsigned)
+                        {
+                            <tr>
+                                <td><CodeInline>byte</CodeInline></td>
+                                <td>
+                                    <MudTextField T="byte" @bind-Value="@byte_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@byte_value</MudText></td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>ushort</CodeInline></td>
+                                <td>
+                                    <MudTextField T="ushort" @bind-Value="@ushort_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@ushort_value</MudText></td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>uint</CodeInline></td>
+                                <td>
+                                    <MudTextField T="uint" @bind-Value="@uint_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@uint_value</MudText></td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>ulong</CodeInline></td>
+                                <td>
+                                    <MudTextField T="ulong" @bind-Value="@ulong_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@ulong_value</MudText></td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td><CodeInline>sbyte</CodeInline></td>
+                                <td>
+                                    <MudTextField T="sbyte" @bind-Value="@sbyte_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@sbyte_value</MudText></td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>short</CodeInline></td>
+                                <td>
+                                    <MudTextField T="short" @bind-Value="@short_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@short_value</MudText></td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>int</CodeInline></td>
+                                <td>
+                                    <MudTextField T="int" @bind-Value="@int_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@int_value</MudText></td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>long</CodeInline></td>
+                                <td>
+                                    <MudTextField T="long" @bind-Value="@long_value" Class="mt-n1" Immediate="true" />
+                                </td>
+                                <td><MudText Inline="true">@long_value</MudText></td>
+                            </tr>
+                        }
+                        <tr>
+                            <td><CodeInline>bool</CodeInline></td>
+                            <td>
+                                <MudTextField T="bool" @bind-Value="@bool_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@bool_value</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>char</CodeInline></td>
+                            <td>
+                                <MudTextField T="char" @bind-Value="@char_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@char_value</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>DateTime</CodeInline></td>
+                            <td>
+                                <MudTextField T="DateTime" @bind-Value="@datetime_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@datetime_value</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>TimeSpan</CodeInline></td>
+                            <td>
+                                <MudTextField T="TimeSpan" @bind-Value="@timespan_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@timespan_value</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>Guid</CodeInline></td>
+                            <td>
+                                <MudTextField T="Guid" @bind-Value="@guid_value" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@guid_value</MudText></td>
+                        </tr>
+                        <tr>
+                            <td><CodeInline>Enum</CodeInline></td>
+                            <td>
+                                <MudTextField T="StringSplitOptions" @bind-Value="@enum_value" Class="mt-n1" Immediate="true" />
+                                @*<MudSelect T="StringSplitOptions" @bind-Value="@enum_value" Class="mt-n2" Immediate="true">
+                                <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.None"></MudSelectItem>
+                                <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.RemoveEmptyEntries"></MudSelectItem>
+                            </MudSelect>*@
+                            </td>
+                            <td><MudText Inline="true">@enum_value</MudText></td>
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+            @code {
+                bool nullable, unsigned;
+                sbyte sbyte_value = -128;
+                sbyte? nsbyte_value = -128;
+                byte byte_value = 255;
+                byte? nbyte_value = 255;
+                char char_value = '龍';
+                char? nchar_value = '龍';
+                short short_value = -1024;
+                short? nshort_value = -1024;
+                ushort ushort_value = 1024;
+                ushort? nushort_value = 1024;
+                int int_value = -3_000_000;
+                int? nint_value = -3_000_000;
+                uint uint_value = 3_000_000;
+                uint? nuint_value = 3_000_000;
+                long long_value = -9_000_000_000;
+                long? nlong_value = -9_000_000_000;
+                ulong ulong_value = 9_000_000_000;
+                ulong? nulong_value = 9_000_000_000;
+                Guid guid_value = Guid.NewGuid();
+                Guid? nguid_value = Guid.NewGuid();
+                DateTime datetime_value = DateTime.Now;
+                DateTime? ndatetime_value = DateTime.Now;
+                TimeSpan timespan_value = DateTime.Now.TimeOfDay;
+                TimeSpan? ntimespan_value = DateTime.Now.TimeOfDay;
+                StringSplitOptions enum_value = StringSplitOptions.RemoveEmptyEntries;
+                StringSplitOptions? nenum_value = StringSplitOptions.RemoveEmptyEntries;
+                bool bool_value = true;
+                bool? nbool_value = true;
+
+
+                string ToS(object value)
+                {
+                    if (value == null)
+                        return "null";
+                    return "" + value;
+                }
+            }
+
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>DateConverter</Title>
+                <Description>
+                    <MudText>
+                        By default the <CodeInline>DefaultConverter</CodeInline> uses your local culture settings. If you want to change that you can either set the <CodeInline>Culture</CodeInline> of individual inputs or converters, or change it globally
+                        by setting <CodeInline>Converters.DefaultCulture</CodeInline> to your desired <CodeInline>CultureInfo</CodeInline> at application start.
+                    </MudText>
+                    <MudText Class="mt-4">
+                        If you want to configure the date format of a DateTime value, there are <CodeInline>DateConverter</CodeInline> and <CodeInline>NullableDateConverter</CodeInline>
+                        which you can configure with a date format string.
+                    </MudText>
+                    <MudText>
+                        Let's format the same date in different ways:
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="false" FullWidth="true">
+                <TurkeyTestExample />
+            </SectionContent>
+            <SectionSource Code="TurkeyTestExample" ShowCode="true" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Custom Binding Converters</Title>
+                <Description>
+                    If you need some really special binding conversion it is very easy to plug in your own converter.
+                    Just create a <CodeInline>Converter<Tag>T</Tag></CodeInline> and set the <CodeInline>SetFunc</CodeInline> and the <CodeInline>GetFunc</CodeInline>.
+                    <MudText>
+                        Type in the textfield to set the switch or flip the switch to set the text:
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="false" FullWidth="true">
+                <SpecialConverterExample />
+            </SectionContent>
+            <SectionSource Code="SpecialConverterExample" ShowCode="true" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+

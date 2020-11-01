@@ -23,6 +23,11 @@ namespace MudBlazor
         [Parameter] public Color Color { get; set; } = Color.Default;
         [Parameter] public Size Size { get; set; } = Size.Medium;
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// If true, compact vertical padding will be applied to all menu items.
+        /// </summary>
+        [Parameter] public bool Dense { get; set; }
         [Parameter] public bool DisableElevation { get; set; }
         [Parameter] public bool Disabled { get; set; }
         [Parameter] public bool DisableRipple { get; set; }

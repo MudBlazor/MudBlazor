@@ -1,8 +1,7 @@
 ﻿@page "/getting-started/installation"
 
 <DocsPage MaxWidth="MaxWidth.Large">
-    <DocsPageHeader>
-        <Title>Installation</Title>
+    <DocsPageHeader Title="Installation">
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
@@ -28,6 +27,10 @@
             <MudText GutterBottom="true" Class="mt-4">
                 <b class="mud-color-text-secondary">Note:</b> If you're installing on a fresh Blazor template make sure to remove everything in you're <CodeInline>site.css</CodeInline> and remove the <CodeInline>bootstrap.min.css</CodeInline> completely.
             </MudText>
+            <MudText GutterBottom="true" Class="mt-4">
+                In the HTML body section of either <CodeInline>index.html</CodeInline> or <CodeInline>_Host.cshtml</CodeInline> add this:
+            </MudText>
+            <MarkdownAddJsReference />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>

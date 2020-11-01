@@ -1,0 +1,44 @@
+﻿@using System.Net
+@using System.Text
+@namespace MudBlazor.Docs.Examples
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <MudContainer Style="max-height: 300px; overflow-y: scroll">
+            <MudText Class="mb-5" Typo="Typo.body1">Copyright (c) 2020 - The MudBlazor Team and Contributors</MudText>
+            @if (Loading)
+            {
+                <MudProgressCircular Indeterminate="true"></MudProgressCircular>
+            }
+            else
+            {
+                <MudText Style="white-space: pre-wrap;">@LicenseText</MudText>
+            }
+        </MudContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Ok">Accept</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Loading = true;
+        var bytes = await new WebClient().DownloadDataTaskAsync(new Uri("https://raw.githubusercontent.com/Garderoben/MudBlazor/master/LICENSE"));
+        LicenseText = Encoding.UTF8.GetString(bytes);
+        Loading = false;
+        await base.OnInitializedAsync();
+    }
+
+    string LicenseText;
+    bool Loading = false;
+
+    void Ok()
+    {
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}
