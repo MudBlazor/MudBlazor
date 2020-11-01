@@ -1820,6 +1820,121 @@ public const string RadioLabelPlacementExample = @"<MudGrid>
     }
 }";
 
+public const string BasicRatingExample = @"<MudRating SelectedValue=""2"" />";
+
+public const string RaitngIconsAndColorExample = @"<MudGrid Spacing=""1"" Class=""d-flex flex-column"">
+        <MudItem>
+            <MudRating SelectedValue=""2"" FullIcon=""@Icons.Material.Visibility"" EmptyIcon=""@Icons.Material.VisibilityOff"" />
+        </MudItem>
+        <MudItem>
+            <MudRating SelectedValue=""2"" FullIcon=""@Icons.Material.Favorite"" EmptyIcon=""@Icons.Material.FavoriteBorder"" Color=""Color.Secondary"" />
+        </MudItem>
+    </MudGrid>";
+
+public const string RaitngMaxValueExample = @"<MudGrid Spacing=""1"" Class=""d-flex flex-column"">
+        <MudItem>
+            <MudRating SelectedValue=""1"" MaxValue=""3"" />
+        </MudItem>
+        <MudItem>
+            <MudRating SelectedValue=""2"" />
+        </MudItem>
+        <MudItem>
+            <MudRating SelectedValue=""3"" MaxValue=""10"" />
+        </MudItem>
+    </MudGrid>";
+
+public const string RaitngSizesExample = @"<MudGrid Spacing=""1"" Class=""d-flex flex-column"">
+        <MudItem>
+            <MudRating SelectedValue=""2"" Size=""Size.Small"" />
+        </MudItem>
+        <MudItem>
+            <MudRating SelectedValue=""2"" Size=""Size.Medium"" />
+        </MudItem>
+        <MudItem>
+            <MudRating SelectedValue=""2"" Size=""Size.Large"" />
+        </MudItem>
+    </MudGrid>";
+
+public const string RatingBindingsExample = @"<div class=""d-flex flex-column align-center"">
+    <MudRating @bind-SelectedValue=""selectedVal"" HoveredValueChanged=""HandleHoveredValueChanged"" />
+    <MudText Typo=""Typo.subtitle2"" Class=""deep-purple-text mt-2"">@GetLabelText()</MudText>
+</div>
+
+
+@code {
+    private int selectedVal = 0;
+    private int? activeVal;
+
+    private void HandleHoveredValueChanged(int? val) => activeVal = val;
+
+    private string GetLabelText() => (activeVal ?? selectedVal) switch
+    {
+        1 => ""Very bad"",
+        2 => ""Bad"",
+        3 => ""Sufficient"",
+        4 => ""Good"",
+        5 => ""Awesome!"",
+        _ => ""Rate our product!""
+    };
+}";
+
+public const string RatingDisabledExample = @"<MudRating Disabled=""true"" SelectedValue=""2"" />";
+
+public const string RatingTestExample = @"@*I delete this file later*@
+
+<MudForm>
+
+    <h3>Default</h3>
+    <MudRating SelectedValue=""2"" />
+    <h3>More Values</h3>
+    <MudRating SelectedValue=""5"" MaxValue=""10"" />
+    <h3>Disabled</h3>
+    <MudRating SelectedValue=""2"" Disabled=""true"" />
+    <h3>Custom Icons, Color</h3>
+    <MudRating SelectedValue=""2"" FullIcon=""@Icons.Material.Favorite"" EmptyIcon=""@Icons.Material.FavoriteBorder"" Color=""Color.Secondary"" />
+    <div class=""d-flex flex-column my-6"">
+        <h3>Size</h3>
+        <MudRating Size=""Size.Small"" />
+        <MudRating Size=""Size.Medium"" />
+        <MudRating Size=""Size.Large"" />
+    </div>
+    <div class=""d-flex flex-column align-center my-6"">
+        <h3>Hover feedback</h3>
+        <MudRating @bind-SelectedValue=""selectedVal"" HoveredValueChanged=""HandleHoveredValueChanged"" />
+        <MudText Typo=""Typo.subtitle1"" Class=""deep-purple-text"">@GetLabelText()</MudText>
+    </div>
+
+    <div class=""d-flex flex-column align-center my-12"">
+        <h3>Normal</h3>
+        <MudRating SelectedValue=""2"" />
+    </div>
+
+    <div class=""d-flex flex-column align-center my-12"">
+        <h3>Custom styles</h3>
+        <MudRating SelectedValue=""2"" Style=""transform: rotate(25deg);"" RatingItemsStyle=""padding: 0 15px; box-sizing: content-box;"" />
+    </div>
+
+</MudForm>
+
+@code {
+    private int selectedVal = 0;
+    private int? activeVal;
+
+    private void HandleSelectedValueChanged(int val) => selectedVal = val;
+
+    private void HandleHoveredValueChanged(int? val) => activeVal = val;
+
+    private string GetLabelText() => (activeVal ?? selectedVal) switch
+    {
+        1 => ""Very bad"",
+        2 => ""Bad"",
+        3 => ""Sufficient"",
+        4 => ""Good"",
+        5 => ""Awesome!"",
+        _ => ""Rate our product!""
+    };
+}";
+
 public const string MultiSelectExample = @"<MudGrid>
     <MudItem xs=""12"" md=""12"">
         <MudSelect T=""string"" Label=""US States"" HelperText=""Pick your favorite states"" MultiSelection=""true"" @bind-Value=""value"" @bind-SelectedValues=""options"">
