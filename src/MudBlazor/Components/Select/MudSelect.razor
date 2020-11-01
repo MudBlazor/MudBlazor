@@ -6,9 +6,8 @@
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
     <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled">
         <InputContent>
-                <MudInput @ref="@input" InputType="InputType.Text" Variant="@Variant" Value="@Text" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                          @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" OnAdornmentClick="@ToggleMenu" 
-                          OnBlur="@OnInputBurred" Immediate="true"/>
+                <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Text" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
+                          @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" OnAdornmentClick="@ToggleMenu"/>
         </InputContent>
         <ChildContent>
             <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
