@@ -127,10 +127,10 @@
                             <td>
                                 <MudTextField T="StringSplitOptions?" @bind-Value="@nenum_value" Class="mt-n1" Immediate="true" />
                                 @*<MudSelect T="StringSplitOptions?" @bind-Value="@nenum_value" Class="mt-n2" Immediate="true">
-                                    <MudSelectItem T="StringSplitOptions?" Value="null">(Nothing selected)</MudSelectItem>
-                                    <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.None">None</MudSelectItem>
-                                    <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.RemoveEmptyEntries">RemoveEmptyEntries</MudSelectItem>
-                                </MudSelect>*@
+                                <MudSelectItem T="StringSplitOptions?" Value="null">(Nothing selected)</MudSelectItem>
+                                <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.None">None</MudSelectItem>
+                                <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.RemoveEmptyEntries">RemoveEmptyEntries</MudSelectItem>
+                            </MudSelect>*@
                             </td>
                             <td><MudText Inline="true">@ToS(nenum_value)</MudText></td>
                         </tr>
@@ -239,18 +239,57 @@
                             <td>
                                 <MudTextField T="StringSplitOptions" @bind-Value="@enum_value" Class="mt-n1" Immediate="true" />
                                 @*<MudSelect T="StringSplitOptions" @bind-Value="@enum_value" Class="mt-n2" Immediate="true">
-                                    <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.None"></MudSelectItem>
-                                    <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.RemoveEmptyEntries"></MudSelectItem>
-                                </MudSelect>*@
+                                <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.None"></MudSelectItem>
+                                <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.RemoveEmptyEntries"></MudSelectItem>
+                            </MudSelect>*@
                             </td>
                             <td><MudText Inline="true">@enum_value</MudText></td>
                         </tr>
                     }
                 </tbody>
             </MudSimpleTable>
-            <MudText>
-            </MudText>
+            @code {
+                bool nullable, unsigned;
+                sbyte sbyte_value = -128;
+                sbyte? nsbyte_value = -128;
+                byte byte_value = 255;
+                byte? nbyte_value = 255;
+                char char_value = '龍';
+                char? nchar_value = '龍';
+                short short_value = -1024;
+                short? nshort_value = -1024;
+                ushort ushort_value = 1024;
+                ushort? nushort_value = 1024;
+                int int_value = -3_000_000;
+                int? nint_value = -3_000_000;
+                uint uint_value = 3_000_000;
+                uint? nuint_value = 3_000_000;
+                long long_value = -9_000_000_000;
+                long? nlong_value = -9_000_000_000;
+                ulong ulong_value = 9_000_000_000;
+                ulong? nulong_value = 9_000_000_000;
+                Guid guid_value = Guid.NewGuid();
+                Guid? nguid_value = Guid.NewGuid();
+                DateTime datetime_value = DateTime.Now;
+                DateTime? ndatetime_value = DateTime.Now;
+                TimeSpan timespan_value = DateTime.Now.TimeOfDay;
+                TimeSpan? ntimespan_value = DateTime.Now.TimeOfDay;
+                StringSplitOptions enum_value = StringSplitOptions.RemoveEmptyEntries;
+                StringSplitOptions? nenum_value = StringSplitOptions.RemoveEmptyEntries;
+                bool bool_value = true;
+                bool? nbool_value = true;
+
+
+                string ToS(object value)
+                {
+                    if (value == null)
+                        return "null";
+                    return "" + value;
+                }
+            }
+
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>DateConverter</Title>
@@ -272,47 +311,24 @@
                 <TurkeyTestExample />
             </SectionContent>
             <SectionSource Code="TurkeyTestExample" ShowCode="true" />
-           
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Custom Binding Converters</Title>
+                <Description>
+                    If you need some really special binding conversion it is very easy to plug in your own converter.
+                    Just create a <CodeInline>Converter<Tag>T</Tag></CodeInline> and set the <CodeInline>SetFunc</CodeInline> and the <CodeInline>GetFunc</CodeInline>.
+                    <MudText>
+                        Type in the textfield to set the switch or flip the switch to set the text:
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="false" FullWidth="true">
+                <SpecialConverterExample />
+            </SectionContent>
+            <SectionSource Code="SpecialConverterExample" ShowCode="true" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
 
-@code {
-    bool nullable, unsigned;
-    sbyte sbyte_value = -128;
-    sbyte? nsbyte_value = -128;
-    byte byte_value = 255;
-    byte? nbyte_value = 255;
-    char char_value = '龍';
-    char? nchar_value = '龍';
-    short short_value = -1024;
-    short? nshort_value = -1024;
-    ushort ushort_value = 1024;
-    ushort? nushort_value = 1024;
-    int int_value = -3_000_000;
-    int? nint_value = -3_000_000;
-    uint uint_value = 3_000_000;
-    uint? nuint_value = 3_000_000;
-    long long_value = -9_000_000_000;
-    long? nlong_value = -9_000_000_000;
-    ulong ulong_value = 9_000_000_000;
-    ulong? nulong_value = 9_000_000_000;
-    Guid guid_value = Guid.NewGuid();
-    Guid? nguid_value = Guid.NewGuid();
-    DateTime datetime_value = DateTime.Now;
-    DateTime? ndatetime_value = DateTime.Now;
-    TimeSpan timespan_value = DateTime.Now.TimeOfDay;
-    TimeSpan? ntimespan_value = DateTime.Now.TimeOfDay;
-    StringSplitOptions enum_value = StringSplitOptions.RemoveEmptyEntries;
-    StringSplitOptions? nenum_value = StringSplitOptions.RemoveEmptyEntries;
-    bool bool_value = true;
-    bool? nbool_value = true;
-
-
-    string ToS(object value)
-    {
-        if (value == null)
-            return "null";
-        return "" + value;
-    }
-}

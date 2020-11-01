@@ -2631,6 +2631,27 @@ public const string ColorsClassExample = @"<MudText>
     But rather css classes based on <strong class=""purple-text text-accent-3"">Material Design</strong> color pallet.
 </MudText>";
 
+public const string SpecialConverterExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSwitch Color=""Color.Primary"" @bind-Checked=""@state"">Flip the switch</MudSwitch>
+    </MudItem>
+    
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField Label=""Switch state"" Variant=""Variant.Outlined"" Converter=""@converter"" @bind-Value=""@state"" Immediate=""true""/>
+    </MudItem>
+
+</MudGrid>
+
+@code {
+    bool state = true;
+
+    Converter<bool> converter = new Converter<bool>
+    {
+        SetFunc = value => value ? ""ON"" : ""OFF"",
+        GetFunc = text => (text ?? """").ToLowerInvariant() == ""on"",
+    };
+}";
+
 public const string TurkeyTestExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudTextField Label=""en-US"" Variant=""Variant.Outlined"" Culture=""@en"" @bind-Value=""date"" />
