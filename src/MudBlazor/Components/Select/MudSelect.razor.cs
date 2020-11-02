@@ -154,7 +154,7 @@ namespace MudBlazor
                 // single selection
                 Value = value;
                 isOpen = false;
-                IconContoller();
+                UpdateIcon();
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
             }

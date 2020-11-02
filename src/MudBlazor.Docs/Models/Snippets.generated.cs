@@ -612,8 +612,7 @@ public const string ContainerFluidExample = @"<MudPaper>
 
 public const string DatePickerBasicUsageExample = @"<MudDatePicker Label=""Picker in menu"" Value=""2020-10-19""/>
 <MudDatePicker Label=""Only Calendar"" Value=""2020-10-19"" DisableToolbar=""true"" HelperText=""No header"" />
-<MudDatePicker Label=""Date Format"" HelperText=""For custom cultures"" DateFormat=""dd/MM/yyyy"" Date=""@(new System.DateTime(2020,10,19))"" />
-<MudDatePicker Label=""Picker in dialog"" HelperText=""Not implemented yet"" Value=""2020-10-19"" Disabled=""true"" />";
+<MudDatePicker Label=""Date Format"" HelperText=""For custom cultures"" DateFormat=""dd/MM/yyyy"" Date=""@(new System.DateTime(2020,10,19))"" />";
 
 public const string DatePickerColorExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Value=""2020-10-19"" />
 <MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Value=""2020-10-19"" />";
