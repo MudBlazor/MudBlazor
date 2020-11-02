@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Components.Select;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -8,29 +10,34 @@ namespace MudBlazor
     /// <summary>
     /// Represents an option of a select or multi-select. To be used inside MudSelect.
     /// </summary>
-    public partial class MudSelectItem : MudBaseSelectItem
+    public partial class MudSelectItem<T> : MudBaseSelectItem, IDisposable
     {
-        private MudSelect _parent;
+        private IMudSelect _parent;
 
         /// <summary>
         /// The parent select component
         /// </summary>
         [CascadingParameter]
-        public MudSelect MudSelect
+        internal IMudSelect IMudSelect
         {
             get => _parent;
             set
             {
                 _parent = value;
+                if (_parent == null)
+                    return;
+                _parent.CheckGenericTypeMatch(this);
                 if (_parent != null && _parent.MultiSelection)
                 {
-                    _parent.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
-                    InvokeAsync(()=>OnUpdateSelectionStateFromOutside(_parent.SelectedValues));
+                    MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
+                    InvokeAsync(()=>OnUpdateSelectionStateFromOutside(MudSelect.SelectedValues));
                 }
             }
         }
 
-        private void OnUpdateSelectionStateFromOutside(HashSet<string> selection)
+        internal MudSelect<T> MudSelect => (MudSelect<T>) IMudSelect;
+
+        private void OnUpdateSelectionStateFromOutside(HashSet<T> selection)
         {
             if (selection==null)
                 return;
@@ -43,7 +50,7 @@ namespace MudBlazor
         /// <summary>
         /// A user-defined option that can be selected
         /// </summary>
-        [Parameter] public string Value { get; set; }
+        [Parameter] public T Value { get; set; }
 
         /// <summary>
         /// Mirrors the MultiSelection status of the parent select
@@ -80,9 +87,19 @@ namespace MudBlazor
         {
             if (MultiSelection)
                 IsSelected = !IsSelected;
+            
             MudSelect?.SelectOption(Value);
             InvokeAsync(StateHasChanged);
         }
 
+        public void Dispose()
+        {
+            //try
+            //{
+            //    MudSelect?.Remove(this);
+            //} catch(Exception) {}
+        }
     }
+
+    public class MudSelectItemString : MudSelectItem<string> { }
 }

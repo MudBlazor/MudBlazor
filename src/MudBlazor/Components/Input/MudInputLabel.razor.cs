@@ -4,7 +4,7 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public partial class MudInputLabel : MudBaseInputText
+    public partial class MudInputLabel : MudComponentBase
     {
         protected string Classname =>
        new CssBuilder()
@@ -20,5 +20,21 @@ namespace MudBlazor
         /// Child content of component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+        
+        /// <summary>
+        /// If true, the input element will be disabled.
+        /// </summary>
+        [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
+        /// If true, the label will be displayed in an error state.
+        /// </summary>
+        [Parameter] public bool Error { get; set; }
+
+        /// <summary>
+        /// Variant to use.
+        /// </summary>
+        [Parameter] public Variant Variant { get; set; } = Variant.Text;
+
     }
 }

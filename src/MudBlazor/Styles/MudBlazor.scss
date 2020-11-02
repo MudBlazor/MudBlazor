@@ -11,6 +11,7 @@
 @import 'core/elevation';
 
 @import 'components/alert';
+@import 'components/badge';
 @import 'components/toolbar';
 @import 'components/tooltip';
 @import 'components/avatar';
@@ -34,12 +35,14 @@
 @import 'components/navmenu';
 @import 'components/picker';
 @import 'components/pickerdate';
+@import 'components/pickertime';
 @import 'components/popover';
 @import 'components/simpletable';
 @import 'components/skeleton';
 @import 'components/slider';
 @import 'components/progress';
 @import 'components/radio';
+@import 'components/rating';
 @import 'components/snackbar';
 @import 'components/switch';
 @import 'components/typography';
@@ -52,7 +55,7 @@
 
 @import 'utilities/flex';
 @import 'utilities/float';
-@import 'utilities/margin';
+@import 'utilities/align';
 @import 'utilities/spacing';
 
 @import 'layout/appbar';

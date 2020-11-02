@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -36,7 +37,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<bool> IsValidChanged { get; set; }
 
         // keeps track of validation. if the input was validated at least once the value will be true
-        protected Dictionary<MudBaseInputText, bool> _formControls = new Dictionary<MudBaseInputText, bool>();
+        protected Dictionary<IFormComponent, bool> _formControls = new Dictionary<IFormComponent, bool>();
         protected HashSet<string> _errors = new HashSet<string>();
 
         /// <summary>
@@ -51,12 +52,12 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<string[]> ErrorsChanged { get; set; }
 
-        internal void Add(MudBaseInputText formControl)
+        internal void Add(IFormComponent formControl)
         {
             _formControls[formControl]=false; // false means fresh, not yet validated!
         }
 
-        internal void Remove(MudBaseInputText formControl)
+        internal void Remove(IFormComponent formControl)
         {
             _formControls.Remove(formControl);
         }
@@ -66,7 +67,7 @@ namespace MudBlazor
         /// Called by any input of the form to signal that its value changed. 
         /// </summary>
         /// <param name="formControl"></param>
-        internal void Update(MudBaseInputText formControl)
+        internal void Update(IFormComponent formControl)
         {
             // request delayed update after render so we can validate all at once
             _update_required=true;

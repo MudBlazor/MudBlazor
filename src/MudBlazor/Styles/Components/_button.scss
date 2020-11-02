@@ -149,6 +149,15 @@
             background-color: var(--mud-theme-secondary-darken);
         }
     }
+
+    &.mud-button-filled-danger {
+        color: var(--mud-theme-on-alert);
+        background-color: var(--mud-theme-danger);
+
+        &:hover {
+            background-color: #da1a0c;
+        }
+    }
 }
 
 .mud-button-disable-elevation {

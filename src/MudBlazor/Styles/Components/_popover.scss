@@ -13,16 +13,12 @@
     }
 
     &.mud-popover-top {
-        bottom: 0;
-
         &.mud-popover-offset-y {
             bottom: 100%;
         }
     }
 
     &.mud-popover-bottom {
-        top: 0;
-
         &.mud-popover-offset-y {
             top: 100%;
         }
