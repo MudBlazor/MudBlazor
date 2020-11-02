@@ -2061,6 +2061,14 @@ public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Ite
         <MudIcon Style=""margin-top: 20px; margin-right: 8px;"" Icon=""@Icons.Material.Search""></MudIcon>
         <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
     </ToolBarContent>
+    <ColGroup>
+        <col style=""width:50px;"" />
+        <col style=""width:80px;"" />
+        <col style=""width:50%;"" />
+        <col />
+        <col />
+        <col style=""width:50px;"" />
+    </ColGroup>
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -2078,13 +2086,17 @@ public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Ite
     <RowEditingTemplate>
         <MudTd>@context.Number</MudTd>
         <MudTd>
-            <MudTextField @bind-Value=""@context.Sign"" />
+            <MudTextField Style="" color: var(--mud-theme-on-surface); font-size: 0.875rem; margin-top: -14px !important; margin-bottom: -8px;"" @bind-Value=""@context.Sign"" />
         </MudTd>
         <MudTd>
-            <MudTextField @bind-Value=""@context.Name"" />
+            <MudTextField Style="" color: var(--mud-theme-on-surface); font-size: 0.875rem; margin-top: -14px !important; margin-bottom: -8px;"" @bind-Value=""@context.Name"" />
         </MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd>@context.Molar</MudTd>
+        <MudTd>
+            <MudTextField T=""int"" Style="" color: var(--mud-theme-on-surface); font-size: 0.875rem; margin-top: -14px !important; margin-bottom: -8px;"" @bind-Value=""@context.Position"" />
+        </MudTd>
+        <MudTd>
+            <MudTextField T=""molar"" Style="" color: var(--mud-theme-on-surface); font-size: 0.875rem; margin-top: -14px !important; margin-bottom: -8px;"" @bind-Value=""@context.Molar"" />
+        </MudTd>
     </RowEditingTemplate>
     <PagerContent>
         <MudTablePager />

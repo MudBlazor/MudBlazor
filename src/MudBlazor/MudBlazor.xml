@@ -1221,11 +1221,6 @@
             Add MudTablePager here to enable breaking the rows in to multiple pages.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudTableBase.InlineEdit">
-            <summary>
-            Defines if Table generates RowEditingTemplate for SelectedItem Row for inline input data.
-            </summary>
-        </member>
         <member name="P:MudBlazor.MudTablePager.DisableRowsPerPage">
             <summary>
             Set true to hide the part of the pager which allows to change the page size.
@@ -1892,6 +1887,11 @@
         <member name="M:MudBlazor.MudTableSortLabel`1.SetSortDirection(MudBlazor.SortDirection)">
             <summary>
             Set sort direction but don't update Table sort order. This should only be called by Table
+            </summary>
+        </member>
+        <member name="F:MudBlazor.MudTr._lockeditingentry">
+            <summary>
+            FinishEdit() is called befor OwRowClick, so we are going to block the OnRowClicked()'s EditingItem sett when user clicks on finish edit button
             </summary>
         </member>
         <member name="P:MudBlazor.MudTabPanel.Text">

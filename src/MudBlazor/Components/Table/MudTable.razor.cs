@@ -10,6 +10,8 @@ namespace MudBlazor
 {
     public abstract class MudTableBase : MudComponentBase
     {
+        internal object _editingItem = null;
+        
         private int _currentPage = 0;
         // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is here in MudTableBase
 
@@ -116,11 +118,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment PagerContent { get; set; }
 
-        /// <summary>
-        /// Defines if Table generates RowEditingTemplate for SelectedItem Row for inline input data.
-        /// </summary>
-        [Parameter] public bool InlineEdit { get; set; } = false;
-
         public abstract TableContext TableContext { get; }
 
         public void NavigateTo(Page page)
@@ -153,6 +150,8 @@ namespace MudBlazor
         public abstract int GetFilteredItemsCount();
 
         public abstract void SetSelectedItem(object item);
+
+        public abstract void SetEditingItem(object item);
 
         protected string TableStyle 
             => new StyleBuilder()

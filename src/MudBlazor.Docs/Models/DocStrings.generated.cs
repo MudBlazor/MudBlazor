@@ -1256,8 +1256,6 @@ public const string MudTableBase_ColGroup = @"Specifies a group of one or more c
 
 public const string MudTableBase_PagerContent = @"Add MudTablePager here to enable breaking the rows in to multiple pages.";
 
-public const string MudTableBase_InlineEdit = @"Defines if Table generates RowEditingTemplate for SelectedItem Row for inline input data.";
-
 public const string MudTableBase_Class = @"User class names, separated by space";
 
 public const string MudTableBase_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -1870,8 +1868,6 @@ public const string MudTable___ColGroup = @"Specifies a group of one or more col
 
 public const string MudTable___PagerContent = @"Add MudTablePager here to enable breaking the rows in to multiple pages.";
 
-public const string MudTable___InlineEdit = @"Defines if Table generates RowEditingTemplate for SelectedItem Row for inline input data.";
-
 public const string MudTable___Class = @"User class names, separated by space";
 
 public const string MudTable___Style = @"User styles, applied on top of the component's own classes and styles";
@@ -1904,6 +1900,8 @@ public const string MudTr_ChildContent = @"";
 public const string MudTr_Item = @"";
 
 public const string MudTr_IsCheckable = @"";
+
+public const string MudTr_IsEditable = @"";
 
 public const string MudTr_IsHeader = @"";
 
