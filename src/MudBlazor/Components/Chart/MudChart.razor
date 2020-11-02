@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Charts
+@inherits MudChartBase
+
+<CascadingValue Value="@this">
+    <div class="@Classname">
+        @if (ChartType == ChartType.Donut)
+        {
+            <Donut InputData="@InputData" InputLabels="@InputLabels"></Donut>
+        }
+        @if (ChartType == ChartType.Pie)
+        {
+            <Pie InputData="@InputData" InputLabels="@InputLabels"></Pie>
+        }
+        @if (ChartType == ChartType.Line)
+        {
+            <Line ChartSeries="@ChartSeries" XAxisLabels="@XAxisLabels"></Line>
+        }
+    </div>
+</CascadingValue>

@@ -1,0 +1,224 @@
+﻿.mud-chart {
+    display: flex;
+
+    &.mud-chart-legend-bottom {
+        flex-direction: column;
+        .mud-chart-legend{
+            margin-top:10px;
+        }
+    }
+
+    &.mud-chart-legend-top {
+        flex-direction: column-reverse;
+    }
+
+    &.mud-chart-legend-right {
+        flex-direction: row;
+
+        & .mud-chart-legend {
+            flex-direction: column;
+        }
+    }
+
+    &.mud-chart-legend-left {
+        flex-direction: row-reverse;
+
+        & .mud-chart-legend {
+            flex-direction: column;
+        }
+    }
+
+
+    & .mud-chart-donut, .mud-chart-pie, mud-chart-line {
+        display: flex;
+        margin: auto;
+    }
+
+    & .mud-chart-legend {
+        display: flex;
+        padding: 10px 0px;
+        margin: auto;
+
+        & .mud-chart-legend-item {
+            display: block;
+            margin: 2px 5px;
+
+            & .mud-chart-legend-marker {
+                height: 12px;
+                width: 12px;
+                border-radius: 50%;
+                position: relative;
+                display: inline-flex;
+            }
+
+            & .mud-chart-legend-text {
+                display: inline-flex;
+            }
+        }
+    }
+}
+
+
+.mud-chart-donut {
+    & .mud-donut-hole {
+        fill: transparent;
+        user-select: none;
+        pointer-events: unset;
+    }
+
+    & .mud-donut-ring {
+        fill: transparent;
+        stroke-width: 5;
+        stroke: white;
+        pointer-events: unset;
+    }
+
+    & .mud-donut-segment {
+        stroke-width: 5;
+        fill: transparent;
+        pointer-events: stroke;
+        -webkit-transition: stroke .2s ease;
+        -moz-transition: stroke .2s ease;
+        -o-transition: stroke .2s ease;
+        transition: stroke .2s ease;
+    }
+}
+
+.mud-chart-legend-marker {
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    position: relative;
+    display: inline-block;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.mud-chart-fill-color-0 {
+    fill: #008FFB;
+
+    &:hover {
+        fill: #4ab1ff;
+    }
+}
+
+.mud-chart-fill-color-1 {
+    fill: #00E396;
+
+    &:hover {
+        fill: #39ffbc;
+    }
+}
+
+.mud-chart-fill-color-2 {
+    fill: #FEB019;
+
+    &:hover {
+        fill: #fec85e;
+    }
+}
+
+.mud-chart-fill-color-3 {
+    fill: #FF4560;
+
+    &:hover {
+        fill: #ff7d90;
+    }
+}
+
+.mud-chart-fill-color-4 {
+    fill: #594ae2;
+
+    &:hover {
+        fill: rgb(114,99,251);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.mud-chart-stroke-color-0 {
+    stroke: #008FFB;
+
+    &:hover {
+        stroke: #4ab1ff;
+    }
+}
+
+.mud-chart-stroke-color-1 {
+    stroke: #00E396;
+
+    &:hover {
+        stroke: #39ffbc;
+    }
+}
+.mud-chart-stroke-color-2 {
+    stroke: #FEB019;
+
+    &:hover {
+        stroke: #fec85e;
+    }
+}
+.mud-chart-stroke-color-3 {
+    stroke: #FF4560;
+
+    &:hover {
+        stroke: #ff7d90;
+    }
+}
+.mud-chart-stroke-color-4 {
+    stroke: #594ae2;
+
+    &:hover {
+        stroke: rgb(114,99,251);
+    }
+}
+
+.mud-chart-marker-color-0 {
+    background-color: #008FFB;
+}
+
+.mud-chart-marker-color-1 {
+    background-color: #00E396;
+}
+
+.mud-chart-marker-color-2 {
+    background-color: #FEB019;
+}
+
+.mud-chart-marker-color-3 {
+    background-color: #FF4560;
+}
+
+.mud-chart-marker-color-4 {
+    background-color: #594ae2;
+}
+

@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="650" Height="350"></MudChart>
+
+@code {
+
+    public List<ChartSeries> Series = new List<ChartSeries>();
+    public string[] XAxisLabels = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+    protected override void OnInitialized()
+    {
+        double[] mySerieData1 = { 90, 79, 72, 69, 62, 62, 55, 65, 70 };
+        double[] mySerieData2 = { 10, 41, 35, 51, 49, 62, 69, 91, 148 };
+
+        ChartSeries Serie1 = new ChartSeries() { Name = "Serie 1", Data = mySerieData1 };
+        Series.Add(Serie1);
+
+        ChartSeries Serie2 = new ChartSeries() { Name = "Serie 2", Data = mySerieData2 };
+        Series.Add(Serie2);
+        StateHasChanged();
+    }
+}
