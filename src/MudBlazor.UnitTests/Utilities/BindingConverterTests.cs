@@ -46,5 +46,32 @@ namespace MudBlazor.UnitTests.Utilities
             c7.Set(null).Should().Be(null);
             c7.Get(null).Should().Be(null);
         }
+
+        [Test]
+        public void DateTimeConvertersTest()
+        {
+            var dt1 = new DateConverter("dd/MM/yyyy");
+            dt1.Culture = new CultureInfo("pt-BR");
+            dt1.Set(new DateTime(2020, 11, 2)).Should().Be("02/11/2020");
+            dt1.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
+            var dt2 = new NullableDateConverter("dd/MM/yyyy");
+            dt2.Culture = new CultureInfo("pt-BR");
+            dt2.Set(new DateTime(2020, 11, 2)).Should().Be("02/11/2020");
+            dt2.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
+            dt2.Set(null).Should().Be(null);
+            dt2.Get(null).Should().Be(null);
+
+            var dt3 = new DateConverter("dd/MM/yyyy");
+            dt3.Culture = new CultureInfo("de-AT");
+            dt3.Set(new DateTime(2020, 11, 2)).Should().Be("02.11.2020");
+            dt3.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
+            var dt4 = new NullableDateConverter("dd/MM/yyyy");
+            dt4.Culture = new CultureInfo("de-AT");
+            dt4.Set(new DateTime(2020, 11, 2)).Should().Be("02.11.2020");
+            dt4.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
+            dt4.Set(null).Should().Be(null);
+            dt4.Get(null).Should().Be(null);
+        }
+
     }
 }
