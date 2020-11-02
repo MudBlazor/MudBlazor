@@ -2,10 +2,10 @@
 
 <MudGrid>
     <MudItem xs="12" md="12">
-        <MudSelect Label="US States" HelperText="Pick your favorite states" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options">
+        <MudSelect T="string" Label="US States" HelperText="Pick your favorite states" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options">
             @foreach (var state in states)
             {
-                <MudSelectItem Value="@state">@state</MudSelectItem>
+                <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
             }
         </MudSelect>
     </MudItem>

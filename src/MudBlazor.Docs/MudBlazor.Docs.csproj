@@ -22,8 +22,19 @@
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Components\Autocomplete\Code\" />
+  </ItemGroup>
+
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <!--<Exec Command="$(SolutionDir)MudBlazor.Docs.Compiler\bin\Debug\netcoreapp3.1\MudBlazor.Docs.Compiler.exe" />-->
   </Target>
 
+  <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
+    <ItemGroup>
+      <FileWatch Include="**\*.razor;" Exclude="node_modules\**\*;obj\**\*;bin\**\*" />
+      <Watch Include="%(FileWatch.FullPath)" />
+    </ItemGroup>
+  </Target>
+  
 </Project>

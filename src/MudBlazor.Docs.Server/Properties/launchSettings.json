@@ -18,7 +18,7 @@
     "MudBlazor.Demo.ServerApp": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "components/timepicker",
+      "launchUrl": "components/autocomplete",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

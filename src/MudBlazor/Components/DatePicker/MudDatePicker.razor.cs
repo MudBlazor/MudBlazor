@@ -45,15 +45,27 @@ namespace MudBlazor
             {
                 if (value == _date)
                     return;
-                _date = value;
-                if ((!string.IsNullOrEmpty(DateFormat)) && _date.HasValue)
-                    Value = _date.Value.ToString(DateFormat);
-                else
-                    Value = _date.ToIsoDateString();
-                InvokeAsync(StateHasChanged);
-                DateChanged.InvokeAsync(value);
+                if (_setting_date)
+                    return;
+                _setting_date = true;
+                try
+                {
+                    _date = value;
+                    if ((!string.IsNullOrEmpty(DateFormat)) && _date.HasValue)
+                        Value = _date.Value.ToString(DateFormat);
+                    else
+                        Value = _date.ToIsoDateString();
+                    InvokeAsync(StateHasChanged);
+                    DateChanged.InvokeAsync(value);
+                }
+                finally
+                {
+                    _setting_date = false;
+                }
             }
         }
+
+        private bool _setting_date;
 
         /// <summary>
         /// Fired when the DateFormat changes.

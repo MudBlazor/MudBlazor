@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var select = comp.FindComponent<MudSelect>();
+            var select = comp.FindComponent<MudSelect<string>>();
             var menu = comp.Find("div.mud-popover");
             var input =comp.Find("input");
             
@@ -60,8 +60,8 @@ namespace MudBlazor.UnitTests
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var select = comp.FindComponent<MudSelect>();
-            var menu = comp.Find("div.mud-popover");
+            var select = comp.FindComponent<MudSelect<string>>();
+                var menu = comp.Find("div.mud-popover");
             var input = comp.Find("input");
 
             // check initial state
@@ -76,13 +76,13 @@ namespace MudBlazor.UnitTests
             items[1].Click();
             // menu should still be open now!!
             menu.ClassList.Should().Contain("mud-popover-open");
-            select.Instance.Value.Should().Be("2");
+            select.Instance.Text.Should().Be("2");
             items[0].Click();
-            select.Instance.Value.Should().Be("2, 1");
+            select.Instance.Text.Should().Be("2, 1");
             items[2].Click();
-            select.Instance.Value.Should().Be("2, 1, 3");
+            select.Instance.Text.Should().Be("2, 1, 3");
             items[0].Click();
-            select.Instance.Value.Should().Be("2, 3");
+            select.Instance.Text.Should().Be("2, 3");
             select.Instance.SelectedValues.Count.Should().Be(2);
             select.Instance.SelectedValues.Should().Contain("2");
             select.Instance.SelectedValues.Should().Contain("3");

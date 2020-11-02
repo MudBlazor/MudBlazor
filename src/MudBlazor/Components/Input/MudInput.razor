@@ -1,15 +1,16 @@
 ﻿@namespace MudBlazor
-@inherits MudBaseInput
+@typeparam T
+@inherits MudBaseInput<T>
 @using MudBlazor.InternalComponents.InputAdornment
 
 
 <div class="@Classname" style="@Style">
     @if (Adornment == Adornment.Start)
     {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick"/>
+        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" />
     }
-    <input @attributes="UserAttributes" type="@_InputType" class="@InputClassname" @bind-value="@Value" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
-            placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="OnBlurred"/>
+    <input @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@Text" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
+           placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp" />
     @if (Adornment == Adornment.End)
     {
         <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />

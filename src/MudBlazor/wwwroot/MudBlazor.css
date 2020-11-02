@@ -3698,6 +3698,14 @@ ul {
   width: 100%;
   display: block;
   justify-content: flex-start; }
+  .mud-nav-group > .mud-nav-link > .mud-nav-link-text {
+    font-weight: 500; }
+  .mud-nav-group * .mud-nav-group > .mud-nav-link > .mud-nav-link-text {
+    font-weight: 400; }
+  .mud-nav-group * .mud-nav-group > .mud-nav-link.mud-expanded > .mud-nav-link-text {
+    font-weight: 500; }
+  .mud-nav-group > .mud-expanded {
+    color: var(--mud-theme-primary); }
   .mud-nav-group * .mud-navmenu .mud-nav-item .mud-nav-link {
     padding-left: 36px; }
 
@@ -3709,7 +3717,7 @@ ul {
 
 .mud-nav-link {
   width: 100%;
-  font-weight: 500;
+  font-weight: 400;
   padding: 8px 0 8px 12px;
   color: inherit;
   line-height: 1.75;
@@ -3725,12 +3733,14 @@ ul {
     background-color: var(--mud-theme-default-hover); }
   .mud-nav-link.active {
     font-weight: 500 !important;
-    color: var(--mud-theme-primary); }
+    color: var(--mud-theme-primary);
+    background-color: var(--mud-theme-primary-hover); }
   .mud-nav-link .mud-nav-link-expand-icon {
     margin-right: 12px;
     transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s; }
     .mud-nav-link .mud-nav-link-expand-icon.mud-transform {
-      transform: rotate(-180deg); }
+      transform: rotate(-180deg);
+      color: var(--mud-theme-primary); }
   .mud-nav-link .mud-nav-link-text {
     width: 100%;
     text-align: left;
@@ -4516,6 +4526,35 @@ ul {
   margin-left: 16px;
   flex-direction: column; }
 
+.mud-rating-root {
+  display: inline-flex;
+  color: #ffb400; }
+
+.mud-rating-item {
+  cursor: pointer;
+  transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
+  .mud-rating-item.mud-rating-item-active {
+    transform: scale(1.2); }
+  .mud-rating-item.mud-disabled, .mud-rating-item .mud-disabled:hover {
+    cursor: default;
+    pointer-events: none; }
+    .mud-rating-item.mud-disabled *, .mud-rating-item .mud-disabled:hover * {
+      cursor: default;
+      color: rgba(0, 0, 0, 0.38); }
+  .mud-rating-item .mud-rating-input {
+    clip: rect(0, 0, 0, 0);
+    margin: 0;
+    opacity: 0;
+    padding: 0;
+    z-index: 1;
+    position: absolute;
+    cursor: inherit;
+    overflow: hidden; }
+  .mud-rating-item svg {
+    pointer-events: none; }
+    .mud-rating-item svg path {
+      pointer-events: none; }
+
 .mud-snackbar {
   color: #fff;
   display: flex;
@@ -5049,6 +5088,10 @@ ul {
 
 .mud-select > .mud-form-helpertext {
   margin-top: -21px; }
+
+.mud-selected-item {
+  color: var(--mud-theme-primary);
+  background-color: var(--mud-theme-primary-hover); }
 
 .mud-input {
   position: relative;

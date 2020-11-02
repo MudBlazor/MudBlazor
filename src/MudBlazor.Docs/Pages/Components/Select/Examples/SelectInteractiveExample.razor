@@ -10,10 +10,10 @@
     </MudItem>
     <MudItem xs="12" md="1" />
     <MudItem xs="12" md="4">
-        <MudSelect Label="Variants" Variant="@_variant" Direction="@_direction" Dense="@Dense" OffsetY="@OffsetY" ValueChanged="OnSelectedValue">
-            <MudSelectItem Value="text">Text</MudSelectItem>
-            <MudSelectItem Value="filled">Filled</MudSelectItem>
-            <MudSelectItem Value="outlined">Outlined</MudSelectItem>
+        <MudSelect T="string" Label="Variants" Variant="@_variant" Direction="@_direction" Dense="@Dense" OffsetY="@OffsetY" ValueChanged="OnSelectedValue">
+            <MudSelectItem T="string" Value="@("text")">Text</MudSelectItem>
+            <MudSelectItem T="string" Value="@("filled")">Filled</MudSelectItem>
+            <MudSelectItem T="string" Value="@("outlined")">Outlined</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs="12" md="4" />
