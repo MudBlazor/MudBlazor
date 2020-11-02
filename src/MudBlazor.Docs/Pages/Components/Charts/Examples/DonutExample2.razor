@@ -5,11 +5,11 @@
 </MudChart>
 
 
-<MudSelect Label="Legend Position" Variant="Variant.Outlined" OffsetY="true" Dense="true" ValueChanged="OnSelectedValue" Class="mt-4">
-    <MudSelectItem Value="top">Top</MudSelectItem>
-    <MudSelectItem Value="left">Left</MudSelectItem>
-    <MudSelectItem Value="right">Right</MudSelectItem>
-    <MudSelectItem Value="bottom">Bottom</MudSelectItem>
+<MudSelect Label="Legend Position" Variant="Variant.Outlined" OffsetY="true" Dense="true" T="@LegendPosition" ValueChanged="OnSelectedValue" Class="mt-4">
+    <MudSelectItem  T="LegendPosition" Value="LegendPosition.Top">Top</MudSelectItem>
+    <MudSelectItem  T="LegendPosition" Value="LegendPosition.Left">Left</MudSelectItem>
+    <MudSelectItem  T="LegendPosition" Value="LegendPosition.Right">Right</MudSelectItem>
+    <MudSelectItem  T="LegendPosition" Value="LegendPosition.Bottom">Bottom</MudSelectItem>
 </MudSelect>
 
 @code {
@@ -18,21 +18,22 @@
 
     public LegendPosition LegendPosition { get; set; } = LegendPosition.Bottom;
 
-    private void OnSelectedValue(string value)
+    private void OnSelectedValue(LegendPosition value)
     {
-        if (value == "top")
+        switch(value)
         {
-            LegendPosition = LegendPosition.Top;
-        }else if (value == "left")
-        {
-            LegendPosition = LegendPosition.Left;
-        }else if (value == "right")
-        {
-            LegendPosition = LegendPosition.Right;
-        }
-        else if (value == "bottom")
-        {
-            LegendPosition = LegendPosition.Bottom;
+            case LegendPosition.Top:
+                LegendPosition = LegendPosition.Top;
+                break;
+            case LegendPosition.Left:
+                LegendPosition = LegendPosition.Left;
+                break;
+            case LegendPosition.Right:
+                LegendPosition = LegendPosition.Right;
+                break;
+            case LegendPosition.Bottom:
+                LegendPosition = LegendPosition.Bottom;
+                break;
         }
     }
 }

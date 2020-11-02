@@ -72,7 +72,6 @@ namespace MudBlazor
     public enum ChartType
     {
         Donut,
-        Bar,
         Line,
         Pie
     }
