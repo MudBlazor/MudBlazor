@@ -481,6 +481,11 @@
             </summary>
             <param name="text"></param>
         </member>
+        <member name="F:MudBlazor.MudAutocomplete`1._componentId">
+            <summary>
+            We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBadge.Color">
             <summary>
             The color of the badge.

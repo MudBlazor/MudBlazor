@@ -17,9 +17,10 @@
                     int i = 0;
                     @foreach (T item in Items)
                     {
-                        <MudListItem OnClick="@(() => SelectOption(item))" Class="@(i++==SelectedListItemIndex ? "mud-selected-item" : "")">
+                        <MudListItem id="@GetListItemId(i)" OnClick="@(() => SelectOption(item))" Class="@(i==SelectedListItemIndex ? "mud-selected-item" : "")">
                             @GetItemString(item)
                         </MudListItem>
+                        i++;
                     }
                 }
             </MudList>
