@@ -1,25 +1,26 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@using Microsoft.AspNetCore.Components
+@namespace MudBlazor.Docs.Examples
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect Label="Food" ValueChanged="OnSelectedValue">
-            <MudSelectItem Value="pizza">Pizza</MudSelectItem>
-            <MudSelectItem Value="burgers">Burgers</MudSelectItem>
-            <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
+        <MudSelect T="string" Label="Food" ValueChanged="OnSelectedValue">
+            <MudSelectItem Value="@("pizza")">Pizza</MudSelectItem>
+            <MudSelectItem Value="@("burgers")">Burgers</MudSelectItem>
+            <MudSelectItem Value="@("hotdog")">Hot Dogs</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect Label="Food" ValueChanged="OnSelectedValue" HelperText="With helper text">
-            <MudSelectItem Value="pizza">Pizza</MudSelectItem>
-            <MudSelectItem Value="burgers">Burgers</MudSelectItem>
-            <MudSelectItem Value="hotdog">Hot Dogs</MudSelectItem>
+        <MudSelect T="string" Label="Food" ValueChanged="OnSelectedValue" HelperText="With helper text">
+            <MudSelectItem Value="@("pizza")">Pizza</MudSelectItem>
+            <MudSelectItem Value="@("burgers")">Burgers</MudSelectItem>
+            <MudSelectItem Value="@("hotdog")">Hot Dogs</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelect Placeholder="Brands" ValueChanged="OnSelectedValue" HelperText="Disabled" Disabled="true">
-            <MudSelectItem Value="volvo">Volvo</MudSelectItem>
-            <MudSelectItem Value="saab">Saab</MudSelectItem>
-            <MudSelectItem Value="scania">Scania</MudSelectItem>
+        <MudSelect T="string" Placeholder="Brands" ValueChanged="OnSelectedValue" HelperText="Disabled" Disabled="true">
+            <MudSelectItem Value="@("volvo")">Volvo</MudSelectItem>
+            <MudSelectItem Value="@("saab")">Saab</MudSelectItem>
+            <MudSelectItem Value="@("scania")">Scania</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs="12" md="12">
@@ -35,9 +36,10 @@
 
     private string Item { get; set; } = "Nothing selected";
 
+
     private void OnSelectedValue(string value)
     {
         Item = value;
-    }
+}
 
 }

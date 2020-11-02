@@ -263,6 +263,10 @@
   margin-bottom: 16px;
   text-align: center; }
 
+.demo-badge .docs-section-content-inner > * {
+  margin: 20px !important;
+  align-self: center; }
+
 .docs-home {
   padding-top: 32px;
   padding-bottom: 64px; }
@@ -486,7 +490,7 @@
 
 .docs-icon-panel {
   height: 120px;
-  width: 16%;
+  width: 19%;
   padding: 20px 10px;
   display: inline-block;
   text-align: center; }
@@ -500,3 +504,6 @@
   justify-content: center; }
   .docs-icon-panel-inner .mud-svg-icon-root {
     font-size: 40px; }
+
+.docs-icon-material-container .mud-input-control {
+  background-color: var(--mud-theme-surface); }

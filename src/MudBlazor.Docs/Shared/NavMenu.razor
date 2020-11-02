@@ -33,10 +33,13 @@
         }
     </MudNavGroup>
     <MudNavGroup Title="Features" Icon="@Icons.Material.DeveloperBoard" Expanded="false">
-        <MudNavLink Href="system/colors">Colors</MudNavLink>
-        <MudNavLink Href="system/elevation">Elevation</MudNavLink>
-        <MudNavLink Href="system/spacing">Spacing</MudNavLink>
-        <MudNavLink Href="system/breakpoints">Breakpoints</MudNavLink>
+        <MudNavLink Href="features/breakpoints">Breakpoints</MudNavLink>
+        <MudNavLink Href="features/colors">Colors</MudNavLink>
+        <MudNavLink Href="features/converters">Converters</MudNavLink>
+        <MudNavLink Href="features/elevation">Elevation</MudNavLink>
+        <MudNavLink Href="features/icons">Icons</MudNavLink>
+        <MudNavLink Href="features/spacing">Spacing</MudNavLink>
+
     </MudNavGroup>
     <MudNavGroup Title="Customization" Icon="@Icons.Material.Handyman" Expanded="false">
         <MudNavLink Href="customization/default-theme">Default Theme</MudNavLink>
@@ -66,18 +69,23 @@
                             .AddItem("Button FAB", typeof(MudFab))
                                 .AddNavGroup("Form Inputs & controls", false, new DocsComponents()
                                     .AddItem("Radio", typeof(MudRadio))
-                                    .AddItem("Select", typeof(MudSelect))
+                                    .AddItem("Select", typeof(MudSelect<T>))
                                     .AddItem("Slider", typeof(MudSlider))
                                     .AddItem("Switch", typeof(MudSwitch))
-                                    .AddItem("Text Field", typeof(MudTextField))
-                                    .AddItem("Forms", typeof(MudForm)))
-                            .AddItem("Date Picker", typeof(MudDatePicker))
+                                    .AddItem("Text Field", typeof(MudTextField<T>))
+                                    .AddItem("Forms", typeof(MudForm))
+                                    .AddItem("Autocomplete", typeof(MudAutocomplete<T>))
+                                )
                             .AddItem("AppBar", typeof(MudAppBar))
                             .AddItem("Drawer", typeof(MudDrawer))
                             .AddItem("Link", typeof(MudLink))
                             .AddItem("Menu", typeof(MudMenu))
                             .AddItem("Nav Menu", typeof(MudNavMenu))
                             .AddItem("Tabs", typeof(MudTabs))
+                                .AddNavGroup("Pickers", false, new DocsComponents()
+                                    .AddItem("Date Picker", typeof(MudDatePicker))
+                                    .AddItem("Time Picker", typeof(MudTimePicker))
+                                )
                             .AddItem("Progress", typeof(MudProgressCircular))
                             .AddItem("Dialog", typeof(MudDialog))
                             .AddItem("Snackbar", typeof(MudSnackbarProvider))
@@ -89,10 +97,13 @@
                             .AddItem("Icons", typeof(MudIcon))
                             .AddItem("List", typeof(MudList))
                             .AddItem("Paper", typeof(MudPaper))
-                            .AddItem("Table", typeof(MudTable<T>))
+                            .AddItem("Rating", typeof(MudRating))
                             .AddItem("Skeleton", typeof(MudSkeleton))
                             .AddItem("Simple Table", typeof(MudSimpleTable))
+                            .AddItem("Table", typeof(MudTable<T>))
                             .AddItem("Tooltip", typeof(MudTooltip))
+                            .AddItem("Chips", typeof(MudChip))
+                            .AddItem("Badge", typeof(MudBadge))
                             .AddItem("Typography", typeof(MudText));
 
         @foreach (var item in DocsComponents.ToList())

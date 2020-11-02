@@ -39,161 +39,184 @@
             Button click event.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInputText.Disabled">
-            <summary>
-            If true, the input element will be disabled.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.ReadOnly">
-            <summary>
-            If true, the input will be read only.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.Error">
-            <summary>
-            If true, the label will be displayed in an error state.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.FullWidth">
-            <summary>
-            If true, the input will take up the full width of its container.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.Immediate">
-            <summary>
-            If true, the input will update the Value immediately on typing.
-            If false, the Value is updated only on Enter.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.DisableUnderLine">
-            <summary>
-            If true, the input will not have an underline.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.Label">
-            <summary>
-            If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.Placeholder">
-            <summary>
-            The short hint displayed in the input before the user enters a value.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.HelperText">
-            <summary>
-            The HelperText will be displayed below the text field.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.ErrorText">
-            <summary>
-            The ErrorText that will be displayed if Error true
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.AdornmentIcon">
-            <summary>
-            Icon that will be used if Adornment is set to Start or End.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.AdornmentText">
-            <summary>
-            Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.Adornment">
-            <summary>
-            Sets Start or End Adornment if not set to None.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.IconSize">
-            <summary>
-            Sets the Icon Size.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.OnAdornmentClick">
-            <summary>
-            Button click event if set and Adornment used.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.InputType">
-            <summary>
-            Type of the input element. It should be a valid HTML5 input type.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.Variant">
-            <summary>
-            Variant to use.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.Margin">
-            <summary>
-             Will adjust vertical spacing. 
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.ValueChanged">
-            <summary>
-            Fired when the Value property changes. 
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.Value">
-            <summary>
-            The value of this input element. This property is two-way bindable.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.OnBlur">
-            <summary>
-            Fired when the Value property changes. 
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInputText.Standalone">
+        <member name="P:MudBlazor.MudBaseInput`1.Standalone">
             <summary>
             If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
             If it is sub-component, it will NOT do form validation!!
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "P:MudBlazor.MudBaseInputText.Validation" -->
-        <member name="P:MudBlazor.MudBaseInputText.Required">
+        <member name="P:MudBlazor.MudBaseInput`1.Required">
             <summary>
             If true, this form input is required to be filled out.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInputText.RequiredError">
+        <member name="P:MudBlazor.MudBaseInput`1.RequiredError">
             <summary>
             Set an error text that will be displayed if the input is not filled out but required!
             </summary>
         </member>
-        <member name="M:MudBlazor.MudBaseInputText.Validate">
+        <member name="P:MudBlazor.MudBaseInput`1.ErrorText">
+            <summary>
+            The ErrorText that will be displayed if Error true
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Error">
+            <summary>
+            If true, the label will be displayed in an error state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Disabled">
+            <summary>
+            If true, the input element will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.ReadOnly">
+            <summary>
+            If true, the input will be read only.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.FullWidth">
+            <summary>
+            If true, the input will take up the full width of its container.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Immediate">
+            <summary>
+            If true, the input will update the Value immediately on typing.
+            If false, the Value is updated only on Enter.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.DisableUnderLine">
+            <summary>
+            If true, the input will not have an underline.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Label">
+            <summary>
+            If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Placeholder">
+            <summary>
+            The short hint displayed in the input before the user enters a value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.HelperText">
+            <summary>
+            The HelperText will be displayed below the text field.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.AdornmentIcon">
+            <summary>
+            Icon that will be used if Adornment is set to Start or End.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.AdornmentText">
+            <summary>
+            Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Adornment">
+            <summary>
+            Sets Start or End Adornment if not set to None.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.IconSize">
+            <summary>
+            Sets the Icon Size.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.OnAdornmentClick">
+            <summary>
+            Button click event if set and Adornment used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.InputType">
+            <summary>
+            Type of the input element. It should be a valid HTML5 input type.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Variant">
+            <summary>
+            Variant to use.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Margin">
+            <summary>
+             Will adjust vertical spacing. 
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudBaseInput`1.StringValueChanged(System.String)">
+            <summary>
+            Text change hook for descendants  
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.ValueChanged">
+            <summary>
+            Fired when the Value property changes. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Value">
+            <summary>
+            The value of this input element. This property is two-way bindable.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudBaseInput`1.GenericValueChanged(`0)">
+            <summary>
+            Value change hook for descendants
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.ConversionError">
+            <summary>
+            True if the conversion from string to T failed
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.ConversionErrorMessage">
+            <summary>
+            The error message of the conversion error from string to T. Null otherwise
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBaseInput`1.HasErrors">
+            <summary>
+            True if the input has any of the following errors: An error set from outside, a conversion error or
+            one or more validation errors
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:MudBlazor.MudBaseInput`1.Validation" -->
+        <member name="M:MudBlazor.MudBaseInput`1.Validate">
             <summary>
             Causes this component to validate its value
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInputText.EditContext">
+        <member name="P:MudBlazor.MudBaseInput`1.EditContext">
             <summary>
             This is the form validation context for Blazor's <EditForm></EditForm> component
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInputText.For">
+        <member name="P:MudBlazor.MudBaseInput`1.For">
             <summary>
             Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.
             </summary>
         </member>
-        <member name="F:MudBlazor.MudBaseInputText._fieldIdentifier">
+        <member name="F:MudBlazor.MudBaseInput`1._fieldIdentifier">
             <summary>
             Points to a field of the model for which validation messages should be displayed.
             </summary>
         </member>
-        <member name="F:MudBlazor.MudBaseInputText._currentFor">
+        <member name="F:MudBlazor.MudBaseInput`1._currentFor">
             <summary>
             To find out whether or not For parameter has changed we keep a separate reference
             </summary>
         </member>
-        <member name="F:MudBlazor.MudBaseInputText._currentEditContext">
+        <member name="F:MudBlazor.MudBaseInput`1._currentEditContext">
             <summary>
             To find out whether or not EditContext parameter has changed we keep a separate reference
             </summary>
         </member>
-        <member name="M:MudBlazor.MudBaseInputText.Dispose(System.Boolean)">
+        <member name="M:MudBlazor.MudBaseInput`1.Dispose(System.Boolean)">
             <summary>
             Called to dispose this instance.
             </summary>
@@ -401,6 +424,113 @@
             Child content of the component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.Dense">
+            <summary>
+            If true, compact vertical padding will be applied to all select items.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.OpenIcon">
+            <summary>
+            The Open Select Icon
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.CloseIcon">
+            <summary>
+            The Open Select Icon
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.MaxHeight">
+            <summary>
+            Sets the maxheight the select can have when open.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.ToStringExpression">
+            <summary>
+            Defines how values are displayed in the drop-down list
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.SearchFunc">
+            <summary>
+            The SearchFunc returns a list of items matching the typed text
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.Format">
+            <summary>
+            Set the format for values in the list if no template
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.MaxItems">
+            <summary>
+            Maximum items to display, defaults to 10.
+            Set null to display all
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.MinCharacters">
+            <summary>
+            Minimum characters to initiate a search, defaults to 2
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.DebounceInterval">
+            <summary>
+            Debounce interval in milliseconds.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudAutocomplete`1.StringValueChanged(System.String)">
+            <summary>
+            The user typed something ...
+            </summary>
+            <param name="text"></param>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Color">
+            <summary>
+            The color of the badge.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Bottom">
+            <summary>
+            Aligns the badge to bottom.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Left">
+            <summary>
+            Aligns the badge to left.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Dot">
+            <summary>
+            Reduces the size of the badge and hide any of its content.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Overlap">
+            <summary>
+            Overlaps the childcontent on top of the content.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Bordered">
+            <summary>
+            Applies a border around the badge.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Icon">
+            <summary>
+            Sets the Icon to use in the badge.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Max">
+            <summary>
+            Max lenght of content to show.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.Content">
+            <summary>
+            Content you want as text inside the badge.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBadge.ChildContent">
+            <summary>
+            Child content of component, the content that the badge will apply to.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudButton.StartIcon">
             <summary>
             Icon placed before the text if set.
@@ -556,9 +686,84 @@
             The size of the button. small is equivalent to the dense button styling.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudChip.Variant">
+            <summary>
+            The variant to use.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.Avatar">
+            <summary>
+            Avatar Icon, Overrides the regular Icon if set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.AvatarClass">
+            <summary>
+            Avatar CSS Class, appends to Chips default avatar classes.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.Label">
+            <summary>
+            Removes circle edges and applys theme default.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.Disabled">
+            <summary>
+            If true, the chip will be displayed in disabled state and no events possible.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.Icon">
+            <summary>
+            Sets the Icon to use.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.CloseIcon">
+            <summary>
+            Overrides the default close icon, only shown if OnClose is set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.DisableRipple">
+            <summary>
+            If true, disables ripple effect, ripple effect is only applied to clickable chips.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudChip.ChildContent">
             <summary>
             Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.Link">
+            <summary>
+            If set to a URL, clicking the button will open the referenced document. Use Target to specify where
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.Target">
+            <summary>
+            The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.ForceLoad">
+            <summary>
+            If true, force browser to redirect outside component router-space.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.Command">
+            <summary>
+            Command executed when the user clicks on an element.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.CommandParameter">
+            <summary>
+            Command parameter.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.OnClick">
+            <summary>
+            Chip click event, if set the chip focus, hover and click effects are applied.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.OnClose">
+            <summary>
+            Chip delete event, if set the delete icon will be visible.
             </summary>
         </member>
         <member name="P:MudBlazor.MudDatePicker.MaxDate">
@@ -588,7 +793,12 @@
         </member>
         <member name="P:MudBlazor.MudDatePicker.DateChanged">
             <summary>
-            Fired when the date changes.
+            Fired when the DateFormat changes.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDatePicker.DateFormat">
+            <summary>
+            String Format for selected date view
             </summary>
         </member>
         <member name="P:MudBlazor.MudDatePicker.FirstDayOfWeek">
@@ -722,7 +932,7 @@
             Validation error messages
             </summary>
         </member>
-        <member name="M:MudBlazor.MudForm.Update(MudBlazor.MudBaseInputText)">
+        <member name="M:MudBlazor.MudForm.Update(MudBlazor.Interfaces.IFormComponent)">
             <summary>
             Called by any input of the form to signal that its value changed. 
             </summary>
@@ -788,19 +998,74 @@
             Child content of component.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudInputControl.ControlChild">
+        <member name="P:MudBlazor.MudInputControl.ChildContent">
             <summary>
             Child content of component.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudInputControl.ControlInput">
+        <member name="P:MudBlazor.MudInputControl.InputContent">
             <summary>
             Should be the Input
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.Margin">
+            <summary>
+             Will adjust vertical spacing. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.Error">
+            <summary>
+            If true, the label will be displayed in an error state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.ErrorText">
+            <summary>
+            The ErrorText that will be displayed if Error true
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.HelperText">
+            <summary>
+            The HelperText will be displayed below the text field.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.FullWidth">
+            <summary>
+            If true, the input will take up the full width of its container.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.Label">
+            <summary>
+            If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.Variant">
+            <summary>
+            Variant can be Text, Filled or Outlined.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.Disabled">
+            <summary>
+            If true, the input element will be disabled.
             </summary>
         </member>
         <member name="P:MudBlazor.MudInputLabel.ChildContent">
             <summary>
             Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputLabel.Disabled">
+            <summary>
+            If true, the input element will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputLabel.Error">
+            <summary>
+            If true, the label will be displayed in an error state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputLabel.Variant">
+            <summary>
+            Variant to use.
             </summary>
         </member>
         <member name="P:MudBlazor.MudLink.Color">
@@ -913,6 +1178,11 @@
             List click event.
             </summary>
         </member>
+        <member name="P:MudBlazor.ComponentBaseMudMenu.Dense">
+            <summary>
+            If true, compact vertical padding will be applied to all menu items.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudNavGroup.Icon">
             <summary>
             Icon to use if set.
@@ -983,82 +1253,192 @@
             Child content of component.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelect.ChildContent">
+        <member name="P:MudBlazor.MudRating.ClassName">
+            <summary>
+            Space separated class names
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.RatingItemsClass">
+            <summary>
+            User class names for RatingItems, separated by space
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.RatingItemsStyle">
+            <summary>
+            User styles for RatingItems.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.Name">
+            <summary>
+            Input name. If not initialized, name will be random guid.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.MaxValue">
+            <summary>
+            Max value and how many elements to click will be generated. Default: 5
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.FullIcon">
+            <summary>
+            Selected or hovered icon. Default @Icons.Material.Star
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.EmptyIcon">
+            <summary>
+            Non selected item icon. Default @Icons.Material.StarBorder
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.Size">
+            <summary>
+            The Size of the icons.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.Disabled">
+            <summary>
+            If true, the controls will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.SelectedValueChanged">
+            <summary>
+            Fires when SelectedValue changes.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.SelectedValue">
+            <summary>
+            Selected value. This property is two-way bindable.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRating.HoveredValueChanged">
+            <summary>
+            Fires when hovered value change. Value will be null if no rating item is hovered.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.ClassName">
+            <summary>
+            Space separated class names
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.ItemValue">
+            <summary>
+            This rating item value;
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.Size">
+            <summary>
+            The Size of the icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.Disabled">
+            <summary>
+            If true, the controls will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.ItemClicked">
+            <summary>
+            Fires when element clicked.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudRatingItem.ItemHovered">
+            <summary>
+            Fires when element hovered.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSelect`1.ChildContent">
             <summary>
             Add the MudSelectItems here
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelect.Dense">
+        <member name="P:MudBlazor.MudSelect`1.Dense">
             <summary>
             If true, compact vertical padding will be applied to all select items.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelect.OpenIcon">
+        <member name="P:MudBlazor.MudSelect`1.OpenIcon">
             <summary>
             The Open Select Icon
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelect.CloseIcon">
+        <member name="P:MudBlazor.MudSelect`1.CloseIcon">
             <summary>
             The Open Select Icon
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelect.SelectedValuesChanged">
+        <member name="P:MudBlazor.MudSelect`1.SelectedValuesChanged">
             <summary>
             Fires when SelectedValues changes.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelect.SelectedValues">
+        <member name="P:MudBlazor.MudSelect`1.SelectedValues">
             <summary>
             Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelect.MultiSelection">
+        <member name="P:MudBlazor.MudSelect`1.MultiSelection">
             <summary>
             If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelect.MaxHeight">
+        <member name="P:MudBlazor.MudSelect`1.MaxHeight">
             <summary>
             Sets the maxheight the select can have when open.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelect.Direction">
+        <member name="P:MudBlazor.MudSelect`1.Direction">
             <summary>
             Sets the direction the select menu should be.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelect.OffsetY">
+        <member name="P:MudBlazor.MudSelect`1.OffsetY">
             <summary>
             If true, the select menu will open either before or after the input.
             </summary>
         </member>
-        <member name="T:MudBlazor.MudSelectItem">
+        <member name="T:MudBlazor.MudSelectItem`1">
             <summary>
             Represents an option of a select or multi-select. To be used inside MudSelect.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelectItem.MudSelect">
+        <member name="P:MudBlazor.MudSelectItem`1.IMudSelect">
             <summary>
             The parent select component
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelectItem.Value">
+        <member name="P:MudBlazor.MudSelectItem`1.Value">
             <summary>
             A user-defined option that can be selected
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelectItem.MultiSelection">
+        <member name="P:MudBlazor.MudSelectItem`1.MultiSelection">
             <summary>
             Mirrors the MultiSelection status of the parent select
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelectItem.IsSelected">
+        <member name="P:MudBlazor.MudSelectItem`1.IsSelected">
             <summary>
             Selected state of the option. Only works if the parent is a mulit-select
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSelectItem.CheckBoxIcon">
+        <member name="P:MudBlazor.MudSelectItem`1.CheckBoxIcon">
             <summary>
             The checkbox icon reflects the multi-select option's state
             </summary>
@@ -1278,6 +1658,71 @@
             Child content of component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTabs.TabPanelClass">
+            <summary>
+            Custom class/classes for TabPanel
+            </summary>
+        </member>
+        <member name="F:MudBlazor.MudTimePicker.Picker">
+            <summary>
+            Reference to the Picker, initialized via @ref
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTimePicker.OpenTo">
+            <summary>
+            First view to show in the MudDatePicker.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTimePicker.AmPm">
+            <summary>
+            If true, sets 12 hour selection clock.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTimePicker.InputIcon">
+            <summary>
+            Sets the Input Icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTimePicker.Time">
+            <summary>
+            The currently selected time (two-way bindable). If null, then nothing was selected.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTimePicker.TimeChanged">
+            <summary>
+            Fired when the date changes.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudTimePicker.OnMouseDown(Microsoft.AspNetCore.Components.Web.MouseEventArgs)">
+            <summary>
+            Sets Mouse Down bool to true if mouse is inside the clock mask.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudTimePicker.OnMouseUp(Microsoft.AspNetCore.Components.Web.MouseEventArgs)">
+            <summary>
+            Sets Mouse Down bool to false if mouse is inside the clock mask.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudTimePicker.OnMouseOverHour(System.Int32)">
+            <summary>
+            If MouseDown is true enabels "dragging" effect on the clock pin/stick.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudTimePicker.OnMouseClickHour(System.Int32)">
+            <summary>
+            On click for the hour "sticks", sets the houre.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudTimePicker.OnMouseOverMinute(System.Int32)">
+            <summary>
+            On click for the minutes "sticks", sets the minute.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudTimePicker.OnMouseClickMinute(System.Int32)">
+            <summary>
+            On click for the minute "sticks", sets the minute.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudText.Typo">
             <summary>
             Applies the theme typography styles.
@@ -1371,6 +1816,34 @@
             </summary>
             <param name="configure">Defines settings for this instance.</param>
             <returns>Continues the IServiceCollection chain.</returns>
+        </member>
+        <member name="P:MudBlazor.Converter`2.Culture">
+            <summary>
+            The culture info being used for decimal points, date and time format, etc.
+            </summary>
+        </member>
+        <member name="T:MudBlazor.Converter`1">
+             <summary>
+             Converter from T to string
+            
+             Set converts to string
+             Get converts from string
+             </summary>
+        </member>
+        <member name="T:MudBlazor.NullableDateConverter">
+            <summary>
+            A ready made DateTime? to string binding converter with configurable date format and culture
+            </summary>
+        </member>
+        <member name="T:MudBlazor.DateConverter">
+            <summary>
+            A ready made DateTime to string binding converter with configurable date format and culture
+            </summary>
+        </member>
+        <member name="T:MudBlazor.DefaultConverter`1">
+            <summary>
+            A universal T to string binding converter
+            </summary>
         </member>
         <member name="M:MudBlazor.Utilities.CssBuilder.Default(System.String)">
             <summary>

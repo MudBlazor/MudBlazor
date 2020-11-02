@@ -3,13 +3,13 @@
 <MudDialog>
     <DialogContent>
         <MudText Class="mt-2">Note: Database creation can take up to 30 minutes.</MudText>
-        <MudText Class="mb-2">After database is created you will rescive a email to your cloud account.</MudText>
+        <MudText Class="mb-2">After database is created you will resceive a email to your cloud account.</MudText>
         <MudForm>
-            <MudTextField Label="Database name"></MudTextField>
-            <MudTextField Label="Database tags"></MudTextField>
-            <MudSelect FullWidth="true" Label="Resource Group" ValueChanged="@OnSelectedValue">
-                <MudSelectItem Value="Prod">Prod</MudSelectItem>
-                <MudSelectItem Value="Test">Test</MudSelectItem>
+            <MudTextField T="string" Label="Database name"></MudTextField>
+            <MudTextField T="string" Label="Database tags"></MudTextField>
+            <MudSelect T="string" FullWidth="true" Label="Resource Group" ValueChanged="@OnSelectedValue">
+                <MudSelectItem T="string" Value="@("Prod")">Prod</MudSelectItem>
+                <MudSelectItem T="string" Value="@("Test")">Test</MudSelectItem>
             </MudSelect>
             <MudCheckBox Label="Want to use SQL elastic pool?" Color="Color.Primary" Class="my-4"></MudCheckBox>
         </MudForm>

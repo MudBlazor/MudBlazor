@@ -2,17 +2,12 @@
 
 
 <DocsPage>
-    <DocsPageHeader>
-        <Title>Select</Title>
-        <SubTitle>
-            Select fields allows users to provide information from a list of options.
-        </SubTitle>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Select" SubTitle="Select fields allows users to provide information from a list of options." />
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
                 <Title>Variants</Title>
-                <Description></Description>
+                <Description>Select comes in the variants Text, Filled and Outline. Also, Select is generic, meaning you can use values of any type with it. See the example code how that works.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
                 <MudContainer>
@@ -68,6 +63,7 @@
             </SectionContent>
             <SectionSource Code="SelectDisabledExample" GitHubFolderName="Select" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Interactive</Title>
@@ -80,6 +76,20 @@
             </SectionContent>
             <SectionSource ShowCode="false" Code="SelectInteractiveExample" GitHubFolderName="Select" />
         </DocsPageSection>
+
+        <DocsPageSection>
+        <SectionHeader>
+            <Title>Select with custom converter</Title>
+            <Description></Description>
+        </SectionHeader>
+        <SectionContent Outlined="true" DisplayFlex="true">
+            <MudContainer Class="py-6">
+                <SelectCustomConverterExample />
+            </MudContainer>
+        </SectionContent>
+        <SectionSource ShowCode="false" Code="SelectCustomConverterExample" GitHubFolderName="Select" />
+    </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
 

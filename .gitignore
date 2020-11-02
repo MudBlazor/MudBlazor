@@ -348,6 +348,7 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+.history/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
@@ -362,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /src/MudBlazor.Docs.Server/.config
 /src/MudBlazor.Docs.Server/Properties/ServiceDependencies/MudBlazor - Web Deploy
+
+.idea/

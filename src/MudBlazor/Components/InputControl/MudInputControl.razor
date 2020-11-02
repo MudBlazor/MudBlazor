@@ -1,12 +1,11 @@
 ﻿@namespace MudBlazor
-@inherits MudBaseInputText
-
+@inherits MudComponentBase
 
 
 
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    @ControlInput
+    @InputContent
     @if (!String.IsNullOrEmpty(Label))
     {
         <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant" Disabled=@Disabled Error="@Error">
@@ -30,6 +29,6 @@
     {
         <p class="@HelperClass">@ErrorText</p>
     }
-    @ControlChild
+    @ChildContent
 </div>
 

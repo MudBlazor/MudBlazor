@@ -35,7 +35,7 @@ namespace MudBlazor.Docs.Compiler
                         var doc = info.GetDocumentation();
                         doc = Regex.Replace(doc ?? "", @"</?.+?>", "");
 
-                        w.WriteLine($"public const string {GetSaveTypename(type)}_{info.Name} = @\"{EscapeDescription(doc)}\";\n");
+                        w.WriteLine($"public const string {GetSaveTypename(type).TrimEnd('_')}_{info.Name} = @\"{EscapeDescription(doc)}\";\n");
                         //return new ApiProperty()
                         //{
                         //    Name = info.Name,

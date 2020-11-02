@@ -1,13 +1,14 @@
 ﻿@namespace MudBlazor
-@inherits MudBaseInputText
+@typeparam T
+@inherits MudBaseInput<T>
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
-    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled">
-        <ControlInput>
-                <MudInput @attributes="UserAttributes" InputType="@InputType" Class="@Classname" Style="@Style" Variant="@Variant" @bind-Value="@Value" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                           Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" 
-                           OnBlur="@OnBlurred"/>
-        </ControlInput>
+    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled">
+        <InputContent>
+            <MudInput @attributes="UserAttributes" InputType="@InputType" Class="@Classname" Style="@Style" Variant="@Variant" @bind-Value="@Text" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
+                      Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate"
+                      OnBlur="@OnBlurred" />
+        </InputContent>
     </MudInputControl>
 </CascadingValue>
 
