@@ -10,14 +10,14 @@
         <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant">
             @Label
         </MudInputLabel>
-        <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" style="margin-top: 50px">
+        <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" OffsetY="true">
             <MudList Clickable="true" Dense="@Dense">
                 @if (Items != null && Items.Any())
                 {
                     int i = 0;
                     @foreach (T item in Items)
                     {
-                        <MudListItem OnClick="@(() => SelectOption(item))" Style="@(i++==SelectedListItemIndex ? "color:#1867c0" : null)">
+                        <MudListItem OnClick="@(() => SelectOption(item))" Class="@(i++==SelectedListItemIndex ? "mud-selected-item" : "")">
                             @GetItemString(item)
                         </MudListItem>
                     }
