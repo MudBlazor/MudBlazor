@@ -264,6 +264,19 @@ namespace MudBlazor
             }
         }
 
+        private string _format = null;
+
+        [Parameter]
+        public string Format
+        {
+            get => _format;
+            set
+            {
+                _format = value;
+                _converter.Format = _format;
+            }
+        }
+
         protected virtual void OnConversionError(string error)
         {
             /* to be overridden */

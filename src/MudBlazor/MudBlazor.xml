@@ -454,11 +454,6 @@
             The SearchFunc returns a list of items matching the typed text
             </summary>
         </member>
-        <member name="P:MudBlazor.MudAutocomplete`1.Format">
-            <summary>
-            Set the format for values in the list if no template
-            </summary>
-        </member>
         <member name="P:MudBlazor.MudAutocomplete`1.MaxItems">
             <summary>
             Maximum items to display, defaults to 10.
@@ -1865,14 +1860,9 @@
              Get converts from string
              </summary>
         </member>
-        <member name="T:MudBlazor.NullableDateConverter">
+        <member name="P:MudBlazor.Converter`1.Format">
             <summary>
-            A ready made DateTime? to string binding converter with configurable date format and culture
-            </summary>
-        </member>
-        <member name="T:MudBlazor.DateConverter">
-            <summary>
-            A ready made DateTime to string binding converter with configurable date format and culture
+            Custom Format to be applied on bidirectional way.
             </summary>
         </member>
         <member name="T:MudBlazor.DefaultConverter`1">

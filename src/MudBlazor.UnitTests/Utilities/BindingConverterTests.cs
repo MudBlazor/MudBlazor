@@ -48,30 +48,131 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void DateTimeConvertersTest()
+        public void DefaultConverterTestWithCustomFormat()
         {
-            var dt1 = new DateConverter("dd/MM/yyyy");
-            dt1.Culture = new CultureInfo("pt-BR");
-            dt1.Set(new DateTime(2020, 11, 2)).Should().Be("02/11/2020");
-            dt1.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
-            var dt2 = new NullableDateConverter("dd/MM/yyyy");
-            dt2.Culture = new CultureInfo("pt-BR");
-            dt2.Set(new DateTime(2020, 11, 2)).Should().Be("02/11/2020");
-            dt2.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
-            dt2.Set(null).Should().Be(null);
-            dt2.Get(null).Should().Be(null);
+            var float1 = new DefaultConverter<float>("0.00");
+            float1.Culture = new CultureInfo("en-US");
+            float1.Set(1.7f).Should().Be("1.70");
+            float1.Set(1.773f).Should().Be("1.77");
+            float1.Get("1.773").Should().Be(1.773f);
+            float1.Get("1.77").Should().Be(1.77f);
+            float1.Get("1.7").Should().Be(1.7f);
+            float1.Culture = new CultureInfo("pt-BR");
+            float1.Set(1.7f).Should().Be("1,70");
+            float1.Set(1.773f).Should().Be("1,77");
+            float1.Get("1,773").Should().Be(1.773f);
+            float1.Get("1,77").Should().Be(1.77f);
+            float1.Get("1,7").Should().Be(1.7f);
 
-            var dt3 = new DateConverter("dd/MM/yyyy");
-            dt3.Culture = new CultureInfo("de-AT");
-            dt3.Set(new DateTime(2020, 11, 2)).Should().Be("02.11.2020");
-            dt3.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
-            var dt4 = new NullableDateConverter("dd/MM/yyyy");
-            dt4.Culture = new CultureInfo("de-AT");
-            dt4.Set(new DateTime(2020, 11, 2)).Should().Be("02.11.2020");
-            dt4.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
-            dt4.Set(null).Should().Be(null);
-            dt4.Get(null).Should().Be(null);
+            var dbl1 = new DefaultConverter<double>("0.00");
+            dbl1.Culture = new CultureInfo("en-US");
+            dbl1.Set(1.7d).Should().Be("1.70");
+            dbl1.Set(1.773d).Should().Be("1.77");
+            dbl1.Get("1.773").Should().Be(1.773d);
+            dbl1.Get("1.77").Should().Be(1.77d);
+            dbl1.Get("1.7").Should().Be(1.7d);
+            dbl1.Culture = new CultureInfo("pt-BR");
+            dbl1.Set(1.7d).Should().Be("1,70");
+            dbl1.Set(1.773d).Should().Be("1,77");
+            dbl1.Get("1,773").Should().Be(1.773d);
+            dbl1.Get("1,77").Should().Be(1.77d);
+            dbl1.Get("1,7").Should().Be(1.7d);
+
+            var dbl2 = new DefaultConverter<double?>("0.00");
+            dbl2.Culture = new CultureInfo("en-US");
+            dbl2.Set(1.7d).Should().Be("1.70");
+            dbl2.Set(1.773d).Should().Be("1.77");
+            dbl2.Set(null).Should().Be(null);
+            dbl2.Get("1.773").Should().Be(1.773d);
+            dbl2.Get("1.77").Should().Be(1.77d);
+            dbl2.Get("1.7").Should().Be(1.7d);
+            dbl2.Get(null).Should().Be(null);
+            dbl2.Culture = new CultureInfo("pt-BR");
+            dbl2.Set(1.7d).Should().Be("1,70");
+            dbl2.Set(1.773d).Should().Be("1,77");
+            dbl2.Get("1,773").Should().Be(1.773d);
+            dbl2.Get("1,77").Should().Be(1.77d);
+            dbl2.Get("1,7").Should().Be(1.7d);
+
+            var dec1 = new DefaultConverter<decimal>("0.00");
+            dec1.Culture = new CultureInfo("en-US");
+            dec1.Set(1.7m).Should().Be("1.70");
+            dec1.Set(1.773m).Should().Be("1.77");
+            dec1.Get("1.773").Should().Be(1.773m);
+            dec1.Get("1.77").Should().Be(1.77m);
+            dec1.Get("1.7").Should().Be(1.7m);
+            dec1.Culture = new CultureInfo("pt-BR");
+            dec1.Set(1.7m).Should().Be("1,70");
+            dec1.Set(1.773m).Should().Be("1,77");
+            dec1.Get("1,773").Should().Be(1.773m);
+            dec1.Get("1,77").Should().Be(1.77m);
+            dec1.Get("1,7").Should().Be(1.7m);
+
+            var dec2 = new DefaultConverter<decimal?>("0.00");
+            dec2.Culture = new CultureInfo("en-US");
+            dec2.Set(1.7m).Should().Be("1.70");
+            dec2.Set(1.773m).Should().Be("1.77");
+            dec2.Set(null).Should().Be(null);
+            dec2.Get("1.773").Should().Be(1.773m);
+            dec2.Get("1.77").Should().Be(1.77m);
+            dec2.Get("1.7").Should().Be(1.7m);
+            dec2.Get(null).Should().Be(null);
+            dec2.Culture = new CultureInfo("pt-BR");
+            dec2.Set(1.7m).Should().Be("1,70");
+            dec2.Set(1.773m).Should().Be("1,77");
+            dec2.Get("1,773").Should().Be(1.773m);
+            dec2.Get("1,77").Should().Be(1.77m);
+            dec2.Get("1,7").Should().Be(1.7m);
+
+            var dt1 = new DefaultConverter<DateTime>("MM/dd/yyyy");
+            dt1.Culture = new CultureInfo("en-US");
+            dt1.Set(new DateTime(2020,11,03)).Should().Be("11/03/2020");
+            dt1.Get("11/03/2020").Should().Be(new DateTime(2020, 11, 03));
+            dt1.Culture = new CultureInfo("pt-BR");
+            dt1.Format = "dd/MM/yyyy";
+            dt1.Set(new DateTime(2020, 11, 03)).Should().Be("03/11/2020");
+            dt1.Get("03/11/2020").Should().Be(new DateTime(2020, 11, 03));
+
+            var dt2 = new DefaultConverter<DateTime?>("MM/dd/yyyy");
+            dt2.Culture = new CultureInfo("en-US");
+            dt2.Set(new DateTime(2020, 11, 03)).Should().Be("11/03/2020");
+            dt2.Set(null).Should().Be(null);
+            dt2.Get("11/03/2020").Should().Be(new DateTime(2020, 11, 03));
+            dt2.Get(null).Should().Be(null);
+            dt2.Culture = new CultureInfo("pt-BR");
+            dt2.Format = "dd/MM/yyyy";
+            dt2.Set(new DateTime(2020, 11, 03)).Should().Be("03/11/2020");
+            dt2.Get("03/11/2020").Should().Be(new DateTime(2020, 11, 03));
+
+
+
         }
+
+        //[Test]
+        //public void DateTimeConvertersTest()
+        //{
+        //    var dt1 = new DateConverter("dd/MM/yyyy");
+        //    dt1.Culture = new CultureInfo("pt-BR");
+        //    dt1.Set(new DateTime(2020, 11, 2)).Should().Be("02/11/2020");
+        //    dt1.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
+        //    var dt2 = new NullableDateConverter("dd/MM/yyyy");
+        //    dt2.Culture = new CultureInfo("pt-BR");
+        //    dt2.Set(new DateTime(2020, 11, 2)).Should().Be("02/11/2020");
+        //    dt2.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
+        //    dt2.Set(null).Should().Be(null);
+        //    dt2.Get(null).Should().Be(null);
+
+        //    var dt3 = new DateConverter("dd/MM/yyyy");
+        //    dt3.Culture = new CultureInfo("de-AT");
+        //    dt3.Set(new DateTime(2020, 11, 2)).Should().Be("02.11.2020");
+        //    dt3.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
+        //    var dt4 = new NullableDateConverter("dd/MM/yyyy");
+        //    dt4.Culture = new CultureInfo("de-AT");
+        //    dt4.Set(new DateTime(2020, 11, 2)).Should().Be("02.11.2020");
+        //    dt4.Get("02/11/2020").Should().Be(new DateTime(2020, 11, 2));
+        //    dt4.Set(null).Should().Be(null);
+        //    dt4.Get(null).Should().Be(null);
+        //}
 
     }
 }

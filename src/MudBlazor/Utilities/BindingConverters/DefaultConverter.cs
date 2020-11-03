@@ -16,6 +16,13 @@ namespace MudBlazor
             GetFunc = OnGet;
         }
 
+        public DefaultConverter(string format) : base(format)
+        {
+            SetFunc = OnSet;
+            GetFunc = OnGet;
+        }
+
+
         private T OnGet(string value)
         {
             try
@@ -146,16 +153,28 @@ namespace MudBlazor
                 // datetime
                 else if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
                 {
-                    if (DateTime.TryParse(value, Culture,  DateTimeStyles.None, out var parsedValue))
-                        return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid date time");
+                    try
+                    {
+                        return (T)(object)DateTime.ParseExact(value, Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
+                    }
+                    catch (FormatException e)
+                    {
+                        UpdateGetError("Not a valid date time");
+                        return default;
+                    }
                 }
                 // timespan
                 else if (typeof(T) == typeof(TimeSpan) || typeof(T) == typeof(TimeSpan?))
                 {
-                    if (TimeSpan.TryParse(value, Culture, out var parsedValue))
-                        return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid time span");
+                    try
+                    {
+                        return (T)(object)TimeSpan.ParseExact(value, Format ?? Culture.DateTimeFormat.ShortTimePattern, Culture);
+                    }
+                    catch (FormatException e )
+                    {
+                        UpdateGetError("Not a valid time span");
+                        return default;
+                    }
                 }
                 else
                 {
@@ -211,39 +230,39 @@ namespace MudBlazor
                     return ((ushort?)(object)arg).Value.ToString(Culture);
                 // int
                 else if (typeof(T) == typeof(int) )
-                    return ((int)(object)arg).ToString(Culture);
+                    return ((int)(object)arg).ToString(Format, Culture);
                 else if (typeof(T) == typeof(int?))
-                    return ((int?)(object)arg).Value.ToString(Culture);
+                    return ((int?)(object)arg).Value.ToString(Format, Culture);
                 // uint
                 else if (typeof(T) == typeof(uint))
-                    return ((uint)(object)arg).ToString(Culture);
+                    return ((uint)(object)arg).ToString(Format, Culture);
                 else if (typeof(T) == typeof(uint?))
-                    return ((uint?)(object)arg).Value.ToString(Culture);
+                    return ((uint?)(object)arg).Value.ToString(Format, Culture);
                 // long
                 else if (typeof(T) == typeof(long))
-                    return ((long)(object)arg).ToString(Culture);
+                    return ((long)(object)arg).ToString(Format, Culture);
                 else if (typeof(T) == typeof(long?))
-                    return ((long?)(object)arg).Value.ToString(Culture);
+                    return ((long?)(object)arg).Value.ToString(Format, Culture);
                 // ulong
                 else if (typeof(T) == typeof(ulong))
-                    return ((ulong)(object)arg).ToString(Culture);
+                    return ((ulong)(object)arg).ToString(Format, Culture);
                 else if (typeof(T) == typeof(ulong?))
-                    return ((ulong?)(object)arg).Value.ToString(Culture);
+                    return ((ulong?)(object)arg).Value.ToString(Format, Culture);
                 // float
                 else if (typeof(T) == typeof(float))
-                    return ((float)(object)arg).ToString(Culture);
+                    return ((float)(object)arg).ToString(Format, Culture);
                 else if (typeof(T) == typeof(float?))
-                    return ((float?)(object)arg).Value.ToString(Culture);
+                    return ((float?)(object)arg).Value.ToString(Format, Culture);
                 // double
                 else if (typeof(T) == typeof(double))
-                    return ((double)(object)arg).ToString(Culture);
+                    return ((double)(object)arg).ToString(Format, Culture);
                 else if (typeof(T) == typeof(double?))
-                    return ((double?)(object)arg).Value.ToString(Culture);
+                    return ((double?)(object)arg).Value.ToString(Format, Culture);
                 // decimal
                 else if (typeof(T) == typeof(decimal))
-                    return ((decimal)(object)arg).ToString(Culture);
+                    return ((decimal)(object)arg).ToString(Format, Culture);
                 else if (typeof(T) == typeof(decimal?))
-                    return ((decimal?)(object)arg).Value.ToString(Culture);
+                    return ((decimal?)(object)arg).Value.ToString(Format, Culture);
                 // guid
                 else if (typeof(T) == typeof(Guid))
                 {
@@ -270,23 +289,23 @@ namespace MudBlazor
                 else if (typeof(T) == typeof(DateTime))
                 {
                     var value = (DateTime) (object) arg;
-                    return value.ToString(Culture);
+                    return value.ToString(Format, Culture);
                 }  
                 else if (typeof(T) == typeof(DateTime?))
                 {
                     var value = (DateTime?) (object) arg;
-                    return value.Value.ToString(Culture);
+                    return value.Value.ToString(Format, Culture);
                 }      
                 // timespan
                 else if (typeof(T) == typeof(TimeSpan))
                 {
                     var value = (TimeSpan) (object) arg;
-                    return value.ToString();
+                    return value.ToString(Format, Culture);
                 }  
                 else if (typeof(T) == typeof(TimeSpan?))
                 {
                     var value = (TimeSpan?) (object) arg;
-                    return value.Value.ToString();
+                    return value.Value.ToString(Format, Culture);
                 }               
                 return arg.ToString( );
             }

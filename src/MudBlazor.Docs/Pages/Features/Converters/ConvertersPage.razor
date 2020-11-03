@@ -1,4 +1,5 @@
 ﻿@page "/features/converters"
+@using System.Globalization;
 
 <DocsPage MaxWidth="MaxWidth.Large">
     <DocsPageHeader Title="Converters" SubTitle="Converters are essential for binding input elements to your model.">
@@ -8,7 +9,7 @@
             <MudText Typo="Typo.h5" GutterBottom="true" Class="my-4">DefaultConverter&lt;T&gt;</MudText>
             <MudText>
                 The default converter converts all primitive types and their nullable variants to and from <CodeInline>string</CodeInline>.
-                Edit the textfields below to see how the default converter handles different values depending on the type. 
+                Edit the textfields below to see how the default converter handles different values depending on the type.
             </MudText>
             <div class="d-flex flex-row mt-5">
                 <MudSwitch Color="Color.Primary" @bind-Checked="@nullable">Nullable variants</MudSwitch>
@@ -148,10 +149,10 @@
                             <td>
                                 <MudTextField T="StringSplitOptions?" @bind-Value="@nenum_value" Class="mt-n1" Immediate="true" />
                                 @*<MudSelect T="StringSplitOptions?" @bind-Value="@nenum_value" Class="mt-n2" Immediate="true">
-                        <MudSelectItem T="StringSplitOptions?" Value="null">(Nothing selected)</MudSelectItem>
-                        <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.None">None</MudSelectItem>
-                        <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.RemoveEmptyEntries">RemoveEmptyEntries</MudSelectItem>
-                    </MudSelect>*@
+                                        <MudSelectItem T="StringSplitOptions?" Value="null">(Nothing selected)</MudSelectItem>
+                                        <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.None">None</MudSelectItem>
+                                        <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.RemoveEmptyEntries">RemoveEmptyEntries</MudSelectItem>
+                                    </MudSelect>*@
                             </td>
                             <td><MudText Inline="true">@ToS(nenum_value)</MudText></td>
                         </tr>
@@ -258,14 +259,14 @@
                         <tr>
                             <td><CodeInline>DateTime</CodeInline></td>
                             <td>
-                                <MudTextField T="DateTime" @bind-Value="@datetime_value" Class="mt-n1" Immediate="true" />
+                                <MudTextField T="DateTime" Format="dd/MM/yyyy" @bind-Value="@datetime_value" Class="mt-n1" Immediate="true" />
                             </td>
                             <td><MudText Inline="true">@datetime_value</MudText></td>
                         </tr>
                         <tr>
                             <td><CodeInline>TimeSpan</CodeInline></td>
                             <td>
-                                <MudTextField T="TimeSpan" @bind-Value="@timespan_value" Class="mt-n1" Immediate="true" />
+                                <MudTextField T="TimeSpan" Format="HH:mm:ss" @bind-Value="@timespan_value" Class="mt-n1" Immediate="true" />
                             </td>
                             <td><MudText Inline="true">@timespan_value</MudText></td>
                         </tr>
@@ -281,9 +282,9 @@
                             <td>
                                 <MudTextField T="StringSplitOptions" @bind-Value="@enum_value" Class="mt-n1" Immediate="true" />
                                 @*<MudSelect T="StringSplitOptions" @bind-Value="@enum_value" Class="mt-n2" Immediate="true">
-                        <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.None"></MudSelectItem>
-                        <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.RemoveEmptyEntries"></MudSelectItem>
-                    </MudSelect>*@
+                                        <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.None"></MudSelectItem>
+                                        <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.RemoveEmptyEntries"></MudSelectItem>
+                                    </MudSelect>*@
                             </td>
                             <td><MudText Inline="true">@enum_value</MudText></td>
                         </tr>
@@ -334,6 +335,7 @@
                         return "null";
                     return "" + value;
                 }
+
             }
 
         </DocsPageSection>
