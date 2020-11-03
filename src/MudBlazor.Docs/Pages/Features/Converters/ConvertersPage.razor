@@ -124,6 +124,14 @@
                             <td><MudText Inline="true">@ToS(ndecimal_value) </MudText></td>
                         </tr>
                         <tr>
+                            <td><CodeInline>decimal (2 decimals)</CodeInline></td>
+                            <td>
+                                <MudTextField T="decimal?" Format="0.00" @bind-Value="@ndecimal_value2" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(ndecimal_value2) </MudText></td>
+                        </tr>
+
+                        <tr>
                             <td><CodeInline>DateTime?</CodeInline></td>
                             <td>
                                 <MudTextField T="DateTime?" @bind-Value="@ndatetime_value" Class="mt-n1" Immediate="true" />
@@ -149,10 +157,10 @@
                             <td>
                                 <MudTextField T="StringSplitOptions?" @bind-Value="@nenum_value" Class="mt-n1" Immediate="true" />
                                 @*<MudSelect T="StringSplitOptions?" @bind-Value="@nenum_value" Class="mt-n2" Immediate="true">
-                                        <MudSelectItem T="StringSplitOptions?" Value="null">(Nothing selected)</MudSelectItem>
-                                        <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.None">None</MudSelectItem>
-                                        <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.RemoveEmptyEntries">RemoveEmptyEntries</MudSelectItem>
-                                    </MudSelect>*@
+                        <MudSelectItem T="StringSplitOptions?" Value="null">(Nothing selected)</MudSelectItem>
+                        <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.None">None</MudSelectItem>
+                        <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.RemoveEmptyEntries">RemoveEmptyEntries</MudSelectItem>
+                    </MudSelect>*@
                             </td>
                             <td><MudText Inline="true">@ToS(nenum_value)</MudText></td>
                         </tr>
@@ -257,6 +265,13 @@
                             <td><MudText Inline="true">@ToS(decimal_value) </MudText></td>
                         </tr>
                         <tr>
+                            <td><CodeInline>decimal (2 decimals)</CodeInline></td>
+                            <td>
+                                <MudTextField T="decimal" Format="0.00" @bind-Value="@decimal_value2" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(decimal_value2) </MudText></td>
+                        </tr>
+                        <tr>
                             <td><CodeInline>DateTime</CodeInline></td>
                             <td>
                                 <MudTextField T="DateTime" Format="dd/MM/yyyy" @bind-Value="@datetime_value" Class="mt-n1" Immediate="true" />
@@ -282,9 +297,9 @@
                             <td>
                                 <MudTextField T="StringSplitOptions" @bind-Value="@enum_value" Class="mt-n1" Immediate="true" />
                                 @*<MudSelect T="StringSplitOptions" @bind-Value="@enum_value" Class="mt-n2" Immediate="true">
-                                        <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.None"></MudSelectItem>
-                                        <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.RemoveEmptyEntries"></MudSelectItem>
-                                    </MudSelect>*@
+                        <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.None"></MudSelectItem>
+                        <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.RemoveEmptyEntries"></MudSelectItem>
+                    </MudSelect>*@
                             </td>
                             <td><MudText Inline="true">@enum_value</MudText></td>
                         </tr>
@@ -314,9 +329,11 @@
                 float float_value = (float)Math.PI;
                 double double_value = Math.PI;
                 decimal decimal_value = 99.99m;
+                decimal decimal_value2 = 99.99999m;
                 float? nfloat_value = (float)Math.PI;
                 double? ndouble_value = Math.PI;
                 decimal? ndecimal_value = 99.99m;
+                decimal? ndecimal_value2 = 99.99999m;
                 Guid guid_value = Guid.NewGuid();
                 Guid? nguid_value = Guid.NewGuid();
                 DateTime datetime_value = DateTime.Now;

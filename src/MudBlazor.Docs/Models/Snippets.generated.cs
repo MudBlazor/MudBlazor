@@ -2627,7 +2627,7 @@ public const string TextFieldBindingExample = @"<MudGrid>
         <MudTextField @bind-Value=""@element.Number"" Label=""Number""/>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField T=""DateTime"" Converter=""@(Converters.DateFormat(""yyyy/MM/dd""))"" @bind-Value=""@updatedon"" Label=""Last Update""/>
+        <MudTextField @bind-Value=""@updatedon"" Format=""yyyy/MM/dd"" Label=""Last Update""/>
     </MudItem>
 </MudGrid>
 <div>
@@ -2806,22 +2806,22 @@ public const string SpecialConverterExample = @"<MudGrid>
 
 public const string TurkeyTestExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""en-US"" Variant=""Variant.Outlined"" Culture=""@en"" @bind-Value=""date"" />
+        <MudTextField Label=""en-US"" Variant=""Variant.Outlined"" Culture=""@en"" Format=""@en.DateTimeFormat.ShortDatePattern"" @bind-Value=""date"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""de-AT"" Variant=""Variant.Outlined"" Culture=""@de"" @bind-Value=""date""></MudTextField>
+        <MudTextField Label=""de-AT"" Variant=""Variant.Outlined"" Culture=""@de"" Format=""@de.DateTimeFormat.ShortDatePattern"" @bind-Value=""date""></MudTextField>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""cn-ZH"" Variant=""Variant.Outlined"" Culture=""@cn"" @bind-Value=""date""></MudTextField>
+        <MudTextField Label=""cn-ZH"" Variant=""Variant.Outlined"" Culture=""@cn"" Format=""@cn.DateTimeFormat.ShortDatePattern"" @bind-Value=""date""></MudTextField>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""en-US: dddd, MMM dd"" Variant=""Variant.Outlined"" Converter=""@Converters.DateFormat(""dddd, MMM dd"", en)"" @bind-Value=""date"" />
+        <MudTextField Label=""en-US: dddd, MMM dd"" Variant=""Variant.Outlined"" Culture=""@en"" Format=""dddd, MMM dd"" @bind-Value=""date"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""de-AT: dddd, dd. MM."" Variant=""Variant.Outlined"" Converter=""@Converters.DateFormat(""dddd, dd. MM."", de)"" @bind-Value=""date""></MudTextField>
+        <MudTextField Label=""de-AT: dddd, dd. MM."" Variant=""Variant.Outlined"" Culture=""@de"" Format=""dddd, dd. MM."" @bind-Value=""date""></MudTextField>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""cn-ZH: yy年MM月dd日"" Variant=""Variant.Outlined"" Converter=""@Converters.DateFormat(""yyyy年MM月dd日"", cn)"" @bind-Value=""date""></MudTextField>
+        <MudTextField Label=""cn-ZH: yy年MM月dd日"" Variant=""Variant.Outlined"" Culture=""@cn"" Format=""yyyy年MM月dd日"" @bind-Value=""date""></MudTextField>
     </MudItem>
 </MudGrid>
 

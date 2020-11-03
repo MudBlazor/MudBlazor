@@ -88,6 +88,8 @@ public const string MudBaseInput_Converter = @"";
 
 public const string MudBaseInput_Culture = @"";
 
+public const string MudBaseInput_Format = @"";
+
 public const string MudBaseInput_Validation = @"";
 
 public const string MudBaseInput_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
@@ -222,8 +224,6 @@ public const string MudAutocomplete_ToStringExpression = @"Defines how values ar
 
 public const string MudAutocomplete_SearchFunc = @"The SearchFunc returns a list of items matching the typed text";
 
-public const string MudAutocomplete_Format = @"Set the format for values in the list if no template";
-
 public const string MudAutocomplete_MaxItems = @"Maximum items to display, defaults to 10.
             Set null to display all";
 
@@ -290,6 +290,8 @@ public const string MudAutocomplete_Value = @"";
 public const string MudAutocomplete_Converter = @"";
 
 public const string MudAutocomplete_Culture = @"";
+
+public const string MudAutocomplete_Format = @"";
 
 public const string MudAutocomplete_Validation = @"";
 
@@ -823,6 +825,8 @@ public const string MudInput_Converter = @"";
 
 public const string MudInput_Culture = @"";
 
+public const string MudInput_Format = @"";
+
 public const string MudInput_Validation = @"";
 
 public const string MudInput_For = @"";
@@ -896,6 +900,8 @@ public const string MudInputString_Value = @"The value of this input element. Th
 public const string MudInputString_Converter = @"";
 
 public const string MudInputString_Culture = @"";
+
+public const string MudInputString_Format = @"";
 
 public const string MudInputString_Validation = @"";
 
@@ -1366,6 +1372,8 @@ public const string MudSelect_Converter = @"";
 
 public const string MudSelect_Culture = @"";
 
+public const string MudSelect_Format = @"";
+
 public const string MudSelect_Validation = @"";
 
 public const string MudSelect_For = @"";
@@ -1463,6 +1471,8 @@ public const string MudSelectString_Value = @"The value of this input element. T
 public const string MudSelectString_Converter = @"";
 
 public const string MudSelectString_Culture = @"";
+
+public const string MudSelectString_Format = @"";
 
 public const string MudSelectString_Validation = @"";
 
@@ -1770,6 +1780,8 @@ public const string MudTextField_Converter = @"";
 
 public const string MudTextField_Culture = @"";
 
+public const string MudTextField_Format = @"";
+
 public const string MudTextField_Validation = @"";
 
 public const string MudTextField_For = @"";
@@ -1843,6 +1855,8 @@ public const string MudTextFieldString_Value = @"The value of this input element
 public const string MudTextFieldString_Converter = @"";
 
 public const string MudTextFieldString_Culture = @"";
+
+public const string MudTextFieldString_Format = @"";
 
 public const string MudTextFieldString_Validation = @"";
 
