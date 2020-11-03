@@ -24,10 +24,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Utilities\BindingConverters\DateConverter.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Remove="bundleconfig.json" />
     <Content Remove="compilerconfig.json" />
   </ItemGroup>

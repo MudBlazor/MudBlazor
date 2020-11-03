@@ -1865,6 +1865,16 @@
             Custom Format to be applied on bidirectional way.
             </summary>
         </member>
+        <member name="T:MudBlazor.NullableDateConverter">
+            <summary>
+            A ready made DateTime? to string binding converter with configurable date format and culture
+            </summary>
+        </member>
+        <member name="T:MudBlazor.DateConverter">
+            <summary>
+            A ready made DateTime to string binding converter with configurable date format and culture
+            </summary>
+        </member>
         <member name="T:MudBlazor.DefaultConverter`1">
             <summary>
             A universal T to string binding converter
