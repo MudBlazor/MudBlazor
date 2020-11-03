@@ -16,12 +16,7 @@ namespace MudBlazor
             GetFunc = OnGet;
         }
 
-        public DefaultConverter(string format) : base(format)
-        {
-            SetFunc = OnSet;
-            GetFunc = OnGet;
-        }
-
+        public string DefaultTimeSpanFormat { get; set; } = "c";
 
         private T OnGet(string value)
         {
@@ -168,7 +163,7 @@ namespace MudBlazor
                 {
                     try
                     {
-                        return (T)(object)TimeSpan.ParseExact(value, Format ?? Culture.DateTimeFormat.ShortTimePattern, Culture);
+                        return (T)(object)TimeSpan.ParseExact(value, Format ?? DefaultTimeSpanFormat, Culture);
                     }
                     catch (FormatException e )
                     {
@@ -289,23 +284,23 @@ namespace MudBlazor
                 else if (typeof(T) == typeof(DateTime))
                 {
                     var value = (DateTime) (object) arg;
-                    return value.ToString(Format, Culture);
+                    return value.ToString(Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
                 }  
                 else if (typeof(T) == typeof(DateTime?))
                 {
                     var value = (DateTime?) (object) arg;
-                    return value.Value.ToString(Format, Culture);
+                    return value.Value.ToString(Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
                 }      
                 // timespan
                 else if (typeof(T) == typeof(TimeSpan))
                 {
                     var value = (TimeSpan) (object) arg;
-                    return value.ToString(Format, Culture);
+                    return value.ToString(Format ?? Culture.DateTimeFormat.ShortTimePattern, Culture);
                 }  
                 else if (typeof(T) == typeof(TimeSpan?))
                 {
                     var value = (TimeSpan?) (object) arg;
-                    return value.Value.ToString(Format, Culture);
+                    return value.Value.ToString(Format ?? DefaultTimeSpanFormat, Culture);
                 }               
                 return arg.ToString( );
             }

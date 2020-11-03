@@ -38,17 +38,17 @@ namespace MudBlazor
             return value.ToIsoDateString();
         }
 
-        //public static DateConverter DateFormat(string format)
-        //{
-        //    if (format==null)
-        //       format="yyyy-MM-dd";
-        //    return new DateConverter(format);
-        //}
-        
-        //public static DateConverter DateFormat(string format, CultureInfo culture)
-        //{
-        //    return new DateConverter(format) { Culture = culture };
-        //}
+        public static DateConverter DateFormat(string format)
+        {
+            if (format==null)
+               format="yyyy-MM-dd";
+            return new DateConverter(format);
+        }
+
+        public static DateConverter DateFormat(string format, CultureInfo culture)
+        {
+            return new DateConverter(format) { Culture = culture };
+        }
 
         #endregion
     }
