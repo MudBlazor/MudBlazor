@@ -14,3 +14,8 @@
 .mud-select-menu {
     
 }
+
+.mud-selected-item {
+    color: var(--mud-theme-primary);
+    background-color: var(--mud-theme-primary-hover);
+}

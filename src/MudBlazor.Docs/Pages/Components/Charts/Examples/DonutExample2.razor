@@ -1,0 +1,39 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudChart ChartType="ChartType.Donut" LegendPosition="@LegendPosition" Width="80%" Height="80%"
+          InputData="@data" InputLabels="@labels">
+</MudChart>
+
+
+<MudSelect Label="Legend Position" Variant="Variant.Outlined" OffsetY="true" Dense="true" T="@LegendPosition" ValueChanged="OnSelectedValue" Class="mt-4">
+    <MudSelectItem  T="LegendPosition" Value="LegendPosition.Top">Top</MudSelectItem>
+    <MudSelectItem  T="LegendPosition" Value="LegendPosition.Left">Left</MudSelectItem>
+    <MudSelectItem  T="LegendPosition" Value="LegendPosition.Right">Right</MudSelectItem>
+    <MudSelectItem  T="LegendPosition" Value="LegendPosition.Bottom">Bottom</MudSelectItem>
+</MudSelect>
+
+@code {
+    public double[] data = { 25, 77, 28, 5 };
+    public string[] labels = { "Oil", "Coal", "Gas", "Biomass" };
+
+    public LegendPosition LegendPosition { get; set; } = LegendPosition.Bottom;
+
+    private void OnSelectedValue(LegendPosition value)
+    {
+        switch(value)
+        {
+            case LegendPosition.Top:
+                LegendPosition = LegendPosition.Top;
+                break;
+            case LegendPosition.Left:
+                LegendPosition = LegendPosition.Left;
+                break;
+            case LegendPosition.Right:
+                LegendPosition = LegendPosition.Right;
+                break;
+            case LegendPosition.Bottom:
+                LegendPosition = LegendPosition.Bottom;
+                break;
+        }
+    }
+}
