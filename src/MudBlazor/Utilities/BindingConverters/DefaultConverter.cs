@@ -205,24 +205,24 @@ namespace MudBlazor
                     return ((bool?)(object)arg).Value.ToString(CultureInfo.InvariantCulture);
                 // sbyte
                 if (typeof(T) == typeof(sbyte))
-                    return ((sbyte)(object)arg).ToString(Culture);
+                    return ((sbyte)(object)arg).ToString(Format, Culture);
                 if (typeof(T) == typeof(sbyte?))
-                    return ((sbyte?)(object)arg).Value.ToString(Culture);
+                    return ((sbyte?)(object)arg).Value.ToString(Format, Culture);
                 // byte
                 if (typeof(T) == typeof(byte))
-                    return ((byte)(object)arg).ToString(Culture);
+                    return ((byte)(object)arg).ToString(Format, Culture);
                 if (typeof(T) == typeof(byte?))
-                    return ((byte?)(object)arg).Value.ToString(Culture);
+                    return ((byte?)(object)arg).Value.ToString(Format, Culture);
                 // short
                 if (typeof(T) == typeof(short))
-                    return ((short)(object)arg).ToString(Culture);
+                    return ((short)(object)arg).ToString(Format, Culture);
                 if (typeof(T) == typeof(short?))
-                    return ((short?)(object)arg).Value.ToString(Culture);
+                    return ((short?)(object)arg).Value.ToString(Format, Culture);
                 // ushort
                 if (typeof(T) == typeof(ushort))
-                    return ((ushort)(object)arg).ToString(Culture);
+                    return ((ushort)(object)arg).ToString(Format, Culture);
                 if (typeof(T) == typeof(ushort?))
-                    return ((ushort?)(object)arg).Value.ToString(Culture);
+                    return ((ushort?)(object)arg).Value.ToString(Format, Culture);
                 // int
                 else if (typeof(T) == typeof(int) )
                     return ((int)(object)arg).ToString(Format, Culture);
