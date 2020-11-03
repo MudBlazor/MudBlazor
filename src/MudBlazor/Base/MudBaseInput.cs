@@ -258,9 +258,8 @@ namespace MudBlazor
             set
             {
                 if (_converter == null)
-                    _converter = new DefaultConverter<T> { Culture = value };
-                else
-                    _converter.Culture = value;
+                    _converter = new DefaultConverter<T>();
+                _converter.Culture = value;
             }
         }
 
@@ -273,6 +272,8 @@ namespace MudBlazor
             set
             {
                 _format = value;
+                if (_converter==null)
+                    _converter = new DefaultConverter<T>();
                 _converter.Format = _format;
             }
         }
