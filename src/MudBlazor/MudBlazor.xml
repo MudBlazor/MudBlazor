@@ -646,6 +646,36 @@
             Child content of component, only shows if Icon is null or Empty.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudChartBase.ChartType">
+            <summary>
+            The Type of the chart.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChartBase.Width">
+            <summary>
+            The Width of the chart, end with % or px.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChartBase.Height">
+            <summary>
+            The Height of the chart, end with % or px.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChartBase.LegendPosition">
+            <summary>
+            The placment direction of the legend if used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChartBase.DisplayLegendItemValues">
+            <summary>
+            If true, the Data Values will be displayed next to the Legend Labels.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudChartBase.GetNormalizedData">
+            <summary>
+            Scales the input data to the range between 0 and 1
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudCheckBox.Color">
             <summary>
             The color of the component. It supports the theme colors.
