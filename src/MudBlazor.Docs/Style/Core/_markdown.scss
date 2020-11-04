@@ -1,12 +1,12 @@
 ﻿.mud-codeblock {
     background-color: var(--mud-theme-dark);
     border-radius: var(--mud-theme-border-radius-default);
-    padding: 16px 0px;
+    padding: 16px;
     overflow: auto;
 
     & pre {
         color: #ededed;
-        padding: 0px 16px;
+        padding: 0px;
         font-size: 1em;
         font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
         -webkit-font-smoothing: subpixel-antialiased;
