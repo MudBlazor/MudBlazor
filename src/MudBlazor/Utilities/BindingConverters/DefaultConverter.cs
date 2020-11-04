@@ -16,8 +16,6 @@ namespace MudBlazor
             GetFunc = OnGet;
         }
 
-        public string DefaultTimeSpanFormat { get; set; } = "c";
-
         private T OnGet(string value)
         {
             try
@@ -148,28 +146,16 @@ namespace MudBlazor
                 // datetime
                 else if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
                 {
-                    try
-                    {
-                        return (T)(object)DateTime.ParseExact(value, Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
-                    }
-                    catch (FormatException e)
-                    {
-                        UpdateGetError("Not a valid date time");
-                        return default;
-                    }
+                    if (DateTime.TryParse(value, Culture,  DateTimeStyles.None, out var parsedValue))
+                        return (T)(object)parsedValue;
+                    UpdateGetError("Not a valid date time");
                 }
                 // timespan
                 else if (typeof(T) == typeof(TimeSpan) || typeof(T) == typeof(TimeSpan?))
                 {
-                    try
-                    {
-                        return (T)(object)TimeSpan.ParseExact(value, Format ?? DefaultTimeSpanFormat, Culture);
-                    }
-                    catch (FormatException e )
-                    {
-                        UpdateGetError("Not a valid time span");
-                        return default;
-                    }
+                    if (TimeSpan.TryParse(value, Culture, out var parsedValue))
+                        return (T)(object)parsedValue;
+                    UpdateGetError("Not a valid time span");
                 }
                 else
                 {
@@ -205,59 +191,59 @@ namespace MudBlazor
                     return ((bool?)(object)arg).Value.ToString(CultureInfo.InvariantCulture);
                 // sbyte
                 if (typeof(T) == typeof(sbyte))
-                    return ((sbyte)(object)arg).ToString(Format, Culture);
+                    return ((sbyte)(object)arg).ToString(Culture);
                 if (typeof(T) == typeof(sbyte?))
-                    return ((sbyte?)(object)arg).Value.ToString(Format, Culture);
+                    return ((sbyte?)(object)arg).Value.ToString(Culture);
                 // byte
                 if (typeof(T) == typeof(byte))
-                    return ((byte)(object)arg).ToString(Format, Culture);
+                    return ((byte)(object)arg).ToString(Culture);
                 if (typeof(T) == typeof(byte?))
-                    return ((byte?)(object)arg).Value.ToString(Format, Culture);
+                    return ((byte?)(object)arg).Value.ToString(Culture);
                 // short
                 if (typeof(T) == typeof(short))
-                    return ((short)(object)arg).ToString(Format, Culture);
+                    return ((short)(object)arg).ToString(Culture);
                 if (typeof(T) == typeof(short?))
-                    return ((short?)(object)arg).Value.ToString(Format, Culture);
+                    return ((short?)(object)arg).Value.ToString(Culture);
                 // ushort
                 if (typeof(T) == typeof(ushort))
-                    return ((ushort)(object)arg).ToString(Format, Culture);
+                    return ((ushort)(object)arg).ToString(Culture);
                 if (typeof(T) == typeof(ushort?))
-                    return ((ushort?)(object)arg).Value.ToString(Format, Culture);
+                    return ((ushort?)(object)arg).Value.ToString(Culture);
                 // int
                 else if (typeof(T) == typeof(int) )
-                    return ((int)(object)arg).ToString(Format, Culture);
+                    return ((int)(object)arg).ToString(Culture);
                 else if (typeof(T) == typeof(int?))
-                    return ((int?)(object)arg).Value.ToString(Format, Culture);
+                    return ((int?)(object)arg).Value.ToString(Culture);
                 // uint
                 else if (typeof(T) == typeof(uint))
-                    return ((uint)(object)arg).ToString(Format, Culture);
+                    return ((uint)(object)arg).ToString(Culture);
                 else if (typeof(T) == typeof(uint?))
-                    return ((uint?)(object)arg).Value.ToString(Format, Culture);
+                    return ((uint?)(object)arg).Value.ToString(Culture);
                 // long
                 else if (typeof(T) == typeof(long))
-                    return ((long)(object)arg).ToString(Format, Culture);
+                    return ((long)(object)arg).ToString(Culture);
                 else if (typeof(T) == typeof(long?))
-                    return ((long?)(object)arg).Value.ToString(Format, Culture);
+                    return ((long?)(object)arg).Value.ToString(Culture);
                 // ulong
                 else if (typeof(T) == typeof(ulong))
-                    return ((ulong)(object)arg).ToString(Format, Culture);
+                    return ((ulong)(object)arg).ToString(Culture);
                 else if (typeof(T) == typeof(ulong?))
-                    return ((ulong?)(object)arg).Value.ToString(Format, Culture);
+                    return ((ulong?)(object)arg).Value.ToString(Culture);
                 // float
                 else if (typeof(T) == typeof(float))
-                    return ((float)(object)arg).ToString(Format, Culture);
+                    return ((float)(object)arg).ToString(Culture);
                 else if (typeof(T) == typeof(float?))
-                    return ((float?)(object)arg).Value.ToString(Format, Culture);
+                    return ((float?)(object)arg).Value.ToString(Culture);
                 // double
                 else if (typeof(T) == typeof(double))
-                    return ((double)(object)arg).ToString(Format, Culture);
+                    return ((double)(object)arg).ToString(Culture);
                 else if (typeof(T) == typeof(double?))
-                    return ((double?)(object)arg).Value.ToString(Format, Culture);
+                    return ((double?)(object)arg).Value.ToString(Culture);
                 // decimal
                 else if (typeof(T) == typeof(decimal))
-                    return ((decimal)(object)arg).ToString(Format, Culture);
+                    return ((decimal)(object)arg).ToString(Culture);
                 else if (typeof(T) == typeof(decimal?))
-                    return ((decimal?)(object)arg).Value.ToString(Format, Culture);
+                    return ((decimal?)(object)arg).Value.ToString(Culture);
                 // guid
                 else if (typeof(T) == typeof(Guid))
                 {
@@ -284,23 +270,23 @@ namespace MudBlazor
                 else if (typeof(T) == typeof(DateTime))
                 {
                     var value = (DateTime) (object) arg;
-                    return value.ToString(Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
+                    return value.ToString(Culture);
                 }  
                 else if (typeof(T) == typeof(DateTime?))
                 {
                     var value = (DateTime?) (object) arg;
-                    return value.Value.ToString(Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
+                    return value.Value.ToString(Culture);
                 }      
                 // timespan
                 else if (typeof(T) == typeof(TimeSpan))
                 {
                     var value = (TimeSpan) (object) arg;
-                    return value.ToString(Format ?? Culture.DateTimeFormat.ShortTimePattern, Culture);
+                    return value.ToString();
                 }  
                 else if (typeof(T) == typeof(TimeSpan?))
                 {
                     var value = (TimeSpan?) (object) arg;
-                    return value.Value.ToString(Format ?? DefaultTimeSpanFormat, Culture);
+                    return value.Value.ToString();
                 }               
                 return arg.ToString( );
             }

@@ -9,13 +9,11 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
     public partial class MudAutocomplete<T> : MudBaseInput<T>, IDisposable
     {
-        [Inject] IJSRuntime JsRuntime { get; set; }
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -55,6 +53,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public Func<string, Task<IEnumerable<T>>> SearchFunc { get; set; }
+
+        /// <summary>
+        /// Set the format for values in the list if no template
+        /// </summary>
+        [Parameter]
+        public string Format { get; set; }
 
         /// <summary>
         /// Maximum items to display, defaults to 10.
@@ -99,10 +103,6 @@ namespace MudBlazor
             IsOpen = !IsOpen;
             if (IsOpen && string.IsNullOrEmpty(Text))
                 IsOpen = false;
-            if (IsOpen)
-            {
-                InvokeAsync(()=> ScrollToListItem(SelectedListItemIndex));
-            }
             UpdateIcon();
             StateHasChanged();
         }
@@ -211,25 +211,8 @@ namespace MudBlazor
             if (Items == null || Items.Length == 0)
                 return;
             SelectedListItemIndex = Math.Max(0,  Math.Min(Items.Length-1, SelectedListItemIndex+ increment));
-            ScrollToListItem(SelectedListItemIndex);
+            // TODO: scroll the list to the currently selected item!!!
             StateHasChanged();
-        }
-
-        /// <summary>
-        /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
-        /// </summary>
-        private string _componentId = Guid.NewGuid().ToString();
-
-        public async void ScrollToListItem(int index)
-        {
-            string id = GetListItemId(index);
-            await JsRuntime.InvokeVoidAsync("blazorHelpers.scrollToFragment", id);
-            StateHasChanged();
-        }
-
-        private string GetListItemId(in int index)
-        {
-            return $"{_componentId}_item{index}";
         }
 
         private void OnEnterKey()

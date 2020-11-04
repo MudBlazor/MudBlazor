@@ -4,12 +4,11 @@
 @inherits MudBaseInput<T>
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
-    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
-                     Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" >
+    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled">
         <InputContent>
-            <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Text" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                      Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" />
-                </InputContent>
+                <MudInput InputType="InputType.Text" Variant="@Variant" Value="@Text" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
+                          @onclick="@ToggleMenu" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" OnAdornmentClick="@ToggleMenu"/>
+        </InputContent>
         <ChildContent>
             <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                 <MudPopover Open="@isOpen" Class="mud-select-menu" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
@@ -25,5 +24,5 @@
 
 @if (isOpen)
 {
-    <div class="mud-popover-overlay" @onclick="@CloseMenu"></div>
+    <div class="mud-popover-overlay" @onclick="@ToggleMenu"></div>
 }

@@ -44,7 +44,7 @@ namespace MudBlazor
                format="yyyy-MM-dd";
             return new DateConverter(format);
         }
-
+        
         public static DateConverter DateFormat(string format, CultureInfo culture)
         {
             return new DateConverter(format) { Culture = culture };

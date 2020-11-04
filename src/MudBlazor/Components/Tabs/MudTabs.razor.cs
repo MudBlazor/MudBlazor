@@ -31,6 +31,7 @@ namespace MudBlazor
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
             .AddClass($"mud-tabs-vertical", Vertical)
+            .AddClass(TabPanelClass)
             .Build();
 
         /// <summary>
@@ -95,7 +96,6 @@ namespace MudBlazor
               .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
               .AddClass($"mud-disabled", panel.Disabled)
               .AddClass($"mud-ripple" ,!DisableRipple)
-              .AddClass(TabPanelClass)
             .Build();
 
             return TabClass;
