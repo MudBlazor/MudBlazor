@@ -37,6 +37,7 @@
     protected override void OnInitialized()
     {
         currentTheme = defaultTheme;
+        GetTrackedIn();
     }
 
     void DarkMode()
@@ -52,23 +53,24 @@
     }
 
     public bool _trackedIn { get; set; }
+    public string MudBlazorLogoText { get; set; }
 
     public string GetTrackedIn()
     {
-        if (_trackedIn && _drawerOpen && NavMan.BaseUri != NavMan.Uri)
+        if (_trackedIn && NavMan.BaseUri == NavMan.Uri)
         {
             _trackedIn = !_trackedIn;
-            return "mudblazor-appbar-brand-text track-out";
+            MudBlazorLogoText = "mudblazor-appbar-brand-text track-out";
         }
-        else if (!_trackedIn && !_drawerOpen && NavMan.BaseUri != NavMan.Uri)
+        else if (!_trackedIn && NavMan.BaseUri != NavMan.Uri)
         {
             _trackedIn = !_trackedIn;
-            return "mudblazor-appbar-brand-text track-in";
-        }
-        else
+            MudBlazorLogoText = "mudblazor-appbar-brand-text track-in";
+        } else if (NavMan.BaseUri == NavMan.Uri)
         {
-            return "mudblazor-appbar-brand-text mud-hide";
+            MudBlazorLogoText = "mudblazor-appbar-brand-text mud-hide";
         }
+        return MudBlazorLogoText;
     }
 
     MudTheme currentTheme = new MudTheme();
