@@ -1,7 +1,7 @@
 ﻿.mudblazor-brand {
   font-size: 1.7rem;
-  font-weight: 400;
-  letter-spacing: .1rem;
+  font-weight: 300;
+  letter-spacing: .2rem;
   line-height: 1.5;
   color: var(--mud-theme-on-surface);
   margin-left: auto;
@@ -30,7 +30,7 @@
     padding-right: 30px; } }
 
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 8px;
   z-index: 1; }
 
 ::-webkit-scrollbar-track {

@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudChart ChartType="ChartType.Donut" Width="80%" Height="80%"
+          InputData="@data" InputLabels="@labels">
+</MudChart>
+
+@code {
+    public double[] data = { 50, 25, 20, 5 };
+    public string[] labels = { "Fossile", "Nuclear", "Solar", "Wind" };
+}

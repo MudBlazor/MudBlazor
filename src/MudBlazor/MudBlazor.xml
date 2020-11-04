@@ -454,11 +454,6 @@
             The SearchFunc returns a list of items matching the typed text
             </summary>
         </member>
-        <member name="P:MudBlazor.MudAutocomplete`1.Format">
-            <summary>
-            Set the format for values in the list if no template
-            </summary>
-        </member>
         <member name="P:MudBlazor.MudAutocomplete`1.MaxItems">
             <summary>
             Maximum items to display, defaults to 10.
@@ -480,6 +475,11 @@
             The user typed something ...
             </summary>
             <param name="text"></param>
+        </member>
+        <member name="F:MudBlazor.MudAutocomplete`1._componentId">
+            <summary>
+            We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
+            </summary>
         </member>
         <member name="P:MudBlazor.MudBadge.Color">
             <summary>
@@ -644,6 +644,36 @@
         <member name="P:MudBlazor.MudIconButton.ChildContent">
             <summary>
             Child content of component, only shows if Icon is null or Empty.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChartBase.ChartType">
+            <summary>
+            The Type of the chart.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChartBase.Width">
+            <summary>
+            The Width of the chart, end with % or px.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChartBase.Height">
+            <summary>
+            The Height of the chart, end with % or px.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChartBase.LegendPosition">
+            <summary>
+            The placment direction of the legend if used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChartBase.DisplayLegendItemValues">
+            <summary>
+            If true, the Data Values will be displayed next to the Legend Labels.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.MudChartBase.GetNormalizedData">
+            <summary>
+            Scales the input data to the range between 0 and 1
             </summary>
         </member>
         <member name="P:MudBlazor.MudCheckBox.Color">
@@ -1829,6 +1859,11 @@
              Set converts to string
              Get converts from string
              </summary>
+        </member>
+        <member name="P:MudBlazor.Converter`1.Format">
+            <summary>
+            Custom Format to be applied on bidirectional way.
+            </summary>
         </member>
         <member name="T:MudBlazor.NullableDateConverter">
             <summary>

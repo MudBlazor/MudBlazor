@@ -1,0 +1,54 @@
+﻿@namespace MudBlazor.Charts
+@using System.Globalization;
+@inherits LineBase
+
+
+<svg class="mud-chart-line" width="@MudChartParent.Width" height="@MudChartParent.Height" viewBox="0 0 650 350">
+    <g class="mud-charts-grid">
+        <g class="mud-charts-gridlines-yaxis">
+            @foreach (var horizontalLine in HorizontalLines)
+            {
+                <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
+            }
+        </g>
+        @if (MudChartParent.ChartOptions.XAxisLines)
+        {
+            <g class="mud-charts-gridlines-xaxis-lines">
+                @foreach (var verticalLine in VerticalLines)
+                {
+                    <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
+                }
+            </g>
+        }
+    </g>
+    <g class="mud-charts-yaxis">
+        @foreach (var horizontalLineValue in HorizontalValues)
+        {
+            @((MarkupString)$"<text x='{horizontalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{horizontalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='end' dominant-baseline='auto' fill='Black'>{horizontalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
+        }
+    </g>
+    <g class="mud-charts-xaxis">
+        @foreach (var verticalLineValue in VerticalValues)
+        {
+            @((MarkupString)$"<text x='{verticalLineValue.X.ToString(CultureInfo.InvariantCulture)}' y='{verticalLineValue.Y.ToString(CultureInfo.InvariantCulture)}' font-size='12px' text-anchor='middle' fill='Black'>{verticalLineValue.Value.ToString(CultureInfo.InvariantCulture)}</text>")
+        }
+    </g>
+    <g class="mud-charts-line-series">
+        @foreach (var chartLine in ChartLines)
+        {
+            <path class="@($"mud-chart-stroke-color-{chartLine.Index.ToString()}")" stroke-width="3" fill="none" d="@chartLine.Data"></path>
+        }
+    </g>
+</svg>
+@if (!MudChartParent.ChartOptions.DisableLegend)
+{
+    <div class="mud-chart-legend">
+        @foreach (var item in Legends)
+        {
+            <div class="mud-chart-legend-item">
+                <span class="@($"mud-chart-legend-marker mud-chart-marker-color-{item.Index.ToString()}")"></span>
+                <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>
+            </div>
+        }
+    </div>
+}
