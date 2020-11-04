@@ -1,22 +1,25 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div class="@Classname" style="@Style" @onclick="@OnClickHandler">
-    @if (!String.IsNullOrEmpty(Avatar))
-    {
-        <MudAvatar Class="@AvatarClass" Color="@Color">
-            <MudIcon Icon="@Avatar"/>
-        </MudAvatar>
-    }else if (!String.IsNullOrEmpty(Icon))
-    {
-        <MudIcon Icon="@Icon" Class="mud-chip-icon" Size="Size.Small" />
-    }
-<span class="mud-chip-content">
-    @ChildContent
-    @if (OnCloseSet)
-    {
-        <MudIconButton Class="mud-chip-close-button" Icon="@(String.IsNullOrEmpty(CloseIcon)? $"{Icons.Material.Cancel}":$"{CloseIcon}")" OnClick="OnCloseHandler" Size="Size.Small" />
-    }
-</span>
-    
-</div>
+@if (!@Deleted)
+{
+    <div class="@Classname" style="@Style" @onclick="@OnClickHandler">
+        @if (!String.IsNullOrEmpty(Avatar))
+        {
+            <MudAvatar Class="@AvatarClass" Color="@Color">
+                <MudIcon Icon="@Avatar"/>
+            </MudAvatar>
+        }
+        else if (!String.IsNullOrEmpty(Icon))
+        {
+            <MudIcon Icon="@Icon" Class="mud-chip-icon" Size="Size.Small"/>
+        }
+        <span class="mud-chip-content">
+            @ChildContent
+            @if (OnClose.HasDelegate)
+            {
+                <MudIconButton Class="mud-chip-close-button" Icon="@(String.IsNullOrEmpty(CloseIcon) ? $"{Icons.Material.Cancel}" : $"{CloseIcon}")" OnClick="OnCloseHandler" Size="Size.Small"/>
+            }
+        </span>
+    </div>
+}

@@ -706,6 +706,46 @@
             A callback when CheckedChanges.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudChipSet.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.Choice">
+            <summary>
+            Allows single selection from a set of options. If combined with Filter the selected value can be unselected.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.Filter">
+            <summary>
+             Enables multiple-choice selection from the set of chips. Chips must be "Checkable" for this to work.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChip">
+            <summary>
+            The currently selected chip in Choice mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChipChanged">
+            <summary>
+            Called when the selected chip changes, in Choice mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChips">
+            <summary>
+            The currently selected chips in Filter mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChipsChanged">
+            <summary>
+            Called when the selection changed, in Filter mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.ChipDeleted">
+            <summary>
+            Called when a Chip was deleted (by click on the close icon)
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudChip.Color">
             <summary>
             The color of the component.
@@ -734,6 +774,11 @@
         <member name="P:MudBlazor.MudChip.Label">
             <summary>
             Removes circle edges and applys theme default.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.Deleted">
+            <summary>
+            If true, the chip will not be rendered.
             </summary>
         </member>
         <member name="P:MudBlazor.MudChip.Disabled">
@@ -794,6 +839,11 @@
         <member name="P:MudBlazor.MudChip.OnClose">
             <summary>
             Chip delete event, if set the delete icon will be visible.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.IsSelected">
+            <summary>
+            Set by MudChipSet
             </summary>
         </member>
         <member name="P:MudBlazor.MudDatePicker.MaxDate">

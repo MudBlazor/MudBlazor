@@ -2,7 +2,7 @@
 @inherits MudBaseButton
 @using MudBlazor.Extensions
 
-<button @attributes="UserAttributes" type="@ButtonType.ToDescriptionString()" class="@Classname" style="@Style" @onclick="OnClickHandler" href="@Link" disabled="@Disabled">
+<button @attributes="UserAttributes" type="@ButtonType.ToDescriptionString()" class="@Classname" style="@Style" @onclick="OnClickHandler" @onclick:stopPropagation="true" href="@Link" disabled="@Disabled">
         @if (!String.IsNullOrEmpty(Icon))
         {
         <span class="mud-icon-button-label">

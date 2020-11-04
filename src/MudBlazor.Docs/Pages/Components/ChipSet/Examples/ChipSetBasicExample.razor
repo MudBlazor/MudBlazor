@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudChipSet @bind-SelectedChip="selected">
+    <MudChip Tag="@("grey")">Default</MudChip>
+    <MudChip Tag="@("purple")" Color="Color.Primary">Primary</MudChip>
+    <MudChip Tag="@("pink")" Color="Color.Secondary">Secondary</MudChip>
+    <MudChip Tag="@("blue")" Color="Color.Info">Info</MudChip>
+    <MudChip Tag="@("green")" Color="Color.Success">Success</MudChip>
+    <MudChip Tag="@("orange")" Color="Color.Warning">Warning</MudChip>
+    <MudChip Tag="@("red")" Color="Color.Danger">Danger</MudChip>
+    <MudChip Tag="@("black")" Color="Color.Dark">Dark</MudChip>
+</MudChipSet>
+
+@if (selected != null) {
+    <MudText>You selected the <MudText Color="@selected.Color" Inline="true">@selected.Tag</MudText> chip.</MudText>
+}
+else
+{
+    <MudText>Select a chip.</MudText>
+}
+
+@code
+{
+    MudChip selected;
+}
+

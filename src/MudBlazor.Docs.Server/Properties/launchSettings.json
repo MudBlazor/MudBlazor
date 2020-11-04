@@ -18,7 +18,7 @@
     "MudBlazor.Demo.ServerApp": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "components/autocomplete",
+      "launchUrl": "components/chipset",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

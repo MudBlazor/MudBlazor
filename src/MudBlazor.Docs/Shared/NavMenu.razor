@@ -66,6 +66,9 @@
                             .AddItem("Button", typeof(MudButton))
                             .AddItem("IconButton", typeof(MudIconButton))
                             .AddItem("Checkbox", typeof(MudCheckBox))
+                            .AddItem("Chips", typeof(MudChip))
+                            .AddItem("ChipSet", typeof(MudChipSet))
+                            .AddItem("Badge", typeof(MudBadge))
                             .AddItem("Button FAB", typeof(MudFab))
                                 .AddNavGroup("Form Inputs & controls", false, new DocsComponents()
                                     .AddItem("Radio", typeof(MudRadio))
@@ -102,8 +105,6 @@
                             .AddItem("Simple Table", typeof(MudSimpleTable))
                             .AddItem("Table", typeof(MudTable<T>))
                             .AddItem("Tooltip", typeof(MudTooltip))
-                            .AddItem("Chips", typeof(MudChip))
-                            .AddItem("Badge", typeof(MudBadge))
                             .AddItem("Typography", typeof(MudText));
 
         @foreach (var item in DocsComponents.ToList())

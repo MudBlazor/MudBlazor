@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Folder Include="Pages\Components\Autocomplete\Code\" />
+    <Folder Include="Pages\Components\ChipSet\Code\" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
