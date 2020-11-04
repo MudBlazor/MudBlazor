@@ -31,6 +31,7 @@
 
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
   z-index: 1; }
 
 ::-webkit-scrollbar-track {
@@ -46,14 +47,17 @@
 .mud-codeblock {
   background-color: var(--mud-theme-dark);
   border-radius: var(--mud-theme-border-radius-default);
-  padding: 16px; }
+  padding: 16px 0px;
+  overflow: auto; }
   .mud-codeblock pre {
     color: #ededed;
+    padding: 0px 16px;
     font-size: 1em;
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
     -webkit-font-smoothing: subpixel-antialiased;
-    direction: ltr;
-    overflow: hidden; }
+    direction: ltr; }
+  .mud-codeblock .html + .csharp {
+    margin-top: 23px; }
   .mud-codeblock .html .htmlTagDelimiter {
     color: #979797; }
   .mud-codeblock .html .htmlElementName {
