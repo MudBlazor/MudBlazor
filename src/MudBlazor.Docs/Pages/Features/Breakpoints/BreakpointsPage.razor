@@ -5,66 +5,7 @@
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <MudPaper Elevation="0" Outlined="true">
-                <MudText Typo="Typo.h5" GutterBottom="true" Class="ma-4">Material Design Breakpoints</MudText>
-                <MudSimpleTable Elevation="0" Hover="true" Class="mt-4">
-                    <thead>
-                        <tr>
-                            <th>Device</th>
-                            <th>Code</th>
-                            <th>Type</th>
-                            <th>Range</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <MudIcon Icon="@Icons.Material.PhoneIphone" Class="mb-n1" />
-                                <MudText Inline="true">Extra small</MudText>
-                            </td>
-                            <td>xs</td>
-                            <td>Small to large phone</td>
-                            <td>&lt; 600px</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <MudIcon Icon="@Icons.Material.StayCurrentLandscape" Class="mb-n1 mr-1" />
-                                <MudText Inline="true">Small</MudText>
-                            </td>
-                            <td>sm</td>
-                            <td>Small to medium tablet</td>
-                            <td>600px > &lt; 960px</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <MudIcon Icon="@Icons.Material.Laptop" Class="mb-n1 mr-1" />
-                                <MudText Inline="true">Medium</MudText>
-                            </td>
-                            <td>md</td>
-                            <td>Large tablet to laptop</td>
-                            <td>960px > &lt; 1280px</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <MudIcon Icon="@Icons.Material.DesktopWindows" Class="mb-n1 mr-1" />
-                                <MudText Inline="true">Large</MudText>
-                            </td>
-                            <td>lg</td>
-                            <td>Desktop</td>
-                            <td>1280px > &lt; 1920px</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <MudIcon Icon="@Icons.Material.Tv" Class="mb-n1 mr-1" />
-                                <MudText Inline="true">Extra Large</MudText>
-                            </td>
-                            <td>xl</td>
-                            <td>4k and ultra-wide</td>
-                            <td>> 1920px*</td>
-                        </tr>
-                    </tbody>
-                </MudSimpleTable>
-            </MudPaper>
+            <Breakpoints/>
         </DocsPageSection>
         <DocsPageSection>
             <MudText Typo="Typo.h4" GutterBottom="true">MudGrid</MudText>

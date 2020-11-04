@@ -1953,6 +1953,28 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void SpacingBreakpointExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<SpacingBreakpointExample>();
+        }
+
+
+        [Test]
+        public void SpacingCenteringExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<SpacingCenteringExample>();
+        }
+
+
+        [Test]
         public void SpacingExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -1960,6 +1982,17 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<SpacingExample>();
+        }
+
+
+        [Test]
+        public void SpacingNegativeExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<SpacingNegativeExample>();
         }
 
     }

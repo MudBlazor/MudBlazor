@@ -2873,17 +2873,28 @@ public const string ElevationUsageExample = @"<div class=""mud-elevation-0"">0</
 <div class=""mud-elevation-24"">24</div>
 <div class=""mud-elevation-99"">99</div>";
 
-public const string SpacingExample = @"<MudPaper Class=""pa-6 mr-12"">
-    <MudText Typo=""Typo.subtitle2"">pa-6 & mr-12</MudText>
+public const string SpacingBreakpointExample = @"<MudPaper Class=""pa-md-4 mx-lg-auto"">
+    <MudText Typo=""Typo.subtitle2"">Adjust screen size to see the changes.</MudText>
+</MudPaper>";
+
+public const string SpacingCenteringExample = @"<MudPaper Class=""mx-auto pa-6"">
+    <MudText Typo=""Typo.body1"">Centered!</MudText>
+</MudPaper>";
+
+public const string SpacingExample = @"<MudPaper Class=""pa-4 mr-16"">
+    <MudText Typo=""Typo.subtitle2"">pa-4 mr-16</MudText>
 </MudPaper>
-<MudPaper Class=""pa-6"">
-    <MudText Typo=""Typo.subtitle2"">pa-6</MudText>
+<MudPaper Class=""pa-4"">
+    <MudText Typo=""Typo.subtitle2"">pa-4</MudText>
 </MudPaper>
-<MudPaper Class=""px-4 py-1"">
-    <MudText Typo=""Typo.subtitle2"">px-4 & py-1</MudText>
+<MudPaper Class=""pa-4 ml-8"">
+    <MudText Typo=""Typo.subtitle2"">pa-4 ml-8</MudText>
+</MudPaper>";
+
+public const string SpacingNegativeExample = @"<MudPaper Class=""mx-auto pa-4 mud-theme-color-secondary"" Style=""height:100px; width:150px;"">
 </MudPaper>
-<MudPaper Class=""pa-6 ml-6"">
-    <MudText Typo=""Typo.subtitle2"">pa-6 & ml-6</MudText>
+<MudPaper Class=""mt-n12 mx-auto pa-6 mud-theme-color-primary"" Elevation=""12"" Style=""width: 350px;"">
+    <MudText Typo=""Typo.body1"">This card uses negative top margin!</MudText>
 </MudPaper>";
 
     }
