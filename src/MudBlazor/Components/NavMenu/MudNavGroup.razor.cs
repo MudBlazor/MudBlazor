@@ -23,9 +23,14 @@ namespace MudBlazor
         [Parameter] public bool Expanded { get; set; }
 
         /// <summary>
-        /// If true, adds expand-icon at the end of the NavGroup. Set to true by default.
+        /// If true, hides expand-icon at the end of the NavGroup. Set to true by default.
         /// </summary>
-        [Parameter] public bool ExpandIcon { get; set; } = true;
+        [Parameter] public bool HideExpandIcon { get; set; }
+
+        /// <summary>
+        /// If set, overrides the default expand icon.
+        /// </summary>
+        [Parameter] public string ExpandIcon { get; set; } = @Icons.Material.ArrowDropDown;
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         protected void ExpandedToggle()

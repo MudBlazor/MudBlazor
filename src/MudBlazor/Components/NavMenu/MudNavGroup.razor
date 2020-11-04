@@ -10,9 +10,9 @@
         <div Class="mud-nav-link-text">
             @Title
         </div>
-        @if (ExpandIcon)
+        @if (!HideExpandIcon)
         {
-            <MudIcon Icon="@Icons.Material.ArrowDropDown" class="@(Expanded? "mud-nav-link-expand-icon mud-transform" : "mud-nav-link-expand-icon")" />
+            <MudIcon Icon="@ExpandIcon" class="@(Expanded? "mud-nav-link-expand-icon mud-transform" : "mud-nav-link-expand-icon")" />
         }
     </button>
     <MudCollapse Expanded="@Expanded">
