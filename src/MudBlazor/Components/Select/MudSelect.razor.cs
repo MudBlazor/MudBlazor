@@ -154,7 +154,7 @@ namespace MudBlazor
                 // single selection
                 Value = value;
                 isOpen = false;
-                UpdateIcon();
+                IconContoller();
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
             }
@@ -176,20 +176,11 @@ namespace MudBlazor
             if (Disabled)
                 return;
             isOpen = !isOpen;
-            UpdateIcon();
+            IconContoller();
             StateHasChanged();
         }
 
-        public void CloseMenu()
-        {
-            if (Disabled)
-                return;
-            isOpen = false;
-            UpdateIcon();
-            StateHasChanged();
-        }
-
-        public void UpdateIcon()
+        public void IconContoller()
         {
                 if (isOpen)
                 {
@@ -203,7 +194,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            UpdateIcon();
+            IconContoller();
             if(MultiSelection && MaxHeight == null)
             {
                 MaxHeight = 300;

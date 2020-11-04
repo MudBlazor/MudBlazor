@@ -454,6 +454,11 @@
             The SearchFunc returns a list of items matching the typed text
             </summary>
         </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.Format">
+            <summary>
+            Set the format for values in the list if no template
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudAutocomplete`1.MaxItems">
             <summary>
             Maximum items to display, defaults to 10.
@@ -475,11 +480,6 @@
             The user typed something ...
             </summary>
             <param name="text"></param>
-        </member>
-        <member name="F:MudBlazor.MudAutocomplete`1._componentId">
-            <summary>
-            We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
-            </summary>
         </member>
         <member name="P:MudBlazor.MudBadge.Color">
             <summary>
@@ -1860,11 +1860,6 @@
              Get converts from string
              </summary>
         </member>
-        <member name="P:MudBlazor.Converter`1.Format">
-            <summary>
-            Custom Format to be applied on bidirectional way.
-            </summary>
-        </member>
         <member name="T:MudBlazor.NullableDateConverter">
             <summary>
             A ready made DateTime? to string binding converter with configurable date format and culture
@@ -2357,6 +2352,11 @@
             Defines how a table row looks like. Use MudTd to define the table cells and their content.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTable`1.RowEditingTemplate">
+            <summary>
+            Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTable`1.Items">
             <summary>
             The data to display in the table. MudTable will render one row per item
@@ -2390,6 +2390,11 @@
         <member name="M:MudBlazor.MudTableSortLabel`1.SetSortDirection(MudBlazor.SortDirection)">
             <summary>
             Set sort direction but don't update Table sort order. This should only be called by Table
+            </summary>
+        </member>
+        <member name="F:MudBlazor.MudTr._lockeditingentry">
+            <summary>
+            FinishEdit() is called befor OwRowClick, so we are going to block the OnRowClicked()'s EditingItem sett when user clicks on finish edit button
             </summary>
         </member>
         <member name="P:MudBlazor.MudTabPanel.Text">

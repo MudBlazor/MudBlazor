@@ -29,8 +29,8 @@ namespace MudBlazor.UnitTests
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
-
+            var input =comp.Find("input");
+            
             // check initial state
             select.Instance.Value.Should().BeNullOrEmpty();
             menu.ClassList.Should().NotContain("mud-popover-open");
@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
                 var menu = comp.Find("div.mud-popover");
-            var input = comp.Find("div.mud-input-control");
+            var input = comp.Find("input");
 
             // check initial state
             select.Instance.Value.Should().BeNullOrEmpty();

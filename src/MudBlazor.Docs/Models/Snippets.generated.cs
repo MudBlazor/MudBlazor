@@ -612,7 +612,8 @@ public const string ContainerFluidExample = @"<MudPaper>
 
 public const string DatePickerBasicUsageExample = @"<MudDatePicker Label=""Picker in menu"" Value=""2020-10-19""/>
 <MudDatePicker Label=""Only Calendar"" Value=""2020-10-19"" DisableToolbar=""true"" HelperText=""No header"" />
-<MudDatePicker Label=""Date Format"" HelperText=""For custom cultures"" DateFormat=""dd/MM/yyyy"" Date=""@(new System.DateTime(2020,10,19))"" />";
+<MudDatePicker Label=""Date Format"" HelperText=""For custom cultures"" DateFormat=""dd/MM/yyyy"" Date=""@(new System.DateTime(2020,10,19))"" />
+<MudDatePicker Label=""Picker in dialog"" HelperText=""Not implemented yet"" Value=""2020-10-19"" Disabled=""true"" />";
 
 public const string DatePickerColorExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Value=""2020-10-19"" />
 <MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Value=""2020-10-19"" />";
@@ -2443,6 +2444,79 @@ public const string TableFixedHeaderExample = @"<MudTable Items=""@PeriodicTable
     bool fixed_header = true;
 }";
 
+public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"">
+    <ToolBarContent>
+        <MudText Typo=""Typo.h6"" Class=""mud-flex-1-1-100"">Periodic Elements</MudText>
+        <MudIcon Style=""margin-top: 20px; margin-right: 8px;"" Icon=""@Icons.Material.Search""></MudIcon>
+        <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
+    </ToolBarContent>
+    <ColGroup>
+        <col style=""width:50px;"" />
+        <col style=""width:80px;"" />
+        <col style=""width:50%;"" />
+        <col />
+        <col />
+        <col style=""width:50px;"" />
+    </ColGroup>
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Number</MudTd>
+        <MudTd>@context.Sign</MudTd>
+        <MudTd>@context.Name</MudTd>
+        <MudTd>@context.Position</MudTd>
+        <MudTd>@context.Molar</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd>@context.Number</MudTd>
+        <MudTd>
+            <MudTextField Style="" color: var(--mud-theme-on-surface); font-size: 0.875rem; margin-top: -14px !important; margin-bottom: -8px;"" @bind-Value=""@context.Sign"" />
+        </MudTd>
+        <MudTd>
+            <MudTextField Style="" color: var(--mud-theme-on-surface); font-size: 0.875rem; margin-top: -14px !important; margin-bottom: -8px;"" @bind-Value=""@context.Name"" />
+        </MudTd>
+        <MudTd>
+            <MudTextField T=""int"" Style="" color: var(--mud-theme-on-surface); font-size: 0.875rem; margin-top: -14px !important; margin-bottom: -8px;"" @bind-Value=""@context.Position"" />
+        </MudTd>
+        <MudTd>
+            <MudTextField T=""molar"" Style="" color: var(--mud-theme-on-surface); font-size: 0.875rem; margin-top: -14px !important; margin-bottom: -8px;"" @bind-Value=""@context.Molar"" />
+        </MudTd>
+    </RowEditingTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+<MudSwitch @bind-Checked=""@hover"" Color=""Color.Primary"">Hover</MudSwitch>
+<MudSwitch @bind-Checked=""@dense"" Color=""Color.Secondary"">Dense</MudSwitch>
+<MudText Inline=""true"">Selected: @selected_item?.Name</MudText>
+
+@code {
+    bool dense = false;
+    bool hover = true;
+    bool fixed_header = false;
+    string search_string = """";
+    Element selected_item = null;
+    HashSet<Element> selected_items = new HashSet<Element>();
+
+    bool FilterFunc(Element element)
+    {
+        if (string.IsNullOrWhiteSpace(search_string))
+            return true;
+        if (element.Sign.Contains(search_string))
+            return true;
+        if (element.Name.Contains(search_string))
+            return true;
+        if ($""{element.Number} {element.Position} {element.Molar}"".Contains(search_string))
+            return true;
+        return false;
+    }
+}";
+
 public const string TableMultiSelectExample = @"<MudTable Items=""@PeriodicTable.GetElements()"" MultiSelection=""true"" @bind-SelectedItems=""selected_items"" Hover=""@hover"">
     <HeaderContent>
         <MudTh>Nr</MudTh>
@@ -2550,43 +2624,40 @@ public const string TemplateExample = @"";
 
 public const string TextFieldAdornmentsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""12"" md=""12"">
-        <MudTextField @bind-Value=""Amount"" Label=""Amount"" Variant=""Variant.Text"" Adornment=""Adornment.Start"" AdornmentText=""Kr"" />
+        <MudTextField T=""string"" Label=""Amount"" Variant=""Variant.Text"" Adornment=""Adornment.Start"" AdornmentText=""Kr"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField @bind-Value=""Amount"" Label=""Amount"" Variant=""Variant.Text"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
+        <MudTextField T=""string"" Label=""Amount"" Variant=""Variant.Text"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField @bind-Value=""Weight"" HelperText=""Weight"" Variant=""Variant.Text"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
+        <MudTextField T=""string"" HelperText=""Weight"" Variant=""Variant.Text"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField @bind-Value=""Password"" Label=""Password"" Variant=""Variant.Text"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
+        <MudTextField T=""string"" Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Text"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField @bind-Value=""Amount"" Label=""Amount"" Variant=""Variant.Filled"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
+        <MudTextField T=""string"" Label=""Amount"" Variant=""Variant.Filled"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField @bind-Value=""Weight"" HelperText=""Weight"" Variant=""Variant.Filled"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
+        <MudTextField T=""string"" HelperText=""Weight"" Variant=""Variant.Filled"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField  @bind-Value=""Password"" Label=""Password""  Variant=""Variant.Filled"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
+        <MudTextField T=""string"" Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Filled"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField @bind-Value=""Amount"" Label=""Amount"" Variant=""Variant.Outlined"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
+        <MudTextField T=""string"" Label=""Amount"" Variant=""Variant.Outlined"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.AttachMoney"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField @bind-Value=""Weight"" HelperText=""Weight"" Variant=""Variant.Outlined"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
+        <MudTextField T=""string"" HelperText=""Weight"" Variant=""Variant.Outlined"" Adornment=""Adornment.End"" AdornmentText=""Kg"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField  @bind-Value=""Password"" Label=""Password"" Variant=""Variant.Outlined"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
+        <MudTextField T=""string"" Label=""Password"" @bind-Value=""Password"" Variant=""Variant.Outlined"" InputType=""@PasswordInput"" Adornment=""Adornment.End"" AdornmentIcon=""@PasswordInputIcon"" OnAdornmentClick=""ButtonTestclick"" />
     </MudItem>
 </MudGrid>
 
 
 @code {
-    public double Amount { get; set; }
-    public int Weight { get; set; }
-    public string Password { get; set;} = ""superstrong123"";
-
+    string Password = ""superstrong123"";
     bool isShow;
     InputType PasswordInput = InputType.Password;
     string PasswordInputIcon = Icons.Material.VisibilityOff;
@@ -2609,19 +2680,15 @@ public const string TextFieldAdornmentsExample = @"<MudGrid>
 
 public const string TextFieldBasicExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField @bind-Value=""TextValue"" Label=""Standard"" Variant=""Variant.Text""></MudTextField>
+        <MudTextField T=""string"" Label=""Standard"" Variant=""Variant.Text""></MudTextField>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField @bind-Value=""TextValue"" Label=""Filled"" Variant=""Variant.Filled""></MudTextField>
+        <MudTextField T=""string"" Label=""Filled"" Variant=""Variant.Filled""></MudTextField>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField @bind-Value=""TextValue"" Label=""Outlined"" Variant=""Variant.Outlined""></MudTextField>
+        <MudTextField T=""string"" Label=""Outlined"" Variant=""Variant.Outlined""></MudTextField>
     </MudItem>
-</MudGrid>
-
-@code {
-    public string TextValue { get; set; }
-}";
+</MudGrid>";
 
 public const string TextFieldBindingExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""3"">
@@ -2634,7 +2701,7 @@ public const string TextFieldBindingExample = @"<MudGrid>
         <MudTextField @bind-Value=""@element.Number"" Label=""Number""/>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField @bind-Value=""@updatedon"" Format=""yyyy/MM/dd"" Label=""Last Update""/>
+        <MudTextField T=""DateTime"" Converter=""@(Converters.DateFormat(""yyyy/MM/dd""))"" @bind-Value=""@updatedon"" Label=""Last Update""/>
     </MudItem>
 </MudGrid>
 <div>
@@ -2654,51 +2721,44 @@ public const string TextFieldBindingExample = @"<MudGrid>
 
 public const string TextFieldFormPropsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField @bind-Value=""HelperText"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Text"" />
+        <MudTextField T=""string"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Text"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField @bind-Value=""Disabled"" Label=""Disabled"" Variant=""Variant.Text"" Disabled=""true"" />
+        <MudTextField T=""string"" Label=""Disabled"" Variant=""Variant.Text"" Disabled=""true"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField @bind-Value=""Password"" Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Text"" />
+        <MudTextField T=""string"" Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Text"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField @bind-Value=""ReadOnly"" Label=""Read Only"" ReadOnly=""true"" Variant=""Variant.Text"" />
+        <MudTextField T=""string"" Label=""Read Only"" Text=""Can't change me"" ReadOnly=""true"" Variant=""Variant.Text"" />
     </MudItem>
 
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField @bind-Value=""HelperText"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Filled"" />
+        <MudTextField T=""string"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Filled"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField @bind-Value=""Disabled"" Label=""Disabled"" Variant=""Variant.Filled"" Disabled=""true"" />
+        <MudTextField T=""string"" Label=""Disabled"" Variant=""Variant.Filled"" Disabled=""true"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField @bind-Value=""Password"" Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Filled"" />
+        <MudTextField T=""string"" Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Filled"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField @bind-Value=""ReadOnly"" Label=""Read Only"" ReadOnly=""true"" Variant=""Variant.Filled"" />
+        <MudTextField T=""string"" Label=""Read Only"" Text=""Can't change me"" ReadOnly=""true"" Variant=""Variant.Filled"" />
     </MudItem>
 
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField @bind-Value=""HelperText"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Outlined"" />
+        <MudTextField T=""string"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Outlined"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField @bind-Value=""Disabled"" Label=""Disabled"" Variant=""Variant.Outlined"" Disabled=""true"" />
+        <MudTextField T=""string"" Label=""Disabled"" Variant=""Variant.Outlined"" Disabled=""true"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField @bind-Value=""Password"" Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Outlined"" />
+        <MudTextField T=""string"" Label=""Password"" InputType=""InputType.Password"" Variant=""Variant.Outlined"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""3"">
-        <MudTextField @bind-Value=""ReadOnly"" Label=""Read Only"" ReadOnly=""true"" Variant=""Variant.Outlined"" />
+        <MudTextField T=""string"" Label=""Read Only"" Value=""@(""Can't change me"")"" ReadOnly=""true"" Variant=""Variant.Outlined"" />
     </MudItem>
-</MudGrid>
-
-@code {
-    public string HelperText { get; set; }
-    public string Disabled { get; set; }
-    public string Password { get; set; }
-    public string ReadOnly { get; set; } = ""Can't change me"";
-}";
+</MudGrid>";
 
 public const string TextFieldInputsExample = @"<MudInput Value=""@(""Basic Input"")"" />
 <MudInput T=""string"" Placeholder=""Placeholder"" />
@@ -2829,13 +2889,13 @@ public const string TurkeyTestExample = @"<MudGrid>
         <MudTextField Label=""cn-ZH"" Variant=""Variant.Outlined"" Culture=""@cn"" @bind-Value=""date""></MudTextField>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""en-US: dddd, MMM dd"" Variant=""Variant.Outlined"" Culture=""@en"" Format=""dddd, MMM dd"" @bind-Value=""date"" />
+        <MudTextField Label=""en-US: dddd, MMM dd"" Variant=""Variant.Outlined"" Converter=""@Converters.DateFormat(""dddd, MMM dd"", en)"" @bind-Value=""date"" />
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""de-AT: dddd, dd. MM."" Variant=""Variant.Outlined"" Culture=""@de"" Format=""dddd, dd. MM."" @bind-Value=""date""></MudTextField>
+        <MudTextField Label=""de-AT: dddd, dd. MM."" Variant=""Variant.Outlined"" Converter=""@Converters.DateFormat(""dddd, dd. MM."", de)"" @bind-Value=""date""></MudTextField>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField Label=""cn-ZH: yy年MM月dd日"" Variant=""Variant.Outlined"" Culture=""@cn"" Format=""yyyy年MM月dd日"" @bind-Value=""date""></MudTextField>
+        <MudTextField Label=""cn-ZH: yy年MM月dd日"" Variant=""Variant.Outlined"" Converter=""@Converters.DateFormat(""yyyy年MM月dd日"", cn)"" @bind-Value=""date""></MudTextField>
     </MudItem>
 </MudGrid>
 
