@@ -2475,16 +2475,16 @@ public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Ite
     <RowEditingTemplate>
         <MudTd>@context.Number</MudTd>
         <MudTd>
-            <MudTextField Style="" color: var(--mud-theme-on-surface); font-size: 0.875rem; margin-top: -14px !important; margin-bottom: -8px;"" @bind-Value=""@context.Sign"" />
+            <MudTextField @bind-Value=""@context.Sign"" />
         </MudTd>
         <MudTd>
-            <MudTextField Style="" color: var(--mud-theme-on-surface); font-size: 0.875rem; margin-top: -14px !important; margin-bottom: -8px;"" @bind-Value=""@context.Name"" />
+            <MudTextField @bind-Value=""@context.Name"" />
         </MudTd>
         <MudTd>
-            <MudTextField T=""int"" Style="" color: var(--mud-theme-on-surface); font-size: 0.875rem; margin-top: -14px !important; margin-bottom: -8px;"" @bind-Value=""@context.Position"" />
+            <MudTextField @bind-Value=""@context.Position"" />
         </MudTd>
         <MudTd>
-            <MudTextField T=""molar"" Style="" color: var(--mud-theme-on-surface); font-size: 0.875rem; margin-top: -14px !important; margin-bottom: -8px;"" @bind-Value=""@context.Molar"" />
+            <MudTextField @bind-Value=""@context.Molar"" />
         </MudTd>
     </RowEditingTemplate>
     <PagerContent>
@@ -2933,11 +2933,11 @@ public const string ElevationUsageExample = @"<div class=""mud-elevation-0"">0</
 <div class=""mud-elevation-24"">24</div>
 <div class=""mud-elevation-99"">99</div>";
 
-public const string SpacingBreakpointExample = @"<MudPaper Class=""pa-md-4 mx-lg-auto"">
-    <MudText Typo=""Typo.subtitle2"">Adjust screen size to see the changes.</MudText>
+public const string SpacingBreakpointExample = @"<MudPaper Class=""pa-md-6 mx-lg-auto mud-theme-color-secondary"">
+    <MudText Typo=""Typo.body1"">Adjust screen size to see the changes.</MudText>
 </MudPaper>";
 
-public const string SpacingCenteringExample = @"<MudPaper Class=""mx-auto pa-6"">
+public const string SpacingCenteringExample = @"<MudPaper Class=""mx-auto pa-6 mud-theme-color-success"">
     <MudText Typo=""Typo.body1"">Centered!</MudText>
 </MudPaper>";
 

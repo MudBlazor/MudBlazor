@@ -48,7 +48,7 @@
     overflow: auto;
     margin-bottom: 32px;
 
-    & * .mud-nav-link-icon {
+    & * .mud-nav-link-icon, .mud-nav-link-expand-icon {
         fill: var(--mud-theme-text-default);
     }
 }

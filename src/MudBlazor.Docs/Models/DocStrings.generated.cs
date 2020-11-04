@@ -463,6 +463,35 @@ public const string MudCardMedia_Tag = @"Use Tag to attach any user data object 
 public const string MudCardMedia_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudChartBase_InputData = @"";
+
+public const string MudChartBase_InputLabels = @"";
+
+public const string MudChartBase_XAxisLabels = @"";
+
+public const string MudChartBase_ChartSeries = @"";
+
+public const string MudChartBase_ChartOptions = @"";
+
+public const string MudChartBase_ChartType = @"The Type of the chart.";
+
+public const string MudChartBase_Width = @"The Width of the chart, end with % or px.";
+
+public const string MudChartBase_Height = @"The Height of the chart, end with % or px.";
+
+public const string MudChartBase_LegendPosition = @"The placment direction of the legend if used.";
+
+public const string MudChartBase_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
+
+public const string MudChartBase_Class = @"User class names, separated by space";
+
+public const string MudChartBase_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudChartBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudChartBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudCheckBox_Color = @"The color of the component. It supports the theme colors.";
 
 public const string MudCheckBox_Label = @"If applied the text will be added to the component.";
@@ -1075,7 +1104,9 @@ public const string MudNavGroup_DisableRipple = @"";
 
 public const string MudNavGroup_Expanded = @"";
 
-public const string MudNavGroup_ExpandIcon = @"If true, adds expand-icon at the end of the NavGroup. Set to true by default.";
+public const string MudNavGroup_HideExpandIcon = @"If true, hides expand-icon at the end of the NavGroup. Set to true by default.";
+
+public const string MudNavGroup_ExpandIcon = @"If set, overrides the default expand icon.";
 
 public const string MudNavGroup_ChildContent = @"";
 
@@ -1978,6 +2009,35 @@ public const string MudCardHeader_Tag = @"Use Tag to attach any user data object
 public const string MudCardHeader_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudChart_InputData = @"";
+
+public const string MudChart_InputLabels = @"";
+
+public const string MudChart_XAxisLabels = @"";
+
+public const string MudChart_ChartSeries = @"";
+
+public const string MudChart_ChartOptions = @"";
+
+public const string MudChart_ChartType = @"The Type of the chart.";
+
+public const string MudChart_Width = @"The Width of the chart, end with % or px.";
+
+public const string MudChart_Height = @"The Height of the chart, end with % or px.";
+
+public const string MudChart_LegendPosition = @"The placment direction of the legend if used.";
+
+public const string MudChart_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
+
+public const string MudChart_Class = @"User class names, separated by space";
+
+public const string MudChart_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudChart_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudChart_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudCollapse_Expanded = @"If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.";
 
 public const string MudCollapse_ChildContent = @"Child content of component.";
@@ -2328,6 +2388,8 @@ public const string MudSparkLine_UserAttributes = @"UserAttributes carries all a
 
 public const string MudTable_RowTemplate = @"Defines how a table row looks like. Use MudTd to define the table cells and their content.";
 
+public const string MudTable_RowEditingTemplate = @"Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.";
+
 public const string MudTable_Items = @"The data to display in the table. MudTable will render one row per item";
 
 public const string MudTable_Filter = @"A function that returns whether or not an item should be displayed in the table. You can use this to implement your own search function.";
@@ -2413,6 +2475,8 @@ public const string MudTr_Item = @"";
 
 public const string MudTr_IsCheckable = @"";
 
+public const string MudTr_IsEditable = @"";
+
 public const string MudTr_IsHeader = @"";
 
 public const string MudTr_IsCheckedChanged = @"";
@@ -2490,6 +2554,180 @@ public const string MudDialogProvider_CloseButton = @"";
 public const string MudDialogProvider_DisableBackdropClick = @"";
 
 public const string MudDialogProvider_Position = @"";
+
+public const string DonutBase_InputData = @"";
+
+public const string DonutBase_InputLabels = @"";
+
+public const string DonutBase_XAxisLabels = @"";
+
+public const string DonutBase_ChartSeries = @"";
+
+public const string DonutBase_ChartOptions = @"";
+
+public const string DonutBase_ChartType = @"The Type of the chart.";
+
+public const string DonutBase_Width = @"The Width of the chart, end with % or px.";
+
+public const string DonutBase_Height = @"The Height of the chart, end with % or px.";
+
+public const string DonutBase_LegendPosition = @"The placment direction of the legend if used.";
+
+public const string DonutBase_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
+
+public const string DonutBase_Class = @"User class names, separated by space";
+
+public const string DonutBase_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string DonutBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string DonutBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string LineBase_InputData = @"";
+
+public const string LineBase_InputLabels = @"";
+
+public const string LineBase_XAxisLabels = @"";
+
+public const string LineBase_ChartSeries = @"";
+
+public const string LineBase_ChartOptions = @"";
+
+public const string LineBase_ChartType = @"The Type of the chart.";
+
+public const string LineBase_Width = @"The Width of the chart, end with % or px.";
+
+public const string LineBase_Height = @"The Height of the chart, end with % or px.";
+
+public const string LineBase_LegendPosition = @"The placment direction of the legend if used.";
+
+public const string LineBase_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
+
+public const string LineBase_Class = @"User class names, separated by space";
+
+public const string LineBase_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string LineBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string LineBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string PieBase_InputData = @"";
+
+public const string PieBase_InputLabels = @"";
+
+public const string PieBase_XAxisLabels = @"";
+
+public const string PieBase_ChartSeries = @"";
+
+public const string PieBase_ChartOptions = @"";
+
+public const string PieBase_ChartType = @"The Type of the chart.";
+
+public const string PieBase_Width = @"The Width of the chart, end with % or px.";
+
+public const string PieBase_Height = @"The Height of the chart, end with % or px.";
+
+public const string PieBase_LegendPosition = @"The placment direction of the legend if used.";
+
+public const string PieBase_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
+
+public const string PieBase_Class = @"User class names, separated by space";
+
+public const string PieBase_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string PieBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string PieBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string Donut_InputData = @"";
+
+public const string Donut_InputLabels = @"";
+
+public const string Donut_XAxisLabels = @"";
+
+public const string Donut_ChartSeries = @"";
+
+public const string Donut_ChartOptions = @"";
+
+public const string Donut_ChartType = @"The Type of the chart.";
+
+public const string Donut_Width = @"The Width of the chart, end with % or px.";
+
+public const string Donut_Height = @"The Height of the chart, end with % or px.";
+
+public const string Donut_LegendPosition = @"The placment direction of the legend if used.";
+
+public const string Donut_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
+
+public const string Donut_Class = @"User class names, separated by space";
+
+public const string Donut_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string Donut_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string Donut_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string Line_InputData = @"";
+
+public const string Line_InputLabels = @"";
+
+public const string Line_XAxisLabels = @"";
+
+public const string Line_ChartSeries = @"";
+
+public const string Line_ChartOptions = @"";
+
+public const string Line_ChartType = @"The Type of the chart.";
+
+public const string Line_Width = @"The Width of the chart, end with % or px.";
+
+public const string Line_Height = @"The Height of the chart, end with % or px.";
+
+public const string Line_LegendPosition = @"The placment direction of the legend if used.";
+
+public const string Line_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
+
+public const string Line_Class = @"User class names, separated by space";
+
+public const string Line_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string Line_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string Line_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string Pie_InputData = @"";
+
+public const string Pie_InputLabels = @"";
+
+public const string Pie_XAxisLabels = @"";
+
+public const string Pie_ChartSeries = @"";
+
+public const string Pie_ChartOptions = @"";
+
+public const string Pie_ChartType = @"The Type of the chart.";
+
+public const string Pie_Width = @"The Width of the chart, end with % or px.";
+
+public const string Pie_Height = @"The Height of the chart, end with % or px.";
+
+public const string Pie_LegendPosition = @"The placment direction of the legend if used.";
+
+public const string Pie_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
+
+public const string Pie_Class = @"User class names, separated by space";
+
+public const string Pie_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string Pie_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string Pie_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
 
     }
 }
