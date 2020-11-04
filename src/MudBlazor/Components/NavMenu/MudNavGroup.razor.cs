@@ -8,7 +8,6 @@ namespace MudBlazor
         protected string Classname =>
         new CssBuilder("mud-nav-link")
           .AddClass($"mud-ripple", !DisableRipple)
-          .AddClass("mud-expanded", Expanded)
           .AddClass(Class)
         .Build();
 

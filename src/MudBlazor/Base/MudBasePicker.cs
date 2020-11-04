@@ -100,25 +100,14 @@ namespace MudBlazor
             get => _value;
             set
             {
-                if (value == _value)
-                    return;
-                if (_setting_text)
-                    return;
-                _setting_text = true;
-                try
+                if (value != _value)
                 {
                     _value = value;
                     StringValueChanged(_value);
                     ValueChanged.InvokeAsync(value);
                 }
-                finally
-                {
-                    _setting_text = false;
-                }
             }
         }
-
-        private bool _setting_text;
 
         /// <summary>
         /// 

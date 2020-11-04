@@ -59,19 +59,17 @@
     &.active {
         font-weight: 500 !important;
         color: var(--mud-theme-primary);
-        background-color: var(--mud-theme-primary-hover);
     }
 
     & .mud-nav-link-icon {
     }
 
     & .mud-nav-link-expand-icon {
-        margin-right: 12px;
+        margin-right:12px;
         transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
 
         &.mud-transform {
             transform: rotate(-180deg);
-            color: var(--mud-theme-primary);
         }
     }
 

@@ -15,14 +15,14 @@
             <table class="mud-table-root">
                 @if (ColGroup != null)
                 {
-                <colgroup>
-                    @ColGroup
-                </colgroup>
+                    <colgroup>
+                        @ColGroup
+                    </colgroup>
                 }
                 @if (HeaderContent != null)
                 {
                     <thead class="mud-table-head">
-                        <MudTr IsHeader="true" IsCheckable="MultiSelection" IsCheckedChanged="@OnHeaderCheckboxClicked" @ref="TableContext.HeaderRow">
+                        <MudTr IsHeader="true" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@OnHeaderCheckboxClicked" @ref="TableContext.HeaderRow">
                             @HeaderContent
                         </MudTr>
                     </thead>
@@ -30,9 +30,25 @@
                 <tbody class="mud-table-body">
                     @foreach (var item in CurrentPageItems)
                     {
-                        <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
+                    <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
+                        @if (RowEditingTemplate != null && object.Equals(_editingItem, item))
+                            @RowEditingTemplate(item)
+                        else
                             @RowTemplate(item)
-                        </MudTr>
+                    </MudTr>
+
+                        @*@if(RowEditingTemplate != null && object.Equals(_editingItem, item))
+                        {
+                            <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsEditing="true" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
+                                    @RowEditingTemplate(item)
+                            </MudTr>
+                        }
+                        else
+                        {
+                            <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
+                                    @RowTemplate(item)
+                            </MudTr>
+                        }*@
                     }
                 </tbody>
             </table>
@@ -55,6 +71,11 @@
     /// Defines how a table row looks like. Use MudTd to define the table cells and their content.
     /// </summary>
     [Parameter] public RenderFragment<T> RowTemplate { get; set; }
+
+    /// <summary>
+    /// Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.
+    /// </summary>
+    [Parameter] public RenderFragment<T> RowEditingTemplate { get; set; }
 
     /// <summary>
     /// The data to display in the table. MudTable will render one row per item
@@ -157,6 +178,12 @@
     public override void SetSelectedItem(object item)
     {
         SelectedItem = item.As<T>();
+    }
+
+    public override void SetEditingItem(object item)
+    {
+        if (!Object.ReferenceEquals(_editingItem, item))
+            _editingItem = item;
     }
 
     public override TableContext TableContext
