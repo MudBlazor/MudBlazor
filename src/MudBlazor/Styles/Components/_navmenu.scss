@@ -25,10 +25,6 @@
         }
     }
 
-    & > .mud-expanded {
-        color: var(--mud-theme-primary);
-    }
-
     & * .mud-navmenu .mud-nav-item .mud-nav-link {
         padding-left: 36px;
     }
@@ -44,7 +40,7 @@
 .mud-nav-link {
     width: 100%;
     font-weight: 400;
-    padding: 8px 0 8px 12px;
+    padding: 8px 0 8px 16px;
     color: inherit;
     line-height: 1.75;
     display: inline-flex;
@@ -82,7 +78,7 @@
     & .mud-nav-link-text {
         width: 100%;
         text-align: left;
-        margin-left: 12px;
+        margin-left: 16px;
         letter-spacing: 0;
     }
 }

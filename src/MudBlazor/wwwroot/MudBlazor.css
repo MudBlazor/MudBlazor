@@ -3704,8 +3704,6 @@ ul {
     font-weight: 400; }
   .mud-nav-group * .mud-nav-group > .mud-nav-link.mud-expanded > .mud-nav-link-text {
     font-weight: 500; }
-  .mud-nav-group > .mud-expanded {
-    color: var(--mud-theme-primary); }
   .mud-nav-group * .mud-navmenu .mud-nav-item .mud-nav-link {
     padding-left: 36px; }
 
@@ -3718,7 +3716,7 @@ ul {
 .mud-nav-link {
   width: 100%;
   font-weight: 400;
-  padding: 8px 0 8px 12px;
+  padding: 8px 0 8px 16px;
   color: inherit;
   line-height: 1.75;
   display: inline-flex;
@@ -3744,7 +3742,7 @@ ul {
   .mud-nav-link .mud-nav-link-text {
     width: 100%;
     text-align: left;
-    margin-left: 12px;
+    margin-left: 16px;
     letter-spacing: 0; }
 
 .mud-nav-group * .mud-navmenu > .mud-nav-group .mud-nav-link {
@@ -4942,6 +4940,12 @@ ul {
 
 .mud-table-hover * .mud-table-body .mud-table-row:hover {
   background-color: rgba(0, 0, 0, 0.04); }
+
+.mud-table-cell > .mud-input-control > div.mud-input.mud-input-text {
+  color: var(--mud-theme-on-surface);
+  font-size: 0.875rem;
+  margin-top: -14px;
+  margin-bottom: -8px; }
 
 .mud-table-cell-align-left {
   text-align: left; }

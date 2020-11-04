@@ -1218,9 +1218,14 @@
             Icon to use if set.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudNavGroup.HideExpandIcon">
+            <summary>
+            If true, hides expand-icon at the end of the NavGroup. Set to true by default.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudNavGroup.ExpandIcon">
             <summary>
-            If true, adds expand-icon at the end of the NavGroup. Set to true by default.
+            If set, overrides the default expand icon.
             </summary>
         </member>
         <member name="P:MudBlazor.MudNavLink.Icon">

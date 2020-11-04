@@ -1,4 +1,5 @@
 @inherits LayoutComponentBase
+@inject NavigationManager NavMan
 
 <MudThemeProvider Theme="currentTheme" />
 <MudDialogProvider />
@@ -8,17 +9,16 @@
 <MudLayout DrawerOpen="@_drawerOpen">
     <MudAppBar Elevation="99" Color="Color.Appbar">
         <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h5" Class="@GetTrackedIn()">Mudblazor</MudText>
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
         <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
     </MudAppBar>
-    <MudDrawer Elevation="99">
+    <MudDrawer Elevation="99" Class="mudblazor-appbar-band">
         <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
-            MudBlazor
+            <MudBlazorLogo />
         </MudDrawerHeader>
-        <MudDivider DividerType="DividerType.Middle" />
         <NavMenu />
-        <MudDivider DividerType="DividerType.Middle" Class="mb-4" />
     </MudDrawer>
     <MudMainContent Class="mudblazor-main-content">
         @Body
@@ -48,6 +48,26 @@
         else
         {
             currentTheme = defaultTheme;
+        }
+    }
+
+    public bool _trackedIn { get; set; }
+
+    public string GetTrackedIn()
+    {
+        if (_trackedIn && _drawerOpen && NavMan.BaseUri != NavMan.Uri)
+        {
+            _trackedIn = !_trackedIn;
+            return "mudblazor-appbar-brand-text track-out";
+        }
+        else if (!_trackedIn && !_drawerOpen && NavMan.BaseUri != NavMan.Uri)
+        {
+            _trackedIn = !_trackedIn;
+            return "mudblazor-appbar-brand-text track-in";
+        }
+        else
+        {
+            return "mudblazor-appbar-brand-text mud-hide";
         }
     }
 
