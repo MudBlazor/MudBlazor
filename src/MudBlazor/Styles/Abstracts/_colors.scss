@@ -2,7 +2,7 @@
 
 @each $color in $mud-theme-props {
     .mud-color-#{$color} {
-        background-color: var(--mud-theme-#{$color});
+        background-color: var(--mud-theme-#{$color}) !important;
     }
 
     .mud-color-text-#{$color} {
