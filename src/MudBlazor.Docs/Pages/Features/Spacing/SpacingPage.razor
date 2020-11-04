@@ -26,7 +26,7 @@
             <MudGrid>
                 <MudItem md="6">
                     <MudText Typo="Typo.h6" Color="Color.Primary">Positive</MudText>
-                    <ul class="mud-typography-body1 my-2">
+                    <ul class="mud-typography-body1 my-2 mud-spacing-list">
                         <li><CodeInline>0</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>0</CodeInline></li>
                         <li><CodeInline>1</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>4px</CodeInline></li>
                         <li><CodeInline>2</CodeInline> sets <CodeInline>margin</CodeInline> or <CodeInline>padding</CodeInline> to <CodeInline>8px</CodeInline></li>
@@ -49,7 +49,7 @@
                 </MudItem>
                 <MudItem md="6">
                     <MudText Typo="Typo.h6" Color="Color.Secondary">Negative</MudText>
-                    <ul class="mud-typography-body1 my-2">
+                    <ul class="mud-typography-body1 my-2 mud-spacing-list">
                         <li><CodeInline SecondaryColor="true">n1</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-4px</CodeInline></li>
                         <li><CodeInline SecondaryColor="true">n2</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-8px</CodeInline></li>
                         <li><CodeInline SecondaryColor="true">n3</CodeInline> sets <CodeInline SecondaryColor="true">margin</CodeInline> to <CodeInline SecondaryColor="true">-12px</CodeInline></li>
@@ -78,6 +78,34 @@
                 <SpacingExample />
             </SectionContent>
             <SectionSource Code="SpacingExample" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Breakpoints</Title>
+                <Description>You can combine the spacing system with <MudLink Href="/features/breakpoints">Mudblazors breakpoints</MudLink> to target specific screen sizes.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <SpacingBreakpointExample />
+            </SectionContent>
+            <SectionSource Code="SpacingBreakpointExample" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Centering Horizontal</Title>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true">
+                <SpacingCenteringExample />
+            </SectionContent>
+            <SectionSource Code="SpacingCenteringExample" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Negative Margins</Title>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true">
+                <SpacingNegativeExample />
+            </SectionContent>
+            <SectionSource Code="SpacingNegativeExample" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

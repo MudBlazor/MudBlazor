@@ -30,7 +30,8 @@
     padding-right: 30px; } }
 
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 8px;
+  height: 8px;
   z-index: 1; }
 
 ::-webkit-scrollbar-track {
@@ -46,14 +47,17 @@
 .mud-codeblock {
   background-color: var(--mud-theme-dark);
   border-radius: var(--mud-theme-border-radius-default);
-  padding: 16px; }
+  padding: 16px;
+  overflow: auto; }
   .mud-codeblock pre {
     color: #ededed;
+    padding: 0px;
     font-size: 1em;
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
     -webkit-font-smoothing: subpixel-antialiased;
-    direction: ltr;
-    overflow: hidden; }
+    direction: ltr; }
+  .mud-codeblock .html + .csharp {
+    margin-top: 23px; }
   .mud-codeblock .html .htmlTagDelimiter {
     color: #979797; }
   .mud-codeblock .html .htmlElementName {
@@ -376,6 +380,10 @@
   display: flex; }
   .docs-color-card p {
     width: 100%; }
+
+.mud-spacing-list > li code {
+  width: 70px;
+  text-align: center; }
 
 .docs-page .mud-typography-h4 {
   margin-top: 52px; }
