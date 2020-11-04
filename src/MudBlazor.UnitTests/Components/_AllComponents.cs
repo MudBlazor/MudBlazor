@@ -1920,6 +1920,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void CustomConverterExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<CustomConverterExample>();
+        }
+
+
+        [Test]
         public void SpecialConverterExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
