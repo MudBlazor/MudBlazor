@@ -394,7 +394,7 @@
         }
 
         &::-webkit-scrollbar-thumb {
-            background: #c4c4c4;
+            background: var(--mud-theme-border-color-inputs);
             border-radius: 1px;
         }
 
