@@ -622,6 +622,39 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void ChipSetAddRemoveExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<ChipSetAddRemoveExample>();
+        }
+
+
+        [Test]
+        public void ChipSetBasicExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<ChipSetBasicExample>();
+        }
+
+
+        [Test]
+        public void ChipSetMultiselectionExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<ChipSetMultiselectionExample>();
+        }
+
+
+        [Test]
         public void ContainedFixedExample_Test()
         {
                 using var ctx = new Bunit.TestContext();

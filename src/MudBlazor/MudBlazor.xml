@@ -706,6 +706,56 @@
             A callback when CheckedChanges.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudChipSet.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.MultiSelection">
+            <summary>
+            Allows to select more than one chip.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.Mandatory">
+            <summary>
+            Will not allow to deselect the selected chip in single selection mode.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.AllClosable">
+            <summary>
+            Will make all chips closable.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.Filter">
+            <summary>
+             Will show a check-mark for the selected components.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChip">
+            <summary>
+            The currently selected chip in Choice mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChipChanged">
+            <summary>
+            Called when the selected chip changes, in Choice mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChips">
+            <summary>
+            The currently selected chips in Filter mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChipsChanged">
+            <summary>
+            Called when the selection changed, in Filter mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.OnClose">
+            <summary>
+            Called when a Chip was deleted (by click on the close icon)
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudChip.Color">
             <summary>
             The color of the component.
@@ -734,6 +784,11 @@
         <member name="P:MudBlazor.MudChip.Label">
             <summary>
             Removes circle edges and applys theme default.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.Deleted">
+            <summary>
+            If true, the chip will not be rendered.
             </summary>
         </member>
         <member name="P:MudBlazor.MudChip.Disabled">
@@ -771,9 +826,19 @@
             The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
             </summary>
         </member>
+        <member name="P:MudBlazor.MudChip.Text">
+            <summary>
+            A string you want to associate with the chip. If the ChildContent is not set this will be shown as chip text.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudChip.ForceLoad">
             <summary>
             If true, force browser to redirect outside component router-space.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.RemoveOnClose">
+            <summary>
+            If true, remove the chip from the render tree on close.
             </summary>
         </member>
         <member name="P:MudBlazor.MudChip.Command">
@@ -794,6 +859,16 @@
         <member name="P:MudBlazor.MudChip.OnClose">
             <summary>
             Chip delete event, if set the delete icon will be visible.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.IsChecked">
+            <summary>
+            Set by MudChipSet
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.IsSelected">
+            <summary>
+            Set by MudChipSet
             </summary>
         </member>
         <member name="P:MudBlazor.MudDatePicker.MaxDate">

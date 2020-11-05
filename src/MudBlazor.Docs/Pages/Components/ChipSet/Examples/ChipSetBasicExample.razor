@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudChipSet @bind-SelectedChip="selected" Filter="true" Mandatory="@mandatory">
+    <MudChip Text="grey">Default</MudChip>
+    <MudChip Text="purple" Color="Color.Primary">Primary</MudChip>
+    <MudChip Text="pink" Color="Color.Secondary">Secondary</MudChip>
+    <MudChip Text="blue" Color="Color.Info">Info</MudChip>
+    <MudChip Text="green" Color="Color.Success">Success</MudChip>
+    <MudChip Text="orange" Color="Color.Warning">Warning</MudChip>
+    <MudChip Text="red" Color="Color.Danger">Danger</MudChip>
+    <MudChip Text="black" Color="Color.Dark">Dark</MudChip>
+</MudChipSet>
+
+
+@if (selected != null)
+{
+    <MudText>You selected the <MudText Color="@selected.Color" Inline="true">@selected.Text</MudText> chip.</MudText>
+}
+else
+{
+    <MudText>Select a chip.</MudText>
+}
+<MudCheckBox @bind-Checked="mandatory">Mandatory</MudCheckBox>
+
+
+@code
+{
+    bool mandatory = true;
+    MudChip selected;
+}
+

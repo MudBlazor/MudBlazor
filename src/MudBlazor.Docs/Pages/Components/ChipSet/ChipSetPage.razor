@@ -1,0 +1,44 @@
+﻿@page "/components/chipset"
+
+<DocsPage>
+    <DocsPageHeader Title="Chip Set" />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Single selection</Title>
+                <Description>
+                    Chipset will maintain a selection of chips for you. By default you get a single selection. Setting <CodeInline>Mandatory="true"</CodeInline> will not allow to unselect the selected chip.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Class="mud-text-align-center">
+                <ChipSetBasicExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="ChipSetBasicExample" GitHubFolderName="ChipSet" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Multiselection</Title>
+                <Description>
+                    When <CodeInline>MultiSelection="true"</CodeInline> ChipSet will maintain a selection of multiple chips. Setting <CodeInline>Filter="true"</CodeInline> the selected chips will also display a check mark.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Class="mud-text-align-center">
+                <ChipSetMultiselectionExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="ChipSetMultiselectionExample" GitHubFolderName="ChipSet" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Adding and removing chips</Title>
+                <Description>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" Class="mud-text-align-center">
+                <ChipSetAddRemoveExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="ChipSetAddRemoveExample" GitHubFolderName="ChipSet" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

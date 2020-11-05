@@ -1,0 +1,33 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChipSet</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>bind-SelectedChips</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">selected</span><span class="quot">&quot;</span> <span class="htmlAttributeName">MultiSelection</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Filter</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">filter</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChip</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Milk</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChip</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChip</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Eggs</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChip</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChip</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Soap</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChip</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChip</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Corn flakes</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChip</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChip</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Salad</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChip</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChip</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Apples</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChip</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChip</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Red wine</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChip</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChipSet</span><span class="htmlTagDelimiter">&gt;</span>
+
+
+<span class="atSign">&#64;</span>if (selected != null &amp;&amp; selected.Length&gt;0)
+{
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>You selected <span class="atSign">&#64;</span>string.Join(&quot;, &quot;, selected.Select(chip=&gt;chip.Text)).<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+}
+else
+{
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>Nothing selected.<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+}
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudCheckBox</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>bind-Checked</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">filter</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Filter<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudCheckBox</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code
+{
+    <span class="keyword">bool</span> filter = <span class="keyword">true</span>;
+    MudChip[] selected;
+}
+</pre></div>
+</div>

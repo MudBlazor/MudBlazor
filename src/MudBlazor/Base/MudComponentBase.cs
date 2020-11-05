@@ -32,6 +32,6 @@ namespace MudBlazor
         /// will be splatted onto the underlying HTML tag.
         /// </summary>
         [Parameter(CaptureUnmatchedValues = true)]
-        public Dictionary<string, object> UserAttributes { get; set; }
+        public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
     }
 }
