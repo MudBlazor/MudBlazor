@@ -1,0 +1,64 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSimpleTable Elevation="0" Hover="false" Class="mt-4" Dense="false">
+    <colgroup>
+        <col style="width: 70%;" />
+        <col style="width: 15%;" />
+        <col style="width: 15%;" />
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Mode</th>
+            <th>TextField</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><CodeInline>Free decimal places (default)</CodeInline></td>
+            <td>
+                <MudTextField @bind-Value="@decimal_value_free" Class="mt-n1" Immediate="true" />
+            </td>
+            <td><MudText Inline="true">@ToS(decimal_value_free) </MudText></td>
+        </tr>
+        <tr>
+            <td><CodeInline>No decimal places (what about int value?)</CodeInline></td>
+            <td>
+                <MudTextField Converter="@(new DefaultConverter<decimal>() { GetFunc = (e) => Math.Round(decimal.Parse(e), 0), SetFunc = (e) => e.ToString("#0")})" 
+                              @bind-Value="@decimal_value_0d" Class="mt-n1" Immediate="false" />
+            </td>
+            <td><MudText Inline="true">@ToS(decimal_value_0d) </MudText></td>
+        </tr>
+        <tr>
+            <td><CodeInline>Two decimal places</CodeInline></td>
+            <td>
+                <MudTextField Converter="@(new DefaultConverter<decimal>() { GetFunc = (e) => Math.Round(decimal.Parse(e), 2),  SetFunc = (e) => e.ToString("0.00")})" 
+                              @bind-Value="@decimal_value_2d" Class="mt-n1" Immediate="false" />
+            </td>
+            <td><MudText Inline="true">@ToS(decimal_value_2d) </MudText></td>
+        </tr>
+        <tr>
+            <td><CodeInline>Three decimal places</CodeInline></td>
+            <td>
+                <MudTextField Converter="@(new DefaultConverter<decimal>() { GetFunc = (e) => Math.Round(decimal.Parse(e), 3), SetFunc = (e) => e.ToString("0.000")})"
+                              @bind-Value="@decimal_value_3d" Class="mt-n1" Immediate="false" />
+            </td>
+            <td><MudText Inline="true">@ToS(decimal_value_3d) </MudText></td>
+        </tr>
+    </tbody>
+</MudSimpleTable>
+
+@code {
+    decimal decimal_value_free = 99.99999999m;
+    decimal decimal_value_0d = 99;
+    decimal decimal_value_2d = 99.99m;
+    decimal decimal_value_3d = 99.999m;
+
+    string ToS(object value)
+    {
+        if (value == null)
+            return "null";
+        return "" + value;
+    }
+
+}
