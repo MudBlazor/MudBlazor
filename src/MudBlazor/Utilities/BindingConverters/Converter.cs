@@ -78,5 +78,11 @@ namespace MudBlazor
     /// </summary>
     public class Converter<T> : Converter<T, string>
     {
+
+        /// <summary>
+        /// Custom Format to be applied on bidirectional way.
+        /// </summary>
+        public string Format { get; set; } = null;
+
     }
 }
