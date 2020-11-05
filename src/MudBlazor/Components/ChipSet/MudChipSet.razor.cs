@@ -25,13 +25,20 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// Allows single selection from a set of options. If combined with Filter the selected value can be unselected.
+        /// Allows to select more than one chip.
         /// </summary>
         [Parameter]
-        public bool Choice { get; set; } = true;
+        public bool MultiSelection { get; set; } = false;
 
         /// <summary>
-        ///  Enables multiple-choice selection from the set of chips. Chips must be "Checkable" for this to work.
+        /// Will not allow to deselect the selected chip in single selection mode.
+        /// </summary>
+        [Parameter]
+        public bool Mandatory { get; set; } = false;
+
+
+        /// <summary>
+        ///  Will show a check-mark for the selected components.
         /// </summary>
         [Parameter]
         public bool Filter { get; set; }
@@ -125,16 +132,19 @@ namespace MudBlazor
 
         internal async Task OnChipClicked(MudChip chip)
         {
-            if (Filter)
+            var was_selected=chip.IsSelected;
+            if (MultiSelection)
             {
                 chip.IsSelected = !chip.IsSelected;
             }
-            else if (Choice)
+            else
             {
                 foreach (var ch in _chips)
                 {
                      ch.IsSelected = (ch==chip); // <-- exclusively select the one chip only, thus all others must be deselected
                 }
+                if (!Mandatory)
+                    chip.IsSelected = !was_selected;
             }
             await NotifySelection();
         }

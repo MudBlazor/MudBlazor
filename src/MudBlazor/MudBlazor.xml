@@ -711,14 +711,19 @@
             Child content of component.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudChipSet.Choice">
+        <member name="P:MudBlazor.MudChipSet.MultiSelection">
             <summary>
-            Allows single selection from a set of options. If combined with Filter the selected value can be unselected.
+            Allows to select more than one chip.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.Mandatory">
+            <summary>
+            Will not allow to deselect the selected chip in single selection mode.
             </summary>
         </member>
         <member name="P:MudBlazor.MudChipSet.Filter">
             <summary>
-             Enables multiple-choice selection from the set of chips. Chips must be "Checkable" for this to work.
+             Will show a check-mark for the selected components.
             </summary>
         </member>
         <member name="P:MudBlazor.MudChipSet.SelectedChip">
@@ -821,6 +826,11 @@
             If true, force browser to redirect outside component router-space.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudChip.RemoveOnClose">
+            <summary>
+            If true, remove the chip from the render tree on close.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudChip.Command">
             <summary>
             Command executed when the user clicks on an element.
@@ -839,6 +849,11 @@
         <member name="P:MudBlazor.MudChip.OnClose">
             <summary>
             Chip delete event, if set the delete icon will be visible.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.IsChecked">
+            <summary>
+            Set by MudChipSet
             </summary>
         </member>
         <member name="P:MudBlazor.MudChip.IsSelected">

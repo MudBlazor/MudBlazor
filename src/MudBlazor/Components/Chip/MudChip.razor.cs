@@ -101,10 +101,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Target { get; set; }
 
-        /// <summary>
+     
+         /// <summary>
         /// If true, force browser to redirect outside component router-space.
         /// </summary>
         [Parameter] public bool ForceLoad { get; set; }
+
+       /// <summary>
+       /// If true, remove the chip from the render tree on close.
+       /// </summary>
+       [Parameter]
+       public bool RemoveOnClose { get; set; } = true;
 
         /// <summary>
         /// Command executed when the user clicks on an element.
@@ -126,7 +133,13 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MudChip> OnClose { get; set; }
 
-
+        /// <summary>
+        /// Set by MudChipSet
+        /// </summary>
+        public bool IsChecked
+        {
+            get => _isSelected && ChipSet?.Filter==true;
+        }
 
         /// <summary>
         /// Set by MudChipSet
@@ -169,7 +182,8 @@ namespace MudBlazor
         protected async Task OnCloseHandler(MouseEventArgs ev)
         {
             await OnClose.InvokeAsync(this);
-            Deleted = true;
+            if (RemoveOnClose)
+                Deleted = true;
             ChipSet?.OnChipDeleted(this);
             StateHasChanged();
         }
