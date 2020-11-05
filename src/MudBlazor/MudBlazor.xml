@@ -2362,6 +2362,11 @@
             Defines how a table row looks like. Use MudTd to define the table cells and their content.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTable`1.RowEditingTemplate">
+            <summary>
+            Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTable`1.Items">
             <summary>
             The data to display in the table. MudTable will render one row per item
@@ -2395,6 +2400,11 @@
         <member name="M:MudBlazor.MudTableSortLabel`1.SetSortDirection(MudBlazor.SortDirection)">
             <summary>
             Set sort direction but don't update Table sort order. This should only be called by Table
+            </summary>
+        </member>
+        <member name="F:MudBlazor.MudTr._lockeditingentry">
+            <summary>
+            FinishEdit() is called befor OwRowClick, so we are going to block the OnRowClicked()'s EditingItem sett when user clicks on finish edit button
             </summary>
         </member>
         <member name="P:MudBlazor.MudTabPanel.Text">
