@@ -1821,6 +1821,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void TextFieldMultilineExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TextFieldMultilineExample>();
+        }
+
+
+        [Test]
         public void ThemesCustomExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -2008,6 +2019,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void FlexAlignContentExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<FlexAlignContentExample>();
+        }
+
+
+        [Test]
         public void FlexAlignExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -2015,6 +2037,17 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<FlexAlignExample>();
+        }
+
+
+        [Test]
+        public void FlexAlignSelfExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<FlexAlignSelfExample>();
         }
 
 
@@ -2048,6 +2081,28 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<FlexJustifyExample>();
+        }
+
+
+        [Test]
+        public void FlexOrderExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<FlexOrderExample>();
+        }
+
+
+        [Test]
+        public void FlexWrapExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<FlexWrapExample>();
         }
 
 
