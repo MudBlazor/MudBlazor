@@ -127,6 +127,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
+        /// <summary>
+        ///  A multiline input (textarea) will be shown, if set to more than one line.
+        /// </summary>
+        [Parameter] public int Lines { get; set; } = 1;
+
         private bool _settingText;
         protected string _text;
         [Parameter]
