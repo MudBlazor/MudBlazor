@@ -2,7 +2,8 @@
 @using MudBlazor.Docs.Extensions
 
 <MudNavMenu Class="mudblazor-navmenu">
-    <MudNavGroup Title="Getting Started" Icon="@Icons.Material.School" Expanded="false" ExpandIcon="@Icons.Material.ExpandMore">
+    <div class="docs-nav-fader"></div>
+    <MudNavGroup Title="Getting Started" Icon="@Icons.Material.School" Expanded="false" ExpandIcon="@Icons.Material.ExpandMore" Style="margin-top: 40px;">
         <MudNavLink Href="getting-started/installation">Installation</MudNavLink>
         <MudNavLink Href="getting-started/usage">Usage</MudNavLink>
     </MudNavGroup>
@@ -11,7 +12,7 @@
         {
             if (item.IsNavGroup)
             {
-                <MudNavGroup Title="@item.Name" Expanded="@item.NavGroupExpanded">
+                <MudNavGroup Title="@item.Name" Expanded="@item.NavGroupExpanded" ExpandIcon="@Icons.Material.ExpandMore">
                     @foreach (var item in item.GroupItems.ToList().OrderBy(i => i.Name))
                     {
                         string href = $"components/{item.Link}";

@@ -68,6 +68,8 @@ public const string MudBaseInput_Variant = @"Variant to use.";
 
 public const string MudBaseInput_Margin = @"Will adjust vertical spacing.";
 
+public const string MudBaseInput_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
+
 public const string MudBaseInput_Text = @"";
 
 public const string MudBaseInput_TextChanged = @"";
@@ -270,6 +272,8 @@ public const string MudAutocomplete_InputType = @"";
 public const string MudAutocomplete_Variant = @"";
 
 public const string MudAutocomplete_Margin = @"";
+
+public const string MudAutocomplete_Lines = @"";
 
 public const string MudAutocomplete_Text = @"";
 
@@ -840,6 +844,8 @@ public const string MudInput_Variant = @"";
 
 public const string MudInput_Margin = @"";
 
+public const string MudInput_Lines = @"";
+
 public const string MudInput_Text = @"";
 
 public const string MudInput_TextChanged = @"";
@@ -915,6 +921,8 @@ public const string MudInputString_InputType = @"Type of the input element. It s
 public const string MudInputString_Variant = @"Variant to use.";
 
 public const string MudInputString_Margin = @"Will adjust vertical spacing.";
+
+public const string MudInputString_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
 
 public const string MudInputString_Text = @"";
 
@@ -1389,6 +1397,8 @@ public const string MudSelect_Variant = @"";
 
 public const string MudSelect_Margin = @"";
 
+public const string MudSelect_Lines = @"";
+
 public const string MudSelect_Text = @"";
 
 public const string MudSelect_TextChanged = @"";
@@ -1488,6 +1498,8 @@ public const string MudSelectString_InputType = @"Type of the input element. It 
 public const string MudSelectString_Variant = @"Variant to use.";
 
 public const string MudSelectString_Margin = @"Will adjust vertical spacing.";
+
+public const string MudSelectString_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
 
 public const string MudSelectString_Text = @"";
 
@@ -1797,6 +1809,8 @@ public const string MudTextField_Variant = @"";
 
 public const string MudTextField_Margin = @"";
 
+public const string MudTextField_Lines = @"";
+
 public const string MudTextField_Text = @"";
 
 public const string MudTextField_TextChanged = @"";
@@ -1872,6 +1886,8 @@ public const string MudTextFieldString_InputType = @"Type of the input element. 
 public const string MudTextFieldString_Variant = @"Variant to use.";
 
 public const string MudTextFieldString_Margin = @"Will adjust vertical spacing.";
+
+public const string MudTextFieldString_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
 
 public const string MudTextFieldString_Text = @"";
 

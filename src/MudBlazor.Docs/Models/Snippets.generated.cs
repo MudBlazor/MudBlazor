@@ -3110,7 +3110,7 @@ public const string ElevationUsageExample = @"<div class=""mud-elevation-0"">0</
 
 public const string FlexAlignContentExample = @"<MudGrid>
     <MudItem xs=""12"" md=""6"">
-        <MudPaper Class=""d-flex align-content-start flex-wrap py-2 px-1"" Style=""height:150px;"">
+        <MudPaper Class=""d-flex align-content-start flex-wrap py-2 px-1"" Style=""height:200px;"">
             <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">1</MudPaper>
             <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">2</MudPaper>
             <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">3</MudPaper>
@@ -3130,7 +3130,7 @@ public const string FlexAlignContentExample = @"<MudGrid>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
-        <MudPaper Class=""d-flex align-content-end flex-wrap py-2 px-1"" Style=""height:150px;"">
+        <MudPaper Class=""d-flex align-content-end flex-wrap py-2 px-1"" Style=""height:200px;"">
             <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">1</MudPaper>
             <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">2</MudPaper>
             <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">3</MudPaper>
@@ -3150,7 +3150,7 @@ public const string FlexAlignContentExample = @"<MudGrid>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
-        <MudPaper Class=""d-flex align-content-center flex-wrap py-2 px-1"" Style=""height:150px;"">
+        <MudPaper Class=""d-flex align-content-center flex-wrap py-2 px-1"" Style=""height:200px;"">
             <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">1</MudPaper>
             <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">2</MudPaper>
             <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">3</MudPaper>
@@ -3170,7 +3170,7 @@ public const string FlexAlignContentExample = @"<MudGrid>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
-        <MudPaper Class=""d-flex align-content-space-between flex-wrap py-2 px-1"" Style=""height:150px;"">
+        <MudPaper Class=""d-flex align-content-space-between flex-wrap py-2 px-1"" Style=""height:200px;"">
             <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">1</MudPaper>
             <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">2</MudPaper>
             <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">3</MudPaper>
@@ -3190,25 +3190,25 @@ public const string FlexAlignContentExample = @"<MudGrid>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
-        <MudPaper Class=""d-flex align-content-space-around flex-wrap py-2 px-2"" Style=""height:200px;"">
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:79px; text-align:center;"">1</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:79px; text-align:center;"">2</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:79px; text-align:center;"">3</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:79px; text-align:center;"">4</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">5</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">6</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width: 79px; text-align: center;"">7</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">8</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">9</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width: 79px; text-align: center;"">10</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">11</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">12</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width: 79px; text-align: center;"">13</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">14</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">15</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width: 79px; text-align: center;"">16</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">17</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">18</MudPaper>
+        <MudPaper Class=""d-flex align-content-space-around flex-wrap px-2"" Style=""height:250px;"">
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"" Style=""width:79px; text-align:center;"">1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"" Style=""width:79px; text-align:center;"">2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"" Style=""width:79px; text-align:center;"">3</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"" Style=""width:79px; text-align:center;"">4</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">5</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">6</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"" Style=""width: 79px; text-align: center;"">7</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">8</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">9</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"" Style=""width: 79px; text-align: center;"">10</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">11</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">12</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"" Style=""width: 79px; text-align: center;"">13</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">14</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">15</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"" Style=""width: 79px; text-align: center;"">16</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">17</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">18</MudPaper>
         </MudPaper>
     </MudItem>
 </MudGrid>";
@@ -3340,6 +3340,16 @@ public const string FlexEnableExample = @"<MudPaper Class=""d-flex pa-4"">
     I'm an inline flexbox container.
 </MudPaper>";
 
+public const string FlexGrowAndShrinkExample = @"<MudGrid>
+    <MudItem xs=""12"" md=""12"">
+        <MudPaper Class=""d-flex py-2 px-1"">
+            <MudPaper Class=""flex-grow-0 flex-shrink-0 pa-2 mx-2 mud-theme-color-primary order-3"">First Flex Item</MudPaper>
+            <MudPaper Class=""flex-grow-1 flex-shrink-0 pa-2 mx-2 mud-theme-color-secondary order-2"">Second Flex Item</MudPaper>
+            <MudPaper Class=""flex-grow-0 flex-shrink-1 pa-2 mx-2 mud-theme-color-info order-1"">Third Flex Item</MudPaper>
+        </MudPaper>
+    </MudItem>
+</MudGrid>";
+
 public const string FlexJustifyExample = @"<MudPaper Class=""d-flex justify-start py-2 px-1"">
     <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"">Flex Item 1</MudPaper>
     <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"">Flex Item 2</MudPaper>
@@ -3382,7 +3392,7 @@ public const string FlexOrderExample = @"<MudGrid>
 
 public const string FlexWrapExample = @"<MudGrid>
     <MudItem xs=""12"" md=""12"">
-        <MudPaper Class=""d-flex flex-nowrap pa-2"">
+        <MudPaper Class=""d-flex flex-nowrap px-1"">
             <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"">Flex Item</MudPaper>
             <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"">Flex Item</MudPaper>
             <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"">Flex Item</MudPaper>
@@ -3392,7 +3402,7 @@ public const string FlexWrapExample = @"<MudGrid>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
-        <MudPaper Class=""d-flex flex-wrap pa-2"">
+        <MudPaper Class=""d-flex flex-wrap px-1"">
             <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">1</MudPaper>
             <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">2</MudPaper>
             <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">3</MudPaper>
@@ -3414,7 +3424,7 @@ public const string FlexWrapExample = @"<MudGrid>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
-        <MudPaper Class=""d-flex flex-wrap-reverse pa-2"">
+        <MudPaper Class=""d-flex flex-wrap-reverse px-1"">
             <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">1</MudPaper>
             <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">2</MudPaper>
             <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">3</MudPaper>

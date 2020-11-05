@@ -33,10 +33,17 @@
 
 .mudblazor-navmenu {
   overflow: auto;
-  margin-bottom: 12px;
-  margin-top: 32px; }
+  margin-bottom: 12px; }
   .mudblazor-navmenu * .mud-nav-link-icon, .mudblazor-navmenu .mud-nav-link-expand-icon {
     fill: var(--mud-theme-text-default); }
+
+.docs-nav-fader {
+  display: block;
+  position: fixed;
+  width: 232px;
+  height: 60px;
+  background-image: linear-gradient(to top, rgba(255, 0, 0, 0), #fff);
+  z-index: 100; }
 
 .docs-nav-filler {
   display: flex;
@@ -48,9 +55,6 @@
 .mudblazor-main-content {
   padding-top: 64px;
   padding-bottom: 64px; }
-
-.docs-bold * .mud-typography {
-  font-weight: 500 !important; }
 
 @media (min-width: 960px) {
   .mudblazor-main-content {

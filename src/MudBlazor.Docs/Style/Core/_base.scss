@@ -48,13 +48,20 @@
 .mudblazor-navmenu {
     overflow: auto;
     margin-bottom: 12px;
-    margin-top: 32px;
 
     & * .mud-nav-link-icon, .mud-nav-link-expand-icon {
         fill: var(--mud-theme-text-default);
     }
 }
 
+.docs-nav-fader {
+    display: block;
+    position: fixed;
+    width: 232px;
+    height: 60px;
+    background-image: linear-gradient(to top,rgba(255,0,0,0),#fff);
+    z-index: 100;
+}
 
 .docs-nav-filler {
     display: flex;
