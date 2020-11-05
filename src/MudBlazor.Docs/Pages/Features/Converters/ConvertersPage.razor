@@ -3,6 +3,12 @@
 
 <DocsPage MaxWidth="MaxWidth.Large">
     <DocsPageHeader Title="Converters" SubTitle="Converters are essential for binding input elements to your model.">
+        <Description>
+            When you bind a non-string value to a <CodeInline Tag="true">MudTextField<Tag>T</Tag></CodeInline> or any other input element that supports a value of type T then a <CodeInline>Converter</CodeInline>
+            converts that value to string for display and converts the user's input back to T. This happens automatically without you having to do anything special. <br/>
+            MudBlazor's <CodeInline>DefaultConverter<Tag>T</Tag></CodeInline> is pretty capable as you can see below but sometimes 
+            you'll want to use your own conversion functions. This page is all about that.
+        </Description>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
@@ -123,6 +129,14 @@
                             </td>
                             <td><MudText Inline="true">@ToS(ndecimal_value) </MudText></td>
                         </tr>
+                        <tr>
+                            <td><CodeInline>decimal (2 decimals)</CodeInline></td>
+                            <td>
+                                <MudTextField T="decimal?" Format="0.00" @bind-Value="@ndecimal_value2" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(ndecimal_value2) </MudText></td>
+                        </tr>
+
                         <tr>
                             <td><CodeInline>DateTime?</CodeInline></td>
                             <td>
@@ -252,6 +266,13 @@
                             <td><MudText Inline="true">@ToS(decimal_value) </MudText></td>
                         </tr>
                         <tr>
+                            <td><CodeInline>decimal (2 decimals)</CodeInline></td>
+                            <td>
+                                <MudTextField T="decimal" Format="0.00" @bind-Value="@decimal_value2" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(decimal_value2) </MudText></td>
+                        </tr>
+                        <tr>
                             <td><CodeInline>DateTime</CodeInline></td>
                             <td>
                                 <MudTextField T="DateTime" @bind-Value="@datetime_value" Class="mt-n1" Immediate="true" />
@@ -342,7 +363,7 @@
                         by setting <CodeInline>Converters.DefaultCulture</CodeInline> to your desired <CodeInline>CultureInfo</CodeInline> at application start.
                     </MudText>
                     <MudText Class="mt-4">
-                        If you want to configure the date format of a DateTime value, you can set the <CodeInline>Format</CodeInline> parameter of <CodeInline Tag="true">MudTextField</CodeInline>.
+                        If you want to configure the date format of a DateTime value, you can set the <CodeInline>Format</CodeInline> parameter of <CodeInline  Tag="true">MudTextField</CodeInline>.
                     </MudText>
                     <MudText>
                         Let's format the same date in different ways:
@@ -357,22 +378,6 @@
 
         <DocsPageSection>
             <SectionHeader>
-                <Title>Custom Converter</Title>
-                <Description>
-                    <MudText>
-                        Changing the default Converter's GetFunc() and SetFunc() functions you can get many possibilities. On this example we will work with custom decimal places.
-                        It's recommended to set Immediate="false" for Binding on input's lost focus for better typing experience.
-                    </MudText>
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="false" FullWidth="true">
-                <CustomConverterExample />
-            </SectionContent>
-            <SectionSource Code="CustomConverterExample" ShowCode="true" />
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader>
                 <Title>Custom Binding Converters</Title>
                 <Description>
                     If you need some really special binding conversion it is very easy to plug in your own converter.
@@ -382,10 +387,11 @@
                     </MudText>
                 </Description>
             </SectionHeader>
+
             <SectionContent DarkenBackground="false" FullWidth="true">
                 <SpecialConverterExample />
             </SectionContent>
-            <SectionSource Code="SpecialConverterExample" ShowCode="true" />
+            <SectionSource Code="SpecialConverterExample" ShowCode="false" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
