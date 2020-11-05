@@ -101,8 +101,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Target { get; set; }
 
-     
-         /// <summary>
+        /// <summary>
+        /// A string you want to associate with the chip. If the ChildContent is not set this will be shown as chip text.
+        /// </summary>
+        [Parameter] public string Text { get; set; }
+
+        /// <summary>
         /// If true, force browser to redirect outside component router-space.
         /// </summary>
         [Parameter] public bool ForceLoad { get; set; }
@@ -193,6 +197,9 @@ namespace MudBlazor
             ChipSet?.Add(this);
             return base.OnInitializedAsync();
         }
+
+        internal void ForceRerender() => StateHasChanged();
+             
 
         public void Dispose()
         {

@@ -19,10 +19,17 @@
         <MudIcon Icon="@Icons.Material.Check" Class="mud-chip-icon" Size="Size.Small" />
     }
     <span class="mud-chip-content">
-        @ChildContent
-        @if (OnClose.HasDelegate)
+        @if (ChildContent == null)
         {
-            <MudIconButton Class="mud-chip-close-button" Icon="@(String.IsNullOrEmpty(CloseIcon) ? $"{Icons.Material.Cancel}" : $"{CloseIcon}")" OnClick="OnCloseHandler" Size="Size.Small" />
+            @Text
+        }
+        else
+        {
+            @ChildContent
+        }
+        @if (OnClose.HasDelegate || ChipSet?.AllClosable==true)
+        {
+            <MudIconButton Class="mud-chip-close-button" Icon="@(String.IsNullOrEmpty(CloseIcon) ? $"{Icons.Material.Cancel}" : $"{CloseIcon}")" OnClick="OnCloseHandler" Size="Size.Small"/>
         }
     </span>
 </div>

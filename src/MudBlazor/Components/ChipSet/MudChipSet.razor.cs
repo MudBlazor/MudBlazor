@@ -36,12 +36,29 @@ namespace MudBlazor
         [Parameter]
         public bool Mandatory { get; set; } = false;
 
+        /// <summary>
+        /// Will make all chips closable.
+        /// </summary>
+        [Parameter]
+        public bool AllClosable { get; set; } = false;
 
         /// <summary>
         ///  Will show a check-mark for the selected components.
         /// </summary>
         [Parameter]
-        public bool Filter { get; set; }
+        public bool Filter
+        {
+            get => _filter;
+            set
+            {
+                if (_filter == value)
+                    return;
+                _filter = value;
+                StateHasChanged();
+                foreach (var chip in _chips)
+                    chip.ForceRerender();
+            }
+        }
 
         /// <summary>
         /// The currently selected chip in Choice mode
@@ -114,7 +131,7 @@ namespace MudBlazor
         /// Called when a Chip was deleted (by click on the close icon)
         /// </summary>
         [Parameter]
-        public EventCallback<MudChip> ChipDeleted { get; set; }
+        public EventCallback<MudChip> OnClose { get; set; }
 
         internal void Add(MudChip chip)
         {
@@ -129,6 +146,7 @@ namespace MudBlazor
         }
 
         private HashSet<MudChip> _chips = new HashSet<MudChip>();
+        private bool _filter;
 
         internal async Task OnChipClicked(MudChip chip)
         {
@@ -159,7 +177,7 @@ namespace MudBlazor
         public void OnChipDeleted(MudChip chip)
         {
             Remove(chip);
-            ChipDeleted.InvokeAsync(chip);
+            OnClose.InvokeAsync(chip);
         }
     }
 }

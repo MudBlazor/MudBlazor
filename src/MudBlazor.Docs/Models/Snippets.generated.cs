@@ -562,14 +562,14 @@ public const string ChipBasicExample = @"<MudChip>Default</MudChip>
 <MudChip Disabled=""true"" Color=""Color.Danger"">Disabled</MudChip>
 <MudChip Disabled=""true"" Color=""Color.Dark"">Disabled</MudChip>";
 
-public const string ChipClosableExample = @"<MudChip Color=""Color.Default"" OnClose=""CloseChip"">Closable</MudChip>
-<MudChip Color=""Color.Danger"" OnClose=""CloseChip"">Closable</MudChip>
-<MudChip Color=""Color.Primary"" OnClose=""CloseChip"" CloseIcon=""@Icons.Material.AlarmAdd"">Closable</MudChip>
-<MudChip Color=""Color.Success"" OnClose=""CloseChip"" CloseIcon=""@Icons.Material.AlarmOn"">Closable</MudChip>
+public const string ChipClosableExample = @"<MudChip Color=""Color.Default"" OnClose=""Closed"">Closable</MudChip>
+<MudChip Color=""Color.Danger"" OnClose=""Closed"">Closable</MudChip>
+<MudChip Color=""Color.Primary"" OnClose=""Closed"" CloseIcon=""@Icons.Material.AlarmAdd"">Closable</MudChip>
+<MudChip Color=""Color.Success"" OnClose=""Closed"" CloseIcon=""@Icons.Material.AlarmOn"">Closable</MudChip>
 
 @code {
-    void CloseChip(){
-        // Code..
+    void Closed(MudChip chip) {
+        // react to chip closed
     }
 }";
 
@@ -601,6 +601,83 @@ public const string ChipOutlinedExample = @"<MudChip Variant=""Variant.Outlined"
 public const string ChipSizeExample = @"<MudChip Size=""Size.Small"">Small</MudChip>
 <MudChip Size=""Size.Medium"">Medium</MudChip>
 <MudChip Size=""Size.Large"">Large</MudChip>";
+
+public const string ChipSetAddRemoveExample = @"<MudChipSet AllClosable=""true"" OnClose=""Closed"">
+    @foreach (var value in values)
+    {
+        <MudChip Text=""@value""></MudChip>
+    }
+</MudChipSet>
+
+Add chips <MudIconButton Icon=""@Icons.Material.Add"" OnClick=""Add""></MudIconButton>
+
+
+
+
+
+@code
+{
+    int i = 1;
+    List<string> values = new List<string>();
+    public void Add() => values.Add(""Value "" + (i++));
+    public void Closed(MudChip chip) => values.Remove(chip.Text);
+}";
+
+public const string ChipSetBasicExample = @"<MudChipSet @bind-SelectedChip=""selected"" Filter=""true"" Mandatory=""@mandatory"">
+    <MudChip Text=""grey"">Default</MudChip>
+    <MudChip Text=""purple"" Color=""Color.Primary"">Primary</MudChip>
+    <MudChip Text=""pink"" Color=""Color.Secondary"">Secondary</MudChip>
+    <MudChip Text=""blue"" Color=""Color.Info"">Info</MudChip>
+    <MudChip Text=""green"" Color=""Color.Success"">Success</MudChip>
+    <MudChip Text=""orange"" Color=""Color.Warning"">Warning</MudChip>
+    <MudChip Text=""red"" Color=""Color.Danger"">Danger</MudChip>
+    <MudChip Text=""black"" Color=""Color.Dark"">Dark</MudChip>
+</MudChipSet>
+
+
+@if (selected != null)
+{
+    <MudText>You selected the <MudText Color=""@selected.Color"" Inline=""true"">@selected.Text</MudText> chip.</MudText>
+}
+else
+{
+    <MudText>Select a chip.</MudText>
+}
+<MudCheckBox @bind-Checked=""mandatory"">Mandatory</MudCheckBox>
+
+
+@code
+{
+    bool mandatory = true;
+    MudChip selected;
+}";
+
+public const string ChipSetMultiselectionExample = @"<MudChipSet @bind-SelectedChips=""selected"" MultiSelection=""true"" Filter=""filter"">
+    <MudChip Text=""Milk""></MudChip>
+    <MudChip Text=""Eggs""></MudChip>
+    <MudChip Text=""Soap""></MudChip>
+    <MudChip Text=""Corn flakes""></MudChip>
+    <MudChip Text=""Salad""></MudChip>
+    <MudChip Text=""Apples""></MudChip>
+    <MudChip Text=""Red wine""></MudChip>
+</MudChipSet>
+
+
+@if (selected != null && selected.Length>0)
+{
+    <MudText>You selected @string.Join("", "", selected.Select(chip=>chip.Text)).</MudText>
+}
+else
+{
+    <MudText>Nothing selected.</MudText>
+}
+<MudCheckBox @bind-Checked=""filter"">Filter</MudCheckBox>
+
+@code
+{
+    bool filter = true;
+    MudChip[] selected;
+}";
 
 public const string ContainedFixedExample = @"<MudPaper>
     <MudContainer Fixed=""true""></MudContainer>

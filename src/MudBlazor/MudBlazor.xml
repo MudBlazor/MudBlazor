@@ -721,6 +721,11 @@
             Will not allow to deselect the selected chip in single selection mode.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudChipSet.AllClosable">
+            <summary>
+            Will make all chips closable.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudChipSet.Filter">
             <summary>
              Will show a check-mark for the selected components.
@@ -746,7 +751,7 @@
             Called when the selection changed, in Filter mode
             </summary>
         </member>
-        <member name="P:MudBlazor.MudChipSet.ChipDeleted">
+        <member name="P:MudBlazor.MudChipSet.OnClose">
             <summary>
             Called when a Chip was deleted (by click on the close icon)
             </summary>
@@ -819,6 +824,11 @@
         <member name="P:MudBlazor.MudChip.Target">
             <summary>
             The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.Text">
+            <summary>
+            A string you want to associate with the chip. If the ChildContent is not set this will be shown as chip text.
             </summary>
         </member>
         <member name="P:MudBlazor.MudChip.ForceLoad">

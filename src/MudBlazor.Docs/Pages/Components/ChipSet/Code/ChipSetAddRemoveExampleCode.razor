@@ -1,0 +1,23 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChipSet</span> <span class="htmlAttributeName">AllClosable</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClose</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Closed</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="atSign">&#64;</span>foreach (var value in values)
+    {
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChip</span> <span class="htmlAttributeName">Text</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>value</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChip</span><span class="htmlTagDelimiter">&gt;</span>
+    }
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChipSet</span><span class="htmlTagDelimiter">&gt;</span>
+
+Add chips <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudIconButton</span> <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Icons.Material.Add</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Add</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudIconButton</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code
+{
+    <span class="keyword">int</span> i = <span class="number">1</span>;
+    List&lt;<span class="keyword">string</span>&gt; values = <span class="keyword">new</span> List&lt;<span class="keyword">string</span>&gt;();
+    <span class="keyword">public</span> <span class="keyword">void</span> Add() =&gt; values.Add(<span class="string">&quot;Value &quot;</span> + (i++));
+    <span class="keyword">public</span> <span class="keyword">void</span> Closed(MudChip chip) =&gt; values.Remove(chip.Text);
+}
+</pre></div>
+</div>

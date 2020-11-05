@@ -515,6 +515,35 @@ public const string MudCheckBox_Tag = @"Use Tag to attach any user data object t
 public const string MudCheckBox_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudChipSet_ChildContent = @"Child content of component.";
+
+public const string MudChipSet_MultiSelection = @"Allows to select more than one chip.";
+
+public const string MudChipSet_Mandatory = @"Will not allow to deselect the selected chip in single selection mode.";
+
+public const string MudChipSet_AllClosable = @"Will make all chips closable.";
+
+public const string MudChipSet_Filter = @"Will show a check-mark for the selected components.";
+
+public const string MudChipSet_SelectedChip = @"The currently selected chip in Choice mode";
+
+public const string MudChipSet_SelectedChipChanged = @"Called when the selected chip changes, in Choice mode";
+
+public const string MudChipSet_SelectedChips = @"The currently selected chips in Filter mode";
+
+public const string MudChipSet_SelectedChipsChanged = @"Called when the selection changed, in Filter mode";
+
+public const string MudChipSet_OnClose = @"Called when a Chip was deleted (by click on the close icon)";
+
+public const string MudChipSet_Class = @"User class names, separated by space";
+
+public const string MudChipSet_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudChipSet_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudChipSet_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudChip_Color = @"The color of the component.";
 
 public const string MudChip_Size = @"The size of the button. small is equivalent to the dense button styling.";
@@ -526,6 +555,8 @@ public const string MudChip_Avatar = @"Avatar Icon, Overrides the regular Icon i
 public const string MudChip_AvatarClass = @"Avatar CSS Class, appends to Chips default avatar classes.";
 
 public const string MudChip_Label = @"Removes circle edges and applys theme default.";
+
+public const string MudChip_Deleted = @"If true, the chip will not be rendered.";
 
 public const string MudChip_Disabled = @"If true, the chip will be displayed in disabled state and no events possible.";
 
@@ -541,7 +572,11 @@ public const string MudChip_Link = @"If set to a URL, clicking the button will o
 
 public const string MudChip_Target = @"The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | framename";
 
+public const string MudChip_Text = @"A string you want to associate with the chip. If the ChildContent is not set this will be shown as chip text.";
+
 public const string MudChip_ForceLoad = @"If true, force browser to redirect outside component router-space.";
+
+public const string MudChip_RemoveOnClose = @"If true, remove the chip from the render tree on close.";
 
 public const string MudChip_Command = @"Command executed when the user clicks on an element.";
 
