@@ -5310,12 +5310,116 @@ ul {
   .mud-input > input.mud-input-root-outlined.mud-input-root-margin-dense {
     padding-top: 10.5px;
     padding-bottom: 10.5px; }
-  .mud-input > input.mud-input-root-outlined.mud-input-root-multiline {
-    padding: 0; }
   .mud-input > input.mud-input-root-outlined.mud-input-root-adorned-start {
     padding-left: 0; }
   .mud-input > input.mud-input-root-outlined.mud-input-root-adorned-end {
     padding-right: 0; }
+
+.mud-input > textarea.mud-input-root {
+  font: inherit;
+  color: currentColor;
+  width: 100%;
+  border: 0;
+  height: auto;
+  margin: 6px 0 7px;
+  padding: 0;
+  display: block;
+  min-width: 0;
+  background: none;
+  position: relative;
+  box-sizing: content-box;
+  letter-spacing: inherit;
+  -webkit-tap-highlight-color: transparent;
+  height: auto;
+  resize: none;
+  cursor: auto;
+  /* - Chrome ≤56,
+    - Safari 5-10.0
+    - iOS Safari 4.2-10.2
+    - Opera 15-43
+    - Opera Mobile 12-12.1
+    - Android Browser 2.1-4.4.4
+    - Samsung Internet ≤6.2
+    - QQ Browser */ }
+  .mud-input > textarea.mud-input-root::placeholder {
+    color: currentColor;
+    opacity: 0.42;
+    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
+  .mud-input > textarea.mud-input-root::-webkit-input-placeholder {
+    color: currentColor;
+    opacity: 0.42;
+    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
+  .mud-input > textarea.mud-input-root:-moz-placeholder {
+    color: currentColor;
+    opacity: 0.42;
+    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
+  .mud-input > textarea.mud-input-root::-moz-placeholder {
+    color: currentColor;
+    opacity: 0.42;
+    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
+  .mud-input > textarea.mud-input-root:-ms-input-placeholder {
+    color: currentColor;
+    opacity: 0.42;
+    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
+  .mud-input > textarea.mud-input-root::-ms-input-placeholder {
+    color: currentColor;
+    opacity: 0.42;
+    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
+  .mud-input > textarea.mud-input-root.mud-input-root-margin-dense {
+    margin-top: 3px; }
+  .mud-input > textarea.mud-input-root.mud-input-root-type-search {
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield; }
+  .mud-input > textarea.mud-input-root:focus {
+    outline: 0; }
+  .mud-input > textarea.mud-input-root:invalid {
+    box-shadow: none; }
+  .mud-input > textarea.mud-input-root:disabled {
+    opacity: 1; }
+  .mud-input > textarea.mud-input-root.mud-input-root-filled {
+    margin: 27px 12px 10px; }
+    .mud-input > textarea.mud-input-root.mud-input-root-filled.mud-input-root-margin-dense {
+      margin-top: 23px;
+      margin-bottom: 6px; }
+    .mud-input > textarea.mud-input-root.mud-input-root-filled:-webkit-autofill {
+      border-top-left-radius: inherit;
+      border-top-right-radius: inherit; }
+    .mud-input > textarea.mud-input-root.mud-input-root-filled.mud-input-root-hidden-label {
+      margin-top: 18px;
+      margin-bottom: 19px; }
+      .mud-input > textarea.mud-input-root.mud-input-root-filled.mud-input-root-hidden-label.mud-input-root-margin-dense {
+        margin-top: 10px;
+        margin-bottom: 11px; }
+    .mud-input > textarea.mud-input-root.mud-input-root-filled.mud-input-root-adorned-start {
+      margin-left: 0; }
+    .mud-input > textarea.mud-input-root.mud-input-root-filled.mud-input-root-adorned-end {
+      margin-right: 0; }
+  .mud-input > textarea.mud-input-root::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    z-index: 1;
+    cursor: crosshair; }
+  .mud-input > textarea.mud-input-root::-webkit-scrollbar-thumb {
+    background: var(--mud-theme-border-color-inputs);
+    border-radius: 1px; }
+  .mud-input > textarea.mud-input-root::-webkit-scrollbar-track {
+    background: transparent; }
+
+.mud-input > textarea.mud-input-root-outlined {
+  margin: 18.5px 14px; }
+  .mud-input > textarea.mud-input-root-outlined:hover {
+    border-color: var(--mud-theme-border-color-inputs); }
+  .mud-input > textarea.mud-input-root-outlined:focus {
+    border-color: var(--mud-theme-primary); }
+  .mud-input > textarea.mud-input-root-outlined.mud-input-root:-webkit-autofill {
+    border-radius: inherit; }
+  .mud-input > textarea.mud-input-root-outlined.mud-input-root-margin-dense {
+    margin-top: 10.5px;
+    margin-bottom: 10.5px; }
+  .mud-input > textarea.mud-input-root-outlined.mud-input-root-adorned-start {
+    margin-left: 0; }
+  .mud-input > textarea.mud-input-root-outlined.mud-input-root-adorned-end {
+    margin-right: 0; }
 
 .mud-input-adornment {
   height: 0.01em;
