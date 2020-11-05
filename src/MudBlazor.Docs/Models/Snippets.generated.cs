@@ -2370,8 +2370,9 @@ public const string TableColGroupExample = @"<MudTable Items=""@PeriodicTable.Ge
 
 public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"">
     <ToolBarContent>
-        <MudText Typo=""Typo.h6"" Class=""mud-flex-1-1-100"">Periodic Elements</MudText>
-        <MudIcon Style=""margin-top: 20px; margin-right: 8px;"" Icon=""@Icons.Material.Search""></MudIcon>
+        <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
+        <MudToolBarSpacer />
+        <MudIcon Class=""mt-5 mr-2"" Icon=""@Icons.Material.Search""></MudIcon>
         <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
     </ToolBarContent>
     <HeaderContent>
@@ -2445,8 +2446,9 @@ public const string TableFixedHeaderExample = @"<MudTable Items=""@PeriodicTable
 
 public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"">
     <ToolBarContent>
-        <MudText Typo=""Typo.h6"" Class=""mud-flex-1-1-100"">Periodic Elements</MudText>
-        <MudIcon Style=""margin-top: 20px; margin-right: 8px;"" Icon=""@Icons.Material.Search""></MudIcon>
+        <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
+        <MudToolBarSpacer/>
+        <MudIcon Class=""mt-5 mr-2"" Icon=""@Icons.Material.Search""></MudIcon>
         <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
     </ToolBarContent>
     <ColGroup>
@@ -2945,6 +2947,110 @@ public const string ElevationUsageExample = @"<div class=""mud-elevation-0"">0</
 <div class=""mud-elevation-23"">23</div>
 <div class=""mud-elevation-24"">24</div>
 <div class=""mud-elevation-99"">99</div>";
+
+public const string FlexAlignExample = @"<MudPaper Class=""d-flex align-start py-4 px-1"">
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 1</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 2</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 3</MudPaper>
+</MudPaper>
+
+<MudPaper Class=""d-flex align-end py-4 px-1 mt-6"">
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 1</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 2</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 3</MudPaper>
+</MudPaper>
+
+<MudPaper Class=""d-flex align-center py-4 px-1 mt-6"">
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 1</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 2</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 3</MudPaper>
+</MudPaper>
+
+<MudPaper Class=""d-flex align-baseline py-4 px-1 mt-6"">
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 1</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 2</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 3</MudPaper>
+</MudPaper>
+
+<MudPaper Class=""d-flex align-stretch py-4 px-1 mt-6"">
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 1</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 2</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 3</MudPaper>
+</MudPaper>";
+
+public const string FlexDirectionExample = @"<MudGrid>
+    <MudItem xs=""12"" md=""12"">
+        <MudPaper Class=""d-flex flex-row py-2 px-1"">
+            <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 1</MudPaper>
+            <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 2</MudPaper>
+            <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 3</MudPaper>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs=""12"" md=""12"">
+        <MudPaper Class=""d-flex flex-row-reverse py-2 px-1"">
+            <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 1</MudPaper>
+            <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 2</MudPaper>
+            <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 3</MudPaper>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs=""12"" md=""6"">
+        <div class=""d-flex flex-column"">
+            <MudPaper Class=""my-2 pa-4"">Flex Item 1</MudPaper>
+            <MudPaper Class=""my-2 pa-4"">Flex Item 2</MudPaper>
+            <MudPaper Class=""my-2 pa-4"">Flex Item 3</MudPaper>
+        </div>
+    </MudItem>
+    <MudItem xs=""12"" md=""6"">
+        <div class=""d-flex flex-column-reverse"">
+            <MudPaper Class=""my-2 pa-4"">Flex Item 1</MudPaper>
+            <MudPaper Class=""my-2 pa-4"">Flex Item 2</MudPaper>
+            <MudPaper Class=""my-2 pa-4"">Flex Item 3</MudPaper>
+        </div>
+    </MudItem>
+</MudGrid>";
+
+public const string FlexEnableExample = @"<MudPaper Class=""d-flex pa-4"">
+    I'm a flexbox container.
+</MudPaper>
+<MudPaper Class=""d-flex pa-4"">
+    I'm a flexbox container.
+</MudPaper>
+<MudPaper Class=""d-inline-flex pa-4"">
+    I'm an inline flexbox container.
+</MudPaper>
+<MudPaper Class=""d-inline-flex pa-4"">
+    I'm an inline flexbox container.
+</MudPaper>";
+
+public const string FlexJustifyExample = @"<MudPaper Class=""d-flex justify-start py-2 px-1"">
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 1</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 2</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 3</MudPaper>
+</MudPaper>
+
+<MudPaper Class=""d-flex justify-end py-2 px-1 mt-6"">
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 1</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 2</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 3</MudPaper>
+</MudPaper>
+
+<MudPaper Class=""d-flex justify-center py-2 px-1 mt-6"">
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 1</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 2</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 3</MudPaper>
+</MudPaper>
+
+<MudPaper Class=""d-flex justify-space-between py-2 px-1 mt-6"">
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 1</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 2</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 3</MudPaper>
+</MudPaper>
+
+<MudPaper Class=""d-flex justify-space-around py-2 px-1 mt-6"">
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 1</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 2</MudPaper>
+    <MudPaper Outlined=""true"" Class=""pa-2 mx-2"">Flex Item 3</MudPaper>
+</MudPaper>";
 
 public const string SpacingBreakpointExample = @"<MudPaper Class=""pa-md-6 mx-lg-auto mud-theme-color-secondary"">
     <MudText Typo=""Typo.body1"">Adjust screen size to see the changes.</MudText>

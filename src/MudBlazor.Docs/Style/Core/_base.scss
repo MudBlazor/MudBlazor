@@ -1,5 +1,5 @@
-﻿.mudblazor-brand {
-    margin: 32px 0px;
+.mudblazor-brand {
+    margin: 32px 0 0;
     padding: 0px;
 
     &:hover {
@@ -27,6 +27,7 @@
     font-weight: 300;
     margin-left: 12px;
     opacity: 0;
+    font-size: 24px;
 
     &.track-in {
         -webkit-animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
@@ -38,15 +39,16 @@
         animation: tracking-out-contract 0.7s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
     }
 
-    &.mud-hide{
-        display:none;
+    &.mud-hide {
+        display: none;
     }
 }
 
 
 .mudblazor-navmenu {
     overflow: auto;
-    margin-bottom: 32px;
+    margin-bottom: 12px;
+    margin-top: 32px;
 
     & * .mud-nav-link-icon, .mud-nav-link-expand-icon {
         fill: var(--mud-theme-text-default);
@@ -68,7 +70,6 @@
     padding-top: 64px;
     padding-bottom: 64px;
 }
-
 
 
 @media (min-width: 960px) {

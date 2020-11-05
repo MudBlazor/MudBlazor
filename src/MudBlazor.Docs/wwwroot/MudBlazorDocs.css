@@ -1,5 +1,5 @@
 ﻿.mudblazor-brand {
-  margin: 32px 0px;
+  margin: 32px 0 0;
   padding: 0px; }
   .mudblazor-brand:hover {
     cursor: pointer;
@@ -20,7 +20,8 @@
   letter-spacing: 0.5rem;
   font-weight: 300;
   margin-left: 12px;
-  opacity: 0; }
+  opacity: 0;
+  font-size: 24px; }
   .mudblazor-appbar-brand-text.track-in {
     -webkit-animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) both;
     animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) both; }
@@ -32,7 +33,8 @@
 
 .mudblazor-navmenu {
   overflow: auto;
-  margin-bottom: 32px; }
+  margin-bottom: 12px;
+  margin-top: 32px; }
   .mudblazor-navmenu * .mud-nav-link-icon, .mudblazor-navmenu .mud-nav-link-expand-icon {
     fill: var(--mud-theme-text-default); }
 
@@ -46,6 +48,9 @@
 .mudblazor-main-content {
   padding-top: 64px;
   padding-bottom: 64px; }
+
+.docs-bold * .mud-typography {
+  font-weight: 500 !important; }
 
 @media (min-width: 960px) {
   .mudblazor-main-content {
