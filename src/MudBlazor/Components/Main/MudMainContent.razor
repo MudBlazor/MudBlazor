@@ -10,13 +10,36 @@
 
     protected string Classname =>
     new CssBuilder("mud-main-content")
-      .AddClass($"mud-main-drawer-open", LayoutState.DrawerOpen)
-      .AddClass($"mud-main-drawer-closed", !LayoutState.DrawerOpen)
-      .AddClass(Class)
-    .Build();
+        .AddClass($"mud-main-drawer-open", Layout?.IsDrawerOpen(Anchor.Left))
+        .AddClass($"mud-main-drawer-clipped", Layout?.IsDrawerClipped(Anchor.Left))
+        .AddClass($"mud-main-right-drawer-open", Layout?.IsDrawerOpen(Anchor.Right))
+        .AddClass($"mud-main-right-drawer-clipped", Layout?.IsDrawerClipped(Anchor.Right))
+        .AddClass(Class)
+     .Build();
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    [CascadingParameter] LayoutState LayoutState { get; set; }
+    [CascadingParameter] MudLayout Layout { get; set; }
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if(Layout!=null)
+            Layout.DrawersChanged+=OnDrawersChanged;
+    }
+
+    private void OnDrawersChanged()
+    {
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        try
+        {
+            if (Layout!=null)
+                Layout.DrawersChanged -= OnDrawersChanged;
+        }
+        catch (Exception) { }
+    }
 }

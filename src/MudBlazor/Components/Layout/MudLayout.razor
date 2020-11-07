@@ -3,8 +3,8 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    <CascadingValue Value="@_layoutState">
-        @ChildContent
+    <CascadingValue IsFixed="true" Value="@this">
+            @ChildContent
     </CascadingValue>
 </div>
 
@@ -20,55 +20,43 @@
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    public LayoutState _layoutState = new LayoutState();
+    List<MudDrawer> _drawers = new List<MudDrawer>();
 
-    /// <summary>
-    /// Gets or ets the drawer open state.
-    /// </summary>
-    [Parameter]
-    public bool DrawerOpen
+    public void Add(MudDrawer drawer)
     {
-        get => _layoutState.DrawerOpen;
-        set
-        {
-            if (value != _layoutState.DrawerOpen)
-            {
-                _layoutState.DrawerOpen = value;
-                StateHasChanged();
-            }
-        }
+        _drawers.Add(drawer);
     }
 
-    /// <summary>
-    /// Gets or sets the drawer clipped state.
-    /// </summary>
-    [Parameter]
-    public bool DrawerClipped
+    public void Remove(MudDrawer drawer)
     {
-        get => _layoutState.DrawerClipped;
-        set
-        {
-            if (value != _layoutState.DrawerClipped)
-            {
-                _layoutState.DrawerClipped = value;
-                StateHasChanged();
-            }
-        }
+        _drawers.Remove(drawer);
     }
 
-    /// <summary>
-    /// Side from which the drawer will appear.
-    /// </summary>
-    [Parameter] public Anchor Anchor
+    public bool? IsDrawerOpen(Anchor anchor)
     {
-        get => _layoutState.DrawerAnchor;
-        set
-        {
-            if (value != _layoutState.DrawerAnchor)
-            {
-                _layoutState.DrawerAnchor = value;
-                StateHasChanged();
-            }
-        }
+        return _drawers.FirstOrDefault(d => d.Anchor == anchor)?.Open;
+    }
+
+    public bool? IsDrawerClipped(Anchor anchor)
+    {
+        return _drawers.FirstOrDefault(d => d.Anchor == anchor)?.Clipped;
+    }
+
+    public event Action DrawersChanged;
+
+    public void FireDrawersChanged()
+    {
+        if (!initialized)
+            return;
+        DrawersChanged?.Invoke();
+    }
+
+    bool initialized;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+            initialized = true;
     }
 }

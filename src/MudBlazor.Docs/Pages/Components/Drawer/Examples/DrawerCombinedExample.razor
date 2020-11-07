@@ -3,18 +3,18 @@
 @page "/iframe/docs/examples/drawer/combined"
 
 
-<MudLayout DrawerOpen="@DocsDrawerOpen" DrawerClipped="@DocsLayoutClipping">
+<MudLayout>
     <MudAppBar Elevation="0">
-        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
-        @if (DocsLayoutClipping)
+        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        @if (clipped)
         {
             <MudText Typo="Typo.h6" Class="ml-3">My App</MudText>
         }
         <MudAppBarSpacer />
-        <MudIconButton Icon="@Icons.Material.BorderStyle" Color="Color.Inherit" OnClick="@((e) => DocsLayoutToggle())" />
+        <MudIconButton Icon="@Icons.Material.BorderStyle" Color="Color.Inherit" OnClick="@ToggleClipped" />
     </MudAppBar>
-    <MudDrawer>
-        @if (!DocsLayoutClipping)
+    <MudDrawer Open="@open" Clipped="@clipped">
+        @if (!clipped)
         {
             <MudDrawerHeader>
                 <MudText Typo="Typo.h6">My App</MudText>
@@ -36,16 +36,16 @@
 
 
 @code{
-    bool DocsDrawerOpen = true;
-    bool DocsLayoutClipping = false;
+    bool open = true;
+    bool clipped = false;
 
-    void DocsDrawerToggle()
+    void ToggleDrawer()
     {
-        DocsDrawerOpen = !DocsDrawerOpen;
+        open = !open;
     }
 
-    void DocsLayoutToggle()
+    void ToggleClipped()
     {
-        DocsLayoutClipping = !DocsLayoutClipping;
+        clipped = !clipped;
     }
 }

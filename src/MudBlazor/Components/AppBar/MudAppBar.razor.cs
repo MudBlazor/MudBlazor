@@ -12,10 +12,10 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-appbar")
                 .AddClass($"mud-appbar-position-{Position.ToDescriptionString()}")
-                .AddClass($"mud-left", LayoutState.DrawerAnchor == Anchor.Left)
-                .AddClass($"mud-right", LayoutState.DrawerAnchor == Anchor.Right)
-                .AddClass($"mud-appbar-drawer-open", LayoutState.DrawerOpen)
-                .AddClass($"mud-appbar-drawer-clipped", LayoutState.DrawerClipped)
+                .AddClass($"mud-left", Layout?.HasDrawer(Anchor.Left))
+                .AddClass($"mud-right", Layout?.HasDrawer(Anchor.Right))
+                .AddClass($"mud-appbar-drawer-open", Layout?.IsDrawerOpen(Anchor.Left))
+                .AddClass($"mud-appbar-drawer-clipped", Layout?.IsDrawerClipped(Anchor.Left))
                 .AddClass($"mud-elevation-{Elevation.ToString()}")
                 .AddClass($"mud-appbar-color-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass(Class)
@@ -46,6 +46,29 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        [CascadingParameter] LayoutState LayoutState { get; set; }
+        [CascadingParameter] MudLayout Layout { get; set; }
+
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            if(Layout!=null)
+                Layout.DrawersChanged+=OnDrawersChanged;
+        }
+
+        private void OnDrawersChanged()
+        {
+            InvokeAsync(StateHasChanged);
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                if (Layout!=null)
+                    Layout.DrawersChanged -= OnDrawersChanged;
+            }
+            catch (Exception) { }
+        }
     }
 }

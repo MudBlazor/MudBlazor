@@ -6,18 +6,18 @@
 <span class="atSign">&#64;</span>page &quot;/iframe/docs/examples/drawer/combined&quot;
 
 
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudLayout</span> <span class="htmlAttributeName">DrawerOpen</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>DocsDrawerOpen</span><span class="quot">&quot;</span> <span class="htmlAttributeName">DrawerClipped</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>DocsLayoutClipping</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudLayout</span><span class="htmlTagDelimiter">&gt;</span>
     <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudAppBar</span> <span class="htmlAttributeName">Elevation</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">0</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
-        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudIconButton</span> <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Icons.Material.Menu</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Inherit</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Edge</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Edge</span><span class="enumValue">.Start</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>((e) =&gt; DocsDrawerToggle())</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
-        <span class="atSign">&#64;</span>if (DocsLayoutClipping)
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudIconButton</span> <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Icons.Material.Menu</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Inherit</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Edge</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Edge</span><span class="enumValue">.Start</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>ToggleDrawer</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+        <span class="atSign">&#64;</span>if (clipped)
         {
             <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Typo</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Typo</span><span class="enumValue">.h6</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">ml-3</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>My App<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
         }
         <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudAppBarSpacer</span> <span class="htmlTagDelimiter">/&gt;</span>
-        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudIconButton</span> <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Icons.Material.BorderStyle</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Inherit</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>((e) =&gt; DocsLayoutToggle())</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudIconButton</span> <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Icons.Material.BorderStyle</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Inherit</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>ToggleClipped</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
     <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudAppBar</span><span class="htmlTagDelimiter">&gt;</span>
-    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudDrawer</span><span class="htmlTagDelimiter">&gt;</span>
-        <span class="atSign">&#64;</span>if (!DocsLayoutClipping)
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudDrawer</span> <span class="htmlAttributeName">Open</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>open</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Clipped</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>clipped</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="atSign">&#64;</span>if (!clipped)
         {
             <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudDrawerHeader</span><span class="htmlTagDelimiter">&gt;</span>
                 <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Typo</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Typo</span><span class="enumValue">.h6</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>My App<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
@@ -39,17 +39,17 @@
 </pre></div>
 <div class="csharp"><pre>
 <span class="atSign">&#64;</span>code{
-    <span class="keyword">bool</span> DocsDrawerOpen = <span class="keyword">true</span>;
-    <span class="keyword">bool</span> DocsLayoutClipping = <span class="keyword">false</span>;
+    <span class="keyword">bool</span> open = <span class="keyword">true</span>;
+    <span class="keyword">bool</span> clipped = <span class="keyword">false</span>;
 
-    <span class="keyword">void</span> DocsDrawerToggle()
+    <span class="keyword">void</span> ToggleDrawer()
     {
-        DocsDrawerOpen = !DocsDrawerOpen;
+        open = !open;
     }
 
-    <span class="keyword">void</span> DocsLayoutToggle()
+    <span class="keyword">void</span> ToggleClipped()
     {
-        DocsLayoutClipping = !DocsLayoutClipping;
+        clipped = !clipped;
     }
 }
 </pre></div>

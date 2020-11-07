@@ -18,7 +18,7 @@
     "MudBlazor.Demo.ServerApp": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "components/chipset",
+      "launchUrl": "components/drawer",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
