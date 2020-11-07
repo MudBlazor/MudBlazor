@@ -2,19 +2,20 @@
 @inject NavigationManager NavMan
 
 <MudThemeProvider Theme="currentTheme" />
+<MudThemeProviderNew/>
 <MudDialogProvider />
 <MudSnackbarProvider />
 
 
 <MudLayout DrawerOpen="@_drawerOpen">
-    <MudAppBar Elevation="99" Color="Color.Appbar">
+    <MudAppBar Elevation="25">
         <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="@GetTrackedIn()">Mudblazor</MudText>
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
         <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
     </MudAppBar>
-    <MudDrawer Elevation="99" Class="mudblazor-appbar-band">
+    <MudDrawer Elevation="25" Class="mudblazor-appbar-band">
         <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
             <MudBlazorLogo />
         </MudDrawerHeader>
@@ -73,9 +74,10 @@
         return MudBlazorLogoText;
     }
 
-    MudTheme currentTheme = new MudTheme();
-    MudTheme defaultTheme = new MudTheme();
-    MudTheme darkTheme = new MudTheme()
+    MudThemeOld currentTheme = new MudThemeOld();
+    MudThemeOld defaultTheme = new MudThemeOld();
+
+    MudThemeOld darkTheme = new MudThemeOld()
     {
         Color_Default = "#fff",
         Color_On_Default = "#fff",
