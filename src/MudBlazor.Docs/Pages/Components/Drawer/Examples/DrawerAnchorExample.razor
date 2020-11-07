@@ -1,8 +1,9 @@
 ﻿@layout IframeLayout
 @namespace MudBlazor.Docs.Examples
-@page "/iframe/docs/examples/drawer/clipped"
+@page "/iframe/docs/examples/drawer/anchor"
 
-<MudLayout DrawerOpen="@DocsDrawerOpen" DrawerClipped="true">
+
+<MudLayout DrawerOpen="@DocsDrawerOpen" Anchor="Anchor.Right">
     <MudAppBar Elevation="0">
         <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
         <MudAppBarSpacer />
@@ -18,8 +19,8 @@
             <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
-    <MudMainContent>
-        <MudContainer Class="pt-16 px-16">
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Class="mt-6">
             <LoremIpsum />
         </MudContainer>
     </MudMainContent>
