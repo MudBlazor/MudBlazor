@@ -2337,6 +2337,11 @@
             The higher the number, the heavier the drop-shadow. 0 for no shadow.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudDrawer.Anchor">
+            <summary>
+            Side from which the drawer will appear.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudDrawer.Color">
             <summary>
             The color of the component. It supports the theme colors.
@@ -2360,21 +2365,6 @@
         <member name="P:MudBlazor.MudLayout.ChildContent">
             <summary>
             Child content of component.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudLayout.DrawerOpen">
-            <summary>
-            Gets or ets the drawer open state.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudLayout.DrawerClipped">
-            <summary>
-            Gets or sets the drawer clipped state.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudLayout.Anchor">
-            <summary>
-            Side from which the drawer will appear.
             </summary>
         </member>
         <member name="P:MudBlazor.MudPaper.Elevation">

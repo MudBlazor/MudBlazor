@@ -46,17 +46,13 @@
 
     public void FireDrawersChanged()
     {
-        if (!initialized)
-            return;
-        DrawersChanged?.Invoke();
+        //DrawersChanged?.Invoke();
+        StateHasChanged();
     }
 
-    bool initialized;
-
-    protected override void OnAfterRender(bool firstRender)
+    public bool HasDrawer(Anchor anchor)
     {
-        base.OnAfterRender(firstRender);
-        if (firstRender)
-            initialized = true;
+        return _drawers.Any(d => d.Anchor == anchor);
     }
+
 }

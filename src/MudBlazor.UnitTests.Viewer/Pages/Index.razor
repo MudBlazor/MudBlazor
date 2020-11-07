@@ -1,13 +1,13 @@
 ﻿@page "/"
 @using System.Reflection
 
-<MudLayout DrawerOpen="@drawerOpen">
+<MudLayout>
     <MudAppBar Position="Position.Absolute" Elevation="0">
         <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
         <MudText Typo="Typo.h6">@selectedType?.Name</MudText>
         <MudAppBarSpacer />
     </MudAppBar>
-    <MudDrawer>
+    <MudDrawer Open="@drawerOpen">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">TestComponents</MudText>
         </MudDrawerHeader>

@@ -7,7 +7,7 @@
 <MudSnackbarProvider />
 
 
-<MudLayout DrawerOpen="@_drawerOpen">
+<MudLayout>
     <MudAppBar Elevation="25">
         <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="@GetTrackedIn()">Mudblazor</MudText>
@@ -15,7 +15,7 @@
         <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
         <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
     </MudAppBar>
-    <MudDrawer Elevation="25" Class="mudblazor-appbar-band">
+    <MudDrawer Open="@_drawerOpen" Elevation="25" Class="mudblazor-appbar-band">
         <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
             <MudBlazorLogo />
         </MudDrawerHeader>

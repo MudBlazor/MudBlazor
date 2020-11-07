@@ -976,13 +976,13 @@ public const string DrawerAnchorExample = @"@layout IframeLayout
 @page ""/iframe/docs/examples/drawer/anchor""
 
 
-<MudLayout DrawerOpen=""@DocsDrawerOpen"" Anchor=""Anchor.Right"">
+<MudLayout>
     <MudAppBar Elevation=""0"">
-        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
+        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
     </MudAppBar>
-    <MudDrawer>
+    <MudDrawer Open=""@open"" Anchor=""Anchor.Right"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -1001,24 +1001,24 @@ public const string DrawerAnchorExample = @"@layout IframeLayout
 
 
 @code{
-    bool DocsDrawerOpen = true;
+    bool open = true;
 
-    void DocsDrawerToggle()
+    void ToggleDrawer()
     {
-        DocsDrawerOpen = !DocsDrawerOpen;
+        open = !open;
     }
 }";
 
 public const string DrawerClippingExample = @"@layout IframeLayout
 @page ""/iframe/docs/examples/drawer/clipped""
 
-<MudLayout DrawerOpen=""@DocsDrawerOpen"" DrawerClipped=""true"">
+<MudLayout>
     <MudAppBar Elevation=""0"">
-        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
+        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
     </MudAppBar>
-    <MudDrawer>
+    <MudDrawer Open=""@open"" Clipped=""@clipped"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -1028,20 +1028,21 @@ public const string DrawerClippingExample = @"@layout IframeLayout
             <MudNavLink Match=""NavLinkMatch.All"">Community</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
-    <MudMainContent>
-        <MudContainer Class=""pt-16 px-16"">
-            <LoremIpsum />
+    <MudMainContent Class=""pt-16 px-16"">
+        <MudContainer Class=""mt-6"">
+            <MudSwitch @bind-Checked=""clipped"" Color=""@Color.Secondary"">Drawer clipped</MudSwitch>
+            <LoremIpsum/>
         </MudContainer>
     </MudMainContent>
 </MudLayout>
 
 
 @code{
-    bool DocsDrawerOpen = true;
-
-    void DocsDrawerToggle()
+    bool open = true;
+    bool clipped = true;
+    void ToggleDrawer()
     {
-        DocsDrawerOpen = !DocsDrawerOpen;
+        open = !open;
     }
 }";
 
@@ -1049,18 +1050,18 @@ public const string DrawerCombinedExample = @"@layout IframeLayout
 @page ""/iframe/docs/examples/drawer/combined""
 
 
-<MudLayout DrawerOpen=""@DocsDrawerOpen"" DrawerClipped=""@DocsLayoutClipping"">
+<MudLayout>
     <MudAppBar Elevation=""0"">
-        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
-        @if (DocsLayoutClipping)
+        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
+        @if (clipped)
         {
             <MudText Typo=""Typo.h6"" Class=""ml-3"">My App</MudText>
         }
         <MudAppBarSpacer />
-        <MudIconButton Icon=""@Icons.Material.BorderStyle"" Color=""Color.Inherit"" OnClick=""@((e) => DocsLayoutToggle())"" />
+        <MudIconButton Icon=""@Icons.Material.BorderStyle"" Color=""Color.Inherit"" OnClick=""@ToggleClipped"" />
     </MudAppBar>
-    <MudDrawer>
-        @if (!DocsLayoutClipping)
+    <MudDrawer Open=""@open"" Clipped=""@clipped"">
+        @if (!clipped)
         {
             <MudDrawerHeader>
                 <MudText Typo=""Typo.h6"">My App</MudText>
@@ -1082,17 +1083,17 @@ public const string DrawerCombinedExample = @"@layout IframeLayout
 
 
 @code{
-    bool DocsDrawerOpen = true;
-    bool DocsLayoutClipping = false;
+    bool open = true;
+    bool clipped = false;
 
-    void DocsDrawerToggle()
+    void ToggleDrawer()
     {
-        DocsDrawerOpen = !DocsDrawerOpen;
+        open = !open;
     }
 
-    void DocsLayoutToggle()
+    void ToggleClipped()
     {
-        DocsLayoutClipping = !DocsLayoutClipping;
+        clipped = !clipped;
     }
 }";
 
@@ -1100,13 +1101,13 @@ public const string DrawerPersistentExample = @"@layout IframeLayout
 @page ""/iframe/docs/examples/drawer/persistent""
 
 
-<MudLayout DrawerOpen=""@DocsDrawerOpen"">
+<MudLayout>
     <MudAppBar Elevation=""0"">
-        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
+        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
     </MudAppBar>
-    <MudDrawer>
+    <MudDrawer Open=""@open"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -1125,11 +1126,11 @@ public const string DrawerPersistentExample = @"@layout IframeLayout
 
 
 @code{
-    bool DocsDrawerOpen = true;
+    bool open = true;
 
-    void DocsDrawerToggle()
+    void ToggleDrawer()
     {
-        DocsDrawerOpen = !DocsDrawerOpen;
+        open = !open;
     }
 }";
 

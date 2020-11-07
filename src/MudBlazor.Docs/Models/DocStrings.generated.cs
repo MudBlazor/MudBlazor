@@ -2145,9 +2145,15 @@ public const string MudDivider_UserAttributes = @"UserAttributes carries all att
 
 public const string MudDrawer_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow.";
 
+public const string MudDrawer_Anchor = @"Side from which the drawer will appear.";
+
 public const string MudDrawer_Color = @"The color of the component. It supports the theme colors.";
 
 public const string MudDrawer_ChildContent = @"Child content of component.";
+
+public const string MudDrawer_Open = @"";
+
+public const string MudDrawer_Clipped = @"";
 
 public const string MudDrawer_Class = @"User class names, separated by space";
 
@@ -2208,12 +2214,6 @@ public const string MudItem_UserAttributes = @"UserAttributes carries all attrib
             will be splatted onto the underlying HTML tag.";
 
 public const string MudLayout_ChildContent = @"Child content of component.";
-
-public const string MudLayout_DrawerOpen = @"Gets or ets the drawer open state.";
-
-public const string MudLayout_DrawerClipped = @"Gets or sets the drawer clipped state.";
-
-public const string MudLayout_Anchor = @"Side from which the drawer will appear.";
 
 public const string MudLayout_Class = @"User class names, separated by space";
 
