@@ -12,5 +12,17 @@
 
 .mud-main-drawer-open {
     transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
-    margin-left: 240px;
+    
+}
+
+.mud-drawer-anchor-left {
+    & + .mud-main-drawer-open {
+        margin-left: 240px;
+    }
+}
+
+.mud-drawer-anchor-right {
+    & + .mud-main-drawer-open {
+        margin-right: 240px;
+    }
 }

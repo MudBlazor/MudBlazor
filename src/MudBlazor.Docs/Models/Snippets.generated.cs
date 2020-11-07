@@ -972,6 +972,43 @@ public const string DividerVerticalExample = @"<MudPaper Outlined=""true"">
     <MudIcon Icon=""@Icons.Material.FormatUnderlined"" />
 </MudPaper>";
 
+public const string DrawerAnchorExample = @"@layout IframeLayout
+@page ""/iframe/docs/examples/drawer/anchor""
+
+
+<MudLayout DrawerOpen=""@DocsDrawerOpen"" Anchor=""Anchor.Right"">
+    <MudAppBar Elevation=""0"">
+        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
+        <MudAppBarSpacer />
+        <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
+    </MudAppBar>
+    <MudDrawer>
+        <MudDrawerHeader>
+            <MudText Typo=""Typo.h6"">My App</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match=""NavLinkMatch.All"">Store</MudNavLink>
+            <MudNavLink Match=""NavLinkMatch.All"">Library</MudNavLink>
+            <MudNavLink Match=""NavLinkMatch.All"">Community</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent Class=""pt-16 px-16"">
+        <MudContainer Class=""mt-6"">
+            <LoremIpsum />
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+
+@code{
+    bool DocsDrawerOpen = true;
+
+    void DocsDrawerToggle()
+    {
+        DocsDrawerOpen = !DocsDrawerOpen;
+    }
+}";
+
 public const string DrawerClippingExample = @"@layout IframeLayout
 @page ""/iframe/docs/examples/drawer/clipped""
 
@@ -993,7 +1030,6 @@ public const string DrawerClippingExample = @"@layout IframeLayout
     </MudDrawer>
     <MudMainContent>
         <MudContainer Class=""pt-16 px-16"">
-            <MudText Color=""Color.Secondary"" GutterBottom=""true"">Click the right side button in the appbar to change layout.</MudText>
             <LoremIpsum />
         </MudContainer>
     </MudMainContent>
@@ -2979,10 +3015,12 @@ public const string TextGeneralExample = @"<MudText Typo=""Typo.h1"">h1. Heading
 
 public const string ColorsClassExample = @"<MudText>
     This is not set by any <strong class=""green-text text-accent-4"">MudTheme</strong> colors.
+    <br />
+    But rather css classes based on <strong style=""color:@purple;"">Material Design</strong> color palette.
 </MudText>
-<MudText>
-    But rather css classes based on <strong class=""purple-text text-accent-3"">Material Design</strong> color pallet.
-</MudText>";
+@code{
+    string purple = Colors.Purple.Accent3;
+}";
 
 public const string CustomConverterExample = @"<MudSimpleTable Elevation=""0"" Hover=""false"" Class=""mt-4"" Dense=""false"">
     <colgroup>
@@ -3121,7 +3159,7 @@ public const string ElevationUsageExample = @"<div class=""mud-elevation-0"">0</
 <div class=""mud-elevation-22"">22</div>
 <div class=""mud-elevation-23"">23</div>
 <div class=""mud-elevation-24"">24</div>
-<div class=""mud-elevation-99"">99</div>";
+<div class=""mud-elevation-25"">25</div>";
 
 public const string FlexAlignContentExample = @"<MudGrid>
     <MudItem xs=""12"" md=""6"">
