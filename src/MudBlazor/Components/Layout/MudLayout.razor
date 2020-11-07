@@ -4,7 +4,7 @@
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
     <CascadingValue Value="@_layoutState">
-            @ChildContent
+        @ChildContent
     </CascadingValue>
 </div>
 
@@ -20,7 +20,7 @@
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    LayoutState _layoutState = new LayoutState();
+    public LayoutState _layoutState = new LayoutState();
 
     /// <summary>
     /// Gets or ets the drawer open state.
@@ -42,7 +42,8 @@
     /// <summary>
     /// Gets or sets the drawer clipped state.
     /// </summary>
-    [Parameter] public bool DrawerClipped
+    [Parameter]
+    public bool DrawerClipped
     {
         get => _layoutState.DrawerClipped;
         set
@@ -50,6 +51,22 @@
             if (value != _layoutState.DrawerClipped)
             {
                 _layoutState.DrawerClipped = value;
+                StateHasChanged();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Side from which the drawer will appear.
+    /// </summary>
+    [Parameter] public Anchor Anchor
+    {
+        get => _layoutState.DrawerAnchor;
+        set
+        {
+            if (value != _layoutState.DrawerAnchor)
+            {
+                _layoutState.DrawerAnchor = value;
                 StateHasChanged();
             }
         }

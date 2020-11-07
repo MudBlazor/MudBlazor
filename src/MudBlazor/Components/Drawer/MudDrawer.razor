@@ -13,11 +13,11 @@
 
     protected string Classname =>
     new CssBuilder("mud-drawer")
-      .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
+      .AddClass($"mud-drawer-anchor-{LayoutState.DrawerAnchor.ToDescriptionString()}")
       .AddClass($"mud-drawer--open", LayoutState.DrawerOpen)
       .AddClass($"mud-drawer--closed", !LayoutState.DrawerOpen)
       .AddClass($"mud-drawer-clipped", LayoutState.DrawerClipped)
-      .AddClass($"mud-drawer-color-{Color.ToDescriptionString()}")
+      .AddClass($"mud-drawer-color-{Color.ToDescriptionString()}", Color != Color.Default)
       .AddClass($"mud-elevation-{Elevation.ToString()}")
       .AddClass(Class)
     .Build();
@@ -28,14 +28,9 @@
     [Parameter] public int Elevation { set; get; } = 1;
 
     /// <summary>
-    /// Side from which the drawer will appear.
-    /// </summary>
-    [Parameter] public Anchor Anchor { get; set; }
-
-    /// <summary>
     /// The color of the component. It supports the theme colors.
     /// </summary>
-    [Parameter] public Color Color { get; set; } = Color.Surface;
+    [Parameter] public Color Color { get; set; } = Color.Default;
 
     /// <summary>
     /// Child content of component.

@@ -12,10 +12,12 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-appbar")
                 .AddClass($"mud-appbar-position-{Position.ToDescriptionString()}")
-                .AddClass($"mud-appbar-drawer-open", LayoutState?.DrawerOpen)
-                .AddClass($"mud-appbar-drawer-clipped", LayoutState?.DrawerClipped)
+                .AddClass($"mud-left", LayoutState.DrawerAnchor == Anchor.Left)
+                .AddClass($"mud-right", LayoutState.DrawerAnchor == Anchor.Right)
+                .AddClass($"mud-appbar-drawer-open", LayoutState.DrawerOpen)
+                .AddClass($"mud-appbar-drawer-clipped", LayoutState.DrawerClipped)
                 .AddClass($"mud-elevation-{Elevation.ToString()}")
-                .AddClass($"mud-appbar-color-{Color.ToDescriptionString()}")
+                .AddClass($"mud-appbar-color-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass(Class)
                 .Build();
 
@@ -32,7 +34,7 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color Color { get; set; } = Color.Primary;
+        [Parameter] public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The positioning type. The behavior of the different options is described in the MDN web docs. Note: sticky is not universally supported and will fall back to static when unavailable.
