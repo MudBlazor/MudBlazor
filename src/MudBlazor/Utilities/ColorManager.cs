@@ -44,6 +44,12 @@ namespace MudBlazor.Utilities
             b = (byte)(packedValue >> 8);
         }
 
+        public static string ToRgbaFromHex(string hex, double alpha)
+        {
+            MudColor Color = FromHex(hex);
+            return $"rgba({Color.R},{Color.G},{Color.B}, {alpha.ToString(CultureInfo.InvariantCulture)})";
+        }
+
 
         private static string ToRgbaHex(string hex)
         {
