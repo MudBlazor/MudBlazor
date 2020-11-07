@@ -10,7 +10,7 @@
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Classes</Title>
+                <Title>Classes and C# access</Title>
                 <Description>
                     <MudText>Each color from the list gets converted to a background and text variant for using within your application.</MudText>
                 </Description>
@@ -18,7 +18,7 @@
             <SectionContent Outlined="true">
                 <ColorsClassExample />
             </SectionContent>
-            <SectionSource Code="ColorsClassExample" ShowCode="false" />
+            <SectionSource Code="ColorsClassExample" ShowCode="true" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
@@ -37,7 +37,7 @@
                         @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
                         {
                             IsLightColor = false;
-                            if (shade.Name.Contains("Lighten5") || shade.Name.Contains("Lighten4") || shade.Name.Contains("Lighten3"))
+                            if (shade.Name.Contains("Lighten5") || shade.Name.Contains("Lighten4") || shade.Name.Contains("Lighten3") || shade.Name.Contains("White") || shade.Name.Contains("Transparent"))
                             {
                                 IsLightColor = true;
                             }
@@ -48,23 +48,6 @@
                         }
                     </MudItem>
                 }
-                <MudItem md="6" lg="4" xs="12">
-                    <div class="mud-paper mud-paper-square docs-color-card" style="background-color:#000;color:#fff">
-                        <MudText Align="Align.Left" Typo="Typo.h6">Shades</MudText>
-                    </div>
-                    <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:#000;color:#fff">
-                        <MudText Align="Align.Left">Black</MudText>
-                        <MudText Align="Align.Right">#00000</MudText>
-                    </div>
-                    <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:#fff;color:#444">
-                        <MudText Align="Align.Left">White</MudText>
-                        <MudText Align="Align.Right">#FFFFF</MudText>
-                    </div>
-                    <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:transparent;color:#444">
-                        <MudText Align="Align.Left">Transparent</MudText>
-                        <MudText Align="Align.Right"></MudText>
-                    </div>
-                </MudItem>
             </MudGrid>
         </DocsPageSection>
     </DocsPageContent>
@@ -102,7 +85,7 @@
                         Name = color.Name,
                         Value = color.GetValue(SubColorType).ToString()
                     };
-                    if (color.Name == "Default")
+                    if (color.Name == "Default" || color.Name == "Black")
                     {
                         tempHex = shadeColor.Value;
                     }
