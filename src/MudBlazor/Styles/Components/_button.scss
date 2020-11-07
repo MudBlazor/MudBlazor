@@ -23,7 +23,7 @@
     }
 
     &:disabled {
-        color: rgba(0, 0, 0, 0.26) !important;
+        color: var(--mud-palette-action-disabled) !important;
         cursor: default;
         pointer-events: none;
     }
@@ -38,9 +38,14 @@
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 500;
     line-height: 1.75;
-    border-radius: var(--mud-theme-border-radius-default);
+    border-radius: var(--mud-default-borderradius);
     letter-spacing: 0.02857em;
     text-transform: uppercase;
+    color: var(--mud-palette-text-primary);
+
+    &:hover {
+        background-color: var(--mud-theme-default-hover);
+    }
 }
 
 .mud-button-label {
@@ -55,14 +60,6 @@
 
     &.mud-button-text-inherit {
         color: inherit;
-    }
-
-    &.mud-button-text-default {
-        color: var(--mud-theme-on-default);
-
-        &:hover {
-            background-color: var(--mud-theme-default-hover);
-        }
     }
 
     &.mud-button-text-primary {

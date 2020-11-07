@@ -3,7 +3,7 @@
     height: 1px;
     margin: 0;
     flex-shrink: 0;
-    background-color: var(--mud-theme-border-color-default);
+    background-color: var(--mud-palette-divider);
 }
 
 .mud-divider-absolute {
@@ -18,7 +18,7 @@
 }
 
 .mud-divider-light {
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: var(--mud-palette-divider-light);
 }
 
 .mud-divider-middle {
