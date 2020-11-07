@@ -1,27 +1,31 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@layout IframeLayout
+@namespace MudBlazor.Docs.Examples
+@page "/iframe/docs/examples/drawer/persistent"
 
-<DocsFrame>
-    <MudLayout DrawerOpen="@DocsDrawerOpen">
-        <MudAppBar Position="Position.Absolute" Elevation="0">
-            <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
-            <MudAppBarSpacer />
-            <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
-        </MudAppBar>
-        <MudDrawer>
-            <MudDrawerHeader>
-                <MudText Typo="Typo.h6">My App</MudText>
-            </MudDrawerHeader>
-            <MudNavMenu>
-                <MudNavLink Href="#">Store</MudNavLink>
-                <MudNavLink Href="#">Library</MudNavLink>
-                <MudNavLink Href="#">Community</MudNavLink>
-            </MudNavMenu>
-        </MudDrawer>
-        <MudMainContent>
+
+<MudLayout DrawerOpen="@DocsDrawerOpen">
+    <MudAppBar Elevation="0">
+        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
+        <MudAppBarSpacer />
+        <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
+    </MudAppBar>
+    <MudDrawer>
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">My App</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Class="mt-6">
             <LoremIpsum />
-        </MudMainContent>
-    </MudLayout>
-</DocsFrame>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
 
 @code{
     bool DocsDrawerOpen = true;

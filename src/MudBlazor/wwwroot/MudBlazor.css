@@ -9834,7 +9834,7 @@ ul {
 .mud-appbar {
   width: 100%;
   display: flex;
-  z-index: 90;
+  z-index: var(--mud-zindex-appbar);
   box-sizing: border-box;
   flex-shrink: 0;
   flex-direction: column;
@@ -9906,7 +9906,8 @@ ul {
   flex-shrink: 0;
   flex: 0 0 auto;
   outline: 0;
-  z-index: 89;
+  position: fixed;
+  z-index: var(--mud-zindex-drawer);
   overflow-y: auto;
   flex-direction: column; }
   .mud-drawer.mud-drawer--open {
@@ -9965,11 +9966,11 @@ ul {
 .mud-main-drawer-closed {
   flex-grow: 1;
   transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
-  margin-left: -240px; }
+  margin-left: 0px; }
 
 .mud-main-drawer-open {
   transition: margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-  margin-left: 0; }
+  margin-left: 240px; }
 
 .mud-container {
   width: 100%;

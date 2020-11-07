@@ -5,7 +5,8 @@
     flex-shrink: 0;
     flex: 0 0 auto;
     outline: 0;
-    z-index: 89;
+    position:fixed;
+    z-index: var(--mud-zindex-drawer);
     overflow-y: auto;
     flex-direction: column;
 

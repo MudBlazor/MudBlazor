@@ -2,7 +2,7 @@
 .mud-appbar {
     width: 100%;
     display: flex;
-    z-index: 90;
+    z-index: var(--mud-zindex-appbar);
     box-sizing: border-box;
     flex-shrink: 0;
     flex-direction: column;

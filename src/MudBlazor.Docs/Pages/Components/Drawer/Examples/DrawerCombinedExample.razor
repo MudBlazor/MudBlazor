@@ -1,35 +1,39 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@layout IframeLayout
+@namespace MudBlazor.Docs.Examples
+@page "/iframe/docs/examples/drawer/combined"
 
-<DocsFrame>
-    <MudLayout DrawerOpen="@DocsDrawerOpen" DrawerClipped="@DocsLayoutClipping">
-        <MudAppBar Position="Position.Absolute" Elevation="0">
-            <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
-            @if (DocsLayoutClipping)
-            {
-                <MudText Typo="Typo.h6" Class="ml-3">My App</MudText>
-            }
-            <MudAppBarSpacer />
-            <MudIconButton Icon="@Icons.Material.BorderStyle" Color="Color.Inherit" OnClick="@((e) => DocsLayoutToggle())" />
-        </MudAppBar>
-        <MudDrawer>
-            @if (!DocsLayoutClipping)
-            {
-                <MudDrawerHeader>
-                    <MudText Typo="Typo.h6">My App</MudText>
-                </MudDrawerHeader>
-            }
-            <MudNavMenu>
-                <MudNavLink Href="#">Store</MudNavLink>
-                <MudNavLink Href="#">Library</MudNavLink>
-                <MudNavLink Href="#">Community</MudNavLink>
-            </MudNavMenu>
-        </MudDrawer>
-        <MudMainContent>
+
+<MudLayout DrawerOpen="@DocsDrawerOpen" DrawerClipped="@DocsLayoutClipping">
+    <MudAppBar Elevation="0">
+        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
+        @if (DocsLayoutClipping)
+        {
+            <MudText Typo="Typo.h6" Class="ml-3">My App</MudText>
+        }
+        <MudAppBarSpacer />
+        <MudIconButton Icon="@Icons.Material.BorderStyle" Color="Color.Inherit" OnClick="@((e) => DocsLayoutToggle())" />
+    </MudAppBar>
+    <MudDrawer>
+        @if (!DocsLayoutClipping)
+        {
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">My App</MudText>
+            </MudDrawerHeader>
+        }
+        <MudNavMenu>
+            <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent>
+        <MudContainer Class="pt-16 px-16">
             <MudText Color="Color.Secondary" GutterBottom="true">Click the right side button in the appbar to change layout.</MudText>
             <LoremIpsum />
-        </MudMainContent>
-    </MudLayout>
-</DocsFrame>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
 
 @code{
     bool DocsDrawerOpen = true;
