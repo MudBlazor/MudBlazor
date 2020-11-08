@@ -62,11 +62,6 @@ namespace MudBlazor
         [Parameter] public bool Label { get; set; }
 
         /// <summary>
-        /// If true, the chip will not be rendered.
-        /// </summary>
-        [Parameter] public bool Deleted { get; set; }
-
-        /// <summary>
         /// If true, the chip will be displayed in disabled state and no events possible.
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
@@ -110,12 +105,6 @@ namespace MudBlazor
         /// If true, force browser to redirect outside component router-space.
         /// </summary>
         [Parameter] public bool ForceLoad { get; set; }
-
-       /// <summary>
-       /// If true, remove the chip from the render tree on close.
-       /// </summary>
-       [Parameter]
-       public bool RemoveOnClose { get; set; } = true;
 
         /// <summary>
         /// Command executed when the user clicks on an element.
@@ -186,8 +175,6 @@ namespace MudBlazor
         protected async Task OnCloseHandler(MouseEventArgs ev)
         {
             await OnClose.InvokeAsync(this);
-            if (RemoveOnClose)
-                Deleted = true;
             ChipSet?.OnChipDeleted(this);
             StateHasChanged();
         }

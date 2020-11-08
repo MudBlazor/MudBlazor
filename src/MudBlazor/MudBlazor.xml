@@ -791,11 +791,6 @@
             Removes circle edges and applys theme default.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudChip.Deleted">
-            <summary>
-            If true, the chip will not be rendered.
-            </summary>
-        </member>
         <member name="P:MudBlazor.MudChip.Disabled">
             <summary>
             If true, the chip will be displayed in disabled state and no events possible.
@@ -839,11 +834,6 @@
         <member name="P:MudBlazor.MudChip.ForceLoad">
             <summary>
             If true, force browser to redirect outside component router-space.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudChip.RemoveOnClose">
-            <summary>
-            If true, remove the chip from the render tree on close.
             </summary>
         </member>
         <member name="P:MudBlazor.MudChip.Command">
