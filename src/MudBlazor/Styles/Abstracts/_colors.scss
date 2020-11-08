@@ -37,6 +37,18 @@
     }
 }
 
+.mud-text-primary {
+    color: var(--mud-palette-text-primary);
+}
+
+.mud-text-secondary {
+    color: var(--mud-palette-text-secondary);
+}
+
+.mud-text-disabled {
+    color: var(--mud-palette-text-disabled);
+}
+
 .white {
     background-color: #FFFFFF;
 }
