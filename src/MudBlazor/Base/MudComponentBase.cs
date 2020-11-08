@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -33,5 +34,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter(CaptureUnmatchedValues = true)]
         public Dictionary<string, object> UserAttributes { get; set; } = new Dictionary<string, object>();
+
+        protected static string ToS(double value) => value.ToString(CultureInfo.InvariantCulture);
+        protected static string ToS(float value) => value.ToString(CultureInfo.InvariantCulture);
+        protected static string ToS(decimal value) => value.ToString(CultureInfo.InvariantCulture);
     }
 }
