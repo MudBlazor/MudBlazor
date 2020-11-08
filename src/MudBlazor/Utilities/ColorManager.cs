@@ -15,19 +15,22 @@ namespace MudBlazor.Utilities
 
             return MudColor.FromArgb(a, r, g, b);
         }
-        public static MudColor ColorLighten(MudColor rgbColor, int changeValue)
+
+
+        // amount is between 0.0 and 1.0
+        public static MudColor ColorLighten(MudColor rgbColor, double amount)
         {
-            byte R = (byte)(rgbColor.R + changeValue);
-            byte G = (byte)(rgbColor.G + changeValue);
-            byte B = (byte)(rgbColor.B + changeValue);
-            return MudColor.FromArgb(rgbColor.A, R, G, B);
+            var hsl = ColorTransformation.RgBtoHsl(rgbColor);
+            hsl.L = Math.Max(0, Math.Min(1, hsl.L + amount));
+            return ColorTransformation.HsLtoRgb(hsl, rgbColor.A);
         }
-        public static MudColor ColorDarken(MudColor rgbColor, int changeValue)
+
+        // amount is between 0.0 and 1.0
+        public static MudColor ColorDarken(MudColor rgbColor, double amount)
         {
-            byte R = (byte)(rgbColor.R - changeValue);
-            byte G = (byte)(rgbColor.G - changeValue);
-            byte B = (byte)(rgbColor.B - changeValue);
-            return MudColor.FromArgb(rgbColor.A, R, G, B);
+            var hsl = ColorTransformation.RgBtoHsl(rgbColor);
+            hsl.L = Math.Max(0, Math.Min(1, hsl.L - amount));
+            return ColorTransformation.HsLtoRgb(hsl, rgbColor.A);
         }
 
         public static void FromHex(string hex, out byte a, out byte r, out byte g, out byte b)
