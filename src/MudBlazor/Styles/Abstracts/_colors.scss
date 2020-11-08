@@ -1,4 +1,4 @@
-﻿$mud-theme-props: default, primary, secondary, info, success, warning, danger,dark;
+﻿$mud-theme-props: default, primary, secondary, tertiary, info, success, warning, error, dark;
 
 @each $color in $mud-theme-props {
     .mud-color-#{$color} {
@@ -20,3 +20,35 @@
 .mud-color-text-surface {
     color: var(--mud-theme-on-surface);
 }
+
+
+@each $color in $mud-theme-props {
+    .mud-#{$color} {
+        background-color: var(--mud-palette-#{$color}) !important;
+    }
+
+    .mud-#{$color}-text {
+        color: var(--mud-palette-#{$color}) !important;
+    }
+
+    .mud-theme-#{$color} {
+        color: var(--mud-palette-#{$color}-text) !important;
+        background-color: var(--mud-palette-#{$color}) !important;
+    }
+}
+
+.white {
+    background-color: #FFFFFF;
+}
+.white-text {
+    color: #FFFFFF;
+}
+
+.black {
+    background-color: #000000;
+}
+
+.black-text {
+    color: #000000;
+}
+
