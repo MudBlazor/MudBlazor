@@ -1,10 +1,11 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
 @using MudBlazor.Extensions
+@using System.Globalization
 
 <div class="mud-tooltip-root">
     @ChildContent
-    <span class="@Classname">
+    <span class="@Classname" style="@GetTimeDelay()">
         @Text
     </span>
 </div>
@@ -13,7 +14,6 @@
 
     protected string Classname =>
    new CssBuilder("mud-tooltip")
-        .AddClass($"mud-tooltip-transition-delayed", Delayed)
      .AddClass($"mud-tooltip-placement-{Placement.ToDescriptionString()}")
      .AddClass(Class)
    .Build();
@@ -30,9 +30,9 @@
     [Parameter] public string Class { get; set; }
 
     /// <summary>
-    /// If true, sets set a delay until tooltip is showed.
+    /// Changes the default transition delay in seconds.
     /// </summary>
-    [Parameter] public bool Delayed { get; set; }
+    [Parameter] public double Delayed { get; set; } = 0.2;
 
     /// <summary>
     /// Tooltip placement.
@@ -43,4 +43,9 @@
     /// Child content of component.
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
+
+    protected string GetTimeDelay()
+    {
+        return $"transition-delay: {Delayed.ToString(CultureInfo.InvariantCulture)}s;";
+    }
 }

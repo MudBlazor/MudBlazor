@@ -2236,8 +2236,6 @@ ul {
     visibility: hidden;
     opacity: 0;
     transition: opacity .2s; }
-    .mud-tooltip-root .mud-tooltip.mud-tooltip-transition-delayed {
-      transition-delay: 1s; }
     .mud-tooltip-root .mud-tooltip.mud-tooltip-placement-top {
       top: 0;
       left: 50%;

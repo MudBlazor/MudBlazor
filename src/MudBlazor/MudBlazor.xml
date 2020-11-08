@@ -2537,7 +2537,7 @@
         </member>
         <member name="P:MudBlazor.MudTooltip.Delayed">
             <summary>
-            If true, sets set a delay until tooltip is showed.
+            Changes the default transition delay in seconds.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTooltip.Placement">
