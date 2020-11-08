@@ -562,8 +562,6 @@ public const string MudChip_AvatarClass = @"Avatar CSS Class, appends to Chips d
 
 public const string MudChip_Label = @"Removes circle edges and applys theme default.";
 
-public const string MudChip_Deleted = @"If true, the chip will not be rendered.";
-
 public const string MudChip_Disabled = @"If true, the chip will be displayed in disabled state and no events possible.";
 
 public const string MudChip_Icon = @"Sets the Icon to use.";
@@ -581,8 +579,6 @@ public const string MudChip_Target = @"The target attribute specifies where to o
 public const string MudChip_Text = @"A string you want to associate with the chip. If the ChildContent is not set this will be shown as chip text.";
 
 public const string MudChip_ForceLoad = @"If true, force browser to redirect outside component router-space.";
-
-public const string MudChip_RemoveOnClose = @"If true, remove the chip from the render tree on close.";
 
 public const string MudChip_Command = @"Command executed when the user clicks on an element.";
 
@@ -1591,15 +1587,20 @@ public const string MudSlider_Min = @"The minimum allowed value of the slider. S
 
 public const string MudSlider_Max = @"The maximum allowed value of the slider. Should not be equal to min.";
 
-public const string MudSlider_Step = @"How many steps the slider should take on eatch move.";
+public const string MudSlider_Step = @"How many steps the slider should take on each move.";
 
 public const string MudSlider_Disabled = @"If true, the slider will be disabled.";
 
 public const string MudSlider_ChildContent = @"Child content of component.";
 
+public const string MudSlider_Converter = @"";
+
 public const string MudSlider_ValueChanged = @"";
 
 public const string MudSlider_Value = @"";
+
+public const string MudSlider_Immediate = @"If true, the dragging the slider will update the Value immediately.
+            If false, the Value is updated only on releasing the handle.";
 
 public const string MudSlider_Class = @"User class names, separated by space";
 

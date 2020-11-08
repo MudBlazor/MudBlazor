@@ -2420,28 +2420,37 @@ public const string SkeletonWaveExample = @"<MudCard>
 
 public const string SliderBasicExample = @"<MudGrid>
     <MudItem>
-        <MudSlider Value=""50"">Volume</MudSlider>
-        <MudSlider Disabled=""true"" Value=""20"">Disabled Slider</MudSlider>
+        <MudSlider Value=""@value"">Volume</MudSlider>
+        <MudSlider Disabled=""true"" Value=""@(20)"">Disabled Slider</MudSlider>
     </MudItem>
     <MudItem>
         <div class=""demo-slider-filler""></div>
-        <MudSlider Value=""50"" />
+        <MudSlider Value=""@value"" />
         <div class=""demo-slider-filler""></div>
-        <MudSlider Value=""50"" Disabled=""true"" />
+        <MudSlider Value=""@value"" Disabled=""true"" />
     </MudItem>
-</MudGrid>";
-
-public const string SliderMinMaxExample = @"<MudSlider @bind-Value=""value1"" Min=""20"" Max=""80"">Value: @value1.ToString()</MudSlider>
-<MudSlider @bind-Value=""value2"" Min=""0"" Max=""50"">Value: @value2.ToString()</MudSlider>
+</MudGrid>
 
 
 @code {
-    public int value1 = 50;
-    public int value2 = 50;
+    double value = 50.0;
+}";
+
+public const string SliderMinMaxExample = @"<MudSlider @bind-Value=""value1"" Min=""20"" Max=""80"">Value: @value1.ToString()</MudSlider>
+<MudSlider @bind-Value=""value2"" Min=""-1"" Max=""1"" Step=""0.05"">Value: @value2.ToString(""F2"")</MudSlider>
+
+
+@code {
+    public double value1 = 50;
+    public double value2 = -0.75;
 }";
 
 public const string SliderStepsExample = @"<MudSlider Step=""10"" Value=""70"">Temperature</MudSlider>
-<MudSlider Step=""10"" Value=""50"" Disabled=""true"">Disabled</MudSlider>";
+<MudSlider Step=""10"" Value=""50"" Disabled=""true"">Disabled</MudSlider>
+
+@code {
+    int step = 10;
+}";
 
 public const string SparkLineExample = @"<MudSparkLine></MudSparkLine>";
 

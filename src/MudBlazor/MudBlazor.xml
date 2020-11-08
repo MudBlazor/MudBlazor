@@ -1548,32 +1548,38 @@
             The checkbox icon reflects the multi-select option's state
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSlider.Min">
+        <member name="P:MudBlazor.MudSlider`1.Min">
             <summary>
             The minimum allowed value of the slider. Should not be equal to max.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSlider.Max">
+        <member name="P:MudBlazor.MudSlider`1.Max">
             <summary>
             The maximum allowed value of the slider. Should not be equal to min.
             </summary>
             
         </member>
-        <member name="P:MudBlazor.MudSlider.Step">
+        <member name="P:MudBlazor.MudSlider`1.Step">
             <summary>
-            How many steps the slider should take on eatch move.
+            How many steps the slider should take on each move.
             </summary>
             
         </member>
-        <member name="P:MudBlazor.MudSlider.Disabled">
+        <member name="P:MudBlazor.MudSlider`1.Disabled">
             <summary>
             If true, the slider will be disabled.
             </summary>
             
         </member>
-        <member name="P:MudBlazor.MudSlider.ChildContent">
+        <member name="P:MudBlazor.MudSlider`1.ChildContent">
             <summary>
             Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSlider`1.Immediate">
+            <summary>
+            If true, the dragging the slider will update the Value immediately.
+            If false, the Value is updated only on releasing the handle.
             </summary>
         </member>
         <member name="T:MudBlazor.Snackbars">
@@ -1953,6 +1959,11 @@
         <member name="T:MudBlazor.DefaultConverter`1">
             <summary>
             A universal T to string binding converter
+            </summary>
+        </member>
+        <member name="T:MudBlazor.NumericConverter`1">
+            <summary>
+            A universal T to double binding converter
             </summary>
         </member>
         <member name="T:MudBlazor.Utilities.ColorTransformation">
