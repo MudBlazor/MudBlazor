@@ -1965,6 +1965,29 @@
             A universal T to string binding converter
             </summary>
         </member>
+        <member name="T:MudBlazor.Utilities.ColorTransformation">
+            <summary>
+            Static methods for transforming argb spaces and argb values.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.Utilities.ColorTransformation.RgBtoHsl(System.Drawing.Color)">
+            <summary>
+            Converts RGB to HSL. Alpha is ignored.
+            Output is: { H: [0, 360], S: [0, 1], L: [0, 1] }.
+            </summary>
+            <param name="color">The color to convert.</param>
+        </member>
+        <member name="M:MudBlazor.Utilities.ColorTransformation.HsLtoRgb(MudBlazor.Utilities.ColorTransformation.HSLColor,System.Int32)">
+            <summary>
+            Converts HSL to RGB, with a specified output Alpha.
+            Arguments are limited to the defined range:
+            does not raise exceptions.
+            </summary>
+            <param name="h">Hue, must be in [0, 360].</param>
+            <param name="s">Saturation, must be in [0, 1].</param>
+            <param name="l">Luminance, must be in [0, 1].</param>
+            <param name="a">Output Alpha, must be in [0, 255].</param>
+        </member>
         <member name="M:MudBlazor.Utilities.CssBuilder.Default(System.String)">
             <summary>
             Creates a CssBuilder used to define conditional CSS classes used in a component.

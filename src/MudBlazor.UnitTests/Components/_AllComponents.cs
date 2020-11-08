@@ -1975,6 +1975,72 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void BorderRadiusCornerExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<BorderRadiusCornerExample>();
+        }
+
+
+        [Test]
+        public void BorderRadiusDefaultExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<BorderRadiusDefaultExample>();
+        }
+
+
+        [Test]
+        public void BorderRadiusPillnCircleExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<BorderRadiusPillnCircleExample>();
+        }
+
+
+        [Test]
+        public void BorderRadiusRemoveExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<BorderRadiusRemoveExample>();
+        }
+
+
+        [Test]
+        public void BorderRadiusSidesExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<BorderRadiusSidesExample>();
+        }
+
+
+        [Test]
+        public void BorderRadiusSizeExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<BorderRadiusSizeExample>();
+        }
+
+
+        [Test]
         public void ColorsClassExample_Test()
         {
                 using var ctx = new Bunit.TestContext();

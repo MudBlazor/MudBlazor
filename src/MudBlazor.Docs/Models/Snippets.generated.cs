@@ -3014,6 +3014,62 @@ public const string TextGeneralExample = @"<MudText Typo=""Typo.h1"">h1. Heading
 <MudText Typo=""Typo.caption"">caption text</MudText>
 <MudText Typo=""Typo.overline"">OVERLINE TEXT</MudText>";
 
+public const string BorderRadiusCornerExample = @"<div class=""mud-theme-info py-4 px-6 mx-4 rounded-tl-xl"">
+    <MudText Align=""Align.Center"">.rounded-tl-xl</MudText>
+</div>
+<div class=""mud-theme-tertiary py-4 px-6 mx-4 rounded-tr-xl"">
+    <MudText Align=""Align.Center"">.rounded-tr-xl</MudText>
+</div>
+<div class=""mud-theme-secondary py-4 px-6 mx-4 rounded-br-xl"">
+    <MudText Align=""Align.Center"">.rounded-br-xl</MudText>
+</div>
+<div class=""mud-theme-primary py-4 px-6 mx-4 rounded-bl-xl"">
+    <MudText Align=""Align.Center"">.rounded-bl-xl</MudText>
+</div>";
+
+public const string BorderRadiusDefaultExample = @"<div class=""mud-theme-primary py-4 px-6 mx-4 rounded"">
+    <MudText Align=""Align.Center"">.rounded</MudText>
+</div>";
+
+public const string BorderRadiusPillnCircleExample = @"<div class=""mud-theme-secondary py-4 px-6 mx-4 rounded-pill"">
+    <MudText Align=""Align.Center"">.rounded-pill</MudText>
+</div>
+
+<div class=""mud-theme-primary pa-7 rounded-circle""></div>";
+
+public const string BorderRadiusRemoveExample = @"<div class=""mud-theme-primary py-4 px-8 rounded-0"">
+    <MudText Align=""Align.Center"">.rounded-0</MudText>
+</div>";
+
+public const string BorderRadiusSidesExample = @"<div class=""mud-theme-primary py-4 px-6 mx-4 rounded-t-xl"">
+    <MudText Align=""Align.Center"">.rounded-t-xl</MudText>
+</div>
+<div class=""mud-theme-secondary py-4 px-6 mx-4 rounded-r-xl"">
+    <MudText Align=""Align.Center"">.rounded-r-xl</MudText>
+</div>
+<div class=""mud-theme-tertiary py-4 px-6 mx-4 rounded-b-xl"">
+    <MudText Align=""Align.Center"">.rounded-b-xl</MudText>
+</div>
+<div class=""mud-theme-info py-4 px-6 mx-4 rounded-l-xl"">
+    <MudText Align=""Align.Center"">.rounded-l-xl</MudText>
+</div>";
+
+public const string BorderRadiusSizeExample = @"<div class=""mud-theme-primary py-4 px-6 mx-4 rounded-0"">
+    <MudText Align=""Align.Center"">.rounded-0</MudText>
+</div>
+<div class=""mud-theme-secondary py-4 px-6 mx-4 rounded-sm"">
+    <MudText Align=""Align.Center"">.rounded-sm</MudText>
+</div>
+<div class=""mud-theme-tertiary py-4 px-6 mx-4 rounded"">
+    <MudText Align=""Align.Center"">.rounded</MudText>
+</div>
+<div class=""mud-theme-info py-4 px-6 mx-4 rounded-lg"">
+    <MudText Align=""Align.Center"">.rounded-lg</MudText>
+</div>
+<div class=""mud-theme-primary py-4 px-6 mx-4 rounded-xl"">
+    <MudText Align=""Align.Center"">.rounded-xl</MudText>
+</div>";
+
 public const string ColorsClassExample = @"<MudText>
     This is not set by any <strong class=""green-text text-accent-4"">MudTheme</strong> colors.
     <br />

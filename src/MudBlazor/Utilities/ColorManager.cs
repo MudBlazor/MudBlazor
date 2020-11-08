@@ -16,7 +16,6 @@ namespace MudBlazor.Utilities
             return MudColor.FromArgb(a, r, g, b);
         }
 
-
         // amount is between 0.0 and 1.0
         public static MudColor ColorLighten(MudColor rgbColor, double amount)
         {
