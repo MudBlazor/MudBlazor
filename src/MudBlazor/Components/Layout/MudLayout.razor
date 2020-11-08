@@ -12,6 +12,7 @@
 
     protected string Classname =>
     new CssBuilder("mud-layout")
+        .AddClass("mud-rtl", RightToLeft)
         .AddClass(Class)
     .Build();
 
@@ -19,6 +20,21 @@
     /// Child content of component.
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private bool _rtl;
+
+    [Parameter]
+    public bool RightToLeft
+    {
+        get => _rtl;
+        set
+        {
+            if (_rtl == value)
+                return;
+            _rtl = value;
+            StateHasChanged();
+        }
+    }
 
     List<MudDrawer> _drawers = new List<MudDrawer>();
 

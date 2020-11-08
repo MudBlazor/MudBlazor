@@ -1,0 +1,11 @@
+﻿
+.mud-layout {
+
+    &.mud-rtl {
+        direction: rtl;
+    }
+
+    &.mud-ltr {
+        direction: ltr;
+    }
+}

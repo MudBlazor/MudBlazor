@@ -3794,6 +3794,12 @@ ul {
 .mud-nested-list > .mud-list-item {
   padding-left: 32px; }
 
+.mud-layout.mud-rtl {
+  direction: rtl; }
+
+.mud-layout.mud-ltr {
+  direction: ltr; }
+
 .mud-menu {
   display: inline-flex; }
 
