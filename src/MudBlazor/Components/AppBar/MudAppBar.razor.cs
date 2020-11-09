@@ -11,11 +11,13 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-appbar")
-                .AddClass($"mud-appbar-position-{Position.ToDescriptionString()}")
-                .AddClass($"mud-left", Layout?.HasDrawer(Anchor.Left))
-                .AddClass($"mud-right", Layout?.HasDrawer(Anchor.Right))
-                .AddClass($"mud-appbar-drawer-open", Layout?.IsDrawerOpen(Anchor.Left))
-                .AddClass($"mud-appbar-drawer-clipped", Layout?.IsDrawerClipped(Anchor.Left))
+                .AddClass($"mud-appbar-fixed", Fixed)
+                .AddClass($"mud-appbar-drawer-open", Layout?.IsDrawerOpen(Anchor.Left) == true || Layout?.IsDrawerOpen(Anchor.Right) == true)
+                .AddClass($"mud-appbar-drawer-open-left", Layout?.IsDrawerOpen(Anchor.Left))
+                .AddClass($"mud-appbar-drawer-open-right", Layout?.IsDrawerOpen(Anchor.Right))
+                .AddClass($"mud-appbar-drawer-clipped", Layout?.IsDrawerClipped(Anchor.Left) == true  && !Layout?.HasDrawer(Anchor.Right) == true || Layout?.IsDrawerClipped(Anchor.Right) == true && !Layout?.HasDrawer(Anchor.Left) == true || Layout?.IsDrawerClipped(Anchor.Left) == true && Layout?.IsDrawerClipped(Anchor.Right) == true)
+                .AddClass($"mud-appbar-drawer-clipped-left", Layout?.IsDrawerClipped(Anchor.Left) == true && !Layout?.IsDrawerClipped(Anchor.Right) == true)
+                .AddClass($"mud-appbar-drawer-clipped-right", Layout?.IsDrawerClipped(Anchor.Right) == true && !Layout?.IsDrawerClipped(Anchor.Left) == true)
                 .AddClass($"mud-elevation-{Elevation.ToString()}")
                 .AddClass($"mud-appbar-color-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass(Class)
@@ -37,9 +39,9 @@ namespace MudBlazor
         [Parameter] public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The positioning type. The behavior of the different options is described in the MDN web docs. Note: sticky is not universally supported and will fall back to static when unavailable.
+        /// If true, appbar will be Fixed.
         /// </summary>
-        [Parameter] public Position Position { get; set; } = Position.Fixed;
+        [Parameter] public bool Fixed { get; set; } = true;
 
         /// <summary>
         /// Child content of the component.
