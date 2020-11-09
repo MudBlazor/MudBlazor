@@ -419,9 +419,9 @@
             The color of the component. It supports the theme colors.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudAppBar.Position">
+        <member name="P:MudBlazor.MudAppBar.Fixed">
             <summary>
-            The positioning type. The behavior of the different options is described in the MDN web docs. Note: sticky is not universally supported and will fall back to static when unavailable.
+            If true, appbar will be Fixed.
             </summary>
         </member>
         <member name="P:MudBlazor.MudAppBar.ChildContent">
@@ -2389,6 +2389,11 @@
         <member name="P:MudBlazor.MudLayout.ChildContent">
             <summary>
             Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudLayout.RightToLeft">
+            <summary>
+            If set, changes the layout to RightToLeft.
             </summary>
         </member>
         <member name="P:MudBlazor.MudPaper.Elevation">

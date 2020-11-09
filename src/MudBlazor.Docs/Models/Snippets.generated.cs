@@ -982,7 +982,7 @@ public const string DrawerAnchorExample = @"@layout IframeLayout
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
     </MudAppBar>
-    <MudDrawer Open=""@open"" Anchor=""Anchor.Right"">
+    <MudDrawer Open=""@open"" Clipped=""@clipped"" Anchor=""Anchor.Right"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -994,6 +994,7 @@ public const string DrawerAnchorExample = @"@layout IframeLayout
     </MudDrawer>
     <MudMainContent Class=""pt-16 px-16"">
         <MudContainer Class=""mt-6"">
+            <MudSwitch @bind-Checked=""clipped"" Color=""@Color.Secondary"">Drawer clipped</MudSwitch>
             <LoremIpsum />
         </MudContainer>
     </MudMainContent>
@@ -1002,6 +1003,7 @@ public const string DrawerAnchorExample = @"@layout IframeLayout
 
 @code{
     bool open = true;
+    bool clipped = false;
 
     void ToggleDrawer()
     {
@@ -1094,6 +1096,63 @@ public const string DrawerCombinedExample = @"@layout IframeLayout
     void ToggleClipped()
     {
         clipped = !clipped;
+    }
+}";
+
+public const string DrawerDoubleExample = @"@layout IframeLayout
+@page ""/iframe/docs/examples/drawer/double""
+
+
+<MudLayout>
+    <MudAppBar Elevation=""0"">
+        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawerOne"" />
+        <MudAppBarSpacer />
+        <MudIconButton Icon=""@Icons.Material.Settings"" Color=""Color.Inherit"" OnClick=""@ToggleDrawerTwo""  />
+    </MudAppBar>
+    <MudDrawer Open=""@drawerOneOpen"" Clipped=""@drawerOneClipped"" Anchor=""Anchor.Left"">
+        <MudDrawerHeader>
+            <MudText Typo=""Typo.h6"">My App</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match=""NavLinkMatch.All"">Store</MudNavLink>
+            <MudNavLink Match=""NavLinkMatch.All"">Library</MudNavLink>
+            <MudNavLink Match=""NavLinkMatch.All"">Community</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudDrawer Open=""@drawerTwoOpen"" Clipped=""@drawerTwoClipped"" Anchor=""Anchor.Right"">
+        <MudDrawerHeader>
+            <MudText Typo=""Typo.h6"">Settings</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match=""NavLinkMatch.All"">Profile</MudNavLink>
+            <MudNavLink Match=""NavLinkMatch.All"">Orders</MudNavLink>
+            <MudNavLink Match=""NavLinkMatch.All"">Order History</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent Class=""pt-16 px-16"">
+        <MudContainer MaxWidth=""MaxWidth.Small"" Class=""mt-6"">
+            <MudSwitch @bind-Checked=""drawerOneClipped"" Color=""@Color.Primary"">Drawer One clipped</MudSwitch>
+            <MudSwitch @bind-Checked=""drawerTwoClipped"" Color=""@Color.Secondary"">Drawer Two clipped</MudSwitch>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+
+@code{
+    bool drawerOneOpen = true;
+    bool drawerOneClipped = false;
+
+    void ToggleDrawerOne()
+    {
+        drawerOneOpen = !drawerOneOpen;
+    }
+
+    bool drawerTwoOpen = true;
+    bool drawerTwoClipped = false;
+
+    void ToggleDrawerTwo()
+    {
+        drawerTwoOpen = !drawerTwoOpen;
     }
 }";
 
@@ -2976,10 +3035,10 @@ public const string TimePickerStaticExample = @"<MudTimePicker PickerVariant=""P
 
 public const string TimePickerViewsExample = @"<MudTimePicker Label=""Minutes"" Value=""13:37"" OpenTo=""OpenTo.Minutes"" />";
 
-public const string TooltipDelayedExample = @"<MudTooltip Text=""Delete"" Delayed=""true"">
+public const string TooltipDelayedExample = @"<MudTooltip Text=""Delete"" Delayed=""1"">
     <MudIconButton Icon=""@Icons.Material.Delete"" />
 </MudTooltip>
-<MudTooltip Text=""Add"" Delayed=""true"">
+<MudTooltip Text=""Add"" Delayed=""1"">
     <MudFab Icon=""@Icons.Material.Add"" Color=""Color.Secondary"" />
 </MudTooltip>";
 

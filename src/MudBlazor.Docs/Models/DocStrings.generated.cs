@@ -201,7 +201,7 @@ public const string MudAppBar_Dense = @"If true, compact padding will be used.";
 
 public const string MudAppBar_Color = @"The color of the component. It supports the theme colors.";
 
-public const string MudAppBar_Position = @"The positioning type. The behavior of the different options is described in the MDN web docs. Note: sticky is not universally supported and will fall back to static when unavailable.";
+public const string MudAppBar_Fixed = @"If true, appbar will be Fixed.";
 
 public const string MudAppBar_ChildContent = @"Child content of the component.";
 
@@ -2216,6 +2216,8 @@ public const string MudItem_UserAttributes = @"UserAttributes carries all attrib
 
 public const string MudLayout_ChildContent = @"Child content of component.";
 
+public const string MudLayout_RightToLeft = @"If set, changes the layout to RightToLeft.";
+
 public const string MudLayout_Class = @"User class names, separated by space";
 
 public const string MudLayout_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -2591,7 +2593,7 @@ public const string MudTooltip_Text = @"Sets the text to be displayed inside the
 
 public const string MudTooltip_Class = @"User class names, separated by space";
 
-public const string MudTooltip_Delayed = @"If true, sets set a delay until tooltip is showed.";
+public const string MudTooltip_Delayed = @"Changes the default transition delay in seconds.";
 
 public const string MudTooltip_Placement = @"Tooltip placement.";
 

@@ -897,6 +897,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void DrawerDoubleExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<DrawerDoubleExample>();
+        }
+
+
+        [Test]
         public void DrawerPersistentExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
