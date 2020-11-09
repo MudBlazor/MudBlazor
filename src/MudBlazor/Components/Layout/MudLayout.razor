@@ -12,7 +12,7 @@
 
     protected string Classname =>
     new CssBuilder("mud-layout")
-        .AddClass("mud-rtl", RightToLeft)
+        .AddClass("mud-application-layout-rtl", RightToLeft)
         .AddClass(Class)
     .Build();
 
@@ -35,6 +35,7 @@
             if (_rtl == value)
                 return;
             _rtl = value;
+            SwapDrawerAnchors();
             StateHasChanged();
         }
     }
@@ -72,6 +73,21 @@
     public bool HasDrawer(Anchor anchor)
     {
         return _drawers.Any(d => d.Anchor == anchor);
+    }
+
+    public void SwapDrawerAnchors()
+    {
+        foreach (var drawer in _drawers)
+        {
+            if(drawer.Anchor == Anchor.Left)
+            {
+                drawer.Anchor = Anchor.Right;
+            }
+            else if(drawer.Anchor == Anchor.Right)
+            {
+                drawer.Anchor = Anchor.Left;
+            }
+        }
     }
 
 }
