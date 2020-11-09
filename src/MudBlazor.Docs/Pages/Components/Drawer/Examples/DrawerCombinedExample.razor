@@ -4,7 +4,7 @@
 
 
 <MudLayout>
-    <MudAppBar Elevation="0">
+    <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
         @if (clipped)
         {
@@ -13,7 +13,7 @@
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Material.BorderStyle" Color="Color.Inherit" OnClick="@ToggleClipped" />
     </MudAppBar>
-    <MudDrawer Open="@open" Clipped="@clipped">
+    <MudDrawer Open="@open" Clipped="@clipped" Elevation="1">
         @if (!clipped)
         {
             <MudDrawerHeader>

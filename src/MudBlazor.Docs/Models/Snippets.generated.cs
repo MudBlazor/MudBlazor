@@ -1015,7 +1015,7 @@ public const string DrawerClippingExample = @"@layout IframeLayout
 @page ""/iframe/docs/examples/drawer/clipped""
 
 <MudLayout>
-    <MudAppBar Elevation=""0"">
+    <MudAppBar>
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
