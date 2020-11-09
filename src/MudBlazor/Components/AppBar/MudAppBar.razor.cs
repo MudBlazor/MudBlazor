@@ -49,28 +49,5 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         [CascadingParameter] MudLayout Layout { get; set; }
-
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            if(Layout!=null)
-                Layout.DrawersChanged+=OnDrawersChanged;
-        }
-
-        private void OnDrawersChanged()
-        {
-            InvokeAsync(StateHasChanged);
-        }
-
-        public void Dispose()
-        {
-            try
-            {
-                if (Layout!=null)
-                    Layout.DrawersChanged -= OnDrawersChanged;
-            }
-            catch (Exception) { }
-        }
     }
 }
