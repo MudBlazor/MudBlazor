@@ -199,6 +199,29 @@ public const string AppBarSimpleExample = @"<MudAppBar Position=""Position.Stati
     <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
 </MudAppBar>";
 
+public const string AutocompleteClrObjectsExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value"" SearchFunc=""@Search"" Immediate=""false"" />
+    </MudItem>
+    <MudItem xs=""12"" md=""12"">
+        <MudText Class=""mb-n3"" Typo=""Typo.body2"">
+            Selected value: @(value != null ? value.ToString() : """")
+        </MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    private IEnumerable<Element> datasource = PeriodicTable.GetElements(); //you can also search directly from database on Search()
+
+    private Element value;
+
+
+    private Task<IEnumerable<Element>> Search(string value)
+    {
+        return Task.FromResult(datasource.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+    } }";
+
 public const string AutocompleteUsageExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudAutocomplete T=""string"" Label=""US States"" @bind-Value=""value"" SearchFunc=""@Search"" />
@@ -2896,7 +2919,7 @@ public const string ThemesCustomExample = @"<MudThemeProvider Theme=""MyCoolDark
 
 @code {
 
-    MudThemeOld MyCoolDarkTheme = new MudThemeOld()
+    MudTheme MyCoolDarkTheme = new MudTheme()
     {
         Color_Primary = ""#304ffe"",
         Color_Secondary = ""#1de9b6"",

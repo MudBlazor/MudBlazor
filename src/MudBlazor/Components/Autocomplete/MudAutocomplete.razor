@@ -6,7 +6,7 @@
     <MudInputControl HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style">
         <MudInput InputType="InputType.Text" Variant="@Variant" @bind-Value="@Text" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
                   Immediate="true" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" OnKeyDown="@OnInputKeyDown"
-                  @onclick="@ToggleMenu" />
+                  @onclick="@ToggleMenu" OnBlur="@OnAutoCompleteBlurred" />
         <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant">
             @Label
         </MudInputLabel>
@@ -31,4 +31,24 @@
 @if (IsOpen)
 {
     <div class="mud-popover-overlay" @onclick="@ToggleMenu"></div>
+}
+
+@code{
+
+    private void OnAutoCompleteBlurred()
+    {
+        if (IsOpen == true)
+            IsOpen = false;
+
+        if (Value == null)
+        {
+            Text = null;
+            return;
+        }
+        string actualvalueStr = Value.ToString();
+        if (!object.Equals(actualvalueStr, Text))
+            Text = Converter.Set(Value);
+
+    }
+
 }

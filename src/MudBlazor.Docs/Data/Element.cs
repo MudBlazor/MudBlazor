@@ -22,5 +22,9 @@ namespace MudBlazor.Docs.Data
         [JsonProperty("molar")]
         public double Molar { get; set; }
 
+        public override string ToString()
+        {
+            return $"{Sign} - {Name}";
+        }
     }
 }
