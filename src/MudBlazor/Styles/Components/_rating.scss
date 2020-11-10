@@ -17,7 +17,7 @@
 
         & * {
             cursor: default;
-            color: rgba(0,0,0,.38);
+            color: var(--mud-palette-text-disabled);
         }
     }
 
