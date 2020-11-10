@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -105,11 +103,17 @@ namespace MudBlazor
         }
 
         // rating item lose hover
-        private void HandleMouseOut(MouseEventArgs e)
+        private async Task HandleMouseOut(MouseEventArgs e)
         {
             if (Disabled) return;
-            IsActive = false;
-            ItemHovered.InvokeAsync(null);
+
+            // onmouseout from current item will always fire before onmouseover, if we don't wait here for potential onmouseover from another item there will be a flicker issue
+            await Task.Delay(10);
+            if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value == ItemValue)
+            {
+                IsActive = false;
+                await ItemHovered.InvokeAsync(null);
+            }
         }
 
         private void HandleMouseOver(MouseEventArgs e)
