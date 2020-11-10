@@ -93,7 +93,7 @@
     }
 
     @each $color in $mud-palette-colors {
-        .mud-chip-color-#{$color} {
+        &.mud-chip-color-#{$color} {
             color: var(--mud-palette-#{$color}-text);
             background-color: var(--mud-palette-#{$color});
 
@@ -112,12 +112,12 @@
     }
 
     @each $color in $mud-palette-colors {
-        .mud-chip-color-#{$color} {
-            color: var(--mud-palette-#{$color}-text);
+        &.mud-chip-color-#{$color} {
+            color: var(--mud-palette-#{$color});
             border: 1px solid var(--mud-palette-#{$color});
 
             &:hover {
-                background-color: var(--mud-palette-#{$color}-darken);
+                background-color: var(--mud-palette-#{$color}-hover);
             }
         }
     }
