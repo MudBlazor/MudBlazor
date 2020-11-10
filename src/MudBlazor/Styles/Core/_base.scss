@@ -16,17 +16,17 @@ strong, b {
 
 body {
     height: 100%;
-    color: var(--mud-theme-on-surface);
+    color: var(--mud-palette-text-primary);
     font-size: 0.875rem;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 400;
     line-height: 1.43;
     letter-spacing: 0.01071em;
-    background-color: var(--mud-theme-background);
+    background-color: var(--mud-palette-background);
 }
 
 a {
-    color: var(--mud-theme-text-default);
+    color: var(--mud-palette-text-primary);
 }
 
 app, .mud-layout {

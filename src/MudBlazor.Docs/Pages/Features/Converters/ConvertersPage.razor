@@ -1,14 +1,21 @@
 ﻿@page "/features/converters"
+@using System.Globalization;
 
 <DocsPage MaxWidth="MaxWidth.Large">
     <DocsPageHeader Title="Converters" SubTitle="Converters are essential for binding input elements to your model.">
+        <Description>
+            When you bind a non-string value to a <CodeInline Tag="true">MudTextField<Tag>T</Tag></CodeInline> or any other input element that supports a value of type T then a <CodeInline>Converter</CodeInline>
+            converts that value to string for display and converts the user's input back to T. This happens automatically without you having to do anything special. <br/>
+            MudBlazor's <CodeInline>DefaultConverter<Tag>T</Tag></CodeInline> is pretty capable as you can see below but sometimes 
+            you'll want to use your own conversion functions. This page is all about that.
+        </Description>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
             <MudText Typo="Typo.h5" GutterBottom="true" Class="my-4">DefaultConverter&lt;T&gt;</MudText>
             <MudText>
                 The default converter converts all primitive types and their nullable variants to and from <CodeInline>string</CodeInline>.
-                Edit the textfields below to see how the default converter handles different values depending on the type. 
+                Edit the textfields below to see how the default converter handles different values depending on the type.
             </MudText>
             <div class="d-flex flex-row mt-5">
                 <MudSwitch Color="Color.Primary" @bind-Checked="@nullable">Nullable variants</MudSwitch>
@@ -123,6 +130,14 @@
                             <td><MudText Inline="true">@ToS(ndecimal_value) </MudText></td>
                         </tr>
                         <tr>
+                            <td><CodeInline>decimal (2 decimals)</CodeInline></td>
+                            <td>
+                                <MudTextField T="decimal?" Format="0.00" @bind-Value="@ndecimal_value2" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(ndecimal_value2) </MudText></td>
+                        </tr>
+
+                        <tr>
                             <td><CodeInline>DateTime?</CodeInline></td>
                             <td>
                                 <MudTextField T="DateTime?" @bind-Value="@ndatetime_value" Class="mt-n1" Immediate="true" />
@@ -147,11 +162,6 @@
                             <td><CodeInline>Enum?</CodeInline></td>
                             <td>
                                 <MudTextField T="StringSplitOptions?" @bind-Value="@nenum_value" Class="mt-n1" Immediate="true" />
-                                @*<MudSelect T="StringSplitOptions?" @bind-Value="@nenum_value" Class="mt-n2" Immediate="true">
-                        <MudSelectItem T="StringSplitOptions?" Value="null">(Nothing selected)</MudSelectItem>
-                        <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.None">None</MudSelectItem>
-                        <MudSelectItem T="StringSplitOptions?" Value="StringSplitOptions.RemoveEmptyEntries">RemoveEmptyEntries</MudSelectItem>
-                    </MudSelect>*@
                             </td>
                             <td><MudText Inline="true">@ToS(nenum_value)</MudText></td>
                         </tr>
@@ -256,6 +266,13 @@
                             <td><MudText Inline="true">@ToS(decimal_value) </MudText></td>
                         </tr>
                         <tr>
+                            <td><CodeInline>decimal (2 decimals)</CodeInline></td>
+                            <td>
+                                <MudTextField T="decimal" Format="0.00" @bind-Value="@decimal_value2" Class="mt-n1" Immediate="true" />
+                            </td>
+                            <td><MudText Inline="true">@ToS(decimal_value2) </MudText></td>
+                        </tr>
+                        <tr>
                             <td><CodeInline>DateTime</CodeInline></td>
                             <td>
                                 <MudTextField T="DateTime" @bind-Value="@datetime_value" Class="mt-n1" Immediate="true" />
@@ -280,10 +297,6 @@
                             <td><CodeInline>Enum</CodeInline></td>
                             <td>
                                 <MudTextField T="StringSplitOptions" @bind-Value="@enum_value" Class="mt-n1" Immediate="true" />
-                                @*<MudSelect T="StringSplitOptions" @bind-Value="@enum_value" Class="mt-n2" Immediate="true">
-                        <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.None"></MudSelectItem>
-                        <MudSelectItem T="StringSplitOptions" Value="StringSplitOptions.RemoveEmptyEntries"></MudSelectItem>
-                    </MudSelect>*@
                             </td>
                             <td><MudText Inline="true">@enum_value</MudText></td>
                         </tr>
@@ -313,9 +326,11 @@
                 float float_value = (float)Math.PI;
                 double double_value = Math.PI;
                 decimal decimal_value = 99.99m;
+                decimal decimal_value2 = 99.99999m;
                 float? nfloat_value = (float)Math.PI;
                 double? ndouble_value = Math.PI;
                 decimal? ndecimal_value = 99.99m;
+                decimal? ndecimal_value2 = 99.99999m;
                 Guid guid_value = Guid.NewGuid();
                 Guid? nguid_value = Guid.NewGuid();
                 DateTime datetime_value = DateTime.Now;
@@ -334,6 +349,7 @@
                         return "null";
                     return "" + value;
                 }
+
             }
 
         </DocsPageSection>
@@ -347,8 +363,7 @@
                         by setting <CodeInline>Converters.DefaultCulture</CodeInline> to your desired <CodeInline>CultureInfo</CodeInline> at application start.
                     </MudText>
                     <MudText Class="mt-4">
-                        If you want to configure the date format of a DateTime value, there are <CodeInline>DateConverter</CodeInline> and <CodeInline>NullableDateConverter</CodeInline>
-                        which you can configure with a date format string.
+                        If you want to configure the date format of a DateTime value, you can set the <CodeInline>Format</CodeInline> parameter of <CodeInline  Tag="true">MudTextField</CodeInline>.
                     </MudText>
                     <MudText>
                         Let's format the same date in different ways:
@@ -372,10 +387,11 @@
                     </MudText>
                 </Description>
             </SectionHeader>
+
             <SectionContent DarkenBackground="false" FullWidth="true">
                 <SpecialConverterExample />
             </SectionContent>
-            <SectionSource Code="SpecialConverterExample" ShowCode="true" />
+            <SectionSource Code="SpecialConverterExample" ShowCode="false" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

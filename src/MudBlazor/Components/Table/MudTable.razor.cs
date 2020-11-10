@@ -10,6 +10,8 @@ namespace MudBlazor
 {
     public abstract class MudTableBase : MudComponentBase
     {
+        internal object _editingItem = null;
+        
         private int _currentPage = 0;
         // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is here in MudTableBase
 
@@ -149,11 +151,12 @@ namespace MudBlazor
 
         public abstract void SetSelectedItem(object item);
 
+        public abstract void SetEditingItem(object item);
+
         protected string TableStyle 
             => new StyleBuilder()
                 .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
                 .Build();
-
 
         protected override void OnParametersSet()
         {

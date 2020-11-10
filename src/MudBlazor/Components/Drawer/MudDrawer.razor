@@ -2,20 +2,23 @@
 @using MudBlazor.Utilities
 @using MudBlazor.Extensions
 @inherits MudComponentBase
+@implements IDisposable
+
 
 <aside @attributes="UserAttributes" class="@Classname" style="@Style">
     @ChildContent
 </aside>
+
 
 @code {
 
     protected string Classname =>
     new CssBuilder("mud-drawer")
       .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
-      .AddClass($"mud-drawer--open", LayoutState.DrawerOpen)
-      .AddClass($"mud-drawer--closed", !LayoutState.DrawerOpen)
-      .AddClass($"mud-drawer-clipped", LayoutState.DrawerClipped)
-      .AddClass($"mud-drawer-color-{Color.ToDescriptionString()}")
+      .AddClass($"mud-drawer--open", Open)
+      .AddClass($"mud-drawer--closed", !Open)
+      .AddClass($"mud-drawer-clipped", Clipped)
+      .AddClass($"mud-drawer-color-{Color.ToDescriptionString()}", Color != Color.Default)
       .AddClass($"mud-elevation-{Elevation.ToString()}")
       .AddClass(Class)
     .Build();
@@ -33,13 +36,62 @@
     /// <summary>
     /// The color of the component. It supports the theme colors.
     /// </summary>
-    [Parameter] public Color Color { get; set; } = Color.Surface;
+    [Parameter] public Color Color { get; set; } = Color.Default;
 
     /// <summary>
     /// Child content of component.
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    [CascadingParameter] LayoutState LayoutState { get; set; }
+    [Parameter]
+    public bool Open
+    {
+        get => _open;
+        set
+        {
+            if (_open == value)
+                return;
+            _open = value;
+            Layout?.FireDrawersChanged();
+            StateHasChanged();
+        }
+    }
+
+    private bool _open;
+    private bool _clipped;
+
+    [Parameter]
+    public bool Clipped
+    {
+        get => _clipped;
+        set
+        {
+            if (_clipped == value)
+                return;
+            _clipped = value;
+            Layout?.FireDrawersChanged();
+            StateHasChanged();
+        }
+    }
+
+    [CascadingParameter] MudLayout Layout { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Layout?.Add(this);
+    }
+
+
+    public void Dispose()
+    {
+        try
+        {
+            Layout?.Remove(this);
+        }
+        catch (Exception) {}
+    }
+
 
 }

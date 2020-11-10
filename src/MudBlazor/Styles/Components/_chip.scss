@@ -228,3 +228,8 @@
         }
     }
 }
+
+.mud-chip-selected {
+    color: var(--mud-theme-primary) !important;
+    background-color: var(--mud-theme-primary-hover) !important;
+}

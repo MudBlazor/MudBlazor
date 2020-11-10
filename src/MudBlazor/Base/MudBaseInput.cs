@@ -127,6 +127,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
+        /// <summary>
+        ///  A multiline input (textarea) will be shown, if set to more than one line.
+        /// </summary>
+        [Parameter] public int Lines { get; set; } = 1;
+
         private bool _settingText;
         protected string _text;
         [Parameter]
@@ -258,9 +263,23 @@ namespace MudBlazor
             set
             {
                 if (_converter == null)
-                    _converter = new DefaultConverter<T> { Culture = value };
-                else
-                    _converter.Culture = value;
+                    _converter = new DefaultConverter<T>();
+                _converter.Culture = value;
+            }
+        }
+
+        private string _format = null;
+
+        [Parameter]
+        public string Format
+        {
+            get => _format;
+            set
+            {
+                _format = value;
+                if (_converter==null)
+                    _converter = new DefaultConverter<T>();
+                _converter.Format = _format;
             }
         }
 

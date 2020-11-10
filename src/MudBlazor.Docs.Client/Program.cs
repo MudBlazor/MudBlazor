@@ -1,13 +1,10 @@
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Docs.Extensions;
 using System;
 using System.Net.Http;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Text;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using MudBlazor.Docs.Extensions;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace MudBlazor.Docs.Client
 {
@@ -20,7 +17,8 @@ namespace MudBlazor.Docs.Client
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.TryAddDocsViewServices();
-            
+            builder.Services.AddHeadElementHelper();
+
             await builder.Build().RunAsync();
         }
     }

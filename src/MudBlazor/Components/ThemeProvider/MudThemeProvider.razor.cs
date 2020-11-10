@@ -5,13 +5,13 @@ namespace MudBlazor
 {
     public class ComponentBaseMudThemeProvider : ComponentBase
     {
-        [Parameter] public MudTheme Theme { get; set; }
+        [Parameter] public MudThemeOld Theme { get; set; }
 
         protected override void OnInitialized()
         {
             if (Theme == null)
             {
-                MudTheme _theme = new MudTheme();
+                MudThemeOld _theme = new MudThemeOld();
                 Theme = _theme;
             }
         }

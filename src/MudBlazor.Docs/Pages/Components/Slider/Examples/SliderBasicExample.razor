@@ -2,13 +2,18 @@
 
 <MudGrid>
     <MudItem>
-        <MudSlider Value="50">Volume</MudSlider>
-        <MudSlider Disabled="true" Value="20">Disabled Slider</MudSlider>
+        <MudSlider Value="@value">Volume</MudSlider>
+        <MudSlider Disabled="true" Value="@(20)">Disabled Slider</MudSlider>
     </MudItem>
     <MudItem>
         <div class="demo-slider-filler"></div>
-        <MudSlider Value="50" />
+        <MudSlider Value="@value" />
         <div class="demo-slider-filler"></div>
-        <MudSlider Value="50" Disabled="true" />
+        <MudSlider Value="@value" Disabled="true" />
     </MudItem>
 </MudGrid>
+
+
+@code {
+    double value = 50.0;
+}

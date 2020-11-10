@@ -1,0 +1,446 @@
+﻿@page "/features/flex"
+
+<DocsPage>
+    <DocsPageHeader Title="Flex" SubTitle="Manage the layout, alignment, justification and more with a full suite of flex css classes." />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Enabling Flexbox</Title>
+                <Description>With the display classes you can turn any element into a flex container. Doing so will transform the childelements into flex items.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true">
+                <FlexEnableExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="FlexEnableExample" />
+            <MudText Typo="Typo.h6">The flex classes also works with the <MudLink Typo="Typo.h6" Href="/features/breakpoints">breakpoint system</MudLink></MudText>
+            <MudGrid Class="mt-1" Justify="Justify.SpaceEvenly">
+                <MudItem xs="4" sm="6" md="2">
+                    <MudText>.d-flex</MudText>
+                    <MudText>.d-inline-flex</MudText>
+                </MudItem>
+                <MudItem xs="4" sm="6" md="2">
+                    <MudText>.d-sm-flex</MudText>
+                    <MudText>.d-inline-sm-flex</MudText>
+                </MudItem>
+                <MudItem xs="4" sm="6" md="2">
+                    <MudText>.d-md-flex</MudText>
+                    <MudText>.d-inline-md-flex</MudText>
+                </MudItem>
+                <MudItem xs="4" sm="6" md="2">
+                    <MudText>.d-lg-flex</MudText>
+                    <MudText>.d-inline-lg-flex</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="2">
+                    <MudText>.d-xl-flex</MudText>
+                    <MudText>.d-inline-xl-flex</MudText>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Class="mt-16">
+                <Title>Flex Direction</Title>
+                <Description>By default <CodeInline>d-flex</CodeInline> applies <CodeInline>flex-direction: row</CodeInline> but can be changed where you need it.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <FlexDirectionExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="FlexDirectionExample" />
+            <MudText Typo="Typo.h6">Classes and Responsive variations</MudText>
+            <MudGrid Class="mt-1" Justify="Justify.SpaceEvenly">
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.flex-row</MudText>
+                    <MudText>.flex-row-reverse</MudText>
+                    <MudText>.flex-column</MudText>
+                    <MudText>.flex-column-reverse</MudText>
+                </MudItem>
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.flex-sm-row</MudText>
+                    <MudText>.flex-sm-row-reverse</MudText>
+                    <MudText>.flex-sm-column</MudText>
+                    <MudText>.flex-sm-column-reverse</MudText>
+                    <MudText>.flex-md-row</MudText>
+                    <MudText>.flex-md-row-reverse</MudText>
+                    <MudText>.flex-md-column</MudText>
+                    <MudText>.flex-md-column-reverse</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="4">
+                    <MudText>.flex-lg-row</MudText>
+                    <MudText>.flex-lg-row-reverse</MudText>
+                    <MudText>.flex-lg-column</MudText>
+                    <MudText>.flex-lg-column-reverse</MudText>
+                    <MudText>.flex-xl-row</MudText>
+                    <MudText>.flex-xl-row-reverse</MudText>
+                    <MudText>.flex-xl-column</MudText>
+                    <MudText>.flex-xl-column-reverse</MudText>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Class="mt-16">
+                <Title>Flex Justify</Title>
+                <Description>The <CodeInline>justify-content</CodeInline> flex setting can be changed using our flex justify classes.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <FlexJustifyExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="FlexJustifyExample" />
+            <MudText Typo="Typo.h6">Classes and Responsive variations</MudText>
+            <MudGrid Class="mt-1" Justify="Justify.SpaceEvenly">
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.justify-start</MudText>
+                    <MudText>.justify-end</MudText>
+                    <MudText>.justify-center</MudText>
+                    <MudText>.justify-space-between</MudText>
+                    <MudText>.justify-space-around</MudText>
+                </MudItem>
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.justify-sm-start</MudText>
+                    <MudText>.justify-sm-end</MudText>
+                    <MudText>.justify-sm-center</MudText>
+                    <MudText>.justify-sm-space-between</MudText>
+                    <MudText>.justify-sm-space-around</MudText>
+                    <MudText>.justify-md-start</MudText>
+                    <MudText>.justify-md-end</MudText>
+                    <MudText>.justify-md-center</MudText>
+                    <MudText>.justify-md-space-between</MudText>
+                    <MudText>.justify-md-space-around</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="4">
+                    <MudText>.justify-lg-start</MudText>
+                    <MudText>.justify-lg-end</MudText>
+                    <MudText>.justify-lg-center</MudText>
+                    <MudText>.justify-lg-space-between</MudText>
+                    <MudText>.justify-lg-space-around</MudText>
+                    <MudText>.justify-xl-start</MudText>
+                    <MudText>.justify-xl-end</MudText>
+                    <MudText>.justify-xl-center</MudText>
+                    <MudText>.justify-xl-space-between</MudText>
+                    <MudText>.justify-xl-space-around</MudText>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Class="mt-16">
+                <Title>Flex Align</Title>
+                <Description>The <CodeInline>align-items</CodeInline> flex setting can be changed using the flex align classes.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <FlexAlignExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="FlexAlignExample" />
+            <MudText Typo="Typo.h6">Classes and Responsive variations</MudText>
+            <MudGrid Class="mt-1" Justify="Justify.SpaceEvenly">
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.align-start</MudText>
+                    <MudText>.align-end</MudText>
+                    <MudText>.align-center</MudText>
+                    <MudText>.align-baseline</MudText>
+                    <MudText>.align-stretch</MudText>
+                </MudItem>
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.align-sm-start</MudText>
+                    <MudText>.align-sm-end</MudText>
+                    <MudText>.align-sm-center</MudText>
+                    <MudText>.align-sm-baseline</MudText>
+                    <MudText>.align-sm-stretch</MudText>
+                    <MudText>.align-md-start</MudText>
+                    <MudText>.align-md-end</MudText>
+                    <MudText>.align-md-center</MudText>
+                    <MudText>.align-md-baseline</MudText>
+                    <MudText>.align-md-stretch</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="4">
+                    <MudText>.align-lg-start</MudText>
+                    <MudText>.align-lg-end</MudText>
+                    <MudText>.align-lg-center</MudText>
+                    <MudText>.align-lg-baseline</MudText>
+                    <MudText>.align-lg-stretch</MudText>
+                    <MudText>.align-xl-start</MudText>
+                    <MudText>.align-xl-end</MudText>
+                    <MudText>.align-xl-center</MudText>
+                    <MudText>.align-xl-baseline</MudText>
+                    <MudText>.align-xl-stretch</MudText>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Class="mt-16">
+                <Title>Flex Align Self</Title>
+                <Description>The <CodeInline>align-self</CodeInline> flex setting can be changed using the flex align-self classes.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <FlexAlignSelfExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="FlexAlignSelfExample" />
+            <MudText Typo="Typo.h6">Classes and Responsive variations</MudText>
+            <MudGrid Class="mt-1" Justify="Justify.SpaceEvenly">
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.align-self-auto</MudText>
+                    <MudText>.align-self-start</MudText>
+                    <MudText>.align-self-end</MudText>
+                    <MudText>.align-self-center</MudText>
+                    <MudText>.align-self-baseline</MudText>
+                    <MudText>.align-self-stretch</MudText>
+                </MudItem>
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.align-self-sm-auto</MudText>
+                    <MudText>.align-self-sm-start</MudText>
+                    <MudText>.align-self-sm-end</MudText>
+                    <MudText>.align-self-sm-center</MudText>
+                    <MudText>.align-self-sm-baseline</MudText>
+                    <MudText>.align-self-sm-stretch</MudText>
+                    <MudText>.align-self-md-auto</MudText>
+                    <MudText>.align-self-md-start</MudText>
+                    <MudText>.align-self-md-end</MudText>
+                    <MudText>.align-self-md-center</MudText>
+                    <MudText>.align-self-md-baseline</MudText>
+                    <MudText>.align-self-md-stretch</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="4">
+                    <MudText>.align-self-lg-auto</MudText>
+                    <MudText>.align-self-lg-start</MudText>
+                    <MudText>.align-self-lg-end</MudText>
+                    <MudText>.align-self-lg-center</MudText>
+                    <MudText>.align-self-lg-baseline</MudText>
+                    <MudText>.align-self-lg-stretch</MudText>
+                    <MudText>.align-self-xl-auto</MudText>
+                    <MudText>.align-self-xl-start</MudText>
+                    <MudText>.align-self-xl-end</MudText>
+                    <MudText>.align-self-xl-center</MudText>
+                    <MudText>.align-self-xl-baseline</MudText>
+                    <MudText>.align-self-xl-stretch</MudText>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Class="mt-16">
+                <Title>Flex Align Content</Title>
+                <Description>The <CodeInline>align-content</CodeInline> flex setting can be changed using the flex align-content classes.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <FlexAlignContentExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="FlexAlignContentExample" />
+            <MudText Typo="Typo.h6">Classes and Responsive variations</MudText>
+            <MudGrid Class="mt-1" Justify="Justify.SpaceEvenly">
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.align-content-start</MudText>
+                    <MudText>.align-content-end</MudText>
+                    <MudText>.align-content-center</MudText>
+                    <MudText>.align-content-stretch</MudText>
+                    <MudText>.align-content-space-between</MudText>
+                    <MudText>.align-content-space-around</MudText>
+                </MudItem>
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.align-content-sm-start</MudText>
+                    <MudText>.align-content-sm-end</MudText>
+                    <MudText>.align-content-sm-center</MudText>
+                    <MudText>.align-content-sm-stretch</MudText>
+                    <MudText>.align-content-sm-space-between</MudText>
+                    <MudText>.align-content-sm-space-around</MudText>
+                    <MudText>.align-content-md-start</MudText>
+                    <MudText>.align-content-md-end</MudText>
+                    <MudText>.align-content-md-center</MudText>
+                    <MudText>.align-content-md-stretch</MudText>
+                    <MudText>.align-content-md-space-between</MudText>
+                    <MudText>.align-content-md-space-around</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="4">
+                    <MudText>.align-content-lg-start</MudText>
+                    <MudText>.align-content-lg-end</MudText>
+                    <MudText>.align-content-lg-center</MudText>
+                    <MudText>.align-content-lg-stretch</MudText>
+                    <MudText>.align-content-lg-space-between</MudText>
+                    <MudText>.align-content-lg-space-around</MudText>
+                    <MudText>.align-content-xl-start</MudText>
+                    <MudText>.align-content-xl-end</MudText>
+                    <MudText>.align-content-xl-center</MudText>
+                    <MudText>.align-content-xl-stretch</MudText>
+                    <MudText>.align-content-xl-space-between</MudText>
+                    <MudText>.align-content-xl-space-around</MudText>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Class="mt-16">
+                <Title>Auto margins</Title>
+                <Description>Using our spacing classes together with the flex container, you can control the positioning of flex items.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <FlexAutoMargins />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="FlexAutoMargins" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Class="mt-16">
+                <Title>Flex Wrap</Title>
+                <Description>By default <CodeInline>d-flex</CodeInline> does not provide any wrapping. This can be done with applying the wrap classes.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <FlexWrapExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="FlexWrapExample" />
+            <MudText Typo="Typo.h6">Classes and Responsive variations</MudText>
+            <MudGrid Class="mt-1" Justify="Justify.SpaceEvenly">
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.flex-wrap</MudText>
+                    <MudText>.flex-nowrap</MudText>
+                    <MudText>.flex-wrap-reverse</MudText>
+                </MudItem>
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.flex-sm-wrap</MudText>
+                    <MudText>.flex-sm-nowrap</MudText>
+                    <MudText>.flex-sm-wrap-reverse</MudText>
+                    <MudText>.flex-md-wrap</MudText>
+                    <MudText>.flex-md-nowrap</MudText>
+                    <MudText>.flex-md-wrap-reverse</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="4">
+                    <MudText>.flex-lg-wrap</MudText>
+                    <MudText>.flex-lg-nowrap</MudText>
+                    <MudText>.flex-lg-wrap-reverse</MudText>
+                    <MudText>.flex-xl-wrap</MudText>
+                    <MudText>.flex-xl-nowrap</MudText>
+                    <MudText>.flex-xl-wrap-reverse</MudText>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Class="mt-16">
+                <Title>Flex Order</Title>
+                <Description>To change the visual order of flex items use the <CodeInline>order</CodeInline> classes.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <FlexOrderExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="FlexOrderExample" />
+            <MudText Typo="Typo.h6">Classes and Responsive variations</MudText>
+            <MudGrid Class="mt-1" Justify="Justify.SpaceEvenly">
+                <MudItem xs="6" sm="6" md="2">
+                    <MudText>.order-first</MudText>
+                    <MudText>.order-0</MudText>
+                    <MudText>.order-1</MudText>
+                    <MudText>.order-2</MudText>
+                    <MudText>.order-3</MudText>
+                    <MudText>.order-4</MudText>
+                    <MudText>.order-5</MudText>
+                    <MudText>.order-6</MudText>
+                    <MudText>.order-7</MudText>
+                    <MudText>.order-8</MudText>
+                    <MudText>.order-9</MudText>
+                    <MudText>.order-10</MudText>
+                    <MudText>.order-11</MudText>
+                    <MudText>.order-12</MudText>
+                    <MudText>.order-last</MudText>
+                </MudItem>
+                <MudItem xs="6" sm="6" md="2">
+                    <MudText>.order-sm-first</MudText>
+                    <MudText>.order-sm-0</MudText>
+                    <MudText>.order-sm-1</MudText>
+                    <MudText>.order-sm-2</MudText>
+                    <MudText>.order-sm-3</MudText>
+                    <MudText>.order-sm-4</MudText>
+                    <MudText>.order-sm-5</MudText>
+                    <MudText>.order-sm-6</MudText>
+                    <MudText>.order-sm-7</MudText>
+                    <MudText>.order-sm-8</MudText>
+                    <MudText>.order-sm-9</MudText>
+                    <MudText>.order-sm-10</MudText>
+                    <MudText>.order-sm-11</MudText>
+                    <MudText>.order-sm-12</MudText>
+                    <MudText>.order-sm-last</MudText>
+                </MudItem>
+                <MudItem xs="6" sm="6" md="2">
+                    <MudText>.order-md-first</MudText>
+                    <MudText>.order-md-0</MudText>
+                    <MudText>.order-md-1</MudText>
+                    <MudText>.order-md-2</MudText>
+                    <MudText>.order-md-3</MudText>
+                    <MudText>.order-md-4</MudText>
+                    <MudText>.order-md-5</MudText>
+                    <MudText>.order-md-6</MudText>
+                    <MudText>.order-md-7</MudText>
+                    <MudText>.order-md-8</MudText>
+                    <MudText>.order-md-9</MudText>
+                    <MudText>.order-md-10</MudText>
+                    <MudText>.order-md-11</MudText>
+                    <MudText>.order-md-12</MudText>
+                    <MudText>.order-md-last</MudText>
+                </MudItem>
+                <MudItem xs="6" sm="6" md="2">
+                    <MudText>.order-lg-first</MudText>
+                    <MudText>.order-lg-0</MudText>
+                    <MudText>.order-lg-1</MudText>
+                    <MudText>.order-lg-2</MudText>
+                    <MudText>.order-lg-3</MudText>
+                    <MudText>.order-lg-4</MudText>
+                    <MudText>.order-lg-5</MudText>
+                    <MudText>.order-lg-6</MudText>
+                    <MudText>.order-lg-7</MudText>
+                    <MudText>.order-lg-8</MudText>
+                    <MudText>.order-lg-9</MudText>
+                    <MudText>.order-lg-10</MudText>
+                    <MudText>.order-lg-11</MudText>
+                    <MudText>.order-lg-12</MudText>
+                    <MudText>.order-lg-last</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="2">
+                    <MudText>.order-xl-first</MudText>
+                    <MudText>.order-xl-0</MudText>
+                    <MudText>.order-xl-1</MudText>
+                    <MudText>.order-xl-2</MudText>
+                    <MudText>.order-xl-3</MudText>
+                    <MudText>.order-xl-4</MudText>
+                    <MudText>.order-xl-5</MudText>
+                    <MudText>.order-xl-6</MudText>
+                    <MudText>.order-xl-7</MudText>
+                    <MudText>.order-xl-8</MudText>
+                    <MudText>.order-xl-9</MudText>
+                    <MudText>.order-xl-10</MudText>
+                    <MudText>.order-xl-11</MudText>
+                    <MudText>.order-xl-12</MudText>
+                    <MudText>.order-xl-last</MudText>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Class="mt-16">
+                <Title>Flex Grow and Shrink</Title>
+                <Description>MudBlazor have calsses to apply grow and shrink manually. Where <CodeInline>grow</CodeInline> and <CodeInline>shrink</CodeInline> can be either <CodeInline>0</CodeInline> or <CodeInline>1</CodeInline></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <FlexGrowAndShrinkExample/>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="FlexGrowAndShrinkExample" />
+            <MudText Typo="Typo.h6">Classes and Responsive variations</MudText>
+            <MudGrid Class="mt-1" Justify="Justify.SpaceEvenly">
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.flex-grow-0</MudText>
+                    <MudText>.flex-grow-1</MudText>
+                    <MudText>.flex-shrink-0</MudText>
+                    <MudText>.flex-shrink-1</MudText>
+                </MudItem>
+                <MudItem xs="6" sm="6" md="4">
+                    <MudText>.flex-sm-grow-0</MudText>
+                    <MudText>.flex-sm-grow-1</MudText>
+                    <MudText>.flex-sm-shrink-0</MudText>
+                    <MudText>.flex-sm-shrink-1</MudText>
+                    <MudText>.flex-md-grow-0</MudText>
+                    <MudText>.flex-md-grow-1</MudText>
+                    <MudText>.flex-md-shrink-0</MudText>
+                    <MudText>.flex-md-shrink-1</MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12" md="4">
+                    <MudText>.flex-lg-grow-0</MudText>
+                    <MudText>.flex-lg-grow-1</MudText>
+                    <MudText>.flex-lg-shrink-0</MudText>
+                    <MudText>.flex-lg-shrink-1</MudText>
+                    <MudText>.flex-xl-grow-0</MudText>
+                    <MudText>.flex-xl-grow-1</MudText>
+                    <MudText>.flex-xl-shrink-0</MudText>
+                    <MudText>.flex-xl-shrink-1</MudText>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

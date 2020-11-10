@@ -1,24 +1,32 @@
 @inherits LayoutComponentBase
+@inject NavigationManager NavMan
 
 <MudThemeProvider Theme="currentTheme" />
+<MudThemeProviderNew/>
 <MudDialogProvider />
 <MudSnackbarProvider />
 
 
-<MudLayout DrawerOpen="@_drawerOpen">
-    <MudAppBar Elevation="99" Color="Color.Appbar">
+<MudLayout RightToLeft="@_rightToLeft">
+    <MudAppBar Elevation="25">
         <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h5" Class="@GetTrackedIn()">Mudblazor</MudText>
         <MudAppBarSpacer />
-        <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
-        <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
+        <MudTooltip Text="Toggle light/dark theme">
+            <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
+        </MudTooltip>
+        <MudTooltip Text="GitHub repository">
+            <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
+        </MudTooltip>
+        <MudTooltip Text="Toggle right-to-left/left-to-right">
+            <MudIconButton Icon="@Icons.Material.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
+        </MudTooltip>
     </MudAppBar>
-    <MudDrawer Elevation="99">
+    <MudDrawer Open="@_drawerOpen" Elevation="25" Class="mudblazor-appbar-band">
         <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
-            MudBlazor
+            <MudBlazorLogo />
         </MudDrawerHeader>
-        <MudDivider DividerType="DividerType.Middle" />
         <NavMenu />
-        <MudDivider DividerType="DividerType.Middle" Class="mb-4" />
     </MudDrawer>
     <MudMainContent Class="mudblazor-main-content">
         @Body
@@ -28,15 +36,22 @@
 @code {
 
     bool _drawerOpen = false;
+    bool _rightToLeft = false;
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
 
+    void RightToLeftToggle()
+    {
+        _rightToLeft = !_rightToLeft;
+    }
+
     protected override void OnInitialized()
     {
         currentTheme = defaultTheme;
+        GetTrackedIn();
     }
 
     void DarkMode()
@@ -51,9 +66,31 @@
         }
     }
 
-    MudTheme currentTheme = new MudTheme();
-    MudTheme defaultTheme = new MudTheme();
-    MudTheme darkTheme = new MudTheme()
+    public bool _trackedIn { get; set; }
+    public string MudBlazorLogoText { get; set; }
+
+    public string GetTrackedIn()
+    {
+        if (_trackedIn && NavMan.BaseUri == NavMan.Uri)
+        {
+            _trackedIn = !_trackedIn;
+            MudBlazorLogoText = "mudblazor-appbar-brand-text track-out";
+        }
+        else if (!_trackedIn && NavMan.BaseUri != NavMan.Uri)
+        {
+            _trackedIn = !_trackedIn;
+            MudBlazorLogoText = "mudblazor-appbar-brand-text track-in";
+        } else if (NavMan.BaseUri == NavMan.Uri)
+        {
+            MudBlazorLogoText = "mudblazor-appbar-brand-text mud-hide";
+        }
+        return MudBlazorLogoText;
+    }
+
+    MudThemeOld currentTheme = new MudThemeOld();
+    MudThemeOld defaultTheme = new MudThemeOld();
+
+    MudThemeOld darkTheme = new MudThemeOld()
     {
         Color_Default = "#fff",
         Color_On_Default = "#fff",

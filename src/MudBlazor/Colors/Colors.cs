@@ -334,5 +334,12 @@ namespace MudBlazor
             public static string Darken3 { get; } = "#424242";
             public static string Darken4 { get; } = "#212121";
         }
+
+        public static class Shades
+        {
+            public static string Black { get; } = "#000000";
+            public static string White { get; } = "#FFFFFF";
+            public static string Transparent { get; } = "transparent";
+        }
     }
 }

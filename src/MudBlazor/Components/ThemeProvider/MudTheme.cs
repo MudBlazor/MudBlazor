@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using MudBlazor.Utilities;
 using System.Globalization;
@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace MudBlazor
 {
-    public class MudTheme : DefaultMudTheme
+    public class MudThemeOld : DefaultMudTheme
     {
         protected virtual void GenerateTheme(StringBuilder theme)
         {

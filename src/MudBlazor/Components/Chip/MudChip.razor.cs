@@ -9,8 +9,9 @@ using System;
 
 namespace MudBlazor
 {
-    public partial class MudChip : MudComponentBase
+    public partial class MudChip : MudComponentBase, IDisposable
     {
+        private bool _isSelected;
         [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
 
         [Inject] public IJSRuntime JsRuntime { get; set; }
@@ -20,12 +21,15 @@ namespace MudBlazor
           .AddClass($"mud-chip-{Variant.ToDescriptionString()}")
           .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
           .AddClass($"mud-chip-color-{Color.ToDescriptionString()}")
-          .AddClass("mud-clickable", OnClickSet)
-          .AddClass($"mud-ripple", !DisableRipple && OnClickSet)
+          .AddClass("mud-clickable", (OnClick.HasDelegate || ChipSet != null))
+          .AddClass($"mud-ripple", !DisableRipple && (OnClick.HasDelegate || ChipSet!=null))
           .AddClass("mud-chip-label", Label)
           .AddClass("mud-disabled", Disabled)
+          .AddClass("mud-chip-selected", IsSelected)
           .AddClass(Class)
         .Build();
+
+        [CascadingParameter] MudChipSet ChipSet { get; set; }
 
         /// <summary>
         /// The color of the component.
@@ -93,6 +97,11 @@ namespace MudBlazor
         [Parameter] public string Target { get; set; }
 
         /// <summary>
+        /// A string you want to associate with the chip. If the ChildContent is not set this will be shown as chip text.
+        /// </summary>
+        [Parameter] public string Text { get; set; }
+
+        /// <summary>
         /// If true, force browser to redirect outside component router-space.
         /// </summary>
         [Parameter] public bool ForceLoad { get; set; }
@@ -115,13 +124,37 @@ namespace MudBlazor
         /// <summary>
         /// Chip delete event, if set the delete icon will be visible.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnClose { get; set; }
+        [Parameter] public EventCallback<MudChip> OnClose { get; set; }
 
-        private bool OnCloseSet => OnClose.HasDelegate;
-        private bool OnClickSet => OnClick.HasDelegate;
+        /// <summary>
+        /// Set by MudChipSet
+        /// </summary>
+        public bool IsChecked
+        {
+            get => _isSelected && ChipSet?.Filter==true;
+        }
+
+        /// <summary>
+        /// Set by MudChipSet
+        /// </summary>
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected == value)
+                    return;
+                _isSelected = value;
+                StateHasChanged();
+            }
+        }
 
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
+            if (ChipSet != null)
+            {
+                ChipSet.OnChipClicked(this);
+            }
             if (Link != null)
             {
                 if (string.IsNullOrWhiteSpace(Target))
@@ -141,12 +174,27 @@ namespace MudBlazor
 
         protected async Task OnCloseHandler(MouseEventArgs ev)
         {
-            await OnClick.InvokeAsync(ev);
-            if (Command?.CanExecute(CommandParameter) ?? false)
-            {
-                Command.Execute(CommandParameter);
-            }
-            // Close code here? if user wants something to happen onclose click above?
+            await OnClose.InvokeAsync(this);
+            ChipSet?.OnChipDeleted(this);
+            StateHasChanged();
         }
+
+        protected override Task OnInitializedAsync()
+        {
+            ChipSet?.Add(this);
+            return base.OnInitializedAsync();
+        }
+
+        internal void ForceRerender() => StateHasChanged();
+             
+
+        public void Dispose()
+        {
+            try
+            {
+                ChipSet?.Remove(this);
+            }catch(Exception){}
+        }
+
     }
 }

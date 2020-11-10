@@ -1,11 +1,12 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
-
+@typeparam T
 
 <div class="@Classname" style="@Style">
     @if(ChildContent != null)
     {
         <MudText Typo="Typo.body1">@ChildContent</MudText>
     }
-    <input @attributes="UserAttributes" type="range" min="@Min" max="@Max" step="@Step" @bind-value="@Value" disabled="@Disabled"/>
+    <input @attributes="UserAttributes" type="range" min="@_min" max="@_max" step="@_step" disabled="@Disabled"
+                    @bind-value="@Text" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"/>
 </div>

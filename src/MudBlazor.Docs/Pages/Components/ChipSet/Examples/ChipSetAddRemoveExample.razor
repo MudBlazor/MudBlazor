@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudChipSet AllClosable="true" OnClose="Closed">
+    @foreach (var value in values)
+    {
+        <MudChip Text="@value"></MudChip>
+    }
+</MudChipSet>
+
+Add chips <MudIconButton Icon="@Icons.Material.Add" OnClick="Add"></MudIconButton>
+
+
+
+
+
+@code
+{
+    int i = 1;
+    List<string> values = new List<string>();
+    public void Add() => values.Add("Value " + (i++));
+    public void Closed(MudChip chip) => values.Remove(chip.Text);
+}
+

@@ -26,7 +26,6 @@
     }
 }
 
-
 .demo-list, .demo-divider {
     & .mud-list {
         width: 100%;
@@ -246,4 +245,10 @@
             align-self: center;
         }
     }
+}
+
+.docs-iframe {
+    height: 400px;
+    width: 100%;
+    margin: 0px !important;
 }

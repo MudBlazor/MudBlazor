@@ -57,12 +57,6 @@ namespace MudBlazor
         public Func<string, Task<IEnumerable<T>>> SearchFunc { get; set; }
 
         /// <summary>
-        /// Set the format for values in the list if no template
-        /// </summary>
-        [Parameter]
-        public string Format { get; set; }
-
-        /// <summary>
         /// Maximum items to display, defaults to 10.
         /// Set null to display all
         /// </summary>

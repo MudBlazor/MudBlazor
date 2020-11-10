@@ -3,7 +3,9 @@
 
 <MudText>
     This is not set by any <strong class="green-text text-accent-4">MudTheme</strong> colors.
+    <br />
+    But rather css classes based on <strong style="color:@purple;">Material Design</strong> color palette.
 </MudText>
-<MudText>
-    But rather css classes based on <strong class="purple-text text-accent-3">Material Design</strong> color pallet.
-</MudText>
+@code{
+    string purple = Colors.Purple.Accent3;
+}

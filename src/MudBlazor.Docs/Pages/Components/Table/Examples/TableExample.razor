@@ -3,8 +3,9 @@
 
 <MudTable Items="@PeriodicTable.GetElements()" Dense="@dense" Hover="@hover" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selected_item">
     <ToolBarContent>
-        <MudText Typo="Typo.h6" Class="mud-flex-1-1-100">Periodic Elements</MudText>
-        <MudIcon Style="margin-top: 20px; margin-right: 8px;" Icon="@Icons.Material.Search"></MudIcon>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudToolBarSpacer />
+        <MudIcon Class="mt-5 mr-2" Icon="@Icons.Material.Search"></MudIcon>
         <MudTextField @bind-Value="search_string" Placeholder="Search"></MudTextField>
     </ToolBarContent>
     <HeaderContent>

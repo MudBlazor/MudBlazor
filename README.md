@@ -6,8 +6,17 @@
 [![GitHub Repo stars](https://img.shields.io/github/stars/garderoben/mudblazor?style=flat-square)](https://github.com/Garderoben/MudBlazor/stargazers)
 [![GitHub last commit](https://img.shields.io/github/last-commit/garderoben/mudblazor?style=flat-square)](https://github.com/Garderoben/MudBlazor)
 
-Component Library based on material-ui and Material design. The goal is to do more Blazor, CSS and less Javascript.
-Simple and easy to use components that is highly customizable.
+MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure. It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers them to adapt, fix or extend the framework and the multitude of examples in the documentation makes learning MudBlazor very easy. 
+	
+Design goals:
+ - Clean and aesthetic graphic design based on Material Design
+ - Clear and easy to understand structure
+ - Good documentation with many examples and source snippets
+ - All components are written entirely in C#, no JavaScript allowed (except absolutely necessary)
+ - Users can make beautiful apps without needing CSS (but they can of course use CSS too)
+ - No dependencies on other component libraries, 100% control over components and features
+ - Stability! We strive for a complete test coverage. 
+ - Releasing often so developers can get their PRs and fixes in a timely fashion
 
 ## Documentation & Demo
 - [MudBlazor.com](https://mudblazor.com)

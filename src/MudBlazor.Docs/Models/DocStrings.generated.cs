@@ -68,6 +68,8 @@ public const string MudBaseInput_Variant = @"Variant to use.";
 
 public const string MudBaseInput_Margin = @"Will adjust vertical spacing.";
 
+public const string MudBaseInput_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
+
 public const string MudBaseInput_Text = @"";
 
 public const string MudBaseInput_TextChanged = @"";
@@ -87,6 +89,8 @@ public const string MudBaseInput_Value = @"The value of this input element. This
 public const string MudBaseInput_Converter = @"";
 
 public const string MudBaseInput_Culture = @"";
+
+public const string MudBaseInput_Format = @"";
 
 public const string MudBaseInput_Validation = @"";
 
@@ -197,7 +201,7 @@ public const string MudAppBar_Dense = @"If true, compact padding will be used.";
 
 public const string MudAppBar_Color = @"The color of the component. It supports the theme colors.";
 
-public const string MudAppBar_Position = @"The positioning type. The behavior of the different options is described in the MDN web docs. Note: sticky is not universally supported and will fall back to static when unavailable.";
+public const string MudAppBar_Fixed = @"If true, appbar will be Fixed.";
 
 public const string MudAppBar_ChildContent = @"Child content of the component.";
 
@@ -221,8 +225,6 @@ public const string MudAutocomplete_MaxHeight = @"Sets the maxheight the select 
 public const string MudAutocomplete_ToStringExpression = @"Defines how values are displayed in the drop-down list";
 
 public const string MudAutocomplete_SearchFunc = @"The SearchFunc returns a list of items matching the typed text";
-
-public const string MudAutocomplete_Format = @"Set the format for values in the list if no template";
 
 public const string MudAutocomplete_MaxItems = @"Maximum items to display, defaults to 10.
             Set null to display all";
@@ -271,6 +273,8 @@ public const string MudAutocomplete_Variant = @"";
 
 public const string MudAutocomplete_Margin = @"";
 
+public const string MudAutocomplete_Lines = @"";
+
 public const string MudAutocomplete_Text = @"";
 
 public const string MudAutocomplete_TextChanged = @"";
@@ -290,6 +294,8 @@ public const string MudAutocomplete_Value = @"";
 public const string MudAutocomplete_Converter = @"";
 
 public const string MudAutocomplete_Culture = @"";
+
+public const string MudAutocomplete_Format = @"";
 
 public const string MudAutocomplete_Validation = @"";
 
@@ -515,6 +521,35 @@ public const string MudCheckBox_Tag = @"Use Tag to attach any user data object t
 public const string MudCheckBox_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudChipSet_ChildContent = @"Child content of component.";
+
+public const string MudChipSet_MultiSelection = @"Allows to select more than one chip.";
+
+public const string MudChipSet_Mandatory = @"Will not allow to deselect the selected chip in single selection mode.";
+
+public const string MudChipSet_AllClosable = @"Will make all chips closable.";
+
+public const string MudChipSet_Filter = @"Will show a check-mark for the selected components.";
+
+public const string MudChipSet_SelectedChip = @"The currently selected chip in Choice mode";
+
+public const string MudChipSet_SelectedChipChanged = @"Called when the selected chip changes, in Choice mode";
+
+public const string MudChipSet_SelectedChips = @"The currently selected chips in Filter mode";
+
+public const string MudChipSet_SelectedChipsChanged = @"Called when the selection changed, in Filter mode";
+
+public const string MudChipSet_OnClose = @"Called when a Chip was deleted (by click on the close icon)";
+
+public const string MudChipSet_Class = @"User class names, separated by space";
+
+public const string MudChipSet_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudChipSet_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudChipSet_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudChip_Color = @"The color of the component.";
 
 public const string MudChip_Size = @"The size of the button. small is equivalent to the dense button styling.";
@@ -540,6 +575,8 @@ public const string MudChip_ChildContent = @"Child content of component.";
 public const string MudChip_Link = @"If set to a URL, clicking the button will open the referenced document. Use Target to specify where";
 
 public const string MudChip_Target = @"The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | framename";
+
+public const string MudChip_Text = @"A string you want to associate with the chip. If the ChildContent is not set this will be shown as chip text.";
 
 public const string MudChip_ForceLoad = @"If true, force browser to redirect outside component router-space.";
 
@@ -803,6 +840,8 @@ public const string MudInput_Variant = @"";
 
 public const string MudInput_Margin = @"";
 
+public const string MudInput_Lines = @"";
+
 public const string MudInput_Text = @"";
 
 public const string MudInput_TextChanged = @"";
@@ -822,6 +861,8 @@ public const string MudInput_Value = @"";
 public const string MudInput_Converter = @"";
 
 public const string MudInput_Culture = @"";
+
+public const string MudInput_Format = @"";
 
 public const string MudInput_Validation = @"";
 
@@ -877,6 +918,8 @@ public const string MudInputString_Variant = @"Variant to use.";
 
 public const string MudInputString_Margin = @"Will adjust vertical spacing.";
 
+public const string MudInputString_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
+
 public const string MudInputString_Text = @"";
 
 public const string MudInputString_TextChanged = @"";
@@ -896,6 +939,8 @@ public const string MudInputString_Value = @"The value of this input element. Th
 public const string MudInputString_Converter = @"";
 
 public const string MudInputString_Culture = @"";
+
+public const string MudInputString_Format = @"";
 
 public const string MudInputString_Validation = @"";
 
@@ -1104,7 +1149,9 @@ public const string MudNavGroup_DisableRipple = @"";
 
 public const string MudNavGroup_Expanded = @"";
 
-public const string MudNavGroup_ExpandIcon = @"If true, adds expand-icon at the end of the NavGroup. Set to true by default.";
+public const string MudNavGroup_HideExpandIcon = @"If true, hides expand-icon at the end of the NavGroup. Set to true by default.";
+
+public const string MudNavGroup_ExpandIcon = @"If set, overrides the default expand icon.";
 
 public const string MudNavGroup_ChildContent = @"";
 
@@ -1346,6 +1393,8 @@ public const string MudSelect_Variant = @"";
 
 public const string MudSelect_Margin = @"";
 
+public const string MudSelect_Lines = @"";
+
 public const string MudSelect_Text = @"";
 
 public const string MudSelect_TextChanged = @"";
@@ -1365,6 +1414,8 @@ public const string MudSelect_Value = @"";
 public const string MudSelect_Converter = @"";
 
 public const string MudSelect_Culture = @"";
+
+public const string MudSelect_Format = @"";
 
 public const string MudSelect_Validation = @"";
 
@@ -1444,6 +1495,8 @@ public const string MudSelectString_Variant = @"Variant to use.";
 
 public const string MudSelectString_Margin = @"Will adjust vertical spacing.";
 
+public const string MudSelectString_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
+
 public const string MudSelectString_Text = @"";
 
 public const string MudSelectString_TextChanged = @"";
@@ -1463,6 +1516,8 @@ public const string MudSelectString_Value = @"The value of this input element. T
 public const string MudSelectString_Converter = @"";
 
 public const string MudSelectString_Culture = @"";
+
+public const string MudSelectString_Format = @"";
 
 public const string MudSelectString_Validation = @"";
 
@@ -1532,15 +1587,20 @@ public const string MudSlider_Min = @"The minimum allowed value of the slider. S
 
 public const string MudSlider_Max = @"The maximum allowed value of the slider. Should not be equal to min.";
 
-public const string MudSlider_Step = @"How many steps the slider should take on eatch move.";
+public const string MudSlider_Step = @"How many steps the slider should take on each move.";
 
 public const string MudSlider_Disabled = @"If true, the slider will be disabled.";
 
 public const string MudSlider_ChildContent = @"Child content of component.";
 
+public const string MudSlider_Converter = @"";
+
 public const string MudSlider_ValueChanged = @"";
 
 public const string MudSlider_Value = @"";
+
+public const string MudSlider_Immediate = @"If true, the dragging the slider will update the Value immediately.
+            If false, the Value is updated only on releasing the handle.";
 
 public const string MudSlider_Class = @"User class names, separated by space";
 
@@ -1750,6 +1810,8 @@ public const string MudTextField_Variant = @"";
 
 public const string MudTextField_Margin = @"";
 
+public const string MudTextField_Lines = @"";
+
 public const string MudTextField_Text = @"";
 
 public const string MudTextField_TextChanged = @"";
@@ -1769,6 +1831,8 @@ public const string MudTextField_Value = @"";
 public const string MudTextField_Converter = @"";
 
 public const string MudTextField_Culture = @"";
+
+public const string MudTextField_Format = @"";
 
 public const string MudTextField_Validation = @"";
 
@@ -1824,6 +1888,8 @@ public const string MudTextFieldString_Variant = @"Variant to use.";
 
 public const string MudTextFieldString_Margin = @"Will adjust vertical spacing.";
 
+public const string MudTextFieldString_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
+
 public const string MudTextFieldString_Text = @"";
 
 public const string MudTextFieldString_TextChanged = @"";
@@ -1844,6 +1910,8 @@ public const string MudTextFieldString_Converter = @"";
 
 public const string MudTextFieldString_Culture = @"";
 
+public const string MudTextFieldString_Format = @"";
+
 public const string MudTextFieldString_Validation = @"";
 
 public const string MudTextFieldString_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
@@ -1859,6 +1927,8 @@ public const string MudTextFieldString_UserAttributes = @"UserAttributes carries
             will be splatted onto the underlying HTML tag.";
 
 public const string ComponentBaseMudThemeProvider_Theme = @"";
+
+public const string BaseMudThemeProviderNew_Theme = @"";
 
 public const string MudTimePicker_OpenTo = @"First view to show in the MudDatePicker.";
 
@@ -2082,6 +2152,10 @@ public const string MudDrawer_Color = @"The color of the component. It supports 
 
 public const string MudDrawer_ChildContent = @"Child content of component.";
 
+public const string MudDrawer_Open = @"";
+
+public const string MudDrawer_Clipped = @"";
+
 public const string MudDrawer_Class = @"User class names, separated by space";
 
 public const string MudDrawer_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -2142,9 +2216,7 @@ public const string MudItem_UserAttributes = @"UserAttributes carries all attrib
 
 public const string MudLayout_ChildContent = @"Child content of component.";
 
-public const string MudLayout_DrawerOpen = @"Gets or ets the drawer open state.";
-
-public const string MudLayout_DrawerClipped = @"Gets or sets the drawer clipped state.";
+public const string MudLayout_RightToLeft = @"If set, changes the layout to RightToLeft.";
 
 public const string MudLayout_Class = @"User class names, separated by space";
 
@@ -2386,6 +2458,8 @@ public const string MudSparkLine_UserAttributes = @"UserAttributes carries all a
 
 public const string MudTable_RowTemplate = @"Defines how a table row looks like. Use MudTd to define the table cells and their content.";
 
+public const string MudTable_RowEditingTemplate = @"Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.";
+
 public const string MudTable_Items = @"The data to display in the table. MudTable will render one row per item";
 
 public const string MudTable_Filter = @"A function that returns whether or not an item should be displayed in the table. You can use this to implement your own search function.";
@@ -2471,6 +2545,8 @@ public const string MudTr_Item = @"";
 
 public const string MudTr_IsCheckable = @"";
 
+public const string MudTr_IsEditable = @"";
+
 public const string MudTr_IsHeader = @"";
 
 public const string MudTr_IsCheckedChanged = @"";
@@ -2496,6 +2572,8 @@ public const string MudTabPanel_UserAttributes = @"UserAttributes carries all at
 
 public const string MudThemeProvider_Theme = @"";
 
+public const string MudThemeProviderNew_Theme = @"";
+
 public const string MudToolBar_Dense = @"If true, compact padding will be used.";
 
 public const string MudToolBar_DisableGutters = @"If true, disables gutter padding.";
@@ -2515,7 +2593,7 @@ public const string MudTooltip_Text = @"Sets the text to be displayed inside the
 
 public const string MudTooltip_Class = @"User class names, separated by space";
 
-public const string MudTooltip_Delayed = @"If true, sets set a delay until tooltip is showed.";
+public const string MudTooltip_Delayed = @"Changes the default transition delay in seconds.";
 
 public const string MudTooltip_Placement = @"Tooltip placement.";
 

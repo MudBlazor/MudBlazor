@@ -146,6 +146,11 @@
              Will adjust vertical spacing. 
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Lines">
+            <summary>
+             A multiline input (textarea) will be shown, if set to more than one line.
+            </summary>
+        </member>
         <member name="M:MudBlazor.MudBaseInput`1.StringValueChanged(System.String)">
             <summary>
             Text change hook for descendants  
@@ -414,9 +419,9 @@
             The color of the component. It supports the theme colors.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudAppBar.Position">
+        <member name="P:MudBlazor.MudAppBar.Fixed">
             <summary>
-            The positioning type. The behavior of the different options is described in the MDN web docs. Note: sticky is not universally supported and will fall back to static when unavailable.
+            If true, appbar will be Fixed.
             </summary>
         </member>
         <member name="P:MudBlazor.MudAppBar.ChildContent">
@@ -452,11 +457,6 @@
         <member name="P:MudBlazor.MudAutocomplete`1.SearchFunc">
             <summary>
             The SearchFunc returns a list of items matching the typed text
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudAutocomplete`1.Format">
-            <summary>
-            Set the format for values in the list if no template
             </summary>
         </member>
         <member name="P:MudBlazor.MudAutocomplete`1.MaxItems">
@@ -711,6 +711,56 @@
             A callback when CheckedChanges.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudChipSet.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.MultiSelection">
+            <summary>
+            Allows to select more than one chip.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.Mandatory">
+            <summary>
+            Will not allow to deselect the selected chip in single selection mode.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.AllClosable">
+            <summary>
+            Will make all chips closable.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.Filter">
+            <summary>
+             Will show a check-mark for the selected components.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChip">
+            <summary>
+            The currently selected chip in Choice mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChipChanged">
+            <summary>
+            Called when the selected chip changes, in Choice mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChips">
+            <summary>
+            The currently selected chips in Filter mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChipsChanged">
+            <summary>
+            Called when the selection changed, in Filter mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.OnClose">
+            <summary>
+            Called when a Chip was deleted (by click on the close icon)
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudChip.Color">
             <summary>
             The color of the component.
@@ -776,6 +826,11 @@
             The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
             </summary>
         </member>
+        <member name="P:MudBlazor.MudChip.Text">
+            <summary>
+            A string you want to associate with the chip. If the ChildContent is not set this will be shown as chip text.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudChip.ForceLoad">
             <summary>
             If true, force browser to redirect outside component router-space.
@@ -799,6 +854,16 @@
         <member name="P:MudBlazor.MudChip.OnClose">
             <summary>
             Chip delete event, if set the delete icon will be visible.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.IsChecked">
+            <summary>
+            Set by MudChipSet
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChip.IsSelected">
+            <summary>
+            Set by MudChipSet
             </summary>
         </member>
         <member name="P:MudBlazor.MudDatePicker.MaxDate">
@@ -1223,9 +1288,14 @@
             Icon to use if set.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudNavGroup.HideExpandIcon">
+            <summary>
+            If true, hides expand-icon at the end of the NavGroup. Set to true by default.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudNavGroup.ExpandIcon">
             <summary>
-            If true, adds expand-icon at the end of the NavGroup. Set to true by default.
+            If set, overrides the default expand icon.
             </summary>
         </member>
         <member name="P:MudBlazor.MudNavLink.Icon">
@@ -1478,32 +1548,38 @@
             The checkbox icon reflects the multi-select option's state
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSlider.Min">
+        <member name="P:MudBlazor.MudSlider`1.Min">
             <summary>
             The minimum allowed value of the slider. Should not be equal to max.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSlider.Max">
+        <member name="P:MudBlazor.MudSlider`1.Max">
             <summary>
             The maximum allowed value of the slider. Should not be equal to min.
             </summary>
             
         </member>
-        <member name="P:MudBlazor.MudSlider.Step">
+        <member name="P:MudBlazor.MudSlider`1.Step">
             <summary>
-            How many steps the slider should take on eatch move.
+            How many steps the slider should take on each move.
             </summary>
             
         </member>
-        <member name="P:MudBlazor.MudSlider.Disabled">
+        <member name="P:MudBlazor.MudSlider`1.Disabled">
             <summary>
             If true, the slider will be disabled.
             </summary>
             
         </member>
-        <member name="P:MudBlazor.MudSlider.ChildContent">
+        <member name="P:MudBlazor.MudSlider`1.ChildContent">
             <summary>
             Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSlider`1.Immediate">
+            <summary>
+            If true, the dragging the slider will update the Value immediately.
+            If false, the Value is updated only on releasing the handle.
             </summary>
         </member>
         <member name="T:MudBlazor.Snackbars">
@@ -1865,6 +1941,11 @@
              Get converts from string
              </summary>
         </member>
+        <member name="P:MudBlazor.Converter`1.Format">
+            <summary>
+            Custom Format to be applied on bidirectional way.
+            </summary>
+        </member>
         <member name="T:MudBlazor.NullableDateConverter">
             <summary>
             A ready made DateTime? to string binding converter with configurable date format and culture
@@ -1879,6 +1960,34 @@
             <summary>
             A universal T to string binding converter
             </summary>
+        </member>
+        <member name="T:MudBlazor.NumericConverter`1">
+            <summary>
+            A universal T to double binding converter
+            </summary>
+        </member>
+        <member name="T:MudBlazor.Utilities.ColorTransformation">
+            <summary>
+            Static methods for transforming argb spaces and argb values.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.Utilities.ColorTransformation.RgBtoHsl(System.Drawing.Color)">
+            <summary>
+            Converts RGB to HSL. Alpha is ignored.
+            Output is: { H: [0, 360], S: [0, 1], L: [0, 1] }.
+            </summary>
+            <param name="color">The color to convert.</param>
+        </member>
+        <member name="M:MudBlazor.Utilities.ColorTransformation.HsLtoRgb(MudBlazor.Utilities.ColorTransformation.HSLColor,System.Int32)">
+            <summary>
+            Converts HSL to RGB, with a specified output Alpha.
+            Arguments are limited to the defined range:
+            does not raise exceptions.
+            </summary>
+            <param name="h">Hue, must be in [0, 360].</param>
+            <param name="s">Saturation, must be in [0, 1].</param>
+            <param name="l">Luminance, must be in [0, 1].</param>
+            <param name="a">Output Alpha, must be in [0, 255].</param>
         </member>
         <member name="M:MudBlazor.Utilities.CssBuilder.Default(System.String)">
             <summary>
@@ -2282,14 +2391,9 @@
             Child content of component.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudLayout.DrawerOpen">
+        <member name="P:MudBlazor.MudLayout.RightToLeft">
             <summary>
-            Gets or ets the drawer open state.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudLayout.DrawerClipped">
-            <summary>
-            Gets or sets the drawer clipped state.
+            If set, changes the layout to RightToLeft.
             </summary>
         </member>
         <member name="P:MudBlazor.MudPaper.Elevation">
@@ -2357,6 +2461,11 @@
             Defines how a table row looks like. Use MudTd to define the table cells and their content.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTable`1.RowEditingTemplate">
+            <summary>
+            Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTable`1.Items">
             <summary>
             The data to display in the table. MudTable will render one row per item
@@ -2390,6 +2499,11 @@
         <member name="M:MudBlazor.MudTableSortLabel`1.SetSortDirection(MudBlazor.SortDirection)">
             <summary>
             Set sort direction but don't update Table sort order. This should only be called by Table
+            </summary>
+        </member>
+        <member name="F:MudBlazor.MudTr._lockeditingentry">
+            <summary>
+            FinishEdit() is called befor OwRowClick, so we are going to block the OnRowClicked()'s EditingItem sett when user clicks on finish edit button
             </summary>
         </member>
         <member name="P:MudBlazor.MudTabPanel.Text">
@@ -2439,7 +2553,7 @@
         </member>
         <member name="P:MudBlazor.MudTooltip.Delayed">
             <summary>
-            If true, sets set a delay until tooltip is showed.
+            Changes the default transition delay in seconds.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTooltip.Placement">
