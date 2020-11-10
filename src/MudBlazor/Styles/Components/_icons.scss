@@ -1,4 +1,12 @@
-﻿
+﻿.mud-icon-default {
+    color: var(--mud-palette-text-secondary);
+}
+
+.mud-disabled {
+    .mud-icon-default, .mud-icon-root, .mud-svg-icon-root {
+        color: var(--mud-palette-text-disabled);
+    }
+}
 
 .mud-icon-root {
     width: 1em;

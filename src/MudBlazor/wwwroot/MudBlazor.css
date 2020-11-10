@@ -1278,8 +1278,6 @@ ul {
   vertical-align: middle;
   -webkit-tap-highlight-color: transparent;
   color: var(--mud-palette-text-primary); }
-  .mud-checkbox:hover {
-    background-color: var(--mud-palette-action-default-hover); }
   .mud-checkbox.mud-disabled, .mud-checkbox .mud-disabled:hover {
     cursor: default;
     background-color: transparent; }
@@ -1408,45 +1406,45 @@ ul {
   background-color: var(--mud-palette-action-disabled-background); }
   .mud-chip-filled:hover {
     background-color: var(--mud-palette-action-disabled); }
-  .mud-chip-filled .mud-chip-color-primary {
+  .mud-chip-filled.mud-chip-color-primary {
     color: var(--mud-palette-primary-text);
     background-color: var(--mud-palette-primary); }
-    .mud-chip-filled .mud-chip-color-primary:hover {
+    .mud-chip-filled.mud-chip-color-primary:hover {
       background-color: var(--mud-palette-primary-darken); }
-  .mud-chip-filled .mud-chip-color-secondary {
+  .mud-chip-filled.mud-chip-color-secondary {
     color: var(--mud-palette-secondary-text);
     background-color: var(--mud-palette-secondary); }
-    .mud-chip-filled .mud-chip-color-secondary:hover {
+    .mud-chip-filled.mud-chip-color-secondary:hover {
       background-color: var(--mud-palette-secondary-darken); }
-  .mud-chip-filled .mud-chip-color-tertiary {
+  .mud-chip-filled.mud-chip-color-tertiary {
     color: var(--mud-palette-tertiary-text);
     background-color: var(--mud-palette-tertiary); }
-    .mud-chip-filled .mud-chip-color-tertiary:hover {
+    .mud-chip-filled.mud-chip-color-tertiary:hover {
       background-color: var(--mud-palette-tertiary-darken); }
-  .mud-chip-filled .mud-chip-color-info {
+  .mud-chip-filled.mud-chip-color-info {
     color: var(--mud-palette-info-text);
     background-color: var(--mud-palette-info); }
-    .mud-chip-filled .mud-chip-color-info:hover {
+    .mud-chip-filled.mud-chip-color-info:hover {
       background-color: var(--mud-palette-info-darken); }
-  .mud-chip-filled .mud-chip-color-success {
+  .mud-chip-filled.mud-chip-color-success {
     color: var(--mud-palette-success-text);
     background-color: var(--mud-palette-success); }
-    .mud-chip-filled .mud-chip-color-success:hover {
+    .mud-chip-filled.mud-chip-color-success:hover {
       background-color: var(--mud-palette-success-darken); }
-  .mud-chip-filled .mud-chip-color-warning {
+  .mud-chip-filled.mud-chip-color-warning {
     color: var(--mud-palette-warning-text);
     background-color: var(--mud-palette-warning); }
-    .mud-chip-filled .mud-chip-color-warning:hover {
+    .mud-chip-filled.mud-chip-color-warning:hover {
       background-color: var(--mud-palette-warning-darken); }
-  .mud-chip-filled .mud-chip-color-error {
+  .mud-chip-filled.mud-chip-color-error {
     color: var(--mud-palette-error-text);
     background-color: var(--mud-palette-error); }
-    .mud-chip-filled .mud-chip-color-error:hover {
+    .mud-chip-filled.mud-chip-color-error:hover {
       background-color: var(--mud-palette-error-darken); }
-  .mud-chip-filled .mud-chip-color-dark {
+  .mud-chip-filled.mud-chip-color-dark {
     color: var(--mud-palette-dark-text);
     background-color: var(--mud-palette-dark); }
-    .mud-chip-filled .mud-chip-color-dark:hover {
+    .mud-chip-filled.mud-chip-color-dark:hover {
       background-color: var(--mud-palette-dark-darken); }
 
 .mud-chip-outlined {
@@ -1454,46 +1452,46 @@ ul {
   border: 1px solid var(--mud-palette-lines-inputs); }
   .mud-chip-outlined:hover {
     background-color: var(--mud-palette-action-default-hover); }
-  .mud-chip-outlined .mud-chip-color-primary {
-    color: var(--mud-palette-primary-text);
+  .mud-chip-outlined.mud-chip-color-primary {
+    color: var(--mud-palette-primary);
     border: 1px solid var(--mud-palette-primary); }
-    .mud-chip-outlined .mud-chip-color-primary:hover {
-      background-color: var(--mud-palette-primary-darken); }
-  .mud-chip-outlined .mud-chip-color-secondary {
-    color: var(--mud-palette-secondary-text);
+    .mud-chip-outlined.mud-chip-color-primary:hover {
+      background-color: var(--mud-palette-primary-hover); }
+  .mud-chip-outlined.mud-chip-color-secondary {
+    color: var(--mud-palette-secondary);
     border: 1px solid var(--mud-palette-secondary); }
-    .mud-chip-outlined .mud-chip-color-secondary:hover {
-      background-color: var(--mud-palette-secondary-darken); }
-  .mud-chip-outlined .mud-chip-color-tertiary {
-    color: var(--mud-palette-tertiary-text);
+    .mud-chip-outlined.mud-chip-color-secondary:hover {
+      background-color: var(--mud-palette-secondary-hover); }
+  .mud-chip-outlined.mud-chip-color-tertiary {
+    color: var(--mud-palette-tertiary);
     border: 1px solid var(--mud-palette-tertiary); }
-    .mud-chip-outlined .mud-chip-color-tertiary:hover {
-      background-color: var(--mud-palette-tertiary-darken); }
-  .mud-chip-outlined .mud-chip-color-info {
-    color: var(--mud-palette-info-text);
+    .mud-chip-outlined.mud-chip-color-tertiary:hover {
+      background-color: var(--mud-palette-tertiary-hover); }
+  .mud-chip-outlined.mud-chip-color-info {
+    color: var(--mud-palette-info);
     border: 1px solid var(--mud-palette-info); }
-    .mud-chip-outlined .mud-chip-color-info:hover {
-      background-color: var(--mud-palette-info-darken); }
-  .mud-chip-outlined .mud-chip-color-success {
-    color: var(--mud-palette-success-text);
+    .mud-chip-outlined.mud-chip-color-info:hover {
+      background-color: var(--mud-palette-info-hover); }
+  .mud-chip-outlined.mud-chip-color-success {
+    color: var(--mud-palette-success);
     border: 1px solid var(--mud-palette-success); }
-    .mud-chip-outlined .mud-chip-color-success:hover {
-      background-color: var(--mud-palette-success-darken); }
-  .mud-chip-outlined .mud-chip-color-warning {
-    color: var(--mud-palette-warning-text);
+    .mud-chip-outlined.mud-chip-color-success:hover {
+      background-color: var(--mud-palette-success-hover); }
+  .mud-chip-outlined.mud-chip-color-warning {
+    color: var(--mud-palette-warning);
     border: 1px solid var(--mud-palette-warning); }
-    .mud-chip-outlined .mud-chip-color-warning:hover {
-      background-color: var(--mud-palette-warning-darken); }
-  .mud-chip-outlined .mud-chip-color-error {
-    color: var(--mud-palette-error-text);
+    .mud-chip-outlined.mud-chip-color-warning:hover {
+      background-color: var(--mud-palette-warning-hover); }
+  .mud-chip-outlined.mud-chip-color-error {
+    color: var(--mud-palette-error);
     border: 1px solid var(--mud-palette-error); }
-    .mud-chip-outlined .mud-chip-color-error:hover {
-      background-color: var(--mud-palette-error-darken); }
-  .mud-chip-outlined .mud-chip-color-dark {
-    color: var(--mud-palette-dark-text);
+    .mud-chip-outlined.mud-chip-color-error:hover {
+      background-color: var(--mud-palette-error-hover); }
+  .mud-chip-outlined.mud-chip-color-dark {
+    color: var(--mud-palette-dark);
     border: 1px solid var(--mud-palette-dark); }
-    .mud-chip-outlined .mud-chip-color-dark:hover {
-      background-color: var(--mud-palette-dark-darken); }
+    .mud-chip-outlined.mud-chip-color-dark:hover {
+      background-color: var(--mud-palette-dark-hover); }
 
 .mud-chip-selected {
   color: var(--mud-palette-primary) !important;
@@ -2075,6 +2073,12 @@ ul {
 
 .mud-paper-outlined {
   border: 1px solid var(--mud-palette-lines-default); }
+
+.mud-icon-default {
+  color: var(--mud-palette-text-secondary); }
+
+.mud-disabled .mud-icon-default, .mud-disabled .mud-icon-root, .mud-disabled .mud-svg-icon-root {
+  color: var(--mud-palette-text-disabled); }
 
 .mud-icon-root {
   width: 1em;
