@@ -28,11 +28,11 @@ namespace MudBlazor.Theme.Defaults
         public string DrawerText { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.87);
         public string AppbarBackground { get; set; } = "#594AE2";
         public string AppbarText { get; set; } = Colors.Shades.White;
-        public string LinesDefault { get; set; } = Colors.Grey.Lighten1;
-        public string LinesInputs { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.12);
+        public string LinesDefault { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.12);
+        public string LinesInputs { get; set; } = Colors.Grey.Lighten1;
         public string Divider { get; set; } = Colors.Grey.Lighten2;
         public string DividerLight { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.8);
 
-        public double HoverOpacity { get; set; } = 0.04;
+        public double HoverOpacity { get; set; } = 0.06;
     }
 }
