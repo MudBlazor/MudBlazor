@@ -1,6 +1,6 @@
 ﻿namespace MudBlazor
 {
-    public class DefaultMudTheme
+    public class OldDefaultMudTheme
     {
         //Core Layout Surfaces
         public string Color_Background { get; set; } = "#fff";
