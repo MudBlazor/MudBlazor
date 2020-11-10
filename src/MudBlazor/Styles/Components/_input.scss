@@ -3,7 +3,7 @@
 
 .mud-input {
     position: relative;
-    color: var(--mud-theme-text-default);
+    color: var(--mud-palette-text-primary);
     cursor: text;
     display: inline-flex;
     font-size: 1rem;
@@ -27,7 +27,7 @@
     }
 
     &.mud-disabled {
-        color: rgba(0, 0, 0, 0.38);
+        color: var(--mud-palette-text-disabled);
         cursor: default;
     }
 
@@ -39,12 +39,12 @@
             content: "\00a0";
             position: absolute;
             transition: border-bottom .2s,background-color .2s;
-            border-bottom: 1px solid var(--mud-theme-border-color-inputs);
+            border-bottom: 1px solid var(--mud-palette-lines-inputs);
             pointer-events: none;
         }
 
         &:hover:not(.mud-disabled):before {
-            border-bottom: 1px solid rgba(0, 0, 0, 0.56);
+            border-bottom: 1px solid var(--mud-palette-action-default);
         }
 
         &:after {
@@ -55,7 +55,7 @@
             position: absolute;
             transform: scaleX(0);
             transition: transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
-            border-bottom: 2px solid var(--mud-theme-primary);
+            border-bottom: 2px solid var(--mud-palette-primary);
             pointer-events: none;
         }
 
@@ -65,7 +65,7 @@
 
         &.mud-error:after {
             transform: scaleX(1);
-            border-bottom-color: var(--mud-theme-danger);
+            border-bottom-color: var(--mud-palette-error);
         }
     }
 
@@ -114,7 +114,7 @@
                 content: "\00a0";
                 position: absolute;
                 transition: border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-                border-bottom: 1px solid var(--mud-theme-border-color-inputs);
+                border-bottom: 1px solid var(--mud-palette-lines-inputs);
                 pointer-events: none;
             }
 
@@ -126,7 +126,7 @@
                 position: absolute;
                 transform: scaleX(0);
                 transition: transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
-                border-bottom: 2px solid var(--mud-theme-primary);
+                border-bottom: 2px solid var(--mud-palette-primary);
                 pointer-events: none;
             }
 
@@ -140,7 +140,7 @@
 
             &.mud-error:after {
                 transform: scaleX(1);
-                border-bottom-color: #f44336;
+                border-bottom-color: var(--mud-palette-error);
             }
         }
     }
@@ -148,20 +148,16 @@
     &.mud-input-outlined {
         position: relative;
         border-radius: 4px;
-        border-color: var(--mud-theme-border-color-outlines);
+        border-color: var(--mud-palette-lines-inputs);
         border-style: solid;
         border-width: 1px;
 
         &.mud-error .mud-input-outlined-notched-outline {
-            border-color: #f44336;
+            border-color: var(--mud-palette-error);
         }
 
         &.mud-disabled .mud-input-root-outlined {
-            border-color: rgba(0, 0, 0, 0.26);
-        }
-
-        &.mud-input-outlined-color-secondary:focus .mud-input-outlined-notched-outline {
-            border-color: rgb(220, 0, 78);
+            border-color: var(--mud-palette-action-disabled);
         }
 
         &.mud-input-adorned-start {
@@ -280,11 +276,11 @@
         padding: 18.5px 14px;
 
         &:hover {
-            border-color: var(--mud-theme-border-color-inputs);
+            border-color: var(--mud-palette-lines-inputs);
         }
 
         &:focus {
-            border-color: var(--mud-theme-primary);
+            border-color: var(--mud-palette-primary);
         }
 
         &.mud-input-root:-webkit-autofill {
@@ -394,7 +390,7 @@
         }
 
         &::-webkit-scrollbar-thumb {
-            background: var(--mud-theme-border-color-inputs);
+            background: var(--mud-palette-lines-inputs);
             border-radius: 1px;
         }
 
@@ -408,11 +404,11 @@
         margin: 18.5px 14px;
 
         &:hover {
-            border-color: var(--mud-theme-border-color-inputs);
+            border-color: var(--mud-palette-lines-inputs);
         }
 
         &:focus {
-            border-color: var(--mud-theme-primary);
+            border-color: var(--mud-palette-primary);
         }
 
         &.mud-input-root:-webkit-autofill {
