@@ -12,7 +12,7 @@
     border-radius: 50%;
     justify-content: center;
     color: var(--mud-palette-white);
-    background-color: var(--mud-palette-action-default);
+    background-color: var(--mud-palette-grey-light);
 
     &.mud-avatar-small {
         width: 24px;
@@ -27,13 +27,6 @@
     &.mud-avatar-large {
         width: 56px;
         height: 56px;
-    }
-}
-
-@each $color in $mud-palette-colors {
-    &.mud-avatar-color-#{$color} {
-        color: var(--mud-palette-#{$color});
-        background-color: var(--mud-palette-#{$color});
     }
 }
 
