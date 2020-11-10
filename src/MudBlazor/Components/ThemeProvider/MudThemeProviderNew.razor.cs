@@ -81,22 +81,27 @@ namespace MudBlazor
             theme.AppendLine($"--{Palette}-info-text: {Colors.Shades.White};");
             theme.AppendLine($"--{Palette}-info-darken: {ColorRgbDarken(Theme.Palette.Info)};");
             theme.AppendLine($"--{Palette}-info-lighten: {ColorRgbLighten(Theme.Palette.Info)};");
+            theme.AppendLine($"--{Palette}-info-hover: {ColorRgba(Theme.Palette.Info, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-success: {Theme.Palette.Success};");
             theme.AppendLine($"--{Palette}-success-text: {Colors.Shades.White};");
             theme.AppendLine($"--{Palette}-success-darken: {ColorRgbDarken(Theme.Palette.Success)};");
             theme.AppendLine($"--{Palette}-success-lighten: {ColorRgbLighten(Theme.Palette.Success)};");
+            theme.AppendLine($"--{Palette}-success-hover: {ColorRgba(Theme.Palette.Success, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-warning: {Theme.Palette.Warning};");
             theme.AppendLine($"--{Palette}-warning-text: {Colors.Shades.White};");
             theme.AppendLine($"--{Palette}-warning-darken: {ColorRgbDarken(Theme.Palette.Warning)};");
             theme.AppendLine($"--{Palette}-warning-lighten: {ColorRgbLighten(Theme.Palette.Warning)};");
+            theme.AppendLine($"--{Palette}-warning-hover: {ColorRgba(Theme.Palette.Warning, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-error: {Theme.Palette.Error};");
             theme.AppendLine($"--{Palette}-error-text: {Colors.Shades.White};");
             theme.AppendLine($"--{Palette}-error-darken: {ColorRgbDarken(Theme.Palette.Error)};");
             theme.AppendLine($"--{Palette}-error-lighten: {ColorRgbLighten(Theme.Palette.Error)};");
+            theme.AppendLine($"--{Palette}-error-hover: {ColorRgba(Theme.Palette.Error, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-dark: {Theme.Palette.Dark};");
             theme.AppendLine($"--{Palette}-dark-text: {Colors.Shades.White};");
             theme.AppendLine($"--{Palette}-dark-darken: {ColorRgbDarken(Theme.Palette.Dark)};");
             theme.AppendLine($"--{Palette}-dark-lighten: {ColorRgbLighten(Theme.Palette.Dark)};");
+            theme.AppendLine($"--{Palette}-dark-hover: {ColorRgba(Theme.Palette.Dark, Theme.Palette.HoverOpacity)};");
 
             theme.AppendLine($"--{Palette}-text-primary: {Theme.Palette.TextPrimary};");
             theme.AppendLine($"--{Palette}-text-secondary: {Theme.Palette.TextSecondary};");
