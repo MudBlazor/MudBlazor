@@ -1,8 +1,9 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavMan
+@using MudBlazor.Theme.Defaults
 
-<MudThemeProvider Theme="currentTheme" />
-<MudThemeProviderNew/>
+<MudThemeProvider />
+<MudThemeProviderNew Theme="currentTheme"/>
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -87,25 +88,21 @@
         return MudBlazorLogoText;
     }
 
-    MudThemeOld currentTheme = new MudThemeOld();
-    MudThemeOld defaultTheme = new MudThemeOld();
+    MudTheme currentTheme = new MudTheme();
+    MudTheme defaultTheme = new MudTheme();
 
-    MudThemeOld darkTheme = new MudThemeOld()
+    MudTheme darkTheme = new MudTheme()
     {
-        Color_Default = "#fff",
-        Color_On_Default = "#fff",
-        Color_Background = "#1c2025",
-        Color_Background_Grey = "#14171b",
-        Color_Surface = "#282C34",
-        Color_AppBar = "#282C34",
-        Color_On_AppBar = "#fff",
-        Color_Drawer = "#282C34",
-        Color_On_Drawer = "#adb0bb",
-        Color_On_Surface = "#adb0bb",
-        Color_Text_Default = "#adb0bb",
-        Color_Secondary = "#E62C71",
-        Color_Dark = "#14171b",
-        Color_Border_Default = "#282C34"
+        Palette = new Palette()
+        {
+            Background = "#343a41",
+            Surface = "#3a424e",
+            DrawerBackground = "#3a424e",
+            DrawerText = "#8389a2",
+            AppbarBackground = "#3a424e",
+            AppbarText = "#8389a2",
+            TextPrimary = "#dee2e6"
+        }
     };
 }
 
