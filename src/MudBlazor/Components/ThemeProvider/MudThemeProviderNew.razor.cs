@@ -97,6 +97,7 @@ namespace MudBlazor
 
             theme.AppendLine($"--{Palette}-text-primary: {Theme.Palette.TextPrimary};");
             theme.AppendLine($"--{Palette}-text-secondary: {Theme.Palette.TextSecondary};");
+            theme.AppendLine($"--{Palette}-text-tertiary: {Theme.Palette.TextTertiary};");
             theme.AppendLine($"--{Palette}-text-disabled: {Theme.Palette.TextDisabled};");
 
             theme.AppendLine($"--{Palette}-action-default: {Theme.Palette.ActionDefault};");

@@ -17,6 +17,7 @@ namespace MudBlazor.Theme.Defaults
         public string Dark { get; set; } = Colors.Grey.Darken4;
         public string TextPrimary { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.87);
         public string TextSecondary { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.54);
+        public string TextTertiary { get; set; } = Colors.Grey.Darken3;
         public string TextDisabled { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.38);
         public string ActionDefault { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.54);
         public string ActionDisabled { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.26);
