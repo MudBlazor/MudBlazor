@@ -8,10 +8,6 @@
     -webkit-tap-highlight-color: transparent;
     color: var(--mud-palette-text-primary);
 
-    &:hover {
-        background-color: var(--mud-palette-action-default-hover);
-    }
-
     &.mud-disabled, .mud-disabled:hover {
         cursor: default;
         background-color: transparent;
