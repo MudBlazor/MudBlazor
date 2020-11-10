@@ -11,7 +11,7 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-button-root mud-icon-button")
-          .AddClass($"mud-icon-button-color-{Color.ToDescriptionString()}")
+          .AddClass($"mud-icon-button-color-{Color.ToDescriptionString()}", Color != Color.Default)
           .AddClass($"mud-ripple mud-ripple-icon", !DisableRipple)
           .AddClass($"mud-icon-button-size-{Size.ToDescriptionString()}", when: () => Size != Size.Medium)
           .AddClass($"mud-icon-button-edge-{Edge.ToDescriptionString()}", when: () => Edge != Edge.False)

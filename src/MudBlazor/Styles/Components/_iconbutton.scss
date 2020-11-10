@@ -8,7 +8,7 @@
     text-align: center;
     transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     border-radius: 50%;
-    color: var(--mud-palette-text-primary);
+    color: var(--mud-palette-action-default);
 
     &:hover {
         background-color: var(--mud-palette-action-default-hover);
