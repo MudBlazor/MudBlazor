@@ -1,8 +1,8 @@
 ﻿.mud-markdown {
     margin: 0px;
     padding: 15px;
-    border-radius: var(--mud-theme-border-radius-default);
-    background-color: var(--mud-theme-dark);
+    border-radius: var(--mud-default-borderradius);
+    background-color: var(--mud-palette-dark);
     margin-bottom: 1.5rem;
 
     & .mud-markdown-pre {
