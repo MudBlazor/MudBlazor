@@ -181,19 +181,19 @@ public const string AlertSquareTextExample = @"<MudAlert Severity=""Severity.Nor
 <MudAlert Severity=""Severity.Warning"" Square=""true"">Warning Square</MudAlert>
 <MudAlert Severity=""Severity.Error"" Square=""true"">Error Square</MudAlert>";
 
-public const string AppBarDenseExample = @"<MudAppBar Position=""Position.Static"" Dense=""true"">
+public const string AppBarDenseExample = @"<MudAppBar Fixed=""false"" Dense=""true"">
     <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
     <MudAppBarSpacer />
     <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
 </MudAppBar>";
 
-public const string AppBarElevationExample = @"<MudAppBar Position=""Position.Static"" Elevation=""0"">
+public const string AppBarElevationExample = @"<MudAppBar Fixed=""false"" Elevation=""0"">
     <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
     <MudAppBarSpacer />
     <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
 </MudAppBar>";
 
-public const string AppBarSimpleExample = @"<MudAppBar Position=""Position.Static"">
+public const string AppBarSimpleExample = @"<MudAppBar Fixed=""false"">
     <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
     <MudAppBarSpacer />
     <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
@@ -977,12 +977,12 @@ public const string DrawerAnchorExample = @"@layout IframeLayout
 
 
 <MudLayout>
-    <MudAppBar Elevation=""0"">
-        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
-        <MudAppBarSpacer />
+    <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
+        <MudAppBarSpacer />
+        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
     </MudAppBar>
-    <MudDrawer Open=""@open"" Clipped=""@clipped"" Anchor=""Anchor.Right"">
+    <MudDrawer Open=""@open"" Clipped=""@clipped"" Anchor=""Anchor.Right"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -1015,12 +1015,12 @@ public const string DrawerClippingExample = @"@layout IframeLayout
 @page ""/iframe/docs/examples/drawer/clipped""
 
 <MudLayout>
-    <MudAppBar>
+    <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
     </MudAppBar>
-    <MudDrawer Open=""@open"" Clipped=""@clipped"">
+    <MudDrawer Open=""@open"" Clipped=""@clipped"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -1053,7 +1053,7 @@ public const string DrawerCombinedExample = @"@layout IframeLayout
 
 
 <MudLayout>
-    <MudAppBar Elevation=""0"">
+    <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
         @if (clipped)
         {
@@ -1062,7 +1062,7 @@ public const string DrawerCombinedExample = @"@layout IframeLayout
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Material.BorderStyle"" Color=""Color.Inherit"" OnClick=""@ToggleClipped"" />
     </MudAppBar>
-    <MudDrawer Open=""@open"" Clipped=""@clipped"">
+    <MudDrawer Open=""@open"" Clipped=""@clipped"" Elevation=""1"">
         @if (!clipped)
         {
             <MudDrawerHeader>
@@ -1104,12 +1104,12 @@ public const string DrawerDoubleExample = @"@layout IframeLayout
 
 
 <MudLayout>
-    <MudAppBar Elevation=""0"">
+    <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawerOne"" />
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Material.Settings"" Color=""Color.Inherit"" OnClick=""@ToggleDrawerTwo""  />
     </MudAppBar>
-    <MudDrawer Open=""@drawerOneOpen"" Clipped=""@drawerOneClipped"" Anchor=""Anchor.Left"">
+    <MudDrawer Open=""@drawerOneOpen"" Clipped=""@drawerOneClipped"" Anchor=""Anchor.Left"" Elevation=""25"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -1119,7 +1119,7 @@ public const string DrawerDoubleExample = @"@layout IframeLayout
             <MudNavLink Match=""NavLinkMatch.All"">Community</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
-    <MudDrawer Open=""@drawerTwoOpen"" Clipped=""@drawerTwoClipped"" Anchor=""Anchor.Right"">
+    <MudDrawer Open=""@drawerTwoOpen"" Clipped=""@drawerTwoClipped"" Anchor=""Anchor.Right"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">Settings</MudText>
         </MudDrawerHeader>
@@ -1148,7 +1148,7 @@ public const string DrawerDoubleExample = @"@layout IframeLayout
     }
 
     bool drawerTwoOpen = true;
-    bool drawerTwoClipped = false;
+    bool drawerTwoClipped = true;
 
     void ToggleDrawerTwo()
     {
@@ -1161,12 +1161,12 @@ public const string DrawerPersistentExample = @"@layout IframeLayout
 
 
 <MudLayout>
-    <MudAppBar Elevation=""0"">
+    <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
     </MudAppBar>
-    <MudDrawer Open=""@open"">
+    <MudDrawer Open=""@open"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
