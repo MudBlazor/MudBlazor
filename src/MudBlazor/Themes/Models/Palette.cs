@@ -14,7 +14,7 @@ namespace MudBlazor.Theme.Defaults
         public string Success { get; set; } = Colors.Green.Accent4;
         public string Warning { get; set; } = Colors.Orange.Default;
         public string Error { get; set; } = Colors.Red.Default;
-        public string Dark { get; set; } = Colors.Grey.Darken4;
+        public string Dark { get; set; } = Colors.Grey.Darken3;
         public string TextPrimary { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.87);
         public string TextSecondary { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.54);
         public string TextTertiary { get; set; } = Colors.Grey.Darken3;
@@ -38,7 +38,7 @@ namespace MudBlazor.Theme.Defaults
         public string GrayDefault { get; set; } = Colors.Grey.Default;
         public string GrayLight { get; set; } = Colors.Grey.Lighten2;
         public string GrayLighter { get; set; } = Colors.Grey.Lighten4;
-        public string GrayDark { get; set; } = Colors.Grey.Darken2;
-        public string GrayDarker { get; set; } = Colors.Grey.Darken4;
+        public string GrayDark { get; set; } = Colors.Grey.Darken1;
+        public string GrayDarker { get; set; } = Colors.Grey.Darken2;
     }
 }

@@ -114,7 +114,7 @@
     opacity: 0; } }
 
 .mud-codeblock {
-  background-color: var(--mud-palette-dark);
+  background-color: #272c34;
   border-radius: var(--mud-default-borderradius);
   padding: 16px;
   overflow: auto; }
