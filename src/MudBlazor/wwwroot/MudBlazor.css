@@ -670,7 +670,7 @@ ul {
     font-size: 12px;
     line-height: 1.4em;
     width: max-content;
-    background-color: var(--mud-palette-dark);
+    background-color: var(--mud-palette-grey-dark);
     border-radius: var(--mud-default-borderradius);
     position: absolute;
     z-index: 1;
@@ -3439,7 +3439,7 @@ ul {
   .mud-switch-base:hover {
     background-color: var(--mud-palette-action-default-hover); }
   .mud-switch-base.mud-switch-disabled {
-    color: #a6a6a6; }
+    color: var(--mud-palette-grey-default); }
     .mud-switch-base.mud-switch-disabled + .mud-switch-track {
       opacity: 0.12; }
     .mud-switch-base.mud-switch-disabled:hover {
