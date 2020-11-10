@@ -59,7 +59,7 @@
     }
 
     &.mud-switch-disabled {
-        color: #a6a6a6;
+        color: var(--mud-palette-grey-default);
 
         & + .mud-switch-track {
             opacity: 0.12;
