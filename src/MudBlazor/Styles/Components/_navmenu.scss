@@ -53,13 +53,13 @@
     &:hover {
         cursor: pointer;
         text-decoration: none;
-        background-color: var(--mud-theme-default-hover);
+        background-color: var(--mud-palette-action-default-hover);
     }
 
     &.active {
         font-weight: 500 !important;
-        color: var(--mud-theme-primary);
-        background-color: var(--mud-theme-primary-hover);
+        color: var(--mud-palette-primary);
+        background-color: var(--mud-palette-action-default-hover);
     }
 
     & .mud-nav-link-icon {
@@ -70,14 +70,14 @@
 
         &.mud-transform {
             transform: rotate(-180deg);
-            fill: var(--mud-theme-primary);
+            fill: var(--mud-palette-primary);
         }
     }
 
     & .mud-nav-link-text {
         width: 100%;
         text-align: left;
-        margin-left:12px;
+        margin-left: 12px;
         letter-spacing: 0;
     }
 }
