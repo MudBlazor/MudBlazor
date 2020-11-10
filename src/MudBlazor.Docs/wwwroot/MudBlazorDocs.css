@@ -20,7 +20,6 @@
   letter-spacing: 0.5rem;
   font-weight: 300;
   margin-left: 12px;
-  opacity: 0;
   font-size: 24px; }
   .mudblazor-appbar-brand-text.track-in {
     -webkit-animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) both;

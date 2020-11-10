@@ -11,7 +11,7 @@
 <MudLayout RightToLeft="@_rightToLeft">
     <MudAppBar Elevation="25">
         <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h5" Class="@GetTrackedIn()">Mudblazor</MudText>
+        <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text">Mudblazor</MudText>
         <MudAppBarSpacer />
         <MudTooltip Text="Toggle light/dark theme">
             <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
@@ -52,7 +52,6 @@
     protected override void OnInitialized()
     {
         currentTheme = defaultTheme;
-        GetTrackedIn();
     }
 
     void DarkMode()
@@ -65,27 +64,6 @@
         {
             currentTheme = defaultTheme;
         }
-    }
-
-    public bool _trackedIn { get; set; }
-    public string MudBlazorLogoText { get; set; }
-
-    public string GetTrackedIn()
-    {
-        if (_trackedIn && NavMan.BaseUri == NavMan.Uri)
-        {
-            _trackedIn = !_trackedIn;
-            MudBlazorLogoText = "mudblazor-appbar-brand-text track-out";
-        }
-        else if (!_trackedIn && NavMan.BaseUri != NavMan.Uri)
-        {
-            _trackedIn = !_trackedIn;
-            MudBlazorLogoText = "mudblazor-appbar-brand-text track-in";
-        } else if (NavMan.BaseUri == NavMan.Uri)
-        {
-            MudBlazorLogoText = "mudblazor-appbar-brand-text mud-hide";
-        }
-        return MudBlazorLogoText;
     }
 
     MudTheme currentTheme = new MudTheme();
