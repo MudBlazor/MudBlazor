@@ -13,5 +13,14 @@ namespace MudBlazor
         //public Typography Typography { get; set; }
         public LayoutProperties LayoutProperties { get; set; }
         public ZIndex ZIndex { get; set; }
+
+        public MudTheme()
+        {
+            Breakpoints = new Breakpoints();
+            Palette = new Palette();
+            LayoutProperties = new LayoutProperties();
+            Shadow = new Shadow();
+            ZIndex = new ZIndex();
+        }
     }
 }
