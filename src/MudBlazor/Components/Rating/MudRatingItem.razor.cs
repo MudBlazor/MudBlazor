@@ -17,7 +17,7 @@ namespace MudBlazor
           .AddClass($"mud-svg-icon-root")
           .AddClass($"mud-ripple mud-ripple-icon")
           .AddClass($"yellow-text.text-darken-3", !Color.HasValue)
-          .AddClass($"mud-color-text-{(Color.HasValue ? Color.Value.ToDescriptionString() : string.Empty)}", Color.HasValue)
+          .AddClass($"mud-{(Color.HasValue ? Color.Value.ToDescriptionString() : string.Empty)}-text", Color.HasValue)
           .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
           .AddClass($"mud-rating-item-active", IsActive)
           .AddClass($"mud-disabled", Disabled)
