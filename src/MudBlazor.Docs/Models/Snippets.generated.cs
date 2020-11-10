@@ -1956,7 +1956,7 @@ public const string RadioGroupExample = @"<MudForm>
         <MudRadio Color=""Color.Primary"" Option=""Radio 1"">Primary</MudRadio>
         <MudRadio Color=""Color.Secondary"" Option=""Radio 2"">Secondary</MudRadio>
         <MudRadio Option=""Radio 3"">Default</MudRadio>
-        <MudRadio Disabled=""true"" Option=""Radio 4"">Disabled</MudRadio>
+        <MudRadio Color=""Color.Primary"" Disabled=""true"" Option=""Radio 4"">Disabled</MudRadio>
     </MudRadioGroup>
 </MudForm> 
 
@@ -3138,14 +3138,39 @@ public const string BorderRadiusSizeExample = @"<div class=""mud-theme-primary p
     <MudText Align=""Align.Center"">.rounded-xl</MudText>
 </div>";
 
-public const string ColorsClassExample = @"<MudText>
-    This is not set by any <strong class=""green-text text-accent-4"">MudTheme</strong> colors.
-    <br />
-    But rather css classes based on <strong style=""color:@purple;"">Material Design</strong> color palette.
-</MudText>
+public const string ColorsMaterialExample = @"<MudGrid>
+    <MudItem>
+        <MudPaper Class=""pa-2 mb-2 purple-text text-accent-3"">
+            <MudText Align=""Align.Center"">.purple-text .text-accent-3</MudText>
+        </MudPaper>
+        <MudPaper Class=""pa-2"" Style=""@purple"">
+            <MudText Align=""Align.Center"">Colors.Purple.Accent3</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem>
+        <MudPaper Class=""pa-2 mb-2 blue-grey darken-4 light-green-text text-accent-3"">
+            <MudText Align=""Align.Center"">.blue-grey .darken-4 .light-green-text .text-accent-3</MudText>
+        </MudPaper>
+        <MudPaper Class=""pa-2"" Style=""@bluegrey"">
+            <MudText Align=""Align.Center"">Colors.BlueGrey.Darken4 Colors.LightGreen.Accent3</MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
 @code{
-    string purple = Colors.Purple.Accent3;
+    string purple = $""color:{Colors.Purple.Accent3};"";
+    string bluegrey = $""color:{Colors.LightGreen.Accent3};background-color:{Colors.BlueGrey.Darken4};"";
 }";
+
+public const string ColorsMudBlazorExample = @"<MudPaper Class=""pa-2 mud-info"">
+    <MudText Align=""Align.Center"">.mud-info</MudText>
+</MudPaper>
+<MudPaper Class=""pa-2 mud-secondary-text"">
+    <MudText Align=""Align.Center"">.mud-secondary-text</MudText>
+</MudPaper>
+<MudPaper Class=""pa-2 mud-theme-primary"">
+    <MudText Align=""Align.Center"">.mud-theme-primary</MudText>
+</MudPaper>";
 
 public const string CustomConverterExample = @"<MudSimpleTable Elevation=""0"" Hover=""false"" Class=""mt-4"" Dense=""false"">
     <colgroup>
