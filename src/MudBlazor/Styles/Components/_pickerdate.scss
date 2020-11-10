@@ -38,10 +38,10 @@
         z-index: 1;
         padding: 8px;
         margin: 6px;
-        background-color: var(--mud-theme-surface);
+        background-color: var(--mud-palette-surface);
 
         &:hover {
-            background-color: var(--mud-theme-default-hover);
+            background-color: var(--mud-palette-action-default-hover);
         }
     }
 
@@ -90,7 +90,7 @@
         transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
         &:hover {
-            background-color: var(--mud-theme-default-hover);
+            background-color: var(--mud-palette-action-default-hover);
         }
 
         & .mud-picker-year-selected {
@@ -118,7 +118,7 @@
         transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
         &:hover {
-            background-color: var(--mud-theme-default-hover);
+            background-color: var(--mud-palette-action-default-hover);
         }
 
         & .mud-picker-month-selected {
@@ -126,7 +126,7 @@
         }
 
         &.mud-disabled {
-            color: rgba(0, 0, 0, 0.38);
+            color: var(--mud-palette-text-disabled);
             pointer-events: none;
         }
     }
@@ -166,7 +166,7 @@
 
         .mud-picker-calendar-day {
             .mud-day {
-                color: var(--mud-theme-on-surface);
+                color: var(--mud-palette-text-primary);
                 width: 36px;
                 height: 36px;
                 margin: 0 2px;
@@ -175,7 +175,7 @@
                 font-weight: 500;
 
                 &:hover {
-                    background-color: rgba(0, 0, 0, 0.08);
+                    background-color: var(--mud-palette-action-default-hover);
                 }
 
                 &.mud-hidden {
@@ -196,7 +196,7 @@
                 }
 
                 &.mud-disabled {
-                    color: rgba(0, 0, 0, 0.38);
+                    color: var(--mud-palette-text-disabled);
                     pointer-events: none;
                 }
             }
