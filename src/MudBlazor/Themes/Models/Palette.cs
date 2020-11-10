@@ -34,5 +34,11 @@ namespace MudBlazor.Theme.Defaults
         public string DividerLight { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.8);
 
         public double HoverOpacity { get; set; } = 0.06;
+
+        public string GrayDefault { get; set; } = Colors.Grey.Default;
+        public string GrayLight { get; set; } = Colors.Grey.Lighten2;
+        public string GrayLighter { get; set; } = Colors.Grey.Lighten4;
+        public string GrayDark { get; set; } = Colors.Grey.Darken2;
+        public string GrayDarker { get; set; } = Colors.Grey.Darken4;
     }
 }
