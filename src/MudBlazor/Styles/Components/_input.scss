@@ -14,14 +14,6 @@
     letter-spacing: 0.00938em;
     z-index: 10;
 
-    &.mud-input-multiline {
-        padding: 6px 0 7px;
-
-        &.mud-input-margin-dense {
-            padding-top: 3px;
-        }
-    }
-
     &.mud-input-full-width {
         width: 100%;
     }
@@ -96,16 +88,6 @@
             padding-right: 12px;
         }
 
-        &.mud-input-multiline {
-            padding: 27px 12px 10px;
-
-            &.mud-input-margin-dense {
-                padding-top: 23px;
-                padding-bottom: 6px;
-            }
-        }
-
-
         &.mud-input-underline {
             &:before {
                 left: 0;
@@ -170,15 +152,6 @@
 
         &.mud-input-adorned-end {
             padding-right: 14px;
-        }
-
-        &.mud-input-multiline {
-            padding: 18.5px 14px;
-
-            &.mud-input-margin-dense {
-                padding-top: 10.5px;
-                padding-bottom: 10.5px;
-            }
         }
     }
 }
