@@ -59,7 +59,7 @@
     position: fixed;
     width: 232px;
     height: 60px;
-    background-image: linear-gradient(to top,rgba(255,0,0,0),#fff);
+    background-image: linear-gradient(to top,rgba(255,0,0,0),var(--mud-palette-drawer-background));
     z-index: 100;
 }
 
