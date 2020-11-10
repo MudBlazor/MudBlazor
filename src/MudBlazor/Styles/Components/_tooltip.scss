@@ -4,15 +4,15 @@
     display: inline-block;
 
     & .mud-tooltip {
-        color: #fff;
+        color: var(--mud-palette-dark-text);
         padding: 4px 8px;
         text-align: center;
         font-weight: 500;
         font-size: 12px;
         line-height: 1.4em;
         width: max-content;
-        background-color: #6a6a6a;
-        border-radius: var(--mud-theme-border-radius-default);
+        background-color: var(--mud-palette-dark);
+        border-radius: var(--mud-default-borderradius);
         position: absolute;
         z-index: 1;
         visibility: hidden;
