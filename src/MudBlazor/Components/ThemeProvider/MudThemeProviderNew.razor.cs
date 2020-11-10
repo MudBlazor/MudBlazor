@@ -14,7 +14,7 @@ namespace MudBlazor
         {
             if (Theme == null)
             {
-                MudTheme _theme = new DefaultTheme();
+                MudTheme _theme = new MudTheme();
                 Theme = _theme;
             }
         }
@@ -66,14 +66,17 @@ namespace MudBlazor
             theme.AppendLine($"--{Palette}-primary-text: {Colors.Shades.White};");
             theme.AppendLine($"--{Palette}-primary-darken: {ColorRgbDarken(Theme.Palette.Primary)};");
             theme.AppendLine($"--{Palette}-primary-lighten: {ColorRgbLighten(Theme.Palette.Primary)};");
+            theme.AppendLine($"--{Palette}-primary-hover: {ColorRgba(Theme.Palette.Primary, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-secondary: {Theme.Palette.Secondary};");
             theme.AppendLine($"--{Palette}-secondary-text: {Colors.Shades.White};");
             theme.AppendLine($"--{Palette}-secondary-darken: {ColorRgbDarken(Theme.Palette.Secondary)};");
             theme.AppendLine($"--{Palette}-secondary-lighten: {ColorRgbLighten(Theme.Palette.Secondary)};");
+            theme.AppendLine($"--{Palette}-secondary-hover: {ColorRgba(Theme.Palette.Secondary, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-tertiary: {Theme.Palette.Tertiary};");
             theme.AppendLine($"--{Palette}-tertiary-text: {Colors.Shades.White};");
             theme.AppendLine($"--{Palette}-tertiary-darken: {ColorRgbDarken(Theme.Palette.Tertiary)};");
             theme.AppendLine($"--{Palette}-tertiary-lighten: {ColorRgbLighten(Theme.Palette.Tertiary)};");
+            theme.AppendLine($"--{Palette}-tertiary-hover: {ColorRgba(Theme.Palette.Tertiary, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-info: {Theme.Palette.Info};");
             theme.AppendLine($"--{Palette}-info-text: {Colors.Shades.White};");
             theme.AppendLine($"--{Palette}-info-darken: {ColorRgbDarken(Theme.Palette.Info)};");
