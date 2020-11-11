@@ -709,7 +709,7 @@ ul {
   border-radius: 50%;
   justify-content: center;
   color: var(--mud-palette-white);
-  background-color: var(--mud-palette-action-default); }
+  background-color: var(--mud-palette-grey-light); }
   .mud-avatar.mud-avatar-small {
     width: 24px;
     height: 24px; }
@@ -719,38 +719,6 @@ ul {
   .mud-avatar.mud-avatar-large {
     width: 56px;
     height: 56px; }
-
-.mud-avatar-color-primary {
-  color: var(--mud-palette-primary);
-  background-color: var(--mud-palette-primary); }
-
-.mud-avatar-color-secondary {
-  color: var(--mud-palette-secondary);
-  background-color: var(--mud-palette-secondary); }
-
-.mud-avatar-color-tertiary {
-  color: var(--mud-palette-tertiary);
-  background-color: var(--mud-palette-tertiary); }
-
-.mud-avatar-color-info {
-  color: var(--mud-palette-info);
-  background-color: var(--mud-palette-info); }
-
-.mud-avatar-color-success {
-  color: var(--mud-palette-success);
-  background-color: var(--mud-palette-success); }
-
-.mud-avatar-color-warning {
-  color: var(--mud-palette-warning);
-  background-color: var(--mud-palette-warning); }
-
-.mud-avatar-color-error {
-  color: var(--mud-palette-error);
-  background-color: var(--mud-palette-error); }
-
-.mud-avatar-color-dark {
-  color: var(--mud-palette-dark);
-  background-color: var(--mud-palette-dark); }
 
 .mud-avatar-rounded {
   border-radius: var(--mud-default-borderradius); }
@@ -809,7 +777,7 @@ ul {
   text-transform: uppercase;
   color: var(--mud-palette-text-primary); }
   .mud-button:hover {
-    background-color: var(--mud-theme-default-hover); }
+    background-color: var(--mud-palette-action-default-hover); }
 
 .mud-button-label {
   width: 100%;
@@ -917,7 +885,7 @@ ul {
   background-color: var(--mud-palette-action-disabled-background); }
   .mud-button-filled:hover {
     box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
-    background-color: var(--mud-palette-action-default); }
+    background-color: var(--mud-palette-action-disabled); }
   .mud-button-filled:disabled {
     color: var(--mud-palette-action-disabled);
     box-shadow: none;
@@ -1038,7 +1006,7 @@ ul {
   text-align: center;
   transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   border-radius: 50%;
-  color: var(--mud-palette-text-primary); }
+  color: var(--mud-palette-action-default); }
   .mud-icon-button:hover {
     background-color: var(--mud-palette-action-default-hover); }
   .mud-icon-button:disabled {

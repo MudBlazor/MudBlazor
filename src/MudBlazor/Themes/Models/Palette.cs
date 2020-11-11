@@ -36,8 +36,8 @@ namespace MudBlazor.Theme.Defaults
         public double HoverOpacity { get; set; } = 0.06;
 
         public string GrayDefault { get; set; } = Colors.Grey.Default;
-        public string GrayLight { get; set; } = Colors.Grey.Lighten2;
-        public string GrayLighter { get; set; } = Colors.Grey.Lighten4;
+        public string GrayLight { get; set; } = Colors.Grey.Lighten1;
+        public string GrayLighter { get; set; } = Colors.Grey.Lighten2;
         public string GrayDark { get; set; } = Colors.Grey.Darken1;
         public string GrayDarker { get; set; } = Colors.Grey.Darken2;
     }
