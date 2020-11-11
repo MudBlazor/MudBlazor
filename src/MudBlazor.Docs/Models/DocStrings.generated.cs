@@ -964,6 +964,8 @@ public const string MudInputLabel_Error = @"If true, the label will be displayed
 
 public const string MudInputLabel_Variant = @"Variant to use.";
 
+public const string MudInputLabel_Margin = @"Will adjust vertical spacing.";
+
 public const string MudInputLabel_Class = @"User class names, separated by space";
 
 public const string MudInputLabel_Style = @"User styles, applied on top of the component's own classes and styles";

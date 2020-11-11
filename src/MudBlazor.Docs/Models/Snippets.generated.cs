@@ -2924,6 +2924,22 @@ public const string TextFieldBindingExample = @"<MudGrid>
 
 }";
 
+public const string TextFieldDenseExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField @bind-Value=""TextValue"" Label=""Standard"" Variant=""Variant.Text"" Margin=""Margin.Dense""></MudTextField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField @bind-Value=""TextValue"" Label=""Filled"" Variant=""Variant.Filled"" Margin=""Margin.Dense""></MudTextField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField @bind-Value=""TextValue"" Label=""Outlined"" Variant=""Variant.Outlined"" Margin=""Margin.Dense""></MudTextField>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string TextValue { get; set; }
+}";
+
 public const string TextFieldFormPropsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""3"">
         <MudTextField @bind-Value=""HelperText"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Text"" />
@@ -2979,22 +2995,19 @@ public const string TextFieldInputsExample = @"<MudInput Value=""@(""Basic Input
 
 public const string TextFieldMultilineExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""12"" md=""12"">
-        <MudTextField T=""string"" Label=""Multiline"" Variant=""Variant.Text"" Text=""@(sampleText + ""\n"" + sampleText)"" Lines=""5"" FullWidth=""true"" />
+        <MudTextField T=""string"" Label=""Multiline"" Variant=""Variant.Text"" Text=""@sampleText"" Lines=""5"" />
     </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField T=""string"" Label=""Standard"" Variant=""Variant.Text"" Text=""@sampleText"" Lines=""3"" />
-    </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""4"">
+    <MudItem xs=""12"" sm=""6"" md=""6"">
         <MudTextField T=""string"" Label=""Filled"" Variant=""Variant.Filled"" Text=""@sampleText"" Lines=""3"" />
     </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""4"">
+    <MudItem xs=""12"" sm=""6"" md=""6"">
         <MudTextField T=""string"" Label=""Outlined"" Variant=""Variant.Outlined"" Text=""@sampleText"" Lines=""3"" />
     </MudItem>
 </MudGrid>
 
 @code
 {
-    string sampleText = ""Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."";
+    string sampleText = ""Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."";
 }";
 
 public const string ThemesCustomExample = @"<MudThemeProvider Theme=""MyCoolDarkTheme"" />

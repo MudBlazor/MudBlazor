@@ -1168,6 +1168,11 @@
             Variant to use.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudInputLabel.Margin">
+            <summary>
+             Will adjust vertical spacing. 
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudLink.Color">
             <summary>
             The color of the component. It supports the theme colors.
