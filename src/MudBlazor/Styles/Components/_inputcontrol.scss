@@ -59,7 +59,7 @@
             color: var(--mud-palette-text-disabled);
         }
 
-        &.mud-error {
+        &.mud-input-error {
             color: var(--mud-palette-error) !important;
         }
     }
@@ -81,7 +81,7 @@
     color: var(--mud-palette-text-disabled);
 }
 
-.mud-input-helper-text.mud-error {
+.mud-input-helper-text.mud-input-error {
     color: var(--mud-palette-error) !important;
 }
 

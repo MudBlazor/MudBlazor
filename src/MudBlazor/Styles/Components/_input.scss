@@ -63,7 +63,7 @@
             border-bottom-style: dotted;
         }
 
-        &.mud-error:after {
+        &.mud-input-error:after {
             transform: scaleX(1);
             border-bottom-color: var(--mud-palette-error);
         }
@@ -138,7 +138,7 @@
                 border-bottom-style: dotted;
             }
 
-            &.mud-error:after {
+            &.mud-input-error:after {
                 transform: scaleX(1);
                 border-bottom-color: var(--mud-palette-error);
             }
@@ -152,7 +152,7 @@
         border-style: solid;
         border-width: 1px;
 
-        &.mud-error .mud-input-outlined-notched-outline {
+        &.mud-input-error .mud-input-outlined-notched-outline {
             border-color: var(--mud-palette-error);
         }
 
