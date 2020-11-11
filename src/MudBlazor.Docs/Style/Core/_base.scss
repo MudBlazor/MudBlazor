@@ -47,10 +47,6 @@
 .mudblazor-navmenu {
     overflow: auto;
     margin-bottom: 12px;
-
-    & * .mud-nav-link-icon, .mud-nav-link-expand-icon {
-        fill: var(--mud-palette-text-tertiary);
-    }
 }
 
 .docs-nav-fader {
