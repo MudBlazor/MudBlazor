@@ -1379,41 +1379,65 @@ ul {
     background-color: var(--mud-palette-primary); }
     .mud-chip-filled.mud-chip-color-primary:hover {
       background-color: var(--mud-palette-primary-darken); }
+    .mud-chip-filled.mud-chip-color-primary.mud-chip-selected {
+      color: var(--mud-palette-primary);
+      background-color: var(--mud-palette-primary-hover) !important; }
   .mud-chip-filled.mud-chip-color-secondary {
     color: var(--mud-palette-secondary-text);
     background-color: var(--mud-palette-secondary); }
     .mud-chip-filled.mud-chip-color-secondary:hover {
       background-color: var(--mud-palette-secondary-darken); }
+    .mud-chip-filled.mud-chip-color-secondary.mud-chip-selected {
+      color: var(--mud-palette-secondary);
+      background-color: var(--mud-palette-secondary-hover) !important; }
   .mud-chip-filled.mud-chip-color-tertiary {
     color: var(--mud-palette-tertiary-text);
     background-color: var(--mud-palette-tertiary); }
     .mud-chip-filled.mud-chip-color-tertiary:hover {
       background-color: var(--mud-palette-tertiary-darken); }
+    .mud-chip-filled.mud-chip-color-tertiary.mud-chip-selected {
+      color: var(--mud-palette-tertiary);
+      background-color: var(--mud-palette-tertiary-hover) !important; }
   .mud-chip-filled.mud-chip-color-info {
     color: var(--mud-palette-info-text);
     background-color: var(--mud-palette-info); }
     .mud-chip-filled.mud-chip-color-info:hover {
       background-color: var(--mud-palette-info-darken); }
+    .mud-chip-filled.mud-chip-color-info.mud-chip-selected {
+      color: var(--mud-palette-info);
+      background-color: var(--mud-palette-info-hover) !important; }
   .mud-chip-filled.mud-chip-color-success {
     color: var(--mud-palette-success-text);
     background-color: var(--mud-palette-success); }
     .mud-chip-filled.mud-chip-color-success:hover {
       background-color: var(--mud-palette-success-darken); }
+    .mud-chip-filled.mud-chip-color-success.mud-chip-selected {
+      color: var(--mud-palette-success);
+      background-color: var(--mud-palette-success-hover) !important; }
   .mud-chip-filled.mud-chip-color-warning {
     color: var(--mud-palette-warning-text);
     background-color: var(--mud-palette-warning); }
     .mud-chip-filled.mud-chip-color-warning:hover {
       background-color: var(--mud-palette-warning-darken); }
+    .mud-chip-filled.mud-chip-color-warning.mud-chip-selected {
+      color: var(--mud-palette-warning);
+      background-color: var(--mud-palette-warning-hover) !important; }
   .mud-chip-filled.mud-chip-color-error {
     color: var(--mud-palette-error-text);
     background-color: var(--mud-palette-error); }
     .mud-chip-filled.mud-chip-color-error:hover {
       background-color: var(--mud-palette-error-darken); }
+    .mud-chip-filled.mud-chip-color-error.mud-chip-selected {
+      color: var(--mud-palette-error);
+      background-color: var(--mud-palette-error-hover) !important; }
   .mud-chip-filled.mud-chip-color-dark {
     color: var(--mud-palette-dark-text);
     background-color: var(--mud-palette-dark); }
     .mud-chip-filled.mud-chip-color-dark:hover {
       background-color: var(--mud-palette-dark-darken); }
+    .mud-chip-filled.mud-chip-color-dark.mud-chip-selected {
+      color: var(--mud-palette-dark);
+      background-color: var(--mud-palette-dark-hover) !important; }
 
 .mud-chip-outlined {
   color: var(--mud-palette-text-primary);
@@ -1462,7 +1486,7 @@ ul {
       background-color: var(--mud-palette-dark-hover); }
 
 .mud-chip-selected {
-  color: var(--mud-palette-primary) !important;
+  color: var(--mud-palette-primary);
   background-color: var(--mud-palette-primary-hover) !important; }
 
 .mud-collapse-container {
@@ -3886,7 +3910,7 @@ ul {
     pointer-events: none; }
   .mud-input.mud-input-underline.mud-disabled:before {
     border-bottom-style: dotted; }
-  .mud-input.mud-input-underline.mud-error:after {
+  .mud-input.mud-input-underline.mud-input-error:after {
     transform: scaleX(1);
     border-bottom-color: var(--mud-palette-error); }
   .mud-input.mud-input-filled {
@@ -3933,7 +3957,7 @@ ul {
       border-bottom: 1px solid rgba(0, 0, 0, 0.87); }
     .mud-input.mud-input-filled.mud-input-underline.mud-disabled:before {
       border-bottom-style: dotted; }
-    .mud-input.mud-input-filled.mud-input-underline.mud-error:after {
+    .mud-input.mud-input-filled.mud-input-underline.mud-input-error:after {
       transform: scaleX(1);
       border-bottom-color: var(--mud-palette-error); }
   .mud-input.mud-input-outlined {
@@ -3942,7 +3966,7 @@ ul {
     border-color: var(--mud-palette-lines-inputs);
     border-style: solid;
     border-width: 1px; }
-    .mud-input.mud-input-outlined.mud-error .mud-input-outlined-notched-outline {
+    .mud-input.mud-input-outlined.mud-input-error .mud-input-outlined-notched-outline {
       border-color: var(--mud-palette-error); }
     .mud-input.mud-input-outlined.mud-disabled .mud-input-root-outlined {
       border-color: var(--mud-palette-action-disabled); }
@@ -4218,7 +4242,7 @@ ul {
       color: #1976d2; }
     .mud-input-control > .mud-input-label-inputcontrol.mud-disabled {
       color: var(--mud-palette-text-disabled); }
-    .mud-input-control > .mud-input-label-inputcontrol.mud-error {
+    .mud-input-control > .mud-input-label-inputcontrol.mud-input-error {
       color: var(--mud-palette-error) !important; }
 
 .mud-input-helper-text {
@@ -4234,7 +4258,7 @@ ul {
 .mud-input-helper-text.mud-disabled {
   color: var(--mud-palette-text-disabled); }
 
-.mud-input-helper-text.mud-error {
+.mud-input-helper-text.mud-input-error {
   color: var(--mud-palette-error) !important; }
 
 .mud-input-helper-text-margin-dense {
@@ -4284,7 +4308,7 @@ ul {
   color: var(--mud-palette-primary);
   transform: translate(0, 1.5px) scale(0.75);
   transform-origin: top left; }
-  .mud-input:focus-within + label.mud-input-label.mud-input-label-inputcontrol.mud-error {
+  .mud-input:focus-within + label.mud-input-label.mud-input-label-inputcontrol.mud-input-error {
     color: var(--mud-palette-error); }
 
 .mud-input:focus-within + label.mud-input-label.mud-input-label-inputcontrol.mud-input-label-filled {
