@@ -105,7 +105,6 @@ namespace MudBlazor
 
             theme.AppendLine($"--{Palette}-text-primary: {Theme.Palette.TextPrimary};");
             theme.AppendLine($"--{Palette}-text-secondary: {Theme.Palette.TextSecondary};");
-            theme.AppendLine($"--{Palette}-text-tertiary: {Theme.Palette.TextTertiary};");
             theme.AppendLine($"--{Palette}-text-disabled: {Theme.Palette.TextDisabled};");
 
             theme.AppendLine($"--{Palette}-action-default: {Theme.Palette.ActionDefault};");
@@ -113,10 +112,12 @@ namespace MudBlazor
             theme.AppendLine($"--{Palette}-action-disabled: {Theme.Palette.ActionDisabled};");
             theme.AppendLine($"--{Palette}-action-disabled-background: {Theme.Palette.ActionDisabledBackground};");
 
-            theme.AppendLine($"--{Palette}-background: {Theme.Palette.Background};");
             theme.AppendLine($"--{Palette}-surface: {Theme.Palette.Surface};");
+            theme.AppendLine($"--{Palette}-background: {Theme.Palette.Background};");
+            theme.AppendLine($"--{Palette}-background-grey: {Theme.Palette.BackgroundGrey};");
             theme.AppendLine($"--{Palette}-drawer-background: {Theme.Palette.DrawerBackground};");
             theme.AppendLine($"--{Palette}-drawer-text: {Theme.Palette.DrawerText};");
+            theme.AppendLine($"--{Palette}-drawer-icon: {Theme.Palette.DrawerIcon};");
             theme.AppendLine($"--{Palette}-appbar-background: {Theme.Palette.AppbarBackground};");
             theme.AppendLine($"--{Palette}-appbar-text: {Theme.Palette.AppbarText};");
 
