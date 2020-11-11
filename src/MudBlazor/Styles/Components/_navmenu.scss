@@ -63,9 +63,11 @@
     }
 
     & .mud-nav-link-icon {
+        color: var(--mud-palette-drawer-icon);
     }
 
     & .mud-nav-link-expand-icon {
+        color: var(--mud-palette-drawer-icon);
         transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
 
         &.mud-transform {
