@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Docs.Data;
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value" SearchFunc="@Search" Immediate="false" />
+    </MudItem>
+    <MudItem xs="12" md="12">
+        <MudText Class="mb-n3" Typo="Typo.body2">
+            Selected value: @(value != null ? value.ToString() : "")
+        </MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    private IEnumerable<Element> datasource = PeriodicTable.GetElements(); //you can also search directly from database on Search()
+
+    private Element value;
+
+
+    private Task<IEnumerable<Element>> Search(string value)
+    {
+        return Task.FromResult(datasource.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+    } }

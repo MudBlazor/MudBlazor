@@ -237,6 +237,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void AutocompleteClrObjectsExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<AutocompleteClrObjectsExample>();
+        }
+
+
+        [Test]
         public void AutocompleteUsageExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
