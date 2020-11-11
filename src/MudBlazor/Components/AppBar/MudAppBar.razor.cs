@@ -19,7 +19,7 @@ namespace MudBlazor
                 .AddClass($"mud-appbar-drawer-clipped-left", Layout?.IsDrawerClipped(Anchor.Left) == true && !Layout?.IsDrawerClipped(Anchor.Right) == true)
                 .AddClass($"mud-appbar-drawer-clipped-right", Layout?.IsDrawerClipped(Anchor.Right) == true && !Layout?.IsDrawerClipped(Anchor.Left) == true)
                 .AddClass($"mud-elevation-{Elevation.ToString()}")
-                .AddClass($"mud-appbar-color-{Color.ToDescriptionString()}", Color != Color.Default)
+                .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass(Class)
                 .Build();
 
