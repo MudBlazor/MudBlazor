@@ -1926,9 +1926,9 @@ public const string MudTextFieldString_Tag = @"Use Tag to attach any user data o
 public const string MudTextFieldString_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string ComponentBaseMudThemeProvider_Theme = @"";
+public const string BaseMudThemeProvider_Theme = @"";
 
-public const string BaseMudThemeProviderNew_Theme = @"";
+public const string OldComponentBaseMudThemeProvider_Theme = @"";
 
 public const string MudTimePicker_OpenTo = @"First view to show in the MudDatePicker.";
 
@@ -2572,7 +2572,7 @@ public const string MudTabPanel_UserAttributes = @"UserAttributes carries all at
 
 public const string MudThemeProvider_Theme = @"";
 
-public const string MudThemeProviderNew_Theme = @"";
+public const string OldMudThemeProvider_Theme = @"";
 
 public const string MudToolBar_Dense = @"If true, compact padding will be used.";
 

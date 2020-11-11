@@ -7,13 +7,18 @@
 <div class="csharp"><pre>
 <span class="atSign">&#64;</span>code {
 
-    MudThemeOld MyCoolDarkTheme = <span class="keyword">new</span> MudThemeOld()
+    MudTheme MyCoolDarkTheme = <span class="keyword">new</span> MudTheme()
     {
-        Color_Primary = <span class="string">&quot;#304ffe&quot;</span>,
-        Color_Secondary = <span class="string">&quot;#1de9b6&quot;</span>,
-        Color_Surface = <span class="string">&quot;#282C34&quot;</span>,
-        Color_Background = <span class="string">&quot;#1c2025&quot;</span>,
-        Color_Text_Default = <span class="string">&quot;#e6e5e8&quot;</span>
+        Palette = <span class="keyword">new</span> Palette()
+        {
+            Background = <span class="string">&quot;#343a41&quot;</span>,
+            Surface = <span class="string">&quot;#3a424e&quot;</span>,
+            DrawerBackground = <span class="string">&quot;#3a424e&quot;</span>,
+            DrawerText = <span class="string">&quot;#8389a2&quot;</span>,
+            AppbarBackground = <span class="string">&quot;#3a424e&quot;</span>,
+            AppbarText = <span class="string">&quot;#8389a2&quot;</span>,
+            TextPrimary = <span class="string">&quot;#dee2e6&quot;</span>
+        }
     };
 }
 </pre></div>
