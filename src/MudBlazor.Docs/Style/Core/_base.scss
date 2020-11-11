@@ -103,6 +103,30 @@
 }
 
 
+.docs-list{
+    list-style:inside;
+}
+
+.docs-expand-wrapper {
+    color: var(--mud-palette-white);
+    background-color: var(--mud-palette-black);
+
+    .docs-default-theme {
+        .mud-expand-panel {
+            color: inherit;
+            background-color: inherit;
+            border: none !important;
+
+            .mud-expand-panel-text {
+                color: #988ef1;
+                font-weight: 500;
+                font-size: 1rem;
+            }
+        }
+    }
+}
+
+
 @-webkit-keyframes tracking-in-expand {
     0% {
         letter-spacing: -0.5em;

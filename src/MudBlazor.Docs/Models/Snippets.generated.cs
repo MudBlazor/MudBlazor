@@ -3033,27 +3033,6 @@ public const string TextFieldMultilineExample = @"<MudGrid>
     string sampleText = ""Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."";
 }";
 
-public const string ThemesCustomExample = @"<MudThemeProvider Theme=""MyCoolDarkTheme"" />
-
-@code {
-
-    MudTheme MyCoolDarkTheme = new MudTheme()
-    {
-        Palette = new Palette()
-        {
-            Background = ""#343a41"",
-            Surface = ""#3a424e"",
-            DrawerBackground = ""#3a424e"",
-            DrawerText = ""#8389a2"",
-            AppbarBackground = ""#3a424e"",
-            AppbarText = ""#8389a2"",
-            TextPrimary = ""#dee2e6""
-        }
-    };
-}";
-
-public const string ThemesDefaultExample = @"<MudThemeProvider />";
-
 public const string TimePickerBasicUsageExample = @"<MudTimePicker Label=""12 hours"" AmPm=""true"" @bind-Time=""time""/>
 <MudTimePicker Label=""24 hours"" @bind-Time=""time""/>
 
@@ -3122,6 +3101,81 @@ public const string TextGeneralExample = @"<MudText Typo=""Typo.h1"">h1. Heading
 <MudText Typo=""Typo.button"">BUTTON TEXT</MudText>
 <MudText Typo=""Typo.caption"">caption text</MudText>
 <MudText Typo=""Typo.overline"">OVERLINE TEXT</MudText>";
+
+public const string OverviewThemesCustomExample = @"<MudThemeProvider Theme=""MyCustomTheme"" />
+
+@code{
+    MudTheme MyCustomTheme = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Primary = Colors.Blue.Default,
+            Secondary = Colors.Green.Accent4,
+            AppbarBackground = Colors.Red.Default,
+        },
+
+        LayoutProperties = new LayoutProperties()
+        {
+            DrawerWidth = ""260px""
+        }
+    };
+}";
+
+public const string OverviewThemesDefaultExample = @"<MudThemeProvider />";
+
+public const string OverviewThemesMultipleExample = @"<MudThemeProvider Theme=""currentTheme"" />
+
+<MudButton OnClick=""@((e) => DarkMode())"">Toggle Dark/Light Mode</MudButton>
+
+@code{
+
+    protected override void OnInitialized()
+    {
+        currentTheme = defaultTheme;
+    }
+
+    void DarkMode()
+    {
+        if (currentTheme == defaultTheme)
+        {
+            currentTheme = darkTheme;
+        }
+        else
+        {
+            currentTheme = defaultTheme;
+        }
+    }
+
+    MudTheme currentTheme = new MudTheme();
+    MudTheme defaultTheme = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Black = ""#272c34""
+        }
+    };
+
+    MudTheme darkTheme = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Black = ""#27272f"",
+            Background = ""#32333d"",
+            BackgroundGrey = ""#27272f"",
+            Surface = ""#373740"",
+            DrawerBackground = ""#27272f"",
+            DrawerText = ""rgba(255,255,255, 0.50)"",
+            DrawerIcon = ""rgba(255,255,255, 0.50)""
+            AppbarBackground = ""#27272f"",
+            AppbarText = ""rgba(255,255,255, 0.70)"",
+            TextPrimary = ""rgba(255,255,255, 0.70)"",
+            TextSecondary = ""rgba(255,255,255, 0.50)"",
+            ActionDefault = ""#adadb1"",
+            ActionDisabled = ""rgba(255,255,255, 0.26)"",
+            ActionDisabledBackground = ""rgba(255,255,255, 0.12)"",
+        }
+    };
+}";
 
 public const string BorderRadiusCornerExample = @"<div class=""mud-theme-info py-4 px-6 mx-4 rounded-tl-xl"">
     <MudText Align=""Align.Center"">.rounded-tl-xl</MudText>

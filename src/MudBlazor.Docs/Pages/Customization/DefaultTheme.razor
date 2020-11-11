@@ -4,8 +4,97 @@
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <MarkdownDefaultTheme/>
+            <SectionHeader>
+                <Title>MudTheme</Title>
+            </SectionHeader>
+            <MudPaper Class="docs-expand-wrapper">
+                <MudExpansionPanels MultiExpansion="true" Elevation="0" Class="docs-default-theme">
+                    <MudExpansionPanel Text="Palette">
+                        Panel One Content
+                    </MudExpansionPanel>
+                    <MudExpansionPanel Text="Shadows">
+                        <div>
+                            <MudText Inline="true">Elevation: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(0),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(1),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(2),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(3),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(4),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(5),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(6),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(7),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(8),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(9),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(10),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(11),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(12),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(13),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(14),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(15),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(16),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(17),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(18),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(19),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(20),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(21),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(22),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(23),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(24),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(25)</MudText>
+                        </div>
+                    </MudExpansionPanel>
+                    <MudExpansionPanel Text="LayoutProperties">
+                        <div>
+                            <MudText Inline="true">DefaultBorderRadius: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.LayoutProperties.DefaultBorderRadius.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">DrawerWidth: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.LayoutProperties.DrawerWidth.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">AppbarMinHeight: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.LayoutProperties.AppbarMinHeight.ToString()</MudText>
+                        </div>
+                    </MudExpansionPanel>
+                    <MudExpansionPanel Text="ZIndex">
+                        <div>
+                            <MudText Inline="true">Drawer: </MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@mudTheme.ZIndex.Drawer.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">AppBar: </MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@mudTheme.ZIndex.AppBar.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Dialog: </MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@mudTheme.ZIndex.Dialog.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Popover: </MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@mudTheme.ZIndex.Popover.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Snackbar: </MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@mudTheme.ZIndex.Snackbar.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Tooltip: </MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@mudTheme.ZIndex.Tooltip.ToString()</MudText>
+                        </div>
+                    </MudExpansionPanel>
+                </MudExpansionPanels>
+            </MudPaper>
+           
+        </DocsPageSection>
+        <DocsPageSection>
+            <MudDivider Class="my-16" Style="opacity:0;"/>
+            @*You are cool like a swiming pool!*@
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
 <Footer />
+
+@code {
+    MudTheme mudTheme = new MudTheme();
+}
