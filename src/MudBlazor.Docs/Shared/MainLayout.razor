@@ -35,18 +35,18 @@
 
 @code {
 
-    bool _drawerOpen = false;
-    bool _rightToLeft = false;
+        bool _drawerOpen = false;
+        bool _rightToLeft = false;
 
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
+        void DrawerToggle()
+        {
+            _drawerOpen = !_drawerOpen;
+        }
 
-    void RightToLeftToggle()
-    {
-        _rightToLeft = !_rightToLeft;
-    }
+        void RightToLeftToggle()
+        {
+            _rightToLeft = !_rightToLeft;
+        }
 
     protected override void OnInitialized()
     {
@@ -66,21 +66,32 @@
     }
 
     MudTheme currentTheme = new MudTheme();
-    MudTheme defaultTheme = new MudTheme();
+    MudTheme defaultTheme = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Black = "#272c34"
+        }
+    };
 
     MudTheme darkTheme = new MudTheme()
     {
         Palette = new Palette()
         {
-            Background = "#343a41",
-            Surface = "#3a424e",
-            DrawerBackground = "#3a424e",
-            DrawerText = "#8389a2",
-            AppbarBackground = "#3a424e",
-            AppbarText = "#8389a2",
-            TextPrimary = "#9ea7bf",
-            TextSecondary = "#dee2e6",
-            TextTertiary = "#838ca2"
+            Black = "#27272f",
+            Background = "#32333d",
+            BackgroundGrey = "#27272f",
+            Surface = "#373740",
+            DrawerBackground = "#27272f",
+            DrawerText = "rgba(255,255,255, 0.50)",
+            AppbarBackground = "#27272f",
+            AppbarText = "rgba(255,255,255, 0.70)",
+            TextPrimary = "rgba(255,255,255, 0.70)",
+            TextSecondary = "rgba(255,255,255, 0.50)",
+            ActionDefault = "#adadb1",
+            ActionDisabled = "rgba(255,255,255, 0.26)",
+            ActionDisabledBackground = "rgba(255,255,255, 0.12)",
+            DrawerIcon = "rgba(255,255,255, 0.50)",
         }
     };
 }

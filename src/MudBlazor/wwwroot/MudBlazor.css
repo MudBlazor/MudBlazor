@@ -2491,7 +2491,10 @@ ul {
     font-weight: 500 !important;
     color: var(--mud-palette-primary);
     background-color: var(--mud-palette-action-default-hover); }
+  .mud-nav-link .mud-nav-link-icon {
+    color: var(--mud-palette-drawer-icon); }
   .mud-nav-link .mud-nav-link-expand-icon {
+    color: var(--mud-palette-drawer-icon);
     transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1), visibility 0s; }
     .mud-nav-link .mud-nav-link-expand-icon.mud-transform {
       transform: rotate(-180deg);
@@ -3888,10 +3891,6 @@ ul {
   line-height: 1.1876em;
   letter-spacing: 0.00938em;
   z-index: 10; }
-  .mud-input.mud-input-multiline {
-    padding: 6px 0 7px; }
-    .mud-input.mud-input-multiline.mud-input-margin-dense {
-      padding-top: 3px; }
   .mud-input.mud-input-full-width {
     width: 100%; }
   .mud-input.mud-disabled {
@@ -3939,11 +3938,6 @@ ul {
       padding-left: 12px; }
     .mud-input.mud-input-filled.mud-input-adorned-end {
       padding-right: 12px; }
-    .mud-input.mud-input-filled.mud-input-multiline {
-      padding: 27px 12px 10px; }
-      .mud-input.mud-input-filled.mud-input-multiline.mud-input-margin-dense {
-        padding-top: 23px;
-        padding-bottom: 6px; }
     .mud-input.mud-input-filled.mud-input-underline:before {
       left: 0;
       right: 0;
@@ -3984,11 +3978,6 @@ ul {
       padding-left: 14px; }
     .mud-input.mud-input-outlined.mud-input-adorned-end {
       padding-right: 14px; }
-    .mud-input.mud-input-outlined.mud-input-multiline {
-      padding: 18.5px 14px; }
-      .mud-input.mud-input-outlined.mud-input-multiline.mud-input-margin-dense {
-        padding-top: 10.5px;
-        padding-bottom: 10.5px; }
 
 .mud-input:focus-within.mud-input-underline:after {
   transform: scaleX(1); }
@@ -4232,8 +4221,8 @@ ul {
     margin-top: 16px;
     margin-bottom: 8px; }
   .mud-input-control.mud-input-control-margin-dense {
-    margin-top: 8px;
-    margin-bottom: 4px; }
+    margin-top: 3px;
+    margin-bottom: 2px; }
   .mud-input-control.mud-input-control-full-width {
     width: 100%; }
   .mud-input-control > div.mud-input.mud-input-text {
