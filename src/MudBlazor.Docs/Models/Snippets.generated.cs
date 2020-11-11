@@ -181,19 +181,19 @@ public const string AlertSquareTextExample = @"<MudAlert Severity=""Severity.Nor
 <MudAlert Severity=""Severity.Warning"" Square=""true"">Warning Square</MudAlert>
 <MudAlert Severity=""Severity.Error"" Square=""true"">Error Square</MudAlert>";
 
-public const string AppBarDenseExample = @"<MudAppBar Fixed=""false"" Dense=""true"">
+public const string AppBarDenseExample = @"<MudAppBar Color=""Color.Primary"" Fixed=""false"" Dense=""true"">
     <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
     <MudAppBarSpacer />
     <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
 </MudAppBar>";
 
-public const string AppBarElevationExample = @"<MudAppBar Fixed=""false"" Elevation=""0"">
+public const string AppBarElevationExample = @"<MudAppBar Color=""Color.Primary"" Fixed=""false"" Elevation=""0"">
     <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
     <MudAppBarSpacer />
     <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
 </MudAppBar>";
 
-public const string AppBarSimpleExample = @"<MudAppBar Fixed=""false"">
+public const string AppBarSimpleExample = @"<MudAppBar Color=""Color.Primary"" Fixed=""false"">
     <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
     <MudAppBarSpacer />
     <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
