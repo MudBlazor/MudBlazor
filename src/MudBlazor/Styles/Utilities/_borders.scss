@@ -1,0 +1,91 @@
+﻿$border-radiuses: ( "0": 0, "sm": 2px, "lg": 8px, "xl": 24px );
+
+@each $size, $value in $border-radiuses {
+    .rounded-#{$size} {
+        border-radius: $value !important;
+    }
+
+    .rounded-t-#{$size} {
+        border-top-left-radius: $value !important;
+        border-top-right-radius: $value !important;
+    }
+
+    .rounded-r-#{$size} {
+        border-top-right-radius: $value !important;
+        border-bottom-right-radius: $value !important;
+    }
+
+    .rounded-b-#{$size} {
+        border-bottom-right-radius: $value !important;
+        border-bottom-left-radius: $value !important;
+    }
+
+    .rounded-l-#{$size} {
+        border-top-left-radius: $value !important;
+        border-bottom-left-radius: $value !important;
+    }
+
+    .rounded-tl-#{$size} {
+        border-top-left-radius: $value !important;
+    }
+
+    .rounded-tr-#{$size} {
+        border-top-right-radius: $value !important;
+    }
+
+    .rounded-br-#{$size} {
+        border-bottom-right-radius: $value !important;
+    }
+
+    .rounded-bl-#{$size} {
+        border-bottom-left-radius: $value !important;
+    }
+}
+
+.rounded {
+    border-radius: var(--mud-default-borderradius) !important;
+}
+
+.rounded-t {
+    border-top-left-radius: var(--mud-default-borderradius) !important;
+    border-top-right-radius: var(--mud-default-borderradius) !important;
+}
+
+.rounded-r {
+    border-top-right-radius: var(--mud-default-borderradius) !important;
+    border-bottom-right-radius: var(--mud-default-borderradius) !important;
+}
+
+.rounded-b {
+    border-bottom-right-radius: var(--mud-default-borderradius) !important;
+    border-bottom-left-radius: var(--mud-default-borderradius) !important;
+}
+
+.rounded-l {
+    border-top-left-radius: var(--mud-default-borderradius) !important;
+    border-bottom-left-radius: var(--mud-default-borderradius) !important;
+}
+
+.rounded-tl {
+    border-top-left-radius: var(--mud-default-borderradius) !important;
+}
+
+.rounded-tr {
+    border-top-right-radius: var(--mud-default-borderradius) !important;
+}
+
+.rounded-br {
+    border-bottom-right-radius: var(--mud-default-borderradius) !important;
+}
+
+.rounded-bl {
+    border-bottom-left-radius: var(--mud-default-borderradius) !important;
+}
+
+.rounded-circle {
+    border-radius: 50% !important;
+}
+
+.rounded-pill {
+    border-radius: 9999px !important;
+}

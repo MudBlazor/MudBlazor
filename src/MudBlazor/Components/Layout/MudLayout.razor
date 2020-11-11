@@ -3,7 +3,7 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    <CascadingValue Value="@_layoutState">
+    <CascadingValue IsFixed="true" Value="@this">
             @ChildContent
     </CascadingValue>
 </div>
@@ -12,6 +12,7 @@
 
     protected string Classname =>
     new CssBuilder("mud-layout")
+        .AddClass("mud-application-layout-rtl", RightToLeft)
         .AddClass(Class)
     .Build();
 
@@ -20,38 +21,73 @@
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    LayoutState _layoutState = new LayoutState();
+    private bool _rtl;
 
     /// <summary>
-    /// Gets or ets the drawer open state.
+    /// If set, changes the layout to RightToLeft.
     /// </summary>
     [Parameter]
-    public bool DrawerOpen
+    public bool RightToLeft
     {
-        get => _layoutState.DrawerOpen;
+        get => _rtl;
         set
         {
-            if (value != _layoutState.DrawerOpen)
+            if (_rtl == value)
+                return;
+            _rtl = value;
+            SwapDrawerAnchors();
+            StateHasChanged();
+        }
+    }
+
+    List<MudDrawer> _drawers = new List<MudDrawer>();
+
+    public void Add(MudDrawer drawer)
+    {
+        _drawers.Add(drawer);
+    }
+
+    public void Remove(MudDrawer drawer)
+    {
+        _drawers.Remove(drawer);
+    }
+
+    public bool? IsDrawerOpen(Anchor anchor)
+    {
+        return _drawers.FirstOrDefault(d => d.Anchor == anchor)?.Open;
+    }
+
+    public bool? IsDrawerClipped(Anchor anchor)
+    {
+        return _drawers.FirstOrDefault(d => d.Anchor == anchor)?.Clipped;
+    }
+
+    public event Action DrawersChanged;
+
+    public void FireDrawersChanged()
+    {
+        //DrawersChanged?.Invoke();
+        StateHasChanged();
+    }
+
+    public bool HasDrawer(Anchor anchor)
+    {
+        return _drawers.Any(d => d.Anchor == anchor);
+    }
+
+    public void SwapDrawerAnchors()
+    {
+        foreach (var drawer in _drawers)
+        {
+            if(drawer.Anchor == Anchor.Left)
             {
-                _layoutState.DrawerOpen = value;
-                StateHasChanged();
+                drawer.Anchor = Anchor.Right;
+            }
+            else if(drawer.Anchor == Anchor.Right)
+            {
+                drawer.Anchor = Anchor.Left;
             }
         }
     }
 
-    /// <summary>
-    /// Gets or sets the drawer clipped state.
-    /// </summary>
-    [Parameter] public bool DrawerClipped
-    {
-        get => _layoutState.DrawerClipped;
-        set
-        {
-            if (value != _layoutState.DrawerClipped)
-            {
-                _layoutState.DrawerClipped = value;
-                StateHasChanged();
-            }
-        }
-    }
 }

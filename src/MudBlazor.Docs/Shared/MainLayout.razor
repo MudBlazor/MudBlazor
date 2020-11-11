@@ -1,20 +1,28 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavMan
+@using MudBlazor.Theme.Defaults
 
-<MudThemeProvider Theme="currentTheme" />
+<MudThemeProvider Theme="currentTheme"/>
 <MudDialogProvider />
 <MudSnackbarProvider />
 
 
-<MudLayout DrawerOpen="@_drawerOpen">
-    <MudAppBar Elevation="99" Color="Color.Appbar">
+<MudLayout RightToLeft="@_rightToLeft">
+    <MudAppBar Elevation="25">
         <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h5" Class="@GetTrackedIn()">Mudblazor</MudText>
+        <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text">Mudblazor</MudText>
         <MudAppBarSpacer />
-        <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
-        <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
+        <MudTooltip Text="Toggle light/dark theme">
+            <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
+        </MudTooltip>
+        <MudTooltip Text="GitHub repository">
+            <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
+        </MudTooltip>
+        <MudTooltip Text="Toggle right-to-left/left-to-right">
+            <MudIconButton Icon="@Icons.Material.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
+        </MudTooltip>
     </MudAppBar>
-    <MudDrawer Elevation="99" Class="mudblazor-appbar-band">
+    <MudDrawer Open="@_drawerOpen" Elevation="25" Class="mudblazor-appbar-band">
         <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
             <MudBlazorLogo />
         </MudDrawerHeader>
@@ -27,17 +35,22 @@
 
 @code {
 
-    bool _drawerOpen = false;
+        bool _drawerOpen = false;
+        bool _rightToLeft = false;
 
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
+        void DrawerToggle()
+        {
+            _drawerOpen = !_drawerOpen;
+        }
+
+        void RightToLeftToggle()
+        {
+            _rightToLeft = !_rightToLeft;
+        }
 
     protected override void OnInitialized()
     {
         currentTheme = defaultTheme;
-        GetTrackedIn();
     }
 
     void DarkMode()
@@ -52,45 +65,34 @@
         }
     }
 
-    public bool _trackedIn { get; set; }
-    public string MudBlazorLogoText { get; set; }
-
-    public string GetTrackedIn()
-    {
-        if (_trackedIn && NavMan.BaseUri == NavMan.Uri)
-        {
-            _trackedIn = !_trackedIn;
-            MudBlazorLogoText = "mudblazor-appbar-brand-text track-out";
-        }
-        else if (!_trackedIn && NavMan.BaseUri != NavMan.Uri)
-        {
-            _trackedIn = !_trackedIn;
-            MudBlazorLogoText = "mudblazor-appbar-brand-text track-in";
-        } else if (NavMan.BaseUri == NavMan.Uri)
-        {
-            MudBlazorLogoText = "mudblazor-appbar-brand-text mud-hide";
-        }
-        return MudBlazorLogoText;
-    }
-
     MudTheme currentTheme = new MudTheme();
-    MudTheme defaultTheme = new MudTheme();
+    MudTheme defaultTheme = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Black = "#272c34"
+        }
+    };
+
     MudTheme darkTheme = new MudTheme()
     {
-        Color_Default = "#fff",
-        Color_On_Default = "#fff",
-        Color_Background = "#1c2025",
-        Color_Background_Grey = "#14171b",
-        Color_Surface = "#282C34",
-        Color_AppBar = "#282C34",
-        Color_On_AppBar = "#fff",
-        Color_Drawer = "#282C34",
-        Color_On_Drawer = "#adb0bb",
-        Color_On_Surface = "#adb0bb",
-        Color_Text_Default = "#adb0bb",
-        Color_Secondary = "#E62C71",
-        Color_Dark = "#14171b",
-        Color_Border_Default = "#282C34"
+        Palette = new Palette()
+        {
+            Black = "#27272f",
+            Background = "#32333d",
+            BackgroundGrey = "#27272f",
+            Surface = "#373740",
+            DrawerBackground = "#27272f",
+            DrawerText = "rgba(255,255,255, 0.50)",
+            AppbarBackground = "#27272f",
+            AppbarText = "rgba(255,255,255, 0.70)",
+            TextPrimary = "rgba(255,255,255, 0.70)",
+            TextSecondary = "rgba(255,255,255, 0.50)",
+            ActionDefault = "#adadb1",
+            ActionDisabled = "rgba(255,255,255, 0.26)",
+            ActionDisabledBackground = "rgba(255,255,255, 0.12)",
+            DrawerIcon = "rgba(255,255,255, 0.50)"
+        }
     };
 }
 

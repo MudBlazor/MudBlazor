@@ -1,0 +1,57 @@
+﻿@layout IframeLayout
+@namespace MudBlazor.Docs.Examples
+@page "/iframe/docs/examples/drawer/double"
+
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawerOne" />
+        <MudAppBarSpacer />
+        <MudIconButton Icon="@Icons.Material.Settings" Color="Color.Inherit" OnClick="@ToggleDrawerTwo"  />
+    </MudAppBar>
+    <MudDrawer Open="@drawerOneOpen" Clipped="@drawerOneClipped" Anchor="Anchor.Left" Elevation="25">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">My App</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudDrawer Open="@drawerTwoOpen" Clipped="@drawerTwoClipped" Anchor="Anchor.Right" Elevation="1">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">Settings</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match="NavLinkMatch.All">Profile</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Orders</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Order History</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer MaxWidth="MaxWidth.Small" Class="mt-6">
+            <MudSwitch @bind-Checked="drawerOneClipped" Color="@Color.Primary">Drawer One clipped</MudSwitch>
+            <MudSwitch @bind-Checked="drawerTwoClipped" Color="@Color.Secondary">Drawer Two clipped</MudSwitch>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+
+@code{
+    bool drawerOneOpen = true;
+    bool drawerOneClipped = false;
+
+    void ToggleDrawerOne()
+    {
+        drawerOneOpen = !drawerOneOpen;
+    }
+
+    bool drawerTwoOpen = true;
+    bool drawerTwoClipped = true;
+
+    void ToggleDrawerTwo()
+    {
+        drawerTwoOpen = !drawerTwoOpen;
+    }
+}

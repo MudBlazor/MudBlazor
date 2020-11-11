@@ -11,11 +11,11 @@
     {
         @if (AdornmentClick.HasDelegate)
         {
-            <MudIconButton Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="Size.Medium" />
+            <MudIconButton Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="Size.Medium" Color="Color.Default" />
         }
         else
         {
-            <MudIcon Icon="@Icon" Size="@Size"/>
+            <MudIcon Icon="@Icon" Size="@Size" Color="Color.Default"/>
         }
     }
 </div>

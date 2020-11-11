@@ -2,13 +2,13 @@
 @namespace MudBlazor.Docs.Examples
 @page "/iframe/docs/examples/drawer/clipped"
 
-<MudLayout DrawerOpen="@DocsDrawerOpen" DrawerClipped="true">
-    <MudAppBar Elevation="0">
-        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DocsDrawerToggle())" />
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
     </MudAppBar>
-    <MudDrawer>
+    <MudDrawer Open="@open" Clipped="@clipped" Elevation="1">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">My App</MudText>
         </MudDrawerHeader>
@@ -18,20 +18,20 @@
             <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
-    <MudMainContent>
-        <MudContainer Class="pt-16 px-16">
-            <MudText Color="Color.Secondary" GutterBottom="true">Click the right side button in the appbar to change layout.</MudText>
-            <LoremIpsum />
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Class="mt-6">
+            <MudSwitch @bind-Checked="clipped" Color="@Color.Secondary">Drawer clipped</MudSwitch>
+            <LoremIpsum/>
         </MudContainer>
     </MudMainContent>
 </MudLayout>
 
 
 @code{
-    bool DocsDrawerOpen = true;
-
-    void DocsDrawerToggle()
+    bool open = true;
+    bool clipped = true;
+    void ToggleDrawer()
     {
-        DocsDrawerOpen = !DocsDrawerOpen;
+        open = !open;
     }
 }

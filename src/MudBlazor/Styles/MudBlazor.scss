@@ -4,7 +4,6 @@
 
 @import 'core/base';
 @import 'core/blazor';
-@import 'core/colors';
 @import 'core/animations';
 @import 'core/ripple';
 @import 'core/reset';
@@ -31,6 +30,7 @@
 @import 'components/fab';
 @import 'components/form';
 @import 'components/list';
+@import 'components/layout';
 @import 'components/menu';
 @import 'components/link';
 @import 'components/navmenu';
@@ -58,8 +58,12 @@
 @import 'utilities/float';
 @import 'utilities/align';
 @import 'utilities/spacing';
+@import 'utilities/borders';
 
 @import 'layout/appbar';
 @import 'layout/drawer';
 @import 'layout/main';
 @import 'layout/container';
+
+
+@import 'core/colors';

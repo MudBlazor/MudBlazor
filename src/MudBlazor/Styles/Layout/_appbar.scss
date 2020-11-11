@@ -1,86 +1,58 @@
-﻿
-.mud-appbar {
+﻿.mud-appbar {
     width: 100%;
     display: flex;
+    position: relative;
     z-index: var(--mud-zindex-appbar);
     box-sizing: border-box;
     flex-shrink: 0;
     flex-direction: column;
+    color: var(--mud-palette-appbar-text);
+    background-color: var(--mud-palette-appbar-background);
     transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms,width 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
 }
 
 .mud-appbar-drawer-open {
-    width: calc(100% - 240px);
+    width: calc(100% - var(--mud-drawer-width));
     transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,width 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
-    margin-left: 240px;
+
+    &-left:not(.mud-appbar-drawer-clipped):not(.mud-appbar-drawer-clipped-left) {
+        margin-left: var(--mud-drawer-width);
+    }
+
+    &-right:not(.mud-appbar-drawer-clipped):not(.mud-appbar-drawer-clipped-right) {
+        margin-right: var(--mud-drawer-width);
+    }
+}
+
+.mud-appbar-drawer-open-left:not(.mud-appbar-drawer-clipped):not(.mud-appbar-drawer-clipped-left):not(.mud-appbar-drawer-clipped-right).mud-appbar-drawer-open-right:not(.mud-appbar-drawer-clipped):not(.mud-appbar-drawer-clipped-left):not(.mud-appbar-drawer-clipped-right) {
+    width: calc(100% - var(--mud-drawer-width) - var(--mud-drawer-width));
 }
 
 .mud-appbar-drawer-clipped {
     width: 100%;
+
+    &-left {
+        margin-right: var(--mud-drawer-width);
+
+        &:not(.mud-appbar-drawer-open-right) {
+            width: 100%;
+            margin-right: auto;
+        }
+    }
+
+    &-right {
+        margin-left: var(--mud-drawer-width);
+
+        &:not(.mud-appbar-drawer-open-left) {
+            width: 100%;
+            margin-left:auto;
+        }
+    }
 }
 
-.mud-appbar-position-fixed {
-    top: 0;
-    left: auto;
-    right: 0;
+.mud-appbar-fixed {
     position: fixed;
-}
-
-.mud-appbar-position-absolute {
     top: 0;
-    left: auto;
     right: 0;
-    position: absolute;
-}
-
-.mud-appbar-position-sticky {
-    top: 0;
-    left: auto;
-    right: 0;
-    position: sticky;
-}
-
-.mud-appbar-position-static {
-    position: static;
-}
-
-.mud-appbar-position-relative {
-    position: relative;
-}
-
-/// <summary>
-/// Bellow is the classes for theming
-/// </summary>
-.mud-appbar-color-default {
-    color: var(--mud-theme-on-default);
-    background-color: var(--mud-theme-default);
-}
-
-.mud-appbar-color-primary {
-    color: var(--mud-theme-on-primary);
-    background-color: var(--mud-theme-primary);
-}
-
-.mud-appbar-color-secondary {
-    color: var(--mud-theme-on-secondary);
-    background-color: var(--mud-theme-secondary);
-}
-
-.mud-appbar-color-surface {
-    color: var(--mud-theme-on-surface);
-    background-color: var(--mud-theme-surface);
-}
-
-.mud-appbar-color-appbar {
-    color: var(--mud-theme-on-appbar);
-    background-color: var(--mud-theme-appbar);
-}
-
-.mud-appbar-color-inherit {
-    color: inherit;
-}
-
-.mud-appbar-color-transparent {
-    color: inherit;
-    background-color: transparent;
+    left: 0;
 }

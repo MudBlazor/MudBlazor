@@ -10,9 +10,10 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("")
+           .AddClass($"mud-icon-default", Color == Color.Default)
           .AddClass($"mud-svg-icon-root", !String.IsNullOrEmpty(Icon))
           .AddClass($"mud-icon-root", !String.IsNullOrEmpty(FontIcon))
-          .AddClass($"mud-color-text-{Color.ToDescriptionString()}")
+          .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default)
           .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
           .AddClass(FontClass, !String.IsNullOrEmpty(FontClass))
           .AddClass(Class)

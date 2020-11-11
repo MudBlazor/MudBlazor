@@ -1,0 +1,39 @@
+﻿@layout IframeLayout
+@namespace MudBlazor.Docs.Examples
+@page "/iframe/docs/examples/drawer/anchor"
+
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
+        <MudAppBarSpacer />
+        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+    </MudAppBar>
+    <MudDrawer Open="@open" Clipped="@clipped" Anchor="Anchor.Right" Elevation="1">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">My App</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Class="mt-6">
+            <MudSwitch @bind-Checked="clipped" Color="@Color.Secondary">Drawer clipped</MudSwitch>
+            <LoremIpsum />
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+
+@code{
+    bool open = true;
+    bool clipped = false;
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+}

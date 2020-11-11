@@ -10,13 +10,14 @@
 
     protected string Classname =>
     new CssBuilder("mud-main-content")
-      .AddClass($"mud-main-drawer-open", LayoutState.DrawerOpen)
-      .AddClass($"mud-main-drawer-closed", !LayoutState.DrawerOpen)
-      .AddClass(Class)
-    .Build();
+        .AddClass($"mud-main-drawer-open", Layout?.IsDrawerOpen(Anchor.Left) == true || Layout?.IsDrawerOpen(Anchor.Right) == true)
+        .AddClass($"mud-main-drawer-closed", !Layout?.IsDrawerOpen(Anchor.Left) == true || !Layout?.IsDrawerOpen(Anchor.Right) == true)
+        .AddClass($"mud-main-drawer-clipped", Layout?.IsDrawerClipped(Anchor.Left) == true || Layout?.IsDrawerClipped(Anchor.Right) == true)
+        .AddClass(Class)
+     .Build();
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    [CascadingParameter] LayoutState LayoutState { get; set; }
+    [CascadingParameter] MudLayout Layout { get; set; }
 
 }

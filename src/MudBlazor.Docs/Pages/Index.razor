@@ -1,80 +1,109 @@
 ﻿@page "/"
 
-<MudContainer Class="docs-home">
-    <MudGrid Spacing="0">
-        <MudItem xs="12" md="5">
-            <MudBlazorLogo />
-        </MudItem>
-        <MudItem xs="12" md="7">
-            <MudText Typo="Typo.h2" Color="Color.Primary" Class="mudblazor-text">MudBlazor</MudText>
-            <MudText Typo="Typo.h5" Color="Color.Primary" Class="mt-5">Blazor components for faster and easier web development.</MudText>
-            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Class="mt-6" Link="/getting-started/installation">Get Started</MudButton>
-        </MudItem>
-    </MudGrid>
-</MudContainer>
-<MudContainer Class="mt-16">
-    <MudGrid>
-        <MudItem xs="12" md="12" lg="6">
-            <MudPaper Elevation="99" Class="docs-home-paper">
-                <div class="docs-home-title">
-                    <MudIcon Icon="@Icons.Material.GetApp"/>
-                    <h2>Installation</h2>
+<div class="mudblazor-index">
+    <MudContainer>
+        <MudGrid>
+            <MudItem xs="12" sm="12" md="12">
+                <div class="d-flex justify-center">
+                    <MudBlazorLogo />
                 </div>
-                <MudText Typo="Typo.subtitle1">
-                    Install MudBlazor via NuGet.
-                </MudText>
-                <MarkdownInstallPackage />
-                <MudText Typo="Typo.subtitle1" Class="pt-5">
-                    Link the css file in your _Host.cshtml or index.html
-                </MudText>
-                <MarkdownAddReferencesSimple />
-                <MudButton Variant="Variant.Text" Color="Color.Primary" Link="/getting-started/installation" Class="mt-5">
-                    Read installation docs
-                </MudButton>
-            </MudPaper>
-        </MudItem>
-        <MudItem xs="12" md="12" lg="6">
-            <MudPaper Elevation="99" Class="docs-home-paper">
-                <div class="docs-home-title">
-                    <MudIcon Icon="@Icons.Material.Build" />
-                    <h2>Getting started</h2>
+            </MudItem>
+            <MudItem xs="12" sm="12" md="12">
+                <MudText Align="Align.Center" Typo="Typo.h5" Class="mudblazor-text-h5 mt-4">Blazor components</MudText>
+                <MudText Align="Align.Center" Typo="Typo.h5" Class="mudblazor-text-h5 smaller">For faster and easier web development</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="12" md="12">
+                <div class="d-flex justify-center mt-6">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="/getting-started/installation" Class="mudblazor-button get-started">Get Started</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" Class="mudblazor-button github">GitHub</MudButton>
                 </div>
-                <MudText Typo="Typo.subtitle1">
-                    Add using tag to _Imports.razor or individual pages.
-                </MudText>
-                <MarkdownAddImportsSimple/>
-                <MudText Typo="Typo.subtitle1" Class="pt-5">
-                    Usage
-                </MudText>
-                <MarkdownUsageSimple />
-                <MudButton Variant="Variant.Text" Color="Color.Primary" Link="/getting-started/usage" Class="mt-5">
-                    Explore the docs
-                </MudButton>
-            </MudPaper>
-        </MudItem>
-    </MudGrid>
-</MudContainer>
-<MudContainer>
-    <MudDivider Class="my-16"/>
-</MudContainer>
-<MudContainer>
-    <MudGrid>
-        <MudItem xs="12" md="12" Class="docs-trymudblazor">
-            <MudText Typo="Typo.h2" Color="Color.Surface" Inline="true">Try</MudText>
-            <MudText Typo="Typo.h2" Color="Color.Primary" Inline="true">MudBlazor</MudText>
-            <MudText Typo="Typo.h6" Color="Color.Surface" Class="my-4">A playground for trying out MudBlazor components entirely in the browser.</MudText>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://try.mudblazor.com/">Go to Website</MudButton>
-        </MudItem>
-    </MudGrid>
-</MudContainer>
-<MudContainer>
-    <MudDivider Class="my-16" />
-</MudContainer>
-<MudContainer>
-    <MudText Typo="Typo.h4" Align="Align.Center">Examples</MudText>
-    <MudText Align="Align.Center">Use them as template for your project or just peak around see how we did stuff.</MudText>
-    <div style="padding-top:64px; padding-bottom:64px;">
-        <MudText Align="Align.Center">Coming soon...</MudText>
-    </div>
-</MudContainer>
-<Footer />
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+    <MudContainer>
+        <MudDivider Style="opacity:0;" />
+    </MudContainer>
+    <MudContainer MaxWidth="MaxWidth.Large">
+        <MudGrid>
+            <MudItem xs="12" sm="12" md="12">
+                <MudText Typo="Typo.h4" Align="Align.Center" Class="mudblazor-text mudblazor-section-titles my-6">The Project</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="6">
+                <MudBlazorScreen />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="6">
+                <div class="mt-12 mx-2">
+                    <MudText Align="Align.Justify" Class="mudblazor-text mudblazor-project-text">
+                        MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure.
+                    </MudText>
+                </div>
+                <div class="mt-10 mx-2">
+                    <MudText Align="Align.Justify" Class="mudblazor-text">
+                        It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers them to adapt, fix or extend the framework and the multitude of examples in the documentation makes learning MudBlazor very easy.
+                    </MudText>
+                </div>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+    <MudContainer>
+        <MudGrid>
+            <MudItem xs="12" sm="12" md="12">
+                <MudText Typo="Typo.h4" Align="Align.Center" Class="mudblazor-section-titles design-goals" GutterBottom="true">Design goals</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Elevation="25" Class="pa-6 mudblazor-goal-paper">
+                    <MudText Class="mudblazor-goal-title" Color="Color.Primary" Align="Align.Center">Material Design</MudText>
+                    <MudText Align="Align.Center">Clean and aesthetic graphic design based on Material Design</MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="4">
+                <MudPaper Elevation="25" Class="pa-6 mudblazor-goal-paper">
+                    <MudText Class="mudblazor-goal-title" Color="Color.Secondary" Align="Align.Center">Entirely in C#</MudText>
+                    <MudText Align="Align.Center">All components are written entirely in C#, no JavaScript allowed (except absolutely necessary)</MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="12" md="4">
+                <MudPaper Elevation="25" Class="pa-6 mudblazor-goal-paper">
+                    <MudText Class="mudblazor-goal-title" Color="Color.Info" Align="Align.Center">Be Included!</MudText>
+                    <MudText Align="Align.Center">Releasing often so developers can get their PRs and fixes in a timely fashion and be a part of the community!</MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="6">
+                <MudPaper Elevation="25" Class="pa-6">
+                    <MudText Class="mudblazor-goal-title" Align="Align.Center">Beautiful Apps</MudText>
+                    <MudText Align="Align.Center">Users can make beautiful apps without needing CSS (but they can of course use CSS too)</MudText>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="6" md="6">
+                <MudPaper Elevation="25" Class="pa-6">
+                    <MudText Class="mudblazor-goal-title" Align="Align.Center">No Dependencies</MudText>
+                    <MudText Align="Align.Center">No dependencies on other component libraries, 100% control over components and features</MudText>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+    <MudContainer>
+        <MudDivider Style="opacity:0;" />
+    </MudContainer>
+    <MudContainer>
+        <MudGrid>
+            <MudItem xs="12" md="12" Class="docs-trymudblazor">
+                <MudText Typo="Typo.h2" Color="Color.Surface" Inline="true">Try</MudText>
+                <MudText Typo="Typo.h2" Color="Color.Primary" Inline="true">MudBlazor</MudText>
+                <MudText Typo="Typo.h6" Color="Color.Surface" Class="my-4">A playground for trying out MudBlazor components entirely in the browser.</MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Link="https://try.mudblazor.com/">Go to Website</MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+    <MudContainer>
+        <MudDivider Class="my-16" />
+    </MudContainer>
+    <MudContainer>
+        <MudText Typo="Typo.h4" Align="Align.Center">Examples</MudText>
+        <MudText Align="Align.Center">Use them as template for your project or just peak around see how we did stuff.</MudText>
+        <div style="padding-top:64px; padding-bottom:64px;">
+            <MudText Align="Align.Center">Coming soon...</MudText>
+        </div>
+    </MudContainer>
+    <Footer />
+</div>

@@ -4,8 +4,6 @@ namespace MudBlazor
 {
     public enum Color
     {
-        [Description("inherit")]
-        Inherit,
         [Description("default")]
         Default,
         [Description("primary")]
@@ -18,17 +16,15 @@ namespace MudBlazor
         Success,
         [Description("warning")]
         Warning,
-        [Description("danger")]
-        Danger,
+        [Description("error")]
+        Error,
         [Description("dark")]
         Dark,
         [Description("transparent")]
         Transparent,
+        [Description("inherit")]
+        Inherit,
         [Description("surface")]
-        Surface,
-        [Description("appbar")]
-        Appbar,
-        [Description("drawer")]
-        Drawer
+        Surface
     }
 }

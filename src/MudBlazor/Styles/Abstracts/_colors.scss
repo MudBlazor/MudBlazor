@@ -1,22 +1,57 @@
-﻿$mud-theme-props: default, primary, secondary, info, success, warning, danger,dark;
+﻿@import 'variables';
 
-@each $color in $mud-theme-props {
-    .mud-color-#{$color} {
-        background-color: var(--mud-theme-#{$color}) !important;
+@each $color in $mud-palette-colors {
+    .mud-#{$color} {
+        background-color: var(--mud-palette-#{$color}) !important;
     }
 
-    .mud-color-text-#{$color} {
-        color: var(--mud-theme-#{$color}) !important;
+    .mud-#{$color}-text {
+        color: var(--mud-palette-#{$color}) !important;
     }
-}
 
-@each $color in $mud-theme-props {
-    .mud-theme-color-#{$color} {
-        color: var(--mud-theme-on-#{$color}) !important;
-        background-color: var(--mud-theme-#{$color}) !important;
+    .mud-theme-#{$color} {
+        color: var(--mud-palette-#{$color}-text) !important;
+        background-color: var(--mud-palette-#{$color}) !important;
     }
 }
 
-.mud-color-text-surface {
-    color: var(--mud-theme-on-surface);
+.mud-theme-transparent {
+    color: inherit !important;
+    background-color: transparent !important;
 }
+
+.mud-transparent {
+    background-color: transparent !important;
+}
+
+.mud-transparent-text {
+    color: transparent !important;
+}
+
+.mud-text-primary {
+    color: var(--mud-palette-text-primary);
+}
+
+.mud-text-secondary {
+    color: var(--mud-palette-text-secondary);
+}
+
+.mud-text-disabled {
+    color: var(--mud-palette-text-disabled);
+}
+
+.white {
+    background-color: #FFFFFF;
+}
+.white-text {
+    color: #FFFFFF;
+}
+
+.black {
+    background-color: #000000;
+}
+
+.black-text {
+    color: #000000;
+}
+

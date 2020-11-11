@@ -1,8 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-@if (!@Deleted)
-{
 <div class="@Classname" style="@Style" @onclick="@OnClickHandler">
     @if (!String.IsNullOrEmpty(Avatar))
     {
@@ -33,4 +31,3 @@
         }
     </span>
 </div>
-}

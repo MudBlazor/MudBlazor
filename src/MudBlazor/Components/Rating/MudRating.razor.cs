@@ -53,7 +53,7 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color? Color { get; set; } = null;
+        [Parameter] public Color Color { get; set; } = Color.Default;
         /// <summary>
         /// The Size of the icons.
         /// </summary>

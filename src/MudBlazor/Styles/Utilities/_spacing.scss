@@ -62,21 +62,21 @@ $spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n
 @include spacing-positive-negative("");
 
 // SM
-@media (min-width:600px) {
+@media screen and (min-width:600px) {
     @include spacing-positive-negative("sm-");
 }
 
 // MD
-@media (min-width:960px) {
+@media screen and (min-width:960px) {
     @include spacing-positive-negative("md-");
 }
 
 // LG
-@media (min-width:1280px) {
+@media screen and (min-width:1280px) {
     @include spacing-positive-negative("lg-");
 }
 
 // XL
-@media (min-width:1920px) {
+@media screen and (min-width:1920px) {
     @include spacing-positive-negative("xl-");
 }

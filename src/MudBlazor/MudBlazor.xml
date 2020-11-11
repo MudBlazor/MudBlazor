@@ -419,9 +419,9 @@
             The color of the component. It supports the theme colors.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudAppBar.Position">
+        <member name="P:MudBlazor.MudAppBar.Fixed">
             <summary>
-            The positioning type. The behavior of the different options is described in the MDN web docs. Note: sticky is not universally supported and will fall back to static when unavailable.
+            If true, appbar will be Fixed.
             </summary>
         </member>
         <member name="P:MudBlazor.MudAppBar.ChildContent">
@@ -791,11 +791,6 @@
             Removes circle edges and applys theme default.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudChip.Deleted">
-            <summary>
-            If true, the chip will not be rendered.
-            </summary>
-        </member>
         <member name="P:MudBlazor.MudChip.Disabled">
             <summary>
             If true, the chip will be displayed in disabled state and no events possible.
@@ -839,11 +834,6 @@
         <member name="P:MudBlazor.MudChip.ForceLoad">
             <summary>
             If true, force browser to redirect outside component router-space.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudChip.RemoveOnClose">
-            <summary>
-            If true, remove the chip from the render tree on close.
             </summary>
         </member>
         <member name="P:MudBlazor.MudChip.Command">
@@ -1176,6 +1166,11 @@
         <member name="P:MudBlazor.MudInputLabel.Variant">
             <summary>
             Variant to use.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputLabel.Margin">
+            <summary>
+             Will adjust vertical spacing. 
             </summary>
         </member>
         <member name="P:MudBlazor.MudLink.Color">
@@ -1558,32 +1553,38 @@
             The checkbox icon reflects the multi-select option's state
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSlider.Min">
+        <member name="P:MudBlazor.MudSlider`1.Min">
             <summary>
             The minimum allowed value of the slider. Should not be equal to max.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSlider.Max">
+        <member name="P:MudBlazor.MudSlider`1.Max">
             <summary>
             The maximum allowed value of the slider. Should not be equal to min.
             </summary>
             
         </member>
-        <member name="P:MudBlazor.MudSlider.Step">
+        <member name="P:MudBlazor.MudSlider`1.Step">
             <summary>
-            How many steps the slider should take on eatch move.
+            How many steps the slider should take on each move.
             </summary>
             
         </member>
-        <member name="P:MudBlazor.MudSlider.Disabled">
+        <member name="P:MudBlazor.MudSlider`1.Disabled">
             <summary>
             If true, the slider will be disabled.
             </summary>
             
         </member>
-        <member name="P:MudBlazor.MudSlider.ChildContent">
+        <member name="P:MudBlazor.MudSlider`1.ChildContent">
             <summary>
             Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSlider`1.Immediate">
+            <summary>
+            If true, the dragging the slider will update the Value immediately.
+            If false, the Value is updated only on releasing the handle.
             </summary>
         </member>
         <member name="T:MudBlazor.Snackbars">
@@ -1964,6 +1965,34 @@
             <summary>
             A universal T to string binding converter
             </summary>
+        </member>
+        <member name="T:MudBlazor.NumericConverter`1">
+            <summary>
+            A universal T to double binding converter
+            </summary>
+        </member>
+        <member name="T:MudBlazor.Utilities.ColorTransformation">
+            <summary>
+            Static methods for transforming argb spaces and argb values.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.Utilities.ColorTransformation.RgBtoHsl(System.Drawing.Color)">
+            <summary>
+            Converts RGB to HSL. Alpha is ignored.
+            Output is: { H: [0, 360], S: [0, 1], L: [0, 1] }.
+            </summary>
+            <param name="color">The color to convert.</param>
+        </member>
+        <member name="M:MudBlazor.Utilities.ColorTransformation.HsLtoRgb(MudBlazor.Utilities.ColorTransformation.HSLColor,System.Int32)">
+            <summary>
+            Converts HSL to RGB, with a specified output Alpha.
+            Arguments are limited to the defined range:
+            does not raise exceptions.
+            </summary>
+            <param name="h">Hue, must be in [0, 360].</param>
+            <param name="s">Saturation, must be in [0, 1].</param>
+            <param name="l">Luminance, must be in [0, 1].</param>
+            <param name="a">Output Alpha, must be in [0, 255].</param>
         </member>
         <member name="M:MudBlazor.Utilities.CssBuilder.Default(System.String)">
             <summary>
@@ -2367,14 +2396,9 @@
             Child content of component.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudLayout.DrawerOpen">
+        <member name="P:MudBlazor.MudLayout.RightToLeft">
             <summary>
-            Gets or ets the drawer open state.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudLayout.DrawerClipped">
-            <summary>
-            Gets or sets the drawer clipped state.
+            If set, changes the layout to RightToLeft.
             </summary>
         </member>
         <member name="P:MudBlazor.MudPaper.Elevation">
@@ -2534,7 +2558,7 @@
         </member>
         <member name="P:MudBlazor.MudTooltip.Delayed">
             <summary>
-            If true, sets set a delay until tooltip is showed.
+            Changes the default transition delay in seconds.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTooltip.Placement">

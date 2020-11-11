@@ -2,10 +2,10 @@
 
 
 <MudSlider @bind-Value="value1" Min="20" Max="80">Value: @value1.ToString()</MudSlider>
-<MudSlider @bind-Value="value2" Min="0" Max="50">Value: @value2.ToString()</MudSlider>
+<MudSlider @bind-Value="value2" Min="-1" Max="1" Step="0.05">Value: @value2.ToString("F2")</MudSlider>
 
 
 @code {
-    public int value1 = 50;
-    public int value2 = 50;
+    public double value1 = 50;
+    public double value2 = -0.75;
 }

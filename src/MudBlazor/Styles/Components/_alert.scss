@@ -1,10 +1,11 @@
-﻿
+﻿@import '../abstracts/variables';
+
 .mud-alert {
     display: flex;
     padding: 6px 16px;
     font-size: 0.875rem;
     line-height: 1.43;
-    border-radius: var(--mud-theme-border-radius-default);
+    border-radius: var(--mud-default-borderradius);
     letter-spacing: 0.01071em;
     background-color: transparent;
     transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
@@ -20,119 +21,53 @@
 
 .mud-alert-text {
     &-normal {
-        color: #444;
-        background-color: #eee;
+        color: var(--mud-palette-dark);
+        background-color: var(--mud-palette-dark-hover);
     }
 
-    &-success {
-        color: rgb(30, 70, 32);
-        background-color: rgb(237, 247, 237);
+    @each $color in $mud-palette-colors {
+        &-#{$color} {
+            color: var(--mud-palette-#{$color}-darken);
+            background-color: var(--mud-palette-#{$color}-hover);
 
-        & .mud-alert-icon {
-            color: #4caf50;
-        }
-    }
-
-    &-info {
-        color: rgb(13, 60, 97);
-        background-color: rgb(232, 244, 253);
-
-        & .mud-alert-icon {
-            color: #2196f3;
-        }
-    }
-
-    &-warning {
-        color: rgb(102, 60, 0);
-        background-color: rgb(255, 244, 229);
-
-        & .mud-alert-icon {
-            color: #ff9800;
-        }
-    }
-
-    &-error {
-        color: rgb(97, 26, 21);
-        background-color: rgb(253, 236, 234);
-
-        & .mud-alert-icon {
-            color: #f44336;
+            & .mud-alert-icon {
+                color: var(--mud-palette-#{$color});
+            }
         }
     }
 }
 
 .mud-alert-outlined {
     &-normal {
-        color: #444;
-        border: 1px solid #444;
+        color: var(--mud-palette-dark-darken);
+        border: 1px solid var(--mud-palette-dark);
     }
 
-    &-success {
-        color: rgb(30, 70, 32);
-        border: 1px solid #4caf50;
+    @each $color in $mud-palette-colors {
+        &-#{$color} {
+            color: var(--mud-palette-#{$color}-darken);
+            border: 1px solid var(--mud-palette-#{$color});
 
-        & .mud-alert-icon {
-            color: #4caf50;
-        }
-    }
-
-    &-info {
-        color: rgb(13, 60, 97);
-        border: 1px solid #2196f3;
-
-        & .mud-alert-icon {
-            color: #2196f3;
-        }
-    }
-
-    &-warning {
-        color: rgb(102, 60, 0);
-        border: 1px solid #ff9800;
-
-        & .mud-alert-icon {
-            color: #ff9800;
-        }
-    }
-
-    &-error {
-        color: rgb(97, 26, 21);
-        border: 1px solid #f44336;
-
-        & .mud-alert-icon {
-            color: #f44336;
+            & .mud-alert-icon {
+                color: var(--mud-palette-#{$color});
+            }
         }
     }
 }
 
 .mud-alert-filled {
     &-normal {
-        color: #fff;
+        color: var(--mud-palette-dark-text);
         font-weight: 500;
-        background-color: #313131;
+        background-color: var(--mud-palette-dark);
     }
 
-    &-success {
-        color: #fff;
-        font-weight: 500;
-        background-color: #4caf50;
-    }
-
-    &-info {
-        color: #fff;
-        font-weight: 500;
-        background-color: #2196f3;
-    }
-
-    &-warning {
-        color: #fff;
-        font-weight: 500;
-        background-color: #ff9800;
-    }
-
-    &-error {
-        color: #fff;
-        font-weight: 500;
-        background-color: #f44336;
+    @each $color in $mud-palette-colors {
+        &-#{$color} {
+            color: var(--mud-palette-#{$color}-text);
+            font-weight: 500;
+            background-color: var(--mud-palette-#{$color});
+        }
     }
 }
 

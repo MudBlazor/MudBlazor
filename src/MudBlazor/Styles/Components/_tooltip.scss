@@ -4,24 +4,20 @@
     display: inline-block;
 
     & .mud-tooltip {
-        color: #fff;
+        color: var(--mud-palette-dark-text);
         padding: 4px 8px;
         text-align: center;
         font-weight: 500;
         font-size: 12px;
         line-height: 1.4em;
         width: max-content;
-        background-color: #6a6a6a;
-        border-radius: var(--mud-theme-border-radius-default);
+        background-color: var(--mud-palette-grey-darker);
+        border-radius: var(--mud-default-borderradius);
         position: absolute;
         z-index: 1;
         visibility: hidden;
         opacity: 0;
         transition: opacity .2s;
-
-        &.mud-tooltip-transition-delayed {
-            transition-delay: 1s;
-        }
 
         &.mud-tooltip-placement-top {
             top: 0;

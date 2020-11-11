@@ -181,6 +181,7 @@ public const string AlertSquareTextExample = @"<MudAlert Severity=""Severity.Nor
 <MudAlert Severity=""Severity.Warning"" Square=""true"">Warning Square</MudAlert>
 <MudAlert Severity=""Severity.Error"" Square=""true"">Error Square</MudAlert>";
 
+<<<<<<< HEAD
 public const string AppBarDenseExample = @"<MudAppBar Position=""Position.Static"" Dense=""true"">
     <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
     <MudAppBarSpacer />
@@ -197,6 +198,24 @@ public const string AppBarSimpleExample = @"<MudAppBar Position=""Position.Stati
     <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
     <MudAppBarSpacer />
     <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
+=======
+public const string AppBarDenseExample = @"<MudAppBar Color=""Color.Primary"" Fixed=""false"" Dense=""true"">
+    <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
+    <MudAppBarSpacer />
+    <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
+</MudAppBar>";
+
+public const string AppBarElevationExample = @"<MudAppBar Color=""Color.Primary"" Fixed=""false"" Elevation=""0"">
+    <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
+    <MudAppBarSpacer />
+    <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
+</MudAppBar>";
+
+public const string AppBarSimpleExample = @"<MudAppBar Color=""Color.Primary"" Fixed=""false"">
+    <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" />
+    <MudAppBarSpacer />
+    <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
+>>>>>>> develop
 </MudAppBar>";
 
 public const string AutocompleteClrObjectsExample = @"<MudGrid>
@@ -292,6 +311,7 @@ public const string AvatarVariantsExample = @"<MudAvatar Square=""true"">
     <MudIcon Icon=""@Icons.Material.Comment"" />
 </MudAvatar>";
 
+<<<<<<< HEAD
 public const string BadgeBasicExample = @"<MudBadge Content=""3"" Color=""Color.Primary"" Overlap=""true"">
     <MudIcon Icon=""@Icons.Material.Email"" Color=""Color.Default""/>
 </MudBadge>
@@ -306,6 +326,22 @@ public const string BadgeBasicExample = @"<MudBadge Content=""3"" Color=""Color.
 
 <MudBadge Dot=""true"" Color=""Color.Info"">
     <MudText>Bug Reports</MudText>
+=======
+public const string BadgeBasicExample = @"<MudBadge Content=""3"" Color=""Color.Primary"" Overlap=""true"">
+    <MudIcon Icon=""@Icons.Material.Email"" Color=""Color.Default""/>
+</MudBadge>
+
+<MudBadge Content=""100"" Color=""Color.Primary"" Overlap=""true"">
+    <MudIcon Icon=""@Icons.Material.Email"" Color=""Color.Default""/>
+</MudBadge>
+
+<MudBadge Icon=""@Icons.Material.Lock"" Color=""Color.Error"" Overlap=""true"" Bordered=""true"">
+    <MudButton Color=""Color.Error"" Variant=""Variant.Filled"" DisableElevation=""true"">Security Issues</MudButton>
+</MudBadge>
+
+<MudBadge Dot=""true"" Color=""Color.Info"">
+    <MudText>Bug Reports</MudText>
+>>>>>>> develop
 </MudBadge>";
 
 public const string BadgeInteractiveExample = @"<MudGrid>
@@ -567,6 +603,7 @@ public const string CheckboxLabelExample = @"<MudCheckBox @bind-Checked=""@Label
     public bool Label_CheckBox3 { get; set; } = false;
 }";
 
+<<<<<<< HEAD
 public const string ChipBasicExample = @"<MudChip>Default</MudChip>
 <MudChip Color=""Color.Primary"">Primary</MudChip>
 <MudChip Color=""Color.Secondary"">Secondary</MudChip>
@@ -583,10 +620,28 @@ public const string ChipBasicExample = @"<MudChip>Default</MudChip>
 <MudChip Disabled=""true"" Color=""Color.Success"">Disabled</MudChip>
 <MudChip Disabled=""true"" Color=""Color.Warning"">Disabled</MudChip>
 <MudChip Disabled=""true"" Color=""Color.Danger"">Disabled</MudChip>
+=======
+public const string ChipBasicExample = @"<MudChip>Default</MudChip>
+<MudChip Color=""Color.Primary"">Primary</MudChip>
+<MudChip Color=""Color.Secondary"">Secondary</MudChip>
+<MudChip Color=""Color.Info"">Info</MudChip>
+<MudChip Color=""Color.Success"">Success</MudChip>
+<MudChip Color=""Color.Warning"">Warning</MudChip>
+<MudChip Color=""Color.Error"">Error</MudChip>
+<MudChip Color=""Color.Dark"">Dark</MudChip>
+<MudDivider />
+<MudChip Disabled=""true"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Primary"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Secondary"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Info"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Success"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Warning"">Disabled</MudChip>
+<MudChip Disabled=""true"" Color=""Color.Error"">Disabled</MudChip>
+>>>>>>> develop
 <MudChip Disabled=""true"" Color=""Color.Dark"">Disabled</MudChip>";
 
 public const string ChipClosableExample = @"<MudChip Color=""Color.Default"" OnClose=""Closed"">Closable</MudChip>
-<MudChip Color=""Color.Danger"" OnClose=""Closed"">Closable</MudChip>
+<MudChip Color=""Color.Error"" OnClose=""Closed"">Closable</MudChip>
 <MudChip Color=""Color.Primary"" OnClose=""Closed"" CloseIcon=""@Icons.Material.AlarmAdd"">Closable</MudChip>
 <MudChip Color=""Color.Success"" OnClose=""Closed"" CloseIcon=""@Icons.Material.AlarmOn"">Closable</MudChip>
 
@@ -653,7 +708,7 @@ public const string ChipSetBasicExample = @"<MudChipSet @bind-SelectedChip=""sel
     <MudChip Text=""blue"" Color=""Color.Info"">Info</MudChip>
     <MudChip Text=""green"" Color=""Color.Success"">Success</MudChip>
     <MudChip Text=""orange"" Color=""Color.Warning"">Warning</MudChip>
-    <MudChip Text=""red"" Color=""Color.Danger"">Danger</MudChip>
+    <MudChip Text=""red"" Color=""Color.Error"">Error</MudChip>
     <MudChip Text=""black"" Color=""Color.Dark"">Dark</MudChip>
 </MudChipSet>
 
@@ -995,16 +1050,17 @@ public const string DividerVerticalExample = @"<MudPaper Outlined=""true"">
     <MudIcon Icon=""@Icons.Material.FormatUnderlined"" />
 </MudPaper>";
 
-public const string DrawerClippingExample = @"@layout IframeLayout
-@page ""/iframe/docs/examples/drawer/clipped""
+public const string DrawerAnchorExample = @"@layout IframeLayout
+@page ""/iframe/docs/examples/drawer/anchor""
 
-<MudLayout DrawerOpen=""@DocsDrawerOpen"" DrawerClipped=""true"">
-    <MudAppBar Elevation=""0"">
-        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
-        <MudAppBarSpacer />
+
+<MudLayout>
+    <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
+        <MudAppBarSpacer />
+        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
     </MudAppBar>
-    <MudDrawer>
+    <MudDrawer Open=""@open"" Clipped=""@clipped"" Anchor=""Anchor.Right"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -1014,9 +1070,9 @@ public const string DrawerClippingExample = @"@layout IframeLayout
             <MudNavLink Match=""NavLinkMatch.All"">Community</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
-    <MudMainContent>
-        <MudContainer Class=""pt-16 px-16"">
-            <MudText Color=""Color.Secondary"" GutterBottom=""true"">Click the right side button in the appbar to change layout.</MudText>
+    <MudMainContent Class=""pt-16 px-16"">
+        <MudContainer Class=""mt-6"">
+            <MudSwitch @bind-Checked=""clipped"" Color=""@Color.Secondary"">Drawer clipped</MudSwitch>
             <LoremIpsum />
         </MudContainer>
     </MudMainContent>
@@ -1024,11 +1080,49 @@ public const string DrawerClippingExample = @"@layout IframeLayout
 
 
 @code{
-    bool DocsDrawerOpen = true;
+    bool open = true;
+    bool clipped = false;
 
-    void DocsDrawerToggle()
+    void ToggleDrawer()
     {
-        DocsDrawerOpen = !DocsDrawerOpen;
+        open = !open;
+    }
+}";
+
+public const string DrawerClippingExample = @"@layout IframeLayout
+@page ""/iframe/docs/examples/drawer/clipped""
+
+<MudLayout>
+    <MudAppBar Elevation=""1"">
+        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
+        <MudAppBarSpacer />
+        <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
+    </MudAppBar>
+    <MudDrawer Open=""@open"" Clipped=""@clipped"" Elevation=""1"">
+        <MudDrawerHeader>
+            <MudText Typo=""Typo.h6"">My App</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match=""NavLinkMatch.All"">Store</MudNavLink>
+            <MudNavLink Match=""NavLinkMatch.All"">Library</MudNavLink>
+            <MudNavLink Match=""NavLinkMatch.All"">Community</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent Class=""pt-16 px-16"">
+        <MudContainer Class=""mt-6"">
+            <MudSwitch @bind-Checked=""clipped"" Color=""@Color.Secondary"">Drawer clipped</MudSwitch>
+            <LoremIpsum/>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+
+@code{
+    bool open = true;
+    bool clipped = true;
+    void ToggleDrawer()
+    {
+        open = !open;
     }
 }";
 
@@ -1036,18 +1130,18 @@ public const string DrawerCombinedExample = @"@layout IframeLayout
 @page ""/iframe/docs/examples/drawer/combined""
 
 
-<MudLayout DrawerOpen=""@DocsDrawerOpen"" DrawerClipped=""@DocsLayoutClipping"">
-    <MudAppBar Elevation=""0"">
-        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
-        @if (DocsLayoutClipping)
+<MudLayout>
+    <MudAppBar Elevation=""1"">
+        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
+        @if (clipped)
         {
             <MudText Typo=""Typo.h6"" Class=""ml-3"">My App</MudText>
         }
         <MudAppBarSpacer />
-        <MudIconButton Icon=""@Icons.Material.BorderStyle"" Color=""Color.Inherit"" OnClick=""@((e) => DocsLayoutToggle())"" />
+        <MudIconButton Icon=""@Icons.Material.BorderStyle"" Color=""Color.Inherit"" OnClick=""@ToggleClipped"" />
     </MudAppBar>
-    <MudDrawer>
-        @if (!DocsLayoutClipping)
+    <MudDrawer Open=""@open"" Clipped=""@clipped"" Elevation=""1"">
+        @if (!clipped)
         {
             <MudDrawerHeader>
                 <MudText Typo=""Typo.h6"">My App</MudText>
@@ -1069,17 +1163,74 @@ public const string DrawerCombinedExample = @"@layout IframeLayout
 
 
 @code{
-    bool DocsDrawerOpen = true;
-    bool DocsLayoutClipping = false;
+    bool open = true;
+    bool clipped = false;
 
-    void DocsDrawerToggle()
+    void ToggleDrawer()
     {
-        DocsDrawerOpen = !DocsDrawerOpen;
+        open = !open;
     }
 
-    void DocsLayoutToggle()
+    void ToggleClipped()
     {
-        DocsLayoutClipping = !DocsLayoutClipping;
+        clipped = !clipped;
+    }
+}";
+
+public const string DrawerDoubleExample = @"@layout IframeLayout
+@page ""/iframe/docs/examples/drawer/double""
+
+
+<MudLayout>
+    <MudAppBar Elevation=""1"">
+        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawerOne"" />
+        <MudAppBarSpacer />
+        <MudIconButton Icon=""@Icons.Material.Settings"" Color=""Color.Inherit"" OnClick=""@ToggleDrawerTwo""  />
+    </MudAppBar>
+    <MudDrawer Open=""@drawerOneOpen"" Clipped=""@drawerOneClipped"" Anchor=""Anchor.Left"" Elevation=""25"">
+        <MudDrawerHeader>
+            <MudText Typo=""Typo.h6"">My App</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match=""NavLinkMatch.All"">Store</MudNavLink>
+            <MudNavLink Match=""NavLinkMatch.All"">Library</MudNavLink>
+            <MudNavLink Match=""NavLinkMatch.All"">Community</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudDrawer Open=""@drawerTwoOpen"" Clipped=""@drawerTwoClipped"" Anchor=""Anchor.Right"" Elevation=""1"">
+        <MudDrawerHeader>
+            <MudText Typo=""Typo.h6"">Settings</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match=""NavLinkMatch.All"">Profile</MudNavLink>
+            <MudNavLink Match=""NavLinkMatch.All"">Orders</MudNavLink>
+            <MudNavLink Match=""NavLinkMatch.All"">Order History</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent Class=""pt-16 px-16"">
+        <MudContainer MaxWidth=""MaxWidth.Small"" Class=""mt-6"">
+            <MudSwitch @bind-Checked=""drawerOneClipped"" Color=""@Color.Primary"">Drawer One clipped</MudSwitch>
+            <MudSwitch @bind-Checked=""drawerTwoClipped"" Color=""@Color.Secondary"">Drawer Two clipped</MudSwitch>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+
+@code{
+    bool drawerOneOpen = true;
+    bool drawerOneClipped = false;
+
+    void ToggleDrawerOne()
+    {
+        drawerOneOpen = !drawerOneOpen;
+    }
+
+    bool drawerTwoOpen = true;
+    bool drawerTwoClipped = true;
+
+    void ToggleDrawerTwo()
+    {
+        drawerTwoOpen = !drawerTwoOpen;
     }
 }";
 
@@ -1087,13 +1238,13 @@ public const string DrawerPersistentExample = @"@layout IframeLayout
 @page ""/iframe/docs/examples/drawer/persistent""
 
 
-<MudLayout DrawerOpen=""@DocsDrawerOpen"">
-    <MudAppBar Elevation=""0"">
-        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@((e) => DocsDrawerToggle())"" />
+<MudLayout>
+    <MudAppBar Elevation=""1"">
+        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
     </MudAppBar>
-    <MudDrawer>
+    <MudDrawer Open=""@open"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -1112,11 +1263,11 @@ public const string DrawerPersistentExample = @"@layout IframeLayout
 
 
 @code{
-    bool DocsDrawerOpen = true;
+    bool open = true;
 
-    void DocsDrawerToggle()
+    void ToggleDrawer()
     {
-        DocsDrawerOpen = !DocsDrawerOpen;
+        open = !open;
     }
 }";
 
@@ -1162,6 +1313,7 @@ public const string ExpansionPanelSimpleExample = @"<MudExpansionPanels>
     </MudExpansionPanel>
 </MudExpansionPanels>";
 
+<<<<<<< HEAD
 public const string EditFormExample = @"<EditForm Model=""@model"" OnValidSubmit=""OnValidSubmit"">
     <DataAnnotationsValidator />
     <MudCard Class=""demo-form"">
@@ -1226,6 +1378,72 @@ public const string EditFormExample = @"<EditForm Model=""@model"" OnValidSubmit
         StateHasChanged();
     }
 
+=======
+public const string EditFormExample = @"<EditForm Model=""@model"" OnValidSubmit=""OnValidSubmit"">
+    <DataAnnotationsValidator />
+    <MudCard Class=""demo-form"">
+        <MudCardContent>
+            <MudTextField Label=""First name"" HelperText=""Max. 8 characters"" @bind-Value=""model.Username"" For=""@(() => model.Username)"" />
+            <MudTextField Label=""Email"" @bind-Value=""model.Email"" For=""@(() => model.Email)"" />
+            <MudTextField Label=""Password"" HelperText=""Choose a strong password"" @bind-Value=""model.Password"" For=""@(() => model.Password)"" InputType=""InputType.Password"" />
+            <MudTextField Label=""Password"" HelperText=""Repeat the password"" @bind-Value=""model.Password2"" For=""@(() => model.Password2)"" InputType=""InputType.Password"" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton ButtonType=""ButtonType.Submit"" Variant=""Variant.Filled"" Color=""Color.Primary"" Class=""demo-form-button"">Register</MudButton>
+        </MudCardActions>
+    </MudCard>
+
+    <MudText Typo=""Typo.body2"" Align=""Align.Center"" Class=""my-4"">
+        Fill out the form correctly to see the success message.
+    </MudText>
+
+    <MudExpansionPanels>
+        <MudExpansionPanel Text=""Show Validation Summary"">
+            @if (success)
+            {
+                <MudText Color=""Color.Success"">Success</MudText>
+            }
+            else
+            {
+                <MudText Color=""@Color.Error"">
+                    <ValidationSummary />
+                </MudText>
+            }
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</EditForm>
+
+@code {
+    RegisterAccountForm model = new RegisterAccountForm();
+    bool success;
+
+    public class RegisterAccountForm
+    {
+        [Required]
+        [StringLength(8, ErrorMessage = ""Name length can't be more than 8."")]
+        public string Username { get; set; }
+
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [StringLength(30, ErrorMessage = ""Password must be at least 8 characters long."", MinimumLength = 8)]
+        public string Password { get; set; }
+
+        [Required]
+        [Compare(nameof(Password))]
+        public string Password2 { get; set; }
+
+    }
+
+    private void OnValidSubmit(EditContext context)
+    {
+        success = true;
+        StateHasChanged();
+    }
+
+>>>>>>> develop
 }";
 
 public const string ManualValidationExample = @"<MudForm @bind-IsValid=""@success"">
@@ -1273,6 +1491,7 @@ public const string ManualValidationExample = @"<MudForm @bind-IsValid=""@succes
 
 }";
 
+<<<<<<< HEAD
 public const string MudFormExample = @"<MudForm @ref=""form"" @bind-IsValid=""@success"" @bind-Errors=""@errors"">
 
     <MudCard Class=""demo-form"">
@@ -1339,6 +1558,74 @@ public const string MudFormExample = @"<MudForm @ref=""form"" @bind-IsValid=""@s
         return null;
     }
 
+=======
+public const string MudFormExample = @"<MudForm @ref=""form"" @bind-IsValid=""@success"" @bind-Errors=""@errors"">
+
+    <MudCard Class=""demo-form"">
+        <MudCardContent>
+            <MudTextField T=""string"" Label=""Username"" Required=""true"" RequiredError=""User name is required!"" />
+            <MudTextField T=""string"" Label=""Email"" Required=""true"" RequiredError=""Email is required!""
+                Validation=""@(new EmailAddressAttribute(){ ErrorMessage = ""The email address is invalid""})"" />
+            <MudTextField T=""string"" Label=""Password"" HelperText=""Choose a strong password"" @ref=""pwField1""
+                InputType=""InputType.Password""
+                Validation=""@(new Func<string, IEnumerable<string>>(PasswordStrength))"" />
+            <MudTextField T=""string""
+                Label=""Password"" HelperText=""Repeat the password"" InputType=""InputType.Password""
+                Validation=""@(new Func<string, string>(PasswordMatch))"" Required=""true""
+                RequiredError=""Password is required!"" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" Disabled=""@(!success)"" Class=""demo-form-button"">Register</MudButton>
+        </MudCardActions>
+    </MudCard>
+
+    <MudPaper Class=""demo-form-paper"">
+        <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""@form.Validate"">Validate</MudButton>
+        <MudButton Variant=""Variant.Filled"" Color=""Color.Secondary"" OnClick=""@form.Reset"" Class=""mx-2"">Reset</MudButton>
+        <MudButton Variant=""Variant.Filled"" OnClick=""@form.ResetValidation"">Reset Validation</MudButton>
+    </MudPaper>
+
+    <MudExpansionPanels>
+        <MudExpansionPanel Text=""Show Errors"">
+            @foreach (var error in errors)
+            {
+                <MudText Color=""@Color.Error"">@error</MudText>
+            }
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</MudForm>
+
+@code {
+    bool success;
+    string[] errors={};
+    MudTextField<string> pwField1;
+    MudForm form;
+
+    private IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return ""Password is required!"";
+            yield break;
+        }
+        if (pw.Length < 8)
+            yield return ""Password must be at least of length 8"";
+        if (!Regex.IsMatch(pw, @""[A-Z]""))
+            yield return ""Password must contain at least one capital letter"";
+        if (!Regex.IsMatch(pw, @""[a-z]""))
+            yield return ""Password must contain at least one lowercase letter"";
+        if (!Regex.IsMatch(pw, @""[0-9]""))
+            yield return ""Password must contain at least one digit"";
+    }
+
+    private string PasswordMatch(string arg)
+    {
+        if (pwField1.Value != arg)
+            return ""Passwords don't match"";
+        return null;
+    }
+
+>>>>>>> develop
 }";
 
 public const string GridBasicExample = @"<MudGrid>
@@ -1529,6 +1816,7 @@ public const string IconToggleButtonExample = @"<MudIconButton Icon=""@Icons.Mat
 <MudIconButton Icon=""@Icons.Material.Favorite"" Color=""Color.Secondary""></MudIconButton>
 <MudIconButton Icon=""@Icons.Material.Share"" Disabled=""true""></MudIconButton>";
 
+<<<<<<< HEAD
 public const string IconsColorExample = @"<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Default"" />
 <MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Primary"" />
 <MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Secondary"" />
@@ -1536,6 +1824,15 @@ public const string IconsColorExample = @"<MudIcon Icon=""@Icons.Custom.Radioact
 <MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Info"" />
 <MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Warning"" />
 <MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Danger"" />
+=======
+public const string IconsColorExample = @"<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Default"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Primary"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Secondary"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Success"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Info"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Warning"" />
+<MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Error"" />
+>>>>>>> develop
 <MudIcon Icon=""@Icons.Custom.Radioactive"" Color=""Color.Dark"" />";
 
 public const string IconsFontAwesomeExample = @"<link href=""https://use.fontawesome.com/releases/v5.14.0/css/all.css"" rel=""stylesheet"">
@@ -1878,6 +2175,7 @@ public const string ProgressLinearDeterminateExample = @"<MudProgressLinear Colo
 public const string ProgressLinearInterminateExample = @"<MudProgressLinear Color=""Color.Primary"" Indeterminate=""true""/>
 <MudProgressLinear Color=""Color.Secondary"" Indeterminate=""true""/>";
 
+<<<<<<< HEAD
 public const string RadioGroupExample = @"<MudForm>
     <MudRadioGroup @bind-SelectedLabel=""@SelectedLabel"" @bind-SelectedOption=""@SelectedOption"">
         <MudRadio Color=""Color.Primary"" Option=""Radio 1"">Primary</MudRadio>
@@ -1890,6 +2188,20 @@ public const string RadioGroupExample = @"<MudForm>
 @code {
     public string SelectedLabel { get; set; } = ""Primary"";
     public string SelectedOption { get; set; }
+=======
+public const string RadioGroupExample = @"<MudForm>
+    <MudRadioGroup @bind-SelectedLabel=""@SelectedLabel"" @bind-SelectedOption=""@SelectedOption"">
+        <MudRadio Color=""Color.Primary"" Option=""Radio 1"">Primary</MudRadio>
+        <MudRadio Color=""Color.Secondary"" Option=""Radio 2"">Secondary</MudRadio>
+        <MudRadio Option=""Radio 3"">Default</MudRadio>
+        <MudRadio Color=""Color.Primary"" Disabled=""true"" Option=""Radio 4"">Disabled</MudRadio>
+    </MudRadioGroup>
+</MudForm> 
+
+@code {
+    public string SelectedLabel { get; set; } = ""Primary"";
+    public string SelectedOption { get; set; }
+>>>>>>> develop
 }";
 
 public const string RadioLabelPlacementExample = @"<MudGrid>
@@ -2404,6 +2716,7 @@ public const string SkeletonWaveExample = @"<MudCard>
     </MudCardActions>
 </MudCard>";
 
+<<<<<<< HEAD
 public const string SliderBasicExample = @"<MudGrid>
     <MudItem>
         <MudSlider Value=""50"">Volume</MudSlider>
@@ -2428,6 +2741,41 @@ public const string SliderMinMaxExample = @"<MudSlider @bind-Value=""value1"" Mi
 
 public const string SliderStepsExample = @"<MudSlider Step=""10"" Value=""70"">Temperature</MudSlider>
 <MudSlider Step=""10"" Value=""50"" Disabled=""true"">Disabled</MudSlider>";
+=======
+public const string SliderBasicExample = @"<MudGrid>
+    <MudItem>
+        <MudSlider Value=""@value"">Volume</MudSlider>
+        <MudSlider Disabled=""true"" Value=""@(20)"">Disabled Slider</MudSlider>
+    </MudItem>
+    <MudItem>
+        <div class=""demo-slider-filler""></div>
+        <MudSlider Value=""@value"" />
+        <div class=""demo-slider-filler""></div>
+        <MudSlider Value=""@value"" Disabled=""true"" />
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    double value = 50.0;
+}";
+
+public const string SliderMinMaxExample = @"<MudSlider @bind-Value=""value1"" Min=""20"" Max=""80"">Value: @value1.ToString()</MudSlider>
+<MudSlider @bind-Value=""value2"" Min=""-1"" Max=""1"" Step=""0.05"">Value: @value2.ToString(""F2"")</MudSlider>
+
+
+@code {
+    public double value1 = 50;
+    public double value2 = -0.75;
+}";
+
+public const string SliderStepsExample = @"<MudSlider Step=""10"" Value=""70"">Temperature</MudSlider>
+<MudSlider Step=""10"" Value=""50"" Disabled=""true"">Disabled</MudSlider>
+
+@code {
+    int step = 10;
+}";
+>>>>>>> develop
 
 public const string SparkLineExample = @"<MudSparkLine></MudSparkLine>";
 
@@ -2842,6 +3190,22 @@ public const string TextFieldBindingExample = @"<MudGrid>
 
 }";
 
+public const string TextFieldDenseExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField @bind-Value=""TextValue"" Label=""Standard"" Variant=""Variant.Text"" Margin=""Margin.Dense""></MudTextField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField @bind-Value=""TextValue"" Label=""Filled"" Variant=""Variant.Filled"" Margin=""Margin.Dense""></MudTextField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudTextField @bind-Value=""TextValue"" Label=""Outlined"" Variant=""Variant.Outlined"" Margin=""Margin.Dense""></MudTextField>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string TextValue { get; set; }
+}";
+
 public const string TextFieldFormPropsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""3"">
         <MudTextField @bind-Value=""HelperText"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Text"" />
@@ -2897,24 +3261,22 @@ public const string TextFieldInputsExample = @"<MudInput Value=""@(""Basic Input
 
 public const string TextFieldMultilineExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""12"" md=""12"">
-        <MudTextField T=""string"" Label=""Multiline"" Variant=""Variant.Text"" Text=""@(sampleText + ""\n"" + sampleText)"" Lines=""5"" FullWidth=""true"" />
+        <MudTextField T=""string"" Label=""Multiline"" Variant=""Variant.Text"" Text=""@sampleText"" Lines=""5"" />
     </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudTextField T=""string"" Label=""Standard"" Variant=""Variant.Text"" Text=""@sampleText"" Lines=""3"" />
-    </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""4"">
+    <MudItem xs=""12"" sm=""6"" md=""6"">
         <MudTextField T=""string"" Label=""Filled"" Variant=""Variant.Filled"" Text=""@sampleText"" Lines=""3"" />
     </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""4"">
+    <MudItem xs=""12"" sm=""6"" md=""6"">
         <MudTextField T=""string"" Label=""Outlined"" Variant=""Variant.Outlined"" Text=""@sampleText"" Lines=""3"" />
     </MudItem>
 </MudGrid>
 
 @code
 {
-    string sampleText = ""Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."";
+    string sampleText = ""Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."";
 }";
 
+<<<<<<< HEAD
 public const string ThemesCustomExample = @"<MudThemeProvider Theme=""MyCoolDarkTheme"" />
 
 @code {
@@ -2927,6 +3289,25 @@ public const string ThemesCustomExample = @"<MudThemeProvider Theme=""MyCoolDark
         Color_Background = ""#1c2025"",
         Color_Text_Default = ""#e6e5e8""
     };
+=======
+public const string ThemesCustomExample = @"<MudThemeProvider Theme=""MyCoolDarkTheme"" />
+
+@code {
+
+    MudTheme MyCoolDarkTheme = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Background = ""#343a41"",
+            Surface = ""#3a424e"",
+            DrawerBackground = ""#3a424e"",
+            DrawerText = ""#8389a2"",
+            AppbarBackground = ""#3a424e"",
+            AppbarText = ""#8389a2"",
+            TextPrimary = ""#dee2e6""
+        }
+    };
+>>>>>>> develop
 }";
 
 public const string ThemesDefaultExample = @"<MudThemeProvider />";
@@ -2953,11 +3334,19 @@ public const string TimePickerStaticExample = @"<MudTimePicker PickerVariant=""P
 
 public const string TimePickerViewsExample = @"<MudTimePicker Label=""Minutes"" Value=""13:37"" OpenTo=""OpenTo.Minutes"" />";
 
+<<<<<<< HEAD
 public const string TooltipDelayedExample = @"<MudTooltip Text=""Delete"" Delayed=""true"">
     <MudIconButton Icon=""@Icons.Material.Delete"" />
 </MudTooltip>
 <MudTooltip Text=""Add"" Delayed=""true"">
     <MudFab Icon=""@Icons.Material.Add"" Color=""Color.Secondary"" />
+=======
+public const string TooltipDelayedExample = @"<MudTooltip Text=""Delete"" Delayed=""1"">
+    <MudIconButton Icon=""@Icons.Material.Delete"" />
+</MudTooltip>
+<MudTooltip Text=""Add"" Delayed=""1"">
+    <MudFab Icon=""@Icons.Material.Add"" Color=""Color.Secondary"" />
+>>>>>>> develop
 </MudTooltip>";
 
 public const string TooltipPostionExample = @"<MudTooltip Text=""Start/Left"" Placement=""Placement.Start"">
@@ -3000,12 +3389,104 @@ public const string TextGeneralExample = @"<MudText Typo=""Typo.h1"">h1. Heading
 <MudText Typo=""Typo.caption"">caption text</MudText>
 <MudText Typo=""Typo.overline"">OVERLINE TEXT</MudText>";
 
+<<<<<<< HEAD
 public const string ColorsClassExample = @"<MudText>
     This is not set by any <strong class=""green-text text-accent-4"">MudTheme</strong> colors.
 </MudText>
 <MudText>
     But rather css classes based on <strong class=""purple-text text-accent-3"">Material Design</strong> color pallet.
 </MudText>";
+=======
+public const string BorderRadiusCornerExample = @"<div class=""mud-theme-info py-4 px-6 mx-4 rounded-tl-xl"">
+    <MudText Align=""Align.Center"">.rounded-tl-xl</MudText>
+</div>
+<div class=""mud-theme-tertiary py-4 px-6 mx-4 rounded-tr-xl"">
+    <MudText Align=""Align.Center"">.rounded-tr-xl</MudText>
+</div>
+<div class=""mud-theme-secondary py-4 px-6 mx-4 rounded-br-xl"">
+    <MudText Align=""Align.Center"">.rounded-br-xl</MudText>
+</div>
+<div class=""mud-theme-primary py-4 px-6 mx-4 rounded-bl-xl"">
+    <MudText Align=""Align.Center"">.rounded-bl-xl</MudText>
+</div>";
+
+public const string BorderRadiusDefaultExample = @"<div class=""mud-theme-primary py-4 px-6 mx-4 rounded"">
+    <MudText Align=""Align.Center"">.rounded</MudText>
+</div>";
+
+public const string BorderRadiusPillnCircleExample = @"<div class=""mud-theme-secondary py-4 px-6 mx-4 rounded-pill"">
+    <MudText Align=""Align.Center"">.rounded-pill</MudText>
+</div>
+
+<div class=""mud-theme-primary pa-7 rounded-circle""></div>";
+
+public const string BorderRadiusRemoveExample = @"<div class=""mud-theme-primary py-4 px-8 rounded-0"">
+    <MudText Align=""Align.Center"">.rounded-0</MudText>
+</div>";
+
+public const string BorderRadiusSidesExample = @"<div class=""mud-theme-primary py-4 px-6 mx-4 rounded-t-xl"">
+    <MudText Align=""Align.Center"">.rounded-t-xl</MudText>
+</div>
+<div class=""mud-theme-secondary py-4 px-6 mx-4 rounded-r-xl"">
+    <MudText Align=""Align.Center"">.rounded-r-xl</MudText>
+</div>
+<div class=""mud-theme-tertiary py-4 px-6 mx-4 rounded-b-xl"">
+    <MudText Align=""Align.Center"">.rounded-b-xl</MudText>
+</div>
+<div class=""mud-theme-info py-4 px-6 mx-4 rounded-l-xl"">
+    <MudText Align=""Align.Center"">.rounded-l-xl</MudText>
+</div>";
+
+public const string BorderRadiusSizeExample = @"<div class=""mud-theme-primary py-4 px-6 mx-4 rounded-0"">
+    <MudText Align=""Align.Center"">.rounded-0</MudText>
+</div>
+<div class=""mud-theme-secondary py-4 px-6 mx-4 rounded-sm"">
+    <MudText Align=""Align.Center"">.rounded-sm</MudText>
+</div>
+<div class=""mud-theme-tertiary py-4 px-6 mx-4 rounded"">
+    <MudText Align=""Align.Center"">.rounded</MudText>
+</div>
+<div class=""mud-theme-info py-4 px-6 mx-4 rounded-lg"">
+    <MudText Align=""Align.Center"">.rounded-lg</MudText>
+</div>
+<div class=""mud-theme-primary py-4 px-6 mx-4 rounded-xl"">
+    <MudText Align=""Align.Center"">.rounded-xl</MudText>
+</div>";
+
+public const string ColorsMaterialExample = @"<MudGrid>
+    <MudItem>
+        <MudPaper Class=""pa-2 mb-2 purple-text text-accent-3"">
+            <MudText Align=""Align.Center"">.purple-text .text-accent-3</MudText>
+        </MudPaper>
+        <MudPaper Class=""pa-2"" Style=""@purple"">
+            <MudText Align=""Align.Center"">Colors.Purple.Accent3</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem>
+        <MudPaper Class=""pa-2 mb-2 blue-grey darken-4 light-green-text text-accent-3"">
+            <MudText Align=""Align.Center"">.blue-grey .darken-4 .light-green-text .text-accent-3</MudText>
+        </MudPaper>
+        <MudPaper Class=""pa-2"" Style=""@bluegrey"">
+            <MudText Align=""Align.Center"">Colors.BlueGrey.Darken4 Colors.LightGreen.Accent3</MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code{
+    string purple = $""color:{Colors.Purple.Accent3};"";
+    string bluegrey = $""color:{Colors.LightGreen.Accent3};background-color:{Colors.BlueGrey.Darken4};"";
+}";
+
+public const string ColorsMudBlazorExample = @"<MudPaper Class=""pa-2 mud-info"">
+    <MudText Align=""Align.Center"">.mud-info</MudText>
+</MudPaper>
+<MudPaper Class=""pa-2 mud-secondary-text"">
+    <MudText Align=""Align.Center"">.mud-secondary-text</MudText>
+</MudPaper>
+<MudPaper Class=""pa-2 mud-theme-primary"">
+    <MudText Align=""Align.Center"">.mud-theme-primary</MudText>
+</MudPaper>";
+>>>>>>> develop
 
 public const string CustomConverterExample = @"<MudSimpleTable Elevation=""0"" Hover=""false"" Class=""mt-4"" Dense=""false"">
     <colgroup>
@@ -3119,6 +3600,7 @@ public const string TurkeyTestExample = @"<MudGrid>
     DateTime date = DateTime.Now;
 }";
 
+<<<<<<< HEAD
 public const string ElevationUsageExample = @"<div class=""mud-elevation-0"">0</div>
 <div class=""mud-elevation-1"">1</div>
 <div class=""mud-elevation-2"">2</div>
@@ -3145,108 +3627,136 @@ public const string ElevationUsageExample = @"<div class=""mud-elevation-0"">0</
 <div class=""mud-elevation-23"">23</div>
 <div class=""mud-elevation-24"">24</div>
 <div class=""mud-elevation-99"">99</div>";
+=======
+public const string ElevationUsageExample = @"<div class=""mud-elevation-0"">0</div>
+<div class=""mud-elevation-1"">1</div>
+<div class=""mud-elevation-2"">2</div>
+<div class=""mud-elevation-3"">3</div>
+<div class=""mud-elevation-4"">4</div>
+<div class=""mud-elevation-5"">5</div>
+<div class=""mud-elevation-6"">6</div>
+<div class=""mud-elevation-7"">7</div>
+<div class=""mud-elevation-8"">8</div>
+<div class=""mud-elevation-9"">9</div>
+<div class=""mud-elevation-10"">10</div>
+<div class=""mud-elevation-11"">11</div>
+<div class=""mud-elevation-12"">12</div>
+<div class=""mud-elevation-13"">13</div>
+<div class=""mud-elevation-14"">14</div>
+<div class=""mud-elevation-15"">15</div>
+<div class=""mud-elevation-16"">16</div>
+<div class=""mud-elevation-17"">17</div>
+<div class=""mud-elevation-18"">18</div>
+<div class=""mud-elevation-19"">19</div>
+<div class=""mud-elevation-20"">20</div>
+<div class=""mud-elevation-21"">21</div>
+<div class=""mud-elevation-22"">22</div>
+<div class=""mud-elevation-23"">23</div>
+<div class=""mud-elevation-24"">24</div>
+<div class=""mud-elevation-25"">25</div>";
+>>>>>>> develop
 
 public const string FlexAlignContentExample = @"<MudGrid>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex align-content-start flex-wrap py-2 px-1"" Style=""height:200px;"">
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">1</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">2</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">3</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">4</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">5</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">6</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">7</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">8</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">9</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">10</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">11</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">12</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">13</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">14</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">15</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">16</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">3</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">4</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">5</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">6</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">7</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">8</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">9</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">10</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">11</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">12</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">13</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">14</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">15</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">16</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex align-content-end flex-wrap py-2 px-1"" Style=""height:200px;"">
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">1</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">2</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">3</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">4</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">5</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">6</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">7</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">8</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">9</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">10</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">11</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">12</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">13</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">14</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">15</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">16</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">3</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">4</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">5</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">6</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">7</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">8</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">9</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">10</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">11</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">12</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">13</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">14</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">15</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">16</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex align-content-center flex-wrap py-2 px-1"" Style=""height:200px;"">
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">1</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">2</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">3</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">4</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">5</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">6</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">7</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">8</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">9</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">10</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">11</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">12</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">13</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">14</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">15</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">16</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">3</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">4</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">5</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">6</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">7</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">8</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">9</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">10</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">11</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">12</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">13</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">14</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">15</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">16</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex align-content-space-between flex-wrap py-2 px-1"" Style=""height:200px;"">
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">1</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">2</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">3</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">4</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">5</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">6</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">7</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">8</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">9</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">10</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">11</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">12</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">13</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-secondary"" Style=""width:36px; text-align:center;"">14</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-info"" Style=""width:36px; text-align:center;"">15</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-color-primary"" Style=""width:36px; text-align:center;"">16</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">3</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">4</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">5</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">6</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">7</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">8</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">9</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">10</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">11</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">12</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">13</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-secondary"" Style=""width:36px; text-align:center;"">14</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-info"" Style=""width:36px; text-align:center;"">15</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 my-1 mud-theme-primary"" Style=""width:36px; text-align:center;"">16</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudPaper Class=""d-flex align-content-space-around flex-wrap px-2"" Style=""height:250px;"">
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"" Style=""width:79px; text-align:center;"">1</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"" Style=""width:79px; text-align:center;"">2</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"" Style=""width:79px; text-align:center;"">3</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"" Style=""width:79px; text-align:center;"">4</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">5</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">6</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"" Style=""width: 79px; text-align: center;"">7</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">8</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">9</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"" Style=""width: 79px; text-align: center;"">10</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">11</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">12</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"" Style=""width: 79px; text-align: center;"">13</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">14</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">15</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"" Style=""width: 79px; text-align: center;"">16</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"" Style=""width: 79px; text-align: center;"">17</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"" Style=""width: 79px; text-align: center;"">18</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"" Style=""width:79px; text-align:center;"">1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"" Style=""width:79px; text-align:center;"">2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"" Style=""width:79px; text-align:center;"">3</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"" Style=""width:79px; text-align:center;"">4</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"" Style=""width: 79px; text-align: center;"">5</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"" Style=""width: 79px; text-align: center;"">6</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"" Style=""width: 79px; text-align: center;"">7</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"" Style=""width: 79px; text-align: center;"">8</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"" Style=""width: 79px; text-align: center;"">9</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"" Style=""width: 79px; text-align: center;"">10</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"" Style=""width: 79px; text-align: center;"">11</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"" Style=""width: 79px; text-align: center;"">12</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"" Style=""width: 79px; text-align: center;"">13</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"" Style=""width: 79px; text-align: center;"">14</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"" Style=""width: 79px; text-align: center;"">15</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"" Style=""width: 79px; text-align: center;"">16</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"" Style=""width: 79px; text-align: center;"">17</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"" Style=""width: 79px; text-align: center;"">18</MudPaper>
         </MudPaper>
     </MudItem>
 </MudGrid>";
@@ -3254,37 +3764,37 @@ public const string FlexAlignContentExample = @"<MudGrid>
 public const string FlexAlignExample = @"<MudGrid>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex align-start py-2 px-1"" Style=""height:150px;"">
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"">Flex Item 1</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"">Flex Item 3</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex align-end py-2 px-1"" Style=""height:150px;"">
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"">Flex Item 1</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"">Flex Item 3</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex align-center py-2 px-1"" Style=""height:150px;"">
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"">Flex Item 1</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"">Flex Item 3</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex align-baseline py-2 px-1"" Style=""height:150px;"">
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"">Flex Item 1</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"">Flex Item 3</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudPaper Class=""d-flex align-stretch py-2 px-1"" Style=""height:150px;"">
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"">Flex Item 1</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"">Flex Item 3</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
         </MudPaper>
     </MudItem>
 </MudGrid>";
@@ -3292,44 +3802,44 @@ public const string FlexAlignExample = @"<MudGrid>
 public const string FlexAlignSelfExample = @"<MudGrid>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex py-2 px-1"" Style=""height:150px;"">
-            <MudPaper Class=""pa-2 ml-auto mud-theme-color-primary"">Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary align-self-start"">Aligned Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mr-auto mud-theme-color-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 ml-auto mud-theme-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary align-self-start"">Aligned Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mr-auto mud-theme-primary"">Flex Item</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex py-2 px-1"" Style=""height:150px;"">
-            <MudPaper Class=""pa-2 ml-auto mud-theme-color-primary"">Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary align-self-end"">Aligned Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mr-auto mud-theme-color-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 ml-auto mud-theme-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary align-self-end"">Aligned Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mr-auto mud-theme-primary"">Flex Item</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex py-2 px-1"" Style=""height:150px;"">
-            <MudPaper Class=""pa-2 ml-auto mud-theme-color-primary"">Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary align-self-center"">Aligned Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mr-auto mud-theme-color-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 ml-auto mud-theme-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary align-self-center"">Aligned Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mr-auto mud-theme-primary"">Flex Item</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex py-2 px-1"" Style=""height:150px;"">
-            <MudPaper Class=""pa-2 ml-auto mud-theme-color-primary"">Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary align-self-baseline"">Aligned Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mr-auto mud-theme-color-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 ml-auto mud-theme-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary align-self-baseline"">Aligned Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mr-auto mud-theme-primary"">Flex Item</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex py-2 px-1"" Style=""height:150px;"">
-            <MudPaper Class=""pa-2 ml-auto mud-theme-color-primary"">Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary align-self-auto"">Aligned Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mr-auto mud-theme-color-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 ml-auto mud-theme-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary align-self-auto"">Aligned Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mr-auto mud-theme-primary"">Flex Item</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
         <MudPaper Class=""d-flex py-2 px-1"" Style=""height:150px;"">
-            <MudPaper Class=""pa-2 ml-auto mud-theme-color-primary"">Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary align-self-stretch"">Aligned Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mr-auto mud-theme-color-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 ml-auto mud-theme-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary align-self-stretch"">Aligned Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mr-auto mud-theme-primary"">Flex Item</MudPaper>
         </MudPaper>
     </MudItem>
 </MudGrid>";
@@ -3337,30 +3847,30 @@ public const string FlexAlignSelfExample = @"<MudGrid>
 public const string FlexDirectionExample = @"<MudGrid>
     <MudItem xs=""12"" md=""12"">
         <MudPaper Class=""d-flex flex-row py-2 px-1"">
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"">Flex Item 1</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"">Flex Item 3</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudPaper Class=""d-flex flex-row-reverse py-2 px-1"">
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"">Flex Item 1</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"">Flex Item 3</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
         <div class=""d-flex flex-column"">
-            <MudPaper Class=""my-2 pa-4 mud-theme-color-primary"">Flex Item 1</MudPaper>
-            <MudPaper Class=""my-2 pa-4 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-            <MudPaper Class=""my-2 pa-4 mud-theme-color-info"">Flex Item 3</MudPaper>
+            <MudPaper Class=""my-2 pa-4 mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""my-2 pa-4 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""my-2 pa-4 mud-theme-info"">Flex Item 3</MudPaper>
         </div>
     </MudItem>
     <MudItem xs=""12"" md=""6"">
         <div class=""d-flex flex-column-reverse"">
-            <MudPaper Class=""my-2 pa-4 mud-theme-color-primary"">Flex Item 1</MudPaper>
-            <MudPaper Class=""my-2 pa-4 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-            <MudPaper Class=""my-2 pa-4 mud-theme-color-info"">Flex Item 3</MudPaper>
+            <MudPaper Class=""my-2 pa-4 mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""my-2 pa-4 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""my-2 pa-4 mud-theme-info"">Flex Item 3</MudPaper>
         </div>
     </MudItem>
 </MudGrid>";
@@ -3381,49 +3891,49 @@ public const string FlexEnableExample = @"<MudPaper Class=""d-flex pa-4"">
 public const string FlexGrowAndShrinkExample = @"<MudGrid>
     <MudItem xs=""12"" md=""12"">
         <MudPaper Class=""d-flex py-2 px-1"">
-            <MudPaper Class=""flex-grow-0 flex-shrink-0 pa-2 mx-2 mud-theme-color-primary order-3"">First Flex Item</MudPaper>
-            <MudPaper Class=""flex-grow-1 flex-shrink-0 pa-2 mx-2 mud-theme-color-secondary order-2"">Second Flex Item</MudPaper>
-            <MudPaper Class=""flex-grow-0 flex-shrink-1 pa-2 mx-2 mud-theme-color-info order-1"">Third Flex Item</MudPaper>
+            <MudPaper Class=""flex-grow-0 flex-shrink-0 pa-2 mx-2 mud-theme-primary order-3"">First Flex Item</MudPaper>
+            <MudPaper Class=""flex-grow-1 flex-shrink-0 pa-2 mx-2 mud-theme-secondary order-2"">Second Flex Item</MudPaper>
+            <MudPaper Class=""flex-grow-0 flex-shrink-1 pa-2 mx-2 mud-theme-info order-1"">Third Flex Item</MudPaper>
         </MudPaper>
     </MudItem>
 </MudGrid>";
 
 public const string FlexJustifyExample = @"<MudPaper Class=""d-flex justify-start py-2 px-1"">
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"">Flex Item 1</MudPaper>
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"">Flex Item 3</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
 </MudPaper>
 
 <MudPaper Class=""d-flex justify-end py-2 px-1 mt-6"">
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"">Flex Item 1</MudPaper>
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"">Flex Item 3</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
 </MudPaper>
 
 <MudPaper Class=""d-flex justify-center py-2 px-1 mt-6"">
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"">Flex Item 1</MudPaper>
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"">Flex Item 3</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
 </MudPaper>
 
 <MudPaper Class=""d-flex justify-space-between py-2 px-1 mt-6"">
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"">Flex Item 1</MudPaper>
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"">Flex Item 3</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
 </MudPaper>
 
 <MudPaper Class=""d-flex justify-space-around py-2 px-1 mt-6"">
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary"">Flex Item 1</MudPaper>
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary"">Flex Item 2</MudPaper>
-    <MudPaper Class=""pa-2 mx-2 mud-theme-color-info"">Flex Item 3</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+    <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
 </MudPaper>";
 
 public const string FlexOrderExample = @"<MudGrid>
     <MudItem xs=""12"" md=""12"">
         <MudPaper Class=""d-flex py-2 px-1"">
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-primary order-3"">First Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-secondary order-2"">Second Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 mx-2 mud-theme-color-info order-1"">Third Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary order-3"">First Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary order-2"">Second Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info order-1"">Third Flex Item</MudPaper>
         </MudPaper>
     </MudItem>
 </MudGrid>";
@@ -3431,56 +3941,56 @@ public const string FlexOrderExample = @"<MudGrid>
 public const string FlexWrapExample = @"<MudGrid>
     <MudItem xs=""12"" md=""12"">
         <MudPaper Class=""d-flex flex-nowrap px-1"">
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"">Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"">Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"">Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"">Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"">Flex Item</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"">Flex Item</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"">Flex Item</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudPaper Class=""d-flex flex-wrap px-1"">
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">1</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">2</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">3</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">4</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">5</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">6</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">7</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">8</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">9</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">10</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">11</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">12</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">13</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">14</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">15</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">16</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">17</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">18</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"" Style=""width:75px; text-align:center;"">1</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"" Style=""width:75px; text-align:center;"">2</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"" Style=""width:75px; text-align:center;"">3</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"" Style=""width:75px; text-align:center;"">4</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"" Style=""width:75px; text-align:center;"">5</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"" Style=""width:75px; text-align:center;"">6</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"" Style=""width:75px; text-align:center;"">7</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"" Style=""width:75px; text-align:center;"">8</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"" Style=""width:75px; text-align:center;"">9</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"" Style=""width:75px; text-align:center;"">10</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"" Style=""width:75px; text-align:center;"">11</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"" Style=""width:75px; text-align:center;"">12</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"" Style=""width:75px; text-align:center;"">13</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"" Style=""width:75px; text-align:center;"">14</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"" Style=""width:75px; text-align:center;"">15</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"" Style=""width:75px; text-align:center;"">16</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"" Style=""width:75px; text-align:center;"">17</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"" Style=""width:75px; text-align:center;"">18</MudPaper>
         </MudPaper>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudPaper Class=""d-flex flex-wrap-reverse px-1"">
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">1</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">2</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">3</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">4</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">5</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">6</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">7</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">8</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">9</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">10</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">11</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">12</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">13</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">14</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">15</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-primary"" Style=""width:75px; text-align:center;"">16</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-secondary"" Style=""width:75px; text-align:center;"">17</MudPaper>
-            <MudPaper Class=""pa-2 ma-2 mud-theme-color-info"" Style=""width:75px; text-align:center;"">18</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"" Style=""width:75px; text-align:center;"">1</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"" Style=""width:75px; text-align:center;"">2</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"" Style=""width:75px; text-align:center;"">3</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"" Style=""width:75px; text-align:center;"">4</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"" Style=""width:75px; text-align:center;"">5</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"" Style=""width:75px; text-align:center;"">6</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"" Style=""width:75px; text-align:center;"">7</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"" Style=""width:75px; text-align:center;"">8</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"" Style=""width:75px; text-align:center;"">9</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"" Style=""width:75px; text-align:center;"">10</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"" Style=""width:75px; text-align:center;"">11</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"" Style=""width:75px; text-align:center;"">12</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"" Style=""width:75px; text-align:center;"">13</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"" Style=""width:75px; text-align:center;"">14</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"" Style=""width:75px; text-align:center;"">15</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-primary"" Style=""width:75px; text-align:center;"">16</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-secondary"" Style=""width:75px; text-align:center;"">17</MudPaper>
+            <MudPaper Class=""pa-2 ma-2 mud-theme-info"" Style=""width:75px; text-align:center;"">18</MudPaper>
         </MudPaper>
     </MudItem>
 </MudGrid>";

@@ -1,8 +1,8 @@
 ﻿
 .mud-table {
-    color: var(--mud-theme-text-color-default);
-    background-color: var(--mud-theme-surface);
-    border-radius: var(--mud-theme-border-radius-default);
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-surface);
+    border-radius: var(--mud-default-borderradius);
     transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
     &.mud-table-square {
@@ -10,7 +10,7 @@
     }
 
     &.mud-table-outlined {
-        border: 1px solid rgba(0, 0, 0, 0.12);
+        border: 1px solid var(--mud-palette-lines-inputs);
     }
 }
 
@@ -28,7 +28,7 @@
         display: table-header-group;
 
         & .mud-table-cell {
-            color: var(--mud-theme-text-color-default);
+            color: var(--mud-palette-text-primary);
             font-weight: 500;
             line-height: 1.5rem;
         }
@@ -38,7 +38,7 @@
         display: table-row-group;
 
         & .mud-table-cell {
-            color: var(--mud-theme-on-surface);
+            color: var(--mud-palette-text-primary);
         }
     }
 }
@@ -51,7 +51,7 @@
     justify-content: flex-start;
 
     &:hover {
-        color: rgba(0, 0, 0, 0.54);
+        color: var(--mud-palette-action-default);
     }
 
     .mud-table-sort-label-icon {
@@ -82,7 +82,6 @@
     padding: 16px;
     font-size: 0.875rem;
     text-align: left;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
     font-weight: 400;
     line-height: 1.43;
     border-bottom: 1px solid rgba(224, 224, 224, 1);
@@ -95,7 +94,7 @@
 }
 
 .mud-table-cell-footer {
-    color: rgba(0, 0, 0, 0.54);
+    color: var(--mud-palette-text-secondary);
     font-size: 0.75rem;
     line-height: 1.3125rem;
 }
@@ -121,11 +120,11 @@
 
         .mud-table-head {
             & * .mud-table-cell:first-child {
-                border-radius: var(--mud-theme-border-radius-default) 0px 0px 0px;
+                border-radius: var(--mud-default-borderradius) 0px 0px 0px;
             }
 
             & * .mud-table-cell {
-                background-color: var(--mud-theme-surface);
+                background-color: var(--mud-palette-surface);
                 position: sticky;
                 top: 0;
             }

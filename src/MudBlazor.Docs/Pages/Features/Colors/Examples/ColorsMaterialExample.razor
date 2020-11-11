@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem>
+        <MudPaper Class="pa-2 mb-2 purple-text text-accent-3">
+            <MudText Align="Align.Center">.purple-text .text-accent-3</MudText>
+        </MudPaper>
+        <MudPaper Class="pa-2" Style="@purple">
+            <MudText Align="Align.Center">Colors.Purple.Accent3</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem>
+        <MudPaper Class="pa-2 mb-2 blue-grey darken-4 light-green-text text-accent-3">
+            <MudText Align="Align.Center">.blue-grey .darken-4 .light-green-text .text-accent-3</MudText>
+        </MudPaper>
+        <MudPaper Class="pa-2" Style="@bluegrey">
+            <MudText Align="Align.Center">Colors.BlueGrey.Darken4 Colors.LightGreen.Accent3</MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code{
+    string purple = $"color:{Colors.Purple.Accent3};";
+    string bluegrey = $"color:{Colors.LightGreen.Accent3};background-color:{Colors.BlueGrey.Darken4};";
+}

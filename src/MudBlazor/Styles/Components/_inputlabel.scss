@@ -38,9 +38,9 @@
     z-index: 20 !important;
     transform: translate(14px, 20px) scale(1);
     pointer-events: none;
-    background-color: var(--mud-theme-surface);
+    background-color: var(--mud-palette-surface);
     padding: 0px 5px !important;
-    
+
 
     &.mud-input-label-margin-dense {
         transform: translate(14px, 12px) scale(1);
@@ -50,12 +50,12 @@
 
 .mud-input:focus-within + label {
     &.mud-input-label.mud-input-label-inputcontrol {
-        color: var(--mud-theme-primary);
+        color: var(--mud-palette-primary);
         transform: translate(0, 1.5px) scale(0.75);
         transform-origin: top left;
 
-        &.mud-error {
-            color: #f44336;
+        &.mud-input-error {
+            color: var(--mud-palette-error);
         }
     }
 
@@ -68,14 +68,14 @@
     }
 
     &.mud-input-label.mud-input-label-inputcontrol.mud-input-label-outlined {
-        color: var(--mud-theme-primary);
+        color: var(--mud-palette-primary);
         transform: translate(14px, -6px) scale(0.75);
     }
 }
 
 .mud-shrink + label {
     &.mud-input-label.mud-input-label-inputcontrol {
-        color: var(--mud-theme-text-default);
+        color: var(--mud-palette-text-primary);
         transform: translate(0, 1.5px) scale(0.75);
         transform-origin: top left;
     }
@@ -89,7 +89,7 @@
     }
 
     &.mud-input-label.mud-input-label-inputcontrol.mud-input-label-outlined {
-        color: var(--mud-theme-text-default);
+        color: var(--mud-palette-text-primary);
         transform: translate(14px, -6px) scale(0.75);
     }
 }

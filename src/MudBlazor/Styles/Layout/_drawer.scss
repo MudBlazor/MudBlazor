@@ -1,79 +1,49 @@
 ﻿.mud-drawer {
     height: 100%;
-    width: 240px;
+    width: var(--mud-drawer-width);
     display: flex;
     flex-shrink: 0;
     flex: 0 0 auto;
     outline: 0;
-    position:fixed;
+    position: fixed;
     z-index: var(--mud-zindex-drawer);
     overflow-y: auto;
     flex-direction: column;
+    color: var(--mud-palette-drawer-text);
+    background-color: var(--mud-palette-drawer-background);
 
     &.mud-drawer--open {
         transform: none;
         transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
     }
 
-    &.mud-drawer--closed {
-        transform: translateX(-240px);
-        visibility: hidden;
-    }
-
     &.mud-drawer-anchor-left {
         left: 0;
         right: auto;
+
+        &.mud-drawer--closed {
+            transform: translateX(calc(-1 * var(--mud-drawer-width)));
+            visibility: hidden;
+        }
     }
 
     &.mud-drawer-anchor-right {
         left: auto;
         right: 0;
+
+        &.mud-drawer--closed {
+            transform: translateX(var(--mud-drawer-width));
+            visibility: hidden;
+        }
     }
 }
 
 .mud-drawer-header {
     display: flex;
-    min-height: 64px;
+    min-height: var(--mud-appbar-min-height);
     padding: 12px 24px 12px 24px;
 }
 
 .mud-drawer-clipped {
-    padding-top: 64px;
-}
-
-/// <summary>
-/// Bellow is the classes for theming
-/// </summary>
-.mud-drawer-color-default {
-    color: var(--mud-theme-on-default);
-    background-color: var(--mud-theme-default);
-}
-
-.mud-drawer-color-primary {
-    color: var(--mud-theme-on-primary);
-    background-color: var(--mud-theme-primary);
-}
-
-.mud-drawer-color-secondary {
-    color: var(--mud-theme-on-secondary);
-    background-color: var(--mud-theme-secondary);
-}
-
-.mud-drawer-color-surface {
-    color: var(--mud-theme-on-surface);
-    background-color: var(--mud-theme-surface);
-}
-
-.mud-drawer-color-drawer {
-    color: var(--mud-theme-on-drawer);
-    background-color: var(--mud-theme-drawer);
-}
-
-.mud-drawer-color-inherit {
-    color: inherit;
-}
-
-.mud-drawer-color-transparent {
-    color: inherit;
-    background-color: transparent;
+    padding-top: var(--mud-appbar-min-height);
 }

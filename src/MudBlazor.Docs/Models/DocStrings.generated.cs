@@ -201,7 +201,7 @@ public const string MudAppBar_Dense = @"If true, compact padding will be used.";
 
 public const string MudAppBar_Color = @"The color of the component. It supports the theme colors.";
 
-public const string MudAppBar_Position = @"The positioning type. The behavior of the different options is described in the MDN web docs. Note: sticky is not universally supported and will fall back to static when unavailable.";
+public const string MudAppBar_Fixed = @"If true, appbar will be Fixed.";
 
 public const string MudAppBar_ChildContent = @"Child content of the component.";
 
@@ -562,8 +562,6 @@ public const string MudChip_AvatarClass = @"Avatar CSS Class, appends to Chips d
 
 public const string MudChip_Label = @"Removes circle edges and applys theme default.";
 
-public const string MudChip_Deleted = @"If true, the chip will not be rendered.";
-
 public const string MudChip_Disabled = @"If true, the chip will be displayed in disabled state and no events possible.";
 
 public const string MudChip_Icon = @"Sets the Icon to use.";
@@ -581,8 +579,6 @@ public const string MudChip_Target = @"The target attribute specifies where to o
 public const string MudChip_Text = @"A string you want to associate with the chip. If the ChildContent is not set this will be shown as chip text.";
 
 public const string MudChip_ForceLoad = @"If true, force browser to redirect outside component router-space.";
-
-public const string MudChip_RemoveOnClose = @"If true, remove the chip from the render tree on close.";
 
 public const string MudChip_Command = @"Command executed when the user clicks on an element.";
 
@@ -967,6 +963,8 @@ public const string MudInputLabel_Disabled = @"If true, the input element will b
 public const string MudInputLabel_Error = @"If true, the label will be displayed in an error state.";
 
 public const string MudInputLabel_Variant = @"Variant to use.";
+
+public const string MudInputLabel_Margin = @"Will adjust vertical spacing.";
 
 public const string MudInputLabel_Class = @"User class names, separated by space";
 
@@ -1591,15 +1589,20 @@ public const string MudSlider_Min = @"The minimum allowed value of the slider. S
 
 public const string MudSlider_Max = @"The maximum allowed value of the slider. Should not be equal to min.";
 
-public const string MudSlider_Step = @"How many steps the slider should take on eatch move.";
+public const string MudSlider_Step = @"How many steps the slider should take on each move.";
 
 public const string MudSlider_Disabled = @"If true, the slider will be disabled.";
 
 public const string MudSlider_ChildContent = @"Child content of component.";
 
+public const string MudSlider_Converter = @"";
+
 public const string MudSlider_ValueChanged = @"";
 
 public const string MudSlider_Value = @"";
+
+public const string MudSlider_Immediate = @"If true, the dragging the slider will update the Value immediately.
+            If false, the Value is updated only on releasing the handle.";
 
 public const string MudSlider_Class = @"User class names, separated by space";
 
@@ -1925,8 +1928,13 @@ public const string MudTextFieldString_Tag = @"Use Tag to attach any user data o
 public const string MudTextFieldString_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string ComponentBaseMudThemeProvider_Theme = @"";
+public const string BaseMudThemeProvider_Theme = @"";
 
+<<<<<<< HEAD
+=======
+public const string OldComponentBaseMudThemeProvider_Theme = @"";
+
+>>>>>>> develop
 public const string MudTimePicker_OpenTo = @"First view to show in the MudDatePicker.";
 
 public const string MudTimePicker_AmPm = @"If true, sets 12 hour selection clock.";
@@ -2149,6 +2157,10 @@ public const string MudDrawer_Color = @"The color of the component. It supports 
 
 public const string MudDrawer_ChildContent = @"Child content of component.";
 
+public const string MudDrawer_Open = @"";
+
+public const string MudDrawer_Clipped = @"";
+
 public const string MudDrawer_Class = @"User class names, separated by space";
 
 public const string MudDrawer_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -2209,9 +2221,7 @@ public const string MudItem_UserAttributes = @"UserAttributes carries all attrib
 
 public const string MudLayout_ChildContent = @"Child content of component.";
 
-public const string MudLayout_DrawerOpen = @"Gets or ets the drawer open state.";
-
-public const string MudLayout_DrawerClipped = @"Gets or sets the drawer clipped state.";
+public const string MudLayout_RightToLeft = @"If set, changes the layout to RightToLeft.";
 
 public const string MudLayout_Class = @"User class names, separated by space";
 
@@ -2567,6 +2577,11 @@ public const string MudTabPanel_UserAttributes = @"UserAttributes carries all at
 
 public const string MudThemeProvider_Theme = @"";
 
+<<<<<<< HEAD
+=======
+public const string OldMudThemeProvider_Theme = @"";
+
+>>>>>>> develop
 public const string MudToolBar_Dense = @"If true, compact padding will be used.";
 
 public const string MudToolBar_DisableGutters = @"If true, disables gutter padding.";
@@ -2586,7 +2601,7 @@ public const string MudTooltip_Text = @"Sets the text to be displayed inside the
 
 public const string MudTooltip_Class = @"User class names, separated by space";
 
-public const string MudTooltip_Delayed = @"If true, sets set a delay until tooltip is showed.";
+public const string MudTooltip_Delayed = @"Changes the default transition delay in seconds.";
 
 public const string MudTooltip_Placement = @"Tooltip placement.";
 

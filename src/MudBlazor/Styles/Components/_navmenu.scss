@@ -40,7 +40,7 @@
 .mud-nav-link {
     width: 100%;
     font-weight: 400;
-    padding: 8px 0 8px 16px;
+    padding: 8px 16px 8px 16px;
     color: inherit;
     line-height: 1.75;
     display: inline-flex;
@@ -53,32 +53,33 @@
     &:hover {
         cursor: pointer;
         text-decoration: none;
-        background-color: var(--mud-theme-default-hover);
+        background-color: var(--mud-palette-action-default-hover);
     }
 
     &.active {
         font-weight: 500 !important;
-        color: var(--mud-theme-primary);
-        background-color: var(--mud-theme-primary-hover);
+        color: var(--mud-palette-primary);
+        background-color: var(--mud-palette-action-default-hover);
     }
 
     & .mud-nav-link-icon {
+        color: var(--mud-palette-drawer-icon);
     }
 
     & .mud-nav-link-expand-icon {
-        margin-right: 12px;
+        color: var(--mud-palette-drawer-icon);
         transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
 
         &.mud-transform {
             transform: rotate(-180deg);
-            fill: var(--mud-theme-primary);
+            fill: var(--mud-palette-primary);
         }
     }
 
     & .mud-nav-link-text {
         width: 100%;
         text-align: left;
-        margin-left: 16px;
+        margin-left: 12px;
         letter-spacing: 0;
     }
 }
@@ -90,5 +91,13 @@
 
     & * .mud-navmenu .mud-nav-item .mud-nav-link {
         padding-left: 48px;
+    }
+}
+
+.mud-application-layout-rtl {
+    & * .mud-nav-link-text {
+        text-align: right;
+        margin-left: 0px;
+        margin-right: 12px;
     }
 }

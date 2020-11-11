@@ -60,9 +60,9 @@
     display: flex;
     z-index: 202;
     flex-direction: column;
-    color: var(--mud-theme-text-color-default);
-    background-color: var(--mud-theme-surface);
-    border-radius: var(--mud-theme-border-radius-default);
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-surface);
+    border-radius: var(--mud-default-borderradius);
     -webkit-animation: mud-scale-up-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
     animation: mud-scale-up-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
     box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2), 0px 24px 38px 3px rgba(0,0,0,0.14), 0px 9px 46px 8px rgba(0,0,0,0.12);
