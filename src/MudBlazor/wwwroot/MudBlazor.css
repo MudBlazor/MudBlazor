@@ -79,6 +79,16 @@
   color: var(--mud-palette-dark-text) !important;
   background-color: var(--mud-palette-dark) !important; }
 
+.mud-theme-transparent {
+  color: inherit !important;
+  background-color: transparent !important; }
+
+.mud-transparent {
+  background-color: transparent !important; }
+
+.mud-transparent-text {
+  color: transparent !important; }
+
 .mud-text-primary {
   color: var(--mud-palette-text-primary); }
 
@@ -3695,9 +3705,9 @@ ul {
 .mud-table-sticky-header * .mud-table-root {
   border-collapse: separate; }
   .mud-table-sticky-header * .mud-table-root .mud-table-head * .mud-table-cell:first-child {
-    border-radius: var(--mud-theme-border-radius-default) 0px 0px 0px; }
+    border-radius: var(--mud-default-borderradius) 0px 0px 0px; }
   .mud-table-sticky-header * .mud-table-root .mud-table-head * .mud-table-cell {
-    background-color: var(--mud-theme-surface);
+    background-color: var(--mud-palette-surface);
     position: sticky;
     top: 0; }
 
