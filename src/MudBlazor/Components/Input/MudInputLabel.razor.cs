@@ -11,8 +11,9 @@ namespace MudBlazor
          .AddClass("mud-input-label")
          .AddClass("mud-input-label-animated")
          .AddClass($"mud-input-label-{Variant.ToDescriptionString()}")
+         .AddClass($"mud-input-label-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
          .AddClass($"mud-disabled", Disabled)
-         .AddClass("mud-error", Error)
+         .AddClass("mud-input-error", Error)
          .AddClass(Class)
        .Build();
 
@@ -35,6 +36,11 @@ namespace MudBlazor
         /// Variant to use.
         /// </summary>
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
+
+        /// <summary>
+        ///  Will adjust vertical spacing. 
+        /// </summary>
+        [Parameter] public Margin Margin { get; set; } = Margin.None;
 
     }
 }

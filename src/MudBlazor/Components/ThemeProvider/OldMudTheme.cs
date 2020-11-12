@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace MudBlazor
 {
-    public class MudThemeOld : DefaultMudTheme
+    public class OldMudTheme : OldDefaultMudTheme
     {
         protected virtual void GenerateTheme(StringBuilder theme)
         {

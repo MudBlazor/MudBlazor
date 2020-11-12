@@ -964,6 +964,8 @@ public const string MudInputLabel_Error = @"If true, the label will be displayed
 
 public const string MudInputLabel_Variant = @"Variant to use.";
 
+public const string MudInputLabel_Margin = @"Will adjust vertical spacing.";
+
 public const string MudInputLabel_Class = @"User class names, separated by space";
 
 public const string MudInputLabel_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -1926,9 +1928,9 @@ public const string MudTextFieldString_Tag = @"Use Tag to attach any user data o
 public const string MudTextFieldString_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string ComponentBaseMudThemeProvider_Theme = @"";
+public const string BaseMudThemeProvider_Theme = @"";
 
-public const string BaseMudThemeProviderNew_Theme = @"";
+public const string OldComponentBaseMudThemeProvider_Theme = @"";
 
 public const string MudTimePicker_OpenTo = @"First view to show in the MudDatePicker.";
 
@@ -2572,7 +2574,7 @@ public const string MudTabPanel_UserAttributes = @"UserAttributes carries all at
 
 public const string MudThemeProvider_Theme = @"";
 
-public const string MudThemeProviderNew_Theme = @"";
+public const string OldMudThemeProvider_Theme = @"";
 
 public const string MudToolBar_Dense = @"If true, compact padding will be used.";
 

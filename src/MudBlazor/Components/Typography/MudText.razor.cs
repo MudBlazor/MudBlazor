@@ -11,7 +11,7 @@ namespace MudBlazor
         protected string Classname =>
         new CssBuilder("mud-typography")
           .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
-          .AddClass($"mud-color-text-{Color.ToDescriptionString()}")
+          .AddClass($"mud-{Color.ToDescriptionString()}-text")
           .AddClass("mud-typography-gutterbottom", GutterBottom)
           .AddClass($"mud-typography-align-{Align.ToDescriptionString()}", Align != Align.Inherit)
           .AddClass("mud-typography-display-inline", Inline)

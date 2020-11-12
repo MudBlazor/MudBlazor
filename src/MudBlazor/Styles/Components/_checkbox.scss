@@ -1,9 +1,12 @@
-﻿.mud-checkbox {
+﻿@import '../abstracts/variables';
+
+.mud-checkbox {
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     vertical-align: middle;
     -webkit-tap-highlight-color: transparent;
+    color: var(--mud-palette-text-primary);
 
     &.mud-disabled, .mud-disabled:hover {
         cursor: default;
@@ -11,7 +14,7 @@
 
         & * {
             cursor: default;
-            color: rgba(0,0,0,.38);
+            color: var(--mud-palette-text-disabled);
         }
     }
 }
@@ -35,26 +38,12 @@
     cursor: pointer;
 }
 
-.mud-checkbox-default {
-    color: var(--mud-theme-default);
+@each $color in $mud-palette-colors {
+    .mud-checkbox-#{$color} {
+        color: var(--mud-palette-#{$color});
 
-    &:hover {
-        background-color: var(--mud-theme-default-hover);
-    }
-}
-
-.mud-checkbox-primary {
-    color: var(--mud-theme-primary);
-
-    &:hover {
-        background-color: var(--mud-theme-primary-hover);
-    }
-}
-
-.mud-checkbox-secondary {
-    color: var(--mud-theme-secondary);
-
-    &:hover {
-        background-color: var(--mud-theme-secondary-hover);
+        &:hover {
+            background-color: var(--mud-palette-#{$color}-hover);
+        }
     }
 }

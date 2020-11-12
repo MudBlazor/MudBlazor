@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="TextValue" Label="Standard" Variant="Variant.Text" Margin="Margin.Dense"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="TextValue" Label="Filled" Variant="Variant.Filled" Margin="Margin.Dense"></MudTextField>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="TextValue" Label="Outlined" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string TextValue { get; set; }
+}

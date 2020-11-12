@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -18,8 +16,8 @@ namespace MudBlazor
           .AddClass($"mud-rating-item")
           .AddClass($"mud-svg-icon-root")
           .AddClass($"mud-ripple mud-ripple-icon")
-          .AddClass($"yellow-text.text-darken-3", !Color.HasValue)
-          .AddClass($"mud-color-text-{(Color.HasValue ? Color.Value.ToDescriptionString() : string.Empty)}", Color.HasValue)
+          .AddClass($"yellow-text.text-darken-3", Color == Color.Default)
+          .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default)
           .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
           .AddClass($"mud-rating-item-active", IsActive)
           .AddClass($"mud-disabled", Disabled)
@@ -49,7 +47,7 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color? Color { get; set; } = null;
+        [Parameter] public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// If true, disables ripple effect.
@@ -105,11 +103,17 @@ namespace MudBlazor
         }
 
         // rating item lose hover
-        private void HandleMouseOut(MouseEventArgs e)
+        private async Task HandleMouseOut(MouseEventArgs e)
         {
             if (Disabled) return;
-            IsActive = false;
-            ItemHovered.InvokeAsync(null);
+
+            // onmouseout from current item will always fire before onmouseover, if we don't wait here for potential onmouseover from another item there will be a flicker issue
+            await Task.Delay(10);
+            if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value == ItemValue)
+            {
+                IsActive = false;
+                await ItemHovered.InvokeAsync(null);
+            }
         }
 
         private void HandleMouseOver(MouseEventArgs e)

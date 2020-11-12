@@ -181,17 +181,17 @@ namespace MudBlazor
 
         private string GetClockPinColor()
         {
-            return $"mud-picker-time-clock-pin mud-color-{Color.ToDescriptionString()}";
+            return $"mud-picker-time-clock-pin mud-{Color.ToDescriptionString()}";
         }
         private string GetClockPointerColor()
         {
             if (MouseDown)
             {
-                return $"mud-picker-time-clock-pointer mud-color-{Color.ToDescriptionString()}";
+                return $"mud-picker-time-clock-pointer mud-{Color.ToDescriptionString()}";
             }
             else
             {
-                return $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-color-{Color.ToDescriptionString()}";
+                return $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-{Color.ToDescriptionString()}";
             }
             
         }
@@ -201,11 +201,11 @@ namespace MudBlazor
             double deg = GetDeg();
             if (deg % 30 == 0)
             {
-                return $"mud-picker-time-clock-pointer-thumb mud-onclock-text mud-onclock-primary mud-color-{Color.ToDescriptionString()}";
+                return $"mud-picker-time-clock-pointer-thumb mud-onclock-text mud-onclock-primary mud-{Color.ToDescriptionString()}";
             }
             else
             {
-                return $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-color-text-{Color.ToDescriptionString()}";
+                return $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-{Color.ToDescriptionString()}-text";
             }
         }
 
@@ -221,11 +221,11 @@ namespace MudBlazor
                         h = 12;
                 }
                 if (h==value)
-                    return $"mud-clock-number mud-theme-color-{Color.ToDescriptionString()}";
+                    return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
             }
             else if (OpenTo == OpenTo.Minutes && TimeSet.Minute == value)
             {
-                return $"mud-clock-number mud-theme-color-{Color.ToDescriptionString()}";
+                return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
             }
             return $"mud-clock-number";
         }

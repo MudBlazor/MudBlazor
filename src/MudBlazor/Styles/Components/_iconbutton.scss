@@ -1,4 +1,6 @@
-﻿.mud-icon-button {
+﻿@import '../abstracts/variables';
+
+.mud-icon-button {
     flex: 0 0 auto;
     padding: 12px;
     overflow: visible;
@@ -6,9 +8,14 @@
     text-align: center;
     transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     border-radius: 50%;
+    color: var(--mud-palette-action-default);
+
+    &:hover {
+        background-color: var(--mud-palette-action-default-hover);
+    }
 
     &:disabled {
-        color: rgba(0, 0, 0, 0.26);
+        color: var(--mud-palette-action-disabled);
         background-color: transparent;
     }
 }
@@ -17,41 +24,20 @@
     color: inherit;
 
     &:hover {
-        background-color: rgba(0, 0, 0, 0.04);
+        background-color: var(--mud-palette-action-default-hover);
     }
 }
 
-.mud-icon-button-color-surface {
-    color: var(--mud-theme-on-surface);
+@each $color in $mud-palette-colors {
+    .mud-icon-button-color-#{$color} {
+        color: var(--mud-palette-#{$color});
 
-    &:hover {
-        background-color: var(--mud-theme-default-hover);
+        &:hover {
+            background-color: var(--mud-palette-#{$color}-hover);
+        }
     }
 }
 
-.mud-icon-button-color-default {
-    color: var(--mud-theme-default);
-
-    &:hover {
-        background-color: var(--mud-theme-default-hover);
-    }
-}
-
-.mud-icon-button-color-primary {
-    color: var(--mud-theme-primary);
-
-    &:hover {
-        background-color: var(--mud-theme-primary-hover);
-    }
-}
-
-.mud-icon-button-color-secondary {
-    color: var(--mud-theme-secondary);
-
-    &:hover {
-        background-color: var(--mud-theme-secondary-hover);
-    }
-}
 
 .mud-icon-button-label {
     width: 100%;

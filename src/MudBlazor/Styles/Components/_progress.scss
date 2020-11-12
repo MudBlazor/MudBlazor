@@ -1,6 +1,7 @@
 ﻿
 .mud-progress-circular {
     display: inline-block;
+    color: var(--mud-palette-text-secondary);
 
     &.mud-progress-indeterminate {
         animation: mud-progress-circular-keyframes-circular-rotate 1.4s linear infinite;

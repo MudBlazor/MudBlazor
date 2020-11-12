@@ -30,7 +30,7 @@
     & .mud-list {
         width: 100%;
         max-width: 360px;
-        background-color: var(--mud-theme-surface);
+        background-color: var(--mud-palette-surface);
     }
 }
 
@@ -63,13 +63,13 @@
     & .mud-paper {
         height: 400px;
         width: 100%;
-        background-color: var(--mud-theme-surface);
+        background-color: var(--mud-palette-surface);
     }
 }
 
 .demo-drawer {
     & .mud-main-content {
-        background-color: var(--mud-theme-surface);
+        background-color: var(--mud-palette-surface);
         padding: 20px;
         padding-top: 86px;
     }
@@ -141,8 +141,8 @@
     & > div {
         width: 100px;
         height: 100px;
-        background-color: var(--mud-theme-surface);
-        border-radius: var(--mud-theme-border-radius-default);
+        background-color: var(--mud-palette-surface);
+        border-radius: var(--mud-palette-lines-default);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -153,13 +153,13 @@
 
 .demo-navmenu {
     width: 250px;
-    background-color: var(--mud-theme-surface);
+    background-color: var(--mud-palette-surface);
 }
 
 .demo-tabs {
     & .mud-tabs-panels {
         padding: 24px;
-        background-color: var(--mud-theme-surface);
+        background-color: var(--mud-palette-surface);
     }
 }
 

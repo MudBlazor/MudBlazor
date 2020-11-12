@@ -38,13 +38,13 @@
     -webkit-font-smoothing: subpixel-antialiased;
 
     &.docs-code-primary {
-        color: var(--mud-theme-primary);
-        background-color: var(--mud-theme-primary-hover);
+        color: var(--mud-palette-primary);
+        background-color: var(--mud-palette-primary-hover);
     }
 
     &.docs-code-secondary {
-        color: var(--mud-theme-secondary);
-        background-color: var(--mud-theme-secondary-hover);
+        color: var(--mud-palette-secondary);
+        background-color: var(--mud-palette-secondary-hover);
     }
 }
 

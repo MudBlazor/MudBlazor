@@ -1,4 +1,5 @@
-﻿
+﻿@import '../abstracts/variables';
+
 .mud-chip {
     border: none;
     cursor: default;
@@ -41,7 +42,7 @@
     }
 
     &.mud-chip-label {
-        border-radius: var(--mud-theme-border-radius-default);
+        border-radius: var(--mud-default-borderradius);
     }
 
     &.mud-clickable {
@@ -81,155 +82,53 @@
     }
 }
 
+
+
 .mud-chip-filled {
-    &.mud-chip-color-default {
-        color: var(--mud-theme-on-default);
-        background-color: var(--mud-theme-default-lighten);
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-action-disabled-background);
 
-        &:hover {
-            background-color: var(--mud-theme-default-darken);
-        }
+    &:hover {
+        background-color: var(--mud-palette-action-disabled);
     }
 
-    &.mud-chip-color-primary {
-        color: var(--mud-theme-on-primary);
-        background-color: var(--mud-theme-primary);
+    @each $color in $mud-palette-colors {
+        &.mud-chip-color-#{$color} {
+            color: var(--mud-palette-#{$color}-text);
+            background-color: var(--mud-palette-#{$color});
 
-        &:hover {
-            background-color: var(--mud-theme-primary-darken);
-        }
-    }
+            &:hover {
+                background-color: var(--mud-palette-#{$color}-darken);
+            }
 
-    &.mud-chip-color-secondary {
-        color: var(--mud-theme-on-secondary);
-        background-color: var(--mud-theme-secondary);
-
-        &:hover {
-            background-color: var(--mud-theme-secondary-darken);
-        }
-    }
-
-    &.mud-chip-color-info {
-        color: var(--mud-theme-on-alert);
-        background-color: var(--mud-theme-info);
-
-        &:hover {
-            opacity: .8;
-        }
-    }
-
-    &.mud-chip-color-success {
-        color: var(--mud-theme-on-alert);
-        background-color: var(--mud-theme-success);
-
-        &:hover {
-            opacity: .8;
-        }
-    }
-
-    &.mud-chip-color-warning {
-        color: var(--mud-theme-on-alert);
-        background-color: var(--mud-theme-warning);
-
-        &:hover {
-            opacity: .8;
-        }
-    }
-
-    &.mud-chip-color-danger {
-        color: var(--mud-theme-on-alert);
-        background-color: var(--mud-theme-danger);
-
-        &:hover {
-            opacity: .8;
-        }
-    }
-
-    &.mud-chip-color-dark {
-        color: var(--mud-theme-on-alert);
-        background-color: var(--mud-theme-dark);
-
-        &:hover {
-            opacity: .8;
+            &.mud-chip-selected {
+                color: var(--mud-palette-#{$color});
+                background-color: var(--mud-palette-#{$color}-hover) !important;
+            }
         }
     }
 }
-
 .mud-chip-outlined {
-    &.mud-chip-color-default {
-        color: var(--mud-theme-default);
-        border: 1px solid var(--mud-theme-default-lighten);
+    color: var(--mud-palette-text-primary);
+    border: 1px solid var(--mud-palette-lines-inputs);
 
-        &:hover {
-            background-color: var(--mud-theme-default-hover);
-        }
+    &:hover {
+        background-color: var(--mud-palette-action-default-hover);
     }
 
-    &.mud-chip-color-primary {
-        color: var(--mud-theme-primary);
-        border: 1px solid var(--mud-theme-primary);
+    @each $color in $mud-palette-colors {
+        &.mud-chip-color-#{$color} {
+            color: var(--mud-palette-#{$color});
+            border: 1px solid var(--mud-palette-#{$color});
 
-        &:hover {
-            background-color: var(--mud-theme-primary-hover);
-        }
-    }
-
-    &.mud-chip-color-secondary {
-        color: var(--mud-theme-secondary);
-        border: 1px solid var(--mud-theme-secondary);
-
-        &:hover {
-            background-color: var(--mud-theme-secondary-hover);
-        }
-    }
-
-    &.mud-chip-color-info {
-        color: var(--mud-theme-info);
-        border: 1px solid var(--mud-theme-info);
-
-        &:hover {
-            opacity: .8;
-        }
-    }
-
-    &.mud-chip-color-success {
-        color: var(--mud-theme-success);
-        border: 1px solid var(--mud-theme-success);
-
-        &:hover {
-            opacity: .8;
-        }
-    }
-
-    &.mud-chip-color-warning {
-        color: var(--mud-theme-warning);
-        border: 1px solid var(--mud-theme-warning);
-
-        &:hover {
-            opacity: .8;
-        }
-    }
-
-    &.mud-chip-color-danger {
-        color: var(--mud-theme-danger);
-        border: 1px solid var(--mud-theme-danger);
-
-        &:hover {
-            opacity: .8;
-        }
-    }
-
-    &.mud-chip-color-dark {
-        color: var(--mud-theme-dark);
-        border: 1px solid var(--mud-theme-dark);
-
-        &:hover {
-            opacity: .8;
+            &:hover {
+                background-color: var(--mud-palette-#{$color}-hover);
+            }
         }
     }
 }
 
 .mud-chip-selected {
-    color: var(--mud-theme-primary) !important;
-    background-color: var(--mud-theme-primary-hover) !important;
+    color: var(--mud-palette-primary);
+    background-color: var(--mud-palette-primary-hover) !important;
 }

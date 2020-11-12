@@ -1,7 +1,7 @@
 ﻿
 
 .mud-slider {
-    color: var(--mud-theme-on-surface);
+    color: var(--mud-palette-text-primary);
     display: inline-block;
     width: 100%;
     user-select: none;
@@ -42,7 +42,7 @@
             border-radius: 50%;
             height: 2px;
             width: 2px;
-            background-color: var(--mud-theme-primary);
+            background-color: var(--mud-palette-primary);
             transform: scale(6, 6);
             transition: box-shadow 0.2s;
         }

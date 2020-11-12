@@ -1,4 +1,5 @@
-﻿
+﻿@import '../abstracts/variables';
+
 .mud-avatar {
     display: flex;
     overflow: hidden;
@@ -10,6 +11,8 @@
     user-select: none;
     border-radius: 50%;
     justify-content: center;
+    color: var(--mud-palette-white);
+    background-color: var(--mud-palette-grey-light);
 
     &.mud-avatar-small {
         width: 24px;
@@ -27,25 +30,9 @@
     }
 }
 
-.mud-avatar-color-default {
-    color: #fff;
-    background-color: #bdbdbd;
-}
-
-.mud-avatar-color-primary {
-    color: var(--mud-theme-on-primary);
-    background-color: var(--mud-theme-primary);
-}
-
-.mud-avatar-color-secondary {
-    color: var(--mud-theme-on-secondary);
-    background-color: var(--mud-theme-secondary);
-}
-
-
 
 .mud-avatar-rounded {
-    border-radius: var(--mud-theme-border-radius-default);
+    border-radius: var(--mud-default-borderradius);
 }
 
 .mud-avatar-square {

@@ -1,8 +1,8 @@
 ﻿
 .mud-paper {
-    color: var(--mud-theme-on-surface);
-    background-color: var(--mud-theme-surface);
-    border-radius: var(--mud-theme-border-radius-default);
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-surface);
+    border-radius: var(--mud-default-borderradius);
     transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
 
@@ -11,5 +11,5 @@
 }
 
 .mud-paper-outlined {
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--mud-palette-lines-default);
 }

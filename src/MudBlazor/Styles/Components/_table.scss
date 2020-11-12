@@ -120,11 +120,11 @@
 
         .mud-table-head {
             & * .mud-table-cell:first-child {
-                border-radius: var(--mud-theme-border-radius-default) 0px 0px 0px;
+                border-radius: var(--mud-default-borderradius) 0px 0px 0px;
             }
 
             & * .mud-table-cell {
-                background-color: var(--mud-theme-surface);
+                background-color: var(--mud-palette-surface);
                 position: sticky;
                 top: 0;
             }

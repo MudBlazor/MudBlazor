@@ -1821,6 +1821,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void TextFieldDenseExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TextFieldDenseExample>();
+        }
+
+
+        [Test]
         public void TextFieldFormPropsExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -2052,13 +2063,24 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void ColorsClassExample_Test()
+        public void ColorsMaterialExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<ColorsClassExample>();
+                var comp = ctx.RenderComponent<ColorsMaterialExample>();
+        }
+
+
+        [Test]
+        public void ColorsMudBlazorExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<ColorsMudBlazorExample>();
         }
 
 
