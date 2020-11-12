@@ -1,0 +1,23 @@
+﻿@using MudBlazor;
+@namespace MudBlazor.UnitTests
+
+Value: @Selected
+<br />
+<MudSelect @bind-Value="@Selected">
+    @foreach (MyEnum item in Enum.GetValues(typeof(MyEnum)))
+    {
+        <MudSelectItem Value="@item">@item</MudSelectItem>
+    }
+</MudSelect>
+
+@code {
+    public static string __description__ = "Initial Text should be the enum's default value.";
+
+    public MyEnum Selected { get; set; }
+
+    public enum MyEnum
+    {
+        First,
+        Second,
+    }
+}

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
-
+using static MudBlazor.UnitTests.SelectWithEnumTest;
 
 namespace MudBlazor.UnitTests
 {
@@ -109,5 +109,20 @@ namespace MudBlazor.UnitTests
 
         }
 
+        [Test]
+        public async Task SelectWithEnumTest()
+        {
+            // Initial Text should be enums default value
+            // setup
+            using var ctx = new Bunit.TestContext();
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            var comp = ctx.RenderComponent<SelectWithEnumTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var select = comp.FindComponent<MudSelect<MyEnum>>();
+            select.Instance.Value.Should().Be(default(MyEnum));
+            select.Instance.Text.Should().Be(default(MyEnum).ToString());
+        }
     }
 }
