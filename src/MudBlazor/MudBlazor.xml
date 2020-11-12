@@ -2381,6 +2381,11 @@
             Child content of component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudDrawer.Open">
+            <summary>
+            Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudDrawerHeader.ChildContent">
             <summary>
             Child content of component.
