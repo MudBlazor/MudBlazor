@@ -1,6 +1,13 @@
-﻿[
-  {
-    "outputFile": "wwwroot/MudBlazor.min.css",
-    "inputFile": "Styles/MudBlazor.scss"
+﻿{
+  "Minifiers": {
+    "GZip": false
+  },
+  "Autoprefix": {
+    "ProcessingOptions": {
+      "SourceMap": false
+    }
+  },
+  "Output": {
+    "Directory": ".\\wwwroot"
   }
-]
+}
