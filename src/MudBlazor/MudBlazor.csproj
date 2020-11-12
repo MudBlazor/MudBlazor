@@ -39,6 +39,7 @@
   </ItemGroup>
 
   <Target Name="CompileStaticAssets" AfterTargets="AfterBuild">
+    <Exec Command="dotnet tool restore" />
     <Exec Command="dotnet webcompiler -c .\compilerconfig.json -f .\compilerconfig.files.conf" StandardOutputImportance="high" />
   </Target>
 
