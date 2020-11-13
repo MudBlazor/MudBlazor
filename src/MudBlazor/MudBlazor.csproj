@@ -26,6 +26,8 @@
   <ItemGroup>
     <Content Remove="bundleconfig.json" />
     <Content Remove="compilerconfig.json" />
+    <Content Remove="compilerconfig.build.conf" />
+    <Content Remove="compilerconfig.build.files.conf" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,7 +45,7 @@
   </Target>
 
   <Target Name="PreBuild" AfterTargets="ToolRestore">
-      <Exec Command="dotnet webcompiler -c compilerconfig.json -f compilerconfig.files.conf" StandardOutputImportance="high" />
+      <Exec Command="dotnet webcompiler -c compilerconfig.build.json -f compilerconfig.build.files.conf" StandardOutputImportance="high" />
   </Target>
 
   <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
