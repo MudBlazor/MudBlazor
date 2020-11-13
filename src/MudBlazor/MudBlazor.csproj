@@ -40,7 +40,7 @@
 
   <Target Name="CompileStaticAssets" AfterTargets="AfterBuild">
     <Exec Command="dotnet tool restore" />
-    <Exec Command="dotnet webcompiler -c .\compilerconfig.json -f .\compilerconfig.files.conf" StandardOutputImportance="high" />
+    <Exec Command="dotnet webcompiler -c compilerconfig.json -f compilerconfig.files.conf" StandardOutputImportance="high" />
   </Target>
 
   <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
