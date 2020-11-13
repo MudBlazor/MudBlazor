@@ -2290,29 +2290,34 @@ public const string SelectInteractiveExample = @"<MudGrid>
 
 public const string SelectUsageExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect T=""string"" Label=""Food"" ValueChanged=""OnSelectedValue"">
-            <MudSelectItem Value=""@(""pizza"")"">Pizza</MudSelectItem>
-            <MudSelectItem Value=""@(""burgers"")"">Burgers</MudSelectItem>
-            <MudSelectItem Value=""@(""hotdog"")"">Hot Dogs</MudSelectItem>
+        <MudSelect Label=""Select fast-food"" @bind-Value=""stringValue"" HelperText=""String"">
+            <MudSelectItem Value=""@(""Pizza"")"">Pizza</MudSelectItem>
+            <MudSelectItem Value=""@(""Burger"")"">Burger</MudSelectItem>
+            <MudSelectItem Value=""@(""Hotdog"")"">Hot Dog</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect T=""string"" Label=""Food"" ValueChanged=""OnSelectedValue"" HelperText=""With helper text"">
-            <MudSelectItem Value=""@(""pizza"")"">Pizza</MudSelectItem>
-            <MudSelectItem Value=""@(""burgers"")"">Burgers</MudSelectItem>
-            <MudSelectItem Value=""@(""hotdog"")"">Hot Dogs</MudSelectItem>
+        <MudSelect Label=""Select drink"" @bind-Value=""enumValue"" HelperText=""Enum"">
+            @foreach (Drink item in Enum.GetValues(typeof(Drink)))
+            {
+                <MudSelectItem Value=""@item"">@item</MudSelectItem>
+            }
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect T=""string"" Placeholder=""Brands"" ValueChanged=""OnSelectedValue"" HelperText=""Disabled"" Disabled=""true"">
-            <MudSelectItem Value=""@(""volvo"")"">Volvo</MudSelectItem>
-            <MudSelectItem Value=""@(""saab"")"">Saab</MudSelectItem>
-            <MudSelectItem Value=""@(""scania"")"">Scania</MudSelectItem>
+        <MudSelect Placeholder=""Select culture"" @bind-Value=""cultureValue"" HelperText=""CultureInfo"" ToStringFunc=""@convertFunc"">
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""en-US""))"">English</MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""de-AT""))"">German</MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""pt-BR""))"">Portugese</MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""zh-CN""))"">Chinese</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudText Class=""mb-n3"" Typo=""Typo.body2"">
-            Selected value: @Item
+            Selected values: 
+            <MudChip>@(stringValue ?? ""Select fast-food"")</MudChip>
+            <MudChip Color=""Color.Primary"">@enumValue</MudChip>
+            <MudChip Color=""Color.Secondary"">@(cultureValue?.DisplayName ?? ""Select culture"")</MudChip>
         </MudText>
     </MudItem>
 </MudGrid>
@@ -2320,26 +2325,16 @@ public const string SelectUsageExample = @"<MudGrid>
 
 
 @code {
-
-    private string Item { get; set; } = ""Nothing selected"";
-
-
-    private void OnSelectedValue(string value)
-    {
-        Item = value;
-}
-
+    private string stringValue { get; set; }
+    private Drink enumValue { get; set; }
+    public enum Drink { Tee, SparklingWater, SoftDrink, Cider, Beer, Wine, Moonshine }
+    private CultureInfo cultureValue { get; set; }
+    private Func<CultureInfo, string> convertFunc = ci => ci?.DisplayName;
 }";
 
 public const string SelectVariantsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelectString Label=""Text"">
-            <MudSelectItemString Value=""foo"">Foo</MudSelectItemString>
-            <MudSelectItemString Value=""bar"">Bar</MudSelectItemString>
-        </MudSelectString>
-    </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect T=""string"" Label=""Text"" Variant=""Variant.Filled"">
+        <MudSelect T=""string"" Label=""Text"">
             <MudSelectItem Value=""@(""foo"")"">Foo</MudSelectItem>
             <MudSelectItem Value=""@(""bar"")"">Bar</MudSelectItem>
         </MudSelect>
@@ -2349,6 +2344,12 @@ public const string SelectVariantsExample = @"<MudGrid>
             <MudSelectItem Value=""4.50"">4.50</MudSelectItem>
             <MudSelectItem Value=""21.99"">21.99</MudSelectItem>
         </MudSelect>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSelectString Label=""Text"" Variant=""Variant.Filled"">
+            <MudSelectItemString Value=""foo"">Foo</MudSelectItemString>
+            <MudSelectItemString Value=""bar"">Bar</MudSelectItemString>
+        </MudSelectString>
     </MudItem>
 </MudGrid>";
 
