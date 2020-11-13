@@ -13,16 +13,45 @@
                         <div class="@GetTabClass(panel)" @onclick=@( () => ActivatePanel(panel) )>
                             @if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
                             {
-                                @panel.Text
+                                @if (panel.LiveData != null)
+                                {
+                                    <MudBadge Content="@panel.LiveData" Color="@Color.Primary">
+                                        @panel.Text
+                                    </MudBadge>
+                                }
+                                else
+                                {
+                                    @panel.Text
+                                }
                             }
                             else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
                             {
-                                <MudIcon Icon="@panel.Icon"/>
+                                @if (panel.LiveData != null)
+                                {
+                                    <MudBadge Content="@panel.LiveData" Color="@Color.Primary">
+                                        <MudIcon Icon="@panel.Icon"/>
+                                    </MudBadge>
+                                }
+                                else
+                                {
+                                    <MudIcon Icon="@panel.Icon"/>
+                                }
                             }
                             else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
                             {
-                                <MudIcon Icon="@panel.Icon" Class="mud-tab-icon-text"/>
-                                @panel.Text
+
+                                @if (panel.LiveData != null)
+                                {
+                                    <MudIcon Icon="@panel.Icon" Class="mud-tab-icon-text"/>
+                                    <MudBadge Content="@panel.LiveData" Color="@Color.Primary">
+                                        @panel.Text
+                                    </MudBadge>
+                                }
+                                else
+                                {
+                                    <MudIcon Icon="@panel.Icon" Class="mud-tab-icon-text"/>
+                                    @panel.Text
+                                }
                             }
                         </div>
                         }
