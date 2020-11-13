@@ -29,7 +29,12 @@
     /// <summary>
     /// Optional information to be showed into a badge
     /// </summary>
-    [Parameter] public object LiveData { get; set; }
+    [Parameter] public object BadgeData { get; set; }
+
+    /// <summary>
+    /// The color of the badge.
+    /// </summary>
+    [Parameter] public Color BadgeColor { get; set; } = Color.Primary;
 
     /// <summary>
     /// Child content of component.
