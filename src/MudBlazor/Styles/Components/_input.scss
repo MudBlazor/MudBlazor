@@ -1,436 +1,451 @@
-﻿
+﻿.mud-input {
+  position: relative;
+  color: var(--mud-palette-text-primary);
+  cursor: text;
+  display: inline-flex;
+  font-size: 1rem;
+  box-sizing: border-box;
+  align-items: center;
+  font-weight: 400;
+  line-height: 1.1876em;
+  letter-spacing: 0.00938em;
+  z-index: 10;
 
+  &.mud-input-full-width {
+    width: 100%;
+  }
 
-.mud-input {
+  &.mud-disabled {
+    color: var(--mud-palette-text-disabled);
+    cursor: default;
+  }
+
+  &.mud-input-underline {
+    &:before {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      content: "\00a0";
+      position: absolute;
+      transition: border-bottom 0.2s, background-color 0.2s;
+      border-bottom: 1px solid var(--mud-palette-lines-inputs);
+      pointer-events: none;
+    }
+
+    &:hover:not(.mud-disabled):before {
+      border-bottom: 1px solid var(--mud-palette-action-default);
+    }
+
+    &:after {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      content: "";
+      position: absolute;
+      transform: scaleX(0);
+      transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+      border-bottom: 2px solid var(--mud-palette-primary);
+      pointer-events: none;
+    }
+
+    &.mud-disabled:before {
+      border-bottom-style: dotted;
+    }
+
+    &.mud-input-error:after {
+      transform: scaleX(1);
+      border-bottom-color: var(--mud-palette-error);
+    }
+  }
+
+  &.mud-input-filled {
     position: relative;
-    color: var(--mud-palette-text-primary);
-    cursor: text;
-    display: inline-flex;
-    font-size: 1rem;
-    box-sizing: border-box;
-    align-items: center;
-    font-weight: 400;
-    line-height: 1.1876em;
-    letter-spacing: 0.00938em;
-    z-index: 10;
+    transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+    background-color: rgba(0, 0, 0, 0.09);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
 
-    &.mud-input-full-width {
-        width: 100%;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.13);
+    }
+
+    &.mud-focused {
+      background-color: rgba(0, 0, 0, 0.09);
     }
 
     &.mud-disabled {
-        color: var(--mud-palette-text-disabled);
-        cursor: default;
+      background-color: rgba(0, 0, 0, 0.12);
+    }
+
+    &.mud-input-adorned-start {
+      padding-left: 12px;
+    }
+
+    &.mud-input-adorned-end {
+      padding-right: 12px;
     }
 
     &.mud-input-underline {
-        &:before {
-            left: 0;
-            right: 0;
-            bottom: 0;
-            content: "\00a0";
-            position: absolute;
-            transition: border-bottom .2s,background-color .2s;
-            border-bottom: 1px solid var(--mud-palette-lines-inputs);
-            pointer-events: none;
-        }
+      &:before {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        content: "\00a0";
+        position: absolute;
+        transition: border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        border-bottom: 1px solid var(--mud-palette-lines-inputs);
+        pointer-events: none;
+      }
 
-        &:hover:not(.mud-disabled):before {
-            border-bottom: 1px solid var(--mud-palette-action-default);
-        }
+      &:after {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        content: "";
+        position: absolute;
+        transform: scaleX(0);
+        transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+        border-bottom: 2px solid var(--mud-palette-primary);
+        pointer-events: none;
+      }
 
-        &:after {
-            left: 0;
-            right: 0;
-            bottom: 0;
-            content: "";
-            position: absolute;
-            transform: scaleX(0);
-            transition: transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
-            border-bottom: 2px solid var(--mud-palette-primary);
-            pointer-events: none;
-        }
+      &:hover:before {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.87);
+      }
 
-        &.mud-disabled:before {
-            border-bottom-style: dotted;
-        }
+      &.mud-disabled:before {
+        border-bottom-style: dotted;
+      }
 
-        &.mud-input-error:after {
-            transform: scaleX(1);
-            border-bottom-color: var(--mud-palette-error);
-        }
+      &.mud-input-error:after {
+        transform: scaleX(1);
+        border-bottom-color: var(--mud-palette-error);
+      }
+    }
+  }
+
+  &.mud-input-outlined {
+    position: relative;
+    border-width: 0px;
+
+    & .mud-input-outlined-border {
+      display: flex;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      height: 100%;
+      text-align: left;
+      pointer-events: none;
+      border-radius: 4px;
+      border-color: var(--mud-palette-lines-inputs);
+      border-width: 1px;
+      border-style: solid;
     }
 
-    &.mud-input-filled {
-        position: relative;
-        transition: background-color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
-        background-color: rgba(0, 0, 0, 0.09);
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-
-        &:hover {
-            background-color: rgba(0, 0, 0, 0.13);
-        }
-
-        &.mud-focused {
-            background-color: rgba(0, 0, 0, 0.09);
-        }
-
-        &.mud-disabled {
-            background-color: rgba(0, 0, 0, 0.12);
-        }
-
-        &.mud-input-adorned-start {
-            padding-left: 12px;
-        }
-
-        &.mud-input-adorned-end {
-            padding-right: 12px;
-        }
-
-        &.mud-input-underline {
-            &:before {
-                left: 0;
-                right: 0;
-                bottom: 0;
-                content: "\00a0";
-                position: absolute;
-                transition: border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-                border-bottom: 1px solid var(--mud-palette-lines-inputs);
-                pointer-events: none;
-            }
-
-            &:after {
-                left: 0;
-                right: 0;
-                bottom: 0;
-                content: "";
-                position: absolute;
-                transform: scaleX(0);
-                transition: transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
-                border-bottom: 2px solid var(--mud-palette-primary);
-                pointer-events: none;
-            }
-
-            &:hover:before {
-                border-bottom: 1px solid rgba(0, 0, 0, 0.87);
-            }
-
-            &.mud-disabled:before {
-                border-bottom-style: dotted;
-            }
-
-            &.mud-input-error:after {
-                transform: scaleX(1);
-                border-bottom-color: var(--mud-palette-error);
-            }
-        }
+    &:focus-within .mud-input-outlined-border {
+      border-width: 2px;
+      border-color: var(--mud-palette-primary);
     }
 
-    &.mud-input-outlined {
-        position: relative;
-        border-radius: 4px;
-        border-color: var(--mud-palette-lines-inputs);
-        border-style: solid;
-        border-width: 1px;
-
-        &.mud-input-error .mud-input-outlined-notched-outline {
-            border-color: var(--mud-palette-error);
-        }
-
-        &.mud-disabled .mud-input-root-outlined {
-            border-color: var(--mud-palette-action-disabled);
-        }
-
-        &.mud-input-adorned-start {
-            padding-left: 14px;
-        }
-
-        &.mud-input-adorned-end {
-            padding-right: 14px;
-        }
+    &.mud-input-error .mud-input-outlined-border {
+      border-color: var(--mud-palette-error);
     }
+
+    &.mud-input-error .mud-input-outlined-border {
+      border-color: var(--mud-palette-error);
+    }
+
+    &.mud-disabled .mud-input-outlined-border {
+      border-color: var(--mud-palette-action-disabled);
+    }
+
+    &.mud-input-adorned-start {
+      padding-left: 14px;
+    }
+
+    &.mud-input-adorned-end {
+      padding-right: 14px;
+    }
+  }
 }
+
 .mud-input:focus-within.mud-input-underline:after {
-    transform: scaleX(1);
+  transform: scaleX(1);
 }
-
 
 .mud-input > input {
+  &.mud-input-root {
+    font: inherit;
+    color: currentColor;
+    width: 100%;
+    border: 0;
+    height: 1.1876em;
+    margin: 0;
+    display: block;
+    padding: 6px 0 7px;
+    min-width: 0;
+    background: none;
+    position: relative;
+    box-sizing: content-box;
+    letter-spacing: inherit;
+    -webkit-tap-highlight-color: transparent;
 
-    &.mud-input-root {
-        font: inherit;
-        color: currentColor;
-        width: 100%;
-        border: 0;
-        height: 1.1876em;
-        margin: 0;
-        display: block;
-        padding: 6px 0 7px;
-        min-width: 0;
-        background: none;
-        position: relative;
-        box-sizing: content-box;
-        letter-spacing: inherit;
-        -webkit-tap-highlight-color: transparent;
-
-        @include inputplaceholder {
-            color: currentColor;
-            opacity: 0.42;
-            transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-        }
-
-        &.mud-input-root-margin-dense {
-            padding-top: 3px;
-        }
-
-        &.mud-input-root-multiline {
-            height: auto;
-            resize: none;
-            padding: 0;
-        }
-
-        &.mud-input-root-type-search {
-            -moz-appearance: textfield;
-            -webkit-appearance: textfield;
-        }
-
-        &:focus {
-            outline: 0;
-        }
-
-        &:invalid {
-            box-shadow: none;
-        }
-
-        &:disabled {
-            opacity: 1;
-        }
-
-        &.mud-input-root-filled {
-            padding: 27px 12px 10px;
-
-            &.mud-input-root-margin-dense {
-                padding-top: 23px;
-                padding-bottom: 6px;
-            }
-
-            &:-webkit-autofill {
-                border-top-left-radius: inherit;
-                border-top-right-radius: inherit;
-            }
-
-            &.mud-input-root-hidden-label {
-                padding-top: 18px;
-                padding-bottom: 19px;
-
-                &.mud-input-root-margin-dense {
-                    padding-top: 10px;
-                    padding-bottom: 11px;
-                }
-            }
-
-            &.mud-input-root-multiline {
-                padding: 0;
-            }
-
-            &.mud-input-root-adorned-start {
-                padding-left: 0;
-            }
-
-            &.mud-input-root-adorned-end {
-                padding-right: 0;
-            }
-        }
+    @include inputplaceholder {
+      color: currentColor;
+      opacity: 0.42;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     }
 
+    &.mud-input-root-margin-dense {
+      padding-top: 3px;
+    }
 
-    &.mud-input-root-outlined {
-        padding: 18.5px 14px;
+    &.mud-input-root-multiline {
+      height: auto;
+      resize: none;
+      padding: 0;
+    }
 
-        &:hover {
-            border-color: var(--mud-palette-lines-inputs);
-        }
+    &.mud-input-root-type-search {
+      -moz-appearance: textfield;
+      -webkit-appearance: textfield;
+    }
 
-        &:focus {
-            border-color: var(--mud-palette-primary);
-        }
+    &:focus {
+      outline: 0;
+    }
 
-        &.mud-input-root:-webkit-autofill {
-            border-radius: inherit;
-        }
+    &:invalid {
+      box-shadow: none;
+    }
+
+    &:disabled {
+      opacity: 1;
+    }
+
+    &.mud-input-root-filled {
+      padding: 27px 12px 10px;
+
+      &.mud-input-root-margin-dense {
+        padding-top: 23px;
+        padding-bottom: 6px;
+      }
+
+      &:-webkit-autofill {
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+      }
+
+      &.mud-input-root-hidden-label {
+        padding-top: 18px;
+        padding-bottom: 19px;
 
         &.mud-input-root-margin-dense {
-            padding-top: 10.5px;
-            padding-bottom: 10.5px;
+          padding-top: 10px;
+          padding-bottom: 11px;
         }
+      }
 
-        &.mud-input-root-adorned-start {
-            padding-left: 0;
-        }
+      &.mud-input-root-multiline {
+        padding: 0;
+      }
 
-        &.mud-input-root-adorned-end {
-            padding-right: 0;
-        }
+      &.mud-input-root-adorned-start {
+        padding-left: 0;
+      }
+
+      &.mud-input-root-adorned-end {
+        padding-right: 0;
+      }
     }
+  }
+
+  &.mud-input-root-outlined {
+    padding: 18.5px 14px;
+
+    &:hover {
+      border-color: var(--mud-palette-lines-inputs);
+    }
+
+    &:focus {
+      border-color: var(--mud-palette-primary);
+    }
+
+    &.mud-input-root:-webkit-autofill {
+      border-radius: inherit;
+    }
+
+    &.mud-input-root-margin-dense {
+      padding-top: 10.5px;
+      padding-bottom: 10.5px;
+    }
+
+    &.mud-input-root-adorned-start {
+      padding-left: 0;
+    }
+
+    &.mud-input-root-adorned-end {
+      padding-right: 0;
+    }
+  }
 }
 
 .mud-input > textarea {
+  &.mud-input-root {
+    font: inherit;
+    color: currentColor;
+    width: 100%;
+    border: 0;
+    height: auto;
+    margin: 6px 0 7px;
+    padding: 0;
+    display: block;
+    min-width: 0;
+    background: none;
+    position: relative;
+    box-sizing: content-box;
+    letter-spacing: inherit;
+    -webkit-tap-highlight-color: transparent;
+    height: auto;
+    resize: none;
+    cursor: auto;
 
-    &.mud-input-root {
-        font: inherit;
-        color: currentColor;
-        width: 100%;
-        border: 0;
-        height: auto;
-        margin: 6px 0 7px;
-        padding: 0;
-        display: block;
-        min-width: 0;
-        background: none;
-        position: relative;
-        box-sizing: content-box;
-        letter-spacing: inherit;
-        -webkit-tap-highlight-color: transparent;
-        height: auto;
-        resize: none;
-        cursor: auto;
-
-        @include inputplaceholder {
-            color: currentColor;
-            opacity: 0.42;
-            transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-        }
-
-        &.mud-input-root-margin-dense {
-            margin-top: 3px;
-        }
-
-        &.mud-input-root-type-search {
-            -moz-appearance: textfield;
-            -webkit-appearance: textfield;
-        }
-
-        &:focus {
-            outline: 0;
-        }
-
-        &:invalid {
-            box-shadow: none;
-        }
-
-        &:disabled {
-            opacity: 1;
-        }
-
-        &.mud-input-root-filled {
-            margin: 27px 12px 10px;
-
-            &.mud-input-root-margin-dense {
-                margin-top: 23px;
-                margin-bottom: 6px;
-            }
-
-            &:-webkit-autofill {
-                border-top-left-radius: inherit;
-                border-top-right-radius: inherit;
-            }
-
-            &.mud-input-root-hidden-label {
-                margin-top: 18px;
-                margin-bottom: 19px;
-
-                &.mud-input-root-margin-dense {
-                    margin-top: 10px;
-                    margin-bottom: 11px;
-                }
-            }
-
-            &.mud-input-root-adorned-start {
-                margin-left: 0;
-            }
-
-            &.mud-input-root-adorned-end {
-                margin-right: 0;
-            }
-        }
-
-        &::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-            z-index: 1;
-            cursor: crosshair;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background: var(--mud-palette-lines-inputs);
-            border-radius: 1px;
-        }
-
-        &::-webkit-scrollbar-track {
-            background: transparent;
-        }
+    @include inputplaceholder {
+      color: currentColor;
+      opacity: 0.42;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     }
 
+    &.mud-input-root-margin-dense {
+      margin-top: 3px;
+    }
 
-    &.mud-input-root-outlined {
-        margin: 18.5px 14px;
+    &.mud-input-root-type-search {
+      -moz-appearance: textfield;
+      -webkit-appearance: textfield;
+    }
 
-        &:hover {
-            border-color: var(--mud-palette-lines-inputs);
-        }
+    &:focus {
+      outline: 0;
+    }
 
-        &:focus {
-            border-color: var(--mud-palette-primary);
-        }
+    &:invalid {
+      box-shadow: none;
+    }
 
-        &.mud-input-root:-webkit-autofill {
-            border-radius: inherit;
-        }
+    &:disabled {
+      opacity: 1;
+    }
+
+    &.mud-input-root-filled {
+      margin: 27px 12px 10px;
+
+      &.mud-input-root-margin-dense {
+        margin-top: 23px;
+        margin-bottom: 6px;
+      }
+
+      &:-webkit-autofill {
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+      }
+
+      &.mud-input-root-hidden-label {
+        margin-top: 18px;
+        margin-bottom: 19px;
 
         &.mud-input-root-margin-dense {
-            margin-top: 10.5px;
-            margin-bottom: 10.5px;
+          margin-top: 10px;
+          margin-bottom: 11px;
         }
+      }
 
-        &.mud-input-root-adorned-start {
-            margin-left: 0;
-        }
+      &.mud-input-root-adorned-start {
+        margin-left: 0;
+      }
 
-        &.mud-input-root-adorned-end {
-            margin-right: 0;
-        }
+      &.mud-input-root-adorned-end {
+        margin-right: 0;
+      }
     }
+
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+      z-index: 1;
+      cursor: crosshair;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--mud-palette-lines-inputs);
+      border-radius: 1px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+  }
+
+  &.mud-input-root-outlined {
+    margin: 18.5px 14px;
+
+    &:hover {
+      border-color: var(--mud-palette-lines-inputs);
+    }
+
+    &:focus {
+      border-color: var(--mud-palette-primary);
+    }
+
+    &.mud-input-root:-webkit-autofill {
+      border-radius: inherit;
+    }
+
+    &.mud-input-root-margin-dense {
+      margin-top: 10.5px;
+      margin-bottom: 10.5px;
+    }
+
+    &.mud-input-root-adorned-start {
+      margin-left: 0;
+    }
+
+    &.mud-input-root-adorned-end {
+      margin-right: 0;
+    }
+  }
 }
-
 
 .mud-input-adornment {
-    height: 0.01em;
-    display: flex;
-    max-height: 2em;
-    align-items: center;
-    white-space: nowrap;
+  height: 0.01em;
+  display: flex;
+  max-height: 2em;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .mud-input-adornment-start {
-    &.mud-input-root-filled-shrink {
-        margin-top: 16px;
-    }
+  &.mud-input-root-filled-shrink {
+    margin-top: 16px;
+  }
 }
 
 .mud-input-adornment-start {
-    &.mud-text {
-        margin-right: 8px;
-    }
-    &.mud-icon{
-
-    }
+  &.mud-text {
+    margin-right: 8px;
+  }
+  &.mud-icon {
+  }
 }
 
 .mud-input-adornment-end {
-    margin-left: 8px;
+  margin-left: 8px;
 }
 
 .mud-input-adornment-disable-pointerevents {
-    pointer-events: none;
+  pointer-events: none;
 }
