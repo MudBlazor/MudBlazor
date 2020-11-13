@@ -712,20 +712,20 @@ public const string ContainerFluidExample = @"<MudPaper>
 
 public const string DatePickerBasicUsageExample = @"<MudDatePicker Label=""Picker in menu"" Value=""2020-10-19""/>
 <MudDatePicker Label=""Only Calendar"" Value=""2020-10-19"" DisableToolbar=""true"" HelperText=""No header"" />
-<MudDatePicker Label=""Date Format"" InputVariant=""Variant.Outlined"" HelperText=""For custom cultures"" DateFormat=""dd/MM/yyyy"" Date=""@(new System.DateTime(2020,10,19))"" />";
+<MudDatePicker Label=""Date Format"" HelperText=""For custom cultures"" DateFormat=""dd/MM/yyyy"" Date=""@(new System.DateTime(2020,10,19))"" />";
 
 public const string DatePickerColorExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Value=""2020-10-19"" />
-<MudDatePicker PickerVariant=""PickerVariant.Static"" InputVariant=""Variant.Outlined"" Color=""Color.Secondary"" Rounded=""true"" Value=""2020-10-19"" />";
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Value=""2020-10-19"" />";
 
 public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""1"" Value=""2020-10-19"" />
-<MudDatePicker PickerVariant=""PickerVariant.Static"" InputVariant=""Variant.Outlined"" Rounded=""true"" Elevation=""12"" Value=""2020-10-19"" />";
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""12"" Value=""2020-10-19"" />";
 
 public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Value=""2020-10-19""/>
-<MudDatePicker PickerVariant=""PickerVariant.Static"" InputVariant=""Variant.Outlined"" Orientation=""Orientation.Landscape"" Value=""2020-10-19""/>";
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Value=""2020-10-19""/>";
 
 public const string DatePickeViewsExample = @"<MudDatePicker Label=""Year"" OpenTo=""OpenTo.Year"" Value=""2020-10-19""/>
 <MudDatePicker Label=""Month"" OpenTo=""OpenTo.Month"" Value=""2020-10-19"" />
-<MudDatePicker Label=""Date"" InputVariant=""Variant.Outlined"" Value=""2020-10-19"" />";
+<MudDatePicker Label=""Date""  Value=""2020-10-19"" />";
 
 public const string DialogBodyScrollableExample = @"<MudDialog DisableSidePadding=""true"">
     <DialogContent>
