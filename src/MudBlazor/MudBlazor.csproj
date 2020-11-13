@@ -38,9 +38,12 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
-  <Target Name="CompileStaticAssets" AfterTargets="AfterBuild">
-    <Exec Command="dotnet tool restore" />
-    <Exec Command="dotnet webcompiler -c compilerconfig.json -f compilerconfig.files.conf" StandardOutputImportance="high" />
+  <Target Name="ToolRestore" BeforeTargets="PreBuildEvent">
+      <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
+  </Target>
+
+  <Target Name="PreBuild" AfterTargets="ToolRestore">
+      <Exec Command="dotnet webcompiler -c compilerconfig.json -f compilerconfig.files.conf" StandardOutputImportance="high" />
   </Target>
 
   <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
