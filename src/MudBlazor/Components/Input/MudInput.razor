@@ -13,19 +13,23 @@
     @if (Lines > 1)
     {
         <textarea rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" 
-                   @bind-value="@Text" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
-                  @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp">
+                  @bind-value="@Text" @bind-value:event="@((Immediate ? "oninput" : "onchange"))" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp">
             @Text
         </textarea>
     }
     else
     {
-        <input @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@Text" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
-           placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp" />
+        <input @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@Text" @bind-value:event="@((Immediate ? "oninput" : "onchange"))" 
+                placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp" />
     }
 
     @if (Adornment == Adornment.End)
     {
         <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
+    }
+
+    @if (Variant == Variant.Outlined)
+    {
+        <div class="mud-input-outlined-border"></div>
     }
 </div>
