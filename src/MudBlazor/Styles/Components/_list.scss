@@ -45,6 +45,10 @@
     &:hover {
         background-color: var(--mud-palette-action-default-hover);
     }
+
+    &:focus {
+        background-color: var(--mud-palette-action-default-hover);
+    }
 }
 
 .mud-list-item-gutters {
