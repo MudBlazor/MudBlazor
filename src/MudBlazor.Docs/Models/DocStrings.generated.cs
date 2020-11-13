@@ -2563,6 +2563,10 @@ public const string MudTabPanel_Icon = @"Icon placed before the text if set.";
 
 public const string MudTabPanel_Disabled = @"If true, the tabpanel will be disabled.";
 
+public const string MudTabPanel_BadgeData = @"Optional information to be showed into a badge";
+
+public const string MudTabPanel_BadgeColor = @"The color of the badge.";
+
 public const string MudTabPanel_ChildContent = @"Child content of component.";
 
 public const string MudTabPanel_Class = @"User class names, separated by space";
