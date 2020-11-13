@@ -10,50 +10,25 @@
                     <div class="@WrapperClassnames">
                         @foreach (MudTabPanel panel in Panels)
                         {
-                        <div class="@GetTabClass(panel)" @onclick=@( () => ActivatePanel(panel) )>
-                            @if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
-                            {
-                                @if (panel.LiveData != null)
-                                {
-                                    <MudBadge Content="@panel.LiveData" Color="@Color.Primary">
-                                        @panel.Text
-                                    </MudBadge>
-                                }
-                                else
+                            <div class="@GetTabClass(panel)" @onclick=@( () => ActivatePanel(panel) )>
+                                @if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
                                 {
                                     @panel.Text
                                 }
-                            }
-                            else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
-                            {
-                                @if (panel.LiveData != null)
+                                else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
                                 {
-                                    <MudBadge Content="@panel.LiveData" Color="@Color.Primary">
-                                        <MudIcon Icon="@panel.Icon"/>
-                                    </MudBadge>
+                                    <MudIcon Icon="@panel.Icon" />
                                 }
-                                else
+                                else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
                                 {
-                                    <MudIcon Icon="@panel.Icon"/>
-                                }
-                            }
-                            else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
-                            {
-
-                                @if (panel.LiveData != null)
-                                {
-                                    <MudIcon Icon="@panel.Icon" Class="mud-tab-icon-text"/>
-                                    <MudBadge Content="@panel.LiveData" Color="@Color.Primary">
-                                        @panel.Text
-                                    </MudBadge>
-                                }
-                                else
-                                {
-                                    <MudIcon Icon="@panel.Icon" Class="mud-tab-icon-text"/>
+                                    <MudIcon Icon="@panel.Icon" Class="mud-tab-icon-text" />
                                     @panel.Text
                                 }
-                            }
-                        </div>
+                                @if (panel.BadgeData != null)
+                                {
+                                    <MudBadge Content="@panel.BadgeData" Color="@panel.BadgeColor" Class="mud-tab-badge" />
+                                }
+                            </div>
                         }
                         @if (!Vertical)
                         {
@@ -72,5 +47,5 @@
         </div>
     </CascadingValue>
 </div>
-    
+
 
