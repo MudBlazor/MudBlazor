@@ -2526,6 +2526,11 @@
             If true, the tabpanel will be disabled.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTabPanel.LiveData">
+            <summary>
+            Optional information to be showed into a badge
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTabPanel.ChildContent">
             <summary>
             Child content of component.

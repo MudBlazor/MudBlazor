@@ -27,6 +27,11 @@
     [Parameter] public bool Disabled { get; set; }
 
     /// <summary>
+    /// Optional information to be showed into a badge
+    /// </summary>
+    [Parameter] public object LiveData { get; set; }
+
+    /// <summary>
     /// Child content of component.
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
