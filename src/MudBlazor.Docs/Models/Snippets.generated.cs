@@ -1071,57 +1071,6 @@ public const string DrawerClippingExample = @"@layout IframeLayout
     }
 }";
 
-public const string DrawerCombinedExample = @"@layout IframeLayout
-@page ""/iframe/docs/examples/drawer/combined""
-
-
-<MudLayout>
-    <MudAppBar Elevation=""1"">
-        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
-        @if (clipped)
-        {
-            <MudText Typo=""Typo.h6"" Class=""ml-3"">My App</MudText>
-        }
-        <MudAppBarSpacer />
-        <MudIconButton Icon=""@Icons.Material.BorderStyle"" Color=""Color.Inherit"" OnClick=""@ToggleClipped"" />
-    </MudAppBar>
-    <MudDrawer Open=""@open"" Clipped=""@clipped"" Elevation=""1"">
-        @if (!clipped)
-        {
-            <MudDrawerHeader>
-                <MudText Typo=""Typo.h6"">My App</MudText>
-            </MudDrawerHeader>
-        }
-        <MudNavMenu>
-            <MudNavLink Match=""NavLinkMatch.All"">Store</MudNavLink>
-            <MudNavLink Match=""NavLinkMatch.All"">Library</MudNavLink>
-            <MudNavLink Match=""NavLinkMatch.All"">Community</MudNavLink>
-        </MudNavMenu>
-    </MudDrawer>
-    <MudMainContent>
-        <MudContainer Class=""pt-16 px-16"">
-            <MudText Color=""Color.Secondary"" GutterBottom=""true"">Click the right side button in the appbar to change layout.</MudText>
-            <LoremIpsum />
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
-
-
-@code{
-    bool open = true;
-    bool clipped = false;
-
-    void ToggleDrawer()
-    {
-        open = !open;
-    }
-
-    void ToggleClipped()
-    {
-        clipped = !clipped;
-    }
-}";
-
 public const string DrawerDoubleExample = @"@layout IframeLayout
 @page ""/iframe/docs/examples/drawer/double""
 
