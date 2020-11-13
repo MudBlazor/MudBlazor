@@ -2791,25 +2791,23 @@ public const string TabsVerticalExample = @"<MudTabs Vertical=""true"" Border=""
     </MudTabPanel>
 </MudTabs>";
 
-public const string TabsWithBagdesExample = @"<div style=""display:block"">
-    <MudTabs Elevation=""1"">
-        <MudTabPanel Icon=""@Icons.Material.Api"" BadgeData='""live""' BadgeColor=""Color.Info"" />
-        <MudTabPanel Icon=""@Icons.Material.Build"" BadgeData='""...""' />
-        <MudTabPanel Icon=""@Icons.Material.BugReport"" BadgeData='""99+""' BadgeColor=""Color.Error"" />
-    </MudTabs>
-    <br />
-    <MudTabs Elevation=""1"">
-        <MudTabPanel Icon=""@Icons.Material.Api"" Text=""API"" BadgeData='""!""' BadgeColor=""Color.Error"" />
-        <MudTabPanel Icon=""@Icons.Material.Build"" Text=""Build"" BadgeData=""1"" BadgeColor=""Color.Success"" />
-        <MudTabPanel Icon=""@Icons.Material.BugReport"" Text=""Bugs"" BadgeData=""0"" />
-    </MudTabs>
-    <br />
-    <MudTabs Elevation=""1"">
-        <MudTabPanel Text=""API"" BadgeData='""S""' />
-        <MudTabPanel Text=""Build"" BadgeData='""...""' />
-        <MudTabPanel Text=""Bugs"" BadgeData='""N""' />
-    </MudTabs>
-</div>";
+public const string TabsWithBagdesExample = @"<MudTabs Elevation=""1"" Rounded=""true"">
+    <MudTabPanel Icon=""@Icons.Material.Api"" BadgeData='""live""' BadgeColor=""Color.Info"" />
+    <MudTabPanel Icon=""@Icons.Material.Build"" BadgeData='""...""' />
+    <MudTabPanel Icon=""@Icons.Material.BugReport"" BadgeData='""99+""' BadgeColor=""Color.Error"" />
+</MudTabs>
+
+<MudTabs Elevation=""1"" Rounded=""true"" Class=""my-4"">
+    <MudTabPanel Icon=""@Icons.Material.Api"" Text=""API"" BadgeData='""!""' BadgeColor=""Color.Error"" />
+    <MudTabPanel Icon=""@Icons.Material.Build"" Text=""Build"" BadgeData=""1"" BadgeColor=""Color.Success"" />
+    <MudTabPanel Icon=""@Icons.Material.BugReport"" Text=""Bugs"" BadgeData=""0"" />
+</MudTabs>
+
+<MudTabs Elevation=""1"" Rounded=""true"">
+    <MudTabPanel Text=""API"" BadgeData='""S""' />
+    <MudTabPanel Text=""Build"" BadgeData='""...""' BadgeColor=""Color.Dark"" />
+    <MudTabPanel Text=""Bugs"" BadgeData='""N""' />
+</MudTabs>";
 
 public const string TemplateExample = @"";
 
