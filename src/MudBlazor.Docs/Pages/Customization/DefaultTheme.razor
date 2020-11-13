@@ -1,11 +1,233 @@
 ﻿@page "/customization/default-theme"
+@using System.Globalization
+
 <DocsPage>
     <DocsPageHeader Title="Default Theme" SubTitle="Here's the default theme class with the default values.">
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <MarkdownDefaultTheme/>
+            <SectionHeader>
+                <Title>MudTheme</Title>
+            </SectionHeader>
+            <MudPaper Class="docs-expand-wrapper">
+                <MudExpansionPanels MultiExpansion="true" Elevation="0" Class="docs-default-theme">
+                    <MudExpansionPanel Text="Palette">
+                        <div>
+                            <MudText Inline="true">Black: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.Black.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">White: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.White.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Primary: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.Primary.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Tertiary: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.Tertiary.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Info: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.Info.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Success: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.Success.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Warning: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.Warning.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Error: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.Error.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Dark: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.Dark.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">TextPrimary: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.TextPrimary.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">TextSecondary: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.TextSecondary.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">TextDisabled: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.TextDisabled.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">ActionDefault: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.ActionDefault.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">ActionDisabled: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.ActionDisabled.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">ActionDisabledBackground: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.ActionDisabledBackground.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Background: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.Background.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">BackgroundGrey: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.BackgroundGrey.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Surface: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.Surface.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">DrawerBackground: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.DrawerBackground.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">DrawerText: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.DrawerText.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">DrawerIcon: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.DrawerIcon.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">AppbarBackground: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.AppbarBackground.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">AppbarText: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.AppbarText.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">LinesDefault: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.LinesDefault.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">LinesInputs: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.LinesInputs.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Divider: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.Divider.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">DividerLight: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.DividerLight.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">HoverOpacity: </MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@mudTheme.Palette.HoverOpacity.ToString(CultureInfo.InvariantCulture)</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">GrayDefault: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.GrayDefault.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">GrayLight: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.GrayLight.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">GrayLighter: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.GrayLighter.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">GrayDark: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.GrayDark.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">GrayDarker: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Palette.GrayDarker.ToString()</MudText>
+                        </div>
+                    </MudExpansionPanel>
+                    <MudExpansionPanel Text="Shadows">
+                        <div>
+                            <MudText Inline="true">Elevation[]: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(0),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(1),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(2),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(3),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(4),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(5),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(6),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(7),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(8),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(9),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(10),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(11),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(12),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(13),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(14),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(15),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(16),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(17),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(18),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(19),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(20),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(21),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(22),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(23),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(24),</MudText>
+                            <MudText Style="color:#d69d85;">@mudTheme.Shadows.Elevation.GetValue(25)</MudText>
+                        </div>
+                    </MudExpansionPanel>
+                    <MudExpansionPanel Text="LayoutProperties">
+                        <div>
+                            <MudText Inline="true">DefaultBorderRadius: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.LayoutProperties.DefaultBorderRadius.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">DrawerWidth: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.LayoutProperties.DrawerWidth.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">AppbarMinHeight: </MudText>
+                            <MudText Inline="true" Style="color:#d69d85;">@mudTheme.LayoutProperties.AppbarMinHeight.ToString()</MudText>
+                        </div>
+                    </MudExpansionPanel>
+                    <MudExpansionPanel Text="ZIndex">
+                        <div>
+                            <MudText Inline="true">Drawer: </MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@mudTheme.ZIndex.Drawer.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">AppBar: </MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@mudTheme.ZIndex.AppBar.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Dialog: </MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@mudTheme.ZIndex.Dialog.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Popover: </MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@mudTheme.ZIndex.Popover.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Snackbar: </MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@mudTheme.ZIndex.Snackbar.ToString()</MudText>
+                        </div>
+                        <div>
+                            <MudText Inline="true">Tooltip: </MudText>
+                            <MudText Inline="true" Style="color:#79cc41;">@mudTheme.ZIndex.Tooltip.ToString()</MudText>
+                        </div>
+                    </MudExpansionPanel>
+                </MudExpansionPanels>
+            </MudPaper>
+
+        </DocsPageSection>
+        <DocsPageSection>
+            <MudDivider Class="my-16" Style="opacity:0;" />
+            @*You are cool like a swiming pool!*@
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
 <Footer />
+
+@code {
+    MudTheme mudTheme = new MudTheme();
+}

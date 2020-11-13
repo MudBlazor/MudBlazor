@@ -74,7 +74,6 @@ namespace MudBlazor
         [Parameter] public string TabPanelClass { get; set; }
 
 
-
         public MudTabPanel ActivePanel { get; set; }
         public int ActivePanelIndex { get; set; }
 

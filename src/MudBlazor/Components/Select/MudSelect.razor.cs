@@ -203,8 +203,9 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            UpdateIcon();
-            if(MultiSelection && MaxHeight == null)
+            base.OnInitialized();
+            UpdateIcon();            
+            if (MultiSelection && MaxHeight == null)
             {
                 MaxHeight = 300;
             }

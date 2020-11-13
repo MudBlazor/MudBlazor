@@ -1,13 +1,27 @@
 ﻿@page "/customization/theming/z-index"
 <DocsPage>
     <DocsPageHeader Title="z-index">
+        <Description>The z-index CSS property specifies a stack order of your elements to help you arrange the content.</Description>
     </DocsPageHeader>
     <DocsPageContent>
-        <DocsPageHeader>
-
-        </DocsPageHeader>
         <DocsPageSection>
-            
+            <SectionHeader>
+                <Title>MudBlazor z-index's</Title>
+                <Description>This is the z-indexes that is utilized by MudBlazor by default, either design your application around them or change them in your theme.</Description>
+            </SectionHeader>
+            <ul class="docs-list mx-2">
+                <li><MudText Inline="true">Drawer</MudText></li>
+                <li><MudText Inline="true">AppBar</MudText></li>
+                <li><MudText Inline="true">Dialog</MudText></li>
+                <li><MudText Inline="true">Popover</MudText></li>
+                <li><MudText Inline="true">Snackbar</MudText></li>
+                <li><MudText Inline="true">Tooltip</MudText></li>
+            </ul>
+            <MudText Class="mt-4 mb-16">These values can be changed in the <CodeInline>MudTheme</CodeInline> class, where <MudLink Href="/customization/default-theme" Color="Color.Secondary">the defaults</MudLink> is displayed under z-index.</MudText>
+        </DocsPageSection>
+        <DocsPageSection>
+            <MudDivider Class="my-16" Style="opacity:0;" />
+            @*You are cool like a swiming pool!*@
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

@@ -22,7 +22,7 @@
             <MudIconButton Icon="@Icons.Material.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
         </MudTooltip>
     </MudAppBar>
-    <MudDrawer Open="@_drawerOpen" Elevation="25" Class="mudblazor-appbar-band">
+    <MudDrawer @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
         <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
             <MudBlazorLogo />
         </MudDrawerHeader>
@@ -35,18 +35,18 @@
 
 @code {
 
-        bool _drawerOpen = false;
-        bool _rightToLeft = false;
+    bool _drawerOpen = false;
+    bool _rightToLeft = false;
 
-        void DrawerToggle()
-        {
-            _drawerOpen = !_drawerOpen;
-        }
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
 
-        void RightToLeftToggle()
-        {
-            _rightToLeft = !_rightToLeft;
-        }
+    void RightToLeftToggle()
+    {
+        _rightToLeft = !_rightToLeft;
+    }
 
     protected override void OnInitialized()
     {

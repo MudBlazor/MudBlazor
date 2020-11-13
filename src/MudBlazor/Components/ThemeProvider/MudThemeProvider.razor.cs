@@ -134,32 +134,32 @@ namespace MudBlazor
             theme.AppendLine($"--{Palette}-grey-darker: {Theme.Palette.GrayDarker};");
 
             //Elevations
-            theme.AppendLine($"--{Elevation}-0: {Theme.Shadow.Elevation.GetValue(0)};");
-            theme.AppendLine($"--{Elevation}-1: {Theme.Shadow.Elevation.GetValue(1)};");
-            theme.AppendLine($"--{Elevation}-2: {Theme.Shadow.Elevation.GetValue(2)};");
-            theme.AppendLine($"--{Elevation}-3: {Theme.Shadow.Elevation.GetValue(3)};");
-            theme.AppendLine($"--{Elevation}-4: {Theme.Shadow.Elevation.GetValue(4)};");
-            theme.AppendLine($"--{Elevation}-5: {Theme.Shadow.Elevation.GetValue(5)};");
-            theme.AppendLine($"--{Elevation}-6: {Theme.Shadow.Elevation.GetValue(6)};");
-            theme.AppendLine($"--{Elevation}-7: {Theme.Shadow.Elevation.GetValue(7)};");
-            theme.AppendLine($"--{Elevation}-8: {Theme.Shadow.Elevation.GetValue(8)};");
-            theme.AppendLine($"--{Elevation}-9: {Theme.Shadow.Elevation.GetValue(9)};");
-            theme.AppendLine($"--{Elevation}-10: {Theme.Shadow.Elevation.GetValue(10)};");
-            theme.AppendLine($"--{Elevation}-11: {Theme.Shadow.Elevation.GetValue(11)};");
-            theme.AppendLine($"--{Elevation}-12: {Theme.Shadow.Elevation.GetValue(12)};");
-            theme.AppendLine($"--{Elevation}-13: {Theme.Shadow.Elevation.GetValue(13)};");
-            theme.AppendLine($"--{Elevation}-14: {Theme.Shadow.Elevation.GetValue(14)};");
-            theme.AppendLine($"--{Elevation}-15: {Theme.Shadow.Elevation.GetValue(15)};");
-            theme.AppendLine($"--{Elevation}-16: {Theme.Shadow.Elevation.GetValue(16)};");
-            theme.AppendLine($"--{Elevation}-17: {Theme.Shadow.Elevation.GetValue(17)};");
-            theme.AppendLine($"--{Elevation}-18: {Theme.Shadow.Elevation.GetValue(18)};");
-            theme.AppendLine($"--{Elevation}-19: {Theme.Shadow.Elevation.GetValue(19)};");
-            theme.AppendLine($"--{Elevation}-20: {Theme.Shadow.Elevation.GetValue(20)};");
-            theme.AppendLine($"--{Elevation}-21: {Theme.Shadow.Elevation.GetValue(21)};");
-            theme.AppendLine($"--{Elevation}-22: {Theme.Shadow.Elevation.GetValue(22)};");
-            theme.AppendLine($"--{Elevation}-23: {Theme.Shadow.Elevation.GetValue(23)};");
-            theme.AppendLine($"--{Elevation}-24: {Theme.Shadow.Elevation.GetValue(24)};");
-            theme.AppendLine($"--{Elevation}-25: {Theme.Shadow.Elevation.GetValue(25)};");
+            theme.AppendLine($"--{Elevation}-0: {Theme.Shadows.Elevation.GetValue(0)};");
+            theme.AppendLine($"--{Elevation}-1: {Theme.Shadows.Elevation.GetValue(1)};");
+            theme.AppendLine($"--{Elevation}-2: {Theme.Shadows.Elevation.GetValue(2)};");
+            theme.AppendLine($"--{Elevation}-3: {Theme.Shadows.Elevation.GetValue(3)};");
+            theme.AppendLine($"--{Elevation}-4: {Theme.Shadows.Elevation.GetValue(4)};");
+            theme.AppendLine($"--{Elevation}-5: {Theme.Shadows.Elevation.GetValue(5)};");
+            theme.AppendLine($"--{Elevation}-6: {Theme.Shadows.Elevation.GetValue(6)};");
+            theme.AppendLine($"--{Elevation}-7: {Theme.Shadows.Elevation.GetValue(7)};");
+            theme.AppendLine($"--{Elevation}-8: {Theme.Shadows.Elevation.GetValue(8)};");
+            theme.AppendLine($"--{Elevation}-9: {Theme.Shadows.Elevation.GetValue(9)};");
+            theme.AppendLine($"--{Elevation}-10: {Theme.Shadows.Elevation.GetValue(10)};");
+            theme.AppendLine($"--{Elevation}-11: {Theme.Shadows.Elevation.GetValue(11)};");
+            theme.AppendLine($"--{Elevation}-12: {Theme.Shadows.Elevation.GetValue(12)};");
+            theme.AppendLine($"--{Elevation}-13: {Theme.Shadows.Elevation.GetValue(13)};");
+            theme.AppendLine($"--{Elevation}-14: {Theme.Shadows.Elevation.GetValue(14)};");
+            theme.AppendLine($"--{Elevation}-15: {Theme.Shadows.Elevation.GetValue(15)};");
+            theme.AppendLine($"--{Elevation}-16: {Theme.Shadows.Elevation.GetValue(16)};");
+            theme.AppendLine($"--{Elevation}-17: {Theme.Shadows.Elevation.GetValue(17)};");
+            theme.AppendLine($"--{Elevation}-18: {Theme.Shadows.Elevation.GetValue(18)};");
+            theme.AppendLine($"--{Elevation}-19: {Theme.Shadows.Elevation.GetValue(19)};");
+            theme.AppendLine($"--{Elevation}-20: {Theme.Shadows.Elevation.GetValue(20)};");
+            theme.AppendLine($"--{Elevation}-21: {Theme.Shadows.Elevation.GetValue(21)};");
+            theme.AppendLine($"--{Elevation}-22: {Theme.Shadows.Elevation.GetValue(22)};");
+            theme.AppendLine($"--{Elevation}-23: {Theme.Shadows.Elevation.GetValue(23)};");
+            theme.AppendLine($"--{Elevation}-24: {Theme.Shadows.Elevation.GetValue(24)};");
+            theme.AppendLine($"--{Elevation}-25: {Theme.Shadows.Elevation.GetValue(25)};");
 
             //Layout Properties
             theme.AppendLine($"--{LayoutProperties}-default-borderradius: {Theme.LayoutProperties.DefaultBorderRadius};");
@@ -167,11 +167,11 @@ namespace MudBlazor
             theme.AppendLine($"--{LayoutProperties}-appbar-min-height: {Theme.LayoutProperties.AppbarMinHeight};");
 
             //Breakpoint
-            theme.AppendLine($"--{Breakpoint}-xs: {Theme.Breakpoints.xs};");
-            theme.AppendLine($"--{Breakpoint}-sm: {Theme.Breakpoints.sm};");
-            theme.AppendLine($"--{Breakpoint}-md: {Theme.Breakpoints.md};");
-            theme.AppendLine($"--{Breakpoint}-lg: {Theme.Breakpoints.lg};");
-            theme.AppendLine($"--{Breakpoint}-xl: {Theme.Breakpoints.xl};");
+            //theme.AppendLine($"--{Breakpoint}-xs: {Theme.Breakpoints.xs};");
+            //theme.AppendLine($"--{Breakpoint}-sm: {Theme.Breakpoints.sm};");
+            //theme.AppendLine($"--{Breakpoint}-md: {Theme.Breakpoints.md};");
+            //theme.AppendLine($"--{Breakpoint}-lg: {Theme.Breakpoints.lg};");
+            //theme.AppendLine($"--{Breakpoint}-xl: {Theme.Breakpoints.xl};");
 
             //Z-Index
             theme.AppendLine($"--{Zindex}-drawer: {Theme.ZIndex.Drawer};");

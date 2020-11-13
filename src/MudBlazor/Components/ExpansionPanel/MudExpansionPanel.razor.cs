@@ -17,6 +17,7 @@ namespace MudBlazor
             .AddClass("mud-panel-next-expanded", NextPanelExpanded)
             .AddClass("mud-disabled", Disabled)
             .AddClass($"mud-elevation-{Parent.Elevation.ToString()}")
+            .AddClass(Class)
         .Build();
 
         /// <summary>

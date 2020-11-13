@@ -27,6 +27,16 @@
     [Parameter] public bool Disabled { get; set; }
 
     /// <summary>
+    /// Optional information to be showed into a badge
+    /// </summary>
+    [Parameter] public object BadgeData { get; set; }
+
+    /// <summary>
+    /// The color of the badge.
+    /// </summary>
+    [Parameter] public Color BadgeColor { get; set; } = Color.Primary;
+
+    /// <summary>
     /// Child content of component.
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }

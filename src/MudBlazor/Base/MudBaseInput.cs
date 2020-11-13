@@ -446,6 +446,14 @@ namespace MudBlazor
 
         #endregion
 
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            // this is important for value type T's where the initial Value is equal to the default(T) because the way the Value setter is built,
+            // it won't cause an update if the incoming value is equal to the internal value. That's why we trigger that update here
+            GenericValueChanged(Value); 
+        }
+
         protected override Task OnInitializedAsync()
         {
             if (Standalone)

@@ -1,14 +1,47 @@
-﻿@page "/customization/theming"
+﻿@page "/customization/theming/overview"
 
 <DocsPage>
-    <DocsPageHeader Title="Theming" SubTitle="Customize MudBlazor so it suits your needs, change colors, typography, shapes and more.">
+    <DocsPageHeader Title="Theming" SubTitle="Customize MudBlazor so that it suits your needs, change colors, typography, shapes and more.">
     </DocsPageHeader>
     <DocsPageContent>
-        <DocsPageHeader>
-
-        </DocsPageHeader>
         <DocsPageSection>
-            
+            <SectionHeader>
+                <Title>Theme Provider</Title>
+                <Description>
+                    The Theme provider specifies all the colors, shapes, sizes and shadows to your layout.
+                    No configuration or theme is needed, by default it will use MudBlazor's default theme.
+                </Description>
+            </SectionHeader>
+            <SectionSource Code="OverviewThemesDefaultExample" NoToolbar="true" GitHubFolderName="Customization/Theming" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Theme Provider variables</Title>
+                <Description>At the moment it's possible to change the following theme types.</Description>
+            </SectionHeader>
+            <ul class="docs-list mx-2">
+                <li><MudLink Href="/customization/theming/palette">Palette</MudLink></li>
+                <li><MudText Inline="true">Shadows</MudText></li>
+                <li><MudText Inline="true">Layout Properties</MudText></li>
+                <li><MudLink Href="/customization/theming/z-index">z-index</MudLink></li>
+            </ul>
+            <MudText Class="mt-4">You can find all the <MudLink Href="/customization/default-theme" Color="Color.Secondary">Default Theme</MudLink> values under customization.</MudText>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Custom Themes</Title>
+                <Description>To customize the theme you need to give the ThemeProvider a new <CodeInline>MudTheme</CodeInline> class with the settings you want to change.</Description>
+            </SectionHeader>
+            <SectionSource Code="OverviewThemesCustomExample" NoToolbar="true" GitHubFolderName="Customization/Theming" />
+
+            <MudText Class="my-2">This way you only need to change the stuff you don't like in our default theme, but you can replace all the defaults completely if you want to.</MudText>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Multiple Themes</Title>
+                <Description>You can have multiple themes applied in different ways but this is how we apply our dark theme on MudBlazor page.</Description>
+            </SectionHeader>
+            <SectionSource Code="OverviewThemesMultipleExample" NoToolbar="true" GitHubFolderName="Customization/Theming" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

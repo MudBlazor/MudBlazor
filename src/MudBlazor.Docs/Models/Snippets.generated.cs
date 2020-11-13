@@ -199,6 +199,29 @@ public const string AppBarSimpleExample = @"<MudAppBar Color=""Color.Primary"" F
     <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
 </MudAppBar>";
 
+public const string AutocompleteClrObjectsExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value"" SearchFunc=""@Search"" Immediate=""false"" />
+    </MudItem>
+    <MudItem xs=""12"" md=""12"">
+        <MudText Class=""mb-n3"" Typo=""Typo.body2"">
+            Selected value: @(value != null ? value.ToString() : """")
+        </MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    private IEnumerable<Element> datasource = PeriodicTable.GetElements(); //you can also search directly from database on Search()
+
+    private Element value;
+
+
+    private Task<IEnumerable<Element>> Search(string value)
+    {
+        return Task.FromResult(datasource.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+    } }";
+
 public const string AutocompleteUsageExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudAutocomplete T=""string"" Label=""US States"" @bind-Value=""value"" SearchFunc=""@Search"" />
@@ -1048,57 +1071,6 @@ public const string DrawerClippingExample = @"@layout IframeLayout
     }
 }";
 
-public const string DrawerCombinedExample = @"@layout IframeLayout
-@page ""/iframe/docs/examples/drawer/combined""
-
-
-<MudLayout>
-    <MudAppBar Elevation=""1"">
-        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
-        @if (clipped)
-        {
-            <MudText Typo=""Typo.h6"" Class=""ml-3"">My App</MudText>
-        }
-        <MudAppBarSpacer />
-        <MudIconButton Icon=""@Icons.Material.BorderStyle"" Color=""Color.Inherit"" OnClick=""@ToggleClipped"" />
-    </MudAppBar>
-    <MudDrawer Open=""@open"" Clipped=""@clipped"" Elevation=""1"">
-        @if (!clipped)
-        {
-            <MudDrawerHeader>
-                <MudText Typo=""Typo.h6"">My App</MudText>
-            </MudDrawerHeader>
-        }
-        <MudNavMenu>
-            <MudNavLink Match=""NavLinkMatch.All"">Store</MudNavLink>
-            <MudNavLink Match=""NavLinkMatch.All"">Library</MudNavLink>
-            <MudNavLink Match=""NavLinkMatch.All"">Community</MudNavLink>
-        </MudNavMenu>
-    </MudDrawer>
-    <MudMainContent>
-        <MudContainer Class=""pt-16 px-16"">
-            <MudText Color=""Color.Secondary"" GutterBottom=""true"">Click the right side button in the appbar to change layout.</MudText>
-            <LoremIpsum />
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
-
-
-@code{
-    bool open = true;
-    bool clipped = false;
-
-    void ToggleDrawer()
-    {
-        open = !open;
-    }
-
-    void ToggleClipped()
-    {
-        clipped = !clipped;
-    }
-}";
-
 public const string DrawerDoubleExample = @"@layout IframeLayout
 @page ""/iframe/docs/examples/drawer/double""
 
@@ -1166,7 +1138,7 @@ public const string DrawerPersistentExample = @"@layout IframeLayout
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
     </MudAppBar>
-    <MudDrawer Open=""@open"" Elevation=""1"">
+    <MudDrawer @bind-Open=""@open"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -2267,29 +2239,34 @@ public const string SelectInteractiveExample = @"<MudGrid>
 
 public const string SelectUsageExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect T=""string"" Label=""Food"" ValueChanged=""OnSelectedValue"">
-            <MudSelectItem Value=""@(""pizza"")"">Pizza</MudSelectItem>
-            <MudSelectItem Value=""@(""burgers"")"">Burgers</MudSelectItem>
-            <MudSelectItem Value=""@(""hotdog"")"">Hot Dogs</MudSelectItem>
+        <MudSelect Label=""Select fast-food"" @bind-Value=""stringValue"" HelperText=""String"">
+            <MudSelectItem Value=""@(""Pizza"")"">Pizza</MudSelectItem>
+            <MudSelectItem Value=""@(""Burger"")"">Burger</MudSelectItem>
+            <MudSelectItem Value=""@(""Hotdog"")"">Hot Dog</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect T=""string"" Label=""Food"" ValueChanged=""OnSelectedValue"" HelperText=""With helper text"">
-            <MudSelectItem Value=""@(""pizza"")"">Pizza</MudSelectItem>
-            <MudSelectItem Value=""@(""burgers"")"">Burgers</MudSelectItem>
-            <MudSelectItem Value=""@(""hotdog"")"">Hot Dogs</MudSelectItem>
+        <MudSelect Label=""Select drink"" @bind-Value=""enumValue"" HelperText=""Enum"">
+            @foreach (Drink item in Enum.GetValues(typeof(Drink)))
+            {
+                <MudSelectItem Value=""@item"">@item</MudSelectItem>
+            }
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect T=""string"" Placeholder=""Brands"" ValueChanged=""OnSelectedValue"" HelperText=""Disabled"" Disabled=""true"">
-            <MudSelectItem Value=""@(""volvo"")"">Volvo</MudSelectItem>
-            <MudSelectItem Value=""@(""saab"")"">Saab</MudSelectItem>
-            <MudSelectItem Value=""@(""scania"")"">Scania</MudSelectItem>
+        <MudSelect Placeholder=""Select culture"" @bind-Value=""cultureValue"" HelperText=""CultureInfo"" ToStringFunc=""@convertFunc"">
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""en-US""))"">English</MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""de-AT""))"">German</MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""pt-BR""))"">Portugese</MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""zh-CN""))"">Chinese</MudSelectItem>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudText Class=""mb-n3"" Typo=""Typo.body2"">
-            Selected value: @Item
+            Selected values: 
+            <MudChip>@(stringValue ?? ""Select fast-food"")</MudChip>
+            <MudChip Color=""Color.Primary"">@enumValue</MudChip>
+            <MudChip Color=""Color.Secondary"">@(cultureValue?.DisplayName ?? ""Select culture"")</MudChip>
         </MudText>
     </MudItem>
 </MudGrid>
@@ -2297,26 +2274,16 @@ public const string SelectUsageExample = @"<MudGrid>
 
 
 @code {
-
-    private string Item { get; set; } = ""Nothing selected"";
-
-
-    private void OnSelectedValue(string value)
-    {
-        Item = value;
-}
-
+    private string stringValue { get; set; }
+    private Drink enumValue { get; set; }
+    public enum Drink { Tee, SparklingWater, SoftDrink, Cider, Beer, Wine, Moonshine }
+    private CultureInfo cultureValue { get; set; }
+    private Func<CultureInfo, string> convertFunc = ci => ci?.DisplayName;
 }";
 
 public const string SelectVariantsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelectString Label=""Text"">
-            <MudSelectItemString Value=""foo"">Foo</MudSelectItemString>
-            <MudSelectItemString Value=""bar"">Bar</MudSelectItemString>
-        </MudSelectString>
-    </MudItem>
-    <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect T=""string"" Label=""Text"" Variant=""Variant.Filled"">
+        <MudSelect T=""string"" Label=""Text"">
             <MudSelectItem Value=""@(""foo"")"">Foo</MudSelectItem>
             <MudSelectItem Value=""@(""bar"")"">Bar</MudSelectItem>
         </MudSelect>
@@ -2326,6 +2293,12 @@ public const string SelectVariantsExample = @"<MudGrid>
             <MudSelectItem Value=""4.50"">4.50</MudSelectItem>
             <MudSelectItem Value=""21.99"">21.99</MudSelectItem>
         </MudSelect>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSelectString Label=""Text"" Variant=""Variant.Filled"">
+            <MudSelectItemString Value=""foo"">Foo</MudSelectItemString>
+            <MudSelectItemString Value=""bar"">Bar</MudSelectItemString>
+        </MudSelectString>
     </MudItem>
 </MudGrid>";
 
@@ -2818,6 +2791,24 @@ public const string TabsVerticalExample = @"<MudTabs Vertical=""true"" Border=""
     </MudTabPanel>
 </MudTabs>";
 
+public const string TabsWithBagdesExample = @"<MudTabs Elevation=""1"" Rounded=""true"">
+    <MudTabPanel Icon=""@Icons.Material.Api"" BadgeData='""live""' BadgeColor=""Color.Info"" />
+    <MudTabPanel Icon=""@Icons.Material.Build"" BadgeData='""...""' />
+    <MudTabPanel Icon=""@Icons.Material.BugReport"" BadgeData='""99+""' BadgeColor=""Color.Error"" />
+</MudTabs>
+
+<MudTabs Elevation=""1"" Rounded=""true"" Class=""my-4"">
+    <MudTabPanel Icon=""@Icons.Material.Api"" Text=""API"" BadgeData='""!""' BadgeColor=""Color.Error"" />
+    <MudTabPanel Icon=""@Icons.Material.Build"" Text=""Build"" BadgeData=""1"" BadgeColor=""Color.Success"" />
+    <MudTabPanel Icon=""@Icons.Material.BugReport"" Text=""Bugs"" BadgeData=""0"" />
+</MudTabs>
+
+<MudTabs Elevation=""1"" Rounded=""true"">
+    <MudTabPanel Text=""API"" BadgeData='""S""' />
+    <MudTabPanel Text=""Build"" BadgeData='""...""' BadgeColor=""Color.Dark"" />
+    <MudTabPanel Text=""Bugs"" BadgeData='""N""' />
+</MudTabs>";
+
 public const string TemplateExample = @"";
 
 public const string TextFieldAdornmentsExample = @"<MudGrid>
@@ -3010,27 +3001,6 @@ public const string TextFieldMultilineExample = @"<MudGrid>
     string sampleText = ""Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."";
 }";
 
-public const string ThemesCustomExample = @"<MudThemeProvider Theme=""MyCoolDarkTheme"" />
-
-@code {
-
-    MudTheme MyCoolDarkTheme = new MudTheme()
-    {
-        Palette = new Palette()
-        {
-            Background = ""#343a41"",
-            Surface = ""#3a424e"",
-            DrawerBackground = ""#3a424e"",
-            DrawerText = ""#8389a2"",
-            AppbarBackground = ""#3a424e"",
-            AppbarText = ""#8389a2"",
-            TextPrimary = ""#dee2e6""
-        }
-    };
-}";
-
-public const string ThemesDefaultExample = @"<MudThemeProvider />";
-
 public const string TimePickerBasicUsageExample = @"<MudTimePicker Label=""12 hours"" AmPm=""true"" @bind-Time=""time""/>
 <MudTimePicker Label=""24 hours"" @bind-Time=""time""/>
 
@@ -3099,6 +3069,81 @@ public const string TextGeneralExample = @"<MudText Typo=""Typo.h1"">h1. Heading
 <MudText Typo=""Typo.button"">BUTTON TEXT</MudText>
 <MudText Typo=""Typo.caption"">caption text</MudText>
 <MudText Typo=""Typo.overline"">OVERLINE TEXT</MudText>";
+
+public const string OverviewThemesCustomExample = @"<MudThemeProvider Theme=""MyCustomTheme"" />
+
+@code{
+    MudTheme MyCustomTheme = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Primary = Colors.Blue.Default,
+            Secondary = Colors.Green.Accent4,
+            AppbarBackground = Colors.Red.Default,
+        },
+
+        LayoutProperties = new LayoutProperties()
+        {
+            DrawerWidth = ""260px""
+        }
+    };
+}";
+
+public const string OverviewThemesDefaultExample = @"<MudThemeProvider />";
+
+public const string OverviewThemesMultipleExample = @"<MudThemeProvider Theme=""currentTheme"" />
+
+<MudButton OnClick=""@((e) => DarkMode())"">Toggle Dark/Light Mode</MudButton>
+
+@code{
+
+    protected override void OnInitialized()
+    {
+        currentTheme = defaultTheme;
+    }
+
+    void DarkMode()
+    {
+        if (currentTheme == defaultTheme)
+        {
+            currentTheme = darkTheme;
+        }
+        else
+        {
+            currentTheme = defaultTheme;
+        }
+    }
+
+    MudTheme currentTheme = new MudTheme();
+    MudTheme defaultTheme = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Black = ""#272c34""
+        }
+    };
+
+    MudTheme darkTheme = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Black = ""#27272f"",
+            Background = ""#32333d"",
+            BackgroundGrey = ""#27272f"",
+            Surface = ""#373740"",
+            DrawerBackground = ""#27272f"",
+            DrawerText = ""rgba(255,255,255, 0.50)"",
+            DrawerIcon = ""rgba(255,255,255, 0.50)"",
+            AppbarBackground = ""#27272f"",
+            AppbarText = ""rgba(255,255,255, 0.70)"",
+            TextPrimary = ""rgba(255,255,255, 0.70)"",
+            TextSecondary = ""rgba(255,255,255, 0.50)"",
+            ActionDefault = ""#adadb1"",
+            ActionDisabled = ""rgba(255,255,255, 0.26)"",
+            ActionDisabledBackground = ""rgba(255,255,255, 0.12)""
+        }
+    };
+}";
 
 public const string BorderRadiusCornerExample = @"<div class=""mud-theme-info py-4 px-6 mx-4 rounded-tl-xl"">
     <MudText Align=""Align.Center"">.rounded-tl-xl</MudText>
@@ -3668,11 +3713,11 @@ public const string FlexWrapExample = @"<MudGrid>
     </MudItem>
 </MudGrid>";
 
-public const string SpacingBreakpointExample = @"<MudPaper Class=""pa-md-6 mx-lg-auto mud-theme-color-secondary"">
+public const string SpacingBreakpointExample = @"<MudPaper Class=""pa-md-6 mx-lg-auto mud-theme-secondary"">
     <MudText Typo=""Typo.body1"">Adjust screen size to see the changes.</MudText>
 </MudPaper>";
 
-public const string SpacingCenteringExample = @"<MudPaper Class=""mx-auto pa-6 mud-theme-color-success"">
+public const string SpacingCenteringExample = @"<MudPaper Class=""mx-auto pa-6 mud-theme-success"">
     <MudText Typo=""Typo.body1"">Centered!</MudText>
 </MudPaper>";
 
@@ -3686,9 +3731,9 @@ public const string SpacingExample = @"<MudPaper Class=""pa-4 mr-16"">
     <MudText Typo=""Typo.subtitle2"">pa-4 ml-8</MudText>
 </MudPaper>";
 
-public const string SpacingNegativeExample = @"<MudPaper Class=""mx-auto pa-4 mud-theme-color-secondary"" Style=""height:100px; width:150px;"">
+public const string SpacingNegativeExample = @"<MudPaper Class=""mx-auto pa-4 mud-theme-secondary"" Style=""height:100px; width:150px;"">
 </MudPaper>
-<MudPaper Class=""mt-n12 mx-auto pa-6 mud-theme-color-primary"" Elevation=""12"" Style=""width: 350px;"">
+<MudPaper Class=""mt-n12 mx-auto pa-6 mud-theme-primary"" Elevation=""12"" Style=""width: 350px;"">
     <MudText Typo=""Typo.body1"">This card uses negative top margin!</MudText>
 </MudPaper>";
 

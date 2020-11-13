@@ -1,0 +1,60 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudThemeProvider</span> <span class="htmlAttributeName">Theme</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">currentTheme</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>((e) =&gt; DarkMode())</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Toggle Dark/Light Mode<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code{
+
+    <span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> OnInitialized()
+    {
+        currentTheme = defaultTheme;
+    }
+
+    <span class="keyword">void</span> DarkMode()
+    {
+        <span class="keyword">if</span> (currentTheme == defaultTheme)
+        {
+            currentTheme = darkTheme;
+        }
+        <span class="keyword">else</span>
+        {
+            currentTheme = defaultTheme;
+        }
+    }
+
+    MudTheme currentTheme = <span class="keyword">new</span> MudTheme();
+    MudTheme defaultTheme = <span class="keyword">new</span> MudTheme()
+    {
+        Palette = <span class="keyword">new</span> Palette()
+        {
+            Black = <span class="string">&quot;#272c34&quot;</span>
+        }
+    };
+
+    MudTheme darkTheme = <span class="keyword">new</span> MudTheme()
+    {
+        Palette = <span class="keyword">new</span> Palette()
+        {
+            Black = <span class="string">&quot;#27272f&quot;</span>,
+            Background = <span class="string">&quot;#32333d&quot;</span>,
+            BackgroundGrey = <span class="string">&quot;#27272f&quot;</span>,
+            Surface = <span class="string">&quot;#373740&quot;</span>,
+            DrawerBackground = <span class="string">&quot;#27272f&quot;</span>,
+            DrawerText = <span class="string">&quot;rgba(255,255,255, 0.50)&quot;</span>,
+            DrawerIcon = <span class="string">&quot;rgba(255,255,255, 0.50)&quot;</span>,
+            AppbarBackground = <span class="string">&quot;#27272f&quot;</span>,
+            AppbarText = <span class="string">&quot;rgba(255,255,255, 0.70)&quot;</span>,
+            TextPrimary = <span class="string">&quot;rgba(255,255,255, 0.70)&quot;</span>,
+            TextSecondary = <span class="string">&quot;rgba(255,255,255, 0.50)&quot;</span>,
+            ActionDefault = <span class="string">&quot;#adadb1&quot;</span>,
+            ActionDisabled = <span class="string">&quot;rgba(255,255,255, 0.26)&quot;</span>,
+            ActionDisabledBackground = <span class="string">&quot;rgba(255,255,255, 0.12)&quot;</span>
+        }
+    };
+}
+</pre></div>
+</div>

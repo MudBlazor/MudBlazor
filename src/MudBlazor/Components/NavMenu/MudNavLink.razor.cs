@@ -18,5 +18,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Icon { get; set; }
         [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+
+        [CascadingParameter] public MudDrawer Drawer { get; set; }
+
+        private void OnNavigation()
+        {
+            if (Drawer == null || !Drawer.OpenChanged.HasDelegate)
+            {
+                return;
+            }
+
+            Drawer.OpenChanged.InvokeAsync(false);
+        }
     }
 }

@@ -2154,7 +2154,9 @@ public const string MudDrawer_Color = @"The color of the component. It supports 
 
 public const string MudDrawer_ChildContent = @"Child content of component.";
 
-public const string MudDrawer_Open = @"";
+public const string MudDrawer_Open = @"Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.";
+
+public const string MudDrawer_OpenChanged = @"";
 
 public const string MudDrawer_Clipped = @"";
 
@@ -2560,6 +2562,10 @@ public const string MudTabPanel_Text = @"Text will be displayed in the TabPanel 
 public const string MudTabPanel_Icon = @"Icon placed before the text if set.";
 
 public const string MudTabPanel_Disabled = @"If true, the tabpanel will be disabled.";
+
+public const string MudTabPanel_BadgeData = @"Optional information to be showed into a badge";
+
+public const string MudTabPanel_BadgeColor = @"The color of the badge.";
 
 public const string MudTabPanel_ChildContent = @"Child content of component.";
 
