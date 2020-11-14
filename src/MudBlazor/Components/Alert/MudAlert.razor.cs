@@ -63,7 +63,7 @@ namespace MudBlazor
             {
                 Severity.Normal => Outlined.EventNoteOutlined,
                 Severity.Info => Outlined.InfoOutlined,
-                Severity.Success => Outlined.DoneOutlineOutlined,
+                Severity.Success => Icons.Custom.AlertSuccess,
                 Severity.Warning => Outlined.ReportProblemOutlined,
                 Severity.Error => Filled.ErrorOutline
             };
