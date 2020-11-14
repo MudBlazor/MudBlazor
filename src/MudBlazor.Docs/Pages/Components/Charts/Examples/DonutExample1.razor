@@ -1,10 +1,23 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChart ChartType="ChartType.Donut" Width="80%" Height="80%"
-          InputData="@data" InputLabels="@labels">
-</MudChart>
+<div>
+    <MudChart ChartType="ChartType.Donut" Width="80%" Height="80%"
+              InputData="@data" InputLabels="@labels">
+    </MudChart>
+    <MudButton @onclick="RandomizeData">Randomize Data</MudButton>
+</div>
 
 @code {
     public double[] data = { 50, 25, 20, 5 };
     public string[] labels = { "Fossile", "Nuclear", "Solar", "Wind" };
+
+    Random random = new Random();
+    public void RandomizeData()
+    {
+        var new_data = new double[data.Length];
+        for (int i = 0; i < new_data.Length; i++)
+            new_data[i] = random.NextDouble() * 100;
+        data = new_data;
+        StateHasChanged();
+    }
 }
