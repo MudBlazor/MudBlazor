@@ -21,11 +21,17 @@ namespace MudBlazor.Charts
 
         public List<SvgPath> ChartLines = new List<SvgPath>();
 
-        protected override void OnInitialized()
+        protected override void OnParametersSet()
         {
-            Series = MudChartParent.ChartSeries;
+            base.OnParametersSet();
+            HorizontalLines.Clear();
+            VerticalLines.Clear();
+            HorizontalValues.Clear();
+            VerticalValues.Clear();
+            Legends.Clear();
+            ChartLines.Clear();
 
-            int SeriesCount = Series.Count;
+            Series = MudChartParent.ChartSeries;
 
             double maxY = 0.0;
             int numValues = 0;

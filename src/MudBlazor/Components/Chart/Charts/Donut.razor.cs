@@ -13,8 +13,10 @@ namespace MudBlazor.Charts
         public List<SvgCircle> Circles = new List<SvgCircle>();
         public List<SvgLegend> Legends = new List<SvgLegend>();
 
-        protected override void OnInitialized()
+        protected override void OnParametersSet()
         {
+            Circles.Clear();
+            Legends.Clear();
             double counterClockwiseOffset = 25;
             double totalPercent = 0;
             double offset = counterClockwiseOffset;
