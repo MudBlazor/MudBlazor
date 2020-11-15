@@ -3,17 +3,11 @@
 @inherits DonutBase
 
 <svg class="mud-chart-donut" width="@MudChartParent.Width" height="@MudChartParent.Height" viewBox="0 0 42 42">
-    <filter id="lighten">
-        <feColorMatrix type="matrix"
-            values="1.5   0   0   0   0
-                    0   1.5   0   0   0
-                    0   0   1.5   0   0
-                    0   0   0   1   0 " />
-    </filter>
+    <Filters />
     <circle class="mud-donut-ring" cx="20" cy="20" r="15.91549430918954"></circle>
     @foreach (var item in Circles.ToList())
     {
-        <circle class="mud-chart-serie mud-donut-segment" stroke="@(ColorPalette.GetValue(item.Index % ColorPalette.Count()))"
+        <circle class="mud-chart-serie mud-donut-segment" stroke="@(ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count()))"
                 cx="@ToS(item.CX)"
                 cy="@ToS(item.CY)"
                 r="@ToS(item.Radius)"
@@ -23,14 +17,4 @@
     }
     <circle class="mud-donut-hole" cx="21" cy="21" r="13.4"></circle>
 </svg>
-<div class="mud-chart-legend">
-    @foreach (var item in Legends.ToList())
-    {
-        <div class="mud-chart-legend-item">
-            <span class="@($"mud-chart-legend-marker mud-chart-marker-color-{item.Index.ToString()}")"></span>
-            <MudText Typo="Typo.body2" Inline="true">@item.Labels @(MudChartParent.DisplayLegendItemValues? $"({item.Data}%)": "")</MudText>
-        </div>
-    }
-</div>
-
-
+<Legend Data="@Legends" />

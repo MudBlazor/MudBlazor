@@ -12,12 +12,6 @@ namespace MudBlazor.Charts
 
         public List<SvgPath> Paths = new List<SvgPath>();
         public List<SvgLegend> Legends = new List<SvgLegend>();
-        public string[] ColorPalette { get; set; }
-
-        protected override void OnInitialized()
-        {
-            ColorPalette = GetChartPalette();
-        }
 
         protected override void OnParametersSet()
         {

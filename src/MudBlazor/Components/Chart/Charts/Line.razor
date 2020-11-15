@@ -40,15 +40,4 @@
         }
     </g>
 </svg>
-@if (!MudChartParent.ChartOptions.DisableLegend)
-{
-    <div class="mud-chart-legend">
-        @foreach (var item in Legends)
-        {
-            <div class="mud-chart-legend-item">
-                <span class="@($"mud-chart-legend-marker mud-chart-marker-color-{item.Index.ToString()}")"></span>
-                <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>
-            </div>
-        }
-    </div>
-}
+<Legend Data="@Legends" />
