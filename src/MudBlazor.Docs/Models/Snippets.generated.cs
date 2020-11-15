@@ -201,25 +201,35 @@ public const string AppBarSimpleExample = @"<MudAppBar Color=""Color.Primary"" F
 
 public const string AutocompleteClrObjectsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value"" SearchFunc=""@Search"" ToStringFunc=""@(e=> $""{e.Name} ({e.Sign})"")"" />
+        <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value1"" SearchFunc=""@Search"" ToStringFunc=""@(e=> $""{e.Name} ({e.Sign})"")"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value2"" SearchFunc=""@Search"" ToStringFunc=""@(e=> $""{e.Name} ({e.Sign})"")"">
+            <ItemTemplate Context=""e"">                          
+                <MudText><MudIcon Icon=""@Icons.Material.CheckBoxOutlineBlank"" Class=""mb-n1 mr-3"" />@($""{e.Name} ({e.Sign})"")</MudText>
+            </ItemTemplate>
+            <ItemSelectedTemplate Context=""e"">                
+                <MudText><MudIcon Icon=""@Icons.Material.CheckBox"" Class=""mb-n1 mr-3"" />@($""{e.Name} ({e.Sign})"")</MudText>
+            </ItemSelectedTemplate>
+        </MudAutocomplete>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudText Class=""mb-n3"" Typo=""Typo.body2"">
-            Selected value: <MudChip>@(value?.ToString() ?? ""Not selected"")</MudChip>
+            Selected values: <MudChip>@(value1?.ToString() ?? ""Not selected"")</MudChip><MudChip>@(value2?.ToString() ?? ""Not selected"")</MudChip>
         </MudText>
     </MudItem>
 </MudGrid>
 
 @code {
     private IEnumerable<Element> datasource = PeriodicTable.GetElements(); //you can also search directly from database on Search()
-    private Element value;
+    private Element value1, value2;
 
     private async Task<IEnumerable<Element>> Search(string value)
     {
         if (string.IsNullOrEmpty(value))
-            return new Element[0];
+            return datasource;
         return datasource.Where(e => $""{e.Name} ({e.Sign})"".Contains(value, StringComparison.InvariantCultureIgnoreCase));
-    } 
+    }
 }";
 
 public const string AutocompleteUsageExample = @"<MudGrid>
