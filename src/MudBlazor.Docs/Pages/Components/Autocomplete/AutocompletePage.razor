@@ -5,25 +5,33 @@
     <DocsPageHeader Title="Autocomplete"
         SubTitle="The autocomplete component offers simple and flexible type-ahead functionality.">
         <Description>
-            Autocomplete allows searching from a list of options. In comparison to a Select, the Autocomplete doesn't need to know the complete item list, 
-            it only calls a search function that will return items asynchronously.
+            It is great for searching a value from a long list of options. In comparison to a Select, the Autocomplete doesn't need to know the complete item list, 
+            it only calls a search function which will return matching items. The search function can even run asynchronously, i.e. for database queries.
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Usage</Title>
-                <Description>How you write the search function determines whether or not the Autocomplete shows a full list initially.</Description>
+                <Description>
+                    How you write the search function determines whether or not the Autocomplete shows a full list initially. By setting <CodeInline>ResetValueOnEmptyText="true"</CodeInline>
+                    the value will be reset when the user deletes the input text. Otherwise, the value is kept and the text coerced.
+                </Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
                 <AutocompleteUsageExample />
             </SectionContent>
             <SectionSource ShowCode="false" Code="AutocompleteUsageExample" GitHubFolderName="Autocomplete" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
-                <Title>Binding to complex objects</Title>
-                <Description></Description>
+                <Title>Binding to objects</Title>
+                <Description>
+                    When you use objects, Autocomplete uses <CodeInline>ToString()</CodeInline> to convert the object into text form. You can set a custom <CodeInline>ToStringFunc</CodeInline>
+                    to override the list item presentation string.
+                </Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
                 <AutocompleteClrObjectsExample />

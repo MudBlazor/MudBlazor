@@ -3,11 +3,11 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value" SearchFunc="@Search" Immediate="false" />
+        <MudAutocomplete T="Element" Label="Periodic Table Element" @bind-Value="value" SearchFunc="@Search" ToStringFunc="@(e=> $"{e.Name} ({e.Sign})")" />
     </MudItem>
     <MudItem xs="12" md="12">
         <MudText Class="mb-n3" Typo="Typo.body2">
-            Selected value: @(value != null ? value.ToString() : "")
+            Selected value: <MudChip>@(value?.ToString() ?? "Not selected")</MudChip>
         </MudText>
     </MudItem>
 </MudGrid>
@@ -16,10 +16,10 @@
     private IEnumerable<Element> datasource = PeriodicTable.GetElements(); //you can also search directly from database on Search()
     private Element value;
 
-    private Task<IEnumerable<Element>> Search(string value)
+    private async Task<IEnumerable<Element>> Search(string value)
     {
         if (string.IsNullOrEmpty(value))
-            Task.FromResult(new string[0]);
-        return Task.FromResult(datasource.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+            return new Element[0];
+        return datasource.Where(e => $"{e.Name} ({e.Sign})".Contains(value, StringComparison.InvariantCultureIgnoreCase));
     } 
 }
