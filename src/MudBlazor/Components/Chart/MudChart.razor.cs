@@ -67,6 +67,12 @@ namespace MudBlazor
         {
             return d.ToString(CultureInfo.InvariantCulture);
         }
+
+        protected string[] GetChartPalette()
+        {
+            string[] chartPalette = { Colors.Blue.Accent3, Colors.Green.Accent3, Colors.Amber.Accent3, Colors.Red.Accent3, Colors.DeepPurple.Accent3, Colors.Purple.Accent3, Colors.Cyan.Accent3, Colors.Teal.Accent3, Colors.Orange.Accent3, Colors.DeepOrange.Accent3 };
+            return chartPalette;
+        }
     }
 
     public enum ChartType

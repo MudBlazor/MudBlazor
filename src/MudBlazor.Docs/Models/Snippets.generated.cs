@@ -2846,8 +2846,8 @@ public const string TextFieldAdornmentsExample = @"<MudGrid>
 
 
 @code {
-    public double Amount { get; set; }
-    public int Weight { get; set; }
+    public double? Amount { get; set; }
+    public int? Weight { get; set; }
     public string Password { get; set;} = ""superstrong123"";
 
     bool isShow;

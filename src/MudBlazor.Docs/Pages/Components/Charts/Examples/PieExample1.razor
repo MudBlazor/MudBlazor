@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <div>
-    <MudChart ChartType="ChartType.Pie" InputData="@data" InputLabels="@labels" DisplayLegendItemValues="true" />
+    <MudChart ChartType="ChartType.Pie" InputData="@data" InputLabels="@labels" Width="300px" Height="300px" DisplayLegendItemValues="true" />
     <MudButton @onclick="RandomizeData">Randomize Data</MudButton>
     <MudSlider Value="dataSize" Min="0" Max="20" T="int" ValueChanged="@((value) => OnValueChanged(value))"></MudSlider>
 </div>

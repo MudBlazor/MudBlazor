@@ -1930,8 +1930,6 @@ public const string MudTextFieldString_UserAttributes = @"UserAttributes carries
 
 public const string BaseMudThemeProvider_Theme = @"";
 
-public const string OldComponentBaseMudThemeProvider_Theme = @"";
-
 public const string MudTimePicker_OpenTo = @"First view to show in the MudDatePicker.";
 
 public const string MudTimePicker_AmPm = @"If true, sets 12 hour selection clock.";
@@ -2579,8 +2577,6 @@ public const string MudTabPanel_UserAttributes = @"UserAttributes carries all at
             will be splatted onto the underlying HTML tag.";
 
 public const string MudThemeProvider_Theme = @"";
-
-public const string OldMudThemeProvider_Theme = @"";
 
 public const string MudToolBar_Dense = @"If true, compact padding will be used.";
 

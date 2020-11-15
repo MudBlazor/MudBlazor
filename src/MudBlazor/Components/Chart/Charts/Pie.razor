@@ -12,7 +12,7 @@
     </filter>
     @foreach (var item in Paths.ToList())
     {
-        <path class="@($"mud-chart-item-hover mud-chart-fill-color-{item.Index.ToString()}")" d="@item.Data"></path>
+        <path class="mud-chart-serie" fill="@(ColorPalette.GetValue(item.Index % ColorPalette.Count()))" d="@item.Data"></path>
     }
 </svg>
 <div class="mud-chart-legend">
