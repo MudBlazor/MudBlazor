@@ -3,13 +3,21 @@
 
     &.mud-chart-legend-bottom {
         flex-direction: column;
-        .mud-chart-legend{
-            margin-top:10px;
+
+        .mud-chart-legend {
+            margin-top: 10px;
+            justify-content: center;
+            width: 100%;
         }
     }
 
     &.mud-chart-legend-top {
         flex-direction: column-reverse;
+
+        & .mud-chart-legend {
+            justify-content: center;
+            width: 100%;
+        }
     }
 
     &.mud-chart-legend-right {
@@ -38,6 +46,7 @@
         display: flex;
         padding: 10px 0px;
         margin: auto;
+        flex-wrap: wrap;
 
         & .mud-chart-legend-item {
             display: block;
