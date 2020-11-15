@@ -25,6 +25,13 @@
     }
 }
 
+.mud-dialog {
+    .mud-popover {
+        position: fixed;
+        width: calc(100% - 48px);
+    }
+}
+
 .mud-popover-overlay {
     top: 0;
     left: 0;
