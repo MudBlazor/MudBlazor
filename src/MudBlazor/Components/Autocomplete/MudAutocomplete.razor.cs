@@ -80,6 +80,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public int DebounceInterval { get; set; } = 100;
 
+        /// <summary>
+        /// Optional presentation template for unselected items
+        /// </summary>
+        [Parameter] public RenderFragment<T> ItemTemplate { get; set; }
+
+        /// <summary>
+        /// Optional presentation template for the selected item
+        /// </summary>
+        [Parameter] public RenderFragment<T> ItemSelectedTemplate { get; set; }
+
+
         internal bool IsOpen { get; set; }
 
         public string CurrentIcon { get; set; }

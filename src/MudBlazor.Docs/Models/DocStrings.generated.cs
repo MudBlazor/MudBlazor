@@ -235,6 +235,10 @@ public const string MudAutocomplete_ResetValueOnEmptyText = @"Reset value if use
 
 public const string MudAutocomplete_DebounceInterval = @"Debounce interval in milliseconds.";
 
+public const string MudAutocomplete_ItemTemplate = @"Optional presentation template for unselected items";
+
+public const string MudAutocomplete_ItemSelectedTemplate = @"Optional presentation template for the selected item";
+
 public const string MudAutocomplete_Required = @"";
 
 public const string MudAutocomplete_RequiredError = @"";

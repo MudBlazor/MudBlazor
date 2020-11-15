@@ -485,6 +485,16 @@
             Debounce interval in milliseconds.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.ItemTemplate">
+            <summary>
+            Optional presentation template for unselected items
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.ItemSelectedTemplate">
+            <summary>
+            Optional presentation template for the selected item
+            </summary>
+        </member>
         <member name="F:MudBlazor.MudAutocomplete`1._componentId">
             <summary>
             We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
