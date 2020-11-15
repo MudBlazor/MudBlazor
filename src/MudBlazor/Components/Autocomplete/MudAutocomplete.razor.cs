@@ -104,7 +104,7 @@ namespace MudBlazor
             Timer?.Dispose();
             IsOpen = false;
             UpdateIcon();
-
+            ValidateValue(Value);
             StateHasChanged();
         }
 
@@ -221,6 +221,7 @@ namespace MudBlazor
                     SelectNextItem(-1);
                     break;
             }
+            base.onKeyDown(args);
         }
 
         private void SelectNextItem(int increment)
@@ -259,11 +260,11 @@ namespace MudBlazor
                 SelectOption(Items[SelectedListItemIndex]);
         }
 
-        private void OnInputBlurred()
+        private void OnInputBlurred(FocusEventArgs args)
         {
-            if (IsOpen == true)
-                return;
-            CoerceTextToValue();
+            if (!IsOpen)
+                CoerceTextToValue();
+            base.OnBlurred(args);
         }
 
         private void CoerceTextToValue()

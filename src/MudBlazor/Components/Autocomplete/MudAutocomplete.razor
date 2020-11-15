@@ -8,7 +8,7 @@
         <InputContent>
             <MudInput InputType="InputType.Text" Variant="@Variant" @bind-Value="@Text" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
                       Immediate="true" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" OnKeyDown="@this.OnInputKeyDown"
-                      OnBlur="@OnInputBlurred" />
+                      OnBlur="@OnInputBlurred" OnKeyUp="@base.onKeyUp" OnKeyPress="@base.onKeyPress"/> 
         </InputContent>
         <ChildContent>
             <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" OffsetY="true">
