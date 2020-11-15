@@ -49,11 +49,6 @@ namespace MudBlazor
         [Parameter] public LegendPosition LegendPosition { get; set; } = LegendPosition.Bottom;
 
         /// <summary>
-        /// If true, the Data Values will be displayed next to the Legend Labels.
-        /// </summary>
-        [Parameter] public bool DisplayLegendItemValues { get; set; }
-
-        /// <summary>
         /// Scales the input data to the range between 0 and 1
         /// </summary>
         protected double[] GetNormalizedData()
@@ -62,16 +57,9 @@ namespace MudBlazor
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
         }
 
-
         protected string ToS(double d)
         {
             return d.ToString(CultureInfo.InvariantCulture);
-        }
-
-        protected string[] GetChartPalette()
-        {
-            string[] chartPalette = { Colors.Blue.Accent3, Colors.Green.Accent3, Colors.Amber.Accent3, Colors.Red.Accent3, Colors.DeepPurple.Accent3, Colors.Purple.Accent3, Colors.Cyan.Accent3, Colors.Teal.Accent3, Colors.Orange.Accent3, Colors.DeepOrange.Accent3 };
-            return chartPalette;
         }
     }
 
