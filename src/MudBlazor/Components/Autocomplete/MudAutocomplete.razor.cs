@@ -48,7 +48,7 @@ namespace MudBlazor
         /// Defines how values are displayed in the drop-down list
         /// </summary>
         [Parameter]
-        public Expression<Func<T, object>> ToStringExpression{ get; set; } = (x) => x;
+        public Expression<Func<T, object>> ToStringExpression { get; set; } = (x) => x;
 
         /// <summary>
         /// The SearchFunc returns a list of items matching the typed text
@@ -82,13 +82,13 @@ namespace MudBlazor
         public void SelectOption(T value)
         {
             Value = value;
-            if (Items!=null)
+            if (Items != null)
                 SelectedListItemIndex = Array.IndexOf(Items, value);
             _text = GetItemString(value);
             Timer?.Dispose();
             IsOpen = false;
             UpdateIcon();
-            
+
             StateHasChanged();
         }
 
@@ -97,11 +97,14 @@ namespace MudBlazor
             if (Disabled)
                 return;
             IsOpen = !IsOpen;
-            if (IsOpen && string.IsNullOrEmpty(Text))
-                IsOpen = false;
+            //if (IsOpen && string.IsNullOrEmpty(Text))
+            //    IsOpen = false;
             if (IsOpen)
             {
-                InvokeAsync(()=> ScrollToListItem(SelectedListItemIndex));
+                if (string.IsNullOrEmpty(Text))
+                    OnSearch();
+                else 
+                    InvokeAsync(() => ScrollToListItem(SelectedListItemIndex));
             }
             UpdateIcon();
             StateHasChanged();
@@ -140,30 +143,31 @@ namespace MudBlazor
             Timer = new Timer(OnTimerComplete, autoReset, DebounceInterval, Timeout.Infinite);
         }
 
-        private void OnTimerComplete(object stateInfo) => InvokeAsync(async () =>
+        private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearch);
+
+        private async void OnSearch()
         {
-            if (!string.IsNullOrWhiteSpace(Text) && Text.Length >= MinCharacters)
+            if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
+                return;
+            SelectedListItemIndex = 0;
+
+            var searched_items = await SearchFunc(Text);
+            if (MaxItems.HasValue)
+                searched_items = searched_items.Take(MaxItems.Value);
+            Items = searched_items.ToArray();
+
+            if (Items?.Count() == 0)
             {
-                SelectedListItemIndex = 0;
-
-                var searched_items = await SearchFunc(Text);
-                if (MaxItems.HasValue)
-                    searched_items = searched_items.Take(MaxItems.Value);
-                Items = searched_items.ToArray();
-
-                if (Items?.Count() == 0)
-                {
-                    IsOpen = false;
-                    UpdateIcon();
-                    StateHasChanged();
-                    return;
-                }
-
-                IsOpen = true;
+                IsOpen = false;
                 UpdateIcon();
                 StateHasChanged();
+                return;
             }
-        });
+
+            IsOpen = true;
+            UpdateIcon();
+            StateHasChanged();
+        }
 
         private Func<T, object> toStringFunc;
 
@@ -210,7 +214,7 @@ namespace MudBlazor
         {
             if (Items == null || Items.Length == 0)
                 return;
-            SelectedListItemIndex = Math.Max(0,  Math.Min(Items.Length-1, SelectedListItemIndex+ increment));
+            SelectedListItemIndex = Math.Max(0, Math.Min(Items.Length - 1, SelectedListItemIndex + increment));
             ScrollToListItem(SelectedListItemIndex);
             StateHasChanged();
         }
@@ -240,6 +244,21 @@ namespace MudBlazor
                 return;
             if (SelectedListItemIndex >= 0 && SelectedListItemIndex < Items.Length)
                 SelectOption(Items[SelectedListItemIndex]);
+        }
+
+        private void OnAutoCompleteBlurred()
+        {
+            if (IsOpen == true)
+                IsOpen = false;
+
+            if (Value == null)
+            {
+                Text = null;
+                return;
+            }
+            string actualvalueStr = Value.ToString();
+            if (!object.Equals(actualvalueStr, Text))
+                Text = Converter.Set(Value);
         }
 
         protected override void Dispose(bool disposing)

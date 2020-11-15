@@ -13,13 +13,13 @@
 </MudGrid>
 
 @code {
-
     private IEnumerable<Element> datasource = PeriodicTable.GetElements(); //you can also search directly from database on Search()
-
     private Element value;
-
 
     private Task<IEnumerable<Element>> Search(string value)
     {
+        if (string.IsNullOrEmpty(value))
+            Task.FromResult(new string[0]);
         return Task.FromResult(datasource.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
-    } }
+    } 
+}

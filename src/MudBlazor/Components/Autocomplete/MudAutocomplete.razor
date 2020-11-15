@@ -33,22 +33,3 @@
     <div class="mud-popover-overlay" @onclick="@ToggleMenu"></div>
 }
 
-@code{
-
-    private void OnAutoCompleteBlurred()
-    {
-        if (IsOpen == true)
-            IsOpen = false;
-
-        if (Value == null)
-        {
-            Text = null;
-            return;
-        }
-        string actualvalueStr = Value.ToString();
-        if (!object.Equals(actualvalueStr, Text))
-            Text = Converter.Set(Value);
-
-    }
-
-}
