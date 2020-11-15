@@ -4,22 +4,28 @@
     <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px"
               InputData="@data" InputLabels="@labels">
     </MudChart>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
-    <MudButton @onclick="RandomizeData" Variant="Variant.Filled">Randomize</MudButton>
-    <MudButton Variant="Variant.Filled" Color="Color.Secondary">Remove</MudButton>
+    <MudButton @onclick="RandomizeData">Randomize Data</MudButton>
+    <MudSlider Value="dataSize" Min="0" Max="20" T="int" ValueChanged="@((value) => OnValueChanged(value))"></MudSlider>
 </div>
 
 @code {
+    int dataSize = 4;
     public double[] data = { 50, 25, 20, 5 };
     public string[] labels = { "Fossile", "Nuclear", "Solar", "Wind" };
 
     Random random = new Random();
     public void RandomizeData()
     {
-        var new_data = new double[data.Length];
+        var new_data = new double[dataSize];
         for (int i = 0; i < new_data.Length; i++)
             new_data[i] = random.NextDouble() * 100;
         data = new_data;
         StateHasChanged();
+    }
+
+    void OnValueChanged(int value)
+    {
+        dataSize = value;
+        RandomizeData();
     }
 }

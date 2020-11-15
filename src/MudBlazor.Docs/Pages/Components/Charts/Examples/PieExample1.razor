@@ -3,19 +3,27 @@
 <div>
     <MudChart ChartType="ChartType.Pie" InputData="@data" InputLabels="@labels" DisplayLegendItemValues="true" />
     <MudButton @onclick="RandomizeData">Randomize Data</MudButton>
+    <MudSlider Value="dataSize" Min="0" Max="20" T="int" ValueChanged="@((value) => OnValueChanged(value))"></MudSlider>
 </div>
 
 @code {
-    public double[] data = { 77, 25, 20, 5 };
-    public string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium" };
+    int dataSize = 4;
+    double[] data = { 77, 25, 20, 5 };
+    string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium" };
 
     Random random = new Random();
-    public void RandomizeData()
+    void RandomizeData()
     {
-        var new_data = new double[data.Length];
+        var new_data = new double[dataSize];
         for (int i = 0; i < new_data.Length; i++)
             new_data[i] = random.NextDouble() * 100;
         data = new_data;
         StateHasChanged();
+    }
+
+    void OnValueChanged(int value)
+    {
+        dataSize = value;
+        RandomizeData();
     }
 }
