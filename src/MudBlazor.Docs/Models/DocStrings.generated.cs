@@ -90,7 +90,7 @@ public const string MudBaseInput_Converter = @"";
 
 public const string MudBaseInput_Culture = @"";
 
-public const string MudBaseInput_Format = @"";
+public const string MudBaseInput_Format = @"Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans";
 
 public const string MudBaseInput_Validation = @"";
 
@@ -222,7 +222,7 @@ public const string MudAutocomplete_CloseIcon = @"The Open Select Icon";
 
 public const string MudAutocomplete_MaxHeight = @"Sets the maxheight the select can have when open.";
 
-public const string MudAutocomplete_ToStringExpression = @"Defines how values are displayed in the drop-down list";
+public const string MudAutocomplete_ToStringFunc = @"Defines how values are displayed in the drop-down list";
 
 public const string MudAutocomplete_SearchFunc = @"The SearchFunc returns a list of items matching the typed text";
 
@@ -230,6 +230,8 @@ public const string MudAutocomplete_MaxItems = @"Maximum items to display, defau
             Set null to display all";
 
 public const string MudAutocomplete_MinCharacters = @"Minimum characters to initiate a search, defaults to 2";
+
+public const string MudAutocomplete_ResetValueOnEmptyText = @"Reset value if user deletes the text";
 
 public const string MudAutocomplete_DebounceInterval = @"Debounce interval in milliseconds.";
 
@@ -940,7 +942,7 @@ public const string MudInputString_Converter = @"";
 
 public const string MudInputString_Culture = @"";
 
-public const string MudInputString_Format = @"";
+public const string MudInputString_Format = @"Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans";
 
 public const string MudInputString_Validation = @"";
 
@@ -1519,7 +1521,7 @@ public const string MudSelectString_Converter = @"";
 
 public const string MudSelectString_Culture = @"";
 
-public const string MudSelectString_Format = @"";
+public const string MudSelectString_Format = @"Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans";
 
 public const string MudSelectString_Validation = @"";
 
@@ -1912,7 +1914,7 @@ public const string MudTextFieldString_Converter = @"";
 
 public const string MudTextFieldString_Culture = @"";
 
-public const string MudTextFieldString_Format = @"";
+public const string MudTextFieldString_Format = @"Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans";
 
 public const string MudTextFieldString_Validation = @"";
 

@@ -201,40 +201,43 @@ public const string AppBarSimpleExample = @"<MudAppBar Color=""Color.Primary"" F
 
 public const string AutocompleteClrObjectsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value"" SearchFunc=""@Search"" Immediate=""false"" />
+        <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value"" SearchFunc=""@Search"" ToStringFunc=""@(e=> $""{e.Name} ({e.Sign})"")"" />
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudText Class=""mb-n3"" Typo=""Typo.body2"">
-            Selected value: @(value != null ? value.ToString() : """")
+            Selected value: <MudChip>@(value?.ToString() ?? ""Not selected"")</MudChip>
         </MudText>
     </MudItem>
 </MudGrid>
 
 @code {
-
     private IEnumerable<Element> datasource = PeriodicTable.GetElements(); //you can also search directly from database on Search()
-
     private Element value;
 
-
-    private Task<IEnumerable<Element>> Search(string value)
+    private async Task<IEnumerable<Element>> Search(string value)
     {
-        return Task.FromResult(datasource.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
-    } }";
+        if (string.IsNullOrEmpty(value))
+            return new Element[0];
+        return datasource.Where(e => $""{e.Name} ({e.Sign})"".Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    } 
+}";
 
 public const string AutocompleteUsageExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudAutocomplete T=""string"" Label=""US States"" @bind-Value=""value"" SearchFunc=""@Search"" />
+        <MudAutocomplete T=""string"" Label=""US States"" @bind-Value=""value1"" SearchFunc=""@Search1"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudAutocomplete T=""string"" Label=""US States"" @bind-Value=""value2"" SearchFunc=""@Search2"" ResetValueOnEmptyText=""true"" />
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudText Class=""mb-n3"" Typo=""Typo.body2"">
-            Selected value: @value
+            <MudChip>@(value1 ?? ""Not selected"")</MudChip><MudChip>@(value2 ?? ""Not selected"")</MudChip>
         </MudText>
     </MudItem>
 </MudGrid>
 
 @code {
-    private string value;
+    private string value1, value2;
     private string[] states =
     {
         ""Alabama"", ""Alaska"", ""American Samoa"", ""Arizona"",
@@ -253,11 +256,21 @@ public const string AutocompleteUsageExample = @"<MudGrid>
         ""Washington"", ""West Virginia"", ""Wisconsin"", ""Wyoming"",
     };
 
-    private Task<IEnumerable<string>> Search(string value)
+    private async Task<IEnumerable<string>> Search1(string value)
     {
-        return Task.FromResult(states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return states;
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
+    private async Task<IEnumerable<string>> Search2(string value)
+    {
+        // if text is null or empty, don't return values (drop-down will not open)
+        if (string.IsNullOrEmpty(value))
+            return new string[0];
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
 }";
 
 public const string AvatarIconExample = @"<MudAvatar>
