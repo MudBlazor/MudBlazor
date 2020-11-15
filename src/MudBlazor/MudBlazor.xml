@@ -685,11 +685,6 @@
             The placment direction of the legend if used.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudChartBase.DisplayLegendItemValues">
-            <summary>
-            If true, the Data Values will be displayed next to the Legend Labels.
-            </summary>
-        </member>
         <member name="M:MudBlazor.MudChartBase.GetNormalizedData">
             <summary>
             Scales the input data to the range between 0 and 1
