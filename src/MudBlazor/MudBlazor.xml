@@ -173,6 +173,11 @@
             </summary>
             <param name="value"></param>
         </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Format">
+            <summary>
+            Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBaseInput`1.ConversionError">
             <summary>
             True if the conversion from string to T failed
@@ -449,7 +454,7 @@
             Sets the maxheight the select can have when open.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudAutocomplete`1.ToStringExpression">
+        <member name="P:MudBlazor.MudAutocomplete`1.ToStringFunc">
             <summary>
             Defines how values are displayed in the drop-down list
             </summary>
@@ -470,16 +475,15 @@
             Minimum characters to initiate a search, defaults to 2
             </summary>
         </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.ResetValueOnEmptyText">
+            <summary>
+            Reset value if user deletes the text
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudAutocomplete`1.DebounceInterval">
             <summary>
             Debounce interval in milliseconds.
             </summary>
-        </member>
-        <member name="M:MudBlazor.MudAutocomplete`1.StringValueChanged(System.String)">
-            <summary>
-            The user typed something ...
-            </summary>
-            <param name="text"></param>
         </member>
         <member name="F:MudBlazor.MudAutocomplete`1._componentId">
             <summary>

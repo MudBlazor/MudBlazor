@@ -48,7 +48,7 @@ namespace MudBlazor
         /// Defines how values are displayed in the drop-down list
         /// </summary>
         [Parameter]
-        public Expression<Func<T, object>> ToStringExpression { get; set; } = (x) => x;
+        public Func<T, string> ToStringFunc { get; set; } = null;
 
         /// <summary>
         /// The SearchFunc returns a list of items matching the typed text
@@ -70,10 +70,15 @@ namespace MudBlazor
         public int MinCharacters { get; set; } = 0;
 
         /// <summary>
+        /// Reset value if user deletes the text
+        /// </summary>
+        [Parameter]
+        public bool ResetValueOnEmptyText { get; set; } = false;
+
+        /// <summary>
         /// Debounce interval in milliseconds.
         /// </summary>
         [Parameter] public int DebounceInterval { get; set; } = 100;
-
 
         internal bool IsOpen { get; set; }
 
@@ -101,10 +106,12 @@ namespace MudBlazor
             //    IsOpen = false;
             if (IsOpen)
             {
-                if (string.IsNullOrEmpty(Text))
-                    OnSearch();
-                else 
-                    InvokeAsync(() => ScrollToListItem(SelectedListItemIndex));
+                OnSearch();
+                InvokeAsync(() => ScrollToListItem(SelectedListItemIndex));
+            }
+            else
+            {
+                CoerceTextToValue();
             }
             UpdateIcon();
             StateHasChanged();
@@ -131,14 +138,11 @@ namespace MudBlazor
         private T[] Items;
         private int SelectedListItemIndex = 0;
 
-        /// <summary>
-        /// The user typed something ...
-        /// </summary>
-        /// <param name="text"></param>
         protected override void StringValueChanged(string text)
         {
+            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(text))
+                Value = default(T);
             Timer?.Dispose();
-            //Text = GetValue((T)text.Value);
             var autoReset = new AutoResetEvent(false);
             Timer = new Timer(OnTimerComplete, autoReset, DebounceInterval, Timeout.Infinite);
         }
@@ -173,25 +177,23 @@ namespace MudBlazor
 
         private string GetItemString(T item)
         {
-            if (item == null) return string.Empty;
-
-            if (toStringFunc == null)
-                toStringFunc = ToStringExpression.Compile();
-
-            object value = null;
-
+            if (item == null) 
+                return string.Empty;
+            if (ToStringFunc != null)
+            {
+                try
+                {
+                    return ToStringFunc(item);
+                }
+                catch (NullReferenceException) { }
+                return "null";
+            }
             try
             {
-                value = toStringFunc.Invoke(item);
+                return Converter.Set(item);
             }
             catch (NullReferenceException) { }
-
-            if (value == null) return string.Empty;
-
-            if (string.IsNullOrEmpty(Format))
-                return value.ToString();
-
-            return string.Format(CultureInfo.CurrentCulture, $"{{0:{Format}}}", value);
+            return "null";
         }
 
         protected virtual void OnInputKeyDown(KeyboardEventArgs args)
@@ -246,19 +248,27 @@ namespace MudBlazor
                 SelectOption(Items[SelectedListItemIndex]);
         }
 
-        private void OnAutoCompleteBlurred()
+        private void OnInputBlurred()
         {
             if (IsOpen == true)
-                IsOpen = false;
+                return;
+            CoerceTextToValue();
+        }
 
+        private void CoerceTextToValue()
+        {
             if (Value == null)
             {
                 Text = null;
+                Timer?.Dispose();
                 return;
             }
-            string actualvalueStr = Value.ToString();
+            string actualvalueStr = GetItemString(Value);
             if (!object.Equals(actualvalueStr, Text))
-                Text = Converter.Set(Value);
+            {
+                Text = actualvalueStr;
+                Timer?.Dispose();
+            }
         }
 
         protected override void Dispose(bool disposing)
