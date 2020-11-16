@@ -1,12 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<div>
-    <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px"
-              InputData="@data" InputLabels="@labels">
-    </MudChart>
-    <MudButton @onclick="RandomizeData">Randomize Data</MudButton>
-    <MudSlider Value="dataSize" Min="0" Max="20" T="int" ValueChanged="@((value) => OnValueChanged(value))"></MudSlider>
-</div>
+<MudPaper Class="pa-4" Style="width:400px">
+    <MudChart ChartType="ChartType.Donut" Width="300px" Height="300px" InputData="@data" InputLabels="@labels"></MudChart>
+</MudPaper>
+<MudPaper Class="pa-4 mt-2 d-flex justify-center">
+    <MudButton OnClick="AddDataSize" Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+    <MudButton @onclick="RandomizeData" Variant="Variant.Filled" Class="mx-4">Randomize</MudButton>
+    <MudButton OnClick="RemoveDataSize" Variant="Variant.Filled" Color="Color.Secondary">Remove</MudButton>
+</MudPaper>
 
 @code {
     int dataSize = 4;
@@ -23,9 +24,14 @@
         StateHasChanged();
     }
 
-    void OnValueChanged(int value)
+    void AddDataSize()
     {
-        dataSize = value;
+        dataSize = dataSize + 1;
+        RandomizeData();
+    }
+    void RemoveDataSize()
+    {
+        dataSize = dataSize - 1;
         RandomizeData();
     }
 }
