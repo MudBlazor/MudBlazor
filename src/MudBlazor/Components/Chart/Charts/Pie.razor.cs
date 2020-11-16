@@ -13,8 +13,10 @@ namespace MudBlazor.Charts
         public List<SvgPath> Paths = new List<SvgPath>();
         public List<SvgLegend> Legends = new List<SvgLegend>();
 
-        protected override void OnInitialized()
+        protected override void OnParametersSet()
         {
+            Paths.Clear();
+            Legends.Clear();
             double startx, starty, endx, endy;
             var ndata = GetNormalizedData();
             double cumulativeRadians = 0;

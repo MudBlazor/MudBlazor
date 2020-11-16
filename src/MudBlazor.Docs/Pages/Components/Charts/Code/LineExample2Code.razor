@@ -8,20 +8,24 @@
 <span class="atSign">&#64;</span>code {
 
     <span class="keyword">public</span> List&lt;ChartSeries&gt; Series = <span class="keyword">new</span> List&lt;ChartSeries&gt;();
-    <span class="keyword">public</span> <span class="keyword">string</span>[] XAxisLabels = {<span class="string">&quot;00:00&quot;</span>, <span class="string">&quot;01:00&quot;</span>, <span class="string">&quot;02:00&quot;</span>, <span class="string">&quot;03:00&quot;</span>, <span class="string">&quot;04:00&quot;</span>, <span class="string">&quot;05:00&quot;</span>, <span class="string">&quot;06:00&quot;</span>};
+    <span class="keyword">public</span> ChartOptions Options = <span class="keyword">new</span> ChartOptions();
+    <span class="keyword">public</span> <span class="keyword">string</span>[] XAxisLabels = { <span class="string">&quot;1986-04-20&quot;</span>, <span class="string">&quot;1986-04-21&quot;</span>, <span class="string">&quot;1986-04-22&quot;</span>, <span class="string">&quot;1986-04-23&quot;</span>, <span class="string">&quot;1986-04-24&quot;</span>, <span class="string">&quot;1986-04-25&quot;</span>, <span class="string">&quot;1986-04-26&quot;</span> };
 
     <span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> OnInitialized()
     {
-        <span class="keyword">double</span>[] Data1 = { <span class="number">31</span>, <span class="number">40</span>, <span class="number">28</span>, <span class="number">51</span>, <span class="number">42</span>, <span class="number">109</span>, <span class="number">100</span> };
-        <span class="keyword">double</span>[] Data2 = { <span class="number">11</span>, <span class="number">32</span>, <span class="number">45</span>, <span class="number">32</span>, <span class="number">34</span>, <span class="number">52</span>, <span class="number">41</span> };
-        <span class="keyword">double</span>[] Data3 = { <span class="number">60</span>, <span class="number">65</span>, <span class="number">75</span>, <span class="number">80</span>, <span class="number">120</span>, <span class="number">100</span>, <span class="number">30</span> };
-        <span class="keyword">double</span>[] Data4 = { <span class="number">90</span>, <span class="number">109</span>, <span class="number">100</span>, <span class="number">110</span>, <span class="number">102</span>, <span class="number">95</span>, <span class="number">90</span> };
+        <span class="keyword">double</span>[] Data1 = { <span class="number">65</span>, <span class="number">68</span>, <span class="number">70</span>, <span class="number">74</span>, <span class="number">74</span>, <span class="number">72</span>, <span class="number">74</span> };
+        <span class="keyword">double</span>[] Data2 = { <span class="number">88</span>, <span class="number">90</span>, <span class="number">91</span>, <span class="number">92</span>, <span class="number">91</span>, <span class="number">90</span>, <span class="number">90</span> };
+        <span class="keyword">double</span>[] Data3 = { <span class="number">89</span>, <span class="number">91</span>, <span class="number">92</span>, <span class="number">92</span>, <span class="number">92</span>, <span class="number">92</span>, <span class="number">91</span> };
+        <span class="keyword">double</span>[] Data4 = { <span class="number">85</span>, <span class="number">86</span>, <span class="number">90</span>, <span class="number">90</span>, <span class="number">92</span>, <span class="number">99</span>, <span class="number">0</span> };
 
 
-        Series.Add(<span class="keyword">new</span> ChartSeries() { Name = <span class="string">&quot;Serie 1&quot;</span>, Data = Data1 });
-        Series.Add(<span class="keyword">new</span> ChartSeries() { Name = <span class="string">&quot;Serie 2&quot;</span>, Data = Data2 });
-        Series.Add(<span class="keyword">new</span> ChartSeries() { Name = <span class="string">&quot;Serie 3&quot;</span>, Data = Data3 });
-        Series.Add(<span class="keyword">new</span> ChartSeries() { Name = <span class="string">&quot;Serie 4&quot;</span>, Data = Data4 });
+        Series.Add(<span class="keyword">new</span> ChartSeries() { Name = <span class="string">&quot;Chernobyl-1&quot;</span>, Data = Data1 });
+        Series.Add(<span class="keyword">new</span> ChartSeries() { Name = <span class="string">&quot;Chernobyl-2&quot;</span>, Data = Data2 });
+        Series.Add(<span class="keyword">new</span> ChartSeries() { Name = <span class="string">&quot;Chernobyl-3&quot;</span>, Data = Data3 });
+        Series.Add(<span class="keyword">new</span> ChartSeries() { Name = <span class="string">&quot;Chernobyl-4&quot;</span>, Data = Data4 });
+
+        Options.YAxisTicks = <span class="number">400</span>;
+
         StateHasChanged();
     }
 }

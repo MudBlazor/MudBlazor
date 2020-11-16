@@ -1,8 +1,38 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudChart ChartType="ChartType.Pie" InputData="@data" InputLabels="@labels" DisplayLegendItemValues="true" />
+
+<MudPaper Class="pa-4" Style="width:400px">
+    <MudChart ChartType="ChartType.Pie" InputData="@data" InputLabels="@labels" Width="300px" Height="300px" />
+</MudPaper>
+<MudPaper Class="pa-4 mt-2 d-flex justify-center">
+    <MudButton OnClick="AddDataSize" Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
+    <MudButton @onclick="RandomizeData" Variant="Variant.Filled" Class="mx-4">Randomize</MudButton>
+    <MudButton OnClick="RemoveDataSize" Variant="Variant.Filled" Color="Color.Secondary">Remove</MudButton>
+</MudPaper>
 
 @code {
-    public double[] data = { 77, 25, 20, 5 };
-    public string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium" };
+    int dataSize = 4;
+    double[] data = { 77, 25, 20, 5 };
+    string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium", "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium", "Neptunium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium", "Mudblaznium" };
+
+    Random random = new Random();
+    void RandomizeData()
+    {
+        var new_data = new double[dataSize];
+        for (int i = 0; i < new_data.Length; i++)
+            new_data[i] = random.NextDouble() * 100;
+        data = new_data;
+        StateHasChanged();
+    }
+
+    void AddDataSize()
+    {
+        dataSize = dataSize + 1;
+        RandomizeData();
+    }
+    void RemoveDataSize()
+    {
+        dataSize = dataSize - 1;
+        RandomizeData();
+    }
 }

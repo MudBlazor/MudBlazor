@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.Charts
+@inherits LegendBase
+
+
+@if (!MudChartParent.ChartOptions.DisableLegend)
+{
+    <div class="mud-chart-legend">
+        @foreach (var item in Data)
+        {
+            <div class="mud-chart-legend-item">
+                <span class="mud-chart-legend-marker" style="@($"background-color:{ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count())}")"></span>
+                <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>
+            </div>
+        }
+    </div>
+}

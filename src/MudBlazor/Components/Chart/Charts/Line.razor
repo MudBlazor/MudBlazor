@@ -36,19 +36,8 @@
     <g class="mud-charts-line-series">
         @foreach (var chartLine in ChartLines)
         {
-            <path class="@($"mud-chart-stroke-color-{chartLine.Index.ToString()}")" stroke-width="3" fill="none" d="@chartLine.Data"></path>
+            <path fill="none" stroke="@(ChartOptions.ChartPalette.GetValue(chartLine.Index % ChartOptions.ChartPalette.Count()))" stroke-width="3" d="@chartLine.Data"></path>
         }
     </g>
 </svg>
-@if (!MudChartParent.ChartOptions.DisableLegend)
-{
-    <div class="mud-chart-legend">
-        @foreach (var item in Legends)
-        {
-            <div class="mud-chart-legend-item">
-                <span class="@($"mud-chart-legend-marker mud-chart-marker-color-{item.Index.ToString()}")"></span>
-                <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>
-            </div>
-        }
-    </div>
-}
+<Legend Data="@Legends" />

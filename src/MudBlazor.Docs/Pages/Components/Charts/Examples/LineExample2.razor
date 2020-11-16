@@ -6,20 +6,24 @@
 @code {
 
     public List<ChartSeries> Series = new List<ChartSeries>();
-    public string[] XAxisLabels = {"00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00"};
+    public ChartOptions Options = new ChartOptions();
+    public string[] XAxisLabels = { "1986-04-20", "1986-04-21", "1986-04-22", "1986-04-23", "1986-04-24", "1986-04-25", "1986-04-26" };
 
     protected override void OnInitialized()
     {
-        double[] Data1 = { 31, 40, 28, 51, 42, 109, 100 };
-        double[] Data2 = { 11, 32, 45, 32, 34, 52, 41 };
-        double[] Data3 = { 60, 65, 75, 80, 120, 100, 30 };
-        double[] Data4 = { 90, 109, 100, 110, 102, 95, 90 };
+        double[] Data1 = { 65, 68, 70, 74, 74, 72, 74 };
+        double[] Data2 = { 88, 90, 91, 92, 91, 90, 90 };
+        double[] Data3 = { 89, 91, 92, 92, 92, 92, 91 };
+        double[] Data4 = { 85, 86, 90, 90, 92, 99, 0 };
 
 
-        Series.Add(new ChartSeries() { Name = "Serie 1", Data = Data1 });
-        Series.Add(new ChartSeries() { Name = "Serie 2", Data = Data2 });
-        Series.Add(new ChartSeries() { Name = "Serie 3", Data = Data3 });
-        Series.Add(new ChartSeries() { Name = "Serie 4", Data = Data4 });
+        Series.Add(new ChartSeries() { Name = "Chernobyl-1", Data = Data1 });
+        Series.Add(new ChartSeries() { Name = "Chernobyl-2", Data = Data2 });
+        Series.Add(new ChartSeries() { Name = "Chernobyl-3", Data = Data3 });
+        Series.Add(new ChartSeries() { Name = "Chernobyl-4", Data = Data4 });
+
+        Options.YAxisTicks = 400;
+
         StateHasChanged();
     }
 }

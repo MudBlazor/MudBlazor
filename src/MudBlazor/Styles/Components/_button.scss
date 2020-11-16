@@ -48,9 +48,9 @@
         background-color: var(--mud-palette-action-default-hover);
     }
 
-    &:focus {
+    /*&:focus {
         background-color: var(--mud-palette-action-default-hover);
-    }
+    }*/
 }
 
 .mud-button-label {
@@ -75,9 +75,9 @@
                 background-color: var(--mud-palette-#{$color}-hover);
             }
 
-            &:focus {
+            /*&:focus {
                 background-color: var(--mud-palette-#{$color}-hover);
-            }
+            }*/
         }
     }
 }
@@ -91,9 +91,9 @@
         background-color: var(--mud-palette-action-default-hover);
     }
 
-    &:focus {
+    /*&:focus {
         background-color: var(--mud-palette-action-default-hover);
-    }
+    }*/
 
     &:disabled {
         border: 1px solid var(--mud-palette-action-disabled-background);
@@ -109,9 +109,9 @@
                 background-color: var(--mud-palette-#{$color}-hover);
             }
 
-            &:focus {
+            /*&:focus {
                 background-color: var(--mud-palette-#{$color}-hover);
-            }
+            }*/
         }
     }
 }
@@ -126,10 +126,10 @@
         background-color: var(--mud-palette-action-disabled);
     }
 
-    &:focus {
+    /*&:focus {
         box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
         background-color: var(--mud-palette-action-disabled);
-    }
+    }*/
 
     &:disabled {
         color: var(--mud-palette-action-disabled);
@@ -146,9 +146,9 @@
                 background-color: var(--mud-palette-#{$color}-darken);
             }
 
-            &:focus {
+            /*&:focus {
                 background-color: var(--mud-palette-#{$color}-darken);
-            }
+            }*/
         }
     }
 }

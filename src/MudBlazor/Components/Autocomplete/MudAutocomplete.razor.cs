@@ -48,7 +48,7 @@ namespace MudBlazor
         /// Defines how values are displayed in the drop-down list
         /// </summary>
         [Parameter]
-        public Expression<Func<T, object>> ToStringExpression{ get; set; } = (x) => x;
+        public Func<T, string> ToStringFunc { get; set; } = null;
 
         /// <summary>
         /// The SearchFunc returns a list of items matching the typed text
@@ -70,9 +70,25 @@ namespace MudBlazor
         public int MinCharacters { get; set; } = 0;
 
         /// <summary>
+        /// Reset value if user deletes the text
+        /// </summary>
+        [Parameter]
+        public bool ResetValueOnEmptyText { get; set; } = false;
+
+        /// <summary>
         /// Debounce interval in milliseconds.
         /// </summary>
         [Parameter] public int DebounceInterval { get; set; } = 100;
+
+        /// <summary>
+        /// Optional presentation template for unselected items
+        /// </summary>
+        [Parameter] public RenderFragment<T> ItemTemplate { get; set; }
+
+        /// <summary>
+        /// Optional presentation template for the selected item
+        /// </summary>
+        [Parameter] public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
 
         internal bool IsOpen { get; set; }
@@ -82,13 +98,13 @@ namespace MudBlazor
         public void SelectOption(T value)
         {
             Value = value;
-            if (Items!=null)
+            if (Items != null)
                 SelectedListItemIndex = Array.IndexOf(Items, value);
             _text = GetItemString(value);
             Timer?.Dispose();
             IsOpen = false;
             UpdateIcon();
-            
+            ValidateValue(Value);
             StateHasChanged();
         }
 
@@ -97,11 +113,16 @@ namespace MudBlazor
             if (Disabled)
                 return;
             IsOpen = !IsOpen;
-            if (IsOpen && string.IsNullOrEmpty(Text))
-                IsOpen = false;
+            //if (IsOpen && string.IsNullOrEmpty(Text))
+            //    IsOpen = false;
             if (IsOpen)
             {
-                InvokeAsync(()=> ScrollToListItem(SelectedListItemIndex));
+                OnSearch();
+                InvokeAsync(() => ScrollToListItem(SelectedListItemIndex));
+            }
+            else
+            {
+                CoerceTextToValue();
             }
             UpdateIcon();
             StateHasChanged();
@@ -128,66 +149,62 @@ namespace MudBlazor
         private T[] Items;
         private int SelectedListItemIndex = 0;
 
-        /// <summary>
-        /// The user typed something ...
-        /// </summary>
-        /// <param name="text"></param>
         protected override void StringValueChanged(string text)
         {
+            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(text))
+                Value = default(T);
             Timer?.Dispose();
-            //Text = GetValue((T)text.Value);
             var autoReset = new AutoResetEvent(false);
             Timer = new Timer(OnTimerComplete, autoReset, DebounceInterval, Timeout.Infinite);
         }
 
-        private void OnTimerComplete(object stateInfo) => InvokeAsync(async () =>
+        private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearch);
+
+        private async void OnSearch()
         {
-            if (!string.IsNullOrWhiteSpace(Text) && Text.Length >= MinCharacters)
+            if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
+                return;
+            SelectedListItemIndex = 0;
+
+            var searched_items = await SearchFunc(Text);
+            if (MaxItems.HasValue)
+                searched_items = searched_items.Take(MaxItems.Value);
+            Items = searched_items.ToArray();
+
+            if (Items?.Count() == 0)
             {
-                SelectedListItemIndex = 0;
-
-                var searched_items = await SearchFunc(Text);
-                if (MaxItems.HasValue)
-                    searched_items = searched_items.Take(MaxItems.Value);
-                Items = searched_items.ToArray();
-
-                if (Items?.Count() == 0)
-                {
-                    IsOpen = false;
-                    UpdateIcon();
-                    StateHasChanged();
-                    return;
-                }
-
-                IsOpen = true;
+                IsOpen = false;
                 UpdateIcon();
                 StateHasChanged();
+                return;
             }
-        });
+
+            IsOpen = true;
+            UpdateIcon();
+            StateHasChanged();
+        }
 
         private Func<T, object> toStringFunc;
 
         private string GetItemString(T item)
         {
-            if (item == null) return string.Empty;
-
-            if (toStringFunc == null)
-                toStringFunc = ToStringExpression.Compile();
-
-            object value = null;
-
+            if (item == null) 
+                return string.Empty;
+            if (ToStringFunc != null)
+            {
+                try
+                {
+                    return ToStringFunc(item);
+                }
+                catch (NullReferenceException) { }
+                return "null";
+            }
             try
             {
-                value = toStringFunc.Invoke(item);
+                return Converter.Set(item);
             }
             catch (NullReferenceException) { }
-
-            if (value == null) return string.Empty;
-
-            if (string.IsNullOrEmpty(Format))
-                return value.ToString();
-
-            return string.Format(CultureInfo.CurrentCulture, $"{{0:{Format}}}", value);
+            return "null";
         }
 
         protected virtual void OnInputKeyDown(KeyboardEventArgs args)
@@ -204,13 +221,14 @@ namespace MudBlazor
                     SelectNextItem(-1);
                     break;
             }
+            base.onKeyDown(args);
         }
 
         private void SelectNextItem(int increment)
         {
             if (Items == null || Items.Length == 0)
                 return;
-            SelectedListItemIndex = Math.Max(0,  Math.Min(Items.Length-1, SelectedListItemIndex+ increment));
+            SelectedListItemIndex = Math.Max(0, Math.Min(Items.Length - 1, SelectedListItemIndex + increment));
             ScrollToListItem(SelectedListItemIndex);
             StateHasChanged();
         }
@@ -240,6 +258,29 @@ namespace MudBlazor
                 return;
             if (SelectedListItemIndex >= 0 && SelectedListItemIndex < Items.Length)
                 SelectOption(Items[SelectedListItemIndex]);
+        }
+
+        private void OnInputBlurred(FocusEventArgs args)
+        {
+            if (!IsOpen)
+                CoerceTextToValue();
+            base.OnBlurred(args);
+        }
+
+        private void CoerceTextToValue()
+        {
+            if (Value == null)
+            {
+                Text = null;
+                Timer?.Dispose();
+                return;
+            }
+            string actualvalueStr = GetItemString(Value);
+            if (!object.Equals(actualvalueStr, Text))
+            {
+                Text = actualvalueStr;
+                Timer?.Dispose();
+            }
         }
 
         protected override void Dispose(bool disposing)
