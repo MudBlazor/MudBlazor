@@ -14,10 +14,6 @@
         background-color: var(--mud-palette-action-default-hover);
     }
 
-    &:focus {
-        background-color: var(--mud-palette-action-default-hover);
-    }
-
     &:disabled {
         color: var(--mud-palette-action-disabled);
         background-color: transparent;
@@ -37,10 +33,6 @@
         color: var(--mud-palette-#{$color});
 
         &:hover {
-            background-color: var(--mud-palette-#{$color}-hover);
-        }
-
-        &:focus {
             background-color: var(--mud-palette-#{$color}-hover);
         }
     }
