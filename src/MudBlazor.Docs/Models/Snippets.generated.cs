@@ -201,40 +201,53 @@ public const string AppBarSimpleExample = @"<MudAppBar Color=""Color.Primary"" F
 
 public const string AutocompleteClrObjectsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value"" SearchFunc=""@Search"" Immediate=""false"" />
+        <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value1"" SearchFunc=""@Search"" ToStringFunc=""@(e=> $""{e.Name} ({e.Sign})"")"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value2"" SearchFunc=""@Search"" ToStringFunc=""@(e=> $""{e.Name} ({e.Sign})"")"">
+            <ItemTemplate Context=""e"">                          
+                <MudText><MudIcon Icon=""@Icons.Material.CheckBoxOutlineBlank"" Class=""mb-n1 mr-3"" />@($""{e.Name} ({e.Sign})"")</MudText>
+            </ItemTemplate>
+            <ItemSelectedTemplate Context=""e"">                
+                <MudText><MudIcon Icon=""@Icons.Material.CheckBox"" Class=""mb-n1 mr-3"" />@($""{e.Name} ({e.Sign})"")</MudText>
+            </ItemSelectedTemplate>
+        </MudAutocomplete>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudText Class=""mb-n3"" Typo=""Typo.body2"">
-            Selected value: @(value != null ? value.ToString() : """")
+            Selected values: <MudChip>@(value1?.ToString() ?? ""Not selected"")</MudChip><MudChip>@(value2?.ToString() ?? ""Not selected"")</MudChip>
         </MudText>
     </MudItem>
 </MudGrid>
 
 @code {
-
     private IEnumerable<Element> datasource = PeriodicTable.GetElements(); //you can also search directly from database on Search()
+    private Element value1, value2;
 
-    private Element value;
-
-
-    private Task<IEnumerable<Element>> Search(string value)
+    private async Task<IEnumerable<Element>> Search(string value)
     {
-        return Task.FromResult(datasource.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
-    } }";
+        if (string.IsNullOrEmpty(value))
+            return datasource;
+        return datasource.Where(e => $""{e.Name} ({e.Sign})"".Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+}";
 
 public const string AutocompleteUsageExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudAutocomplete T=""string"" Label=""US States"" @bind-Value=""value"" SearchFunc=""@Search"" />
+        <MudAutocomplete T=""string"" Label=""US States"" @bind-Value=""value1"" SearchFunc=""@Search1"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudAutocomplete T=""string"" Label=""US States"" @bind-Value=""value2"" SearchFunc=""@Search2"" ResetValueOnEmptyText=""true"" />
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudText Class=""mb-n3"" Typo=""Typo.body2"">
-            Selected value: @value
+            <MudChip>@(value1 ?? ""Not selected"")</MudChip><MudChip>@(value2 ?? ""Not selected"")</MudChip>
         </MudText>
     </MudItem>
 </MudGrid>
 
 @code {
-    private string value;
+    private string value1, value2;
     private string[] states =
     {
         ""Alabama"", ""Alaska"", ""American Samoa"", ""Arizona"",
@@ -253,11 +266,21 @@ public const string AutocompleteUsageExample = @"<MudGrid>
         ""Washington"", ""West Virginia"", ""Wisconsin"", ""Wyoming"",
     };
 
-    private Task<IEnumerable<string>> Search(string value)
+    private async Task<IEnumerable<string>> Search1(string value)
     {
-        return Task.FromResult(states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return states;
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
+    private async Task<IEnumerable<string>> Search2(string value)
+    {
+        // if text is null or empty, don't return values (drop-down will not open)
+        if (string.IsNullOrEmpty(value))
+            return new string[0];
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
 }";
 
 public const string AvatarIconExample = @"<MudAvatar>
@@ -1071,57 +1094,6 @@ public const string DrawerClippingExample = @"@layout IframeLayout
     }
 }";
 
-public const string DrawerCombinedExample = @"@layout IframeLayout
-@page ""/iframe/docs/examples/drawer/combined""
-
-
-<MudLayout>
-    <MudAppBar Elevation=""1"">
-        <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
-        @if (clipped)
-        {
-            <MudText Typo=""Typo.h6"" Class=""ml-3"">My App</MudText>
-        }
-        <MudAppBarSpacer />
-        <MudIconButton Icon=""@Icons.Material.BorderStyle"" Color=""Color.Inherit"" OnClick=""@ToggleClipped"" />
-    </MudAppBar>
-    <MudDrawer Open=""@open"" Clipped=""@clipped"" Elevation=""1"">
-        @if (!clipped)
-        {
-            <MudDrawerHeader>
-                <MudText Typo=""Typo.h6"">My App</MudText>
-            </MudDrawerHeader>
-        }
-        <MudNavMenu>
-            <MudNavLink Match=""NavLinkMatch.All"">Store</MudNavLink>
-            <MudNavLink Match=""NavLinkMatch.All"">Library</MudNavLink>
-            <MudNavLink Match=""NavLinkMatch.All"">Community</MudNavLink>
-        </MudNavMenu>
-    </MudDrawer>
-    <MudMainContent>
-        <MudContainer Class=""pt-16 px-16"">
-            <MudText Color=""Color.Secondary"" GutterBottom=""true"">Click the right side button in the appbar to change layout.</MudText>
-            <LoremIpsum />
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
-
-
-@code{
-    bool open = true;
-    bool clipped = false;
-
-    void ToggleDrawer()
-    {
-        open = !open;
-    }
-
-    void ToggleClipped()
-    {
-        clipped = !clipped;
-    }
-}";
-
 public const string DrawerDoubleExample = @"@layout IframeLayout
 @page ""/iframe/docs/examples/drawer/double""
 
@@ -1189,7 +1161,7 @@ public const string DrawerPersistentExample = @"@layout IframeLayout
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
     </MudAppBar>
-    <MudDrawer Open=""@open"" Elevation=""1"">
+    <MudDrawer @bind-Open=""@open"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -2842,6 +2814,24 @@ public const string TabsVerticalExample = @"<MudTabs Vertical=""true"" Border=""
     </MudTabPanel>
 </MudTabs>";
 
+public const string TabsWithBagdesExample = @"<MudTabs Elevation=""1"" Rounded=""true"">
+    <MudTabPanel Icon=""@Icons.Material.Api"" BadgeData='""live""' BadgeColor=""Color.Info"" />
+    <MudTabPanel Icon=""@Icons.Material.Build"" BadgeData='""...""' />
+    <MudTabPanel Icon=""@Icons.Material.BugReport"" BadgeData='""99+""' BadgeColor=""Color.Error"" />
+</MudTabs>
+
+<MudTabs Elevation=""1"" Rounded=""true"" Class=""my-4"">
+    <MudTabPanel Icon=""@Icons.Material.Api"" Text=""API"" BadgeData='""!""' BadgeColor=""Color.Error"" />
+    <MudTabPanel Icon=""@Icons.Material.Build"" Text=""Build"" BadgeData=""1"" BadgeColor=""Color.Success"" />
+    <MudTabPanel Icon=""@Icons.Material.BugReport"" Text=""Bugs"" BadgeData=""0"" />
+</MudTabs>
+
+<MudTabs Elevation=""1"" Rounded=""true"">
+    <MudTabPanel Text=""API"" BadgeData='""S""' />
+    <MudTabPanel Text=""Build"" BadgeData='""...""' BadgeColor=""Color.Dark"" />
+    <MudTabPanel Text=""Bugs"" BadgeData='""N""' />
+</MudTabs>";
+
 public const string TemplateExample = @"";
 
 public const string TextFieldAdornmentsExample = @"<MudGrid>
@@ -2879,8 +2869,8 @@ public const string TextFieldAdornmentsExample = @"<MudGrid>
 
 
 @code {
-    public double Amount { get; set; }
-    public int Weight { get; set; }
+    public double? Amount { get; set; }
+    public int? Weight { get; set; }
     public string Password { get; set;} = ""superstrong123"";
 
     bool isShow;

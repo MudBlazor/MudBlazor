@@ -2,13 +2,13 @@
 @using System.Globalization
 @inherits DonutBase
 
-
 <svg class="mud-chart-donut" width="@MudChartParent.Width" height="@MudChartParent.Height" viewBox="0 0 42 42">
+    <Filters />
     <circle class="mud-donut-ring" cx="20" cy="20" r="15.91549430918954"></circle>
     @foreach (var item in Circles.ToList())
     {
-        <circle class="@($"mud-donut-segment mud-chart-stroke-color-{item.Index.ToString()}")" 
-                cx="@ToS(item.CX)" 
+        <circle class="mud-chart-serie mud-donut-segment" stroke="@(ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count()))"
+                cx="@ToS(item.CX)"
                 cy="@ToS(item.CY)"
                 r="@ToS(item.Radius)"
                 stroke-dasharray="@item.StrokeDashArray"
@@ -17,14 +17,4 @@
     }
     <circle class="mud-donut-hole" cx="21" cy="21" r="13.4"></circle>
 </svg>
-<div class="mud-chart-legend">
-    @foreach (var item in Legends.ToList())
-    {
-        <div class="mud-chart-legend-item">
-            <span class="@($"mud-chart-legend-marker mud-chart-marker-color-{item.Index.ToString()}")"></span>
-            <MudText Typo="Typo.body2" Inline="true">@item.Labels @(MudChartParent.DisplayLegendItemValues? $"({item.Data}%)": "")</MudText>
-        </div>
-    }
-</div>
-
-
+<Legend Data="@Legends" />

@@ -6,7 +6,9 @@
 
 
 <aside @attributes="UserAttributes" class="@Classname" style="@Style">
-    @ChildContent
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
 </aside>
 
 
@@ -43,6 +45,9 @@
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
 
+    /// <summary>
+    /// Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.
+    /// </summary>
     [Parameter]
     public bool Open
     {
@@ -56,6 +61,8 @@
             StateHasChanged();
         }
     }
+
+    [Parameter] public EventCallback<bool> OpenChanged { get; set;}
 
     private bool _open;
     private bool _clipped;

@@ -4,7 +4,7 @@
 
 
 <div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
-    <NavLink class="mud-nav-link" style="@Style" href="@Href" Match="@Match" ActiveClass="active">
+    <NavLink @onclick="@OnNavigation" class="mud-nav-link" style="@Style" href="@Href" Match="@Match" ActiveClass="active">
         @if (!String.IsNullOrEmpty(Icon))
         {
             <MudIcon Icon="@Icon" Class="mud-nav-link-icon"></MudIcon>

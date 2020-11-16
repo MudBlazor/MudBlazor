@@ -49,11 +49,6 @@ namespace MudBlazor
         [Parameter] public LegendPosition LegendPosition { get; set; } = LegendPosition.Bottom;
 
         /// <summary>
-        /// If true, the Data Values will be displayed next to the Legend Labels.
-        /// </summary>
-        [Parameter] public bool DisplayLegendItemValues { get; set; }
-
-        /// <summary>
         /// Scales the input data to the range between 0 and 1
         /// </summary>
         protected double[] GetNormalizedData()
@@ -61,7 +56,6 @@ namespace MudBlazor
             var total = InputData.Sum();
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
         }
-
 
         protected string ToS(double d)
         {

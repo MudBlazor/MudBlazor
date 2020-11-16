@@ -47,6 +47,10 @@
     &:hover {
         background-color: var(--mud-palette-action-default-hover);
     }
+
+    /*&:focus {
+        background-color: var(--mud-palette-action-default-hover);
+    }*/
 }
 
 .mud-button-label {
@@ -70,6 +74,10 @@
             &:hover {
                 background-color: var(--mud-palette-#{$color}-hover);
             }
+
+            /*&:focus {
+                background-color: var(--mud-palette-#{$color}-hover);
+            }*/
         }
     }
 }
@@ -82,6 +90,10 @@
     &:hover {
         background-color: var(--mud-palette-action-default-hover);
     }
+
+    /*&:focus {
+        background-color: var(--mud-palette-action-default-hover);
+    }*/
 
     &:disabled {
         border: 1px solid var(--mud-palette-action-disabled-background);
@@ -96,6 +108,10 @@
                 border: 1px solid var(--mud-palette-#{$color});
                 background-color: var(--mud-palette-#{$color}-hover);
             }
+
+            /*&:focus {
+                background-color: var(--mud-palette-#{$color}-hover);
+            }*/
         }
     }
 }
@@ -109,6 +125,11 @@
         box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
         background-color: var(--mud-palette-action-disabled);
     }
+
+    /*&:focus {
+        box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
+        background-color: var(--mud-palette-action-disabled);
+    }*/
 
     &:disabled {
         color: var(--mud-palette-action-disabled);
@@ -124,6 +145,10 @@
             &:hover {
                 background-color: var(--mud-palette-#{$color}-darken);
             }
+
+            /*&:focus {
+                background-color: var(--mud-palette-#{$color}-darken);
+            }*/
         }
     }
 }

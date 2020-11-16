@@ -1,7 +1,7 @@
 ﻿.mud-popover {
     width: 100%;
     outline: 0;
-    z-index: 100;
+    z-index: calc(var(--mud-zindex-popover) + 1);
     display: none;
     position: absolute;
     overflow-x: hidden;
@@ -25,6 +25,13 @@
     }
 }
 
+.mud-dialog {
+    .mud-popover {
+        position: fixed;
+        width: calc(100% - 48px);
+    }
+}
+
 .mud-popover-overlay {
     top: 0;
     left: 0;
@@ -33,5 +40,5 @@
     width: 100%;
     position: fixed;
     background-color: transparent;
-    z-index: 99;
+    z-index: var(--mud-zindex-popover);
 }
