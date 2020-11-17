@@ -267,6 +267,11 @@
             Hide toolbar and show only date/time views.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBasePicker.ToolBarClass">
+            <summary>
+            User class names for picker's ToolBar, separated by space
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBasePicker.PickerVariant">
             <summary>
             Picker container option
