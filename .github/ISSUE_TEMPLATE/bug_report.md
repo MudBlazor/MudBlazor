@@ -14,7 +14,7 @@ A clear and concise description of what the bug is.
 A clear and concise description of what you expected to happen.
 
 **TryMudBlazor**
-If applicable provide a try.mudblazor.com snippet link demonstrating the bug.
+If you provide a [try.mudblazor.com](https://try.mudblazor.com) snippet link demonstrating the bug your issue gets priority attention.
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
+If applicable, add screenshots to help explain your problem but please no code screenshots.
