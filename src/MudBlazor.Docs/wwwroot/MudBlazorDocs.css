@@ -20,7 +20,8 @@
   letter-spacing: 0.5rem;
   font-weight: 300;
   margin-left: 12px;
-  font-size: 24px; }
+  font-size: 24px;
+  user-select: none; }
   .mudblazor-appbar-brand-text.track-in {
     -webkit-animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) both;
     animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) both; }
@@ -38,7 +39,7 @@
   display: block;
   position: fixed;
   width: 232px;
-  height: 60px;
+  height: 40px;
   background-image: linear-gradient(to top, rgba(255, 0, 0, 0), var(--mud-palette-drawer-background));
   z-index: 100; }
 
