@@ -1217,16 +1217,16 @@ public const string ExpansionPanelMultiExample = @"<MudExpansionPanels MultiExpa
 
 public const string ExpansionPanelSimpleExample = @"<MudExpansionPanels>
     <MudExpansionPanel Text=""Panel One"">
-        Panel One Content
+        <LoremIpsum/>
     </MudExpansionPanel>
     <MudExpansionPanel Text=""Panel Two"">
-        Panel Two Content
+        <LoremIpsum />
     </MudExpansionPanel>
     <MudExpansionPanel Text=""Panel Three"">
-        Panel Three Content
+        <LoremIpsum />
     </MudExpansionPanel>
     <MudExpansionPanel Text=""Panel Four"">
-        Panel Four Content
+        <LoremIpsum />
     </MudExpansionPanel>
 </MudExpansionPanels>";
 

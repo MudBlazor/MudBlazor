@@ -1,5 +1,9 @@
 ﻿
 .mud-expansion-panels {
+    flex: 0 1 auto;
+    position: relative;
+    max-width: 100%;
+    transition: .3s cubic-bezier(.25,.8,.5,1);
     border-radius: var(--mud-default-borderradius);
 
     .mud-expansion-panels-square {
