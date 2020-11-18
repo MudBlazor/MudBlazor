@@ -2330,6 +2330,11 @@
             If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudCollapse.Class">
+            <summary>
+            User class names, separated by space
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudCollapse.ChildContent">
             <summary>
             Child content of component.
