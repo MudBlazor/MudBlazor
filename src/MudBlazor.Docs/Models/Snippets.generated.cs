@@ -2189,9 +2189,9 @@ public const string SelectCustomConverterExample = @"<MudGrid>
 }";
 
 public const string SelectDenseExample = @"<MudSelect T=""string"" Label=""Dense"" Dense=""true"">
-    <MudSelectItem T=""string"" Value=""@(""foo"")"">Foo</MudSelectItem>
-    <MudSelectItem T=""string"" Value=""@(""bar"")"">Bar</MudSelectItem>
-    <MudSelectItem T=""string"" Value=""@(""baz"")"">Baz</MudSelectItem>
+    <MudSelectItem T=""string"" Value=""@(""Tyrannosaur"")"">Tyrannosaur</MudSelectItem>
+    <MudSelectItem T=""string"" Value=""@(""Triceratops"")"">Triceratops</MudSelectItem>
+    <MudSelectItem T=""string"" Value=""@(""Oviraptor"")"">Oviraptor</MudSelectItem>
 </MudSelect>";
 
 public const string SelectDisabledExample = @"<MudSelect T=""string"" Label=""Disabled"" Disabled=""true"">
