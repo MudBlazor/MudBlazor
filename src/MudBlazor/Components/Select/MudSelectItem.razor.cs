@@ -83,6 +83,17 @@ namespace MudBlazor
             }
         }
 
+        protected string DisplayString
+        {
+            get
+            {
+                var converter = MudSelect?.Converter;
+                if (converter == null)
+                    return $"{Value}";
+                return converter.Set(Value);
+            }
+        }
+
         private void OnClicked()
         {
             if (MultiSelection)
