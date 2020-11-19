@@ -26,22 +26,11 @@
 }
 
 .mud-dialog {
-    .mud-popover {
-        position: fixed;
-        width: calc(100% - 48px);
-    }
 
-    .mud-picker-view {
-        position: fixed;
-    }
 }
 
 .mud-collapse-container {
-/*    .mud-popover {
-        position: fixed;
-    }*/
-
-    .mud-picker-view {
+        .mud-picker-view {
         position: fixed;
     }
 }
