@@ -2,7 +2,7 @@
 @using System.Globalization
 @inherits PieBase
 
-<svg class="mud-chart-pie" width="@MudChartParent.Width" height="@MudChartParent.Height" viewBox="-1 -1 2 2" style="transform: rotate(-90deg);">
+<svg class="mud-chart-pie" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="-1 -1 2 2" style="transform: rotate(-90deg);">
     <Filters />
     @foreach (var item in Paths.ToList())
     {
