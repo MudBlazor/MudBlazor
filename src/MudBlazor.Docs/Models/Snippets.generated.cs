@@ -737,14 +737,14 @@ public const string DatePickerBasicUsageExample = @"<MudDatePicker Label=""Picke
 <MudDatePicker Label=""Only Calendar"" Value=""2020-10-19"" DisableToolbar=""true"" HelperText=""No header"" />
 <MudDatePicker Label=""Date Format"" HelperText=""For custom cultures"" DateFormat=""dd/MM/yyyy"" Date=""@(new System.DateTime(2020,10,19))"" />";
 
-public const string DatePickerColorExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Value=""2020-10-19"" />
-<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Value=""2020-10-19"" />";
+public const string DatePickerColorExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Date=""@(DateTime.Today.AddDays(1))"" />
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Date=""@(DateTime.Today.AddDays(1))"" />";
 
-public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""1"" Value=""2020-10-19"" />
-<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""12"" Value=""2020-10-19"" />";
+public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""1"" Date=""@(DateTime.Today.AddDays(1))"" />
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""12"" Date=""@(DateTime.Today.AddDays(1))"" />";
 
-public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Value=""2020-10-19""/>
-<MudDatePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Value=""2020-10-19""/>";
+public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Date=""@(DateTime.Today.AddDays(1))""/>
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Date=""@(DateTime.Today.AddDays(1))""/>";
 
 public const string DatePickeViewsExample = @"<MudDatePicker Label=""Year"" OpenTo=""OpenTo.Year"" Value=""2020-10-19""/>
 <MudDatePicker Label=""Month"" OpenTo=""OpenTo.Month"" Value=""2020-10-19"" />
