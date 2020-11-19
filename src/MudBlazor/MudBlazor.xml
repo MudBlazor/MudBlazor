@@ -1674,6 +1674,11 @@
             Set true to see rows hover on mouse-over.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTableBase.Breakpoint">
+            <summary>
+            At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTableBase.FixedHeader">
             <summary>
             When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.

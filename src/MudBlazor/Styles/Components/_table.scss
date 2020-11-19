@@ -231,51 +231,79 @@
     margin-left: 20px;
 }
 
+
+@mixin table-display-smalldevices ($breakpoint) {
+    .mud-#{$breakpoint}table {
+        .mud-table-root .mud-table-head {
+            display: none;
+        }
+
+        .mud-table-body {
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .mud-table-row {
+            display: initial;
+
+            .mud-table-cell:last-child {
+                border-bottom: 1px solid #e0e0e0;
+            }
+        }
+
+        .mud-table-cell {
+            display: flex;
+            border: none;
+        }
+
+        .mud-table-cell:before {
+            content: attr(data-label);
+            font-weight: 500;
+            width: 100%;
+        }
+
+        .mud-table-pagination {
+            .mud-table-pagination-spacer {
+                flex: none;
+            }
+
+            .mud-table-pagination-actions {
+                .mud-button-root:first-child {
+                    display: none;
+                }
+
+                .mud-button-root:last-child {
+                    display: none;
+                }
+            }
+
+            .mud-table-pagination-select {
+                margin-right: 30px !important;
+            }
+        }
+    }
+}
+
+// < XS
 @media (max-width:600px) {
-    .mud-table-root .mud-table-head {
-        display: none;
-    }
+    @include table-display-smalldevices("");
+}
 
-    .mud-table-body {
-        border-top: 1px solid #e0e0e0;
-    }
+// SM
+@media (max-width:960px) {
+    @include table-display-smalldevices("sm-");
+}
 
-    .mud-table-row {
-        display: initial;
+// MD
+@media (max-width:1280px) {
+    @include table-display-smalldevices("md-");
+}
 
-        .mud-table-cell:last-child {
-            border-bottom: 1px solid #e0e0e0;
-        }
-    }
+// LG
+@media (max-width:1920px) {
+    @include table-display-smalldevices("lg-");
+}
 
-    .mud-table-cell {
-        display: flex;
-        border:none;
-    }
-
-    .mud-table-cell:before {
-        content: attr(data-label);
-        font-weight: 500;
-        width: 100%;
-    }
-
-    .mud-table-pagination {
-        .mud-table-pagination-spacer {
-            flex: none;
-        }
-
-        .mud-table-pagination-actions {
-            .mud-button-root:first-child {
-                display: none;
-            }
-
-            .mud-button-root:last-child {
-                display: none;
-            }
-        }
-
-        .mud-table-pagination-select {
-            margin-right: 30px !important;
-        }
-    }
+// XL
+@media (min-width:1920px) {
+    @include table-display-smalldevices("xl-");
 }
