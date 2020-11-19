@@ -13,6 +13,9 @@ namespace MudBlazor.Charts
         public List<SvgCircle> Circles = new List<SvgCircle>();
         public List<SvgLegend> Legends = new List<SvgLegend>();
 
+        protected string ParentWidth => MudChartParent?.Width;
+        protected string ParentHeight => MudChartParent?.Height;
+
         protected override void OnParametersSet()
         {
             Circles.Clear();

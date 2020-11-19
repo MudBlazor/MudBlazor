@@ -3,7 +3,7 @@
 @inherits LineBase
 
 
-<svg class="mud-chart-line" width="@MudChartParent.Width" height="@MudChartParent.Height" viewBox="0 0 650 350">
+<svg class="mud-chart-line" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
     <g class="mud-charts-grid">
         <g class="mud-charts-gridlines-yaxis">
             @foreach (var horizontalLine in HorizontalLines)
@@ -11,7 +11,7 @@
                 <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
             }
         </g>
-        @if (MudChartParent.ChartOptions.XAxisLines)
+        @if (MudChartParent?.ChartOptions.XAxisLines==true)
         {
             <g class="mud-charts-gridlines-xaxis-lines">
                 @foreach (var verticalLine in VerticalLines)
