@@ -149,6 +149,12 @@ namespace MudBlazor
         private T[] Items;
         private int SelectedListItemIndex = 0;
 
+        protected override void GenericValueChanged(T value)
+        {
+            base.GenericValueChanged(value);
+            Timer?.Dispose();
+        }
+
         protected override void StringValueChanged(string text)
         {
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(text))
