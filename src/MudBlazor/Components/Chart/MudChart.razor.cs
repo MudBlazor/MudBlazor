@@ -53,6 +53,8 @@ namespace MudBlazor
         /// </summary>
         protected double[] GetNormalizedData()
         {
+            if (InputData == null)
+                return new double[0];
             var total = InputData.Sum();
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
         }
