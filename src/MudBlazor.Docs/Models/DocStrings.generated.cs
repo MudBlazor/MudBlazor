@@ -1697,6 +1697,8 @@ public const string MudTableBase_Dense = @"Set true for rows with a narrow heigh
 
 public const string MudTableBase_Hover = @"Set true to see rows hover on mouse-over.";
 
+public const string MudTableBase_Breakpoint = @"At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.";
+
 public const string MudTableBase_FixedHeader = @"When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.";
 
 public const string MudTableBase_Height = @"Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
@@ -2494,6 +2496,8 @@ public const string MudTable_Dense = @"Set true for rows with a narrow height";
 
 public const string MudTable_Hover = @"Set true to see rows hover on mouse-over.";
 
+public const string MudTable_Breakpoint = @"At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.";
+
 public const string MudTable_FixedHeader = @"When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.";
 
 public const string MudTable_Height = @"Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
@@ -2546,6 +2550,8 @@ public const string MudTableSortLabel_SortBy = @"";
 public const string MudTd_ChildContent = @"";
 
 public const string MudTd_Style = @"";
+
+public const string MudTd_DataLabel = @"";
 
 public const string MudTh_ChildContent = @"";
 
