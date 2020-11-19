@@ -2567,8 +2567,7 @@ public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElement
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
         <MudToolBarSpacer />
-        <MudIcon Class=""mt-5 mr-2"" Icon=""@Icons.Material.Search""></MudIcon>
-        <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
+        <MudTextField @bind-Value=""search_string"" Placeholder=""Search"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium"" Class=""mt-0""></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Nr</MudTh>
@@ -2642,9 +2641,8 @@ public const string TableFixedHeaderExample = @"<MudTable Items=""@PeriodicTable
 public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
-        <MudToolBarSpacer/>
-        <MudIcon Class=""mt-5 mr-2"" Icon=""@Icons.Material.Search""></MudIcon>
-        <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
+        <MudToolBarSpacer />
+        <MudTextField @bind-Value=""search_string"" Placeholder=""Search"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium""></MudTextField>
     </ToolBarContent>
     <ColGroup>
         <col style=""width:50px;"" />
