@@ -253,6 +253,12 @@
         border:none;
     }
 
+    .mud-table-cell:before {
+        content: attr(data-label);
+        font-weight: 500;
+        width: 100%;
+    }
+
     .mud-table-pagination {
         .mud-table-pagination-spacer {
             flex: none;
