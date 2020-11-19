@@ -37,7 +37,7 @@ namespace MudBlazor
 
         private void SetRowsPerPage(string size)
         {
-            Table.SetRowsPerPage(int.Parse(size));
+            Table?.SetRowsPerPage(int.Parse(size));
         }
 
         public MudTableBase Table => Context?.Table;
