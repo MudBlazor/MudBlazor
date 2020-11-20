@@ -1,7 +1,8 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Utilities
 @inherits MudComponentBase
 
-<div class="mud-card-content" style="@Style">
+<div class="@Classname" style="@Style">
     @ChildContent
 </div>
 
@@ -12,4 +13,8 @@
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
 
+    protected string Classname =>
+    new CssBuilder("mud-card-content")
+      .AddClass(Class)
+    .Build();
 }
