@@ -11,6 +11,7 @@ namespace MudBlazor
         protected string Classname =>
         new CssBuilder("mud-expansion-panels")
             .AddClass($"mud-expansion-panels-square", Square)
+            .AddClass(Class)
         .Build();
 
         /// <summary>

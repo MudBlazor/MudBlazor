@@ -12,13 +12,13 @@ namespace MudBlazor
 {
     public class MudChartBase : MudComponentBase
     {
-        [Parameter] public double[] InputData { get; set; }
+        [Parameter] public double[] InputData { get; set; } = new double[0];
 
-        [Parameter] public string[] InputLabels { get; set; }
+        [Parameter] public string[] InputLabels { get; set; } = new string[0];
 
-        [Parameter] public string[] XAxisLabels { get; set; }
+        [Parameter] public string[] XAxisLabels { get; set; } = new string[0];
 
-        [Parameter] public List<ChartSeries> ChartSeries { get; set; }
+        [Parameter] public List<ChartSeries> ChartSeries { get; set; } = new List<ChartSeries>();
 
         [Parameter] public ChartOptions ChartOptions { get; set; } = new ChartOptions();
 
@@ -49,19 +49,15 @@ namespace MudBlazor
         [Parameter] public LegendPosition LegendPosition { get; set; } = LegendPosition.Bottom;
 
         /// <summary>
-        /// If true, the Data Values will be displayed next to the Legend Labels.
-        /// </summary>
-        [Parameter] public bool DisplayLegendItemValues { get; set; }
-
-        /// <summary>
         /// Scales the input data to the range between 0 and 1
         /// </summary>
         protected double[] GetNormalizedData()
         {
+            if (InputData == null)
+                return new double[0];
             var total = InputData.Sum();
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
         }
-
 
         protected string ToS(double d)
         {

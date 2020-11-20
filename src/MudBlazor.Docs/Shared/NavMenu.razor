@@ -45,11 +45,12 @@
     </MudNavGroup>
     <MudNavGroup Title="Customization" Icon="@Icons.Material.Handyman" Expanded="false" ExpandIcon="@Icons.Material.ExpandMore">
         <MudNavLink Href="customization/default-theme">Default Theme</MudNavLink>
-        <MudNavGroup Title="Theming" Expanded="false" ExpandIcon="@Icons.Material.ExpandMore">
-            <MudNavLink Href="customization/theming">Overview</MudNavLink>
+        <MudNavGroup Title="Theming" Expanded="true" ExpandIcon="@Icons.Material.ExpandMore">
+            <MudNavLink Href="customization/theming/overview">Overview</MudNavLink>
             <MudNavLink Href="customization/theming/palette">Palette</MudNavLink>
-            <MudNavLink Href="customization/theming/typography">Typography</MudNavLink>
-            <MudNavLink Href="customization/theming/breakpoints">Breakpoints</MudNavLink>
+            @*<MudNavLink Href="customization/theming/layoutprops">Layout Properties</MudNavLink>
+            <MudNavLink Href="customization/theming/shadows">Shadows</MudNavLink>*@
+            <MudNavLink Href="customization/theming/z-index">z-index</MudNavLink>
         </MudNavGroup>
     </MudNavGroup>
     <MudNavGroup Title="About" Icon="@Icons.Custom.MudBlazor" Expanded="false" ExpandIcon="@Icons.Material.ExpandMore">
@@ -70,7 +71,6 @@
         DocsComponents.AddItem("Container", typeof(MudContainer))
                             .AddItem("Grid", typeof(MudGrid))
                             .AddItem("Hidden", typeof(MudHidden))
-                            .AddItem("Themes", typeof(MudThemeProvider))
                             .AddItem("Button", typeof(MudButton))
                             .AddItem("IconButton", typeof(MudIconButton))
 		                    .AddNavGroup("Charts", false, new DocsComponents()

@@ -11,7 +11,7 @@
     else if (Buffer)
     {
         <div class="@BufferClassname"></div>
-        <div class="mud-progress-linear-bar mud-color-@Color.ToDescriptionString() mud-progress-linear-bar-1-buffer" style="transform: translateX(-@Value%);"></div>
+        <div class="mud-progress-linear-bar mud-@Color.ToDescriptionString() mud-progress-linear-bar-1-buffer" style="transform: translateX(-@Value%);"></div>
         <div class="mud-progress-linear-bar mud-progress-linear-color-@Color.ToDescriptionString() mud-progress-linear-bar-2-buffer" style="transform: translateX(-@BufferValue%);"></div>
     }
     else
@@ -29,7 +29,7 @@
 
     protected string LinearClassname =>
         new CssBuilder("mud-progress-linear-bar")
-            .AddClass($"mud-color-{Color.ToDescriptionString()}")
+            .AddClass($"mud-{Color.ToDescriptionString()}")
             .AddClass($"mud-progress-indeterminate", Indeterminate)
         .AddClass($"mud-progress-linear-bar-1-determinate", !Indeterminate)
         .Build();

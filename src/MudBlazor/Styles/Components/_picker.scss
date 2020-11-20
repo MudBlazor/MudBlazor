@@ -1,11 +1,12 @@
 ﻿.mud-picker {
     &.mud-rounded {
-        border-radius: var(--mud-theme-border-radius-default);
+        border-radius: var(--mud-default-borderradius);
     }
 }
 
 .mud-picker-inline {
     display: inline-flex;
+    position: relative;
 
     &.mud-picker-input-button {
         & .mud-input, .mud-input .mud-input-root {
@@ -60,6 +61,7 @@
 
 .mud-picker-popover-paper {
     outline: 0;
+    z-index: calc(var(--mud-zindex-popover) + 1);
     position: absolute;
     min-width: 16px;
     min-height: 16px;
@@ -68,7 +70,6 @@
 }
 
 .mud-picker-view {
-    z-index: 100;
     display: none;
     margin-top: 20px;
 

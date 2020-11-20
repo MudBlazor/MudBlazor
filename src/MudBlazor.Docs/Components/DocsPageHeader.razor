@@ -5,17 +5,23 @@
 @using MudBlazor.Docs.Models
 @using Toolbelt.Blazor.HeadElement
 @using MudBlazor.Docs.Extensions
+@using System.Collections.Generic
+@using System.Text.RegularExpressions
 
 @*html head (for server prerendering)*@
-<Title>@GetTitle()</Title>
+<Title>@(GetTitle())</Title>
 <Meta Name="keywords" Content="@GetKeywords()" />
 <Meta Property="og:title" Content="@GetTitle()" />
 <Meta Name="twitter:title" Content="@GetTitle()" />
 @if (!string.IsNullOrEmpty(SubTitle))
 {
-    <Meta Name="description" Content="@SubTitle" />
+    <Meta Name="description" Content="@(SubTitle)" />
     <Meta Property="og:description" Content="@SubTitle" />
     <Meta Name="twitter:description" Content="@SubTitle" />
+}
+@if (IsApiPage && !string.IsNullOrEmpty(ComponentLink))
+{
+    <Link Rel="canonical" Href="@($"https://mudblazor.com{@ComponentLink}")" />
 }
 
 <div class="docs-page-header">
@@ -58,7 +64,7 @@
         }
     }
 
-    private string GetComponentTypeName() => ApiLink.GetTypeFromComponentLink(GetComponentName())?.Name;
+    private string GetComponentTypeName() => ApiLink.GetTypeFromComponentLink(GetComponentName())?.Name.Replace("`1", "");
 
     string GetTitle() => $"{Title} - MudBlazor";
 
@@ -69,5 +75,18 @@
         return SubTitle.TrimEnd('.') + ".";
     }
 
-    string GetKeywords() => $"{Title}, {GetComponentTypeName()}, {Keywords}, mudblazor, blazor, component, material design";
+    string GetKeywords()
+    {
+        var keywords = new HashSet<string>(Regex.Split(Keywords??"", @",\s"));
+        keywords.Add(Title);
+        keywords.Add(GetComponentTypeName());
+        keywords.Add(GetComponentTypeName()?.Replace("Mud", ""));
+        keywords.Add("mudblazor");
+        keywords.Add("blazor");
+        keywords.Add("component");
+        keywords.Add("material design");
+        keywords.Remove("");
+        keywords.Remove(null);
+        return string.Join(", ", keywords);
+    }
 }

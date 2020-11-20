@@ -4,18 +4,21 @@
 <div class="html"><pre>
 <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudGrid</span><span class="htmlTagDelimiter">&gt;</span>
     <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudItem</span> <span class="htmlAttributeName">xs</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">12</span><span class="quot">&quot;</span> <span class="htmlAttributeName">sm</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">6</span><span class="quot">&quot;</span> <span class="htmlAttributeName">md</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">4</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
-        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudAutocomplete</span> <span class="htmlAttributeName">T</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">string</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Label</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">US States</span><span class="quot">&quot;</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>bind-Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">value</span><span class="quot">&quot;</span> <span class="htmlAttributeName">SearchFunc</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Search</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudAutocomplete</span> <span class="htmlAttributeName">T</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">string</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Label</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">US States</span><span class="quot">&quot;</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>bind-Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">value1</span><span class="quot">&quot;</span> <span class="htmlAttributeName">SearchFunc</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Search1</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudItem</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudItem</span> <span class="htmlAttributeName">xs</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">12</span><span class="quot">&quot;</span> <span class="htmlAttributeName">sm</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">6</span><span class="quot">&quot;</span> <span class="htmlAttributeName">md</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">4</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudAutocomplete</span> <span class="htmlAttributeName">T</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">string</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Label</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">US States</span><span class="quot">&quot;</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>bind-Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">value2</span><span class="quot">&quot;</span> <span class="htmlAttributeName">SearchFunc</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>Search2</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ResetValueOnEmptyText</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
     <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudItem</span><span class="htmlTagDelimiter">&gt;</span>
     <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudItem</span> <span class="htmlAttributeName">xs</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">12</span><span class="quot">&quot;</span> <span class="htmlAttributeName">md</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">12</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
         <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">mb-n3</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Typo</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Typo</span><span class="enumValue">.body2</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
-            Selected value: <span class="atSign">&#64;</span>value
+            <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChip</span><span class="htmlTagDelimiter">&gt;</span><span class="atSign">&#64;</span>(value1 ?? &quot;Not selected&quot;)<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChip</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudChip</span><span class="htmlTagDelimiter">&gt;</span><span class="atSign">&#64;</span>(value2 ?? &quot;Not selected&quot;)<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudChip</span><span class="htmlTagDelimiter">&gt;</span>
         <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
     <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudItem</span><span class="htmlTagDelimiter">&gt;</span>
 <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudGrid</span><span class="htmlTagDelimiter">&gt;</span>
 </pre></div>
 <div class="csharp"><pre>
 <span class="atSign">&#64;</span>code {
-    <span class="keyword">private</span> <span class="keyword">string</span> value;
+    <span class="keyword">private</span> <span class="keyword">string</span> value1, value2;
     <span class="keyword">private</span> <span class="keyword">string</span>[] states =
     {
         <span class="string">&quot;Alabama&quot;</span>, <span class="string">&quot;Alaska&quot;</span>, <span class="string">&quot;American Samoa&quot;</span>, <span class="string">&quot;Arizona&quot;</span>,
@@ -34,11 +37,21 @@
         <span class="string">&quot;Washington&quot;</span>, <span class="string">&quot;West Virginia&quot;</span>, <span class="string">&quot;Wisconsin&quot;</span>, <span class="string">&quot;Wyoming&quot;</span>,
     };
 
-    <span class="keyword">private</span> Task&lt;IEnumerable&lt;<span class="keyword">string</span>&gt;&gt; Search(<span class="keyword">string</span> value)
+    <span class="keyword">private</span> <span class="keyword">async</span> Task&lt;IEnumerable&lt;<span class="keyword">string</span>&gt;&gt; Search1(<span class="keyword">string</span> value)
     {
-        <span class="keyword">return</span> Task.FromResult(states.Where(x =&gt; x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+        <span class="comment">// if text is null or empty, show complete list</span>
+        <span class="keyword">if</span> (<span class="keyword">string</span>.IsNullOrEmpty(value))
+            <span class="keyword">return</span> states;
+        <span class="keyword">return</span> states.Where(x =&gt; x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
+    <span class="keyword">private</span> <span class="keyword">async</span> Task&lt;IEnumerable&lt;<span class="keyword">string</span>&gt;&gt; Search2(<span class="keyword">string</span> value)
+    {
+        <span class="comment">// if text is null or empty, don&#39;t return values (drop-down will not open)</span>
+        <span class="keyword">if</span> (<span class="keyword">string</span>.IsNullOrEmpty(value))
+            <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">string</span>[<span class="number">0</span>];
+        <span class="keyword">return</span> states.Where(x =&gt; x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
 }
 </pre></div>
 </div>

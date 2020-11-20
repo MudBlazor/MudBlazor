@@ -171,9 +171,9 @@ namespace MudBlazor
             if (day < GetMonthStart() || day > GetMonthEnd())
                 return b.AddClass("mud-hidden").Build();
             if (_date.HasValue && _date.Value.Date == day)
-                 return b.AddClass("mud-selected").AddClass($"mud-theme-color-{Color.ToDescriptionString()}").Build();
+                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
             if (day == DateTime.Today)
-                return b.AddClass("mud-current").AddClass($"mud-color-text-{Color.ToDescriptionString()}").Build();
+                return b.AddClass("mud-current").AddClass($"mud-{Color.ToDescriptionString()}-text").Build();
             return b.Build();
         }
 
@@ -278,7 +278,7 @@ namespace MudBlazor
         private string GetYearClasses(int year)
         {
             if (year == GetMonthStart().Year)
-                return $"mud-picker-year-selected mud-color-text-{Color.ToDescriptionString()}";
+                return $"mud-picker-year-selected mud-{Color.ToDescriptionString()}-text";
             return null;
         }
         private Typo GetYearTypo(int year)

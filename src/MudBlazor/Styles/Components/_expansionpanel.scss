@@ -1,6 +1,10 @@
 ﻿
 .mud-expansion-panels {
-    border-radius: var(--mud-theme-border-radius-default);
+    flex: 0 1 auto;
+    position: relative;
+    max-width: 100%;
+    transition: .3s cubic-bezier(.25,.8,.5,1);
+    border-radius: var(--mud-default-borderradius);
 
     .mud-expansion-panels-square {
         border-radius: 0px;
@@ -11,10 +15,11 @@
     flex: 1 0 100%;
     max-width: 100%;
     position: relative;
-    transition: .3s cubic-bezier(.25,.8,.5,1);
-    border-bottom: 1px solid rgba(0,0,0,.12);
-    color: var(--mud-theme-on-surface);
-    background-color: var(--mud-theme-surface);
+    transition: margin .3s cubic-bezier(.25,.8,.5,1);
+    transition-delay: 100ms;
+    border-bottom: 1px solid var(--mud-palette-lines-default);
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-surface);
 
     &:first-child {
         border-top-left-radius: inherit;
@@ -31,6 +36,7 @@
         margin: 16px 0;
         border-radius: inherit;
         border-bottom: none;
+        transition-delay: 0ms;
 
         &:first-child {
             margin-top: 0;
@@ -92,7 +98,7 @@
 
 .mud-disabled {
     & > .mud-expand-panel-header {
-        color: rgba(0,0,0,.38);
+        color: var(--mud-palette-text-disabled);
 
         &:hover {
             cursor: default;

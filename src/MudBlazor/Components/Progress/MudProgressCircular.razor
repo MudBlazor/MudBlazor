@@ -21,7 +21,7 @@
 
     protected string DivClassname =>
     new CssBuilder("mud-progress-circular")
-        .AddClass($"mud-color-text-{Color.ToDescriptionString()}")
+        .AddClass($"mud-{Color.ToDescriptionString()}-text")
         .AddClass($"mud-progress-indeterminate", Indeterminate)
         .AddClass($"mud-progress-static", !Indeterminate)
     .Build();

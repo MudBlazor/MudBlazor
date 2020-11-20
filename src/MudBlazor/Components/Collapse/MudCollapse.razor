@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Utilities;
 
-<div class="mud-collapse-container @(Expanded? "mud-collapse-expanded" : "")">
+<div class="@Classname">
     <div class="mud-collapse-wrapper">
         <div class="mud-collapse-wrapper-inner">
             @ChildContent
@@ -16,7 +17,18 @@
     [Parameter] public bool Expanded { get; set; }
 
     /// <summary>
+    /// User class names, separated by space
+    /// </summary>
+    [Parameter] public string Class { get; set; }
+
+    /// <summary>
     /// Child content of component.
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
+
+    protected string Classname =>
+        new CssBuilder("mud-collapse-container")
+          .AddClass($"mud-collapse-expanded", Expanded)
+          .AddClass(Class)
+        .Build();
 }

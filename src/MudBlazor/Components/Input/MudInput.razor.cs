@@ -12,10 +12,11 @@ namespace MudBlazor
             new CssBuilder("mud-input")
                 .AddClass($"mud-input-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
-                .AddClass("mud-input-underline", when: () => DisableUnderLine == false && Variant != Variant.Outlined)
+                .AddClass($"mud-input-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+                .AddClass("mud-input-underline", when: () => DisableUnderLine == false && Variant != Variant.Outlined)                
                 .AddClass("mud-shrink", when: () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start)
                 .AddClass("mud-disabled", Disabled)
-                .AddClass("mud-error", HasErrors)
+                .AddClass("mud-input-error", HasErrors)
                 .AddClass(Class)
                 .Build();
 
@@ -23,6 +24,7 @@ namespace MudBlazor
             new CssBuilder("mud-input-root")
                 .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-root-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
+                .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
                 .AddClass(Class)
                 .Build();
 

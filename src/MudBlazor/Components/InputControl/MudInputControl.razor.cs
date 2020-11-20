@@ -12,12 +12,13 @@ namespace MudBlazor
            new CssBuilder("mud-input-control")
               .AddClass($"mud-input-control-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
              .AddClass("mud-input-control-full-width", FullWidth)
+             .AddClass("mud-input-error", Error)
              .AddClass(Class)
            .Build();
 
         protected string HelperClass =>
            new CssBuilder("mud-input-helper-text")
-             .AddClass("mud-error", Error)
+             .AddClass("mud-input-error", Error)
              .AddClass(Class)
            .Build();
 

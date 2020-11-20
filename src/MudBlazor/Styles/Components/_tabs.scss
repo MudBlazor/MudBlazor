@@ -8,10 +8,10 @@
 .mud-tabs-toolbar {
     z-index: 20;
     position: relative;
-    background-color: var(--mud-theme-surface);
+    background-color: var(--mud-palette-surface);
 
     &.mud-tabs-rounded {
-        border-radius: var(--mud-theme-border-radius-default);
+        border-radius: var(--mud-default-borderradius);
     }
 
     & .mud-tabs-toolbar-inner {
@@ -72,11 +72,11 @@
 
     &:hover {
         cursor: pointer;
-        background-color: var(--mud-theme-default-hover);
+        background-color: var(--mud-palette-action-default-hover);
     }
 
     &.mud-tab-active {
-        color: var(--mud-theme-primary);
+        color: var(--mud-palette-primary);
 
         &:hover {
             background-color: var(--mud-theme-primary-hover);
@@ -86,7 +86,7 @@
     &.mud-disabled {
         cursor: default;
         pointer-events: none;
-        color: rgba(0, 0, 0, 0.38);
+        color: var(--mud-palette-text-disabled);
     }
 
     & .mud-tab-icon-text {
@@ -96,7 +96,7 @@
 
 .mud-tab-slider {
     position: absolute;
-    background: var(--mud-theme-primary);
+    background: var(--mud-palette-primary);
 
     &.mud-tab-slider-horizontal {
         height: 2px;
@@ -115,5 +115,9 @@
 }
 
 .mud-border-right {
-    border-right: 1px solid rgba(0, 0, 0, 0.12);
+    border-right: 1px solid var(--mud-palette-lines-default);
+}
+
+.mud-tab-badge{
+    margin-left:8px;
 }

@@ -3,13 +3,22 @@
 @implements IDisposable;
 
 <span class="mud-button-root mud-table-sort-label" @onclick="ToggleSortDirection">
-    <svg class="mud-svg-icon-root mud-table-sort-label-icon @(_direction==SortDirection.Descending ? "mud-direction-desc" : "mud-direction-asc")" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
-        @if (_direction != SortDirection.None)
-        {
-            <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/>
-        }
-    </svg>
-    @ChildContent
+    @if (!AppendIcon)
+    {
+        @ChildContent
+    }
+    @if (_direction != SortDirection.None)
+    {
+        <MudIcon Icon="@SortIcon" Class="@GetSortIconClass()" />
+    }
+    else
+    {
+        <MudIcon Icon="@SortIcon" Class="mud-table-sort-label-icon"/>
+    }
+    @if (AppendIcon)
+    {
+        @ChildContent
+    }
 </span>
 
 @code {
@@ -22,6 +31,16 @@
 
     [Parameter]
     public SortDirection InitialDirection { get; set; } = SortDirection.None;
+
+    /// <summary>
+    /// The Icon used to display sortdirection.
+    /// </summary>
+    [Parameter] public string SortIcon { get; set; } = Icons.Material.ArrowUpward;
+
+    /// <summary>
+    /// If true the icon will be placed before the label text.
+    /// </summary>
+    [Parameter] public bool AppendIcon { get; set; }
 
     private SortDirection _direction = SortDirection.None;
 
@@ -76,4 +95,19 @@
         StateHasChanged();
     }
 
+    private string GetSortIconClass()
+    {
+        if (_direction == SortDirection.Descending)
+        {
+            return $"mud-table-sort-label-icon mud-direction-desc";
+        }
+        else if(_direction == SortDirection.Ascending)
+        {
+            return $"mud-table-sort-label-icon mud-direction-asc";
+        }
+        else
+        {
+            return $"mud-table-sort-label-icon";
+        }
+    }
 }

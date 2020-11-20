@@ -3,7 +3,7 @@
 @inherits LineBase
 
 
-<svg class="mud-chart-line" width="@MudChartParent.Width" height="@MudChartParent.Height" viewBox="0 0 650 350">
+<svg class="mud-chart-line" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
     <g class="mud-charts-grid">
         <g class="mud-charts-gridlines-yaxis">
             @foreach (var horizontalLine in HorizontalLines)
@@ -11,7 +11,7 @@
                 <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
             }
         </g>
-        @if (MudChartParent.ChartOptions.XAxisLines)
+        @if (MudChartParent?.ChartOptions.XAxisLines==true)
         {
             <g class="mud-charts-gridlines-xaxis-lines">
                 @foreach (var verticalLine in VerticalLines)
@@ -36,19 +36,8 @@
     <g class="mud-charts-line-series">
         @foreach (var chartLine in ChartLines)
         {
-            <path class="@($"mud-chart-stroke-color-{chartLine.Index.ToString()}")" stroke-width="3" fill="none" d="@chartLine.Data"></path>
+            <path fill="none" stroke="@(ChartOptions.ChartPalette.GetValue(chartLine.Index % ChartOptions.ChartPalette.Count()))" stroke-width="3" d="@chartLine.Data"></path>
         }
     </g>
 </svg>
-@if (!MudChartParent.ChartOptions.DisableLegend)
-{
-    <div class="mud-chart-legend">
-        @foreach (var item in Legends)
-        {
-            <div class="mud-chart-legend-item">
-                <span class="@($"mud-chart-legend-marker mud-chart-marker-color-{item.Index.ToString()}")"></span>
-                <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>
-            </div>
-        }
-    </div>
-}
+<Legend Data="@Legends" />

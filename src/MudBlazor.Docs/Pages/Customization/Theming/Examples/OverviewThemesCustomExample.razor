@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Theme.Defaults
+
+<MudThemeProvider Theme="MyCustomTheme" />
+
+@code{
+    MudTheme MyCustomTheme = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Primary = Colors.Blue.Default,
+            Secondary = Colors.Green.Accent4,
+            AppbarBackground = Colors.Red.Default,
+        },
+
+        LayoutProperties = new LayoutProperties()
+        {
+            DrawerWidth = "260px"
+        }
+    };
+}

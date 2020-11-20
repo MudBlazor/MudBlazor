@@ -4,7 +4,7 @@
     top: 0;
     width: 100%;
     height: 100%;
-    z-index: 200;
+    z-index: var(--mud-zindex-dialog);
 
     &.mud-dialog-center {
         align-items: center;
@@ -43,7 +43,7 @@
     height: 100%;
     width: 100%;
     position: fixed;
-    z-index: 201;
+    z-index: calc(var(--mud-zindex-dialog) + 1);
     background-color: rgba(0,0,0,0.5);
     animation: mud-animation-fadein ease 0.15s;
     -webkit-animation: mud-animation-fadein ease 0.15s;
@@ -58,11 +58,11 @@
 
 .mud-dialog {
     display: flex;
-    z-index: 202;
+    z-index: calc(var(--mud-zindex-dialog) + 2);
     flex-direction: column;
-    color: var(--mud-theme-text-color-default);
-    background-color: var(--mud-theme-surface);
-    border-radius: var(--mud-theme-border-radius-default);
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-surface);
+    border-radius: var(--mud-default-borderradius);
     -webkit-animation: mud-scale-up-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
     animation: mud-scale-up-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
     box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2), 0px 24px 38px 3px rgba(0,0,0,0.14), 0px 9px 46px 8px rgba(0,0,0,0.12);
@@ -82,7 +82,6 @@
     & .mud-dialog-content {
         position: relative;
         flex: 1 1 auto;
-        overflow-y: hidden;
         padding: 8px 24px;
         -webkit-overflow-scrolling: touch;
 

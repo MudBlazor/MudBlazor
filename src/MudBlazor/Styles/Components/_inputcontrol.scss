@@ -16,8 +16,8 @@
     }
 
     &.mud-input-control-margin-dense {
-        margin-top: 8px;
-        margin-bottom: 4px;
+        margin-top: 3px;
+        margin-bottom: 2px;
     }
 
     &.mud-input-control-full-width {
@@ -38,12 +38,12 @@
 
     & > .mud-input-label-outlined {
         &.mud-input-label-inputcontrol {
-            line-height: 20px;
+            line-height: 18px;
         }
     }
 
     & > .mud-input-label-inputcontrol {
-        color: var(--mud-theme-text-default);
+        color: var(--mud-palette-text-primary);
         padding: 0;
         font-size: 1rem;
         font-weight: 400;
@@ -56,17 +56,17 @@
         }
 
         &.mud-disabled {
-            color: rgba(0, 0, 0, 0.38);
+            color: var(--mud-palette-text-disabled);
         }
 
-        &.mud-error {
-            color: #f44336 !important;
+        &.mud-input-error {
+            color: var(--mud-palette-error) !important;
         }
     }
 }
 
 .mud-input-helper-text {
-    color: rgba(0, 0, 0, 0.54);
+    color: var(--mud-palette-text-secondary);
     margin: 0;
     font-size: 0.75rem;
     margin-top: 3px;
@@ -78,11 +78,11 @@
 
 
 .mud-input-helper-text.mud-disabled {
-    color: rgba(0, 0, 0, 0.38);
+    color: var(--mud-palette-text-disabled);
 }
 
-.mud-input-helper-text.mud-error {
-    color: #f44336 !important;
+.mud-input-helper-text.mud-input-error {
+    color: var(--mud-palette-error) !important;
 }
 
 .mud-input-helper-text-margin-dense {

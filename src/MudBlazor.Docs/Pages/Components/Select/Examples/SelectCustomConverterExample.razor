@@ -3,8 +3,10 @@
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
         <MudSelect T="Pizza" @bind-Value="@pizza" Label="Select your pizza" Variant="Variant.Outlined" ToStringFunc="@converter" OffsetY="true">
-            <MudSelectItem Value="@(new Pizza() { Name="Margarita"})">Margarita</MudSelectItem>
-            <MudSelectItem Value="@(new Pizza() { Name="Diavolo"})">Diavolo</MudSelectItem>
+            <MudSelectItem Value="@(new Pizza() { Name="Cardinale"})" />
+            <MudSelectItem Value="@(new Pizza() { Name="Diavolo"})" />
+            <MudSelectItem Value="@(new Pizza() { Name="Margarita"})" />
+            <MudSelectItem Value="@(new Pizza() { Name="Spinaci"})" />
         </MudSelect>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">

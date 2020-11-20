@@ -237,7 +237,7 @@
 
         .mud-clock-number {
             left: calc((100% - 32px) / 2);
-            color: rgba(0, 0, 0, 0.87);
+            color: var(--mud-palette-text-primary);
             background-color: transparent !important;
             width: 32px;
             height: 32px;

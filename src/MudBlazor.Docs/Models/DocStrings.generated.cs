@@ -90,7 +90,7 @@ public const string MudBaseInput_Converter = @"";
 
 public const string MudBaseInput_Culture = @"";
 
-public const string MudBaseInput_Format = @"";
+public const string MudBaseInput_Format = @"Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans";
 
 public const string MudBaseInput_Validation = @"";
 
@@ -119,6 +119,8 @@ public const string MudBasePicker_Label = @"If string has value the label text w
 public const string MudBasePicker_Disabled = @"If true, the picker will be disabled.";
 
 public const string MudBasePicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
+
+public const string MudBasePicker_ToolBarClass = @"User class names for picker's ToolBar, separated by space";
 
 public const string MudBasePicker_PickerVariant = @"Picker container option";
 
@@ -222,7 +224,7 @@ public const string MudAutocomplete_CloseIcon = @"The Open Select Icon";
 
 public const string MudAutocomplete_MaxHeight = @"Sets the maxheight the select can have when open.";
 
-public const string MudAutocomplete_ToStringExpression = @"Defines how values are displayed in the drop-down list";
+public const string MudAutocomplete_ToStringFunc = @"Defines how values are displayed in the drop-down list";
 
 public const string MudAutocomplete_SearchFunc = @"The SearchFunc returns a list of items matching the typed text";
 
@@ -231,7 +233,13 @@ public const string MudAutocomplete_MaxItems = @"Maximum items to display, defau
 
 public const string MudAutocomplete_MinCharacters = @"Minimum characters to initiate a search, defaults to 2";
 
+public const string MudAutocomplete_ResetValueOnEmptyText = @"Reset value if user deletes the text";
+
 public const string MudAutocomplete_DebounceInterval = @"Debounce interval in milliseconds.";
+
+public const string MudAutocomplete_ItemTemplate = @"Optional presentation template for unselected items";
+
+public const string MudAutocomplete_ItemSelectedTemplate = @"Optional presentation template for the selected item";
 
 public const string MudAutocomplete_Required = @"";
 
@@ -487,8 +495,6 @@ public const string MudChartBase_Height = @"The Height of the chart, end with % 
 
 public const string MudChartBase_LegendPosition = @"The placment direction of the legend if used.";
 
-public const string MudChartBase_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
-
 public const string MudChartBase_Class = @"User class names, separated by space";
 
 public const string MudChartBase_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -635,6 +641,8 @@ public const string MudDatePicker_Label = @"If string has value the label text w
 public const string MudDatePicker_Disabled = @"If true, the picker will be disabled.";
 
 public const string MudDatePicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
+
+public const string MudDatePicker_ToolBarClass = @"User class names for picker's ToolBar, separated by space";
 
 public const string MudDatePicker_PickerVariant = @"Picker container option";
 
@@ -940,7 +948,7 @@ public const string MudInputString_Converter = @"";
 
 public const string MudInputString_Culture = @"";
 
-public const string MudInputString_Format = @"";
+public const string MudInputString_Format = @"Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans";
 
 public const string MudInputString_Validation = @"";
 
@@ -963,6 +971,8 @@ public const string MudInputLabel_Disabled = @"If true, the input element will b
 public const string MudInputLabel_Error = @"If true, the label will be displayed in an error state.";
 
 public const string MudInputLabel_Variant = @"Variant to use.";
+
+public const string MudInputLabel_Margin = @"Will adjust vertical spacing.";
 
 public const string MudInputLabel_Class = @"User class names, separated by space";
 
@@ -1517,7 +1527,7 @@ public const string MudSelectString_Converter = @"";
 
 public const string MudSelectString_Culture = @"";
 
-public const string MudSelectString_Format = @"";
+public const string MudSelectString_Format = @"Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans";
 
 public const string MudSelectString_Validation = @"";
 
@@ -1686,6 +1696,8 @@ public const string MudTableBase_Outlined = @"";
 public const string MudTableBase_Dense = @"Set true for rows with a narrow height";
 
 public const string MudTableBase_Hover = @"Set true to see rows hover on mouse-over.";
+
+public const string MudTableBase_Breakpoint = @"At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.";
 
 public const string MudTableBase_FixedHeader = @"When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.";
 
@@ -1910,7 +1922,7 @@ public const string MudTextFieldString_Converter = @"";
 
 public const string MudTextFieldString_Culture = @"";
 
-public const string MudTextFieldString_Format = @"";
+public const string MudTextFieldString_Format = @"Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans";
 
 public const string MudTextFieldString_Validation = @"";
 
@@ -1926,9 +1938,7 @@ public const string MudTextFieldString_Tag = @"Use Tag to attach any user data o
 public const string MudTextFieldString_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string ComponentBaseMudThemeProvider_Theme = @"";
-
-public const string BaseMudThemeProviderNew_Theme = @"";
+public const string BaseMudThemeProvider_Theme = @"";
 
 public const string MudTimePicker_OpenTo = @"First view to show in the MudDatePicker.";
 
@@ -1953,6 +1963,8 @@ public const string MudTimePicker_Label = @"If string has value the label text w
 public const string MudTimePicker_Disabled = @"If true, the picker will be disabled.";
 
 public const string MudTimePicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
+
+public const string MudTimePicker_ToolBarClass = @"User class names for picker's ToolBar, separated by space";
 
 public const string MudTimePicker_PickerVariant = @"Picker container option";
 
@@ -2095,8 +2107,6 @@ public const string MudChart_Height = @"The Height of the chart, end with % or p
 
 public const string MudChart_LegendPosition = @"The placment direction of the legend if used.";
 
-public const string MudChart_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
-
 public const string MudChart_Class = @"User class names, separated by space";
 
 public const string MudChart_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -2107,6 +2117,8 @@ public const string MudChart_UserAttributes = @"UserAttributes carries all attri
             will be splatted onto the underlying HTML tag.";
 
 public const string MudCollapse_Expanded = @"If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.";
+
+public const string MudCollapse_Class = @"User class names, separated by space";
 
 public const string MudCollapse_ChildContent = @"Child content of component.";
 
@@ -2152,7 +2164,9 @@ public const string MudDrawer_Color = @"The color of the component. It supports 
 
 public const string MudDrawer_ChildContent = @"Child content of component.";
 
-public const string MudDrawer_Open = @"";
+public const string MudDrawer_Open = @"Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.";
+
+public const string MudDrawer_OpenChanged = @"";
 
 public const string MudDrawer_Clipped = @"";
 
@@ -2333,11 +2347,9 @@ public const string MudPaper_Tag = @"Use Tag to attach any user data object to t
 public const string MudPaper_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudPicker_ChildContent = @"";
-
 public const string MudPicker_InputIcon = @"";
 
-public const string MudPicker_ToolBarClass = @"";
+public const string MudPicker_ChildContent = @"";
 
 public const string MudPicker_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.";
 
@@ -2352,6 +2364,8 @@ public const string MudPicker_Label = @"If string has value the label text will 
 public const string MudPicker_Disabled = @"If true, the picker will be disabled.";
 
 public const string MudPicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
+
+public const string MudPicker_ToolBarClass = @"User class names for picker's ToolBar, separated by space";
 
 public const string MudPicker_PickerVariant = @"Picker container option";
 
@@ -2482,6 +2496,8 @@ public const string MudTable_Dense = @"Set true for rows with a narrow height";
 
 public const string MudTable_Hover = @"Set true to see rows hover on mouse-over.";
 
+public const string MudTable_Breakpoint = @"At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.";
+
 public const string MudTable_FixedHeader = @"When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.";
 
 public const string MudTable_Height = @"Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
@@ -2535,6 +2551,8 @@ public const string MudTd_ChildContent = @"";
 
 public const string MudTd_Style = @"";
 
+public const string MudTd_DataLabel = @"";
+
 public const string MudTh_ChildContent = @"";
 
 public const string MudTh_Style = @"";
@@ -2559,6 +2577,10 @@ public const string MudTabPanel_Icon = @"Icon placed before the text if set.";
 
 public const string MudTabPanel_Disabled = @"If true, the tabpanel will be disabled.";
 
+public const string MudTabPanel_BadgeData = @"Optional information to be showed into a badge";
+
+public const string MudTabPanel_BadgeColor = @"The color of the badge.";
+
 public const string MudTabPanel_ChildContent = @"Child content of component.";
 
 public const string MudTabPanel_Class = @"User class names, separated by space";
@@ -2571,8 +2593,6 @@ public const string MudTabPanel_UserAttributes = @"UserAttributes carries all at
             will be splatted onto the underlying HTML tag.";
 
 public const string MudThemeProvider_Theme = @"";
-
-public const string MudThemeProviderNew_Theme = @"";
 
 public const string MudToolBar_Dense = @"If true, compact padding will be used.";
 
@@ -2645,8 +2665,6 @@ public const string DonutBase_Height = @"The Height of the chart, end with % or 
 
 public const string DonutBase_LegendPosition = @"The placment direction of the legend if used.";
 
-public const string DonutBase_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
-
 public const string DonutBase_Class = @"User class names, separated by space";
 
 public const string DonutBase_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -2673,8 +2691,6 @@ public const string LineBase_Width = @"The Width of the chart, end with % or px.
 public const string LineBase_Height = @"The Height of the chart, end with % or px.";
 
 public const string LineBase_LegendPosition = @"The placment direction of the legend if used.";
-
-public const string LineBase_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
 
 public const string LineBase_Class = @"User class names, separated by space";
 
@@ -2703,8 +2719,6 @@ public const string PieBase_Height = @"The Height of the chart, end with % or px
 
 public const string PieBase_LegendPosition = @"The placment direction of the legend if used.";
 
-public const string PieBase_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
-
 public const string PieBase_Class = @"User class names, separated by space";
 
 public const string PieBase_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -2712,6 +2726,35 @@ public const string PieBase_Style = @"User styles, applied on top of the compone
 public const string PieBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
 public const string PieBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string LegendBase_Data = @"";
+
+public const string LegendBase_InputData = @"";
+
+public const string LegendBase_InputLabels = @"";
+
+public const string LegendBase_XAxisLabels = @"";
+
+public const string LegendBase_ChartSeries = @"";
+
+public const string LegendBase_ChartOptions = @"";
+
+public const string LegendBase_ChartType = @"The Type of the chart.";
+
+public const string LegendBase_Width = @"The Width of the chart, end with % or px.";
+
+public const string LegendBase_Height = @"The Height of the chart, end with % or px.";
+
+public const string LegendBase_LegendPosition = @"The placment direction of the legend if used.";
+
+public const string LegendBase_Class = @"User class names, separated by space";
+
+public const string LegendBase_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string LegendBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string LegendBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string Donut_InputData = @"";
@@ -2731,8 +2774,6 @@ public const string Donut_Width = @"The Width of the chart, end with % or px.";
 public const string Donut_Height = @"The Height of the chart, end with % or px.";
 
 public const string Donut_LegendPosition = @"The placment direction of the legend if used.";
-
-public const string Donut_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
 
 public const string Donut_Class = @"User class names, separated by space";
 
@@ -2761,8 +2802,6 @@ public const string Line_Height = @"The Height of the chart, end with % or px.";
 
 public const string Line_LegendPosition = @"The placment direction of the legend if used.";
 
-public const string Line_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
-
 public const string Line_Class = @"User class names, separated by space";
 
 public const string Line_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -2790,8 +2829,6 @@ public const string Pie_Height = @"The Height of the chart, end with % or px.";
 
 public const string Pie_LegendPosition = @"The placment direction of the legend if used.";
 
-public const string Pie_DisplayLegendItemValues = @"If true, the Data Values will be displayed next to the Legend Labels.";
-
 public const string Pie_Class = @"User class names, separated by space";
 
 public const string Pie_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -2799,6 +2836,35 @@ public const string Pie_Style = @"User styles, applied on top of the component's
 public const string Pie_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
 public const string Pie_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string Legend_Data = @"";
+
+public const string Legend_InputData = @"";
+
+public const string Legend_InputLabels = @"";
+
+public const string Legend_XAxisLabels = @"";
+
+public const string Legend_ChartSeries = @"";
+
+public const string Legend_ChartOptions = @"";
+
+public const string Legend_ChartType = @"The Type of the chart.";
+
+public const string Legend_Width = @"The Width of the chart, end with % or px.";
+
+public const string Legend_Height = @"The Height of the chart, end with % or px.";
+
+public const string Legend_LegendPosition = @"The placment direction of the legend if used.";
+
+public const string Legend_Class = @"User class names, separated by space";
+
+public const string Legend_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string Legend_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string Legend_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
     }

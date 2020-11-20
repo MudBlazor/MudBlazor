@@ -5,7 +5,14 @@
 
 
 <MudListItem @onclick="@OnClicked" Icon="@CheckBoxIcon">
-    @ChildContent
+    @if (ChildContent!=null)
+    {
+        @ChildContent
+    }
+    else
+    {
+        @DisplayString
+    }
 </MudListItem>
 
 

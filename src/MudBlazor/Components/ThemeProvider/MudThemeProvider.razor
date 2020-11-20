@@ -1,5 +1,11 @@
 ﻿@namespace MudBlazor
-@inherits ComponentBaseMudThemeProvider
+@inherits BaseMudThemeProvider
 
+@*Needed for charts, maybe put in bool, IncludeCharts="true"??*@
+<style>
+    .mud-chart-serie:hover {
+        filter: url(#lighten);
+    }
+</style>
 
-@((MarkupString)Theme?.BuildTheme())
+@((MarkupString)BuildTheme())

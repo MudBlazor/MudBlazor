@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\Components\Autocomplete\Examples\AutocompleteClrObjectsExampleee.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Data\Elements.json" />
   </ItemGroup>
 

@@ -16,8 +16,8 @@ namespace MudBlazor
         Success,
         [Description("warning")]
         Warning,
-        [Description("danger")]
-        Danger,
+        [Description("error")]
+        Error,
         [Description("dark")]
         Dark,
         [Description("transparent")]

@@ -1,6 +1,5 @@
 ﻿
 .mud-snackbar {
-    color: #fff;
     display: flex;
     flex-wrap: wrap;
     flex-grow: initial;
@@ -14,28 +13,10 @@
     margin-top: 16px;
     min-width: 288px;
     max-width: 500px;
-    border-radius: var(--mud-theme-border-radius-default);
+    border-radius: var(--mud-default-borderradius);
+    color: var(--mud-palette-dark-text);
+    background-color: var(--mud-palette-dark);
     box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2), 0px 6px 10px 0px rgba(0,0,0,0.14), 0px 1px 18px 0px rgba(0,0,0,0.12);
-
-    &.mud-snackbar-default {
-        background-color: #313131;
-    }
-
-    &.mud-snackbar-info {
-        background-color: var(--mud-theme-info);
-    }
-
-    &.mud-snackbar-success {
-        background-color: var(--mud-theme-success);
-    }
-
-    &.mud-snackbar-warning {
-        background-color: var(--mud-theme-warning);
-    }
-
-    &.mud-snackbar-error {
-        background-color: var(--mud-theme-danger);
-    }
 
     .mud-snackbar-content-message {
         padding: 8px 0;
@@ -96,6 +77,6 @@
 
 #mud-snackbar-container {
     position: fixed;
-    z-index: 999999;
+    z-index: var(--mud-zindex-snackbar);
     pointer-events: none
 }

@@ -132,7 +132,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public int Lines { get; set; } = 1;
 
-        private bool _settingText;
+        protected bool _settingText;
         protected string _text;
         [Parameter]
         public string Text
@@ -265,11 +265,15 @@ namespace MudBlazor
                 if (_converter == null)
                     _converter = new DefaultConverter<T>();
                 _converter.Culture = value;
+                Text = Converter.Set(Value);
             }
         }
 
         private string _format = null;
 
+        /// <summary>
+        /// Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans
+        /// </summary>
         [Parameter]
         public string Format
         {
@@ -280,6 +284,7 @@ namespace MudBlazor
                 if (_converter==null)
                     _converter = new DefaultConverter<T>();
                 _converter.Format = _format;
+                Text = Converter.Set(Value);
             }
         }
 
@@ -445,6 +450,14 @@ namespace MudBlazor
         }
 
         #endregion
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            // this is important for value type T's where the initial Value is equal to the default(T) because the way the Value setter is built,
+            // it won't cause an update if the incoming value is equal to the internal value. That's why we trigger that update here
+            GenericValueChanged(Value); 
+        }
 
         protected override Task OnInitializedAsync()
         {

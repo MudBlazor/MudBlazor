@@ -4,29 +4,33 @@
 <DocsPage>
     <DocsPageHeader Title="Colors">
         <Description>
-            Out of the box you get access to all colors in the <MudLink Href="https://material.io/guidelines/style/color.html">Material Design spec</MudLink> through css classes and Blazor.
+            Out of the box you get access to all colors in the <MudLink Href="https://material.io/guidelines/style/color.html">Material Design spec</MudLink> through css classes and Blazor.<br />
+            You can also use the palette colors from either the default theme or your own.
         </Description>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Classes and C# access</Title>
-                <Description>
-                    <MudText>Each color from the list gets converted to a background and text variant for using within your application.</MudText>
-                </Description>
+                <Title>MudBlazor Palette colors</Title>
+                <Description>Each palette color gets converted to a class with the background and contrast, but also separet classes for only background or text color.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <ColorsClassExample />
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <ColorsMudBlazorExample />
             </SectionContent>
-            <SectionSource Code="ColorsClassExample" ShowCode="true" />
+            <SectionSource ShowCode="false" Code="ColorsMudBlazorExample" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
                 <Title>Material colors</Title>
                 <Description>
-                    <MudText>Below is a list of the Material design color palette grouped by primary color</MudText>
+                    Each color from the list gets converted to a background and text variant for using within your application.
                 </Description>
             </SectionHeader>
+            <SectionContent DarkenBackground="true">
+                <ColorsMaterialExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="ColorsMaterialExample" />
+            <MudText Class="my-8">Below is a list of the Material design color palette grouped by primary color</MudText>
             <MudGrid Spacing="4">
                 @foreach (var color in MaterialColors)
                 {

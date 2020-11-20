@@ -9,10 +9,10 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-list-item")
-          .AddClass("mud-list-item-dense", Dense || MudList.Dense)
-          .AddClass("mud-list-item-gutters", !DisableGutters && !MudList.DisableGutters)
-          .AddClass("mud-list-item-clickable", MudList.Clickable)
-          .AddClass($"mud-ripple", MudList.Clickable && !DisableRipple)
+          .AddClass("mud-list-item-dense", Dense || MudList?.Dense==true)
+          .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters==true))
+          .AddClass("mud-list-item-clickable", MudList?.Clickable)
+          .AddClass($"mud-ripple", MudList?.Clickable==true && !DisableRipple)
           .AddClass(Class)
         .Build();
         [Parameter] public string Text { get; set; }
@@ -106,11 +106,11 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-           if(Dense || MudList.Dense)
+           if(Dense || MudList?.Dense==true)
            {
                 textTypo = Typo.body2;
            }
-            else if(!Dense || !MudList.Dense)
+            else if(!Dense || !MudList?.Dense==true)
            {
                 textTypo = Typo.body1;
             }

@@ -13,7 +13,7 @@
 @code {
     protected string Classnames =>
     new CssBuilder("mud-picker-toolbar")
-      .AddClass($"mud-theme-color-{Color.ToDescriptionString()}")
+      .AddClass($"mud-theme-{Color.ToDescriptionString()}")
       .AddClass("mud-picker-toolbar-landscape", Orientation == Orientation.Landscape)
       .AddClass(Class)
     .Build();

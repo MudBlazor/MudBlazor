@@ -2,13 +2,7 @@
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudSelectString Label="Text">
-            <MudSelectItemString Value="foo">Foo</MudSelectItemString>
-            <MudSelectItemString Value="bar">Bar</MudSelectItemString>
-        </MudSelectString>
-    </MudItem>
-    <MudItem xs="12" sm="6" md="4">
-        <MudSelect T="string" Label="Text" Variant="Variant.Filled">
+        <MudSelect T="string" Label="Text">
             <MudSelectItem Value="@("foo")">Foo</MudSelectItem>
             <MudSelectItem Value="@("bar")">Bar</MudSelectItem>
         </MudSelect>
@@ -18,5 +12,11 @@
             <MudSelectItem Value="4.50">4.50</MudSelectItem>
             <MudSelectItem Value="21.99">21.99</MudSelectItem>
         </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelectString Label="Text" Variant="Variant.Filled">
+            <MudSelectItemString Value="foo">Foo</MudSelectItemString>
+            <MudSelectItemString Value="bar">Bar</MudSelectItemString>
+        </MudSelectString>
     </MudItem>
 </MudGrid>

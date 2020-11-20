@@ -5,6 +5,20 @@
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
+                <Title>Default Table</Title>
+                <Description>
+                   The default table displays your data in simple rows and is responsive, it breaks into mobile layout on <CodeInline>xs</CodeInline> unless changed.<br/>
+                   Add the <CodeInline>DataLabel</CodeInline> property to your <CodeInline>MudTd</CodeInline> cells to properly display the column label when the table has changed to mobile layout.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TableBasicExample />
+            </SectionContent>
+            <SectionSource Code="TableBasicExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
                 <Title>Table with pagination and filtering</Title>
                 <Description>
                     The <CodeInline>&lt;MudTable></CodeInline> component supports pagination, sorting and filtering of rows as well as single and multiple row selection. To tell the table how to render your data, define a <CodeInline>&lt;RowTemplate></CodeInline>

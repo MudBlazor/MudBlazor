@@ -173,6 +173,11 @@
             </summary>
             <param name="value"></param>
         </member>
+        <member name="P:MudBlazor.MudBaseInput`1.Format">
+            <summary>
+            Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBaseInput`1.ConversionError">
             <summary>
             True if the conversion from string to T failed
@@ -260,6 +265,11 @@
         <member name="P:MudBlazor.MudBasePicker.DisableToolbar">
             <summary>
             Hide toolbar and show only date/time views.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudBasePicker.ToolBarClass">
+            <summary>
+            User class names for picker's ToolBar, separated by space
             </summary>
         </member>
         <member name="P:MudBlazor.MudBasePicker.PickerVariant">
@@ -449,7 +459,7 @@
             Sets the maxheight the select can have when open.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudAutocomplete`1.ToStringExpression">
+        <member name="P:MudBlazor.MudAutocomplete`1.ToStringFunc">
             <summary>
             Defines how values are displayed in the drop-down list
             </summary>
@@ -470,16 +480,25 @@
             Minimum characters to initiate a search, defaults to 2
             </summary>
         </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.ResetValueOnEmptyText">
+            <summary>
+            Reset value if user deletes the text
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudAutocomplete`1.DebounceInterval">
             <summary>
             Debounce interval in milliseconds.
             </summary>
         </member>
-        <member name="M:MudBlazor.MudAutocomplete`1.StringValueChanged(System.String)">
+        <member name="P:MudBlazor.MudAutocomplete`1.ItemTemplate">
             <summary>
-            The user typed something ...
+            Optional presentation template for unselected items
             </summary>
-            <param name="text"></param>
+        </member>
+        <member name="P:MudBlazor.MudAutocomplete`1.ItemSelectedTemplate">
+            <summary>
+            Optional presentation template for the selected item
+            </summary>
         </member>
         <member name="F:MudBlazor.MudAutocomplete`1._componentId">
             <summary>
@@ -669,11 +688,6 @@
         <member name="P:MudBlazor.MudChartBase.LegendPosition">
             <summary>
             The placment direction of the legend if used.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudChartBase.DisplayLegendItemValues">
-            <summary>
-            If true, the Data Values will be displayed next to the Legend Labels.
             </summary>
         </member>
         <member name="M:MudBlazor.MudChartBase.GetNormalizedData">
@@ -1168,6 +1182,11 @@
             Variant to use.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudInputLabel.Margin">
+            <summary>
+             Will adjust vertical spacing. 
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudLink.Color">
             <summary>
             The color of the component. It supports the theme colors.
@@ -1653,6 +1672,11 @@
         <member name="P:MudBlazor.MudTableBase.Hover">
             <summary>
             Set true to see rows hover on mouse-over.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.Breakpoint">
+            <summary>
+            At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTableBase.FixedHeader">
@@ -2311,6 +2335,11 @@
             If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudCollapse.Class">
+            <summary>
+            User class names, separated by space
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudCollapse.ChildContent">
             <summary>
             Child content of component.
@@ -2374,6 +2403,11 @@
         <member name="P:MudBlazor.MudDrawer.ChildContent">
             <summary>
             Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudDrawer.Open">
+            <summary>
+            Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.
             </summary>
         </member>
         <member name="P:MudBlazor.MudDrawerHeader.ChildContent">
@@ -2496,6 +2530,16 @@
             Callback is called whenever items are selected or deselected in multi selection mode.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTableSortLabel`1.SortIcon">
+            <summary>
+            The Icon used to display sortdirection.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableSortLabel`1.AppendIcon">
+            <summary>
+            If true the icon will be placed before the label text.
+            </summary>
+        </member>
         <member name="M:MudBlazor.MudTableSortLabel`1.SetSortDirection(MudBlazor.SortDirection)">
             <summary>
             Set sort direction but don't update Table sort order. This should only be called by Table
@@ -2519,6 +2563,16 @@
         <member name="P:MudBlazor.MudTabPanel.Disabled">
             <summary>
             If true, the tabpanel will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabPanel.BadgeData">
+            <summary>
+            Optional information to be showed into a badge
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabPanel.BadgeColor">
+            <summary>
+            The color of the badge.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTabPanel.ChildContent">

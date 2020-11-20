@@ -3,28 +3,43 @@
 @typeparam T
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
-    <MudInputControl HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style">
-        <MudInput InputType="InputType.Text" Variant="@Variant" @bind-Value="@Text" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                  Immediate="true" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" OnKeyDown="@OnInputKeyDown"
-                  @onclick="@ToggleMenu" />
-        <MudInputLabel Class="mud-input-label-inputcontrol" Variant="@Variant">
-            @Label
-        </MudInputLabel>
-        <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" OffsetY="true">
-            <MudList Clickable="true" Dense="@Dense">
-                @if (Items != null && Items.Any())
-                {
-                    int i = 0;
-                    @foreach (T item in Items)
+    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
+                     Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu">
+        <InputContent>
+            <MudInput InputType="InputType.Text" Variant="@Variant" @bind-Value="@Text" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
+                      Immediate="true" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" OnKeyDown="@this.OnInputKeyDown"
+                      OnBlur="@OnInputBlurred" OnKeyUp="@base.onKeyUp" OnKeyPress="@base.onKeyPress"/> 
+        </InputContent>
+        <ChildContent>
+            <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" OffsetY="true">
+                <MudList Clickable="true" Dense="@Dense">
+                    @if (Items != null && Items.Any())
                     {
-                        <MudListItem id="@GetListItemId(i)" OnClick="@(() => SelectOption(item))" Class="@(i==SelectedListItemIndex ? "mud-selected-item" : "")">
-                            @GetItemString(item)
-                        </MudListItem>
-                        i++;
+                        int i = 0;
+                        @foreach (T item in Items)
+                        {
+                            bool is_selected = i == SelectedListItemIndex;
+                            <MudListItem id="@GetListItemId(i)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
+                                @if (ItemTemplate == null)
+                                {
+                                    @GetItemString(item)
+                                }
+                                else if (is_selected) {
+                                    @if (ItemSelectedTemplate == null)
+                                        @ItemTemplate(item)
+                                    else
+                                        @ItemSelectedTemplate(item)
+                                }
+                                else {
+                                    @ItemTemplate(item)
+                                }
+                            </MudListItem>
+                            i++;
+                        }
                     }
-                }
-            </MudList>
-        </MudPopover>
+                </MudList>
+            </MudPopover>
+        </ChildContent>
     </MudInputControl>
 </CascadingValue>
 
@@ -32,3 +47,4 @@
 {
     <div class="mud-popover-overlay" @onclick="@ToggleMenu"></div>
 }
+

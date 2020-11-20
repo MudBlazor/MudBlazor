@@ -1,6 +1,8 @@
 ﻿@using MudBlazor.Docs.Models
 @using System.Text.RegularExpressions
 @using System.Reflection
+@using Microsoft.Extensions.DependencyInjection
+@using System.Globalization
 @namespace MudBlazor.Docs.Components
 
 
@@ -20,10 +22,12 @@
                         <MudTh>Name</MudTh>
                         <MudTh>Type</MudTh>
                         <MudTh>Description</MudTh>
+                        <MudTd>Default value</MudTd>
                     </HeaderContent>
                     <RowTemplate>
                         <MudTd><CodeInline>@context.Name</CodeInline></MudTd>
                         <MudTd>@context.Type</MudTd>
+                        <MudTd>@PresentDefaultValue(context.Default)</MudTd>
                         <MudTd>@context.Description</MudTd>
                     </RowTemplate>
                 </MudTable>
@@ -32,6 +36,9 @@
     </DocsPageContent>
 </DocsPage>
 
+<div style="display: none;">
+    @RenderTheType()
+</div>
 
 @code {
 
@@ -48,10 +55,39 @@
                 {
                     Name=info.Name,
                     Type = info.PropertyType.ConvertToCSharpSource(),
-                    Description = doc
+                    Description = doc,
+                    Default = GetDefaultValue(info),
                 };
             }
         }
+    }
+
+    // used for default value getting
+    object _comp_instance;
+
+    RenderFragment RenderTheType()
+    {
+        return new RenderFragment(builder =>
+        {
+            builder.OpenComponent(0, Type);
+            builder.AddComponentReferenceCapture(1, inst => { _comp_instance = inst; });
+            builder.CloseComponent();
+        });
+    }
+
+    private object GetDefaultValue(PropertyInfo info)
+    {
+        try
+        {
+            if (_comp_instance == null)
+            {
+                return null;
+                //RenderTheType();
+            }
+            return info.GetValue(_comp_instance);
+        }
+        catch(Exception){}
+        return null;
     }
 
     // TODO: document public methods later
@@ -70,4 +106,23 @@
     //        }
     //    }
     //}
+    DefaultConverter<object> _converter = new DefaultConverter<object>() { Culture= CultureInfo.InvariantCulture };
+
+    private string PresentDefaultValue(object @default)
+    {
+        if (@default == null)
+            return "null";
+        if (@default.GetType()==typeof(string))
+            return $"\"{@default}\"";
+        if (@default.GetType().IsEnum)
+            return $"{@default.GetType().Name}.{@default}";
+        if (Nullable.GetUnderlyingType(@default.GetType())!=null)
+            return _converter.Set(@default);
+        if (@default.GetType().IsGenericType) // for instance event callbacks
+            return "";
+        if (@default.GetType().IsValueType)
+            return _converter.Set( @default);
+        return "";
+    }
+
 }

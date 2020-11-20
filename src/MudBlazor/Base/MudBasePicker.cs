@@ -52,6 +52,11 @@ namespace MudBlazor
         [Parameter] public bool DisableToolbar { get; set; }
 
         /// <summary>
+        /// User class names for picker's ToolBar, separated by space
+        /// </summary>
+        [Parameter] public string ToolBarClass { get; set; }
+
+        /// <summary>
         /// Picker container option
         /// </summary>
         [Parameter] public PickerVariant PickerVariant { get; set; } = PickerVariant.Inline;

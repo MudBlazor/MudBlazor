@@ -1,4 +1,5 @@
-﻿
+﻿@import '../abstracts/variables';
+
 .mud-fab {
     padding: 0;
     font-size: 0.875rem;
@@ -13,29 +14,28 @@
     border-radius: 50%;
     letter-spacing: 0.02857em;
     text-transform: uppercase;
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-action-disabled-background);
+
+    &:hover {
+        text-decoration: none;
+        background-color: var(--mud-palette-action-disabled);
+    }
 
     &:active {
         box-shadow: 0px 7px 8px -4px rgba(0,0,0,0.2),0px 12px 17px 2px rgba(0,0,0,0.14),0px 5px 22px 4px rgba(0,0,0,0.12);
     }
 
-    &:hover {
-        text-decoration: none;
-    }
-
     &:disabled {
-        color: rgba(0, 0, 0, 0.26);
+        color: var(--mud-palette-action-disabled);
         box-shadow: none;
-        background-color: rgba(0, 0, 0, 0.12);
+        background-color: var(--mud-palette-action-disabled-background);
         cursor: default;
         pointer-events: none;
 
         &:hover {
-            background-color: rgba(0, 0, 0, 0.12);
+            background-color: var(--mud-palette-action-disabled-background);
         }
-    }
-
-    &:focus {
-        box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12);
     }
 }
 
@@ -46,33 +46,18 @@
     justify-content: inherit;
 }
 
-.mud-fab-default {
-    color: var(--mud-theme-on-default);
-    background-color: var(--mud-theme-default-lighten);
 
-    &:hover {
-        background-color: var(--mud-theme-default-darken);
+@each $color in $mud-palette-colors {
+    .mud-fab-#{$color} {
+        color: var(--mud-palette-#{$color}-text);
+        background-color: var(--mud-palette-#{$color});
+
+        &:hover {
+            background-color: var(--mud-palette-#{$color}-darken);
+        }
     }
 }
 
-
-.mud-fab-primary {
-    color: var(--mud-theme-on-primary);
-    background-color: var(--mud-theme-primary);
-
-    &:hover {
-        background-color: var(--mud-theme-primary-darken);
-    }
-}
-
-.mud-fab-secondary {
-    color: var(--mud-theme-on-secondary);
-    background-color: var(--mud-theme-secondary);
-
-    &:hover {
-        background-color: var(--mud-theme-secondary-darken);
-    }
-}
 
 .mud-fab-extended.mud-fab-size-large {
     width: auto;
