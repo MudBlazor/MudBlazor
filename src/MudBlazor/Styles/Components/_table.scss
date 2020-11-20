@@ -37,6 +37,12 @@
     & .mud-table-body {
         display: table-row-group;
 
+        .mud-table-row:last-child {
+            .mud-table-cell {
+                border-bottom: none;
+            }
+        }
+
         & .mud-table-cell {
             color: var(--mud-palette-text-primary);
         }
@@ -82,6 +88,7 @@
     padding-left: 16px;
     padding-right: 8px;
 }
+
 
 
 .mud-table-cell {
@@ -197,7 +204,8 @@
     padding: 0;
 }
 
-.mud-table-pagination-toolbar{
+.mud-table-pagination-toolbar {
+    border-top: 1px solid rgba(224, 224, 224, 1);
     height: 52px;
     padding-right: 2px;
 }
