@@ -2530,6 +2530,16 @@
             Callback is called whenever items are selected or deselected in multi selection mode.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTableSortLabel`1.SortIcon">
+            <summary>
+            The Icon used to display sortdirection.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableSortLabel`1.AppendIcon">
+            <summary>
+            If true the icon will be placed before the label text.
+            </summary>
+        </member>
         <member name="M:MudBlazor.MudTableSortLabel`1.SetSortDirection(MudBlazor.SortDirection)">
             <summary>
             Set sort direction but don't update Table sort order. This should only be called by Table
