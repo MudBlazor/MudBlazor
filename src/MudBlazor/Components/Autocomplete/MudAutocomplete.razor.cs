@@ -110,7 +110,7 @@ namespace MudBlazor
 
         public void ToggleMenu()
         {
-            if (Disabled)
+            if (Disabled || MinCharacters > 0 && (string.IsNullOrEmpty(Text) || Text.Length < MinCharacters))
                 return;
             IsOpen = !IsOpen;
             //if (IsOpen && string.IsNullOrEmpty(Text))
@@ -169,7 +169,11 @@ namespace MudBlazor
         private async void OnSearch()
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
+            {
+                IsOpen = false;
+                StateHasChanged();
                 return;
+            }
             SelectedListItemIndex = 0;
 
             var searched_items = await SearchFunc(Text);
