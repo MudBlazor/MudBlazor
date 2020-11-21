@@ -35,6 +35,7 @@
            .AddClass($"mud-picker-input-button", !AllowKeyboardInput && PickerVariant != PickerVariant.Static)
            .AddClass($"mud-picker-input-text", AllowKeyboardInput && PickerVariant != PickerVariant.Static)
            .AddClass($"mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
+           .AddClass(Class)
         .Build();
 
     protected string PickerPaperClass =>
@@ -50,10 +51,8 @@
       .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
     .Build();
 
-    [Parameter] public RenderFragment ChildContent { get; set; }
-
     [Parameter] public string InputIcon { get; set; }
-    [Parameter] public string ToolBarClass { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
 
     private bool PickerSquare { get; set; }
     private int PickerElevation { get; set; }

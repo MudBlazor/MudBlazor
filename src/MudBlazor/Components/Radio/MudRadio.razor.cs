@@ -22,7 +22,7 @@ namespace MudBlazor
 
         protected string ButtonClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple)
+            .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple)
             .AddClass($"mud-radio-color-{Color.ToDescriptionString()}")
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-checked", Checked)

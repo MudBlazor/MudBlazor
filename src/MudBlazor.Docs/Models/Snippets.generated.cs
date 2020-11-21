@@ -201,40 +201,53 @@ public const string AppBarSimpleExample = @"<MudAppBar Color=""Color.Primary"" F
 
 public const string AutocompleteClrObjectsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value"" SearchFunc=""@Search"" Immediate=""false"" />
+        <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value1"" SearchFunc=""@Search"" ToStringFunc=""@(e=> $""{e.Name} ({e.Sign})"")"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value2"" SearchFunc=""@Search"" ToStringFunc=""@(e=> $""{e.Name} ({e.Sign})"")"">
+            <ItemTemplate Context=""e"">                          
+                <MudText><MudIcon Icon=""@Icons.Material.CheckBoxOutlineBlank"" Class=""mb-n1 mr-3"" />@($""{e.Name} ({e.Sign})"")</MudText>
+            </ItemTemplate>
+            <ItemSelectedTemplate Context=""e"">                
+                <MudText><MudIcon Icon=""@Icons.Material.CheckBox"" Class=""mb-n1 mr-3"" />@($""{e.Name} ({e.Sign})"")</MudText>
+            </ItemSelectedTemplate>
+        </MudAutocomplete>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudText Class=""mb-n3"" Typo=""Typo.body2"">
-            Selected value: @(value != null ? value.ToString() : """")
+            Selected values: <MudChip>@(value1?.ToString() ?? ""Not selected"")</MudChip><MudChip>@(value2?.ToString() ?? ""Not selected"")</MudChip>
         </MudText>
     </MudItem>
 </MudGrid>
 
 @code {
-
     private IEnumerable<Element> datasource = PeriodicTable.GetElements(); //you can also search directly from database on Search()
+    private Element value1, value2;
 
-    private Element value;
-
-
-    private Task<IEnumerable<Element>> Search(string value)
+    private async Task<IEnumerable<Element>> Search(string value)
     {
-        return Task.FromResult(datasource.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
-    } }";
+        if (string.IsNullOrEmpty(value))
+            return datasource;
+        return datasource.Where(e => $""{e.Name} ({e.Sign})"".Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+}";
 
 public const string AutocompleteUsageExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudAutocomplete T=""string"" Label=""US States"" @bind-Value=""value"" SearchFunc=""@Search"" />
+        <MudAutocomplete T=""string"" Label=""US States"" @bind-Value=""value1"" SearchFunc=""@Search1"" />
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudAutocomplete T=""string"" Label=""US States"" @bind-Value=""value2"" SearchFunc=""@Search2"" ResetValueOnEmptyText=""true"" />
     </MudItem>
     <MudItem xs=""12"" md=""12"">
         <MudText Class=""mb-n3"" Typo=""Typo.body2"">
-            Selected value: @value
+            <MudChip>@(value1 ?? ""Not selected"")</MudChip><MudChip>@(value2 ?? ""Not selected"")</MudChip>
         </MudText>
     </MudItem>
 </MudGrid>
 
 @code {
-    private string value;
+    private string value1, value2;
     private string[] states =
     {
         ""Alabama"", ""Alaska"", ""American Samoa"", ""Arizona"",
@@ -253,11 +266,21 @@ public const string AutocompleteUsageExample = @"<MudGrid>
         ""Washington"", ""West Virginia"", ""Wisconsin"", ""Wyoming"",
     };
 
-    private Task<IEnumerable<string>> Search(string value)
+    private async Task<IEnumerable<string>> Search1(string value)
     {
-        return Task.FromResult(states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return states;
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
+    private async Task<IEnumerable<string>> Search2(string value)
+    {
+        // if text is null or empty, don't return values (drop-down will not open)
+        if (string.IsNullOrEmpty(value))
+            return new string[0];
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
 }";
 
 public const string AvatarIconExample = @"<MudAvatar>
@@ -714,14 +737,14 @@ public const string DatePickerBasicUsageExample = @"<MudDatePicker Label=""Picke
 <MudDatePicker Label=""Only Calendar"" Value=""2020-10-19"" DisableToolbar=""true"" HelperText=""No header"" />
 <MudDatePicker Label=""Date Format"" HelperText=""For custom cultures"" DateFormat=""dd/MM/yyyy"" Date=""@(new System.DateTime(2020,10,19))"" />";
 
-public const string DatePickerColorExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Value=""2020-10-19"" />
-<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Value=""2020-10-19"" />";
+public const string DatePickerColorExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Date=""@(DateTime.Today.AddDays(1))"" />
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Date=""@(DateTime.Today.AddDays(1))"" />";
 
-public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""1"" Value=""2020-10-19"" />
-<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""12"" Value=""2020-10-19"" />";
+public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""1"" Date=""@(DateTime.Today.AddDays(1))"" />
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""12"" Date=""@(DateTime.Today.AddDays(1))"" />";
 
-public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Value=""2020-10-19""/>
-<MudDatePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Value=""2020-10-19""/>";
+public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Date=""@(DateTime.Today.AddDays(1))""/>
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Date=""@(DateTime.Today.AddDays(1))""/>";
 
 public const string DatePickeViewsExample = @"<MudDatePicker Label=""Year"" OpenTo=""OpenTo.Year"" Value=""2020-10-19""/>
 <MudDatePicker Label=""Month"" OpenTo=""OpenTo.Month"" Value=""2020-10-19"" />
@@ -1194,16 +1217,16 @@ public const string ExpansionPanelMultiExample = @"<MudExpansionPanels MultiExpa
 
 public const string ExpansionPanelSimpleExample = @"<MudExpansionPanels>
     <MudExpansionPanel Text=""Panel One"">
-        Panel One Content
+        <LoremIpsum/>
     </MudExpansionPanel>
     <MudExpansionPanel Text=""Panel Two"">
-        Panel Two Content
+        <LoremIpsum />
     </MudExpansionPanel>
     <MudExpansionPanel Text=""Panel Three"">
-        Panel Three Content
+        <LoremIpsum />
     </MudExpansionPanel>
     <MudExpansionPanel Text=""Panel Four"">
-        Panel Four Content
+        <LoremIpsum />
     </MudExpansionPanel>
 </MudExpansionPanels>";
 
@@ -2140,8 +2163,10 @@ public const string MultiSelectExample = @"<MudGrid>
 public const string SelectCustomConverterExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudSelect T=""Pizza"" @bind-Value=""@pizza"" Label=""Select your pizza"" Variant=""Variant.Outlined"" ToStringFunc=""@converter"" OffsetY=""true"">
-            <MudSelectItem Value=""@(new Pizza() { Name=""Margarita""})"">Margarita</MudSelectItem>
-            <MudSelectItem Value=""@(new Pizza() { Name=""Diavolo""})"">Diavolo</MudSelectItem>
+            <MudSelectItem Value=""@(new Pizza() { Name=""Cardinale""})"" />
+            <MudSelectItem Value=""@(new Pizza() { Name=""Diavolo""})"" />
+            <MudSelectItem Value=""@(new Pizza() { Name=""Margarita""})"" />
+            <MudSelectItem Value=""@(new Pizza() { Name=""Spinaci""})"" />
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
@@ -2166,9 +2191,9 @@ public const string SelectCustomConverterExample = @"<MudGrid>
 }";
 
 public const string SelectDenseExample = @"<MudSelect T=""string"" Label=""Dense"" Dense=""true"">
-    <MudSelectItem T=""string"" Value=""@(""foo"")"">Foo</MudSelectItem>
-    <MudSelectItem T=""string"" Value=""@(""bar"")"">Bar</MudSelectItem>
-    <MudSelectItem T=""string"" Value=""@(""baz"")"">Baz</MudSelectItem>
+    <MudSelectItem T=""string"" Value=""@(""Tyrannosaur"")""/>
+    <MudSelectItem T=""string"" Value=""@(""Triceratops"")""/>
+    <MudSelectItem T=""string"" Value=""@(""Oviraptor"")""/>
 </MudSelect>";
 
 public const string SelectDisabledExample = @"<MudSelect T=""string"" Label=""Disabled"" Disabled=""true"">
@@ -2508,6 +2533,23 @@ public const string SwitchWithLabelExample = @"<MudSwitch @bind-Checked=""@Label
     public bool Label_Switch3 { get; set; } = true;
 }";
 
+public const string TableBasicExample = @"<MudTable Items=""@PeriodicTable.GetElements().Take(4)"" Hover=""true"" Breakpoint=""Breakpoint.Sm"">
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
+    </RowTemplate>
+</MudTable>";
+
 public const string TableColGroupExample = @"<MudTable Items=""@PeriodicTable.GetElements()"">
     <ColGroup>
         <col style=""width: 60px;"" />
@@ -2542,8 +2584,7 @@ public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElement
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
         <MudToolBarSpacer />
-        <MudIcon Class=""mt-5 mr-2"" Icon=""@Icons.Material.Search""></MudIcon>
-        <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
+        <MudTextField @bind-Value=""search_string"" Placeholder=""Search"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium"" Class=""mt-0""></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Nr</MudTh>
@@ -2553,11 +2594,11 @@ public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElement
         <MudTh>Molar mass</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>@context.Sign</MudTd>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd>@context.Molar</MudTd>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
@@ -2617,9 +2658,8 @@ public const string TableFixedHeaderExample = @"<MudTable Items=""@PeriodicTable
 public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
-        <MudToolBarSpacer/>
-        <MudIcon Class=""mt-5 mr-2"" Icon=""@Icons.Material.Search""></MudIcon>
-        <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
+        <MudToolBarSpacer />
+        <MudTextField @bind-Value=""search_string"" Placeholder=""Search"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium""></MudTextField>
     </ToolBarContent>
     <ColGroup>
         <col style=""width:50px;"" />
@@ -2846,8 +2886,8 @@ public const string TextFieldAdornmentsExample = @"<MudGrid>
 
 
 @code {
-    public double Amount { get; set; }
-    public int Weight { get; set; }
+    public double? Amount { get; set; }
+    public int? Weight { get; set; }
     public string Password { get; set;} = ""superstrong123"";
 
     bool isShow;
@@ -3022,46 +3062,6 @@ public const string TimePickerStaticExample = @"<MudTimePicker PickerVariant=""P
 }";
 
 public const string TimePickerViewsExample = @"<MudTimePicker Label=""Minutes"" Value=""13:37"" OpenTo=""OpenTo.Minutes"" />";
-
-public const string ToggleIconButtonEventCallbackExample = @"<MudToggleIconButton Toggled=""@AlarmOn"" ToggledChanged=""(toggleValue) => IncrementSwitchedOn(toggleValue)""
-                     Icon=""@Icons.Material.AlarmOff"" Color=""@Color.Error"" 
-                     ToggledIcon=""@Icons.Material.AlarmOn"" ToggledColor=""@Color.Success"" />
-
-<MudBody1>Alarm is @(AlarmOn ? ""On"" : ""Off"")</MudBody1>
-<MudBody1>@($""I have been switched on {SwitchedOnCount} times."")</MudBody1>
-
-@code {
-    public bool AlarmOn { get; set; }
-    public int SwitchedOnCount { get; set; }
-
-    public void IncrementSwitchedOn(bool toggleValue)
-    {
-        // You can do things before assignment
-        // ...
-
-        // Assignment of one-way bound parameter
-        AlarmOn = toggleValue;
-
-        // And after assignment has been made
-        // ...
-
-        if (AlarmOn)
-        {
-            SwitchedOnCount++;
-        }
-
-    }
-}";
-
-public const string ToggleIconButtonTwoWayBindingExample = @"<MudToggleIconButton @bind-Toggled=""@AlarmOn""
-                     Icon=""@Icons.Material.AlarmOff"" Color=""@Color.Error""
-                     ToggledIcon=""@Icons.Material.AlarmOn"" ToggledColor=""@Color.Success""/>
-
-<MudBody1>Alarm is @(AlarmOn ? ""On"" : ""Off"")</MudBody1>
-
-@code {
-    public bool AlarmOn { get; set; }
-}";
 
 public const string TooltipDelayedExample = @"<MudTooltip Text=""Delete"" Delayed=""1"">
     <MudIconButton Icon=""@Icons.Material.Delete"" />

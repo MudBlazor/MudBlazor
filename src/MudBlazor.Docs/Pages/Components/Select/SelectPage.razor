@@ -80,7 +80,12 @@
         <DocsPageSection>
         <SectionHeader>
             <Title>Select with custom converter</Title>
-            <Description></Description>
+            <Description>
+                Select has a built-in <CodeInline>DefaultConverter</CodeInline> which converts the values from any primitive type to string for presentation of the selected value. 
+                You can customize that converter as described under <MudLink Href="/features/converters">Converters</MudLink>. Here we use <CodeInline>ToStringFunc</CodeInline> to 
+                convert objects of type Pizza to their string representation. Note how the <CodeInline Tag="true">MudSelectItem</CodeInline> uses that string representation if you don't 
+                specify a render fragement.
+            </Description>
         </SectionHeader>
         <SectionContent Outlined="true" DisplayFlex="true">
             <MudContainer Class="py-6">

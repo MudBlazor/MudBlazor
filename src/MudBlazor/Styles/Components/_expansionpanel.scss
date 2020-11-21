@@ -1,5 +1,9 @@
 ﻿
 .mud-expansion-panels {
+    flex: 0 1 auto;
+    position: relative;
+    max-width: 100%;
+    transition: .3s cubic-bezier(.25,.8,.5,1);
     border-radius: var(--mud-default-borderradius);
 
     .mud-expansion-panels-square {
@@ -11,7 +15,8 @@
     flex: 1 0 100%;
     max-width: 100%;
     position: relative;
-    transition: .3s cubic-bezier(.25,.8,.5,1);
+    transition: margin .3s cubic-bezier(.25,.8,.5,1);
+    transition-delay: 100ms;
     border-bottom: 1px solid var(--mud-palette-lines-default);
     color: var(--mud-palette-text-primary);
     background-color: var(--mud-palette-surface);
@@ -31,6 +36,7 @@
         margin: 16px 0;
         border-radius: inherit;
         border-bottom: none;
+        transition-delay: 0ms;
 
         &:first-child {
             margin-top: 0;

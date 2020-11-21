@@ -1645,6 +1645,17 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void TableBasicExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TableBasicExample>();
+        }
+
+
+        [Test]
         public void TableColGroupExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -1927,28 +1938,6 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<TimePickerViewsExample>();
-        }
-
-
-        [Test]
-        public void ToggleIconButtonEventCallbackExample_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<ToggleIconButtonEventCallbackExample>();
-        }
-
-
-        [Test]
-        public void ToggleIconButtonTwoWayBindingExample_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<ToggleIconButtonTwoWayBindingExample>();
         }
 
 

@@ -18,9 +18,9 @@ namespace MudBlazor.Dialog
     public partial class MudDialogInstance
     {
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
-        [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; }
+        [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
-        [Parameter] public DialogOptions Options { get; set; }
+        [Parameter] public DialogOptions Options { get; set; } = new DialogOptions();
         [Parameter] public string Title { get; set; }
         [Parameter] public RenderFragment Content { get; set; }
         [Parameter] public Guid Id { get; set; }
@@ -74,7 +74,7 @@ namespace MudBlazor.Dialog
         {
             DialogPosition position;
 
-            if (Options.Position.HasValue)
+            if (Options != null && Options.Position.HasValue)
             {
                 position = Options.Position.Value;
             }

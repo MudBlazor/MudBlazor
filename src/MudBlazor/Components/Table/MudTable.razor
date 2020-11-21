@@ -28,27 +28,30 @@
                     </thead>
                 }
                 <tbody class="mud-table-body">
-                    @foreach (var item in CurrentPageItems)
+                    @if (CurrentPageItems != null)
                     {
-                    <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
-                        @if (RowEditingTemplate != null && object.Equals(_editingItem, item))
-                            @RowEditingTemplate(item)
-                        else
-                            @RowTemplate(item)
-                    </MudTr>
+                        @foreach (var item in CurrentPageItems)
+                        {
+                        <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
+                            @if (RowEditingTemplate != null && object.Equals(_editingItem, item))
+                                @RowEditingTemplate(item)
+                            else
+                                @RowTemplate(item)
+                        </MudTr>
 
-                        @*@if(RowEditingTemplate != null && object.Equals(_editingItem, item))
-                        {
-                            <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsEditing="true" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
-                                    @RowEditingTemplate(item)
-                            </MudTr>
+                            @*@if(RowEditingTemplate != null && object.Equals(_editingItem, item))
+                            {
+                                <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsEditing="true" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
+                                        @RowEditingTemplate(item)
+                                </MudTr>
+                            }
+                            else
+                            {
+                                <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
+                                        @RowTemplate(item)
+                                </MudTr>
+                            }*@
                         }
-                        else
-                        {
-                            <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
-                                    @RowTemplate(item)
-                            </MudTr>
-                        }*@
                     }
                 </tbody>
             </table>

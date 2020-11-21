@@ -1,0 +1,11 @@
+﻿<div class="mudblazor-sponsor">
+    <a class="mudblazor-sponsor-item" href="@Website" target="_blank">
+        <img src="@($"_content/MudBlazor.Docs/images/sponsors/{NameAndImage}.png")" class="mudblazor-sponsor-image">
+    </a>
+</div>
+
+@code {
+    [Parameter] public RenderFragment Childcontent { get; set; }
+    [Parameter] public string Website { get; set; }
+    [Parameter] public string NameAndImage { get; set; }
+}

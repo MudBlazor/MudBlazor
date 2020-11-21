@@ -23,7 +23,7 @@
     <MudContainer>
         <MudDivider Style="opacity:0;" />
     </MudContainer>
-    <MudContainer MaxWidth="MaxWidth.Large">
+    <MudContainer>
         <MudGrid>
             <MudItem xs="12" sm="12" md="12">
                 <MudText Typo="Typo.h4" Align="Align.Center" Class="mudblazor-text mudblazor-section-titles my-6">The Project</MudText>
@@ -46,44 +46,69 @@
         </MudGrid>
     </MudContainer>
     <MudContainer>
-        <MudGrid>
+        <MudGrid Spacing="4">
             <MudItem xs="12" sm="12" md="12">
                 <MudText Typo="Typo.h4" Align="Align.Center" Class="mudblazor-section-titles design-goals" GutterBottom="true">Design goals</MudText>
             </MudItem>
             <MudItem xs="12" sm="6" md="4">
-                <MudPaper Elevation="25" Class="pa-6 mudblazor-goal-paper">
+                <MudPaper Elevation="25" Class="px-4 py-6 rounded-lg mudblazor-goal-paper material">
                     <MudText Class="mudblazor-goal-title" Color="Color.Primary" Align="Align.Center">Material Design</MudText>
                     <MudText Align="Align.Center">Clean and aesthetic graphic design based on Material Design</MudText>
                 </MudPaper>
             </MudItem>
             <MudItem xs="12" sm="6" md="4">
-                <MudPaper Elevation="25" Class="pa-6 mudblazor-goal-paper">
+                <MudPaper Elevation="25" Class="px-4 py-6 rounded-lg mudblazor-goal-paper in-c">
                     <MudText Class="mudblazor-goal-title" Color="Color.Secondary" Align="Align.Center">Entirely in C#</MudText>
-                    <MudText Align="Align.Center">All components are written entirely in C#, no JavaScript allowed (except absolutely necessary)</MudText>
+                    <MudText Align="Align.Center">All components are written entirely in C#</MudText>
+                    <MudText Align="Align.Center">No JavaScript allowed</MudText>
+                    <MudText Align="Align.Center">(except absolutely necessary)</MudText>
                 </MudPaper>
             </MudItem>
             <MudItem xs="12" sm="12" md="4">
-                <MudPaper Elevation="25" Class="pa-6 mudblazor-goal-paper">
-                    <MudText Class="mudblazor-goal-title" Color="Color.Info" Align="Align.Center">Be Included!</MudText>
+                <MudPaper Elevation="25" Class="px-4 py-6 rounded-lg mudblazor-goal-paper be-included">
+                    <MudText Class="mudblazor-goal-title" Color="Color.Tertiary" Align="Align.Center">Be Included!</MudText>
                     <MudText Align="Align.Center">Releasing often so developers can get their PRs and fixes in a timely fashion and be a part of the community!</MudText>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="6">
-                <MudPaper Elevation="25" Class="pa-6">
-                    <MudText Class="mudblazor-goal-title" Align="Align.Center">Beautiful Apps</MudText>
-                    <MudText Align="Align.Center">Users can make beautiful apps without needing CSS (but they can of course use CSS too)</MudText>
-                </MudPaper>
-            </MudItem>
-            <MudItem xs="12" sm="6" md="6">
-                <MudPaper Elevation="25" Class="pa-6">
-                    <MudText Class="mudblazor-goal-title" Align="Align.Center">No Dependencies</MudText>
-                    <MudText Align="Align.Center">No dependencies on other component libraries, 100% control over components and features</MudText>
                 </MudPaper>
             </MudItem>
         </MudGrid>
     </MudContainer>
     <MudContainer>
-        <MudDivider Style="opacity:0;" />
+        <MudGrid>
+            <MudItem xs="12" sm="12" md="4" lg="6">
+                <MudText Typo="Typo.h4" Class="mudblazor-section-sub-title" Align="Align.Center" GutterBottom="true">Beautiful Apps</MudText>
+                <MudText Align="Align.Center">Users can make beautiful apps without any knowledge of CSS or the need to create custom CSS classes.</MudText>
+            </MudItem>
+            <MudItem xs="12" sm="12" md="8" lg="6">
+               <MudBlazorApp/>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+    <MudContainer>
+        <MudGrid>
+            <MudItem xs="12" sm="6" md="6">
+
+            </MudItem>
+            <MudItem xs="12" sm="6" md="6">
+                <MudText Typo="Typo.h4" Class="align-center mudblazor-section-sub-title" Align="Align.Center" GutterBottom="true">No Dependencies</MudText>
+                <MudText Align="Align.Center" Class="align-center">No dependencies on other component libraries, 100% control over components and features.</MudText>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+    <MudContainer>
+        <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true" Class="mudblazor-text mudblazor-section-titles mt-8">Project Sponsors</MudText>
+        <MudText Align="Align.Center" Typo="Typo.body2" Class="mudblazor-text mb-4">
+            Mudblazor is thankful for its <MudLink Href="https://opencollective.com/mudblazor">Open Collective sponsors</MudLink> and the companys that supplied us with their software.
+        </MudText>
+        <div class="mudblazor-sponsor-list mb-8">
+            <Sponsor Website="https://www.jetbrains.com/?from=MudBlazor" NameAndImage="JetBrains" />
+            <Sponsor Website="https://www.livesharp.net/" NameAndImage="LiveSharp" />
+        </div>
+        <div class="d-flex justify-center mt-16">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mudblazor-sponsor-button" DisableElevation="true">Become a sponsor</MudButton>
+            </div>
+    </MudContainer>
+    <MudContainer>
+        <MudDivider Class="my-16" />
     </MudContainer>
     <MudContainer>
         <MudGrid>

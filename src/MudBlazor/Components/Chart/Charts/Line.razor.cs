@@ -21,11 +21,18 @@ namespace MudBlazor.Charts
 
         public List<SvgPath> ChartLines = new List<SvgPath>();
 
-        protected override void OnInitialized()
+        protected override void OnParametersSet()
         {
-            Series = MudChartParent.ChartSeries;
+            base.OnParametersSet();
+            HorizontalLines.Clear();
+            VerticalLines.Clear();
+            HorizontalValues.Clear();
+            VerticalValues.Clear();
+            Legends.Clear();
+            ChartLines.Clear();
 
-            int SeriesCount = Series.Count;
+            if (MudChartParent!=null)
+                Series = MudChartParent.ChartSeries;
 
             double maxY = 0.0;
             int numValues = 0;
@@ -48,7 +55,7 @@ namespace MudBlazor.Charts
             double boundHeight = 350.0;
             double boundWidth = 650.0;
 
-            double gridYUnits = MudChartParent.ChartOptions.YAxisTicks;
+            double gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
             double gridXUnits = 30;
 
             int numVerticalLines = numValues - 1;

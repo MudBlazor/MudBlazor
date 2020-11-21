@@ -57,7 +57,7 @@ namespace MudBlazor
                 if (string.IsNullOrWhiteSpace(Target))
                     UriHelper.NavigateTo(Link, ForceLoad);
                 else
-                    await JsRuntime.InvokeAsync<object>("open", Link, Target);
+                    await JsRuntime.InvokeVoidAsync("blazorOpen", new object[2] { Link, Target });
             }
             else
             {

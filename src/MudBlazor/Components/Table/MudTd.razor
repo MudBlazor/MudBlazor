@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
 
-<td class="mud-table-cell" style="@Style">
+<td class="mud-table-cell" data-label="@DataLabel" style="@Style">
     @ChildContent
 </td>
 
@@ -9,4 +9,5 @@
 
     [Parameter] public RenderFragment ChildContent { get; set; }
     [Parameter] public string Style { get; set; }
+    [Parameter] public string DataLabel { get; set; }
 }
