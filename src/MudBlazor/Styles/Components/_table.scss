@@ -74,12 +74,12 @@
 
         &.mud-direction-desc {
             opacity: 1;
-            transform: rotate(0deg);
+            transform: rotate(180deg);
         }
 
         &.mud-direction-asc {
             opacity: 1;
-            transform: rotate(180deg);
+            transform: rotate(0deg);
         }
     }
 }
