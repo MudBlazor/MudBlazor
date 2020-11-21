@@ -1162,6 +1162,11 @@
             If true, the input element will be disabled.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudInput`1.ChildContent">
+            <summary>
+            ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudInputLabel.ChildContent">
             <summary>
             Child content of component.
