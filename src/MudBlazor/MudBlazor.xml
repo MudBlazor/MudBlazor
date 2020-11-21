@@ -672,7 +672,7 @@
         </member>
         <member name="P:MudBlazor.MudToggleIconButton.Toggled">
             <summary>
-            The toggled value. Can be used with two-way binding to get notified on toggle changes automatically.
+            The toggled value.
             </summary>
         </member>
         <member name="P:MudBlazor.MudToggleIconButton.ToggledChanged">

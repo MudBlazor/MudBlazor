@@ -462,7 +462,7 @@ public const string MudIconButton_Tag = @"Use Tag to attach any user data object
 public const string MudIconButton_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudToggleIconButton_Toggled = @"The toggled value. Can be used with two-way binding to get notified on toggle changes automatically.";
+public const string MudToggleIconButton_Toggled = @"The toggled value.";
 
 public const string MudToggleIconButton_ToggledChanged = @"Fires whenever toggled is changed.";
 
@@ -830,6 +830,8 @@ public const string MudInputControl_Tag = @"Use Tag to attach any user data obje
 public const string MudInputControl_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudInput_ChildContent = @"ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.";
+
 public const string MudInput_Required = @"";
 
 public const string MudInput_RequiredError = @"";
@@ -906,6 +908,8 @@ public const string MudInput_Tag = @"Use Tag to attach any user data object to t
 
 public const string MudInput_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
+
+public const string MudInputString_ChildContent = @"ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.";
 
 public const string MudInputString_Required = @"If true, this form input is required to be filled out.";
 
@@ -2562,6 +2566,10 @@ public const string MudTable_UserAttributes = @"UserAttributes carries all attri
 public const string MudTableSortLabel_ChildContent = @"";
 
 public const string MudTableSortLabel_InitialDirection = @"";
+
+public const string MudTableSortLabel_SortIcon = @"The Icon used to display sortdirection.";
+
+public const string MudTableSortLabel_AppendIcon = @"If true the icon will be placed before the label text.";
 
 public const string MudTableSortLabel_SortDirection = @"";
 
