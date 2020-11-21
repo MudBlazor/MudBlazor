@@ -5,6 +5,16 @@
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
     <CascadingValue Value="TableContext" IsFixed="true">
+        @*Note: should only show if the breakpoint is reached*@
+        @if (Context.SortLabels.Any())
+        {
+            <MudSelect Value="@Context.CurrentSortLabel" ValueChanged="@(v => Context.SetSortFunc(v, override_direction_none:true))" T="MudTableSortLabel<T>">
+                @foreach (var label in Context.SortLabels)
+                {
+                    <MudSelectItem Value="@label">@label.ChildContent</MudSelectItem>
+                }
+            </MudSelect>
+        }
         @if (ToolBarContent != null)
         {
             <MudToolBar Class="mud-table-toolbar">
