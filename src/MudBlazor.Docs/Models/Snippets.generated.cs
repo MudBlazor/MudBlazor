@@ -2566,11 +2566,11 @@ public const string TableColGroupExample = @"<MudTable Items=""@PeriodicTable.Ge
         <MudTh Style=""text-align:center"">Molar mass</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>@context.Sign</MudTd>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd Style=""text-align:right"">@context.Molar</MudTd>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"" Style=""text-align:right"">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
@@ -2639,11 +2639,11 @@ public const string TableFixedHeaderExample = @"<MudTable Items=""@PeriodicTable
         <MudTh>Molar mass</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>@context.Sign</MudTd>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd>@context.Molar</MudTd>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager PageSizeOptions=""new int[]{50, 100}"" />
@@ -2677,11 +2677,11 @@ public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Ite
         <MudTh>Molar mass</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>@context.Sign</MudTd>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd>@context.Molar</MudTd>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
     </RowTemplate>
     <RowEditingTemplate>
         <MudTd>@context.Number</MudTd>
@@ -2737,11 +2737,11 @@ public const string TableMultiSelectExample = @"<MudTable Items=""@PeriodicTable
         <MudTh>Molar mass</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>@context.Sign</MudTd>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd>@context.Molar</MudTd>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager PageSizeOptions=""new int[]{50, 100}"" />
@@ -2763,11 +2763,11 @@ public const string TableSortingExample = @"<MudTable Items=""@PeriodicTable.Get
         <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Molar)"">Mass</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>@context.Sign</MudTd>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd>@context.Molar</MudTd>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager PageSizeOptions=""new int[]{50, 100}"" />

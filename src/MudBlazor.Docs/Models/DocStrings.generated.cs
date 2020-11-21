@@ -2541,6 +2541,10 @@ public const string MudTableSortLabel_ChildContent = @"";
 
 public const string MudTableSortLabel_InitialDirection = @"";
 
+public const string MudTableSortLabel_SortIcon = @"The Icon used to display sortdirection.";
+
+public const string MudTableSortLabel_AppendIcon = @"If true the icon will be placed before the label text.";
+
 public const string MudTableSortLabel_SortDirection = @"";
 
 public const string MudTableSortLabel_SortDirectionChanged = @"";
