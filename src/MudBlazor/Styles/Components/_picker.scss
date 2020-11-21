@@ -6,6 +6,7 @@
 
 .mud-picker-inline {
     display: inline-flex;
+    position: relative;
 
     &.mud-picker-input-button {
         & .mud-input, .mud-input .mud-input-root {

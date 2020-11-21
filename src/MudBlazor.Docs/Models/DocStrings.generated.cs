@@ -120,6 +120,8 @@ public const string MudBasePicker_Disabled = @"If true, the picker will be disab
 
 public const string MudBasePicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
 
+public const string MudBasePicker_ToolBarClass = @"User class names for picker's ToolBar, separated by space";
+
 public const string MudBasePicker_PickerVariant = @"Picker container option";
 
 public const string MudBasePicker_InputVariant = @"InputVariant, if Picker is static this option will not change anything.";
@@ -639,6 +641,8 @@ public const string MudDatePicker_Label = @"If string has value the label text w
 public const string MudDatePicker_Disabled = @"If true, the picker will be disabled.";
 
 public const string MudDatePicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
+
+public const string MudDatePicker_ToolBarClass = @"User class names for picker's ToolBar, separated by space";
 
 public const string MudDatePicker_PickerVariant = @"Picker container option";
 
@@ -1693,6 +1697,8 @@ public const string MudTableBase_Dense = @"Set true for rows with a narrow heigh
 
 public const string MudTableBase_Hover = @"Set true to see rows hover on mouse-over.";
 
+public const string MudTableBase_Breakpoint = @"At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.";
+
 public const string MudTableBase_FixedHeader = @"When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.";
 
 public const string MudTableBase_Height = @"Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
@@ -1958,6 +1964,8 @@ public const string MudTimePicker_Disabled = @"If true, the picker will be disab
 
 public const string MudTimePicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
 
+public const string MudTimePicker_ToolBarClass = @"User class names for picker's ToolBar, separated by space";
+
 public const string MudTimePicker_PickerVariant = @"Picker container option";
 
 public const string MudTimePicker_InputVariant = @"InputVariant, if Picker is static this option will not change anything.";
@@ -2109,6 +2117,8 @@ public const string MudChart_UserAttributes = @"UserAttributes carries all attri
             will be splatted onto the underlying HTML tag.";
 
 public const string MudCollapse_Expanded = @"If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.";
+
+public const string MudCollapse_Class = @"User class names, separated by space";
 
 public const string MudCollapse_ChildContent = @"Child content of component.";
 
@@ -2337,11 +2347,9 @@ public const string MudPaper_Tag = @"Use Tag to attach any user data object to t
 public const string MudPaper_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudPicker_ChildContent = @"";
-
 public const string MudPicker_InputIcon = @"";
 
-public const string MudPicker_ToolBarClass = @"";
+public const string MudPicker_ChildContent = @"";
 
 public const string MudPicker_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.";
 
@@ -2356,6 +2364,8 @@ public const string MudPicker_Label = @"If string has value the label text will 
 public const string MudPicker_Disabled = @"If true, the picker will be disabled.";
 
 public const string MudPicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
+
+public const string MudPicker_ToolBarClass = @"User class names for picker's ToolBar, separated by space";
 
 public const string MudPicker_PickerVariant = @"Picker container option";
 
@@ -2486,6 +2496,8 @@ public const string MudTable_Dense = @"Set true for rows with a narrow height";
 
 public const string MudTable_Hover = @"Set true to see rows hover on mouse-over.";
 
+public const string MudTable_Breakpoint = @"At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.";
+
 public const string MudTable_FixedHeader = @"When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.";
 
 public const string MudTable_Height = @"Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
@@ -2538,6 +2550,8 @@ public const string MudTableSortLabel_SortBy = @"";
 public const string MudTd_ChildContent = @"";
 
 public const string MudTd_Style = @"";
+
+public const string MudTd_DataLabel = @"";
 
 public const string MudTh_ChildContent = @"";
 

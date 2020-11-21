@@ -2,7 +2,7 @@
 @inherits LegendBase
 
 
-@if (!MudChartParent.ChartOptions.DisableLegend)
+@if (MudChartParent?.ChartOptions.DisableLegend!=true)
 {
     <div class="mud-chart-legend">
         @foreach (var item in Data)

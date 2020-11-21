@@ -17,6 +17,10 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-table")
+           .AddClass($"mud-sm-table", Breakpoint == Breakpoint.Sm)
+           .AddClass($"mud-md-table", Breakpoint == Breakpoint.Md)
+           .AddClass($"mud-lg-table", Breakpoint == Breakpoint.Lg)
+           .AddClass($"mud-xl-table", Breakpoint == Breakpoint.Xl)
            .AddClass($"mud-table-dense", Dense)
            .AddClass($"mud-table-hover", Hover)
            .AddClass($"mud-table-outlined", Outlined)
@@ -47,6 +51,11 @@ namespace MudBlazor
         /// Set true to see rows hover on mouse-over.
         /// </summary>
         [Parameter] public bool Hover { get; set; }
+
+        /// <summary>
+        /// At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.
+        /// </summary>
+        [Parameter] public Breakpoint Breakpoint { get; set; }
 
         /// <summary>
         /// When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.

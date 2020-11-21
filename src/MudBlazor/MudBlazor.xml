@@ -267,6 +267,11 @@
             Hide toolbar and show only date/time views.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBasePicker.ToolBarClass">
+            <summary>
+            User class names for picker's ToolBar, separated by space
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBasePicker.PickerVariant">
             <summary>
             Picker container option
@@ -1157,6 +1162,11 @@
             If true, the input element will be disabled.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudInput`1.ChildContent">
+            <summary>
+            ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudInputLabel.ChildContent">
             <summary>
             Child content of component.
@@ -1667,6 +1677,11 @@
         <member name="P:MudBlazor.MudTableBase.Hover">
             <summary>
             Set true to see rows hover on mouse-over.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.Breakpoint">
+            <summary>
+            At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTableBase.FixedHeader">
@@ -2325,6 +2340,11 @@
             If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudCollapse.Class">
+            <summary>
+            User class names, separated by space
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudCollapse.ChildContent">
             <summary>
             Child content of component.
@@ -2513,6 +2533,16 @@
         <member name="P:MudBlazor.MudTable`1.SelectedItemsChanged">
             <summary>
             Callback is called whenever items are selected or deselected in multi selection mode.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableSortLabel`1.SortIcon">
+            <summary>
+            The Icon used to display sortdirection.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableSortLabel`1.AppendIcon">
+            <summary>
+            If true the icon will be placed before the label text.
             </summary>
         </member>
         <member name="M:MudBlazor.MudTableSortLabel`1.SetSortDirection(MudBlazor.SortDirection)">

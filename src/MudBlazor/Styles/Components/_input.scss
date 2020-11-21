@@ -144,9 +144,11 @@
             border-color: var(--mud-palette-lines-inputs);
             border-width: 1px;
             border-style: solid;
-            transition-duration: .1s;
-            transition-property: color,border-width;
-            transition-timing-function: border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+            transition: border-width,border-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        }
+
+        &:not(.mud-disabled):not(:focus-within):hover .mud-input-outlined-border {
+            border-color: var(--mud-palette-action-default);
         }
 
         &:focus-within .mud-input-outlined-border {
@@ -176,7 +178,7 @@
     transform: scaleX(1);
 }
 
-.mud-input > input {
+.mud-input > input, .mud-input-slot {
   &.mud-input-root {
     font: inherit;
     color: currentColor;
@@ -266,13 +268,6 @@
   &.mud-input-root-outlined {
     padding: 18.5px 14px;
 
-    &:hover {
-      border-color: var(--mud-palette-lines-inputs);
-    }
-
-    &:focus {
-      border-color: var(--mud-palette-primary);
-    }
 
     &.mud-input-root:-webkit-autofill {
       border-radius: inherit;
@@ -392,13 +387,6 @@
   &.mud-input-root-outlined {
     margin: 18.5px 14px;
 
-    &:hover {
-      border-color: var(--mud-palette-lines-inputs);
-    }
-
-    &:focus {
-      border-color: var(--mud-palette-primary);
-    }
 
     &.mud-input-root:-webkit-autofill {
       border-radius: inherit;

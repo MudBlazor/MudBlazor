@@ -15,7 +15,7 @@
             <MudIcon Icon="@ExpandIcon" class="@(Expanded? "mud-nav-link-expand-icon mud-transform" : "mud-nav-link-expand-icon")" />
         }
     </button>
-    <MudCollapse Expanded="@Expanded">
+    <MudCollapse Expanded="@Expanded" Class="mud-navgroup-collapse">
         <MudNavMenu>
             @ChildContent
         </MudNavMenu>

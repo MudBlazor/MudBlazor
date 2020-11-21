@@ -26,9 +26,12 @@
 }
 
 .mud-dialog {
-    .mud-popover {
+
+}
+
+.mud-collapse-container {
+        .mud-picker-view {
         position: fixed;
-        width: calc(100% - 48px);
     }
 }
 
