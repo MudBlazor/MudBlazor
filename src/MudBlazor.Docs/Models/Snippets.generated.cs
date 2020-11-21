@@ -3023,6 +3023,46 @@ public const string TimePickerStaticExample = @"<MudTimePicker PickerVariant=""P
 
 public const string TimePickerViewsExample = @"<MudTimePicker Label=""Minutes"" Value=""13:37"" OpenTo=""OpenTo.Minutes"" />";
 
+public const string ToggleIconButtonEventCallbackExample = @"<MudToggleIconButton Toggled=""@AlarmOn"" ToggledChanged=""(toggleValue) => IncrementSwitchedOn(toggleValue)""
+                     Icon=""@Icons.Material.AlarmOff"" Color=""@Color.Error"" 
+                     ToggledIcon=""@Icons.Material.AlarmOn"" ToggledColor=""@Color.Success"" />
+
+<MudBody1>Alarm is @(AlarmOn ? ""On"" : ""Off"")</MudBody1>
+<MudBody1>@($""I have been switched on {SwitchedOnCount} times."")</MudBody1>
+
+@code {
+    public bool AlarmOn { get; set; }
+    public int SwitchedOnCount { get; set; }
+
+    public void IncrementSwitchedOn(bool toggleValue)
+    {
+        // You can do things before assignment
+        // ...
+
+        // Assignment of one-way bound parameter
+        AlarmOn = toggleValue;
+
+        // And after assignment has been made
+        // ...
+
+        if (AlarmOn)
+        {
+            SwitchedOnCount++;
+        }
+
+    }
+}";
+
+public const string ToggleIconButtonTwoWayBindingExample = @"<MudToggleIconButton @bind-Toggled=""@AlarmOn""
+                     Icon=""@Icons.Material.AlarmOff"" Color=""@Color.Error""
+                     ToggledIcon=""@Icons.Material.AlarmOn"" ToggledColor=""@Color.Success""/>
+
+<MudBody1>Alarm is @(AlarmOn ? ""On"" : ""Off"")</MudBody1>
+
+@code {
+    public bool AlarmOn { get; set; }
+}";
+
 public const string TooltipDelayedExample = @"<MudTooltip Text=""Delete"" Delayed=""1"">
     <MudIconButton Icon=""@Icons.Material.Delete"" />
 </MudTooltip>

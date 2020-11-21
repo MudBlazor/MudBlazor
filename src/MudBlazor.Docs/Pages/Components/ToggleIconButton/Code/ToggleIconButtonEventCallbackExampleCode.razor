@@ -1,0 +1,36 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudToggleIconButton</span> <span class="htmlAttributeName">Toggled</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>AlarmOn</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ToggledChanged</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">(toggleValue) =&gt; IncrementSwitchedOn(toggleValue)</span><span class="quot">&quot;</span>
+                     <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Icons.Material.AlarmOff</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Color.Error</span><span class="quot">&quot;</span> 
+                     <span class="htmlAttributeName">ToggledIcon</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Icons.Material.AlarmOn</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ToggledColor</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Color.Success</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudBody1</span><span class="htmlTagDelimiter">&gt;</span>Alarm is <span class="atSign">&#64;</span>(AlarmOn ? &quot;On&quot; : &quot;Off&quot;)<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudBody1</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudBody1</span><span class="htmlTagDelimiter">&gt;</span><span class="atSign">&#64;</span>($&quot;I have been switched on {SwitchedOnCount} times.&quot;)<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudBody1</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code {
+    <span class="keyword">public</span> <span class="keyword">bool</span> AlarmOn { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+    <span class="keyword">public</span> <span class="keyword">int</span> SwitchedOnCount { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> IncrementSwitchedOn(<span class="keyword">bool</span> toggleValue)
+    {
+        <span class="comment">// You can do things before assignment</span>
+        <span class="comment">// ...</span>
+
+        <span class="comment">// Assignment of one-way bound parameter</span>
+        AlarmOn = toggleValue;
+
+        <span class="comment">// And after assignment has been made</span>
+        <span class="comment">// ...</span>
+
+        <span class="keyword">if</span> (AlarmOn)
+        {
+            SwitchedOnCount++;
+        }
+
+    }
+}
+</pre></div>
+</div>

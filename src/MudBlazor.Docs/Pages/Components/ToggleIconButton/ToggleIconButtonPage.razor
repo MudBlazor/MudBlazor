@@ -1,0 +1,33 @@
+﻿@page "/components/toggleiconbutton"
+
+<DocsPage>
+    <DocsPageHeader Title="Toggle Icon Button">
+        <Description>
+            A toggleable implementation of <CodeInline>MudIconButton</CodeInline> where you can use its familiar API to define two different states which you can toggle between. For available icons go to <MudLink Href="/components/icons">Icons.</MudLink>. Custom icons are passed as a SVG string.
+        </Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Basic usage</Title>
+                <Description>Use two-way binding <CodeInline>@(@"@bind-Toggle=""...""")</CodeInline> to update a bound value in the parent component.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <ToggleIconButtonTwoWayBindingExample />
+            </SectionContent>
+            <SectionSource Code="ToggleIconButtonTwoWayBindingExample" GitHubFolderName="ToggleIconButton" />
+        </DocsPageSection>
+    </DocsPageContent>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Advanced usage</Title>
+                <Description>Use <CodeInline>EventCallback</CodeInline> with manual assignment of the one-way bound value if you want to act on the toggle event.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <ToggleIconButtonEventCallbackExample />
+            </SectionContent>
+            <SectionSource Code="ToggleIconButtonEventCallbackExample" GitHubFolderName="ToggleIconButton" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
