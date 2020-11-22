@@ -257,7 +257,7 @@
         }
 
         .mud-table-smalldevices-sortselect {
-            display: flex;
+            display: block;
             padding: 4px 16px 8px;
         }
 
@@ -276,6 +276,7 @@
         .mud-table-cell {
             display: flex;
             border: none;
+            padding: 14px 16px;
         }
 
         .mud-table-cell:before {
