@@ -13,7 +13,7 @@
             </SectionHeader>
             <SectionContent Outlined="true">
                 <MudText></MudText>
-                <MudButton @onclick="@(() => Snackbar.Default("Simple snackbar"))">Open Simple snackbar</MudButton>
+                <MudButton @onclick="@(() => Snackbar.Add(Severity.Normal, "Simple snackbar"))">Open Simple snackbar</MudButton>
             </SectionContent>
         </DocsPageSection>
         <DocsPageSection>
@@ -86,7 +86,7 @@
     {
         Snackbar.Clear();
         Snackbar.Configuration.PositionClass = position;
-        Snackbar.Default(message);
+        Snackbar.Add(Severity.Normal ,message);
     }
 
     public bool ShowBuildLog { get; set; }
@@ -97,7 +97,7 @@
     void StartBuild()
     {
         string ErrorMessage = "Build succeeded, click for more information.";
-        Snackbar.Add(SnackbarType.Success, ErrorMessage, config =>
+        Snackbar.Add(Severity.Success, ErrorMessage, config =>
         {
             config.RequireInteraction = true;
             config.ShowCloseIcon = false;
