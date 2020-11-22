@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor.Docs.Shared
+﻿@namespace MudBlazor.Docs.Components.MudBlazorApp
 
 <MudCard Elevation="25" Class="mudblazor-apps">
     <MudCardHeader Class="rounded-t">
@@ -24,7 +24,7 @@
                     <MudListItem Icon="@Icons.Material.Inbox" OnClick="@((e) => ChangeMailbox(Inbox))">Inbox</MudListItem>
                     <MudListItem Icon="@Icons.Material.Send" OnClick="@((e) => ChangeMailbox(Sent))">Sent mail</MudListItem>
                     <MudListItem Icon="@Icons.Material.Drafts" OnClick="@((e) => ChangeMailbox(Drafts))">Drafts</MudListItem>
-                    <MudListItem Icon="@Icons.Material.Folder" Text="More" >
+                    <MudListItem Icon="@Icons.Material.Folder" Text="More">
                         <NestedList>
                             <MudListItem Icon="@Outlined.ReportProblemOutlined" Dense="true" OnClick="@((e) => ChangeMailbox(Spam))">Spam</MudListItem>
                             <MudListItem Icon="@Outlined.DeleteOutlined" Dense="true" OnClick="@((e) => ChangeMailbox(Bin))">Bin</MudListItem>
@@ -85,15 +85,31 @@
                     <MudText Align="Align.Center" Typo="Typo.body2">Click one of the apps to open them.</MudText>
                 </div>
                 <div class="d-flex align-self-center">
-                    <MudIconButton Icon="@Icons.Material.ShoppingCart" Disabled="true" />
                     <MudIconButton Icon="@Icons.Material.Email" OnClick="@NavigateToMailbox" Color="Color.Secondary" />
-                    <MudIconButton Icon="@Icons.Material.Calculate" Disabled="true" />
+                    <MudIconButton Icon="@Icons.Material.ShoppingCart" Disabled="true" />
+                    <MudIconButton Icon="@Icons.Material.Calculate" OnClick="@ToggleCalculator" Color="Color.Primary" />
                     <MudIconButton Icon="@Icons.Material.SportsEsports" Disabled="true" />
                     <MudIconButton Icon="@Icons.Material.Settings" Disabled="true" />
                 </div>
             </div>
         }
-
+        @if (CalculatorOpen)
+        {
+            <MudCard Class="mudblazor-apps-calculator rounded-lg" Elevation="25">
+                <MudCardHeader Class="rounded-t-lg">
+                    <CardHeaderContent>
+                        
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Remove" Size="Size.Small" Color="Color.Inherit" Class="rounded-0" />
+                        <MudIconButton Icon="@Icons.Material.Close" Size="Size.Small" OnClick="@ToggleCalculator" Color="Color.Inherit" Class="rounded-0 rounded-tr-lg" />
+                    </CardHeaderActions>
+                </MudCardHeader>
+                <MudCardContent Class="pa-0">
+                    <Calculator/>
+                </MudCardContent>
+            </MudCard>
+        }
     </MudCardContent>
 </MudCard>
 
@@ -104,6 +120,7 @@
     public int UnreadEmails { get; set; } = 1;
     public bool BackButtonDisabled { get; set; } = true;
     public bool ComposeEmail { get; set; }
+    public bool CalculatorOpen { get; set; }
 
 
     public List<Email> CurrentMailBox = new List<Email>();
@@ -181,6 +198,11 @@
     public void ComposeNewEmail()
     {
         ComposeEmail = !ComposeEmail;
+    }
+
+    public void ToggleCalculator()
+    {
+        CalculatorOpen = !CalculatorOpen;
     }
 }
 

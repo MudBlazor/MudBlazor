@@ -90,4 +90,44 @@
         text-align: center;
         width: 70%;
     }
+
+    .mudblazor-apps-calculator {
+        position: absolute;
+        left: 72%;
+        background: linear-gradient(180deg,var(--mud-palette-surface) 0%,var(--mud-palette-background-grey) 100%);
+
+        .mud-button {
+            min-width: 36px;
+            min-height: 36px;
+            width: 100%;
+            height: 100%;
+            box-shadow: none;
+            padding: 6px 6px;
+
+            .mud-button-start-icon {
+                margin: 0;
+            }
+        }
+
+        .mud-card-header .mud-card-header-actions {
+            margin-top: -6px;
+            margin-right: -12px;
+        }
+
+        .calc-button-small {
+            .mud-svg-icon-root {
+                font-size: 16px;
+            }
+        }
+
+        .calc-button-medium {
+            .mud-svg-icon-root {
+                font-size: 18px;
+            }
+        }
+
+        .calc-button-opacity {
+            opacity: 0.9;
+        }
+    }
 }
