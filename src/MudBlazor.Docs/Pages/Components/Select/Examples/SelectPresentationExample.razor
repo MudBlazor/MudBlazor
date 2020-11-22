@@ -1,0 +1,63 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect @bind-Value="@country" Label="With render fragements" Variant="Variant.Outlined" OffsetY="true">
+            <MudSelectItem Value="@("Afghanistan")">
+                <svg width="20" height="20" style="display: inline;">
+                    <image xlink:href="https://en.wikipedia.org/wiki/Flag_of_Afghanistan#/media/File:Flag_of_Afghanistan.svg" width="20" height="20" />
+                </svg>
+                Afghanistan
+            </MudSelectItem>
+            <MudSelectItem Value="@("Australia")">
+                <svg width="20" height="20" style="display: inline;">
+                    <image xlink:href="https://en.wikipedia.org/wiki/Flag_of_Australia#/media/File:Flag_of_Australia_(converted).svg" width="20" height="20" />
+                </svg>
+                Australia
+            </MudSelectItem>
+            <MudSelectItem Value="@("Austria")">
+                <svg width="20" height="20" style="display: inline;">
+                    <image xlink:href="https://en.wikipedia.org/wiki/Flag_of_Austria#/media/File:Flag_of_Austria.svg" width="20" height="20" />
+                </svg>
+                Austria
+            </MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect @bind-Value="@country" Label="Without render fragements" Variant="Variant.Outlined" OffsetY="true">
+            <MudSelectItem Value="@("Afghanistan")" />
+            <MudSelectItem Value="@("Andorra")" />
+            <MudSelectItem Value="@("Australia")" />
+            <MudSelectItem Value="@("Austria")" />
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect @bind-Value="@country" Label="Unrepresentable value" Variant="Variant.Outlined" OffsetY="true">
+            <MudSelectItem Value="@("Afghanistan")">
+                <svg width="20" height="20" style="display: inline;">       
+                    <image xlink:href="https://en.wikipedia.org/wiki/Flag_of_Afghanistan#/media/File:Flag_of_Afghanistan.svg" width="20" height="20"/>    
+                </svg>
+                Afghanistan
+            </MudSelectItem>
+            <MudSelectItem Value="@("Australia")">
+                <svg width="20" height="20" style="display: inline;">
+                    <image xlink:href="https://en.wikipedia.org/wiki/Flag_of_Australia#/media/File:Flag_of_Australia_(converted).svg" width="20" height="20" />
+                </svg>
+                Australia
+            </MudSelectItem>
+            <MudSelectItem Value="@("Andorra")">
+                <svg width="20" height="20" style="display: inline;">
+                    <image xlink:href="https://en.wikipedia.org/wiki/Flag_of_Andorra#/media/File:Flag_of_Andorra.svg" width="20" height="20" />
+                </svg>
+                Andorra
+            </MudSelectItem>
+        </MudSelect>
+    </MudItem>
+
+</MudGrid>
+
+@code {
+    string country="Austria";
+
+   
+}
