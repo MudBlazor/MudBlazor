@@ -25,14 +25,7 @@
     }
 }
 
-.mud-dialog {
-
-}
-
 .mud-collapse-container {
-    /*       .mud-picker-view {
-        position: fixed;
-    }*/
     .mud-select {
         position: unset;
 
@@ -42,6 +35,18 @@
 
         .mud-popover {
             width: calc(calc(100% - 48px));
+
+            &.mud-popover-top {
+                &.mud-popover-offset-y {
+                    bottom: auto;
+                }
+            }
+
+            &.mud-popover-bottom {
+                &.mud-popover-offset-y {
+                    top: auto;
+                }
+            }
         }
     }
 
