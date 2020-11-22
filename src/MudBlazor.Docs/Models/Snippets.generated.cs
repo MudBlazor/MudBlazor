@@ -2324,10 +2324,10 @@ public const string SelectUsageExample = @"<MudGrid>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudSelect Placeholder=""Select culture"" @bind-Value=""cultureValue"" HelperText=""CultureInfo"" ToStringFunc=""@convertFunc"">
-            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""en-US""))"">English</MudSelectItem>
-            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""de-AT""))"">German</MudSelectItem>
-            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""pt-BR""))"">Portugese</MudSelectItem>
-            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""zh-CN""))"">Chinese</MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""en-US""))""></MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""de-AT""))""></MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""pt-BR""))""></MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""zh-CN""))""/>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
@@ -2352,22 +2352,28 @@ public const string SelectUsageExample = @"<MudGrid>
 
 public const string SelectVariantsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect T=""string"" Label=""Text"">
-            <MudSelectItem Value=""@(""foo"")"">Foo</MudSelectItem>
-            <MudSelectItem Value=""@(""bar"")"">Bar</MudSelectItem>
+        <MudSelect T=""string"" Label=""Coffee"">
+            <MudSelectItem Value=""@(""Cappuccino"")"" />
+            <MudSelectItem Value=""@(""Cafe Latte"")"" />
+            <MudSelectItem Value=""@(""Espresso"")"" />
+            <MudSelectItem Value=""@(""Irish Coffee"")"" />
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect T=""double"" Label=""Text"" Variant=""Variant.Outlined"">
-            <MudSelectItem Value=""4.50"">4.50</MudSelectItem>
-            <MudSelectItem Value=""21.99"">21.99</MudSelectItem>
+        <MudSelect T=""double?"" Label=""Price"" Variant=""Variant.Outlined"" Format=""F2"">
+            <MudSelectItem T=""double?"" Value=""4.50""/>
+            <MudSelectItem T=""double?"" Value=""4.99""/>
+            <MudSelectItem T=""double?"" Value=""3.60""/>
+            <MudSelectItem T=""double?"" Value=""21.99""/>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelectString Label=""Text"" Variant=""Variant.Filled"">
-            <MudSelectItemString Value=""foo"">Foo</MudSelectItemString>
-            <MudSelectItemString Value=""bar"">Bar</MudSelectItemString>
-        </MudSelectString>
+        <MudSelect T=""string"" Label=""Pies"" Variant=""Variant.Filled"">
+            <MudSelectItem Value=""@(""Apple Pie"")"" />
+            <MudSelectItem Value=""@(""Blackberry Pie"")"" />
+            <MudSelectItem Value=""@(""Rhubarb Pie"")"" />
+            <MudSelectItem Value=""@(""Lemon Pie"")"" />
+        </MudSelect>
     </MudItem>
 </MudGrid>";
 

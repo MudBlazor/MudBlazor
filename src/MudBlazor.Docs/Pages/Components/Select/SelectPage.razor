@@ -78,6 +78,22 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader>
+                <Title>Value presentation</Title>
+                <Description>
+                    Select uses the render fragements you specify for the items to display the selected value (if any). If you don't specify render fragments the value will be displayed as text. Also, if you have render fragments
+                    but the value that has been set is not in the list, it will also be displayed as text.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer Class="py-6">
+                    <SelectPresentationExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="SelectPresentationExample" GitHubFolderName="Select" />
+        </DocsPageSection>
+
+        <DocsPageSection>
         <SectionHeader>
             <Title>Select with custom converter</Title>
             <Description>
@@ -95,21 +111,7 @@
         <SectionSource ShowCode="false" Code="SelectCustomConverterExample" GitHubFolderName="Select" />
     </DocsPageSection>
         
-        <DocsPageSection>
-            <SectionHeader>
-                <Title>Value presentation</Title>
-                <Description>
-                    Select uses the render fragements you specify for the items to display the selected value (if any). If you don't specify render fragments the value will be displayed as text. Also, if you have render fragments
-                    but the value that has been set is not in the list, it will also be displayed as text.
-                </Description>
-            </SectionHeader>
-            <SectionContent Outlined="true" DisplayFlex="true">
-                <MudContainer Class="py-6">
-                    <SelectPresentationExample />
-                </MudContainer>
-            </SectionContent>
-            <SectionSource ShowCode="false" Code="SelectPresentationExample" GitHubFolderName="Select" />
-        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
 

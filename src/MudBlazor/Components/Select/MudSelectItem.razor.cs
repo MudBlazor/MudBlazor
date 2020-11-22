@@ -114,5 +114,4 @@ namespace MudBlazor
         }
     }
 
-    public class MudSelectItemString : MudSelectItem<string> { }
 }
