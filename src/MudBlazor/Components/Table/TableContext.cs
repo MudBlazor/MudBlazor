@@ -66,11 +66,15 @@ namespace MudBlazor
         }
 
         public Func<T, object> SortBy { get; protected set; }
+        public MudTableSortLabel<T> CurrentSortLabel { get; protected set; }
 
-        public void SetSortFunc(MudTableSortLabel<T> label)
+        public void SetSortFunc(MudTableSortLabel<T> label, bool override_direction_none=false)
         {
+            CurrentSortLabel = label;
+            if (label.SortDirection == SortDirection.None && override_direction_none)
+                label.SortDirection = SortDirection.Ascending;
             SortDirection = label.SortDirection;
-            SortBy = label.SortBy;
+            SortBy = label.SortBy; 
             UpdateSortLabels(label);
             TableStateHasChanged();
         }
