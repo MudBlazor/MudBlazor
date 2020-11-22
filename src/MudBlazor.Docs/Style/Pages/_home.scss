@@ -3,6 +3,11 @@
     margin-top: 64px;
 }
 
+.mudblazor-svg {
+    width: 100%;
+    max-width: 300px;
+}
+
 .mudblazor-text-h5 {
     white-space: nowrap;
     letter-spacing: .1rem;
@@ -15,14 +20,11 @@
     }
 }
 
-
-.mudblazor-svg {
-    width: 100%;
-    max-width: 300px;
-}
-
 @media (min-width: 960px) {
 
+    .mudblazor-index {
+        margin-top: 128px;
+    }
     .mudblazor-svg {
         max-width: 400px;
     }
@@ -34,11 +36,7 @@
         &.smaller {
             font-size: 2.5rem;
         }
-    }
-
-    .mudblazor-index{
-        margin-top:128px;
-    }
+    }  
 }
 
 .mudblazor-section-titles {
@@ -53,7 +51,6 @@
 .mudblazor-goal-title {
     font-weight: 600;
     font-size: 1.2rem;
-    margin-bottom: 12px;
 }
 
 .mudblazor-goal-paper {
@@ -75,31 +72,13 @@
 .mudblazor-project-text {
     font-weight: 500;
     font-size: 1.1rem;
-    
-}
-
-.mudblazor-project-card {
-    & > .mud-card-header {
-        background: transparent linear-gradient(90deg,#594AE2 0%, #FF4081 100%) 0% 0% no-repeat padding-box;
-        padding: 12px;
-    }
-
-    & > .mud-card-content{
-        height:300px;
-    }
-}
-
-.mudblazor-project-paper {
-    &.gradient-pink {
-        background: transparent linear-gradient(90deg,#594AE2 0%, #FF4081 100%) 0% 0% no-repeat padding-box;
-    }
 }
 
 .mudblazor-skeleton-white {
     background-color: rgba(255,255,255,.25);
 }
 
-.mudblazor-button {
+.docs-mud-button {
     width: 200px;
     padding: 12px 0;
     margin: 0 8px;
@@ -111,24 +90,15 @@
     &.github {
         background: transparent linear-gradient(90deg, rgb(72,72,72) 0%, rgb(52,52,52) 100%) 0% 0% no-repeat padding-box;
     }
-}
 
-.docs-trymudblazor {
-    text-align: center;
+    &.become-sponsor {
+        background: transparent linear-gradient(18deg, rgba(29,214,167,1) 0%, rgba(30,224,176,1) 100%) 0% 0% no-repeat padding-box;
+    }
 
-    .mud-button {
-        margin-top: 16px;
-        width: 100%;
-        height: 50px;
-        max-width: 250px;
+    &.try-mudblazor {
         background: transparent linear-gradient(90deg, #594AE2 0%, rgb(119,107,231) 100%) 0% 0% no-repeat padding-box;
     }
 }
-
-.mudblazor-sponsor-button {
-    background: -webkit-linear-gradient(18deg, rgba(29,214,167,1) 0%, rgba(30,224,176,1) 100%);
-}
-
 
 .mudblazor-sponsor-list {
     align-items: center;

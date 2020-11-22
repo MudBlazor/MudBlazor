@@ -303,6 +303,10 @@
 .mudblazor-index {
   margin-top: 64px; }
 
+.mudblazor-svg {
+  width: 100%;
+  max-width: 300px; }
+
 .mudblazor-text-h5 {
   white-space: nowrap;
   letter-spacing: .1rem;
@@ -312,20 +316,16 @@
   .mudblazor-text-h5.smaller {
     font-size: 1.5rem; }
 
-.mudblazor-svg {
-  width: 100%;
-  max-width: 300px; }
-
 @media (min-width: 960px) {
+  .mudblazor-index {
+    margin-top: 128px; }
   .mudblazor-svg {
     max-width: 400px; }
   .mudblazor-text-h5 {
     font-size: 3rem;
     letter-spacing: .2rem; }
     .mudblazor-text-h5.smaller {
-      font-size: 2.5rem; }
-  .mudblazor-index {
-    margin-top: 128px; } }
+      font-size: 2.5rem; } }
 
 .mudblazor-section-titles {
   font-size: 38px;
@@ -337,8 +337,7 @@
 
 .mudblazor-goal-title {
   font-weight: 600;
-  font-size: 1.2rem;
-  margin-bottom: 12px; }
+  font-size: 1.2rem; }
 
 .mudblazor-goal-paper {
   height: 160px; }
@@ -353,39 +352,21 @@
   font-weight: 500;
   font-size: 1.1rem; }
 
-.mudblazor-project-card > .mud-card-header {
-  background: transparent linear-gradient(90deg, #594AE2 0%, #FF4081 100%) 0% 0% no-repeat padding-box;
-  padding: 12px; }
-
-.mudblazor-project-card > .mud-card-content {
-  height: 300px; }
-
-.mudblazor-project-paper.gradient-pink {
-  background: transparent linear-gradient(90deg, #594AE2 0%, #FF4081 100%) 0% 0% no-repeat padding-box; }
-
 .mudblazor-skeleton-white {
   background-color: rgba(255, 255, 255, 0.25); }
 
-.mudblazor-button {
+.docs-mud-button {
   width: 200px;
   padding: 12px 0;
   margin: 0 8px; }
-  .mudblazor-button.get-started {
+  .docs-mud-button.get-started {
     background: transparent linear-gradient(90deg, #594AE2 0%, #776be7 100%) 0% 0% no-repeat padding-box; }
-  .mudblazor-button.github {
+  .docs-mud-button.github {
     background: transparent linear-gradient(90deg, #484848 0%, #343434 100%) 0% 0% no-repeat padding-box; }
-
-.docs-trymudblazor {
-  text-align: center; }
-  .docs-trymudblazor .mud-button {
-    margin-top: 16px;
-    width: 100%;
-    height: 50px;
-    max-width: 250px;
+  .docs-mud-button.become-sponsor {
+    background: transparent linear-gradient(18deg, #1dd6a7 0%, #1ee0b0 100%) 0% 0% no-repeat padding-box; }
+  .docs-mud-button.try-mudblazor {
     background: transparent linear-gradient(90deg, #594AE2 0%, #776be7 100%) 0% 0% no-repeat padding-box; }
-
-.mudblazor-sponsor-button {
-  background: -webkit-linear-gradient(18deg, #1dd6a7 0%, #1ee0b0 100%); }
 
 .mudblazor-sponsor-list {
   align-items: center;
