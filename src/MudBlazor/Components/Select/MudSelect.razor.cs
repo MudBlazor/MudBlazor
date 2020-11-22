@@ -110,7 +110,9 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-                return _value_lookup.ContainsKey(Value);
+                if (!_value_lookup.TryGetValue(Value, out var item))
+                    return false;
+                return (item.ChildContent != null);
             }
         }
 
