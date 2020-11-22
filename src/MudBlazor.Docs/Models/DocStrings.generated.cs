@@ -1730,6 +1730,8 @@ public const string MudTableBase_FixedHeader = @"When true, the header will stay
 public const string MudTableBase_Height = @"Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
             attribute 'height' accepts, i.e. 500px.";
 
+public const string MudTableBase_SortLabel = @"If table is in smalldevice mode and uses any kind of sorting the text applied here will be the sort selects label.";
+
 public const string MudTableBase_RowsPerPage = @"If the table has more items than this number, it will break the rows into pages of said size.
             Note: requires a MudTablePager in PagerContent.";
 
@@ -2528,6 +2530,8 @@ public const string MudTable_FixedHeader = @"When true, the header will stay in 
 
 public const string MudTable_Height = @"Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
             attribute 'height' accepts, i.e. 500px.";
+
+public const string MudTable_SortLabel = @"If table is in smalldevice mode and uses any kind of sorting the text applied here will be the sort selects label.";
 
 public const string MudTable_RowsPerPage = @"If the table has more items than this number, it will break the rows into pages of said size.
             Note: requires a MudTablePager in PagerContent.";

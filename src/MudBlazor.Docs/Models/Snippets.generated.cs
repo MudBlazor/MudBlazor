@@ -2699,11 +2699,11 @@ public const string TableFixedHeaderExample = @"<MudTable Items=""@PeriodicTable
     bool fixed_header = true;
 }";
 
-public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"">
+public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"" SortLabel=""Sort By"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
         <MudToolBarSpacer />
-        <MudTextField @bind-Value=""search_string"" Placeholder=""Search"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium""></MudTextField>
+        <MudTextField @bind-Value=""search_string"" Placeholder=""Search"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium"" Class=""mt-0""></MudTextField>
     </ToolBarContent>
     <ColGroup>
         <col style=""width:50px;"" />
@@ -2714,11 +2714,11 @@ public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Ite
         <col style=""width:50px;"" />
     </ColGroup>
     <HeaderContent>
-        <MudTh>Nr</MudTh>
-        <MudTh>Sign</MudTh>
-        <MudTh>Name</MudTh>
-        <MudTh>Position</MudTh>
-        <MudTh>Molar mass</MudTh>
+        <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Number)"">Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Sign)"">Sign</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection=""SortDirection.Ascending"" SortBy=""new Func<Element, object>(x=>x.Name)"">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Position)"">Position</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Molar)"">Mass</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel=""Nr"">@context.Number</MudTd>
@@ -2798,7 +2798,7 @@ public const string TableMultiSelectExample = @"<MudTable Items=""@PeriodicTable
     HashSet<Element> selected_items = new HashSet<Element>();
 }";
 
-public const string TableSortingExample = @"<MudTable Items=""@PeriodicTable.GetElements()"" Hover=""true"">
+public const string TableSortingExample = @"<MudTable Items=""@PeriodicTable.GetElements()"" Hover=""true"" SortLabel=""Sort By"">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Number)"">Nr</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Sign)"">Sign</MudTableSortLabel></MudTh>
