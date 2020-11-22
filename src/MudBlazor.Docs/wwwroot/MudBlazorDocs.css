@@ -302,6 +302,8 @@
 
 .mudblazor-index {
   margin-top: 64px; }
+  .mudblazor-index .docs-sections {
+    margin-bottom: 128px; }
 
 .mudblazor-svg {
   width: 100%;
@@ -367,6 +369,10 @@
     background: transparent linear-gradient(18deg, #1dd6a7 0%, #1ee0b0 100%) 0% 0% no-repeat padding-box; }
   .docs-mud-button.try-mudblazor {
     background: transparent linear-gradient(90deg, #594AE2 0%, #776be7 100%) 0% 0% no-repeat padding-box; }
+
+.mudblazor-app-text .mud-typography {
+  font-family: monospace;
+  font-size: 16px; }
 
 .mudblazor-sponsor-list {
   align-items: center;

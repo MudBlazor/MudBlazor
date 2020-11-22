@@ -1,8 +1,8 @@
 ﻿@page "/"
 @using MudBlazor.Docs.Components.MudBlazorApp
 
-<div class="mudblazor-index">
-    <MudContainer>
+<MudContainer Class="mudblazor-index">
+    <div for="Section One" class="docs-sections">
         <MudGrid>
             <MudItem xs="12" sm="12" md="12">
                 <div class="d-flex justify-center">
@@ -20,11 +20,9 @@
                 </div>
             </MudItem>
         </MudGrid>
-    </MudContainer>
-    <MudContainer>
-        <MudDivider Style="opacity:0;" />
-    </MudContainer>
-    <MudContainer>
+    </div>
+
+    <div for="Section The Project" class="docs-sections">
         <MudGrid>
             <MudItem xs="12" sm="12" md="12">
                 <MudText Typo="Typo.h4" Align="Align.Center" Class="mudblazor-section-titles my-6">The Project</MudText>
@@ -45,8 +43,9 @@
                 </div>
             </MudItem>
         </MudGrid>
-    </MudContainer>
-    <MudContainer>
+    </div>
+
+    <div for="Section Design Goals" class="docs-sections">
         <MudGrid Spacing="4">
             <MudItem xs="12" sm="12" md="12">
                 <MudText Typo="Typo.h4" Align="Align.Center" Class="mudblazor-section-titles design-goals" GutterBottom="true">Design goals</MudText>
@@ -72,19 +71,29 @@
                 </MudPaper>
             </MudItem>
         </MudGrid>
-    </MudContainer>
-    <MudContainer>
+    </div>
+
+    <div for="Section App" class="docs-sections">
         <MudGrid>
             <MudItem xs="12" sm="12" md="4" lg="6">
-                <MudText Typo="Typo.h4" Class="mudblazor-section-sub-title" Align="Align.Center" GutterBottom="true">Beautiful Apps</MudText>
-                <MudText Align="Align.Center">Users can make beautiful apps without any knowledge of CSS or the need to create custom CSS classes.</MudText>
+                <div class="d-flex justify-center flex-column" style="height:100%;">
+                    <MudText Typo="Typo.h4" Align="Align.Center" Class="mudblazor-section-sub-title" GutterBottom="true">Beautiful Apps</MudText>
+                    <MudText Align="Align.Center">Users can make beautiful apps without any knowledge of CSS or the need to create custom CSS classes.</MudText>
+                    <div class="mt-4 mudblazor-app-text px-12">
+                        <MudText Inline="true">Blazor@MudBlazor:~$</MudText><MudText Inline="true" Class="ml-2">dotnet mudblazor -activate ai-core</MudText>
+                        <MudText Class="mt-2">> Hi!</MudText>
+                        <MudText>> Did you notice the screen to the right?</MudText>
+                        <MudText>> Try it out, its a functional app built with MudBlazor</MudText>
+                    </div>
+                </div>
             </MudItem>
             <MudItem xs="12" sm="12" md="8" lg="6">
-               <MudBlazorApp/>
+                <MudBlazorApp />
             </MudItem>
         </MudGrid>
-    </MudContainer>
-    <MudContainer>
+    </div>
+
+    <div for="Section Dependencies" class="docs-sections">
         <MudGrid>
             <MudItem xs="12" sm="6" md="6">
 
@@ -94,9 +103,10 @@
                 <MudText Align="Align.Center" Class="align-center">No dependencies on other component libraries, 100% control over components and features.</MudText>
             </MudItem>
         </MudGrid>
-    </MudContainer>
-    <MudContainer>
-        <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true" Class="mudblazor-section-titles mt-8">Project Sponsors</MudText>
+    </div>
+
+    <div for="Section Sponsors" class="docs-sections">
+        <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true" Class="mudblazor-section-titles">Project Sponsors</MudText>
         <MudText Align="Align.Center" Typo="Typo.body2" Class="mb-4">
             Mudblazor is thankful for its <MudLink Href="https://opencollective.com/mudblazor">Open Collective sponsors</MudLink> and the companys that supplied us with their software.
         </MudText>
@@ -107,11 +117,11 @@
         <div class="d-flex justify-center mt-16">
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Class="docs-mud-button become-sponsor" Link="https://opencollective.com/mudblazor">Become a sponsor</MudButton>
         </div>
-    </MudContainer>
-    <MudContainer>
-        <MudDivider Class="my-16" />
-    </MudContainer>
-    <MudContainer>
+    </div>
+
+    <MudDivider Class="my-16" />
+
+    <div for="Section MudBlazor" class="docs-sections">
         <MudGrid>
             <MudItem xs="12" md="12">
                 <div class="d-flex justify-center flex-column">
@@ -124,16 +134,16 @@
                 </div>
             </MudItem>
         </MudGrid>
-    </MudContainer>
-    <MudContainer>
-        <MudDivider Class="my-16" />
-    </MudContainer>
-    <MudContainer>
+    </div>
+
+    <MudDivider Class="my-16" />
+
+    <div for="Section Examples" class="docs-sections">
         <MudText Typo="Typo.h4" Align="Align.Center">Examples</MudText>
         <MudText Align="Align.Center">Use them as template for your project or just peak around see how we did stuff.</MudText>
         <div class="my-16">
             <MudText Align="Align.Center">Coming soon...</MudText>
         </div>
-    </MudContainer>
-    <Footer />
-</div>
+    </div>
+</MudContainer>
+<Footer />

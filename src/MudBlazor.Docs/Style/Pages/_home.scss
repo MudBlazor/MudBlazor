@@ -1,6 +1,10 @@
 ﻿
 .mudblazor-index {
     margin-top: 64px;
+
+    .docs-sections {
+        margin-bottom: 128px;
+    }
 }
 
 .mudblazor-svg {
@@ -97,6 +101,13 @@
 
     &.try-mudblazor {
         background: transparent linear-gradient(90deg, #594AE2 0%, rgb(119,107,231) 100%) 0% 0% no-repeat padding-box;
+    }
+}
+
+.mudblazor-app-text {
+    .mud-typography {
+        font-family: monospace;
+        font-size: 16px;
     }
 }
 
