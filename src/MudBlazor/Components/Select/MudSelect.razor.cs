@@ -90,13 +90,36 @@ namespace MudBlazor
             }
         }
 
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+            if (firstRender && Value != null)
+            {
+                // we need to render the initial Value which is not possible without the items
+                // which supply the RenderFragment. So in this case, a second render is necessary
+                StateHasChanged();
+            }
+        }
+
+        /// <summary>
+        /// Returns whether or not the Value can be found in items. If not, the Select will display it as a string.
+        /// </summary>
+        protected bool CanRenderValue
+        {
+            get
+            {
+                if (Value == null)
+                    return false;
+                return _value_lookup.ContainsKey(Value);
+            }
+        }
+
         protected RenderFragment GetSelectedValuePresenter()
         {
             if (Value == null)
                 return null;
-            var selected_item = _items.FirstOrDefault(item => object.Equals(item.Value, Value));
-            if (selected_item == null)
-                return null; //<-- for now. we'll add a custom template to present values (set from outside) whi not on the list?
+            if (!_value_lookup.TryGetValue(Value, out var selected_item))
+                return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
             return selected_item.ChildContent;
         }
 
@@ -123,15 +146,19 @@ namespace MudBlazor
         [Parameter] public bool MultiSelection { get; set; }
 
         protected List<MudSelectItem<T>> _items = new List<MudSelectItem<T>>();
-
+        protected Dictionary<T, MudSelectItem<T>> _value_lookup = new Dictionary<T, MudSelectItem<T>>();
         internal void Add(MudSelectItem<T> item)
         {
             _items.Add(item);
+            if (item.Value!=null)
+                _value_lookup[item.Value] = item;
         }
 
         internal void Remove(MudSelectItem<T> item)
         {
             _items.Remove(item);
+            if (item.Value != null)
+                _value_lookup.Remove(item.Value);
         }
 
         /// <summary>

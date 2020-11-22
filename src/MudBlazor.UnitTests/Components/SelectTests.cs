@@ -109,6 +109,9 @@ namespace MudBlazor.UnitTests
 
         }
 
+        /// <summary>
+        /// Initial render fragement in input should be the pre-selected value's items's render fragment. After clicking the second item, the render fragment should update
+        /// </summary>
         [Test]
         public async Task SelectWithEnumTest()
         {
@@ -123,6 +126,34 @@ namespace MudBlazor.UnitTests
             var select = comp.FindComponent<MudSelect<MyEnum>>();
             select.Instance.Value.Should().Be(default(MyEnum));
             select.Instance.Text.Should().Be(default(MyEnum).ToString());
+            await Task.Delay(50);
+            comp.Find("div.mud-input-slot").TextContent.Should().Be("First");
+            //Console.WriteLine(comp.Markup);
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+            comp.Find("div.mud-input-slot").TextContent.Should().Be("Second");
+        }
+
+        /// <summary>
+        /// Initially we have a value of 17 which is not in the list. So we render it as text via MudInput
+        /// </summary>
+        [Test]
+        public async Task SelectUnrepresentableValueTest()
+        {
+            using var ctx = new Bunit.TestContext();
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            var comp = ctx.RenderComponent<SelectUnrepresentableValueTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var select = comp.FindComponent<MudSelect<int>>();
+            select.Instance.Value.Should().Be(17);
+            select.Instance.Text.Should().Be("17");
+            comp.FindAll("div.mud-input-slot").Count.Should().Be(0);
+            //Console.WriteLine(comp.Markup);
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+            comp.Find("div.mud-input-slot").TextContent.Should().Be("Two");
         }
     }
 }
