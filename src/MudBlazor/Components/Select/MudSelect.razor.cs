@@ -90,6 +90,17 @@ namespace MudBlazor
             }
         }
 
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+            if (firstRender && Value != null)
+            {
+                // we need to render the initial Value which is not possible without the items
+                // which supply the RenderFragment. So in this case, a second render is necessary
+                StateHasChanged();
+            }
+        }
+
         protected RenderFragment GetSelectedValuePresenter()
         {
             if (Value == null)

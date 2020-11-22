@@ -109,6 +109,9 @@ namespace MudBlazor.UnitTests
 
         }
 
+        /// <summary>
+        /// Initial render fragement in input should be the pre-selected value's items's render fragment. After clicking the second item, the render fragment should update
+        /// </summary>
         [Test]
         public async Task SelectWithEnumTest()
         {
@@ -123,6 +126,11 @@ namespace MudBlazor.UnitTests
             var select = comp.FindComponent<MudSelect<MyEnum>>();
             select.Instance.Value.Should().Be(default(MyEnum));
             select.Instance.Text.Should().Be(default(MyEnum).ToString());
+            comp.Find("div.mud-input-slot").TextContent.Should().Be("First");
+            //Console.WriteLine(comp.Markup);
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+            comp.Find("div.mud-input-slot").TextContent.Should().Be("Second");
         }
     }
 }
