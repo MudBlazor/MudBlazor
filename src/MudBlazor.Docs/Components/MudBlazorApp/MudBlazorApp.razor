@@ -76,7 +76,7 @@
         }
         else
         {
-            <MudAlert Severity="Severity.Info" Dense="true" Class="mudblazor-apps-alert" Elevation="25">You got a new email!</MudAlert>
+            <MudAlert Severity="Severity.Info" Variant="Variant.Filled"  Dense="true" Class="mudblazor-apps-alert" Elevation="0" @onclick="@NavigateToMailbox">You got a new email! Go to Inbox</MudAlert>
             <div class="d-flex flex-column mx-auto align-self-center mt-n4">
                 <div class="d-flex align-self-center">
                     <MudText Align="Align.Center" Typo="Typo.h6" GutterBottom="true">Welcome Back!</MudText>
@@ -85,7 +85,7 @@
                     <MudText Align="Align.Center" Typo="Typo.body2">Click one of the apps to open them.</MudText>
                 </div>
                 <div class="d-flex align-self-center">
-                    <MudIconButton Icon="@Icons.Material.Email" OnClick="@NavigateToMailbox" Color="Color.Secondary" />
+                    <MudIconButton Icon="@Icons.Material.Email" OnClick="@NavigateToMailbox" Color="Color.Secondary" Size="Size.Large"/>
                     <MudIconButton Icon="@Icons.Material.ShoppingCart" Disabled="true" />
                     <MudIconButton Icon="@Icons.Material.Calculate" OnClick="@ToggleCalculator" Color="Color.Primary" />
                     <MudIconButton Icon="@Icons.Material.SportsEsports" Disabled="true" />

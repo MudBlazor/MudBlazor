@@ -414,6 +414,11 @@
             Child content of the component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudAlert.OnClick">
+            <summary>
+            Raised when the alert is clicked
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudAppBar.Elevation">
             <summary>
             The higher the number, the heavier the drop-shadow. 0 for no shadow.
