@@ -19,7 +19,7 @@
         @if (MailBoxOpen)
         {
             <div class="mudblazor-apps-list">
-                <MudButton Variant="Variant.Outlined" OnClick="@ComposeNewEmail" DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="mx-3 mt-2 mb-1" Style="height: 24px; width:85%">Compose</MudButton>
+                <MudButton Variant="Variant.Filled" OnClick="@ComposeNewEmail" DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="mx-3 mt-2 mb-1" Style="height: 24px; width:85%">Compose</MudButton>
                 <MudList Clickable="true" Dense="true" DisablePadding="true">
                     <MudListItem Icon="@Icons.Material.Inbox" OnClick="@((e) => ChangeMailbox(Inbox))">Inbox</MudListItem>
                     <MudListItem Icon="@Icons.Material.Send" OnClick="@((e) => ChangeMailbox(Sent))">Sent mail</MudListItem>
@@ -76,7 +76,8 @@
         }
         else
         {
-            <MudAlert Severity="Severity.Info" Variant="Variant.Filled"  Dense="true" Class="mudblazor-apps-alert" Elevation="0" @onclick="@NavigateToMailbox">You got a new email! Go to Inbox</MudAlert>
+            <MudAlert Severity="Severity.Info" Variant="Variant.Filled"  Dense="true" Class="mudblazor-apps-alert" Elevation="0" >You got new email! 
+                <MudButton Class="py-0 ml-3" Style="color:white;" Size="Size.Small" @onclick="@NavigateToMailbox" >Go to Inbox</MudButton></MudAlert>
             <div class="d-flex flex-column mx-auto align-self-center mt-n4">
                 <div class="d-flex align-self-center">
                     <MudText Align="Align.Center" Typo="Typo.h6" GutterBottom="true">Welcome Back!</MudText>
@@ -84,12 +85,12 @@
                 <div class="d-flex align-self-center">
                     <MudText Align="Align.Center" Typo="Typo.body2">Click one of the apps to open them.</MudText>
                 </div>
-                <div class="d-flex align-self-center">
+                <div class="d-flex align-self-center mt-3">
                     <MudIconButton Icon="@Icons.Material.Email" OnClick="@NavigateToMailbox" Color="Color.Secondary" Size="Size.Large"/>
-                    <MudIconButton Icon="@Icons.Material.ShoppingCart" Disabled="true" />
-                    <MudIconButton Icon="@Icons.Material.Calculate" OnClick="@ToggleCalculator" Color="Color.Primary" />
-                    <MudIconButton Icon="@Icons.Material.SportsEsports" Disabled="true" />
-                    <MudIconButton Icon="@Icons.Material.Settings" Disabled="true" />
+                    <MudIconButton Icon="@Icons.Material.ShoppingCart" Disabled="true"  Size="Size.Large"/>
+                    <MudIconButton Icon="@Icons.Material.Calculate" OnClick="@ToggleCalculator" Color="Color.Primary"  Size="Size.Large"/>
+                    <MudIconButton Icon="@Icons.Material.SportsEsports" Disabled="true"  Size="Size.Large"/>
+                    <MudIconButton Icon="@Icons.Material.Settings" Disabled="true"  Size="Size.Large"/>
                 </div>
             </div>
         }
