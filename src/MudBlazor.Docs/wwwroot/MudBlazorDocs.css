@@ -22,14 +22,6 @@
   margin-left: 12px;
   font-size: 24px;
   user-select: none; }
-  .mudblazor-appbar-brand-text.track-in {
-    -webkit-animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) both;
-    animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.61, 0.355, 1) both; }
-  .mudblazor-appbar-brand-text.track-out {
-    -webkit-animation: tracking-out-contract 0.7s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
-    animation: tracking-out-contract 0.7s cubic-bezier(0.55, 0.085, 0.68, 0.53) both; }
-  .mudblazor-appbar-brand-text.mud-hide {
-    display: none; }
 
 .mudblazor-navmenu {
   overflow: auto;
@@ -61,21 +53,6 @@
     padding-left: 30px;
     padding-right: 30px; } }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-  z-index: 1; }
-
-::-webkit-scrollbar-track {
-  background: transparent; }
-
-::-webkit-scrollbar-thumb {
-  background: #c4c4c4;
-  border-radius: 1px; }
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a6a6a6; }
-
 .docs-list {
   list-style: inside; }
 
@@ -90,42 +67,6 @@
       color: #988ef1;
       font-weight: 500;
       font-size: 1rem; }
-
-@-webkit-keyframes tracking-in-expand {
-  0% {
-    letter-spacing: -0.5em;
-    opacity: 0; }
-  40% {
-    opacity: 0.6; }
-  100% {
-    opacity: 1; } }
-
-@keyframes tracking-in-expand {
-  0% {
-    letter-spacing: -0.5em;
-    opacity: 0; }
-  40% {
-    opacity: 0.6; }
-  100% {
-    opacity: 1; } }
-
-@-webkit-keyframes tracking-out-contract {
-  0% {
-    opacity: 1; }
-  50% {
-    opacity: 1; }
-  100% {
-    letter-spacing: -0.5em;
-    opacity: 0; } }
-
-@keyframes tracking-out-contract {
-  0% {
-    opacity: 1; }
-  50% {
-    opacity: 1; }
-  100% {
-    letter-spacing: -0.5em;
-    opacity: 0; } }
 
 .mud-codeblock {
   background-color: var(--mud-palette-black);
@@ -703,7 +644,7 @@
     width: 70%; }
   .mudblazor-apps .mudblazor-apps-calculator {
     position: absolute;
-    left: 72%;
+    left: 38%;
     background: linear-gradient(180deg, var(--mud-palette-surface) 0%, var(--mud-palette-background-grey) 100%); }
     .mudblazor-apps .mudblazor-apps-calculator .mud-button {
       min-width: 36px;
