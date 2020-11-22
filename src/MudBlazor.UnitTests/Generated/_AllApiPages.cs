@@ -527,20 +527,6 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void MudSelectString_API_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
-                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
-                var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudSelectString)));
-                Console.WriteLine(comp.Markup);
-         }
-
-
-        [Test]
         public void MudSelectItem_API_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -550,20 +536,6 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
                 ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
                 var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudSelectItem<T>)));
-                Console.WriteLine(comp.Markup);
-         }
-
-
-        [Test]
-        public void MudSelectItemString_API_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
-                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
-                var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudSelectItemString)));
                 Console.WriteLine(comp.Markup);
          }
 
