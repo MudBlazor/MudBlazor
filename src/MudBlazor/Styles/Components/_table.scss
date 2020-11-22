@@ -246,11 +246,19 @@
     margin-left: 20px;
 }
 
+.mud-table-smalldevices-sortselect{
+    display:none;
+}
 
 @mixin table-display-smalldevices ($breakpoint) {
     .mud-#{$breakpoint}table {
         .mud-table-root .mud-table-head {
             display: none;
+        }
+
+        .mud-table-smalldevices-sortselect {
+            display: flex;
+            padding: 4px 16px 8px;
         }
 
         .mud-table-body {

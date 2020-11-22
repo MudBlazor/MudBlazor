@@ -1,7 +1,7 @@
 ﻿@using MudBlazor.Docs.Data
 @namespace MudBlazor.Docs.Examples
 
-<MudTable Items="@PeriodicTable.GetElements()" Hover="true">
+<MudTable Items="@PeriodicTable.GetElements()" Hover="true" SortLabel="Sort By">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Number)">Nr</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Sign)">Sign</MudTableSortLabel></MudTh>
