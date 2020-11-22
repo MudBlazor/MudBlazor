@@ -20,6 +20,7 @@ namespace MudBlazor.Docs.Extensions
                 config.VisibleStateDuration = 10000;
                 config.HideTransitionDuration = 500;
                 config.ShowTransitionDuration = 500;
+                config.SnackbarDefaultVariant = Variant.Filled;
             });
         }
     }
