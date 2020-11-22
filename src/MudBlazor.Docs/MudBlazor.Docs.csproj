@@ -15,10 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Pages\Components\Autocomplete\Examples\AutocompleteClrObjectsExampleee.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Data\Elements.json" />
   </ItemGroup>
 
@@ -33,11 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\Components\Autocomplete\Code\" />
-    <Folder Include="Pages\Components\ChipSet\Code\" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
