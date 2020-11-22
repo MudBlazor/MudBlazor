@@ -9,5 +9,6 @@ namespace MudBlazor.Components.Select
     {
         void CheckGenericTypeMatch(object select_item);
         bool MultiSelection { get; set; }
+
     }
 }
