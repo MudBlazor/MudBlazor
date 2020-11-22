@@ -1,4 +1,9 @@
-﻿.mud-select-input {
+﻿.mud-select {
+    display:flex;
+    position: relative;
+}
+
+.mud-select-input {
     cursor: pointer;
 
     &:disabled {
