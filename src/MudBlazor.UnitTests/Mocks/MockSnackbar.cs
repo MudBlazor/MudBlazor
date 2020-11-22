@@ -12,9 +12,14 @@ namespace MudBlazor.UnitTests.Mocks
 
         public event Action OnSnackbarsUpdated;
 
-        public void Add(SnackbarType type, string message, Action<SnackbarOptions> configure)
+        public void Add(Severity severity, string message, Action<SnackbarOptions> configure)
         {
             
+        }
+
+        public void AddNew(Severity severity, string message, Action<SnackbarOptions> configure)
+        {
+
         }
 
         public void Clear()
@@ -22,39 +27,17 @@ namespace MudBlazor.UnitTests.Mocks
             
         }
 
-        public void Default(string message, Action<SnackbarOptions> configure = null)
-        {
-            
-        }
 
         public void Dispose()
         {
             
         }
 
-        public void Error(string message, Action<SnackbarOptions> configure = null)
-        {
-            
-        }
-
-        public void Info(string message, Action<SnackbarOptions> configure = null)
-        {
-            
-        }
 
         public void Remove(Snackbar snackbar)
         {
             
         }
 
-        public void Success(string message, Action<SnackbarOptions> configure = null)
-        {
-            
-        }
-
-        public void Warning(string message, Action<SnackbarOptions> configure = null)
-        {
-            
-        }
     }
 }
