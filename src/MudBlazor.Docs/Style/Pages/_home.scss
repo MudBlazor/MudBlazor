@@ -1,6 +1,15 @@
 ﻿
 .mudblazor-index {
     margin-top: 64px;
+
+    .docs-sections {
+        margin-bottom: 128px;
+    }
+}
+
+.mudblazor-svg {
+    width: 100%;
+    max-width: 300px;
 }
 
 .mudblazor-text-h5 {
@@ -15,14 +24,11 @@
     }
 }
 
-
-.mudblazor-svg {
-    width: 100%;
-    max-width: 300px;
-}
-
 @media (min-width: 960px) {
 
+    .mudblazor-index {
+        margin-top: 128px;
+    }
     .mudblazor-svg {
         max-width: 400px;
     }
@@ -34,56 +40,49 @@
         &.smaller {
             font-size: 2.5rem;
         }
-    }
-
-    .mudblazor-index{
-        margin-top:128px;
-    }
+    }  
 }
 
 .mudblazor-section-titles {
     font-size: 38px;
-    font-weight: 700;
+    font-weight: 500;
+}
+.mudblazor-section-sub-title {
+    font-size: 32px;
+    font-weight: 500;
 }
 
 .mudblazor-goal-title {
     font-weight: 600;
     font-size: 1.2rem;
-    margin-bottom: 12px;
 }
 
 .mudblazor-goal-paper {
     height: 160px;
+
+    &.material {
+        box-shadow: 0 22px 45px -20px rgba(59,41,221,0.4), 0 5px 5px -3px rgba(0,0,0,.06), 0 8px 10px 1px rgba(0,0,0,.042), 0 3px 14px 2px rgba(0,0,0,.036);
+    }
+
+    &.in-c {
+        box-shadow: 0 22px 45px -20px rgba(255,26,104,0.4), 0 5px 5px -3px rgba(0,0,0,.06), 0 8px 10px 1px rgba(0,0,0,.042), 0 3px 14px 2px rgba(0,0,0,.036);
+    }
+
+    &.be-included {
+        box-shadow: 0 22px 45px -20px rgba(20,204,158,0.4), 0 5px 5px -3px rgba(0,0,0,.06), 0 8px 10px 1px rgba(0,0,0,.042), 0 3px 14px 2px rgba(0,0,0,.036);
+    }
 }
 
 .mudblazor-project-text {
     font-weight: 500;
     font-size: 1.1rem;
-    
-}
-
-.mudblazor-project-card {
-    & > .mud-card-header {
-        background: transparent linear-gradient(90deg,#594AE2 0%, #FF4081 100%) 0% 0% no-repeat padding-box;
-        padding: 12px;
-    }
-
-    & > .mud-card-content{
-        height:300px;
-    }
-}
-
-.mudblazor-project-paper {
-    &.gradient-pink {
-        background: transparent linear-gradient(90deg,#594AE2 0%, #FF4081 100%) 0% 0% no-repeat padding-box;
-    }
 }
 
 .mudblazor-skeleton-white {
     background-color: rgba(255,255,255,.25);
 }
 
-.mudblazor-button {
+.docs-mud-button {
     width: 200px;
     padding: 12px 0;
     margin: 0 8px;
@@ -95,16 +94,53 @@
     &.github {
         background: transparent linear-gradient(90deg, rgb(72,72,72) 0%, rgb(52,52,52) 100%) 0% 0% no-repeat padding-box;
     }
-}
 
-.docs-trymudblazor {
-    text-align: center;
+    &.become-sponsor {
+        background: transparent linear-gradient(18deg, rgba(29,214,167,1) 0%, rgba(30,224,176,1) 100%) 0% 0% no-repeat padding-box;
+    }
 
-    .mud-button {
-        margin-top: 16px;
-        width: 100%;
-        height: 50px;
-        max-width: 250px;
+    &.try-mudblazor {
         background: transparent linear-gradient(90deg, #594AE2 0%, rgb(119,107,231) 100%) 0% 0% no-repeat padding-box;
     }
 }
+
+.mudblazor-app-text {
+    .mud-typography {
+        font-family: monospace;
+        font-size: 16px;
+    }
+}
+
+.mudblazor-sponsor-list {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 auto;
+
+    .mudblazor-sponsor {
+        width: 180px;
+        height: 80px;
+        margin: 10px 5px;
+        text-align: center;
+        justify-content: center;
+        border-radius: var(--mud-default-borderradius);
+        transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1) 0ms;
+
+        &:hover {
+            background-color: rgba(0,0,0, 0.04);
+        }
+
+        .mudblazor-sponsor-item {
+            display: flex;
+            align-items: center;
+            display: flex;
+            justify-content: center;
+
+            .mudblazor-sponsor-image {
+                width: 150px;
+            }
+        }
+    }
+}
+

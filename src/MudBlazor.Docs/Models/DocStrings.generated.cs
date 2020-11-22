@@ -462,6 +462,28 @@ public const string MudIconButton_Tag = @"Use Tag to attach any user data object
 public const string MudIconButton_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudToggleIconButton_Toggled = @"The toggled value.";
+
+public const string MudToggleIconButton_ToggledChanged = @"Fires whenever toggled is changed.";
+
+public const string MudToggleIconButton_Icon = @"The Icon that will be used in the untoggled state.";
+
+public const string MudToggleIconButton_ToggledIcon = @"The Icon that will be used in the toggled state.";
+
+public const string MudToggleIconButton_Color = @"The color of the icon in the untoggled state. It supports the theme colors.";
+
+public const string MudToggleIconButton_ToggledColor = @"The color of the icon in the toggled state. It supports the theme colors.";
+
+public const string MudToggleIconButton_Size = @"The Size of the component in the untoggled state.";
+
+public const string MudToggleIconButton_ToggledSize = @"The Size of the component in the toggled state.";
+
+public const string MudToggleIconButton_Edge = @"If set uses a negative margin.";
+
+public const string MudToggleIconButton_DisableRipple = @"If true, disables ripple effect.";
+
+public const string MudToggleIconButton_Disabled = @"If true, the button will be disabled.";
+
 public const string MudCardMedia_Title = @"";
 
 public const string MudCardMedia_Image = @"";
@@ -808,6 +830,8 @@ public const string MudInputControl_Tag = @"Use Tag to attach any user data obje
 public const string MudInputControl_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudInput_ChildContent = @"ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.";
+
 public const string MudInput_Required = @"";
 
 public const string MudInput_RequiredError = @"";
@@ -884,6 +908,8 @@ public const string MudInput_Tag = @"Use Tag to attach any user data object to t
 
 public const string MudInput_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
+
+public const string MudInputString_ChildContent = @"ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.";
 
 public const string MudInputString_Required = @"If true, this form input is required to be filled out.";
 
