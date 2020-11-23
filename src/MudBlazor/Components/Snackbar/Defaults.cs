@@ -1,5 +1,5 @@
-﻿// Copyright (c) Alessandro Ghidini. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
+﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
+//Changes and improvements Copyright (c) The MudBlazor Team.
 
 namespace MudBlazor
 {
@@ -16,15 +16,6 @@ namespace MudBlazor
                 public const string BottomLeft = "mud-snackbar-location-bottom-left";
                 public const string BottomCenter = "mud-snackbar-location-bottom-center";
                 public const string BottomRight = "mud-snackbar-location-bottom-right";
-            }
-
-            public static class Icons
-            {
-                public const string Default = "mud-snackbar-default";
-                public const string Info = "mud-snackbar-info";
-                public const string Success = "mud-snackbar-success";
-                public const string Warning = "mud-snackbar-warning";
-                public const string Error = "mud-snackbar-error";
             }
         }
     }

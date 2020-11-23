@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudToggleIconButton Toggled="@AlarmOn" ToggledChanged="(toggleValue) => IncrementSwitchedOn(toggleValue)"
+                     Icon="@Icons.Material.AlarmOff" Color="@Color.Error" 
+                     ToggledIcon="@Icons.Material.AlarmOn" ToggledColor="@Color.Success" />
+
+<MudBody1>Alarm is @(AlarmOn ? "On" : "Off")</MudBody1>
+<MudBody1>@($"I have been switched on {SwitchedOnCount} times.")</MudBody1>
+
+@code {
+    public bool AlarmOn { get; set; }
+    public int SwitchedOnCount { get; set; }
+
+    public void IncrementSwitchedOn(bool toggleValue)
+    {
+        // You can do things before assignment
+        // ...
+
+        // Assignment of one-way bound parameter
+        AlarmOn = toggleValue;
+
+        // And after assignment has been made
+        // ...
+
+        if (AlarmOn)
+        {
+            SwitchedOnCount++;
+        }
+
+    }
+}
+

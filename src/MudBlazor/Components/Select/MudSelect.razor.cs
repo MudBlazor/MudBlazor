@@ -87,21 +87,43 @@ namespace MudBlazor
                     SetFunc = _toStringFunc ?? (x => x?.ToString()),
                     //GetFunc = LookupValue,
                 };
-                //RegenerateLookup();
             }
         }
 
-        ///// <summary>
-        ///// LookupValue is used to find the value for a given input text by looking it up in the string -> value lookup.
-        ///// </summary>
-        //protected T LookupValue(string arg)
-        //{
-        //    if (_lookup.TryGetValue(arg, out var value))
-        //        return value;
-        //    return default(T);
-        //}
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+            if (firstRender && Value != null)
+            {
+                // we need to render the initial Value which is not possible without the items
+                // which supply the RenderFragment. So in this case, a second render is necessary
+                StateHasChanged();
+            }
+        }
 
-        //private Dictionary<string, T> _lookup = new Dictionary<string, T>();
+        /// <summary>
+        /// Returns whether or not the Value can be found in items. If not, the Select will display it as a string.
+        /// </summary>
+        protected bool CanRenderValue
+        {
+            get
+            {
+                if (Value == null)
+                    return false;
+                if (!_value_lookup.TryGetValue(Value, out var item))
+                    return false;
+                return (item.ChildContent != null);
+            }
+        }
+
+        protected RenderFragment GetSelectedValuePresenter()
+        {
+            if (Value == null)
+                return null;
+            if (!_value_lookup.TryGetValue(Value, out var selected_item))
+                return null; //<-- for now. we'll add a custom template to present values (set from outside) which are not on the list?
+            return selected_item.ChildContent;
+        }
 
         protected override void StringValueChanged(string text)
         {
@@ -124,6 +146,22 @@ namespace MudBlazor
         /// If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
         /// </summary>
         [Parameter] public bool MultiSelection { get; set; }
+
+        protected List<MudSelectItem<T>> _items = new List<MudSelectItem<T>>();
+        protected Dictionary<T, MudSelectItem<T>> _value_lookup = new Dictionary<T, MudSelectItem<T>>();
+        internal void Add(MudSelectItem<T> item)
+        {
+            _items.Add(item);
+            if (item.Value!=null)
+                _value_lookup[item.Value] = item;
+        }
+
+        internal void Remove(MudSelectItem<T> item)
+        {
+            _items.Remove(item);
+            if (item.Value != null)
+                _value_lookup.Remove(item.Value);
+        }
 
         /// <summary>
         /// Sets the maxheight the select can have when open.
@@ -211,57 +249,13 @@ namespace MudBlazor
             }
         }
 
-        //private HashSet<MudSelectItem<T>> _items = new HashSet<MudSelectItem<T>>();
-
         public void CheckGenericTypeMatch(object select_item)
         {
-            if (select_item is MudSelectItemString && typeof(T) == typeof(string))
-                return;
             var itemT=select_item.GetType().GenericTypeArguments[0];
             if (itemT != typeof(T))
                 throw new GenericTypeMismatchException("MudSelect", "MudSelectItem", typeof(T), itemT);
-            //var item = select_item as MudSelectItem<T>;
-            //_items.Add(item);
-            //AddToLookup(item);
         }
 
-        //private void AddToLookup(MudSelectItem<T> item)
-        //{
-        //    try
-        //    {
-        //        if (item.Value == null)
-        //            return;
-        //        var text = _toStringFunc(item.Value);
-        //        _lookup[text] = item.Value;
-        //    }
-        //    catch (Exception) { }
-        //}
-        //private void RemoveFromLookup(MudSelectItem<T> item)
-        //{
-        //    try
-        //    {
-        //        if (item.Value == null)
-        //            return;
-        //        var text = _toStringFunc(item.Value);
-        //        if (_lookup.TryGetValue(text, out var v) && object.Equals(v,  item.Value))
-        //            _lookup.Remove(text);
-        //    }
-        //    catch (Exception) { }
-        //}
-
-        //protected void RegenerateLookup()
-        //{
-        //    _lookup.Clear();
-        //    foreach (var item in _items)
-        //        AddToLookup(item);
-        //}
-
-        //internal void Remove(MudSelectItem<T> item)
-        //{
-        //    _items.Remove(item);
-        //    RemoveFromLookup(item);
-        //}
     }
 
-    public class MudSelectString : MudSelect<string> {}
 }

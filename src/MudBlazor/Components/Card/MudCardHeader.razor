@@ -1,7 +1,8 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Utilities
 @inherits MudComponentBase
 
-<div class="mud-card-header" style="@Style">
+<div class="@Classname" style="@Style">
     @if (CardHeaderAvatar != null)
     {<div class="mud-card-header-avatar">@CardHeaderAvatar</div>}
     @if (CardHeaderContent != null)
@@ -25,4 +26,9 @@
     /// If used renders child content of the CardHeaderActions.
     /// </summary>
     [Parameter] public RenderFragment CardHeaderActions { get; set; }
+
+    protected string Classname =>
+    new CssBuilder("mud-card-header")
+      .AddClass(Class)
+    .Build();
 }

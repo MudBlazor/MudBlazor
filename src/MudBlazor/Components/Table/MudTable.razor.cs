@@ -69,6 +69,11 @@ namespace MudBlazor
         [Parameter] public string Height { get; set; }
 
         /// <summary>
+        /// If table is in smalldevice mode and uses any kind of sorting the text applied here will be the sort selects label.
+        /// </summary>
+        [Parameter] public string SortLabel { get; set; }
+
+        /// <summary>
         /// If the table has more items than this number, it will break the rows into pages of said size.
         /// Note: requires a MudTablePager in PagerContent.
         /// </summary>

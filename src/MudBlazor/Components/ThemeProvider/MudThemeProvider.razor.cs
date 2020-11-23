@@ -50,6 +50,12 @@ namespace MudBlazor
             return $"rgb({Color.R},{Color.G},{Color.B})";
         }
 
+        public static string ColorRgb(string hex)
+        {
+            MudColor Color = ColorManager.FromHex(hex);
+            return $"rgb({Color.R},{Color.G},{Color.B})";
+        }
+
         public static string ColorRgba(string hex, double alpha)
         {
             MudColor Color = ColorManager.FromHex(hex);

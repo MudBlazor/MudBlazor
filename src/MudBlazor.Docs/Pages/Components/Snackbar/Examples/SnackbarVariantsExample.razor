@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+<MudButton @onclick="@(() => ChangeVariant("Text Snackbar", Variant.Text))" Color="Color.Primary">Open Text Snackbar Variants</MudButton>
+<MudButton @onclick="@(() => ChangeVariant("Filled Snackbar", Variant.Filled))" Color="Color.Secondary">Open Filled Snackbar Variants</MudButton>
+<MudButton @onclick="@(() => ChangeVariant("Outlined Snackbar", Variant.Outlined))" Color="Color.Tertiary">Open Outlined Snackbar Variants</MudButton>
+
+@code {
+    void ChangeVariant(string message, Variant variant)
+    {
+        Snackbar.Configuration.SnackbarVariant = variant;
+        Snackbar.Configuration.MaxDisplayedSnackbars = 10;
+        Snackbar.Add($"Normal {message}", Severity.Normal);
+        Snackbar.Add($"Info {message}", Severity.Info);
+        Snackbar.Add($"Success {message}", Severity.Success);
+        Snackbar.Add($"Warning {message}", Severity.Warning);
+        Snackbar.Add($"Error {message}", Severity.Error);
+    }
+}

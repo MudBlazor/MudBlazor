@@ -59,85 +59,12 @@
         <MudText Class="mb-8">Contributors who are actively working to improve or have added significantly to Mudblazor.</MudText>
         <MudGrid>
             
-            <MudItem xs="12" md="6">
-                <MudCard Elevation="4">
-                    <MudCardHeader>
-                        <CardHeaderAvatar>
-                            <MudAvatar Image="https://avatars0.githubusercontent.com/u/15158923?s=460&u=c527c409416ada0be8b6dba6d8ff2af9db409574&v=4" Size="Size.Large" Class="mud-elevation-4"/>
-                        </CardHeaderAvatar>
-                        <CardHeaderContent>
-                            <MudText Typo="Typo.body1">Henrique Clausing</MudText>
-                            <MudText Typo="Typo.body2">Contributor</MudText>
-                        </CardHeaderContent>
-                        <CardHeaderActions>
-                            <MudIconButton Icon="@Icons.Custom.GitHub" Link="https://github.com/HClausing" Color="Color.Surface" Target="_blank"/>
-                        </CardHeaderActions>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <MudText>Improved the MudTable component</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
-
-            <MudItem xs="12" md="6">
-                <MudCard Elevation="4">
-                    <MudCardHeader>
-                        <CardHeaderAvatar>
-                            <MudAvatar Image="https://avatars1.githubusercontent.com/u/9521987?s=460&u=12efca27feaf41d81eabff88af9ecbfc7acb7180&v=4" Size="Size.Large" Class="mud-elevation-4"/>
-                        </CardHeaderAvatar>
-                        <CardHeaderContent>
-                            <MudText Typo="Typo.body1">Ivan Josipovic</MudText>
-                            <MudText Typo="Typo.body2">Contributor</MudText>
-                        </CardHeaderContent>
-                        <CardHeaderActions>
-                            <MudIconButton Icon="@Icons.Custom.GitHub" Link="https://github.com/IvanJosipovic" Color="Color.Surface" Target="_blank"/>
-                        </CardHeaderActions>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <MudText>Added the MudAutocomplete component</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
-
-            <MudItem xs="12" md="6">
-                <MudCard Elevation="4">
-                    <MudCardHeader>
-                        <CardHeaderAvatar>
-                            <MudAvatar Image="https://avatars0.githubusercontent.com/u/7383088?s=460&u=c23572535c1a8bb0d2cfa857b05034e2c26cf924&v=4" Size="Size.Large" Class="mud-elevation-4"/>
-                        </CardHeaderAvatar>
-                        <CardHeaderContent>
-                            <MudText Typo="Typo.body1">Shusty-6th</MudText>
-                            <MudText Typo="Typo.body2">Contributor</MudText>
-                        </CardHeaderContent>
-                        <CardHeaderActions>
-                            <MudIconButton Icon="@Icons.Custom.GitHub" Link="https://github.com/Shusty-6th" Color="Color.Surface" Target="_blank"/>
-                        </CardHeaderActions>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <MudText>Added the MudRating component</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
-
-            <MudItem xs="12" md="6">
-                <MudCard Elevation="4">
-                    <MudCardHeader>
-                        <CardHeaderAvatar>
-                            <MudAvatar Image="https://avatars2.githubusercontent.com/u/71094850?s=460&u=66c16f5bb7d27dc751f6759a82a3a070c8c7fe4b&v=4" Size="Size.Large" Class="mud-elevation-4"/>
-                        </CardHeaderAvatar>
-                        <CardHeaderContent>
-                            <MudText Typo="Typo.body1">Rasmus Wahlström</MudText>
-                            <MudText Typo="Typo.body2">Contributor</MudText>
-                        </CardHeaderContent>
-                        <CardHeaderActions>
-                            <MudIconButton Icon="@Icons.Custom.GitHub" Link="https://github.com/Lunees" Color="Color.Surface" Target="_blank"/>
-                        </CardHeaderActions>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <MudText>Documentation</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudItem>
+            @foreach (var contri in contributors.OrderBy(x=>x.Github))
+            {
+                <MudItem xs="12" md="6">
+                    <MudContributor Firstname="@contri.Github" AvatarLink="@contri.Avatar" GithubLink="@("https://github.com/"+contri.Github)"/>
+                </MudItem>
+            }
 
         </MudGrid>
     </MudContainer>
@@ -146,3 +73,26 @@
     </MudContainer>
 </DocsPage>
 <Footer />
+
+@code
+{
+    Contributor[] contributors = new Contributor[]
+    {
+        new Contributor { Github = "IvanJosipovic", Avatar = "https://avatars1.githubusercontent.com/u/9521987?s=460&u=12efca27feaf41d81eabff88af9ecbfc7acb7180&v=4"},
+        new Contributor { Github = "HClausing", Avatar = "https://avatars0.githubusercontent.com/u/15158923?s=460&u=c527c409416ada0be8b6dba6d8ff2af9db409574&v=4"},
+        new Contributor { Github = "Shusty-6th", Avatar = "https://avatars0.githubusercontent.com/u/7383088?s=460&u=c23572535c1a8bb0d2cfa857b05034e2c26cf924&v=4"},
+        new Contributor { Github = "Lunees", Avatar = "https://avatars2.githubusercontent.com/u/71094850?s=460&u=66c16f5bb7d27dc751f6759a82a3a070c8c7fe4b&v=4"},
+        new Contributor { Github = "MattChique", Avatar = "https://avatars1.githubusercontent.com/u/26269158?s=460&u=33aace223087bd25900e9c70169754b321f4b8c4&v=4"},
+        new Contributor { Github = "lindespang", Avatar = "https://avatars0.githubusercontent.com/u/36196344?s=460&u=a053e8acc41baef963d5f56cd49f72b8d8efe185&v=4"},
+        new Contributor { Github = "Bimble", Avatar = "https://avatars1.githubusercontent.com/u/235179?s=460&v=4"},
+        new Contributor { Github = "Flaflo", Avatar = "https://avatars3.githubusercontent.com/u/12973684?s=460&u=f133dbcd2bc9a3c95ea904bda0da2c3c02a9db26&v=4"},
+    };
+
+    class Contributor
+    {
+        public string First;
+        public string Last;
+        public string Avatar;
+        public string Github;
+    }
+}
