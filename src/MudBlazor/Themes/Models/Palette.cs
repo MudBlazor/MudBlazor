@@ -11,7 +11,7 @@ namespace MudBlazor.Theme.Defaults
         public string PrimaryContrastText { get; set; } = Colors.Shades.White;
         public string Secondary { get; set; } = Colors.Pink.Accent2;
         public string SecondaryContrastText { get; set; } = Colors.Shades.White;
-        public string Tertiary { get; set; } = Colors.Teal.Accent3;
+        public string Tertiary { get; set; } = "#1EC8A5";
         public string TertiaryContrastText { get; set; } = Colors.Shades.White;
         public string Info { get; set; } = Colors.Blue.Default;
         public string InfoContrastText { get; set; } = Colors.Shades.White;
