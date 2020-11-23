@@ -26,7 +26,7 @@ namespace MudBlazor
             SnackBarList = new List<Snackbar>();
         }
 
-        public void Add(Severity severity, string message, Action<SnackbarOptions> configure = null)
+        public void Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null)
         {
             AddNew(severity, message, configure);
         }
