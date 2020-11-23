@@ -15,6 +15,11 @@
     }
 }
 
+.mud-theme-default {
+    color: var(--mud-palette-text-primary) !important;
+    background-color: var(--mud-palette-action-disabled-background) !important;
+}
+
 .mud-theme-transparent {
     color: inherit !important;
     background-color: transparent !important;
