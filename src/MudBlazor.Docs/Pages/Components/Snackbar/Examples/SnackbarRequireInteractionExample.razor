@@ -1,0 +1,65 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject MudBlazor.ISnackbar Snackbar
+
+<div class="pa-0 ma-0">
+    <MudAlert Severity="Severity.Warning" Dense="true">The reactor temperature exceeds the optimal range</MudAlert>
+    <MudAlert Severity="Severity.Error" Dense="true">Reactor meltdown is imminent!</MudAlert>
+    <MudGrid>
+        <MudItem xs="4">
+            <MudAlert Severity="Severity.Info" Dense="true">The reactor is about to have a melt down deputy chief-engineer! You must act now!</MudAlert>
+        </MudItem>
+        <MudItem xs="8">
+            <div class="mud-theme-default">
+                <MudButton Variant="Variant.Filled" Color="Color.Error" Class="rounded-circle"></MudButton>
+            </div>
+        </MudItem>
+    </MudGrid>
+</div>
+
+
+
+
+@*<MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" StartIcon="@Icons.Material.Build" @onclick="@(() => StartBuild())" Disabled="BuildAgainDisabled">Build Project</MudButton>
+<MudButton Variant="Variant.Filled" DisableElevation="true" @onclick="@OnShowBuildLog" Disabled="RunAgainDisabled">Run Again</MudButton>
+<MudPaper Outlined="true" Class="demo-snackbar-output">
+    @if (ShowBuildLog)
+    {
+        foreach (string line in BuildLogList)
+        {
+            <MudText Typo="Typo.caption">@line</MudText>
+        }
+    }
+</MudPaper>*@
+
+@code {
+
+    public bool ShowBuildLog { get; set; }
+    public List<string> BuildLogList = new List<string> { "Starting: Build", "dotnet build", "Build succeeded.", "Finishing: Build" };
+    public bool BuildAgainDisabled { get; set; } = false;
+    public bool RunAgainDisabled { get; set; } = true;
+
+    void StartBuild()
+    {
+        string ErrorMessage = "Build succeeded, click for more information.";
+        Snackbar.Add(ErrorMessage, Severity.Success, config =>
+        {
+            config.RequireInteraction = true;
+            config.ShowCloseIcon = false;
+            config.Onclick = snackbar =>
+            {
+                OnShowBuildLog();
+                return Task.CompletedTask;
+            };
+        });
+    }
+
+    public void OnShowBuildLog()
+    {
+        BuildAgainDisabled = !BuildAgainDisabled;
+        RunAgainDisabled = !RunAgainDisabled;
+        ShowBuildLog = !ShowBuildLog;
+        StateHasChanged();
+    }
+
+}
