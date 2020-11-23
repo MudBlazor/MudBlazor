@@ -1086,6 +1086,86 @@
             Child content of component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudField.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Margin">
+            <summary>
+             Will adjust vertical spacing. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Error">
+            <summary>
+            If true, the label will be displayed in an error state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.ErrorText">
+            <summary>
+            The ErrorText that will be displayed if Error true
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.HelperText">
+            <summary>
+            The HelperText will be displayed below the text field.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.FullWidth">
+            <summary>
+            If true, the field will take up the full width of its container.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Label">
+            <summary>
+            If string has value the label text will be displayed in the input, and scaled down at the top if the field has value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Variant">
+            <summary>
+            Variant can be Text, Filled or Outlined.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Disabled">
+            <summary>
+            If true, the input element will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.AdornmentIcon">
+            <summary>
+            Icon that will be used if Adornment is set to Start or End.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.AdornmentText">
+            <summary>
+            Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Adornment">
+            <summary>
+            Sets Start or End Adornment if not set to None.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.IconSize">
+            <summary>
+            Sets the Icon Size.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.OnAdornmentClick">
+            <summary>
+            Button click event if set and Adornment used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.InnerPadding">
+            <summary>
+            If true, the inner contents padding is removed.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.DisableUnderLine">
+            <summary>
+            If true, the field will not have an underline.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudForm.ChildContent">
             <summary>
             Child content of component.
