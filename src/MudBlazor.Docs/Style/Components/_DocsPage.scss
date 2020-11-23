@@ -46,6 +46,11 @@
         color: var(--mud-palette-secondary);
         background-color: var(--mud-palette-secondary-hover);
     }
+
+    &.docs-code-tertiary {
+        color: var(--mud-palette-tertiary);
+        background-color: var(--mud-palette-tertiary-hover);
+    }
 }
 
 
