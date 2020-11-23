@@ -234,6 +234,7 @@ namespace MudBlazor.UnitTests.Components
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<{component_name}>();
         }}
