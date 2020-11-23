@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-@inject MudBlazor.ISnackbar Snackbar
+@inject ISnackbar Snackbar
 
 
 <MudButton Color="Color.Dark" @onclick="@(() => Snackbar.Add("The reactor type is RBMK-1000", Severity.Normal))">Normal Snackbar</MudButton>

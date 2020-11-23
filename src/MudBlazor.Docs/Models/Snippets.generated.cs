@@ -2539,13 +2539,13 @@ public const string SliderStepsExample = @"<MudSlider Step=""10"" Value=""70"">T
     int step = 10;
 }";
 
-public const string SnackbarConfigurationExample = @"@inject MudBlazor.ISnackbar Snackbar
+public const string SnackbarConfigurationExample = @"@inject ISnackbar Snackbar
 
 <MudButton @onclick=""@(() => Snackbar.Add(""My Close button is gone!"", Severity.Normal, config => { config.ShowCloseIcon = false; }))"" Variant=""Variant.Filled"" Color=""Color.Primary"">
     Open Modified Snackbar
 </MudButton>";
 
-public const string SnackbarPositionExample = @"@inject MudBlazor.ISnackbar Snackbar
+public const string SnackbarPositionExample = @"@inject ISnackbar Snackbar
 
 <MudButton @onclick=""@(() => ChangePosition(""Top-Left"", Defaults.Classes.Position.TopLeft))"" Color=""Color.Primary"" >Top-Left</MudButton>
 <MudButton @onclick=""@(() => ChangePosition(""Top-Center"", Defaults.Classes.Position.TopCenter))"" Color=""Color.Primary"" >Top-Center</MudButton>
@@ -2563,7 +2563,7 @@ public const string SnackbarPositionExample = @"@inject MudBlazor.ISnackbar Snac
     }
 }";
 
-public const string SnackbarRequireInteractionExample = @"@inject MudBlazor.ISnackbar Snackbar
+public const string SnackbarRequireInteractionExample = @"@inject ISnackbar Snackbar
 
 <div class=""pa-0 ma-0"">
     <MudAlert Severity=""Severity.Warning"" Dense=""true"" Class=""rounded-0 rounded-t"">The reactor temperature exceeds the optimal range</MudAlert>
@@ -2608,7 +2608,7 @@ public const string SnackbarRequireInteractionExample = @"@inject MudBlazor.ISna
     }
 }";
 
-public const string SnackbarSeverityExample = @"@inject MudBlazor.ISnackbar Snackbar
+public const string SnackbarSeverityExample = @"@inject ISnackbar Snackbar
 
 
 <MudButton Color=""Color.Dark"" @onclick=""@(() => Snackbar.Add(""The reactor type is RBMK-1000"", Severity.Normal))"">Normal Snackbar</MudButton>
@@ -2617,17 +2617,17 @@ public const string SnackbarSeverityExample = @"@inject MudBlazor.ISnackbar Snac
 <MudButton Color=""Color.Warning"" @onclick=""@(() => Snackbar.Add(""The reactor temperature exceeds the optimal range"", Severity.Warning))"">Warning Snackbar</MudButton>
 <MudButton Color=""Color.Error"" @onclick=""@(() => Snackbar.Add(""Reactor meltdown is imminent"", Severity.Error))"">Error Snackbar</MudButton>";
 
-public const string SnackbarUsageExample = @"@inject MudBlazor.ISnackbar Snackbar
+public const string SnackbarUsageExample = @"@inject ISnackbar Snackbar
 
 <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" @onclick=""@(() => Snackbar.Add(""Simple Snackbar""))"">
     Open Snackbar
 </MudButton>";
 
-public const string SnackbarVariantsExample = @"@inject MudBlazor.ISnackbar Snackbar
+public const string SnackbarVariantsExample = @"@inject ISnackbar Snackbar
 
-<MudButton @onclick=""@(() => ChangeVariant(""Text Snackbar"", Variant.Text))"" Color=""Color.Primary"">Open Text Snackbar</MudButton>
-<MudButton @onclick=""@(() => ChangeVariant(""Filled Snackbar"", Variant.Filled))"" Color=""Color.Secondary"">Open Filled Snackbar</MudButton>
-<MudButton @onclick=""@(() => ChangeVariant(""Outlined Snackbar"", Variant.Outlined))"" Color=""Color.Tertiary"">Open Outlined Snackbar</MudButton>
+<MudButton @onclick=""@(() => ChangeVariant(""Text Snackbar"", Variant.Text))"" Color=""Color.Primary"">Open Text Snackbar Variants</MudButton>
+<MudButton @onclick=""@(() => ChangeVariant(""Filled Snackbar"", Variant.Filled))"" Color=""Color.Secondary"">Open Filled Snackbar Variants</MudButton>
+<MudButton @onclick=""@(() => ChangeVariant(""Outlined Snackbar"", Variant.Outlined))"" Color=""Color.Tertiary"">Open Outlined Snackbar Variants</MudButton>
 
 @code {
     void ChangeVariant(string message, Variant variant)
