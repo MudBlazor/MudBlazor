@@ -178,7 +178,7 @@
     transform: scaleX(1);
 }
 
-.mud-input > input, .mud-input-slot {
+.mud-input > input, div.mud-input-slot {
   &.mud-input-root {
     font: inherit;
     color: currentColor;
