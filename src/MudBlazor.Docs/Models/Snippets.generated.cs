@@ -1210,6 +1210,48 @@ public const string ExpansionPanelSimpleExample = @"<MudExpansionPanels>
     </MudExpansionPanel>
 </MudExpansionPanels>";
 
+public const string FieldBasicExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudField Label=""Standard"" Variant=""Variant.Text"">Some Content <MudIcon Icon=""@Icons.Material.Favorite"" Color=""@Color.Warning"" /> follows here</MudField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudField Label=""Filled"" Variant=""Variant.Filled"">Some Content <MudIcon Icon=""@Icons.Material.Favorite"" Color=""@Color.Warning"" /> follows here</MudField>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudField Label=""Outlined"" Variant=""Variant.Outlined"">Some Content <MudIcon Icon=""@Icons.Material.Favorite"" Color=""@Color.Warning"" /> follows here</MudField>
+    </MudItem>
+</MudGrid>";
+
+public const string FieldMinimizePaddingExample = @"<MudGrid>
+    <MudItem xs=""12"">
+        <MudField Label=""Example with RadioGroup"" Variant=""Variant.Text"" InnerPadding=""false"">
+            <MudRadioGroup>
+                <MudRadio Label=""Option 1""></MudRadio>
+                <MudRadio Label=""Option 2""></MudRadio>
+                <MudRadio Label=""Option 3""></MudRadio>
+            </MudRadioGroup>
+        </MudField>
+    </MudItem>
+    <MudItem xs=""12"">
+        <MudField Label=""Example with RadioGroup"" Variant=""Variant.Filled"" InnerPadding=""false"">
+            <MudRadioGroup>
+                <MudRadio Label=""Option 1""></MudRadio>
+                <MudRadio Label=""Option 2""></MudRadio>
+                <MudRadio Label=""Option 3""></MudRadio>
+            </MudRadioGroup>
+        </MudField>
+    </MudItem>
+    <MudItem xs=""12"">
+        <MudField Label=""Example with RadioGroup"" Variant=""Variant.Outlined"" InnerPadding=""false"">
+            <MudRadioGroup>
+                <MudRadio Label=""Option 1""></MudRadio>
+                <MudRadio Label=""Option 2""></MudRadio>
+                <MudRadio Label=""Option 3""></MudRadio>
+            </MudRadioGroup>
+        </MudField>
+    </MudItem>
+</MudGrid>";
+
 public const string EditFormExample = @"<EditForm Model=""@model"" OnValidSubmit=""OnValidSubmit"">
     <DataAnnotationsValidator />
     <MudCard Class=""demo-form"">
@@ -3559,6 +3601,26 @@ public const string TurkeyTestExample = @"<MudGrid>
     CultureInfo cn = CultureInfo.GetCultureInfo(""cn-ZH"");
     DateTime date = DateTime.Now;
 }";
+
+public const string DisplayDblockExample = @"<div>
+    <div class=""d-block pa-2 mud-theme-primary"">d-block</div>
+    <div class=""d-block pa-2 mud-theme-dark"">d-block</div>
+</div>";
+
+public const string DisplayDinlineExample = @"<div>
+    <div class=""d-inline pa-2 mud-theme-primary"">d-inline</div>
+    <div class=""d-inline pa-2 mud-theme-dark"">d-inline</div>
+</div>";
+
+public const string DisplayVisibilyExample = @"<MudPaper Elevation=""0"" Class=""pa-4"" Style=""height:100px; width:180px;"">
+    <div class=""d-none d-sm-flex d-md-none mud-theme-primary rounded"" style=""height:100%; width:100%;""></div>
+</MudPaper>
+<MudPaper Elevation=""0"" Class=""pa-4"" Style=""height:100px; width:180px;"">
+    <div class=""d-lg-none mud-theme-secondary rounded"" style=""height:100%; width:100%;""></div>
+</MudPaper>
+<MudPaper Elevation=""0"" Class=""pa-4"" Style=""height:100px; width:180px;"">
+    <div class=""d-none d-lg-block mud-theme-tertiary rounded"" style=""height:100%; width:100%;""></div>
+</MudPaper>";
 
 public const string ElevationUsageExample = @"<div class=""mud-elevation-0"">0</div>
 <div class=""mud-elevation-1"">1</div>

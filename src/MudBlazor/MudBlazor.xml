@@ -1923,6 +1923,11 @@
             If true, sets a border.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTabs.Outlined">
+            <summary>
+            If true, toolbar will be outlined.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTabs.Centered">
             <summary>
             If true, centers the tabitems.

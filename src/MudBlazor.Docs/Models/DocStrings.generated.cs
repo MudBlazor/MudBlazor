@@ -748,6 +748,47 @@ public const string MudExpansionPanels_Tag = @"Use Tag to attach any user data o
 public const string MudExpansionPanels_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudField_ChildContent = @"Child content of component.";
+
+public const string MudField_Margin = @"Will adjust vertical spacing.";
+
+public const string MudField_Error = @"If true, the label will be displayed in an error state.";
+
+public const string MudField_ErrorText = @"The ErrorText that will be displayed if Error true";
+
+public const string MudField_HelperText = @"The HelperText will be displayed below the text field.";
+
+public const string MudField_FullWidth = @"If true, the field will take up the full width of its container.";
+
+public const string MudField_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the field has value.";
+
+public const string MudField_Variant = @"Variant can be Text, Filled or Outlined.";
+
+public const string MudField_Disabled = @"If true, the input element will be disabled.";
+
+public const string MudField_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
+
+public const string MudField_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
+
+public const string MudField_Adornment = @"Sets Start or End Adornment if not set to None.";
+
+public const string MudField_IconSize = @"Sets the Icon Size.";
+
+public const string MudField_OnAdornmentClick = @"Button click event if set and Adornment used.";
+
+public const string MudField_InnerPadding = @"If true, the inner contents padding is removed.";
+
+public const string MudField_DisableUnderLine = @"If true, the field will not have an underline.";
+
+public const string MudField_Class = @"User class names, separated by space";
+
+public const string MudField_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudField_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudField_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudForm_ChildContent = @"Child content of component.";
 
 public const string MudForm_IsValid = @"Validation status. True if the form is valid and without errors. This parameter is readonly.";
@@ -1663,6 +1704,8 @@ public const string MudTabs_Rounded = @"If true, sets the border-radius to theme
 
 public const string MudTabs_Border = @"If true, sets a border.";
 
+public const string MudTabs_Outlined = @"If true, toolbar will be outlined.";
+
 public const string MudTabs_Centered = @"If true, centers the tabitems.";
 
 public const string MudTabs_Vertical = @"If true, displays the MudTabs verticaly.";
@@ -2324,6 +2367,15 @@ public const string MudProgressCircular_Value = @"";
 
 public const string MudProgressCircular_StrokeWidth = @"";
 
+public const string MudProgressCircular_Class = @"User class names, separated by space";
+
+public const string MudProgressCircular_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudProgressCircular_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudProgressCircular_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudProgressLinear_Color = @"The color of the component. It supports the theme colors.";
 
 public const string MudProgressLinear_Size = @"The color of the component. It supports the theme colors.";
@@ -2343,6 +2395,15 @@ public const string MudProgressLinear_Maximum = @"";
 public const string MudProgressLinear_Value = @"";
 
 public const string MudProgressLinear_BufferValue = @"";
+
+public const string MudProgressLinear_Class = @"User class names, separated by space";
+
+public const string MudProgressLinear_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudProgressLinear_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudProgressLinear_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
 
 public const string MudSkeleton_Width = @"With defined in string, needs px or % or equal prefix.";
 
