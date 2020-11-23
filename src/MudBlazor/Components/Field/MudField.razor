@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<MudInputControl Label="@Label" HelperText="@HelperText" Variant="@Variant" FullWidth="@FullWidth" Margin="@Margin" Disabled="@Disabled"
+                 Class="@InputControlClassname" Error="@Error" ErrorText="@ErrorText" Style="@Style" @attributes="UserAttributes">
+    <InputContent>
+        <div class="@Classname">
+            @if (Adornment == Adornment.Start)
+            {
+                <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" />
+            }
+            <div class="@InnerClassname">
+                @ChildContent
+            </div>
+            @if (Adornment == Adornment.End)
+            {
+                <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
+            }
+            @if (Variant == Variant.Outlined)
+            {
+                <div class="mud-input-outlined-border"></div>
+            }
+        </div>
+    </InputContent>
+</MudInputControl>
+

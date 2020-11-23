@@ -1,0 +1,20 @@
+﻿.mud-input-control.mud-field {
+    .mud-input-slot {
+        height: auto;
+
+        &.mud-input-slot-nopadding {
+            padding-top: 0px;
+            padding-bottom: 0px;
+
+            &.mud-input-root-filled {
+                padding-top: 21px;
+                padding-bottom: 2px;
+            }
+
+            &.mud-input-root-outlined {
+                padding-top: 7px;
+                padding-bottom: 2px;
+            }
+        }
+    }
+}
