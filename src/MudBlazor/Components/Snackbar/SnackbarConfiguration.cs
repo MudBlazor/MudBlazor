@@ -64,9 +64,20 @@ namespace MudBlazor
             MaxDisplayedSnackbars = 5;
         }
 
-        internal string SnackbarTypeClass(Severity severity, Variant variant)
+        internal string SnackbarTypeClass(Severity severity, Variant variant, bool blurred)
         {
-            return $"mud-alert-{variant.ToDescriptionString()}-{severity.ToDescriptionString()}";
+            string backgroundClass = "";
+
+            if (blurred && variant != Variant.Filled)
+            {
+                backgroundClass = "mud-snackbar-blurred";
+            }
+            else if(!blurred && variant != Variant.Filled)
+            {
+                backgroundClass = "mud-snackbar-surface";
+            }
+
+            return $"mud-alert-{variant.ToDescriptionString()}-{severity.ToDescriptionString()} {backgroundClass}";
         }
     }
 }

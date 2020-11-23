@@ -17,7 +17,7 @@ namespace MudBlazor
         public SnackbarOptions(Severity severity, SnackbarConfiguration configuration)
         {
             Severity = severity;
-            SnackbarTypeClass = configuration.SnackbarTypeClass(severity, configuration.SnackbarDefaultVariant);
+            SnackbarTypeClass = configuration.SnackbarTypeClass(severity, configuration.SnackbarVariant, configuration.BackgroundBlurred);
 
             MaximumOpacity = configuration.MaximumOpacity;
 
