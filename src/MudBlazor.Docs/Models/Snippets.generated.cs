@@ -71,21 +71,11 @@ public const string AlertElevationExample = @"<MudGrid Class=""mt-6"">
     public int elevation = 1;
 }";
 
-public const string AlertFilledExample = @"<MudAlert Severity=""Severity.Normal"" Variant=""Variant.Filled"">
-    The reactor type is RBMK-1000
-</MudAlert>
-<MudAlert Severity=""Severity.Info"" Variant=""Variant.Filled"">
-    The reactor was fired up successfully
-</MudAlert>
-<MudAlert Severity=""Severity.Success"" Variant=""Variant.Filled"">
-    The reactor is running at optimum temperature
-</MudAlert>
-<MudAlert Severity=""Severity.Warning"" Variant=""Variant.Filled"">
-    The reactor is running at optimum temperature
-</MudAlert>
-<MudAlert Severity=""Severity.Error"" Variant=""Variant.Filled"">
-    The reactor temperature exceeds the optimal range
-</MudAlert>";
+public const string AlertFilledExample = @"<MudAlert Severity=""Severity.Normal"" Variant=""Variant.Filled"">The reactor type is RBMK-1000</MudAlert>
+<MudAlert Severity=""Severity.Info"" Variant=""Variant.Filled"">The reactor was fired up successfully</MudAlert>
+<MudAlert Severity=""Severity.Success"" Variant=""Variant.Filled"">The reactor is running at optimum temperature</MudAlert>
+<MudAlert Severity=""Severity.Warning"" Variant=""Variant.Filled"">The reactor temperature exceeds the optimal range</MudAlert>
+<MudAlert Severity=""Severity.Error"" Variant=""Variant.Filled"">Meltdown is imminent</MudAlert>";
 
 public const string AlertNoIconExample = @"<MudAlert Severity=""Severity.Normal"" NoIcon=""true"">Default No Icon</MudAlert>
 <MudAlert Severity=""Severity.Info"" NoIcon=""true"">Info No Icon</MudAlert>
@@ -123,27 +113,17 @@ public const string AlertNoIconTextExample = @"<MudAlert Severity=""Severity.Nor
 <MudAlert Severity=""Severity.Warning"" NoIcon=""true"">Warning No Icon</MudAlert>
 <MudAlert Severity=""Severity.Error"" NoIcon=""true"">Error No Icon</MudAlert>";
 
-public const string AlertOutlinedExample = @"<MudAlert Severity=""Severity.Normal"" Variant=""Variant.Outlined"">
-    The reactor type is RBMK-1000
-</MudAlert>
-<MudAlert Severity=""Severity.Info"" Variant=""Variant.Outlined"">
-    The reactor was fired up successfully
-</MudAlert>
-<MudAlert Severity=""Severity.Success"" Variant=""Variant.Outlined"">
-    The reactor is running at optimum temperature
-</MudAlert>
-<MudAlert Severity=""Severity.Warning"" Variant=""Variant.Outlined"">
-    The reactor is running at optimum temperature
-</MudAlert>
-<MudAlert Severity=""Severity.Error"" Variant=""Variant.Outlined"">
-    The reactor temperature exceeds the optimal range
-</MudAlert>";
+public const string AlertOutlinedExample = @"<MudAlert Severity=""Severity.Normal"" Variant=""Variant.Outlined"">The reactor type is RBMK-1000</MudAlert>
+<MudAlert Severity=""Severity.Info"" Variant=""Variant.Outlined"">The reactor was fired up successfully</MudAlert>
+<MudAlert Severity=""Severity.Success"" Variant=""Variant.Outlined"">The reactor is running at optimum temperature</MudAlert>
+<MudAlert Severity=""Severity.Warning"" Variant=""Variant.Outlined"">The reactor temperature exceeds the optimal range</MudAlert>
+<MudAlert Severity=""Severity.Error"" Variant=""Variant.Outlined"">Meltdown is imminent</MudAlert>";
 
 public const string AlertSimpleExample = @"<MudAlert Severity=""Severity.Normal"">The reactor type is RBMK-1000</MudAlert>
 <MudAlert Severity=""Severity.Info"">The reactor was fired up successfully</MudAlert>
 <MudAlert Severity=""Severity.Success"">The reactor is running at optimum temperature</MudAlert>
-<MudAlert Severity=""Severity.Warning"">The reactor is running at optimum temperature</MudAlert>
-<MudAlert Severity=""Severity.Error"">The reactor temperature exceeds the optimal range</MudAlert>";
+<MudAlert Severity=""Severity.Warning"">The reactor temperature exceeds the optimal range</MudAlert>
+<MudAlert Severity=""Severity.Error"">Meltdown is imminent</MudAlert>";
 
 public const string AlertSquareExample = @"<MudAlert Severity=""Severity.Normal"" Square=""true"">Default Square</MudAlert>
 <MudAlert Severity=""Severity.Info"" Square=""true"">Info Square</MudAlert>
@@ -2557,6 +2537,126 @@ public const string SliderStepsExample = @"<MudSlider Step=""10"" Value=""70"">T
 
 @code {
     int step = 10;
+}";
+
+public const string SnackbarConfigurationExample = @"@inject MudBlazor.ISnackbar Snackbar
+
+<MudButton @onclick=""@(() => Snackbar.Add(""My Close button is gone!"", Severity.Normal, config => { config.ShowCloseIcon = false; }))"" Variant=""Variant.Filled"" Color=""Color.Primary"">
+    Open Modified Snackbar
+</MudButton>";
+
+public const string SnackbarPositionExample = @"@inject MudBlazor.ISnackbar Snackbar
+
+<MudButton @onclick=""@(() => ChangePosition(""Top-Left"", Defaults.Classes.Position.TopLeft))"" Color=""Color.Primary"" >Top-Left</MudButton>
+<MudButton @onclick=""@(() => ChangePosition(""Top-Center"", Defaults.Classes.Position.TopCenter))"" Color=""Color.Primary"" >Top-Center</MudButton>
+<MudButton @onclick=""@(() => ChangePosition(""Top-Right"", Defaults.Classes.Position.TopRight))"" Color=""Color.Primary"" >Top-Right</MudButton>
+<MudButton @onclick=""@(() => ChangePosition(""Bottom-Left"", Defaults.Classes.Position.BottomLeft))"" Color=""Color.Default"" >Bottom-Left</MudButton>
+<MudButton @onclick=""@(() => ChangePosition(""Bottom-Center"", Defaults.Classes.Position.BottomCenter))"" Color=""Color.Default"" >Bottom-Center</MudButton>
+<MudButton @onclick=""@(() => ChangePosition(""Bottom-Right"", Defaults.Classes.Position.BottomRight))"" Color=""Color.Default"" >Bottom-Right</MudButton>
+
+@code {
+    void ChangePosition(string message, string position)
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = position;
+        Snackbar.Add(message, Severity.Normal);
+    }
+}";
+
+public const string SnackbarRequireInteractionExample = @"@inject MudBlazor.ISnackbar Snackbar
+
+<MudAlert Severity=""Severity.Warning"" Dense=""true"">The reactor temperature exceeds the optimal range</MudAlert>
+<MudAlert Severity=""Severity.Error"" Dense=""true"">Reactor meltdown is imminent!</MudAlert>
+<MudGrid>
+    <MudItem xs=""4"">
+        <MudAlert Severity=""Severity.Info"" Dense=""true"">The reactor is about to have a melt down deputy chief-engineer! You must act now!</MudAlert>
+    </MudItem>
+    <MudItem xs=""8"">
+        <div class=""mud-theme-default"">
+            <MudButton Variant=""Variant.Filled"" Color=""Color.Error"" Class=""rounded-circle""></MudButton>
+        </div>
+    </MudItem>
+</MudGrid>
+
+
+
+
+@*<MudButton Variant=""Variant.Filled"" DisableElevation=""true"" Color=""Color.Primary"" StartIcon=""@Icons.Material.Build"" @onclick=""@(() => StartBuild())"" Disabled=""BuildAgainDisabled"">Build Project</MudButton>
+<MudButton Variant=""Variant.Filled"" DisableElevation=""true"" @onclick=""@OnShowBuildLog"" Disabled=""RunAgainDisabled"">Run Again</MudButton>
+<MudPaper Outlined=""true"" Class=""demo-snackbar-output"">
+    @if (ShowBuildLog)
+    {
+        foreach (string line in BuildLogList)
+        {
+            <MudText Typo=""Typo.caption"">@line</MudText>
+        }
+    }
+</MudPaper>*@
+
+@code {
+
+    public bool ShowBuildLog { get; set; }
+    public List<string> BuildLogList = new List<string> { ""Starting: Build"", ""dotnet build"", ""Build succeeded."", ""Finishing: Build"" };
+    public bool BuildAgainDisabled { get; set; } = false;
+    public bool RunAgainDisabled { get; set; } = true;
+
+    void StartBuild()
+    {
+        string ErrorMessage = ""Build succeeded, click for more information."";
+        Snackbar.Add(ErrorMessage, Severity.Success, config =>
+        {
+            config.RequireInteraction = true;
+            config.ShowCloseIcon = false;
+            config.Onclick = snackbar =>
+            {
+                OnShowBuildLog();
+                return Task.CompletedTask;
+            };
+        });
+    }
+
+    public void OnShowBuildLog()
+    {
+        BuildAgainDisabled = !BuildAgainDisabled;
+        RunAgainDisabled = !RunAgainDisabled;
+        ShowBuildLog = !ShowBuildLog;
+        StateHasChanged();
+    }
+
+}";
+
+public const string SnackbarSeverityExample = @"@inject MudBlazor.ISnackbar Snackbar
+
+
+<MudButton Color=""Color.Dark"" @onclick=""@(() => Snackbar.Add(""The reactor type is RBMK-1000"", Severity.Normal))"">Normal Snackbar</MudButton>
+<MudButton Color=""Color.Info"" @onclick=""@(() => Snackbar.Add(""The reactor was fired up successfully"", Severity.Info))"">Info Snackbar</MudButton>
+<MudButton Color=""Color.Success"" @onclick=""@(() => Snackbar.Add(""The reactor is running at optimum temperature"", Severity.Success))"">Success Snackbar</MudButton>
+<MudButton Color=""Color.Warning"" @onclick=""@(() => Snackbar.Add(""The reactor temperature exceeds the optimal range"", Severity.Warning))"">Warning Snackbar</MudButton>
+<MudButton Color=""Color.Error"" @onclick=""@(() => Snackbar.Add(""Reactor meltdown is imminent"", Severity.Error))"">Error Snackbar</MudButton>";
+
+public const string SnackbarUsageExample = @"@inject MudBlazor.ISnackbar Snackbar
+
+<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" @onclick=""@(() => Snackbar.Add(""Simple Snackbar""))"">
+    Open Snackbar
+</MudButton>";
+
+public const string SnackbarVariantsExample = @"@inject MudBlazor.ISnackbar Snackbar
+
+<MudButton @onclick=""@(() => ChangeVariant(""Text Snackbar"", Variant.Text))"" Color=""Color.Primary"">Open Text Snackbar</MudButton>
+<MudButton @onclick=""@(() => ChangeVariant(""Filled Snackbar"", Variant.Filled))"" Color=""Color.Secondary"">Open Filled Snackbar</MudButton>
+<MudButton @onclick=""@(() => ChangeVariant(""Outlined Snackbar"", Variant.Outlined))"" Color=""Color.Tertiary"">Open Outlined Snackbar</MudButton>
+
+@code {
+    void ChangeVariant(string message, Variant variant)
+    {
+        Snackbar.Configuration.SnackbarVariant = variant;
+        Snackbar.Configuration.MaxDisplayedSnackbars = 10;
+        Snackbar.Add($""Normal {message}"", Severity.Normal);
+        Snackbar.Add($""Info {message}"", Severity.Info);
+        Snackbar.Add($""Success {message}"", Severity.Success);
+        Snackbar.Add($""Warning {message}"", Severity.Warning);
+        Snackbar.Add($""Error {message}"", Severity.Error);
+    }
 }";
 
 public const string SparkLineExample = @"<MudSparkLine></MudSparkLine>";

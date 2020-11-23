@@ -122,6 +122,10 @@
     color: #9cdcfe; }
   .mud-codeblock .csharp .interface {
     color: #b0d7a3; }
+  .mud-codeblock .csharp .number {
+    color: #b0d7a3; }
+  .mud-codeblock .csharp .enum {
+    color: #b4eb8f; }
   .mud-codeblock .csharp .comment {
     color: #57a64a; }
 
@@ -472,6 +476,9 @@
   .docs-code.docs-code-secondary {
     color: var(--mud-palette-secondary);
     background-color: var(--mud-palette-secondary-hover); }
+  .docs-code.docs-code-tertiary {
+    color: var(--mud-palette-tertiary);
+    background-color: var(--mud-palette-tertiary-hover); }
 
 .docs-frame {
   height: 100%;
