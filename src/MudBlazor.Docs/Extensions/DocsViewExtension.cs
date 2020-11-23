@@ -17,10 +17,11 @@ namespace MudBlazor.Docs.Extensions
 
                 config.PreventDuplicates = false;
                 config.NewestOnTop = false;
+                config.ShowCloseIcon = true;
                 config.VisibleStateDuration = 10000;
                 config.HideTransitionDuration = 500;
                 config.ShowTransitionDuration = 500;
-                config.SnackbarDefaultVariant = Variant.Filled;
+                config.SnackbarVariant = Variant.Filled;
             });
         }
     }
