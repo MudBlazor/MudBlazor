@@ -19,6 +19,7 @@ namespace MudBlazor
             .AddClass($"mud-tabs-rounded", Rounded)
             .AddClass($"mud-tabs-vertical", Vertical)
             .AddClass($"mud-border-right", Border)
+            .AddClass($"mud-paper-outlined", Outlined)
             .AddClass($"mud-elevation-{Elevation.ToString()}" , Elevation != 0)
             .Build();
 
@@ -42,6 +43,11 @@ namespace MudBlazor
         /// If true, sets a border.
         /// </summary>
         [Parameter] public bool Border { get; set; }
+
+        /// <summary>
+        /// If true, toolbar will be outlined.
+        /// </summary>
+        [Parameter] public bool Outlined { get; set; }
 
         /// <summary>
         /// If true, centers the tabitems.
