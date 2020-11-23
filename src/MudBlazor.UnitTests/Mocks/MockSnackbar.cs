@@ -12,7 +12,7 @@ namespace MudBlazor.UnitTests.Mocks
 
         public event Action OnSnackbarsUpdated;
 
-        public void Add(Severity severity, string message, Action<SnackbarOptions> configure)
+        public void Add(string message, Severity severity, Action<SnackbarOptions> configure)
         {
             
         }
