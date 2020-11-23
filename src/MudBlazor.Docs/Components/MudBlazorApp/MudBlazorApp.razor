@@ -76,8 +76,7 @@
         }
         else
         {
-            <MudAlert Severity="Severity.Info" Variant="Variant.Filled"  Dense="true" Class="mudblazor-apps-alert" Elevation="0" >You got new email! 
-                <MudButton Class="py-0 ml-3" Style="color:white;" Size="Size.Small" @onclick="@NavigateToMailbox" >Go to Inbox</MudButton></MudAlert>
+            <MudAlert Severity="Severity.Info" Dense="true" Class="mudblazor-apps-alert pa-0 px-2" Elevation="25" OnClick="@NavigateToMailbox">You got new email!</MudAlert>
             <div class="d-flex flex-column mx-auto align-self-center mt-n4">
                 <div class="d-flex align-self-center">
                     <MudText Align="Align.Center" Typo="Typo.h6" GutterBottom="true">Welcome Back!</MudText>
