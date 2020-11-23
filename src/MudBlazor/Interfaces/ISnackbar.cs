@@ -1,5 +1,5 @@
-﻿// Copyright (c) Alessandro Ghidini. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
+﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
+//Changes and improvements Copyright (c) The MudBlazor Team.
 
 using System;
 using System.Collections.Generic;
@@ -14,17 +14,9 @@ namespace MudBlazor
         
         event Action OnSnackbarsUpdated;
 
-        void Default(string message, Action<SnackbarOptions> configure = null);
+        void Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null);
 
-        void Info(string message, Action<SnackbarOptions> configure = null);
-
-        void Success(string message, Action<SnackbarOptions> configure = null);
-        
-        void Warning(string message, Action<SnackbarOptions> configure = null);
-
-        void Error(string message, Action<SnackbarOptions> configure = null);
-
-        void Add(SnackbarType type, string message, Action<SnackbarOptions> configure);
+        void AddNew(Severity severity, string message, Action<SnackbarOptions> configure);
 
         void Clear();
 

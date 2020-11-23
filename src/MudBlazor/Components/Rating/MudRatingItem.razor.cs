@@ -37,7 +37,7 @@ namespace MudBlazor
 
         internal bool IsActive { get; set; }
 
-        private bool IsChecked => ItemValue == Rating.SelectedValue;
+        private bool IsChecked => ItemValue == Rating?.SelectedValue;
 
         /// <summary>
         /// The Size of the icon.
@@ -77,6 +77,8 @@ namespace MudBlazor
 
         private string SelectIcon()
         {
+            if (Rating==null)
+                return null;
             if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value >= ItemValue)
             {
                 // full icon when @RatingItem hovered
@@ -106,7 +108,8 @@ namespace MudBlazor
         private async Task HandleMouseOut(MouseEventArgs e)
         {
             if (Disabled) return;
-
+            if (Rating == null)
+                return;
             // onmouseout from current item will always fire before onmouseover, if we don't wait here for potential onmouseover from another item there will be a flicker issue
             await Task.Delay(10);
             if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value == ItemValue)
@@ -126,8 +129,8 @@ namespace MudBlazor
         private void HandleClick(MouseEventArgs e)
         {
             if (Disabled) return;
-            IsActive = false;
-            if (Rating.SelectedValue == ItemValue)
+            IsActive = false;            
+            if (Rating?.SelectedValue == ItemValue)
             {
                 ItemClicked.InvokeAsync(0);
             }

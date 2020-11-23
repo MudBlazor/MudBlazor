@@ -11,6 +11,18 @@
                 @ToolBarContent
             </MudToolBar>
         }
+        @if (Context.SortLabels.Any())
+        {
+            <div Class="mud-table-smalldevices-sortselect">
+                <MudSelect Value="@Context.CurrentSortLabel" Label="@SortLabel" ValueChanged="@(v => Context.SetSortFunc(v, override_direction_none:true))" T="MudTableSortLabel<T>">
+                    @foreach (var label in Context.SortLabels)
+                    {
+                        <MudSelectItem Value="@label">@label.ChildContent</MudSelectItem>
+                    }
+                </MudSelect>
+            </div>
+            
+        }
         <div class="mud-table-container" style="@TableStyle">
             <table class="mud-table-root">
                 @if (ColGroup != null)
@@ -32,12 +44,12 @@
                     {
                         @foreach (var item in CurrentPageItems)
                         {
-                        <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
-                            @if (RowEditingTemplate != null && object.Equals(_editingItem, item))
-                                @RowEditingTemplate(item)
-                            else
-                                @RowTemplate(item)
-                        </MudTr>
+                            <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
+                                @if (RowEditingTemplate != null && object.Equals(_editingItem, item))
+                                    @RowEditingTemplate(item)
+                                    else
+                                        @RowTemplate(item)
+                            </MudTr>
 
                             @*@if(RowEditingTemplate != null && object.Equals(_editingItem, item))
                             {
@@ -59,7 +71,7 @@
         @if (PagerContent != null)
         {
             <div class="mud-table-pagination">
-                    @PagerContent
+                @PagerContent
             </div>
         }
     </CascadingValue>

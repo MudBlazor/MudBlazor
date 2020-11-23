@@ -110,7 +110,7 @@ namespace MudBlazor
 
         public void ToggleMenu()
         {
-            if (Disabled)
+            if (Disabled || MinCharacters > 0 && (string.IsNullOrEmpty(Text) || Text.Length < MinCharacters))
                 return;
             IsOpen = !IsOpen;
             //if (IsOpen && string.IsNullOrEmpty(Text))
@@ -149,6 +149,12 @@ namespace MudBlazor
         private T[] Items;
         private int SelectedListItemIndex = 0;
 
+        protected override void GenericValueChanged(T value)
+        {
+            base.GenericValueChanged(value);
+            Timer?.Dispose();
+        }
+
         protected override void StringValueChanged(string text)
         {
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(text))
@@ -163,7 +169,11 @@ namespace MudBlazor
         private async void OnSearch()
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
+            {
+                IsOpen = false;
+                StateHasChanged();
                 return;
+            }
             SelectedListItemIndex = 0;
 
             var searched_items = await SearchFunc(Text);

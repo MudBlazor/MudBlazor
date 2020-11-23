@@ -120,6 +120,8 @@ public const string MudBasePicker_Disabled = @"If true, the picker will be disab
 
 public const string MudBasePicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
 
+public const string MudBasePicker_ToolBarClass = @"User class names for picker's ToolBar, separated by space";
+
 public const string MudBasePicker_PickerVariant = @"Picker container option";
 
 public const string MudBasePicker_InputVariant = @"InputVariant, if Picker is static this option will not change anything.";
@@ -194,6 +196,8 @@ public const string MudAlert_Variant = @"The variant to use.";
 public const string MudAlert_Class = @"User class names, separated by space.";
 
 public const string MudAlert_ChildContent = @"Child content of the component.";
+
+public const string MudAlert_OnClick = @"Raised when the alert is clicked";
 
 public const string MudAppBar_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow.";
 
@@ -460,6 +464,28 @@ public const string MudIconButton_Tag = @"Use Tag to attach any user data object
 public const string MudIconButton_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudToggleIconButton_Toggled = @"The toggled value.";
+
+public const string MudToggleIconButton_ToggledChanged = @"Fires whenever toggled is changed.";
+
+public const string MudToggleIconButton_Icon = @"The Icon that will be used in the untoggled state.";
+
+public const string MudToggleIconButton_ToggledIcon = @"The Icon that will be used in the toggled state.";
+
+public const string MudToggleIconButton_Color = @"The color of the icon in the untoggled state. It supports the theme colors.";
+
+public const string MudToggleIconButton_ToggledColor = @"The color of the icon in the toggled state. It supports the theme colors.";
+
+public const string MudToggleIconButton_Size = @"The Size of the component in the untoggled state.";
+
+public const string MudToggleIconButton_ToggledSize = @"The Size of the component in the toggled state.";
+
+public const string MudToggleIconButton_Edge = @"If set uses a negative margin.";
+
+public const string MudToggleIconButton_DisableRipple = @"If true, disables ripple effect.";
+
+public const string MudToggleIconButton_Disabled = @"If true, the button will be disabled.";
+
 public const string MudCardMedia_Title = @"";
 
 public const string MudCardMedia_Image = @"";
@@ -640,6 +666,8 @@ public const string MudDatePicker_Disabled = @"If true, the picker will be disab
 
 public const string MudDatePicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
 
+public const string MudDatePicker_ToolBarClass = @"User class names for picker's ToolBar, separated by space";
+
 public const string MudDatePicker_PickerVariant = @"Picker container option";
 
 public const string MudDatePicker_InputVariant = @"InputVariant, if Picker is static this option will not change anything.";
@@ -804,6 +832,8 @@ public const string MudInputControl_Tag = @"Use Tag to attach any user data obje
 public const string MudInputControl_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudInput_ChildContent = @"ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.";
+
 public const string MudInput_Required = @"";
 
 public const string MudInput_RequiredError = @"";
@@ -880,6 +910,8 @@ public const string MudInput_Tag = @"Use Tag to attach any user data object to t
 
 public const string MudInput_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
+
+public const string MudInputString_ChildContent = @"ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.";
 
 public const string MudInputString_Required = @"If true, this form input is required to be filled out.";
 
@@ -1436,109 +1468,6 @@ public const string MudSelect_Tag = @"Use Tag to attach any user data object to 
 public const string MudSelect_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudSelectString_ChildContent = @"Add the MudSelectItems here";
-
-public const string MudSelectString_Dense = @"If true, compact vertical padding will be applied to all select items.";
-
-public const string MudSelectString_OpenIcon = @"The Open Select Icon";
-
-public const string MudSelectString_CloseIcon = @"The Open Select Icon";
-
-public const string MudSelectString_SelectedValuesChanged = @"Fires when SelectedValues changes.";
-
-public const string MudSelectString_SelectedValues = @"Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.";
-
-public const string MudSelectString_ToStringFunc = @"";
-
-public const string MudSelectString_MultiSelection = @"If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown";
-
-public const string MudSelectString_MaxHeight = @"Sets the maxheight the select can have when open.";
-
-public const string MudSelectString_Direction = @"Sets the direction the select menu should be.";
-
-public const string MudSelectString_OffsetY = @"If true, the select menu will open either before or after the input.";
-
-public const string MudSelectString_OffsetX = @"";
-
-public const string MudSelectString_Required = @"If true, this form input is required to be filled out.";
-
-public const string MudSelectString_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
-
-public const string MudSelectString_ErrorText = @"The ErrorText that will be displayed if Error true";
-
-public const string MudSelectString_Error = @"If true, the label will be displayed in an error state.";
-
-public const string MudSelectString_Disabled = @"If true, the input element will be disabled.";
-
-public const string MudSelectString_ReadOnly = @"If true, the input will be read only.";
-
-public const string MudSelectString_FullWidth = @"If true, the input will take up the full width of its container.";
-
-public const string MudSelectString_Immediate = @"If true, the input will update the Value immediately on typing.
-            If false, the Value is updated only on Enter.";
-
-public const string MudSelectString_DisableUnderLine = @"If true, the input will not have an underline.";
-
-public const string MudSelectString_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
-
-public const string MudSelectString_Placeholder = @"The short hint displayed in the input before the user enters a value.";
-
-public const string MudSelectString_HelperText = @"The HelperText will be displayed below the text field.";
-
-public const string MudSelectString_AdornmentIcon = @"Icon that will be used if Adornment is set to Start or End.";
-
-public const string MudSelectString_AdornmentText = @"Text that will be used if Adornment is set to Start or End, the Text overrides Icon.";
-
-public const string MudSelectString_Adornment = @"Sets Start or End Adornment if not set to None.";
-
-public const string MudSelectString_IconSize = @"Sets the Icon Size.";
-
-public const string MudSelectString_OnAdornmentClick = @"Button click event if set and Adornment used.";
-
-public const string MudSelectString_InputType = @"Type of the input element. It should be a valid HTML5 input type.";
-
-public const string MudSelectString_Variant = @"Variant to use.";
-
-public const string MudSelectString_Margin = @"Will adjust vertical spacing.";
-
-public const string MudSelectString_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
-
-public const string MudSelectString_Text = @"";
-
-public const string MudSelectString_TextChanged = @"";
-
-public const string MudSelectString_OnBlur = @"";
-
-public const string MudSelectString_OnKeyDown = @"";
-
-public const string MudSelectString_OnKeyPress = @"";
-
-public const string MudSelectString_OnKeyUp = @"";
-
-public const string MudSelectString_ValueChanged = @"Fired when the Value property changes.";
-
-public const string MudSelectString_Value = @"The value of this input element. This property is two-way bindable.";
-
-public const string MudSelectString_Converter = @"";
-
-public const string MudSelectString_Culture = @"";
-
-public const string MudSelectString_Format = @"Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans";
-
-public const string MudSelectString_Validation = @"";
-
-public const string MudSelectString_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
-            Currently only string fields are supported.";
-
-public const string MudSelectString_Class = @"User class names, separated by space";
-
-public const string MudSelectString_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudSelectString_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudSelectString_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
 public const string MudSelectItem_Value = @"A user-defined option that can be selected";
 
 public const string MudSelectItem_Disabled = @"If true, the input element will be disabled.";
@@ -1562,31 +1491,6 @@ public const string MudSelectItem_Style = @"User styles, applied on top of the c
 public const string MudSelectItem_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
 public const string MudSelectItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudSelectItemString_Value = @"A user-defined option that can be selected";
-
-public const string MudSelectItemString_Disabled = @"If true, the input element will be disabled.";
-
-public const string MudSelectItemString_DisableRipple = @"If true, disables ripple effect.";
-
-public const string MudSelectItemString_Href = @"Link to a URL when clicked.";
-
-public const string MudSelectItemString_ChildContent = @"Child content of component.";
-
-public const string MudSelectItemString_CommandParameter = @"Command parameter.";
-
-public const string MudSelectItemString_Command = @"Command executed when the user clicks on an element.";
-
-public const string MudSelectItemString_OnClick = @"";
-
-public const string MudSelectItemString_Class = @"User class names, separated by space";
-
-public const string MudSelectItemString_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudSelectItemString_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudSelectItemString_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudSlider_Min = @"The minimum allowed value of the slider. Should not be equal to max.";
@@ -1693,10 +1597,14 @@ public const string MudTableBase_Dense = @"Set true for rows with a narrow heigh
 
 public const string MudTableBase_Hover = @"Set true to see rows hover on mouse-over.";
 
+public const string MudTableBase_Breakpoint = @"At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.";
+
 public const string MudTableBase_FixedHeader = @"When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.";
 
 public const string MudTableBase_Height = @"Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
             attribute 'height' accepts, i.e. 500px.";
+
+public const string MudTableBase_SortLabel = @"If table is in smalldevice mode and uses any kind of sorting the text applied here will be the sort selects label.";
 
 public const string MudTableBase_RowsPerPage = @"If the table has more items than this number, it will break the rows into pages of said size.
             Note: requires a MudTablePager in PagerContent.";
@@ -1958,6 +1866,8 @@ public const string MudTimePicker_Disabled = @"If true, the picker will be disab
 
 public const string MudTimePicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
 
+public const string MudTimePicker_ToolBarClass = @"User class names for picker's ToolBar, separated by space";
+
 public const string MudTimePicker_PickerVariant = @"Picker container option";
 
 public const string MudTimePicker_InputVariant = @"InputVariant, if Picker is static this option will not change anything.";
@@ -2109,6 +2019,8 @@ public const string MudChart_UserAttributes = @"UserAttributes carries all attri
             will be splatted onto the underlying HTML tag.";
 
 public const string MudCollapse_Expanded = @"If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.";
+
+public const string MudCollapse_Class = @"User class names, separated by space";
 
 public const string MudCollapse_ChildContent = @"Child content of component.";
 
@@ -2337,11 +2249,9 @@ public const string MudPaper_Tag = @"Use Tag to attach any user data object to t
 public const string MudPaper_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudPicker_ChildContent = @"";
-
 public const string MudPicker_InputIcon = @"";
 
-public const string MudPicker_ToolBarClass = @"";
+public const string MudPicker_ChildContent = @"";
 
 public const string MudPicker_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.";
 
@@ -2356,6 +2266,8 @@ public const string MudPicker_Label = @"If string has value the label text will 
 public const string MudPicker_Disabled = @"If true, the picker will be disabled.";
 
 public const string MudPicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
+
+public const string MudPicker_ToolBarClass = @"User class names for picker's ToolBar, separated by space";
 
 public const string MudPicker_PickerVariant = @"Picker container option";
 
@@ -2486,10 +2398,14 @@ public const string MudTable_Dense = @"Set true for rows with a narrow height";
 
 public const string MudTable_Hover = @"Set true to see rows hover on mouse-over.";
 
+public const string MudTable_Breakpoint = @"At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.";
+
 public const string MudTable_FixedHeader = @"When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.";
 
 public const string MudTable_Height = @"Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
             attribute 'height' accepts, i.e. 500px.";
+
+public const string MudTable_SortLabel = @"If table is in smalldevice mode and uses any kind of sorting the text applied here will be the sort selects label.";
 
 public const string MudTable_RowsPerPage = @"If the table has more items than this number, it will break the rows into pages of said size.
             Note: requires a MudTablePager in PagerContent.";
@@ -2529,6 +2445,10 @@ public const string MudTableSortLabel_ChildContent = @"";
 
 public const string MudTableSortLabel_InitialDirection = @"";
 
+public const string MudTableSortLabel_SortIcon = @"The Icon used to display sortdirection.";
+
+public const string MudTableSortLabel_AppendIcon = @"If true the icon will be placed before the label text.";
+
 public const string MudTableSortLabel_SortDirection = @"";
 
 public const string MudTableSortLabel_SortDirectionChanged = @"";
@@ -2538,6 +2458,8 @@ public const string MudTableSortLabel_SortBy = @"";
 public const string MudTd_ChildContent = @"";
 
 public const string MudTd_Style = @"";
+
+public const string MudTd_DataLabel = @"";
 
 public const string MudTh_ChildContent = @"";
 

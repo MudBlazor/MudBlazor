@@ -27,7 +27,8 @@ namespace MudBlazor
                 if (_parent == null)
                     return;
                 _parent.CheckGenericTypeMatch(this);
-                if (_parent != null && _parent.MultiSelection)
+                MudSelect?.Add(this);
+                if (MudSelect != null && _parent.MultiSelection)
                 {
                     MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
                     InvokeAsync(()=>OnUpdateSelectionStateFromOutside(MudSelect.SelectedValues));
@@ -83,6 +84,17 @@ namespace MudBlazor
             }
         }
 
+        protected string DisplayString
+        {
+            get
+            {
+                var converter = MudSelect?.Converter;
+                if (converter == null)
+                    return $"{Value}";
+                return converter.Set(Value);
+            }
+        }
+
         private void OnClicked()
         {
             if (MultiSelection)
@@ -94,12 +106,12 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            //try
-            //{
-            //    MudSelect?.Remove(this);
-            //} catch(Exception) {}
+            try
+            {
+                MudSelect?.Remove(this);
+            }
+            catch (Exception) { }
         }
     }
 
-    public class MudSelectItemString : MudSelectItem<string> { }
 }

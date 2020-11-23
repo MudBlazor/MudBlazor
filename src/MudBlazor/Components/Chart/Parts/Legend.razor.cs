@@ -7,6 +7,6 @@ namespace MudBlazor.Charts
     public class LegendBase : MudChartBase
     {
         [CascadingParameter] public MudChart MudChartParent { get; set; }
-        [Parameter] public List<SvgLegend> Data { get; set; }
+        [Parameter] public List<SvgLegend> Data { get; set; } = new List<SvgLegend>();
     }
 }

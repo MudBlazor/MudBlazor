@@ -1,0 +1,143 @@
+﻿.mudblazor-apps {
+    background: linear-gradient(180deg,var(--mud-palette-surface) 0%,var(--mud-palette-background-grey) 100%);
+
+    .mud-card-header {
+        padding: 6px 12px;
+    }
+
+    .mud-card-header .mud-card-header-avatar {
+        margin-right: 6px;
+    }
+
+    .mud-list-subheader {
+        padding-bottom: 8px;
+    }
+
+    .mudblazor-apps-list {
+        height: 100%;
+        width: 100%;
+        max-width: 160px;
+
+        & * > .mud-list-item-icon {
+            min-width: 36px;
+        }
+    }
+
+    .mudblazor-apps-email {
+        width: 100%;
+
+        .mud-table {
+            background-color: transparent;
+            border: none;
+            border-radius: 0px;
+            box-shadow: none;
+
+            & * thead tr {
+                &:hover {
+                    cursor: default;
+                    background-color: transparent !important;
+                }
+
+                th {
+                    color: var(--mud-palette-action-default);
+                    font-size: .875rem;
+                    box-sizing: border-box;
+                    list-style: none;
+                    font-weight: 500;
+                }
+            }
+
+            & * tr, td {
+                cursor: pointer;
+            }
+
+            & tbody tr:last-child {
+                border-bottom: none;
+
+                & td {
+                    border-bottom: none;
+                }
+            }
+        }
+    }
+
+    .mudblazor-apps-email-compose {
+        background: linear-gradient(180deg,var(--mud-palette-surface) 0%,var(--mud-palette-background-grey) 100%);
+        position: absolute;
+        bottom: 0;
+        right: 10px;
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
+
+        & * > .mud-input-control * > .mud-typography, .mud-input-root {
+            font-size: .875rem;
+        }
+
+        & * > .mud-input-control > div.mud-input.mud-input-text {
+            margin-top: 6px;
+        }
+    }
+
+    .mudblazor-apps-alert {
+        position: absolute;
+        top: 0;
+        left: 10px;
+        border-radius: 5px;
+        transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+        .mud-alert-icon {
+            margin-right: 4px;
+        }
+
+        &:hover {
+            background-color: rgba(69,167,245, 0.2);
+            cursor: pointer;
+        }
+    }
+
+    .mudblazor-app-title {
+        display: inline-block;
+        text-align: center;
+        width: 70%;
+    }
+
+    .mudblazor-apps-calculator {
+        position: absolute;
+        left: 38%;
+        background: linear-gradient(180deg,var(--mud-palette-surface) 0%,var(--mud-palette-background-grey) 100%);
+
+        .mud-button {
+            min-width: 36px;
+            min-height: 36px;
+            width: 100%;
+            height: 100%;
+            box-shadow: none;
+            padding: 6px 6px;
+
+            .mud-button-start-icon {
+                margin: 0;
+            }
+        }
+
+        .mud-card-header .mud-card-header-actions {
+            margin-top: -6px;
+            margin-right: -12px;
+        }
+
+        .calc-button-small {
+            .mud-svg-icon-root {
+                font-size: 16px;
+            }
+        }
+
+        .calc-button-medium {
+            .mud-svg-icon-root {
+                font-size: 18px;
+            }
+        }
+
+        .calc-button-opacity {
+            opacity: 0.9;
+        }
+    }
+}

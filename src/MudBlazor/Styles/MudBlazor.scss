@@ -5,9 +5,9 @@
 @import 'core/base';
 @import 'core/blazor';
 @import 'core/animations';
-@import 'core/ripple';
 @import 'core/reset';
 @import 'core/elevation';
+@import 'core/scrollbar';
 
 @import 'components/alert';
 @import 'components/badge';
@@ -67,3 +67,4 @@
 
 
 @import 'core/colors';
+@import 'core/ripple';

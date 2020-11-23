@@ -16,7 +16,7 @@ namespace MudBlazor
             .AddClass("mud-panel-expanded", IsExpanded)
             .AddClass("mud-panel-next-expanded", NextPanelExpanded)
             .AddClass("mud-disabled", Disabled)
-            .AddClass($"mud-elevation-{Parent.Elevation.ToString()}")
+            .AddClass($"mud-elevation-{Parent?.Elevation.ToString()}")
             .AddClass(Class)
         .Build();
 
@@ -34,10 +34,10 @@ namespace MudBlazor
                 if (_isExpanded == value)
                     return;
                 _isExpanded = value;
-                if (Parent.MultiExpansion)
-                    Parent.UpdateAll();
+                if (Parent?.MultiExpansion==true)
+                    Parent?.UpdateAll();
                 else
-                    Parent.CloseAllExcept(this);
+                    Parent?.CloseAllExcept(this);
                 InvokeAsync(StateHasChanged);
             }
         }
@@ -68,7 +68,7 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            if (Parent.MultiExpansion)
+            if (Parent?.MultiExpansion==true)
             {
                 IsExpanded = !IsExpanded;
             }
@@ -102,10 +102,11 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            if (Parent == null)
-                throw new ArgumentNullException(nameof(Parent), "ExpansionPanel must exist within a ExpansionPanels component");
+            // NOTE: we can't throw here because we need to be able to instanciate the type for the API Docs to infer default values
+            //if (Parent == null)
+            //    throw new ArgumentNullException(nameof(Parent), "ExpansionPanel must exist within a ExpansionPanels component");
             base.OnInitialized();
-            Parent.AddPanel(this);
+            Parent?.AddPanel(this);
         }
 
         public void Dispose()

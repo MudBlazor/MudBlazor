@@ -25,8 +25,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string InfoFormat { get; set; } = "{first_item}-{last_item} of {all_items}";
 
-        private string Info => InfoFormat
-            .Replace("{first_item}", $"{Table.CurrentPage * Table.RowsPerPage+1}")
+        private string Info => Table==null ? "Table==null" : InfoFormat
+            .Replace("{first_item}", $"{Table?.CurrentPage * Table.RowsPerPage+1}")
             .Replace("{last_item}", $"{Math.Min((Table.CurrentPage+1) * Table.RowsPerPage, Table.GetFilteredItemsCount())}")
             .Replace("{all_items}", $"{Table.GetFilteredItemsCount()}");
 
@@ -37,7 +37,7 @@ namespace MudBlazor
 
         private void SetRowsPerPage(string size)
         {
-            Table.SetRowsPerPage(int.Parse(size));
+            Table?.SetRowsPerPage(int.Parse(size));
         }
 
         public MudTableBase Table => Context?.Table;

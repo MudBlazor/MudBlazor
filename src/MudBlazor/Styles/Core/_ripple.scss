@@ -27,8 +27,12 @@
     }
 }
 
-.mud-ripple-icon, .mud-ripple-checkbox, .mud-ripple-switch {
+.mud-ripple-icon, .mud-ripple-checkbox, .mud-ripple-switch, .mud-ripple-radio {
     &:after {
         transform: scale(7,7);
     }
+}
+
+.mud-ripple-switch {
+    position: absolute;
 }

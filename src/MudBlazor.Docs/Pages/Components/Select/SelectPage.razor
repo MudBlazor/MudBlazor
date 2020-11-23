@@ -78,9 +78,30 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader>
+                <Title>Value presentation</Title>
+                <Description>
+                    Select uses the render fragements you specify for the items to display the selected value (if any). If you don't specify render fragments the value will be displayed as text. Also, if you have render fragments
+                    but the value that has been set is not in the list, it will also be displayed as text.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer Class="py-6">
+                    <SelectPresentationExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="SelectPresentationExample" GitHubFolderName="Select" />
+        </DocsPageSection>
+
+        <DocsPageSection>
         <SectionHeader>
             <Title>Select with custom converter</Title>
-            <Description></Description>
+            <Description>
+                Select has a built-in <CodeInline>DefaultConverter</CodeInline> which converts the values from any primitive type to string for presentation of the selected value. 
+                You can customize that converter as described under <MudLink Href="/features/converters">Converters</MudLink>. Here we use <CodeInline>ToStringFunc</CodeInline> to 
+                convert objects of type Pizza to their string representation. Note how the <CodeInline Tag="true">MudSelectItem</CodeInline> uses that string representation if you don't 
+                specify a render fragement.
+            </Description>
         </SectionHeader>
         <SectionContent Outlined="true" DisplayFlex="true">
             <MudContainer Class="py-6">
@@ -89,6 +110,7 @@
         </SectionContent>
         <SectionSource ShowCode="false" Code="SelectCustomConverterExample" GitHubFolderName="Select" />
     </DocsPageSection>
+        
 
     </DocsPageContent>
 </DocsPage>

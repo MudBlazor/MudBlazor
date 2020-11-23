@@ -21,7 +21,8 @@ namespace MudBlazor
                 .Build();
 
         protected string InputClassname =>
-            new CssBuilder("mud-input-root")
+            new CssBuilder("mud-input-slot")
+                .AddClass("mud-input-root")
                 .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-root-adorned-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
@@ -38,8 +39,10 @@ namespace MudBlazor
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
-
-
+        /// <summary>
+        /// ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.
+        /// </summary>
+        [Parameter] public RenderFragment ChildContent { get; set; }
     }
 
     public class MudInputString : MudInput<string> { }

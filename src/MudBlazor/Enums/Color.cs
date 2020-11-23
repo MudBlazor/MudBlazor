@@ -10,6 +10,8 @@ namespace MudBlazor
         Primary,
         [Description("secondary")]
         Secondary,
+        [Description("tertiary")]
+        Tertiary,
         [Description("info")]
         Info,
         [Description("success")]

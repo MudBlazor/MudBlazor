@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -67,6 +68,16 @@ namespace MudBlazor
                 Severity.Warning => Outlined.ReportProblemOutlined,
                 Severity.Error => Filled.ErrorOutline
             };
+        }
+
+        /// <summary>
+        /// Raised when the alert is clicked
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        private void OnClicked(MouseEventArgs ev)
+        {
+            OnClick.InvokeAsync(ev);
         }
     }
 }

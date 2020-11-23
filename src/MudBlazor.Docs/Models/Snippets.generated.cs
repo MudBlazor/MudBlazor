@@ -71,21 +71,11 @@ public const string AlertElevationExample = @"<MudGrid Class=""mt-6"">
     public int elevation = 1;
 }";
 
-public const string AlertFilledExample = @"<MudAlert Severity=""Severity.Normal"" Variant=""Variant.Filled"">
-    The reactor type is RBMK-1000
-</MudAlert>
-<MudAlert Severity=""Severity.Info"" Variant=""Variant.Filled"">
-    The reactor was fired up successfully
-</MudAlert>
-<MudAlert Severity=""Severity.Success"" Variant=""Variant.Filled"">
-    The reactor is running at optimum temperature
-</MudAlert>
-<MudAlert Severity=""Severity.Warning"" Variant=""Variant.Filled"">
-    The reactor is running at optimum temperature
-</MudAlert>
-<MudAlert Severity=""Severity.Error"" Variant=""Variant.Filled"">
-    The reactor temperature exceeds the optimal range
-</MudAlert>";
+public const string AlertFilledExample = @"<MudAlert Severity=""Severity.Normal"" Variant=""Variant.Filled"">The reactor type is RBMK-1000</MudAlert>
+<MudAlert Severity=""Severity.Info"" Variant=""Variant.Filled"">The reactor was fired up successfully</MudAlert>
+<MudAlert Severity=""Severity.Success"" Variant=""Variant.Filled"">The reactor is running at optimum temperature</MudAlert>
+<MudAlert Severity=""Severity.Warning"" Variant=""Variant.Filled"">The reactor temperature exceeds the optimal range</MudAlert>
+<MudAlert Severity=""Severity.Error"" Variant=""Variant.Filled"">Meltdown is imminent</MudAlert>";
 
 public const string AlertNoIconExample = @"<MudAlert Severity=""Severity.Normal"" NoIcon=""true"">Default No Icon</MudAlert>
 <MudAlert Severity=""Severity.Info"" NoIcon=""true"">Info No Icon</MudAlert>
@@ -123,27 +113,17 @@ public const string AlertNoIconTextExample = @"<MudAlert Severity=""Severity.Nor
 <MudAlert Severity=""Severity.Warning"" NoIcon=""true"">Warning No Icon</MudAlert>
 <MudAlert Severity=""Severity.Error"" NoIcon=""true"">Error No Icon</MudAlert>";
 
-public const string AlertOutlinedExample = @"<MudAlert Severity=""Severity.Normal"" Variant=""Variant.Outlined"">
-    The reactor type is RBMK-1000
-</MudAlert>
-<MudAlert Severity=""Severity.Info"" Variant=""Variant.Outlined"">
-    The reactor was fired up successfully
-</MudAlert>
-<MudAlert Severity=""Severity.Success"" Variant=""Variant.Outlined"">
-    The reactor is running at optimum temperature
-</MudAlert>
-<MudAlert Severity=""Severity.Warning"" Variant=""Variant.Outlined"">
-    The reactor is running at optimum temperature
-</MudAlert>
-<MudAlert Severity=""Severity.Error"" Variant=""Variant.Outlined"">
-    The reactor temperature exceeds the optimal range
-</MudAlert>";
+public const string AlertOutlinedExample = @"<MudAlert Severity=""Severity.Normal"" Variant=""Variant.Outlined"">The reactor type is RBMK-1000</MudAlert>
+<MudAlert Severity=""Severity.Info"" Variant=""Variant.Outlined"">The reactor was fired up successfully</MudAlert>
+<MudAlert Severity=""Severity.Success"" Variant=""Variant.Outlined"">The reactor is running at optimum temperature</MudAlert>
+<MudAlert Severity=""Severity.Warning"" Variant=""Variant.Outlined"">The reactor temperature exceeds the optimal range</MudAlert>
+<MudAlert Severity=""Severity.Error"" Variant=""Variant.Outlined"">Meltdown is imminent</MudAlert>";
 
 public const string AlertSimpleExample = @"<MudAlert Severity=""Severity.Normal"">The reactor type is RBMK-1000</MudAlert>
 <MudAlert Severity=""Severity.Info"">The reactor was fired up successfully</MudAlert>
 <MudAlert Severity=""Severity.Success"">The reactor is running at optimum temperature</MudAlert>
-<MudAlert Severity=""Severity.Warning"">The reactor is running at optimum temperature</MudAlert>
-<MudAlert Severity=""Severity.Error"">The reactor temperature exceeds the optimal range</MudAlert>";
+<MudAlert Severity=""Severity.Warning"">The reactor temperature exceeds the optimal range</MudAlert>
+<MudAlert Severity=""Severity.Error"">Meltdown is imminent</MudAlert>";
 
 public const string AlertSquareExample = @"<MudAlert Severity=""Severity.Normal"" Square=""true"">Default Square</MudAlert>
 <MudAlert Severity=""Severity.Info"" Square=""true"">Info Square</MudAlert>
@@ -737,14 +717,14 @@ public const string DatePickerBasicUsageExample = @"<MudDatePicker Label=""Picke
 <MudDatePicker Label=""Only Calendar"" Value=""2020-10-19"" DisableToolbar=""true"" HelperText=""No header"" />
 <MudDatePicker Label=""Date Format"" HelperText=""For custom cultures"" DateFormat=""dd/MM/yyyy"" Date=""@(new System.DateTime(2020,10,19))"" />";
 
-public const string DatePickerColorExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Value=""2020-10-19"" />
-<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Value=""2020-10-19"" />";
+public const string DatePickerColorExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Date=""@(DateTime.Today.AddDays(1))"" />
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Date=""@(DateTime.Today.AddDays(1))"" />";
 
-public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""1"" Value=""2020-10-19"" />
-<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""12"" Value=""2020-10-19"" />";
+public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""1"" Date=""@(DateTime.Today.AddDays(1))"" />
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""12"" Date=""@(DateTime.Today.AddDays(1))"" />";
 
-public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Value=""2020-10-19""/>
-<MudDatePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Value=""2020-10-19""/>";
+public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Date=""@(DateTime.Today.AddDays(1))""/>
+<MudDatePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Date=""@(DateTime.Today.AddDays(1))""/>";
 
 public const string DatePickeViewsExample = @"<MudDatePicker Label=""Year"" OpenTo=""OpenTo.Year"" Value=""2020-10-19""/>
 <MudDatePicker Label=""Month"" OpenTo=""OpenTo.Month"" Value=""2020-10-19"" />
@@ -1217,16 +1197,16 @@ public const string ExpansionPanelMultiExample = @"<MudExpansionPanels MultiExpa
 
 public const string ExpansionPanelSimpleExample = @"<MudExpansionPanels>
     <MudExpansionPanel Text=""Panel One"">
-        Panel One Content
+        <LoremIpsum/>
     </MudExpansionPanel>
     <MudExpansionPanel Text=""Panel Two"">
-        Panel Two Content
+        <LoremIpsum />
     </MudExpansionPanel>
     <MudExpansionPanel Text=""Panel Three"">
-        Panel Three Content
+        <LoremIpsum />
     </MudExpansionPanel>
     <MudExpansionPanel Text=""Panel Four"">
-        Panel Four Content
+        <LoremIpsum />
     </MudExpansionPanel>
 </MudExpansionPanels>";
 
@@ -2163,8 +2143,10 @@ public const string MultiSelectExample = @"<MudGrid>
 public const string SelectCustomConverterExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudSelect T=""Pizza"" @bind-Value=""@pizza"" Label=""Select your pizza"" Variant=""Variant.Outlined"" ToStringFunc=""@converter"" OffsetY=""true"">
-            <MudSelectItem Value=""@(new Pizza() { Name=""Margarita""})"">Margarita</MudSelectItem>
-            <MudSelectItem Value=""@(new Pizza() { Name=""Diavolo""})"">Diavolo</MudSelectItem>
+            <MudSelectItem Value=""@(new Pizza() { Name=""Cardinale""})"" />
+            <MudSelectItem Value=""@(new Pizza() { Name=""Diavolo""})"" />
+            <MudSelectItem Value=""@(new Pizza() { Name=""Margarita""})"" />
+            <MudSelectItem Value=""@(new Pizza() { Name=""Spinaci""})"" />
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
@@ -2189,9 +2171,9 @@ public const string SelectCustomConverterExample = @"<MudGrid>
 }";
 
 public const string SelectDenseExample = @"<MudSelect T=""string"" Label=""Dense"" Dense=""true"">
-    <MudSelectItem T=""string"" Value=""@(""foo"")"">Foo</MudSelectItem>
-    <MudSelectItem T=""string"" Value=""@(""bar"")"">Bar</MudSelectItem>
-    <MudSelectItem T=""string"" Value=""@(""baz"")"">Baz</MudSelectItem>
+    <MudSelectItem T=""string"" Value=""@(""Tyrannosaur"")""/>
+    <MudSelectItem T=""string"" Value=""@(""Triceratops"")""/>
+    <MudSelectItem T=""string"" Value=""@(""Oviraptor"")""/>
 </MudSelect>";
 
 public const string SelectDisabledExample = @"<MudSelect T=""string"" Label=""Disabled"" Disabled=""true"">
@@ -2260,6 +2242,50 @@ public const string SelectInteractiveExample = @"<MudGrid>
     }
 }";
 
+public const string SelectPresentationExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSelect @bind-Value=""@country"" Label=""With render fragements"" Variant=""Variant.Outlined"" OffsetY=""true"">
+            <MudSelectItem Value=""@(""Afghanistan"")"">
+                <img src=""https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Afghanistan.svg"" height=""14"" class=""mr-1""/> Afghanistan
+            </MudSelectItem>
+            <MudSelectItem Value=""@(""Australia"")"">
+                <img src=""https://upload.wikimedia.org/wikipedia/commons/8/88/Flag_of_Australia_%28converted%29.svg"" height=""14"" class=""mr-1"" /> Australia
+            </MudSelectItem>
+            <MudSelectItem Value=""@(""Austria"")"">
+                <img src=""https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_Austria.svg"" height=""14"" class=""mr-1"" /> Austria
+            </MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSelect @bind-Value=""@country"" Label=""Without render fragements"" Variant=""Variant.Outlined"" OffsetY=""true"">
+            <MudSelectItem Value=""@(""Afghanistan"")"" />
+            <MudSelectItem Value=""@(""Andorra"")"" />
+            <MudSelectItem Value=""@(""Australia"")"" />
+            <MudSelectItem Value=""@(""Austria"")"" />
+        </MudSelect>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"" md=""4"">
+        <MudSelect @bind-Value=""@country"" Label=""Austria not representable"" Variant=""Variant.Outlined"" OffsetY=""true"">
+            <MudSelectItem Value=""@(""Afghanistan"")"">
+                <img src=""https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Afghanistan.svg"" height=""14"" class=""mr-1"" /> Afghanistan
+            </MudSelectItem>
+            <MudSelectItem Value=""@(""Australia"")"">
+                <img src=""https://upload.wikimedia.org/wikipedia/commons/8/88/Flag_of_Australia_%28converted%29.svg"" height=""14"" class=""mr-1"" /> Australia
+            </MudSelectItem>
+            <MudSelectItem Value=""@(""Andorra"")"">
+                <img src=""https://upload.wikimedia.org/wikipedia/commons/1/19/Flag_of_Andorra.svg"" height=""14"" class=""mr-1"" /> Andorra
+            </MudSelectItem>
+        </MudSelect>
+    </MudItem>
+
+</MudGrid>
+
+@code {
+    string country=""Austria"";
+
+   
+}";
+
 public const string SelectUsageExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudSelect Label=""Select fast-food"" @bind-Value=""stringValue"" HelperText=""String"">
@@ -2278,10 +2304,10 @@ public const string SelectUsageExample = @"<MudGrid>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudSelect Placeholder=""Select culture"" @bind-Value=""cultureValue"" HelperText=""CultureInfo"" ToStringFunc=""@convertFunc"">
-            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""en-US""))"">English</MudSelectItem>
-            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""de-AT""))"">German</MudSelectItem>
-            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""pt-BR""))"">Portugese</MudSelectItem>
-            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""zh-CN""))"">Chinese</MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""en-US""))""></MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""de-AT""))""></MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""pt-BR""))""></MudSelectItem>
+            <MudSelectItem Value=""@(CultureInfo.GetCultureInfo(""zh-CN""))""/>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" md=""12"">
@@ -2306,22 +2332,28 @@ public const string SelectUsageExample = @"<MudGrid>
 
 public const string SelectVariantsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect T=""string"" Label=""Text"">
-            <MudSelectItem Value=""@(""foo"")"">Foo</MudSelectItem>
-            <MudSelectItem Value=""@(""bar"")"">Bar</MudSelectItem>
+        <MudSelect T=""string"" Label=""Coffee"">
+            <MudSelectItem Value=""@(""Cappuccino"")"" />
+            <MudSelectItem Value=""@(""Cafe Latte"")"" />
+            <MudSelectItem Value=""@(""Espresso"")"" />
+            <MudSelectItem Value=""@(""Irish Coffee"")"" />
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect T=""double"" Label=""Text"" Variant=""Variant.Outlined"">
-            <MudSelectItem Value=""4.50"">4.50</MudSelectItem>
-            <MudSelectItem Value=""21.99"">21.99</MudSelectItem>
+        <MudSelect T=""double?"" Label=""Price"" Variant=""Variant.Outlined"" Format=""F2"">
+            <MudSelectItem T=""double?"" Value=""4.50""/>
+            <MudSelectItem T=""double?"" Value=""4.99""/>
+            <MudSelectItem T=""double?"" Value=""3.60""/>
+            <MudSelectItem T=""double?"" Value=""21.99""/>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelectString Label=""Text"" Variant=""Variant.Filled"">
-            <MudSelectItemString Value=""foo"">Foo</MudSelectItemString>
-            <MudSelectItemString Value=""bar"">Bar</MudSelectItemString>
-        </MudSelectString>
+        <MudSelect T=""string"" Label=""Pies"" Variant=""Variant.Filled"">
+            <MudSelectItem Value=""@(""Apple Pie"")"" />
+            <MudSelectItem Value=""@(""Blackberry Pie"")"" />
+            <MudSelectItem Value=""@(""Rhubarb Pie"")"" />
+            <MudSelectItem Value=""@(""Lemon Pie"")"" />
+        </MudSelect>
     </MudItem>
 </MudGrid>";
 
@@ -2507,6 +2539,109 @@ public const string SliderStepsExample = @"<MudSlider Step=""10"" Value=""70"">T
     int step = 10;
 }";
 
+public const string SnackbarConfigurationExample = @"@inject MudBlazor.ISnackbar Snackbar
+
+<MudButton @onclick=""@(() => Snackbar.Add(""My Close button is gone!"", Severity.Normal, config => { config.ShowCloseIcon = false; }))"" Variant=""Variant.Filled"" Color=""Color.Primary"">
+    Open Modified Snackbar
+</MudButton>";
+
+public const string SnackbarPositionExample = @"@inject MudBlazor.ISnackbar Snackbar
+
+<MudButton @onclick=""@(() => ChangePosition(""Top-Left"", Defaults.Classes.Position.TopLeft))"" Color=""Color.Primary"" >Top-Left</MudButton>
+<MudButton @onclick=""@(() => ChangePosition(""Top-Center"", Defaults.Classes.Position.TopCenter))"" Color=""Color.Primary"" >Top-Center</MudButton>
+<MudButton @onclick=""@(() => ChangePosition(""Top-Right"", Defaults.Classes.Position.TopRight))"" Color=""Color.Primary"" >Top-Right</MudButton>
+<MudButton @onclick=""@(() => ChangePosition(""Bottom-Left"", Defaults.Classes.Position.BottomLeft))"" Color=""Color.Default"" >Bottom-Left</MudButton>
+<MudButton @onclick=""@(() => ChangePosition(""Bottom-Center"", Defaults.Classes.Position.BottomCenter))"" Color=""Color.Default"" >Bottom-Center</MudButton>
+<MudButton @onclick=""@(() => ChangePosition(""Bottom-Right"", Defaults.Classes.Position.BottomRight))"" Color=""Color.Default"" >Bottom-Right</MudButton>
+
+@code {
+    void ChangePosition(string message, string position)
+    {
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = position;
+        Snackbar.Add(message, Severity.Normal);
+    }
+}";
+
+public const string SnackbarRequireInteractionExample = @"@inject MudBlazor.ISnackbar Snackbar
+
+<div class=""pa-0 ma-0"">
+    <MudAlert Severity=""Severity.Warning"" Dense=""true"" Class=""rounded-0 rounded-t"">The reactor temperature exceeds the optimal range</MudAlert>
+    <MudAlert Severity=""Severity.Error"" Dense=""true"" Class=""rounded-0"">Reactor meltdown is imminent!</MudAlert>
+    <div class=""d-flex flex-column"" style=""height: 200px;"">
+        <div class=""align-self-center mt-12"">
+            <MudText Typo=""Typo.h6"">Fuel Rod Temperature: @FuelRodTemperature.ToString()C</MudText>
+        </div>
+        <div class=""align-self-center mt-6"">
+            <MudTooltip Text=""Reactor Shutdown"">
+                <MudButton Variant=""Variant.Filled"" DisableElevation=""true"" Color=""Color.Error"" @onclick=""@(() => ShutDown())"">Scram Button</MudButton>
+            </MudTooltip>
+        </div>
+    </div>
+    <MudAlert Severity=""Severity.Info"" Dense=""true"" Class=""rounded-0 rounded-b"">The reactor is about to have a meltdown deputy chief-engineer! You must act now!</MudAlert>
+</div>
+
+@code {
+
+    public int FuelRodTemperature { get; set; } = 600;
+
+    void ShutDown()
+    {
+        string message = ""Scram Initiated!"";
+        Snackbar.Add(message, Severity.Success, config =>
+        {
+            config.RequireInteraction = true;
+            config.ShowCloseIcon = false;
+            config.Onclick = snackbar =>
+            {
+                UpdateTemperature();
+                return Task.CompletedTask;
+            };
+        });
+    }
+
+    public void UpdateTemperature()
+    {
+        FuelRodTemperature += 100;
+        Snackbar.Add(""Temperature is still going up!"", Severity.Warning);
+        StateHasChanged();
+    }
+}";
+
+public const string SnackbarSeverityExample = @"@inject MudBlazor.ISnackbar Snackbar
+
+
+<MudButton Color=""Color.Dark"" @onclick=""@(() => Snackbar.Add(""The reactor type is RBMK-1000"", Severity.Normal))"">Normal Snackbar</MudButton>
+<MudButton Color=""Color.Info"" @onclick=""@(() => Snackbar.Add(""The reactor was fired up successfully"", Severity.Info))"">Info Snackbar</MudButton>
+<MudButton Color=""Color.Success"" @onclick=""@(() => Snackbar.Add(""The reactor is running at optimum temperature"", Severity.Success))"">Success Snackbar</MudButton>
+<MudButton Color=""Color.Warning"" @onclick=""@(() => Snackbar.Add(""The reactor temperature exceeds the optimal range"", Severity.Warning))"">Warning Snackbar</MudButton>
+<MudButton Color=""Color.Error"" @onclick=""@(() => Snackbar.Add(""Reactor meltdown is imminent"", Severity.Error))"">Error Snackbar</MudButton>";
+
+public const string SnackbarUsageExample = @"@inject MudBlazor.ISnackbar Snackbar
+
+<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" @onclick=""@(() => Snackbar.Add(""Simple Snackbar""))"">
+    Open Snackbar
+</MudButton>";
+
+public const string SnackbarVariantsExample = @"@inject MudBlazor.ISnackbar Snackbar
+
+<MudButton @onclick=""@(() => ChangeVariant(""Text Snackbar"", Variant.Text))"" Color=""Color.Primary"">Open Text Snackbar</MudButton>
+<MudButton @onclick=""@(() => ChangeVariant(""Filled Snackbar"", Variant.Filled))"" Color=""Color.Secondary"">Open Filled Snackbar</MudButton>
+<MudButton @onclick=""@(() => ChangeVariant(""Outlined Snackbar"", Variant.Outlined))"" Color=""Color.Tertiary"">Open Outlined Snackbar</MudButton>
+
+@code {
+    void ChangeVariant(string message, Variant variant)
+    {
+        Snackbar.Configuration.SnackbarVariant = variant;
+        Snackbar.Configuration.MaxDisplayedSnackbars = 10;
+        Snackbar.Add($""Normal {message}"", Severity.Normal);
+        Snackbar.Add($""Info {message}"", Severity.Info);
+        Snackbar.Add($""Success {message}"", Severity.Success);
+        Snackbar.Add($""Warning {message}"", Severity.Warning);
+        Snackbar.Add($""Error {message}"", Severity.Error);
+    }
+}";
+
 public const string SparkLineExample = @"<MudSparkLine></MudSparkLine>";
 
 public const string SwitchBasicExample = @"<MudSwitch @bind-Checked=""@Basic_Switch1"" />
@@ -2531,6 +2666,23 @@ public const string SwitchWithLabelExample = @"<MudSwitch @bind-Checked=""@Label
     public bool Label_Switch3 { get; set; } = true;
 }";
 
+public const string TableBasicExample = @"<MudTable Items=""@PeriodicTable.GetElements().Take(4)"" Hover=""true"" Breakpoint=""Breakpoint.Sm"">
+    <HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
+    </RowTemplate>
+</MudTable>";
+
 public const string TableColGroupExample = @"<MudTable Items=""@PeriodicTable.GetElements()"">
     <ColGroup>
         <col style=""width: 60px;"" />
@@ -2547,11 +2699,11 @@ public const string TableColGroupExample = @"<MudTable Items=""@PeriodicTable.Ge
         <MudTh Style=""text-align:center"">Molar mass</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>@context.Sign</MudTd>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd Style=""text-align:right"">@context.Molar</MudTd>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"" Style=""text-align:right"">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
@@ -2565,8 +2717,7 @@ public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElement
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
         <MudToolBarSpacer />
-        <MudIcon Class=""mt-5 mr-2"" Icon=""@Icons.Material.Search""></MudIcon>
-        <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
+        <MudTextField @bind-Value=""search_string"" Placeholder=""Search"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium"" Class=""mt-0""></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Nr</MudTh>
@@ -2576,11 +2727,11 @@ public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElement
         <MudTh>Molar mass</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>@context.Sign</MudTd>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd>@context.Molar</MudTd>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
@@ -2621,11 +2772,11 @@ public const string TableFixedHeaderExample = @"<MudTable Items=""@PeriodicTable
         <MudTh>Molar mass</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>@context.Sign</MudTd>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd>@context.Molar</MudTd>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager PageSizeOptions=""new int[]{50, 100}"" />
@@ -2637,12 +2788,11 @@ public const string TableFixedHeaderExample = @"<MudTable Items=""@PeriodicTable
     bool fixed_header = true;
 }";
 
-public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"">
+public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"" SortLabel=""Sort By"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
-        <MudToolBarSpacer/>
-        <MudIcon Class=""mt-5 mr-2"" Icon=""@Icons.Material.Search""></MudIcon>
-        <MudTextField @bind-Value=""search_string"" Placeholder=""Search""></MudTextField>
+        <MudToolBarSpacer />
+        <MudTextField @bind-Value=""search_string"" Placeholder=""Search"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium"" Class=""mt-0""></MudTextField>
     </ToolBarContent>
     <ColGroup>
         <col style=""width:50px;"" />
@@ -2653,18 +2803,18 @@ public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Ite
         <col style=""width:50px;"" />
     </ColGroup>
     <HeaderContent>
-        <MudTh>Nr</MudTh>
-        <MudTh>Sign</MudTh>
-        <MudTh>Name</MudTh>
-        <MudTh>Position</MudTh>
-        <MudTh>Molar mass</MudTh>
+        <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Number)"">Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Sign)"">Sign</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection=""SortDirection.Ascending"" SortBy=""new Func<Element, object>(x=>x.Name)"">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Position)"">Position</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Molar)"">Mass</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>@context.Sign</MudTd>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd>@context.Molar</MudTd>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
     </RowTemplate>
     <RowEditingTemplate>
         <MudTd>@context.Number</MudTd>
@@ -2720,11 +2870,11 @@ public const string TableMultiSelectExample = @"<MudTable Items=""@PeriodicTable
         <MudTh>Molar mass</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>@context.Sign</MudTd>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd>@context.Molar</MudTd>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager PageSizeOptions=""new int[]{50, 100}"" />
@@ -2737,7 +2887,7 @@ public const string TableMultiSelectExample = @"<MudTable Items=""@PeriodicTable
     HashSet<Element> selected_items = new HashSet<Element>();
 }";
 
-public const string TableSortingExample = @"<MudTable Items=""@PeriodicTable.GetElements()"" Hover=""true"">
+public const string TableSortingExample = @"<MudTable Items=""@PeriodicTable.GetElements()"" Hover=""true"" SortLabel=""Sort By"">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Number)"">Nr</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Sign)"">Sign</MudTableSortLabel></MudTh>
@@ -2746,11 +2896,11 @@ public const string TableSortingExample = @"<MudTable Items=""@PeriodicTable.Get
         <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Molar)"">Mass</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>@context.Sign</MudTd>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd>@context.Molar</MudTd>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager PageSizeOptions=""new int[]{50, 100}"" />
@@ -3045,6 +3195,46 @@ public const string TimePickerStaticExample = @"<MudTimePicker PickerVariant=""P
 }";
 
 public const string TimePickerViewsExample = @"<MudTimePicker Label=""Minutes"" Value=""13:37"" OpenTo=""OpenTo.Minutes"" />";
+
+public const string ToggleIconButtonEventCallbackExample = @"<MudToggleIconButton Toggled=""@AlarmOn"" ToggledChanged=""(toggleValue) => IncrementSwitchedOn(toggleValue)""
+                     Icon=""@Icons.Material.AlarmOff"" Color=""@Color.Error"" 
+                     ToggledIcon=""@Icons.Material.AlarmOn"" ToggledColor=""@Color.Success"" />
+
+<MudBody1>Alarm is @(AlarmOn ? ""On"" : ""Off"")</MudBody1>
+<MudBody1>@($""I have been switched on {SwitchedOnCount} times."")</MudBody1>
+
+@code {
+    public bool AlarmOn { get; set; }
+    public int SwitchedOnCount { get; set; }
+
+    public void IncrementSwitchedOn(bool toggleValue)
+    {
+        // You can do things before assignment
+        // ...
+
+        // Assignment of one-way bound parameter
+        AlarmOn = toggleValue;
+
+        // And after assignment has been made
+        // ...
+
+        if (AlarmOn)
+        {
+            SwitchedOnCount++;
+        }
+
+    }
+}";
+
+public const string ToggleIconButtonTwoWayBindingExample = @"<MudToggleIconButton @bind-Toggled=""@AlarmOn""
+                     Icon=""@Icons.Material.AlarmOff"" Color=""@Color.Error""
+                     ToggledIcon=""@Icons.Material.AlarmOn"" ToggledColor=""@Color.Success""/>
+
+<MudBody1>Alarm is @(AlarmOn ? ""On"" : ""Off"")</MudBody1>
+
+@code {
+    public bool AlarmOn { get; set; }
+}";
 
 public const string TooltipDelayedExample = @"<MudTooltip Text=""Delete"" Delayed=""1"">
     <MudIconButton Icon=""@Icons.Material.Delete"" />

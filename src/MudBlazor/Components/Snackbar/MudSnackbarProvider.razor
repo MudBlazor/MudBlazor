@@ -1,15 +1,17 @@
 ﻿@*
     Copyright (c) Alessandro Ghidini. All rights reserved.
-    Licensed under the MIT License. See License.txt in the project root for license information.
-    Changes and improvements copyright (c) The MudBlazor Team
+    Changes and improvements Copyright (c) The MudBlazor Team.
 *@
 
 @namespace MudBlazor
 @inherits MudComponentBase
 
 <div id="mud-snackbar-container" class="@Classname" style="@Style">
-    @foreach (var snackbar in Snackbar)
+    @if (Snackbar != null)
     {
-        <MudSnackbarElement @key="snackbar" Snackbar="@snackbar"></MudSnackbarElement>
+        @foreach (var snackbar in Snackbar)
+        {
+            <MudSnackbarElement @key="snackbar" Snackbar="@snackbar"></MudSnackbarElement>
+        }
     }
 </div>

@@ -25,10 +25,33 @@
     }
 }
 
-.mud-dialog {
-    .mud-popover {
-        position: fixed;
-        width: calc(100% - 48px);
+.mud-collapse-container {
+    .mud-select {
+        position: unset;
+
+        .mud-input-control.mud-select {
+            position: relative;
+        }
+
+        .mud-popover {
+            width: calc(calc(100% - 48px));
+
+            &.mud-popover-top {
+                &.mud-popover-offset-y {
+                    bottom: auto;
+                }
+            }
+
+            &.mud-popover-bottom {
+                &.mud-popover-offset-y {
+                    top: auto;
+                }
+            }
+        }
+    }
+
+    .mud-picker-inline {
+        position: unset;
     }
 }
 

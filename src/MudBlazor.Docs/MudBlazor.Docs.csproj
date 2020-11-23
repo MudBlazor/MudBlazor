@@ -6,9 +6,13 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Content Remove="Pages\Components\Autocomplete\Examples\AutocompleteClrObjectsExampleee.razor" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;LIVESHARP_DISABLE</DefineConstants>
+  </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Data\Elements.json" />
@@ -16,6 +20,7 @@
 
 
   <ItemGroup>
+    <PackageReference Include="LiveSharp" Version="1.6.31" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
@@ -24,11 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\Components\Autocomplete\Code\" />
-    <Folder Include="Pages\Components\ChipSet\Code\" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

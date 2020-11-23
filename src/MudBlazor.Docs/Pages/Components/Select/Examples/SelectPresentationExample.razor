@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect @bind-Value="@country" Label="With render fragements" Variant="Variant.Outlined" OffsetY="true">
+            <MudSelectItem Value="@("Afghanistan")">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Afghanistan.svg" height="14" class="mr-1"/> Afghanistan
+            </MudSelectItem>
+            <MudSelectItem Value="@("Australia")">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/88/Flag_of_Australia_%28converted%29.svg" height="14" class="mr-1" /> Australia
+            </MudSelectItem>
+            <MudSelectItem Value="@("Austria")">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_Austria.svg" height="14" class="mr-1" /> Austria
+            </MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect @bind-Value="@country" Label="Without render fragements" Variant="Variant.Outlined" OffsetY="true">
+            <MudSelectItem Value="@("Afghanistan")" />
+            <MudSelectItem Value="@("Andorra")" />
+            <MudSelectItem Value="@("Australia")" />
+            <MudSelectItem Value="@("Austria")" />
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSelect @bind-Value="@country" Label="Austria not representable" Variant="Variant.Outlined" OffsetY="true">
+            <MudSelectItem Value="@("Afghanistan")">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Afghanistan.svg" height="14" class="mr-1" /> Afghanistan
+            </MudSelectItem>
+            <MudSelectItem Value="@("Australia")">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/8/88/Flag_of_Australia_%28converted%29.svg" height="14" class="mr-1" /> Australia
+            </MudSelectItem>
+            <MudSelectItem Value="@("Andorra")">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Flag_of_Andorra.svg" height="14" class="mr-1" /> Andorra
+            </MudSelectItem>
+        </MudSelect>
+    </MudItem>
+
+</MudGrid>
+
+@code {
+    string country="Austria";
+
+   
+}
