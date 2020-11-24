@@ -555,6 +555,9 @@
   padding: 0px;
   width: 100%; }
 
+.docs-content-outlined {
+  border: 1px solid var(--mud-palette-lines-default); }
+
 .docs-icon-container {
   margin-top: 20px; }
   .docs-icon-container .mud-divider {
