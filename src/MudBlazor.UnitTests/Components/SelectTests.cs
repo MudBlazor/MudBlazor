@@ -128,12 +128,12 @@ namespace MudBlazor.UnitTests
             select.Instance.Text.Should().Be(default(MyEnum).ToString());
             await Task.Delay(50);
             comp.Find("div.mud-input-slot").TextContent.Should().Be("First");
-            comp.RenderCount.Should().Be(2);
+            comp.RenderCount.Should().Be(1);
             //Console.WriteLine(comp.Markup);
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             comp.Find("div.mud-input-slot").TextContent.Should().Be("Second");
-            comp.RenderCount.Should().Be(3);
+            comp.RenderCount.Should().Be(2);
         }
 
         /// <summary>
