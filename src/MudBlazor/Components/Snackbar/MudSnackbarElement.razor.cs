@@ -13,13 +13,15 @@ namespace MudBlazor
         public Snackbar Snackbar { get; set; }
         protected RenderFragment Css;
 
-        protected string Message => Snackbar.Message;
+        protected string Message => Snackbar?.Message;
 
-        protected void Clicked() => Snackbar.Clicked(false);
-        protected void CloseIconClicked() => Snackbar.Clicked(true);
+        protected void Clicked() => Snackbar?.Clicked(false);
+        protected void CloseIconClicked() => Snackbar?.Clicked(true);
 
         protected override void OnInitialized()
         {
+            if (Snackbar == null)
+                return;
             Snackbar.OnUpdate += SnackbarUpdated;
             Snackbar.Init();
 
@@ -47,7 +49,8 @@ namespace MudBlazor
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing || Snackbar == null) return;
+            if (!disposing || Snackbar == null) 
+                return;
             Snackbar.OnUpdate -= SnackbarUpdated;
         }
     }

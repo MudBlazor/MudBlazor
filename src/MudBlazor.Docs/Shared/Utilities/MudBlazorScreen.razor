@@ -1,6 +1,7 @@
-﻿
-<MudCard Elevation="25" Class="mudblazor-project-card">
-    <MudCardHeader>
+﻿@namespace MudBlazor.Docs.Shared
+
+<MudCard Elevation="25">
+    <MudCardHeader Class="rounded-t pa-3" Style="background: transparent linear-gradient(90deg,#594AE2 0%, #FF4081 100%) 0% 0% no-repeat padding-box;">
         <CardHeaderAvatar>
             <MudSkeleton SkeletonType="SkeletonType.Circle" Width="8px" Height="8px" Animation="Animation.False" Class="d-inline-flex mudblazor-skeleton-white" />
             <MudSkeleton SkeletonType="SkeletonType.Circle" Width="8px" Height="8px" Animation="Animation.False" Class="d-inline-flex mudblazor-skeleton-white" />
@@ -10,7 +11,7 @@
             <MudSkeleton Animation="Animation.False" Class="mudblazor-skeleton-white" />
         </CardHeaderContent>
     </MudCardHeader>
-    <MudCardContent>
+    <MudCardContent Style="height: 300px;">
         <MudGrid>
             <MudItem xs="12" sm="12" md="3">
                 <MudPaper Elevation="25" Style="background-color: rgba(0,0,0,.11); height:100%;">

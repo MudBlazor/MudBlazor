@@ -17,6 +17,10 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-table")
+           .AddClass($"mud-sm-table", Breakpoint == Breakpoint.Sm)
+           .AddClass($"mud-md-table", Breakpoint == Breakpoint.Md)
+           .AddClass($"mud-lg-table", Breakpoint == Breakpoint.Lg)
+           .AddClass($"mud-xl-table", Breakpoint == Breakpoint.Xl)
            .AddClass($"mud-table-dense", Dense)
            .AddClass($"mud-table-hover", Hover)
            .AddClass($"mud-table-outlined", Outlined)
@@ -49,6 +53,11 @@ namespace MudBlazor
         [Parameter] public bool Hover { get; set; }
 
         /// <summary>
+        /// At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.
+        /// </summary>
+        [Parameter] public Breakpoint Breakpoint { get; set; }
+
+        /// <summary>
         /// When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.
         /// </summary>
         [Parameter] public bool FixedHeader { get; set; }
@@ -58,6 +67,11 @@ namespace MudBlazor
         /// attribute 'height' accepts, i.e. 500px. 
         /// </summary>
         [Parameter] public string Height { get; set; }
+
+        /// <summary>
+        /// If table is in smalldevice mode and uses any kind of sorting the text applied here will be the sort selects label.
+        /// </summary>
+        [Parameter] public string SortLabel { get; set; }
 
         /// <summary>
         /// If the table has more items than this number, it will break the rows into pages of said size.

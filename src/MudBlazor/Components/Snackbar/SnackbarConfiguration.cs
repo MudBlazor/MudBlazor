@@ -1,7 +1,8 @@
-﻿// Copyright (c) Alessandro Ghidini. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
+﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
+//Changes and improvements Copyright (c) The MudBlazor Team.
 
 using System;
+using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
@@ -55,8 +56,6 @@ namespace MudBlazor
             }
         }
 
-        public SnackbarIconClasses IconClasses = new SnackbarIconClasses();
-
         public SnackbarConfiguration()
         {
             PositionClass = Defaults.Classes.Position.TopRight;
@@ -65,17 +64,20 @@ namespace MudBlazor
             MaxDisplayedSnackbars = 5;
         }
 
-        internal string SnackbarTypeClass(SnackbarType type)
+        internal string SnackbarTypeClass(Severity severity, Variant variant, bool blurred)
         {
-            switch (type)
+            string backgroundClass = "";
+
+            if (blurred && variant != Variant.Filled)
             {
-                case SnackbarType.Default: return IconClasses.Default;
-                case SnackbarType.Info: return IconClasses.Info;
-                case SnackbarType.Error: return IconClasses.Error;
-                case SnackbarType.Success: return IconClasses.Success;
-                case SnackbarType.Warning: return IconClasses.Warning;
-                default: return IconClasses.Default;
+                backgroundClass = "mud-snackbar-blurred";
             }
+            else if(!blurred && variant != Variant.Filled)
+            {
+                backgroundClass = "mud-snackbar-surface";
+            }
+
+            return $"mud-alert-{variant.ToDescriptionString()}-{severity.ToDescriptionString()} {backgroundClass}";
         }
     }
 }

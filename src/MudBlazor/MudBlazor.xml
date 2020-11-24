@@ -414,6 +414,11 @@
             Child content of the component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudAlert.OnClick">
+            <summary>
+            Raised when the alert is clicked
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudAppBar.Elevation">
             <summary>
             The higher the number, the heavier the drop-shadow. 0 for no shadow.
@@ -668,6 +673,61 @@
         <member name="P:MudBlazor.MudIconButton.ChildContent">
             <summary>
             Child content of component, only shows if Icon is null or Empty.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToggleIconButton.Toggled">
+            <summary>
+            The toggled value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToggleIconButton.ToggledChanged">
+            <summary>
+            Fires whenever toggled is changed. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToggleIconButton.Icon">
+            <summary>
+            The Icon that will be used in the untoggled state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToggleIconButton.ToggledIcon">
+            <summary>
+            The Icon that will be used in the toggled state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToggleIconButton.Color">
+            <summary>
+            The color of the icon in the untoggled state. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToggleIconButton.ToggledColor">
+            <summary>
+            The color of the icon in the toggled state. It supports the theme colors.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToggleIconButton.Size">
+            <summary>
+            The Size of the component in the untoggled state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToggleIconButton.ToggledSize">
+            <summary>
+            The Size of the component in the toggled state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToggleIconButton.Edge">
+            <summary>
+            If set uses a negative margin.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToggleIconButton.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudToggleIconButton.Disabled">
+            <summary>
+            If true, the button will be disabled.
             </summary>
         </member>
         <member name="P:MudBlazor.MudChartBase.ChartType">
@@ -1026,6 +1086,86 @@
             Child content of component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudField.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Margin">
+            <summary>
+             Will adjust vertical spacing. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Error">
+            <summary>
+            If true, the label will be displayed in an error state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.ErrorText">
+            <summary>
+            The ErrorText that will be displayed if Error true
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.HelperText">
+            <summary>
+            The HelperText will be displayed below the text field.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.FullWidth">
+            <summary>
+            If true, the field will take up the full width of its container.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Label">
+            <summary>
+            If string has value the label text will be displayed in the input, and scaled down at the top if the field has value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Variant">
+            <summary>
+            Variant can be Text, Filled or Outlined.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Disabled">
+            <summary>
+            If true, the input element will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.AdornmentIcon">
+            <summary>
+            Icon that will be used if Adornment is set to Start or End.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.AdornmentText">
+            <summary>
+            Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Adornment">
+            <summary>
+            Sets Start or End Adornment if not set to None.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.IconSize">
+            <summary>
+            Sets the Icon Size.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.OnAdornmentClick">
+            <summary>
+            Button click event if set and Adornment used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.InnerPadding">
+            <summary>
+            If true, the inner contents padding is removed.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.DisableUnderLine">
+            <summary>
+            If true, the field will not have an underline.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudForm.ChildContent">
             <summary>
             Child content of component.
@@ -1160,6 +1300,11 @@
         <member name="P:MudBlazor.MudInputControl.Disabled">
             <summary>
             If true, the input element will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInput`1.ChildContent">
+            <summary>
+            ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.
             </summary>
         </member>
         <member name="P:MudBlazor.MudInputLabel.ChildContent">
@@ -1517,6 +1662,11 @@
             Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudSelect`1.CanRenderValue">
+            <summary>
+            Returns whether or not the Value can be found in items. If not, the Select will display it as a string.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudSelect`1.MultiSelection">
             <summary>
             If true, multiple values can be selected via checkboxes which are automatically shown in the dropdown
@@ -1674,6 +1824,11 @@
             Set true to see rows hover on mouse-over.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTableBase.Breakpoint">
+            <summary>
+            At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTableBase.FixedHeader">
             <summary>
             When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.
@@ -1683,6 +1838,11 @@
             <summary>
             Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
             attribute 'height' accepts, i.e. 500px. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.SortLabel">
+            <summary>
+            If table is in smalldevice mode and uses any kind of sorting the text applied here will be the sort selects label.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTableBase.RowsPerPage">
@@ -1761,6 +1921,11 @@
         <member name="P:MudBlazor.MudTabs.Border">
             <summary>
             If true, sets a border.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabs.Outlined">
+            <summary>
+            If true, toolbar will be outlined.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTabs.Centered">
@@ -2523,6 +2688,16 @@
         <member name="P:MudBlazor.MudTable`1.SelectedItemsChanged">
             <summary>
             Callback is called whenever items are selected or deselected in multi selection mode.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableSortLabel`1.SortIcon">
+            <summary>
+            The Icon used to display sortdirection.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableSortLabel`1.AppendIcon">
+            <summary>
+            If true the icon will be placed before the label text.
             </summary>
         </member>
         <member name="M:MudBlazor.MudTableSortLabel`1.SetSortDirection(MudBlazor.SortDirection)">

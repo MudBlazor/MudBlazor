@@ -1,0 +1,20 @@
+@namespace MudBlazor.Docs.Pages.Components.Snackbar
+
+<div class="mud-codeblock">
+<div class="csharp"><pre>
+<span class="keyword">using</span> MudBlazor.Services;
+
+<span class="localVar">services</span>.<span class="function">AddMudBlazorSnackbar</span>(<span class="localVar">config</span> =&gt;
+{
+    <span class="localVar">config</span>.PositionClass = <span class="class">Defaults</span>.<span class="class">Classes</span>.<span class="class">Position</span>.BottomLeft;
+
+    <span class="localVar">config</span>.PreventDuplicates = <span class="keyword">false</span>;
+    <span class="localVar">config</span>.NewestOnTop = <span class="keyword">false</span>;
+    <span class="localVar">config</span>.ShowCloseIcon = <span class="keyword">true</span>;
+    <span class="localVar">config</span>.VisibleStateDuration = <span class="number">10000</span>;
+    <span class="localVar">config</span>.HideTransitionDuration = <span class="number">500</span>;
+    <span class="localVar">config</span>.ShowTransitionDuration = <span class="number">500</span>;
+    <span class="localVar">config</span>.SnackbarDefaultVariant = <span class="enum">Variant</span>.Filled;
+});
+</pre></div>
+</div>

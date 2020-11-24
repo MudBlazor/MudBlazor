@@ -7,116 +7,92 @@
     <DocsPageHeader Title="Snackbar" />
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Simple snackbars</Title>
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <MudText></MudText>
-                <MudButton @onclick="@(() => Snackbar.Default("Simple snackbar"))">Open Simple snackbar</MudButton>
-            </SectionContent>
+            <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
+            <MudText>The Snackbar is dependant on <CodeInline Class="docs-code-tertiary">ISnackbar</CodeInline> service and <CodeInline>MudSnackbarProvider</CodeInline></MudText>
+            <MudText>Check the <MudLink Href="/getting-started/installation">Installation</MudLink> page for instructions regarding default setup.</MudText>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
-                <Title>Positioned snackbars</Title>
-                <Description></Description>
+                <Title>Usage</Title>
+                <Description>This is the simplest way of using the <CodeInline>Snackbar</CodeInline> it provides the user with a temporary an closable <CodeInline>Snackbar</CodeInline></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <MudButton Color="Color.Primary" @onclick="@(() => ChangePosition("Top-Left", Defaults.Classes.Position.TopLeft))">Top-Left</MudButton>
-                <MudButton Color="Color.Primary" @onclick="@(() => ChangePosition("Top-Center", Defaults.Classes.Position.TopCenter))">Top-Center</MudButton>
-                <MudButton Color="Color.Primary" @onclick="@(() => ChangePosition("Top-Right", Defaults.Classes.Position.TopRight))">Top-Right</MudButton>
-                <MudButton Color="Color.Default" @onclick="@(() => ChangePosition("Bottom-Left", Defaults.Classes.Position.BottomLeft))">Bottom-Left</MudButton>
-                <MudButton Color="Color.Default" @onclick="@(() => ChangePosition("Bottom-Center", Defaults.Classes.Position.BottomCenter))">Bottom-Center</MudButton>
-                <MudButton Color="Color.Default" @onclick="@(() => ChangePosition("Bottom-Right", Defaults.Classes.Position.BottomRight))">Bottom-Right</MudButton>
+                <SnackbarUsageExample />
             </SectionContent>
-            @*<SectionSource Code="@Markdown_SimpleDialog"></SectionSource>*@
+            <SectionSource Code="SnackbarUsageExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
-                <Title>Snackbars with Alert</Title>
-                <Description>Snackbars can take use of Alert component and show short alerts.</Description>
+                <Title>Alerts and Severity</Title>
+                <Description>
+                    By defaulty no <CodeInline>Severity</CodeInline> property has to be passed and the snackbar uses the normal level.<br />
+                    To change the snackbar into an alert snackbar simply pass down the <CodeInline>Severity</CodeInline> enum after the message.
+                </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true" Class="demo-snackbar-alerts">
-                <MudAlert Severity="Severity.Normal" Variant="Variant.Filled" Class="mud-elevation-6">
-                    The reactor type is RBMK-1000
-                </MudAlert>
-                <MudAlert Severity="Severity.Info" Variant="Variant.Filled" Class="mud-elevation-6">
-                    The reactor was fired up successfully
-                </MudAlert>
-                <MudAlert Severity="Severity.Success" Variant="Variant.Filled" Class="mud-elevation-6">
-                    The reactor is running at optimum temperature
-                </MudAlert>
-                <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" Class="mud-elevation-6">
-                    The reactor is running at optimum temperature
-                </MudAlert>
-                <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Class="mud-elevation-6">
-                    The reactor temperature exceeds the optimal range
-                </MudAlert>
+            <SectionContent Outlined="true">
+                <SnackbarSeverityExample />
             </SectionContent>
-            @*<SectionSource Code="@Markdown_SimpleDialog"GitHubFolderName="Snackbar"></SectionSource>*@
+            <SectionSource Code="SnackbarSeverityExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Configuration</Title>
+                <Description>The Snackbars default behavior can be changed in two ways, either globaly when the service is registered and pass down the <CodeInline>SnackbarConfiguration</CodeInline> class with the changes you want to make.</Description>
+            </SectionHeader>
+            <SectionHeader>
+                <SubTitle>1. Global Service Settings</SubTitle>
+                <Description>In either <CodeInline>Program.Main</CodeInline> or <CodeInline>Startup.cs</CodeInline> depending on what kind of project you have. See <MudLink Href="/getting-started/installation">installation page</MudLink> for more information regarding this.</Description>
+            </SectionHeader>
+            <MarkdownSnackbarConfigurationService />
+            <SectionHeader>
+                <SubTitle>2. Per Snackbar</SubTitle>
+                <Description>
+                    This can be done in many ways, below is one of them and we will contiune to use it use it further down on this page.<br />
+                    Below we pass along a modified configuration that differs from our globally set <CodeInline>ShowCloseIcon</CodeInline> in this case it's also the Snackbar's default value.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SnackbarConfigurationExample />
+            </SectionContent>
+            <SectionSource Code="SnackbarConfigurationExample" GitHubFolderName="Snackbar" />
+        </DocsPageSection>
+
+        <MudDivider Class="my-16" Style="opacity:0;" />
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Snackbar Position</Title>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SnackbarPositionExample />
+            </SectionContent>
+            <SectionSource Code="SnackbarPositionExample" GitHubFolderName="Snackbar" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Snackbar Variants</Title>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SnackbarVariantsExample />
+            </SectionContent>
+            <SectionSource Code="SnackbarVariantsExample" GitHubFolderName="Snackbar" ShowCode="false" />
+        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Require Interacation</Title>
-                <Description></Description>
+                <Description>With the <CodeInline>RequireInteraction</CodeInline> property set to true the snackbar will not dissapear until the user interacts with it.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
-                <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Primary" StartIcon="@Icons.Material.Build" @onclick="@(() => StartBuild())" Disabled="BuildAgainDisabled">Build Project</MudButton>
-                <MudButton Variant="Variant.Filled" DisableElevation="true" @onclick="@OnShowBuildLog" Disabled="RunAgainDisabled">Run Again</MudButton>
-                <MudPaper Outlined="true" Class="demo-snackbar-output">
-                    @if (ShowBuildLog)
-                    {
-                        foreach (string line in BuildLogList)
-                        {
-                            <MudText Typo="Typo.caption">@line</MudText>
-                        }
-                    }
-                </MudPaper>
+            <SectionContent FullWidth="true" Class="pa-0" Outlined="true">
+                <SnackbarRequireInteractionExample/>
             </SectionContent>
-            @*<SectionSource Code="@Markdown_SimpleDialog"GitHubFolderName="Snackbar"></SectionSource>*@
+            <SectionSource Code="SnackbarRequireInteractionExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>
-
-
-@code {
-
-    void ChangePosition(string message, string position)
-    {
-        Snackbar.Clear();
-        Snackbar.Configuration.PositionClass = position;
-        Snackbar.Default(message);
-    }
-
-    public bool ShowBuildLog { get; set; }
-    public List<string> BuildLogList = new List<string> { "Starting: Build", "dotnet build", "Build succeeded.", "Finishing: Build" };
-    public bool BuildAgainDisabled { get; set; } = false;
-    public bool RunAgainDisabled { get; set; } = true;
-
-    void StartBuild()
-    {
-        string ErrorMessage = "Build succeeded, click for more information.";
-        Snackbar.Add(SnackbarType.Success, ErrorMessage, config =>
-        {
-            config.RequireInteraction = true;
-            config.ShowCloseIcon = false;
-            config.Onclick = snackbar =>
-            {
-                OnShowBuildLog();
-                return Task.CompletedTask;
-            };
-        });
-    }
-
-    public void OnShowBuildLog()
-    {
-        BuildAgainDisabled = !BuildAgainDisabled;
-        RunAgainDisabled = !RunAgainDisabled;
-        ShowBuildLog = !ShowBuildLog;
-        StateHasChanged();
-    }
-
-}
-
 

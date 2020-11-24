@@ -1,5 +1,5 @@
-﻿// Copyright (c) Alessandro Ghidini. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
+﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
+//Changes and improvements Copyright (c) The MudBlazor Team.
 
 using System;
 using System.Threading;
@@ -13,7 +13,7 @@ namespace MudBlazor
         public string Message { get; }
         public event Action<Snackbar> OnClose;
         public event Action OnUpdate;
-        public SnackbarType Type => State.Options.Type;
+        public Severity Severity => State.Options.Severity;
 
         internal Snackbar(string message, SnackbarOptions options)
         {

@@ -1,11 +1,11 @@
-﻿// Copyright (c) Alessandro Ghidini. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
+﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
+//Changes and improvements Copyright (c) The MudBlazor Team.
 
 namespace MudBlazor
 {
     public abstract class CommonSnackbarOptions
     {
-        public int MaximumOpacity { get; set; } = 100;
+        public int MaximumOpacity { get; set; } = 95;
         public int ShowTransitionDuration { get; set; } = 1000;
 
         public int VisibleStateDuration { get; set; } = 5000;
@@ -15,5 +15,9 @@ namespace MudBlazor
         public bool ShowCloseIcon { get; set; } = true;
 
         public bool RequireInteraction { get; set; } = false;
+
+        public bool BackgroundBlurred { get; set; } = false;
+
+        public Variant SnackbarVariant { get; set; } = Variant.Filled;
     }
 }

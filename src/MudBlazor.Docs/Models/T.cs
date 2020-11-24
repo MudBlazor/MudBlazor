@@ -4,5 +4,5 @@ using System.Text;
 
 namespace MudBlazor.Docs.Models
 {
-    internal class T  { }
+    public class T  { }
 }

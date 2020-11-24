@@ -58,5 +58,40 @@ namespace MudBlazor.UnitTests
             comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
         }
 
+        /// <summary>
+        /// Popup should open when 3 characters are typed and close when below.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task AutocompleteTest2()
+        {
+            using var ctx = new Bunit.TestContext();
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            var comp = ctx.RenderComponent<AutocompleteTest2>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var select = comp.FindComponent<MudAutocomplete<string>>();
+            var menu = comp.Find("div.mud-popover");
+            var inputControl = comp.Find("div.mud-input-control");
+
+            // check initial state
+            menu.ClassList.Should().NotContain("mud-popover-open");
+
+            // click and check if it has toggled the menu
+            inputControl.Click();
+            await Task.Delay(100);
+            menu.ClassList.Should().NotContain("mud-popover-open");
+
+            // type 3 characters and check if it has toggled the menu
+            select.Instance.Text = "ala";
+            await Task.Delay(100);
+            menu.ClassList.Should().Contain("mud-popover-open");
+
+            // type 2 characters and check if it has toggled the menu
+            select.Instance.Text = "al";
+            await Task.Delay(100);
+            menu.ClassList.Should().NotContain("mud-popover-open");
+        }
     }
 }

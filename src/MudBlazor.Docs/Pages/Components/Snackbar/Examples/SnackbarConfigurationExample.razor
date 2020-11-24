@@ -1,0 +1,7 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+<MudButton @onclick="@(() => Snackbar.Add("My Close button is gone!", Severity.Normal, config => { config.ShowCloseIcon = false; }))" Variant="Variant.Filled" Color="Color.Primary">
+    Open Modified Snackbar
+</MudButton>

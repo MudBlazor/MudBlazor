@@ -1,12 +1,11 @@
 ﻿@using MudBlazor.Docs.Data
 @namespace MudBlazor.Docs.Examples
 
-<MudTable InlineEdit="true" Items="@PeriodicTable.GetElements()" Dense="@dense" Hover="@hover" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selected_item">
+<MudTable InlineEdit="true" Items="@PeriodicTable.GetElements()" Dense="@dense" Hover="@hover" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selected_item" SortLabel="Sort By">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
-        <MudToolBarSpacer/>
-        <MudIcon Class="mt-5 mr-2" Icon="@Icons.Material.Search"></MudIcon>
-        <MudTextField @bind-Value="search_string" Placeholder="Search"></MudTextField>
+        <MudToolBarSpacer />
+        <MudTextField @bind-Value="search_string" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <ColGroup>
         <col style="width:50px;" />
@@ -17,18 +16,18 @@
         <col style="width:50px;" />
     </ColGroup>
     <HeaderContent>
-        <MudTh>Nr</MudTh>
-        <MudTh>Sign</MudTh>
-        <MudTh>Name</MudTh>
-        <MudTh>Position</MudTh>
-        <MudTh>Molar mass</MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Number)">Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Sign)">Sign</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Element, object>(x=>x.Name)">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Position)">Position</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Element, object>(x=>x.Molar)">Mass</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>@context.Sign</MudTd>
-        <MudTd>@context.Name</MudTd>
-        <MudTd>@context.Position</MudTd>
-        <MudTd>@context.Molar</MudTd>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <RowEditingTemplate>
         <MudTd>@context.Number</MudTd>

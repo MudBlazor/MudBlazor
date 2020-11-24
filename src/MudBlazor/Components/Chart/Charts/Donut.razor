@@ -2,7 +2,7 @@
 @using System.Globalization
 @inherits DonutBase
 
-<svg class="mud-chart-donut" width="@MudChartParent.Width" height="@MudChartParent.Height" viewBox="0 0 42 42">
+<svg class="mud-chart-donut" width="@ParentWidth" height="@ParentHeight" viewBox="0 0 42 42">
     <Filters />
     <circle class="mud-donut-ring" cx="20" cy="20" r="15.91549430918954"></circle>
     @foreach (var item in Circles.ToList())

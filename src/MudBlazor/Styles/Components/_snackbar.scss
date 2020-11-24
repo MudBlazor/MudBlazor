@@ -14,9 +14,19 @@
     min-width: 288px;
     max-width: 500px;
     border-radius: var(--mud-default-borderradius);
-    color: var(--mud-palette-dark-text);
-    background-color: var(--mud-palette-dark);
     box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2), 0px 6px 10px 0px rgba(0,0,0,0.14), 0px 1px 18px 0px rgba(0,0,0,0.12);
+
+    &.force-cursor{
+        cursor:pointer;
+    }
+
+    &.mud-snackbar-blurred {
+        backdrop-filter: blur(18px);
+    }
+
+    &.mud-snackbar-surface {
+        background: var(--mud-palette-surface);
+    }
 
     .mud-snackbar-content-message {
         padding: 8px 0;

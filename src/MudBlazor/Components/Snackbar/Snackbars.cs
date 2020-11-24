@@ -1,5 +1,5 @@
-﻿// Copyright (c) Alessandro Ghidini. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
+﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
+//Changes and improvements Copyright (c) The MudBlazor Team.
 
 using System;
 using System.Collections.Generic;
@@ -26,29 +26,9 @@ namespace MudBlazor
             SnackBarList = new List<Snackbar>();
         }
 
-        public void Default(string message, Action<SnackbarOptions> configure = null)
+        public void Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null)
         {
-            Add(SnackbarType.Default, message, configure);
-        }
-
-        public void Info(string message, Action<SnackbarOptions> configure = null)
-        {
-            Add(SnackbarType.Info, message, configure);
-        }
-
-        public void Success(string message, Action<SnackbarOptions> configure = null)
-        {
-            Add(SnackbarType.Success, message, configure);
-        }
-
-        public void Warning(string message, Action<SnackbarOptions> configure = null)
-        {
-            Add(SnackbarType.Warning, message, configure);
-        }
-
-        public void Error(string message, Action<SnackbarOptions> configure = null)
-        {
-            Add(SnackbarType.Error, message, configure);
+            AddNew(severity, message, configure);
         }
 
         public IEnumerable<Snackbar> ShownSnackbars
@@ -67,23 +47,23 @@ namespace MudBlazor
             }
         }
 
-        public void Add(SnackbarType type, string message, Action<SnackbarOptions> configure)
+        public void AddNew(Severity severity, string message, Action<SnackbarOptions> configure)
         {
             if (message.IsEmpty()) return;
 
             message = message.Trimmed();
 
-            var options = new SnackbarOptions(type, Configuration);
+            var options = new SnackbarOptions(severity, Configuration);
             configure?.Invoke(options);
 
-            var toast = new Snackbar(message, options);
+            var snackbar = new Snackbar(message, options);
 
             SnackBarLock.EnterWriteLock();
             try
             {
-                if (Configuration.PreventDuplicates && ToastAlreadyPresent(toast)) return;
-                toast.OnClose += Remove;
-                SnackBarList.Add(toast);
+                if (Configuration.PreventDuplicates && SnackbarAlreadyPresent(snackbar)) return;
+                snackbar.OnClose += Remove;
+                SnackBarList.Add(snackbar);
             }
             finally
             {
@@ -98,7 +78,7 @@ namespace MudBlazor
             SnackBarLock.EnterWriteLock();
             try
             {
-                RemoveAllToasts(SnackBarList);
+                RemoveAllSnackbars(SnackBarList);
             }
             finally
             {
@@ -108,15 +88,15 @@ namespace MudBlazor
             OnSnackbarsUpdated?.Invoke();
         }
 
-        public void Remove(Snackbar toast)
+        public void Remove(Snackbar snackbar)
         {
-            toast.Dispose();
-            toast.OnClose -= Remove;
+            snackbar.Dispose();
+            snackbar.OnClose -= Remove;
 
             SnackBarLock.EnterWriteLock();
             try
             {
-                var index = SnackBarList.IndexOf(toast);
+                var index = SnackBarList.IndexOf(snackbar);
                 if (index < 0) return;
                 SnackBarList.RemoveAt(index);
             }
@@ -128,11 +108,11 @@ namespace MudBlazor
             OnSnackbarsUpdated?.Invoke();
         }
 
-        private bool ToastAlreadyPresent(Snackbar newToast)
+        private bool SnackbarAlreadyPresent(Snackbar newSnackbar)
         {
-            return SnackBarList.Any(toast =>
-                newToast.Message.Equals(toast.Message) &&
-                newToast.Type.Equals(toast.Type)
+            return SnackBarList.Any(snackbar =>
+                newSnackbar.Message.Equals(snackbar.Message) &&
+                newSnackbar.Severity.Equals(snackbar.Severity)
             );
         }
 
@@ -144,17 +124,17 @@ namespace MudBlazor
         public void Dispose()
         {
             Configuration.OnUpdate -= ConfigurationUpdated;
-            RemoveAllToasts(SnackBarList);
+            RemoveAllSnackbars(SnackBarList);
         }
 
-        private void RemoveAllToasts(IEnumerable<Snackbar> toasts)
+        private void RemoveAllSnackbars(IEnumerable<Snackbar> snackbars)
         {
             if (SnackBarList.Count == 0) return;
 
-            foreach (var toast in toasts)
+            foreach (var snackbar in snackbars)
             {
-                toast.OnClose -= Remove;
-                toast.Dispose();
+                snackbar.OnClose -= Remove;
+                snackbar.Dispose();
             }
 
             SnackBarList.Clear();

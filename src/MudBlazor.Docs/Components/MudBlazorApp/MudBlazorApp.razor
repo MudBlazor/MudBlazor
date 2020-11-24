@@ -1,0 +1,208 @@
+﻿@namespace MudBlazor.Docs.Components.MudBlazorApp
+
+<MudCard Elevation="25" Class="mudblazor-apps">
+    <MudCardHeader Class="rounded-t">
+        <CardHeaderAvatar>
+            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="8px" Height="8px" Animation="Animation.False" Class="d-inline-flex" Style="background-color: #ff6059;" />
+            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="8px" Height="8px" Animation="Animation.False" Class="d-inline-flex" Style="background-color: #ffbd2e;" />
+            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="8px" Height="8px" Animation="Animation.False" Class="d-inline-flex" Style="background-color: #28ca42;" />
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudIconButton Icon="@Icons.Material.NavigateBefore" Size="Size.Small" OnClick="@NavigateToHome" Disabled="@BackButtonDisabled" />
+            <MudIconButton Icon="@Icons.Material.NavigateNext" Size="Size.Small" Disabled="true" />
+            <div class="mudblazor-app-title">
+                @ApplicationTitle
+            </div>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent Class="pa-0 d-flex" Style="height:300px; position:relative;">
+        @if (MailBoxOpen)
+        {
+            <div class="mudblazor-apps-list">
+                <MudButton Variant="Variant.Filled" OnClick="@ComposeNewEmail" DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="mx-3 mt-2 mb-1" Style="height: 24px; width:85%">Compose</MudButton>
+                <MudList Clickable="true" Dense="true" DisablePadding="true">
+                    <MudListItem Icon="@Icons.Material.Inbox" OnClick="@((e) => ChangeMailbox(Inbox))">Inbox</MudListItem>
+                    <MudListItem Icon="@Icons.Material.Send" OnClick="@((e) => ChangeMailbox(Sent))">Sent mail</MudListItem>
+                    <MudListItem Icon="@Icons.Material.Drafts" OnClick="@((e) => ChangeMailbox(Drafts))">Drafts</MudListItem>
+                    <MudListItem Icon="@Icons.Material.Folder" Text="More">
+                        <NestedList>
+                            <MudListItem Icon="@Outlined.ReportProblemOutlined" Dense="true" OnClick="@((e) => ChangeMailbox(Spam))">Spam</MudListItem>
+                            <MudListItem Icon="@Outlined.DeleteOutlined" Dense="true" OnClick="@((e) => ChangeMailbox(Bin))">Bin</MudListItem>
+                        </NestedList>
+                    </MudListItem>
+                </MudList>
+            </div>
+            <MudDivider Vertical="true" FlexItem="true" Class="mr-4" />
+            <div class="mudblazor-apps-email">
+                <MudSimpleTable Hover="true" Dense="true" Class="mudblazor-apps-email">
+                    <thead>
+                        <tr>
+                            <th>From</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var mail in CurrentMailBox)
+                        {
+                            <tr>
+                                <td>@mail.From</td>
+                                <td>@mail.Message</td>
+                            </tr>
+                        }
+                    </tbody>
+                </MudSimpleTable>
+            </div>
+            @if (ComposeEmail)
+            {
+                <MudCard Class="mudblazor-apps-email-compose" Elevation="25">
+                    <MudCardHeader Class="mud-theme-dark rounded-t">
+                        <CardHeaderContent>
+                            New Message
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+                            <MudIconButton Icon="@Icons.Material.Close" Size="Size.Small" OnClick="@ComposeNewEmail" Color="Color.Inherit" Class="mt-2" />
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                    <MudCardContent Class="pa-0 px-1">
+                        <MudTextField T="string" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentText="To" Margin="Margin.Dense" Class="mb-1" />
+                        Message
+                        <MudTextField T="string" Variant="Variant.Text" Lines="3" Class="mt-n1" />
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Filled" OnClick="@ComposeNewEmail" DisableElevation="true" Color="Color.Primary" Size="Size.Small" Style="height: 24px;" Class="rounded-sm">Send</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            }
+        }
+        else
+        {
+            <MudAlert Severity="Severity.Info" Dense="true" Class="mudblazor-apps-alert pa-0 px-2" Elevation="25" OnClick="@NavigateToMailbox">You got new email!</MudAlert>
+            <div class="d-flex flex-column mx-auto align-self-center mt-n4">
+                <div class="d-flex align-self-center">
+                    <MudText Align="Align.Center" Typo="Typo.h6" GutterBottom="true">Welcome Back!</MudText>
+                </div>
+                <div class="d-flex align-self-center">
+                    <MudText Align="Align.Center" Typo="Typo.body2">Click one of the apps to open them.</MudText>
+                </div>
+                <div class="d-flex align-self-center mt-3">
+                    <MudIconButton Icon="@Icons.Material.Email" OnClick="@NavigateToMailbox" Color="Color.Secondary"/>
+                    <MudIconButton Icon="@Icons.Material.ShoppingCart" Disabled="true" />
+                    <MudIconButton Icon="@Icons.Material.Calculate" OnClick="@ToggleCalculator" Color="Color.Primary" />
+                    <MudIconButton Icon="@Icons.Material.SportsEsports" Disabled="true" />
+                    <MudIconButton Icon="@Icons.Material.Settings" Disabled="true" />
+                </div>
+            </div>
+        }
+        @if (CalculatorOpen)
+        {
+            <MudCard Class="mudblazor-apps-calculator rounded-lg" Elevation="10">
+                <MudCardHeader Class="rounded-t-lg black">
+                    <CardHeaderContent>
+                        
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Remove" Size="Size.Small" OnClick="@ToggleCalculator" Color="Color.Inherit" Class="rounded-0 grey-text" />
+                        <MudIconButton Icon="@Icons.Material.Close" Size="Size.Small" OnClick="@ToggleCalculator" Color="Color.Inherit" Class="rounded-0 rounded-tr-lg grey-text" />
+                    </CardHeaderActions>
+                </MudCardHeader>
+                <MudCardContent Class="pa-0">
+                    <Calculator/>
+                </MudCardContent>
+            </MudCard>
+        }
+    </MudCardContent>
+</MudCard>
+
+@code {
+    public string ApplicationTitle { get; set; }
+
+    public bool MailBoxOpen { get; set; }
+    public int UnreadEmails { get; set; } = 1;
+    public bool BackButtonDisabled { get; set; } = true;
+    public bool ComposeEmail { get; set; }
+    public bool CalculatorOpen { get; set; }
+
+
+    public List<Email> CurrentMailBox = new List<Email>();
+
+    public List<Email> Inbox = new List<Email>();
+    public List<Email> Sent = new List<Email>();
+    public List<Email> Drafts = new List<Email>();
+    public List<Email> Spam = new List<Email>();
+    public List<Email> Bin = new List<Email>();
+
+    public class Email
+    {
+        public string From { get; set; }
+        public string Message { get; set; }
+    }
+
+    protected override void OnInitialized()
+    {
+        Inbox.Add(new Email { From = "Audréanne", Message = "Innovate extensible technologies" });
+        Inbox.Add(new Email { From = "Torbjörn", Message = "Maximize efficient applications" });
+        Inbox.Add(new Email { From = "Ivan", Message = "Synthesize frictionless portals" });
+        Inbox.Add(new Email { From = "Eva", Message = "Bleeding-edge Blazor!!! Get on it now!" });
+        Inbox.Add(new Email { From = "Håkan", Message = "Unleash next-generation e-tailers" });
+        Inbox.Add(new Email { From = "Boris", Message = "Blow the reactor tonight, cya at rondevu." });
+
+        Spam.Add(new Email { From = "Enlargement pills", Message = "Size matters!!" });
+        Spam.Add(new Email { From = "Insane Lottery", Message = "Every ticket wins" });
+        Spam.Add(new Email { From = "Random blog", Message = "buy blog posts now, only one hour left" });
+        Spam.Add(new Email { From = "KING MBUTU", Message = "REALLY SERIOUS BUSINESS PROPOSITION" });
+    }
+
+    public void NavigateToMailbox()
+    {
+        MailBoxOpen = true;
+        CurrentMailBox = Inbox;
+        BackButtonDisabled = false;
+
+        ApplicationTitle = "Mail - Inbox";
+    }
+
+    public void NavigateToHome()
+    {
+        MailBoxOpen = false;
+        ComposeEmail = false;
+        BackButtonDisabled = true;
+    }
+
+    public void ChangeMailbox(List<Email> mailbox)
+    {
+        CurrentMailBox = mailbox;
+
+
+        if (mailbox == Inbox)
+        {
+            ApplicationTitle = "Mail - Inbox";
+        }
+        if (mailbox == Sent)
+        {
+            ApplicationTitle = "Mail - Sent";
+        }
+        if (mailbox == Drafts)
+        {
+            ApplicationTitle = "Mail - Drafts";
+        }
+        if (mailbox == Spam)
+        {
+            ApplicationTitle = "Mail - Spam";
+        }
+        if (mailbox == Bin)
+        {
+            ApplicationTitle = "Mail - Bin";
+        }
+    }
+
+    public void ComposeNewEmail()
+    {
+        ComposeEmail = !ComposeEmail;
+    }
+
+    public void ToggleCalculator()
+    {
+        CalculatorOpen = !CalculatorOpen;
+    }
+}
+

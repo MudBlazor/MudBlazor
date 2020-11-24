@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-@if (Parent.ActivePanel == this && ChildContent != null)
+@if (Parent?.ActivePanel == this && ChildContent != null)
 {
     @ChildContent
 }
@@ -43,9 +43,10 @@
 
     protected override void OnInitialized()
     {
-        if (Parent == null)
-            throw new ArgumentNullException(nameof(Parent), "TabPanel must exist within a Tabs component");
+        // NOTE: we must not throw here because we need the component to be able to live for the API docs to be able to infer default values
+        //if (Parent == null)
+        //    throw new ArgumentNullException(nameof(Parent), "TabPanel must exist within a Tabs component");
         base.OnInitialized();
-        Parent.AddPanel(this);
+        Parent?.AddPanel(this);
     }
 }

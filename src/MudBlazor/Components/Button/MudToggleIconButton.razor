@@ -1,0 +1,11 @@
+﻿@namespace MudBlazor
+
+@if (_toggled)
+{
+    <MudIconButton Icon="@ToggledIcon" Size="@ToggledSize" Color="@ToggledColor" Disabled="@Disabled" Edge="@Edge" DisableRipple="@DisableRipple" OnClick="@Toggle" />
+}
+
+else
+{
+    <MudIconButton Icon="@Icon" Size="@Size" Color="@Color" Disabled="@Disabled" Edge="@Edge" DisableRipple="@DisableRipple" OnClick="@Toggle" />
+}

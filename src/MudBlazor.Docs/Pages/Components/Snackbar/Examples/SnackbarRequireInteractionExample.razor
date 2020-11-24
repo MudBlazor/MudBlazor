@@ -1,0 +1,46 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+<div class="pa-0 ma-0">
+    <MudAlert Severity="Severity.Warning" Dense="true" Class="rounded-0 rounded-t">The reactor temperature exceeds the optimal range</MudAlert>
+    <MudAlert Severity="Severity.Error" Dense="true" Class="rounded-0">Reactor meltdown is imminent!</MudAlert>
+    <div class="d-flex flex-column" style="height: 200px;">
+        <div class="align-self-center mt-12">
+            <MudText Typo="Typo.h6">Fuel Rod Temperature: @FuelRodTemperature.ToString()C</MudText>
+        </div>
+        <div class="align-self-center mt-6">
+            <MudTooltip Text="Reactor Shutdown">
+                <MudButton Variant="Variant.Filled" DisableElevation="true" Color="Color.Error" @onclick="@(() => ShutDown())">Scram Button</MudButton>
+            </MudTooltip>
+        </div>
+    </div>
+    <MudAlert Severity="Severity.Info" Dense="true" Class="rounded-0 rounded-b">The reactor is about to have a meltdown deputy chief-engineer! You must act now!</MudAlert>
+</div>
+
+@code {
+
+    public int FuelRodTemperature { get; set; } = 600;
+
+    void ShutDown()
+    {
+        string message = "Scram Initiated!";
+        Snackbar.Add(message, Severity.Success, config =>
+        {
+            config.RequireInteraction = true;
+            config.ShowCloseIcon = false;
+            config.Onclick = snackbar =>
+            {
+                UpdateTemperature();
+                return Task.CompletedTask;
+            };
+        });
+    }
+
+    public void UpdateTemperature()
+    {
+        FuelRodTemperature += 100;
+        Snackbar.Add("Temperature is still going up!", Severity.Warning);
+        StateHasChanged();
+    }
+}

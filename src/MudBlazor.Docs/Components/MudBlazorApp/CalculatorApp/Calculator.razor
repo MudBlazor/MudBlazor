@@ -1,0 +1,81 @@
+﻿@using PrimitiveCalculator
+@using System.Globalization
+@namespace MudBlazor.Docs.Components.MudBlazorApp
+
+<div class="d-flex flex-column rounded-b-lg grey-text" style="background: black;">
+    <div class="d-flex justify-center my-2">
+        <div class="d-flex justify-center" style="height:32px; width:100%;">
+            @if (string.IsNullOrWhiteSpace(CalcExpression) || CalcExpression == Result)
+            {
+                <MudText Typo="Typo.h6" Align="Align.Center">@Result</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.button" Align="Align.Center" Style="font-size: 1rem;">@CalcExpression</MudText>
+            }
+        </div>
+    </div>
+    <div class="d-flex">
+        <MudButton Color="Color.Secondary" OnClick="@(()=>CalcExpression+="(")" Class="rounded-0">(</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="@(()=>CalcExpression+=")")" Class="rounded-0">)</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="@(()=>CalcExpression+="%")" Class="rounded-0 calc-button-small calc-button-opacity" StartIcon="M18.5 3.5l-15 15l2 2l15-15M7 4a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3m10 10a3 3 0 0 0-3 3a3 3 0 0 0 3 3a3 3 0 0 0 3-3a3 3 0 0 0-3-3z"></MudButton>
+        <MudButton Color="Color.Secondary" OnClick="@(()=>CalcExpression+="/")" Class="rounded-0" StartIcon="M19 13H5v-2h14v2m-7-8a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2m0 10a2 2 0 0 1 2 2a2 2 0 0 1-2 2a2 2 0 0 1-2-2a2 2 0 0 1 2-2z"></MudButton>
+
+    </div>
+    <div class="d-flex">
+        <MudButton Class="rounded-0 grey-text" OnClick="@(()=>CalcExpression+=7)">7</MudButton>
+        <MudButton Class="rounded-0 grey-text" OnClick="@(()=>CalcExpression+=8)">8</MudButton>
+        <MudButton Class="rounded-0 grey-text" OnClick="@(()=>CalcExpression+=9)">9</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="@(()=>CalcExpression+="*")" Class="rounded-0 calc-button-medium" StartIcon="@Icons.Material.Close"></MudButton>
+    </div>
+    <div class="d-flex">
+        <MudButton Class="rounded-0 grey-text" OnClick="@(()=>CalcExpression+=4)">4</MudButton>
+        <MudButton Class="rounded-0 grey-text" OnClick="@(()=>CalcExpression+=5)">5</MudButton>
+        <MudButton Class="rounded-0 grey-text" OnClick="@(()=>CalcExpression+=6)">6</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="@(()=>CalcExpression+="-")" Class="rounded-0 calc-button-small" StartIcon="@Icons.Material.Remove"></MudButton>
+    </div>
+    <div class="d-flex">
+        <MudButton Class="rounded-0 grey-text" OnClick="@(()=>CalcExpression+=1)">1</MudButton>
+        <MudButton Class="rounded-0 grey-text" OnClick="@(()=>CalcExpression+=2)">2</MudButton>
+        <MudButton Class="rounded-0 grey-text" OnClick="@(()=>CalcExpression+=3)">3</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="@(()=>CalcExpression+="+")" Class="rounded-0 calc-button-small" StartIcon="@Icons.Material.Add"></MudButton>
+    </div>
+    <div class="d-flex">
+        <MudButton Color="Color.Secondary" OnClick="Reset" Variant="Variant.Filled" Class="rounded-0 rounded-bl-lg">C</MudButton>
+        <MudButton Class="rounded-0 grey-text" OnClick="@(()=>CalcExpression+=0)">0</MudButton>
+        <MudButton Class="rounded-0 grey-text" OnClick="@(()=>CalcExpression+=".")">.</MudButton>
+        <MudButton Color="Color.Secondary" OnClick="Evaluate" Variant="Variant.Filled" Class="rounded-0 rounded-br-lg calc-button-smal" StartIcon="M19,10H5V8H19V10M19,16H5V14H19V16Z"></MudButton>
+    </div>
+</div>
+
+@code
+{
+    protected string CalcExpression = "";
+
+    public void Reset()
+    {
+        CalcExpression = "";
+        Result = "";
+    }
+
+    public void Evaluate()
+    {
+        if (string.IsNullOrWhiteSpace(CalcExpression))
+        {
+            Result = "";
+            return;
+        }
+        var exp=new Expression(CalcExpression);
+        var result=exp.Eval();
+        if (result == double.NaN)
+        {
+            Result = "ERROR";
+            return;
+        }
+        Result =Math.Round( result, 8).ToString(CultureInfo.InvariantCulture);
+        CalcExpression=Result; // <-- this allows to continue calculating with the result
+    }
+
+    protected string Result;
+
+}
