@@ -176,14 +176,13 @@ namespace MudBlazor.UnitTests
             select.Instance.Value.Should().Be(1);
             select.Instance.Text.Should().Be("1");
             comp.FindAll("div.mud-input-slot").Count.Should().Be(0);
-            comp.RenderCount.Should().Be(2);
+            comp.RenderCount.Should().Be(1);
             //Console.WriteLine(comp.Markup);
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             comp.FindAll("div.mud-input-slot").Count.Should().Be(0);
             select.Instance.Value.Should().Be(2);
             select.Instance.Text.Should().Be("2");
-            comp.RenderCount.Should().Be(3);
         }
     }
 }
