@@ -1,6 +1,6 @@
 ﻿@using MudBlazor.Utilities
 
-<div class="@Classname">
+<div class="@Classname" style="@Style">
     <div class="docs-section-content-inner">
         @ChildContent
     </div>
@@ -19,6 +19,7 @@
     .Build();
 
     [Parameter] public string Class { get; set; }
+    [Parameter] public string Style { get; set; }
 
     [Parameter] public bool DisplayGrid { get; set; }
 

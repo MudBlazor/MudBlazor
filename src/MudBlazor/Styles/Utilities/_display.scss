@@ -1,0 +1,63 @@
+﻿@mixin display-mixin ($breakpoint) {
+    .d-#{$breakpoint}none {
+        display: none !important;
+    }
+
+    .d-#{$breakpoint}inline {
+        display: inline !important;
+    }
+
+    .d-#{$breakpoint}inline-block {
+        display: inline-block !important;
+    }
+
+    .d-#{$breakpoint}block {
+        display: block !important;
+    }
+
+    .d-#{$breakpoint}table {
+        display: table !important;
+    }
+
+    .d-#{$breakpoint}table-row {
+        display: table-row !important;
+    }
+
+    .d-#{$breakpoint}table-cell {
+        display: table-cell !important;
+    }
+
+    .d-#{$breakpoint}flex {
+        display: flex !important;
+    }
+
+    .d-#{$breakpoint}inline-flex {
+        display: inline-flex !important;
+    }
+}
+
+
+
+
+// XS >
+@include display-mixin("");
+
+// SM
+@media (min-width:600px) {
+    @include display-mixin("sm-");
+}
+
+// MD
+@media (min-width:960px) {
+    @include display-mixin("md-");
+}
+
+// LG
+@media (min-width:1280px) {
+    @include display-mixin("lg-");
+}
+
+// XL
+@media (min-width:1920px) {
+    @include display-mixin("xl-");
+}

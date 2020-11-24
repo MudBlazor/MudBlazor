@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities;
 @using MudBlazor.Extensions;
+@inherits MudComponentBase
 
 <div class="@DivClassname" role="progressbar" aria-valuenow="@Value" aria-valuemin="0" aria-valuemax="100">
     @if (Indeterminate)
@@ -25,6 +26,7 @@
     protected string DivClassname =>
     new CssBuilder("mud-progress-linear")
         .AddClass($"mud-progress-linear-color-{Color.ToDescriptionString()}", !Buffer)
+        .AddClass(Class)
     .Build();
 
     protected string LinearClassname =>

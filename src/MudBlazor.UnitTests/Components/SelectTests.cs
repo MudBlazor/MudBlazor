@@ -127,12 +127,12 @@ namespace MudBlazor.UnitTests
             select.Instance.Value.Should().Be(default(MyEnum));
             select.Instance.Text.Should().Be(default(MyEnum).ToString());
             await Task.Delay(50);
-            comp.Find("div.mud-input-slot").TextContent.Should().Be("First");
+            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("First");
             comp.RenderCount.Should().Be(2);
             //Console.WriteLine(comp.Markup);
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
-            comp.Find("div.mud-input-slot").TextContent.Should().Be("Second");
+            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("Second");
             comp.RenderCount.Should().Be(3);
         }
 
@@ -155,7 +155,7 @@ namespace MudBlazor.UnitTests
             //Console.WriteLine(comp.Markup);
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
-            comp.Find("div.mud-input-slot").TextContent.Should().Be("Two");
+            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("Two");
             select.Instance.Value.Should().Be(2);
             select.Instance.Text.Should().Be("2");
         }
