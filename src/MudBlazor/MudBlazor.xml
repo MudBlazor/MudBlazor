@@ -1217,6 +1217,16 @@
             Inverts the Breakpoint, so that the ChildContent is only rendered when the breakpoint matches the screen size.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudHidden.IsHidden">
+            <summary>
+            True if the component is not visible (two-way bindable)
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudHidden.IsHiddenChanged">
+            <summary>
+            Fires when the breakpoint changes visibility of the component
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudHidden.ChildContent">
             <summary>
             Child content of component.
