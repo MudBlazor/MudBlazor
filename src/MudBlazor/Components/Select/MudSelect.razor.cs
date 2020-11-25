@@ -211,7 +211,7 @@ namespace MudBlazor
 
         public void ToggleMenu()
         {
-            if (Disabled)
+            if (Disabled || ReadOnly)
                 return;
             isOpen = !isOpen;
             UpdateIcon();
@@ -220,8 +220,6 @@ namespace MudBlazor
 
         public void CloseMenu()
         {
-            if (Disabled)
-                return;
             isOpen = false;
             UpdateIcon();
             StateHasChanged();
@@ -229,14 +227,14 @@ namespace MudBlazor
 
         public void UpdateIcon()
         {
-                if (isOpen)
-                {
-                    CurrentIcon = OpenIcon;
-                }
-                else
-                {
-                    CurrentIcon = CloseIcon;
-                }
+            if (isOpen)
+            {
+                CurrentIcon = OpenIcon;
+            }
+            else
+            {
+                CurrentIcon = CloseIcon;
+            }
         }
 
         protected override void OnInitialized()
