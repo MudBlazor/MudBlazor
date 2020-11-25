@@ -404,14 +404,14 @@
             The variant to use.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudAlert.Class">
-            <summary>
-            User class names, separated by space.
-            </summary>
-        </member>
         <member name="P:MudBlazor.MudAlert.ChildContent">
             <summary>
             Child content of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAlert.Icon">
+            <summary>
+            Custom icon, leave unset to use the standard icon which depends on the Severity
             </summary>
         </member>
         <member name="P:MudBlazor.MudAlert.OnClick">

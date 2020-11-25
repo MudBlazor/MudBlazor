@@ -193,11 +193,20 @@ public const string MudAlert_Severity = @"The severity of the alert. This define
 
 public const string MudAlert_Variant = @"The variant to use.";
 
-public const string MudAlert_Class = @"User class names, separated by space.";
-
 public const string MudAlert_ChildContent = @"Child content of the component.";
 
+public const string MudAlert_Icon = @"Custom icon, leave unset to use the standard icon which depends on the Severity";
+
 public const string MudAlert_OnClick = @"Raised when the alert is clicked";
+
+public const string MudAlert_Class = @"User class names, separated by space";
+
+public const string MudAlert_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudAlert_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudAlert_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
 
 public const string MudAppBar_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow.";
 
@@ -811,6 +820,10 @@ public const string MudForm_UserAttributes = @"UserAttributes carries all attrib
 public const string MudHidden_Breakpoint = @"The screen size(s) depending on which the ChildContent should not be rendered (or should be, if Invert is true)";
 
 public const string MudHidden_Invert = @"Inverts the Breakpoint, so that the ChildContent is only rendered when the breakpoint matches the screen size.";
+
+public const string MudHidden_IsHidden = @"True if the component is not visible (two-way bindable)";
+
+public const string MudHidden_IsHiddenChanged = @"Fires when the breakpoint changes visibility of the component";
 
 public const string MudHidden_ChildContent = @"Child content of component.";
 
