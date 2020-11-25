@@ -21,14 +21,14 @@
                     <HeaderContent>
                         <MudTh>Name</MudTh>
                         <MudTh>Type</MudTh>
+                        <MudTd>Default</MudTd>
                         <MudTh>Description</MudTh>
-                        <MudTd>Default value</MudTd>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd><CodeInline>@context.Name</CodeInline></MudTd>
-                        <MudTd>@context.Type</MudTd>
-                        <MudTd>@PresentDefaultValue(context.Default)</MudTd>
-                        <MudTd>@context.Description</MudTd>
+                        <MudTd DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
+                        <MudTd DataLabel="Type">@context.Type</MudTd>
+                        <MudTd DataLabel="Default">@PresentDefaultValue(context.Default)</MudTd>
+                        <MudTd DataLabel="Description">@context.Description</MudTd>
                     </RowTemplate>
                 </MudTable>
             </SectionContent>

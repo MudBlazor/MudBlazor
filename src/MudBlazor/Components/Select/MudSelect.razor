@@ -9,7 +9,7 @@
                          Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu">
             <InputContent>
                 <MudInput Variant="@Variant" Value="@Text" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                          Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium"
+                          Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" Margin="@Margin"
                           InputType="@(CanRenderValue ? InputType.Hidden : InputType.Text)">
                     @if (CanRenderValue)
                     {

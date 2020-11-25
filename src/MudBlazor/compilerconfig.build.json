@@ -1,0 +1,13 @@
+﻿{
+  "Minifiers": {
+    "GZip": false
+  },
+  "Autoprefix": {
+    "ProcessingOptions": {
+      "SourceMap": false
+    }
+  },
+  "Output": {
+    "Directory": ".\\wwwroot"
+  }
+}
