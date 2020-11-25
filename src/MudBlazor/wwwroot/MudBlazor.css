@@ -3701,6 +3701,7 @@ ul {
   .mud-table-sticky-header * .mud-table-root .mud-table-head * .mud-table-cell {
     background-color: var(--mud-palette-surface);
     position: sticky;
+    z-index: 1;
     top: 0; }
 
 .mud-table-row {
