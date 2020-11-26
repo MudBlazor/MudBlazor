@@ -223,6 +223,7 @@
     cursor: pointer;
     margin-left: 10px !important;
     margin-right: 10px !important;
+    min-width: 52px;
     margin-top: 0px !important;
 
     & .mud-select-input {
@@ -287,6 +288,7 @@
         }
 
         .mud-table-pagination {
+
             .mud-table-pagination-spacer {
                 flex: none;
             }
@@ -301,8 +303,40 @@
                 }
             }
 
-            .mud-table-pagination-select {
-                margin-right: 30px !important;
+            .mud-select ~ .mud-table-pagination-caption {
+                margin-left: auto;
+            }
+        }
+    }
+}
+
+// Table Pagination Flex Wrapper on old as phones
+@media (max-width:360px) {
+    .mud-table {
+        .mud-table-pagination {
+            .mud-select {
+                margin-left: auto;
+                margin-right: -14px;
+            }
+
+            .mud-select ~ .mud-table-pagination-caption {
+                margin-left: unset !important;
+            }
+        }
+    }
+}
+@media (max-width:416px) {
+    .mud-table {
+        .mud-table-pagination {
+            .mud-table-pagination-toolbar {
+                flex-wrap: wrap;
+                padding-top: 16px;
+                padding-right: 16px;
+                min-height: 100px;
+                .mud-table-pagination-actions{
+                    margin-left:auto;
+                    margin-right:-14px;
+                }
             }
         }
     }

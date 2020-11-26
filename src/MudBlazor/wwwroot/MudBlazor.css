@@ -3758,6 +3758,7 @@ ul {
   cursor: pointer;
   margin-left: 10px !important;
   margin-right: 10px !important;
+  min-width: 52px;
   margin-top: 0px !important; }
   .mud-table-pagination-select .mud-select-input {
     margin-top: 0px !important; }
@@ -3778,6 +3779,23 @@ ul {
 
 .mud-table-smalldevices-sortselect {
   display: none; }
+
+@media (max-width: 360px) {
+  .mud-table .mud-table-pagination .mud-select {
+    margin-left: auto;
+    margin-right: -14px; }
+  .mud-table .mud-table-pagination .mud-select ~ .mud-table-pagination-caption {
+    margin-left: unset !important; } }
+
+@media (max-width: 416px) {
+  .mud-table .mud-table-pagination .mud-table-pagination-toolbar {
+    flex-wrap: wrap;
+    padding-top: 16px;
+    padding-right: 16px;
+    min-height: 100px; }
+    .mud-table .mud-table-pagination .mud-table-pagination-toolbar .mud-table-pagination-actions {
+      margin-left: auto;
+      margin-right: -14px; } }
 
 @media (max-width: 600px) {
   .mud-table .mud-table-root .mud-table-head {
@@ -3805,8 +3823,8 @@ ul {
     display: none; }
   .mud-table .mud-table-pagination .mud-table-pagination-actions .mud-button-root:last-child {
     display: none; }
-  .mud-table .mud-table-pagination .mud-table-pagination-select {
-    margin-right: 30px !important; } }
+  .mud-table .mud-table-pagination .mud-select ~ .mud-table-pagination-caption {
+    margin-left: auto; } }
 
 @media (max-width: 960px) {
   .mud-sm-table .mud-table-root .mud-table-head {
@@ -3834,8 +3852,8 @@ ul {
     display: none; }
   .mud-sm-table .mud-table-pagination .mud-table-pagination-actions .mud-button-root:last-child {
     display: none; }
-  .mud-sm-table .mud-table-pagination .mud-table-pagination-select {
-    margin-right: 30px !important; } }
+  .mud-sm-table .mud-table-pagination .mud-select ~ .mud-table-pagination-caption {
+    margin-left: auto; } }
 
 @media (max-width: 1280px) {
   .mud-md-table .mud-table-root .mud-table-head {
@@ -3863,8 +3881,8 @@ ul {
     display: none; }
   .mud-md-table .mud-table-pagination .mud-table-pagination-actions .mud-button-root:last-child {
     display: none; }
-  .mud-md-table .mud-table-pagination .mud-table-pagination-select {
-    margin-right: 30px !important; } }
+  .mud-md-table .mud-table-pagination .mud-select ~ .mud-table-pagination-caption {
+    margin-left: auto; } }
 
 @media (max-width: 1920px) {
   .mud-lg-table .mud-table-root .mud-table-head {
@@ -3892,8 +3910,8 @@ ul {
     display: none; }
   .mud-lg-table .mud-table-pagination .mud-table-pagination-actions .mud-button-root:last-child {
     display: none; }
-  .mud-lg-table .mud-table-pagination .mud-table-pagination-select {
-    margin-right: 30px !important; } }
+  .mud-lg-table .mud-table-pagination .mud-select ~ .mud-table-pagination-caption {
+    margin-left: auto; } }
 
 @media (min-width: 1920px) {
   .mud-xl-table .mud-table-root .mud-table-head {
@@ -3921,8 +3939,8 @@ ul {
     display: none; }
   .mud-xl-table .mud-table-pagination .mud-table-pagination-actions .mud-button-root:last-child {
     display: none; }
-  .mud-xl-table .mud-table-pagination .mud-table-pagination-select {
-    margin-right: 30px !important; } }
+  .mud-xl-table .mud-table-pagination .mud-select ~ .mud-table-pagination-caption {
+    margin-left: auto; } }
 
 .mud-tabs.mud-tabs-vertical {
   display: flex; }
