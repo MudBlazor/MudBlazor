@@ -641,21 +641,25 @@ ul {
   padding-left: 16px;
   padding-right: 16px; }
 
+@media (min-width: 0px) and (orientation: landscape) {
+  .mud-toolbar {
+    min-height: 48px; }
+    .mud-toolbar.mud-toolbar-appbar {
+      min-height: calc(var(--mud-appbar-min-height) - 16px); } }
+
 @media (min-width: 600px) {
+  .mud-toolbar {
+    min-height: 64px; }
+    .mud-toolbar.mud-toolbar-appbar {
+      min-height: var(--mud-appbar-min-height); }
   .mud-toolbar-gutters {
     padding-left: 24px;
     padding-right: 24px; } }
 
-@media (min-width: 0px) and (orientation: landscape) {
-  .mud-toolbar {
-    min-height: 48px; } }
-
-@media (min-width: 600px) {
-  .mud-toolbar {
-    min-height: 64px; } }
-
 .mud-toolbar-dense {
   min-height: 48px; }
+  .mud-toolbar-dense.mud-toolbar-appbar {
+    min-height: calc(var(--mud-appbar-min-height) - 16px); }
 
 .mud-tooltip-root {
   position: relative;
@@ -971,21 +975,19 @@ ul {
 .mud-button-full-width {
   width: 100%; }
 
-.mud-button-start-icon {
+.mud-button-label .mud-button-icon:first-child {
   display: inherit;
   margin-left: -4px;
   margin-right: 8px; }
+  .mud-button-label .mud-button-icon:first-child.mud-button-icon-size-small {
+    margin-left: -2px; }
 
-.mud-button-start-icon.mud-button-icon-size-small {
-  margin-left: -2px; }
-
-.mud-button-end-icon {
+.mud-button-label .mud-button-icon:last-child {
   display: inherit;
   margin-left: 8px;
   margin-right: -4px; }
-
-.mud-button-end-icon.mud-button-icon-size-small {
-  margin-right: -2px; }
+  .mud-button-label .mud-button-icon:last-child.mud-button-icon-size-small {
+    margin-right: -2px; }
 
 .mud-button-icon-size-small > *:first-child {
   font-size: 18px; }
@@ -9096,8 +9098,13 @@ ul {
   min-height: var(--mud-appbar-min-height);
   padding: 12px 24px 12px 24px; }
 
-.mud-drawer-clipped {
-  padding-top: var(--mud-appbar-min-height); }
+@media (min-width: 0px) and (orientation: landscape) {
+  .mud-drawer-clipped {
+    padding-top: calc(var(--mud-appbar-min-height) - 16px); } }
+
+@media (min-width: 600px) {
+  .mud-drawer-clipped {
+    padding-top: var(--mud-appbar-min-height); } }
 
 .mud-main-content {
   flex: 1 1 auto;
