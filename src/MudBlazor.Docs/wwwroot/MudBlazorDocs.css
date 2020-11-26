@@ -16,6 +16,10 @@
   background-position: top right;
   overflow: hidden; }
 
+@media (max-width: 600px) {
+  .mudblazor-appbar-band {
+    background-position: 14px 0px; } }
+
 .mudblazor-appbar-brand-text {
   letter-spacing: 0.5rem;
   font-weight: 300;
