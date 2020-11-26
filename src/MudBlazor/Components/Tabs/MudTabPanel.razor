@@ -37,6 +37,11 @@
     [Parameter] public Color BadgeColor { get; set; } = Color.Primary;
 
     /// <summary>
+    /// Raised when tab is clicked
+    /// </summary>
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+    
+    /// <summary>
     /// Child content of component.
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }

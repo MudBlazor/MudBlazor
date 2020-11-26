@@ -2745,6 +2745,11 @@
             The color of the badge.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTabPanel.OnClick">
+            <summary>
+                Raised when tab is clicked
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTabPanel.ChildContent">
             <summary>
             Child content of component.
