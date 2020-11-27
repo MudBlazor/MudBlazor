@@ -746,9 +746,14 @@ public const string DialogPassingDataExample = @"@inject IDialogService Dialog
 
     async Task DeleteServer(Server server)
     {
+        var options = new DialogOptions();
+        options.MaxWidth = MaxWidth.ExtraSmall;
+        options.FullWidth = true;
+
         var parameters = new DialogParameters();
         parameters.Add(""server"", server);
-        var dialog = Dialog.Show<DialogPassingDataExample_Dialog>(""Delete Server"", parameters);
+
+        var dialog = Dialog.Show<DialogPassingDataExample_Dialog>(""Delete Server"", parameters, options);
         var result = await dialog.Result;
 
         if (!result.Cancelled)
