@@ -189,25 +189,31 @@
     width: 100%;
 }
 
-.mud-button-start-icon {
-    display: inherit;
-    margin-left: -4px;
-    margin-right: 8px;
+.mud-button-label {
+    .mud-button-icon-start {
+        display: inherit;
+        margin-left: -4px;
+        margin-right: 8px;
+
+        &.mud-button-icon-size-small {
+            margin-left: -2px;
+        }
+    }
+
+    .mud-button-icon-end {
+        display: inherit;
+        margin-left: 8px;
+        margin-right: -4px;
+
+        &.mud-button-icon-size-small {
+            margin-right: -2px;
+        }
+    }
 }
 
-.mud-button-start-icon.mud-button-icon-size-small {
-    margin-left: -2px;
-}
 
-.mud-button-end-icon {
-    display: inherit;
-    margin-left: 8px;
-    margin-right: -4px;
-}
 
-.mud-button-end-icon.mud-button-icon-size-small {
-    margin-right: -2px;
-}
+
 
 .mud-button-icon-size-small > *:first-child {
     font-size: 18px;

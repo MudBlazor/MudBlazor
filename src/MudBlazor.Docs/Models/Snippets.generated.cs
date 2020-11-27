@@ -420,12 +420,12 @@ public const string ButtonFilledExample = @"<MudButton Variant=""Variant.Filled"
 <MudButton Variant=""Variant.Filled"" Color=""Color.Secondary"">Secondary</MudButton>
 <MudButton Variant=""Variant.Filled"" Disabled=""true"">Disabled</MudButton>";
 
-public const string ButtonIconLabelExample = @"<MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Delete"" Color=""Color.Secondary"">Delete</MudButton>
+public const string ButtonIconLabelExample = @"<MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Delete"" Color=""Color.Error"">Delete</MudButton>
 <MudButton Variant=""Variant.Filled"" EndIcon=""@Icons.Material.Send"" Color=""Color.Primary"">Send</MudButton>
-<MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.CloudUpload"">Upload</MudButton>
+<MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Custom.Radioactive"" Color=""Color.Warning"">Warning</MudButton>
 <MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Mic"" Disabled=""true"">Talk</MudButton>
-<MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Save"" Color=""Color.Primary"" Size=""Size.Small"">Save</MudButton>
-<MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Save"" Color=""Color.Primary"" Size=""Size.Large"">Save</MudButton>";
+<MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Save"" Color=""Color.Info"" Size=""Size.Small"">Save</MudButton>
+<MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Save"" Color=""Color.Success"" Size=""Size.Large"">Save</MudButton>";
 
 public const string ButtonOutlinedExample = @"<MudButton Variant=""Variant.Outlined"">Default</MudButton>
 <MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"">Primary</MudButton>
@@ -729,6 +729,64 @@ public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""P
 public const string DatePickeViewsExample = @"<MudDatePicker Label=""Year"" OpenTo=""OpenTo.Year"" Value=""2020-10-19""/>
 <MudDatePicker Label=""Month"" OpenTo=""OpenTo.Month"" Value=""2020-10-19"" />
 <MudDatePicker Label=""Date""  Value=""2020-10-19"" />";
+
+public const string DialogPassingDataExample = @"@inject IDialogService Dialog
+
+<div class=""d-flex"">
+    @foreach (var item in Servers)
+    {
+        <MudPaper Class=""d-flex align-center pa-2 mx-2"">
+            <MudText>@item.Name</MudText>
+            <MudButton Variant=""Variant.Text"" Color=""Color.Error"" OnClick=""@((e) => DeleteServer(item))"">Delete</MudButton>
+        </MudPaper>
+    }
+</div>
+
+@code {
+
+    async Task DeleteServer(Server server)
+    {
+        var options = new DialogOptions();
+        options.MaxWidth = MaxWidth.ExtraSmall;
+        options.FullWidth = true;
+
+        var parameters = new DialogParameters();
+        parameters.Add(""server"", server);
+
+        var dialog = Dialog.Show<DialogPassingDataExample_Dialog>(""Delete Server"", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            //In a real world scenario we would reload the data from the source here since we ""removed"" it in the dialog already.
+            Guid.TryParse(result.Data.ToString(), out Guid deletedServer);
+            Servers.RemoveAll(item => item.Id == deletedServer);
+        }
+    }
+
+    //Pretend we are loading this data from a database or API
+    public List<Server> Servers { get; } = new List<Server>
+    {
+        new Server{ Id = Guid.NewGuid(), Name = ""Server1"", Location = ""Denmark"", IpAddress = ""193.254.123.1"" },
+        new Server{ Id = Guid.NewGuid(), Name = ""Server2"", Location = ""Sweden"", IpAddress = ""127.0.0.1"" },
+        new Server{ Id = Guid.NewGuid(), Name = ""Server3"", Location = ""Russia"", IpAddress = ""173.164.2.1"" },
+        new Server{ Id = Guid.NewGuid(), Name = ""Server4"", Location = ""Germany"", IpAddress = ""193.168.1.1"" },
+    };
+}";
+
+public const string DialogUsageExample = @"@inject IDialogService Dialog
+
+
+<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" @onclick=""OpenDialog"">Open Simple Dialog</MudButton>
+
+
+@code {
+
+    async Task OpenDialog()
+    {
+       Dialog.Show<DialogUsageExample_Dialog>(""Simple Dialog"");
+    }
+}";
 
 public const string DialogBodyScrollableExample = @"<MudDialog DisableSidePadding=""true"">
     <DialogContent>
@@ -1769,6 +1827,11 @@ public const string MenuCustomizationExample = @"<MudMenu Label=""Open Menu"">
     <MudMenuItem>Enlist</MudMenuItem>
     <MudMenuItem>Barracks</MudMenuItem>
     <MudMenuItem>Armory</MudMenuItem>
+</MudMenu>
+
+<MudMenu StartIcon=""@Filled.Translate"" EndIcon=""@Filled.KeyboardArrowDown"" Label=""Swedish"" Color=""Color.Primary"" Variant=""Variant.Filled"">
+    <MudMenuItem>Swedish</MudMenuItem>
+    <MudMenuItem>Old Norse</MudMenuItem>
 </MudMenu>";
 
 public const string MenuIconButtonsExample = @"<MudMenu Icon=""@Icons.Material.MoreVert"">

@@ -44,6 +44,15 @@
     padding: 12px 24px 12px 24px;
 }
 
-.mud-drawer-clipped {
-    padding-top: var(--mud-appbar-min-height);
+@media (min-width:0px) and (orientation: landscape) {
+    .mud-drawer-clipped {
+        padding-top: calc(var(--mud-appbar-min-height) - 16px);
+    }
+}
+
+@media (min-width:600px) {
+    .mud-drawer-clipped {
+        padding-top: var(--mud-appbar-min-height);
+    }
+
 }

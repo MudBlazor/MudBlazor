@@ -641,21 +641,25 @@ ul {
   padding-left: 16px;
   padding-right: 16px; }
 
+@media (min-width: 0px) and (orientation: landscape) {
+  .mud-toolbar {
+    min-height: 48px; }
+    .mud-toolbar.mud-toolbar-appbar {
+      min-height: calc(var(--mud-appbar-min-height) - 16px); } }
+
 @media (min-width: 600px) {
+  .mud-toolbar {
+    min-height: 64px; }
+    .mud-toolbar.mud-toolbar-appbar {
+      min-height: var(--mud-appbar-min-height); }
   .mud-toolbar-gutters {
     padding-left: 24px;
     padding-right: 24px; } }
 
-@media (min-width: 0px) and (orientation: landscape) {
-  .mud-toolbar {
-    min-height: 48px; } }
-
-@media (min-width: 600px) {
-  .mud-toolbar {
-    min-height: 64px; } }
-
 .mud-toolbar-dense {
   min-height: 48px; }
+  .mud-toolbar-dense.mud-toolbar-appbar {
+    min-height: calc(var(--mud-appbar-min-height) - 16px); }
 
 .mud-tooltip-root {
   position: relative;
@@ -971,21 +975,19 @@ ul {
 .mud-button-full-width {
   width: 100%; }
 
-.mud-button-start-icon {
+.mud-button-label .mud-button-icon-start {
   display: inherit;
   margin-left: -4px;
   margin-right: 8px; }
+  .mud-button-label .mud-button-icon-start.mud-button-icon-size-small {
+    margin-left: -2px; }
 
-.mud-button-start-icon.mud-button-icon-size-small {
-  margin-left: -2px; }
-
-.mud-button-end-icon {
+.mud-button-label .mud-button-icon-end {
   display: inherit;
   margin-left: 8px;
   margin-right: -4px; }
-
-.mud-button-end-icon.mud-button-icon-size-small {
-  margin-right: -2px; }
+  .mud-button-label .mud-button-icon-end.mud-button-icon-size-small {
+    margin-right: -2px; }
 
 .mud-button-icon-size-small > *:first-child {
   font-size: 18px; }
@@ -3701,6 +3703,7 @@ ul {
   .mud-table-sticky-header * .mud-table-root .mud-table-head * .mud-table-cell {
     background-color: var(--mud-palette-surface);
     position: sticky;
+    z-index: 1;
     top: 0; }
 
 .mud-table-row {
@@ -3755,6 +3758,7 @@ ul {
   cursor: pointer;
   margin-left: 10px !important;
   margin-right: 10px !important;
+  min-width: 52px;
   margin-top: 0px !important; }
   .mud-table-pagination-select .mud-select-input {
     margin-top: 0px !important; }
@@ -3775,6 +3779,23 @@ ul {
 
 .mud-table-smalldevices-sortselect {
   display: none; }
+
+@media (max-width: 360px) {
+  .mud-table .mud-table-pagination .mud-select {
+    margin-left: auto;
+    margin-right: -14px; }
+  .mud-table .mud-table-pagination .mud-select ~ .mud-table-pagination-caption {
+    margin-left: unset !important; } }
+
+@media (max-width: 416px) {
+  .mud-table .mud-table-pagination .mud-table-pagination-toolbar {
+    flex-wrap: wrap;
+    padding-top: 16px;
+    padding-right: 16px;
+    min-height: 100px; }
+    .mud-table .mud-table-pagination .mud-table-pagination-toolbar .mud-table-pagination-actions {
+      margin-left: auto;
+      margin-right: -14px; } }
 
 @media (max-width: 600px) {
   .mud-table .mud-table-root .mud-table-head {
@@ -3802,8 +3823,8 @@ ul {
     display: none; }
   .mud-table .mud-table-pagination .mud-table-pagination-actions .mud-button-root:last-child {
     display: none; }
-  .mud-table .mud-table-pagination .mud-table-pagination-select {
-    margin-right: 30px !important; } }
+  .mud-table .mud-table-pagination .mud-select ~ .mud-table-pagination-caption {
+    margin-left: auto; } }
 
 @media (max-width: 960px) {
   .mud-sm-table .mud-table-root .mud-table-head {
@@ -3831,8 +3852,8 @@ ul {
     display: none; }
   .mud-sm-table .mud-table-pagination .mud-table-pagination-actions .mud-button-root:last-child {
     display: none; }
-  .mud-sm-table .mud-table-pagination .mud-table-pagination-select {
-    margin-right: 30px !important; } }
+  .mud-sm-table .mud-table-pagination .mud-select ~ .mud-table-pagination-caption {
+    margin-left: auto; } }
 
 @media (max-width: 1280px) {
   .mud-md-table .mud-table-root .mud-table-head {
@@ -3860,8 +3881,8 @@ ul {
     display: none; }
   .mud-md-table .mud-table-pagination .mud-table-pagination-actions .mud-button-root:last-child {
     display: none; }
-  .mud-md-table .mud-table-pagination .mud-table-pagination-select {
-    margin-right: 30px !important; } }
+  .mud-md-table .mud-table-pagination .mud-select ~ .mud-table-pagination-caption {
+    margin-left: auto; } }
 
 @media (max-width: 1920px) {
   .mud-lg-table .mud-table-root .mud-table-head {
@@ -3889,8 +3910,8 @@ ul {
     display: none; }
   .mud-lg-table .mud-table-pagination .mud-table-pagination-actions .mud-button-root:last-child {
     display: none; }
-  .mud-lg-table .mud-table-pagination .mud-table-pagination-select {
-    margin-right: 30px !important; } }
+  .mud-lg-table .mud-table-pagination .mud-select ~ .mud-table-pagination-caption {
+    margin-left: auto; } }
 
 @media (min-width: 1920px) {
   .mud-xl-table .mud-table-root .mud-table-head {
@@ -3918,8 +3939,8 @@ ul {
     display: none; }
   .mud-xl-table .mud-table-pagination .mud-table-pagination-actions .mud-button-root:last-child {
     display: none; }
-  .mud-xl-table .mud-table-pagination .mud-table-pagination-select {
-    margin-right: 30px !important; } }
+  .mud-xl-table .mud-table-pagination .mud-select ~ .mud-table-pagination-caption {
+    margin-left: auto; } }
 
 .mud-tabs.mud-tabs-vertical {
   display: flex; }
@@ -4400,6 +4421,9 @@ ul {
       color: var(--mud-palette-text-disabled); }
     .mud-input-control > .mud-input-label-inputcontrol.mud-input-error {
       color: var(--mud-palette-error) !important; }
+  .mud-input-control.mud-input-required > .mud-input-label::after {
+    content: "*";
+    color: var(--mud-palette-error); }
 
 .mud-input-helper-text {
   color: var(--mud-palette-text-secondary);
@@ -9095,8 +9119,13 @@ ul {
   min-height: var(--mud-appbar-min-height);
   padding: 12px 24px 12px 24px; }
 
-.mud-drawer-clipped {
-  padding-top: var(--mud-appbar-min-height); }
+@media (min-width: 0px) and (orientation: landscape) {
+  .mud-drawer-clipped {
+    padding-top: calc(var(--mud-appbar-min-height) - 16px); } }
+
+@media (min-width: 600px) {
+  .mud-drawer-clipped {
+    padding-top: var(--mud-appbar-min-height); } }
 
 .mud-main-content {
   flex: 1 1 auto;
