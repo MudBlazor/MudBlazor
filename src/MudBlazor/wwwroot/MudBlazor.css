@@ -379,6 +379,15 @@ ul {
 ::-webkit-scrollbar-thumb:hover {
   background: #a6a6a6; }
 
+.mud-action-area {
+  cursor: pointer;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
+  .mud-action-area:hover {
+    background-color: var(--mud-palette-action-default-hover); }
+  .mud-action-area.mud-disabled {
+    cursor: default;
+    pointer-events: none; }
+
 .mud-alert {
   display: flex;
   padding: 6px 16px;
@@ -4262,6 +4271,9 @@ ul {
     padding-left: 0; }
   .mud-input > input.mud-input-root-outlined.mud-input-root-adorned-end, div.mud-input-slot.mud-input-root-outlined.mud-input-root-adorned-end {
     padding-right: 0; }
+
+.mud-input > input::-ms-reveal, .mud-input > input::-ms-clear, div.mud-input-slot::-ms-reveal, div.mud-input-slot::-ms-clear {
+  display: none !important; }
 
 .mud-input > textarea.mud-input-root {
   font: inherit;
