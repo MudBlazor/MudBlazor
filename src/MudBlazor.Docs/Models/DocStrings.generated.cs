@@ -362,6 +362,8 @@ public const string MudButton_StartIcon = @"Icon placed before the text if set."
 
 public const string MudButton_EndIcon = @"Icon placed before the text if set.";
 
+public const string MudButton_IconClass = @"Icon class names, separated by space";
+
 public const string MudButton_Color = @"The color of the component. It supports the theme colors.";
 
 public const string MudButton_Size = @"The Size of the component.";
@@ -862,6 +864,8 @@ public const string MudInputControl_ChildContent = @"Child content of component.
 public const string MudInputControl_InputContent = @"Should be the Input";
 
 public const string MudInputControl_Margin = @"Will adjust vertical spacing.";
+
+public const string MudInputControl_Required = @"If true, will apply mud-input-required class to the output div";
 
 public const string MudInputControl_Error = @"If true, the label will be displayed in an error state.";
 
@@ -2562,6 +2566,8 @@ public const string MudTabPanel_Disabled = @"If true, the tabpanel will be disab
 public const string MudTabPanel_BadgeData = @"Optional information to be showed into a badge";
 
 public const string MudTabPanel_BadgeColor = @"The color of the badge.";
+
+public const string MudTabPanel_OnClick = @"Raised when tab is clicked";
 
 public const string MudTabPanel_ChildContent = @"Child content of component.";
 
