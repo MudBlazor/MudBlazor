@@ -1,0 +1,22 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Typo</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Typo</span><span class="enumValue">.h6</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>MudBlazor is <span class="atSign">&#64;</span>Text<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Variant</span><span class="enumValue">.Filled</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Primary</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">ButtonOnClick</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="atSign">&#64;</span>ButtonText<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code {
+    <span class="keyword">public</span> <span class="keyword">string</span> Text { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="string">&quot;????&quot;</span>;
+    <span class="keyword">public</span> <span class="keyword">string</span> ButtonText { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="string">&quot;Click Me&quot;</span>;
+    <span class="keyword">public</span> <span class="keyword">int</span> ButtonClicked { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="keyword">void</span> ButtonOnClick()
+    {
+        ButtonClicked += <span class="number">1</span>;
+        Text = $<span class="string">&quot;Awesome x {ButtonClicked}&quot;</span>;
+        ButtonText = <span class="string">&quot;Click Me Again&quot;</span>;
+    }
+}
+</pre></div>
+</div>

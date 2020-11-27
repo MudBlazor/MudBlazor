@@ -4,22 +4,6 @@ namespace MudBlazor.Docs.Models
     public static partial class Snippets
     {
 
-public const string UsageExample = @"<MudText Typo=""Typo.h6"">MudBlazor is @Text</MudText>
-<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ButtonOnClick"">@ButtonText</MudButton>
-
-@code {
-    public string Text { get; set; } = ""????"";
-    public string ButtonText { get; set; } = ""Click Me"";
-    public int ButtonClicked { get; set; }
-
-    void ButtonOnClick()
-    {
-        ButtonClicked += 1;
-        Text = $""Awesome x {ButtonClicked}"";
-        ButtonText = ""Click Me Again"";
-    }
-}";
-
 public const string AlertDenseExample = @"<MudAlert Severity=""Severity.Normal"" Dense=""true"">Dense Default</MudAlert>
 <MudAlert Severity=""Severity.Info"" Dense=""true"">Dense Info</MudAlert>
 <MudAlert Severity=""Severity.Success"" Dense=""true"">Dense Success</MudAlert>
@@ -4074,6 +4058,22 @@ public const string SpacingNegativeExample = @"<MudPaper Class=""mx-auto pa-4 mu
 <MudPaper Class=""mt-n12 mx-auto pa-6 mud-theme-primary"" Elevation=""12"" Style=""width: 350px;"">
     <MudText Typo=""Typo.body1"">This card uses negative top margin!</MudText>
 </MudPaper>";
+
+public const string UsageExample = @"<MudText Typo=""Typo.h6"">MudBlazor is @Text</MudText>
+<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ButtonOnClick"">@ButtonText</MudButton>
+
+@code {
+    public string Text { get; set; } = ""????"";
+    public string ButtonText { get; set; } = ""Click Me"";
+    public int ButtonClicked { get; set; }
+
+    void ButtonOnClick()
+    {
+        ButtonClicked += 1;
+        Text = $""Awesome x {ButtonClicked}"";
+        ButtonText = ""Click Me Again"";
+    }
+}";
 
     }
 }
