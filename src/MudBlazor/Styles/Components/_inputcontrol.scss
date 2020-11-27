@@ -63,6 +63,11 @@
             color: var(--mud-palette-error) !important;
         }
     }
+
+    &.mud-input-required > .mud-input-label::after {
+        content: "*";
+        color: var(--mud-palette-error);
+    }
 }
 
 .mud-input-helper-text {

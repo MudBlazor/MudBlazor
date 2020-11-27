@@ -3,7 +3,7 @@
 @inherits MudBaseInput<T>
 
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
-    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin">
+    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
         <InputContent>
             <MudInput @attributes="UserAttributes" InputType="@InputType" Lines="@Lines" Class="@Classname" Style="@Style" Variant="@Variant" @bind-Value="@Text" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly"
                       Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
