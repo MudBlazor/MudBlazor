@@ -190,8 +190,7 @@
 }
 
 .mud-button-label {
-
-    .mud-button-icon:first-child {
+    .mud-button-icon-start {
         display: inherit;
         margin-left: -4px;
         margin-right: 8px;
@@ -201,7 +200,7 @@
         }
     }
 
-    .mud-button-icon:last-child {
+    .mud-button-icon-end {
         display: inherit;
         margin-left: 8px;
         margin-right: -4px;

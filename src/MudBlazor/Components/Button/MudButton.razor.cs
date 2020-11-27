@@ -19,8 +19,14 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
-        protected string IconClassname =>
-        new CssBuilder("mud-button-icon")
+        protected string StartIconClass =>
+        new CssBuilder("mud-button-icon-start")
+          .AddClass($"mud-button-icon-size-{Size.ToDescriptionString()}")
+          .AddClass(IconClass)
+        .Build();
+
+        protected string EndIconClass =>
+        new CssBuilder("mud-button-icon-end")
           .AddClass($"mud-button-icon-size-{Size.ToDescriptionString()}")
           .AddClass(IconClass)
         .Build();

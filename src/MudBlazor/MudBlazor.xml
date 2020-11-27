@@ -570,6 +570,11 @@
             Icon placed before the text if set.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudButton.IconClass">
+            <summary>
+            Icon class names, separated by space
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudButton.Color">
             <summary>
             The color of the component. It supports the theme colors.
@@ -1275,6 +1280,11 @@
         <member name="P:MudBlazor.MudInputControl.Margin">
             <summary>
              Will adjust vertical spacing. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.Required">
+            <summary>
+            If true, will apply mud-input-required class to the output div
             </summary>
         </member>
         <member name="P:MudBlazor.MudInputControl.Error">
@@ -2747,7 +2757,7 @@
         </member>
         <member name="P:MudBlazor.MudTabPanel.OnClick">
             <summary>
-                Raised when tab is clicked
+            Raised when tab is clicked
             </summary>
         </member>
         <member name="P:MudBlazor.MudTabPanel.ChildContent">
