@@ -41,7 +41,7 @@ namespace MudBlazor.Docs.Compiler
         {
             var source = File.ReadAllText(path, Encoding.UTF8);
             //source = Regex.Replace(source, "@using .+?\n", "");
-            source = Regex.Replace(source, "@namespace .+?\n", "");
+            source = Regex.Replace(source, "@(namespace|layout|page) .+?\n", "");
             return source.Trim();
         }
 
@@ -287,7 +287,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var source = File.ReadAllText(path, Encoding.UTF8);
             //source = Regex.Replace(source, "@using .+?\n", "");
-            source = Regex.Replace(source, "@namespace .+?\n", "");
+            source = Regex.Replace(source, "@(namespace|layout|page) .+?\n", "");
             return source.Replace("\"", "\"\"").Trim();
         }
 
