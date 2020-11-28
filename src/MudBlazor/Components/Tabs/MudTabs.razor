@@ -10,7 +10,7 @@
                     <div class="@WrapperClassnames">
                         @foreach (MudTabPanel panel in Panels)
                         {
-                            <div class="@GetTabClass(panel)" @onclick=@( () => ActivatePanel(panel) )>
+                            <div class="@GetTabClass(panel)" @onclick=@( e => ActivatePanel(panel, e) )>
                                 @if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
                                 {
                                     @panel.Text

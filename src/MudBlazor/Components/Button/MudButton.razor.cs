@@ -19,12 +19,16 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
-        protected string IconClassname =>
-        new CssBuilder()
-          .AddClass($"mud-button-start-icon", !String.IsNullOrEmpty(StartIcon))
-          .AddClass($"mud-button-end-icon", !String.IsNullOrEmpty(EndIcon))
+        protected string StartIconClass =>
+        new CssBuilder("mud-button-icon-start")
           .AddClass($"mud-button-icon-size-{Size.ToDescriptionString()}")
-          .AddClass(Class)
+          .AddClass(IconClass)
+        .Build();
+
+        protected string EndIconClass =>
+        new CssBuilder("mud-button-icon-end")
+          .AddClass($"mud-button-icon-size-{Size.ToDescriptionString()}")
+          .AddClass(IconClass)
         .Build();
 
         /// <summary>
@@ -36,6 +40,11 @@ namespace MudBlazor
         /// Icon placed before the text if set.
         /// </summary>
         [Parameter] public string EndIcon { get; set; }
+
+        /// <summary>
+        /// Icon class names, separated by space
+        /// </summary>
+        [Parameter] public string IconClass { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.

@@ -374,6 +374,21 @@
             will be splatted onto the underlying HTML tag.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudActionArea.Disabled">
+            <summary>
+            If true, the area will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudActionArea.DisableRipple">
+            <summary>
+            If true, disables ripple effect.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudActionArea.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudAlert.Elevation">
             <summary>
             The higher the number, the heavier the drop-shadow. 0 for no shadow.
@@ -404,14 +419,14 @@
             The variant to use.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudAlert.Class">
-            <summary>
-            User class names, separated by space.
-            </summary>
-        </member>
         <member name="P:MudBlazor.MudAlert.ChildContent">
             <summary>
             Child content of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAlert.Icon">
+            <summary>
+            Custom icon, leave unset to use the standard icon which depends on the Severity
             </summary>
         </member>
         <member name="P:MudBlazor.MudAlert.OnClick">
@@ -568,6 +583,11 @@
         <member name="P:MudBlazor.MudButton.EndIcon">
             <summary>
             Icon placed before the text if set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudButton.IconClass">
+            <summary>
+            Icon class names, separated by space
             </summary>
         </member>
         <member name="P:MudBlazor.MudButton.Color">
@@ -1217,6 +1237,16 @@
             Inverts the Breakpoint, so that the ChildContent is only rendered when the breakpoint matches the screen size.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudHidden.IsHidden">
+            <summary>
+            True if the component is not visible (two-way bindable)
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudHidden.IsHiddenChanged">
+            <summary>
+            Fires when the breakpoint changes visibility of the component
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudHidden.ChildContent">
             <summary>
             Child content of component.
@@ -1265,6 +1295,11 @@
         <member name="P:MudBlazor.MudInputControl.Margin">
             <summary>
              Will adjust vertical spacing. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputControl.Required">
+            <summary>
+            If true, will apply mud-input-required class to the output div
             </summary>
         </member>
         <member name="P:MudBlazor.MudInputControl.Error">
@@ -2733,6 +2768,11 @@
         <member name="P:MudBlazor.MudTabPanel.BadgeColor">
             <summary>
             The color of the badge.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabPanel.OnClick">
+            <summary>
+            Raised when tab is clicked
             </summary>
         </member>
         <member name="P:MudBlazor.MudTabPanel.ChildContent">

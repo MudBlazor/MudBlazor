@@ -181,6 +181,35 @@ public const string MudComponentBase_Tag = @"Use Tag to attach any user data obj
 public const string MudComponentBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudActionArea_Disabled = @"If true, the area will be disabled.";
+
+public const string MudActionArea_DisableRipple = @"If true, disables ripple effect.";
+
+public const string MudActionArea_ChildContent = @"Child content of component.";
+
+public const string MudActionArea_ButtonType = @"The button Type (Button, Submit, Refresh)";
+
+public const string MudActionArea_Link = @"If set to a URL, clicking the button will open the referenced document. Use Target to specify where";
+
+public const string MudActionArea_Target = @"The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | framename";
+
+public const string MudActionArea_ForceLoad = @"If true, force browser to redirect outside component router-space.";
+
+public const string MudActionArea_Command = @"Command executed when the user clicks on an element.";
+
+public const string MudActionArea_CommandParameter = @"Command parameter.";
+
+public const string MudActionArea_OnClick = @"Button click event.";
+
+public const string MudActionArea_Class = @"User class names, separated by space";
+
+public const string MudActionArea_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudActionArea_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudActionArea_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudAlert_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow.";
 
 public const string MudAlert_Square = @"If true, rounded corners are disabled.";
@@ -193,11 +222,20 @@ public const string MudAlert_Severity = @"The severity of the alert. This define
 
 public const string MudAlert_Variant = @"The variant to use.";
 
-public const string MudAlert_Class = @"User class names, separated by space.";
-
 public const string MudAlert_ChildContent = @"Child content of the component.";
 
+public const string MudAlert_Icon = @"Custom icon, leave unset to use the standard icon which depends on the Severity";
+
 public const string MudAlert_OnClick = @"Raised when the alert is clicked";
+
+public const string MudAlert_Class = @"User class names, separated by space";
+
+public const string MudAlert_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudAlert_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudAlert_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
 
 public const string MudAppBar_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow.";
 
@@ -352,6 +390,8 @@ public const string MudBadge_UserAttributes = @"UserAttributes carries all attri
 public const string MudButton_StartIcon = @"Icon placed before the text if set.";
 
 public const string MudButton_EndIcon = @"Icon placed before the text if set.";
+
+public const string MudButton_IconClass = @"Icon class names, separated by space";
 
 public const string MudButton_Color = @"The color of the component. It supports the theme colors.";
 
@@ -812,6 +852,10 @@ public const string MudHidden_Breakpoint = @"The screen size(s) depending on whi
 
 public const string MudHidden_Invert = @"Inverts the Breakpoint, so that the ChildContent is only rendered when the breakpoint matches the screen size.";
 
+public const string MudHidden_IsHidden = @"True if the component is not visible (two-way bindable)";
+
+public const string MudHidden_IsHiddenChanged = @"Fires when the breakpoint changes visibility of the component";
+
 public const string MudHidden_ChildContent = @"Child content of component.";
 
 public const string MudHidden_Class = @"User class names, separated by space";
@@ -849,6 +893,8 @@ public const string MudInputControl_ChildContent = @"Child content of component.
 public const string MudInputControl_InputContent = @"Should be the Input";
 
 public const string MudInputControl_Margin = @"Will adjust vertical spacing.";
+
+public const string MudInputControl_Required = @"If true, will apply mud-input-required class to the output div";
 
 public const string MudInputControl_Error = @"If true, the label will be displayed in an error state.";
 
@@ -2549,6 +2595,8 @@ public const string MudTabPanel_Disabled = @"If true, the tabpanel will be disab
 public const string MudTabPanel_BadgeData = @"Optional information to be showed into a badge";
 
 public const string MudTabPanel_BadgeColor = @"The color of the badge.";
+
+public const string MudTabPanel_OnClick = @"Raised when tab is clicked";
 
 public const string MudTabPanel_ChildContent = @"Child content of component.";
 

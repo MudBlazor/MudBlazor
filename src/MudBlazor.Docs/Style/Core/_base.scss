@@ -19,7 +19,13 @@
     background-image: url(../../_content/MudBlazor.Docs/MudAppbarCorner.svg);
     background-repeat: no-repeat;
     background-position: top right;
-    overflow:hidden;
+    overflow: hidden;
+}
+
+@media (max-width:600px) {
+    .mudblazor-appbar-band {
+        background-position: 14px 0px;
+    }
 }
 
 .mudblazor-appbar-brand-text {
@@ -69,6 +75,7 @@
         padding-right: 30px;
     }
 }
+
 
 .docs-list{
     list-style:inside;
