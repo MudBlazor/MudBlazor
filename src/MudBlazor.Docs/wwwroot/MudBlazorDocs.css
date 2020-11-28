@@ -491,7 +491,8 @@
 
 .wf-content {
   flex: 1 1 auto;
-  overflow: auto; }
+  overflow: auto;
+  padding: 38px 8px 0px; }
 
 .docs-page .mud-typography-h4 {
   margin-top: 52px; }
