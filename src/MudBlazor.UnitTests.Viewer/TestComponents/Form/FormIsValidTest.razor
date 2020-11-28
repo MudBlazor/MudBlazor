@@ -1,0 +1,10 @@
+﻿@using MudBlazor;
+@namespace MudBlazor.UnitTests
+
+<MudForm>
+    <MudTextField T="string" Required="true" RequiredError="Enter a rock star"></MudTextField>
+</MudForm>
+
+@code {
+    public static string __description__ = "Clearing the value of a required textfield should set form's isvalid to false.";
+}
