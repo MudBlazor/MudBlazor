@@ -40,8 +40,8 @@ namespace MudBlazor.Docs.Compiler
         private static string StripComponentSource(string path)
         {
             var source = File.ReadAllText(path, Encoding.UTF8);
-            source = Regex.Replace(source, "@using .+?\n", "");
-            source = Regex.Replace(source, "@namespace .+?\n", "");
+            //source = Regex.Replace(source, "@using .+?\n", "");
+            source = Regex.Replace(source, "@(namespace|layout|page) .+?\n", "");
             return source.Trim();
         }
 
@@ -286,8 +286,8 @@ namespace MudBlazor.UnitTests.Components
         private static string EscapeComponentSource(string path)
         {
             var source = File.ReadAllText(path, Encoding.UTF8);
-            source = Regex.Replace(source, "@using .+?\n", "");
-            source = Regex.Replace(source, "@namespace .+?\n", "");
+            //source = Regex.Replace(source, "@using .+?\n", "");
+            source = Regex.Replace(source, "@(namespace|layout|page) .+?\n", "");
             return source.Replace("\"", "\"\"").Trim();
         }
 

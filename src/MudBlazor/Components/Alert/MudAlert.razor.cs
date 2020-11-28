@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudAlert : ComponentBase
+    public partial class MudAlert : MudComponentBase
     {
         protected string Classname =>
         new CssBuilder("mud-alert")
@@ -47,28 +47,35 @@ namespace MudBlazor
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// User class names, separated by space.
-        /// </summary>
-        [Parameter] public string Class { set; get; }
-
-        /// <summary>
         /// Child content of the component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        public string Icon;
-        public string variant;
-        protected override void OnInitialized()
+        /// <summary>
+        /// Custom icon, leave unset to use the standard icon which depends on the Severity
+        /// </summary>
+        [Parameter] public string Icon { get; set; }
+
+        protected string _icon;
+
+        protected override void OnParametersSet()
         {
-            Icon = Severity switch
+            if (!string.IsNullOrEmpty(Icon))
             {
-                Severity.Normal => Outlined.EventNoteOutlined,
-                Severity.Info => Outlined.InfoOutlined,
-                Severity.Success => Icons.Custom.AlertSuccess,
-                Severity.Warning => Outlined.ReportProblemOutlined,
-                Severity.Error => Filled.ErrorOutline
-            };
-        }
+                _icon = Icon;
+            }
+            else 
+            {
+                _icon = Severity switch
+                {
+                    Severity.Normal => Outlined.EventNoteOutlined,
+                    Severity.Info => Outlined.InfoOutlined,
+                    Severity.Success => Icons.Custom.AlertSuccess,
+                    Severity.Warning => Outlined.ReportProblemOutlined,
+                    Severity.Error => Filled.ErrorOutline
+                };
+            }
+            }
 
         /// <summary>
         /// Raised when the alert is clicked

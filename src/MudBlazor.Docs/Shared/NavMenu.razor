@@ -6,6 +6,7 @@
     <MudNavGroup Title="Getting Started" Icon="@Icons.Material.School" Expanded="false" ExpandIcon="@Icons.Material.ExpandMore" Style="margin-top: 40px;">
         <MudNavLink Href="getting-started/installation">Installation</MudNavLink>
         <MudNavLink Href="getting-started/usage">Usage</MudNavLink>
+        <MudNavLink Href="getting-started/wireframes">Wireframes</MudNavLink>
     </MudNavGroup>
     <MudNavGroup Title="Components" Icon="@Icons.Material.Dashboard" Expanded="false" ExpandIcon="@Icons.Material.ExpandMore">
         @foreach (var item in DocsComponents.ToList().OrderBy(i => i.Name))
@@ -38,6 +39,7 @@
         <MudNavLink Href="features/border-radius">Border Radius</MudNavLink>
         <MudNavLink Href="features/colors">Colors</MudNavLink>
         <MudNavLink Href="features/converters">Converters</MudNavLink>
+        <MudNavLink Href="features/display">Display</MudNavLink>
         <MudNavLink Href="features/elevation">Elevation</MudNavLink>
         <MudNavLink Href="features/flex">Flex</MudNavLink>
         <MudNavLink Href="features/icons">Icons</MudNavLink>
@@ -92,6 +94,7 @@
                                     .AddItem("Text Field", typeof(MudTextField<T>))
                                     .AddItem("Form", typeof(MudForm))
                                     .AddItem("Autocomplete", typeof(MudAutocomplete<T>))
+                                    .AddItem("Field", typeof(MudField))
                                 )
                             .AddItem("AppBar", typeof(MudAppBar))
                             .AddItem("Drawer", typeof(MudDrawer))
@@ -117,7 +120,7 @@
                             .AddItem("Rating", typeof(MudRating))
                             .AddItem("Skeleton", typeof(MudSkeleton))
                             .AddItem("Table", typeof(MudTable<T>))
-                            .AddItem("Table Simple", typeof(MudSimpleTable))
+                            .AddItem("Simple Table", typeof(MudSimpleTable))
                             .AddItem("Tooltip", typeof(MudTooltip))
                             .AddItem("Typography", typeof(MudText));
 
