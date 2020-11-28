@@ -412,6 +412,7 @@ namespace MudBlazor
                 Error = ValidationErrors.Count > 0;
                 ErrorText = ValidationErrors.FirstOrDefault();
                 Form.Update(this);
+                StateHasChanged();
             }
         }
 
