@@ -4102,6 +4102,212 @@ public const string UsageExample = @"<MudText Typo=""Typo.h6"">MudBlazor is @Tex
     }
 }";
 
+public const string Content1Example = @"<MudContainer Class=""mt-16 px-8"" MaxWidth=""MaxWidth.False"">
+    <MudGrid>
+        <MudItem xs=""12"" sm=""6"" md=""4"">
+            <MudPaper Elevation=""2"" Class=""pa-4"" Style=""height: 200px;""></MudPaper>
+        </MudItem>
+        <MudItem xs=""12"" sm=""6"" md=""4"">
+            <MudPaper Elevation=""2"" Class=""pa-4"" Style=""height: 200px;""></MudPaper>
+        </MudItem>
+        <MudItem xs=""12"" sm=""12"" md=""4"">
+            <MudPaper Elevation=""2"" Class=""pa-4"" Style=""height: 200px;""></MudPaper>
+        </MudItem>
+        <MudItem xs=""12"" sm=""6"">
+            <MudGrid>
+                <MudItem xs=""12"">
+                    <MudPaper Elevation=""2"" Class=""pa-4"" Style=""height: 200px;""></MudPaper>
+                </MudItem>
+                <MudItem xs=""12"">
+                    <MudPaper Elevation=""2"" Class=""pa-4"" Style=""height: 200px;""></MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+        <MudItem xs=""12"" sm=""6"">
+            <MudPaper Elevation=""2"" Class=""pa-4"" Style=""height: 100%""></MudPaper>
+        </MudItem>
+        <MudItem xs=""12"" sm=""6"" md=""4"">
+            <MudPaper Elevation=""2"" Class=""pa-4"" Style=""height: 200px;""></MudPaper>
+        </MudItem>
+        <MudItem xs=""12"" sm=""6"" md=""4"">
+            <MudPaper Elevation=""2"" Class=""pa-4"" Style=""height: 200px;""></MudPaper>
+        </MudItem>
+        <MudItem xs=""12"" sm=""12"" md=""4"">
+            <MudPaper Elevation=""2"" Class=""pa-4"" Style=""height: 200px;""></MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>";
+
+public const string Content2Example = @"<MudContainer Class=""mt-16"">
+    <MudText Typo=""Typo.h3"" Align=""Align.Center"" GutterBottom=""true"">Pricing</MudText>
+    <MudText Align=""Align.Center"">Some long pricing text should go here maybe? who knows what text you would want here, i guess i cant fill it in for you.</MudText>
+    <MudGrid Class=""mt-8"">
+        <MudItem xs=""12"" sm=""6"" md=""4"">
+            <MudCard Elevation=""25"" Class=""rounded-lg pb-4"">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo=""Typo.h5"" Align=""Align.Center"">Beginner</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <div class=""d-flex justify-center"">
+                        <MudText Typo=""Typo.h3"">$5</MudText>
+                        <MudText Typo=""Typo.h5"" Class=""ml-1 mt-5"" Color=""Color.Secondary"">/Monthly</MudText>
+                    </div>
+                    <MudList Class=""mx-auto mt-4"" Style=""width:300px;"">
+                        <MudListItem Icon=""@Icons.Material.LiveHelp"">
+                            Unlimited something
+                        </MudListItem>
+                        <MudListItem Icon=""@Icons.Material.LiveHelp"">
+                            10 something
+                        </MudListItem>
+                        <MudListItem Icon=""@Icons.Material.LiveHelp"">
+                            No something
+                        </MudListItem>
+                    </MudList>
+                </MudCardContent>
+                <MudCardActions Class=""d-flex justify-center"">
+                    <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" Size=""Size.Large"" Style=""width:50%;"">Start Now</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs=""12"" sm=""6"" md=""4"">
+            <MudCard Elevation=""25"" Class=""rounded-lg pb-4"">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo=""Typo.h5"" Align=""Align.Center"">Starter</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <div class=""d-flex justify-center"">
+                        <MudText Typo=""Typo.h3"">$10</MudText>
+                        <MudText Typo=""Typo.h5"" Class=""ml-1 mt-5"" Color=""Color.Secondary"">/Monthly</MudText>
+                    </div>
+                    <MudList Class=""mx-auto mt-4"" Style=""width:300px;"">
+                        <MudListItem Icon=""@Icons.Material.LiveHelp"">
+                            Unlimited something
+                        </MudListItem>
+                        <MudListItem Icon=""@Icons.Material.LiveHelp"">
+                            10 something
+                        </MudListItem>
+                        <MudListItem Icon=""@Icons.Material.LiveHelp"">
+                            No something
+                        </MudListItem>
+                    </MudList>
+                </MudCardContent>
+                <MudCardActions Class=""d-flex justify-center"">
+                    <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" Size=""Size.Large"" Style=""width:50%;"">Start Now</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+        <MudItem xs=""12"" sm=""12"" md=""4"">
+            <MudCard Elevation=""25"" Class=""rounded-lg pb-4"">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo=""Typo.h5"" Align=""Align.Center"">Professional</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <div class=""d-flex justify-center"">
+                        <MudText Typo=""Typo.h3"">$15</MudText>
+                        <MudText Typo=""Typo.h5"" Class=""ml-1 mt-5"" Color=""Color.Secondary"">/Monthly</MudText>
+                    </div>
+                    <MudList Class=""mx-auto mt-4"" Style=""width:300px;"">
+                        <MudListItem Icon=""@Icons.Material.LiveHelp"">
+                            Unlimited something
+                        </MudListItem>
+                        <MudListItem Icon=""@Icons.Material.LiveHelp"">
+                            10 something
+                        </MudListItem>
+                        <MudListItem Icon=""@Icons.Material.LiveHelp"">
+                            No something
+                        </MudListItem>
+                    </MudList>
+                </MudCardContent>
+                <MudCardActions Class=""d-flex justify-center"">
+                    <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" Size=""Size.Large"" Style=""width:50%;"">Start Now</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>";
+
+public const string Content3Example = @"<MudContainer Class=""mt-16"" MaxWidth=""MaxWidth.Medium"">
+    <MudText Typo=""Typo.h3"" Align=""Align.Center"" GutterBottom=""true"">Checkout</MudText>
+    <MudGrid Spacing=""6"" Class=""mt-16"">
+        <MudItem xs=""7"">
+            <MudText Typo=""Typo.h5"" GutterBottom=""true"">Billing address</MudText>
+            <MudGrid>
+                <MudItem xs=""12"">
+                    <MudTextField T=""string"" Label=""Email"" />
+                </MudItem>
+                <MudItem xs=""12"">
+                    <MudTextField T=""string"" Label=""Mobile number"" />
+                </MudItem>
+                <MudItem xs=""12"">
+                    <MudTextField T=""string"" Label=""Personal number"" />
+                </MudItem>
+                <MudItem xs=""6"">
+                    <MudTextField T=""string"" Label=""First name"" />
+                </MudItem>
+                <MudItem xs=""6"">
+                    <MudTextField T=""string"" Label=""Last name"" />
+                </MudItem>
+                <MudItem xs=""12"">
+                    <MudTextField T=""string"" Label=""Address"" />
+                </MudItem>
+                <MudItem xs=""6"">
+                    <MudTextField T=""string"" Label=""Postal code"" />
+                </MudItem>
+                <MudItem xs=""6"">
+                    <MudTextField T=""string"" Label=""Postal Area"" />
+                </MudItem>
+                <MudItem xs=""12"" Class=""d-flex justify-center"">
+                    <MudButton Variant=""Variant.Filled"" DisableElevation=""true"" Color=""Color.Primary"" Size=""Size.Large"" Class=""mt-8"">Continue to Payment</MudButton>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+        <MudItem xs=""5"">
+            <MudText Typo=""Typo.h5"" GutterBottom=""true"">Cart</MudText>
+            <MudPaper Class=""d-flex flex-column"" Style=""height:100%;"" Outlined=""true"">
+                <MudList Clickable=""true"">
+                    <MudListItem Icon=""@Icons.Material.ContentCut"">
+                        <div class=""d-flex"">
+                            <MudText>Scissor - Big</MudText>
+                            <MudText Inline=""true"" Class=""ml-auto"">$5</MudText>
+                        </div>
+                    </MudListItem>
+                    <MudListItem Icon=""@Icons.Material.AirplanemodeActive"">
+                        <div class=""d-flex"">
+                            <MudText>Model Airplane</MudText>
+                            <MudText Class=""ml-auto"">$20</MudText>
+                        </div>
+                    </MudListItem>
+                    <MudListItem Icon=""@Icons.Material.Create"">
+                        <div class=""d-flex"">
+                            <MudText>Plastic Glue</MudText>
+                            <MudText Class=""ml-auto"">$12</MudText>
+                        </div>
+                    </MudListItem>
+                    <MudListItem Icon=""@Icons.Material.ColorLens"">
+                        <div class=""d-flex"">
+                            <MudText>Color set - Modern planes</MudText>
+                            <MudText Class=""ml-auto"">$16</MudText>
+                        </div>
+                    </MudListItem>
+                </MudList>
+                <div class=""mt-auto"">
+                    <MudDivider />
+                    <div class=""d-flex pa-4"">
+                        <MudText>Total:</MudText>
+                        <MudText Class=""ml-auto""><b>$53</b></MudText>
+                    </div>
+                </div>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>";
+
     }
 }
 
