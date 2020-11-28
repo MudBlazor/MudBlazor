@@ -3,6 +3,7 @@ using MudBlazor.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
@@ -105,12 +106,13 @@ namespace MudBlazor
 
             return TabClass;
         }
-        void ActivatePanel(MudTabPanel panel)
+        void ActivatePanel(MudTabPanel panel, MouseEventArgs ev)
         {
             if(!panel.Disabled)
             {
                 ActivePanel = panel;
                 ActivePanelIndex = Panels.IndexOf(panel);
+                ActivePanel.OnClick.InvokeAsync(ev);
             }
         }
     }

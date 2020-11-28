@@ -10,7 +10,8 @@ namespace MudBlazor
     {
         protected string Classname =>
            new CssBuilder("mud-input-control")
-              .AddClass($"mud-input-control-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
+             .AddClass("mud-input-required", when: () => Required)
+             .AddClass($"mud-input-control-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
              .AddClass("mud-input-control-full-width", FullWidth)
              .AddClass("mud-input-error", Error)
              .AddClass(Class)
@@ -36,6 +37,11 @@ namespace MudBlazor
         ///  Will adjust vertical spacing. 
         /// </summary>
         [Parameter] public Margin Margin { get; set; } = Margin.None;
+
+        /// <summary>
+        /// If true, will apply mud-input-required class to the output div
+        /// </summary>
+        [Parameter] public bool Required { get; set; }
 
         /// <summary>
         /// If true, the label will be displayed in an error state.

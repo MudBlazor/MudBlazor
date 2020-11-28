@@ -1,5 +1,5 @@
 ﻿
-namespace MudBlazor.Theme.Defaults
+namespace MudBlazor
 {
     public class LayoutProperties
     {

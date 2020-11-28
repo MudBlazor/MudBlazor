@@ -1,0 +1,77 @@
+﻿@page "/getting-started/wireframes"
+
+<DocsPage MaxWidth="MaxWidth.Large">
+    <DocsPageHeader Title="Wireframes"
+                    SubTitle="These small templates or as we call them wireframes can be copied directly from here or just be used for inspiration.">
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Main Layouts</Title>
+            </SectionHeader>
+            <MudGrid>
+                <MudItem>
+                    <div class="wf-layout rounded" @onclick="@((e) => NavigateToWireFrame("/getting-started/wireframes/layout1"))">
+                        <div class="wf-appbar wf-drawer-open-left rounded-tr mud-elevation-1">
+                            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="12px" Height="12px" Class="mr-2" />
+                            <MudSkeleton Height="12px" Width="40px" />
+                        </div>
+                        <div class="wf-drawer rounded-l mud-elevation-1"></div>
+                        <div class="wf-content"></div>
+                    </div>
+                    <MudText Typo="Typo.body1" Align="Align.Center" Class="mt-4">Drawer left + top appbar</MudText>
+                </MudItem>
+                <MudItem>
+                    <div class="wf-layout rounded" @onclick="@((e) => NavigateToWireFrame("/getting-started/wireframes/layout2"))">
+                        <div class="wf-appbar rounded-tr mud-elevation-1">
+                            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="12px" Height="12px" Class="mr-2" />
+                            <MudSkeleton Height="12px" Width="40px" />
+                        </div>
+                        <div class="wf-drawer rounded-l mud-elevation-1"></div>
+                        <div class="wf-content"></div>
+                    </div>
+                    <MudText Typo="Typo.body1" Align="Align.Center" Class="mt-4">Top appbar with clipped drawer</MudText>
+                </MudItem>
+                <MudItem>
+                    <div class="wf-layout rounded" @onclick="@((e) => NavigateToWireFrame("/getting-started/wireframes/layout3"))">
+                        <div class="wf-appbar rounded-tr mud-elevation-1">
+                            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="12px" Height="12px" Class="mr-2" />
+                            <MudSkeleton Height="12px" Width="40px" />
+                        </div>
+                        <div class="wf-content"></div>
+                    </div>
+                    <MudText Typo="Typo.body1" Align="Align.Center" Class="mt-4">Appbar Only</MudText>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Custom Components</Title>
+            </SectionHeader>
+            <MudGrid>
+                <MudItem>
+                    <div class="wf-layout rounded"></div>
+                </MudItem>
+                <MudItem>
+                    <div class="wf-layout rounded"></div>
+                </MudItem>
+                <MudItem>
+                    <div class="wf-layout rounded"></div>
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+    </DocsPageContent>
+    <MudDivider Class="my-16" Style="opacity:0;"/>
+</DocsPage>
+<Footer />
+
+@code {
+    [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
+
+    public void NavigateToWireFrame(string wireframe)
+    {
+        UriHelper.NavigateTo(wireframe);
+    }
+}
+
+
