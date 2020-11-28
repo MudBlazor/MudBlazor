@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Bunit;
+using Bunit.Rendering;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,5 +60,79 @@ namespace MudBlazor.UnitTests
             textField.ErrorText.Should().BeNullOrEmpty();
         }
 
+        /// <summary>
+        /// Custom validation func should be called to determine whether or not a form value is good
+        /// </summary>
+        [Test]
+        public async Task FormValidationTest1()
+        {
+            using var ctx = new Bunit.TestContext();
+            var validationFunc = new Func<string, Task<bool>>(async x => x?.StartsWith("Marilyn") == true);
+            var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            // check initial state: form should not be valid, but text field does not display an error initially!
+            form.IsValid.Should().Be(false);
+            textField.Error.Should().BeFalse();
+            textField.ErrorText.Should().BeNullOrEmpty();
+            await comp.InvokeAsync(() => textField.Value = "Marilyn Manson");
+            form.IsValid.Should().Be(true);
+            form.Errors.Length.Should().Be(0);
+            textField.Error.Should().BeFalse();
+            textField.ErrorText.Should().BeNullOrEmpty();
+            // this rock star doesn't start with Marilyn
+            await comp.InvokeAsync(() => textField.Value = "Kurt Cobain"); 
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            textField.Error.Should().BeTrue();
+            textField.ErrorText.Should().Be("Invalid");
+            // value is not required, so don't call the validation func on empty text
+            await comp.InvokeAsync(() => textField.Value = "");
+            form.IsValid.Should().Be(true);
+            form.Errors.Length.Should().Be(0);
+            textField.Error.Should().BeFalse();
+            textField.ErrorText.Should().BeNullOrEmpty();
+            // ok, not a rock star, but a star nonetheless
+            await comp.InvokeAsync(() => textField.Value = "Marilyn Monroe");
+            form.IsValid.Should().Be(true);
+            form.Errors.Length.Should().Be(0);
+            textField.Error.Should().BeFalse();
+            textField.ErrorText.Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Custom validation func should be called to determine whether or not a form value is good
+        /// </summary>
+        [Test]
+        public async Task FormValidationTest2()
+        {
+            using var ctx = new Bunit.TestContext();
+            var validationFunc = new Func<string, string>(s =>
+            {
+                if (!(s.StartsWith("Marilyn") || s.EndsWith("Manson")))
+                    return "Not a star!";
+                return null;
+            });
+            var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            form.IsValid.Should().Be(false);
+            await comp.InvokeAsync(() => textField.Value = "Marilyn Manson");
+            form.IsValid.Should().Be(true);
+            // this one might not be a star, but our custom validation func deems him valid nonetheless
+            await comp.InvokeAsync(() => textField.Value = "Charles Manson");
+            form.IsValid.Should().Be(true);
+            // value is not required, so don't call the validation func on empty text
+            await comp.InvokeAsync(() => textField.Value = "");
+            form.IsValid.Should().Be(true);
+            // clearly a star
+            await comp.InvokeAsync(() => textField.Value = "Marilyn Monroe");
+            form.IsValid.Should().Be(true);
+            // not a star according to our validation func
+            await comp.InvokeAsync(() => textField.Value = "Manson Marilyn");
+            form.IsValid.Should().Be(false);
+        }
     }
 }
