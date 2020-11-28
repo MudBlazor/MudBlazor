@@ -1047,11 +1047,7 @@ public const string DividerVerticalExample = @"<MudPaper Outlined=""true"">
     <MudIcon Icon=""@Icons.Material.FormatUnderlined"" />
 </MudPaper>";
 
-public const string DrawerAnchorExample = @"@layout IframeLayout
-@page ""/iframe/docs/examples/drawer/anchor""
-
-
-<MudLayout>
+public const string DrawerAnchorExample = @"<MudLayout>
     <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
         <MudAppBarSpacer />
@@ -1086,10 +1082,7 @@ public const string DrawerAnchorExample = @"@layout IframeLayout
     }
 }";
 
-public const string DrawerClippingExample = @"@layout IframeLayout
-@page ""/iframe/docs/examples/drawer/clipped""
-
-<MudLayout>
+public const string DrawerClippingExample = @"<MudLayout>
     <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
         <MudAppBarSpacer />
@@ -1123,11 +1116,7 @@ public const string DrawerClippingExample = @"@layout IframeLayout
     }
 }";
 
-public const string DrawerDoubleExample = @"@layout IframeLayout
-@page ""/iframe/docs/examples/drawer/double""
-
-
-<MudLayout>
+public const string DrawerDoubleExample = @"<MudLayout>
     <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawerOne"" />
         <MudAppBarSpacer />
@@ -1180,11 +1169,7 @@ public const string DrawerDoubleExample = @"@layout IframeLayout
     }
 }";
 
-public const string DrawerPersistentExample = @"@layout IframeLayout
-@page ""/iframe/docs/examples/drawer/persistent""
-
-
-<MudLayout>
+public const string DrawerPersistentExample = @"<MudLayout>
     <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
         <MudAppBarSpacer />
