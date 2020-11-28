@@ -362,12 +362,19 @@ namespace MudBlazor
             ValidationErrors = new List<string>();
             try
             {
-                if (Required && value == null)
+                if (Required)
                 {
-                    ValidationErrors.Add(RequiredError);
-                    return;
+                    var is_valid = true;
+                    if (typeof(T)==typeof(string))
+                        is_valid = !string.IsNullOrWhiteSpace((string)(object)value);
+                    else if (value == null)
+                        is_valid = false;
+                    if (!is_valid)
+                    {
+                        ValidationErrors.Add(RequiredError);
+                        return;
+                    }
                 }
-
                 if (Validation is ValidationAttribute)
                     ValidateWithAttribute(Validation as ValidationAttribute, value);
                 else if (Validation is Func<T, bool>)
