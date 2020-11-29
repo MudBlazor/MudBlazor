@@ -1491,20 +1491,6 @@ ul {
     bottom: 32px;
     right: 32px; }
 
-.mud-dialog-overlay {
-  top: 0;
-  left: 0;
-  margin: 0px !important;
-  height: 100%;
-  width: 100%;
-  position: fixed;
-  z-index: calc(var(--mud-zindex-dialog) + 1);
-  background-color: rgba(0, 0, 0, 0.5);
-  animation: mud-animation-fadein ease 0.15s;
-  -webkit-animation: mud-animation-fadein ease 0.15s;
-  -moz-animation: mud-animation-fadein ease 0.15s;
-  -o-animation: mud-animation-fadein ease 0.15s; }
-
 .mud-dialog {
   display: flex;
   z-index: calc(var(--mud-zindex-dialog) + 2);
@@ -2917,16 +2903,6 @@ ul {
 
 .mud-collapse-container .mud-picker-inline {
   position: unset; }
-
-.mud-popover-overlay {
-  top: 0;
-  left: 0;
-  margin: 0px !important;
-  height: 100%;
-  width: 100%;
-  position: fixed;
-  background-color: transparent;
-  z-index: var(--mud-zindex-popover); }
 
 .mud-simple-table table {
   width: 100%;
@@ -4516,6 +4492,23 @@ ul {
 .mud-shrink + label.mud-input-label.mud-input-label-inputcontrol.mud-input-label-outlined {
   color: var(--mud-palette-text-primary);
   transform: translate(14px, -6px) scale(0.75); }
+
+.mud-overlay {
+  top: 0;
+  left: 0;
+  margin: 0px !important;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  z-index: var(--mud-zindex-popover);
+  background-color: transparent; }
+  .mud-overlay.mud-overlay-dialog {
+    z-index: calc(var(--mud-zindex-dialog) + 1);
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: mud-animation-fadein ease 0.15s;
+    -webkit-animation: mud-animation-fadein ease 0.15s;
+    -moz-animation: mud-animation-fadein ease 0.15s;
+    -o-animation: mud-animation-fadein ease 0.15s; }
 
 .d-flex {
   display: flex !important; }
