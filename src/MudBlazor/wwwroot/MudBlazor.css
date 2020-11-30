@@ -4425,8 +4425,7 @@ ul {
     .mud-input-control > .mud-input-label-inputcontrol.mud-input-error {
       color: var(--mud-palette-error) !important; }
   .mud-input-control.mud-input-required > .mud-input-label::after {
-    content: "*";
-    color: var(--mud-palette-error); }
+    content: "*"; }
 
 .mud-input-helper-text {
   color: var(--mud-palette-text-secondary);
