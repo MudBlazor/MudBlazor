@@ -4,12 +4,12 @@
 @inherits MudComponentBase
 @implements IDisposable
 
-
 <aside @attributes="UserAttributes" class="@Classname" style="@Style">
     <CascadingValue Value="this" IsFixed="true">
         @ChildContent
     </CascadingValue>
 </aside>
+<MudOverlay OnClick="@DrawerClose" Class="@OverlayClass" />
 
 
 @code {
@@ -23,6 +23,12 @@
       .AddClass($"mud-drawer-color-{Color.ToDescriptionString()}", Color != Color.Default)
       .AddClass($"mud-elevation-{Elevation.ToString()}")
       .AddClass(Class)
+    .Build();
+
+    protected string OverlayClass =>
+    new CssBuilder("mud-drawer-overlay")
+      .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
+      .AddClass($"mud-drawer--open", Open)
     .Build();
 
     /// <summary>
@@ -62,7 +68,7 @@
         }
     }
 
-    [Parameter] public EventCallback<bool> OpenChanged { get; set;}
+    [Parameter] public EventCallback<bool> OpenChanged { get; set; }
 
     private bool _open;
     private bool _clipped;
@@ -100,5 +106,8 @@
         catch (Exception) {}
     }
 
-
+    private void DrawerClose()
+    {
+        OpenChanged.InvokeAsync(false);
+    }
 }
