@@ -51,10 +51,6 @@
         letter-spacing: 0.00938em;
         z-index: 0;
 
-        &:after {
-            color: #1976d2;
-        }
-
         &.mud-disabled {
             color: var(--mud-palette-text-disabled);
         }
