@@ -379,15 +379,6 @@ ul {
 ::-webkit-scrollbar-thumb:hover {
   background: #a6a6a6; }
 
-.mud-action-area {
-  cursor: pointer;
-  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
-  .mud-action-area:hover {
-    background-color: var(--mud-palette-action-default-hover); }
-  .mud-action-area.mud-disabled {
-    cursor: default;
-    pointer-events: none; }
-
 .mud-alert {
   display: flex;
   padding: 6px 16px;

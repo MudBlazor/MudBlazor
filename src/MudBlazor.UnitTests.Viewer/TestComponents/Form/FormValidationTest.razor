@@ -1,0 +1,12 @@
+﻿@using MudBlazor;
+@namespace MudBlazor.UnitTests
+
+<MudForm>
+    <MudTextField T="string" Required="false" RequiredError="Enter a star" Validation="@validation"></MudTextField>
+</MudForm>
+
+@code {
+    public static string __description__ = "Supplied validation func should be called.";
+
+    [Parameter] public object validation { get; set; }
+}

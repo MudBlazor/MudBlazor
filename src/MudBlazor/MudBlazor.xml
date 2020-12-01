@@ -379,21 +379,6 @@
             will be splatted onto the underlying HTML tag.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudActionArea.Disabled">
-            <summary>
-            If true, the area will be disabled.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudActionArea.DisableRipple">
-            <summary>
-            If true, disables ripple effect.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudActionArea.ChildContent">
-            <summary>
-            Child content of component.
-            </summary>
-        </member>
         <member name="P:MudBlazor.MudAlert.Elevation">
             <summary>
             The higher the number, the heavier the drop-shadow. 0 for no shadow.
