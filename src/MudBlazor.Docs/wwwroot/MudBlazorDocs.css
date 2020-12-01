@@ -77,11 +77,13 @@
       font-size: 1rem; }
 
 .mud-codeblock {
+  height: 100%;
   background-color: var(--mud-palette-black);
   border-radius: var(--mud-default-borderradius);
   padding: 16px;
   overflow: auto; }
   .mud-codeblock pre {
+    height: 100%;
     color: #ededed;
     padding: 0px;
     font-size: 1em;
@@ -115,6 +117,8 @@
   .mud-codeblock .html .atSign {
     color: #000;
     background-color: #d2d295; }
+  .mud-codeblock .html .comment {
+    color: #57a64a; }
   .mud-codeblock .csharp .atSign {
     color: #000;
     background-color: #d2d295; }
@@ -590,17 +594,19 @@
 .docs-section-content-row > * {
   margin: 8px; }
 
-.docs-section-source .docs-content-toolbar {
-  width: 100%;
-  display: flex; }
-  .docs-section-source .docs-content-toolbar > .mud-tooltip-root .mud-icon-button .mud-svg-icon-root {
-    font-size: 1.25rem; }
-
-.docs-section-source .docs-source-code.docs-show-code {
-  display: block; }
-
-.docs-section-source .docs-source-code.docs-hide-code {
-  display: none; }
+.docs-section-source {
+  height: 100%; }
+  .docs-section-source .docs-content-toolbar {
+    width: 100%;
+    display: flex; }
+    .docs-section-source .docs-content-toolbar > .mud-tooltip-root .mud-icon-button .mud-svg-icon-root {
+      font-size: 1.25rem; }
+  .docs-section-source .docs-source-code {
+    height: 100%; }
+    .docs-section-source .docs-source-code.docs-show-code {
+      display: block; }
+    .docs-section-source .docs-source-code.docs-hide-code {
+      display: none; }
 
 .docs-content-api {
   padding: 0px;

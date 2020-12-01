@@ -1,10 +1,12 @@
 ﻿.mud-codeblock {
+    height: 100%;
     background-color: var(--mud-palette-black);
     border-radius: var(--mud-default-borderradius);
     padding: 16px;
     overflow: auto;
 
     & pre {
+        height: 100%;
         color: #ededed;
         padding: 0px;
         font-size: 1em;
@@ -62,6 +64,10 @@
         & .atSign {
             color: #000;
             background-color: #d2d295;
+        }
+
+        & .comment {
+            color: #57a64a;
         }
     }
 
