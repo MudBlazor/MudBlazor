@@ -716,6 +716,26 @@ public const string DatePickeViewsExample = @"<MudDatePicker Label=""Year"" Open
 <MudDatePicker Label=""Month"" OpenTo=""OpenTo.Month"" Value=""2020-10-19"" />
 <MudDatePicker Label=""Date""  Value=""2020-10-19"" />";
 
+public const string DialogOptionsExample = @"@inject IDialogService Dialog
+
+<MudButton OnClick=""@((e) => OpenDialog(maxWidth))"">Open MaxWidth Dialog</MudButton>
+<MudButton OnClick=""@((e) => OpenDialog(closeButton))"" Color=""Color.Primary"">Close Button Dialog</MudButton>
+<MudButton OnClick=""@((e) => OpenDialog(noHeader))"" Color=""Color.Secondary"">No header Dialog</MudButton>
+<MudButton OnClick=""@((e) => OpenDialog(disableBackdropClick))"" Color=""Color.Tertiary"">Disable backdrop dialog</MudButton>
+
+
+@code {
+    DialogOptions maxWidth = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+    DialogOptions closeButton = new DialogOptions() { CloseButton = true };
+    DialogOptions noHeader = new DialogOptions() {  NoHeader = true };
+    DialogOptions disableBackdropClick = new DialogOptions() { DisableBackdropClick = true };
+
+    async Task OpenDialog(DialogOptions options)
+    {
+        Dialog.Show<DialogUsageExample_Dialog>(""Custom Options Dialog"", options);
+    }
+}";
+
 public const string DialogPassingDataExample = @"@using MudBlazor.Docs.Pages.Components.Dialog.Models
 
 @inject IDialogService Dialog
@@ -734,14 +754,10 @@ public const string DialogPassingDataExample = @"@using MudBlazor.Docs.Pages.Com
 
     async Task DeleteServer(Server server)
     {
-        var options = new DialogOptions();
-        options.MaxWidth = MaxWidth.ExtraSmall;
-        options.FullWidth = true;
-
         var parameters = new DialogParameters();
         parameters.Add(""server"", server);
 
-        var dialog = Dialog.Show<DialogPassingDataExample_Dialog>(""Delete Server"", parameters, options);
+        var dialog = Dialog.Show<DialogPassingDataExample_Dialog>(""Delete Server"", parameters);
         var result = await dialog.Result;
 
         if (!result.Cancelled)
@@ -762,184 +778,6 @@ public const string DialogPassingDataExample = @"@using MudBlazor.Docs.Pages.Com
     };
 }";
 
-public const string DialogUsageExample = @"@inject IDialogService Dialog
-
-
-<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" @onclick=""OpenDialog"">Open Simple Dialog</MudButton>
-
-
-@code {
-
-    async Task OpenDialog()
-    {
-       Dialog.Show<DialogUsageExample_Dialog>(""Simple Dialog"");
-    }
-}";
-
-public const string DialogBodyScrollableExample = @"@using System.Net
-@using System.Text
-
-<MudDialog DisableSidePadding=""true"">
-    <DialogContent>
-        <MudContainer Style=""max-height: 300px; overflow-y: scroll"">
-            <MudText Class=""mb-5"" Typo=""Typo.body1"">Copyright (c) 2020 - The MudBlazor Team and Contributors</MudText>
-            @if (Loading)
-            {
-                <MudProgressCircular Indeterminate=""true""></MudProgressCircular>
-            }
-            else
-            {
-                <MudText Style=""white-space: pre-wrap;"">@LicenseText</MudText>
-            }
-        </MudContainer>
-    </DialogContent>
-    <DialogActions>
-        <MudButton Color=""Color.Primary"" OnClick=""Ok"">Accept</MudButton>
-    </DialogActions>
-</MudDialog>
-
-
-@code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        Loading = true;
-        var bytes = await new WebClient().DownloadDataTaskAsync(new Uri(""https://raw.githubusercontent.com/Garderoben/MudBlazor/master/LICENSE""));
-        LicenseText = Encoding.UTF8.GetString(bytes);
-        Loading = false;
-        await base.OnInitializedAsync();
-    }
-
-    string LicenseText;
-    bool Loading = false;
-
-    void Ok()
-    {
-        MudDialog.Close(DialogResult.Ok(true));
-    }
-}";
-
-public const string DialogDialogFormExample = @"<MudDialog>
-    <DialogContent>
-        <MudText Class=""mt-2"">Note: Database creation can take up to 30 minutes.</MudText>
-        <MudText Class=""mb-2"">After database is created you will resceive a email to your cloud account.</MudText>
-        <MudForm>
-            <MudTextField T=""string"" Label=""Database name""></MudTextField>
-            <MudTextField T=""string"" Label=""Database tags""></MudTextField>
-            <MudSelect T=""string"" FullWidth=""true"" Label=""Resource Group"" ValueChanged=""@OnSelectedValue"">
-                <MudSelectItem T=""string"" Value=""@(""Prod"")"">Prod</MudSelectItem>
-                <MudSelectItem T=""string"" Value=""@(""Test"")"">Test</MudSelectItem>
-            </MudSelect>
-            <MudCheckBox Label=""Want to use SQL elastic pool?"" Color=""Color.Primary"" Class=""my-4""></MudCheckBox>
-        </MudForm>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick=""Cancel"">Cancel</MudButton>
-        <MudButton Color=""Color.Primary"" OnClick=""AddDatabase"">Add Database</MudButton>
-    </DialogActions>
-</MudDialog>
-
-
-@code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
-    void AddDatabase() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
-
-    private string ResourceGroup { get; set; }
-
-    private void OnSelectedValue(string value)
-    {
-        ResourceGroup = value;
-    }
-}";
-
-public const string DialogDialogOptionExample = @"<MudDialog >
-    <DialogContent>
-       <MudText Class=""my-6"">
-           @Message
-       </MudText>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick=""Cancel"">Cancel</MudButton>
-        <MudButton Color=""Color.Primary"" OnClick=""Submit"">Ok</MudButton>
-    </DialogActions>
-</MudDialog>
-
-
-@code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
-    [Parameter] public string Message { get; set; }
-
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
-
-}";
-
-public const string DialogDialogSimpleExample = @"<MudDialog DisableSidePadding=""true"" ClassContent=""demo-dialog-simple"">
-    <DialogContent>
-        <MudList Clickable=""true"">
-            <MudListItem Avatar=""@Icons.Material.Person"" @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"">
-                coolusername@gmail.com
-            </MudListItem>
-            <MudListItem Avatar=""@Icons.Material.Person"" @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"">
-                    notsocool@gmail.com
-            </MudListItem>
-            <MudListItem Avatar=""@Icons.Custom.Radioactive"" AvatarClass=""s-t-a-l-k-e-r"" @onclick=""@(() => SelectUser(""strelok@gmail.com""))"">
-                    strelok@gmail.com
-            </MudListItem>
-        </MudList>
-    </DialogContent>
-</MudDialog>
-
-
-@code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
-    void SelectUser(string user)
-    {
-        MudDialog.Close(DialogResult.Ok(user));
-    }
-}";
-
-public const string DialogFormExample = @"@inject IDialogService Dialog
-
-<MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenFormDialog"">Open Form Dialog</MudButton>
-
-@code {
-
-    void OpenFormDialog()
-    {
-        Dialog.Show<DialogDialogFormExample>(""Create SQL Database"");
-    }
-
-}";
-
-public const string DialogOptionsExample = @"@inject IDialogService Dialog
-
-<MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenClodebuttonDialog"">With Close Button</MudButton>
-<MudButton Variant=""Variant.Outlined"" Color=""Color.Secondary"" @onclick=""OpenBackDropDialog"">With No Backdrop click</MudButton>
-
-@code {
-    async Task OpenClodebuttonDialog()
-    {
-        var Options = new DialogOptions() { CloseButton = true };
-        var Parameters = new DialogParameters();
-        Parameters.Add(""Message"", ""This dialog has a close button that is set either globally or per dialog."");
-        var userSelect = Dialog.Show<DialogDialogOptionExample>(""With close button"", Parameters, Options);
-    }
-
-    async Task OpenBackDropDialog()
-    {
-        var Options = new DialogOptions() { DisableBackdropClick = true };
-        var Parameters = new DialogParameters();
-        Parameters.Add(""Message"", ""This dialog has the backdrop click disabled and the user need to take an action within the dialog."");
-        var userSelect = Dialog.Show<DialogDialogOptionExample>(""With no backdrop click"", Parameters, Options);
-    }
-}";
-
 public const string DialogScrollableExample = @"@inject IDialogService Dialog
 
 <MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenSimpleDialog"">Scrollable Dialog</MudButton>
@@ -956,7 +794,7 @@ public const string DialogScrollableExample = @"@inject IDialogService Dialog
 
     async Task OpenSimpleDialog()
     {
-        var userSelect = Dialog.Show<DialogBodyScrollableExample>(""MudBlazor License"");
+        var userSelect = Dialog.Show<DialogScrollableExample_Dialog>(""MudBlazor License"");
         var result = await userSelect.Result;
 
         if (!result.Cancelled)
@@ -966,33 +804,61 @@ public const string DialogScrollableExample = @"@inject IDialogService Dialog
     }
 }";
 
-public const string DialogSimpleExample = @"@inject IDialogService Dialog
+public const string DialogTemplateExample = @"@inject IDialogService Dialog
 
-<MudText Align=""Align.Center"" Typo=""Typo.subtitle1"">Selected User</MudText>
-<MudText Align=""Align.Center"" Typo=""Typo.subtitle2"">@selectedUser</MudText>
-<MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenSimpleDialog"">Open Simple Dialog</MudButton>
+
+<MudButton @onclick=""DeleteUser"" Variant=""Variant.Filled"" Color=""Color.Error"">Delete Records</MudButton>
+<MudButton @onclick=""Confirm"" Variant=""Variant.Filled"" Color=""Color.Success"">Remove Email</MudButton>
+<MudButton @onclick=""Download"" Variant=""Variant.Filled"" Color=""Color.Warning"">Slow Computer</MudButton>
+
+@code {
+
+    async Task DeleteUser()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add(""ContentText"", ""Do you really want to delete these records? This process cannot be undone."");
+        parameters.Add(""ButtonText"", ""Delete"");
+        parameters.Add(""Color"", Color.Error);
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+        Dialog.Show<DialogTemplateExample_Dialog>(""Delete"", parameters, options);
+    }
+
+    async Task Confirm()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add(""ContentText"", ""Are you sure you want to remove thisguy@emailz.com from this account?"");
+        parameters.Add(""ButtonText"", ""Yes"");
+        parameters.Add(""Color"", Color.Success);
+
+        Dialog.Show<DialogTemplateExample_Dialog>(""Confirm"", parameters);
+    }
+
+    async Task Download()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add(""ContentText"", ""Your computer seems very slow, click the download button to download free RAM."");
+        parameters.Add(""ButtonText"", ""Download"");
+        parameters.Add(""Color"", Color.Info);
+
+        Dialog.Show<DialogTemplateExample_Dialog>(""Slow Computer Detected"", parameters);
+    }
+}";
+
+public const string DialogUsageExample = @"@inject IDialogService Dialog
+
+
+<MudButton @onclick=""OpenDialog"" Variant=""Variant.Filled"" Color=""Color.Primary"">
+    Open Simple Dialog
+</MudButton>
 
 
 @code {
-    bool HideSourceSimpleDialog = true;
 
-    public void ShowSimpleDialogSource()
+    async Task OpenDialog()
     {
-        HideSourceSimpleDialog = !HideSourceSimpleDialog;
-    }
-
-
-    string selectedUser = ""No user selected"";
-
-    async Task OpenSimpleDialog()
-    {
-        var userSelect = Dialog.Show<DialogDialogSimpleExample>(""Choose Account"");
-        var result = await userSelect.Result;
-
-        if (!result.Cancelled)
-        {
-            selectedUser = result.Data.ToString() ?? string.Empty;
-        }
+       Dialog.Show<DialogUsageExample_Dialog>(""Simple Dialog"");
     }
 }";
 

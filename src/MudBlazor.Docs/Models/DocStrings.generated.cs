@@ -2666,7 +2666,11 @@ public const string MudDialogProvider_CloseButton = @"";
 
 public const string MudDialogProvider_DisableBackdropClick = @"";
 
+public const string MudDialogProvider_FullWidth = @"";
+
 public const string MudDialogProvider_Position = @"";
+
+public const string MudDialogProvider_MaxWidth = @"";
 
 public const string DonutBase_InputData = @"";
 

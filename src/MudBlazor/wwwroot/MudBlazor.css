@@ -394,7 +394,7 @@ ul {
     padding: 0px 12px; }
 
 .mud-alert-text-normal {
-  color: var(--mud-palette-dark);
+  color: var(--mud-palette-text-primary);
   background-color: var(--mud-palette-dark-hover); }
 
 .mud-alert-text-primary {
@@ -446,8 +446,8 @@ ul {
     color: var(--mud-palette-dark); }
 
 .mud-alert-outlined-normal {
-  color: var(--mud-palette-dark-darken);
-  border: 1px solid var(--mud-palette-dark); }
+  color: var(--mud-palette-text-primary);
+  border: 1px solid var(--mud-palette-text-primary); }
 
 .mud-alert-outlined-primary {
   color: var(--mud-palette-primary-darken);
