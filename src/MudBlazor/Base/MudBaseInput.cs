@@ -175,6 +175,7 @@ namespace MudBlazor
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
             ValidateValue(Value);
+            EditFormValidate();
             OnBlur.InvokeAsync(obj);
         }
 
@@ -219,6 +220,7 @@ namespace MudBlazor
                     GenericValueChanged(value);
                     ValidateValue(value);
                     ValueChanged.InvokeAsync(value);
+                    EditFormValidate();
                 }
                 finally
                 {
@@ -548,6 +550,18 @@ namespace MudBlazor
         /// </summary>
         [CascadingParameter]
         EditContext EditContext { get; set; } = default!;
+
+        /// <summary>
+        /// Triggers field to be validated.
+        /// </summary>
+        internal void EditFormValidate()
+        {
+            if (_fieldIdentifier.FieldName == null)
+            {
+                return;
+            }
+            EditContext?.NotifyFieldChanged(_fieldIdentifier);
+        }
 
         /// <summary>
         /// Specify an expression which returns the model's field for which validation messages should be displayed.
