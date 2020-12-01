@@ -36,6 +36,12 @@
     user-select:none;
 }
 
+@media (max-width:400px) {
+    .mudblazor-appbar-brand-text {
+        letter-spacing: 0.25rem;
+    }
+}
+
 
 .mudblazor-navmenu {
     overflow: auto;
@@ -62,8 +68,8 @@
 
 
 .mudblazor-main-content {
-    padding-top: 64px;
-    padding-bottom: 64px;
+    padding-top: 86px;
+    padding-bottom: 86px;
 }
 
 

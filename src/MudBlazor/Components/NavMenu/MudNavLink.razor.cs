@@ -26,7 +26,7 @@ namespace MudBlazor
         {
             OnClickHandler(args);
             if (Drawer!=null)
-                Drawer.OpenChanged.InvokeAsync(false);
+                Drawer.DrawerNavigationClose();
         }
     }
 }

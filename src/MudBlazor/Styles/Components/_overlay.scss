@@ -1,0 +1,20 @@
+﻿.mud-overlay {
+    top: 0;
+    left: 0;
+    margin: 0px !important;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: var(--mud-zindex-popover);
+    background-color: transparent;
+
+
+    &.mud-overlay-dialog {
+        z-index: calc(var(--mud-zindex-dialog) + 1);
+        background-color: rgba(0,0,0,0.5);
+        animation: mud-animation-fadein ease 0.15s;
+        -webkit-animation: mud-animation-fadein ease 0.15s;
+        -moz-animation: mud-animation-fadein ease 0.15s;
+        -o-animation: mud-animation-fadein ease 0.15s;
+    }
+}

@@ -21,7 +21,7 @@
 
 .mud-alert-text {
     &-normal {
-        color: var(--mud-palette-dark);
+        color: var(--mud-palette-text-primary);
         background-color: var(--mud-palette-dark-hover);
     }
 
@@ -39,8 +39,8 @@
 
 .mud-alert-outlined {
     &-normal {
-        color: var(--mud-palette-dark-darken);
-        border: 1px solid var(--mud-palette-dark);
+        color: var(--mud-palette-text-primary);
+        border: 1px solid var(--mud-palette-text-primary);
     }
 
     @each $color in $mud-palette-colors {

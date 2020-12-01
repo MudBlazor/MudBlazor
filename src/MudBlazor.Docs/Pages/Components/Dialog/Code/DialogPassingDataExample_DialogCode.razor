@@ -23,8 +23,7 @@
 <span class="atSign">&#64;</span>code {
     [CascadingParameter] MudDialogInstance MudDialog { <span class="keyword">get</span>; <span class="keyword">set</span>; }
 
-    [Parameter]
-    <span class="keyword">public</span> Server server { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">new</span> Server();
+    [Parameter] <span class="keyword">public</span> Server server { <span class="keyword">get</span>; <span class="keyword">set</span>; } = <span class="keyword">new</span> Server();
 
     <span class="keyword">void</span> Cancel() =&gt; MudDialog.Cancel();
 

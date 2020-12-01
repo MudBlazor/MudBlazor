@@ -11,16 +11,18 @@
     transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms,width 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
 }
 
-.mud-appbar-drawer-open {
-    width: calc(100% - var(--mud-drawer-width));
-    transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,width 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+@media (min-width:1280px) {
+    .mud-appbar-drawer-open {
+        width: calc(100% - var(--mud-drawer-width));
+        transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,width 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
 
-    &-left:not(.mud-appbar-drawer-clipped):not(.mud-appbar-drawer-clipped-left) {
-        margin-left: var(--mud-drawer-width);
-    }
+        &-left:not(.mud-appbar-drawer-clipped):not(.mud-appbar-drawer-clipped-left) {
+            margin-left: var(--mud-drawer-width);
+        }
 
-    &-right:not(.mud-appbar-drawer-clipped):not(.mud-appbar-drawer-clipped-right) {
-        margin-right: var(--mud-drawer-width);
+        &-right:not(.mud-appbar-drawer-clipped):not(.mud-appbar-drawer-clipped-right) {
+            margin-right: var(--mud-drawer-width);
+        }
     }
 }
 

@@ -15,46 +15,47 @@
     
 }
 
-
-.mud-drawer-anchor-left {
-    & + .mud-main-drawer-open {
-        margin-left: var(--mud-drawer-width);
-    }
-
-    &.mud-drawer--open {
-        & + .mud-drawer-anchor-right.mud-drawer--open {
-            & + .mud-main-drawer-open {
-                margin-right: var(--mud-drawer-width);
-                margin-left: var(--mud-drawer-width);
-            }
+@media (min-width:1280px) {
+    .mud-drawer-anchor-left {
+        & + .mud-main-drawer-open {
+            margin-left: var(--mud-drawer-width);
         }
 
-        & + .mud-drawer-anchor-right.mud-drawer--closed {
-            & + .mud-main-drawer-open {
-                margin-right: auto;
-                margin-left: var(--mud-drawer-width);
+        &.mud-drawer--open {
+            & + .mud-drawer-anchor-right.mud-drawer--open {
+                & + .mud-main-drawer-open {
+                    margin-right: var(--mud-drawer-width);
+                    margin-left: var(--mud-drawer-width);
+                }
+            }
+
+            & + .mud-drawer-anchor-right.mud-drawer--closed {
+                & + .mud-main-drawer-open {
+                    margin-right: auto;
+                    margin-left: var(--mud-drawer-width);
+                }
             }
         }
     }
-}
 
-.mud-drawer-anchor-right {
-    & + .mud-main-drawer-open {
-        margin-right: var(--mud-drawer-width);
-    }
-
-    &.mud-drawer--open {
-        & + .mud-drawer-anchor-left.mud-drawer--open {
-            & + .mud-main-drawer-open {
-                margin-right: var(--mud-drawer-width);
-                margin-left: var(--mud-drawer-width);
-            }
+    .mud-drawer-anchor-right {
+        & + .mud-main-drawer-open {
+            margin-right: var(--mud-drawer-width);
         }
 
-        & + .mud-drawer-anchor-left.mud-drawer--closed {
-            & + .mud-main-drawer-open {
-                margin-right: var(--mud-drawer-width);
-                margin-left: auto;
+        &.mud-drawer--open {
+            & + .mud-drawer-anchor-left.mud-drawer--open {
+                & + .mud-main-drawer-open {
+                    margin-right: var(--mud-drawer-width);
+                    margin-left: var(--mud-drawer-width);
+                }
+            }
+
+            & + .mud-drawer-anchor-left.mud-drawer--closed {
+                & + .mud-main-drawer-open {
+                    margin-right: var(--mud-drawer-width);
+                    margin-left: auto;
+                }
             }
         }
     }

@@ -16,7 +16,7 @@
 
     async Task OpenSimpleDialog()
     {
-        var userSelect = Dialog.Show<DialogBodyScrollableExample>("MudBlazor License");
+        var userSelect = Dialog.Show<DialogScrollableExample_Dialog>("MudBlazor License");
         var result = await userSelect.Result;
 
         if (!result.Cancelled)

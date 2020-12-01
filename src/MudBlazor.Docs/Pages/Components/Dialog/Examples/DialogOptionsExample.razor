@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IDialogService Dialog
+
+<MudButton OnClick="@((e) => OpenDialog(maxWidth))">Open MaxWidth Dialog</MudButton>
+<MudButton OnClick="@((e) => OpenDialog(closeButton))" Color="Color.Primary">Close Button Dialog</MudButton>
+<MudButton OnClick="@((e) => OpenDialog(noHeader))" Color="Color.Secondary">No header Dialog</MudButton>
+<MudButton OnClick="@((e) => OpenDialog(disableBackdropClick))" Color="Color.Tertiary">Disable backdrop dialog</MudButton>
+
+
+@code {
+    DialogOptions maxWidth = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+    DialogOptions closeButton = new DialogOptions() { CloseButton = true };
+    DialogOptions noHeader = new DialogOptions() {  NoHeader = true };
+    DialogOptions disableBackdropClick = new DialogOptions() { DisableBackdropClick = true };
+
+    async Task OpenDialog(DialogOptions options)
+    {
+        Dialog.Show<DialogUsageExample_Dialog>("Custom Options Dialog", options);
+    }
+}

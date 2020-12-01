@@ -1298,6 +1298,23 @@ public const string MudNavMenu_Tag = @"Use Tag to attach any user data object to
 public const string MudNavMenu_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudOverlay_ChildContent = @"Child content of the component.";
+
+public const string MudOverlay_CommandParameter = @"Command parameter.";
+
+public const string MudOverlay_Command = @"Command executed when the user clicks on an element.";
+
+public const string MudOverlay_OnClick = @"";
+
+public const string MudOverlay_Class = @"User class names, separated by space";
+
+public const string MudOverlay_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudOverlay_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudOverlay_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudPopover_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default.";
 
 public const string MudPopover_Square = @"If true, border-radius is set to 0.";
@@ -1688,6 +1705,14 @@ public const string MudTableBase_ColGroup = @"Specifies a group of one or more c
             table";
 
 public const string MudTableBase_PagerContent = @"Add MudTablePager here to enable breaking the rows in to multiple pages.";
+
+public const string MudTableBase_OnCommitEditClick = @"Button click event.";
+
+public const string MudTableBase_CommitEditCommand = @"Command executed when the user clicks on the CommitEdit Button.";
+
+public const string MudTableBase_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button.";
+
+public const string MudTableBase_CommitEditTooltip = @"Tooltip for the CommitEdit Button.";
 
 public const string MudTableBase_Class = @"User class names, separated by space";
 
@@ -2510,6 +2535,14 @@ public const string MudTable_ColGroup = @"Specifies a group of one or more colum
 
 public const string MudTable_PagerContent = @"Add MudTablePager here to enable breaking the rows in to multiple pages.";
 
+public const string MudTable_OnCommitEditClick = @"Button click event.";
+
+public const string MudTable_CommitEditCommand = @"Command executed when the user clicks on the CommitEdit Button.";
+
+public const string MudTable_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button.";
+
+public const string MudTable_CommitEditTooltip = @"Tooltip for the CommitEdit Button.";
+
 public const string MudTable_Class = @"User class names, separated by space";
 
 public const string MudTable_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -2633,7 +2666,11 @@ public const string MudDialogProvider_CloseButton = @"";
 
 public const string MudDialogProvider_DisableBackdropClick = @"";
 
+public const string MudDialogProvider_FullWidth = @"";
+
 public const string MudDialogProvider_Position = @"";
+
+public const string MudDialogProvider_MaxWidth = @"";
 
 public const string DonutBase_InputData = @"";
 
