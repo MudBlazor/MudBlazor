@@ -45,12 +45,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        private ElementReference elementReference;
+        private ElementReference _elementReference;
 
         public override ValueTask FocusAsync()
         {
             //The context must be a WebElementReferenceContext otherwise the JSRuntime is not available otherwise we just return a completed task and pretend everything is ok
-            return elementReference.Context is WebElementReferenceContext ? elementReference.FocusAsync() : ValueTask.CompletedTask;
+            return _elementReference.Context is WebElementReferenceContext ? _elementReference.FocusAsync() : ValueTask.CompletedTask;
         }
     }
 

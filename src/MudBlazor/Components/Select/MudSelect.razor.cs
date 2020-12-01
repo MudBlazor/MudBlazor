@@ -73,7 +73,7 @@ namespace MudBlazor
 
         private Func<T, string> _toStringFunc = x => x?.ToString();
 
-        private MudInput<string> elementReference;
+        private MudInput<string> _elementReference;
 
         [Parameter]
         public Func<T, string> ToStringFunc
@@ -258,7 +258,7 @@ namespace MudBlazor
 
         public override ValueTask FocusAsync()
         {
-            return elementReference.FocusAsync();
+            return _elementReference.FocusAsync();
         }
     }
 

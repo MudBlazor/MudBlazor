@@ -94,7 +94,7 @@ namespace MudBlazor
 
         public string CurrentIcon { get; set; }
 
-        private MudInput<string> elementReference;
+        private MudInput<string> _elementReference;
 
         public void SelectOption(T value)
         {
@@ -302,7 +302,7 @@ namespace MudBlazor
 
         public override ValueTask FocusAsync()
         {
-            return elementReference.FocusAsync();
+            return _elementReference.FocusAsync();
         }
     }
 }

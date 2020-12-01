@@ -14,11 +14,11 @@ namespace MudBlazor
            new CssBuilder("mud-input-input-control").AddClass(Class)
            .Build();
 
-        private MudInput<string> elementReference;
+        private MudInput<string> _elementReference;
 
         public override ValueTask FocusAsync()
         {
-            return elementReference.FocusAsync();
+            return _elementReference.FocusAsync();
         }
     }
 

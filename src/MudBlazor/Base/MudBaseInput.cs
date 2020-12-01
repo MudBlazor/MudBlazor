@@ -163,10 +163,13 @@ namespace MudBlazor
             }
         }
 
-        public abstract ValueTask FocusAsync();
-            
-
         [Parameter] public EventCallback<string> TextChanged { get; set; }
+
+        /// <summary>
+        /// Focuses the element
+        /// </summary>
+        /// <returns>The ValueTask</returns>
+        public abstract ValueTask FocusAsync();
 
         /// <summary>
         /// Text change hook for descendants  
