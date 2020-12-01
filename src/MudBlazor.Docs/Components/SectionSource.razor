@@ -6,48 +6,48 @@
     @if (!NoToolbar)
     {
     <div class="docs-content-toolbar">
-        <div class="flex-grow-1"></div>
-        <MudTooltip Text="@TooltipSourceCodeText" Placement="Placement.Top">
-            <MudIconButton Icon="@Icons.Material.Code" OnClick="OnShowCode" />
-        </MudTooltip>
-        @if (!String.IsNullOrEmpty(SnippetId))
-        {
-            <MudTooltip Text="Edit on TryMudBlazor" Placement="Placement.Top">
-                <MudIconButton Icon="@Icons.Material.Create" Link="@TryMudBlazorSnippetLink" Target="_blank" />
-            </MudTooltip>
+        @if (!String.IsNullOrEmpty(Title))
+        { 
+            <MudText Class="pt-4 pb-1">@Title</MudText>
         }
-        @if (!String.IsNullOrEmpty(Code))
+        <div class="flex-grow-1"></div>
+        @if (!HideButtons)
         {
-            <MudTooltip Text="Copy Code" Placement="Placement.Top">
-                <MudIconButton Icon="@Icons.Material.FileCopy" @onclick="CopyTextToClipboard" />
+            <MudTooltip Text="@TooltipSourceCodeText" Placement="Placement.Top">
+                <MudIconButton Icon="@Icons.Material.Code" OnClick="OnShowCode" />
             </MudTooltip>
+            @if (!String.IsNullOrEmpty(SnippetId))
+            {
+                <MudTooltip Text="Edit on TryMudBlazor" Placement="Placement.Top">
+                    <MudIconButton Icon="@Icons.Material.Create" Link="@TryMudBlazorSnippetLink" Target="_blank" />
+                </MudTooltip>
+            }
+            @if (!String.IsNullOrEmpty(Code))
+            {
+                <MudTooltip Text="Copy Code" Placement="Placement.Top">
+                    <MudIconButton Icon="@Icons.Material.FileCopy" @onclick="CopyTextToClipboard" />
+                </MudTooltip>
+            }
+            @if (!String.IsNullOrEmpty(GitHubFolderName))
+            {
+                <MudTooltip Text="View the source on GitHub" Placement="Placement.Top">
+                    <MudIconButton Icon="@Icons.Custom.GitHub" Link="@GitHubSourceCode" Target="_blank" />
+                </MudTooltip>
+            }
         }
 
-        @if (!String.IsNullOrEmpty(GitHubFolderName))
-        {
-            <MudTooltip Text="View the source on GitHub" Placement="Placement.Top">
-                <MudIconButton Icon="@Icons.Custom.GitHub" Link="@GitHubSourceCode" Target="_blank" />
-            </MudTooltip>
-        }
     </div>
     }
-
     <div class="docs-source-code @(ShowCode? "docs-show-code" : "docs-hide-code")">
         @CodeComponent()
     </div>
-    @if (!String.IsNullOrEmpty(FullCode))
-    {
-        <div class="docs-source-code @(ShowFullCode? "docs-show-code" : "docs-hide-code")">
-            @FullCodeComponent()
-        </div>
-    }
 </div>
 
 @code {
 
-    [Parameter] public string Code { get; set; }
+    [Parameter] public string Title { get; set; }
 
-    [Parameter] public string FullCode { get; set; }
+    [Parameter] public string Code { get; set; }
 
     [Parameter] public string Class { get; set; }
 
@@ -57,6 +57,8 @@
 
     [Parameter] public bool ShowCode { get; set; } = true;
 
+    [Parameter] public bool HideButtons { get; set; }
+
     [Parameter] public bool NoToolbar { get; set; }
 
     private string GitHubSourceCode { get; set; }
@@ -64,8 +66,6 @@
     private string TryMudBlazorSnippetLink { get; set; }
 
     public string TooltipSourceCodeText { get; set; }
-
-    private bool ShowFullCode;
 
     private string showCodeExampleString { get; set; } = "Show code example";
     private string hideCodeExampleString { get; set; } = "Hide code example";
@@ -79,7 +79,7 @@
 
     public void OnShowCode()
     {
-        if (!String.IsNullOrEmpty(Code) && String.IsNullOrEmpty(FullCode))
+        if (!String.IsNullOrEmpty(Code))
         {
             ShowCode = !ShowCode;
             if (ShowCode)
@@ -91,23 +91,9 @@
                 TooltipSourceCodeText = showCodeExampleString;
             }
         }
-        if (!String.IsNullOrEmpty(Code) && !String.IsNullOrEmpty(FullCode))
-        {
-            ShowCode = !ShowCode;
-            ShowFullCode = !ShowFullCode;
-            if (ShowFullCode)
-            {
-                TooltipSourceCodeText = hideComponentCodeExampleString;
-            }
-            else
-            {
-                TooltipSourceCodeText = showComponentCodeExampleString;
-            }
-        }
     }
 
     private Type CodeType => Type.GetType("MudBlazor.Docs.Examples.Markup." + Code + "Code");
-    private Type FullCodeType => Type.GetType("MudBlazor.Docs.Examples.Markup." + FullCode + "Code");
 
     RenderFragment CodeComponent() => builder =>
     {
@@ -119,19 +105,6 @@
         catch (Exception e)
         {
             // todo: log this
-        }
-    };
-
-    RenderFragment FullCodeComponent() => builder =>
-    {
-        try
-        {
-            builder.OpenComponent(0, FullCodeType);
-            builder.CloseComponent();
-        }
-        catch (Exception e)
-        {
-        // todo: log this
         }
     };
 
@@ -154,18 +127,6 @@
         else
         {
             TooltipSourceCodeText = showCodeExampleString;
-        }
-        if (!String.IsNullOrEmpty(FullCode))
-        {
-            if (ShowFullCode)
-            {
-                TooltipSourceCodeText = hideComponentCodeExampleString;
-
-            }
-            else
-            {
-                TooltipSourceCodeText = showComponentCodeExampleString;
-            }
         }
     }
 }
