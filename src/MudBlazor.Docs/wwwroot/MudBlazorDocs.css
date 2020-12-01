@@ -27,6 +27,10 @@
   font-size: 24px;
   user-select: none; }
 
+@media (max-width: 400px) {
+  .mudblazor-appbar-brand-text {
+    letter-spacing: 0.25rem; } }
+
 .mudblazor-navmenu {
   overflow: auto;
   margin-bottom: 12px; }
@@ -47,8 +51,8 @@
   margin-bottom: 128px; }
 
 .mudblazor-main-content {
-  padding-top: 64px;
-  padding-bottom: 64px; }
+  padding-top: 86px;
+  padding-bottom: 86px; }
 
 @media (min-width: 960px) {
   .mudblazor-main-content {
@@ -318,7 +322,6 @@
   max-width: 300px; }
 
 .mudblazor-text-h5 {
-  white-space: nowrap;
   letter-spacing: .1rem;
   font-size: 2rem;
   font-weight: 300;
