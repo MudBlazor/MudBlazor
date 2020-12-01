@@ -181,35 +181,6 @@ public const string MudComponentBase_Tag = @"Use Tag to attach any user data obj
 public const string MudComponentBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudActionArea_Disabled = @"If true, the area will be disabled.";
-
-public const string MudActionArea_DisableRipple = @"If true, disables ripple effect.";
-
-public const string MudActionArea_ChildContent = @"Child content of component.";
-
-public const string MudActionArea_ButtonType = @"The button Type (Button, Submit, Refresh)";
-
-public const string MudActionArea_Link = @"If set to a URL, clicking the button will open the referenced document. Use Target to specify where";
-
-public const string MudActionArea_Target = @"The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | framename";
-
-public const string MudActionArea_ForceLoad = @"If true, force browser to redirect outside component router-space.";
-
-public const string MudActionArea_Command = @"Command executed when the user clicks on an element.";
-
-public const string MudActionArea_CommandParameter = @"Command parameter.";
-
-public const string MudActionArea_OnClick = @"Button click event.";
-
-public const string MudActionArea_Class = @"User class names, separated by space";
-
-public const string MudActionArea_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudActionArea_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudActionArea_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
 public const string MudAlert_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow.";
 
 public const string MudAlert_Square = @"If true, rounded corners are disabled.";
