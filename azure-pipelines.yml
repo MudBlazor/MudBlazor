@@ -4,11 +4,9 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-branches:
-    include:
-    - master
-    - develop
-    - net5
+- master
+- develop
+- net5
 
 
 pool:
