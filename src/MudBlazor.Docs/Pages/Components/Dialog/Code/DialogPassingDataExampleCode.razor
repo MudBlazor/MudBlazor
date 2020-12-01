@@ -21,14 +21,10 @@
 
     <span class="keyword">async</span> Task DeleteServer(Server server)
     {
-        <span class="keyword">var</span> options = <span class="keyword">new</span> DialogOptions();
-        options.MaxWidth = MaxWidth.ExtraSmall;
-        options.FullWidth = <span class="keyword">true</span>;
-
         <span class="keyword">var</span> parameters = <span class="keyword">new</span> DialogParameters();
         parameters.Add(<span class="string">&quot;server&quot;</span>, server);
 
-        <span class="keyword">var</span> dialog = Dialog.Show&lt;DialogPassingDataExample_Dialog&gt;(<span class="string">&quot;Delete Server&quot;</span>, parameters, options);
+        <span class="keyword">var</span> dialog = Dialog.Show&lt;DialogPassingDataExample_Dialog&gt;(<span class="string">&quot;Delete Server&quot;</span>, parameters);
         <span class="keyword">var</span> result = <span class="keyword">await</span> dialog.Result;
 
         <span class="keyword">if</span> (!result.Cancelled)

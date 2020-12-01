@@ -1,0 +1,43 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IDialogService Dialog
+
+
+<MudButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error">Delete Records</MudButton>
+<MudButton @onclick="Confirm" Variant="Variant.Filled" Color="Color.Success">Remove Email</MudButton>
+<MudButton @onclick="Download" Variant="Variant.Filled" Color="Color.Warning">Slow Computer</MudButton>
+
+@code {
+
+    async Task DeleteUser()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", "Do you really want to delete these records? This process cannot be undone.");
+        parameters.Add("ButtonText", "Delete");
+        parameters.Add("Color", Color.Error);
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+        Dialog.Show<DialogTemplateExample_Dialog>("Delete", parameters, options);
+    }
+
+    async Task Confirm()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", "Are you sure you want to remove thisguy@emailz.com from this account?");
+        parameters.Add("ButtonText", "Yes");
+        parameters.Add("Color", Color.Success);
+
+        Dialog.Show<DialogTemplateExample_Dialog>("Confirm", parameters);
+    }
+
+    async Task Download()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("ContentText", "Your computer seems very slow, click the download button to download free RAM.");
+        parameters.Add("ButtonText", "Download");
+        parameters.Add("Color", Color.Info);
+
+        Dialog.Show<DialogTemplateExample_Dialog>("Slow Computer Detected", parameters);
+    }
+}
