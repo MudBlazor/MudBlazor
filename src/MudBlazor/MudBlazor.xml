@@ -156,6 +156,12 @@
              A multiline input (textarea) will be shown, if set to more than one line.
             </summary>
         </member>
+        <member name="M:MudBlazor.MudBaseInput`1.FocusAsync">
+            <summary>
+            Focuses the element
+            </summary>
+            <returns>The ValueTask</returns>
+        </member>
         <member name="M:MudBlazor.MudBaseInput`1.StringValueChanged(System.String)">
             <summary>
             Text change hook for descendants  
