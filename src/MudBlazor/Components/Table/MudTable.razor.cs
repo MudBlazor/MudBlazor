@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 
@@ -132,6 +134,26 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment PagerContent { get; set; }
 
+        /// <summary>
+        /// Button click event.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnCommitEditClick { get; set; }
+
+        /// <summary>
+        /// Command executed when the user clicks on the CommitEdit Button.
+        /// </summary>
+        [Parameter] public ICommand CommitEditCommand { get; set; }
+
+        /// <summary>
+        /// Command parameter for the CommitEdit Button.
+        /// </summary>
+        [Parameter] public string CommitEditCommandParameter { get; set; }
+
+        /// <summary>
+        /// Tooltip for the CommitEdit Button.
+        /// </summary>
+        [Parameter] public string CommitEditTooltip { get; set; }
+
         public abstract TableContext TableContext { get; }
 
         public void NavigateTo(Page page)
@@ -166,6 +188,15 @@ namespace MudBlazor
         public abstract void SetSelectedItem(object item);
 
         public abstract void SetEditingItem(object item);
+
+        internal async Task OnCommitEditHandler(MouseEventArgs ev)
+        {
+            await OnCommitEditClick.InvokeAsync(ev);
+            if (CommitEditCommand?.CanExecute(CommitEditCommandParameter) ?? false)
+            {
+                CommitEditCommand.Execute(CommitEditCommandParameter);
+            }
+        }
 
         protected string TableStyle 
             => new StyleBuilder()

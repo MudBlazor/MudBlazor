@@ -21,7 +21,7 @@
                     }
                 </MudSelect>
             </div>
-            
+
         }
         <div class="mud-table-container" style="@TableStyle">
             <table class="mud-table-root">
@@ -52,17 +52,17 @@
                             </MudTr>
 
                             @*@if(RowEditingTemplate != null && object.Equals(_editingItem, item))
-                            {
-                                <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsEditing="true" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
-                                        @RowEditingTemplate(item)
-                                </MudTr>
-                            }
-                            else
-                            {
-                                <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
-                                        @RowTemplate(item)
-                                </MudTr>
-                            }*@
+                                {
+                                    <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsEditing="true" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
+                                            @RowEditingTemplate(item)
+                                    </MudTr>
+                                }
+                                else
+                                {
+                                    <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@((value) => {var x=item; OnRowCheckboxChanged(value, x); })">
+                                            @RowTemplate(item)
+                                    </MudTr>
+                                }*@
                         }
                     }
                 </tbody>
@@ -111,7 +111,7 @@
         get => _selectedItem;
         set
         {
-            if (Object.ReferenceEquals( SelectedItem , value))
+            if (Object.ReferenceEquals(SelectedItem, value))
                 return;
             _selectedItem = value;
             SelectedItemChanged.InvokeAsync(value);
@@ -133,7 +133,7 @@
         get
         {
             if (!MultiSelection)
-                return new HashSet<T>(new T[] {_selectedItem});
+                return new HashSet<T>(new T[] { _selectedItem });
             else
                 return Context.Selection;
         }
@@ -181,12 +181,12 @@
 
     protected IEnumerable<T> GetItemsOfPage(int n, int pageSize)
     {
-        if (n < 0 || pageSize <=0)
+        if (n < 0 || pageSize <= 0)
             return new T[0];
         return FilteredItems.Skip(n * pageSize).Take(pageSize);
     }
 
-    protected override int NumPages => (int)Math.Ceiling(FilteredItems.Count() / (double) RowsPerPage);
+    protected override int NumPages => (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
 
     public override int GetFilteredItemsCount() => FilteredItems.Count();
 
@@ -211,7 +211,7 @@
         }
     }
 
-    // TableContext provides shared functionality between all table sub-components 
+    // TableContext provides shared functionality between all table sub-components
     public TableContext<T> Context { get; } = new TableContext<T>();
 
     private void OnRowCheckboxChanged(bool value, T item)
@@ -246,4 +246,5 @@
         TableContext.UpdateRowCheckBoxes();
         return base.OnAfterRenderAsync(firstRender);
     }
+
 }
