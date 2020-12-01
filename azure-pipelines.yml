@@ -5,9 +5,6 @@
 
 trigger:
 - master
-- develop
-- net5
-
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -18,7 +15,7 @@ variables:
 steps:
 - task: UseDotNet@2
   inputs:
-    version: 5.0.x
+    version: 3.1.x
 
 
 - task: DotNetCoreCLI@2
