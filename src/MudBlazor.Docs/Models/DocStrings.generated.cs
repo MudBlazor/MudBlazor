@@ -1706,6 +1706,14 @@ public const string MudTableBase_ColGroup = @"Specifies a group of one or more c
 
 public const string MudTableBase_PagerContent = @"Add MudTablePager here to enable breaking the rows in to multiple pages.";
 
+public const string MudTableBase_OnCommitEditClick = @"Button click event.";
+
+public const string MudTableBase_CommitEditCommand = @"Command executed when the user clicks on the CommitEdit Button.";
+
+public const string MudTableBase_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button.";
+
+public const string MudTableBase_CommitEditTooltip = @"Tooltip for the CommitEdit Button.";
+
 public const string MudTableBase_Class = @"User class names, separated by space";
 
 public const string MudTableBase_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -2526,6 +2534,14 @@ public const string MudTable_ColGroup = @"Specifies a group of one or more colum
             table";
 
 public const string MudTable_PagerContent = @"Add MudTablePager here to enable breaking the rows in to multiple pages.";
+
+public const string MudTable_OnCommitEditClick = @"Button click event.";
+
+public const string MudTable_CommitEditCommand = @"Command executed when the user clicks on the CommitEdit Button.";
+
+public const string MudTable_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button.";
+
+public const string MudTable_CommitEditTooltip = @"Tooltip for the CommitEdit Button.";
 
 public const string MudTable_Class = @"User class names, separated by space";
 

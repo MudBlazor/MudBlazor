@@ -26,12 +26,21 @@
         }
         else
         {
-            <MudTd>
-                @if (object.ReferenceEquals(Context?.Table._editingItem, Item))
+        <MudTd>
+            @if (object.ReferenceEquals(Context?.Table._editingItem, Item))
+            {
+                if (!string.IsNullOrEmpty(Context?.Table.CommitEditTooltip))
                 {
-                   <MudIconButton Class="pa-0" Icon="@Icons.Material.Done" OnClick="FinishEdit" Size="@Size.Small" />
+                <MudTooltip Text="@Context.Table.CommitEditTooltip">
+                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Done" OnClick="FinishEdit" Size="@Size.Small" />
+                </MudTooltip>
                 }
-            </MudTd>
+                else
+                {
+                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Done" OnClick="FinishEdit" Size="@Size.Small" />
+                }
+            }
+        </MudTd>
         }
     }
 </tr>
@@ -104,10 +113,11 @@
     /// FinishEdit() is called befor OwRowClick, so we are going to block the OnRowClicked()'s EditingItem sett when user clicks on finish edit button
     /// </summary>
     private bool _lockeditingentry = false;
-    private void FinishEdit()
+    private void FinishEdit(MouseEventArgs ev)
     {
         Context?.Table.SetEditingItem(null);
         _lockeditingentry = true;
+        Context?.Table.OnCommitEditHandler(ev);
     }
 
 }

@@ -1926,6 +1926,26 @@
             Add MudTablePager here to enable breaking the rows in to multiple pages.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTableBase.OnCommitEditClick">
+            <summary>
+            Button click event.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.CommitEditCommand">
+            <summary>
+            Command executed when the user clicks on the CommitEdit Button.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.CommitEditCommandParameter">
+            <summary>
+            Command parameter for the CommitEdit Button.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.CommitEditTooltip">
+            <summary>
+            Tooltip for the CommitEdit Button.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTablePager.DisableRowsPerPage">
             <summary>
             Set true to hide the part of the pager which allows to change the page size.
