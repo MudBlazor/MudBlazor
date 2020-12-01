@@ -3,6 +3,7 @@ using MudBlazor.Utilities;
 using MudBlazor.Extensions;
 using System;
 using Microsoft.AspNetCore.Components.Web;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -43,6 +44,14 @@ namespace MudBlazor
         /// ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        private ElementReference elementReference;
+
+        public override ValueTask FocusAsync()
+        {
+            //The context must be a WebElementReferenceContext otherwise the JSRuntime is not available otherwise we just return a completed task and pretend everything is ok
+            return elementReference.Context is WebElementReferenceContext ? elementReference.FocusAsync() : ValueTask.CompletedTask;
+        }
     }
 
     public class MudInputString : MudInput<string> { }

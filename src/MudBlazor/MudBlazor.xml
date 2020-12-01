@@ -146,6 +146,11 @@
              Will adjust vertical spacing. 
             </summary>
         </member>
+        <member name="P:MudBlazor.MudBaseInput`1.AutoFocus">
+            <summary>
+            If true the input will focus automatically
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBaseInput`1.Lines">
             <summary>
              A multiline input (textarea) will be shown, if set to more than one line.

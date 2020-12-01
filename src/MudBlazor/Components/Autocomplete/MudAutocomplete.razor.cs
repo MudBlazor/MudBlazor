@@ -90,10 +90,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
-
         internal bool IsOpen { get; set; }
 
         public string CurrentIcon { get; set; }
+
+        private MudInput<string> elementReference;
 
         public void SelectOption(T value)
         {
@@ -297,6 +298,11 @@ namespace MudBlazor
         {
             Timer?.Dispose();
             base.Dispose(disposing);
+        }
+
+        public override ValueTask FocusAsync()
+        {
+            return elementReference.FocusAsync();
         }
     }
 }

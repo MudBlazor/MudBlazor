@@ -7,7 +7,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
@@ -128,6 +127,11 @@ namespace MudBlazor
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
+        /// If true the input will focus automatically
+        /// </summary>
+        [Parameter] public bool AutoFocus { get; set; }
+
+        /// <summary>
         ///  A multiline input (textarea) will be shown, if set to more than one line.
         /// </summary>
         [Parameter] public int Lines { get; set; } = 1;
@@ -158,6 +162,9 @@ namespace MudBlazor
                 }
             }
         }
+
+        public abstract ValueTask FocusAsync();
+            
 
         [Parameter] public EventCallback<string> TextChanged { get; set; }
 
@@ -467,7 +474,17 @@ namespace MudBlazor
             }
             if (_converter != null)
                 _converter.OnError = OnConversionError;
+
             return base.OnInitializedAsync();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            //Only focus automatically after the first render cycle!
+            if (firstRender && AutoFocus)
+            {
+                await FocusAsync();
+            }
         }
 
         #region --> Blazor EditForm validation support

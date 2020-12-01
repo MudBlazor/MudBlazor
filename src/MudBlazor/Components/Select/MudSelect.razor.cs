@@ -73,6 +73,8 @@ namespace MudBlazor
 
         private Func<T, string> _toStringFunc = x => x?.ToString();
 
+        private MudInput<string> elementReference;
+
         [Parameter]
         public Func<T, string> ToStringFunc
         {
@@ -254,6 +256,10 @@ namespace MudBlazor
                 throw new GenericTypeMismatchException("MudSelect", "MudSelectItem", typeof(T), itemT);
         }
 
+        public override ValueTask FocusAsync()
+        {
+            return elementReference.FocusAsync();
+        }
     }
 
 }
