@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudForm : MudComponentBase
+    public partial class MudForm : MudComponentBase, IDisposable
     {
 
         protected string Classname =>
@@ -157,6 +158,11 @@ namespace MudBlazor
                 _formControls[control] = false;
             }
             EvaluateForm(debounce: false);
+        }
+
+        public void Dispose()
+        {
+            _timer?.Dispose();
         }
     }
 }
