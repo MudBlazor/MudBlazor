@@ -1567,6 +1567,125 @@ public const string HiddenExample = @"<MudHidden Breakpoint=""Breakpoint.Xl"" In
     </MudCard>
 </MudHidden>";
 
+public const string HighlighterUntilNextBoundaryExample = @"<MudTextField Style=""max-width:250px"" @bind-Value=""@highlightedText"" Immediate=""true"" Label=""Highlighted Text"" />
+<MudPaper Class=""pa-4 mt-4"" Elevation=""0"">
+    @foreach (var paragraph in paragraphs)
+    {
+        <MudText @key=""paragraph"" Class=""ma-2"">
+            <Highlighter Text=""@paragraph""
+                         HighlightedText=""@highlightedText""
+                         UntilNextBoundary=""@untilNextBoundary""
+                         CaseSensitive=""@caseSensitive""
+                         Class=""@(untilNextBoundary ? ""pa-1 mud-elevation-2 mud-theme-primary"":"""")"" />
+        </MudText>
+    }
+
+</MudPaper>
+<MudSwitch @bind-Checked=""@untilNextBoundary"" Label=""UntilNextBoundary"" Color=""Color.Primary"" />
+<MudSwitch @bind-Checked=""@caseSensitive"" Label=""CaseSensitive"" Color=""Color.Primary"" />
+
+
+@code{
+    string highlightedText = ""Mud"";
+    bool untilNextBoundary;
+    bool caseSensitive;
+    IEnumerable<string> paragraphs = new List<string>
+{
+        ""MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure."",
+        ""MudLists are easily customizable and scrollable lists. Make them suit your needs with avatars, icons, or something like checkboxes."",
+        ""Use mud-* classes to customize your MudBlazor components.""
+    };
+
+}";
+
+public const string HighlighterWithCustomStyleExample = @"<MudPaper Elevation=""0"">
+    <MudList>
+        <MudListSubheader>
+            <MudTextField @bind-Value=""@searchTerm"" AdornmentIcon=""@Filled.Brush""
+                          Adornment=""Adornment.End"" Immediate=""true"" Variant=""Variant.Outlined"" />
+        </MudListSubheader>
+
+        @foreach (var sentence in sentences)
+        {
+            <MudListItem @key=""sentence"" Icon=""@Filled.Folder"">
+                <Highlighter Class=""mud-primary-text"" Style=""background-color:transparent;font-weight:bold""
+                             Text=""@sentence"" HighlightedText=""@searchTerm"" />
+            </MudListItem>
+        }
+    </MudList>
+</MudPaper>
+
+@code {
+    string searchTerm = ""it"";
+    IEnumerable<string> sentences = new List<string>
+{
+        ""This is the first item"", ""This is the second item"", ""This is the third item""
+    };
+
+
+}";
+
+public const string HighlighterWithListExample = @"<MudPaper Elevation=""0"">
+    <MudList>
+        <MudListSubheader>
+            <MudTextField @bind-Value=""@searchTerm"" AdornmentIcon=""@Filled.Brush""
+                          Adornment=""Adornment.End"" Immediate=""true"" Variant=""Variant.Outlined"" />
+        </MudListSubheader>
+
+        @foreach (var sentence in sentences)
+        {
+            <MudListItem @key=""sentence"" Icon=""@Filled.Folder"">
+                <Highlighter Text=""@sentence"" HighlightedText=""@searchTerm"" />
+            </MudListItem>
+        }
+    </MudList>
+</MudPaper>
+
+@code {
+    string searchTerm = ""item"";
+    IEnumerable<string> sentences = new List<string>
+{
+        ""This is the first item"", ""This is the second item"", ""This is the third item""
+    };
+
+
+}";
+
+public const string HighlighterWithTableExample = @"<MudTable Items=""GetElements()"">
+    <ToolBarContent>
+        <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
+        <MudToolBarSpacer />
+        <MudTextField @bind-Value=""@searchTerm"" Placeholder=""Search"" Adornment=""Adornment.End"" AdornmentIcon=""@Filled.Search"" IconSize=""Size.Medium"" Class=""mt-0"" Immediate=""true""></MudTextField>
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel=""Name"">
+            <Highlighter Text=""@context.Name"" HighlightedText=""@searchTerm"" />
+        </MudTd>
+    </RowTemplate>
+
+</MudTable>
+
+@code {
+
+    string searchTerm = ""ch"";
+
+    IEnumerable<Element> GetElements()
+    {
+        var allElements = PeriodicTable.GetElements();
+        if (string.IsNullOrWhiteSpace(searchTerm)) return allElements;
+
+        var filteredElements = allElements
+            .Where(e => e.Name.ToUpper().Contains(searchTerm.ToUpper()));
+
+        return filteredElements;
+    }
+}";
+
 public const string IconButtonSimpleExample = @"<MudIconButton Icon=""@Icons.Material.Delete""></MudIconButton>
 <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Primary""></MudIconButton>
 <MudIconButton Icon=""@Icons.Material.Favorite"" Color=""Color.Secondary""></MudIconButton>

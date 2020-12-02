@@ -49,7 +49,7 @@
             <MudNavLink Href="customization/theming/overview">Overview</MudNavLink>
             <MudNavLink Href="customization/theming/palette">Palette</MudNavLink>
             @*<MudNavLink Href="customization/theming/layoutprops">Layout Properties</MudNavLink>
-            <MudNavLink Href="customization/theming/shadows">Shadows</MudNavLink>*@
+                <MudNavLink Href="customization/theming/shadows">Shadows</MudNavLink>*@
             <MudNavLink Href="customization/theming/z-index">z-index</MudNavLink>
         </MudNavGroup>
     </MudNavGroup>
@@ -119,7 +119,8 @@
                             .AddItem("Table", typeof(MudTable<T>))
                             .AddItem("Table Simple", typeof(MudSimpleTable))
                             .AddItem("Tooltip", typeof(MudTooltip))
-                            .AddItem("Typography", typeof(MudText));
+                            .AddItem("Typography", typeof(MudText))
+                            .AddItem("Highlighter", typeof(Highlighter));
 
         @foreach (var item in DocsComponents.ToList())
         {

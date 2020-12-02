@@ -809,6 +809,8 @@ public const string MudInputControl_InputContent = @"Should be the Input";
 
 public const string MudInputControl_Margin = @"Will adjust vertical spacing.";
 
+public const string MudInputControl_Required = @"If true, will apply mud-input-required class to the output div";
+
 public const string MudInputControl_Error = @"If true, the label will be displayed in an error state.";
 
 public const string MudInputControl_ErrorText = @"The ErrorText that will be displayed if Error true";
@@ -2130,6 +2132,23 @@ public const string MudItem_Tag = @"Use Tag to attach any user data object to th
 public const string MudItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string Highlighter_Text = @"The whole text in which a fragment will be highlighted";
+
+public const string Highlighter_HighlightedText = @"The fragment of text to be highlighted";
+
+public const string Highlighter_CaseSensitive = @"Whether or not the highlighted text is case sensitive";
+
+public const string Highlighter_UntilNextBoundary = @"If true, highlights the text until the next regex boundary";
+
+public const string Highlighter_Class = @"User class names, separated by space";
+
+public const string Highlighter_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string Highlighter_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string Highlighter_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudLayout_ChildContent = @"Child content of component.";
 
 public const string MudLayout_RightToLeft = @"If set, changes the layout to RightToLeft.";
@@ -2488,6 +2507,8 @@ public const string MudTabPanel_Disabled = @"If true, the tabpanel will be disab
 public const string MudTabPanel_BadgeData = @"Optional information to be showed into a badge";
 
 public const string MudTabPanel_BadgeColor = @"The color of the badge.";
+
+public const string MudTabPanel_OnClick = @"Raised when tab is clicked";
 
 public const string MudTabPanel_ChildContent = @"Child content of component.";
 
