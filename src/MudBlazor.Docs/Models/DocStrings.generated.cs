@@ -1727,6 +1727,8 @@ public const string MudTabs_Centered = @"If true, centers the tabitems.";
 
 public const string MudTabs_Vertical = @"If true, displays the MudTabs verticaly.";
 
+public const string MudTabs_Color = @"The color of the component. It supports the theme colors.";
+
 public const string MudTabs_Elevation = @"Child content of component.";
 
 public const string MudTabs_DisableRipple = @"If true, disables ripple effect.";

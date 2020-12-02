@@ -3025,6 +3025,54 @@ public const string TabsCenteredExample = @"<MudTabs Elevation=""1"" Rounded=""t
     <MudTabPanel Text=""Three""/>
 </MudTabs>";
 
+public const string TabsColorsExample = @"<MudTabs Elevation=""1"" Rounded=""true"" Color=""@Color.Primary"">
+    <MudTabPanel Text=""Api"" Icon=""@Icons.Material.Api"" />
+    <MudTabPanel Text=""Build"" Icon=""@Icons.Material.Build"" />
+    <MudTabPanel Text=""Bug Report"" Icon=""@Icons.Material.BugReport"" />
+</MudTabs>
+
+<MudTabs Elevation=""1"" Rounded=""true"" Color=""@Color.Secondary"">
+    <MudTabPanel Text=""Api"" Icon=""@Icons.Material.Api"" />
+    <MudTabPanel Text=""Build"" Icon=""@Icons.Material.Build"" />
+    <MudTabPanel Text=""Bug Report"" Icon=""@Icons.Material.BugReport"" />
+</MudTabs>
+
+<MudTabs Elevation=""1"" Rounded=""true"" Color=""@Color.Tertiary"">
+    <MudTabPanel Text=""Api"" Icon=""@Icons.Material.Api"" />
+    <MudTabPanel Text=""Build"" Icon=""@Icons.Material.Build"" />
+    <MudTabPanel Text=""Bug Report"" Icon=""@Icons.Material.BugReport"" />
+</MudTabs>
+
+<MudTabs Elevation=""1"" Rounded=""true"" Color=""@Color.Info"">
+    <MudTabPanel Text=""Api"" Icon=""@Icons.Material.Api"" />
+    <MudTabPanel Text=""Build"" Icon=""@Icons.Material.Build"" />
+    <MudTabPanel Text=""Bug Report"" Icon=""@Icons.Material.BugReport"" />
+</MudTabs>
+
+<MudTabs Elevation=""1"" Rounded=""true"" Color=""@Color.Success"">
+    <MudTabPanel Text=""Api"" Icon=""@Icons.Material.Api"" />
+    <MudTabPanel Text=""Build"" Icon=""@Icons.Material.Build"" />
+    <MudTabPanel Text=""Bug Report"" Icon=""@Icons.Material.BugReport"" />
+</MudTabs>
+
+<MudTabs Elevation=""1"" Rounded=""true"" Color=""@Color.Warning"">
+    <MudTabPanel Text=""Api"" Icon=""@Icons.Material.Api"" />
+    <MudTabPanel Text=""Build"" Icon=""@Icons.Material.Build"" />
+    <MudTabPanel Text=""Bug Report"" Icon=""@Icons.Material.BugReport"" />
+</MudTabs>
+
+<MudTabs Elevation=""1"" Rounded=""true"" Color=""@Color.Error"">
+    <MudTabPanel Text=""Api"" Icon=""@Icons.Material.Api"" />
+    <MudTabPanel Text=""Build"" Icon=""@Icons.Material.Build"" />
+    <MudTabPanel Text=""Bug Report"" Icon=""@Icons.Material.BugReport"" />
+</MudTabs>
+
+<MudTabs Elevation=""1"" Rounded=""true"" Color=""@Color.Dark"">
+    <MudTabPanel Text=""Api"" Icon=""@Icons.Material.Api"" />
+    <MudTabPanel Text=""Build"" Icon=""@Icons.Material.Build"" />
+    <MudTabPanel Text=""Bug Report"" Icon=""@Icons.Material.BugReport"" />
+</MudTabs>";
+
 public const string TabsDisabledExample = @"<MudTabs Elevation=""1"" Rounded=""true"">
     <MudTabPanel Text=""Active""/>
     <MudTabPanel Text=""Disabled"" Disabled=""true""/>

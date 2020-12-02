@@ -1958,6 +1958,11 @@
             If true, displays the MudTabs verticaly.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTabs.Color">
+            <summary>
+            The color of the component. It supports the theme colors.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTabs.Elevation">
             <summary>
             Child content of component.
