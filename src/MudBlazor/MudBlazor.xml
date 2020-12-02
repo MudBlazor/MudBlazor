@@ -1186,6 +1186,11 @@
             Validation status. True if the form is valid and without errors. This parameter is readonly.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudForm.ValidationDelay">
+            <summary>
+            Validation debounce delay in milliseconds. 
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudForm.IsValidChanged">
             <summary>
             Raised when IsValid changes.
