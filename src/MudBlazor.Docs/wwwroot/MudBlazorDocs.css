@@ -16,12 +16,20 @@
   background-position: top right;
   overflow: hidden; }
 
+@media (max-width: 600px) {
+  .mudblazor-appbar-band {
+    background-position: 14px 0px; } }
+
 .mudblazor-appbar-brand-text {
   letter-spacing: 0.5rem;
   font-weight: 300;
   margin-left: 12px;
   font-size: 24px;
   user-select: none; }
+
+@media (max-width: 400px) {
+  .mudblazor-appbar-brand-text {
+    letter-spacing: 0.25rem; } }
 
 .mudblazor-navmenu {
   overflow: auto;
@@ -43,8 +51,8 @@
   margin-bottom: 128px; }
 
 .mudblazor-main-content {
-  padding-top: 64px;
-  padding-bottom: 64px; }
+  padding-top: 86px;
+  padding-bottom: 86px; }
 
 @media (min-width: 960px) {
   .mudblazor-main-content {
@@ -69,11 +77,13 @@
       font-size: 1rem; }
 
 .mud-codeblock {
+  height: 100%;
   background-color: var(--mud-palette-black);
   border-radius: var(--mud-default-borderradius);
   padding: 16px;
   overflow: auto; }
   .mud-codeblock pre {
+    height: 100%;
     color: #ededed;
     padding: 0px;
     font-size: 1em;
@@ -107,6 +117,8 @@
   .mud-codeblock .html .atSign {
     color: #000;
     background-color: #d2d295; }
+  .mud-codeblock .html .comment {
+    color: #57a64a; }
   .mud-codeblock .csharp .atSign {
     color: #000;
     background-color: #d2d295; }
@@ -314,7 +326,6 @@
   max-width: 300px; }
 
 .mudblazor-text-h5 {
-  white-space: nowrap;
   letter-spacing: .1rem;
   font-size: 2rem;
   font-weight: 300;
@@ -446,6 +457,50 @@
   width: 70px;
   text-align: center; }
 
+.wf-layout {
+  overflow: hidden;
+  display: flex;
+  height: 200px;
+  width: 350px;
+  position: relative;
+  background-color: var(--mud-palette-background);
+  box-shadow: var(--mud-elevation-3);
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; }
+  .wf-layout:hover {
+    cursor: pointer;
+    box-shadow: var(--mud-elevation-6); }
+
+.wf-appbar {
+  height: 28px;
+  width: 100%;
+  display: flex;
+  padding: 8px;
+  flex-shrink: 0;
+  position: absolute;
+  color: var(--mud-palette-appbar-text);
+  background-color: var(--mud-palette-appbar-background); }
+  .wf-appbar.wf-drawer-open-left {
+    margin-left: 70px;
+    width: calc(100% - 70px); }
+  .wf-appbar.wf-drawer-open-right {
+    margin-right: 70px;
+    width: calc(100% - 70px); }
+
+.wf-drawer {
+  height: 100%;
+  width: 70px;
+  display: flex;
+  flex-shrink: 0;
+  flex: 0 0 auto;
+  flex-direction: column;
+  color: var(--mud-palette-drawer-text);
+  background-color: var(--mud-palette-drawer-background); }
+
+.wf-content {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 38px 8px 0px; }
+
 .docs-page .mud-typography-h4 {
   margin-top: 52px; }
 
@@ -539,21 +594,26 @@
 .docs-section-content-row > * {
   margin: 8px; }
 
-.docs-section-source .docs-content-toolbar {
-  width: 100%;
-  display: flex; }
-  .docs-section-source .docs-content-toolbar > .mud-tooltip-root .mud-icon-button .mud-svg-icon-root {
-    font-size: 1.25rem; }
-
-.docs-section-source .docs-source-code.docs-show-code {
-  display: block; }
-
-.docs-section-source .docs-source-code.docs-hide-code {
-  display: none; }
+.docs-section-source {
+  height: 100%; }
+  .docs-section-source .docs-content-toolbar {
+    width: 100%;
+    display: flex; }
+    .docs-section-source .docs-content-toolbar > .mud-tooltip-root .mud-icon-button .mud-svg-icon-root {
+      font-size: 1.25rem; }
+  .docs-section-source .docs-source-code {
+    height: 100%; }
+    .docs-section-source .docs-source-code.docs-show-code {
+      display: block; }
+    .docs-section-source .docs-source-code.docs-hide-code {
+      display: none; }
 
 .docs-content-api {
   padding: 0px;
   width: 100%; }
+
+.docs-content-outlined {
+  border: 1px solid var(--mud-palette-lines-default); }
 
 .docs-icon-container {
   margin-top: 20px; }

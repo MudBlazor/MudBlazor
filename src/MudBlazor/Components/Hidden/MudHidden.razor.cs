@@ -24,6 +24,25 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Invert { get; set; }
 
+        /// <summary>
+        /// True if the component is not visible (two-way bindable)
+        /// </summary>
+        [Parameter] public bool IsHidden
+        {
+            get => _is_hidden;
+            set
+            {
+                if (_is_hidden == value)
+                    return;
+                _is_hidden = value;
+                StateHasChanged();
+            }
+        }
+
+        /// <summary>
+        /// Fires when the breakpoint changes visibility of the component
+        /// </summary>
+        [Parameter] public EventCallback<bool> IsHiddenChanged { get; set; }
 
         /// <summary>
         /// Child content of component.
@@ -51,6 +70,7 @@ namespace MudBlazor
                 return;
             _is_hidden = hidden;
             InvokeAsync(StateHasChanged);
+            IsHiddenChanged.InvokeAsync(_is_hidden);
         }
 
         private void OnResized(object sender, BrowserWindowSize size)

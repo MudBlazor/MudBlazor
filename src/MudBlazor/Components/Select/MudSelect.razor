@@ -8,8 +8,8 @@
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
                          Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu">
             <InputContent>
-                <MudInput Variant="@Variant" Value="@Text" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                          Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium"
+                <MudInput Variant="@Variant" Value="@Text" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="true"
+                          Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" Margin="@Margin"
                           InputType="@(CanRenderValue ? InputType.Hidden : InputType.Text)">
                     @if (CanRenderValue)
                     {
@@ -31,5 +31,5 @@
 
 @if (isOpen)
 {
-    <div class="mud-popover-overlay" @onclick="@CloseMenu"></div>
+    <MudOverlay OnClick="@CloseMenu" />
 }

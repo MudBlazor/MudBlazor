@@ -19,7 +19,13 @@
     background-image: url(../../_content/MudBlazor.Docs/MudAppbarCorner.svg);
     background-repeat: no-repeat;
     background-position: top right;
-    overflow:hidden;
+    overflow: hidden;
+}
+
+@media (max-width:600px) {
+    .mudblazor-appbar-band {
+        background-position: 14px 0px;
+    }
 }
 
 .mudblazor-appbar-brand-text {
@@ -28,6 +34,12 @@
     margin-left: 12px;
     font-size: 24px;
     user-select:none;
+}
+
+@media (max-width:400px) {
+    .mudblazor-appbar-brand-text {
+        letter-spacing: 0.25rem;
+    }
 }
 
 
@@ -56,8 +68,8 @@
 
 
 .mudblazor-main-content {
-    padding-top: 64px;
-    padding-bottom: 64px;
+    padding-top: 86px;
+    padding-bottom: 86px;
 }
 
 
@@ -69,6 +81,7 @@
         padding-right: 30px;
     }
 }
+
 
 .docs-list{
     list-style:inside;

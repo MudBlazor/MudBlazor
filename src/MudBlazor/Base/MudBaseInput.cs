@@ -175,6 +175,7 @@ namespace MudBlazor
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
             ValidateValue(Value);
+            EditFormValidate();
             OnBlur.InvokeAsync(obj);
         }
 
@@ -219,6 +220,7 @@ namespace MudBlazor
                     GenericValueChanged(value);
                     ValidateValue(value);
                     ValueChanged.InvokeAsync(value);
+                    EditFormValidate();
                 }
                 finally
                 {
@@ -344,6 +346,9 @@ namespace MudBlazor
         /// Func<T, bool> ... will output the standard error message "Invalid" if false
         /// Func<T, string> ... outputs the result as error message, no error if null
         /// Func<T, IEnumerable<string>> ... outputs all the returned error messages, no error if empty
+        /// Func<T, Task<bool>> ... will output the standard error message "Invalid" if false
+        /// Func<T, Task<string>> ... outputs the result as error message, no error if null
+        /// Func<T, Task<IEnumerable<string>>> ... outputs all the returned error messages, no error if empty
         /// System.ComponentModel.DataAnnotations.ValidationAttribute instances
         /// </summary>
         [Parameter]
@@ -353,21 +358,40 @@ namespace MudBlazor
         /// <summary>
         /// Causes this component to validate its value
         /// </summary>
-        public void Validate() => ValidateValue(Value);
+        public async Task Validate() => await ValidateValue(Value);
 
-        internal virtual void ValidateValue(T value)
+        internal async virtual Task ValidateValue(T value)
         {
             if (Form == null || !Standalone)
                 return;
             ValidationErrors = new List<string>();
             try
             {
-                if (Required && value == null)
+                if (Required)
                 {
-                    ValidationErrors.Add(RequiredError);
-                    return;
+                    // a value is required, so if nothing has been entered, we'll return ERROR
+                    var is_valid = true;
+                    if (typeof(T)==typeof(string))
+                        is_valid = !string.IsNullOrWhiteSpace((string)(object)value);
+                    else if (value == null)
+                        is_valid = false;
+                    if (!is_valid)
+                    {
+                        ValidationErrors.Add(RequiredError);
+                        return;
+                    }
                 }
-
+                else
+                {
+                    // a value is not required, so if nothing has been entered, we'll return OK without calling validation funcs
+                    var is_empty = false;
+                    if (typeof(T) == typeof(string))
+                        is_empty = string.IsNullOrWhiteSpace((string)(object)value);
+                    else if (value == null)
+                        is_empty = false;
+                    if (is_empty)
+                        return;
+                }
                 if (Validation is ValidationAttribute)
                     ValidateWithAttribute(Validation as ValidationAttribute, value);
                 else if (Validation is Func<T, bool>)
@@ -376,6 +400,12 @@ namespace MudBlazor
                     ValidateWithFunc(Validation as Func<T, string>, value);
                 else if (Validation is Func<T, IEnumerable<string>>)
                     ValidateWithFunc(Validation as Func<T, IEnumerable<string>>, value);
+                else if (Validation is Func<T, Task<bool>>)
+                    await ValidateWithFunc(Validation as Func<T, Task<bool>>, value);
+                else if (Validation is Func<T, Task<string>>)
+                    await ValidateWithFunc(Validation as Func<T, Task<string>>, value);
+                else if (Validation is Func<T, Task<IEnumerable<string>>>)
+                    await ValidateWithFunc(Validation as Func<T, Task<IEnumerable<string>>>, value);
             }
             finally
             {
@@ -384,6 +414,7 @@ namespace MudBlazor
                 Error = ValidationErrors.Count > 0;
                 ErrorText = ValidationErrors.FirstOrDefault();
                 Form.Update(this);
+                StateHasChanged();
             }
         }
 
@@ -436,6 +467,48 @@ namespace MudBlazor
             }
         }
 
+        protected async virtual Task ValidateWithFunc(Func<T, Task<bool>> func, T value)
+        {
+            try
+            {
+                if (await func(value))
+                    return;
+                ValidationErrors.Add("Invalid");
+            }
+            catch (Exception e)
+            {
+                ValidationErrors.Add("Error in validation func: " + e.Message);
+            }
+        }
+
+        protected async virtual Task ValidateWithFunc(Func<T, Task<string>> func, T value)
+        {
+            try
+            {
+                var error = await func(value);
+                if (error == null)
+                    return;
+                ValidationErrors.Add(error);
+            }
+            catch (Exception e)
+            {
+                ValidationErrors.Add("Error in validation func: " + e.Message);
+            }
+        }
+
+        protected async virtual Task ValidateWithFunc(Func<T, Task<IEnumerable<string>>> func, T value)
+        {
+            try
+            {
+                foreach (var error in await func(value))
+                    ValidationErrors.Add(error);
+            }
+            catch (Exception e)
+            {
+                ValidationErrors.Add("Error in validation func: " + e.Message);
+            }
+        }
+
         public void Reset()
         {
             _value = default;
@@ -477,6 +550,18 @@ namespace MudBlazor
         /// </summary>
         [CascadingParameter]
         EditContext EditContext { get; set; } = default!;
+
+        /// <summary>
+        /// Triggers field to be validated.
+        /// </summary>
+        internal void EditFormValidate()
+        {
+            if (_fieldIdentifier.FieldName == null)
+            {
+                return;
+            }
+            EditContext?.NotifyFieldChanged(_fieldIdentifier);
+        }
 
         /// <summary>
         /// Specify an expression which returns the model's field for which validation messages should be displayed.

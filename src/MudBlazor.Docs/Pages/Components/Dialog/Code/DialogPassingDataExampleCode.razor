@@ -1,0 +1,48 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="atSign">&#64;</span>using MudBlazor.Docs.Pages.Components.Dialog.Models
+
+<span class="atSign">&#64;</span>inject IDialogService Dialog
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">div</span> <span class="htmlAttributeName">class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">d-flex</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="atSign">&#64;</span>foreach (var item in Servers)
+    {
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudPaper</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">d-flex align-center pa-2 mx-2</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+            <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span><span class="atSign">&#64;</span>item.Name<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+            <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Variant</span><span class="enumValue">.Text</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Error</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>((e) =&gt; DeleteServer(item))</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Delete<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudPaper</span><span class="htmlTagDelimiter">&gt;</span>
+    }
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">div</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code {
+
+    <span class="keyword">async</span> Task DeleteServer(Server server)
+    {
+        <span class="keyword">var</span> parameters = <span class="keyword">new</span> DialogParameters();
+        parameters.Add(<span class="string">&quot;server&quot;</span>, server);
+
+        <span class="keyword">var</span> dialog = Dialog.Show&lt;DialogPassingDataExample_Dialog&gt;(<span class="string">&quot;Delete Server&quot;</span>, parameters);
+        <span class="keyword">var</span> result = <span class="keyword">await</span> dialog.Result;
+
+        <span class="keyword">if</span> (!result.Cancelled)
+        {
+            <span class="comment">//In a real world scenario we would reload the data from the source here since we &quot;removed&quot; it in the dialog already.</span>
+            Guid.TryParse(result.Data.ToString(), <span class="keyword">out</span> Guid deletedServer);
+            Servers.RemoveAll(item =&gt; item.Id == deletedServer);
+        }
+    }
+
+    <span class="comment">//Pretend we are loading this data from a database or API</span>
+    <span class="keyword">public</span> List&lt;Server&gt; Servers { <span class="keyword">get</span>; } = <span class="keyword">new</span> List&lt;Server&gt;
+    {
+        <span class="keyword">new</span> Server{ Id = Guid.NewGuid(), Name = <span class="string">&quot;Server1&quot;</span>, Location = <span class="string">&quot;Denmark&quot;</span>, IpAddress = <span class="string">&quot;193.254.123.1&quot;</span> },
+        <span class="keyword">new</span> Server{ Id = Guid.NewGuid(), Name = <span class="string">&quot;Server2&quot;</span>, Location = <span class="string">&quot;Sweden&quot;</span>, IpAddress = <span class="string">&quot;127.0.0.1&quot;</span> },
+        <span class="keyword">new</span> Server{ Id = Guid.NewGuid(), Name = <span class="string">&quot;Server3&quot;</span>, Location = <span class="string">&quot;Russia&quot;</span>, IpAddress = <span class="string">&quot;173.164.2.1&quot;</span> },
+        <span class="keyword">new</span> Server{ Id = Guid.NewGuid(), Name = <span class="string">&quot;Server4&quot;</span>, Location = <span class="string">&quot;Germany&quot;</span>, IpAddress = <span class="string">&quot;193.168.1.1&quot;</span> },
+    };
+}
+</pre></div>
+</div>

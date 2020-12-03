@@ -205,6 +205,11 @@
             This is the form validation context for Blazor's <EditForm></EditForm> component
             </summary>
         </member>
+        <member name="M:MudBlazor.MudBaseInput`1.EditFormValidate">
+            <summary>
+            Triggers field to be validated.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBaseInput`1.For">
             <summary>
             Specify an expression which returns the model's field for which validation messages should be displayed.
@@ -404,14 +409,14 @@
             The variant to use.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudAlert.Class">
-            <summary>
-            User class names, separated by space.
-            </summary>
-        </member>
         <member name="P:MudBlazor.MudAlert.ChildContent">
             <summary>
             Child content of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudAlert.Icon">
+            <summary>
+            Custom icon, leave unset to use the standard icon which depends on the Severity
             </summary>
         </member>
         <member name="P:MudBlazor.MudAlert.OnClick">
@@ -568,6 +573,11 @@
         <member name="P:MudBlazor.MudButton.EndIcon">
             <summary>
             Icon placed before the text if set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudButton.IconClass">
+            <summary>
+            Icon class names, separated by space
             </summary>
         </member>
         <member name="P:MudBlazor.MudButton.Color">
@@ -1086,6 +1096,86 @@
             Child content of component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudField.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Margin">
+            <summary>
+             Will adjust vertical spacing. 
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Error">
+            <summary>
+            If true, the label will be displayed in an error state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.ErrorText">
+            <summary>
+            The ErrorText that will be displayed if Error true
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.HelperText">
+            <summary>
+            The HelperText will be displayed below the text field.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.FullWidth">
+            <summary>
+            If true, the field will take up the full width of its container.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Label">
+            <summary>
+            If string has value the label text will be displayed in the input, and scaled down at the top if the field has value.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Variant">
+            <summary>
+            Variant can be Text, Filled or Outlined.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Disabled">
+            <summary>
+            If true, the input element will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.AdornmentIcon">
+            <summary>
+            Icon that will be used if Adornment is set to Start or End.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.AdornmentText">
+            <summary>
+            Text that will be used if Adornment is set to Start or End, the Text overrides Icon.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.Adornment">
+            <summary>
+            Sets Start or End Adornment if not set to None.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.IconSize">
+            <summary>
+            Sets the Icon Size.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.OnAdornmentClick">
+            <summary>
+            Button click event if set and Adornment used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.InnerPadding">
+            <summary>
+            If true, the inner contents padding is removed.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudField.DisableUnderLine">
+            <summary>
+            If true, the field will not have an underline.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudForm.ChildContent">
             <summary>
             Child content of component.
@@ -1094,6 +1184,11 @@
         <member name="P:MudBlazor.MudForm.IsValid">
             <summary>
             Validation status. True if the form is valid and without errors. This parameter is readonly.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudForm.ValidationDelay">
+            <summary>
+            Validation debounce delay in milliseconds. 
             </summary>
         </member>
         <member name="P:MudBlazor.MudForm.IsValidChanged">
@@ -1135,6 +1230,16 @@
         <member name="P:MudBlazor.MudHidden.Invert">
             <summary>
             Inverts the Breakpoint, so that the ChildContent is only rendered when the breakpoint matches the screen size.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudHidden.IsHidden">
+            <summary>
+            True if the component is not visible (two-way bindable)
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudHidden.IsHiddenChanged">
+            <summary>
+            Fires when the breakpoint changes visibility of the component
             </summary>
         </member>
         <member name="P:MudBlazor.MudHidden.ChildContent">
@@ -1401,6 +1506,21 @@
         <member name="P:MudBlazor.MudNavLink.Icon">
             <summary>
             Icon to use if set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudOverlay.ChildContent">
+            <summary>
+            Child content of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudOverlay.CommandParameter">
+            <summary>
+            Command parameter.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudOverlay.Command">
+            <summary>
+            Command executed when the user clicks on an element.
             </summary>
         </member>
         <member name="P:MudBlazor.MudPopover.Elevation">
@@ -1827,6 +1947,26 @@
             Add MudTablePager here to enable breaking the rows in to multiple pages.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudTableBase.OnCommitEditClick">
+            <summary>
+            Button click event.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.CommitEditCommand">
+            <summary>
+            Command executed when the user clicks on the CommitEdit Button.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.CommitEditCommandParameter">
+            <summary>
+            Command parameter for the CommitEdit Button.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.CommitEditTooltip">
+            <summary>
+            Tooltip for the CommitEdit Button.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTablePager.DisableRowsPerPage">
             <summary>
             Set true to hide the part of the pager which allows to change the page size.
@@ -1857,6 +1997,11 @@
         <member name="P:MudBlazor.MudTabs.Border">
             <summary>
             If true, sets a border.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTabs.Outlined">
+            <summary>
+            If true, toolbar will be outlined.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTabs.Centered">

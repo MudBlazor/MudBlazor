@@ -66,6 +66,8 @@
 }
 
 .docs-section-source {
+    height: 100%;
+
     .docs-content-toolbar {
         width: 100%;
         display: flex;
@@ -76,6 +78,8 @@
     }
 
     & .docs-source-code {
+        height: 100%;
+
         &.docs-show-code {
             display: block;
         }
@@ -91,3 +95,6 @@
     width:100%;
 }
 
+.docs-content-outlined {
+    border: 1px solid var(--mud-palette-lines-default);
+}

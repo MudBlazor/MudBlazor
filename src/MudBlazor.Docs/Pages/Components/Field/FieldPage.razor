@@ -1,0 +1,31 @@
+﻿@page "/components/field"
+
+
+<DocsPage>
+    <DocsPageHeader Title="Field" SubTitle="A component that inherits the same look and behavier as Textfield. It has no input, but you can add any content you want." />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Basic Fields</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <FieldBasicExample />
+            </SectionContent>
+            <SectionSource Code="FieldBasicExample" ShowCode="false" GitHubFolderName="Field" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Minimize inner padding</Title>
+                <Description>
+                    Set <CodeInline>InnerPadding</CodeInline> to false to minimize the inner padding.
+                    It does not remove the full inner padding, but it is minimized to the absolute necessary value, to not concur with the label.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <FieldMinimizePaddingExample />
+            </SectionContent>
+            <SectionSource Code="FieldMinimizePaddingExample" ShowCode="false" GitHubFolderName="Field" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

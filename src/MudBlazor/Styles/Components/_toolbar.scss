@@ -11,25 +11,35 @@
     padding-right: 16px;
 }
 
-@media (min-width:600px) {
-    .mud-toolbar-gutters {
-        padding-left: 24px;
-        padding-right: 24px;
-    }
-}
-
 @media (min-width:0px) and (orientation: landscape) {
     .mud-toolbar {
         min-height: 48px;
+
+        &.mud-toolbar-appbar {
+            min-height: calc(var(--mud-appbar-min-height) - 16px);
+        }
     }
 }
 
 @media (min-width:600px) {
     .mud-toolbar {
         min-height: 64px;
+
+        &.mud-toolbar-appbar {
+            min-height: var(--mud-appbar-min-height);
+        }
+    }
+
+    .mud-toolbar-gutters {
+        padding-left: 24px;
+        padding-right: 24px;
     }
 }
 
 .mud-toolbar-dense {
     min-height: 48px;
+
+    &.mud-toolbar-appbar {
+        min-height: calc(var(--mud-appbar-min-height) - 16px);
+    }
 }

@@ -6,7 +6,7 @@
     flex: 0 0 auto;
     outline: 0;
     position: fixed;
-    z-index: var(--mud-zindex-drawer);
+    z-index: calc(var(--mud-zindex-drawer) + 1);
     overflow-y: auto;
     flex-direction: column;
     color: var(--mud-palette-drawer-text);
@@ -25,6 +25,25 @@
             transform: translateX(calc(-1 * var(--mud-drawer-width)));
             visibility: hidden;
         }
+
+        &.mud-drawer--force-close {
+            transform: translateX(calc(-1 * var(--mud-drawer-width)));
+            visibility: hidden;
+        }
+
+        @media (min-width:0px) {
+            &.mud-drawer--force-close {
+                transform: translateX(calc(-1 * var(--mud-drawer-width)));
+                visibility: hidden;
+            }
+        }
+
+        @media (min-width:1280px) {
+            &.mud-drawer--force-close {
+                transform: unset;
+                visibility: unset;
+            }
+        }
     }
 
     &.mud-drawer-anchor-right {
@@ -35,6 +54,20 @@
             transform: translateX(var(--mud-drawer-width));
             visibility: hidden;
         }
+
+        @media (min-width:0px) {
+            &.mud-drawer--force-close {
+                transform: translateX(var(--mud-drawer-width));
+                visibility: hidden;
+            }
+        }
+
+        @media (min-width:1280px) {
+            &.mud-drawer--force-close {
+                transform: unset;
+                visibility: unset;
+            }
+        }
     }
 }
 
@@ -44,6 +77,41 @@
     padding: 12px 24px 12px 24px;
 }
 
-.mud-drawer-clipped {
-    padding-top: var(--mud-appbar-min-height);
+@media (min-width:0px) and (orientation: landscape) {
+    .mud-drawer-clipped {
+        padding-top: calc(var(--mud-appbar-min-height) - 16px);
+    }
+}
+
+@media (min-width:600px) {
+    .mud-drawer-clipped {
+        padding-top: var(--mud-appbar-min-height);
+    }
+
+}
+
+.mud-drawer-overlay {
+    display: none;
+    z-index: var(--mud-zindex-drawer);
+    background-color: rgba(0,0,0,0.5);
+    animation: mud-animation-fadein ease 0.15s;
+    -webkit-animation: mud-animation-fadein ease 0.15s;
+    -moz-animation: mud-animation-fadein ease 0.15s;
+    -o-animation: mud-animation-fadein ease 0.15s;
+
+    @media (min-width:0px) {
+        &.mud-drawer--open {
+            display: block;
+        }
+
+        &.mud-drawer--force-close {
+            display: none;
+        }
+    }
+
+    @media (min-width:1280px) {
+        &.mud-drawer--open {
+            display: none;
+        }
+    }
 }

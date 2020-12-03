@@ -1,9 +1,8 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavMan
-@using MudBlazor.Theme.Defaults
 
 <MudThemeProvider Theme="currentTheme"/>
-<MudDialogProvider />
+<MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall" />
 <MudSnackbarProvider />
 
 
@@ -22,7 +21,7 @@
             <MudIconButton Icon="@Icons.Material.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
         </MudTooltip>
     </MudAppBar>
-    <MudDrawer Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
+    <MudDrawer @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
         <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
             <MudBlazorLogo />
         </MudDrawerHeader>

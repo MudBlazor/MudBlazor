@@ -22,6 +22,7 @@
 @import 'components/chip';
 @import 'components/collapse';
 @import 'components/dialog';
+@import 'components/field';
 @import 'components/grid';
 @import 'components/paper';
 @import 'components/icons';
@@ -53,12 +54,14 @@
 @import 'components/input';
 @import 'components/inputcontrol';
 @import 'components/inputlabel';
+@import 'components/overlay';
 
 @import 'utilities/flex';
 @import 'utilities/float';
 @import 'utilities/align';
 @import 'utilities/spacing';
 @import 'utilities/borders';
+@import 'utilities/display';
 
 @import 'layout/appbar';
 @import 'layout/drawer';

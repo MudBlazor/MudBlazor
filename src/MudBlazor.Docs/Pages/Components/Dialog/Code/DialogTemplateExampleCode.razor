@@ -1,0 +1,48 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="atSign">&#64;</span>inject IDialogService Dialog
+
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>onclick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">DeleteUser</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Variant</span><span class="enumValue">.Filled</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Error</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Delete Records<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>onclick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Confirm</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Variant</span><span class="enumValue">.Filled</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Success</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Remove Email<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>onclick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Download</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Variant</span><span class="enumValue">.Filled</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Warning</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Slow Computer<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code {
+
+    <span class="keyword">async</span> Task DeleteUser()
+    {
+        <span class="keyword">var</span> parameters = <span class="keyword">new</span> DialogParameters();
+        parameters.Add(<span class="string">&quot;ContentText&quot;</span>, <span class="string">&quot;Do you really want to delete these records? This process cannot be undone.&quot;</span>);
+        parameters.Add(<span class="string">&quot;ButtonText&quot;</span>, <span class="string">&quot;Delete&quot;</span>);
+        parameters.Add(<span class="string">&quot;Color&quot;</span>, Color.Error);
+
+        <span class="keyword">var</span> options = <span class="keyword">new</span> DialogOptions() { CloseButton = <span class="keyword">true</span>, MaxWidth = MaxWidth.ExtraSmall };
+
+        Dialog.Show&lt;DialogTemplateExample_Dialog&gt;(<span class="string">&quot;Delete&quot;</span>, parameters, options);
+    }
+
+    <span class="keyword">async</span> Task Confirm()
+    {
+        <span class="keyword">var</span> parameters = <span class="keyword">new</span> DialogParameters();
+        parameters.Add(<span class="string">&quot;ContentText&quot;</span>, <span class="string">&quot;Are you sure you want to remove thisguy<span class="atSign">&#64;</span>emailz.com from this account?&quot;</span>);
+        parameters.Add(<span class="string">&quot;ButtonText&quot;</span>, <span class="string">&quot;Yes&quot;</span>);
+        parameters.Add(<span class="string">&quot;Color&quot;</span>, Color.Success);
+
+        Dialog.Show&lt;DialogTemplateExample_Dialog&gt;(<span class="string">&quot;Confirm&quot;</span>, parameters);
+    }
+
+    <span class="keyword">async</span> Task Download()
+    {
+        <span class="keyword">var</span> parameters = <span class="keyword">new</span> DialogParameters();
+        parameters.Add(<span class="string">&quot;ContentText&quot;</span>, <span class="string">&quot;Your computer seems very slow, click the download button to download free RAM.&quot;</span>);
+        parameters.Add(<span class="string">&quot;ButtonText&quot;</span>, <span class="string">&quot;Download&quot;</span>);
+        parameters.Add(<span class="string">&quot;Color&quot;</span>, Color.Info);
+
+        Dialog.Show&lt;DialogTemplateExample_Dialog&gt;(<span class="string">&quot;Slow Computer Detected&quot;</span>, parameters);
+    }
+}
+</pre></div>
+</div>

@@ -8,18 +8,21 @@
         <MudTextField Label="@Label" Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="true" @onclick="ToggleOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
     }
     <CascadingValue Value="@this" IsFixed="true">
-        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@PickerElevation" Square="@PickerSquare">
-            <div class="@PickerContainerClass">
-                @ChildContent
-            </div>
-        </MudPaper>
+        @if (isOpen)
+        {
+            <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@PickerElevation" Square="@PickerSquare">
+                <div class="@PickerContainerClass">
+                    @ChildContent
+                </div>
+            </MudPaper>
+        }
     </CascadingValue>
 </div>
 @if (PickerVariant == PickerVariant.Inline)
 {
     @if (isOpen)
     {
-        <div class="mud-popover-overlay" @onclick="@Close"></div>
+        <MudOverlay OnClick="@Close" />
     }
 }
 

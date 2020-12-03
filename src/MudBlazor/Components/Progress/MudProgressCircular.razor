@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities;
 @using MudBlazor.Extensions;
+@inherits MudComponentBase
 
 <div class="@DivClassname" role="progressbar" style="width: 40px; height: 40px; transform: rotate(-90deg);" aria-valuenow="@Value">
     <svg class="mud-progress-circular-svg" viewBox="22 22 44 44">
@@ -10,20 +11,21 @@
         }
         else
         {
-    <circle class="@SvgClassname" cx="44" cy="44" r="20.2" fill="none" stroke-width="@StrokeWidth" style="stroke-dasharray: @MagicNumber; stroke-dashoffset: @_svg_value;"></circle>
+            <circle class="@SvgClassname" cx="44" cy="44" r="20.2" fill="none" stroke-width="@StrokeWidth" style="stroke-dasharray: @MagicNumber; stroke-dashoffset: @_svg_value;"></circle>
         }
     </svg>
 </div>
 
 
 @code {
-    private const int MagicNumber=126; // weird, but required for the SVG to work
+    private const int MagicNumber = 126; // weird, but required for the SVG to work
 
     protected string DivClassname =>
     new CssBuilder("mud-progress-circular")
         .AddClass($"mud-{Color.ToDescriptionString()}-text")
         .AddClass($"mud-progress-indeterminate", Indeterminate)
         .AddClass($"mud-progress-static", !Indeterminate)
+        .AddClass(Class)
     .Build();
 
     protected string SvgClassname =>
@@ -56,7 +58,7 @@
         get => _value;
         set
         {
-            if (_value.Equals( value))
+            if (_value.Equals(value))
                 return;
             _value = value;
             _svg_value = ToSvgValue(_value);
@@ -68,7 +70,7 @@
     {
         var value = Math.Min(Math.Max(Minimum, in_value), Maximum);
         // calculate fraction, which is a value between 0 and 1
-        var fraction=(value - Minimum) / (Maximum - Minimum);
+        var fraction = (value - Minimum) / (Maximum - Minimum);
         // now project into the range of the SVG value (126 .. 0)
         return (int)Math.Round(MagicNumber - MagicNumber * fraction);
     }

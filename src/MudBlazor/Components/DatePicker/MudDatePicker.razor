@@ -10,22 +10,22 @@
     <MudPickerContent>
         @if (OpenTo == OpenTo.Year)
         {
-        <div id="pickerYears" class="mud-picker-year-container">
-            @for (int i = GetMinYear(); i <= GetMaxYear(); i++)
-            {
-                var year = i;
-                <div class="mud-picker-year" id="@(_componentId+year)" @onclick="@(()=>OnYearClicked(year))">
-                    <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@year</MudText>
-                </div>
-            }
-        </div>
+            <div id="pickerYears" class="mud-picker-year-container">
+                @for (int i = GetMinYear(); i <= GetMaxYear(); i++)
+                {
+                    var year = i;
+                    <div class="mud-picker-year" id="@(_componentId + year)" @onclick="@(() => OnYearClicked(year))">
+                        <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@year</MudText>
+                    </div>
+                }
+            </div>
         }
         else if (OpenTo == OpenTo.Month)
         {
             <div class="mud-picker-month-container">
                 @foreach (var month in GetAllMonths())
                 {
-                    <div class="mud-picker-month" @onclick="@(()=>OnMonthSelected(month))">
+                    <div class="mud-picker-month" @onclick="@(() => OnMonthSelected(month))">
                         <MudText Typo="@GetMonthTypo(month)" Class="@GetMonthClasses(month)">@GetAbbreviatedMontName(month)</MudText>
                     </div>
                 }
@@ -35,11 +35,11 @@
         {
             <div class="mud-picker-calendar-header">
                 <div class="mud-picker-calendar-header-switch">
-                    <MudIconButton Icon="@Icons.Material.ChevronLeft" OnClick="@OnPreviousMonthClick" />
+                    <MudIconButton Icon="@Icons.Material.ChevronLeft" OnClick="@OnPreviousMonthClick"/>
                     <div class="mud-picker-slide-transition mud-picker-calendar-header-transition" @onclick="OnMonthClicked">
                         <MudText Typo="Typo.body1" Align="Align.Center">@GetMonthName()</MudText>
                     </div>
-                    <MudIconButton Icon="@Icons.Material.ChevronRight" OnClick="@OnNextMonthClick" />
+                    <MudIconButton Icon="@Icons.Material.ChevronRight" OnClick="@OnNextMonthClick"/>
                 </div>
                 <div class="mud-picker-calendar-header-day">
                     @foreach (var dayname in GetAbbreviatedDayNames())
@@ -56,7 +56,7 @@
                             @foreach (var day in GetWeek(week))
                             {
                                 <div role="presentation" class="mud-picker-calendar-day">
-                                    <MudIconButton Class="@GetDayClasses(day)" OnClick="@(() =>{ var d = day; OnDayClicked(d); })">@day.Day</MudIconButton>
+                                    <MudIconButton Class="@GetDayClasses(day)" OnClick="@(() =>{ var d = day; OnDayClicked(d); })" Disabled="@((day < MinDate) || (day > MaxDate))">@day.Day</MudIconButton>
                                 </div>
                             }
                         </div>

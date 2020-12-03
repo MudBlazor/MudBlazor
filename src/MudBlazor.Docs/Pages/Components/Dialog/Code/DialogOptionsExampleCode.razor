@@ -4,25 +4,21 @@
 <div class="html"><pre>
 <span class="atSign">&#64;</span>inject IDialogService Dialog
 
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Variant</span><span class="enumValue">.Outlined</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Primary</span><span class="quot">&quot;</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>onclick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">OpenClodebuttonDialog</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>With Close Button<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Variant</span><span class="enumValue">.Outlined</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Secondary</span><span class="quot">&quot;</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>onclick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">OpenBackDropDialog</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>With No Backdrop click<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>((e) =&gt; OpenDialog(maxWidth))</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Open MaxWidth Dialog<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>((e) =&gt; OpenDialog(closeButton))</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Primary</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Close Button Dialog<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>((e) =&gt; OpenDialog(noHeader))</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Secondary</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>No header Dialog<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>((e) =&gt; OpenDialog(disableBackdropClick))</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Tertiary</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Disable backdrop dialog<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
 </pre></div>
 <div class="csharp"><pre>
 <span class="atSign">&#64;</span>code {
-    <span class="keyword">async</span> Task OpenClodebuttonDialog()
-    {
-        <span class="keyword">var</span> Options = <span class="keyword">new</span> DialogOptions() { CloseButton = <span class="keyword">true</span> };
-        <span class="keyword">var</span> Parameters = <span class="keyword">new</span> DialogParameters();
-        Parameters.Add(<span class="string">&quot;Message&quot;</span>, <span class="string">&quot;This dialog has a close button that is set either globally or per dialog.&quot;</span>);
-        <span class="keyword">var</span> userSelect = Dialog.Show&lt;DialogDialogOptionExample&gt;(<span class="string">&quot;With close button&quot;</span>, Parameters, Options);
-    }
+    DialogOptions maxWidth = <span class="keyword">new</span> DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = <span class="keyword">true</span> };
+    DialogOptions closeButton = <span class="keyword">new</span> DialogOptions() { CloseButton = <span class="keyword">true</span> };
+    DialogOptions noHeader = <span class="keyword">new</span> DialogOptions() {  NoHeader = <span class="keyword">true</span> };
+    DialogOptions disableBackdropClick = <span class="keyword">new</span> DialogOptions() { DisableBackdropClick = <span class="keyword">true</span> };
 
-    <span class="keyword">async</span> Task OpenBackDropDialog()
+    <span class="keyword">async</span> Task OpenDialog(DialogOptions options)
     {
-        <span class="keyword">var</span> Options = <span class="keyword">new</span> DialogOptions() { DisableBackdropClick = <span class="keyword">true</span> };
-        <span class="keyword">var</span> Parameters = <span class="keyword">new</span> DialogParameters();
-        Parameters.Add(<span class="string">&quot;Message&quot;</span>, <span class="string">&quot;This dialog has the backdrop click disabled and the user need to take an action within the dialog.&quot;</span>);
-        <span class="keyword">var</span> userSelect = Dialog.Show&lt;DialogDialogOptionExample&gt;(<span class="string">&quot;With no backdrop click&quot;</span>, Parameters, Options);
+        Dialog.Show&lt;DialogUsageExample_Dialog&gt;(<span class="string">&quot;Custom Options Dialog&quot;</span>, options);
     }
 }
 </pre></div>

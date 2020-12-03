@@ -14,7 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LiveSharp" Version="1.6.31" />
     <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.0.0-rc.1" />
     <PackageReference Include="Toolbelt.Blazor.HeadElement.ServerPrerendering" Version="1.2.2" />
   </ItemGroup>

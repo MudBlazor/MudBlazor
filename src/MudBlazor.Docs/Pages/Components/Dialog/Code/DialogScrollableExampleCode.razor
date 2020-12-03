@@ -19,7 +19,7 @@
 
     <span class="keyword">async</span> Task OpenSimpleDialog()
     {
-        <span class="keyword">var</span> userSelect = Dialog.Show&lt;DialogBodyScrollableExample&gt;(<span class="string">&quot;MudBlazor License&quot;</span>);
+        <span class="keyword">var</span> userSelect = Dialog.Show&lt;DialogScrollableExample_Dialog&gt;(<span class="string">&quot;MudBlazor License&quot;</span>);
         <span class="keyword">var</span> result = <span class="keyword">await</span> userSelect.Result;
 
         <span class="keyword">if</span> (!result.Cancelled)

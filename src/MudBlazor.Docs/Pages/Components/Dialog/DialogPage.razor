@@ -6,57 +6,110 @@
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Simple Dialogs</Title>
-                <Description></Description>
-            </SectionHeader>
-            <SectionContent Outlined="true">
-                <DialogSimpleExample />
-            </SectionContent>
-            <SectionSource Code="DialogSimpleExample" FullCode="DialogDialogSimpleExample" GitHubFolderName="Dialog" />
+            <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
+            <MudText>The Dialog is dependant on <CodeInline Class="docs-code-tertiary">IDialogService</CodeInline> and <CodeInline>MudDialogProvider</CodeInline></MudText>
+            <MudText>Check the <MudLink Href="/getting-started/installation">Installation</MudLink> page for instructions regarding default setup.</MudText>
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Form Dialogs</Title>
-                <Description></Description>
+                <Title>Usage</Title>
+                <Description>
+                    The Dialog is its own .razor file and can be used as a kind of template where you populate it by passing data.<br />
+                    We will start with a simple example, then some configration options and further down on this page more advanced examples.
+                    You can either have one Dialog.razor file for eatch type of dialog you want to have or build a few of them and reuse them across the system.
+                </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
-                <DialogFormExample />
+                <DialogUsageExample />
             </SectionContent>
-            <SectionSource Code="DialogFormExample" FullCode="DialogDialogFormExample" GitHubFolderName="Dialog" />
+            <MudGrid>
+                <MudItem xs="12" sm="6">
+                    <SectionSource Title="Page.razor" HideButtons="true" Code="DialogUsageExample" GitHubFolderName="Dialog" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <SectionSource Title="DialogFile.razor" HideButtons="true" Code="DialogUsageExample_Dialog" GitHubFolderName="Dialog" />
+                </MudItem>
+            </MudGrid>
+        </DocsPageSection>
+        <DocsPageSection>
+            <MudDivider Class="my-16" Style="opacity:0;" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Dialog Options</Title>
-                <Description>The close button can be set either globaly for the whole project or per dialog.<br /> You can also disable the on backdropclick.</Description>
+                <Title>Configuration</Title>
+                <Description>
+                    The dialogs default behavior can be changed in two ways, either globaly with parameters in the <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline> or pass down the <CodeInline>DialogOptions</CodeInline> class when you open the dialog.
+                </Description>
+            </SectionHeader>
+            <SectionHeader>
+                <SubTitle>1. Global Settings</SubTitle>
+                <Description>In the file where you added <CodeInline>&lt;MudDialogProvider/&gt;</CodeInline> we can pass down different options as parameters. See <MudLink Href="/getting-started/installation">installation page</MudLink> for more information regarding this.</Description>
+            </SectionHeader>
+            <MarkdownDialogParameters />
+            <SectionHeader>
+                <SubTitle>2. Per Dialog</SubTitle>
+                <Description>
+                    Below we pass along the DialogOptions class when we open the dialog, this can be done per dialog or you can predefine a bunch of them that you use for specific cases in your system.<br />
+                </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <DialogOptionsExample />
             </SectionContent>
-            <SectionSource Code="DialogOptionsExample" FullCode="DialogDialogOptionExample" GitHubFolderName="Dialog" />
-        </DocsPageSection>
-        <DocsPageSection>
-            <MudText Typo="Typo.h4" GutterBottom="true">Available options are at the moment</MudText>
-            <MudText Typo="Typo.subtitle1" GutterBottom="true">This options can be set with the <CodeInline>DialogOptions</CodeInline> Class.</MudText>
-            <ul class="mud-typography-body1">
-                <li><CodeInline>enum</CodeInline> - <CodeInline>Position</CodeInline></li>
-                <li><CodeInline>enum</CodeInline> - <CodeInline>MaxWidth</CodeInline></li>
-                <li><CodeInline>bool</CodeInline> - <CodeInline>DisableBackdropClick</CodeInline></li>
-                <li><CodeInline>bool</CodeInline> - <CodeInline>NoHeader</CodeInline></li>
-                <li><CodeInline>bool</CodeInline> - <CodeInline>CloseButton</CodeInline></li>
-                <li><CodeInline>bool</CodeInline> - <CodeInline>FullScreen</CodeInline></li>
-                <li><CodeInline>bool</CodeInline> - <CodeInline>FullWidth</CodeInline></li>
-            </ul>
+            <SectionSource Code="DialogOptionsExample" GitHubFolderName="Dialog" ShowCode="false" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Scrollable Dialog Content</Title>
-                <Description>If the content is longer than the dialog it will automatically become scrollable.</Description>
+                <Title>Templating and Passing Simple Data</Title>
+                <Description>In this section we will demonstrate how you can build one dialog but use it for multiple purposes.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <DialogTemplateExample />
+            </SectionContent>
+            <MudTabs Rounded="true" Outlined="true" Class="mt-4">
+                <MudTabPanel Text="Hide Source" />
+                <MudTabPanel Text="Page.razor">
+                    <SectionSource Code="DialogTemplateExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                </MudTabPanel>
+                <MudTabPanel Text="Dialog.razor">
+                    <SectionSource Code="DialogTemplateExample_Dialog" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                </MudTabPanel>
+            </MudTabs>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Passing Data</Title>
+                <Description>Here is a little more advanced use case, we will use the same dialog but feed it with different server data and then mimmic a delete operation.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true">
+                <DialogPassingDataExample />
+            </SectionContent>
+            <MudTabs Rounded="true" Outlined="true" Class="mt-4">
+                <MudTabPanel Text="Hide Source" />
+                <MudTabPanel Text="Page.razor">
+                    <SectionSource Code="DialogPassingDataExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                </MudTabPanel>
+                <MudTabPanel Text="Dialog.razor">
+                    <SectionSource Code="DialogPassingDataExample_Dialog" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                </MudTabPanel>
+            </MudTabs>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Scrollable Dialog</Title>
+                <Description>Quick example on how to give your dialog scrollable content.</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <DialogScrollableExample />
             </SectionContent>
-            <SectionSource Code="DialogScrollableExample" FullCode="DialogBodyScrollableExample" GitHubFolderName="Dialog" />
+            <MudTabs Rounded="true" Outlined="true" Class="mt-4">
+                <MudTabPanel Text="Hide Source"/>
+                <MudTabPanel Text="Page.razor">
+                    <SectionSource Code="DialogScrollableExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                </MudTabPanel>
+                <MudTabPanel Text="Dialog.razor">
+                    <SectionSource Code="DialogScrollableExample_Dialog" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                </MudTabPanel>
+            </MudTabs>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

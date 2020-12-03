@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
-    <Version>1.1.4</Version>
+    <Version>1.1.5</Version>
     <Authors>Garderoben</Authors>
     <Company>Gardnet</Company>
     <Title>MudBlazor</Title>
@@ -25,18 +25,25 @@
 
   <ItemGroup>
     <Content Remove="bundleconfig.json" />
+    <Content Remove="compilerconfig.build.json" />
     <Content Remove="compilerconfig.json" />
+    <Content Remove="compilerconfig.build.conf" />
+    <Content Remove="compilerconfig.build.files.conf" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
+  <Target Name="ToolRestore" BeforeTargets="PreBuildEvent">
+      <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
+  </Target>
 
+  <Target Name="PreBuild" AfterTargets="ToolRestore">
+      <Exec Command="dotnet webcompiler -c compilerconfig.build.json -f compilerconfig.build.files.conf" StandardOutputImportance="high" />
+  </Target>
 
   <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
     <ItemGroup>
@@ -50,6 +57,7 @@
     <None Include="bundleconfig.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+    <None Include="compilerconfig.build.json" />
     <None Include="compilerconfig.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

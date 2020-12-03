@@ -54,14 +54,3 @@
         position: unset;
     }
 }
-
-.mud-popover-overlay {
-    top: 0;
-    left: 0;
-    margin: 0px !important;
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    background-color: transparent;
-    z-index: var(--mud-zindex-popover);
-}

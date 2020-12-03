@@ -25,7 +25,10 @@ namespace MudBlazor.Dialog
         [Parameter] public bool? NoHeader { get; set; }
         [Parameter] public bool? CloseButton { get; set; }
         [Parameter] public bool? DisableBackdropClick { get; set; }
+        [Parameter] public bool? FullWidth { get; set; }
         [Parameter] public DialogPosition? Position { get; set; }
+        [Parameter] public MaxWidth? MaxWidth { get; set; }
+        
 
         private readonly Collection<DialogReference> Dialogs = new Collection<DialogReference>();
         private readonly DialogOptions GlobalDialogOptions = new DialogOptions();
@@ -40,6 +43,8 @@ namespace MudBlazor.Dialog
             GlobalDialogOptions.CloseButton = CloseButton;
             GlobalDialogOptions.NoHeader = NoHeader;
             GlobalDialogOptions.Position = Position;
+            GlobalDialogOptions.FullWidth = FullWidth;
+            GlobalDialogOptions.MaxWidth = MaxWidth;
         }
 
         internal async void CloseInstance(DialogReference dialog, DialogResult result)

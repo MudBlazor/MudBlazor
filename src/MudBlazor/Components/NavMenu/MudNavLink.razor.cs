@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -21,14 +22,11 @@ namespace MudBlazor
 
         [CascadingParameter] public MudDrawer Drawer { get; set; }
 
-        private void OnNavigation()
+        private void OnNavigation(MouseEventArgs args)
         {
-            if (Drawer == null || !Drawer.OpenChanged.HasDelegate)
-            {
-                return;
-            }
-
-            Drawer.OpenChanged.InvokeAsync(false);
+            OnClickHandler(args);
+            if (Drawer!=null)
+                Drawer.DrawerNavigationClose();
         }
     }
 }

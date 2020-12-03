@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IDialogService Dialog
+
+
+<MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+    Open Simple Dialog
+</MudButton>
+
+
+@code {
+
+    async Task OpenDialog()
+    {
+       Dialog.Show<DialogUsageExample_Dialog>("Simple Dialog");
+    }
+}

@@ -14,7 +14,7 @@
         <MudList>
             @foreach (var type in getTestComponenTypes().OrderBy(x=>x.Name))
             {
-                <MudListItem OnClick="@(() => selectedType = type)">@type.Name</MudListItem>    
+                <MudListItem OnClick="@(() => selectedType = type)" @key="type.Name">@type.Name</MudListItem>    
             }
         </MudList>
     </MudDrawer>
@@ -63,14 +63,14 @@
                 continue;
             yield return type;
         }
-        foreach (var type in typeof(MudBlazor.Docs.Components.DocsPage).Assembly.GetTypes())
-        {
-            if (!type.Name.EndsWith("Example"))
-                continue;
-            if (type.Name.StartsWith("<"))
-                continue;
-            yield return type;
-        }
+        //foreach (var type in typeof(MudBlazor.Docs.Components.DocsPage).Assembly.GetTypes())
+        //{
+        //    if (!type.Name.EndsWith("Example"))
+        //        continue;
+        //    if (type.Name.StartsWith("<"))
+        //        continue;
+        //    yield return type;
+        //}
     }
 
     private string getDescription(Type type)
