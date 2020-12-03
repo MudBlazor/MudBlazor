@@ -84,7 +84,7 @@ namespace MudBlazor
         private void EvaluateForm(bool debounce=true)
         {
             _timer?.Dispose();
-            if (debounce)
+            if (debounce && ValidationDelay > 0)
                 _timer = new Timer(OnTimerComplete, null, ValidationDelay, Timeout.Infinite);
             else
                 OnEvaluateForm();
