@@ -29,6 +29,10 @@
     {
         <p class="@HelperClass">@ErrorText</p>
     }
+    else
+    {
+        <p class="@HelperClass" style="visibility: hidden"> mocktext </p> //So same space always is taken, undependent of helpertext / errortext or not.
+    }
     @ChildContent
 </div>
 
