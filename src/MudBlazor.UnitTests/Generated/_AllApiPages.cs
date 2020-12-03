@@ -891,7 +891,7 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void Highlighter_API_Test()
+        public void MudHighlighter_API_Test()
         {
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
@@ -899,7 +899,7 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
                 ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
-                var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(Highlighter)));
+                var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudHighlighter)));
                 Console.WriteLine(comp.Markup);
          }
 

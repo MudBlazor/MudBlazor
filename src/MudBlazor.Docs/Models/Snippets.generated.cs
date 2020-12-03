@@ -1572,7 +1572,7 @@ public const string HighlighterUntilNextBoundaryExample = @"<MudTextField Style=
     @foreach (var paragraph in paragraphs)
     {
         <MudText @key=""paragraph"" Class=""ma-2"">
-            <Highlighter Text=""@paragraph""
+            <MudHighlighter Text=""@paragraph""
                          HighlightedText=""@highlightedText""
                          UntilNextBoundary=""@untilNextBoundary""
                          CaseSensitive=""@caseSensitive""
@@ -1608,8 +1608,10 @@ public const string HighlighterWithCustomStyleExample = @"<MudPaper Elevation=""
         @foreach (var sentence in sentences)
         {
             <MudListItem @key=""sentence"" Icon=""@Filled.Folder"">
-                <Highlighter Class=""mud-primary-text"" Style=""background-color:transparent;font-weight:bold""
-                             Text=""@sentence"" HighlightedText=""@searchTerm"" />
+                <MudHighlighter Class=""mud-primary-text""
+                             Style=""background-color:transparent;font-weight:bold""
+                             Text=""@sentence""
+                             HighlightedText=""@searchTerm"" />
             </MudListItem>
         }
     </MudList>
@@ -1618,7 +1620,7 @@ public const string HighlighterWithCustomStyleExample = @"<MudPaper Elevation=""
 @code {
     string searchTerm = ""it"";
     IEnumerable<string> sentences = new List<string>
-{
+    {
         ""This is the first item"", ""This is the second item"", ""This is the third item""
     };
 
@@ -1635,7 +1637,7 @@ public const string HighlighterWithListExample = @"<MudPaper Elevation=""0"">
         @foreach (var sentence in sentences)
         {
             <MudListItem @key=""sentence"" Icon=""@Filled.Folder"">
-                <Highlighter Text=""@sentence"" HighlightedText=""@searchTerm"" />
+                <MudHighlighter Text=""@sentence"" HighlightedText=""@searchTerm"" />
             </MudListItem>
         }
     </MudList>
@@ -1644,7 +1646,7 @@ public const string HighlighterWithListExample = @"<MudPaper Elevation=""0"">
 @code {
     string searchTerm = ""item"";
     IEnumerable<string> sentences = new List<string>
-{
+    {
         ""This is the first item"", ""This is the second item"", ""This is the third item""
     };
 
@@ -1664,7 +1666,7 @@ public const string HighlighterWithTableExample = @"<MudTable Items=""GetElement
 
     <RowTemplate>
         <MudTd DataLabel=""Name"">
-            <Highlighter Text=""@context.Name"" HighlightedText=""@searchTerm"" />
+            <MudHighlighter Text=""@context.Name"" HighlightedText=""@searchTerm"" />
         </MudTd>
     </RowTemplate>
 

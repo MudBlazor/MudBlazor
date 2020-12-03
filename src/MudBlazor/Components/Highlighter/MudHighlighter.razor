@@ -8,7 +8,7 @@
 {
     if (!string.IsNullOrWhiteSpace(HighlightedText)
         && Regex.IsMatch(fragment,
-            HighlightedText,
+           Regex.Escape(HighlightedText), //escape until add a property to accept regex
             CaseSensitive
                 ? RegexOptions.None
                 : RegexOptions.IgnoreCase))
@@ -44,6 +44,11 @@
     /// If true, highlights the text until the next regex boundary
     /// </summary>
     [Parameter] public bool UntilNextBoundary { get; set; }
+
+    //TODO
+    //Accept regex highlightings
+    // [Parameter] public bool IsRegex { get; set; }
+
 
 
     protected override void OnParametersSet()

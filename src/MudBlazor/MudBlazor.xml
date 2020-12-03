@@ -2511,22 +2511,22 @@
             If true, the component will link to index page with an a element instead of div.
             </summary>
         </member>
-        <member name="P:MudBlazor.Highlighter.Text">
+        <member name="P:MudBlazor.MudHighlighter.Text">
             <summary>
             The whole text in which a fragment will be highlighted
             </summary>
         </member>
-        <member name="P:MudBlazor.Highlighter.HighlightedText">
+        <member name="P:MudBlazor.MudHighlighter.HighlightedText">
             <summary>
             The fragment of text to be highlighted
             </summary>
         </member>
-        <member name="P:MudBlazor.Highlighter.CaseSensitive">
+        <member name="P:MudBlazor.MudHighlighter.CaseSensitive">
             <summary>
             Whether or not the highlighted text is case sensitive
             </summary>
         </member>
-        <member name="P:MudBlazor.Highlighter.UntilNextBoundary">
+        <member name="P:MudBlazor.MudHighlighter.UntilNextBoundary">
             <summary>
             If true, highlights the text until the next regex boundary
             </summary>

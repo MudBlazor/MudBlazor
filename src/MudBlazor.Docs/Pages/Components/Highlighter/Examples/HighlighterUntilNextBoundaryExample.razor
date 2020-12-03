@@ -4,7 +4,7 @@
     @foreach (var paragraph in paragraphs)
     {
         <MudText @key="paragraph" Class="ma-2">
-            <Highlighter Text="@paragraph"
+            <MudHighlighter Text="@paragraph"
                          HighlightedText="@highlightedText"
                          UntilNextBoundary="@untilNextBoundary"
                          CaseSensitive="@caseSensitive"

@@ -10,7 +10,7 @@
         @foreach (var sentence in sentences)
         {
             <MudListItem @key="sentence" Icon="@Filled.Folder">
-                <Highlighter Text="@sentence" HighlightedText="@searchTerm" />
+                <MudHighlighter Text="@sentence" HighlightedText="@searchTerm" />
             </MudListItem>
         }
     </MudList>
