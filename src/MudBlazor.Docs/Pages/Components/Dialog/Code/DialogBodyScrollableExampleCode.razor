@@ -1,0 +1,49 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="atSign">&#64;</span>using System.Net
+<span class="atSign">&#64;</span>using System.Text
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudDialog</span> <span class="htmlAttributeName">DisableSidePadding</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">DialogContent</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudContainer</span> <span class="htmlAttributeName">Style</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">max-height: 300px; overflow-y: scroll</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+            <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">mb-5</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Typo</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Typo</span><span class="enumValue">.body1</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Copyright (c) 2020 - The MudBlazor Team and Contributors<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+            <span class="atSign">&#64;</span>if (Loading)
+            {
+                <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudProgressCircular</span> <span class="htmlAttributeName">Indeterminate</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudProgressCircular</span><span class="htmlTagDelimiter">&gt;</span>
+            }
+            else
+            {
+                <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Style</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">white-space: pre-wrap;</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="atSign">&#64;</span>LicenseText<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
+            }
+        <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudContainer</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">DialogContent</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">DialogActions</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Primary</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Ok</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Accept<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">DialogActions</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudDialog</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code {
+    [CascadingParameter] MudDialogInstance MudDialog { <span class="keyword">get</span>; <span class="keyword">set</span>; }
+
+    <span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">async</span> Task OnInitializedAsync()
+    {
+        Loading = <span class="keyword">true</span>;
+        <span class="keyword">var</span> bytes = <span class="keyword">await</span> <span class="keyword">new</span> WebClient().DownloadDataTaskAsync(<span class="keyword">new</span> Uri(<span class="string">&quot;https://raw.githubusercontent.com/Garderoben/MudBlazor/master/LICENSE&quot;</span>));
+        LicenseText = Encoding.UTF8.GetString(bytes);
+        Loading = <span class="keyword">false</span>;
+        <span class="keyword">await</span> <span class="keyword">base</span>.OnInitializedAsync();
+    }
+
+    <span class="keyword">string</span> LicenseText;
+    <span class="keyword">bool</span> Loading = <span class="keyword">false</span>;
+
+    <span class="keyword">void</span> Ok()
+    {
+        MudDialog.Close(DialogResult.Ok(<span class="keyword">true</span>));
+    }
+}
+</pre></div>
+</div>

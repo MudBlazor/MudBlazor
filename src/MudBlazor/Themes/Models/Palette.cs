@@ -1,6 +1,6 @@
 ﻿using MudBlazor.Utilities;
 
-namespace MudBlazor.Theme.Defaults
+namespace MudBlazor
 
 {
     public class Palette

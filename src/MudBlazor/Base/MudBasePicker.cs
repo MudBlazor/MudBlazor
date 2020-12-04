@@ -134,7 +134,7 @@ namespace MudBlazor
             /* to be overridden by descendants */
         }
 
-        public bool isOpen { get; set; }
+        internal bool isOpen { get; set; }
 
         public void ToggleOpen()
         {

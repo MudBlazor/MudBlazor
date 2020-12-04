@@ -4,22 +4,6 @@ namespace MudBlazor.Docs.Models
     public static partial class Snippets
     {
 
-public const string UsageExample = @"<MudText Typo=""Typo.h6"">MudBlazor is @Text</MudText>
-<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ButtonOnClick"">@ButtonText</MudButton>
-
-@code {
-    public string Text { get; set; } = ""????"";
-    public string ButtonText { get; set; } = ""Click Me"";
-    public int ButtonClicked { get; set; }
-
-    void ButtonOnClick()
-    {
-        ButtonClicked += 1;
-        Text = $""Awesome x {ButtonClicked}"";
-        ButtonText = ""Click Me Again"";
-    }
-}";
-
 public const string AlertDenseExample = @"<MudAlert Severity=""Severity.Normal"" Dense=""true"">Dense Default</MudAlert>
 <MudAlert Severity=""Severity.Info"" Dense=""true"">Dense Info</MudAlert>
 <MudAlert Severity=""Severity.Success"" Dense=""true"">Dense Success</MudAlert>
@@ -179,7 +163,9 @@ public const string AppBarSimpleExample = @"<MudAppBar Color=""Color.Primary"" F
     <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" />
 </MudAppBar>";
 
-public const string AutocompleteClrObjectsExample = @"<MudGrid>
+public const string AutocompleteClrObjectsExample = @"@using MudBlazor.Docs.Data;
+
+<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudAutocomplete T=""Element"" Label=""Periodic Table Element"" @bind-Value=""value1"" SearchFunc=""@Search"" ToStringFunc=""@(e=> $""{e.Name} ({e.Sign})"")"" />
     </MudItem>
@@ -730,7 +716,29 @@ public const string DatePickeViewsExample = @"<MudDatePicker Label=""Year"" Open
 <MudDatePicker Label=""Month"" OpenTo=""OpenTo.Month"" Value=""2020-10-19"" />
 <MudDatePicker Label=""Date""  Value=""2020-10-19"" />";
 
-public const string DialogPassingDataExample = @"@inject IDialogService Dialog
+public const string DialogOptionsExample = @"@inject IDialogService Dialog
+
+<MudButton OnClick=""@((e) => OpenDialog(maxWidth))"">Open MaxWidth Dialog</MudButton>
+<MudButton OnClick=""@((e) => OpenDialog(closeButton))"" Color=""Color.Primary"">Close Button Dialog</MudButton>
+<MudButton OnClick=""@((e) => OpenDialog(noHeader))"" Color=""Color.Secondary"">No header Dialog</MudButton>
+<MudButton OnClick=""@((e) => OpenDialog(disableBackdropClick))"" Color=""Color.Tertiary"">Disable backdrop dialog</MudButton>
+
+
+@code {
+    DialogOptions maxWidth = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+    DialogOptions closeButton = new DialogOptions() { CloseButton = true };
+    DialogOptions noHeader = new DialogOptions() {  NoHeader = true };
+    DialogOptions disableBackdropClick = new DialogOptions() { DisableBackdropClick = true };
+
+    async Task OpenDialog(DialogOptions options)
+    {
+        Dialog.Show<DialogUsageExample_Dialog>(""Custom Options Dialog"", options);
+    }
+}";
+
+public const string DialogPassingDataExample = @"@using MudBlazor.Docs.Pages.Components.Dialog.Models
+
+@inject IDialogService Dialog
 
 <div class=""d-flex"">
     @foreach (var item in Servers)
@@ -746,14 +754,10 @@ public const string DialogPassingDataExample = @"@inject IDialogService Dialog
 
     async Task DeleteServer(Server server)
     {
-        var options = new DialogOptions();
-        options.MaxWidth = MaxWidth.ExtraSmall;
-        options.FullWidth = true;
-
         var parameters = new DialogParameters();
         parameters.Add(""server"", server);
 
-        var dialog = Dialog.Show<DialogPassingDataExample_Dialog>(""Delete Server"", parameters, options);
+        var dialog = Dialog.Show<DialogPassingDataExample_Dialog>(""Delete Server"", parameters);
         var result = await dialog.Result;
 
         if (!result.Cancelled)
@@ -774,181 +778,6 @@ public const string DialogPassingDataExample = @"@inject IDialogService Dialog
     };
 }";
 
-public const string DialogUsageExample = @"@inject IDialogService Dialog
-
-
-<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" @onclick=""OpenDialog"">Open Simple Dialog</MudButton>
-
-
-@code {
-
-    async Task OpenDialog()
-    {
-       Dialog.Show<DialogUsageExample_Dialog>(""Simple Dialog"");
-    }
-}";
-
-public const string DialogBodyScrollableExample = @"<MudDialog DisableSidePadding=""true"">
-    <DialogContent>
-        <MudContainer Style=""max-height: 300px; overflow-y: scroll"">
-            <MudText Class=""mb-5"" Typo=""Typo.body1"">Copyright (c) 2020 - The MudBlazor Team and Contributors</MudText>
-            @if (Loading)
-            {
-                <MudProgressCircular Indeterminate=""true""></MudProgressCircular>
-            }
-            else
-            {
-                <MudText Style=""white-space: pre-wrap;"">@LicenseText</MudText>
-            }
-        </MudContainer>
-    </DialogContent>
-    <DialogActions>
-        <MudButton Color=""Color.Primary"" OnClick=""Ok"">Accept</MudButton>
-    </DialogActions>
-</MudDialog>
-
-
-@code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        Loading = true;
-        var bytes = await new WebClient().DownloadDataTaskAsync(new Uri(""https://raw.githubusercontent.com/Garderoben/MudBlazor/master/LICENSE""));
-        LicenseText = Encoding.UTF8.GetString(bytes);
-        Loading = false;
-        await base.OnInitializedAsync();
-    }
-
-    string LicenseText;
-    bool Loading = false;
-
-    void Ok()
-    {
-        MudDialog.Close(DialogResult.Ok(true));
-    }
-}";
-
-public const string DialogDialogFormExample = @"<MudDialog>
-    <DialogContent>
-        <MudText Class=""mt-2"">Note: Database creation can take up to 30 minutes.</MudText>
-        <MudText Class=""mb-2"">After database is created you will resceive a email to your cloud account.</MudText>
-        <MudForm>
-            <MudTextField T=""string"" Label=""Database name""></MudTextField>
-            <MudTextField T=""string"" Label=""Database tags""></MudTextField>
-            <MudSelect T=""string"" FullWidth=""true"" Label=""Resource Group"" ValueChanged=""@OnSelectedValue"">
-                <MudSelectItem T=""string"" Value=""@(""Prod"")"">Prod</MudSelectItem>
-                <MudSelectItem T=""string"" Value=""@(""Test"")"">Test</MudSelectItem>
-            </MudSelect>
-            <MudCheckBox Label=""Want to use SQL elastic pool?"" Color=""Color.Primary"" Class=""my-4""></MudCheckBox>
-        </MudForm>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick=""Cancel"">Cancel</MudButton>
-        <MudButton Color=""Color.Primary"" OnClick=""AddDatabase"">Add Database</MudButton>
-    </DialogActions>
-</MudDialog>
-
-
-@code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
-    void AddDatabase() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
-
-    private string ResourceGroup { get; set; }
-
-    private void OnSelectedValue(string value)
-    {
-        ResourceGroup = value;
-    }
-}";
-
-public const string DialogDialogOptionExample = @"<MudDialog >
-    <DialogContent>
-       <MudText Class=""my-6"">
-           @Message
-       </MudText>
-    </DialogContent>
-    <DialogActions>
-        <MudButton OnClick=""Cancel"">Cancel</MudButton>
-        <MudButton Color=""Color.Primary"" OnClick=""Submit"">Ok</MudButton>
-    </DialogActions>
-</MudDialog>
-
-
-@code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
-    [Parameter] public string Message { get; set; }
-
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
-
-}";
-
-public const string DialogDialogSimpleExample = @"<MudDialog DisableSidePadding=""true"" ClassContent=""demo-dialog-simple"">
-    <DialogContent>
-        <MudList Clickable=""true"">
-            <MudListItem Avatar=""@Icons.Material.Person"" @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"">
-                coolusername@gmail.com
-            </MudListItem>
-            <MudListItem Avatar=""@Icons.Material.Person"" @onclick=""@(() => SelectUser(""notsocool@gmail.com""))"">
-                    notsocool@gmail.com
-            </MudListItem>
-            <MudListItem Avatar=""@Icons.Custom.Radioactive"" AvatarClass=""s-t-a-l-k-e-r"" @onclick=""@(() => SelectUser(""strelok@gmail.com""))"">
-                    strelok@gmail.com
-            </MudListItem>
-        </MudList>
-    </DialogContent>
-</MudDialog>
-
-
-@code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-
-    void SelectUser(string user)
-    {
-        MudDialog.Close(DialogResult.Ok(user));
-    }
-}";
-
-public const string DialogFormExample = @"@inject IDialogService Dialog
-
-<MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenFormDialog"">Open Form Dialog</MudButton>
-
-@code {
-
-    void OpenFormDialog()
-    {
-        Dialog.Show<DialogDialogFormExample>(""Create SQL Database"");
-    }
-
-}";
-
-public const string DialogOptionsExample = @"@inject IDialogService Dialog
-
-<MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenClodebuttonDialog"">With Close Button</MudButton>
-<MudButton Variant=""Variant.Outlined"" Color=""Color.Secondary"" @onclick=""OpenBackDropDialog"">With No Backdrop click</MudButton>
-
-@code {
-    async Task OpenClodebuttonDialog()
-    {
-        var Options = new DialogOptions() { CloseButton = true };
-        var Parameters = new DialogParameters();
-        Parameters.Add(""Message"", ""This dialog has a close button that is set either globally or per dialog."");
-        var userSelect = Dialog.Show<DialogDialogOptionExample>(""With close button"", Parameters, Options);
-    }
-
-    async Task OpenBackDropDialog()
-    {
-        var Options = new DialogOptions() { DisableBackdropClick = true };
-        var Parameters = new DialogParameters();
-        Parameters.Add(""Message"", ""This dialog has the backdrop click disabled and the user need to take an action within the dialog."");
-        var userSelect = Dialog.Show<DialogDialogOptionExample>(""With no backdrop click"", Parameters, Options);
-    }
-}";
-
 public const string DialogScrollableExample = @"@inject IDialogService Dialog
 
 <MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenSimpleDialog"">Scrollable Dialog</MudButton>
@@ -965,7 +794,7 @@ public const string DialogScrollableExample = @"@inject IDialogService Dialog
 
     async Task OpenSimpleDialog()
     {
-        var userSelect = Dialog.Show<DialogBodyScrollableExample>(""MudBlazor License"");
+        var userSelect = Dialog.Show<DialogScrollableExample_Dialog>(""MudBlazor License"");
         var result = await userSelect.Result;
 
         if (!result.Cancelled)
@@ -975,33 +804,61 @@ public const string DialogScrollableExample = @"@inject IDialogService Dialog
     }
 }";
 
-public const string DialogSimpleExample = @"@inject IDialogService Dialog
+public const string DialogTemplateExample = @"@inject IDialogService Dialog
 
-<MudText Align=""Align.Center"" Typo=""Typo.subtitle1"">Selected User</MudText>
-<MudText Align=""Align.Center"" Typo=""Typo.subtitle2"">@selectedUser</MudText>
-<MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"" @onclick=""OpenSimpleDialog"">Open Simple Dialog</MudButton>
+
+<MudButton @onclick=""DeleteUser"" Variant=""Variant.Filled"" Color=""Color.Error"">Delete Records</MudButton>
+<MudButton @onclick=""Confirm"" Variant=""Variant.Filled"" Color=""Color.Success"">Remove Email</MudButton>
+<MudButton @onclick=""Download"" Variant=""Variant.Filled"" Color=""Color.Warning"">Slow Computer</MudButton>
+
+@code {
+
+    async Task DeleteUser()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add(""ContentText"", ""Do you really want to delete these records? This process cannot be undone."");
+        parameters.Add(""ButtonText"", ""Delete"");
+        parameters.Add(""Color"", Color.Error);
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
+
+        Dialog.Show<DialogTemplateExample_Dialog>(""Delete"", parameters, options);
+    }
+
+    async Task Confirm()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add(""ContentText"", ""Are you sure you want to remove thisguy@emailz.com from this account?"");
+        parameters.Add(""ButtonText"", ""Yes"");
+        parameters.Add(""Color"", Color.Success);
+
+        Dialog.Show<DialogTemplateExample_Dialog>(""Confirm"", parameters);
+    }
+
+    async Task Download()
+    {
+        var parameters = new DialogParameters();
+        parameters.Add(""ContentText"", ""Your computer seems very slow, click the download button to download free RAM."");
+        parameters.Add(""ButtonText"", ""Download"");
+        parameters.Add(""Color"", Color.Info);
+
+        Dialog.Show<DialogTemplateExample_Dialog>(""Slow Computer Detected"", parameters);
+    }
+}";
+
+public const string DialogUsageExample = @"@inject IDialogService Dialog
+
+
+<MudButton @onclick=""OpenDialog"" Variant=""Variant.Filled"" Color=""Color.Primary"">
+    Open Simple Dialog
+</MudButton>
 
 
 @code {
-    bool HideSourceSimpleDialog = true;
 
-    public void ShowSimpleDialogSource()
+    async Task OpenDialog()
     {
-        HideSourceSimpleDialog = !HideSourceSimpleDialog;
-    }
-
-
-    string selectedUser = ""No user selected"";
-
-    async Task OpenSimpleDialog()
-    {
-        var userSelect = Dialog.Show<DialogDialogSimpleExample>(""Choose Account"");
-        var result = await userSelect.Result;
-
-        if (!result.Cancelled)
-        {
-            selectedUser = result.Data.ToString() ?? string.Empty;
-        }
+       Dialog.Show<DialogUsageExample_Dialog>(""Simple Dialog"");
     }
 }";
 
@@ -1056,11 +913,7 @@ public const string DividerVerticalExample = @"<MudPaper Outlined=""true"">
     <MudIcon Icon=""@Icons.Material.FormatUnderlined"" />
 </MudPaper>";
 
-public const string DrawerAnchorExample = @"@layout IframeLayout
-@page ""/iframe/docs/examples/drawer/anchor""
-
-
-<MudLayout>
+public const string DrawerAnchorExample = @"<MudLayout>
     <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
         <MudAppBarSpacer />
@@ -1095,10 +948,7 @@ public const string DrawerAnchorExample = @"@layout IframeLayout
     }
 }";
 
-public const string DrawerClippingExample = @"@layout IframeLayout
-@page ""/iframe/docs/examples/drawer/clipped""
-
-<MudLayout>
+public const string DrawerClippingExample = @"<MudLayout>
     <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
         <MudAppBarSpacer />
@@ -1132,11 +982,7 @@ public const string DrawerClippingExample = @"@layout IframeLayout
     }
 }";
 
-public const string DrawerDoubleExample = @"@layout IframeLayout
-@page ""/iframe/docs/examples/drawer/double""
-
-
-<MudLayout>
+public const string DrawerDoubleExample = @"<MudLayout>
     <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawerOne"" />
         <MudAppBarSpacer />
@@ -1189,11 +1035,7 @@ public const string DrawerDoubleExample = @"@layout IframeLayout
     }
 }";
 
-public const string DrawerPersistentExample = @"@layout IframeLayout
-@page ""/iframe/docs/examples/drawer/persistent""
-
-
-<MudLayout>
+public const string DrawerPersistentExample = @"<MudLayout>
     <MudAppBar Elevation=""1"">
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
         <MudAppBarSpacer />
@@ -1310,7 +1152,9 @@ public const string FieldMinimizePaddingExample = @"<MudGrid>
     </MudItem>
 </MudGrid>";
 
-public const string EditFormExample = @"<EditForm Model=""@model"" OnValidSubmit=""OnValidSubmit"">
+public const string EditFormExample = @"@using System.ComponentModel.DataAnnotations
+
+<EditForm Model=""@model"" OnValidSubmit=""OnValidSubmit"">
     <DataAnnotationsValidator />
     <MudCard Class=""demo-form"">
         <MudCardContent>
@@ -1376,7 +1220,9 @@ public const string EditFormExample = @"<EditForm Model=""@model"" OnValidSubmit
 
 }";
 
-public const string ManualValidationExample = @"<MudForm @bind-IsValid=""@success"">
+public const string ManualValidationExample = @"@using System.Text.RegularExpressions
+
+<MudForm @bind-IsValid=""@success"">
 
     <MudCard Class=""demo-form-manual"">
         <MudCardContent>
@@ -1421,7 +1267,10 @@ public const string ManualValidationExample = @"<MudForm @bind-IsValid=""@succes
 
 }";
 
-public const string MudFormExample = @"<MudForm @ref=""form"" @bind-IsValid=""@success"" @bind-Errors=""@errors"">
+public const string MudFormExample = @"@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+
+<MudForm @ref=""form"" @bind-IsValid=""@success"" @bind-Errors=""@errors"">
 
     <MudCard Class=""demo-form"">
         <MudCardContent>
@@ -1574,7 +1423,9 @@ public const string GridWithBreakpointsExample = @"<MudGrid>
     </MudItem>
 </MudGrid>";
 
-public const string BrowserResizeEventExample = @"<MudCard Class=""pa-5"">
+public const string BrowserResizeEventExample = @"@using MudBlazor.Services
+
+<MudCard Class=""pa-5"">
     <MudText>Resize the window and see width and height change:<br /> 
         Browser window is @(width)x@(height)px</MudText>
 </MudCard>
@@ -1611,7 +1462,9 @@ public const string BrowserResizeEventExample = @"<MudCard Class=""pa-5"">
     }
 }";
 
-public const string HiddenExample = @"<MudHidden Breakpoint=""Breakpoint.Xl"" Invert=""true"">
+public const string HiddenExample = @"@using MudBlazor.Services
+
+<MudHidden Breakpoint=""Breakpoint.Xl"" Invert=""true"">
     <MudCard Class=""pa-5"">
         <MudText>XL</MudText>
     </MudCard>
@@ -1914,7 +1767,10 @@ public const string PaperVariantsExample = @"<MudPaper Outlined=""true""></MudPa
 <MudPaper Outlined=""true"" Square=""true""></MudPaper>
 <MudPaper Square=""true""></MudPaper>";
 
-public const string ProgressCircularDeterminateExample = @"@implements IDisposable;
+public const string ProgressCircularDeterminateExample = @"@using System;
+@using System.Threading;
+
+@implements IDisposable;
 
 <MudProgressCircular Color=""Color.Default"" Value=""@Value"" />
 <MudProgressCircular Color=""Color.Primary"" Value=""@Value"" />
@@ -2391,7 +2247,10 @@ public const string SelectPresentationExample = @"<MudGrid>
    
 }";
 
-public const string SelectUsageExample = @"<MudGrid>
+public const string SelectUsageExample = @"@using Microsoft.AspNetCore.Components
+@using System.Globalization;
+
+<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudSelect Label=""Select fast-food"" @bind-Value=""stringValue"" HelperText=""String"">
             <MudSelectItem Value=""@(""Pizza"")"">Pizza</MudSelectItem>
@@ -2771,7 +2630,9 @@ public const string SwitchWithLabelExample = @"<MudSwitch @bind-Checked=""@Label
     public bool Label_Switch3 { get; set; } = true;
 }";
 
-public const string TableBasicExample = @"<MudTable Items=""@PeriodicTable.GetElements().Take(4)"" Hover=""true"" Breakpoint=""Breakpoint.Sm"">
+public const string TableBasicExample = @"@using MudBlazor.Docs.Data
+
+<MudTable Items=""@PeriodicTable.GetElements().Take(4)"" Hover=""true"" Breakpoint=""Breakpoint.Sm"">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -2788,7 +2649,9 @@ public const string TableBasicExample = @"<MudTable Items=""@PeriodicTable.GetEl
     </RowTemplate>
 </MudTable>";
 
-public const string TableColGroupExample = @"<MudTable Items=""@PeriodicTable.GetElements()"">
+public const string TableColGroupExample = @"@using MudBlazor.Docs.Data
+
+<MudTable Items=""@PeriodicTable.GetElements()"">
     <ColGroup>
         <col style=""width: 60px;"" />
         <col />
@@ -2818,7 +2681,9 @@ public const string TableColGroupExample = @"<MudTable Items=""@PeriodicTable.Ge
 @code {
 }";
 
-public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"">
+public const string TableExample = @"@using MudBlazor.Docs.Data
+
+<MudTable Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
         <MudToolBarSpacer />
@@ -2868,7 +2733,9 @@ public const string TableExample = @"<MudTable Items=""@PeriodicTable.GetElement
     }
 }";
 
-public const string TableFixedHeaderExample = @"<MudTable Items=""@PeriodicTable.GetElements()"" FixedHeader=""true"" Height=""400px"">
+public const string TableFixedHeaderExample = @"@using MudBlazor.Docs.Data
+
+<MudTable Items=""@PeriodicTable.GetElements()"" FixedHeader=""true"" Height=""400px"">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -2893,7 +2760,10 @@ public const string TableFixedHeaderExample = @"<MudTable Items=""@PeriodicTable
     bool fixed_header = true;
 }";
 
-public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"" SortLabel=""Sort By"">
+public const string TableInlineEditExample = @"@using MudBlazor.Docs.Data
+@inject ISnackbar Snackbar
+
+<MudTable Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"" SortLabel=""Sort By"" CommitEditTooltip=""Commit Edit"" OnCommitEditClick=""@(() => Snackbar.Add(""Commit Edit Handler Invoked""))"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
         <MudToolBarSpacer />
@@ -2966,7 +2836,9 @@ public const string TableInlineEditExample = @"<MudTable InlineEdit=""true"" Ite
     }
 }";
 
-public const string TableMultiSelectExample = @"<MudTable Items=""@PeriodicTable.GetElements()"" MultiSelection=""true"" @bind-SelectedItems=""selected_items"" Hover=""@hover"">
+public const string TableMultiSelectExample = @"@using MudBlazor.Docs.Data
+
+<MudTable Items=""@PeriodicTable.GetElements()"" MultiSelection=""true"" @bind-SelectedItems=""selected_items"" Hover=""@hover"">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -2992,7 +2864,9 @@ public const string TableMultiSelectExample = @"<MudTable Items=""@PeriodicTable
     HashSet<Element> selected_items = new HashSet<Element>();
 }";
 
-public const string TableSortingExample = @"<MudTable Items=""@PeriodicTable.GetElements()"" Hover=""true"" SortLabel=""Sort By"">
+public const string TableSortingExample = @"@using MudBlazor.Docs.Data
+
+<MudTable Items=""@PeriodicTable.GetElements()"" Hover=""true"" SortLabel=""Sort By"">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Number)"">Nr</MudTableSortLabel></MudTh>
         <MudTh><MudTableSortLabel SortBy=""new Func<Element, object>(x=>x.Sign)"">Sign</MudTableSortLabel></MudTh>
@@ -3616,7 +3490,9 @@ public const string CustomConverterExample = @"<MudSimpleTable Elevation=""0"" H
 
 }";
 
-public const string SpecialConverterExample = @"<MudGrid>
+public const string SpecialConverterExample = @"@using System.Globalization;
+
+<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudSwitch Color=""Color.Primary"" @bind-Checked=""@state"">Flip the switch</MudSwitch>
     </MudItem>
@@ -3637,7 +3513,9 @@ public const string SpecialConverterExample = @"<MudGrid>
     };
 }";
 
-public const string TurkeyTestExample = @"<MudGrid>
+public const string TurkeyTestExample = @"@using System.Globalization;
+
+<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""4"">
         <MudTextField Label=""en-US"" Variant=""Variant.Outlined"" Culture=""@en"" @bind-Value=""date"" />
     </MudItem>
@@ -3900,6 +3778,44 @@ public const string FlexAlignSelfExample = @"<MudGrid>
     </MudItem>
 </MudGrid>";
 
+public const string FlexAutoMarginsExample = @"<MudGrid>
+    <MudItem xs=""12"" md=""12"">
+        <MudPaper Class=""d-flex py-2 px-1"">
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs=""12"" md=""12"">
+        <MudPaper Class=""d-flex py-2 px-1"">
+            <MudPaper Class=""pa-2 ml-2 mr-auto mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs=""12"" md=""12"">
+        <MudPaper Class=""d-flex py-2 px-1"">
+            <MudPaper Class=""pa-2 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""pa-2 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""pa-2 mr-2 ml-auto mud-theme-info"">Flex Item 3</MudPaper>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs=""12"" md=""6"">
+        <MudPaper Class=""d-flex align-start flex-column py-2 px-1"" Style=""height:200px;"">
+            <MudPaper Class=""pa-2 my-1 mx-2 mb-auto mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""pa-2 my-1 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""pa-2 my-1 mx-2 mud-theme-info"">Flex Item 3</MudPaper>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs=""12"" md=""6"">
+        <MudPaper Class=""d-flex align-end flex-column py-2 px-1"" Style=""height:200px;"">
+            <MudPaper Class=""pa-2 my-1 mx-2 mud-theme-primary"">Flex Item 1</MudPaper>
+            <MudPaper Class=""pa-2 my-1 mx-2 mud-theme-secondary"">Flex Item 2</MudPaper>
+            <MudPaper Class=""pa-2 my-1 mx-2 mt-auto mud-theme-info"">Flex Item 3</MudPaper>
+        </MudPaper>
+    </MudItem>
+</MudGrid>";
+
 public const string FlexDirectionExample = @"<MudGrid>
     <MudItem xs=""12"" md=""12"">
         <MudPaper Class=""d-flex flex-row py-2 px-1"">
@@ -4074,6 +3990,22 @@ public const string SpacingNegativeExample = @"<MudPaper Class=""mx-auto pa-4 mu
 <MudPaper Class=""mt-n12 mx-auto pa-6 mud-theme-primary"" Elevation=""12"" Style=""width: 350px;"">
     <MudText Typo=""Typo.body1"">This card uses negative top margin!</MudText>
 </MudPaper>";
+
+public const string UsageExample = @"<MudText Typo=""Typo.h6"">MudBlazor is @Text</MudText>
+<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ButtonOnClick"">@ButtonText</MudButton>
+
+@code {
+    public string Text { get; set; } = ""????"";
+    public string ButtonText { get; set; } = ""Click Me"";
+    public int ButtonClicked { get; set; }
+
+    void ButtonOnClick()
+    {
+        ButtonClicked += 1;
+        Text = $""Awesome x {ButtonClicked}"";
+        ButtonText = ""Click Me Again"";
+    }
+}";
 
     }
 }

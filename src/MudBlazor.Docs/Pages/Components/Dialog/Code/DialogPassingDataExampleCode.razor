@@ -2,6 +2,8 @@
 @namespace MudBlazor.Docs.Examples.Markup
 <div class="mud-codeblock">
 <div class="html"><pre>
+<span class="atSign">&#64;</span>using MudBlazor.Docs.Pages.Components.Dialog.Models
+
 <span class="atSign">&#64;</span>inject IDialogService Dialog
 
 <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">div</span> <span class="htmlAttributeName">class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">d-flex</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
@@ -19,14 +21,10 @@
 
     <span class="keyword">async</span> Task DeleteServer(Server server)
     {
-        <span class="keyword">var</span> options = <span class="keyword">new</span> DialogOptions();
-        options.MaxWidth = MaxWidth.ExtraSmall;
-        options.FullWidth = <span class="keyword">true</span>;
-
         <span class="keyword">var</span> parameters = <span class="keyword">new</span> DialogParameters();
         parameters.Add(<span class="string">&quot;server&quot;</span>, server);
 
-        <span class="keyword">var</span> dialog = Dialog.Show&lt;DialogPassingDataExample_Dialog&gt;(<span class="string">&quot;Delete Server&quot;</span>, parameters, options);
+        <span class="keyword">var</span> dialog = Dialog.Show&lt;DialogPassingDataExample_Dialog&gt;(<span class="string">&quot;Delete Server&quot;</span>, parameters);
         <span class="keyword">var</span> result = <span class="keyword">await</span> dialog.Result;
 
         <span class="keyword">if</span> (!result.Cancelled)

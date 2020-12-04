@@ -205,6 +205,11 @@
             This is the form validation context for Blazor's <EditForm></EditForm> component
             </summary>
         </member>
+        <member name="M:MudBlazor.MudBaseInput`1.EditFormValidate">
+            <summary>
+            Triggers field to be validated.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudBaseInput`1.For">
             <summary>
             Specify an expression which returns the model's field for which validation messages should be displayed.
@@ -1181,6 +1186,11 @@
             Validation status. True if the form is valid and without errors. This parameter is readonly.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudForm.ValidationDelay">
+            <summary>
+            Validation debounce delay in milliseconds. 
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudForm.IsValidChanged">
             <summary>
             Raised when IsValid changes.
@@ -1485,6 +1495,21 @@
         <member name="P:MudBlazor.MudNavLink.Icon">
             <summary>
             Icon to use if set.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudOverlay.ChildContent">
+            <summary>
+            Child content of the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudOverlay.CommandParameter">
+            <summary>
+            Command parameter.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudOverlay.Command">
+            <summary>
+            Command executed when the user clicks on an element.
             </summary>
         </member>
         <member name="P:MudBlazor.MudPopover.Elevation">
@@ -1909,6 +1934,26 @@
         <member name="P:MudBlazor.MudTableBase.PagerContent">
             <summary>
             Add MudTablePager here to enable breaking the rows in to multiple pages.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.OnCommitEditClick">
+            <summary>
+            Button click event.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.CommitEditCommand">
+            <summary>
+            Command executed when the user clicks on the CommitEdit Button.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.CommitEditCommandParameter">
+            <summary>
+            Command parameter for the CommitEdit Button.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudTableBase.CommitEditTooltip">
+            <summary>
+            Tooltip for the CommitEdit Button.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTablePager.DisableRowsPerPage">
