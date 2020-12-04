@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-
+using MudBlazor.Providers;
 
 namespace MudBlazor.Services
 {
@@ -17,14 +16,17 @@ namespace MudBlazor.Services
         /// 
         /// </summary>
         /// <param name="jsRuntime"></param>
+        /// <param name="browserWindowSizeProvider"></param>
         /// <param name="options"></param>
-        public ResizeListenerService(IJSRuntime jsRuntime, IOptions<ResizeOptions> options = null)
+        public ResizeListenerService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null)
         {
-            this._options = options.Value ?? new ResizeOptions();
+            this._options = options?.Value ?? new ResizeOptions();
             this._jsRuntime = jsRuntime;
+            this._browserWindowSizeProvider = browserWindowSizeProvider;
         }
 
         private readonly IJSRuntime _jsRuntime;
+        private readonly IBrowserWindowSizeProvider _browserWindowSizeProvider;
         private readonly ResizeOptions _options;
 #nullable enable
         private EventHandler<BrowserWindowSize>? _onResized;
@@ -84,8 +86,9 @@ namespace MudBlazor.Services
         /// Get the current BrowserWindowSize, this includes the Height and Width of the document.
         /// </summary>
         /// <returns></returns>
-        public async ValueTask<BrowserWindowSize> GetBrowserWindowSize() =>
-            await _jsRuntime.InvokeAsync<BrowserWindowSize>($"resizeListener.getBrowserWindowSize");
+        [Obsolete("Method has moved to IBrowserWindowSizeProvider.GetBrowserWindowSize, please use that instead")]
+        public ValueTask<BrowserWindowSize> GetBrowserWindowSize() =>
+            _browserWindowSizeProvider.GetBrowserWindowSize();
 
         /// <summary>
         /// Invoked by jsInterop, use the OnResized event handler to subscribe.
@@ -136,13 +139,13 @@ namespace MudBlazor.Services
                 return false;
             if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Xl])
             {
-                if (breakpoint == Breakpoint.Xl || 
+                if (breakpoint == Breakpoint.Xl ||
                     breakpoint == Breakpoint.LgAndUp || breakpoint == Breakpoint.MdAndUp || breakpoint == Breakpoint.SmAndUp)
                     return true;
             }
             else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Lg])
             {
-                if (breakpoint == Breakpoint.Lg || 
+                if (breakpoint == Breakpoint.Lg ||
                     breakpoint == Breakpoint.LgAndUp || breakpoint == Breakpoint.MdAndUp || breakpoint == Breakpoint.SmAndUp ||
                     breakpoint == Breakpoint.LgAndDown)
                     return true;
@@ -151,17 +154,17 @@ namespace MudBlazor.Services
             {
                 if (breakpoint == Breakpoint.Md ||
                     breakpoint == Breakpoint.MdAndUp || breakpoint == Breakpoint.SmAndUp ||
-                    breakpoint == Breakpoint.MdAndDown)
+                    breakpoint == Breakpoint.MdAndDown || breakpoint == Breakpoint.LgAndDown)
                     return true;
             }
             else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Sm])
             {
                 if (breakpoint == Breakpoint.Sm ||
-                    breakpoint == Breakpoint.SmAndUp || 
-                    breakpoint == Breakpoint.SmAndDown)
+                    breakpoint == Breakpoint.SmAndUp ||
+                    breakpoint == Breakpoint.SmAndDown || breakpoint == Breakpoint.MdAndDown || breakpoint == Breakpoint.LgAndDown)
                     return true;
             }
-            else if (breakpoint == Breakpoint.Xs)
+            else if (breakpoint == Breakpoint.Xs || breakpoint == Breakpoint.SmAndDown || breakpoint == Breakpoint.MdAndDown || breakpoint == Breakpoint.LgAndDown)
                 return true;
             return false;
         }
