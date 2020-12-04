@@ -139,8 +139,6 @@ namespace MudBlazor.Services
             if (_windowSize == null)
                 return false;
 
-            var windowWidth = _windowSize.Width;
-
             Breakpoint? minimumBreakpoint = null;
             Breakpoint? maximumBreakpoint = null;
 
@@ -191,8 +189,8 @@ namespace MudBlazor.Services
             }
 
             return
-                (!minimumBreakpoint.HasValue || windowWidth >= BreakpointDefinition[minimumBreakpoint.Value])
-                && (!maximumBreakpoint.HasValue || windowWidth < BreakpointDefinition[maximumBreakpoint.Value]);
+                (!minimumBreakpoint.HasValue || _windowSize.Width >= BreakpointDefinition[minimumBreakpoint.Value])
+                && (!maximumBreakpoint.HasValue || _windowSize.Width < BreakpointDefinition[maximumBreakpoint.Value]);
         }
 
         bool disposed;
