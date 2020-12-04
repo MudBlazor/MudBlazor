@@ -115,7 +115,7 @@ namespace MudBlazor.Services
         public async Task<Breakpoint> GetBreakpoint( ) {
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
             if (_onResized == null || _windowSize == null)
-                _windowSize = await GetBrowserWindowSize();
+                _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
             if (_windowSize == null)
                 return Breakpoint.Xs;
             if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Xl])
@@ -134,39 +134,65 @@ namespace MudBlazor.Services
         {
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
             if (_onResized == null || _windowSize == null)
-                _windowSize = await GetBrowserWindowSize();
+                _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
+
             if (_windowSize == null)
                 return false;
-            if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Xl])
+
+            var windowWidth = _windowSize.Width;
+
+            Breakpoint? minimumBreakpoint = null;
+            Breakpoint? maximumBreakpoint = null;
+
+            switch (breakpoint)
             {
-                if (breakpoint == Breakpoint.Xl ||
-                    breakpoint == Breakpoint.LgAndUp || breakpoint == Breakpoint.MdAndUp || breakpoint == Breakpoint.SmAndUp)
-                    return true;
+                case Breakpoint.Xs:
+                    minimumBreakpoint = breakpoint;
+                    maximumBreakpoint = Breakpoint.Sm;
+                    break;
+                case Breakpoint.Sm:
+                    minimumBreakpoint = breakpoint;
+                    maximumBreakpoint = Breakpoint.Md;
+                    break;
+                case Breakpoint.Md:
+                    minimumBreakpoint = breakpoint;
+                    maximumBreakpoint = Breakpoint.Lg;
+                    break;
+                case Breakpoint.Lg:
+                    minimumBreakpoint = breakpoint;
+                    maximumBreakpoint = Breakpoint.Xl;
+                    break;
+                case Breakpoint.Xl:
+                    minimumBreakpoint = breakpoint;
+                    maximumBreakpoint = null;
+                    break;
+
+                    // * and down
+                case Breakpoint.SmAndDown:
+                    maximumBreakpoint = Breakpoint.Md;
+                    break;
+                case Breakpoint.MdAndDown:
+                    maximumBreakpoint = Breakpoint.Lg;
+                    break;
+                case Breakpoint.LgAndDown:
+                    maximumBreakpoint = Breakpoint.Xl;
+                    break;
+
+                    // * and up
+                case Breakpoint.SmAndUp:
+                    minimumBreakpoint = Breakpoint.Sm;
+                    break;
+                case Breakpoint.MdAndUp:
+                    minimumBreakpoint = Breakpoint.Md;
+                    break;
+                case Breakpoint.LgAndUp:
+                    minimumBreakpoint = Breakpoint.Lg;
+                    break;
             }
-            else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Lg])
-            {
-                if (breakpoint == Breakpoint.Lg ||
-                    breakpoint == Breakpoint.LgAndUp || breakpoint == Breakpoint.MdAndUp || breakpoint == Breakpoint.SmAndUp ||
-                    breakpoint == Breakpoint.LgAndDown)
-                    return true;
-            }
-            else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Md])
-            {
-                if (breakpoint == Breakpoint.Md ||
-                    breakpoint == Breakpoint.MdAndUp || breakpoint == Breakpoint.SmAndUp ||
-                    breakpoint == Breakpoint.MdAndDown || breakpoint == Breakpoint.LgAndDown)
-                    return true;
-            }
-            else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Sm])
-            {
-                if (breakpoint == Breakpoint.Sm ||
-                    breakpoint == Breakpoint.SmAndUp ||
-                    breakpoint == Breakpoint.SmAndDown || breakpoint == Breakpoint.MdAndDown || breakpoint == Breakpoint.LgAndDown)
-                    return true;
-            }
-            else if (breakpoint == Breakpoint.Xs || breakpoint == Breakpoint.SmAndDown || breakpoint == Breakpoint.MdAndDown || breakpoint == Breakpoint.LgAndDown)
-                return true;
-            return false;
+
+            return
+                (!minimumBreakpoint.HasValue || windowWidth >= BreakpointDefinition[minimumBreakpoint.Value])
+                && (!maximumBreakpoint.HasValue || windowWidth < BreakpointDefinition[maximumBreakpoint.Value]);
         }
 
         bool disposed;

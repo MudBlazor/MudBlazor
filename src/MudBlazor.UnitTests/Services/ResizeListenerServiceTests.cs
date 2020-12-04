@@ -20,25 +20,30 @@ namespace MudBlazor.UnitTests.Services
             _service = new ResizeListenerService(null, _browserWindowSizeProvider.Object);
         }
 
+        // 0 - 599
         [TestCase(Breakpoint.Xs, 0, true)]
         [TestCase(Breakpoint.Xs, 599, true)]
         [TestCase(Breakpoint.Xs, 600, false)]
 
+        // 600 - 959
         [TestCase(Breakpoint.Sm, 599, false)]
         [TestCase(Breakpoint.Sm, 600, true)]
         [TestCase(Breakpoint.Sm, 959, true)]
         [TestCase(Breakpoint.Sm, 960, false)]
 
+        // 960 - 1279
         [TestCase(Breakpoint.Md, 959, false)]
         [TestCase(Breakpoint.Md, 960, true)]
         [TestCase(Breakpoint.Md, 1279, true)]
         [TestCase(Breakpoint.Md, 1280, false)]
 
+        // 1280 - 1919
         [TestCase(Breakpoint.Lg, 1279, false)]
         [TestCase(Breakpoint.Lg, 1280, true)]
         [TestCase(Breakpoint.Lg, 1919, true)]
         [TestCase(Breakpoint.Lg, 1920, false)]
 
+        // 1920 - *
         [TestCase(Breakpoint.Xl, 1919, false)]
         [TestCase(Breakpoint.Xl, 1920, true)]
         [TestCase(Breakpoint.Xl, 9999, true)]
