@@ -1157,6 +1157,54 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void HighlighterUntilNextBoundaryExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<HighlighterUntilNextBoundaryExample>();
+        }
+
+
+        [Test]
+        public void HighlighterWithCustomStyleExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<HighlighterWithCustomStyleExample>();
+        }
+
+
+        [Test]
+        public void HighlighterWithListExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<HighlighterWithListExample>();
+        }
+
+
+        [Test]
+        public void HighlighterWithTableExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<HighlighterWithTableExample>();
+        }
+
+
+        [Test]
         public void IconButtonSimpleExample_Test()
         {
                 using var ctx = new Bunit.TestContext();

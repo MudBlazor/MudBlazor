@@ -1247,6 +1247,17 @@
             Child content of component.
             </summary>
         </member>
+        <member name="M:MudBlazor.Components.Highlighter.Splitter.GetFragments(System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Splits the text into fragments, according to the
+            text to be highlighted
+            </summary>
+            <param name="text">The whole text</param>
+            <param name="highlightedText">The text to be highlighted</param>
+            <param name="caseSensitive">Whether it's case sensitive or not</param>
+            <param name="untilNextBoundary">If true, splits until the next regex boundary</param>
+            <returns></returns>
+        </member>
         <member name="P:MudBlazor.MudIcon.Icon">
             <summary>
             If set will display an SVG Icon.
@@ -2661,6 +2672,26 @@
         <member name="P:MudBlazor.MudDrawerHeader.LinkToIndex">
             <summary>
             If true, the component will link to index page with an a element instead of div.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudHighlighter.Text">
+            <summary>
+            The whole text in which a fragment will be highlighted
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudHighlighter.HighlightedText">
+            <summary>
+            The fragment of text to be highlighted
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudHighlighter.CaseSensitive">
+            <summary>
+            Whether or not the highlighted text is case sensitive
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudHighlighter.UntilNextBoundary">
+            <summary>
+            If true, highlights the text until the next regex boundary
             </summary>
         </member>
         <member name="P:MudBlazor.MudLayout.ChildContent">

@@ -2215,6 +2215,23 @@ public const string MudItem_Tag = @"Use Tag to attach any user data object to th
 public const string MudItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudHighlighter_Text = @"The whole text in which a fragment will be highlighted";
+
+public const string MudHighlighter_HighlightedText = @"The fragment of text to be highlighted";
+
+public const string MudHighlighter_CaseSensitive = @"Whether or not the highlighted text is case sensitive";
+
+public const string MudHighlighter_UntilNextBoundary = @"If true, highlights the text until the next regex boundary";
+
+public const string MudHighlighter_Class = @"User class names, separated by space";
+
+public const string MudHighlighter_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudHighlighter_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudHighlighter_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudLayout_ChildContent = @"Child content of component.";
 
 public const string MudLayout_RightToLeft = @"If set, changes the layout to RightToLeft.";

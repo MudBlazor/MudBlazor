@@ -1,0 +1,58 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+@using System.Text.RegularExpressions
+@using static MudBlazor.Components.Highlighter.Splitter
+
+@foreach (var fragment in fragments)
+{
+    if (!string.IsNullOrWhiteSpace(HighlightedText)
+        && Regex.IsMatch(fragment,
+           Regex.Escape(HighlightedText), //escape until add a property to accept regex
+            CaseSensitive
+                ? RegexOptions.None
+                : RegexOptions.IgnoreCase))
+    {
+        <mark class="@Class" style="@Style" @attributes="@UserAttributes"> @fragment </mark>
+    }
+    else
+    {
+        @fragment
+    }
+}
+
+@code
+{
+    IEnumerable<string> fragments;
+
+    /// <summary>
+    /// The whole text in which a fragment will be highlighted
+    /// </summary>
+    [Parameter] public string Text { get; set; }
+
+    /// <summary>
+    /// The fragment of text to be highlighted
+    /// </summary>
+    [Parameter] public string HighlightedText { get; set; }
+
+    /// <summary>
+    /// Whether or not the highlighted text is case sensitive
+    /// </summary>
+    [Parameter] public bool CaseSensitive { get; set; }
+
+    /// <summary>
+    /// If true, highlights the text until the next regex boundary
+    /// </summary>
+    [Parameter] public bool UntilNextBoundary { get; set; }
+
+    //TODO
+    //Accept regex highlightings
+    // [Parameter] public bool IsRegex { get; set; }
+
+
+
+    protected override void OnParametersSet()
+    {
+        fragments = GetFragments(Text, HighlightedText, CaseSensitive, UntilNextBoundary);
+    }
+}
