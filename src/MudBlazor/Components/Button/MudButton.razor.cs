@@ -42,6 +42,11 @@ namespace MudBlazor
         [Parameter] public string EndIcon { get; set; }
 
         /// <summary>
+        /// The color of the icon. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
         /// Icon class names, separated by space
         /// </summary>
         [Parameter] public string IconClass { get; set; }

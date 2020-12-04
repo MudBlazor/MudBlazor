@@ -575,6 +575,11 @@
             Icon placed before the text if set.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudButton.IconColor">
+            <summary>
+            The color of the icon. It supports the theme colors.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudButton.IconClass">
             <summary>
             Icon class names, separated by space
@@ -628,6 +633,11 @@
         <member name="P:MudBlazor.MudFab.Icon">
             <summary>
             If applied Icon will be added to the component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudFab.IconColor">
+            <summary>
+            The color of the icon. It supports the theme colors.
             </summary>
         </member>
         <member name="P:MudBlazor.MudFab.Label">
