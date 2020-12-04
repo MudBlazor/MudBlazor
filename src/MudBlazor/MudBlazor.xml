@@ -2113,6 +2113,23 @@
             If true, Sets display inine
             </summary>
         </member>
+        <member name="T:MudBlazor.Providers.BrowserWindowSizeProvider">
+            <summary>
+            This provider calls the JS method resizeListener.getBrowserWindowSize to get the browser window size
+            </summary>
+        </member>
+        <member name="M:MudBlazor.Providers.BrowserWindowSizeProvider.#ctor(Microsoft.JSInterop.IJSRuntime)">
+            <summary>
+            
+            </summary>
+            <param name="jsRuntime"></param>
+        </member>
+        <member name="M:MudBlazor.Providers.BrowserWindowSizeProvider.GetBrowserWindowSize">
+            <summary>
+            Get the current BrowserWindowSize, this includes the Height and Width of the document.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:MudBlazor.Breakpoint">
             <summary>
             Breakpoints describe certain user interfaces sizes or ranges. Use them in conjunction with MudHidden or ResizeListenerService
@@ -2123,11 +2140,12 @@
             This service listens to browser resize events and allows you to react to a changing window size in Blazor
             </summary>
         </member>
-        <member name="M:MudBlazor.Services.ResizeListenerService.#ctor(Microsoft.JSInterop.IJSRuntime,Microsoft.Extensions.Options.IOptions{MudBlazor.Services.ResizeOptions})">
+        <member name="M:MudBlazor.Services.ResizeListenerService.#ctor(Microsoft.JSInterop.IJSRuntime,MudBlazor.Providers.IBrowserWindowSizeProvider,Microsoft.Extensions.Options.IOptions{MudBlazor.Services.ResizeOptions})">
             <summary>
             
             </summary>
             <param name="jsRuntime"></param>
+            <param name="browserWindowSizeProvider"></param>
             <param name="options"></param>
         </member>
         <member name="E:MudBlazor.Services.ResizeListenerService.OnResized">
