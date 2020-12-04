@@ -362,6 +362,8 @@ public const string MudButton_StartIcon = @"Icon placed before the text if set."
 
 public const string MudButton_EndIcon = @"Icon placed before the text if set.";
 
+public const string MudButton_IconColor = @"The color of the icon. It supports the theme colors.";
+
 public const string MudButton_IconClass = @"Icon class names, separated by space";
 
 public const string MudButton_Color = @"The color of the component. It supports the theme colors.";
@@ -406,6 +408,8 @@ public const string MudFab_Color = @"The color of the component. It supports the
 public const string MudFab_Size = @"The Size of the component.";
 
 public const string MudFab_Icon = @"If applied Icon will be added to the component.";
+
+public const string MudFab_IconColor = @"The color of the icon. It supports the theme colors.";
 
 public const string MudFab_Label = @"If applied the text will be added to the component.";
 
@@ -803,6 +807,8 @@ public const string MudField_UserAttributes = @"UserAttributes carries all attri
 public const string MudForm_ChildContent = @"Child content of component.";
 
 public const string MudForm_IsValid = @"Validation status. True if the form is valid and without errors. This parameter is readonly.";
+
+public const string MudForm_ValidationDelay = @"Validation debounce delay in milliseconds.";
 
 public const string MudForm_IsValidChanged = @"Raised when IsValid changes.";
 
