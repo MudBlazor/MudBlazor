@@ -3947,7 +3947,8 @@ ul {
 
 .mud-tabs-toolbar {
   z-index: 20;
-  position: relative; }
+  position: relative;
+  background-color: var(--mud-palette-surface); }
   .mud-tabs-toolbar.mud-tabs-rounded {
     border-radius: var(--mud-default-borderradius); }
   .mud-tabs-toolbar .mud-tabs-toolbar-inner {
@@ -4027,9 +4028,6 @@ ul {
 
 .mud-tab-badge {
   margin-left: 8px; }
-
-.mud-tabs-toolbar-default {
-  background-color: var(--mud-palette-surface); }
 
 .mud-tabs-toolbar-primary {
   background-color: var(--mud-palette-primary); }

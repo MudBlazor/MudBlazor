@@ -20,7 +20,7 @@ namespace MudBlazor
             new CssBuilder("mud-tabs-toolbar")
             .AddClass($"mud-tabs-rounded", Rounded)
             .AddClass($"mud-tabs-vertical", Vertical)
-            .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}")
+            .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default)
             .AddClass($"mud-border-right", Border)
             .AddClass($"mud-paper-outlined", Outlined)
             .AddClass($"mud-elevation-{Elevation.ToString()}" , Elevation != 0)

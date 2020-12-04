@@ -2,5 +2,9 @@
   {
     "outputFile": "wwwroot/MudBlazor.css",
     "inputFile": "Styles/MudBlazor.scss"
+  },
+  {
+    "outputFile": "Styles/Components/_tabs.css",
+    "inputFile": "Styles/Components/_tabs.scss"
   }
 ]
