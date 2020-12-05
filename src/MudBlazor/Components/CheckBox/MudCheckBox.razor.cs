@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Windows.Input;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -58,6 +59,46 @@ namespace MudBlazor
         public EventCallback<T> CheckedChanged { get; set; }
 
         private T _checked;
+        private bool? _value
+        {
+            get
+            {
+                try
+                {
+                    if (_checked is bool)
+                        return (bool) (object) _checked;
+                    else if (_checked is bool?)
+                        return (bool?) (object) _checked;
+                    else if (_checked is string)
+                    {
+                        var s = (string) (object) _checked;
+                        if (string.IsNullOrWhiteSpace(s))
+                            return null;
+                        if (bool.TryParse(s, out var b))
+                            return b;
+                        if (s.ToLowerInvariant() == "on")
+                            return true;
+                        if (s.ToLowerInvariant() == "off")
+                            return false;
+                        return null;
+                    }
+                    return null;
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                if (typeof(T) == typeof(bool))
+                    Checked = (T) (object)(value == true);
+                else if (typeof(T) == typeof(bool?))
+                    Checked = (T)(object)value;
+                else if (typeof(T) == typeof(string))
+                    Checked = (T) (object) (value == true ? "on" : (value == false ? "off" : null));
+            }
+        }
 
         /// <summary>
         /// The state of the checkbox
