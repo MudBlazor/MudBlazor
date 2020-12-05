@@ -57,6 +57,7 @@ namespace MudBlazor.Docs.Models
             [typeof(MudInput<T>)] = "input",
             [typeof(MudAutocomplete<T>)] = "autocomplete",
             [typeof(MudSlider<T>)]="slider",
+            [typeof(MudCheckBox<T>)] = "checkbox",
         };
 
         private static Dictionary<string, string> ComponentLinkTranslation = new Dictionary<string, string>()
