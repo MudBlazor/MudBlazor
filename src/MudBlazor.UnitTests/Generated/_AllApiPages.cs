@@ -619,7 +619,7 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
                 ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
-                var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudSwitch)));
+                var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudSwitch<T>)));
                 Console.WriteLine(comp.Markup);
          }
 

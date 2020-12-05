@@ -2277,7 +2277,7 @@ public const string SelectDisabledExample = @"<MudSelect T=""string"" Label=""Di
 public const string SelectInteractiveExample = @"<MudGrid>
     <MudItem xs=""12"" md=""3"">
         <MudForm>
-            <MudSwitch CheckedChanged=""@OnPostitionChange"" Color=""Color.Primary"" Label=""Open Top"" />
+            <MudSwitch T=""bool"" CheckedChanged=""@OnPostitionChange"" Color=""Color.Primary"" Label=""Open Top"" />
             <MudSwitch @bind-Checked=""@OffsetY"" Color=""Color.Secondary"" Label=""Offset Y"" />
             <MudSwitch @bind-Checked=""@Dense"" Color=""Color.Primary"" Label=""Dense"" />
         </MudForm>
@@ -2743,7 +2743,7 @@ public const string SparkLineExample = @"<MudSparkLine></MudSparkLine>";
 public const string SwitchBasicExample = @"<MudSwitch @bind-Checked=""@Basic_Switch1"" />
 <MudSwitch @bind-Checked=""@Basic_Switch2"" Color=""Color.Primary"" />
 <MudSwitch @bind-Checked=""@Basic_Switch2"" Color=""Color.Secondary"" />
-<MudSwitch Disabled=""true"" />
+<MudSwitch T=""bool"" Disabled=""true"" />
 
 @code{
     public bool Basic_Switch1 { get; set; } = false;
@@ -2754,7 +2754,7 @@ public const string SwitchBasicExample = @"<MudSwitch @bind-Checked=""@Basic_Swi
 public const string SwitchWithLabelExample = @"<MudSwitch @bind-Checked=""@Label_Switch1"" Label=""Default"" />
 <MudSwitch @bind-Checked=""@Label_Switch2"" Label=""Primary"" Color=""Color.Primary"" />
 <MudSwitch @bind-Checked=""@Label_Switch2"" Label=""Secondary"" Color=""Color.Secondary"" />
-<MudSwitch Disabled=""true"" Label=""Disabled"" />
+<MudSwitch T=""bool"" Disabled=""true"" Label=""Disabled"" />
 
 @code{
     public bool Label_Switch1 { get; set; } = false;

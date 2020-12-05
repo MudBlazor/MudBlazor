@@ -553,7 +553,7 @@ public const string MudCheckBox_Disabled = @"If true, the checkbox will be disab
 
 public const string MudCheckBox_ChildContent = @"Child content of component.";
 
-public const string MudCheckBox_CheckedChanged = @"A callback when Checked changes.";
+public const string MudCheckBox_CheckedChanged = @"Fired when Checked changes.";
 
 public const string MudCheckBox_Checked = @"The state of the checkbox";
 
@@ -1630,9 +1630,9 @@ public const string MudSwitch_DisableRipple = @"If true, disables ripple effect.
 
 public const string MudSwitch_Disabled = @"If true, the switch will be disabled.";
 
-public const string MudSwitch_CheckedChanged = @"";
+public const string MudSwitch_CheckedChanged = @"Fired when Checked changes.";
 
-public const string MudSwitch_Checked = @"";
+public const string MudSwitch_Checked = @"The state of the switch";
 
 public const string MudSwitch_ChildContent = @"";
 

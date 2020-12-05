@@ -53,7 +53,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// A callback when Checked changes.
+        /// Fired when Checked changes.
         /// </summary>
         [Parameter]
         public EventCallback<T> CheckedChanged { get; set; }

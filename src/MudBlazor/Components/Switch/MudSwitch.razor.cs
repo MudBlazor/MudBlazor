@@ -9,7 +9,7 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public partial class MudSwitch : MudComponentBase
+    public partial class MudSwitch<T> : MudComponentBase
     {
         protected string Classname =>
         new CssBuilder("mud-switch")
@@ -21,7 +21,7 @@ namespace MudBlazor
             .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple)
             .AddClass($"mud-switch-{Color.ToDescriptionString()}")
             .AddClass($"mud-switch-disabled", Disabled)
-            .AddClass($"mud-checked", Checked)
+            .AddClass($"mud-checked", _value)
           .AddClass(Class)
         .Build();
 
@@ -45,20 +45,36 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
-        [Parameter] public EventCallback<bool> CheckedChanged { get; set; }
+        /// <summary>
+        /// Fired when Checked changes.
+        /// </summary>
+        [Parameter]
+        public EventCallback<T> CheckedChanged { get; set; }
 
-        private bool _checked;
-        [Parameter] public bool Checked
+        private T _checked;
+
+        private BoolConverter<T> _boolConverter = new BoolConverter<T>();
+
+        private bool? _value
+        {
+            get => _boolConverter.Set(_checked);
+            set => Checked = _boolConverter.Get(value);
+        }
+
+        /// <summary>
+        /// The state of the switch
+        /// </summary>
+        [Parameter]
+        public T Checked
         {
             get => _checked;
             set
             {
-                if (value != _checked)
-                {
-                    _checked = value;
-                    CheckedChanged.InvokeAsync(value);
-                }
-            }   
+                if (object.Equals(value, _checked))
+                    return;
+                _checked = value;
+                CheckedChanged.InvokeAsync(value);
+            }
         }
     }
 }

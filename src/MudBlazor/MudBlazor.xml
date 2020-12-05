@@ -802,7 +802,7 @@
         </member>
         <member name="P:MudBlazor.MudCheckBox`1.CheckedChanged">
             <summary>
-            A callback when Checked changes.
+            Fired when Checked changes.
             </summary>
         </member>
         <member name="P:MudBlazor.MudCheckBox`1.Checked">
@@ -1825,24 +1825,34 @@
         <member name="T:MudBlazor.Snackbars">
             <inheritdoc />
         </member>
-        <member name="P:MudBlazor.MudSwitch.Color">
+        <member name="P:MudBlazor.MudSwitch`1.Color">
             <summary>
             The color of the component. It supports the theme colors.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSwitch.Label">
+        <member name="P:MudBlazor.MudSwitch`1.Label">
             <summary>
             The text/label will be displayed next to the switch if set.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSwitch.DisableRipple">
+        <member name="P:MudBlazor.MudSwitch`1.DisableRipple">
             <summary>
             If true, disables ripple effect.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudSwitch.Disabled">
+        <member name="P:MudBlazor.MudSwitch`1.Disabled">
             <summary>
             If true, the switch will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSwitch`1.CheckedChanged">
+            <summary>
+            Fired when Checked changes.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSwitch`1.Checked">
+            <summary>
+            The state of the switch
             </summary>
         </member>
         <member name="P:MudBlazor.MudSimpleTable.Elevation">

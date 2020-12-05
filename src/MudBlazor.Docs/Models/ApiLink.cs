@@ -58,7 +58,12 @@ namespace MudBlazor.Docs.Models
             [typeof(MudAutocomplete<T>)] = "autocomplete",
             [typeof(MudSlider<T>)]="slider",
             [typeof(MudCheckBox<T>)] = "checkbox",
+            [typeof(MudSwitch<T>)] = "switch",
         };
+
+        // this is the inversion of above lookup
+        private static Dictionary<string, Type> InverseSpecialCase =
+            SpecialCaseComponents.ToDictionary(pair => pair.Value, pair => pair.Key);
 
         private static Dictionary<string, string> ComponentLinkTranslation = new Dictionary<string, string>()
         {
@@ -66,7 +71,5 @@ namespace MudBlazor.Docs.Models
             ["chip"]="chips",
         };
 
-        private static Dictionary<string, Type> InverseSpecialCase =
-            SpecialCaseComponents.ToDictionary(pair => pair.Value, pair => pair.Key);
     }
 }
