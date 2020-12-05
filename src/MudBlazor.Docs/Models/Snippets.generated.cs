@@ -545,6 +545,18 @@ public const string CheckboxBasicExample = @"<MudCheckBox @bind-Checked=""@Basic
     public bool Basic_CheckBox3 { get; set; } = false;
 }";
 
+public const string CheckboxConversionExample = @"<MudCheckBox @bind-Checked=""boolean"">bool: @boolean</MudCheckBox>
+<MudCheckBox @bind-Checked=""nullable"" Color=""Color.Primary"">bool?: @nullable</MudCheckBox>
+<MudCheckBox @bind-Checked=""integer"" Color=""Color.Secondary"">int: @integer</MudCheckBox>
+<MudCheckBox @bind-Checked=""str"" Color=""Color.Tertiary"">string: ""@(str)""</MudCheckBox>
+
+@code{
+    public bool boolean { get; set; } = true;
+    public bool? nullable { get; set; } = true;
+    public int integer { get; set; } = 1;
+    public string str { get; set; } = ""on"";
+}";
+
 public const string CheckboxIndeterminateExample = @"<MudCheckBox @bind-Checked=""value"" Color=""@Color.Primary"">
     Value: @(value == null ? ""null"" : value.ToString())
 </MudCheckBox>
@@ -2760,7 +2772,7 @@ public const string SwitchConversionExample = @"<MudSwitch @bind-Checked=""boole
     public bool boolean { get; set; } = true;
     public bool? nullable { get; set; } = true;
     public int integer { get; set; } = 1;
-    public string str { get; set; } = ""true"";
+    public string str { get; set; } = ""on"";
 }";
 
 public const string SwitchWithLabelExample = @"<MudSwitch @bind-Checked=""@Label_Switch1"" Label=""Default"" />
