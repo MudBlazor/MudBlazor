@@ -2205,7 +2205,6 @@
             <summary>
             Get the current BrowserWindowSize, this includes the Height and Width of the document.
             </summary>
-            <returns></returns>
         </member>
         <member name="M:MudBlazor.Services.ResizeListenerService.RaiseOnResized(MudBlazor.Services.BrowserWindowSize)">
             <summary>
