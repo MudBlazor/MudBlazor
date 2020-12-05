@@ -333,7 +333,7 @@ public const string BadgeInteractiveExample = @"<MudGrid>
                 <MudCheckBox @bind-Checked=""@Left"" Label=""Left"" Color=""Color.Primary"" Style=""width:100%;"" />
                 <MudCheckBox @bind-Checked=""@Overlap"" Label=""Overlap"" Color=""Color.Primary"" Style=""width:100%;"" />
                 <MudCheckBox @bind-Checked=""@Bordered"" Label=""Bordered"" Color=""Color.Primary"" Style=""width:100%;"" />
-                <MudCheckBox CheckedChanged=""AddIcon"" Label=""Icon"" Color=""Color.Primary"" Style=""width:100%;"" />
+                <MudCheckBox T=""bool"" CheckedChanged=""AddIcon"" Label=""Icon"" Color=""Color.Primary"" Style=""width:100%;"" />
                 <MudText Typo=""Typo.subtitle2"" Class=""my-2"">Badge Content</MudText>
                 <div style=""display: flex;"">
                     <MudButton OnClick=""AddValue"" Variant=""Variant.Filled"" Size=""Size.Small"" Color=""Color.Primary"" Style=""width:100%;"" Class=""mr-1"">Add @AddNumber</MudButton>
@@ -1606,7 +1606,9 @@ public const string HighlighterWithListExample = @"<MudPaper Elevation=""0"">
 
 }";
 
-public const string HighlighterWithTableExample = @"<MudTable Items=""GetElements()"">
+public const string HighlighterWithTableExample = @"@using MudBlazor.Docs.Data
+
+<MudTable Items=""GetElements()"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
         <MudToolBarSpacer />
