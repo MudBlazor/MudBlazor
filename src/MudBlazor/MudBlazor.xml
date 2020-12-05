@@ -2221,6 +2221,11 @@
             <param name="configure">Defines settings for this instance.</param>
             <returns>Continues the IServiceCollection chain.</returns>
         </member>
+        <member name="T:MudBlazor.BoolConverter`1">
+            <summary>
+            A universal T to bool? binding converter
+            </summary>
+        </member>
         <member name="P:MudBlazor.Converter`2.Culture">
             <summary>
             The culture info being used for decimal points, date and time format, etc.
