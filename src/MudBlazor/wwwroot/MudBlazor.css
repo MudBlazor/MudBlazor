@@ -4005,6 +4005,62 @@ ul {
 .mud-tab-badge {
   margin-left: 8px; }
 
+.mud-tabs-toolbar-primary {
+  background-color: var(--mud-palette-primary); }
+  .mud-tabs-toolbar-primary .mud-tab {
+    color: var(--mud-palette-primary-text); }
+  .mud-tabs-toolbar-primary .mud-tab-slider {
+    background: var(--mud-palette-primary-text); }
+
+.mud-tabs-toolbar-secondary {
+  background-color: var(--mud-palette-secondary); }
+  .mud-tabs-toolbar-secondary .mud-tab {
+    color: var(--mud-palette-secondary-text); }
+  .mud-tabs-toolbar-secondary .mud-tab-slider {
+    background: var(--mud-palette-secondary-text); }
+
+.mud-tabs-toolbar-tertiary {
+  background-color: var(--mud-palette-tertiary); }
+  .mud-tabs-toolbar-tertiary .mud-tab {
+    color: var(--mud-palette-tertiary-text); }
+  .mud-tabs-toolbar-tertiary .mud-tab-slider {
+    background: var(--mud-palette-tertiary-text); }
+
+.mud-tabs-toolbar-info {
+  background-color: var(--mud-palette-info); }
+  .mud-tabs-toolbar-info .mud-tab {
+    color: var(--mud-palette-info-text); }
+  .mud-tabs-toolbar-info .mud-tab-slider {
+    background: var(--mud-palette-info-text); }
+
+.mud-tabs-toolbar-success {
+  background-color: var(--mud-palette-success); }
+  .mud-tabs-toolbar-success .mud-tab {
+    color: var(--mud-palette-success-text); }
+  .mud-tabs-toolbar-success .mud-tab-slider {
+    background: var(--mud-palette-success-text); }
+
+.mud-tabs-toolbar-warning {
+  background-color: var(--mud-palette-warning); }
+  .mud-tabs-toolbar-warning .mud-tab {
+    color: var(--mud-palette-warning-text); }
+  .mud-tabs-toolbar-warning .mud-tab-slider {
+    background: var(--mud-palette-warning-text); }
+
+.mud-tabs-toolbar-error {
+  background-color: var(--mud-palette-error); }
+  .mud-tabs-toolbar-error .mud-tab {
+    color: var(--mud-palette-error-text); }
+  .mud-tabs-toolbar-error .mud-tab-slider {
+    background: var(--mud-palette-error-text); }
+
+.mud-tabs-toolbar-dark {
+  background-color: var(--mud-palette-dark); }
+  .mud-tabs-toolbar-dark .mud-tab {
+    color: var(--mud-palette-dark-text); }
+  .mud-tabs-toolbar-dark .mud-tab-slider {
+    background: var(--mud-palette-dark-text); }
+
 .mud-select {
   display: flex;
   position: relative; }
