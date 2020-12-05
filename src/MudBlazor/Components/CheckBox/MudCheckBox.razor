@@ -27,10 +27,12 @@
     </span>
     @if (!String.IsNullOrEmpty(Label))
     {
-        <MudText>@Label</MudText>}
+        <MudText>@Label</MudText>
+    }
     @if (ChildContent != null)
     {
         <MudText>
             @ChildContent
-        </MudText>}
+        </MudText>
+    }
 </label>

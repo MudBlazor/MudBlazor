@@ -545,6 +545,15 @@ public const string CheckboxBasicExample = @"<MudCheckBox @bind-Checked=""@Basic
     public bool Basic_CheckBox3 { get; set; } = false;
 }";
 
+public const string CheckboxIndeterminateExample = @"<MudCheckBox @bind-Checked=""value"" Color=""@Color.Primary"">
+    Value: @(value == null ? ""null"" : value.ToString())
+</MudCheckBox>
+<MudButton OnClick=""@(()=>value=null)"">Reset</MudButton>
+
+@code {
+    public bool? value { get; set; } = null;
+}";
+
 public const string CheckboxLabelExample = @"<MudCheckBox @bind-Checked=""@Label_CheckBox1"" Label=""Default""></MudCheckBox>
 <MudCheckBox @bind-Checked=""@Label_CheckBox2"" Label=""Primary"" Color=""Color.Primary""></MudCheckBox>
 <MudCheckBox @bind-Checked=""@Label_CheckBox3"" Label=""Secondary"" Color=""Color.Secondary""></MudCheckBox>
