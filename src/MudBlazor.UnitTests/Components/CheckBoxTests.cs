@@ -22,7 +22,7 @@ namespace MudBlazor.UnitTests
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var box = comp.FindComponent<MudCheckBox>();
+            var box = comp.FindComponent<MudCheckBox<bool>>();
             var input =comp.Find("input");
             // check initial state
             box.Instance.Checked.Should().Be(false);
@@ -43,7 +43,7 @@ namespace MudBlazor.UnitTests
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var box = comp.FindComponent<MudCheckBox>();
+            var box = comp.FindComponent<MudCheckBox<bool>>();
             var input = comp.Find("input");
             // check initial state
             box.Instance.Checked.Should().Be(true);
@@ -64,7 +64,7 @@ namespace MudBlazor.UnitTests
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var boxes = comp.FindComponents<MudCheckBox>();
+            var boxes = comp.FindComponents<MudCheckBox<bool>>();
             var inputs = comp.FindAll("input");
             // check initial state
             boxes[0].Instance.Checked.Should().Be(true);

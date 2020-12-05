@@ -775,34 +775,39 @@
             Scales the input data to the range between 0 and 1
             </summary>
         </member>
-        <member name="P:MudBlazor.MudCheckBox.Color">
+        <member name="P:MudBlazor.MudCheckBox`1.Color">
             <summary>
             The color of the component. It supports the theme colors.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudCheckBox.Label">
+        <member name="P:MudBlazor.MudCheckBox`1.Label">
             <summary>
             If applied the text will be added to the component.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudCheckBox.DisableRipple">
+        <member name="P:MudBlazor.MudCheckBox`1.DisableRipple">
             <summary>
             If true, disables ripple effect.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudCheckBox.Disabled">
+        <member name="P:MudBlazor.MudCheckBox`1.Disabled">
             <summary>
             If true, the checkbox will be disabled.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudCheckBox.ChildContent">
+        <member name="P:MudBlazor.MudCheckBox`1.ChildContent">
             <summary>
             Child content of component.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudCheckBox.CheckedChanged">
+        <member name="P:MudBlazor.MudCheckBox`1.CheckedChanged">
             <summary>
-            A callback when CheckedChanges.
+            A callback when Checked changes.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudCheckBox`1.Checked">
+            <summary>
+            The state of the checkbox
             </summary>
         </member>
         <member name="P:MudBlazor.MudChipSet.ChildContent">

@@ -9,7 +9,7 @@ using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public partial class MudCheckBox : MudComponentBase
+    public partial class MudCheckBox<T> : MudComponentBase
     {
         protected string Classname =>
         new CssBuilder("mud-checkbox")
@@ -23,6 +23,8 @@ namespace MudBlazor
             .AddClass($"mud-disabled", Disabled)
           .AddClass(Class)
         .Build();
+
+        //[CascadingParameter] internal MudForm Form { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -50,23 +52,34 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// A callback when CheckedChanges.
+        /// A callback when Checked changes.
         /// </summary>
         [Parameter]
-        public EventCallback<bool> CheckedChanged { get; set; }
+        public EventCallback<T> CheckedChanged { get; set; }
 
-        private bool _checked;
-        [Parameter] public bool Checked
+        private T _checked;
+
+        /// <summary>
+        /// The state of the checkbox
+        /// </summary>
+        [Parameter] public T Checked
         {
             get => _checked;
             set
             {
-                if (value != _checked)
-                {
-                    _checked = value;
-                    CheckedChanged.InvokeAsync(value);
-                }
+                if (object.Equals(value, _checked))
+                    return;
+                _checked = value;
+                CheckedChanged.InvokeAsync(value);
             }   
         }
+
+        //protected override Task OnInitializedAsync()
+        //{
+        //    Form?.Add(this);
+        //    if (_converter != null)
+        //        _converter.OnError = OnConversionError;
+        //    return base.OnInitializedAsync();
+        //}
     }
 }

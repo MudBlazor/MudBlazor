@@ -553,9 +553,9 @@ public const string MudCheckBox_Disabled = @"If true, the checkbox will be disab
 
 public const string MudCheckBox_ChildContent = @"Child content of component.";
 
-public const string MudCheckBox_CheckedChanged = @"A callback when CheckedChanges.";
+public const string MudCheckBox_CheckedChanged = @"A callback when Checked changes.";
 
-public const string MudCheckBox_Checked = @"";
+public const string MudCheckBox_Checked = @"The state of the checkbox";
 
 public const string MudCheckBox_Class = @"User class names, separated by space";
 
