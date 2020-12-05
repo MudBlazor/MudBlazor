@@ -85,8 +85,6 @@ namespace MudBlazor.Services
         /// <summary>
         /// Get the current BrowserWindowSize, this includes the Height and Width of the document.
         /// </summary>
-        /// <returns></returns>
-        [Obsolete("Method has moved to IBrowserWindowSizeProvider.GetBrowserWindowSize, please use that instead")]
         public ValueTask<BrowserWindowSize> GetBrowserWindowSize() =>
             _browserWindowSizeProvider.GetBrowserWindowSize();
 
