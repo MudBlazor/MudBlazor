@@ -45,26 +45,6 @@
             If it is sub-component, it will NOT do form validation!!
             </summary>
         </member>
-        <member name="P:MudBlazor.MudBaseInput`1.Required">
-            <summary>
-            If true, this form input is required to be filled out.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInput`1.RequiredError">
-            <summary>
-            Set an error text that will be displayed if the input is not filled out but required!
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInput`1.ErrorText">
-            <summary>
-            The ErrorText that will be displayed if Error true
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInput`1.Error">
-            <summary>
-            If true, the label will be displayed in an error state.
-            </summary>
-        </member>
         <member name="P:MudBlazor.MudBaseInput`1.Disabled">
             <summary>
             If true, the input element will be disabled.
@@ -187,55 +167,6 @@
             <summary>
             The error message of the conversion error from string to T. Null otherwise
             </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInput`1.HasErrors">
-            <summary>
-            True if the input has any of the following errors: An error set from outside, a conversion error or
-            one or more validation errors
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "P:MudBlazor.MudBaseInput`1.Validation" -->
-        <member name="M:MudBlazor.MudBaseInput`1.Validate">
-            <summary>
-            Causes this component to validate its value
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInput`1.EditContext">
-            <summary>
-            This is the form validation context for Blazor's <EditForm></EditForm> component
-            </summary>
-        </member>
-        <member name="M:MudBlazor.MudBaseInput`1.EditFormValidate">
-            <summary>
-            Triggers field to be validated.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudBaseInput`1.For">
-            <summary>
-            Specify an expression which returns the model's field for which validation messages should be displayed.
-            Currently only string fields are supported.
-            </summary>
-        </member>
-        <member name="F:MudBlazor.MudBaseInput`1._fieldIdentifier">
-            <summary>
-            Points to a field of the model for which validation messages should be displayed.
-            </summary>
-        </member>
-        <member name="F:MudBlazor.MudBaseInput`1._currentFor">
-            <summary>
-            To find out whether or not For parameter has changed we keep a separate reference
-            </summary>
-        </member>
-        <member name="F:MudBlazor.MudBaseInput`1._currentEditContext">
-            <summary>
-            To find out whether or not EditContext parameter has changed we keep a separate reference
-            </summary>
-        </member>
-        <member name="M:MudBlazor.MudBaseInput`1.Dispose(System.Boolean)">
-            <summary>
-            Called to dispose this instance.
-            </summary>
-            <param name="disposing"><see langword="true"/> if called within <see cref="M:System.IDisposable.Dispose"/>.</param>
         </member>
         <member name="P:MudBlazor.MudBasePicker.Elevation">
             <summary>
@@ -378,6 +309,90 @@
             UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.
             </summary>
+        </member>
+        <member name="P:MudBlazor.Base.MudFormComponent`1.Required">
+            <summary>
+            If true, this form input is required to be filled out.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.Base.MudFormComponent`1.RequiredError">
+            <summary>
+            Set an error text that will be displayed if the input is not filled out but required!
+            </summary>
+        </member>
+        <member name="P:MudBlazor.Base.MudFormComponent`1.ErrorText">
+            <summary>
+            The ErrorText that will be displayed if Error true
+            </summary>
+        </member>
+        <member name="P:MudBlazor.Base.MudFormComponent`1.Error">
+            <summary>
+            If true, the label will be displayed in an error state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.Base.MudFormComponent`1.ConversionError">
+            <summary>
+            True if the conversion from string to T failed
+            </summary>
+        </member>
+        <member name="P:MudBlazor.Base.MudFormComponent`1.ConversionErrorMessage">
+            <summary>
+            The error message of the conversion error from string to T. Null otherwise
+            </summary>
+        </member>
+        <member name="P:MudBlazor.Base.MudFormComponent`1.HasErrors">
+            <summary>
+            True if the input has any of the following errors: An error set from outside, a conversion error or
+            one or more validation errors
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:MudBlazor.Base.MudFormComponent`1.Validation" -->
+        <member name="F:MudBlazor.Base.MudFormComponent`1._value">
+            <summary>
+            This is the form component's value.
+            </summary>
+        </member>
+        <member name="M:MudBlazor.Base.MudFormComponent`1.Validate">
+            <summary>
+            Causes this component to validate its value
+            </summary>
+        </member>
+        <member name="P:MudBlazor.Base.MudFormComponent`1.EditContext">
+            <summary>
+            This is the form validation context for Blazor's <EditForm></EditForm> component
+            </summary>
+        </member>
+        <member name="M:MudBlazor.Base.MudFormComponent`1.EditFormValidate">
+            <summary>
+            Triggers field to be validated.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.Base.MudFormComponent`1.For">
+            <summary>
+            Specify an expression which returns the model's field for which validation messages should be displayed.
+            Currently only string fields are supported.
+            </summary>
+        </member>
+        <member name="F:MudBlazor.Base.MudFormComponent`1._fieldIdentifier">
+            <summary>
+            Points to a field of the model for which validation messages should be displayed.
+            </summary>
+        </member>
+        <member name="F:MudBlazor.Base.MudFormComponent`1._currentFor">
+            <summary>
+            To find out whether or not For parameter has changed we keep a separate reference
+            </summary>
+        </member>
+        <member name="F:MudBlazor.Base.MudFormComponent`1._currentEditContext">
+            <summary>
+            To find out whether or not EditContext parameter has changed we keep a separate reference
+            </summary>
+        </member>
+        <member name="M:MudBlazor.Base.MudFormComponent`1.Dispose(System.Boolean)">
+            <summary>
+            Called to dispose this instance.
+            </summary>
+            <param name="disposing"><see langword="true"/> if called within <see cref="M:System.IDisposable.Dispose"/>.</param>
         </member>
         <member name="P:MudBlazor.MudAlert.Elevation">
             <summary>
