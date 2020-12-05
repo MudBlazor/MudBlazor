@@ -4,13 +4,14 @@ using System.Windows.Input;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-
+using MudBlazor.Base;
 using MudBlazor.Utilities;
 using MudBlazor.Extensions;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
-    public partial class MudCheckBox<T> : MudComponentBase
+    public partial class MudCheckBox<T> : MudFormComponent<T>
     {
         protected string Classname =>
         new CssBuilder("mud-checkbox")
@@ -24,8 +25,6 @@ namespace MudBlazor
             .AddClass($"mud-disabled", Disabled)
           .AddClass(Class)
         .Build();
-
-        //[CascadingParameter] internal MudForm Form { get; set; }
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -58,13 +57,11 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T> CheckedChanged { get; set; }
 
-        private T _checked;
-
         private BoolConverter<T> _boolConverter = new BoolConverter<T>();
 
-        private bool? _value
+        protected bool? BoolValue
         {
-            get => _boolConverter.Set(_checked);
+            get => _boolConverter.Set(_value);
             set => Checked = _boolConverter.Get(value);
         }
 
@@ -73,22 +70,23 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public T Checked
         {
-            get => _checked;
+            get => _value;
             set
             {
-                if (object.Equals(value, _checked))
+                if (object.Equals(value, _value))
                     return;
-                _checked = value;
+                _value = value;
                 CheckedChanged.InvokeAsync(value);
-            }   
+                ValidateValue(value);
+                EditFormValidate();
+            }
         }
 
-        //protected override Task OnInitializedAsync()
-        //{
-        //    Form?.Add(this);
-        //    if (_converter != null)
-        //        _converter.OnError = OnConversionError;
-        //    return base.OnInitializedAsync();
-        //}
+        protected override Task OnInitializedAsync()
+        {
+            if (_boolConverter != null)
+                _boolConverter.OnError = OnConversionError;
+            return base.OnInitializedAsync();
+        }
     }
 }
