@@ -2751,6 +2751,18 @@ public const string SwitchBasicExample = @"<MudSwitch @bind-Checked=""@Basic_Swi
     public bool Basic_Switch3 { get; set; } = true;
 }";
 
+public const string SwitchConversionExample = @"<MudSwitch @bind-Checked=""boolean"">bool: @boolean</MudSwitch>
+<MudSwitch @bind-Checked=""nullable"" Color=""Color.Primary"">bool?: @nullable</MudSwitch>
+<MudSwitch @bind-Checked=""integer"" Color=""Color.Secondary"">int: @integer</MudSwitch>
+<MudSwitch @bind-Checked=""str"" Color=""Color.Tertiary"">string: ""@(str)""</MudSwitch>
+
+@code{
+    public bool boolean { get; set; } = true;
+    public bool? nullable { get; set; } = true;
+    public int integer { get; set; } = 1;
+    public string str { get; set; } = ""true"";
+}";
+
 public const string SwitchWithLabelExample = @"<MudSwitch @bind-Checked=""@Label_Switch1"" Label=""Default"" />
 <MudSwitch @bind-Checked=""@Label_Switch2"" Label=""Primary"" Color=""Color.Primary"" />
 <MudSwitch @bind-Checked=""@Label_Switch2"" Label=""Secondary"" Color=""Color.Secondary"" />

@@ -25,7 +25,7 @@ namespace MudBlazor
                 else if (typeof(T) == typeof(bool?))
                     return (T)(object)value;
                 else if (typeof(T) == typeof(string))
-                    return (T)(object)(value == true ? "true" : (value == false ? "false" : null));
+                    return (T)(object)(value == true ? "on" : (value == false ? "off" : null));
                 else if (typeof(T) == typeof(int))
                     return (T)(object)(value == true ? 1 : 0);
                 else if (typeof(T) == typeof(int?))
@@ -81,34 +81,5 @@ namespace MudBlazor
             }
         }
 
-
-        #region --> Floating Point comparison
-
-        const double MinNormal = 2.2250738585072014E-308d;
-
-        public static bool AreEqual(double a, double b, double epsilon = MinNormal)
-        {
-            // Copyright (c) Michael Borgwardt
-            double absA = Math.Abs(a);
-            double absB = Math.Abs(b);
-            double diff = Math.Abs(a - b);
-
-            if (a.Equals(b))
-            { // shortcut, handles infinities
-                return true;
-            }
-            else if (a == 0 || b == 0 || absA + absB < MinNormal)
-            {
-                // a or b is zero or both are extremely close to it
-                // relative error is less meaningful here
-                return diff < (epsilon * MinNormal);
-            }
-            else
-            { // use relative error
-                return diff / (absA + absB) < epsilon;
-            }
-        }
-
-        #endregion
     }
 }

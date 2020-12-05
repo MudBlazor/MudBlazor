@@ -194,8 +194,8 @@ namespace MudBlazor.UnitTests.Utilities
             c3.Set("off").Should().Be(false);
             c3.Set(null).Should().BeNull();
             c3.Get(null).Should().BeNull();
-            c3.Get(false).Should().Be("false");
-            c3.Get(true).Should().Be("true");
+            c3.Get(false).Should().Be("off");
+            c3.Get(true).Should().Be("on");
             var c4 = new BoolConverter<int>();
             c4.Set(1).Should().Be(true);
             c4.Set(0).Should().Be(false);
