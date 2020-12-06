@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 using System.Globalization;
-using MudBlazor.Base;
 
 namespace MudBlazor
 {

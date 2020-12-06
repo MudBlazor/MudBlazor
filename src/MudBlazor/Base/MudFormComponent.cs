@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Interfaces;
 
-namespace MudBlazor.Base
+namespace MudBlazor
 {
     public class MudFormComponent<T> : MudComponentBase, IFormComponent, IDisposable
     {       
