@@ -2,7 +2,7 @@
 @inherits MudBaseButton
 @using MudBlazor.Extensions
 
-<MudElement HtmlTag="@(HtmlTag ?? "button")"
+<MudElement HtmlTag="@HtmlTag"
             @attributes="UserAttributes"
             @onclick="OnClickHandler"
             type="@ButtonType.ToDescriptionString()"
