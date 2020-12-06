@@ -52,13 +52,16 @@ namespace MudBlazor
 
         protected  override void OnInitialized()
         {
+            //if HtmlTag is not set, defaults to button element
+            if (string.IsNullOrWhiteSpace(HtmlTag))
+            {
+                HtmlTag = "button";
+            }
+
+            //if Link is set, defaults to anchor element
             if (!string.IsNullOrWhiteSpace(Link))
             {
                 HtmlTag = "a";
-            }
-            if(string.IsNullOrWhiteSpace(HtmlTag))
-            {
-                HtmlTag = "button";
             }
         }
         protected async Task OnClickHandler(MouseEventArgs ev)
