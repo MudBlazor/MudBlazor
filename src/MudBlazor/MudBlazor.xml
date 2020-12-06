@@ -825,6 +825,11 @@
             The state of the checkbox
             </summary>
         </member>
+        <member name="M:MudBlazor.MudCheckBox`1.HasValue(`0)">
+            <summary>
+            A value is required, so if not checked we return ERROR.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudChipSet.ChildContent">
             <summary>
             Child content of component.

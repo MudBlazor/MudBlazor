@@ -88,5 +88,13 @@ namespace MudBlazor
                 _boolConverter.OnError = OnConversionError;
             return base.OnInitializedAsync();
         }
+
+        /// <summary>
+        /// A value is required, so if not checked we return ERROR.
+        /// </summary>
+        protected override bool HasValue(T value)
+        {
+            return (BoolValue == true);
+        }
     }
 }
