@@ -50,6 +50,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        protected  override void OnInitialized()
+        {
+            if (!string.IsNullOrWhiteSpace(Link))
+            {
+                HtmlTag = "a";
+            }
+            if(string.IsNullOrWhiteSpace(HtmlTag))
+            {
+                HtmlTag = "button";
+            }
+        }
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
             if (string.IsNullOrWhiteSpace(Link))            
