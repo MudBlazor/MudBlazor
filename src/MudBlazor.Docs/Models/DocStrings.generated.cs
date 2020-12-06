@@ -1534,6 +1534,10 @@ public const string MudSelect_OffsetY = @"If true, the select menu will open eit
 
 public const string MudSelect_OffsetX = @"";
 
+public const string MudSelect_Strict = @"If true, the select's input will not show any values that are not defined in the dropdown.
+            This can be useful if Value is bound to a variable which is initialized to a value which is not in the list
+            and you want the select to show the label / placeholder instead.";
+
 public const string MudSelect_Disabled = @"";
 
 public const string MudSelect_ReadOnly = @"";

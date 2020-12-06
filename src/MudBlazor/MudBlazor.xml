@@ -1785,6 +1785,13 @@
             If true, the select menu will open either before or after the input.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudSelect`1.Strict">
+            <summary>
+            If true, the select's input will not show any values that are not defined in the dropdown.
+            This can be useful if Value is bound to a variable which is initialized to a value which is not in the list
+            and you want the select to show the label / placeholder instead.
+            </summary>
+        </member>
         <member name="T:MudBlazor.MudSelectItem`1">
             <summary>
             Represents an option of a select or multi-select. To be used inside MudSelect.
