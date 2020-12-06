@@ -294,6 +294,11 @@
             User class names, separated by space
             </summary>
         </member>
+        <member name="P:MudBlazor.MudComponentBase.HtmlTag">
+            <summary>
+            The HTML element that will be rendered in the root by the component
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudComponentBase.Style">
             <summary>
             User styles, applied on top of the component's own classes and styles
@@ -1516,6 +1521,12 @@
         <member name="P:MudBlazor.ComponentBaseMudMenu.Dense">
             <summary>
             If true, compact vertical padding will be applied to all menu items.
+            </summary>
+        </member>
+        <member name="T:MudBlazor.MudElement">
+            <summary>
+            Primitive component which allows rendering any HTML element we want
+            through the HtmlTag property
             </summary>
         </member>
         <member name="P:MudBlazor.MudNavGroup.Icon">
