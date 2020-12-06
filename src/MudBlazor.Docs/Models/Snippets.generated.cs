@@ -413,6 +413,15 @@ public const string ButtonIconLabelExample = @"<MudButton Variant=""Variant.Fill
 <MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Save"" Color=""Color.Info""  Size=""Size.Small"">Save</MudButton>
 <MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Save"" Color=""Color.Success"" IconColor=""Color.Error"" Size=""Size.Large"">Save</MudButton>";
 
+public const string ButtonLinkExample = @"Visit our github page clicking <MudButton Variant=""Variant.Text"" 
+                                   Color=""Color.Secondary"" 
+                                   EndIcon=""@Icons.Custom.GitHub""                                   
+                                   target=""_blank""
+                                   rel=""noopener noreferrer""
+                                   Link=""https://github.com/Garderoben/MudBlazor"">
+                                   here
+                                </MudButton>";
+
 public const string ButtonOutlinedExample = @"<MudButton Variant=""Variant.Outlined"">Default</MudButton>
 <MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"">Primary</MudButton>
 <MudButton Variant=""Variant.Outlined"" Color=""Color.Secondary"">Secondary</MudButton>
@@ -1172,6 +1181,75 @@ public const string FieldMinimizePaddingExample = @"<MudGrid>
         </MudField>
     </MudItem>
 </MudGrid>";
+
+public const string FileUploadButtonExample = @"@using BlazorInputFile
+<MudButton HtmlTag=""label""
+           Variant=""Variant.Filled""
+           Color=""Color.Primary""           
+           StartIcon=""@Filled.CloudUpload""
+           for=""fileInput"">
+    Upload Files
+</MudButton>
+
+<InputFile id=""fileInput"" OnChange=""UploadFiles"" hidden multiple/>
+
+@if (files != null)
+{
+
+    <MudList>
+        @foreach (var file in files)
+        {
+            <MudListItem Icon=""@Filled.AttachFile"">
+                @file.Name <code>@file.Size bytes</code>
+            </MudListItem>
+        }
+    </MudList>
+}
+
+
+@code{
+
+    IEnumerable<IFileListEntry> files;
+    private void UploadFiles(IFileListEntry[] entries)
+    {
+        files = entries;
+        //TODO upload the files to the server
+    }
+
+}";
+
+public const string FileUploadIconButtonExample = @"@using BlazorInputFile
+<MudIconButton HtmlTag=""label""         
+           Color=""Color.Secondary""
+           Icon=""@Filled.AddAPhoto""               
+           for=""fileInput2"" />
+
+<InputFile id=""fileInput2"" OnChange=""UploadFiles"" hidden multiple />
+
+@if (files != null)
+{
+
+    <MudList>
+        @foreach (var file in files)
+        {
+            <MudListItem Icon=""@Filled.AttachFile"">
+                @file.Name <code>@file.Size bytes</code>
+            </MudListItem>
+        }
+    </MudList>
+}
+
+
+@code{
+
+    IEnumerable<IFileListEntry> files;
+    private void UploadFiles(IFileListEntry[] entries)
+    {
+        files = entries;
+        //TODO upload the files to the server
+    }
+
+}";
 
 public const string EditFormExample = @"@using System.ComponentModel.DataAnnotations
 

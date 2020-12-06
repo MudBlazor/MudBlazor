@@ -1,0 +1,55 @@
+﻿@page "/components/fileupload"
+
+<DocsPage>
+    <DocsPageHeader Title="File Upload"
+                    SubTitle="This is an example on how to compose a file upload button"> 
+        <Description>
+          <p>If you are working with .Net Core 3.1 or earlier, you should install the 
+            <MudButton Variant="Variant.Text" 
+                       Color="Color.Primary"
+                       EndIcon="@Filled.Link"
+                       Link="https://www.nuget.org/packages/BlazorInputFile" target="_blank" rel="noopener noreferrer">
+                nuget package InputFile
+            </MudButton>
+                , created by Steve Sanderson and reference it in your _host.cshtml or index.html (Server Side Blazor or Client Side Blazor).</p>
+          <p>
+              See
+              <MudButton Variant="Variant.Text"
+                         Color="Color.Primary"
+                         EndIcon="@Filled.Info"
+                         Link="https://blog.stevensanderson.com/2019/09/13/blazor-inputfile/" target="_blank" rel="noopener noreferrer">
+                  more info
+              </MudButton>
+               on how to install it.
+          </p>
+            <p>
+                If your project is .Net 5.0, InputFile is a native component and you don't need to install it.
+            </p>
+        </Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>With a regular MudButton</Title>
+                <Description>Use a MudButton with the HtmlTag property set to "label" in combination with a hidden InputFile</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" DarkenBackground="true">
+                <FileUploadButtonExample />
+            </SectionContent>
+            <SectionSource Code="FileUploadButtonExample" GitHubFolderName="Button"  />
+            
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>With another type of MudButtons, like an icon button</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true"  FullWidth="true" DarkenBackground="true">
+                <FileUploadIconButtonExample />
+            </SectionContent>
+            <SectionSource Code="FileUploadButtonExample" GitHubFolderName="Button" />
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

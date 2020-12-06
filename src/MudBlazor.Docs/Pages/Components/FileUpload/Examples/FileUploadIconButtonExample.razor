@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using BlazorInputFile
+<MudIconButton HtmlTag="label"         
+           Color="Color.Secondary"
+           Icon="@Filled.AddAPhoto"               
+           for="fileInput2" />
+
+<InputFile id="fileInput2" OnChange="UploadFiles" hidden multiple />
+
+@if (files != null)
+{
+
+    <MudList>
+        @foreach (var file in files)
+        {
+            <MudListItem Icon="@Filled.AttachFile">
+                @file.Name <code>@file.Size bytes</code>
+            </MudListItem>
+        }
+    </MudList>
+}
+
+
+@code{
+
+    IEnumerable<IFileListEntry> files;
+    private void UploadFiles(IFileListEntry[] entries)
+    {
+        files = entries;
+        //TODO upload the files to the server
+    }
+
+}
