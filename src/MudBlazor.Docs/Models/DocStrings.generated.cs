@@ -866,7 +866,11 @@ public const string MudForm_ChildContent = @"Child content of component.";
 
 public const string MudForm_IsValid = @"Validation status. True if the form is valid and without errors. This parameter is readonly.";
 
-public const string MudForm_ValidationDelay = @"Validation debounce delay in milliseconds.";
+public const string MudForm_ValidationDelay = @"Validation debounce delay in milliseconds. This can help improve rendering performance of forms with real-time validation of inputs
+            i.e. when textfields have Immediate=""true""";
+
+public const string MudForm_SuppressRenderingOnValidation = @"When true, the form will not re-render its child contents on validation updates (i.e. when IsValid changes). This is an optimization which is necessary
+            especially for larger forms on older devices.";
 
 public const string MudForm_IsValidChanged = @"Raised when IsValid changes.";
 
