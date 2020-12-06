@@ -250,8 +250,14 @@ namespace MudBlazor
 
         public void Reset()
         {
-            _value = default;
+            ResetValue();
             ResetValidation();
+        }
+
+        protected virtual void ResetValue()
+        {
+            /* to be overridden */
+            _value = default;
         }
 
         public void ResetValidation()

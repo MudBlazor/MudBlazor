@@ -338,6 +338,13 @@ namespace MudBlazor
             base.OnParametersSet();
         }
 
-
+        protected override void ResetValue()
+        {
+            base.ResetValue();
+            if (string.IsNullOrWhiteSpace(_text))
+                return;
+            _text = null;
+            StateHasChanged();
+        }
     }
 }
