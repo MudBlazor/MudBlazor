@@ -27,14 +27,6 @@ public const string MudBaseButton_Tag = @"Use Tag to attach any user data object
 public const string MudBaseButton_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudBaseInput_Required = @"If true, this form input is required to be filled out.";
-
-public const string MudBaseInput_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
-
-public const string MudBaseInput_ErrorText = @"The ErrorText that will be displayed if Error true";
-
-public const string MudBaseInput_Error = @"If true, the label will be displayed in an error state.";
-
 public const string MudBaseInput_Disabled = @"If true, the input element will be disabled.";
 
 public const string MudBaseInput_ReadOnly = @"If true, the input will be read only.";
@@ -92,10 +84,17 @@ public const string MudBaseInput_Culture = @"";
 
 public const string MudBaseInput_Format = @"Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans";
 
+public const string MudBaseInput_Required = @"";
+
+public const string MudBaseInput_RequiredError = @"";
+
+public const string MudBaseInput_ErrorText = @"";
+
+public const string MudBaseInput_Error = @"";
+
 public const string MudBaseInput_Validation = @"";
 
-public const string MudBaseInput_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
-            Currently only string fields are supported.";
+public const string MudBaseInput_For = @"";
 
 public const string MudBaseInput_Class = @"User class names, separated by space";
 
@@ -172,6 +171,31 @@ public const string MudBaseSelectItem_Tag = @"Use Tag to attach any user data ob
 public const string MudBaseSelectItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudBooleanInput_CheckedChanged = @"Fired when Checked changes.";
+
+public const string MudBooleanInput_Checked = @"The state of the component";
+
+public const string MudBooleanInput_Required = @"";
+
+public const string MudBooleanInput_RequiredError = @"";
+
+public const string MudBooleanInput_ErrorText = @"";
+
+public const string MudBooleanInput_Error = @"";
+
+public const string MudBooleanInput_Validation = @"";
+
+public const string MudBooleanInput_For = @"";
+
+public const string MudBooleanInput_Class = @"User class names, separated by space";
+
+public const string MudBooleanInput_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudBooleanInput_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudBooleanInput_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudComponentBase_Class = @"User class names, separated by space";
 
 public const string MudComponentBase_Style = @"User styles, applied on top of the component's own classes and styles";
@@ -179,6 +203,28 @@ public const string MudComponentBase_Style = @"User styles, applied on top of th
 public const string MudComponentBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
 public const string MudComponentBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudFormComponent_Required = @"If true, this form input is required to be filled out.";
+
+public const string MudFormComponent_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+
+public const string MudFormComponent_ErrorText = @"The ErrorText that will be displayed if Error true";
+
+public const string MudFormComponent_Error = @"If true, the label will be displayed in an error state.";
+
+public const string MudFormComponent_Validation = @"";
+
+public const string MudFormComponent_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
+            Currently only string fields are supported.";
+
+public const string MudFormComponent_Class = @"User class names, separated by space";
+
+public const string MudFormComponent_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudFormComponent_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudFormComponent_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudAlert_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow.";
@@ -252,14 +298,6 @@ public const string MudAutocomplete_ItemTemplate = @"Optional presentation templ
 
 public const string MudAutocomplete_ItemSelectedTemplate = @"Optional presentation template for the selected item";
 
-public const string MudAutocomplete_Required = @"";
-
-public const string MudAutocomplete_RequiredError = @"";
-
-public const string MudAutocomplete_ErrorText = @"";
-
-public const string MudAutocomplete_Error = @"";
-
 public const string MudAutocomplete_Disabled = @"";
 
 public const string MudAutocomplete_ReadOnly = @"";
@@ -315,6 +353,14 @@ public const string MudAutocomplete_Converter = @"";
 public const string MudAutocomplete_Culture = @"";
 
 public const string MudAutocomplete_Format = @"";
+
+public const string MudAutocomplete_Required = @"";
+
+public const string MudAutocomplete_RequiredError = @"";
+
+public const string MudAutocomplete_ErrorText = @"";
+
+public const string MudAutocomplete_Error = @"";
 
 public const string MudAutocomplete_Validation = @"";
 
@@ -553,9 +599,21 @@ public const string MudCheckBox_Disabled = @"If true, the checkbox will be disab
 
 public const string MudCheckBox_ChildContent = @"Child content of component.";
 
-public const string MudCheckBox_CheckedChanged = @"Fired when Checked changes.";
+public const string MudCheckBox_CheckedChanged = @"";
 
-public const string MudCheckBox_Checked = @"The state of the checkbox";
+public const string MudCheckBox_Checked = @"";
+
+public const string MudCheckBox_Required = @"";
+
+public const string MudCheckBox_RequiredError = @"";
+
+public const string MudCheckBox_ErrorText = @"";
+
+public const string MudCheckBox_Error = @"";
+
+public const string MudCheckBox_Validation = @"";
+
+public const string MudCheckBox_For = @"";
 
 public const string MudCheckBox_Class = @"User class names, separated by space";
 
@@ -898,14 +956,6 @@ public const string MudInputControl_UserAttributes = @"UserAttributes carries al
 
 public const string MudInput_ChildContent = @"ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.";
 
-public const string MudInput_Required = @"";
-
-public const string MudInput_RequiredError = @"";
-
-public const string MudInput_ErrorText = @"";
-
-public const string MudInput_Error = @"";
-
 public const string MudInput_Disabled = @"";
 
 public const string MudInput_ReadOnly = @"";
@@ -962,6 +1012,14 @@ public const string MudInput_Culture = @"";
 
 public const string MudInput_Format = @"";
 
+public const string MudInput_Required = @"";
+
+public const string MudInput_RequiredError = @"";
+
+public const string MudInput_ErrorText = @"";
+
+public const string MudInput_Error = @"";
+
 public const string MudInput_Validation = @"";
 
 public const string MudInput_For = @"";
@@ -976,14 +1034,6 @@ public const string MudInput_UserAttributes = @"UserAttributes carries all attri
             will be splatted onto the underlying HTML tag.";
 
 public const string MudInputString_ChildContent = @"ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.";
-
-public const string MudInputString_Required = @"If true, this form input is required to be filled out.";
-
-public const string MudInputString_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
-
-public const string MudInputString_ErrorText = @"The ErrorText that will be displayed if Error true";
-
-public const string MudInputString_Error = @"If true, the label will be displayed in an error state.";
 
 public const string MudInputString_Disabled = @"If true, the input element will be disabled.";
 
@@ -1041,6 +1091,14 @@ public const string MudInputString_Converter = @"";
 public const string MudInputString_Culture = @"";
 
 public const string MudInputString_Format = @"Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans";
+
+public const string MudInputString_Required = @"If true, this form input is required to be filled out.";
+
+public const string MudInputString_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+
+public const string MudInputString_ErrorText = @"The ErrorText that will be displayed if Error true";
+
+public const string MudInputString_Error = @"If true, the label will be displayed in an error state.";
 
 public const string MudInputString_Validation = @"";
 
@@ -1472,14 +1530,6 @@ public const string MudSelect_OffsetY = @"If true, the select menu will open eit
 
 public const string MudSelect_OffsetX = @"";
 
-public const string MudSelect_Required = @"";
-
-public const string MudSelect_RequiredError = @"";
-
-public const string MudSelect_ErrorText = @"";
-
-public const string MudSelect_Error = @"";
-
 public const string MudSelect_Disabled = @"";
 
 public const string MudSelect_ReadOnly = @"";
@@ -1535,6 +1585,14 @@ public const string MudSelect_Converter = @"";
 public const string MudSelect_Culture = @"";
 
 public const string MudSelect_Format = @"";
+
+public const string MudSelect_Required = @"";
+
+public const string MudSelect_RequiredError = @"";
+
+public const string MudSelect_ErrorText = @"";
+
+public const string MudSelect_Error = @"";
 
 public const string MudSelect_Validation = @"";
 
@@ -1630,11 +1688,23 @@ public const string MudSwitch_DisableRipple = @"If true, disables ripple effect.
 
 public const string MudSwitch_Disabled = @"If true, the switch will be disabled.";
 
-public const string MudSwitch_CheckedChanged = @"Fired when Checked changes.";
-
-public const string MudSwitch_Checked = @"The state of the switch";
-
 public const string MudSwitch_ChildContent = @"";
+
+public const string MudSwitch_CheckedChanged = @"";
+
+public const string MudSwitch_Checked = @"";
+
+public const string MudSwitch_Required = @"";
+
+public const string MudSwitch_RequiredError = @"";
+
+public const string MudSwitch_ErrorText = @"";
+
+public const string MudSwitch_Error = @"";
+
+public const string MudSwitch_Validation = @"";
+
+public const string MudSwitch_For = @"";
 
 public const string MudSwitch_Class = @"User class names, separated by space";
 
@@ -1777,14 +1847,6 @@ public const string MudTabs_Tag = @"Use Tag to attach any user data object to th
 public const string MudTabs_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudTextField_Required = @"";
-
-public const string MudTextField_RequiredError = @"";
-
-public const string MudTextField_ErrorText = @"";
-
-public const string MudTextField_Error = @"";
-
 public const string MudTextField_Disabled = @"";
 
 public const string MudTextField_ReadOnly = @"";
@@ -1841,6 +1903,14 @@ public const string MudTextField_Culture = @"";
 
 public const string MudTextField_Format = @"";
 
+public const string MudTextField_Required = @"";
+
+public const string MudTextField_RequiredError = @"";
+
+public const string MudTextField_ErrorText = @"";
+
+public const string MudTextField_Error = @"";
+
 public const string MudTextField_Validation = @"";
 
 public const string MudTextField_For = @"";
@@ -1853,14 +1923,6 @@ public const string MudTextField_Tag = @"Use Tag to attach any user data object 
 
 public const string MudTextField_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
-
-public const string MudTextFieldString_Required = @"If true, this form input is required to be filled out.";
-
-public const string MudTextFieldString_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
-
-public const string MudTextFieldString_ErrorText = @"The ErrorText that will be displayed if Error true";
-
-public const string MudTextFieldString_Error = @"If true, the label will be displayed in an error state.";
 
 public const string MudTextFieldString_Disabled = @"If true, the input element will be disabled.";
 
@@ -1918,6 +1980,14 @@ public const string MudTextFieldString_Converter = @"";
 public const string MudTextFieldString_Culture = @"";
 
 public const string MudTextFieldString_Format = @"Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans";
+
+public const string MudTextFieldString_Required = @"If true, this form input is required to be filled out.";
+
+public const string MudTextFieldString_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+
+public const string MudTextFieldString_ErrorText = @"The ErrorText that will be displayed if Error true";
+
+public const string MudTextFieldString_Error = @"If true, the label will be displayed in an error state.";
 
 public const string MudTextFieldString_Validation = @"";
 

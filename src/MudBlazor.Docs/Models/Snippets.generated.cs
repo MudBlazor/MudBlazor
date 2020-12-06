@@ -1241,95 +1241,52 @@ public const string EditFormExample = @"@using System.ComponentModel.DataAnnotat
 
 }";
 
-public const string ManualValidationExample = @"@using System.Text.RegularExpressions
-
-<MudForm @bind-IsValid=""@success"">
-
-    <MudCard Class=""demo-form-manual"">
-        <MudCardContent>
-            <MudTextField T=""string"" Label=""Password"" HelperText=""Enter your new password"" Immediate=""true""
-                          Error=""@error1"" ErrorText=""@error_text1"" ValueChanged=""@(x => { pw1 = x; Validate(); })"" InputType=""InputType.Password"" />
-            <MudTextField T=""string"" Label=""Password"" HelperText=""Enter the password again"" Immediate=""true""
-                          Error=""@error2"" ErrorText=""@error_text2"" ValueChanged=""@(x => { pw2 = x; Validate(); })"" InputType=""InputType.Password"" />
-        </MudCardContent>
-    </MudCard>
-    <MudText Typo=""Typo.body2"" Align=""Align.Center"" Class=""my-4"">
-        @if (success)
-        {
-            <MudText Color=""Color.Success"" Align=""Align.Center"" Typo=""Typo.body2"">Success</MudText>
-        }
-        else
-        {
-            <MudText Align=""Align.Center"" Typo=""Typo.body2"">Enter the same password twice to see the success message.</MudText>
-        }
-    </MudText>
-</MudForm>
-
-@code {
-    bool success, error1, error2;
-    string pw1, pw2, error_text1, error_text2;
-
-    public void Validate()
-    {
-        error1 = false;
-        error2 = false;
-        if (string.IsNullOrEmpty(pw1))
-        {
-            error1 = true;
-            error_text1 = ""Password required"";
-        }
-        if (pw1 != pw2)
-        {
-            error2 = true;
-            error_text2 = ""The passwords do not match!"";
-        }
-        StateHasChanged();
-    }
-
-}";
-
 public const string MudFormExample = @"@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
 
-<MudForm @ref=""form"" @bind-IsValid=""@success"" @bind-Errors=""@errors"">
 
-    <MudCard Class=""demo-form"">
+<div style=""max-width: 400px;"">
+    <MudCard>
         <MudCardContent>
-            <MudTextField T=""string"" Label=""Username"" Required=""true"" RequiredError=""User name is required!"" />
-            <MudTextField T=""string"" Label=""Email"" Required=""true"" RequiredError=""Email is required!""
-                Validation=""@(new EmailAddressAttribute(){ ErrorMessage = ""The email address is invalid""})"" />
-            <MudTextField T=""string"" Label=""Password"" HelperText=""Choose a strong password"" @ref=""pwField1""
-                InputType=""InputType.Password""
-                Validation=""@(new Func<string, IEnumerable<string>>(PasswordStrength))"" />
-            <MudTextField T=""string""
-                Label=""Password"" HelperText=""Repeat the password"" InputType=""InputType.Password""
-                Validation=""@(new Func<string, string>(PasswordMatch))"" Required=""true""
-                RequiredError=""Password is required!"" />
+            <MudForm @ref=""form"" @bind-IsValid=""@success"" @bind-Errors=""@errors"">
+                <MudTextField T=""string"" Label=""Username"" Required=""true"" RequiredError=""User name is required!""/>
+                <MudTextField T=""string"" Class=""mt-2"" Label=""Email"" Required=""true"" RequiredError=""Email is required!""
+                              Validation=""@(new EmailAddressAttribute() {ErrorMessage = ""The email address is invalid""})""/>
+                <MudTextField T=""string"" Class=""mt-2"" Label=""Password"" HelperText=""Choose a strong password"" @ref=""pwField1""
+                              InputType=""InputType.Password""
+                              Validation=""@(new Func<string, IEnumerable<string>>(PasswordStrength))"" Required=""true""
+                              RequiredError=""Password is required!""/>
+                <MudTextField T=""string"" Class=""mt-2""
+                              Label=""Password"" HelperText=""Repeat the password"" InputType=""InputType.Password""
+                              Validation=""@(new Func<string, string>(PasswordMatch))""/>
+                <MudCheckBox T=""bool"" Required=""true"" RequiredError=""You must agree"" Class=""ml-n2""
+                             Label=""I agree that MudBlazor is awesome!""/>
+            </MudForm>
         </MudCardContent>
         <MudCardActions>
-            <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" Disabled=""@(!success)"" Class=""demo-form-button"">Register</MudButton>
+            <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" Disabled=""@(!success)"" Class=""ml-auto"">Register</MudButton>
         </MudCardActions>
     </MudCard>
-
-    <MudPaper Class=""demo-form-paper"">
-        <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""@form.Validate"">Validate</MudButton>
-        <MudButton Variant=""Variant.Filled"" Color=""Color.Secondary"" OnClick=""@form.Reset"" Class=""mx-2"">Reset</MudButton>
-        <MudButton Variant=""Variant.Filled"" OnClick=""@form.ResetValidation"">Reset Validation</MudButton>
+    
+    <MudPaper Class=""pa-4 justify-center my-4 mud-text-align-center"">
+        <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""@(()=>form.Validate())"">Validate</MudButton>
+        <MudButton Variant=""Variant.Filled"" Color=""Color.Secondary"" OnClick=""@(()=>form.Reset())"" Class=""mx-2"">Reset</MudButton>
+        <MudButton Variant=""Variant.Filled"" OnClick=""@(()=>form.ResetValidation())"">Reset Validation</MudButton>
     </MudPaper>
 
     <MudExpansionPanels>
-        <MudExpansionPanel Text=""Show Errors"">
+        <MudExpansionPanel Text=""@($""Show Errors ({errors.Length})"")"">
             @foreach (var error in errors)
             {
                 <MudText Color=""@Color.Error"">@error</MudText>
             }
         </MudExpansionPanel>
     </MudExpansionPanels>
-</MudForm>
+</div>
 
 @code {
     bool success;
-    string[] errors={};
+    string[] errors = { };
     MudTextField<string> pwField1;
     MudForm form;
 
