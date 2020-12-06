@@ -52,14 +52,7 @@ namespace MudBlazor
 
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
-            if (Link != null)
-            {
-                if (string.IsNullOrWhiteSpace(Target))
-                    UriHelper.NavigateTo(Link, ForceLoad);
-                else
-                    await JsRuntime.InvokeVoidAsync("blazorOpen", new object[2] { Link, Target });
-            }
-            else
+            if (string.IsNullOrWhiteSpace(Link))            
             {
                 await OnClick.InvokeAsync(ev);
                 if (Command?.CanExecute(CommandParameter) ?? false)

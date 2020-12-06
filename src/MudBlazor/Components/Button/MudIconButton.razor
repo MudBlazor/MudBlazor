@@ -2,14 +2,23 @@
 @inherits MudBaseButton
 @using MudBlazor.Extensions
 
-<MudElement HtmlTag="@(HtmlTag ?? "button")" @attributes="UserAttributes" type="@ButtonType.ToDescriptionString()" class="@Classname" style="@Style" @onclick="OnClickHandler"  href="@Link" disabled="@Disabled">
-        @if (!String.IsNullOrEmpty(Icon))
-        {
+<MudElement HtmlTag="@(HtmlTag ?? "button")"
+            @onclick="OnClickHandler"
+            @attributes="UserAttributes"
+            type="@ButtonType.ToDescriptionString()"
+            class="@Classname"
+            style="@Style"
+            href="@Link"
+            target="@Target"
+            disabled="@Disabled">
+    @if (!String.IsNullOrEmpty(Icon))
+    {
         <span class="mud-icon-button-label">
             <MudIcon Icon="@Icon" Size="@Size" />
         </span>
-        }else
-        {
-            <MudText Typo="Typo.body2" Color="Color.Inherit">@ChildContent</MudText>
-        }
+    }
+    else
+    {
+        <MudText Typo="Typo.body2" Color="Color.Inherit">@ChildContent</MudText>
+    }
 </MudElement>
