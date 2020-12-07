@@ -1,0 +1,49 @@
+﻿@import '../abstracts/variables';
+
+.mud-checkbox {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    -webkit-tap-highlight-color: transparent;
+    color: var(--mud-palette-text-primary);
+
+    &.mud-disabled, .mud-disabled:hover {
+        cursor: default;
+        background-color: transparent;
+
+        & * {
+            cursor: default;
+            color: var(--mud-palette-text-disabled);
+        }
+    }
+}
+
+.mud-checkbox-input {
+    top: 0;
+    left: 0;
+    width: 100%;
+    cursor: inherit;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    padding: 0;
+    z-index: 1;
+    position: absolute;
+}
+
+.mud-checkbox-span {
+    display: inline-block;
+    width: 100%;
+    cursor: pointer;
+}
+
+@each $color in $mud-palette-colors {
+    .mud-checkbox-#{$color} {
+        color: var(--mud-palette-#{$color});
+
+        &:hover {
+            background-color: var(--mud-palette-#{$color}-hover);
+        }
+    }
+}

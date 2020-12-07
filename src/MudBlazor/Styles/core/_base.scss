@@ -1,0 +1,36 @@
+﻿* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html,svg {
+    height: 100%;
+}
+
+strong, b {
+    font-weight: 700;
+}
+
+body {
+    height: 100%;
+    color: var(--mud-palette-text-primary);
+    font-size: 0.875rem;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.43;
+    letter-spacing: 0.01071em;
+    background-color: var(--mud-palette-background);
+}
+
+a {
+    color: var(--mud-palette-text-primary);
+}
+
+app, .mud-layout {
+    width:100%;
+    height: 100%;
+    display: flex;
+}

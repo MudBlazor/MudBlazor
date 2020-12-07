@@ -1,0 +1,46 @@
+﻿.mud-card {
+    
+}
+
+.mud-card-header {
+    display: flex;
+    padding: 16px;
+    align-items: center;
+
+    & .mud-card-header-avatar {
+        flex: 0 0 auto;
+        margin-right: 16px;
+    }
+
+    & .mud-card-header-content {
+        flex: 1 1 auto;
+
+        & .mud-typography {
+            margin-bottom: 0;
+        }
+    }
+
+    & .mud-card-header-actions {
+        flex: 0 0 auto;
+        align-self: flex-start;
+        margin-top: -8px;
+        margin-right: -8px;
+    }
+}
+
+.mud-card-media {
+    display: block;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.mud-card-content {
+    padding: 16px;
+}
+
+.mud-card-actions {
+    display: flex;
+    padding: 8px;
+    align-items: center;
+}

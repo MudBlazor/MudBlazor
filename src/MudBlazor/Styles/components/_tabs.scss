@@ -1,0 +1,139 @@
+﻿@import '../abstracts/variables';
+
+.mud-tabs {
+
+    &.mud-tabs-vertical {
+        display:flex;
+    }
+}
+
+.mud-tabs-toolbar {
+    z-index: 20;
+    position: relative;
+    background-color: var(--mud-palette-surface);
+
+    &.mud-tabs-rounded {
+        border-radius: var(--mud-default-borderradius);
+    }
+
+    & .mud-tabs-toolbar-inner {
+        display: flex;
+        overflow: hidden;
+        min-height: 48px;
+    }
+}
+
+.mud-tabs-toolbar-content {
+    width: 100%;
+    flex: 1 1 auto;
+    display: inline-block;
+    position: relative;
+    white-space: nowrap;
+
+    & .mud-tabs-toolbar-wrapper {
+        width: max-content;
+        position: inherit;
+        display: flex;
+
+        &.mud-tabs-centered {
+            margin: auto;
+        }
+
+        &.mud-tabs-vertical {
+            flex-direction: column;
+        }
+    }
+}
+
+.mud-tabs-panels {
+    position: relative;
+
+    &.mud-tabs-vertical {
+        display: flex;
+        flex-grow: 1;
+    }
+}
+
+.mud-tab {
+    min-width: 160px;
+    max-width: 360px;
+    display: inline-flex;
+    padding: 6px 12px;
+    min-height: 48px;
+    flex-shrink: 0;
+    font-weight: 500;
+    line-height: 1.75;
+    user-select: none;
+    white-space: normal;
+    letter-spacing: 0.02857em;
+    text-transform: uppercase;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+    &:hover {
+        cursor: pointer;
+        background-color: var(--mud-palette-action-default-hover);
+    }
+
+    &.mud-tab-active {
+        color: var(--mud-palette-primary);
+
+        &:hover {
+            background-color: var(--mud-theme-primary-hover);
+        }
+    }
+
+    &.mud-disabled {
+        cursor: default;
+        pointer-events: none;
+        color: var(--mud-palette-text-disabled);
+    }
+
+    & .mud-tab-icon-text {
+        margin-right: 8px;
+    }
+}
+
+.mud-tab-slider {
+    position: absolute;
+    background: var(--mud-palette-primary);
+
+    &.mud-tab-slider-horizontal {
+        height: 2px;
+        left: 0;
+        top: 46px;
+        transition: left .3s cubic-bezier(.64,.09,.08,1);
+        will-change: left;
+    }
+
+    &.mud-tab-slider-vertical {
+        width: 2px;
+        right: 0;
+        transition: top .3s cubic-bezier(.64,.09,.08,1);
+        will-change: top;
+    }
+}
+
+.mud-border-right {
+    border-right: 1px solid var(--mud-palette-lines-default);
+}
+
+.mud-tab-badge{
+    margin-left:8px;
+}
+
+@each $color in $mud-palette-colors {
+    .mud-tabs-toolbar-#{$color} {
+        background-color: var(--mud-palette-#{$color});
+
+        .mud-tab {
+            color: var(--mud-palette-#{$color}-text);
+        }
+
+        .mud-tab-slider {
+            background: var(--mud-palette-#{$color}-text);
+        }
+    }
+}

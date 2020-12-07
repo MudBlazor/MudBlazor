@@ -1,0 +1,107 @@
+﻿.mud-navmenu {
+    margin: 0;
+    position: relative;
+    list-style: none;
+}
+
+.mud-nav-group {
+    width: 100%;
+    display: block;
+    justify-content: flex-start;
+
+    & > .mud-nav-link > .mud-nav-link-text {
+        font-weight: 500;
+    }
+
+    & * .mud-nav-group {
+        & > .mud-nav-link > .mud-nav-link-text {
+            font-weight: 400;
+        }
+    }
+
+    & * .mud-nav-group {
+        & > .mud-nav-link.mud-expanded > .mud-nav-link-text {
+            font-weight: 500;
+        }
+    }
+
+    & * .mud-navmenu .mud-nav-item .mud-nav-link {
+        padding-left: 36px;
+    }
+}
+
+.mud-nav-item {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    text-decoration: none;
+}
+
+.mud-nav-link {
+    width: 100%;
+    font-weight: 400;
+    padding: 8px 16px 8px 16px;
+    color: inherit;
+    line-height: 1.75;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-transform: none;
+    background-color: transparent;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+    &:hover {
+        cursor: pointer;
+        text-decoration: none;
+        background-color: var(--mud-palette-action-default-hover);
+    }
+
+    &:focus {
+        background-color: var(--mud-palette-action-default-hover);      
+    }
+
+    &.active {
+        font-weight: 500 !important;
+        color: var(--mud-palette-primary);
+        background-color: var(--mud-palette-action-default-hover);
+    }
+
+    & .mud-nav-link-icon {
+        color: var(--mud-palette-drawer-icon);
+    }
+
+    & .mud-nav-link-expand-icon {
+        color: var(--mud-palette-drawer-icon);
+        transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
+
+        &.mud-transform {
+            transform: rotate(-180deg);
+            fill: var(--mud-palette-primary);
+        }
+    }
+
+    & .mud-nav-link-text {
+        width: 100%;
+        text-align: left;
+        margin-left: 12px;
+        letter-spacing: 0;
+    }
+}
+
+.mud-nav-group * .mud-navmenu > .mud-nav-group {
+    & .mud-nav-link {
+        padding-left: 36px;
+    }
+
+    & * .mud-navmenu .mud-nav-item .mud-nav-link {
+        padding-left: 48px;
+    }
+}
+
+.mud-application-layout-rtl {
+    & * .mud-nav-link-text {
+        text-align: right;
+        margin-left: 0px;
+        margin-right: 12px;
+    }
+}

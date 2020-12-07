@@ -1,0 +1,92 @@
+﻿@import '../abstracts/variables';
+
+.mud-alert {
+    display: flex;
+    padding: 6px 16px;
+    font-size: 0.875rem;
+    line-height: 1.43;
+    border-radius: var(--mud-default-borderradius);
+    letter-spacing: 0.01071em;
+    background-color: transparent;
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+    &.mud-square {
+        border-radius: 0px;
+    }
+
+    &.mud-dense {
+        padding: 0px 12px;
+    }
+}
+
+.mud-alert-text {
+    &-normal {
+        color: var(--mud-palette-text-primary);
+        background-color: var(--mud-palette-dark-hover);
+    }
+
+    @each $color in $mud-palette-colors {
+        &-#{$color} {
+            color: var(--mud-palette-#{$color}-darken);
+            background-color: var(--mud-palette-#{$color}-hover);
+
+            & .mud-alert-icon {
+                color: var(--mud-palette-#{$color});
+            }
+        }
+    }
+}
+
+.mud-alert-outlined {
+    &-normal {
+        color: var(--mud-palette-text-primary);
+        border: 1px solid var(--mud-palette-text-primary);
+    }
+
+    @each $color in $mud-palette-colors {
+        &-#{$color} {
+            color: var(--mud-palette-#{$color}-darken);
+            border: 1px solid var(--mud-palette-#{$color});
+
+            & .mud-alert-icon {
+                color: var(--mud-palette-#{$color});
+            }
+        }
+    }
+}
+
+.mud-alert-filled {
+    &-normal {
+        color: var(--mud-palette-dark-text);
+        font-weight: 500;
+        background-color: var(--mud-palette-dark);
+    }
+
+    @each $color in $mud-palette-colors {
+        &-#{$color} {
+            color: var(--mud-palette-#{$color}-text);
+            font-weight: 500;
+            background-color: var(--mud-palette-#{$color});
+        }
+    }
+}
+
+.mud-alert-icon {
+    display: flex;
+    opacity: 0.9;
+    padding: 7px 0;
+    font-size: 22px;
+    margin-right: 12px;
+}
+
+.mud-alert-message {
+    padding: 9px 0;
+}
+
+.mud-alert-action {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    margin-right: -8px;
+    padding-left: 16px;
+}

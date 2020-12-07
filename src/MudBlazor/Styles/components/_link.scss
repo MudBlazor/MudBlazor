@@ -1,0 +1,18 @@
+﻿
+.mud-link {
+    &.mud-link-underline-none {
+        text-decoration: none;
+    }
+
+    &.mud-link-underline-hover {
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    &.mud-link-underline-always {
+        text-decoration: underline;
+    }
+}

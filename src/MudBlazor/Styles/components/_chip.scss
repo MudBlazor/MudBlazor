@@ -1,0 +1,134 @@
+﻿@import '../abstracts/variables';
+
+.mud-chip {
+    border: none;
+    cursor: default;
+    display: inline-flex;
+    max-width: 100%;
+    outline: 0;
+    padding: 0 12px;
+    position: relative;
+    box-sizing: border-box;
+    transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    align-items: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    justify-content: center;
+    text-decoration: none;
+    line-height: normal;
+    margin: 4px;
+
+    &.mud-disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    &.mud-chip-size-small {
+        border-radius: 12px;
+        font-size: 12px;
+        height: 24px;
+    }
+
+    &.mud-chip-size-medium {
+        height: 32px;
+        font-size: 14px;
+        border-radius: 16px;
+    }
+
+    &.mud-chip-size-large {
+        height: 40px;
+        font-size: 16px;
+        border-radius: 20px;
+    }
+
+    &.mud-chip-label {
+        border-radius: var(--mud-default-borderradius);
+    }
+
+    &.mud-clickable {
+        cursor: pointer;
+    }
+
+    .mud-chip-icon {
+        margin-left: -4px;
+        margin-right: 4px;
+        color: inherit;
+    }
+
+    .mud-chip-close-button {
+        padding: 1px;
+        margin-right: -4px;
+        margin-left: 6px;
+        height: 18px;
+        width: 18px;
+        color: inherit;
+        transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
+
+        .mud-icon-size-small {
+            font-size: 1.15rem;
+        }
+
+        &:hover {
+            opacity: .70;
+        }
+    }
+
+    & > .mud-chip-content {
+        align-items: center;
+        display: inline-flex;
+        height: 100%;
+        max-width: 100%;
+        user-select: none;
+    }
+}
+
+
+
+.mud-chip-filled {
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-action-disabled-background);
+
+    &:hover {
+        background-color: var(--mud-palette-action-disabled);
+    }
+
+    @each $color in $mud-palette-colors {
+        &.mud-chip-color-#{$color} {
+            color: var(--mud-palette-#{$color}-text);
+            background-color: var(--mud-palette-#{$color});
+
+            &:hover {
+                background-color: var(--mud-palette-#{$color}-darken);
+            }
+
+            &.mud-chip-selected {
+                color: var(--mud-palette-#{$color});
+                background-color: var(--mud-palette-#{$color}-hover) !important;
+            }
+        }
+    }
+}
+.mud-chip-outlined {
+    color: var(--mud-palette-text-primary);
+    border: 1px solid var(--mud-palette-lines-inputs);
+
+    &:hover {
+        background-color: var(--mud-palette-action-default-hover);
+    }
+
+    @each $color in $mud-palette-colors {
+        &.mud-chip-color-#{$color} {
+            color: var(--mud-palette-#{$color});
+            border: 1px solid var(--mud-palette-#{$color});
+
+            &:hover {
+                background-color: var(--mud-palette-#{$color}-hover);
+            }
+        }
+    }
+}
+
+.mud-chip-selected {
+    color: var(--mud-palette-primary);
+    background-color: var(--mud-palette-primary-hover) !important;
+}

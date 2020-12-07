@@ -1,0 +1,42 @@
+﻿.mud-rating-root {
+    display: inline-flex;
+    color: #ffb400;
+}
+
+.mud-rating-item {
+    cursor: pointer;
+    transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+    &.mud-rating-item-active {
+        transform: scale(1.2);
+    }
+
+    &.mud-disabled, .mud-disabled:hover {
+        cursor: default;
+        pointer-events: none;
+
+        & * {
+            cursor: default;
+            color: var(--mud-palette-text-disabled);
+        }
+    }
+
+    & .mud-rating-input {
+        clip: rect(0,0,0,0);
+        margin: 0;
+        opacity: 0;
+        padding: 0;
+        z-index: 1;
+        position: absolute;
+        cursor: inherit;
+        overflow: hidden;
+    }
+
+    & svg {
+        pointer-events: none;
+
+        & path {
+            pointer-events: none;
+        }
+    }
+}

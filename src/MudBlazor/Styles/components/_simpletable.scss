@@ -1,0 +1,60 @@
+﻿
+.mud-simple-table {
+
+    table {
+        width: 100%;
+        display: table;
+        border-spacing: 0;
+        border-collapse: collapse;
+
+        thead {
+            display: table-header-group;
+        }
+
+        tbody {
+            display: table-row-group;
+        }
+
+        * tr {
+            color: inherit;
+            display: table-row;
+            outline: 0;
+            vertical-align: middle;
+
+            > td, th {
+                display: table-cell;
+                padding: 16px;
+                font-size: 0.875rem;
+                text-align: left;
+                font-weight: 400;
+                line-height: 1.43;
+                border-bottom: 1px solid var(--mud-palette-lines-default);
+                letter-spacing: 0.01071em;
+                vertical-align: inherit;
+            }
+
+            > th {
+                font-weight: 500;
+                line-height: 1.5rem;
+            }
+        }
+    }
+}
+
+.mud-simple-table.mud-table-dense {
+    & * tr {
+        & td, th {
+            padding: 6px 24px 6px 16px;
+        }
+
+        & td, th:last-child {
+            padding-right: 16px;
+        }
+    }
+}
+
+.mud-simple-table.mud-table-hover {
+    & * tr:hover {
+        background-color: var(--mud-palette-action-default-hover);
+    }
+}

@@ -1,0 +1,68 @@
+﻿@import '../abstracts/variables';
+
+.mud-icon-button {
+    flex: 0 0 auto;
+    padding: 12px;
+    overflow: visible;
+    font-size: 1.5rem;
+    text-align: center;
+    transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    border-radius: 50%;
+    color: var(--mud-palette-action-default);
+
+    &:hover {
+        background-color: var(--mud-palette-action-default-hover);
+    }
+
+    &:disabled {
+        color: var(--mud-palette-action-disabled);
+        background-color: transparent;
+    }
+}
+
+.mud-icon-button-color-inherit {
+    color: inherit;
+
+    &:hover {
+        background-color: var(--mud-palette-action-default-hover);
+    }
+}
+
+@each $color in $mud-palette-colors {
+    .mud-icon-button-color-#{$color} {
+        color: var(--mud-palette-#{$color});
+
+        &:hover {
+            background-color: var(--mud-palette-#{$color}-hover);
+        }
+    }
+}
+
+
+.mud-icon-button-label {
+    width: 100%;
+    display: flex;
+    align-items: inherit;
+    justify-content: inherit;
+}
+
+.mud-icon-button-edge-start {
+    margin-left: -12px;
+}
+
+.mud-icon-button-edge-end {
+    margin-right: -12px;
+}
+
+.mud-icon-button-size-small {
+    padding: 3px;
+    font-size: 1.125rem;
+
+    &.mud-icon-button-edge-start {
+        margin-left: -3px;
+    }
+
+    &.mud-icon-button-edge-end {
+        margin-right: -3px;
+    }
+}

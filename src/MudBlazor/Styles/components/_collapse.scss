@@ -1,0 +1,30 @@
+﻿.mud-collapse-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+
+    &.mud-navgroup-collapse {
+        transition: max-height 300ms cubic-bezier(0, 1, 0, 1);
+    }
+}
+
+.mud-collapse-expanded {
+    max-height: 2000px;
+    transition: max-height 1s ease-in-out;
+
+    &.mud-navgroup-collapse {
+        transition: max-height 300ms ease-in-out;
+    }
+}
+
+.mud-collapse-hidden {
+    visibility: hidden;
+}
+
+.mud-collapse-wrapper {
+    display: flex;
+}
+
+.mud-collapse-wrapper-inner {
+    width: 100%;
+}
