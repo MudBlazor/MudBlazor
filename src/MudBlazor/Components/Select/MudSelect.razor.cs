@@ -118,6 +118,16 @@ namespace MudBlazor
             }
         }
 
+        protected bool IsValueInList
+        {
+            get
+            {
+                if (Value == null)
+                    return false;
+                return _value_lookup.TryGetValue(Value, out var item);
+            }
+        }
+
         protected RenderFragment GetSelectedValuePresenter()
         {
             if (Value == null)
@@ -181,6 +191,13 @@ namespace MudBlazor
         [Parameter] public bool OffsetY { get; set; }
 
         [Parameter] public bool OffsetX { get; set; }
+
+        /// <summary>
+        /// If true, the select's input will not show any values that are not defined in the dropdown.
+        /// This can be useful if Value is bound to a variable which is initialized to a value which is not in the list
+        /// and you want the select to show the label / placeholder instead.
+        /// </summary>
+        [Parameter] public bool Strict { get; set; }
 
         internal bool isOpen { get; set; }
 

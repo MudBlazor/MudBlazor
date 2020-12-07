@@ -1,12 +1,12 @@
 ﻿@namespace MudBlazor
-@inherits MudComponentBase
-
+@inherits MudBooleanInput<T>
+@typeparam T
 
 <label class="@Classname" style="@Style">
     <span class="mud-switch-span">
         <span class="@SwitchClassname">
             <span class="mud-switch-button">
-                <input @attributes="UserAttributes" type="checkbox" class="mud-switch-input" @bind="@Checked" disabled="@Disabled" />
+                <input @attributes="UserAttributes" type="checkbox" class="mud-switch-input" @bind="@BoolValue" disabled="@Disabled" />
                 <span class="mud-switch-thumb"></span>
             </span>
         </span>

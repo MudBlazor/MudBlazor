@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
@@ -7,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudForm : MudComponentBase
+    public partial class MudForm : MudComponentBase, IDisposable
     {
 
         protected string Classname =>
@@ -32,6 +34,18 @@ namespace MudBlazor
         private bool _valid;
 
         /// <summary>
+        /// Validation debounce delay in milliseconds. This can help improve rendering performance of forms with real-time validation of inputs
+        /// i.e. when textfields have Immediate="true"
+        /// </summary>
+        [Parameter] public int ValidationDelay { get; set; } = 300;
+
+        /// <summary>
+        /// When true, the form will not re-render its child contents on validation updates (i.e. when IsValid changes). This is an optimization which is necessary
+        /// especially for larger forms on older devices.
+        /// </summary>
+        [Parameter] public bool SuppressRenderingOnValidation { get; set; } = true;
+
+        /// <summary>
         /// Raised when IsValid changes.
         /// </summary>
         [Parameter] public EventCallback<bool> IsValidChanged { get; set; }
@@ -54,7 +68,7 @@ namespace MudBlazor
 
         internal void Add(IFormComponent formControl)
         {
-            _formControls[formControl]=false; // false means fresh, not yet validated!
+            _formControls[formControl] = false; // false means fresh, not yet validated!
         }
 
         internal void Remove(IFormComponent formControl)
@@ -62,38 +76,59 @@ namespace MudBlazor
             _formControls.Remove(formControl);
         }
 
-        private bool _update_required;
+        private Timer _timer;
+
         /// <summary>
         /// Called by any input of the form to signal that its value changed. 
         /// </summary>
         /// <param name="formControl"></param>
         internal void Update(IFormComponent formControl)
         {
-            // request delayed update after render so we can validate all at once
-            _update_required=true;
             _formControls[formControl] = true;
-            StateHasChanged();
+            EvaluateForm();
         }
 
-        protected override Task OnAfterRenderAsync(bool firstRender)
+        private void EvaluateForm(bool debounce=true)
         {
-            if (_update_required)
+            _timer?.Dispose();
+            if (debounce && ValidationDelay > 0)
+                _timer = new Timer(OnTimerComplete, null, ValidationDelay, Timeout.Infinite);
+            else
+                OnEvaluateForm();
+        }
+
+        private void OnTimerComplete(object stateInfo) => InvokeAsync(OnEvaluateForm);
+
+        private bool _shouldRender=true; // <-- default is true, we need the form children to render
+
+        protected async Task OnEvaluateForm()
+        {
+            _errors.Clear();
+            foreach (var error in _formControls.Keys.SelectMany(control => control.ValidationErrors))
+                _errors.Add(error);
+            var old_valid = _valid;
+            // form can only be valid if none have an error and all have been validated at least once!
+            var no_errors = _formControls.Keys.All(x => x.Error == false);
+            var all_validated = _formControls.Values.All(x => x == true);
+            _valid = no_errors && all_validated;
+            try
             {
-                _update_required = false;
-                _errors.Clear();
-                foreach (var error in _formControls.Keys.SelectMany(control => control.ValidationErrors))
-                    _errors.Add(error);
-                var old_valid = _valid;
-                // form can only be valid if none have an error and all have been validated at least once!
-                var no_errors = _formControls.Keys.All(x => x.Error == false);
-                var all_validated = _formControls.Values.All(x => x == true);
-                _valid = no_errors && all_validated;
+                _shouldRender = false;
                 if (old_valid != _valid)
-                    IsValidChanged.InvokeAsync(_valid);
-                ErrorsChanged.InvokeAsync(Errors);
-                StateHasChanged();
+                    await IsValidChanged.InvokeAsync(_valid);
+                await ErrorsChanged.InvokeAsync(Errors);
             }
-            return base.OnAfterRenderAsync(firstRender);
+            finally
+            {
+                _shouldRender = true;
+            }
+        }
+
+        protected override bool ShouldRender()
+        {
+            if (!SuppressRenderingOnValidation)
+                return true;
+            return _shouldRender;
         }
 
         /// <summary>
@@ -105,8 +140,7 @@ namespace MudBlazor
             {
                 control.Validate();
             }
-            _update_required=true;
-            StateHasChanged();
+            EvaluateForm(debounce:false);
         }
 
         /// <summary>
@@ -119,8 +153,7 @@ namespace MudBlazor
                 control.Reset();
                 _formControls[control] = false;
             }
-            _update_required = true;
-            StateHasChanged();
+            EvaluateForm(debounce: false);
         }
 
         /// <summary>
@@ -133,8 +166,12 @@ namespace MudBlazor
                 control.ResetValidation();
                 _formControls[control] = false;
             }
-            _update_required = true;
-            StateHasChanged();
+            EvaluateForm(debounce: false);
+        }
+
+        public void Dispose()
+        {
+            _timer?.Dispose();
         }
     }
 }

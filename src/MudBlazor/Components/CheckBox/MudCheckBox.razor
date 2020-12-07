@@ -1,28 +1,38 @@
 ﻿@namespace MudBlazor
-@inherits MudComponentBase
+@inherits MudBooleanInput<T>
+@typeparam T
 
 <label class="@Classname" style="@Style">
     <span class="@CheckBoxClassname">
         @*note: stopping the click propagation is important here. otherwise checking the checkbox results in click events on its parent (i.e. table row), which is generally not what you would want*@
-        <input @attributes="UserAttributes" type="checkbox" class="mud-checkbox-input" @bind="@Checked" disabled="@Disabled" @onclick:stopPropagation="true"/>
-        @if (Checked)
+        <input @attributes="UserAttributes" type="checkbox" class="mud-checkbox-input" @bind="@BoolValue" disabled="@Disabled" @onclick:stopPropagation="true" />
+        @if (BoolValue == true)
         {
             <svg class="mud-svg-icon-root" focusable="false" viewBox="0 0 24 24" role="presentation" aria-hidden="true">
                 <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
             </svg>
         }
-        else
+        else if (BoolValue == false)
         {
             <svg class="mud-svg-icon-root" focusable="false" viewBox="0 0 24 24" role="presentation" aria-hidden="true">
                 <path d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"></path>
-            </svg>}
+            </svg>
+        }
+        else
+        {
+            <svg class="mud-svg-icon-root" focusable="false" viewBox="0 0 24 24" role="presentation" aria-hidden="true">
+                <path d="M17,13H7V11H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z"></path>
+            </svg>
+        }
     </span>
     @if (!String.IsNullOrEmpty(Label))
     {
-        <MudText>@Label</MudText>}
+        <MudText>@Label</MudText>
+    }
     @if (ChildContent != null)
     {
         <MudText>
             @ChildContent
-        </MudText>}
+        </MudText>
+    }
 </label>

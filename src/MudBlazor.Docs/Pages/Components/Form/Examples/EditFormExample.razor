@@ -1,39 +1,44 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @namespace MudBlazor.Docs.Examples
 
-<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
-    <DataAnnotationsValidator />
-    <MudCard Class="demo-form">
-        <MudCardContent>
-            <MudTextField Label="First name" HelperText="Max. 8 characters" @bind-Value="model.Username" For="@(() => model.Username)" />
-            <MudTextField Label="Email" @bind-Value="model.Email" For="@(() => model.Email)" />
-            <MudTextField Label="Password" HelperText="Choose a strong password" @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password" />
-            <MudTextField Label="Password" HelperText="Repeat the password" @bind-Value="model.Password2" For="@(() => model.Password2)" InputType="InputType.Password" />
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="demo-form-button">Register</MudButton>
-        </MudCardActions>
-    </MudCard>
+<div style="max-width: 400px;">
+    <EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="First name" HelperText="Max. 8 characters"
+                              @bind-Value="model.Username" For="@(() => model.Username)" />
+                <MudTextField Label="Email" Class="mt-3"
+                              @bind-Value="model.Email" For="@(() => model.Email)" />
+                <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
+                              @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password" />
+                <MudTextField Label="Password" HelperText="Repeat the password" Class="mt-3"
+                              @bind-Value="model.Password2" For="@(() => model.Password2)" InputType="InputType.Password" />
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
+            </MudCardActions>
+        </MudCard>
+        <MudText Typo="Typo.body2" Align="Align.Center" Class="my-4">
+            Fill out the form correctly to see the success message.
+        </MudText>
 
-    <MudText Typo="Typo.body2" Align="Align.Center" Class="my-4">
-        Fill out the form correctly to see the success message.
-    </MudText>
-
-    <MudExpansionPanels>
-        <MudExpansionPanel Text="Show Validation Summary">
-            @if (success)
-            {
-                <MudText Color="Color.Success">Success</MudText>
-            }
-            else
-            {
-                <MudText Color="@Color.Error">
-                    <ValidationSummary />
-                </MudText>
-            }
-        </MudExpansionPanel>
-    </MudExpansionPanels>
-</EditForm>
+        <MudExpansionPanels>
+            <MudExpansionPanel Text="Show Validation Summary">
+                @if (success)
+                {
+                    <MudText Color="Color.Success">Success</MudText>
+                }
+                else
+                {
+                    <MudText Color="@Color.Error">
+                        <ValidationSummary />
+                    </MudText>
+                }
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </EditForm>
+</div>
 
 @code {
     RegisterAccountForm model = new RegisterAccountForm();

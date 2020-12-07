@@ -7,7 +7,7 @@
         <InputContent>
             <MudInput @ref="_elementReference" @attributes="UserAttributes" InputType="@InputType" Lines="@Lines" Class="@Classname" Style="@Style" Variant="@Variant" @bind-Value="@Text" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly"
                       Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
-                      OnBlur="@OnBlurred" />
+                      OnBlur="@OnBlurred" OnKeyDown="@onKeyDown" OnKeyPress="@onKeyPress" OnKeyUp="@onKeyUp" />
         </InputContent>
     </MudInputControl>
 </CascadingValue>

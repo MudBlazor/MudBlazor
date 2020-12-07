@@ -1,0 +1,37 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using MudBlazor.Docs.Data
+
+<MudTable Items="GetElements()">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudToolBarSpacer />
+        <MudTextField @bind-Value="@searchTerm" Placeholder="Search" Adornment="Adornment.End" AdornmentIcon="@Filled.Search" IconSize="Size.Medium" Class="mt-0" Immediate="true"></MudTextField>
+    </ToolBarContent>
+
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+    </HeaderContent>
+
+    <RowTemplate>
+        <MudTd DataLabel="Name">
+            <MudHighlighter Text="@context.Name" HighlightedText="@searchTerm" />
+        </MudTd>
+    </RowTemplate>
+
+</MudTable>
+
+@code {
+
+    string searchTerm = "ch";
+
+    IEnumerable<Element> GetElements()
+    {
+        var allElements = PeriodicTable.GetElements();
+        if (string.IsNullOrWhiteSpace(searchTerm)) return allElements;
+
+        var filteredElements = allElements
+            .Where(e => e.Name.ToUpper().Contains(searchTerm.ToUpper()));
+
+        return filteredElements;
+    }
+}

@@ -99,10 +99,10 @@ namespace MudBlazor
         public void SelectOption(T value)
         {
             Value = value;
-            if (Items != null)
-                SelectedListItemIndex = Array.IndexOf(Items, value);
+            if (_items != null)
+                _selectedListItemIndex = Array.IndexOf(_items, value);
             _text = GetItemString(value);
-            Timer?.Dispose();
+            _timer?.Dispose();
             IsOpen = false;
             UpdateIcon();
             ValidateValue(Value);
@@ -119,7 +119,7 @@ namespace MudBlazor
             if (IsOpen)
             {
                 OnSearch();
-                InvokeAsync(() => ScrollToListItem(SelectedListItemIndex));
+                InvokeAsync(() => ScrollToListItem(_selectedListItemIndex));
             }
             else
             {
@@ -146,23 +146,22 @@ namespace MudBlazor
             UpdateIcon();
         }
 
-        private Timer Timer;
-        private T[] Items;
-        private int SelectedListItemIndex = 0;
+        private Timer _timer;
+        private T[] _items;
+        private int _selectedListItemIndex = 0;
 
         protected override void GenericValueChanged(T value)
         {
             base.GenericValueChanged(value);
-            Timer?.Dispose();
+            _timer?.Dispose();
         }
 
         protected override void StringValueChanged(string text)
         {
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(text))
                 Value = default(T);
-            Timer?.Dispose();
-            var autoReset = new AutoResetEvent(false);
-            Timer = new Timer(OnTimerComplete, autoReset, DebounceInterval, Timeout.Infinite);
+            _timer?.Dispose();
+            _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
         private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearch);
@@ -175,14 +174,14 @@ namespace MudBlazor
                 StateHasChanged();
                 return;
             }
-            SelectedListItemIndex = 0;
+            _selectedListItemIndex = 0;
 
             var searched_items = await SearchFunc(Text);
             if (MaxItems.HasValue)
                 searched_items = searched_items.Take(MaxItems.Value);
-            Items = searched_items.ToArray();
+            _items = searched_items.ToArray();
 
-            if (Items?.Count() == 0)
+            if (_items?.Count() == 0)
             {
                 IsOpen = false;
                 UpdateIcon();
@@ -195,7 +194,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private Func<T, object> toStringFunc;
+        private Func<T, object> _toStringFunc;
 
         private string GetItemString(T item)
         {
@@ -237,10 +236,10 @@ namespace MudBlazor
 
         private void SelectNextItem(int increment)
         {
-            if (Items == null || Items.Length == 0)
+            if (_items == null || _items.Length == 0)
                 return;
-            SelectedListItemIndex = Math.Max(0, Math.Min(Items.Length - 1, SelectedListItemIndex + increment));
-            ScrollToListItem(SelectedListItemIndex);
+            _selectedListItemIndex = Math.Max(0, Math.Min(_items.Length - 1, _selectedListItemIndex + increment));
+            ScrollToListItem(_selectedListItemIndex);
             StateHasChanged();
         }
 
@@ -265,10 +264,10 @@ namespace MudBlazor
         {
             if (IsOpen == false)
                 return;
-            if (Items == null || Items.Length == 0)
+            if (_items == null || _items.Length == 0)
                 return;
-            if (SelectedListItemIndex >= 0 && SelectedListItemIndex < Items.Length)
-                SelectOption(Items[SelectedListItemIndex]);
+            if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
+                SelectOption(_items[_selectedListItemIndex]);
         }
 
         private void OnInputBlurred(FocusEventArgs args)
@@ -283,20 +282,20 @@ namespace MudBlazor
             if (Value == null)
             {
                 Text = null;
-                Timer?.Dispose();
+                _timer?.Dispose();
                 return;
             }
             string actualvalueStr = GetItemString(Value);
             if (!object.Equals(actualvalueStr, Text))
             {
                 Text = actualvalueStr;
-                Timer?.Dispose();
+                _timer?.Dispose();
             }
         }
 
         protected override void Dispose(bool disposing)
         {
-            Timer?.Dispose();
+            _timer?.Dispose();
             base.Dispose(disposing);
         }
 

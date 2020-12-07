@@ -3,13 +3,12 @@ using System.Windows.Input;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-
 using MudBlazor.Utilities;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public partial class MudSwitch : MudComponentBase
+    public partial class MudSwitch<T> : MudBooleanInput<T>
     {
         protected string Classname =>
         new CssBuilder("mud-switch")
@@ -21,7 +20,7 @@ namespace MudBlazor
             .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple)
             .AddClass($"mud-switch-{Color.ToDescriptionString()}")
             .AddClass($"mud-switch-disabled", Disabled)
-            .AddClass($"mud-checked", Checked)
+            .AddClass($"mud-checked", BoolValue)
           .AddClass(Class)
         .Build();
 
@@ -45,20 +44,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
-        [Parameter] public EventCallback<bool> CheckedChanged { get; set; }
-
-        private bool _checked;
-        [Parameter] public bool Checked
-        {
-            get => _checked;
-            set
-            {
-                if (value != _checked)
-                {
-                    _checked = value;
-                    CheckedChanged.InvokeAsync(value);
-                }
-            }   
-        }
+      
     }
 }

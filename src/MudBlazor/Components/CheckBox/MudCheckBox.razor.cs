@@ -1,15 +1,16 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Windows.Input;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-
 using MudBlazor.Utilities;
 using MudBlazor.Extensions;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
-    public partial class MudCheckBox : MudComponentBase
+    public partial class MudCheckBox<T> : MudBooleanInput<T>
     {
         protected string Classname =>
         new CssBuilder("mud-checkbox")
@@ -49,24 +50,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        /// <summary>
-        /// A callback when CheckedChanges.
-        /// </summary>
-        [Parameter]
-        public EventCallback<bool> CheckedChanged { get; set; }
-
-        private bool _checked;
-        [Parameter] public bool Checked
-        {
-            get => _checked;
-            set
-            {
-                if (value != _checked)
-                {
-                    _checked = value;
-                    CheckedChanged.InvokeAsync(value);
-                }
-            }   
-        }
+  
     }
 }

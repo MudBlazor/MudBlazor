@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSwitch @bind-Checked="boolean">bool: @boolean</MudSwitch>
+<MudSwitch @bind-Checked="nullable" Color="Color.Primary">bool?: @nullable</MudSwitch>
+<MudSwitch @bind-Checked="integer" Color="Color.Secondary">int: @integer</MudSwitch>
+<MudSwitch @bind-Checked="str" Color="Color.Tertiary">string: "@(str)"</MudSwitch>
+
+@code{
+    public bool boolean { get; set; } = true;
+    public bool? nullable { get; set; } = true;
+    public int integer { get; set; } = 1;
+    public string str { get; set; } = "on";
+}

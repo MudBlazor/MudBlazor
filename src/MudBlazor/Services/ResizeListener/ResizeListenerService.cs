@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-
+using MudBlazor.Providers;
 
 namespace MudBlazor.Services
 {
@@ -17,14 +16,17 @@ namespace MudBlazor.Services
         /// 
         /// </summary>
         /// <param name="jsRuntime"></param>
+        /// <param name="browserWindowSizeProvider"></param>
         /// <param name="options"></param>
-        public ResizeListenerService(IJSRuntime jsRuntime, IOptions<ResizeOptions> options = null)
+        public ResizeListenerService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null)
         {
-            this._options = options.Value ?? new ResizeOptions();
+            this._options = options?.Value ?? new ResizeOptions();
             this._jsRuntime = jsRuntime;
+            this._browserWindowSizeProvider = browserWindowSizeProvider;
         }
 
         private readonly IJSRuntime _jsRuntime;
+        private readonly IBrowserWindowSizeProvider _browserWindowSizeProvider;
         private readonly ResizeOptions _options;
 #nullable enable
         private EventHandler<BrowserWindowSize>? _onResized;
@@ -83,9 +85,8 @@ namespace MudBlazor.Services
         /// <summary>
         /// Get the current BrowserWindowSize, this includes the Height and Width of the document.
         /// </summary>
-        /// <returns></returns>
-        public async ValueTask<BrowserWindowSize> GetBrowserWindowSize() =>
-            await _jsRuntime.InvokeAsync<BrowserWindowSize>($"resizeListener.getBrowserWindowSize");
+        public ValueTask<BrowserWindowSize> GetBrowserWindowSize() =>
+            _browserWindowSizeProvider.GetBrowserWindowSize();
 
         /// <summary>
         /// Invoked by jsInterop, use the OnResized event handler to subscribe.
@@ -112,7 +113,7 @@ namespace MudBlazor.Services
         public async Task<Breakpoint> GetBreakpoint( ) {
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
             if (_onResized == null || _windowSize == null)
-                _windowSize = await GetBrowserWindowSize();
+                _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
             if (_windowSize == null)
                 return Breakpoint.Xs;
             if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Xl])
@@ -131,39 +132,63 @@ namespace MudBlazor.Services
         {
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
             if (_onResized == null || _windowSize == null)
-                _windowSize = await GetBrowserWindowSize();
+                _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
+
             if (_windowSize == null)
                 return false;
-            if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Xl])
+
+            Breakpoint? minimumBreakpoint = null;
+            Breakpoint? maximumBreakpoint = null;
+
+            switch (breakpoint)
             {
-                if (breakpoint == Breakpoint.Xl || 
-                    breakpoint == Breakpoint.LgAndUp || breakpoint == Breakpoint.MdAndUp || breakpoint == Breakpoint.SmAndUp)
-                    return true;
+                case Breakpoint.Xs:
+                    minimumBreakpoint = breakpoint;
+                    maximumBreakpoint = Breakpoint.Sm;
+                    break;
+                case Breakpoint.Sm:
+                    minimumBreakpoint = breakpoint;
+                    maximumBreakpoint = Breakpoint.Md;
+                    break;
+                case Breakpoint.Md:
+                    minimumBreakpoint = breakpoint;
+                    maximumBreakpoint = Breakpoint.Lg;
+                    break;
+                case Breakpoint.Lg:
+                    minimumBreakpoint = breakpoint;
+                    maximumBreakpoint = Breakpoint.Xl;
+                    break;
+                case Breakpoint.Xl:
+                    minimumBreakpoint = breakpoint;
+                    maximumBreakpoint = null;
+                    break;
+
+                    // * and down
+                case Breakpoint.SmAndDown:
+                    maximumBreakpoint = Breakpoint.Md;
+                    break;
+                case Breakpoint.MdAndDown:
+                    maximumBreakpoint = Breakpoint.Lg;
+                    break;
+                case Breakpoint.LgAndDown:
+                    maximumBreakpoint = Breakpoint.Xl;
+                    break;
+
+                    // * and up
+                case Breakpoint.SmAndUp:
+                    minimumBreakpoint = Breakpoint.Sm;
+                    break;
+                case Breakpoint.MdAndUp:
+                    minimumBreakpoint = Breakpoint.Md;
+                    break;
+                case Breakpoint.LgAndUp:
+                    minimumBreakpoint = Breakpoint.Lg;
+                    break;
             }
-            else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Lg])
-            {
-                if (breakpoint == Breakpoint.Lg || 
-                    breakpoint == Breakpoint.LgAndUp || breakpoint == Breakpoint.MdAndUp || breakpoint == Breakpoint.SmAndUp ||
-                    breakpoint == Breakpoint.LgAndDown)
-                    return true;
-            }
-            else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Md])
-            {
-                if (breakpoint == Breakpoint.Md ||
-                    breakpoint == Breakpoint.MdAndUp || breakpoint == Breakpoint.SmAndUp ||
-                    breakpoint == Breakpoint.MdAndDown)
-                    return true;
-            }
-            else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Sm])
-            {
-                if (breakpoint == Breakpoint.Sm ||
-                    breakpoint == Breakpoint.SmAndUp || 
-                    breakpoint == Breakpoint.SmAndDown)
-                    return true;
-            }
-            else if (breakpoint == Breakpoint.Xs)
-                return true;
-            return false;
+
+            return
+                (!minimumBreakpoint.HasValue || _windowSize.Width >= BreakpointDefinition[minimumBreakpoint.Value])
+                && (!maximumBreakpoint.HasValue || _windowSize.Width < BreakpointDefinition[maximumBreakpoint.Value]);
         }
 
         bool disposed;

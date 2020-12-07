@@ -17,6 +17,7 @@
             </SectionContent>
             <SectionSource Code="CheckboxBasicExample" GitHubFolderName="Checkbox" SnippetId="wabuFtku57JoZq4T13"></SectionSource>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Checkbox with label</Title>
@@ -27,5 +28,28 @@
             </SectionContent>
             <SectionSource Code="CheckboxLabelExample" GitHubFolderName="Checkbox" SnippetId="QaPubtak57NxJlnH55"></SectionSource>
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Indeterminate state</Title>
+                <Description>When you use <CodeInline>T="bool?"</CodeInline> or bind the checkbox against a nullable bool it can have an indeterminate state when the value is <CodeInline>null</CodeInline>.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <CheckboxIndeterminateExample />
+            </SectionContent>
+            <SectionSource Code="CheckboxIndeterminateExample" GitHubFolderName="Checkbox"></SectionSource>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Binding checkbox against different data types</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <CheckboxConversionExample />
+            </SectionContent>
+            <SectionSource Code="CheckboxConversionExample" GitHubFolderName="Switch" />
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

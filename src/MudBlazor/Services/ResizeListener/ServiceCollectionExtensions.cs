@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using MudBlazor.Services;
+using MudBlazor.Providers;
 
 namespace MudBlazor.Services
 {
@@ -14,6 +15,7 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudBlazorResizeListener(this IServiceCollection services, Action<ResizeOptions> configure)
         {
             services.AddScoped<IResizeListenerService, ResizeListenerService>();
+            services.AddScoped<IBrowserWindowSizeProvider, BrowserWindowSizeProvider>();
             services.Configure(configure);
             return services;
         }
@@ -22,7 +24,7 @@ namespace MudBlazor.Services
         {
             services.AddMudBlazorResizeListener(options =>
             {
-                options.ReportRate = 300;
+                options.ReportRate = 100; // ms delay
                 options.EnableLogging = true;
                 options.SuppressInitEvent = false;
             });
