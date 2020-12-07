@@ -19,6 +19,7 @@
       .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
       .AddClass($"mud-drawer--open", Open)
       .AddClass($"mud-drawer--closed", !Open)
+      .AddClass($"mud-drawer--initial", _initial)
       .AddClass($"mud-drawer-clipped", Clipped)
       .AddClass($"mud-drawer-color-{Color.ToDescriptionString()}", Color != Color.Default)
       .AddClass($"mud-elevation-{Elevation.ToString()}")
@@ -28,7 +29,8 @@
     protected string OverlayClass =>
     new CssBuilder("mud-drawer-overlay")
       .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
-      .AddClass($"mud-drawer--open", Open)
+      .AddClass($"mud-drawer--open", !Open)
+      .AddClass($"mud-drawer--initial", _initial)
     .Build();
 
     /// <summary>
@@ -63,6 +65,7 @@
             if (_open == value)
                 return;
             _open = value;
+            _initial = false;
             Layout?.FireDrawersChanged();
             StateHasChanged();
         }
@@ -73,6 +76,7 @@
 
     private bool _open;
     private bool _clipped;
+    private bool _initial = true;
 
     [Parameter]
     public bool Clipped
@@ -108,6 +112,13 @@
 
     private void DrawerClose()
     {
-        OpenChanged.InvokeAsync(false);
+        if (Open)
+        {
+            OpenChanged.InvokeAsync(false);
+        }
+        else
+        {
+            OpenChanged.InvokeAsync(true);
+        }
     }
 }

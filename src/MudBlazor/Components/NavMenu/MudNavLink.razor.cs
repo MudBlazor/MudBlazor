@@ -28,11 +28,20 @@ namespace MudBlazor
         private async void OnNavigation(MouseEventArgs args)
         {
             var browserSize = await JsRuntime.InvokeAsync<BrowserWindowSize>("resizeListener.getBrowserWindowSize");
-            if (browserSize.Width < 1200)
+            if (browserSize.Width < 1280)
             {
                 OnClickHandler(args);
                 if (Drawer != null)
-                    await Drawer.OpenChanged.InvokeAsync(false);
+                {
+                    if (Drawer.Open)
+                    {
+                        await Drawer.OpenChanged.InvokeAsync(false);
+                    }
+                    else
+                    {
+                        await Drawer.OpenChanged.InvokeAsync(true);
+                    }
+                }
             }
         }
 
