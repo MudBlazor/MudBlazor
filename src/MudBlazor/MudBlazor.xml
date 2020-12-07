@@ -830,6 +830,56 @@
             Child content of component.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudChipSet.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.MultiSelection">
+            <summary>
+            Allows to select more than one chip.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.Mandatory">
+            <summary>
+            Will not allow to deselect the selected chip in single selection mode.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.AllClosable">
+            <summary>
+            Will make all chips closable.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.Filter">
+            <summary>
+             Will show a check-mark for the selected components.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChip">
+            <summary>
+            The currently selected chip in Choice mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChipChanged">
+            <summary>
+            Called when the selected chip changes, in Choice mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChips">
+            <summary>
+            The currently selected chips in Filter mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.SelectedChipsChanged">
+            <summary>
+            Called when the selection changed, in Filter mode
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudChipSet.OnClose">
+            <summary>
+            Called when a Chip was deleted (by click on the close icon)
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudChip.Color">
             <summary>
             The color of the component.
@@ -933,56 +983,6 @@
         <member name="P:MudBlazor.MudChip.IsSelected">
             <summary>
             Set by MudChipSet
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudChipSet.ChildContent">
-            <summary>
-            Child content of component.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudChipSet.MultiSelection">
-            <summary>
-            Allows to select more than one chip.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudChipSet.Mandatory">
-            <summary>
-            Will not allow to deselect the selected chip in single selection mode.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudChipSet.AllClosable">
-            <summary>
-            Will make all chips closable.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudChipSet.Filter">
-            <summary>
-             Will show a check-mark for the selected components.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudChipSet.SelectedChip">
-            <summary>
-            The currently selected chip in Choice mode
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudChipSet.SelectedChipChanged">
-            <summary>
-            Called when the selected chip changes, in Choice mode
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudChipSet.SelectedChips">
-            <summary>
-            The currently selected chips in Filter mode
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudChipSet.SelectedChipsChanged">
-            <summary>
-            Called when the selection changed, in Filter mode
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudChipSet.OnClose">
-            <summary>
-            Called when a Chip was deleted (by click on the close icon)
             </summary>
         </member>
         <member name="P:MudBlazor.MudDatePicker.MaxDate">
@@ -1330,36 +1330,6 @@
             Child content of component.
             </summary>
         </member>
-        <member name="P:MudBlazor.MudInput`1.ChildContent">
-            <summary>
-            ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudInputLabel.ChildContent">
-            <summary>
-            Child content of component.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudInputLabel.Disabled">
-            <summary>
-            If true, the input element will be disabled.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudInputLabel.Error">
-            <summary>
-            If true, the label will be displayed in an error state.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudInputLabel.Variant">
-            <summary>
-            Variant to use.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudInputLabel.Margin">
-            <summary>
-             Will adjust vertical spacing. 
-            </summary>
-        </member>
         <member name="P:MudBlazor.MudInputControl.ChildContent">
             <summary>
             Child content of component.
@@ -1413,6 +1383,36 @@
         <member name="P:MudBlazor.MudInputControl.Disabled">
             <summary>
             If true, the input element will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInput`1.ChildContent">
+            <summary>
+            ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputLabel.ChildContent">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputLabel.Disabled">
+            <summary>
+            If true, the input element will be disabled.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputLabel.Error">
+            <summary>
+            If true, the label will be displayed in an error state.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputLabel.Variant">
+            <summary>
+            Variant to use.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudInputLabel.Margin">
+            <summary>
+             Will adjust vertical spacing. 
             </summary>
         </member>
         <member name="P:MudBlazor.MudLink.Color">
@@ -1879,6 +1879,36 @@
             If true, the switch will be disabled.
             </summary>
         </member>
+        <member name="P:MudBlazor.MudSimpleTable.Elevation">
+            <summary>
+            Child content of component.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSimpleTable.Hover">
+            <summary>
+            If true, the table row will shade on hover.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSimpleTable.Square">
+            <summary>
+            If true, border-radius is set to 0.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSimpleTable.Dense">
+            <summary>
+            If true, compact padding will be used.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSimpleTable.Outlined">
+            <summary>
+            If true, card will be outlined.
+            </summary>
+        </member>
+        <member name="P:MudBlazor.MudSimpleTable.ChildContent">
+            <summary>
+            Child content of the component.
+            </summary>
+        </member>
         <member name="P:MudBlazor.MudTableBase.Elevation">
             <summary>
             The higher the number, the heavier the drop-shadow. 0 for no shadow.
@@ -2006,36 +2036,6 @@
         <member name="P:MudBlazor.MudTablePager.RowsPerPageString">
             <summary>
             The localizable "Rows per page:" text.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudSimpleTable.Elevation">
-            <summary>
-            Child content of component.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudSimpleTable.Hover">
-            <summary>
-            If true, the table row will shade on hover.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudSimpleTable.Square">
-            <summary>
-            If true, border-radius is set to 0.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudSimpleTable.Dense">
-            <summary>
-            If true, compact padding will be used.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudSimpleTable.Outlined">
-            <summary>
-            If true, card will be outlined.
-            </summary>
-        </member>
-        <member name="P:MudBlazor.MudSimpleTable.ChildContent">
-            <summary>
-            Child content of the component.
             </summary>
         </member>
         <member name="P:MudBlazor.MudTabs.Rounded">
