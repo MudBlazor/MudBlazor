@@ -1,0 +1,56 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "build",
+                "src/MudBlazor.sln",
+                // Ask dotnet build to generate full paths for file names.
+                "/property:GenerateFullPaths=true",
+                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build and test",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "test",
+                "src/MudBlazor.sln",
+                // Ask dotnet build to generate full paths for file names.
+                "/property:GenerateFullPaths=true",
+                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": "build",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "compile docs",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "run",
+                "--project",
+                "src/MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj",
+                // Ask dotnet build to generate full paths for file names.
+                "/property:GenerateFullPaths=true",
+                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": "build",
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}

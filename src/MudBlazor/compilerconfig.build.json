@@ -8,6 +8,6 @@
     }
   },
   "Output": {
-    "Directory": ".\\wwwroot"
+    "Directory": "./wwwroot"
   }
 }
