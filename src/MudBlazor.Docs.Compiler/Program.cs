@@ -48,8 +48,8 @@ namespace MudBlazor.Docs.Compiler
         private static void CreateHilitedCode(string doc_path)
         {
             var formatter = new HtmlClassFormatter();
-            var files = Directory.EnumerateFiles(doc_path, "*.razor", SearchOption.AllDirectories).OrderBy(s => s, System.StringComparer.Ordinal).ToArray();
-            foreach (var entry in files)
+            foreach (var entry in Directory.EnumerateFiles(doc_path, "*.razor", SearchOption.AllDirectories)
+                .OrderBy(e => e.Replace("\\","/"), StringComparer.Ordinal))
             {
                 if (entry.EndsWith("Code.razor"))
                     continue;
@@ -154,7 +154,7 @@ namespace MudBlazor.UnitTests.Components
         // These tests just check if all the API pages to see if they throw any exceptions
 
 ");
-                var mud_blazor_components = typeof(MudAlert).Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ComponentBase)));
+                var mud_blazor_components = typeof(MudAlert).Assembly.GetTypes().OrderBy(t => t.FullName).Where(t => t.IsSubclassOf(typeof(ComponentBase)));
                 foreach (var type in mud_blazor_components)
                 {
                     if (type.Name.Contains("Base"))
@@ -219,8 +219,8 @@ namespace MudBlazor.UnitTests.Components
         // These tests just check if all the examples from the doc page render without errors
 
 ");
-                var files = Directory.EnumerateFiles(docPath, "*.razor", SearchOption.AllDirectories).OrderBy(s => s, System.StringComparer.Ordinal);
-                foreach (var entry in files)
+                foreach (var entry in Directory.EnumerateFiles(docPath, "*.razor", SearchOption.AllDirectories)
+                    .OrderBy(e => e.Replace("\\","/"), StringComparer.Ordinal))
                 {
                     if (entry.EndsWith("Code.razor"))
                         continue;
@@ -267,8 +267,8 @@ namespace MudBlazor.UnitTests.Components
     public static partial class Snippets
     {
 ");
-                var files = Directory.EnumerateFiles(doc_path, "*.razor", SearchOption.AllDirectories).OrderBy(s =>s, System.StringComparer.Ordinal);
-                foreach (var entry in files)
+                foreach (var entry in Directory.EnumerateFiles(doc_path, "*.razor", SearchOption.AllDirectories)
+                    .OrderBy(e => e.Replace("\\","/"), StringComparer.Ordinal))
                 {
                     var filename = Path.GetFileName(entry);
                     var component_name = Path.GetFileNameWithoutExtension(filename);

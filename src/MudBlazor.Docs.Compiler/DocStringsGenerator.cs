@@ -28,7 +28,7 @@ namespace MudBlazor.Docs.Compiler
     {
 ");
                 var assembly = typeof(MudText).Assembly;
-                foreach (var type in assembly.GetTypes())
+                foreach (var type in assembly.GetTypes().OrderBy(t => GetSaveTypename(t)))
                 {
                     foreach (var info in type.GetPropertyInfosWithAttribute<ParameterAttribute>())
                     {
