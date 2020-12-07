@@ -336,6 +336,15 @@ namespace MudBlazor
             return base.OnInitializedAsync();
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            //Only focus automatically after the first render cycle!
+            if (firstRender && AutoFocus)
+            {
+                await FocusAsync();
+            }
+        }
+
         protected override void RegisterAsFormComponent()
         {
             if (Standalone)
