@@ -48,7 +48,8 @@ namespace MudBlazor.Docs.Compiler
         private static void CreateHilitedCode(string doc_path)
         {
             var formatter = new HtmlClassFormatter();
-            foreach (var entry in Directory.EnumerateFiles(doc_path, "*.razor", SearchOption.AllDirectories).ToArray())
+            var files = Directory.EnumerateFiles(doc_path, "*.razor", SearchOption.AllDirectories).OrderBy(s => s, System.StringComparer.Ordinal).ToArray();
+            foreach (var entry in files)
             {
                 if (entry.EndsWith("Code.razor"))
                     continue;
@@ -218,7 +219,8 @@ namespace MudBlazor.UnitTests.Components
         // These tests just check if all the examples from the doc page render without errors
 
 ");
-                foreach (var entry in Directory.EnumerateFiles(docPath, "*.razor", SearchOption.AllDirectories))
+                var files = Directory.EnumerateFiles(docPath, "*.razor", SearchOption.AllDirectories).OrderBy(s => s, System.StringComparer.Ordinal);
+                foreach (var entry in files)
                 {
                     if (entry.EndsWith("Code.razor"))
                         continue;
@@ -265,7 +267,8 @@ namespace MudBlazor.UnitTests.Components
     public static partial class Snippets
     {
 ");
-                foreach (var entry in Directory.EnumerateFiles(doc_path, "*.razor", SearchOption.AllDirectories))
+                var files = Directory.EnumerateFiles(doc_path, "*.razor", SearchOption.AllDirectories).OrderBy(s =>s, System.StringComparer.Ordinal);
+                foreach (var entry in files)
                 {
                     var filename = Path.GetFileName(entry);
                     var component_name = Path.GetFileNameWithoutExtension(filename);
