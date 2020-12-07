@@ -720,10 +720,6 @@ public const string ContainerFluidExample = @"<MudPaper>
     <MudContainer MaxWidth=""MaxWidth.Small""></MudContainer>
 </MudPaper>";
 
-public const string DatePickeViewsExample = @"<MudDatePicker Label=""Year"" OpenTo=""OpenTo.Year"" Value=""2020-10-19""/>
-<MudDatePicker Label=""Month"" OpenTo=""OpenTo.Month"" Value=""2020-10-19"" />
-<MudDatePicker Label=""Date""  Value=""2020-10-19"" />";
-
 public const string DatePickerBasicUsageExample = @"<MudDatePicker Label=""Picker in menu"" Value=""2020-10-19""/>
 <MudDatePicker Label=""Only Calendar"" Value=""2020-10-19"" DisableToolbar=""true"" HelperText=""No header"" />
 <MudDatePicker Label=""Date Format"" HelperText=""For custom cultures"" DateFormat=""dd/MM/yyyy"" Date=""@(new System.DateTime(2020,10,19))"" />";
@@ -736,6 +732,10 @@ public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=
 
 public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Date=""@(DateTime.Today.AddDays(1))""/>
 <MudDatePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Date=""@(DateTime.Today.AddDays(1))""/>";
+
+public const string DatePickerViewsExample = @"<MudDatePicker Label=""Year"" OpenTo=""OpenTo.Year"" Value=""2020-10-19""/>
+<MudDatePicker Label=""Month"" OpenTo=""OpenTo.Month"" Value=""2020-10-19"" />
+<MudDatePicker Label=""Date""  Value=""2020-10-19"" />";
 
 public const string DialogOptionsExample = @"@inject IDialogService Dialog
 

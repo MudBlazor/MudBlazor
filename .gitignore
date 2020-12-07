@@ -371,3 +371,4 @@ FodyWeavers.xsd
 **/MudBlazor.css
 **/MudBlazor.min.js
 MudBlazor.xml
+LiveSharp.dashboard.cs
