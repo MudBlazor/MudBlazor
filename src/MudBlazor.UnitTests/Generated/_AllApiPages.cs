@@ -191,20 +191,6 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void MudChipSet_API_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
-                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
-                var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudChipSet)));
-                Console.WriteLine(comp.Markup);
-         }
-
-
-        [Test]
         public void MudChip_API_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -214,6 +200,20 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
                 ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
                 var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudChip)));
+                Console.WriteLine(comp.Markup);
+         }
+
+
+        [Test]
+        public void MudChipSet_API_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudChipSet)));
                 Console.WriteLine(comp.Markup);
          }
 
@@ -331,20 +331,6 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void MudInputControl_API_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
-                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
-                var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudInputControl)));
-                Console.WriteLine(comp.Markup);
-         }
-
-
-        [Test]
         public void MudInput_API_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -382,6 +368,20 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
                 ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
                 var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudInputLabel)));
+                Console.WriteLine(comp.Markup);
+         }
+
+
+        [Test]
+        public void MudInputControl_API_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudInputControl)));
                 Console.WriteLine(comp.Markup);
          }
 
@@ -653,20 +653,6 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void MudSimpleTable_API_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
-                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
-                var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudSimpleTable)));
-                Console.WriteLine(comp.Markup);
-         }
-
-
-        [Test]
         public void MudTablePager_API_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -676,6 +662,20 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
                 ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
                 var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudTablePager)));
+                Console.WriteLine(comp.Markup);
+         }
+
+
+        [Test]
+        public void MudSimpleTable_API_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter("Type", typeof(MudSimpleTable)));
                 Console.WriteLine(comp.Markup);
          }
 

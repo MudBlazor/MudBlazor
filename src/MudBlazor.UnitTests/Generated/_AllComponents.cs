@@ -833,18 +833,6 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void DialogPassingDataExample_Test()
-        {
-                using var ctx = new Bunit.TestContext();
-                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-                ctx.Services.AddSingleton<IDialogService>(new DialogService());
-                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
-                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<DialogPassingDataExample>();
-        }
-
-
-        [Test]
         public void DialogPassingDataExample_Dialog_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -857,14 +845,14 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void DialogScrollableExample_Test()
+        public void DialogPassingDataExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<DialogScrollableExample>();
+                var comp = ctx.RenderComponent<DialogPassingDataExample>();
         }
 
 
@@ -881,14 +869,14 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void DialogTemplateExample_Test()
+        public void DialogScrollableExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<DialogTemplateExample>();
+                var comp = ctx.RenderComponent<DialogScrollableExample>();
         }
 
 
@@ -905,14 +893,14 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
-        public void DialogUsageExample_Test()
+        public void DialogTemplateExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
                 ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
                 ctx.Services.AddSingleton<IDialogService>(new DialogService());
                 ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-                var comp = ctx.RenderComponent<DialogUsageExample>();
+                var comp = ctx.RenderComponent<DialogTemplateExample>();
         }
 
 
@@ -925,6 +913,18 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<DialogUsageExample_Dialog>();
+        }
+
+
+        [Test]
+        public void DialogUsageExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<DialogUsageExample>();
         }
 
 
