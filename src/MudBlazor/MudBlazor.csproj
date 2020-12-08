@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
-    <Version>1.1.5</Version>
+    <Version>1.2.0</Version>
     <Authors>Garderoben</Authors>
     <Company>Gardnet</Company>
     <Title>MudBlazor</Title>

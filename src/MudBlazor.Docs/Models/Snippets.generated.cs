@@ -940,7 +940,7 @@ public const string DrawerAnchorExample = @"<MudLayout>
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
     </MudAppBar>
-    <MudDrawer Open=""@open"" Clipped=""@clipped"" Anchor=""Anchor.Right"" Elevation=""1"">
+    <MudDrawer @bind-Open=""@open"" Clipped=""@clipped"" Anchor=""Anchor.Right"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -975,7 +975,7 @@ public const string DrawerClippingExample = @"<MudLayout>
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
     </MudAppBar>
-    <MudDrawer Open=""@open"" Clipped=""@clipped"" Elevation=""1"">
+    <MudDrawer @bind-Open=""@open"" Clipped=""@clipped"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -1009,7 +1009,7 @@ public const string DrawerDoubleExample = @"<MudLayout>
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Material.Settings"" Color=""Color.Inherit"" OnClick=""@ToggleDrawerTwo""  />
     </MudAppBar>
-    <MudDrawer Open=""@drawerOneOpen"" Clipped=""@drawerOneClipped"" Anchor=""Anchor.Left"" Elevation=""25"">
+    <MudDrawer @bind-Open=""@drawerOneOpen"" Clipped=""@drawerOneClipped"" Anchor=""Anchor.Left"" Elevation=""25"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -1019,7 +1019,7 @@ public const string DrawerDoubleExample = @"<MudLayout>
             <MudNavLink Match=""NavLinkMatch.All"">Community</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
-    <MudDrawer Open=""@drawerTwoOpen"" Clipped=""@drawerTwoClipped"" Anchor=""Anchor.Right"" Elevation=""1"">
+    <MudDrawer @bind-Open=""@drawerTwoOpen"" Clipped=""@drawerTwoClipped"" Anchor=""Anchor.Right"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">Settings</MudText>
         </MudDrawerHeader>
