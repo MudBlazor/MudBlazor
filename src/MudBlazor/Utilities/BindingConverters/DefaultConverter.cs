@@ -22,6 +22,9 @@ namespace MudBlazor
         {
             try
             {
+                // this is important, or otherwise all the TryParse down there might fail.
+                if (string.IsNullOrEmpty(value))
+                    return default(T);
                 // string
                 if (typeof(T) == typeof(string))
                 {
@@ -52,77 +55,77 @@ namespace MudBlazor
                 {
                     if (sbyte.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number (sbyte)");
+                    UpdateGetError("Not a valid number");
                 }
                 // byte
                 else if (typeof(T) == typeof(byte) || typeof(T) == typeof(byte?))
                 {
                     if (byte.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number (byte)");
+                    UpdateGetError("Not a valid number");
                 }
                 // short
                 else if (typeof(T) == typeof(short) || typeof(T) == typeof(short?))
                 {
                     if (short.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number (short)");
+                    UpdateGetError("Not a valid number");
                 }
                 // ushort
                 else if (typeof(T) == typeof(ushort) || typeof(T) == typeof(ushort?))
                 {
                     if (ushort.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number (ushort)");
+                    UpdateGetError("Not a valid number");
                 }
                 // int
                 else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
                 {
                     if (int.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number (int)");
+                    UpdateGetError("Not a valid number");
                 }
                 // uint
                 else if (typeof(T) == typeof(uint) || typeof(T) == typeof(uint?))
                 {
                     if (uint.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number (uint)");
+                    UpdateGetError("Not a valid number");
                 }
                 // long
                 else if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
                 {
                     if (long.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number (long)");
+                    UpdateGetError("Not a valid number");
                 }
                 // ulong
                 else if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
                 {
                     if (ulong.TryParse(value, NumberStyles.Integer, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number (ulong)");
+                    UpdateGetError("Not a valid number");
                 }
                 // float
                 else if (typeof(T) == typeof(float) || typeof(T) == typeof(float?))
                 {
                     if (float.TryParse(value, NumberStyles.Any, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number (float)");
+                    UpdateGetError("Not a valid number");
                 }
                 // double
                 else if (typeof(T) == typeof(double) || typeof(T) == typeof(double?))
                 {
                     if (double.TryParse(value, NumberStyles.Any, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number (double)");
+                    UpdateGetError("Not a valid number");
                 }
                 // decimal
                 else if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
                 {
                     if (decimal.TryParse(value, NumberStyles.Any, Culture, out var parsedValue))
                         return (T)(object)parsedValue;
-                    UpdateGetError("Not a valid number (decimal)");
+                    UpdateGetError("Not a valid number");
                 }
                 // guid
                 else if (typeof(T) == typeof(Guid) || typeof(T) == typeof(Guid?))
