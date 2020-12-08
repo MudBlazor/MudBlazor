@@ -145,6 +145,7 @@ using System;
 using Toolbelt.Blazor.HeadElement;
 using MudBlazor.UnitTests;
 using MudBlazor.Charts;
+using Bunit;
 
 namespace MudBlazor.UnitTests.Components
 {
