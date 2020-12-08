@@ -3249,6 +3249,36 @@ public const string TextFieldDenseExample = @"<MudGrid>
     public string TextValue { get; set; }
 }";
 
+public const string TextFieldFocusExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""12"" md=""12"">
+        <MudTextField T=""string"" Label=""Autofocus"" Variant=""Variant.Text"" Text=""@sampleText"" AutoFocus=""true"" />
+    </MudItem>
+    <MudItem xs=""12"">
+        <MudTextField @ref=""multilineReference"" T=""string"" Label=""Manual focus"" Variant=""Variant.Filled"" Text=""@sampleText"" Lines=""3"" />
+    </MudItem>
+    <MudItem xs=""12"" Class=""d-flex justify-end"">
+        <MudButton @onclick=""() => multilineReference.FocusAsync()"">
+            Focus
+        </MudButton>
+    </MudItem>
+    <MudItem xs=""12"">
+        <MudTextField @ref=""singleLineReference"" T=""string"" Label=""Manual focus"" Variant=""Variant.Filled"" Text=""@sampleText"" />
+    </MudItem>
+    <MudItem xs=""12"" Class=""d-flex justify-end"">
+        <MudButton @onclick=""() => singleLineReference.FocusAsync()"">
+            Focus
+        </MudButton>
+    </MudItem>
+</MudGrid>
+
+@code
+{
+    private MudTextField<string> multilineReference;
+    private MudTextField<string> singleLineReference;
+
+    string sampleText = ""Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."";
+}";
+
 public const string TextFieldFormPropsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""6"" md=""3"">
         <MudTextField @bind-Value=""HelperText"" Label=""With Helper"" HelperText=""Some helping Text"" Variant=""Variant.Text"" />
