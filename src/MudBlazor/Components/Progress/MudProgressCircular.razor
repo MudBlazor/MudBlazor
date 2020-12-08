@@ -3,7 +3,7 @@
 @using MudBlazor.Extensions;
 @inherits MudComponentBase
 
-<div class="@DivClassname" role="progressbar" style="width: 40px; height: 40px; transform: rotate(-90deg);" aria-valuenow="@Value">
+<div class="@DivClassname" role="progressbar" style="transform: rotate(-90deg);@Style" aria-valuenow="@Value">
     <svg class="mud-progress-circular-svg" viewBox="22 22 44 44">
         @if (Indeterminate)
         {
@@ -23,6 +23,7 @@
     protected string DivClassname =>
     new CssBuilder("mud-progress-circular")
         .AddClass($"mud-{Color.ToDescriptionString()}-text")
+        .AddClass($"mud-progress-{Size.ToDescriptionString()}")
         .AddClass($"mud-progress-indeterminate", Indeterminate)
         .AddClass($"mud-progress-static", !Indeterminate)
         .AddClass(Class)
