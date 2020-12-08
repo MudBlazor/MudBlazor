@@ -1,0 +1,37 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+@inherits MudComponentBase
+
+@if (Visible)
+{
+    <div @attributes="UserAttributes" class="@Classname" style="@Style">
+        @if (ChildContent == null)
+        {
+            <MudProgressCircular Size="@Size" StrokeWidth="4" Color="Color.Primary" Indeterminate="true" />
+        }
+        else
+        {
+            @ChildContent
+        }
+    </div>
+}
+
+@code
+{
+    protected string Classname =>
+        new CssBuilder("mud-working")
+            .AddClass(Class)
+            .Build();
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public bool Visible { get; set; } = true;
+
+    [Parameter]
+    public Size Size { get; set; } = Size.Medium;
+
+    [Parameter]
+    public Color Color { get; set; } = Color.Primary;
+}
