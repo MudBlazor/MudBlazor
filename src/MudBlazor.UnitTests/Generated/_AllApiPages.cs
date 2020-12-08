@@ -14,6 +14,10 @@ using MudBlazor.UnitTests;
 using MudBlazor.Charts;
 using Bunit;
 
+#if NET5_0
+using ComponentParameter = Bunit.ComponentParameter;
+#endif
+
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
