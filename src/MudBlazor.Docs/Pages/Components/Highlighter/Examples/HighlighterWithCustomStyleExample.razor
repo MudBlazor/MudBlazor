@@ -1,0 +1,30 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Elevation="0">
+    <MudList>
+        <MudListSubheader>
+            <MudTextField @bind-Value="@searchTerm" AdornmentIcon="@Filled.Brush"
+                          Adornment="Adornment.End" Immediate="true" Variant="Variant.Outlined" />
+        </MudListSubheader>
+
+        @foreach (var sentence in sentences)
+        {
+            <MudListItem @key="sentence" Icon="@Filled.Folder">
+                <MudHighlighter Class="mud-primary-text"
+                             Style="background-color:transparent;font-weight:bold"
+                             Text="@sentence"
+                             HighlightedText="@searchTerm" />
+            </MudListItem>
+        }
+    </MudList>
+</MudPaper>
+
+@code {
+    string searchTerm = "it";
+    IEnumerable<string> sentences = new List<string>
+    {
+        "This is the first item", "This is the second item", "This is the third item"
+    };
+
+
+}

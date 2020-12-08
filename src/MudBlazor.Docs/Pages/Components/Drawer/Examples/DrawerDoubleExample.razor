@@ -9,7 +9,7 @@
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Material.Settings" Color="Color.Inherit" OnClick="@ToggleDrawerTwo"  />
     </MudAppBar>
-    <MudDrawer Open="@drawerOneOpen" Clipped="@drawerOneClipped" Anchor="Anchor.Left" Elevation="25">
+    <MudDrawer @bind-Open="@drawerOneOpen" Clipped="@drawerOneClipped" Anchor="Anchor.Left" Elevation="25">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">My App</MudText>
         </MudDrawerHeader>
@@ -19,7 +19,7 @@
             <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
-    <MudDrawer Open="@drawerTwoOpen" Clipped="@drawerTwoClipped" Anchor="Anchor.Right" Elevation="1">
+    <MudDrawer @bind-Open="@drawerTwoOpen" Clipped="@drawerTwoClipped" Anchor="Anchor.Right" Elevation="1">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">Settings</MudText>
         </MudDrawerHeader>

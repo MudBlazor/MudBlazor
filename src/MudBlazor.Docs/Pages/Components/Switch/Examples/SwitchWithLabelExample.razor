@@ -3,7 +3,7 @@
 <MudSwitch @bind-Checked="@Label_Switch1" Label="Default" />
 <MudSwitch @bind-Checked="@Label_Switch2" Label="Primary" Color="Color.Primary" />
 <MudSwitch @bind-Checked="@Label_Switch2" Label="Secondary" Color="Color.Secondary" />
-<MudSwitch Disabled="true" Label="Disabled" />
+<MudSwitch T="bool" Disabled="true" Label="Disabled" />
 
 @code{
     public bool Label_Switch1 { get; set; } = false;

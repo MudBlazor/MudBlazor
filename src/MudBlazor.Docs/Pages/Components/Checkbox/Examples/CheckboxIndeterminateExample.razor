@@ -1,0 +1,10 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudCheckBox @bind-Checked="value" Color="@Color.Primary">
+    Value: @(value == null ? "null" : value.ToString())
+</MudCheckBox>
+<MudButton OnClick="@(()=>value=null)">Reset</MudButton>
+
+@code {
+    public bool? value { get; set; } = null;
+}

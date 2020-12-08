@@ -3,7 +3,7 @@
 <MudGrid>
     <MudItem xs="12" md="3">
         <MudForm>
-            <MudSwitch CheckedChanged="@OnPostitionChange" Color="Color.Primary" Label="Open Top" />
+            <MudSwitch T="bool" CheckedChanged="@OnPostitionChange" Color="Color.Primary" Label="Open Top" />
             <MudSwitch @bind-Checked="@OffsetY" Color="Color.Secondary" Label="Offset Y" />
             <MudSwitch @bind-Checked="@Dense" Color="Color.Primary" Label="Dense" />
         </MudForm>

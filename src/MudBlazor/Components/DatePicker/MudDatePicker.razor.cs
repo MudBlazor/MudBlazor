@@ -183,8 +183,11 @@ namespace MudBlazor
         protected async void OnDayClicked(DateTime dateTime)
         {
             Date = dateTime;
-            await Task.Delay(ClosingDelay);
-            Picker.Close();
+            if(PickerVariant != PickerVariant.Static)
+            {
+                await Task.Delay(ClosingDelay);
+                Picker.Close();
+            }
         }
 
         /// <summary>

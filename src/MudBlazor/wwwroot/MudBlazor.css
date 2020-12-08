@@ -150,7 +150,7 @@ app, .mud-layout {
   padding: 0.6rem 1.25rem 0.7rem 1.25rem;
   position: fixed;
   width: 100%;
-  z-index: 1000; }
+  z-index: 9999; }
 
 #blazor-error-ui .dismiss {
   cursor: pointer;
@@ -2173,7 +2173,6 @@ ul {
   box-sizing: border-box;
   min-height: 36px;
   transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 500;
   line-height: 1.75;
   border-radius: 50%;
@@ -2256,13 +2255,17 @@ ul {
   min-width: 48px;
   min-height: auto;
   border-radius: 24px; }
+  .mud-fab-extended.mud-fab-size-large .mud-svg-icon-root {
+    margin-right: 8px; }
 
 .mud-fab-extended.mud-fab-size-small {
   width: auto;
   height: 34px;
-  padding: 0 10px;
+  padding: 0 12px;
   min-width: 34px;
   border-radius: 17px; }
+  .mud-fab-extended.mud-fab-size-small .mud-svg-icon-root {
+    margin-right: 4px; }
 
 .mud-fab-extended.mud-fab-size-medium {
   width: auto;
@@ -2270,6 +2273,8 @@ ul {
   padding: 0 16px;
   min-width: 40px;
   border-radius: 20px; }
+  .mud-fab-extended.mud-fab-size-medium .mud-svg-icon-root {
+    margin-right: 8px; }
 
 .mud-fab-color-inherit {
   color: inherit; }
@@ -4004,6 +4009,62 @@ ul {
 
 .mud-tab-badge {
   margin-left: 8px; }
+
+.mud-tabs-toolbar-primary {
+  background-color: var(--mud-palette-primary); }
+  .mud-tabs-toolbar-primary .mud-tab {
+    color: var(--mud-palette-primary-text); }
+  .mud-tabs-toolbar-primary .mud-tab-slider {
+    background: var(--mud-palette-primary-text); }
+
+.mud-tabs-toolbar-secondary {
+  background-color: var(--mud-palette-secondary); }
+  .mud-tabs-toolbar-secondary .mud-tab {
+    color: var(--mud-palette-secondary-text); }
+  .mud-tabs-toolbar-secondary .mud-tab-slider {
+    background: var(--mud-palette-secondary-text); }
+
+.mud-tabs-toolbar-tertiary {
+  background-color: var(--mud-palette-tertiary); }
+  .mud-tabs-toolbar-tertiary .mud-tab {
+    color: var(--mud-palette-tertiary-text); }
+  .mud-tabs-toolbar-tertiary .mud-tab-slider {
+    background: var(--mud-palette-tertiary-text); }
+
+.mud-tabs-toolbar-info {
+  background-color: var(--mud-palette-info); }
+  .mud-tabs-toolbar-info .mud-tab {
+    color: var(--mud-palette-info-text); }
+  .mud-tabs-toolbar-info .mud-tab-slider {
+    background: var(--mud-palette-info-text); }
+
+.mud-tabs-toolbar-success {
+  background-color: var(--mud-palette-success); }
+  .mud-tabs-toolbar-success .mud-tab {
+    color: var(--mud-palette-success-text); }
+  .mud-tabs-toolbar-success .mud-tab-slider {
+    background: var(--mud-palette-success-text); }
+
+.mud-tabs-toolbar-warning {
+  background-color: var(--mud-palette-warning); }
+  .mud-tabs-toolbar-warning .mud-tab {
+    color: var(--mud-palette-warning-text); }
+  .mud-tabs-toolbar-warning .mud-tab-slider {
+    background: var(--mud-palette-warning-text); }
+
+.mud-tabs-toolbar-error {
+  background-color: var(--mud-palette-error); }
+  .mud-tabs-toolbar-error .mud-tab {
+    color: var(--mud-palette-error-text); }
+  .mud-tabs-toolbar-error .mud-tab-slider {
+    background: var(--mud-palette-error-text); }
+
+.mud-tabs-toolbar-dark {
+  background-color: var(--mud-palette-dark); }
+  .mud-tabs-toolbar-dark .mud-tab {
+    color: var(--mud-palette-dark-text); }
+  .mud-tabs-toolbar-dark .mud-tab-slider {
+    background: var(--mud-palette-dark-text); }
 
 .mud-select {
   display: flex;
@@ -9094,38 +9155,41 @@ ul {
   background-color: var(--mud-palette-drawer-background); }
   .mud-drawer.mud-drawer--open {
     transform: none;
-    transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms; }
+    transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+    visibility: hidden; }
+  @media (min-width: 1280px) {
+    .mud-drawer.mud-drawer--open {
+      transform: none;
+      transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+      visibility: unset; } }
   .mud-drawer.mud-drawer-anchor-left {
     left: 0;
     right: auto; }
     .mud-drawer.mud-drawer-anchor-left.mud-drawer--closed {
-      transform: translateX(calc(-1 * var(--mud-drawer-width)));
-      visibility: hidden; }
-    .mud-drawer.mud-drawer-anchor-left.mud-drawer--force-close {
-      transform: translateX(calc(-1 * var(--mud-drawer-width)));
-      visibility: hidden; }
-    @media (min-width: 0px) {
-      .mud-drawer.mud-drawer-anchor-left.mud-drawer--force-close {
+      transform: none;
+      transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+      visibility: unset; }
+      .mud-drawer.mud-drawer-anchor-left.mud-drawer--closed.mud-drawer--initial {
+        transform: translateX(calc(-1 * var(--mud-drawer-width)));
+        visibility: hidden; }
+    @media (min-width: 1280px) {
+      .mud-drawer.mud-drawer-anchor-left.mud-drawer--closed {
         transform: translateX(calc(-1 * var(--mud-drawer-width)));
         visibility: hidden; } }
-    @media (min-width: 1280px) {
-      .mud-drawer.mud-drawer-anchor-left.mud-drawer--force-close {
-        transform: unset;
-        visibility: unset; } }
   .mud-drawer.mud-drawer-anchor-right {
     left: auto;
     right: 0; }
     .mud-drawer.mud-drawer-anchor-right.mud-drawer--closed {
-      transform: translateX(var(--mud-drawer-width));
-      visibility: hidden; }
-    @media (min-width: 0px) {
-      .mud-drawer.mud-drawer-anchor-right.mud-drawer--force-close {
+      transform: none;
+      transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+      visibility: unset; }
+      .mud-drawer.mud-drawer-anchor-right.mud-drawer--closed.mud-drawer--initial {
+        transform: translateX(var(--mud-drawer-width));
+        visibility: hidden; }
+    @media (min-width: 1280px) {
+      .mud-drawer.mud-drawer-anchor-right.mud-drawer--closed {
         transform: translateX(var(--mud-drawer-width));
         visibility: hidden; } }
-    @media (min-width: 1280px) {
-      .mud-drawer.mud-drawer-anchor-right.mud-drawer--force-close {
-        transform: unset;
-        visibility: unset; } }
 
 .mud-drawer-header {
   display: flex;
@@ -9148,11 +9212,10 @@ ul {
   -webkit-animation: mud-animation-fadein ease 0.15s;
   -moz-animation: mud-animation-fadein ease 0.15s;
   -o-animation: mud-animation-fadein ease 0.15s; }
-  @media (min-width: 0px) {
-    .mud-drawer-overlay.mud-drawer--open {
-      display: block; }
-    .mud-drawer-overlay.mud-drawer--force-close {
-      display: none; } }
+  .mud-drawer-overlay.mud-drawer--open {
+    display: block; }
+    .mud-drawer-overlay.mud-drawer--open.mud-drawer--initial {
+      display: none; }
   @media (min-width: 1280px) {
     .mud-drawer-overlay.mud-drawer--open {
       display: none; } }

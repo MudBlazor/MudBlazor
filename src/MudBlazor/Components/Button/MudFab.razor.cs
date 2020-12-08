@@ -35,6 +35,11 @@ namespace MudBlazor
         [Parameter] public string Icon { get; set; }
 
         /// <summary>
+        /// The color of the icon. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
         /// If applied the text will be added to the component.
         /// </summary>
         [Parameter] public string Label { get; set; }

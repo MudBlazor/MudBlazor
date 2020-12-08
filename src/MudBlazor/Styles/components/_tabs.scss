@@ -1,4 +1,6 @@
-﻿.mud-tabs {
+﻿@import '../abstracts/variables';
+
+.mud-tabs {
 
     &.mud-tabs-vertical {
         display:flex;
@@ -120,4 +122,18 @@
 
 .mud-tab-badge{
     margin-left:8px;
+}
+
+@each $color in $mud-palette-colors {
+    .mud-tabs-toolbar-#{$color} {
+        background-color: var(--mud-palette-#{$color});
+
+        .mud-tab {
+            color: var(--mud-palette-#{$color}-text);
+        }
+
+        .mud-tab-slider {
+            background: var(--mud-palette-#{$color}-text);
+        }
+    }
 }

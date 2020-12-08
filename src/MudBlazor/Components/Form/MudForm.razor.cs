@@ -34,9 +34,16 @@ namespace MudBlazor
         private bool _valid;
 
         /// <summary>
-        /// Validation debounce delay in milliseconds. 
+        /// Validation debounce delay in milliseconds. This can help improve rendering performance of forms with real-time validation of inputs
+        /// i.e. when textfields have Immediate="true"
         /// </summary>
         [Parameter] public int ValidationDelay { get; set; } = 300;
+
+        /// <summary>
+        /// When true, the form will not re-render its child contents on validation updates (i.e. when IsValid changes). This is an optimization which is necessary
+        /// especially for larger forms on older devices.
+        /// </summary>
+        [Parameter] public bool SuppressRenderingOnValidation { get; set; } = true;
 
         /// <summary>
         /// Raised when IsValid changes.
@@ -119,6 +126,8 @@ namespace MudBlazor
 
         protected override bool ShouldRender()
         {
+            if (!SuppressRenderingOnValidation)
+                return true;
             return _shouldRender;
         }
 
