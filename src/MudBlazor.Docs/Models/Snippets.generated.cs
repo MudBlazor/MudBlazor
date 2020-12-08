@@ -1865,6 +1865,37 @@ public const string NavMenuIconExample = @"<MudNavMenu Class=""demo-navmenu"">
     <MudNavLink Href=""/about"">About</MudNavLink>
 </MudNavMenu>";
 
+public const string OverlayAbsoluteExample = @"<MudPaper Class=""px-4 pt-4 pb-16"">
+    <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ToggleOverlay"">Show Overlay</MudButton>
+    <MudOverlay Visible=""isVisible"" OnClick=""ToggleOverlay"" BackgroundColor=""rgba(0,0,0,0.5)"" FadeIn=""true"" Absolute=""true""></MudOverlay>
+</MudPaper>
+
+
+
+@code {
+    private bool isVisible;
+
+    public void ToggleOverlay()
+    {
+        isVisible = !isVisible;
+        StateHasChanged();
+    }
+}";
+
+public const string OverlayUsageExample = @"<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ToggleOverlay"">Show Overlay</MudButton>
+<MudOverlay Visible=""isVisible"" OnClick=""ToggleOverlay"" BackgroundColor=""rgba(0,0,0,0.5)"" FadeIn=""true""></MudOverlay>
+
+
+@code {
+    private bool isVisible;
+
+    public void ToggleOverlay()
+    {
+        isVisible = !isVisible;
+        StateHasChanged();
+    }
+}";
+
 public const string PaperComponentExample = @"<MudPaper Elevation=""0""></MudPaper>
 <MudPaper></MudPaper>
 <MudPaper Elevation=""3""></MudPaper>";

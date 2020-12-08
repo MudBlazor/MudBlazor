@@ -1885,6 +1885,14 @@ public const string MudNavMenu_UserAttributes = @"UserAttributes carries all att
 
 public const string MudOverlay_ChildContent = @"Child content of the component.";
 
+public const string MudOverlay_Visible = @"If true overlay will be visible.";
+
+public const string MudOverlay_BackgroundColor = @"";
+
+public const string MudOverlay_FadeIn = @"If true will fadein.";
+
+public const string MudOverlay_Absolute = @"Icon class names, separated by space";
+
 public const string MudOverlay_CommandParameter = @"Command parameter.";
 
 public const string MudOverlay_Command = @"Command executed when the user clicks on an element.";

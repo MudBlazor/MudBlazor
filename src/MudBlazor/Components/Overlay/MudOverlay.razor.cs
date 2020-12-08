@@ -14,13 +14,38 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-overlay")
+                .AddClass("mud-animation", FadeIn)
+                .AddClass("mud-absolute", Absolute)
                 .AddClass(Class)
                 .Build();
+
+        protected string Styles =>
+            new StyleBuilder()
+            .AddStyle("background-color", $"{BackgroundColor}", !String.IsNullOrEmpty(BackgroundColor))
+            .AddStyle(Style)
+            .Build();
 
         /// <summary>
         /// Child content of the component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// If true overlay will be visible.
+        /// </summary>
+        [Parameter] public bool Visible { get; set; }
+
+        [Parameter] public string BackgroundColor { get; set; }
+
+        /// <summary>
+        /// If true will fadein.
+        /// </summary>
+        [Parameter] public bool FadeIn { get; set; }
+
+        /// <summary>
+        /// Icon class names, separated by space
+        /// </summary>
+        [Parameter] public bool Absolute { get; set; }
 
         /// <summary>
         /// Command parameter.
