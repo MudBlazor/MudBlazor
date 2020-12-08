@@ -1,0 +1,32 @@
+﻿@page "/components/working"
+
+<DocsPage>
+    <DocsPageHeader Title="Working" SubTitle="An overlay for areas to show work in progress or loading. It covers an area and shows a circular progress indicator by default." />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Basic</Title>
+                <Description>
+                    <MudAlert Severity="Severity.Info">The area to be covered must have CSS position set to relative. (position:relative;)</MudAlert>
+                    <MudText Class="py-4">
+                        Set the property <CodeInline>Visible</CodeInline> to <CodeInline>true</CodeInline> to show and to <CodeInline>false</CodeInline> to hide
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <WorkingExample />
+            </SectionContent>
+            <SectionSource Code="WorkingExample" GitHubFolderName="Working" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Custom indicator</Title>
+                <Description>You can add a custom indicator by adding it to the child content.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <WorkingCustomExample />
+            </SectionContent>
+            <SectionSource Code="WorkingCustomExample" GitHubFolderName="Working" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

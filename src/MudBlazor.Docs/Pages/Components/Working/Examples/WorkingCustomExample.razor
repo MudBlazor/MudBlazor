@@ -1,0 +1,41 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid>
+    <MudItem>
+        <MudCard Style="position:relative;">
+            <MudCardContent>
+                <MudWorking>
+                    <MudChip Color="Color.Primary">Loading</MudChip>
+                </MudWorking>
+                <LoremIpsum></LoremIpsum>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+    <MudItem>
+        <MudCard Style="position:relative;">
+            <MudCardContent>
+                <MudWorking>
+
+                    <svg style="height: 24px; width: 104px;" viewBox="0 0 52 12">
+                        <circle style="fill: var(--mud-palette-primary)" stroke="none" cx="6" cy="6" r="6">
+                            <animate attributeName="opacity" dur="1s" values="0;1;0" repeatCount="indefinite" begin="0.1"></animate>
+                        </circle>
+                        <circle style="fill: var(--mud-palette-secondary)" stroke="none" cx="26" cy="6" r="6">
+                            <animate attributeName="opacity" dur="1s" values="0;1;0" repeatCount="indefinite" begin="0.2"></animate>
+                        </circle>
+                        <circle style="fill: var(--mud-palette-tertiary)" stroke="none" cx="46" cy="6" r="6">
+                            <animate attributeName="opacity" dur="1s" values="0;1;0" repeatCount="indefinite" begin="0.3"></animate>
+                        </circle>
+                    </svg>
+                  
+                </MudWorking>
+                <LoremIpsum></LoremIpsum>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public bool WorkInProgress { get; set; } = true;
+}

@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem>
+        <MudCard Style="position:relative;">
+            <MudWorking Visible="@WorkInProgress" />
+            <MudCardContent>
+                <LoremIpsum></LoremIpsum>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Filled" OnClick="@(() => WorkInProgress = true)">Action</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+    <MudItem>
+        <MudSwitch @bind-Checked="@WorkInProgress" Label="Toggle" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    public bool WorkInProgress { get; set; } = true;
+}
