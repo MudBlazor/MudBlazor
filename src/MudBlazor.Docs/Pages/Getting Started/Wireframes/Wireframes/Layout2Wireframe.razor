@@ -11,7 +11,7 @@
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Material.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
     </MudAppBar>
-    <MudDrawer Open="_drawerOpen" Clipped="true" Elevation="2">
+    <MudDrawer @bind-Open="_drawerOpen" Clipped="true" Elevation="2">
         @*NavMenu*@
     </MudDrawer>
     <MudMainContent>

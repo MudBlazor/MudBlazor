@@ -1,0 +1,12 @@
+﻿@using MudBlazor;
+@namespace MudBlazor.UnitTests
+
+<MudForm ValidationDelay="0">
+    <MudCheckBox T="bool" Required="true" RequiredError="You must agree">
+        You agree that MudBlazor is awesome
+    </MudCheckBox>
+</MudForm>
+
+@code {
+    public static string __description__ = "Without clicking the checkbox the form should not validate.";
+}

@@ -24,7 +24,7 @@ namespace MudBlazor.Services
         {
             services.AddMudBlazorResizeListener(options =>
             {
-                options.ReportRate = 300;
+                options.ReportRate = 100; // ms delay
                 options.EnableLogging = true;
                 options.SuppressInitEvent = false;
             });

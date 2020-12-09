@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 using System.Globalization;
-using MudBlazor.Base;
 
 namespace MudBlazor
 {
@@ -339,6 +338,13 @@ namespace MudBlazor
             base.OnParametersSet();
         }
 
-
+        protected override void ResetValue()
+        {
+            base.ResetValue();
+            if (string.IsNullOrWhiteSpace(_text))
+                return;
+            _text = null;
+            StateHasChanged();
+        }
     }
 }

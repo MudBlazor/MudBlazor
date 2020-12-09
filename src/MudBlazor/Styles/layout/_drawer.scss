@@ -15,6 +15,15 @@
     &.mud-drawer--open {
         transform: none;
         transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+        visibility: hidden;
+    }
+
+    @media (min-width:1280px) {
+        &.mud-drawer--open {
+            transform: none;
+            transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+            visibility: unset;
+        }
     }
 
     &.mud-drawer-anchor-left {
@@ -22,26 +31,20 @@
         right: auto;
 
         &.mud-drawer--closed {
-            transform: translateX(calc(-1 * var(--mud-drawer-width)));
-            visibility: hidden;
-        }
+            transform: none;
+            transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+            visibility: unset;
 
-        &.mud-drawer--force-close {
-            transform: translateX(calc(-1 * var(--mud-drawer-width)));
-            visibility: hidden;
-        }
-
-        @media (min-width:0px) {
-            &.mud-drawer--force-close {
+            &.mud-drawer--initial {
                 transform: translateX(calc(-1 * var(--mud-drawer-width)));
                 visibility: hidden;
             }
         }
 
         @media (min-width:1280px) {
-            &.mud-drawer--force-close {
-                transform: unset;
-                visibility: unset;
+            &.mud-drawer--closed {
+                transform: translateX(calc(-1 * var(--mud-drawer-width)));
+                visibility: hidden;
             }
         }
     }
@@ -51,21 +54,20 @@
         right: 0;
 
         &.mud-drawer--closed {
-            transform: translateX(var(--mud-drawer-width));
-            visibility: hidden;
-        }
+            transform: none;
+            transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+            visibility: unset;
 
-        @media (min-width:0px) {
-            &.mud-drawer--force-close {
+            &.mud-drawer--initial {
                 transform: translateX(var(--mud-drawer-width));
                 visibility: hidden;
             }
         }
 
         @media (min-width:1280px) {
-            &.mud-drawer--force-close {
-                transform: unset;
-                visibility: unset;
+            &.mud-drawer--closed {
+                transform: translateX(var(--mud-drawer-width));
+                visibility: hidden;
             }
         }
     }
@@ -99,12 +101,10 @@
     -moz-animation: mud-animation-fadein ease 0.15s;
     -o-animation: mud-animation-fadein ease 0.15s;
 
-    @media (min-width:0px) {
-        &.mud-drawer--open {
-            display: block;
-        }
+    &.mud-drawer--open {
+        display: block;
 
-        &.mud-drawer--force-close {
+        &.mud-drawer--initial {
             display: none;
         }
     }

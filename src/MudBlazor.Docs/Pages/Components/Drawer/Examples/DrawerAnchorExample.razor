@@ -9,7 +9,7 @@
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
     </MudAppBar>
-    <MudDrawer Open="@open" Clipped="@clipped" Anchor="Anchor.Right" Elevation="1">
+    <MudDrawer @bind-Open="@open" Clipped="@clipped" Anchor="Anchor.Right" Elevation="1">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">My App</MudText>
         </MudDrawerHeader>
