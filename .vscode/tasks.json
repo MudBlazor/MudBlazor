@@ -22,6 +22,24 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "clean",
+            "command": "dotnet",
+            "type": "shell",
+            "args": [
+                "clean",
+                "src/MudBlazor.sln",
+                // Ask dotnet build to generate full paths for file names.
+                "/property:GenerateFullPaths=true",
+                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "build and test",
             "command": "dotnet",
             "type": "shell",
@@ -42,6 +60,8 @@
             "type": "shell",
             "args": [
                 "run",
+                "--framework",
+                "net5.0",
                 "--project",
                 "src/MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj",
                 // Ask dotnet build to generate full paths for file names.

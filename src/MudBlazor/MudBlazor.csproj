@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <RazorLangVersion>3.0</RazorLangVersion>
+    <TargetFrameworks>netstandard2.1;net5.0</TargetFrameworks>
     <Version>1.2.0</Version>
     <Authors>Garderoben</Authors>
     <Company>Gardnet</Company>
@@ -17,6 +16,9 @@
     <RepositoryType>git</RepositoryType>
     <IsPackable>true</IsPackable>
     <PackageId>MudBlazor</PackageId>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
+    <RazorLangVersion>3.0</RazorLangVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -33,9 +35,16 @@
 
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
+      <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.8" />
+      <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.0" />
+  </ItemGroup>
+  
 
   <Target Name="ToolRestore" BeforeTargets="PreBuildEvent">
       <Exec Command="dotnet tool restore" StandardOutputImportance="high" />

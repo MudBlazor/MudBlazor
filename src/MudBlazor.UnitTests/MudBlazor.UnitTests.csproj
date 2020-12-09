@@ -1,23 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="bunit" Version="1.0.0-beta-10" />
-    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="bunit" Version="1.0.0-beta-11" />
+    <PackageReference Include="FluentAssertions" Version="6.0.0-alpha0001" />
     <PackageReference Include="Moq" Version="4.15.2" />
     <PackageReference Include="nunit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.0.0-beta.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.0-preview-20201123-03" />
+    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.0.0" />
+    
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Docs.Compiler\MudBlazor.Docs.Compiler.csproj" />
-    <ProjectReference Include="..\MudBlazor.UnitTests.Viewer\MudBlazor.UnitTests.Viewer.csproj" />
+    <ProjectReference Include="..\MudBlazor.Docs\MudBlazor.Docs.csproj" />
+    <ProjectReference Include="..\MudBlazor.UnitTests.TestComponents\MudBlazor.UnitTests.TestComponents.csproj" />
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
   </ItemGroup>
 

@@ -5,9 +5,32 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "docs server",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/MudBlazor.Docs.Server/bin/Debug/net5.0/MudBlazor.Docs.Server.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/MudBlazor.Docs.Server",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "docs client",
+            "cwd": "${workspaceFolder}/src/MudBlazor.Docs.Client", 
+            "type": "blazorwasm",
+            "request": "launch",
+        },
+        {
+            "name": "unit test viewer",
             "cwd": "${workspaceFolder}/src/MudBlazor.UnitTests.Viewer",
             "type": "blazorwasm",
-            "name": "unit test viewer",
             "request": "launch"
         }
     ]

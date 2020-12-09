@@ -55,7 +55,10 @@
 
     IEnumerable<Type> getTestComponenTypes()
     {
-        foreach (var type in typeof(Program).Assembly.GetTypes())
+        // Force the assembly to load and get types
+        var types = typeof(MudBlazor.UnitTests.LoadTestComponents).Assembly.GetTypes();
+
+        foreach (var type in types)
         {
             if (!type.Name.Contains("Test"))
                 continue;
