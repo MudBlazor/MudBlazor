@@ -2,24 +2,21 @@
 @using MudBlazor.Utilities
 @inherits MudComponentBase
 
-@if (Visible)
-{
-    <div @attributes="UserAttributes" class="@Classname" style="@Style">
+<MudOverlay Visible="@Visible" Absolute="true" FadeIn="true" BackgroundColor="" @attributes="UserAttributes" class="@Classname" style="@Style">
         @if (ChildContent == null)
         {
-            <MudProgressCircular Size="@Size" StrokeWidth="4" Color="Color.Primary" Indeterminate="true" />
+            <MudProgressCircular Size="@Size" StrokeWidth="4" Color="@Color" Indeterminate="true" />
         }
         else
         {
             @ChildContent
         }
-    </div>
-}
+</MudOverlay>
 
 @code
 {
     protected string Classname =>
-        new CssBuilder("mud-working")
+        new CssBuilder("mud-progress-overlay")
             .AddClass(Class)
             .Build();
 

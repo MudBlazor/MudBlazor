@@ -2063,6 +2063,23 @@ public const string MudProgressLinear_Tag = @"Use Tag to attach any user data ob
 public const string MudProgressLinear_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudProgressOverlay_ChildContent = @"";
+
+public const string MudProgressOverlay_Visible = @"";
+
+public const string MudProgressOverlay_Size = @"";
+
+public const string MudProgressOverlay_Color = @"";
+
+public const string MudProgressOverlay_Class = @"User class names, separated by space";
+
+public const string MudProgressOverlay_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudProgressOverlay_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudProgressOverlay_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudRadio_Color = @"The color of the component. It supports the theme colors.";
 
 public const string MudRadio_Placement = @"The position of the label.";

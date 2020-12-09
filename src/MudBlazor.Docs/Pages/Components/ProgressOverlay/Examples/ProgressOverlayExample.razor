@@ -3,17 +3,17 @@
 <MudGrid>
     <MudItem>
         <MudCard Style="position:relative;">
-            <MudWorking Visible="@WorkInProgress" />
+            <MudProgressOverlay Visible="@WorkInProgress" />
             <MudCardContent>
                 <LoremIpsum></LoremIpsum>
             </MudCardContent>
             <MudCardActions>
-                <MudButton Variant="Variant.Filled" OnClick="@(() => WorkInProgress = true)">Action</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => WorkInProgress = true)">Action</MudButton>
             </MudCardActions>
         </MudCard>
     </MudItem>
     <MudItem>
-        <MudSwitch @bind-Checked="@WorkInProgress" Label="Toggle" />
+        <MudSwitch @bind-Checked="@WorkInProgress" Label="Toggle Overlay" />
     </MudItem>
 </MudGrid>
 

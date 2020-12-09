@@ -1,11 +1,6 @@
 ﻿@import '../abstracts/variables';
 
-.mud-working {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
+.mud-progress-overlay {
     z-index: calc(var(--mud-zindex-drawer) - 1);
     background: rgba(255,255,255,0.54);
     display: flex;

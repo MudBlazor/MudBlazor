@@ -1951,6 +1951,11 @@ public const string ProgressCircularInterminateExample = @"<MudProgressCircular 
 <MudProgressCircular Color=""Color.Success"" Indeterminate=""true"" />
 <MudProgressCircular Color=""Color.Info"" Indeterminate=""true"" />";
 
+public const string ProgressCircularSizesExample = @"<MudProgressCircular Color=""Color.Primary"" Size=""Size.Small"" Indeterminate=""true""/>
+<MudProgressCircular Color=""Color.Primary"" Size=""Size.Medium"" Indeterminate=""true"" />
+<MudProgressCircular Color=""Color.Primary"" Size=""Size.Large"" Indeterminate=""true"" />
+<MudProgressCircular Color=""Color.Primary"" Style=""height:70px;width:70px;"" Indeterminate=""true"" />";
+
 public const string ProgressLinearBufferExample = @"<MudProgressLinear Color=""Color.Primary"" Buffer=""true"" Value=""@Value"" BufferValue=""@BufferValue"" />
 <MudProgressLinear Color=""Color.Secondary"" Buffer=""true"" Value=""@Value"" BufferValue=""@BufferValue"" />
 
@@ -2023,6 +2028,66 @@ public const string ProgressLinearDeterminateExample = @"<MudProgressLinear Colo
 
 public const string ProgressLinearInterminateExample = @"<MudProgressLinear Color=""Color.Primary"" Indeterminate=""true""/>
 <MudProgressLinear Color=""Color.Secondary"" Indeterminate=""true""/>";
+
+public const string ProgressOverlayCustomExample = @"<MudGrid>
+    <MudItem>
+        <MudCard Style=""position:relative;"">
+            <MudCardContent>
+                <MudProgressOverlay>
+                    <MudChip Color=""Color.Primary"">Loading</MudChip>
+                </MudProgressOverlay>
+                <LoremIpsum></LoremIpsum>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+    <MudItem>
+        <MudCard Style=""position:relative;"">
+            <MudCardContent>
+                <MudProgressOverlay>
+
+                    <svg style=""height: 24px; width: 104px;"" viewBox=""0 0 52 12"">
+                        <circle style=""fill: var(--mud-palette-primary)"" stroke=""none"" cx=""6"" cy=""6"" r=""6"">
+                            <animate attributeName=""opacity"" dur=""1s"" values=""0;1;0"" repeatCount=""indefinite"" begin=""0.1""></animate>
+                        </circle>
+                        <circle style=""fill: var(--mud-palette-secondary)"" stroke=""none"" cx=""26"" cy=""6"" r=""6"">
+                            <animate attributeName=""opacity"" dur=""1s"" values=""0;1;0"" repeatCount=""indefinite"" begin=""0.2""></animate>
+                        </circle>
+                        <circle style=""fill: var(--mud-palette-tertiary)"" stroke=""none"" cx=""46"" cy=""6"" r=""6"">
+                            <animate attributeName=""opacity"" dur=""1s"" values=""0;1;0"" repeatCount=""indefinite"" begin=""0.3""></animate>
+                        </circle>
+                    </svg>
+                  
+                </MudProgressOverlay>
+                <LoremIpsum></LoremIpsum>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public bool WorkInProgress { get; set; } = true;
+}";
+
+public const string ProgressOverlayExample = @"<MudGrid>
+    <MudItem>
+        <MudCard Style=""position:relative;"">
+            <MudProgressOverlay Visible=""@WorkInProgress"" />
+            <MudCardContent>
+                <LoremIpsum></LoremIpsum>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""@(() => WorkInProgress = true)"">Action</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+    <MudItem>
+        <MudSwitch @bind-Checked=""@WorkInProgress"" Label=""Toggle Overlay"" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    public bool WorkInProgress { get; set; } = true;
+}";
 
 public const string RadioGroupExample = @"<MudForm>
     <MudRadioGroup @bind-SelectedLabel=""@SelectedLabel"" @bind-SelectedOption=""@SelectedOption"">
