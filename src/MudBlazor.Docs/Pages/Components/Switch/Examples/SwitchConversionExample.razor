@@ -4,10 +4,108 @@
 <MudSwitch @bind-Checked="nullable" Color="Color.Primary">bool?: @nullable</MudSwitch>
 <MudSwitch @bind-Checked="integer" Color="Color.Secondary">int: @integer</MudSwitch>
 <MudSwitch @bind-Checked="str" Color="Color.Tertiary">string: "@(str)"</MudSwitch>
+<MudSwitch @bind-Checked="customstr" Color="Color.Tertiary" Converter="@(new CustomStringToBoolConverter())"> custom string: "@(customstr)"</MudSwitch>
+<MudSwitch @bind-Checked="customobj" Color="Color.Tertiary" Converter="@(new ObjectToBoolConverter())">object: "@(customobj.ToString())"</MudSwitch>
 
 @code{
     public bool boolean { get; set; } = true;
     public bool? nullable { get; set; } = true;
     public int integer { get; set; } = 1;
     public string str { get; set; } = "on";
-}
+    public string customstr { get; set; } = "no, at all";
+    public object customobj { get; set; } = false;
+
+    public class ObjectToBoolConverter : BoolConverter<object>
+    {
+
+        public ObjectToBoolConverter()
+        {
+            SetFunc = OnSet;
+            GetFunc = OnGet;
+        }
+
+        private object OnGet(bool? value)
+        {
+            try
+            {
+                return (object)(value == true);
+            }
+            catch (Exception e)
+            {
+                UpdateGetError("Conversion error: " + e.Message);
+                return default(T);
+            }
+        }
+
+        private bool? OnSet(object arg)
+        {
+            if (arg == null)
+                return null;
+            try
+            {
+                if (arg is bool)
+                    return (bool)(object)arg;
+                else if (arg is bool?)
+                    return (bool?)(object)arg;
+                else
+                {
+                    UpdateSetError("Unable to convert to bool? from type object");
+                    return null;
+                }
+            }
+            catch (FormatException e)
+            {
+                UpdateSetError("Conversion error: " + e.Message);
+                return null;
+            }
+        }
+
+    }
+
+    public class CustomStringToBoolConverter : BoolConverter<string>
+    {
+
+        public CustomStringToBoolConverter()
+        {
+            SetFunc = OnSet;
+            GetFunc = OnGet;
+        }
+
+        private string TrueString = "yes, please";
+        private string FalseString = "no, at all";
+        private string NullString = "I don't know";
+
+        private string OnGet(bool? value)
+        {
+            try
+            {
+                return (value == true) ? TrueString : FalseString;
+            }
+            catch (Exception e)
+            {
+                UpdateGetError("Conversion error: " + e.Message);
+                return NullString;
+            }
+        }
+
+        private bool? OnSet(string arg)
+        {
+            if (arg == null)
+                return null;
+            try
+            {
+                if (arg == TrueString)
+                    return true;
+                if (arg == FalseString)
+                    return false;
+                else
+                    return null;
+            }
+            catch (FormatException e)
+            {
+                UpdateSetError("Conversion error: " + e.Message);
+                return null;
+            }
+        }
+
+    } }
