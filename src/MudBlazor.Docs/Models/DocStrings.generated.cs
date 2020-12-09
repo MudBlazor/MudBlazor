@@ -2017,7 +2017,7 @@ public const string MudPopover_UserAttributes = @"UserAttributes carries all att
 
 public const string MudProgressCircular_Color = @"The color of the component. It supports the theme colors.";
 
-public const string MudProgressCircular_Size = @"The color of the component. It supports the theme colors.";
+public const string MudProgressCircular_Size = @"The size of the component.";
 
 public const string MudProgressCircular_Indeterminate = @"";
 
