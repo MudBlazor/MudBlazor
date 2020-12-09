@@ -15,10 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="LiveSharp.dashboard.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Data\Elements.json" />
   </ItemGroup>
 
