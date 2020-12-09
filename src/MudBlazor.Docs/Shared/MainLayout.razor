@@ -1,38 +1,36 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavMan
 
-<div class="page">
-    <MudThemeProvider Theme="currentTheme"/>
-    <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall" />
-    <MudSnackbarProvider />
+<MudThemeProvider Theme="currentTheme"/>
+<MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall" />
+<MudSnackbarProvider />
 
 
-    <MudLayout RightToLeft="@_rightToLeft">
-        <MudAppBar Elevation="25">
-            <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-            <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text">Mudblazor</MudText>
-            <MudAppBarSpacer />
-            <MudTooltip Text="Toggle light/dark theme">
-                <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
-            </MudTooltip>
-            <MudTooltip Text="GitHub repository">
-                <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
-            </MudTooltip>
-            <MudTooltip Text="Toggle right-to-left/left-to-right">
-                <MudIconButton Icon="@Icons.Material.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
-            </MudTooltip>
-        </MudAppBar>
-        <MudDrawer @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
-            <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
-                <MudBlazorLogo />
-            </MudDrawerHeader>
-            <NavMenu />
-        </MudDrawer>
-        <MudMainContent Class="mudblazor-main-content">
-            @Body
-        </MudMainContent>
-    </MudLayout>
-</div>
+<MudLayout RightToLeft="@_rightToLeft">
+    <MudAppBar Elevation="25">
+        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text">Mudblazor</MudText>
+        <MudAppBarSpacer />
+        <MudTooltip Text="Toggle light/dark theme">
+            <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
+        </MudTooltip>
+        <MudTooltip Text="GitHub repository">
+            <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
+        </MudTooltip>
+        <MudTooltip Text="Toggle right-to-left/left-to-right">
+            <MudIconButton Icon="@Icons.Material.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
+        </MudTooltip>
+    </MudAppBar>
+    <MudDrawer @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
+        <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
+            <MudBlazorLogo />
+        </MudDrawerHeader>
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent Class="mudblazor-main-content">
+        @Body
+    </MudMainContent>
+</MudLayout>
 
 @code {
 
