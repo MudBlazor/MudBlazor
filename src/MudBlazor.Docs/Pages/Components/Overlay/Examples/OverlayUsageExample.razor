@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ToggleOverlay">Show Overlay</MudButton>
+<MudOverlay Visible="isVisible" OnClick="ToggleOverlay" BackgroundColor="rgba(0,0,0,0.5)" FadeIn="true"></MudOverlay>
+
+
+@code {
+    private bool isVisible;
+
+    public void ToggleOverlay()
+    {
+        isVisible = !isVisible;
+        StateHasChanged();
+    }
+} 

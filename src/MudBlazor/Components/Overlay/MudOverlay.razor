@@ -1,10 +1,13 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div class="@Classname" style="@Style" @onclick="OnClickHandler" @onclick:stopPropagation="true">
-    @ChildContent
-</div>
+@if (Visible)
+{
+    <div class="@Classname" style="@Styles" @onclick="OnClickHandler" @onclick:stopPropagation="true">
+        @ChildContent
+    </div>
+}
 
-        
+
 
 
