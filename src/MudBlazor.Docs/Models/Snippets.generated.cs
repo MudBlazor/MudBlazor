@@ -1963,7 +1963,7 @@ public const string NavMenuIconExample = @"<MudNavMenu Class=""demo-navmenu"">
 </MudNavMenu>";
 
 public const string OverlayAbsoluteExample = @"<MudPaper Class=""pa-8"" Style=""height: 300px;"">
-    <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""@(e => ToggleOverlay(true))"">Show Overlay</MudButton>
+    <MudButton Variant=""Variant.Filled"" Color=""Color.Secondary"" OnClick=""@(e => ToggleOverlay(true))"">Show Overlay</MudButton>
 
     <MudOverlay Visible=""isVisible"" DarkBackground=""true"" Absolute=""true"">
         <MudButton Variant=""Variant.Filled"" Color=""Color.Primary""  OnClick=""@(e => ToggleOverlay(false))"">Hide Overlay</MudButton>
@@ -1978,6 +1978,116 @@ public const string OverlayAbsoluteExample = @"<MudPaper Class=""pa-8"" Style=""
     public void ToggleOverlay(bool value)
     {
         isVisible = value;
+    }
+}";
+
+public const string OverlayColorsExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"">
+        <MudPaper Class=""pa-4 my-2"" Style=""position:relative;"">
+            <MudOverlay Visible=""lightIsVisible"" LightBackground=""true"" Absolute=""true"" />
+            <LoremIpsum />
+            <MudButton Variant=""Variant.Filled"" Class=""mt-2"">Action</MudButton>
+        </MudPaper>
+        <MudSwitch @bind-Checked=""@lightIsVisible"" Label=""Light Overlay"" Color=""Color.Primary""/>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"">
+        <MudPaper Class=""pa-4 my-2"" Style=""position:relative;"">
+            <MudOverlay Visible=""darkIsVisible"" DarkBackground=""true"" Absolute=""true"" />
+            <LoremIpsum />
+            <MudButton Variant=""Variant.Filled"" Class=""mt-2"">Action</MudButton>
+        </MudPaper>
+        <MudSwitch @bind-Checked=""@darkIsVisible"" Label=""Dark Overlay"" Color=""Color.Secondary"" />
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    private bool lightIsVisible;
+    private bool darkIsVisible;
+}";
+
+public const string OverlayLoaderExample = @"<MudCard Class=""my-2"" Style=""position:relative; width:377px;"">
+    @if (!dataLoaded)
+    {
+        <MudSkeleton SkeletonType=""SkeletonType.Rectangle"" Height=""200px"" />
+        <MudCardContent>
+            <MudSkeleton Width=""30%"" Height=""42px;"" />
+            <MudSkeleton Width=""80%"" />
+            <MudSkeleton Width=""100%"" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudSkeleton Width=""64px"" Height=""40px"" Class=""ml-2"" />
+            <MudSkeleton Width=""105px"" Height=""40px"" Class=""ml-3"" />
+        </MudCardActions>
+        <MudOverlay Visible=""isVisible"" DarkBackground=""true"" Absolute=""true"">
+            <MudProgressCircular Color=""Color.Secondary"" Indeterminate=""true"" />
+        </MudOverlay>
+    }
+    else
+    {
+        <MudCardMedia Image=""_content/MudBlazor.Docs/images/content-template-door.png"" Height=""200"" />
+        <MudCardContent>
+            <MudText Typo=""Typo.h5"">Old Paint</MudText>
+            <MudText Typo=""Typo.body2"">Old paint found on a stone house door.</MudText>
+            <MudText Typo=""Typo.body2"">This photo was taken in a small village in Istra Croatia.</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant=""Variant.Text"" Color=""Color.Primary"">Share</MudButton>
+            <MudButton Variant=""Variant.Text"" Color=""Color.Primary"">Learn More</MudButton>
+        </MudCardActions>
+    }
+</MudCard>
+
+<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""OpenOverlay"" EndIcon=""@Icons.Material.Refresh"">Refresh Data</MudButton>
+<MudButton Variant=""Variant.Filled"" OnClick=""ResetExample"">Reset Example</MudButton>
+
+@code { 
+    private bool isVisible;
+    private bool dataLoaded;
+
+    public async void OpenOverlay()
+    {
+        isVisible = true;
+        await Task.Delay(3000);
+        isVisible = false;
+        dataLoaded = true;
+        StateHasChanged();
+    }
+
+    public void ResetExample()
+    {
+        dataLoaded = false;
+    }
+}";
+
+public const string OverlayOnClickExample = @"@inject ISnackbar Snackbar
+
+
+<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ToggleOverlay"" Class=""mx-1"">On Click Close</MudButton>
+<MudButton Variant=""Variant.Filled"" Color=""Color.Dark"" OnClick=""ToggleOverlayWithSnackbar"" Class=""mx-1"">On Click Alert</MudButton>
+
+<MudOverlay Visible=""isVisible"" OnClick=""ToggleOverlay"" DarkBackground=""true"" ZIndex=""9999"" />
+<MudOverlay Visible=""isVisibleWithSnackbar"" OnClick=""ShowSnackbar"" DarkBackground=""true"" ZIndex=""9999"" />
+
+
+@code {
+    private bool isVisible;
+    private bool isVisibleWithSnackbar;
+
+    public void ToggleOverlay()
+    {
+        isVisible = !isVisible;
+    }
+
+    public void ToggleOverlayWithSnackbar()
+    {
+        isVisibleWithSnackbar = !isVisibleWithSnackbar;
+    }
+
+    public void ShowSnackbar()
+    {
+        Snackbar.Add(""Random message"", Severity.Normal);
+        isVisibleWithSnackbar = false;
     }
 }";
 
@@ -1998,7 +2108,7 @@ public const string OverlayUsageExample = @"<MudButton Variant=""Variant.Filled"
     }
 }";
 
-public const string OverlayZIndexExample = @"<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""OpenOverlay"">Show Overlay</MudButton>
+public const string OverlayZIndexExample = @"<MudButton Variant=""Variant.Filled"" Color=""Color.Tertiary"" OnClick=""OpenOverlay"">Show Overlay</MudButton>
 
 <MudOverlay Visible=""isVisible"" DarkBackground=""true"" ZIndex=""9999""/>
 

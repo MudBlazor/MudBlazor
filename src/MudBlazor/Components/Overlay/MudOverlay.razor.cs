@@ -41,8 +41,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Visible { get; set; }
 
+        /// <summary>
+        /// If true applys the themes dark overlay color.
+        /// </summary>
         [Parameter] public bool DarkBackground { get; set; }
 
+        /// <summary>
+        /// If true applys the themes light overlay color.
+        /// </summary>
         [Parameter] public bool LightBackground { get; set; }
 
         /// <summary>

@@ -1,0 +1,36 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="atSign">&#64;</span>inject ISnackbar Snackbar
+
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Variant</span><span class="enumValue">.Filled</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Primary</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">ToggleOverlay</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">mx-1</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>On Click Close<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Variant</span><span class="enumValue">.Filled</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Dark</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">ToggleOverlayWithSnackbar</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">mx-1</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>On Click Alert<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudOverlay</span> <span class="htmlAttributeName">Visible</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">isVisible</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">ToggleOverlay</span><span class="quot">&quot;</span> <span class="htmlAttributeName">DarkBackground</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ZIndex</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">9999</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudOverlay</span> <span class="htmlAttributeName">Visible</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">isVisibleWithSnackbar</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">ShowSnackbar</span><span class="quot">&quot;</span> <span class="htmlAttributeName">DarkBackground</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ZIndex</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">9999</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code {
+    <span class="keyword">private</span> <span class="keyword">bool</span> isVisible;
+    <span class="keyword">private</span> <span class="keyword">bool</span> isVisibleWithSnackbar;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> ToggleOverlay()
+    {
+        isVisible = !isVisible;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> ToggleOverlayWithSnackbar()
+    {
+        isVisibleWithSnackbar = !isVisibleWithSnackbar;
+    }
+
+    <span class="keyword">public</span> <span class="keyword">void</span> ShowSnackbar()
+    {
+        Snackbar.Add(<span class="string">&quot;Random message&quot;</span>, Severity.Normal);
+        isVisibleWithSnackbar = <span class="keyword">false</span>;
+    }
+}
+</pre></div>
+</div>

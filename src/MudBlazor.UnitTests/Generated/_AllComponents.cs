@@ -1469,6 +1469,42 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void OverlayColorsExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<OverlayColorsExample>();
+        }
+
+
+        [Test]
+        public void OverlayLoaderExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<OverlayLoaderExample>();
+        }
+
+
+        [Test]
+        public void OverlayOnClickExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<OverlayOnClickExample>();
+        }
+
+
+        [Test]
         public void OverlayUsageExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
