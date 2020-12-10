@@ -1,26 +1,54 @@
 ﻿.mud-overlay {
     top: 0;
     left: 0;
-    margin: 0px !important;
-    height: 100%;
-    width: 100%;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+    display: flex;
     position: fixed;
-    z-index: var(--mud-zindex-popover);
-    background-color: transparent;
+    transition: .3s cubic-bezier(.25,.8,.5,1),z-index 1ms;
+    z-index: 5;
 
-    &.mud-animation {
-        animation: mud-animation-fadein ease 0.15s;
-        -webkit-animation: mud-animation-fadein ease 0.15s;
-        -moz-animation: mud-animation-fadein ease 0.15s;
-        -o-animation: mud-animation-fadein ease 0.15s;
+    &.mud-overlay-absolute {
+        position: absolute;
     }
 
-    &.mud-absolute {
+    & .mud-overlay-scrim {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: inherit;
         position: absolute;
+        height: 100%;
+        width: 100%;
+        transition: inherit;
+        will-change: background-color, border-color;
+        border-color: transparent;
+        background-color: transparent;
+
+        &.mud-overlay-dark {
+            border-color: var(--mud-palette-overlay-dark);
+            background-color: var(--mud-palette-overlay-dark);
+        }
+
+        &.mud-overlay-light {
+            border-color: var(--mud-palette-overlay-light);
+            background-color: var(--mud-palette-overlay-light);
+        }
+    }
+
+    & .mud-overlay-content {
+        position: relative;
+    }
+
+    &.mud-overlay-popover {
+        z-index: var(--mud-zindex-popover);
     }
 
     &.mud-overlay-dialog {
         z-index: calc(var(--mud-zindex-dialog) + 1);
-        background-color: rgba(0,0,0,0.5);
     }
 }
