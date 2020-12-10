@@ -3,6 +3,7 @@
     left: 0;
     right: 0;
     bottom: 0;
+    margin: 0 !important;
     align-items: center;
     justify-content: center;
     border-radius: inherit;
@@ -24,10 +25,12 @@
         position: absolute;
         height: 100%;
         width: 100%;
-        transition: inherit;
-        will-change: background-color, border-color;
         border-color: transparent;
         background-color: transparent;
+        animation: mud-animation-fadein ease 0.15s;
+        -webkit-animation: mud-animation-fadein ease 0.15s;
+        -moz-animation: mud-animation-fadein ease 0.15s;
+        -o-animation: mud-animation-fadein ease 0.15s;
 
         &.mud-overlay-dark {
             border-color: var(--mud-palette-overlay-dark);
@@ -50,5 +53,9 @@
 
     &.mud-overlay-dialog {
         z-index: calc(var(--mud-zindex-dialog) + 1);
+    }
+
+    &.mud-overlay-drawer {
+        z-index: var(--mud-zindex-dialog); //<-- Yes this is correct we want to display it on top of the Appbar
     }
 }

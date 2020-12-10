@@ -34,6 +34,7 @@
             transform: none;
             transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
             visibility: unset;
+            z-index: calc(var(--mud-zindex-dialog) + 1);
 
             &.mud-drawer--initial {
                 transform: translateX(calc(-1 * var(--mud-drawer-width)));
@@ -57,6 +58,8 @@
             transform: none;
             transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
             visibility: unset;
+            z-index: calc(var(--mud-zindex-dialog) + 1);
+
 
             &.mud-drawer--initial {
                 transform: translateX(var(--mud-drawer-width));
@@ -79,27 +82,18 @@
     padding: 12px 24px 12px 24px;
 }
 
-@media (min-width:0px) and (orientation: landscape) {
-    .mud-drawer-clipped {
-        padding-top: calc(var(--mud-appbar-min-height) - 16px);
-    }
+.mud-drawer-clipped {
+        padding-top: 0;
 }
 
-@media (min-width:600px) {
+@media (min-width:1280px) {
     .mud-drawer-clipped {
         padding-top: var(--mud-appbar-min-height);
     }
-
 }
 
 .mud-drawer-overlay {
     display: none;
-    z-index: var(--mud-zindex-drawer);
-    background-color: rgba(0,0,0,0.5);
-    animation: mud-animation-fadein ease 0.15s;
-    -webkit-animation: mud-animation-fadein ease 0.15s;
-    -moz-animation: mud-animation-fadein ease 0.15s;
-    -o-animation: mud-animation-fadein ease 0.15s;
 
     &.mud-drawer--open {
         display: block;
