@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<div class="@Classnames" style="@Style">
+    @if (Align == Align.Center)
+    {
+        <div class="align-self-center ml-auto mr-auto">
+            @ChildContent
+        </div>
+    }
+    else if (Align == Align.Justify)
+    {
+        <div class="flex-grow-1">
+            @ChildContent
+        </div>
+    }
+    else
+    {
+        <div class="ml-auto flex-grow-1">
+            @if (Align == Align.Left)
+            {
+                @ChildContent
+            }
+        </div>
+        <div class="flex-grow-0">
+            @*timeline elements...*@
+        </div>
+        <div class="mr-auto flex-grow-1">
+            @if (Align == Align.Right)
+            {
+                @ChildContent
+            }
+        </div>
+    }
+</div>
