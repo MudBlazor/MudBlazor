@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div class="@Classname" style="@Style" @onclick="@OnClickHandler">
+<div class="@Classname" style="@Style" @onclick="@OnClickHandler" onpointerdown="@(!DisableRipple  && (OnClick.HasDelegate || ChipSet!=null) ? "ripplet(arguments[0])" : "")">
     @if (!String.IsNullOrEmpty(Avatar))
     {
         <MudAvatar Class="@AvatarClass" Color="@Color">

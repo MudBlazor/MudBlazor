@@ -12,7 +12,6 @@ namespace MudBlazor
           .AddClass("mud-list-item-dense", Dense || MudList?.Dense==true)
           .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters==true))
           .AddClass("mud-list-item-clickable", MudList?.Clickable)
-          .AddClass($"mud-ripple", MudList?.Clickable==true && !DisableRipple)
           .AddClass(Class)
         .Build();
         [Parameter] public string Text { get; set; }
