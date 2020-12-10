@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Dialog
 
 <div class="mud-dialog-container @Position">
-    <MudOverlay OnClick="HandleBackgroundClick" Class="mud-overlay-dialog" />
+    <MudOverlay Visible="true" OnClick="HandleBackgroundClick" Class="mud-overlay-dialog" DarkBackground="true" />
     <div id="_@Id.ToString("N")" class="@Classname">
         @if (!NoHeader)
         {
