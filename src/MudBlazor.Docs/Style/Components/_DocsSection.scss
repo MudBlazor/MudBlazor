@@ -52,7 +52,7 @@
         display: grid;
     }
 
-    & > .docs-section-content-inner {
+    &.docs-section-auto-margin-content > .docs-section-content-inner {
         & > *:not(.mud-grid) {
             margin: 8px;
         }
