@@ -1,8 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudPaper Class="px-4 pt-4 pb-16">
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ToggleOverlay">Show Overlay</MudButton>
-    <MudOverlay Visible="isVisible" OnClick="ToggleOverlay" BackgroundColor="rgba(0,0,0,0.5)" FadeIn="true" Absolute="true"></MudOverlay>
+<MudPaper Class="pa-8" Style="height: 300px;">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(e => ToggleOverlay(true))">Show Overlay</MudButton>
+
+    <MudOverlay Visible="isVisible" DarkBackground="true" Absolute="true">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary"  OnClick="@(e => ToggleOverlay(false))">Hide Overlay</MudButton>
+    </MudOverlay>
 </MudPaper>
 
 
@@ -10,9 +13,8 @@
 @code {
     private bool isVisible;
 
-    public void ToggleOverlay()
+    public void ToggleOverlay(bool value)
     {
-        isVisible = !isVisible;
-        StateHasChanged();
+        isVisible = value;
     }
 } 

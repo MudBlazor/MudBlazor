@@ -1891,11 +1891,13 @@ public const string MudOverlay_ChildContent = @"Child content of the component."
 
 public const string MudOverlay_Visible = @"If true overlay will be visible.";
 
-public const string MudOverlay_BackgroundColor = @"";
+public const string MudOverlay_DarkBackground = @"";
 
-public const string MudOverlay_FadeIn = @"If true will fadein.";
+public const string MudOverlay_LightBackground = @"";
 
 public const string MudOverlay_Absolute = @"Icon class names, separated by space";
+
+public const string MudOverlay_ZIndex = @"Sets the z-index of the overlay.";
 
 public const string MudOverlay_CommandParameter = @"Command parameter.";
 

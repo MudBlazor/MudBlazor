@@ -1962,9 +1962,12 @@ public const string NavMenuIconExample = @"<MudNavMenu Class=""demo-navmenu"">
     <MudNavLink Href=""/about"">About</MudNavLink>
 </MudNavMenu>";
 
-public const string OverlayAbsoluteExample = @"<MudPaper Class=""px-4 pt-4 pb-16"">
-    <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ToggleOverlay"">Show Overlay</MudButton>
-    <MudOverlay Visible=""isVisible"" OnClick=""ToggleOverlay"" BackgroundColor=""rgba(0,0,0,0.5)"" FadeIn=""true"" Absolute=""true""></MudOverlay>
+public const string OverlayAbsoluteExample = @"<MudPaper Class=""pa-8"" Style=""height: 300px;"">
+    <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""@(e => ToggleOverlay(true))"">Show Overlay</MudButton>
+
+    <MudOverlay Visible=""isVisible"" DarkBackground=""true"" Absolute=""true"">
+        <MudButton Variant=""Variant.Filled"" Color=""Color.Primary""  OnClick=""@(e => ToggleOverlay(false))"">Hide Overlay</MudButton>
+    </MudOverlay>
 </MudPaper>
 
 
@@ -1972,23 +1975,42 @@ public const string OverlayAbsoluteExample = @"<MudPaper Class=""px-4 pt-4 pb-16
 @code {
     private bool isVisible;
 
-    public void ToggleOverlay()
+    public void ToggleOverlay(bool value)
     {
-        isVisible = !isVisible;
-        StateHasChanged();
+        isVisible = value;
     }
 }";
 
-public const string OverlayUsageExample = @"<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ToggleOverlay"">Show Overlay</MudButton>
-<MudOverlay Visible=""isVisible"" OnClick=""ToggleOverlay"" BackgroundColor=""rgba(0,0,0,0.5)"" FadeIn=""true""></MudOverlay>
+public const string OverlayUsageExample = @"<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""OpenOverlay"">Show Overlay</MudButton>
+
+<MudOverlay Visible=""isVisible"" DarkBackground=""true""/>
 
 
 @code {
     private bool isVisible;
 
-    public void ToggleOverlay()
+    public async void OpenOverlay()
     {
-        isVisible = !isVisible;
+        isVisible = true;
+        await Task.Delay(3000);
+        isVisible = false;
+        StateHasChanged();
+    }
+}";
+
+public const string OverlayZIndexExample = @"<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""OpenOverlay"">Show Overlay</MudButton>
+
+<MudOverlay Visible=""isVisible"" DarkBackground=""true"" ZIndex=""9999""/>
+
+
+@code {
+    private bool isVisible;
+
+    public async void OpenOverlay()
+    {
+        isVisible = true;
+        await Task.Delay(3000);
+        isVisible = false;
         StateHasChanged();
     }
 }";
