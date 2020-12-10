@@ -80,6 +80,11 @@
     display: flex;
     min-height: var(--mud-appbar-min-height);
     padding: 12px 24px 12px 24px;
+
+    &.mud-drawer-header-dense {
+        min-height: calc(var(--mud-appbar-min-height) - 16px);
+        padding: 8px 24px 8px 24px;
+    }
 }
 
 .mud-drawer-clipped {

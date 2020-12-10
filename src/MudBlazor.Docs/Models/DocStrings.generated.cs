@@ -1108,6 +1108,8 @@ public const string MudDrawer_Tag = @"Use Tag to attach any user data object to 
 public const string MudDrawer_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudDrawerHeader_Dense = @"If true, compact padding will be used, same as the Appbar.";
+
 public const string MudDrawerHeader_ChildContent = @"Child content of component.";
 
 public const string MudDrawerHeader_LinkToIndex = @"If true, the component will link to index page with an a element instead of div.";
