@@ -1,0 +1,21 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudPaper</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">px-4 pt-4 pb-16</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Variant</span><span class="enumValue">.Filled</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Primary</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">ToggleOverlay</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Show Overlay<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+    <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudOverlay</span> <span class="htmlAttributeName">Visible</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">isVisible</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">ToggleOverlay</span><span class="quot">&quot;</span> <span class="htmlAttributeName">BackgroundColor</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">rgba(0,0,0,0.5)</span><span class="quot">&quot;</span> <span class="htmlAttributeName">FadeIn</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Absolute</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudOverlay</span><span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudPaper</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code {
+    <span class="keyword">private</span> <span class="keyword">bool</span> isVisible;
+
+    <span class="keyword">public</span> <span class="keyword">void</span> ToggleOverlay()
+    {
+        isVisible = !isVisible;
+        StateHasChanged();
+    }
+}
+</pre></div>
+</div>

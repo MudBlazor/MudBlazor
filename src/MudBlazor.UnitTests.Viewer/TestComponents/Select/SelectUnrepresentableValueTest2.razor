@@ -1,0 +1,14 @@
+﻿@using MudBlazor;
+@namespace MudBlazor.UnitTests
+
+<MudSelect @bind-Value="value" Strict="true">
+    <MudSelectItem T="int" Value="1"/>
+    <MudSelectItem T="int" Value="2"/>
+    <MudSelectItem T="int" Value="3"/>
+</MudSelect>
+
+@code {
+    public static string __description__ = "Don't show initial value which is not in list because of Strict=true.";
+
+    int value=17;
+}

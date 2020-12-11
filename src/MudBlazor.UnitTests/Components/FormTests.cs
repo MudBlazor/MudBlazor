@@ -134,5 +134,26 @@ namespace MudBlazor.UnitTests
             await comp.InvokeAsync(() => textField.Value = "Manson Marilyn");
             form.IsValid.Should().Be(false);
         }
+
+        /// <summary>
+        /// Reset() should reset the input components of the form
+        /// </summary>
+        [Test]
+        public async Task FormValidationTest3()
+        {
+            using var ctx = new Bunit.TestContext();
+            var comp = ctx.RenderComponent<FormValidationTest>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            form.IsValid.Should().Be(false);
+            await comp.InvokeAsync(() => textField.Value = "Some value");
+            form.IsValid.Should().Be(true);
+            // calling Reset() should reset the textField's value
+            await comp.InvokeAsync(() =>form.Reset());
+            textField.Value.Should().Be(null);
+            textField.Text.Should().Be(null);
+            form.IsValid.Should().Be(false); // because we did reset validation state as a side-effect.
+        }
     }
 }

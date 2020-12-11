@@ -59,6 +59,10 @@ namespace MudBlazor.Docs.Models
             [typeof(MudSlider<T>)]="slider",
             [typeof(MudCheckBox<T>)] = "checkbox",
             [typeof(MudSwitch<T>)] = "switch",
+            [typeof(MudFab)] = "buttonfab",
+            [typeof(MudIcon)] = "icons",
+            [typeof(MudProgressCircular)] = "progress",
+            [typeof(MudText)]= "typography",
         };
 
         // this is the inversion of above lookup

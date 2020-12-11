@@ -3,13 +3,12 @@ using System.Windows.Input;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-
 using MudBlazor.Utilities;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
-    public partial class MudSwitch<T> : MudComponentBase
+    public partial class MudSwitch<T> : MudBooleanInput<T>
     {
         protected string Classname =>
         new CssBuilder("mud-switch")
@@ -21,7 +20,7 @@ namespace MudBlazor
             .AddClass($"mud-ripple mud-ripple-switch", !DisableRipple)
             .AddClass($"mud-switch-{Color.ToDescriptionString()}")
             .AddClass($"mud-switch-disabled", Disabled)
-            .AddClass($"mud-checked", _value)
+            .AddClass($"mud-checked", BoolValue)
           .AddClass(Class)
         .Build();
 
@@ -45,36 +44,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
-        /// <summary>
-        /// Fired when Checked changes.
-        /// </summary>
-        [Parameter]
-        public EventCallback<T> CheckedChanged { get; set; }
-
-        private T _checked;
-
-        private BoolConverter<T> _boolConverter = new BoolConverter<T>();
-
-        private bool? _value
-        {
-            get => _boolConverter.Set(_checked);
-            set => Checked = _boolConverter.Get(value);
-        }
-
-        /// <summary>
-        /// The state of the switch
-        /// </summary>
-        [Parameter]
-        public T Checked
-        {
-            get => _checked;
-            set
-            {
-                if (object.Equals(value, _checked))
-                    return;
-                _checked = value;
-                CheckedChanged.InvokeAsync(value);
-            }
-        }
+      
     }
 }

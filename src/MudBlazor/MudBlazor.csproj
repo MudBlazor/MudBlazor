@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
-    <Version>1.1.5</Version>
+    <Version>1.2.0</Version>
     <Authors>Garderoben</Authors>
     <Company>Gardnet</Company>
     <Title>MudBlazor</Title>
@@ -19,8 +19,8 @@
     <PackageId>MudBlazor</PackageId>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>MudBlazor.xml</DocumentationFile>
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

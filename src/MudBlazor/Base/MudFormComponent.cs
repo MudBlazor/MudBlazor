@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Interfaces;
 
-namespace MudBlazor.Base
+namespace MudBlazor
 {
     public class MudFormComponent<T> : MudComponentBase, IFormComponent, IDisposable
     {       
@@ -105,30 +105,21 @@ namespace MudBlazor.Base
             ValidationErrors = new List<string>();
             try
             {
+                var hasValue = HasValue(value);
                 if (Required)
                 {
-                    // a value is required, so if nothing has been entered, we'll return ERROR
-                    var is_valid = true;
-                    if (typeof(T) == typeof(string))
-                        is_valid = !string.IsNullOrWhiteSpace((string)(object)value);
-                    else if (value == null)
-                        is_valid = false;
-                    if (!is_valid)
+                    if (!hasValue)
                     {
                         ValidationErrors.Add(RequiredError);
-                        return;
+                        return; // no need to call validation funcs if required value doesn't exist. we already have a required error.
                     }
+                    // we have a required value, proceed to the validation funcs
                 }
                 else
                 {
-                    // a value is not required, so if nothing has been entered, we'll return OK without calling validation funcs
-                    var is_empty = false;
-                    if (typeof(T) == typeof(string))
-                        is_empty = string.IsNullOrWhiteSpace((string)(object)value);
-                    else if (value == null)
-                        is_empty = false;
-                    if (is_empty)
-                        return;
+                    if (!hasValue)
+                        return; // if nothing has been entered, we return OK without calling validation funcs
+                    // proceed to the validation funcs
                 }
                 if (Validation is ValidationAttribute)
                     ValidateWithAttribute(Validation as ValidationAttribute, value);
@@ -154,6 +145,16 @@ namespace MudBlazor.Base
                 Form.Update(this);
                 StateHasChanged();
             }
+        }
+
+        protected virtual bool HasValue(T value)
+        {
+            var hasValue = true;
+            if (typeof(T) == typeof(string))
+                hasValue = !string.IsNullOrWhiteSpace((string)(object)value);
+            else if (value == null)
+                hasValue = false;
+            return hasValue;
         }
 
         protected virtual void ValidateWithAttribute(ValidationAttribute attr, T value)
@@ -249,8 +250,14 @@ namespace MudBlazor.Base
 
         public void Reset()
         {
-            _value = default;
+            ResetValue();
             ResetValidation();
+        }
+
+        protected virtual void ResetValue()
+        {
+            /* to be overridden */
+            _value = default;
         }
 
         public void ResetValidation()

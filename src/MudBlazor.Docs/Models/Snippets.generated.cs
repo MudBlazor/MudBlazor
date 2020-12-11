@@ -558,13 +558,110 @@ public const string CheckboxConversionExample = @"<MudCheckBox @bind-Checked=""b
 <MudCheckBox @bind-Checked=""nullable"" Color=""Color.Primary"">bool?: @nullable</MudCheckBox>
 <MudCheckBox @bind-Checked=""integer"" Color=""Color.Secondary"">int: @integer</MudCheckBox>
 <MudCheckBox @bind-Checked=""str"" Color=""Color.Tertiary"">string: ""@(str)""</MudCheckBox>
+<MudCheckBox @bind-Checked=""customstr"" Color=""Color.Tertiary"" Converter=""@(new CustomStringToBoolConverter())""> custom string: ""@(customstr)""</MudCheckBox>
+<MudCheckBox @bind-Checked=""customobj"" Color=""Color.Tertiary"" Converter=""@(new ObjectToBoolConverter())"">object: ""@(customobj.ToString())""</MudCheckBox>
 
-@code{
-    public bool boolean { get; set; } = true;
+@code{ public bool boolean { get; set; } = true;
     public bool? nullable { get; set; } = true;
     public int integer { get; set; } = 1;
     public string str { get; set; } = ""on"";
-}";
+    public string customstr { get; set; } = ""no, at all"";
+    public object customobj { get; set; } = false;
+
+    public class ObjectToBoolConverter : BoolConverter<object>
+    {
+
+        public ObjectToBoolConverter()
+        {
+            SetFunc = OnSet;
+            GetFunc = OnGet;
+        }
+
+        private object OnGet(bool? value)
+        {
+            try
+            {
+                return (object)(value == true);
+            }
+            catch (Exception e)
+            {
+                UpdateGetError(""Conversion error: "" + e.Message);
+                return default(T);
+            }
+        }
+
+        private bool? OnSet(object arg)
+        {
+            if (arg == null)
+                return null;
+            try
+            {
+                if (arg is bool)
+                    return (bool)(object)arg;
+                else if (arg is bool?)
+                    return (bool?)(object)arg;
+                else
+                {
+                    UpdateSetError(""Unable to convert to bool? from type object"");
+                    return null;
+                }
+            }
+            catch (FormatException e)
+            {
+                UpdateSetError(""Conversion error: "" + e.Message);
+                return null;
+            }
+        }
+
+    }
+
+    public class CustomStringToBoolConverter : BoolConverter<string>
+    {
+
+        public CustomStringToBoolConverter()
+        {
+            SetFunc = OnSet;
+            GetFunc = OnGet;
+        }
+
+        private string TrueString = ""yes, please"";
+        private string FalseString = ""no, at all"";
+        private string NullString = ""I don't know"";
+
+        private string OnGet(bool? value)
+        {
+            try
+            {
+                return (value == true) ? TrueString : FalseString;
+            }
+            catch (Exception e)
+            {
+                UpdateGetError(""Conversion error: "" + e.Message);
+                return NullString;
+            }
+        }
+
+        private bool? OnSet(string arg)
+        {
+            if (arg == null)
+                return null;
+            try
+            {
+                if (arg == TrueString)
+                    return true;
+                if (arg == FalseString)
+                    return false;
+                else
+                    return null;
+            }
+            catch (FormatException e)
+            {
+                UpdateSetError(""Conversion error: "" + e.Message);
+                return null;
+            }
+        }
+
+    } }";
 
 public const string CheckboxIndeterminateExample = @"<MudCheckBox @bind-Checked=""value"" Color=""@Color.Primary"">
     Value: @(value == null ? ""null"" : value.ToString())
@@ -742,7 +839,7 @@ public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=
 public const string DatePickerStaticExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Date=""@(DateTime.Today.AddDays(1))""/>
 <MudDatePicker PickerVariant=""PickerVariant.Static"" Orientation=""Orientation.Landscape"" Date=""@(DateTime.Today.AddDays(1))""/>";
 
-public const string DatePickeViewsExample = @"<MudDatePicker Label=""Year"" OpenTo=""OpenTo.Year"" Value=""2020-10-19""/>
+public const string DatePickerViewsExample = @"<MudDatePicker Label=""Year"" OpenTo=""OpenTo.Year"" Value=""2020-10-19""/>
 <MudDatePicker Label=""Month"" OpenTo=""OpenTo.Month"" Value=""2020-10-19"" />
 <MudDatePicker Label=""Date""  Value=""2020-10-19"" />";
 
@@ -949,7 +1046,7 @@ public const string DrawerAnchorExample = @"<MudLayout>
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Material.Menu"" Color=""Color.Inherit"" Edge=""Edge.Start"" OnClick=""@ToggleDrawer"" />
     </MudAppBar>
-    <MudDrawer Open=""@open"" Clipped=""@clipped"" Anchor=""Anchor.Right"" Elevation=""1"">
+    <MudDrawer @bind-Open=""@open"" Clipped=""@clipped"" Anchor=""Anchor.Right"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -984,7 +1081,7 @@ public const string DrawerClippingExample = @"<MudLayout>
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Custom.GitHub"" Color=""Color.Inherit"" Link=""https://github.com/Garderoben/MudBlazor"" Target=""_blank"" />
     </MudAppBar>
-    <MudDrawer Open=""@open"" Clipped=""@clipped"" Elevation=""1"">
+    <MudDrawer @bind-Open=""@open"" Clipped=""@clipped"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -1018,7 +1115,7 @@ public const string DrawerDoubleExample = @"<MudLayout>
         <MudAppBarSpacer />
         <MudIconButton Icon=""@Icons.Material.Settings"" Color=""Color.Inherit"" OnClick=""@ToggleDrawerTwo""  />
     </MudAppBar>
-    <MudDrawer Open=""@drawerOneOpen"" Clipped=""@drawerOneClipped"" Anchor=""Anchor.Left"" Elevation=""25"">
+    <MudDrawer @bind-Open=""@drawerOneOpen"" Clipped=""@drawerOneClipped"" Anchor=""Anchor.Left"" Elevation=""25"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">My App</MudText>
         </MudDrawerHeader>
@@ -1028,7 +1125,7 @@ public const string DrawerDoubleExample = @"<MudLayout>
             <MudNavLink Match=""NavLinkMatch.All"">Community</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
-    <MudDrawer Open=""@drawerTwoOpen"" Clipped=""@drawerTwoClipped"" Anchor=""Anchor.Right"" Elevation=""1"">
+    <MudDrawer @bind-Open=""@drawerTwoOpen"" Clipped=""@drawerTwoClipped"" Anchor=""Anchor.Right"" Elevation=""1"">
         <MudDrawerHeader>
             <MudText Typo=""Typo.h6"">Settings</MudText>
         </MudDrawerHeader>
@@ -1253,39 +1350,44 @@ public const string FileUploadIconButtonExample = @"@using BlazorInputFile
 
 public const string EditFormExample = @"@using System.ComponentModel.DataAnnotations
 
-<EditForm Model=""@model"" OnValidSubmit=""OnValidSubmit"">
-    <DataAnnotationsValidator />
-    <MudCard Class=""demo-form"">
-        <MudCardContent>
-            <MudTextField Label=""First name"" HelperText=""Max. 8 characters"" @bind-Value=""model.Username"" For=""@(() => model.Username)"" />
-            <MudTextField Label=""Email"" @bind-Value=""model.Email"" For=""@(() => model.Email)"" />
-            <MudTextField Label=""Password"" HelperText=""Choose a strong password"" @bind-Value=""model.Password"" For=""@(() => model.Password)"" InputType=""InputType.Password"" />
-            <MudTextField Label=""Password"" HelperText=""Repeat the password"" @bind-Value=""model.Password2"" For=""@(() => model.Password2)"" InputType=""InputType.Password"" />
-        </MudCardContent>
-        <MudCardActions>
-            <MudButton ButtonType=""ButtonType.Submit"" Variant=""Variant.Filled"" Color=""Color.Primary"" Class=""demo-form-button"">Register</MudButton>
-        </MudCardActions>
-    </MudCard>
+<div style=""max-width: 400px;"">
+    <EditForm Model=""@model"" OnValidSubmit=""OnValidSubmit"">
+        <DataAnnotationsValidator />
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label=""First name"" HelperText=""Max. 8 characters""
+                              @bind-Value=""model.Username"" For=""@(() => model.Username)"" />
+                <MudTextField Label=""Email"" Class=""mt-3""
+                              @bind-Value=""model.Email"" For=""@(() => model.Email)"" />
+                <MudTextField Label=""Password"" HelperText=""Choose a strong password"" Class=""mt-3""
+                              @bind-Value=""model.Password"" For=""@(() => model.Password)"" InputType=""InputType.Password"" />
+                <MudTextField Label=""Password"" HelperText=""Repeat the password"" Class=""mt-3""
+                              @bind-Value=""model.Password2"" For=""@(() => model.Password2)"" InputType=""InputType.Password"" />
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType=""ButtonType.Submit"" Variant=""Variant.Filled"" Color=""Color.Primary"" Class=""ml-auto"">Register</MudButton>
+            </MudCardActions>
+        </MudCard>
+        <MudText Typo=""Typo.body2"" Align=""Align.Center"" Class=""my-4"">
+            Fill out the form correctly to see the success message.
+        </MudText>
 
-    <MudText Typo=""Typo.body2"" Align=""Align.Center"" Class=""my-4"">
-        Fill out the form correctly to see the success message.
-    </MudText>
-
-    <MudExpansionPanels>
-        <MudExpansionPanel Text=""Show Validation Summary"">
-            @if (success)
-            {
-                <MudText Color=""Color.Success"">Success</MudText>
-            }
-            else
-            {
-                <MudText Color=""@Color.Error"">
-                    <ValidationSummary />
-                </MudText>
-            }
-        </MudExpansionPanel>
-    </MudExpansionPanels>
-</EditForm>
+        <MudExpansionPanels>
+            <MudExpansionPanel Text=""Show Validation Summary"">
+                @if (success)
+                {
+                    <MudText Color=""Color.Success"">Success</MudText>
+                }
+                else
+                {
+                    <MudText Color=""@Color.Error"">
+                        <ValidationSummary />
+                    </MudText>
+                }
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </EditForm>
+</div>
 
 @code {
     RegisterAccountForm model = new RegisterAccountForm();
@@ -1319,95 +1421,52 @@ public const string EditFormExample = @"@using System.ComponentModel.DataAnnotat
 
 }";
 
-public const string ManualValidationExample = @"@using System.Text.RegularExpressions
-
-<MudForm @bind-IsValid=""@success"">
-
-    <MudCard Class=""demo-form-manual"">
-        <MudCardContent>
-            <MudTextField T=""string"" Label=""Password"" HelperText=""Enter your new password"" Immediate=""true""
-                          Error=""@error1"" ErrorText=""@error_text1"" ValueChanged=""@(x => { pw1 = x; Validate(); })"" InputType=""InputType.Password"" />
-            <MudTextField T=""string"" Label=""Password"" HelperText=""Enter the password again"" Immediate=""true""
-                          Error=""@error2"" ErrorText=""@error_text2"" ValueChanged=""@(x => { pw2 = x; Validate(); })"" InputType=""InputType.Password"" />
-        </MudCardContent>
-    </MudCard>
-    <MudText Typo=""Typo.body2"" Align=""Align.Center"" Class=""my-4"">
-        @if (success)
-        {
-            <MudText Color=""Color.Success"" Align=""Align.Center"" Typo=""Typo.body2"">Success</MudText>
-        }
-        else
-        {
-            <MudText Align=""Align.Center"" Typo=""Typo.body2"">Enter the same password twice to see the success message.</MudText>
-        }
-    </MudText>
-</MudForm>
-
-@code {
-    bool success, error1, error2;
-    string pw1, pw2, error_text1, error_text2;
-
-    public void Validate()
-    {
-        error1 = false;
-        error2 = false;
-        if (string.IsNullOrEmpty(pw1))
-        {
-            error1 = true;
-            error_text1 = ""Password required"";
-        }
-        if (pw1 != pw2)
-        {
-            error2 = true;
-            error_text2 = ""The passwords do not match!"";
-        }
-        StateHasChanged();
-    }
-
-}";
-
 public const string MudFormExample = @"@using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
 
-<MudForm @ref=""form"" @bind-IsValid=""@success"" @bind-Errors=""@errors"">
 
-    <MudCard Class=""demo-form"">
+<div style=""max-width: 400px;"">
+    <MudCard>
         <MudCardContent>
-            <MudTextField T=""string"" Label=""Username"" Required=""true"" RequiredError=""User name is required!"" />
-            <MudTextField T=""string"" Label=""Email"" Required=""true"" RequiredError=""Email is required!""
-                Validation=""@(new EmailAddressAttribute(){ ErrorMessage = ""The email address is invalid""})"" />
-            <MudTextField T=""string"" Label=""Password"" HelperText=""Choose a strong password"" @ref=""pwField1""
-                InputType=""InputType.Password""
-                Validation=""@(new Func<string, IEnumerable<string>>(PasswordStrength))"" />
-            <MudTextField T=""string""
-                Label=""Password"" HelperText=""Repeat the password"" InputType=""InputType.Password""
-                Validation=""@(new Func<string, string>(PasswordMatch))"" Required=""true""
-                RequiredError=""Password is required!"" />
+            <MudForm @ref=""form"" @bind-IsValid=""@success"" @bind-Errors=""@errors"">
+                <MudTextField T=""string"" Label=""Username"" Required=""true"" RequiredError=""User name is required!""/>
+                <MudTextField T=""string"" Class=""mt-3"" Label=""Email"" Required=""true"" RequiredError=""Email is required!""
+                              Validation=""@(new EmailAddressAttribute() {ErrorMessage = ""The email address is invalid""})""/>
+                <MudTextField T=""string"" Class=""mt-3"" Label=""Password"" HelperText=""Choose a strong password"" @ref=""pwField1""
+                              InputType=""InputType.Password""
+                              Validation=""@(new Func<string, IEnumerable<string>>(PasswordStrength))"" Required=""true""
+                              RequiredError=""Password is required!""/>
+                <MudTextField T=""string"" Class=""mt-3""
+                              Label=""Password"" HelperText=""Repeat the password"" InputType=""InputType.Password""
+                              Validation=""@(new Func<string, string>(PasswordMatch))""/>
+                <MudCheckBox T=""bool"" Required=""true"" RequiredError=""You must agree"" Class=""ml-n2""
+                             Label=""I agree that MudBlazor is awesome!""/>
+            </MudForm>
         </MudCardContent>
         <MudCardActions>
-            <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" Disabled=""@(!success)"" Class=""demo-form-button"">Register</MudButton>
+            <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" Disabled=""@(!success)"" Class=""ml-auto"">Register</MudButton>
         </MudCardActions>
     </MudCard>
-
-    <MudPaper Class=""demo-form-paper"">
-        <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""@form.Validate"">Validate</MudButton>
-        <MudButton Variant=""Variant.Filled"" Color=""Color.Secondary"" OnClick=""@form.Reset"" Class=""mx-2"">Reset</MudButton>
-        <MudButton Variant=""Variant.Filled"" OnClick=""@form.ResetValidation"">Reset Validation</MudButton>
+    
+    <MudPaper Class=""pa-4 justify-center my-4 mud-text-align-center"">
+        <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""@(()=>form.Validate())"">Validate</MudButton>
+        <MudButton Variant=""Variant.Filled"" Color=""Color.Secondary"" OnClick=""@(()=>form.Reset())"" Class=""mx-2"">Reset</MudButton>
+        <MudButton Variant=""Variant.Filled"" OnClick=""@(()=>form.ResetValidation())"">Reset Validation</MudButton>
     </MudPaper>
 
     <MudExpansionPanels>
-        <MudExpansionPanel Text=""Show Errors"">
+        <MudExpansionPanel Text=""@($""Show Errors ({errors.Length})"")"">
             @foreach (var error in errors)
             {
                 <MudText Color=""@Color.Error"">@error</MudText>
             }
         </MudExpansionPanel>
     </MudExpansionPanels>
-</MudForm>
+</div>
 
 @code {
     bool success;
-    string[] errors={};
+    string[] errors = { };
     MudTextField<string> pwField1;
     MudForm form;
 
@@ -1981,6 +2040,37 @@ public const string NavMenuIconExample = @"<MudNavMenu Class=""demo-navmenu"">
     <MudNavLink Href=""/about"">About</MudNavLink>
 </MudNavMenu>";
 
+public const string OverlayAbsoluteExample = @"<MudPaper Class=""px-4 pt-4 pb-16"">
+    <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ToggleOverlay"">Show Overlay</MudButton>
+    <MudOverlay Visible=""isVisible"" OnClick=""ToggleOverlay"" BackgroundColor=""rgba(0,0,0,0.5)"" FadeIn=""true"" Absolute=""true""></MudOverlay>
+</MudPaper>
+
+
+
+@code {
+    private bool isVisible;
+
+    public void ToggleOverlay()
+    {
+        isVisible = !isVisible;
+        StateHasChanged();
+    }
+}";
+
+public const string OverlayUsageExample = @"<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ToggleOverlay"">Show Overlay</MudButton>
+<MudOverlay Visible=""isVisible"" OnClick=""ToggleOverlay"" BackgroundColor=""rgba(0,0,0,0.5)"" FadeIn=""true""></MudOverlay>
+
+
+@code {
+    private bool isVisible;
+
+    public void ToggleOverlay()
+    {
+        isVisible = !isVisible;
+        StateHasChanged();
+    }
+}";
+
 public const string PaperComponentExample = @"<MudPaper Elevation=""0""></MudPaper>
 <MudPaper></MudPaper>
 <MudPaper Elevation=""3""></MudPaper>";
@@ -2526,11 +2616,11 @@ public const string SelectVariantsExample = @"<MudGrid>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
-        <MudSelect T=""double?"" Label=""Price"" Variant=""Variant.Outlined"" Format=""F2"">
-            <MudSelectItem T=""double?"" Value=""4.50""/>
-            <MudSelectItem T=""double?"" Value=""4.99""/>
-            <MudSelectItem T=""double?"" Value=""3.60""/>
-            <MudSelectItem T=""double?"" Value=""21.99""/>
+        <MudSelect T=""double"" Label=""Price"" Strict=""true"" Variant=""Variant.Outlined"" Format=""F2"">
+            <MudSelectItem T=""double"" Value=""4.50""/>
+            <MudSelectItem T=""double"" Value=""4.99""/>
+            <MudSelectItem T=""double"" Value=""3.60""/>
+            <MudSelectItem T=""double"" Value=""21.99""/>
         </MudSelect>
     </MudItem>
     <MudItem xs=""12"" sm=""6"" md=""4"">
@@ -2845,13 +2935,111 @@ public const string SwitchConversionExample = @"<MudSwitch @bind-Checked=""boole
 <MudSwitch @bind-Checked=""nullable"" Color=""Color.Primary"">bool?: @nullable</MudSwitch>
 <MudSwitch @bind-Checked=""integer"" Color=""Color.Secondary"">int: @integer</MudSwitch>
 <MudSwitch @bind-Checked=""str"" Color=""Color.Tertiary"">string: ""@(str)""</MudSwitch>
+<MudSwitch @bind-Checked=""customstr"" Color=""Color.Tertiary"" Converter=""@(new CustomStringToBoolConverter())""> custom string: ""@(customstr)""</MudSwitch>
+<MudSwitch @bind-Checked=""customobj"" Color=""Color.Tertiary"" Converter=""@(new ObjectToBoolConverter())"">object: ""@(customobj.ToString())""</MudSwitch>
 
 @code{
     public bool boolean { get; set; } = true;
     public bool? nullable { get; set; } = true;
     public int integer { get; set; } = 1;
     public string str { get; set; } = ""on"";
-}";
+    public string customstr { get; set; } = ""no, at all"";
+    public object customobj { get; set; } = false;
+
+    public class ObjectToBoolConverter : BoolConverter<object>
+    {
+
+        public ObjectToBoolConverter()
+        {
+            SetFunc = OnSet;
+            GetFunc = OnGet;
+        }
+
+        private object OnGet(bool? value)
+        {
+            try
+            {
+                return (object)(value == true);
+            }
+            catch (Exception e)
+            {
+                UpdateGetError(""Conversion error: "" + e.Message);
+                return default(T);
+            }
+        }
+
+        private bool? OnSet(object arg)
+        {
+            if (arg == null)
+                return null;
+            try
+            {
+                if (arg is bool)
+                    return (bool)(object)arg;
+                else if (arg is bool?)
+                    return (bool?)(object)arg;
+                else
+                {
+                    UpdateSetError(""Unable to convert to bool? from type object"");
+                    return null;
+                }
+            }
+            catch (FormatException e)
+            {
+                UpdateSetError(""Conversion error: "" + e.Message);
+                return null;
+            }
+        }
+
+    }
+
+    public class CustomStringToBoolConverter : BoolConverter<string>
+    {
+
+        public CustomStringToBoolConverter()
+        {
+            SetFunc = OnSet;
+            GetFunc = OnGet;
+        }
+
+        private string TrueString = ""yes, please"";
+        private string FalseString = ""no, at all"";
+        private string NullString = ""I don't know"";
+
+        private string OnGet(bool? value)
+        {
+            try
+            {
+                return (value == true) ? TrueString : FalseString;
+            }
+            catch (Exception e)
+            {
+                UpdateGetError(""Conversion error: "" + e.Message);
+                return NullString;
+            }
+        }
+
+        private bool? OnSet(string arg)
+        {
+            if (arg == null)
+                return null;
+            try
+            {
+                if (arg == TrueString)
+                    return true;
+                if (arg == FalseString)
+                    return false;
+                else
+                    return null;
+            }
+            catch (FormatException e)
+            {
+                UpdateSetError(""Conversion error: "" + e.Message);
+                return null;
+            }
+        }
+
+    } }";
 
 public const string SwitchWithLabelExample = @"<MudSwitch @bind-Checked=""@Label_Switch1"" Label=""Default"" />
 <MudSwitch @bind-Checked=""@Label_Switch2"" Label=""Primary"" Color=""Color.Primary"" />

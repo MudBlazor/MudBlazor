@@ -150,7 +150,7 @@ app, .mud-layout {
   padding: 0.6rem 1.25rem 0.7rem 1.25rem;
   position: fixed;
   width: 100%;
-  z-index: 1000; }
+  z-index: 9999; }
 
 #blazor-error-ui .dismiss {
   cursor: pointer;
@@ -2173,7 +2173,6 @@ ul {
   box-sizing: border-box;
   min-height: 36px;
   transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   font-weight: 500;
   line-height: 1.75;
   border-radius: 50%;
@@ -2256,13 +2255,17 @@ ul {
   min-width: 48px;
   min-height: auto;
   border-radius: 24px; }
+  .mud-fab-extended.mud-fab-size-large .mud-svg-icon-root {
+    margin-right: 8px; }
 
 .mud-fab-extended.mud-fab-size-small {
   width: auto;
   height: 34px;
-  padding: 0 10px;
+  padding: 0 12px;
   min-width: 34px;
   border-radius: 17px; }
+  .mud-fab-extended.mud-fab-size-small .mud-svg-icon-root {
+    margin-right: 4px; }
 
 .mud-fab-extended.mud-fab-size-medium {
   width: auto;
@@ -2270,6 +2273,8 @@ ul {
   padding: 0 16px;
   min-width: 40px;
   border-radius: 20px; }
+  .mud-fab-extended.mud-fab-size-medium .mud-svg-icon-root {
+    margin-right: 8px; }
 
 .mud-fab-color-inherit {
   color: inherit; }
@@ -4063,6 +4068,7 @@ ul {
 
 .mud-select {
   display: flex;
+  flex-grow: 1;
   position: relative; }
 
 .mud-select-input {
@@ -4087,8 +4093,7 @@ ul {
   align-items: center;
   font-weight: 400;
   line-height: 1.1876em;
-  letter-spacing: 0.00938em;
-  z-index: 10; }
+  letter-spacing: 0.00938em; }
   .mud-input.mud-input-full-width {
     width: 100%; }
   .mud-input.mud-disabled {
@@ -4555,13 +4560,16 @@ ul {
   position: fixed;
   z-index: var(--mud-zindex-popover);
   background-color: transparent; }
-  .mud-overlay.mud-overlay-dialog {
-    z-index: calc(var(--mud-zindex-dialog) + 1);
-    background-color: rgba(0, 0, 0, 0.5);
+  .mud-overlay.mud-animation {
     animation: mud-animation-fadein ease 0.15s;
     -webkit-animation: mud-animation-fadein ease 0.15s;
     -moz-animation: mud-animation-fadein ease 0.15s;
     -o-animation: mud-animation-fadein ease 0.15s; }
+  .mud-overlay.mud-absolute {
+    position: absolute; }
+  .mud-overlay.mud-overlay-dialog {
+    z-index: calc(var(--mud-zindex-dialog) + 1);
+    background-color: rgba(0, 0, 0, 0.5); }
 
 .d-flex {
   display: flex !important; }
@@ -9150,38 +9158,41 @@ ul {
   background-color: var(--mud-palette-drawer-background); }
   .mud-drawer.mud-drawer--open {
     transform: none;
-    transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms; }
+    transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+    visibility: hidden; }
+  @media (min-width: 1280px) {
+    .mud-drawer.mud-drawer--open {
+      transform: none;
+      transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+      visibility: unset; } }
   .mud-drawer.mud-drawer-anchor-left {
     left: 0;
     right: auto; }
     .mud-drawer.mud-drawer-anchor-left.mud-drawer--closed {
-      transform: translateX(calc(-1 * var(--mud-drawer-width)));
-      visibility: hidden; }
-    .mud-drawer.mud-drawer-anchor-left.mud-drawer--force-close {
-      transform: translateX(calc(-1 * var(--mud-drawer-width)));
-      visibility: hidden; }
-    @media (min-width: 0px) {
-      .mud-drawer.mud-drawer-anchor-left.mud-drawer--force-close {
+      transform: none;
+      transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+      visibility: unset; }
+      .mud-drawer.mud-drawer-anchor-left.mud-drawer--closed.mud-drawer--initial {
+        transform: translateX(calc(-1 * var(--mud-drawer-width)));
+        visibility: hidden; }
+    @media (min-width: 1280px) {
+      .mud-drawer.mud-drawer-anchor-left.mud-drawer--closed {
         transform: translateX(calc(-1 * var(--mud-drawer-width)));
         visibility: hidden; } }
-    @media (min-width: 1280px) {
-      .mud-drawer.mud-drawer-anchor-left.mud-drawer--force-close {
-        transform: unset;
-        visibility: unset; } }
   .mud-drawer.mud-drawer-anchor-right {
     left: auto;
     right: 0; }
     .mud-drawer.mud-drawer-anchor-right.mud-drawer--closed {
-      transform: translateX(var(--mud-drawer-width));
-      visibility: hidden; }
-    @media (min-width: 0px) {
-      .mud-drawer.mud-drawer-anchor-right.mud-drawer--force-close {
+      transform: none;
+      transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+      visibility: unset; }
+      .mud-drawer.mud-drawer-anchor-right.mud-drawer--closed.mud-drawer--initial {
+        transform: translateX(var(--mud-drawer-width));
+        visibility: hidden; }
+    @media (min-width: 1280px) {
+      .mud-drawer.mud-drawer-anchor-right.mud-drawer--closed {
         transform: translateX(var(--mud-drawer-width));
         visibility: hidden; } }
-    @media (min-width: 1280px) {
-      .mud-drawer.mud-drawer-anchor-right.mud-drawer--force-close {
-        transform: unset;
-        visibility: unset; } }
 
 .mud-drawer-header {
   display: flex;
@@ -9204,11 +9215,10 @@ ul {
   -webkit-animation: mud-animation-fadein ease 0.15s;
   -moz-animation: mud-animation-fadein ease 0.15s;
   -o-animation: mud-animation-fadein ease 0.15s; }
-  @media (min-width: 0px) {
-    .mud-drawer-overlay.mud-drawer--open {
-      display: block; }
-    .mud-drawer-overlay.mud-drawer--force-close {
-      display: none; } }
+  .mud-drawer-overlay.mud-drawer--open {
+    display: block; }
+    .mud-drawer-overlay.mud-drawer--open.mud-drawer--initial {
+      display: none; }
   @media (min-width: 1280px) {
     .mud-drawer-overlay.mud-drawer--open {
       display: none; } }
