@@ -4068,6 +4068,7 @@ ul {
 
 .mud-select {
   display: flex;
+  flex-grow: 1;
   position: relative; }
 
 .mud-select-input {
@@ -4092,8 +4093,7 @@ ul {
   align-items: center;
   font-weight: 400;
   line-height: 1.1876em;
-  letter-spacing: 0.00938em;
-  z-index: 10; }
+  letter-spacing: 0.00938em; }
   .mud-input.mud-input-full-width {
     width: 100%; }
   .mud-input.mud-disabled {
@@ -4560,13 +4560,16 @@ ul {
   position: fixed;
   z-index: var(--mud-zindex-popover);
   background-color: transparent; }
-  .mud-overlay.mud-overlay-dialog {
-    z-index: calc(var(--mud-zindex-dialog) + 1);
-    background-color: rgba(0, 0, 0, 0.5);
+  .mud-overlay.mud-animation {
     animation: mud-animation-fadein ease 0.15s;
     -webkit-animation: mud-animation-fadein ease 0.15s;
     -moz-animation: mud-animation-fadein ease 0.15s;
     -o-animation: mud-animation-fadein ease 0.15s; }
+  .mud-overlay.mud-absolute {
+    position: absolute; }
+  .mud-overlay.mud-overlay-dialog {
+    z-index: calc(var(--mud-zindex-dialog) + 1);
+    background-color: rgba(0, 0, 0, 0.5); }
 
 .d-flex {
   display: flex !important; }

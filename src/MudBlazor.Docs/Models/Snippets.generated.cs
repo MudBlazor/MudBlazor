@@ -549,13 +549,110 @@ public const string CheckboxConversionExample = @"<MudCheckBox @bind-Checked=""b
 <MudCheckBox @bind-Checked=""nullable"" Color=""Color.Primary"">bool?: @nullable</MudCheckBox>
 <MudCheckBox @bind-Checked=""integer"" Color=""Color.Secondary"">int: @integer</MudCheckBox>
 <MudCheckBox @bind-Checked=""str"" Color=""Color.Tertiary"">string: ""@(str)""</MudCheckBox>
+<MudCheckBox @bind-Checked=""customstr"" Color=""Color.Tertiary"" Converter=""@(new CustomStringToBoolConverter())""> custom string: ""@(customstr)""</MudCheckBox>
+<MudCheckBox @bind-Checked=""customobj"" Color=""Color.Tertiary"" Converter=""@(new ObjectToBoolConverter())"">object: ""@(customobj.ToString())""</MudCheckBox>
 
-@code{
-    public bool boolean { get; set; } = true;
+@code{ public bool boolean { get; set; } = true;
     public bool? nullable { get; set; } = true;
     public int integer { get; set; } = 1;
     public string str { get; set; } = ""on"";
-}";
+    public string customstr { get; set; } = ""no, at all"";
+    public object customobj { get; set; } = false;
+
+    public class ObjectToBoolConverter : BoolConverter<object>
+    {
+
+        public ObjectToBoolConverter()
+        {
+            SetFunc = OnSet;
+            GetFunc = OnGet;
+        }
+
+        private object OnGet(bool? value)
+        {
+            try
+            {
+                return (object)(value == true);
+            }
+            catch (Exception e)
+            {
+                UpdateGetError(""Conversion error: "" + e.Message);
+                return default(T);
+            }
+        }
+
+        private bool? OnSet(object arg)
+        {
+            if (arg == null)
+                return null;
+            try
+            {
+                if (arg is bool)
+                    return (bool)(object)arg;
+                else if (arg is bool?)
+                    return (bool?)(object)arg;
+                else
+                {
+                    UpdateSetError(""Unable to convert to bool? from type object"");
+                    return null;
+                }
+            }
+            catch (FormatException e)
+            {
+                UpdateSetError(""Conversion error: "" + e.Message);
+                return null;
+            }
+        }
+
+    }
+
+    public class CustomStringToBoolConverter : BoolConverter<string>
+    {
+
+        public CustomStringToBoolConverter()
+        {
+            SetFunc = OnSet;
+            GetFunc = OnGet;
+        }
+
+        private string TrueString = ""yes, please"";
+        private string FalseString = ""no, at all"";
+        private string NullString = ""I don't know"";
+
+        private string OnGet(bool? value)
+        {
+            try
+            {
+                return (value == true) ? TrueString : FalseString;
+            }
+            catch (Exception e)
+            {
+                UpdateGetError(""Conversion error: "" + e.Message);
+                return NullString;
+            }
+        }
+
+        private bool? OnSet(string arg)
+        {
+            if (arg == null)
+                return null;
+            try
+            {
+                if (arg == TrueString)
+                    return true;
+                if (arg == FalseString)
+                    return false;
+                else
+                    return null;
+            }
+            catch (FormatException e)
+            {
+                UpdateSetError(""Conversion error: "" + e.Message);
+                return null;
+            }
+        }
+
+    } }";
 
 public const string CheckboxIndeterminateExample = @"<MudCheckBox @bind-Checked=""value"" Color=""@Color.Primary"">
     Value: @(value == null ? ""null"" : value.ToString())
@@ -1865,6 +1962,37 @@ public const string NavMenuIconExample = @"<MudNavMenu Class=""demo-navmenu"">
     <MudNavLink Href=""/about"">About</MudNavLink>
 </MudNavMenu>";
 
+public const string OverlayAbsoluteExample = @"<MudPaper Class=""px-4 pt-4 pb-16"">
+    <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ToggleOverlay"">Show Overlay</MudButton>
+    <MudOverlay Visible=""isVisible"" OnClick=""ToggleOverlay"" BackgroundColor=""rgba(0,0,0,0.5)"" FadeIn=""true"" Absolute=""true""></MudOverlay>
+</MudPaper>
+
+
+
+@code {
+    private bool isVisible;
+
+    public void ToggleOverlay()
+    {
+        isVisible = !isVisible;
+        StateHasChanged();
+    }
+}";
+
+public const string OverlayUsageExample = @"<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ToggleOverlay"">Show Overlay</MudButton>
+<MudOverlay Visible=""isVisible"" OnClick=""ToggleOverlay"" BackgroundColor=""rgba(0,0,0,0.5)"" FadeIn=""true""></MudOverlay>
+
+
+@code {
+    private bool isVisible;
+
+    public void ToggleOverlay()
+    {
+        isVisible = !isVisible;
+        StateHasChanged();
+    }
+}";
+
 public const string PaperComponentExample = @"<MudPaper Elevation=""0""></MudPaper>
 <MudPaper></MudPaper>
 <MudPaper Elevation=""3""></MudPaper>";
@@ -2729,13 +2857,111 @@ public const string SwitchConversionExample = @"<MudSwitch @bind-Checked=""boole
 <MudSwitch @bind-Checked=""nullable"" Color=""Color.Primary"">bool?: @nullable</MudSwitch>
 <MudSwitch @bind-Checked=""integer"" Color=""Color.Secondary"">int: @integer</MudSwitch>
 <MudSwitch @bind-Checked=""str"" Color=""Color.Tertiary"">string: ""@(str)""</MudSwitch>
+<MudSwitch @bind-Checked=""customstr"" Color=""Color.Tertiary"" Converter=""@(new CustomStringToBoolConverter())""> custom string: ""@(customstr)""</MudSwitch>
+<MudSwitch @bind-Checked=""customobj"" Color=""Color.Tertiary"" Converter=""@(new ObjectToBoolConverter())"">object: ""@(customobj.ToString())""</MudSwitch>
 
 @code{
     public bool boolean { get; set; } = true;
     public bool? nullable { get; set; } = true;
     public int integer { get; set; } = 1;
     public string str { get; set; } = ""on"";
-}";
+    public string customstr { get; set; } = ""no, at all"";
+    public object customobj { get; set; } = false;
+
+    public class ObjectToBoolConverter : BoolConverter<object>
+    {
+
+        public ObjectToBoolConverter()
+        {
+            SetFunc = OnSet;
+            GetFunc = OnGet;
+        }
+
+        private object OnGet(bool? value)
+        {
+            try
+            {
+                return (object)(value == true);
+            }
+            catch (Exception e)
+            {
+                UpdateGetError(""Conversion error: "" + e.Message);
+                return default(T);
+            }
+        }
+
+        private bool? OnSet(object arg)
+        {
+            if (arg == null)
+                return null;
+            try
+            {
+                if (arg is bool)
+                    return (bool)(object)arg;
+                else if (arg is bool?)
+                    return (bool?)(object)arg;
+                else
+                {
+                    UpdateSetError(""Unable to convert to bool? from type object"");
+                    return null;
+                }
+            }
+            catch (FormatException e)
+            {
+                UpdateSetError(""Conversion error: "" + e.Message);
+                return null;
+            }
+        }
+
+    }
+
+    public class CustomStringToBoolConverter : BoolConverter<string>
+    {
+
+        public CustomStringToBoolConverter()
+        {
+            SetFunc = OnSet;
+            GetFunc = OnGet;
+        }
+
+        private string TrueString = ""yes, please"";
+        private string FalseString = ""no, at all"";
+        private string NullString = ""I don't know"";
+
+        private string OnGet(bool? value)
+        {
+            try
+            {
+                return (value == true) ? TrueString : FalseString;
+            }
+            catch (Exception e)
+            {
+                UpdateGetError(""Conversion error: "" + e.Message);
+                return NullString;
+            }
+        }
+
+        private bool? OnSet(string arg)
+        {
+            if (arg == null)
+                return null;
+            try
+            {
+                if (arg == TrueString)
+                    return true;
+                if (arg == FalseString)
+                    return false;
+                else
+                    return null;
+            }
+            catch (FormatException e)
+            {
+                UpdateSetError(""Conversion error: "" + e.Message);
+                return null;
+            }
+        }
+
+    } }";
 
 public const string SwitchWithLabelExample = @"<MudSwitch @bind-Checked=""@Label_Switch1"" Label=""Default"" />
 <MudSwitch @bind-Checked=""@Label_Switch2"" Label=""Primary"" Color=""Color.Primary"" />

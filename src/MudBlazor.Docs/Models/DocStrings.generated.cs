@@ -619,6 +619,8 @@ public const string MudBooleanInput_CheckedChanged = @"Fired when Checked change
 
 public const string MudBooleanInput_Checked = @"The state of the component";
 
+public const string MudBooleanInput_Converter = @"";
+
 public const string MudBooleanInput_Required = @"";
 
 public const string MudBooleanInput_RequiredError = @"";
@@ -827,6 +829,8 @@ public const string MudCheckBox_IndeterminateIcon = @"Custom indeterminate icon,
 public const string MudCheckBox_CheckedChanged = @"";
 
 public const string MudCheckBox_Checked = @"";
+
+public const string MudCheckBox_Converter = @"";
 
 public const string MudCheckBox_Required = @"";
 
@@ -1967,6 +1971,14 @@ public const string MudNavMenu_UserAttributes = @"UserAttributes carries all att
 
 public const string MudOverlay_ChildContent = @"Child content of the component.";
 
+public const string MudOverlay_Visible = @"If true overlay will be visible.";
+
+public const string MudOverlay_BackgroundColor = @"";
+
+public const string MudOverlay_FadeIn = @"If true will fadein.";
+
+public const string MudOverlay_Absolute = @"Icon class names, separated by space";
+
 public const string MudOverlay_CommandParameter = @"Command parameter.";
 
 public const string MudOverlay_Command = @"Command executed when the user clicks on an element.";
@@ -2481,6 +2493,8 @@ public const string MudSwitch_ChildContent = @"";
 public const string MudSwitch_CheckedChanged = @"";
 
 public const string MudSwitch_Checked = @"";
+
+public const string MudSwitch_Converter = @"";
 
 public const string MudSwitch_Required = @"";
 

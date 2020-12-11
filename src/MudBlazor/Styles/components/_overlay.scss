@@ -8,13 +8,19 @@
     z-index: var(--mud-zindex-popover);
     background-color: transparent;
 
-
-    &.mud-overlay-dialog {
-        z-index: calc(var(--mud-zindex-dialog) + 1);
-        background-color: rgba(0,0,0,0.5);
+    &.mud-animation {
         animation: mud-animation-fadein ease 0.15s;
         -webkit-animation: mud-animation-fadein ease 0.15s;
         -moz-animation: mud-animation-fadein ease 0.15s;
         -o-animation: mud-animation-fadein ease 0.15s;
+    }
+
+    &.mud-absolute {
+        position: absolute;
+    }
+
+    &.mud-overlay-dialog {
+        z-index: calc(var(--mud-zindex-dialog) + 1);
+        background-color: rgba(0,0,0,0.5);
     }
 }
