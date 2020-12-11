@@ -35,7 +35,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <!--<Exec Command="$(SolutionDir)MudBlazor.Docs.Compiler\bin\Debug\netcoreapp3.1\MudBlazor.Docs.Compiler.exe" />-->
+    <Exec Command="$(SolutionDir)MudBlazor.Docs.Compiler\bin\Debug\netcoreapp3.1\MudBlazor.Docs.Compiler.exe" />
   </Target>
 
   <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
