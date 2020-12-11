@@ -1,9 +1,10 @@
-﻿using FluentAssertions;
-
+﻿using Bunit;
+using FluentAssertions;
 using NUnit.Framework;
-
+using System;
 using System.Collections.Generic;
 
+using static Bunit.ComponentParameterFactory;
 using static MudBlazor.Components.Highlighter.Splitter;
 
 namespace MudBlazor.UnitTests
@@ -13,6 +14,8 @@ namespace MudBlazor.UnitTests
     {
         private const string TEXT = "This is the first item";
 
+        #region Splitter
+        
         [Test]
         public void ShouldSplitTest()
         {
@@ -49,5 +52,98 @@ namespace MudBlazor.UnitTests
             result.Should().HaveCount(1);
             result.Should().BeEquivalentTo(new List<string> { TEXT });
         }
+        
+        #endregion
+
+
+        #region Markup
+
+
+
+
+        /// <summary>
+        /// Check markup whith regular text, no regex
+        /// </summary>
+        [Test]
+        public void MudHighlighterMarkupTest()
+        {
+            using var ctx = new Bunit.TestContext();
+            var text = Parameter(nameof(MudHighlighter.Text), TEXT);
+            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "item");
+            
+           var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
+            comp.Markup.Should()
+                .BeEquivalentTo("This is the first <mark>item</mark>");
+            
+            
+            
+        }
+
+        /// <summary>
+        /// Check markup whith regex text, no regex
+        /// </summary>
+        [Test]
+        public void MudHighlighterMarkupWithRegexTextTest()
+        {
+            using var ctx = new Bunit.TestContext();
+            var text = Parameter(nameof(MudHighlighter.Text), TEXT);
+            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "[");
+
+            var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
+            comp.Markup.Should()
+                .BeEquivalentTo("This is the first item");
+
+
+
+        }
+
+
+        /// <summary>
+        /// Check markup whith property 
+        /// </summary>
+        [Test]
+        public void MudHighlighterMarkupUntilNextBoundaryTest()
+        {
+            using var ctx = new Bunit.TestContext();
+            var text = Parameter(nameof(MudHighlighter.Text), TEXT);
+            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "it");
+            var untilNextBoundary= Parameter(nameof(MudHighlighter.UntilNextBoundary), true);
+
+            var comp = ctx
+                .RenderComponent<MudHighlighter>(text, highlightedText, untilNextBoundary);
+            
+            comp.Markup.Should()
+                .BeEquivalentTo("This is the first <mark>item</mark>");
+
+
+
+        }
+
+        /// <summary>
+        /// Check markup whith property 
+        /// </summary>
+        [Test]
+        public void MudHighlighterMarkupCaseSensitiveTest()
+        {
+            using var ctx = new Bunit.TestContext();
+            var text = Parameter(nameof(MudHighlighter.Text), "This is this");
+            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "this");
+            var caseSensitive = Parameter(nameof(MudHighlighter.CaseSensitive), true);
+            var caseInSensitive = Parameter(nameof(MudHighlighter.CaseSensitive), false);
+
+            var comp = ctx
+                .RenderComponent<MudHighlighter>(text, highlightedText, caseSensitive);
+
+            //Case sensitive
+            comp.Markup.Should()
+                .BeEquivalentTo("This is <mark>this</mark>");
+
+            //Case insensitive
+            comp.SetParametersAndRender(text, highlightedText, caseInSensitive);
+            comp.Markup.Should()
+                .BeEquivalentTo("<mark>This</mark> is <mark>this</mark>");
+
+        }
+        #endregion
     }
 }
