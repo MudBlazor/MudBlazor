@@ -1,4 +1,9 @@
 ﻿@charset "UTF-8";
+/*!
+ * MudBlazor (https://mudblazor.com/)
+ * Copyright (c) 2020 Jonny Larsson
+ * Licensed under MIT (https://github.com/Garderoben/MudBlazor/blob/develop/LICENSE)
+ */
 .mud-primary {
   background-color: var(--mud-palette-primary) !important; }
 
