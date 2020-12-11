@@ -10,6 +10,7 @@ namespace MudBlazor.Services
         /// <summary>
         /// Adds a ResizeListener as a Scoped instance.
         /// </summary>
+        /// <param name="services">IServiceCollection</param>
         /// <param name="configure">Defines settings for this instance.</param>
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorResizeListener(this IServiceCollection services, Action<ResizeOptions> configure)
