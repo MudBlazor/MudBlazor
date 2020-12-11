@@ -3714,8 +3714,8 @@ public const string ToggleIconButtonEventCallbackExample = @"<MudToggleIconButto
                      Icon=""@Icons.Material.AlarmOff"" Color=""@Color.Error"" 
                      ToggledIcon=""@Icons.Material.AlarmOn"" ToggledColor=""@Color.Success"" />
 
-<MudBody1>Alarm is @(AlarmOn ? ""On"" : ""Off"")</MudBody1>
-<MudBody1>@($""I have been switched on {SwitchedOnCount} times."")</MudBody1>
+<span>Alarm is @(AlarmOn ? ""On"" : ""Off"")</span>
+<span>@($""I have been switched on {SwitchedOnCount} times."")</span>
 
 @code {
     public bool AlarmOn { get; set; }
@@ -3744,7 +3744,7 @@ public const string ToggleIconButtonTwoWayBindingExample = @"<MudToggleIconButto
                      Icon=""@Icons.Material.AlarmOff"" Color=""@Color.Error""
                      ToggledIcon=""@Icons.Material.AlarmOn"" ToggledColor=""@Color.Success""/>
 
-<MudBody1>Alarm is @(AlarmOn ? ""On"" : ""Off"")</MudBody1>
+<span>Alarm is @(AlarmOn ? ""On"" : ""Off"")</span>
 
 @code {
     public bool AlarmOn { get; set; }
