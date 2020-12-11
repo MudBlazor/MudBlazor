@@ -3491,6 +3491,35 @@ public const string TabsWithBagdesExample = @"<MudTabs Elevation=""1"" Rounded="
 
 public const string TemplateExample = @"";
 
+public const string DebouncedTextFieldExample = @"@using MudBlazor.Docs.Data 
+<MudGrid>
+    <MudItem xs=""12"" sm=""6"">
+        <MudTextField @bind-Value=""@_searchText""
+                      Label=""Search""
+                      Variant=""Variant.Outlined""
+                      Adornment=""Adornment.End""
+                      AdornmentIcon=""@Filled.Search""
+                      DebounceInterval=""500""
+                      OnDebounceIntervalElapsed=""HandleIntervalElapsed""/>
+    </MudItem>
+</MudGrid>
+<div>
+    <MudText Typo=""@MudBlazor.Typo.h6"">Search text:</MudText>
+    <MudText>@_searchText</MudText>
+</div>
+
+
+@code { 
+    string _searchText;
+
+    void HandleIntervalElapsed(string debouncedText)
+    {
+        // at this stage, interval has elapsed
+    }
+
+
+}";
+
 public const string TextFieldAdornmentsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""12"" md=""12"">
         <MudTextField @bind-Value=""Amount"" Label=""Amount"" Variant=""Variant.Text"" Adornment=""Adornment.Start"" AdornmentText=""Kr"" />

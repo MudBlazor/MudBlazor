@@ -1027,6 +1027,88 @@ public const string MudDatePicker_Tag = @"Use Tag to attach any user data object
 public const string MudDatePicker_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudDebouncedInput_DebounceInterval = @"Interval to be awaited in milliseconds before changing the Text value";
+
+public const string MudDebouncedInput_OnDebounceIntervalElapsed = @"callback to be called when the debounce interval has elapsed
+            receives the Text as a parameter";
+
+public const string MudDebouncedInput_Disabled = @"";
+
+public const string MudDebouncedInput_ReadOnly = @"";
+
+public const string MudDebouncedInput_FullWidth = @"";
+
+public const string MudDebouncedInput_Immediate = @"";
+
+public const string MudDebouncedInput_DisableUnderLine = @"";
+
+public const string MudDebouncedInput_Label = @"";
+
+public const string MudDebouncedInput_Placeholder = @"";
+
+public const string MudDebouncedInput_HelperText = @"";
+
+public const string MudDebouncedInput_AdornmentIcon = @"";
+
+public const string MudDebouncedInput_AdornmentText = @"";
+
+public const string MudDebouncedInput_Adornment = @"";
+
+public const string MudDebouncedInput_IconSize = @"";
+
+public const string MudDebouncedInput_OnAdornmentClick = @"";
+
+public const string MudDebouncedInput_InputType = @"";
+
+public const string MudDebouncedInput_Variant = @"";
+
+public const string MudDebouncedInput_Margin = @"";
+
+public const string MudDebouncedInput_Lines = @"";
+
+public const string MudDebouncedInput_Text = @"";
+
+public const string MudDebouncedInput_TextChanged = @"";
+
+public const string MudDebouncedInput_OnBlur = @"";
+
+public const string MudDebouncedInput_OnKeyDown = @"";
+
+public const string MudDebouncedInput_OnKeyPress = @"";
+
+public const string MudDebouncedInput_OnKeyUp = @"";
+
+public const string MudDebouncedInput_ValueChanged = @"";
+
+public const string MudDebouncedInput_Value = @"";
+
+public const string MudDebouncedInput_Converter = @"";
+
+public const string MudDebouncedInput_Culture = @"";
+
+public const string MudDebouncedInput_Format = @"";
+
+public const string MudDebouncedInput_Required = @"";
+
+public const string MudDebouncedInput_RequiredError = @"";
+
+public const string MudDebouncedInput_ErrorText = @"";
+
+public const string MudDebouncedInput_Error = @"";
+
+public const string MudDebouncedInput_Validation = @"";
+
+public const string MudDebouncedInput_For = @"";
+
+public const string MudDebouncedInput_Class = @"User class names, separated by space";
+
+public const string MudDebouncedInput_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudDebouncedInput_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudDebouncedInput_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudDialog_DialogContent = @"";
 
 public const string MudDialog_DialogActions = @"";
@@ -2689,6 +2771,10 @@ public const string MudText_Tag = @"Use Tag to attach any user data object to th
 public const string MudText_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudTextField_DebounceInterval = @"";
+
+public const string MudTextField_OnDebounceIntervalElapsed = @"";
+
 public const string MudTextField_Disabled = @"";
 
 public const string MudTextField_ReadOnly = @"";
@@ -2765,6 +2851,11 @@ public const string MudTextField_Tag = @"Use Tag to attach any user data object 
 
 public const string MudTextField_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
+
+public const string MudTextFieldString_DebounceInterval = @"Interval to be awaited in milliseconds before changing the Text value";
+
+public const string MudTextFieldString_OnDebounceIntervalElapsed = @"callback to be called when the debounce interval has elapsed
+            receives the Text as a parameter";
 
 public const string MudTextFieldString_Disabled = @"If true, the input element will be disabled.";
 
