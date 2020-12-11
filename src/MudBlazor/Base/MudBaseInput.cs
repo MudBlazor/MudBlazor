@@ -142,7 +142,7 @@ namespace MudBlazor
         /// <summary>
         /// Text change hook for descendants  
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="text"></param>
         protected virtual void StringValueChanged(string text)
         {
             Value = Converter.Get(text);
