@@ -145,9 +145,9 @@ namespace MudBlazor
         [Parameter] public ICommand CommitEditCommand { get; set; }
 
         /// <summary>
-        /// Command parameter for the CommitEdit Button.
+        /// Command parameter for the CommitEdit Button. By default, will be the row level item model, if you won't set anything else.
         /// </summary>
-        [Parameter] public string CommitEditCommandParameter { get; set; }
+        [Parameter] public object CommitEditCommandParameter { get; set; }
 
         /// <summary>
         /// Tooltip for the CommitEdit Button.
@@ -189,12 +189,15 @@ namespace MudBlazor
 
         public abstract void SetEditingItem(object item);
 
-        internal async Task OnCommitEditHandler(MouseEventArgs ev)
+        internal async Task OnCommitEditHandler(MouseEventArgs ev, object item)
         {
             await OnCommitEditClick.InvokeAsync(ev);
             if (CommitEditCommand?.CanExecute(CommitEditCommandParameter) ?? false)
             {
-                CommitEditCommand.Execute(CommitEditCommandParameter);
+                object parameter = CommitEditCommandParameter;
+                if (parameter == null)
+                    parameter = item;
+                CommitEditCommand.Execute(parameter);
             }
         }
 

@@ -2499,7 +2499,7 @@ public const string MudTable_OnCommitEditClick = @"Button click event.";
 
 public const string MudTable_CommitEditCommand = @"Command executed when the user clicks on the CommitEdit Button.";
 
-public const string MudTable_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button.";
+public const string MudTable_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button. By default, will be the row level item model, if you won't set anything else.";
 
 public const string MudTable_CommitEditTooltip = @"Tooltip for the CommitEdit Button.";
 
@@ -2560,7 +2560,7 @@ public const string MudTableBase_OnCommitEditClick = @"Button click event.";
 
 public const string MudTableBase_CommitEditCommand = @"Command executed when the user clicks on the CommitEdit Button.";
 
-public const string MudTableBase_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button.";
+public const string MudTableBase_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button. By default, will be the row level item model, if you won't set anything else.";
 
 public const string MudTableBase_CommitEditTooltip = @"Tooltip for the CommitEdit Button.";
 
@@ -2846,6 +2846,44 @@ public const string MudTh_ChildContent = @"";
 public const string MudTh_Style = @"";
 
 public const string MudThemeProvider_Theme = @"";
+
+public const string MudTimeLine_Rounded = @"If true, sets the border-radius to theme default.";
+
+public const string MudTimeLine_Border = @"If true, sets a border.";
+
+public const string MudTimeLine_Outlined = @"If true, toolbar will be outlined.";
+
+public const string MudTimeLine_Elevation = @"Child content of component.";
+
+public const string MudTimeLine_ChildContent = @"Child content of component.";
+
+public const string MudTimeLine_Class = @"User class names, separated by space";
+
+public const string MudTimeLine_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudTimeLine_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudTimeLine_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudTimeLineItem_Elevation = @"Child content of component.";
+
+public const string MudTimeLineItem_Align = @"TimeLineItem's Alignment on main TimeLine component";
+
+public const string MudTimeLineItem_Icon = @"Icon for the TimeLineItem";
+
+public const string MudTimeLineItem_Color = @"Color for the TimeLineItem symbol";
+
+public const string MudTimeLineItem_ChildContent = @"Child content of component.";
+
+public const string MudTimeLineItem_Class = @"User class names, separated by space";
+
+public const string MudTimeLineItem_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudTimeLineItem_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudTimeLineItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
 
 public const string MudTimePicker_OpenTo = @"First view to show in the MudDatePicker.";
 
