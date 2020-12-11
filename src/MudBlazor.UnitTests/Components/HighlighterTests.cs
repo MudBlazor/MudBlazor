@@ -58,9 +58,6 @@ namespace MudBlazor.UnitTests
 
         #region Markup
 
-
-
-
         /// <summary>
         /// Check markup whith regular text, no regex
         /// </summary>
@@ -74,9 +71,6 @@ namespace MudBlazor.UnitTests
            var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
             comp.Markup.Should()
                 .BeEquivalentTo("This is the first <mark>item</mark>");
-            
-            
-            
         }
 
         /// <summary>
@@ -92,9 +86,6 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
             comp.Markup.Should()
                 .BeEquivalentTo("This is the first item");
-
-
-
         }
 
 
@@ -114,9 +105,6 @@ namespace MudBlazor.UnitTests
             
             comp.Markup.Should()
                 .BeEquivalentTo("This is the first <mark>item</mark>");
-
-
-
         }
 
         /// <summary>
