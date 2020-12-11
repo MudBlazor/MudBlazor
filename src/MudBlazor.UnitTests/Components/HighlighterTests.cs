@@ -69,8 +69,7 @@ namespace MudBlazor.UnitTests
             var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "item");
             
            var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
-            comp.Markup.Should()
-                .BeEquivalentTo("This is the first <mark>item</mark>");
+            comp.MarkupMatches("This is the first <mark>item</mark>");
         }
 
         /// <summary>
@@ -84,8 +83,7 @@ namespace MudBlazor.UnitTests
             var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "[");
 
             var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
-            comp.Markup.Should()
-                .BeEquivalentTo("This is the first item");
+            comp.MarkupMatches("This is the first item");
         }
 
 
@@ -103,8 +101,7 @@ namespace MudBlazor.UnitTests
             var comp = ctx
                 .RenderComponent<MudHighlighter>(text, highlightedText, untilNextBoundary);
             
-            comp.Markup.Should()
-                .BeEquivalentTo("This is the first <mark>item</mark>");
+            comp.MarkupMatches("This is the first <mark>item</mark>");
         }
 
         /// <summary>
@@ -123,13 +120,11 @@ namespace MudBlazor.UnitTests
                 .RenderComponent<MudHighlighter>(text, highlightedText, caseSensitive);
 
             //Case sensitive
-            comp.Markup.Should()
-                .BeEquivalentTo("This is <mark>this</mark>");
+            comp.MarkupMatches("This is <mark>this</mark>");
 
             //Case insensitive
             comp.SetParametersAndRender(text, highlightedText, caseInSensitive);
-            comp.Markup.Should()
-                .BeEquivalentTo("<mark>This</mark> is <mark>this</mark>");
+            comp.MarkupMatches("<mark>This</mark> is <mark>this</mark>");
 
         }
         #endregion
