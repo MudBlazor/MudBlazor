@@ -3,16 +3,25 @@
 <div class="mud-codeblock">
 <div class="html"><pre>
 <span class="atSign">&#64;</span>using BlazorInputFile
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudIconButton</span> <span class="htmlAttributeName">HtmlTag</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">label</span><span class="quot">&quot;</span>         
-           <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Secondary</span><span class="quot">&quot;</span>
-           <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Filled.AddAPhoto</span><span class="quot">&quot;</span>               
-           <span class="htmlAttributeName">for</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">fileInput2</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">/&gt;</span>
+
+&lt;label style=&quot;padding: 8px 16px;
+        box-shadow: 0 2px 7px rgba(89, 74, 226, 0.83);
+        display: inline-flex;
+        width: 150px;
+        justify-content: space-around;
+        border-radius: 2em;
+        color: white;
+        cursor: pointer;
+        align-items:center;
+        background-color: var(--mud-palette-primary);&quot;         
+       for=&quot;fileInput2&quot;&gt;
+    Upload <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudIcon</span> <span class="htmlAttributeName">Icon</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Filled.CloudUpload</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">/&gt;</span>
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">label</span><span class="htmlTagDelimiter">&gt;</span>
 
 <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">InputFile</span> <span class="htmlAttributeName">id</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">fileInput2</span><span class="quot">&quot;</span> <span class="htmlAttributeName">OnChange</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">UploadFiles</span><span class="quot">&quot;</span> <span class="htmlAttributeName">hidden</span> <span class="htmlAttributeName">multiple</span> <span class="htmlTagDelimiter">/&gt;</span>
 
 <span class="atSign">&#64;</span>if (files != null)
 {
-
     <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudList</span><span class="htmlTagDelimiter">&gt;</span>
         <span class="atSign">&#64;</span>foreach (var file in files)
         {

@@ -1,15 +1,24 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using BlazorInputFile
-<MudIconButton HtmlTag="label"         
-           Color="Color.Secondary"
-           Icon="@Filled.AddAPhoto"               
-           for="fileInput2" />
+
+<label style="padding: 8px 16px;
+        box-shadow: 0 2px 7px rgba(89, 74, 226, 0.83);
+        display: inline-flex;
+        width: 150px;
+        justify-content: space-around;
+        border-radius: 2em;
+        color: white;
+        cursor: pointer;
+        align-items:center;
+        background-color: var(--mud-palette-primary);"         
+       for="fileInput2">
+    Upload <MudIcon Icon="@Filled.CloudUpload"/>
+</label>
 
 <InputFile id="fileInput2" OnChange="UploadFiles" hidden multiple />
 
 @if (files != null)
 {
-
     <MudList>
         @foreach (var file in files)
         {
@@ -19,7 +28,6 @@
         }
     </MudList>
 }
-
 
 @code{
 

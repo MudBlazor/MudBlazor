@@ -1280,52 +1280,76 @@ public const string FieldMinimizePaddingExample = @"<MudGrid>
 </MudGrid>";
 
 public const string FileUploadButtonExample = @"@using BlazorInputFile
+
+<InputFile id=""fileInput"" OnChange=""UploadFiles"" hidden multiple />
+
 <MudButton HtmlTag=""label""
            Variant=""Variant.Filled""
-           Color=""Color.Primary""           
+           Color=""Color.Primary""
            StartIcon=""@Filled.CloudUpload""
            for=""fileInput"">
     Upload Files
 </MudButton>
 
-<InputFile id=""fileInput"" OnChange=""UploadFiles"" hidden multiple/>
+<MudFab HtmlTag=""label""
+        Color=""Color.Secondary""
+        Icon=""@Filled.Image""
+        Label=""Load picture""
+        for=""fileInput"" />
+
+<MudFab HtmlTag=""label""
+        Color=""Color.Success""
+        Icon=""@Filled.AttachFile""
+        for=""fileInput"" />
+
+<MudIconButton HtmlTag=""label""
+               Color=""Color.Info""
+               Icon=""@Filled.PhotoCamera""
+               for=""fileInput"">
+</MudIconButton>
 
 @if (files != null)
-{
-
+ {
+    <MudText Typo=""@Typo.h6"">@files.Count() File@(files.Count()>1?""s"":""""):</MudText>
     <MudList>
-        @foreach (var file in files)
-        {
-            <MudListItem Icon=""@Filled.AttachFile"">
-                @file.Name <code>@file.Size bytes</code>
-            </MudListItem>
-        }
+    @foreach (var file in files)
+    {
+     <MudListItem Icon=""@Filled.AttachFile"" @key=""@file"">
+         @file.Name <code>@file.Size bytes</code>
+     </MudListItem>
+    }
     </MudList>
-}
+ }
 
 
-@code{
 
-    IEnumerable<IFileListEntry> files;
+@code{ IEnumerable<IFileListEntry> files;
     private void UploadFiles(IFileListEntry[] entries)
     {
         files = entries;
         //TODO upload the files to the server
-    }
-
-}";
+    } }";
 
 public const string FileUploadIconButtonExample = @"@using BlazorInputFile
-<MudIconButton HtmlTag=""label""         
-           Color=""Color.Secondary""
-           Icon=""@Filled.AddAPhoto""               
-           for=""fileInput2"" />
+
+<label style=""padding: 8px 16px;
+        box-shadow: 0 2px 7px rgba(89, 74, 226, 0.83);
+        display: inline-flex;
+        width: 150px;
+        justify-content: space-around;
+        border-radius: 2em;
+        color: white;
+        cursor: pointer;
+        align-items:center;
+        background-color: var(--mud-palette-primary);""         
+       for=""fileInput2"">
+    Upload <MudIcon Icon=""@Filled.CloudUpload""/>
+</label>
 
 <InputFile id=""fileInput2"" OnChange=""UploadFiles"" hidden multiple />
 
 @if (files != null)
 {
-
     <MudList>
         @foreach (var file in files)
         {
@@ -1335,7 +1359,6 @@ public const string FileUploadIconButtonExample = @"@using BlazorInputFile
         }
     </MudList>
 }
-
 
 @code{
 
