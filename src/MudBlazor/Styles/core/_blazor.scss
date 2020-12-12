@@ -16,3 +16,30 @@
     right: 0.75rem;
     top: 0.5rem;
 }
+
+#components-reconnect-modal {
+    z-index: 9999 !important;
+
+    h5 {
+        font-size: 18px;
+    }
+
+    button {
+        color: var(--mud-palette-text-primary);
+        padding: 8px 16px;
+        font-size: .875rem;
+        min-width: 64px;
+        box-sizing: border-box;
+        transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1) 0ms;
+        font-weight: 500;
+        line-height: 1;
+        border-radius: var(--mud-default-borderradius);
+        letter-spacing: .02857em;
+        text-transform: uppercase;
+        margin: 40px auto !important;
+
+        &:hover {
+            background-color: var(--mud-palette-action-default-hover);
+        }
+    }
+}
