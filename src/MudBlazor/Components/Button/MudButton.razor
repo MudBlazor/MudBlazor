@@ -2,7 +2,7 @@
 @inherits MudBaseButton
 @using MudBlazor.Extensions
 
-<button @attributes="UserAttributes" type="@ButtonType.ToDescriptionString()" class="@Classname" style="@Style" @onclick="OnClickHandler" href="@Link" disabled="@Disabled" onpointerdown="@(!DisableRipple ? "ripplet(arguments[0])" : "")">
+<button @attributes="UserAttributes" type="@ButtonType.ToDescriptionString()" class="@Classname" style="@Style" @onclick="OnClickHandler" @onclick:stopPropagation="true" href="@Link" disabled="@Disabled" onpointerdown="@(!DisableRipple ? "ripplet(arguments[0])" : "")">
     <span class="mud-button-label">
         @if (!string.IsNullOrWhiteSpace(StartIcon))
         {

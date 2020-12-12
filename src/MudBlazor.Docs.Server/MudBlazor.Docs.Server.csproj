@@ -15,8 +15,8 @@
 
   <ItemGroup>    
     <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.0.0" />
-    <PackageReference Include="Toolbelt.Blazor.HeadElement.ServerPrerendering" Version="1.2.2" />
-  </ItemGroup>
+    <PackageReference Include="Toolbelt.Blazor.HeadElement.ServerPrerendering" Version="1.2.3" />
+  </ItemGroup> 
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Docs\MudBlazor.Docs.csproj" />

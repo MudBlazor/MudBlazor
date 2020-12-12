@@ -14,13 +14,52 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-overlay")
+                .AddClass("mud-overlay-absolute", Absolute)
                 .AddClass(Class)
                 .Build();
+
+        protected string ScrimClassname =>
+            new CssBuilder("mud-overlay-scrim")
+                .AddClass("mud-overlay-dark", DarkBackground)
+                .AddClass("mud-overlay-light", LightBackground)
+                .AddClass(Class)
+                .Build();
+
+        protected string Styles =>
+            new StyleBuilder()
+            .AddStyle("z-index", $"{ZIndex}", ZIndex != 5)
+            .AddStyle(Style)
+            .Build();
 
         /// <summary>
         /// Child content of the component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// If true overlay will be visible.
+        /// </summary>
+        [Parameter] public bool Visible { get; set; }
+
+        /// <summary>
+        /// If true applys the themes dark overlay color.
+        /// </summary>
+        [Parameter] public bool DarkBackground { get; set; }
+
+        /// <summary>
+        /// If true applys the themes light overlay color.
+        /// </summary>
+        [Parameter] public bool LightBackground { get; set; }
+
+        /// <summary>
+        /// Icon class names, separated by space
+        /// </summary>
+        [Parameter] public bool Absolute { get; set; }
+
+        /// <summary>
+        /// Sets the z-index of the overlay.
+        /// </summary>
+        [Parameter] public int ZIndex { get; set; } = 5;
 
         /// <summary>
         /// Command parameter.

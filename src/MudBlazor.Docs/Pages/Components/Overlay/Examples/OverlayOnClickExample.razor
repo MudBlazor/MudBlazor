@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ToggleOverlay" Class="mx-1">On Click Close</MudButton>
+<MudButton Variant="Variant.Filled" Color="Color.Dark" OnClick="ToggleOverlayWithSnackbar" Class="mx-1">On Click Alert</MudButton>
+
+<MudOverlay Visible="isVisible" OnClick="ToggleOverlay" DarkBackground="true" ZIndex="9999" />
+<MudOverlay Visible="isVisibleWithSnackbar" OnClick="ShowSnackbar" DarkBackground="true" ZIndex="9999" />
+
+
+@code {
+    private bool isVisible;
+    private bool isVisibleWithSnackbar;
+
+    public void ToggleOverlay()
+    {
+        isVisible = !isVisible;
+    }
+
+    public void ToggleOverlayWithSnackbar()
+    {
+        isVisibleWithSnackbar = !isVisibleWithSnackbar;
+    }
+
+    public void ShowSnackbar()
+    {
+        Snackbar.Add("Random message", Severity.Normal);
+        isVisibleWithSnackbar = false;
+    }
+} 

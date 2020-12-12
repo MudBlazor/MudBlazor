@@ -139,6 +139,9 @@ namespace MudBlazor
             theme.AppendLine($"--{Palette}-grey-dark: {Theme.Palette.GrayDark};");
             theme.AppendLine($"--{Palette}-grey-darker: {Theme.Palette.GrayDarker};");
 
+            theme.AppendLine($"--{Palette}-overlay-dark: {Theme.Palette.OverlayDark};");
+            theme.AppendLine($"--{Palette}-overlay-light: {Theme.Palette.OverlayLight};");
+
             //Elevations
             theme.AppendLine($"--{Elevation}-0: {Theme.Shadows.Elevation.GetValue(0)};");
             theme.AppendLine($"--{Elevation}-1: {Theme.Shadows.Elevation.GetValue(1)};");

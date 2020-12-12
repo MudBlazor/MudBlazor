@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudPaper Class="pa-4 my-2" Style="position:relative;">
+            <MudOverlay Visible="lightIsVisible" LightBackground="true" Absolute="true" />
+            <LoremIpsum />
+            <MudButton Variant="Variant.Filled" Class="mt-2">Action</MudButton>
+        </MudPaper>
+        <MudSwitch @bind-Checked="@lightIsVisible" Label="Light Overlay" Color="Color.Primary"/>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudPaper Class="pa-4 my-2" Style="position:relative;">
+            <MudOverlay Visible="darkIsVisible" DarkBackground="true" Absolute="true" />
+            <LoremIpsum />
+            <MudButton Variant="Variant.Filled" Class="mt-2">Action</MudButton>
+        </MudPaper>
+        <MudSwitch @bind-Checked="@darkIsVisible" Label="Dark Overlay" Color="Color.Secondary" />
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    private bool lightIsVisible;
+    private bool darkIsVisible;
+} 

@@ -12,17 +12,19 @@ namespace MudBlazor.Docs.Data
     public static class PeriodicTable
     {
         private static List<Element> _elements = null;
+        private static DateTime _loadTime;
 
         public static IEnumerable<Element> GetElements()
         {
-            if (_elements == null)
+            if (_elements == null || _loadTime.Add(TimeSpan.FromMinutes(5)) < DateTime.Now)
                 LoadElements();
             return _elements;
         }
 
         private static void LoadElements()
         {
-            _elements=new List<Element>();
+            _loadTime=DateTime.Now;
+            _elements =new List<Element>();
             var key = GetResourceKey(typeof(PeriodicTable).Assembly, "Elements.json");
             using (Stream stream = typeof(PeriodicTable).Assembly.GetManifestResourceStream(key))
             using (var reader = new JsonTextReader(new StreamReader(stream)))

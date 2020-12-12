@@ -56,6 +56,16 @@
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
+                <Title>Debounced TextFields</Title>
+                <Description>Debounce your <CodeInline>TextField</CodeInline> setting the <CodeInline>DebounceInterval</CodeInline> parameter to the amount of milliseconds you want to await before updating the binded value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback. Notice how, in this example, it only updates the text 500 ms after you stop typing</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <DebouncedTextFieldExample />
+            </SectionContent>
+            <SectionSource Code="DebouncedTextFieldExample" ShowCode="false" GitHubFolderName="TextField" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
                 <Title>Multiline</Title>
                 <Description></Description>
             </SectionHeader>

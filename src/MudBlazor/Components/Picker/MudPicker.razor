@@ -8,7 +8,7 @@
         <MudTextField Label="@Label" Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="true" @onclick="ToggleOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
     }
     <CascadingValue Value="@this" IsFixed="true">
-        @if (isOpen)
+        @if (isOpen && PickerVariant != PickerVariant.Dialog)
         {
             <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@PickerElevation" Square="@PickerSquare">
                 <div class="@PickerContainerClass">
@@ -16,22 +16,28 @@
                 </div>
             </MudPaper>
         }
+        else if(isOpen && PickerVariant == PickerVariant.Dialog)
+        {
+            <MudOverlay Visible="isOpen" OnClick="@Close" DarkBackground="true" Class="mud-overlay-dialog">
+                <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@PickerElevation" Square="@PickerSquare">
+                    <div class="@PickerContainerClass">
+                        @ChildContent
+                    </div>
+                </MudPaper>
+            </MudOverlay>
+        }
     </CascadingValue>
 </div>
 @if (PickerVariant == PickerVariant.Inline)
 {
-    @if (isOpen)
-    {
-        <MudOverlay OnClick="@Close" />
-    }
+    <MudOverlay Visible="isOpen" OnClick="@Close" />
 }
-
 
 @code {
 
     protected string PickerClass =>
         new CssBuilder("mud-picker")
-           .AddClass($"mud-picker-inline", PickerVariant == PickerVariant.Inline)
+           .AddClass($"mud-picker-inline", PickerVariant != PickerVariant.Static)
            .AddClass($"mud-picker-static", PickerVariant == PickerVariant.Static)
            .AddClass($"mud-rounded", PickerVariant == PickerVariant.Static && !PickerSquare)
            .AddClass($"mud-elevation-{PickerElevation.ToString()}", PickerVariant == PickerVariant.Static)
@@ -46,6 +52,7 @@
       .AddClass("mud-picker-view", PickerVariant == PickerVariant.Inline)
       .AddClass("mud-picker-open", isOpen && PickerVariant == PickerVariant.Inline)
       .AddClass("mud-picker-popover-paper", PickerVariant == PickerVariant.Inline)
+      .AddClass("mud-dialog", PickerVariant == PickerVariant.Dialog)
     .Build();
 
     protected string PickerContainerClass =>

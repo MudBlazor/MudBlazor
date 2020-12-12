@@ -30,6 +30,10 @@
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\Components\Overlay\Code\" />
+  </ItemGroup>
+
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <!--<Exec Command="$(SolutionDir)MudBlazor.Docs.Compiler\bin\Debug\netcoreapp3.1\MudBlazor.Docs.Compiler.exe" />-->
   </Target>
