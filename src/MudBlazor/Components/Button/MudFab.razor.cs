@@ -11,6 +11,8 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-fab-root mud-fab")
+      //the next class wass added as a workaround while the CSS is not fixed to not rely on elements, but in classes @porkopek
+          .AddClass("mud-button-root")
           .AddClass($"mud-fab-extended", !String.IsNullOrEmpty(Label))
           .AddClass($"mud-fab-{Color.ToDescriptionString()}")
           .AddClass($"mud-fab-size-{Size.ToDescriptionString()}")

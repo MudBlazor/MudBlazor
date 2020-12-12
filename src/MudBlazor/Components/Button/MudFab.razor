@@ -2,13 +2,13 @@
 @inherits MudBaseButton
 @using MudBlazor.Extensions
 
-@*the current style is a workaround while the CSS is not fixed to not rely on elements, but in classes*@
+
 <MudElement HtmlTag="@(HtmlTag ?? "button")"
             @attributes="UserAttributes"
             @onclick="OnClickHandler"
             type="@ButtonType.ToDescriptionString()"
             class="@Classname"            
-            style=@("display:inline-flex;justify-content:center;align-items:center;"+Style)
+            style=@(Style)
             href="@Link"
             target="@Target"
             disabled="@Disabled">
