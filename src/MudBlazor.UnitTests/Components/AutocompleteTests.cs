@@ -81,7 +81,7 @@ namespace MudBlazor.UnitTests
             // click and check if it has toggled the menu
             inputControl.Click();
             await Task.Delay(100);
-            menu.ClassList.Should().NotContain("mud-popover-open");
+            menu.ClassList.Should().Contain("mud-popover-open");
 
             // type 3 characters and check if it has toggled the menu
             select.Instance.Text = "ala";
