@@ -588,7 +588,7 @@
     border: 1px solid var(--mud-palette-lines-default); }
   .docs-section-content.docs-section-content-display-grid {
     display: grid; }
-  .docs-section-content > .docs-section-content-inner > *:not(.mud-grid) {
+  .docs-section-content.docs-section-auto-margin-content > .docs-section-content-inner > *:not(.mud-grid) {
     margin: 8px; }
 
 .docs-section-content-row > * {
