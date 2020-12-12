@@ -13,9 +13,10 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'MudBlazor.Demo.ServerApp' " />
   <ItemGroup>    
     <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.0.0" />
-    <PackageReference Include="Toolbelt.Blazor.HeadElement.ServerPrerendering" Version="1.2.2" />
+    <PackageReference Include="Toolbelt.Blazor.HeadElement.ServerPrerendering" Version="1.2.3" />
   </ItemGroup>
 
   <ItemGroup>
