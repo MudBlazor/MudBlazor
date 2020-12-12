@@ -465,8 +465,10 @@ namespace MudBlazor.Docs.Compiler
 		/// <remarks>The XML documentation must be loaded into memory for this function to work.</remarks>
 		public static string GetDocumentation(this PropertyInfo propertyInfo)
 		{
-			LoadXmlDocumentation(propertyInfo.DeclaringType.Assembly);
-			string key = "P:" + XmlDocumentationKeyHelper(propertyInfo.DeclaringType.FullName ?? propertyInfo.ReflectedType.FullName, propertyInfo.Name);
+            LoadXmlDocumentation(propertyInfo.DeclaringType.Assembly);
+            var typename = propertyInfo.DeclaringType.FullName ??
+                           $"{propertyInfo.DeclaringType.Namespace}.{propertyInfo.DeclaringType.Name}";
+            string key = "P:" + XmlDocumentationKeyHelper(typename, propertyInfo.Name);
 			loadedXmlDocumentation.TryGetValue(key, out string documentation);
 			return documentation;
 		}
