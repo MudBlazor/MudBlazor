@@ -17,12 +17,7 @@ namespace MudBlazor
         /// User class names, separated by space
         /// </summary>
         [Parameter] public string Class { get; set; }
-
-        /// <summary>
-        /// The HTML element that will be rendered in the root by the component
-        /// </summary>
-        [Parameter] public string HtmlTag { get; set; }
-
+               
         /// <summary>
         /// User styles, applied on top of the component's own classes and styles
         /// </summary>

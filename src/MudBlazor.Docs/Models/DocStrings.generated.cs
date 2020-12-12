@@ -21,9 +21,6 @@ public const string ComponentBaseMudMenu_Size = @"";
 public const string ComponentBaseMudMenu_Variant = @"";
 
 public const string ComponentBaseMudMenu_Dense = @"If true, compact vertical padding will be applied to all menu items.";
-public const string MudBaseButton_HtmlTag = @"The HTML element that will be rendered in the root by the component";
-
-public const string MudBaseButton_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string ComponentBaseMudMenu_DisableElevation = @"";
 
@@ -49,6 +46,8 @@ public const string ComponentBaseMudMenu_OnClick = @"Button click event.";
 
 public const string ComponentBaseMudMenu_Class = @"User class names, separated by space";
 
+public const string ComponentBaseMudMenu_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string ComponentBaseMudMenu_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string ComponentBaseMudMenu_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -56,15 +55,15 @@ public const string ComponentBaseMudMenu_Tag = @"Use Tag to attach any user data
 public const string ComponentBaseMudMenu_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudBaseInput_Required = @"If true, this form input is required to be filled out.";
+public const string ComponentBaseMudMenuItem_ChildContent = @"";
 
-public const string MudBaseInput_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+public const string ComponentBaseMudMenuItem_Disabled = @"";
 
-public const string MudBaseInput_ErrorText = @"The ErrorText that will be displayed if Error true";
+public const string ComponentBaseMudMenuItem_Link = @"";
 
-public const string MudBaseInput_Error = @"If true, the label will be displayed in an error state.";
+public const string ComponentBaseMudMenuItem_Target = @"";
 
-public const string MudBaseInput_Disabled = @"If true, the input element will be disabled.";
+public const string ComponentBaseMudMenuItem_ForceLoad = @"";
 
 public const string ComponentBaseMudMenuItem_Command = @"";
 
@@ -73,6 +72,8 @@ public const string ComponentBaseMudMenuItem_CommandParameter = @"";
 public const string ComponentBaseMudMenuItem_OnClick = @"";
 
 public const string ComponentBaseMudMenuItem_Class = @"User class names, separated by space";
+
+public const string ComponentBaseMudMenuItem_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string ComponentBaseMudMenuItem_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -101,6 +102,8 @@ public const string Donut_LegendPosition = @"The placment direction of the legen
 
 public const string Donut_Class = @"User class names, separated by space";
 
+public const string Donut_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string Donut_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string Donut_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -122,14 +125,15 @@ public const string DonutBase_ChartType = @"The Type of the chart.";
 
 public const string DonutBase_Width = @"The Width of the chart, end with % or px.";
 
-public const string MudBaseInput_Validation = @"";
+public const string DonutBase_Height = @"The Height of the chart, end with % or px.";
 
-public const string MudBaseInput_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
-            Currently only string fields are supported.";
+public const string DonutBase_LegendPosition = @"The placment direction of the legend if used.";
 
 public const string DonutBase_Class = @"User class names, separated by space";
 
-public const string MudBaseInput_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string DonutBase_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
+public const string DonutBase_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string DonutBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
@@ -158,6 +162,8 @@ public const string Legend_LegendPosition = @"The placment direction of the lege
 
 public const string Legend_Class = @"User class names, separated by space";
 
+public const string Legend_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string Legend_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string Legend_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -173,7 +179,7 @@ public const string LegendBase_InputLabels = @"";
 
 public const string LegendBase_XAxisLabels = @"";
 
-public const string MudBasePicker_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string LegendBase_ChartSeries = @"";
 
 public const string LegendBase_ChartOptions = @"";
 
@@ -186,6 +192,8 @@ public const string LegendBase_Height = @"The Height of the chart, end with % or
 public const string LegendBase_LegendPosition = @"The placment direction of the legend if used.";
 
 public const string LegendBase_Class = @"User class names, separated by space";
+
+public const string LegendBase_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string LegendBase_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -210,9 +218,11 @@ public const string Line_Width = @"The Width of the chart, end with % or px.";
 
 public const string Line_Height = @"The Height of the chart, end with % or px.";
 
-public const string MudBaseSelectItem_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string Line_LegendPosition = @"The placment direction of the legend if used.";
 
 public const string Line_Class = @"User class names, separated by space";
+
+public const string Line_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string Line_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -223,7 +233,7 @@ public const string Line_UserAttributes = @"UserAttributes carries all attribute
 
 public const string LineBase_InputData = @"";
 
-public const string MudComponentBase_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string LineBase_InputLabels = @"";
 
 public const string LineBase_XAxisLabels = @"";
 
@@ -240,6 +250,8 @@ public const string LineBase_Height = @"The Height of the chart, end with % or p
 public const string LineBase_LegendPosition = @"The placment direction of the legend if used.";
 
 public const string LineBase_Class = @"User class names, separated by space";
+
+public const string LineBase_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string LineBase_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -422,6 +434,8 @@ public const string MudAvatar_ChildContent = @"Child content of the component.";
 
 public const string MudAvatar_Class = @"User class names, separated by space";
 
+public const string MudAvatar_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudAvatar_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudAvatar_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -475,6 +489,8 @@ public const string MudBaseButton_CommandParameter = @"Command parameter.";
 public const string MudBaseButton_OnClick = @"Button click event.";
 
 public const string MudBaseButton_Class = @"User class names, separated by space";
+
+public const string MudBaseButton_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudBaseButton_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -554,6 +570,8 @@ public const string MudBaseInput_For = @"";
 
 public const string MudBaseInput_Class = @"User class names, separated by space";
 
+public const string MudBaseInput_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudBaseInput_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudBaseInput_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -597,6 +615,8 @@ public const string MudBasePicker_Value = @"The currently selected value represe
 
 public const string MudBasePicker_Class = @"User class names, separated by space";
 
+public const string MudBasePicker_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudBasePicker_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudBasePicker_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -619,6 +639,8 @@ public const string MudBaseSelectItem_Command = @"Command executed when the user
 public const string MudBaseSelectItem_OnClick = @"";
 
 public const string MudBaseSelectItem_Class = @"User class names, separated by space";
+
+public const string MudBaseSelectItem_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudBaseSelectItem_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -646,6 +668,8 @@ public const string MudBooleanInput_Validation = @"";
 public const string MudBooleanInput_For = @"";
 
 public const string MudBooleanInput_Class = @"User class names, separated by space";
+
+public const string MudBooleanInput_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudBooleanInput_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -711,6 +735,8 @@ public const string MudCard_ChildContent = @"Child content of the component.";
 
 public const string MudCard_Class = @"User class names, separated by space";
 
+public const string MudCard_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudCard_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudCard_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -721,6 +747,8 @@ public const string MudCard_UserAttributes = @"UserAttributes carries all attrib
 public const string MudCardActions_ChildContent = @"Child content of the component.";
 
 public const string MudCardActions_Class = @"User class names, separated by space";
+
+public const string MudCardActions_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudCardActions_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -733,9 +761,11 @@ public const string MudCardContent_ChildContent = @"Child content of the compone
 
 public const string MudCardContent_Class = @"User class names, separated by space";
 
+public const string MudCardContent_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudCardContent_Style = @"User styles, applied on top of the component's own classes and styles";
 
-public const string MudFab_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudCardContent_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
 public const string MudCardContent_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
@@ -747,6 +777,8 @@ public const string MudCardHeader_CardHeaderContent = @"If used renders child co
 public const string MudCardHeader_CardHeaderActions = @"If used renders child content of the CardHeaderActions.";
 
 public const string MudCardHeader_Class = @"User class names, separated by space";
+
+public const string MudCardHeader_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudCardHeader_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -763,19 +795,13 @@ public const string MudCardMedia_Height = @"";
 
 public const string MudCardMedia_Class = @"User class names, separated by space";
 
+public const string MudCardMedia_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudCardMedia_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudCardMedia_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
-public const string MudIconButton_OnClick = @"Button click event.";
-
-public const string MudIconButton_Class = @"User class names, separated by space";
-
-public const string MudIconButton_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudIconButton_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudIconButton_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+public const string MudCardMedia_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudChart_InputData = @"";
@@ -798,21 +824,13 @@ public const string MudChart_LegendPosition = @"The placment direction of the le
 
 public const string MudChart_Class = @"User class names, separated by space";
 
+public const string MudChart_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudChart_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudChart_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
-public const string MudCardMedia_Image = @"";
-
-public const string MudCardMedia_Height = @"";
-
-public const string MudCardMedia_Class = @"User class names, separated by space";
-
-public const string MudCardMedia_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudCardMedia_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudCardMedia_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+public const string MudChart_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudChartBase_InputData = @"";
@@ -858,16 +876,7 @@ public const string MudCheckBox_CheckedIcon = @"Custom checked icon, leave null 
 
 public const string MudCheckBox_UncheckedIcon = @"Custom unchecked icon, leave null for default.";
 
-public const string MudCheckBox_Class = @"User class names, separated by space";
-
-public const string MudCheckBox_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudCheckBox_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudCheckBox_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudChipSet_ChildContent = @"Child content of component.";
+public const string MudCheckBox_IndeterminateIcon = @"Custom indeterminate icon, leave null for default.";
 
 public const string MudCheckBox_CheckedChanged = @"";
 
@@ -889,7 +898,9 @@ public const string MudCheckBox_For = @"";
 
 public const string MudCheckBox_Class = @"User class names, separated by space";
 
-public const string MudChipSet_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudCheckBox_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
+public const string MudCheckBox_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudCheckBox_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
@@ -967,6 +978,8 @@ public const string MudChipSet_OnClose = @"Called when a Chip was deleted (by cl
 
 public const string MudChipSet_Class = @"User class names, separated by space";
 
+public const string MudChipSet_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudChipSet_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudChipSet_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -982,6 +995,8 @@ public const string MudCollapse_ChildContent = @"Child content of component.";
 
 public const string MudComponentBase_Class = @"User class names, separated by space";
 
+public const string MudComponentBase_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudComponentBase_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudComponentBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -996,6 +1011,8 @@ public const string MudContainer_MaxWidth = @"Determine the max-width of the con
 public const string MudContainer_ChildContent = @"Child content of component.";
 
 public const string MudContainer_Class = @"User class names, separated by space";
+
+public const string MudContainer_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudContainer_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -1127,6 +1144,8 @@ public const string MudDivider_DividerType = @"The Divider type to use.";
 
 public const string MudDivider_Class = @"User class names, separated by space";
 
+public const string MudDivider_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudDivider_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudDivider_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -1150,6 +1169,8 @@ public const string MudDrawer_Clipped = @"";
 
 public const string MudDrawer_Class = @"User class names, separated by space";
 
+public const string MudDrawer_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudDrawer_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudDrawer_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -1163,11 +1184,26 @@ public const string MudDrawerHeader_LinkToIndex = @"If true, the component will 
 
 public const string MudDrawerHeader_Class = @"User class names, separated by space";
 
+public const string MudDrawerHeader_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudDrawerHeader_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudDrawerHeader_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
 public const string MudDrawerHeader_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudElement_ChildContent = @"";
+
+public const string MudElement_Class = @"User class names, separated by space";
+
+public const string MudElement_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
+public const string MudElement_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudElement_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudElement_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudExpansionPanel_Text = @"The text to be displayed in the expansion panel.";
@@ -1239,6 +1275,8 @@ public const string MudFab_CommandParameter = @"Command parameter.";
 public const string MudFab_OnClick = @"Button click event.";
 
 public const string MudFab_Class = @"User class names, separated by space";
+
+public const string MudFab_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudFab_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -1332,6 +1370,8 @@ public const string MudFormComponent_For = @"Specify an expression which returns
 
 public const string MudFormComponent_Class = @"User class names, separated by space";
 
+public const string MudFormComponent_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudFormComponent_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudFormComponent_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -1346,6 +1386,8 @@ public const string MudGrid_Justify = @"";
 public const string MudGrid_ChildContent = @"";
 
 public const string MudGrid_Class = @"User class names, separated by space";
+
+public const string MudGrid_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudGrid_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -1384,6 +1426,8 @@ public const string MudHighlighter_CaseSensitive = @"Whether or not the highligh
 public const string MudHighlighter_UntilNextBoundary = @"If true, highlights the text until the next regex boundary";
 
 public const string MudHighlighter_Class = @"User class names, separated by space";
+
+public const string MudHighlighter_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudHighlighter_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -1437,7 +1481,7 @@ public const string MudIconButton_Target = @"The target attribute specifies wher
 
 public const string MudIconButton_ForceLoad = @"If true, force browser to redirect outside component router-space.";
 
-public const string MudInputControl_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudIconButton_Command = @"Command executed when the user clicks on an element.";
 
 public const string MudIconButton_CommandParameter = @"Command parameter.";
 
@@ -1445,13 +1489,16 @@ public const string MudIconButton_OnClick = @"Button click event.";
 
 public const string MudIconButton_Class = @"User class names, separated by space";
 
-public const string MudInput_Required = @"";
+public const string MudIconButton_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
-public const string MudInput_RequiredError = @"";
+public const string MudIconButton_Style = @"User styles, applied on top of the component's own classes and styles";
 
-public const string MudInput_ErrorText = @"";
+public const string MudIconButton_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
-public const string MudInput_Error = @"";
+public const string MudIconButton_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudInput_ChildContent = @"ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.";
 
 public const string MudInput_Disabled = @"";
 
@@ -1568,6 +1615,8 @@ public const string MudInputControl_Disabled = @"If true, the input element will
 
 public const string MudInputControl_Class = @"User class names, separated by space";
 
+public const string MudInputControl_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudInputControl_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudInputControl_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -1587,13 +1636,16 @@ public const string MudInputLabel_Margin = @"Will adjust vertical spacing.";
 
 public const string MudInputLabel_Class = @"User class names, separated by space";
 
-public const string MudInputString_Required = @"If true, this form input is required to be filled out.";
+public const string MudInputLabel_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
-public const string MudInputString_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
+public const string MudInputLabel_Style = @"User styles, applied on top of the component's own classes and styles";
 
-public const string MudInputString_ErrorText = @"The ErrorText that will be displayed if Error true";
+public const string MudInputLabel_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
-public const string MudInputString_Error = @"If true, the label will be displayed in an error state.";
+public const string MudInputLabel_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudInputString_ChildContent = @"ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.";
 
 public const string MudInputString_Disabled = @"If true, the input element will be disabled.";
 
@@ -1690,6 +1742,8 @@ public const string MudItem_ChildContent = @"";
 
 public const string MudItem_Class = @"User class names, separated by space";
 
+public const string MudItem_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudItem_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudItem_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -1703,7 +1757,9 @@ public const string MudLayout_RightToLeft = @"If set, changes the layout to Righ
 
 public const string MudLayout_Class = @"User class names, separated by space";
 
-public const string MudInputLabel_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudLayout_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
+public const string MudLayout_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudLayout_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
@@ -1816,6 +1872,8 @@ public const string MudMainContent_ChildContent = @"";
 
 public const string MudMainContent_Class = @"User class names, separated by space";
 
+public const string MudMainContent_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudMainContent_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudMainContent_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -1863,7 +1921,9 @@ public const string MudMenu_OnClick = @"Button click event.";
 
 public const string MudMenu_Class = @"User class names, separated by space";
 
-public const string ComponentBaseMudMenu_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudMenu_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
+public const string MudMenu_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudMenu_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
@@ -1888,24 +1948,13 @@ public const string MudMenuItem_OnClick = @"";
 
 public const string MudMenuItem_Class = @"User class names, separated by space";
 
-public const string ComponentBaseMudMenuItem_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudMenuItem_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
+public const string MudMenuItem_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudMenuItem_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
 public const string MudMenuItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudElement_ChildContent = @"";
-
-public const string MudElement_Class = @"User class names, separated by space";
-
-public const string MudElement_HtmlTag = @"The HTML element that will be rendered in the root by the component";
-
-public const string MudElement_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudElement_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudElement_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudNavGroup_Title = @"";
@@ -2014,6 +2063,8 @@ public const string MudPaper_ChildContent = @"Child content of the component.";
 
 public const string MudPaper_Class = @"User class names, separated by space";
 
+public const string MudPaper_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudPaper_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudPaper_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -2060,6 +2111,8 @@ public const string MudPicker_ValueChanged = @"Fired when the value changes.";
 public const string MudPicker_Value = @"The currently selected value represented as a string (two-way bindable)";
 
 public const string MudPicker_Class = @"User class names, separated by space";
+
+public const string MudPicker_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudPicker_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -2111,7 +2164,7 @@ public const string MudPopover_UserAttributes = @"UserAttributes carries all att
 
 public const string MudProgressCircular_Color = @"The color of the component. It supports the theme colors.";
 
-public const string MudProgressCircular_Size = @"The color of the component. It supports the theme colors.";
+public const string MudProgressCircular_Size = @"The size of the component.";
 
 public const string MudProgressCircular_Indeterminate = @"";
 
@@ -2124,6 +2177,8 @@ public const string MudProgressCircular_Value = @"";
 public const string MudProgressCircular_StrokeWidth = @"";
 
 public const string MudProgressCircular_Class = @"User class names, separated by space";
+
+public const string MudProgressCircular_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudProgressCircular_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -2153,6 +2208,8 @@ public const string MudProgressLinear_Value = @"";
 public const string MudProgressLinear_BufferValue = @"";
 
 public const string MudProgressLinear_Class = @"User class names, separated by space";
+
+public const string MudProgressLinear_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudProgressLinear_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -2295,13 +2352,9 @@ public const string MudSelect_OffsetY = @"If true, the select menu will open eit
 
 public const string MudSelect_OffsetX = @"";
 
-public const string MudSelect_Required = @"";
-
-public const string MudSelect_RequiredError = @"";
-
-public const string MudSelect_ErrorText = @"";
-
-public const string MudSelect_Error = @"";
+public const string MudSelect_Strict = @"If true, the select's input will not show any values that are not defined in the dropdown.
+            This can be useful if Value is bound to a variable which is initialized to a value which is not in the list
+            and you want the select to show the label / placeholder instead.";
 
 public const string MudSelect_Disabled = @"";
 
@@ -2425,6 +2478,8 @@ public const string MudSimpleTable_ChildContent = @"Child content of the compone
 
 public const string MudSimpleTable_Class = @"User class names, separated by space";
 
+public const string MudSimpleTable_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudSimpleTable_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudSimpleTable_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -2441,6 +2496,8 @@ public const string MudSkeleton_SkeletonType = @"Shape of the skeleton that will
 public const string MudSkeleton_Animation = @"Animation style, if false it will be disabled.";
 
 public const string MudSkeleton_Class = @"User class names, separated by space";
+
+public const string MudSkeleton_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudSkeleton_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -2506,6 +2563,8 @@ public const string MudSnackbarProvider_UserAttributes = @"UserAttributes carrie
 public const string MudSparkLine_StrokeWidth = @"";
 
 public const string MudSparkLine_Class = @"User class names, separated by space";
+
+public const string MudSparkLine_HtmlTag = @"The HTML element that will be rendered in the root by the component";
 
 public const string MudSparkLine_Style = @"User styles, applied on top of the component's own classes and styles";
 
@@ -2623,7 +2682,9 @@ public const string MudTable_CommitEditTooltip = @"Tooltip for the CommitEdit Bu
 
 public const string MudTable_Class = @"User class names, separated by space";
 
-public const string MudSimpleTable_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudTable_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
+public const string MudTable_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudTable_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
@@ -2744,6 +2805,8 @@ public const string MudTabPanel_ChildContent = @"Child content of component.";
 
 public const string MudTabPanel_Class = @"User class names, separated by space";
 
+public const string MudTabPanel_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
 public const string MudTabPanel_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string MudTabPanel_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
@@ -2782,13 +2845,34 @@ public const string MudTabs_Tag = @"Use Tag to attach any user data object to th
 public const string MudTabs_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
-public const string MudTextField_Required = @"";
+public const string MudTd_ChildContent = @"";
 
-public const string MudTextField_RequiredError = @"";
+public const string MudTd_Style = @"";
 
-public const string MudTextField_ErrorText = @"";
+public const string MudTd_DataLabel = @"";
 
-public const string MudTextField_Error = @"";
+public const string MudText_Typo = @"Applies the theme typography styles.";
+
+public const string MudText_Align = @"Set the text-align on the component.";
+
+public const string MudText_Color = @"The color of the component. It supports the theme colors.";
+
+public const string MudText_GutterBottom = @"If true, the text will have a bottom margin.";
+
+public const string MudText_ChildContent = @"Child content of component.";
+
+public const string MudText_Inline = @"If true, Sets display inine";
+
+public const string MudText_Class = @"User class names, separated by space";
+
+public const string MudText_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
+public const string MudText_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudText_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudText_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
 
 public const string MudTextField_Disabled = @"";
 
@@ -3025,642 +3109,13 @@ public const string MudToggleIconButton_ToggledColor = @"The color of the icon i
 
 public const string MudToggleIconButton_Size = @"The Size of the component in the untoggled state.";
 
-public const string MudText_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudToggleIconButton_ToggledSize = @"The Size of the component in the toggled state.";
 
 public const string MudToggleIconButton_Edge = @"If set uses a negative margin.";
 
 public const string MudToggleIconButton_DisableRipple = @"If true, disables ripple effect.";
 
-public const string MudAvatar_Square = @"If true, border-radius is set to 0.";
-
-public const string MudAvatar_Rounded = @"If true, border-radius is set to the themes default value.";
-
-public const string MudAvatar_Image = @"Link to image, if set a image will be displayed instead of text.";
-
-public const string MudAvatar_Color = @"The color of the component. It supports the theme colors.";
-
-public const string MudAvatar_Size = @"The Size of the MudAvatar.";
-
-public const string MudAvatar_ChildContent = @"Child content of the component.";
-
-public const string MudAvatar_Class = @"User class names, separated by space";
-
-public const string MudAvatar_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudAvatar_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudAvatar_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudCard_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow.";
-
-public const string MudCard_Square = @"If true, border-radius is set to 0.";
-
-public const string MudCard_Outlined = @"If true, card will be outlined.";
-
-public const string MudCard_ChildContent = @"Child content of the component.";
-
-public const string MudCard_Class = @"User class names, separated by space";
-
-public const string MudCard_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudCard_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudCard_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudCardActions_ChildContent = @"Child content of the component.";
-
-public const string MudCardActions_Class = @"User class names, separated by space";
-
-public const string MudCardActions_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudCardActions_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudCardActions_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudCardContent_ChildContent = @"Child content of the component.";
-
-public const string MudCardContent_Class = @"User class names, separated by space";
-
-public const string MudCardContent_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudCardContent_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudCardContent_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudCardHeader_CardHeaderAvatar = @"If used renders child content of the CardHeaderAvatar.";
-
-public const string MudCardHeader_CardHeaderContent = @"If used renders child content of the CardHeaderContent.";
-
-public const string MudCardHeader_CardHeaderActions = @"If used renders child content of the CardHeaderActions.";
-
-public const string MudCardHeader_Class = @"User class names, separated by space";
-
-public const string MudCardHeader_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudCardHeader_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudCardHeader_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudChart_InputData = @"";
-
-public const string MudChart_InputLabels = @"";
-
-public const string MudChart_XAxisLabels = @"";
-
-public const string MudChart_ChartSeries = @"";
-
-public const string MudChart_ChartOptions = @"";
-
-public const string MudChart_ChartType = @"The Type of the chart.";
-
-public const string MudChart_Width = @"The Width of the chart, end with % or px.";
-
-public const string MudChart_Height = @"The Height of the chart, end with % or px.";
-
-public const string MudChart_LegendPosition = @"The placment direction of the legend if used.";
-
-public const string MudChart_Class = @"User class names, separated by space";
-
-public const string MudChart_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudChart_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudChart_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudCollapse_Expanded = @"If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.";
-
-public const string MudCollapse_Class = @"User class names, separated by space";
-
-public const string MudCollapse_ChildContent = @"Child content of component.";
-
-public const string MudContainer_Fixed = @"Set the max-width to match the min-width of the current breakpoint. This is useful if you'd prefer to design for a fixed set of sizes instead of trying to accommodate a fully fluid viewport. It's fluid by default.";
-
-public const string MudContainer_MaxWidth = @"Determine the max-width of the container. The container width grows with the size of the screen. Set to false to disable maxWidth.";
-
-public const string MudContainer_ChildContent = @"Child content of component.";
-
-public const string MudContainer_Class = @"User class names, separated by space";
-
-public const string MudContainer_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudContainer_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudContainer_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudDivider_Absolute = @"Sets absolute postion to the component.";
-
-public const string MudDivider_FlexItem = @"If true, a vertical divider will have the correct height when used in flex container.";
-
-public const string MudDivider_Light = @"If true, the divider will have a lighter color.";
-
-public const string MudDivider_Vertical = @"If true, the divider is displayed vertically.";
-
-public const string MudDivider_DividerType = @"The Divider type to use.";
-
-public const string MudDivider_Class = @"User class names, separated by space";
-
-public const string MudDivider_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudDivider_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudDivider_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudDrawer_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow.";
-
-public const string MudDrawer_Anchor = @"Side from which the drawer will appear.";
-
-public const string MudDrawer_Color = @"The color of the component. It supports the theme colors.";
-
-public const string MudDrawer_ChildContent = @"Child content of component.";
-
-public const string MudDrawer_Open = @"Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.";
-
-public const string MudDrawer_OpenChanged = @"";
-
-public const string MudDrawer_Clipped = @"";
-
-public const string MudDrawer_Class = @"User class names, separated by space";
-
-public const string MudDrawer_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudDrawer_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudDrawer_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudDrawerHeader_ChildContent = @"Child content of component.";
-
-public const string MudDrawerHeader_LinkToIndex = @"If true, the component will link to index page with an a element instead of div.";
-
-public const string MudDrawerHeader_Class = @"User class names, separated by space";
-
-public const string MudDrawerHeader_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudDrawerHeader_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudDrawerHeader_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudGrid_Spacing = @"";
-
-public const string MudGrid_Justify = @"";
-
-public const string MudGrid_ChildContent = @"";
-
-public const string MudGrid_Class = @"User class names, separated by space";
-
-public const string MudGrid_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudGrid_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudGrid_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudItem_xs = @"";
-
-public const string MudItem_sm = @"";
-
-public const string MudItem_md = @"";
-
-public const string MudItem_lg = @"";
-
-public const string MudItem_xl = @"";
-
-public const string MudItem_ChildContent = @"";
-
-public const string MudItem_Class = @"User class names, separated by space";
-
-public const string MudItem_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudItem_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudHighlighter_Text = @"The whole text in which a fragment will be highlighted";
-
-public const string MudHighlighter_HighlightedText = @"The fragment of text to be highlighted";
-
-public const string MudHighlighter_CaseSensitive = @"Whether or not the highlighted text is case sensitive";
-
-public const string MudHighlighter_UntilNextBoundary = @"If true, highlights the text until the next regex boundary";
-
-public const string MudHighlighter_Class = @"User class names, separated by space";
-
-public const string MudHighlighter_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudHighlighter_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudHighlighter_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudLayout_ChildContent = @"Child content of component.";
-
-public const string MudLayout_RightToLeft = @"If set, changes the layout to RightToLeft.";
-
-public const string MudLayout_Class = @"User class names, separated by space";
-
-public const string MudLayout_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudLayout_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudLayout_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudMainContent_ChildContent = @"";
-
-public const string MudMainContent_Class = @"User class names, separated by space";
-
-public const string MudMainContent_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudMainContent_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudMainContent_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string Markdown_Code = @"";
-
-public const string Markdown_Class = @"";
-
-public const string Markdown_ChildContent = @"";
-
-public const string MudMenu_Label = @"";
-
-public const string MudMenu_Icon = @"";
-
-public const string MudMenu_StartIcon = @"";
-
-public const string MudMenu_EndIcon = @"";
-
-public const string MudMenu_Color = @"";
-
-public const string MudMenu_Size = @"";
-
-public const string MudMenu_Variant = @"";
-
-public const string MudMenu_Dense = @"If true, compact vertical padding will be applied to all menu items.";
-
-public const string MudMenu_DisableElevation = @"";
-
-public const string MudMenu_Disabled = @"";
-
-public const string MudMenu_DisableRipple = @"";
-
-public const string MudMenu_ChildContent = @"";
-
-public const string MudMenu_ButtonType = @"The button Type (Button, Submit, Refresh)";
-
-public const string MudMenu_Link = @"If set to a URL, clicking the button will open the referenced document. Use Target to specify where";
-
-public const string MudMenu_Target = @"The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | framename";
-
-public const string MudMenu_ForceLoad = @"If true, force browser to redirect outside component router-space.";
-
-public const string MudMenu_Command = @"Command executed when the user clicks on an element.";
-
-public const string MudMenu_CommandParameter = @"Command parameter.";
-
-public const string MudMenu_OnClick = @"Button click event.";
-
-public const string MudMenu_Class = @"User class names, separated by space";
-
-public const string MudMenu_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudMenu_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudMenu_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudMenuItem_ChildContent = @"";
-
-public const string MudMenuItem_Disabled = @"";
-
-public const string MudMenuItem_Link = @"";
-
-public const string MudMenuItem_Target = @"";
-
-public const string MudMenuItem_ForceLoad = @"";
-
-public const string MudMenuItem_Command = @"";
-
-public const string MudMenuItem_CommandParameter = @"";
-
-public const string MudMenuItem_OnClick = @"";
-
-public const string MudMenuItem_Class = @"User class names, separated by space";
-
-public const string MudMenuItem_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudMenuItem_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudMenuItem_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudPaper_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 1 by default.";
-
-public const string MudPaper_Square = @"If true, border-radius is set to 0.";
-
-public const string MudPaper_Outlined = @"If true, card will be outlined.";
-
-public const string MudPaper_ChildContent = @"Child content of the component.";
-
-public const string MudPaper_Class = @"User class names, separated by space";
-
-public const string MudPaper_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudPaper_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudPaper_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudPicker_InputIcon = @"";
-
-public const string MudPicker_ChildContent = @"";
-
-public const string MudPicker_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.";
-
-public const string MudPicker_Square = @"If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden with Rounded bool.";
-
-public const string MudPicker_Rounded = @"If true, border-radius is set to theme default when in Static Mode.";
-
-public const string MudPicker_HelperText = @"If string has value, helpertext will be applied.";
-
-public const string MudPicker_Label = @"If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.";
-
-public const string MudPicker_Disabled = @"If true, the picker will be disabled.";
-
-public const string MudPicker_DisableToolbar = @"Hide toolbar and show only date/time views.";
-
-public const string MudPicker_ToolBarClass = @"User class names for picker's ToolBar, separated by space";
-
-public const string MudPicker_PickerVariant = @"Picker container option";
-
-public const string MudPicker_InputVariant = @"InputVariant, if Picker is static this option will not change anything.";
-
-public const string MudPicker_Adornment = @"Sets if the icon will be att start or end, set to false to disable.";
-
-public const string MudPicker_Orientation = @"What orientation to render in when in PickerVariant Static Mode.";
-
-public const string MudPicker_IconSize = @"Sets the Icon Size.";
-
-public const string MudPicker_Color = @"The color of the toolbar, selected and active. It supports the theme colors.";
-
-public const string MudPicker_AllowKeyboardInput = @"Allows text input from keyboard.";
-
-public const string MudPicker_ValueChanged = @"Fired when the value changes.";
-
-public const string MudPicker_Value = @"The currently selected value represented as a string (two-way bindable)";
-
-public const string MudPicker_Class = @"User class names, separated by space";
-
-public const string MudPicker_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudPicker_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudPicker_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudPickerContent_Class = @"";
-
-public const string MudPickerContent_ChildContent = @"";
-
-public const string MudPickerToolbar_Class = @"";
-
-public const string MudPickerToolbar_DisableToolbar = @"";
-
-public const string MudPickerToolbar_Orientation = @"";
-
-public const string MudPickerToolbar_Color = @"";
-
-public const string MudPickerToolbar_ChildContent = @"";
-
-public const string MudProgressCircular_Color = @"The color of the component. It supports the theme colors.";
-
-public const string MudProgressCircular_Size = @"The color of the component. It supports the theme colors.";
-
-public const string MudProgressCircular_Indeterminate = @"";
-
-public const string MudProgressCircular_Minimum = @"";
-
-public const string MudProgressCircular_Maximum = @"";
-
-public const string MudProgressCircular_Value = @"";
-
-public const string MudProgressCircular_StrokeWidth = @"";
-
-public const string MudProgressCircular_Class = @"User class names, separated by space";
-
-public const string MudProgressCircular_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudProgressCircular_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudProgressCircular_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudProgressLinear_Color = @"The color of the component. It supports the theme colors.";
-
-public const string MudProgressLinear_Size = @"The color of the component. It supports the theme colors.";
-
-public const string MudProgressLinear_Indeterminate = @"";
-
-public const string MudProgressLinear_Buffer = @"";
-
-public const string MudProgressLinear_Static = @"";
-
-public const string MudProgressLinear_StrokeWidth = @"";
-
-public const string MudProgressLinear_Minimum = @"";
-
-public const string MudProgressLinear_Maximum = @"";
-
-public const string MudProgressLinear_Value = @"";
-
-public const string MudProgressLinear_BufferValue = @"";
-
-public const string MudProgressLinear_Class = @"User class names, separated by space";
-
-public const string MudProgressLinear_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudProgressLinear_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudProgressLinear_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudSkeleton_Width = @"With defined in string, needs px or % or equal prefix.";
-
-public const string MudSkeleton_Height = @"Height defined in string, needs px or % or equal prefix.";
-
-public const string MudSkeleton_SkeletonType = @"Shape of the skeleton that will be renderd.";
-
-public const string MudSkeleton_Animation = @"Animation style, if false it will be disabled.";
-
-public const string MudSkeleton_Class = @"User class names, separated by space";
-
-public const string MudSkeleton_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudSkeleton_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudSkeleton_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudSparkLine_StrokeWidth = @"";
-
-public const string MudSparkLine_Class = @"User class names, separated by space";
-
-public const string MudSparkLine_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudSparkLine_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudSparkLine_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudTable_RowTemplate = @"Defines how a table row looks like. Use MudTd to define the table cells and their content.";
-
-public const string MudTable_RowEditingTemplate = @"Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.";
-
-public const string MudTable_Items = @"The data to display in the table. MudTable will render one row per item";
-
-public const string MudTable_Filter = @"A function that returns whether or not an item should be displayed in the table. You can use this to implement your own search function.";
-
-public const string MudTable_SelectedItem = @"Returns the item which was last clicked on in single selection mode (that is, if MultiSelection is false)";
-
-public const string MudTable_SelectedItemChanged = @"Callback is called when a row has been clicked and returns the selected item.";
-
-public const string MudTable_SelectedItems = @"If MultiSelection is true, this returns the currently selected items. You can bind this property and the initial content of the HashSet you bind it to will cause these rows to be selected initially.";
-
-public const string MudTable_SelectedItemsChanged = @"Callback is called whenever items are selected or deselected in multi selection mode.";
-
-public const string MudTable_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow.";
-
-public const string MudTable_Square = @"Set true to disable rounded corners";
-
-public const string MudTable_Outlined = @"";
-
-public const string MudTable_Dense = @"Set true for rows with a narrow height";
-
-public const string MudTable_Hover = @"Set true to see rows hover on mouse-over.";
-
-public const string MudTable_Breakpoint = @"At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.";
-
-public const string MudTable_FixedHeader = @"When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.";
-
-public const string MudTable_Height = @"Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
-            attribute 'height' accepts, i.e. 500px.";
-
-public const string MudTable_SortLabel = @"If table is in smalldevice mode and uses any kind of sorting the text applied here will be the sort selects label.";
-
-public const string MudTable_RowsPerPage = @"If the table has more items than this number, it will break the rows into pages of said size.
-            Note: requires a MudTablePager in PagerContent.";
-
-public const string MudTable_CurrentPage = @"The page index of the currently displayed page. Usually called by MudTablePager.
-            Note: requires a MudTablePager in PagerContent.";
-
-public const string MudTable_MultiSelection = @"Set to true to enable selection of multiple rows with check boxes.";
-
-public const string MudTable_ToolBarContent = @"Optional. Add any kind of toolbar to this render fragment.";
-
-public const string MudTable_HeaderContent = @"Add MudTh cells here to define the table header.";
-
-public const string MudTable_ColGroup = @"Specifies a group of one or more columns in a table for formatting.
-            Ex:
-            table
-                colgroup
-                   col span=""2"" style=""background-color:red""
-                   col style=""background-color:yellow""
-                 colgroup
-                 header
-                 body
-            table";
-
-public const string MudTable_PagerContent = @"Add MudTablePager here to enable breaking the rows in to multiple pages.";
-
-public const string MudTable_OnCommitEditClick = @"Button click event.";
-
-public const string MudTable_CommitEditCommand = @"Command executed when the user clicks on the CommitEdit Button.";
-
-public const string MudTable_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button.";
-
-public const string MudTable_CommitEditTooltip = @"Tooltip for the CommitEdit Button.";
-
-public const string MudTable_Class = @"User class names, separated by space";
-
-public const string MudTable_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudTable_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudTable_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudTableSortLabel_ChildContent = @"";
-
-public const string MudTableSortLabel_InitialDirection = @"";
-
-public const string MudTableSortLabel_SortIcon = @"The Icon used to display sortdirection.";
-
-public const string MudTableSortLabel_AppendIcon = @"If true the icon will be placed before the label text.";
-
-public const string MudTableSortLabel_SortDirection = @"";
-
-public const string MudTableSortLabel_SortDirectionChanged = @"";
-
-public const string MudTableSortLabel_SortBy = @"";
-
-public const string MudTd_ChildContent = @"";
-
-public const string MudTd_Style = @"";
-
-public const string MudTd_DataLabel = @"";
-
-public const string MudTh_ChildContent = @"";
-
-public const string MudTh_Style = @"";
-
-public const string MudTr_ChildContent = @"";
-
-public const string MudTr_Item = @"";
-
-public const string MudTr_IsCheckable = @"";
-
-public const string MudTr_IsEditable = @"";
-
-public const string MudTr_IsHeader = @"";
-
-public const string MudTr_IsCheckedChanged = @"";
-
-public const string MudTr_IsChecked = @"";
-
-public const string MudTabPanel_Text = @"Text will be displayed in the TabPanel as TabTitle.";
-
-public const string MudTabPanel_Icon = @"Icon placed before the text if set.";
-
-public const string MudTabPanel_Disabled = @"If true, the tabpanel will be disabled.";
-
-public const string MudTabPanel_BadgeData = @"Optional information to be showed into a badge";
-
-public const string MudTabPanel_BadgeColor = @"The color of the badge.";
-
-public const string MudTabPanel_OnClick = @"Raised when tab is clicked";
-
-public const string MudTabPanel_ChildContent = @"Child content of component.";
-
-public const string MudTabPanel_Class = @"User class names, separated by space";
-
-public const string MudTabPanel_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudTabPanel_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudTabPanel_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudThemeProvider_Theme = @"";
+public const string MudToggleIconButton_Disabled = @"If true, the button will be disabled.";
 
 public const string MudToolBar_Dense = @"If true, compact padding will be used.";
 
@@ -3689,188 +3144,7 @@ public const string MudTooltip_Placement = @"Tooltip placement.";
 
 public const string MudTooltip_ChildContent = @"Child content of component.";
 
-public const string MudInputAdornment_Class = @"";
-
-public const string MudInputAdornment_Text = @"";
-
-public const string MudInputAdornment_Icon = @"";
-
-public const string MudInputAdornment_Edge = @"";
-
-public const string MudInputAdornment_Size = @"";
-
-public const string MudInputAdornment_AdornmentClick = @"";
-
-public const string MudDialogInstance_Options = @"";
-
-public const string MudDialogInstance_Title = @"";
-
-public const string MudDialogInstance_Content = @"";
-
-public const string MudDialogInstance_Id = @"";
-
-public const string MudDialogProvider_NoHeader = @"";
-
-public const string MudDialogProvider_CloseButton = @"";
-
-public const string MudDialogProvider_DisableBackdropClick = @"";
-
-public const string MudDialogProvider_FullWidth = @"";
-
-public const string MudDialogProvider_Position = @"";
-
-public const string MudDialogProvider_MaxWidth = @"";
-
-public const string DonutBase_InputData = @"";
-
-public const string DonutBase_InputLabels = @"";
-
-public const string DonutBase_XAxisLabels = @"";
-
-public const string DonutBase_ChartSeries = @"";
-
-public const string DonutBase_ChartOptions = @"";
-
-public const string DonutBase_ChartType = @"The Type of the chart.";
-
-public const string DonutBase_Width = @"The Width of the chart, end with % or px.";
-
-public const string DonutBase_Height = @"The Height of the chart, end with % or px.";
-
-public const string DonutBase_LegendPosition = @"The placment direction of the legend if used.";
-
-public const string DonutBase_Class = @"User class names, separated by space";
-
-public const string DonutBase_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string DonutBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string DonutBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string LineBase_InputData = @"";
-
-public const string LineBase_InputLabels = @"";
-
-public const string LineBase_XAxisLabels = @"";
-
-public const string LineBase_ChartSeries = @"";
-
-public const string LineBase_ChartOptions = @"";
-
-public const string LineBase_ChartType = @"The Type of the chart.";
-
-public const string LineBase_Width = @"The Width of the chart, end with % or px.";
-
-public const string LineBase_Height = @"The Height of the chart, end with % or px.";
-
-public const string LineBase_LegendPosition = @"The placment direction of the legend if used.";
-
-public const string LineBase_Class = @"User class names, separated by space";
-
-public const string LineBase_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string LineBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string LineBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string PieBase_InputData = @"";
-
-public const string PieBase_InputLabels = @"";
-
-public const string PieBase_XAxisLabels = @"";
-
-public const string PieBase_ChartSeries = @"";
-
-public const string PieBase_ChartOptions = @"";
-
-public const string PieBase_ChartType = @"The Type of the chart.";
-
-public const string PieBase_Width = @"The Width of the chart, end with % or px.";
-
-public const string PieBase_Height = @"The Height of the chart, end with % or px.";
-
-public const string PieBase_LegendPosition = @"The placment direction of the legend if used.";
-
-public const string PieBase_Class = @"User class names, separated by space";
-
-public const string PieBase_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string PieBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string PieBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string LegendBase_Data = @"";
-
-public const string LegendBase_InputData = @"";
-
-public const string LegendBase_InputLabels = @"";
-
-public const string LegendBase_XAxisLabels = @"";
-
-public const string LegendBase_ChartSeries = @"";
-
-public const string LegendBase_ChartOptions = @"";
-
-public const string LegendBase_ChartType = @"The Type of the chart.";
-
-public const string LegendBase_Width = @"The Width of the chart, end with % or px.";
-
-public const string LegendBase_Height = @"The Height of the chart, end with % or px.";
-
-public const string LegendBase_LegendPosition = @"The placment direction of the legend if used.";
-
-public const string LegendBase_Class = @"User class names, separated by space";
-
-public const string LegendBase_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string LegendBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string LegendBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string Donut_InputData = @"";
-
-public const string Donut_InputLabels = @"";
-
-public const string Donut_XAxisLabels = @"";
-
-public const string Donut_ChartSeries = @"";
-
-public const string Donut_ChartOptions = @"";
-
-public const string Donut_ChartType = @"The Type of the chart.";
-
-public const string Donut_Width = @"The Width of the chart, end with % or px.";
-
-public const string Donut_Height = @"The Height of the chart, end with % or px.";
-
-public const string Donut_LegendPosition = @"The placment direction of the legend if used.";
-
-public const string Donut_Class = @"User class names, separated by space";
-
-public const string Donut_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string Donut_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string Donut_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string Line_InputData = @"";
-
-public const string Line_InputLabels = @"";
-
-public const string Line_XAxisLabels = @"";
-
-public const string Line_ChartSeries = @"";
-
-public const string Line_ChartOptions = @"";
-
-public const string Line_ChartType = @"The Type of the chart.";
-
-public const string Line_Width = @"The Width of the chart, end with % or px.";
+public const string MudTr_ChildContent = @"";
 
 public const string MudTr_Item = @"";
 
@@ -3878,7 +3152,7 @@ public const string MudTr_IsCheckable = @"";
 
 public const string MudTr_IsEditable = @"";
 
-public const string Line_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string MudTr_IsHeader = @"";
 
 public const string MudTr_IsCheckedChanged = @"";
 
@@ -3933,35 +3207,13 @@ public const string PieBase_LegendPosition = @"The placment direction of the leg
 
 public const string PieBase_Class = @"User class names, separated by space";
 
-public const string Legend_Style = @"User styles, applied on top of the component's own classes and styles";
+public const string PieBase_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
+public const string PieBase_Style = @"User styles, applied on top of the component's own classes and styles";
 
 public const string PieBase_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
 public const string PieBase_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
-            will be splatted onto the underlying HTML tag.";
-
-public const string MudFormComponent_Required = @"If true, this form input is required to be filled out.";
-
-public const string MudFormComponent_RequiredError = @"Set an error text that will be displayed if the input is not filled out but required!";
-
-public const string MudFormComponent_ErrorText = @"The ErrorText that will be displayed if Error true";
-
-public const string MudFormComponent_Error = @"If true, the label will be displayed in an error state.";
-
-public const string MudFormComponent_Validation = @"";
-
-public const string MudFormComponent_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
-            Currently only string fields are supported.";
-
-public const string MudFormComponent_Class = @"User class names, separated by space";
-
-public const string MudFormComponent_HtmlTag = @"The HTML element that will be rendered in the root by the component";
-
-public const string MudFormComponent_Style = @"User styles, applied on top of the component's own classes and styles";
-
-public const string MudFormComponent_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
-
-public const string MudFormComponent_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
     }

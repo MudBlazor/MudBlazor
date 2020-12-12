@@ -46,6 +46,11 @@ namespace MudBlazor
         [Parameter] public object CommandParameter { get; set; }
 
         /// <summary>
+        /// The HTML element that will be rendered in the root by the component
+        /// </summary>
+        [Parameter] public string HtmlTag { get; set; }
+
+        /// <summary>
         /// Button click event.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }

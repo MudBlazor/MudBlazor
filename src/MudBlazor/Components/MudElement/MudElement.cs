@@ -11,7 +11,12 @@ namespace MudBlazor
     {
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-       protected  override void BuildRenderTree(RenderTreeBuilder builder)
+        /// <summary>
+        /// The HTML element that will be rendered in the root by the component
+        /// </summary>
+        [Parameter] public string HtmlTag { get; set; }
+
+        protected  override void BuildRenderTree(RenderTreeBuilder builder)
         {
             base.BuildRenderTree(builder);
             builder.OpenElement(0, HtmlTag);
