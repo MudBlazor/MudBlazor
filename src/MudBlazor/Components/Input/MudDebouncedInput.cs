@@ -6,7 +6,7 @@ using System.Timers;
 
 namespace MudBlazor
 {
-    public partial class MudDebouncedInput<T> : MudBaseInput<T>, IDisposable
+    public abstract partial class MudDebouncedInput<T> : MudBaseInput<T>, IDisposable
     {
 
         private Timer _timer;
