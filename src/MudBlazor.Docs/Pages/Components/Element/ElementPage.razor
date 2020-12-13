@@ -1,0 +1,33 @@
+﻿@page "/components/element"
+
+<DocsPage>
+    <DocsPageHeader Title="MudElement" SubTitle="A primitive component that allows you to create your own components and render the html element you want in an interactive way." />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Basic example</Title>
+                <Description>MudElement accepts all attributes you want, plus an <CodeInline>HtmlTag</CodeInline> parameter, that tells the component the html element that must render, and a <CodeInline>Class</CodeInline> and <CodeInline>Style</CodeInline> parameters, to style it</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <MudElementSimpleExample />
+            </SectionContent>
+            <SectionSource Code="MudElementSimpleExample" GitHubFolderName="Element" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Interactive example</Title>
+                <Description>Change the rendered html element in an interactive way</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true"  
+                            Style="height:150px; 
+                                   display:flex;
+                                   justify-content:flex-start;
+                                   align-items:flex-end;">
+                <MudElementChangingExample />
+            </SectionContent>
+            <SectionSource Code="MudElementChangingExample" GitHubFolderName="Element" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>
+
+    
