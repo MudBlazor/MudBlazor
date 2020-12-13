@@ -4,9 +4,19 @@
 <div class="@Classname">
     <div class="mud-expand-panel-header" @onclick=@( () => ToggleExpansion())>
         <div class="mud-expand-panel-text">
-            @Text
+            @if (TitleFragment != null)
+            {
+                @TitleFragment
+            }
+            else
+            {
+                @Text
+            }
         </div>
-        <MudIcon Icon="@Icons.Material.ExpandMore" class="@(IsExpanded? "mud-expand-panel-icon mud-transform" : "mud-expand-panel-icon")"/>
+            @if (!IsExpandIconHidden)
+            {
+                <MudIcon Icon="@Icons.Material.ExpandMore" class="@(IsExpanded? "mud-expand-panel-icon mud-transform" : "mud-expand-panel-icon")"/>
+            }
     </div>
     <MudCollapse Expanded="@IsExpanded">
         <div class="mud-expand-panel-content">

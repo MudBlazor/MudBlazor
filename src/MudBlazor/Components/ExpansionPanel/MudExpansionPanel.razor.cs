@@ -20,9 +20,19 @@ namespace MudBlazor
         .Build();
 
         /// <summary>
+        /// RenderFragment to be displayed in the expansion panel which will override header text if defined.
+        /// </summary>
+        [Parameter] public RenderFragment TitleFragment { get; set; }
+
+        /// <summary>
         /// The text to be displayed in the expansion panel.
         /// </summary>
         [Parameter] public string Text { get; set; }
+
+        /// <summary>
+        /// decides wether expand icon is shown or not
+        /// </summary>
+        [Parameter] public bool IsExpandIconHidden { get; set; }
 
         [Parameter]
         public bool IsExpanded
