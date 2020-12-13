@@ -22,8 +22,7 @@ namespace MudBlazor.Utilities
         /// <summary>
         /// Creates a StyleBuilder used to define conditional in-line style used in a component. Call Build() to return the completed style as a string.
         /// </summary>
-        /// <param name="prop"></param>
-        /// <param name="value"></param>
+        /// <param name="style"></param>
         public static StyleBuilder Default(string style) => Empty().AddStyle(style);
 
         /// <summary>
@@ -47,8 +46,7 @@ namespace MudBlazor.Utilities
         /// <summary>
         /// Adds a raw string to the builder that will be concatenated with the next style or value added to the builder.
         /// </summary>
-        /// <param name="prop"></param>
-        /// <param name="value"></param>
+        /// <param name="style"></param>
         /// <returns>StyleBuilder</returns>
         private StyleBuilder AddRaw(string style)
         {

@@ -77,12 +77,12 @@ namespace MudBlazor
 
         /// <summary>
         /// A validation func or a validation attribute. Supported types are:
-        /// Func<T, bool> ... will output the standard error message "Invalid" if false
-        /// Func<T, string> ... outputs the result as error message, no error if null
-        /// Func<T, IEnumerable<string>> ... outputs all the returned error messages, no error if empty
-        /// Func<T, Task<bool>> ... will output the standard error message "Invalid" if false
-        /// Func<T, Task<string>> ... outputs the result as error message, no error if null
-        /// Func<T, Task<IEnumerable<string>>> ... outputs all the returned error messages, no error if empty
+        /// <![CDATA[Func<T, bool>]]> ... will output the standard error message "Invalid" if false
+        /// <![CDATA[Func<T, string>]]> ... outputs the result as error message, no error if null
+        /// <![CDATA[Func<T, IEnumerable<string>>]]> ... outputs all the returned error messages, no error if empty
+        /// <![CDATA[Func<T, Task<bool>>]]> ... will output the standard error message "Invalid" if false
+        /// <![CDATA[Func<T, Task<string>>]]> ... outputs the result as error message, no error if null
+        /// <![CDATA[Func<T, Task<IEnumerable<string>>>]]> ... outputs all the returned error messages, no error if empty
         /// System.ComponentModel.DataAnnotations.ValidationAttribute instances
         /// </summary>
         [Parameter]
