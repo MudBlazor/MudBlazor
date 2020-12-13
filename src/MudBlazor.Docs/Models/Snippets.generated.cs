@@ -1190,6 +1190,35 @@ public const string DrawerPersistentExample = @"<MudLayout>
     }
 }";
 
+public const string MudElementChangingExample = @"<MudElement HtmlTag=""@htmlTag"">
+    This renders an <code style=""color:red;"">@htmlTag</code>  tag
+</MudElement>
+
+<MudButton OnClick=""ChangeTag"" Variant=""Variant.Filled"" Color=""Color.Secondary"">Change tag</MudButton>
+
+@code{ 
+
+    private string htmlTag=""h1"";
+    private int hNumber = 2;
+
+    private void ChangeTag()
+    {
+        htmlTag = ""h"" + hNumber;
+        hNumber++;
+        if (hNumber > 3) hNumber = 1;
+    }
+}";
+
+public const string MudElementSimpleExample = @"Visit our
+<MudElement HtmlTag=""a""
+            Class=""ma-0""
+            Style=""color:red;font-weight:bold;""
+            href=""https://github.com/Garderoben/MudBlazor""
+            target=""blank""
+            rel=""noopener noreferrer"">
+    Github page
+</MudElement>";
+
 public const string ExpansionPanelDisabledExample = @"<MudExpansionPanels>
     <MudExpansionPanel Text=""Panel One"">
         Panel One Content
