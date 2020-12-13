@@ -9,6 +9,9 @@ namespace MudBlazor
     /// </summary>
     public class MudElement : MudComponentBase
     {
+        /// <summary>
+        /// Child content
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>

@@ -1121,6 +1121,19 @@ public const string MudDrawerHeader_Tag = @"Use Tag to attach any user data obje
 public const string MudDrawerHeader_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
+public const string MudElement_ChildContent = @"Child content";
+
+public const string MudElement_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
+public const string MudElement_Class = @"User class names, separated by space";
+
+public const string MudElement_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudElement_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudElement_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
 public const string MudExpansionPanel_Text = @"The text to be displayed in the expansion panel.";
 
 public const string MudExpansionPanel_IsExpanded = @"";
@@ -2017,7 +2030,7 @@ public const string MudPopover_UserAttributes = @"UserAttributes carries all att
 
 public const string MudProgressCircular_Color = @"The color of the component. It supports the theme colors.";
 
-public const string MudProgressCircular_Size = @"The color of the component. It supports the theme colors.";
+public const string MudProgressCircular_Size = @"The size of the component.";
 
 public const string MudProgressCircular_Indeterminate = @"";
 
