@@ -16,6 +16,10 @@ namespace MudBlazor
         public MudTr HeaderRow { get; set; }
 
         public abstract void InitializeSorting();
+
+        public abstract string SortFieldLabel { get; internal set; }
+
+        public abstract SortDirection SortDirection { get; protected set; }        
     }
 
     public class TableContext<T> : TableContext
@@ -60,7 +64,7 @@ namespace MudBlazor
 
         #region --> Sorting
 
-        public SortDirection SortDirection {
+        public override SortDirection SortDirection {
             get;
             protected set;
         }
@@ -110,6 +114,8 @@ namespace MudBlazor
                     x.SetSortDirection(SortDirection.None);
             }
         }
+
+        public override string SortFieldLabel { get; internal set; }
 
         #endregion
 

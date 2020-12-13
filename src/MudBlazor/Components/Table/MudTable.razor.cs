@@ -95,6 +95,7 @@ namespace MudBlazor
                     return;
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
+                PageChangedInvoke();
             }
         }
 
@@ -154,6 +155,22 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string CommitEditTooltip { get; set; }
 
+        /// <summary>
+        /// Pagination and sort is server side
+        /// </summary>
+        [Parameter] public bool ServerData { get; set; }
+
+        /// <summary>
+        /// Number Items. Server Side
+        /// </summary>
+        [Parameter] public int TotalItems { get; set; }
+
+        /// <summary>
+        /// Event Raised whn is required to load data from server 
+        /// </summary>
+        [Parameter] public EventCallback<MudTablePageEventArgs> PageChanged { get; set; }
+
+
         public abstract TableContext TableContext { get; }
 
         public void NavigateTo(Page page)
@@ -179,6 +196,7 @@ namespace MudBlazor
         {
             RowsPerPage = size;
             StateHasChanged();
+            PageChangedInvoke();
         }
 
         protected abstract int NumPages { get; }
@@ -212,5 +230,7 @@ namespace MudBlazor
         {
             return base.OnInitializedAsync();
         }
+
+        internal abstract void PageChangedInvoke();        
     }
 }

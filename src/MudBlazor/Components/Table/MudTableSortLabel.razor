@@ -53,8 +53,9 @@
                 return;
             _direction = value;
             SortDirectionChanged.InvokeAsync(_direction);
-            if (SortBy != null)
+            if (SortBy != null || Table.ServerData)
                 Context?.SetSortFunc(this);
+            Table.PageChangedInvoke();
         }
     }
 
@@ -63,6 +64,8 @@
 
     [Parameter]
     public Func<T, object> SortBy { get; set; } = null;
+
+    [Parameter] public string SortLabel { get; set; }        
 
     public void ToggleSortDirection()
     {

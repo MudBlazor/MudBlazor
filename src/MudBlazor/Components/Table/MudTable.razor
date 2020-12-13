@@ -183,12 +183,30 @@
     {
         if (n < 0 || pageSize <= 0)
             return new T[0];
+        
+        if (ServerData)
+            return Items;
+
         return FilteredItems.Skip(n * pageSize).Take(pageSize);
     }
 
-    protected override int NumPages => (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
+    protected override int NumPages
+    {
+        get
+        {
+            if (ServerData)
+                return (int)Math.Ceiling(TotalItems / (double)RowsPerPage);
 
-    public override int GetFilteredItemsCount() => FilteredItems.Count();
+            return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
+        }
+    }
+
+    public override int GetFilteredItemsCount()
+    {
+        if (ServerData)
+            return TotalItems;
+        return FilteredItems.Count();
+    }
 
     public override void SetSelectedItem(object item)
     {
@@ -246,5 +264,24 @@
         TableContext.UpdateRowCheckBoxes();
         return base.OnAfterRenderAsync(firstRender);
     }
+
+internal override void PageChangedInvoke()
+    {
+        if (!ServerData)
+            return;
+
+        var label = Context.CurrentSortLabel;
+
+        MudTablePageEventArgs args = new MudTablePageEventArgs
+        {
+            Page = CurrentPage,
+            PageSize = RowsPerPage,
+            SortDirection = Context.SortDirection,
+            SortLabel = label?.SortLabel
+        };
+
+        PageChanged.InvokeAsync(args);
+    }    
+    
 
 }
