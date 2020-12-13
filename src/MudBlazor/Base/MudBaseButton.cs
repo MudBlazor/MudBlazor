@@ -11,10 +11,8 @@ namespace MudBlazor
 {
     public abstract class MudBaseButton : MudComponentBase
     {
-        [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
-
-        [Inject] public IJSRuntime JsRuntime { get; set; }
-
+        
+        
         /// <summary>
         /// The button Type (Button, Submit, Refresh)
         /// </summary>
