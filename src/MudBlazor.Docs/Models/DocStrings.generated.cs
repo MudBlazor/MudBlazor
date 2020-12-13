@@ -2612,7 +2612,7 @@ public const string MudTable_OnCommitEditClick = @"Button click event.";
 
 public const string MudTable_CommitEditCommand = @"Command executed when the user clicks on the CommitEdit Button.";
 
-public const string MudTable_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button.";
+public const string MudTable_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button. By default, will be the row level item model, if you won't set anything else.";
 
 public const string MudTable_CommitEditTooltip = @"Tooltip for the CommitEdit Button.";
 
@@ -2673,7 +2673,7 @@ public const string MudTableBase_OnCommitEditClick = @"Button click event.";
 
 public const string MudTableBase_CommitEditCommand = @"Command executed when the user clicks on the CommitEdit Button.";
 
-public const string MudTableBase_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button.";
+public const string MudTableBase_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button. By default, will be the row level item model, if you won't set anything else.";
 
 public const string MudTableBase_CommitEditTooltip = @"Tooltip for the CommitEdit Button.";
 

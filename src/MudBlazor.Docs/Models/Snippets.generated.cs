@@ -3272,7 +3272,7 @@ public const string TableFixedHeaderExample = @"@using MudBlazor.Docs.Data
 public const string TableInlineEditExample = @"@using MudBlazor.Docs.Data
 @inject ISnackbar Snackbar
 
-<MudTable Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"" SortLabel=""Sort By"" CommitEditTooltip=""Commit Edit"" OnCommitEditClick=""@(() => Snackbar.Add(""Commit Edit Handler Invoked""))"">
+<MudTable Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"" SortLabel=""Sort By"" CommitEditTooltip=""Commit Edit"" OnCommitEditClick=""@(() => Snackbar.Add(""Commit Edit Handler Invoked""))"" CommitEditCommand=""@samplecmd"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
         <MudToolBarSpacer />
@@ -3331,6 +3331,12 @@ public const string TableInlineEditExample = @"@using MudBlazor.Docs.Data
     Element selected_item = null;
     HashSet<Element> selected_items = new HashSet<Element>();
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        samplecmd = new Utilities.SampleCommand(SampleCommand_Executed);
+    }
+
     bool FilterFunc(Element element)
     {
         if (string.IsNullOrWhiteSpace(search_string))
@@ -3343,6 +3349,14 @@ public const string TableInlineEditExample = @"@using MudBlazor.Docs.Data
             return true;
         return false;
     }
+
+    private Utilities.SampleCommand samplecmd;
+
+    private void SampleCommand_Executed(object parameter)
+    {
+        Snackbar.Add($""Commit Edit Command Executed for parameter '{parameter.ToString()}'"");
+    }
+
 }";
 
 public const string TableMultiSelectExample = @"@using MudBlazor.Docs.Data
