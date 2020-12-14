@@ -82,9 +82,10 @@ namespace MudBlazor.Utilities
         /// Arguments are limited to the defined range:
         /// does not raise exceptions.
         /// </summary>
-        /// <param name="h">Hue, must be in [0, 360].</param>
-        /// <param name="s">Saturation, must be in [0, 1].</param>
-        /// <param name="l">Luminance, must be in [0, 1].</param>
+        /// <param name="hsl">HSL comprising of - </param>
+        /// hsl.H (Hue), must be in [0, 360] - 
+        /// hsl.S (Saturation), must be in [0, 1] - 
+        /// hsl.L (Luminance), must be in [0, 1].
         /// <param name="a">Output Alpha, must be in [0, 255].</param>
         public static MudColor HsLtoRgb(HSLColor hsl, int a = 255)
         {

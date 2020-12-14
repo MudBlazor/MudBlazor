@@ -85,7 +85,7 @@ namespace MudBlazor
         {
             Context?.Table.SetEditingItem(null);
             _lockeditingentry = true;
-            Context?.Table.OnCommitEditHandler(ev);
+            Context?.Table.OnCommitEditHandler(ev, Item);
         }
     }
-}
+    }

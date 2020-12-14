@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton Variant="Variant.Filled" Color="Color.Tertiary" OnClick="OpenOverlay">Show Overlay</MudButton>
+
+<MudOverlay Visible="isVisible" DarkBackground="true" ZIndex="9999"/>
+
+
+@code {
+    private bool isVisible;
+
+    public async void OpenOverlay()
+    {
+        isVisible = true;
+        await Task.Delay(3000);
+        isVisible = false;
+        StateHasChanged();
+    }
+} 

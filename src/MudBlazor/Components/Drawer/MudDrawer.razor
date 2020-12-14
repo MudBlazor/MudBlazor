@@ -9,7 +9,7 @@
         @ChildContent
     </CascadingValue>
 </aside>
-<MudOverlay OnClick="@DrawerClose" Class="@OverlayClass" />
+<MudOverlay Visible="true" OnClick="@DrawerClose" Class="@OverlayClass" DarkBackground="true" />
 
 
 @code {
@@ -19,7 +19,7 @@
       .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
       .AddClass($"mud-drawer--open", Open)
       .AddClass($"mud-drawer--closed", !Open)
-      .AddClass($"mud-drawer--initial", _initial)
+      .AddClass($"mud-drawer--initial", MobileInitiallyClosed)
       .AddClass($"mud-drawer-clipped", Clipped)
       .AddClass($"mud-drawer-color-{Color.ToDescriptionString()}", Color != Color.Default)
       .AddClass($"mud-elevation-{Elevation.ToString()}")
@@ -27,10 +27,10 @@
     .Build();
 
     protected string OverlayClass =>
-    new CssBuilder("mud-drawer-overlay")
+    new CssBuilder("mud-drawer-overlay mud-overlay-drawer")
       .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
       .AddClass($"mud-drawer--open", !Open)
-      .AddClass($"mud-drawer--initial", _initial)
+      .AddClass($"mud-drawer--initial", MobileInitiallyClosed)
     .Build();
 
     /// <summary>
@@ -49,6 +49,11 @@
     [Parameter] public Color Color { get; set; } = Color.Default;
 
     /// <summary>
+    /// If true the drawer will initially be closed on mobiles or smaller screens.
+    /// </summary>
+    [Parameter] public bool MobileInitiallyClosed { get; set; } = true;
+
+    /// <summary>
     /// Child content of component.
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
@@ -65,7 +70,7 @@
             if (_open == value)
                 return;
             _open = value;
-            _initial = false;
+            MobileInitiallyClosed = false;
             Layout?.FireDrawersChanged();
             StateHasChanged();
         }
@@ -76,7 +81,6 @@
 
     private bool _open;
     private bool _clipped;
-    private bool _initial = true;
 
     [Parameter]
     public bool Clipped

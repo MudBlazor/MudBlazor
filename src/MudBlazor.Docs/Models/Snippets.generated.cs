@@ -411,7 +411,7 @@ public const string ButtonIconLabelExample = @"<MudButton Variant=""Variant.Fill
 <MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Custom.Radioactive"" Color=""Color.Warning"">Warning</MudButton>
 <MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Mic"" Disabled=""true"">Talk</MudButton>
 <MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Save"" Color=""Color.Info""  Size=""Size.Small"">Save</MudButton>
-<MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Save"" Color=""Color.Success"" IconColor=""Color.Error"" Size=""Size.Large"">Save</MudButton>";
+<MudButton Variant=""Variant.Filled"" StartIcon=""@Icons.Material.Save"" IconColor=""Color.Secondary"" Size=""Size.Large"">Save</MudButton>";
 
 public const string ButtonOutlinedExample = @"<MudButton Variant=""Variant.Outlined"">Default</MudButton>
 <MudButton Variant=""Variant.Outlined"" Color=""Color.Primary"">Primary</MudButton>
@@ -817,12 +817,16 @@ public const string ContainerFluidExample = @"<MudPaper>
     <MudContainer MaxWidth=""MaxWidth.Small""></MudContainer>
 </MudPaper>";
 
-public const string DatePickerBasicUsageExample = @"<MudDatePicker Label=""Picker in menu"" Value=""2020-10-19""/>
+public const string DatePickerBasicUsageExample = @"<MudDatePicker Label=""Basic example"" Value=""2020-10-19""/>
 <MudDatePicker Label=""Only Calendar"" Value=""2020-10-19"" DisableToolbar=""true"" HelperText=""No header"" />
 <MudDatePicker Label=""Date Format"" HelperText=""For custom cultures"" DateFormat=""dd/MM/yyyy"" Date=""@(new System.DateTime(2020,10,19))"" />";
 
 public const string DatePickerColorExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Date=""@(DateTime.Today.AddDays(1))"" />
 <MudDatePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Date=""@(DateTime.Today.AddDays(1))"" />";
+
+public const string DatePickerDialogExample = @"<MudDatePicker PickerVariant=""PickerVariant.Dialog"" Label=""Picker example"" Value=""2020-10-19""/>
+<MudDatePicker PickerVariant=""PickerVariant.Dialog"" Label=""Only Calendar"" Value=""2020-10-19"" DisableToolbar=""true"" HelperText=""No header"" />
+<MudDatePicker PickerVariant=""PickerVariant.Dialog"" Label=""Date Format"" HelperText=""For custom cultures"" DateFormat=""dd/MM/yyyy"" Date=""@(new System.DateTime(2020,10,19))"" />";
 
 public const string DatePickerElevationExample = @"<MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""1"" Date=""@(DateTime.Today.AddDays(1))"" />
 <MudDatePicker PickerVariant=""PickerVariant.Static"" Rounded=""true"" Elevation=""12"" Date=""@(DateTime.Today.AddDays(1))"" />";
@@ -1185,6 +1189,35 @@ public const string DrawerPersistentExample = @"<MudLayout>
         open = !open;
     }
 }";
+
+public const string MudElementChangingExample = @"<MudElement HtmlTag=""@htmlTag"">
+    This renders an <code style=""color:red;"">@htmlTag</code>  tag
+</MudElement>
+
+<MudButton OnClick=""ChangeTag"" Variant=""Variant.Filled"" Color=""Color.Secondary"">Change tag</MudButton>
+
+@code{ 
+
+    private string htmlTag=""h1"";
+    private int hNumber = 2;
+
+    private void ChangeTag()
+    {
+        htmlTag = ""h"" + hNumber;
+        hNumber++;
+        if (hNumber > 3) hNumber = 1;
+    }
+}";
+
+public const string MudElementSimpleExample = @"Visit our
+<MudElement HtmlTag=""a""
+            Class=""ma-0""
+            Style=""color:red;font-weight:bold;""
+            href=""https://github.com/Garderoben/MudBlazor""
+            target=""blank""
+            rel=""noopener noreferrer"">
+    Github page
+</MudElement>";
 
 public const string ExpansionPanelDisabledExample = @"<MudExpansionPanels>
     <MudExpansionPanel Text=""Panel One"">
@@ -1962,9 +1995,12 @@ public const string NavMenuIconExample = @"<MudNavMenu Class=""demo-navmenu"">
     <MudNavLink Href=""/about"">About</MudNavLink>
 </MudNavMenu>";
 
-public const string OverlayAbsoluteExample = @"<MudPaper Class=""px-4 pt-4 pb-16"">
-    <MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ToggleOverlay"">Show Overlay</MudButton>
-    <MudOverlay Visible=""isVisible"" OnClick=""ToggleOverlay"" BackgroundColor=""rgba(0,0,0,0.5)"" FadeIn=""true"" Absolute=""true""></MudOverlay>
+public const string OverlayAbsoluteExample = @"<MudPaper Class=""pa-8"" Style=""height: 300px;"">
+    <MudButton Variant=""Variant.Filled"" Color=""Color.Secondary"" OnClick=""@(e => ToggleOverlay(true))"">Show Overlay</MudButton>
+
+    <MudOverlay Visible=""isVisible"" DarkBackground=""true"" Absolute=""true"">
+        <MudButton Variant=""Variant.Filled"" Color=""Color.Primary""  OnClick=""@(e => ToggleOverlay(false))"">Hide Overlay</MudButton>
+    </MudOverlay>
 </MudPaper>
 
 
@@ -1972,23 +2008,152 @@ public const string OverlayAbsoluteExample = @"<MudPaper Class=""px-4 pt-4 pb-16
 @code {
     private bool isVisible;
 
-    public void ToggleOverlay()
+    public void ToggleOverlay(bool value)
     {
-        isVisible = !isVisible;
-        StateHasChanged();
+        isVisible = value;
     }
 }";
 
-public const string OverlayUsageExample = @"<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ToggleOverlay"">Show Overlay</MudButton>
-<MudOverlay Visible=""isVisible"" OnClick=""ToggleOverlay"" BackgroundColor=""rgba(0,0,0,0.5)"" FadeIn=""true""></MudOverlay>
+public const string OverlayColorsExample = @"<MudGrid>
+    <MudItem xs=""12"" sm=""6"">
+        <MudPaper Class=""pa-4 my-2"" Style=""position:relative;"">
+            <MudOverlay Visible=""lightIsVisible"" LightBackground=""true"" Absolute=""true"" />
+            <LoremIpsum />
+            <MudButton Variant=""Variant.Filled"" Class=""mt-2"">Action</MudButton>
+        </MudPaper>
+        <MudSwitch @bind-Checked=""@lightIsVisible"" Label=""Light Overlay"" Color=""Color.Primary""/>
+    </MudItem>
+    <MudItem xs=""12"" sm=""6"">
+        <MudPaper Class=""pa-4 my-2"" Style=""position:relative;"">
+            <MudOverlay Visible=""darkIsVisible"" DarkBackground=""true"" Absolute=""true"" />
+            <LoremIpsum />
+            <MudButton Variant=""Variant.Filled"" Class=""mt-2"">Action</MudButton>
+        </MudPaper>
+        <MudSwitch @bind-Checked=""@darkIsVisible"" Label=""Dark Overlay"" Color=""Color.Secondary"" />
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    private bool lightIsVisible;
+    private bool darkIsVisible;
+}";
+
+public const string OverlayLoaderExample = @"<MudCard Class=""my-2"" Style=""position:relative; width:377px;"">
+    @if (!dataLoaded)
+    {
+        <MudSkeleton SkeletonType=""SkeletonType.Rectangle"" Height=""200px"" />
+        <MudCardContent>
+            <MudSkeleton Width=""30%"" Height=""42px;"" />
+            <MudSkeleton Width=""80%"" />
+            <MudSkeleton Width=""100%"" />
+        </MudCardContent>
+        <MudCardActions>
+            <MudSkeleton Width=""64px"" Height=""40px"" Class=""ml-2"" />
+            <MudSkeleton Width=""105px"" Height=""40px"" Class=""ml-3"" />
+        </MudCardActions>
+        <MudOverlay Visible=""isVisible"" DarkBackground=""true"" Absolute=""true"">
+            <MudProgressCircular Color=""Color.Secondary"" Indeterminate=""true"" />
+        </MudOverlay>
+    }
+    else
+    {
+        <MudCardMedia Image=""_content/MudBlazor.Docs/images/content-template-door.png"" Height=""200"" />
+        <MudCardContent>
+            <MudText Typo=""Typo.h5"">Old Paint</MudText>
+            <MudText Typo=""Typo.body2"">Old paint found on a stone house door.</MudText>
+            <MudText Typo=""Typo.body2"">This photo was taken in a small village in Istra Croatia.</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant=""Variant.Text"" Color=""Color.Primary"">Share</MudButton>
+            <MudButton Variant=""Variant.Text"" Color=""Color.Primary"">Learn More</MudButton>
+        </MudCardActions>
+    }
+</MudCard>
+
+<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""OpenOverlay"" EndIcon=""@Icons.Material.Refresh"">Refresh Data</MudButton>
+<MudButton Variant=""Variant.Filled"" OnClick=""ResetExample"">Reset Example</MudButton>
+
+@code { 
+    private bool isVisible;
+    private bool dataLoaded;
+
+    public async void OpenOverlay()
+    {
+        isVisible = true;
+        await Task.Delay(3000);
+        isVisible = false;
+        dataLoaded = true;
+        StateHasChanged();
+    }
+
+    public void ResetExample()
+    {
+        dataLoaded = false;
+    }
+}";
+
+public const string OverlayOnClickExample = @"@inject ISnackbar Snackbar
+
+
+<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""ToggleOverlay"" Class=""mx-1"">On Click Close</MudButton>
+<MudButton Variant=""Variant.Filled"" Color=""Color.Dark"" OnClick=""ToggleOverlayWithSnackbar"" Class=""mx-1"">On Click Alert</MudButton>
+
+<MudOverlay Visible=""isVisible"" OnClick=""ToggleOverlay"" DarkBackground=""true"" ZIndex=""9999"" />
+<MudOverlay Visible=""isVisibleWithSnackbar"" OnClick=""ShowSnackbar"" DarkBackground=""true"" ZIndex=""9999"" />
+
+
+@code {
+    private bool isVisible;
+    private bool isVisibleWithSnackbar;
+
+    public void ToggleOverlay()
+    {
+        isVisible = !isVisible;
+    }
+
+    public void ToggleOverlayWithSnackbar()
+    {
+        isVisibleWithSnackbar = !isVisibleWithSnackbar;
+    }
+
+    public void ShowSnackbar()
+    {
+        Snackbar.Add(""Random message"", Severity.Normal);
+        isVisibleWithSnackbar = false;
+    }
+}";
+
+public const string OverlayUsageExample = @"<MudButton Variant=""Variant.Filled"" Color=""Color.Primary"" OnClick=""OpenOverlay"">Show Overlay</MudButton>
+
+<MudOverlay Visible=""isVisible"" DarkBackground=""true""/>
 
 
 @code {
     private bool isVisible;
 
-    public void ToggleOverlay()
+    public async void OpenOverlay()
     {
-        isVisible = !isVisible;
+        isVisible = true;
+        await Task.Delay(3000);
+        isVisible = false;
+        StateHasChanged();
+    }
+}";
+
+public const string OverlayZIndexExample = @"<MudButton Variant=""Variant.Filled"" Color=""Color.Tertiary"" OnClick=""OpenOverlay"">Show Overlay</MudButton>
+
+<MudOverlay Visible=""isVisible"" DarkBackground=""true"" ZIndex=""9999""/>
+
+
+@code {
+    private bool isVisible;
+
+    public async void OpenOverlay()
+    {
+        isVisible = true;
+        await Task.Delay(3000);
+        isVisible = false;
         StateHasChanged();
     }
 }";
@@ -3107,7 +3272,7 @@ public const string TableFixedHeaderExample = @"@using MudBlazor.Docs.Data
 public const string TableInlineEditExample = @"@using MudBlazor.Docs.Data
 @inject ISnackbar Snackbar
 
-<MudTable Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"" SortLabel=""Sort By"" CommitEditTooltip=""Commit Edit"" OnCommitEditClick=""@(() => Snackbar.Add(""Commit Edit Handler Invoked""))"">
+<MudTable Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"" SortLabel=""Sort By"" CommitEditTooltip=""Commit Edit"" OnCommitEditClick=""@(() => Snackbar.Add(""Commit Edit Handler Invoked""))"" CommitEditCommand=""@samplecmd"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
         <MudToolBarSpacer />
@@ -3166,6 +3331,12 @@ public const string TableInlineEditExample = @"@using MudBlazor.Docs.Data
     Element selected_item = null;
     HashSet<Element> selected_items = new HashSet<Element>();
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        samplecmd = new Utilities.SampleCommand(SampleCommand_Executed);
+    }
+
     bool FilterFunc(Element element)
     {
         if (string.IsNullOrWhiteSpace(search_string))
@@ -3178,6 +3349,14 @@ public const string TableInlineEditExample = @"@using MudBlazor.Docs.Data
             return true;
         return false;
     }
+
+    private Utilities.SampleCommand samplecmd;
+
+    private void SampleCommand_Executed(object parameter)
+    {
+        Snackbar.Add($""Commit Edit Command Executed for parameter '{parameter.ToString()}'"");
+    }
+
 }";
 
 public const string TableMultiSelectExample = @"@using MudBlazor.Docs.Data
@@ -3354,6 +3533,35 @@ public const string TabsWithBagdesExample = @"<MudTabs Elevation=""1"" Rounded="
 </MudTabs>";
 
 public const string TemplateExample = @"";
+
+public const string DebouncedTextFieldExample = @"@using MudBlazor.Docs.Data 
+<MudGrid>
+    <MudItem xs=""12"" sm=""6"">
+        <MudTextField @bind-Value=""@_searchText""
+                      Label=""Search""
+                      Variant=""Variant.Outlined""
+                      Adornment=""Adornment.End""
+                      AdornmentIcon=""@Filled.Search""
+                      DebounceInterval=""500""
+                      OnDebounceIntervalElapsed=""HandleIntervalElapsed""/>
+    </MudItem>
+</MudGrid>
+<div>
+    <MudText Typo=""@MudBlazor.Typo.h6"">Search text:</MudText>
+    <MudText>@_searchText</MudText>
+</div>
+
+
+@code { 
+    string _searchText;
+
+    void HandleIntervalElapsed(string debouncedText)
+    {
+        // at this stage, interval has elapsed
+    }
+
+
+}";
 
 public const string TextFieldAdornmentsExample = @"<MudGrid>
     <MudItem xs=""12"" sm=""12"" md=""12"">
@@ -3545,8 +3753,8 @@ public const string TextFieldMultilineExample = @"<MudGrid>
     string sampleText = ""Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."";
 }";
 
-public const string TimePickerBasicUsageExample = @"<MudTimePicker Label=""12 hours"" AmPm=""true"" @bind-Time=""time""/>
-<MudTimePicker Label=""24 hours"" @bind-Time=""time""/>
+public const string TimePickerBasicUsageExample = @"<MudTimePicker Label=""12 hours"" AmPm=""true"" @bind-Time=""time"" />
+<MudTimePicker Label=""24 hours"" @bind-Time=""time"" />
 
 @code{
     TimeSpan? time = new TimeSpan(00, 45, 00);
@@ -3554,6 +3762,13 @@ public const string TimePickerBasicUsageExample = @"<MudTimePicker Label=""12 ho
 
 public const string TimePickerColorExample = @"<MudTimePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Value=""03:37 PM"" AmPm=""true"" />
 <MudTimePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Value=""13:37""/>";
+
+public const string TimePickerDialogExample = @"<MudTimePicker PickerVariant=""PickerVariant.Dialog"" Label=""12 hours"" AmPm=""true"" @bind-Time=""time"" />
+<MudTimePicker PickerVariant=""PickerVariant.Dialog"" Label=""24 hours"" @bind-Time=""time"" />
+
+@code{
+    TimeSpan? time = new TimeSpan(00, 45, 00);
+}";
 
 public const string TimePickerElevationExample = @"<MudTimePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Success"" Rounded=""true"" Elevation=""1"" Value=""03:37 PM"" AmPm=""true"" />
 <MudTimePicker PickerVariant=""PickerVariant.Static"" Color=""Color.Secondary"" Rounded=""true"" Elevation=""12"" Value=""13:37"" />";
@@ -3571,8 +3786,8 @@ public const string ToggleIconButtonEventCallbackExample = @"<MudToggleIconButto
                      Icon=""@Icons.Material.AlarmOff"" Color=""@Color.Error"" 
                      ToggledIcon=""@Icons.Material.AlarmOn"" ToggledColor=""@Color.Success"" />
 
-<MudBody1>Alarm is @(AlarmOn ? ""On"" : ""Off"")</MudBody1>
-<MudBody1>@($""I have been switched on {SwitchedOnCount} times."")</MudBody1>
+<span>Alarm is @(AlarmOn ? ""On"" : ""Off"")</span>
+<span>@($""I have been switched on {SwitchedOnCount} times."")</span>
 
 @code {
     public bool AlarmOn { get; set; }
@@ -3601,7 +3816,7 @@ public const string ToggleIconButtonTwoWayBindingExample = @"<MudToggleIconButto
                      Icon=""@Icons.Material.AlarmOff"" Color=""@Color.Error""
                      ToggledIcon=""@Icons.Material.AlarmOn"" ToggledColor=""@Color.Success""/>
 
-<MudBody1>Alarm is @(AlarmOn ? ""On"" : ""Off"")</MudBody1>
+<span>Alarm is @(AlarmOn ? ""On"" : ""Off"")</span>
 
 @code {
     public bool AlarmOn { get; set; }

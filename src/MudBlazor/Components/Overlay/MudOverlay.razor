@@ -4,7 +4,12 @@
 @if (Visible)
 {
     <div class="@Classname" style="@Styles" @onclick="OnClickHandler" @onclick:stopPropagation="true">
-        @ChildContent
+        <div class="@ScrimClassname">
+
+        </div>
+        <div class="mud-overlay-content">
+            @ChildContent
+        </div>
     </div>
 }
 

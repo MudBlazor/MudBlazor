@@ -2,7 +2,7 @@
 @inject ISnackbar Snackbar
 @namespace MudBlazor.Docs.Examples
 
-<MudTable Items="@PeriodicTable.GetElements()" Dense="@dense" Hover="@hover" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selected_item" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))">
+<MudTable Items="@PeriodicTable.GetElements()" Dense="@dense" Hover="@hover" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selected_item" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" CommitEditCommand="@samplecmd">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudToolBarSpacer />
@@ -56,10 +56,15 @@
 @code {
     bool dense = false;
     bool hover = true;
-    bool fixed_header = false;
     string search_string = "";
     Element selected_item = null;
     HashSet<Element> selected_items = new HashSet<Element>();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        samplecmd = new Utilities.SampleCommand(SampleCommand_Executed);
+    }
 
     bool FilterFunc(Element element)
     {
@@ -73,4 +78,12 @@
             return true;
         return false;
     }
+
+    private Utilities.SampleCommand samplecmd;
+
+    private void SampleCommand_Executed(object parameter)
+    {
+        Snackbar.Add($"Commit Edit Command Executed for parameter '{parameter.ToString()}'");
+    }
+
 }

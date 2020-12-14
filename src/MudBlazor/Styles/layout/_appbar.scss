@@ -33,21 +33,23 @@
 .mud-appbar-drawer-clipped {
     width: 100%;
 
-    &-left {
-        margin-right: var(--mud-drawer-width);
+    @media (min-width:1280px) {
+        &-left {
+            margin-right: var(--mud-drawer-width);
 
-        &:not(.mud-appbar-drawer-open-right) {
-            width: 100%;
-            margin-right: auto;
+            &:not(.mud-appbar-drawer-open-right) {
+                width: 100%;
+                margin-right: auto;
+            }
         }
-    }
 
-    &-right {
-        margin-left: var(--mud-drawer-width);
+        &-right {
+            margin-left: var(--mud-drawer-width);
 
-        &:not(.mud-appbar-drawer-open-left) {
-            width: 100%;
-            margin-left:auto;
+            &:not(.mud-appbar-drawer-open-left) {
+                width: 100%;
+                margin-left: auto;
+            }
         }
     }
 }

@@ -1,0 +1,25 @@
+@* Auto-generated markup. Any changes will be overwritten *@
+@namespace MudBlazor.Docs.Examples.Markup
+<div class="mud-codeblock">
+<div class="html"><pre>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudElement</span> <span class="htmlAttributeName">HtmlTag</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>htmlTag</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
+    This renders an <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">code</span> <span class="htmlAttributeName">style</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">color:red;</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="atSign">&#64;</span>htmlTag<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">code</span><span class="htmlTagDelimiter">&gt;</span>  tag
+<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudElement</span><span class="htmlTagDelimiter">&gt;</span>
+
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudButton</span> <span class="htmlAttributeName">OnClick</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">ChangeTag</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Variant</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Variant</span><span class="enumValue">.Filled</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Secondary</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Change tag<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudButton</span><span class="htmlTagDelimiter">&gt;</span>
+</pre></div>
+<div class="csharp"><pre>
+<span class="atSign">&#64;</span>code{ 
+
+    <span class="keyword">private</span> <span class="keyword">string</span> htmlTag=<span class="string">&quot;h1&quot;</span>;
+    <span class="keyword">private</span> <span class="keyword">int</span> hNumber = <span class="number">2</span>;
+
+    <span class="keyword">private</span> <span class="keyword">void</span> ChangeTag()
+    {
+        htmlTag = <span class="string">&quot;h&quot;</span> + hNumber;
+        hNumber++;
+        <span class="keyword">if</span> (hNumber &gt; <span class="number">3</span>) hNumber = <span class="number">1</span>;
+    }
+}
+</pre></div>
+</div>

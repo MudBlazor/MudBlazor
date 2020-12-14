@@ -14,14 +14,20 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-overlay")
-                .AddClass("mud-animation", FadeIn)
-                .AddClass("mud-absolute", Absolute)
+                .AddClass("mud-overlay-absolute", Absolute)
+                .AddClass(Class)
+                .Build();
+
+        protected string ScrimClassname =>
+            new CssBuilder("mud-overlay-scrim")
+                .AddClass("mud-overlay-dark", DarkBackground)
+                .AddClass("mud-overlay-light", LightBackground)
                 .AddClass(Class)
                 .Build();
 
         protected string Styles =>
             new StyleBuilder()
-            .AddStyle("background-color", $"{BackgroundColor}", !String.IsNullOrEmpty(BackgroundColor))
+            .AddStyle("z-index", $"{ZIndex}", ZIndex != 5)
             .AddStyle(Style)
             .Build();
 
@@ -35,17 +41,25 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Visible { get; set; }
 
-        [Parameter] public string BackgroundColor { get; set; }
+        /// <summary>
+        /// If true applys the themes dark overlay color.
+        /// </summary>
+        [Parameter] public bool DarkBackground { get; set; }
 
         /// <summary>
-        /// If true will fadein.
+        /// If true applys the themes light overlay color.
         /// </summary>
-        [Parameter] public bool FadeIn { get; set; }
+        [Parameter] public bool LightBackground { get; set; }
 
         /// <summary>
         /// Icon class names, separated by space
         /// </summary>
         [Parameter] public bool Absolute { get; set; }
+
+        /// <summary>
+        /// Sets the z-index of the overlay.
+        /// </summary>
+        [Parameter] public int ZIndex { get; set; } = 5;
 
         /// <summary>
         /// Command parameter.

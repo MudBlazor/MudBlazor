@@ -162,6 +162,8 @@ namespace MudBlazor.UnitTests.Components
                 var mud_blazor_components = typeof(MudAlert).Assembly.GetTypes().OrderBy(t => t.FullName).Where(t => t.IsSubclassOf(typeof(ComponentBase)));
                 foreach (var type in mud_blazor_components)
                 {
+                    if (type.IsAbstract)
+                        continue;
                     if (type.Name.Contains("Base"))
                         continue;
                     if (type.Namespace.Contains("InternalComponents"))
