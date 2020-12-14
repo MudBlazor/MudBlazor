@@ -354,6 +354,8 @@ public const string MudAutocomplete_Variant = @"Variant to use.";
 
 public const string MudAutocomplete_Margin = @"Will adjust vertical spacing.";
 
+public const string MudAutocomplete_AutoFocus = @"If true the input will focus automatically";
+
 public const string MudAutocomplete_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
 
 public const string MudAutocomplete_Text = @"";
@@ -512,6 +514,8 @@ public const string MudBaseInput_InputType = @"Type of the input element. It sho
 public const string MudBaseInput_Variant = @"Variant to use.";
 
 public const string MudBaseInput_Margin = @"Will adjust vertical spacing.";
+
+public const string MudBaseInput_AutoFocus = @"If true the input will focus automatically";
 
 public const string MudBaseInput_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
 
@@ -1098,6 +1102,8 @@ public const string MudDebouncedInput_Variant = @"Variant to use.";
 
 public const string MudDebouncedInput_Margin = @"Will adjust vertical spacing.";
 
+public const string MudDebouncedInput_AutoFocus = @"If true the input will focus automatically";
+
 public const string MudDebouncedInput_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
 
 public const string MudDebouncedInput_Text = @"";
@@ -1574,6 +1580,8 @@ public const string MudInput_Variant = @"Variant to use.";
 
 public const string MudInput_Margin = @"Will adjust vertical spacing.";
 
+public const string MudInput_AutoFocus = @"If true the input will focus automatically";
+
 public const string MudInput_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
 
 public const string MudInput_Text = @"";
@@ -1723,6 +1731,8 @@ public const string MudInputString_InputType = @"Type of the input element. It s
 public const string MudInputString_Variant = @"Variant to use.";
 
 public const string MudInputString_Margin = @"Will adjust vertical spacing.";
+
+public const string MudInputString_AutoFocus = @"If true the input will focus automatically";
 
 public const string MudInputString_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
 
@@ -2396,6 +2406,8 @@ public const string MudSelect_Variant = @"Variant to use.";
 
 public const string MudSelect_Margin = @"Will adjust vertical spacing.";
 
+public const string MudSelect_AutoFocus = @"If true the input will focus automatically";
+
 public const string MudSelect_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
 
 public const string MudSelect_Text = @"";
@@ -2932,6 +2944,8 @@ public const string MudTextField_Variant = @"Variant to use.";
 
 public const string MudTextField_Margin = @"Will adjust vertical spacing.";
 
+public const string MudTextField_AutoFocus = @"If true the input will focus automatically";
+
 public const string MudTextField_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
 
 public const string MudTextField_Text = @"";
@@ -3022,6 +3036,8 @@ public const string MudTextFieldString_InputType = @"Type of the input element. 
 public const string MudTextFieldString_Variant = @"Variant to use.";
 
 public const string MudTextFieldString_Margin = @"Will adjust vertical spacing.";
+
+public const string MudTextFieldString_AutoFocus = @"If true the input will focus automatically";
 
 public const string MudTextFieldString_Lines = @"A multiline input (textarea) will be shown, if set to more than one line.";
 
