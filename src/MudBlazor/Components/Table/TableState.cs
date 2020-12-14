@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace MudBlazor
 {
-    public class MudTablePageEventArgs : EventArgs
+    public class TableState
     {
         public int Page { get; set; }
 
@@ -13,4 +15,9 @@ namespace MudBlazor
         public SortDirection SortDirection { get; set; }
     }
 
+    public class TableData<T>
+    {
+        public IEnumerable<T> Items { get; set; }
+        public int TotalItems { get; set; }
+    }
 }

@@ -5,11 +5,12 @@
 <span class="atSign">&#64;</span>using MudBlazor.Docs.Data
 <span class="atSign">&#64;</span>using MudBlazor.Docs.Extensions; 
 
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTable</span> <span class="htmlAttributeName">Items</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>pagedData</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Dense</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>dense</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Hover</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>hover</span><span class="quot">&quot;</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>bind-SelectedItem</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">selected_item</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ServerData</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">PageChanged</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">HandePageChanged</span><span class="quot">&quot;</span> <span class="htmlAttributeName">TotalItems</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>totalItems</span><span class="quot">&quot;</span> <span class="htmlTagDelimiter">&gt;</span>
+<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTable</span> <span class="htmlAttributeName">ServerData</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ServerLoadFunc</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>(new Func&lt;TableState, Task&lt;TableData&lt;Element&gt;&gt;&gt;(ServerReload))</span><span class="quot">&quot;</span>  
+          <span class="htmlAttributeName">Dense</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Hover</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>ref</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">table</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>
     <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">ToolBarContent</span><span class="htmlTagDelimiter">&gt;</span>
         <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Typo</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Typo</span><span class="enumValue">.h6</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Periodic Elements<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
         <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudToolBarSpacer</span> <span class="htmlTagDelimiter">/&gt;</span>
-        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTextField</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>bind-Value</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">search_string</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Placeholder</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Search</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Adornment</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Adornment</span><span class="enumValue">.Start</span><span class="quot">&quot;</span> <span class="htmlAttributeName">AdornmentIcon</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Icons.Material.Search</span><span class="quot">&quot;</span> <span class="htmlAttributeName">IconSize</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Size</span><span class="enumValue">.Medium</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">mt-0</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTextField</span><span class="htmlTagDelimiter">&gt;</span>
+        <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTextField</span> <span class="htmlAttributeName">T</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">string</span><span class="quot">&quot;</span> <span class="htmlAttributeName">ValueChanged</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>(s=&gt;OnSearch(s))</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Placeholder</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Search</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Adornment</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Adornment</span><span class="enumValue">.Start</span><span class="quot">&quot;</span> <span class="htmlAttributeName">AdornmentIcon</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue"><span class="atSign">&#64;</span>Icons.Material.Search</span><span class="quot">&quot;</span> <span class="htmlAttributeName">IconSize</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Size</span><span class="enumValue">.Medium</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Class</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">mt-0</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTextField</span><span class="htmlTagDelimiter">&gt;</span>
     <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">ToolBarContent</span><span class="htmlTagDelimiter">&gt;</span>
     <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">HeaderContent</span><span class="htmlTagDelimiter">&gt;</span>
         <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTh</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTableSortLabel</span> <span class="htmlAttributeName">SortLabel</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">nr_field</span><span class="quot">&quot;</span> <span class="htmlAttributeName">T</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="htmlAttributeValue">Element</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Nr<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTableSortLabel</span><span class="htmlTagDelimiter">&gt;</span><span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTh</span><span class="htmlTagDelimiter">&gt;</span>
@@ -29,53 +30,63 @@
         <span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudTablePager</span> <span class="htmlTagDelimiter">/&gt;</span>
     <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">PagerContent</span><span class="htmlTagDelimiter">&gt;</span>
 <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTable</span><span class="htmlTagDelimiter">&gt;</span>
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudSwitch</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>bind-Checked</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>hover</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Primary</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Hover<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudSwitch</span><span class="htmlTagDelimiter">&gt;</span>
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudSwitch</span> <span class="htmlAttributeName"><span class="atSign">&#64;</span>bind-Checked</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="sharpVariable"><span class="atSign">&#64;</span>dense</span><span class="quot">&quot;</span> <span class="htmlAttributeName">Color</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="enum">Color</span><span class="enumValue">.Secondary</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Dense<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudSwitch</span><span class="htmlTagDelimiter">&gt;</span>
-<span class="htmlTagDelimiter">&lt;</span><span class="htmlElementName">MudText</span> <span class="htmlAttributeName">Inline</span><span class="htmlOperator">=</span><span class="quot">&quot;</span><span class="keyword">true</span><span class="quot">&quot;</span><span class="htmlTagDelimiter">&gt;</span>Selected: <span class="atSign">&#64;</span>selected_item?.Name<span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudText</span><span class="htmlTagDelimiter">&gt;</span>
 </pre></div>
 <div class="csharp"><pre>
 <span class="atSign">&#64;</span>code { 
     IEnumerable&lt;Element&gt; allData = PeriodicTable.GetElements();
     IEnumerable&lt;Element&gt; pagedData;
+    MudTable&lt;Element&gt; table;
 
-    <span class="keyword">int</span> totalItems = PeriodicTable.GetElements().Count();
+    <span class="keyword">int</span> totalItems;
+    <span class="keyword">string</span> searchString = <span class="keyword">null</span>;
 
-
-    <span class="keyword">void</span> HandePageChanged(MudTablePageEventArgs e)
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
+    <span class="xmlDocTag">///</span><span class="xmlDocComment"> Here we simulate getting the paged, filtered and ordered data from the server</span>
+    <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
+    <span class="keyword">async</span> Task&lt;TableData&lt;Element&gt;&gt; ServerReload(TableState state)
     {
-        <span class="keyword">var</span> data = PeriodicTable.GetElements();
-
-        <span class="keyword">switch</span>(e.SortLabel)
+        <span class="comment">// simulate a server delay</span>
+        <span class="keyword">await</span> Task.Delay(<span class="number">300</span>);
+        IEnumerable&lt;Element&gt; data = PeriodicTable.GetElements().Where(element =&gt;
+        {
+            <span class="keyword">if</span> (<span class="keyword">string</span>.IsNullOrWhiteSpace(searchString))
+                <span class="keyword">return</span> <span class="keyword">true</span>;
+            <span class="keyword">if</span> (element.Sign.Contains(searchString))
+                <span class="keyword">return</span> <span class="keyword">true</span>;
+            <span class="keyword">if</span> (element.Name.Contains(searchString))
+                <span class="keyword">return</span> <span class="keyword">true</span>;
+            <span class="keyword">if</span> ($<span class="string">&quot;{element.Number} {element.Position} {element.Molar}&quot;</span>.Contains(searchString))
+                <span class="keyword">return</span> <span class="keyword">true</span>;
+            <span class="keyword">return</span> <span class="keyword">false</span>;
+        }).ToArray();
+        totalItems = data.Count();
+        <span class="keyword">switch</span> (state.SortLabel)
         {
             <span class="keyword">case</span> <span class="string">&quot;nr_field&quot;</span>:
-                data = data.OrderByDirection(e.SortDirection, o =&gt; o.Number);
+                data = data.OrderByDirection(state.SortDirection, o =&gt; o.Number);
                 <span class="keyword">break</span>;
             <span class="keyword">case</span> <span class="string">&quot;sign_field&quot;</span>:
-                data = data.OrderByDirection(e.SortDirection,o =&gt; o.Sign);
+                data = data.OrderByDirection(state.SortDirection, o =&gt; o.Sign);
                 <span class="keyword">break</span>;
             <span class="keyword">case</span> <span class="string">&quot;name_field&quot;</span>:
-                data = data.OrderByDirection(e.SortDirection,o =&gt; o.Name);
+                data = data.OrderByDirection(state.SortDirection, o =&gt; o.Name);
                 <span class="keyword">break</span>;
             <span class="keyword">case</span> <span class="string">&quot;position_field&quot;</span>:
-                data = data.OrderByDirection(e.SortDirection,o =&gt; o.Position);
+                data = data.OrderByDirection(state.SortDirection, o =&gt; o.Position);
                 <span class="keyword">break</span>;
             <span class="keyword">case</span> <span class="string">&quot;mass_field&quot;</span>:
-                data = data.OrderByDirection(e.SortDirection, o =&gt; o.Molar);
+                data = data.OrderByDirection(state.SortDirection, o =&gt; o.Molar);
                 <span class="keyword">break</span>;
         }
-
-        pagedData = data.Skip(e.Page * e.PageSize).Take(e.PageSize);
+        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        <span class="keyword">return</span> <span class="keyword">new</span> TableData&lt;Element&gt;() {TotalItems = totalItems, Items = pagedData};
     }
 
-
-    <span class="keyword">bool</span> dense = <span class="keyword">false</span>;
-    <span class="keyword">bool</span> hover = <span class="keyword">true</span>;
-    <span class="keyword">bool</span> fixed_header = <span class="keyword">false</span>;
-    <span class="keyword">string</span> search_string = <span class="string">&quot;&quot;</span>;
-    Element selected_item = <span class="keyword">null</span>;
-    HashSet&lt;Element&gt; selected_items = <span class="keyword">new</span> HashSet&lt;Element&gt;();
-
-
- }
+    <span class="keyword">private</span> <span class="keyword">void</span> OnSearch(<span class="keyword">string</span> text)
+    {
+        searchString = text;
+        table.ReloadServerData();
+    }
+}
 </pre></div>
 </div>

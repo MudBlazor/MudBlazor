@@ -47,8 +47,8 @@
                             <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
                                 @if (RowEditingTemplate != null && object.Equals(_editingItem, item))
                                     @RowEditingTemplate(item)
-                                    else
-                                        @RowTemplate(item)
+                                else
+                                    @RowTemplate(item)
                             </MudTr>
 
                             @*@if(RowEditingTemplate != null && object.Equals(_editingItem, item))
@@ -183,9 +183,9 @@
     {
         if (n < 0 || pageSize <= 0)
             return new T[0];
-        
+
         if (ServerData)
-            return Items;
+            return _server_data.Items;
 
         return FilteredItems.Skip(n * pageSize).Take(pageSize);
     }
@@ -195,7 +195,7 @@
         get
         {
             if (ServerData)
-                return (int)Math.Ceiling(TotalItems / (double)RowsPerPage);
+                return (int)Math.Ceiling(_server_data.TotalItems / (double)RowsPerPage);
 
             return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
         }
@@ -204,7 +204,7 @@
     public override int GetFilteredItemsCount()
     {
         if (ServerData)
-            return TotalItems;
+            return _server_data.TotalItems;
         return FilteredItems.Count();
     }
 
@@ -254,25 +254,31 @@
         SelectedItemsChanged.InvokeAsync(SelectedItems);
     }
 
-    protected override Task OnInitializedAsync()
-    {
-        return base.OnInitializedAsync();
-    }
-
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         TableContext.UpdateRowCheckBoxes();
         return base.OnAfterRenderAsync(firstRender);
     }
 
-internal override void PageChangedInvoke()
+
+    /// <summary>
+    /// Supply an async function which (re)loads filtered, paginated and sorted data from server.
+    /// Table will await this func and update based on the returned TableData.
+    /// Used only with ServerData="true"
+    /// </summary>
+    [Parameter] public Func<TableState, Task<TableData<T>>> ServerLoadFunc { get; set; }
+
+
+    TableData<T> _server_data = new TableData<T>() { TotalItems=0, Items=new T[0] };
+
+    internal override async Task InvokeServerLoadFunc()
     {
-        if (!ServerData)
+        if (!ServerData || ServerLoadFunc==null)
             return;
 
         var label = Context.CurrentSortLabel;
 
-        MudTablePageEventArgs args = new MudTablePageEventArgs
+        var state = new TableState
         {
             Page = CurrentPage,
             PageSize = RowsPerPage,
@@ -280,8 +286,13 @@ internal override void PageChangedInvoke()
             SortLabel = label?.SortLabel
         };
 
-        PageChanged.InvokeAsync(args);
-    }    
-    
+        _server_data = await ServerLoadFunc(state);
+        await InvokeAsync(StateHasChanged);
+        Context?.TableStateHasChanged();
+    }
 
+    public void ReloadServerData()
+    {
+        InvokeServerLoadFunc();
+    }
 }

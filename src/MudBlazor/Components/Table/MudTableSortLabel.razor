@@ -55,7 +55,7 @@
             SortDirectionChanged.InvokeAsync(_direction);
             if (SortBy != null || Table.ServerData)
                 Context?.SetSortFunc(this);
-            Table.PageChangedInvoke();
+            Table.InvokeServerLoadFunc();
         }
     }
 

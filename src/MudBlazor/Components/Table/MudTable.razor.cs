@@ -95,7 +95,7 @@ namespace MudBlazor
                     return;
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
-                PageChangedInvoke();
+                InvokeServerLoadFunc();
             }
         }
 
@@ -161,15 +161,9 @@ namespace MudBlazor
         [Parameter] public bool ServerData { get; set; }
 
         /// <summary>
-        /// Number Items. Server Side
+        /// Number of items. Used only with ServerData="true"
         /// </summary>
         [Parameter] public int TotalItems { get; set; }
-
-        /// <summary>
-        /// Event Raised whn is required to load data from server 
-        /// </summary>
-        [Parameter] public EventCallback<MudTablePageEventArgs> PageChanged { get; set; }
-
 
         public abstract TableContext TableContext { get; }
 
@@ -196,7 +190,7 @@ namespace MudBlazor
         {
             RowsPerPage = size;
             StateHasChanged();
-            PageChangedInvoke();
+            InvokeServerLoadFunc();
         }
 
         protected abstract int NumPages { get; }
@@ -226,11 +220,6 @@ namespace MudBlazor
             base.OnParametersSet();
         }
 
-        protected override Task OnInitializedAsync()
-        {
-            return base.OnInitializedAsync();
-        }
-
-        internal abstract void PageChangedInvoke();        
+        internal abstract Task InvokeServerLoadFunc();        
     }
 }

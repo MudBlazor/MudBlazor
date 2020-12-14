@@ -3211,11 +3211,12 @@ public const string TableMultiSelectExample = @"@using MudBlazor.Docs.Data
 public const string TableServerSidePaginateExample = @"@using MudBlazor.Docs.Data
 @using MudBlazor.Docs.Extensions; 
 
-<MudTable Items=""@pagedData"" Dense=""@dense"" Hover=""@hover"" @bind-SelectedItem=""selected_item"" ServerData=""true"" PageChanged=""HandePageChanged"" TotalItems=""@totalItems"" >
+<MudTable ServerData=""true"" ServerLoadFunc=""@(new Func<TableState, Task<TableData<Element>>>(ServerReload))""  
+          Dense=""true"" Hover=""true"" @ref=""table"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
         <MudToolBarSpacer />
-        <MudTextField @bind-Value=""search_string"" Placeholder=""Search"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium"" Class=""mt-0""></MudTextField>
+        <MudTextField T=""string"" ValueChanged=""@(s=>OnSearch(s))"" Placeholder=""Search"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium"" Class=""mt-0""></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel=""nr_field"" T=""Element"">Nr</MudTableSortLabel></MudTh>
@@ -3235,53 +3236,63 @@ public const string TableServerSidePaginateExample = @"@using MudBlazor.Docs.Dat
         <MudTablePager />
     </PagerContent>
 </MudTable>
-<MudSwitch @bind-Checked=""@hover"" Color=""Color.Primary"">Hover</MudSwitch>
-<MudSwitch @bind-Checked=""@dense"" Color=""Color.Secondary"">Dense</MudSwitch>
-<MudText Inline=""true"">Selected: @selected_item?.Name</MudText>
 
 @code { 
     IEnumerable<Element> allData = PeriodicTable.GetElements();
     IEnumerable<Element> pagedData;
+    MudTable<Element> table;
 
-    int totalItems = PeriodicTable.GetElements().Count();
+    int totalItems;
+    string searchString = null;
 
-
-    void HandePageChanged(MudTablePageEventArgs e)
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    async Task<TableData<Element>> ServerReload(TableState state)
     {
-        var data = PeriodicTable.GetElements();
-
-        switch(e.SortLabel)
+        // simulate a server delay
+        await Task.Delay(300);
+        IEnumerable<Element> data = PeriodicTable.GetElements().Where(element =>
+        {
+            if (string.IsNullOrWhiteSpace(searchString))
+                return true;
+            if (element.Sign.Contains(searchString))
+                return true;
+            if (element.Name.Contains(searchString))
+                return true;
+            if ($""{element.Number} {element.Position} {element.Molar}"".Contains(searchString))
+                return true;
+            return false;
+        }).ToArray();
+        totalItems = data.Count();
+        switch (state.SortLabel)
         {
             case ""nr_field"":
-                data = data.OrderByDirection(e.SortDirection, o => o.Number);
+                data = data.OrderByDirection(state.SortDirection, o => o.Number);
                 break;
             case ""sign_field"":
-                data = data.OrderByDirection(e.SortDirection,o => o.Sign);
+                data = data.OrderByDirection(state.SortDirection, o => o.Sign);
                 break;
             case ""name_field"":
-                data = data.OrderByDirection(e.SortDirection,o => o.Name);
+                data = data.OrderByDirection(state.SortDirection, o => o.Name);
                 break;
             case ""position_field"":
-                data = data.OrderByDirection(e.SortDirection,o => o.Position);
+                data = data.OrderByDirection(state.SortDirection, o => o.Position);
                 break;
             case ""mass_field"":
-                data = data.OrderByDirection(e.SortDirection, o => o.Molar);
+                data = data.OrderByDirection(state.SortDirection, o => o.Molar);
                 break;
         }
-
-        pagedData = data.Skip(e.Page * e.PageSize).Take(e.PageSize);
+        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new TableData<Element>() {TotalItems = totalItems, Items = pagedData};
     }
 
-
-    bool dense = false;
-    bool hover = true;
-    bool fixed_header = false;
-    string search_string = """";
-    Element selected_item = null;
-    HashSet<Element> selected_items = new HashSet<Element>();
-
-
- }";
+    private void OnSearch(string text)
+    {
+        searchString = text;
+        table.ReloadServerData();
+    }
+}";
 
 public const string TableSortingExample = @"@using MudBlazor.Docs.Data
 

@@ -2451,6 +2451,10 @@ public const string MudTable_SelectedItems = @"If MultiSelection is true, this r
 
 public const string MudTable_SelectedItemsChanged = @"Callback is called whenever items are selected or deselected in multi selection mode.";
 
+public const string MudTable_ServerLoadFunc = @"Supply an async function which (re)loads filtered, paginated and sorted data from server.
+            Table will await this func and update based on the returned TableData.
+            Used only with ServerData=""true""";
+
 public const string MudTable_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow.";
 
 public const string MudTable_Square = @"Set true to disable rounded corners";
@@ -2505,9 +2509,7 @@ public const string MudTable_CommitEditTooltip = @"Tooltip for the CommitEdit Bu
 
 public const string MudTable_ServerData = @"Pagination and sort is server side";
 
-public const string MudTable_TotalItems = @"Number Items. Server Side";
-
-public const string MudTable_PageChanged = @"Event Raised whn is required to load data from server";
+public const string MudTable_TotalItems = @"Number of items. Used only with ServerData=""true""";
 
 public const string MudTable_Class = @"User class names, separated by space";
 
@@ -2572,9 +2574,7 @@ public const string MudTableBase_CommitEditTooltip = @"Tooltip for the CommitEdi
 
 public const string MudTableBase_ServerData = @"Pagination and sort is server side";
 
-public const string MudTableBase_TotalItems = @"Number Items. Server Side";
-
-public const string MudTableBase_PageChanged = @"Event Raised whn is required to load data from server";
+public const string MudTableBase_TotalItems = @"Number of items. Used only with ServerData=""true""";
 
 public const string MudTableBase_Class = @"User class names, separated by space";
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -41,5 +42,18 @@ namespace MudBlazor
         }
 
         public MudTableBase Table => Context?.Table;
+
+        protected override Task OnInitializedAsync()
+        {
+            base.OnInitializedAsync();
+            if (Context != null)
+                Context.TableStateHasChanged += OnTableStateHasChanged;
+            return Task.CompletedTask;
+        }
+
+        private void OnTableStateHasChanged()
+        {
+            StateHasChanged();
+        }
     }
 }

@@ -104,7 +104,8 @@
             <SectionHeader>
                 <Title>Server Side Pagination and sort</Title>
                 <Description>
-                    Set <CodeInline>ServerData="true"</CodeInline> to load data backend that is paginated and sorted from backend.
+                    Set <CodeInline>ServerData="true"</CodeInline> to load data backend that is paginated and sorted from backend. Table will call the <CodeInline>PageChanged</CodeInline> callback in which you 
+                    query the data and update the items. In essence, a server-paginated table only sees the current page. In order to know how many pages there are you must set the <CodeInline>TotalItems</CodeInline> parameter.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
