@@ -3208,6 +3208,81 @@ public const string TableMultiSelectExample = @"@using MudBlazor.Docs.Data
     HashSet<Element> selected_items = new HashSet<Element>();
 }";
 
+public const string TableServerSidePaginateExample = @"@using MudBlazor.Docs.Data
+@using MudBlazor.Docs.Extensions; 
+
+<MudTable Items=""@pagedData"" Dense=""@dense"" Hover=""@hover"" @bind-SelectedItem=""selected_item"" ServerData=""true"" PageChanged=""HandePageChanged"" TotalItems=""@totalItems"" >
+    <ToolBarContent>
+        <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
+        <MudToolBarSpacer />
+        <MudTextField @bind-Value=""search_string"" Placeholder=""Search"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium"" Class=""mt-0""></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel=""nr_field"" T=""Element"">Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel=""sign_field"" T=""Element"">Sign</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel=""name_field"" T=""Element"">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel=""position_field"" T=""Element"">Position</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel=""mass_field"" T=""Element"">Molar mass</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+<MudSwitch @bind-Checked=""@hover"" Color=""Color.Primary"">Hover</MudSwitch>
+<MudSwitch @bind-Checked=""@dense"" Color=""Color.Secondary"">Dense</MudSwitch>
+<MudText Inline=""true"">Selected: @selected_item?.Name</MudText>
+
+@code { 
+    IEnumerable<Element> allData = PeriodicTable.GetElements();
+    IEnumerable<Element> pagedData;
+
+    int totalItems = PeriodicTable.GetElements().Count();
+
+
+    void HandePageChanged(MudTablePageEventArgs e)
+    {
+        var data = PeriodicTable.GetElements();
+
+        switch(e.SortLabel)
+        {
+            case ""nr_field"":
+                data = data.OrderByDirection(e.SortDirection, o => o.Number);
+                break;
+            case ""sign_field"":
+                data = data.OrderByDirection(e.SortDirection,o => o.Sign);
+                break;
+            case ""name_field"":
+                data = data.OrderByDirection(e.SortDirection,o => o.Name);
+                break;
+            case ""position_field"":
+                data = data.OrderByDirection(e.SortDirection,o => o.Position);
+                break;
+            case ""mass_field"":
+                data = data.OrderByDirection(e.SortDirection, o => o.Molar);
+                break;
+        }
+
+        pagedData = data.Skip(e.Page * e.PageSize).Take(e.PageSize);
+    }
+
+
+    bool dense = false;
+    bool hover = true;
+    bool fixed_header = false;
+    string search_string = """";
+    Element selected_item = null;
+    HashSet<Element> selected_items = new HashSet<Element>();
+
+
+ }";
+
 public const string TableSortingExample = @"@using MudBlazor.Docs.Data
 
 <MudTable Items=""@PeriodicTable.GetElements()"" Hover=""true"" SortLabel=""Sort By"">
