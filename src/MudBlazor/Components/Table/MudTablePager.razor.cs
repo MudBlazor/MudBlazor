@@ -43,17 +43,12 @@ namespace MudBlazor
 
         public MudTableBase Table => Context?.Table;
 
-        protected override Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
-            base.OnInitializedAsync();
+            base.OnInitialized();
             if (Context != null)
-                Context.TableStateHasChanged += OnTableStateHasChanged;
-            return Task.CompletedTask;
+                Context.PagerStateHasChanged = StateHasChanged;
         }
 
-        private void OnTableStateHasChanged()
-        {
-            StateHasChanged();
-        }
     }
 }

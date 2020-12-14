@@ -10,9 +10,9 @@ namespace MudBlazor
 {
     public partial class MudTableSortLabel<T> : MudComponentBase
     {
-
         protected string Classname => new CssBuilder("mud-button-root mud-table-sort-label")
             .AddClass(Class).Build();
+
         [CascadingParameter] public TableContext TableContext { get; set; }
 
         public MudTableBase Table => TableContext?.Table;
@@ -45,8 +45,9 @@ namespace MudBlazor
                     return;
                 _direction = value;
                 SortDirectionChanged.InvokeAsync(_direction);
-                if (SortBy != null)
+                if (SortBy != null || Table.HasServerData)
                     Context?.SetSortFunc(this);
+                Table.InvokeServerLoadFunc();
             }
         }
 
@@ -55,6 +56,8 @@ namespace MudBlazor
 
         [Parameter]
         public Func<T, object> SortBy { get; set; } = null;
+
+        [Parameter] public string SortLabel { get; set; }
 
         public void ToggleSortDirection()
         {
@@ -104,3 +107,4 @@ namespace MudBlazor
         }
     }
 }
+

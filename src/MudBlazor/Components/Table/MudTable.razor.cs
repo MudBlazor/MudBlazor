@@ -156,11 +156,6 @@ namespace MudBlazor
         [Parameter] public string CommitEditTooltip { get; set; }
 
         /// <summary>
-        /// Pagination and sort is server side
-        /// </summary>
-        [Parameter] public bool ServerData { get; set; }
-
-        /// <summary>
         /// Number of items. Used only with ServerData="true"
         /// </summary>
         [Parameter] public int TotalItems { get; set; }
@@ -218,10 +213,7 @@ namespace MudBlazor
                 .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
                 .Build();
 
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-        }
+        internal abstract bool HasServerData { get; }
 
         internal abstract Task InvokeServerLoadFunc();        
     }

@@ -184,7 +184,7 @@
         if (n < 0 || pageSize <= 0)
             return new T[0];
 
-        if (ServerData)
+        if (ServerData!=null)
             return _server_data.Items;
 
         return FilteredItems.Skip(n * pageSize).Take(pageSize);
@@ -194,7 +194,7 @@
     {
         get
         {
-            if (ServerData)
+            if (ServerData != null)
                 return (int)Math.Ceiling(_server_data.TotalItems / (double)RowsPerPage);
 
             return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
@@ -203,7 +203,7 @@
 
     public override int GetFilteredItemsCount()
     {
-        if (ServerData)
+        if (ServerData != null)
             return _server_data.TotalItems;
         return FilteredItems.Count();
     }
@@ -264,16 +264,18 @@
     /// <summary>
     /// Supply an async function which (re)loads filtered, paginated and sorted data from server.
     /// Table will await this func and update based on the returned TableData.
-    /// Used only with ServerData="true"
+    /// Used only with ServerData
     /// </summary>
-    [Parameter] public Func<TableState, Task<TableData<T>>> ServerLoadFunc { get; set; }
+    [Parameter] public Func<TableState, Task<TableData<T>>> ServerData { get; set; }
 
+    internal override bool HasServerData => ServerData != null;
+    
 
     TableData<T> _server_data = new TableData<T>() { TotalItems=0, Items=new T[0] };
 
     internal override async Task InvokeServerLoadFunc()
     {
-        if (!ServerData || ServerLoadFunc==null)
+        if (ServerData ==null)
             return;
 
         var label = Context.CurrentSortLabel;
@@ -286,9 +288,9 @@
             SortLabel = label?.SortLabel
         };
 
-        _server_data = await ServerLoadFunc(state);
+        _server_data = await ServerData(state);
         await InvokeAsync(StateHasChanged);
-        Context?.TableStateHasChanged();
+        Context?.PagerStateHasChanged();
     }
 
     public void ReloadServerData()

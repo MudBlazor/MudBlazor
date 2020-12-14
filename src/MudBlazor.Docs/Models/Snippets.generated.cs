@@ -2896,11 +2896,7 @@ public const string SliderMinMaxExample = @"<MudSlider @bind-Value=""value1"" Mi
 }";
 
 public const string SliderStepsExample = @"<MudSlider Step=""10"" Value=""70"">Temperature</MudSlider>
-<MudSlider Step=""10"" Value=""50"" Disabled=""true"">Disabled</MudSlider>
-
-@code {
-    int step = 10;
-}";
+<MudSlider Step=""10"" Value=""50"" Disabled=""true"">Disabled</MudSlider>";
 
 public const string SnackbarConfigurationExample = @"@inject ISnackbar Snackbar
 
@@ -3223,7 +3219,6 @@ public const string TableExample = @"@using MudBlazor.Docs.Data
 @code {
     bool dense = false;
     bool hover = true;
-    bool fixed_header = false;
     string search_string = """";
     Element selected_item = null;
     HashSet<Element> selected_items = new HashSet<Element>();
@@ -3326,7 +3321,6 @@ public const string TableInlineEditExample = @"@using MudBlazor.Docs.Data
 @code {
     bool dense = false;
     bool hover = true;
-    bool fixed_header = false;
     string search_string = """";
     Element selected_item = null;
     HashSet<Element> selected_items = new HashSet<Element>();
@@ -3390,12 +3384,13 @@ public const string TableMultiSelectExample = @"@using MudBlazor.Docs.Data
 public const string TableServerSidePaginateExample = @"@using MudBlazor.Docs.Data
 @using MudBlazor.Docs.Extensions; 
 
-<MudTable ServerData=""true"" ServerLoadFunc=""@(new Func<TableState, Task<TableData<Element>>>(ServerReload))""  
-          Dense=""true"" Hover=""true"" @ref=""table"">
+<MudTable ServerData=""@(new Func<TableState, Task<TableData<Element>>>(ServerReload))""  
+                        Dense=""true"" Hover=""true"" @ref=""table"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
         <MudToolBarSpacer />
-        <MudTextField T=""string"" ValueChanged=""@(s=>OnSearch(s))"" Placeholder=""Search"" Adornment=""Adornment.Start"" AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium"" Class=""mt-0""></MudTextField>
+        <MudTextField T=""string"" ValueChanged=""@(s=>OnSearch(s))"" Placeholder=""Search"" Adornment=""Adornment.Start"" 
+                        AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium"" Class=""mt-0""></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel=""nr_field"" T=""Element"">Nr</MudTableSortLabel></MudTh>
