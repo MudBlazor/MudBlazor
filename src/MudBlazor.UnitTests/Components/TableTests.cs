@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.Mocks;
+using MudBlazor.UnitTests.TestComponents.Table;
 using NUnit.Framework;
 
 
@@ -169,11 +171,12 @@ namespace MudBlazor.UnitTests
             checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(2);
         }
 
+        /// <summary>
+        /// Paging should not influence multi-selection
+        /// </summary>
         [Test]
         public void TableMultiSelectionTest5()
         {
-            // Paging should not influence multi-selection
-            // setup
             using var ctx = new Bunit.TestContext();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<TableMultiSelectionTest5>();
@@ -196,6 +199,22 @@ namespace MudBlazor.UnitTests
             // now two checkboxes should be checked on page 2
             checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
             checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(2);
+        }
+
+        /// <summary>
+        /// Setting items delayed should work well and update pager also
+        /// </summary>
+        [Test]
+        public async Task TablePaginationTest1()
+        {
+            using var ctx = new Bunit.TestContext();
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            var comp = ctx.RenderComponent<TablePaginationTest1>();
+            await Task.Delay(200);
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(11); // ten rows + header row
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 20");
         }
     }
 }
