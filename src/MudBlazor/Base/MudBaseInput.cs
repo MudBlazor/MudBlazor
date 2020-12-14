@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 using System.Globalization;
 
@@ -152,7 +151,7 @@ namespace MudBlazor
         /// <summary>
         /// Text change hook for descendants  
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="text"></param>
         protected virtual void StringValueChanged(string text)
         {
             Value = Converter.Get(text);

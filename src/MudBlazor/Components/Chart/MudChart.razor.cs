@@ -59,7 +59,7 @@ namespace MudBlazor
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
         }
 
-        protected string ToS(double d)
+        protected new string ToS(double d)
         {
             return d.ToString(CultureInfo.InvariantCulture);
         }

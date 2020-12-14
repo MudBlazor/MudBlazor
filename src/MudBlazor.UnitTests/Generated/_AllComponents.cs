@@ -1037,6 +1037,30 @@ namespace MudBlazor.UnitTests.Components
 
 
         [Test]
+        public void MudElementChangingExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<MudElementChangingExample>();
+        }
+
+
+        [Test]
+        public void MudElementSimpleExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<MudElementSimpleExample>();
+        }
+
+
+        [Test]
         public void ExpansionPanelDisabledExample_Test()
         {
                 using var ctx = new Bunit.TestContext();
@@ -2125,6 +2149,18 @@ namespace MudBlazor.UnitTests.Components
                 ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
                 ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
                 var comp = ctx.RenderComponent<TableMultiSelectExample>();
+        }
+
+
+        [Test]
+        public void TableServerSidePaginateExample_Test()
+        {
+                using var ctx = new Bunit.TestContext();
+                ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+                ctx.Services.AddSingleton<IDialogService>(new DialogService());
+                ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+                ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+                var comp = ctx.RenderComponent<TableServerSidePaginateExample>();
         }
 
 

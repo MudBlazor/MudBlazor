@@ -1190,6 +1190,35 @@ public const string DrawerPersistentExample = @"<MudLayout>
     }
 }";
 
+public const string MudElementChangingExample = @"<MudElement HtmlTag=""@htmlTag"">
+    This renders an <code style=""color:red;"">@htmlTag</code>  tag
+</MudElement>
+
+<MudButton OnClick=""ChangeTag"" Variant=""Variant.Filled"" Color=""Color.Secondary"">Change tag</MudButton>
+
+@code{ 
+
+    private string htmlTag=""h1"";
+    private int hNumber = 2;
+
+    private void ChangeTag()
+    {
+        htmlTag = ""h"" + hNumber;
+        hNumber++;
+        if (hNumber > 3) hNumber = 1;
+    }
+}";
+
+public const string MudElementSimpleExample = @"Visit our
+<MudElement HtmlTag=""a""
+            Class=""ma-0""
+            Style=""color:red;font-weight:bold;""
+            href=""https://github.com/Garderoben/MudBlazor""
+            target=""blank""
+            rel=""noopener noreferrer"">
+    Github page
+</MudElement>";
+
 public const string ExpansionPanelDisabledExample = @"<MudExpansionPanels>
     <MudExpansionPanel Text=""Panel One"">
         Panel One Content
@@ -2867,11 +2896,7 @@ public const string SliderMinMaxExample = @"<MudSlider @bind-Value=""value1"" Mi
 }";
 
 public const string SliderStepsExample = @"<MudSlider Step=""10"" Value=""70"">Temperature</MudSlider>
-<MudSlider Step=""10"" Value=""50"" Disabled=""true"">Disabled</MudSlider>
-
-@code {
-    int step = 10;
-}";
+<MudSlider Step=""10"" Value=""50"" Disabled=""true"">Disabled</MudSlider>";
 
 public const string SnackbarConfigurationExample = @"@inject ISnackbar Snackbar
 
@@ -3194,7 +3219,6 @@ public const string TableExample = @"@using MudBlazor.Docs.Data
 @code {
     bool dense = false;
     bool hover = true;
-    bool fixed_header = false;
     string search_string = """";
     Element selected_item = null;
     HashSet<Element> selected_items = new HashSet<Element>();
@@ -3243,7 +3267,7 @@ public const string TableFixedHeaderExample = @"@using MudBlazor.Docs.Data
 public const string TableInlineEditExample = @"@using MudBlazor.Docs.Data
 @inject ISnackbar Snackbar
 
-<MudTable Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"" SortLabel=""Sort By"" CommitEditTooltip=""Commit Edit"" OnCommitEditClick=""@(() => Snackbar.Add(""Commit Edit Handler Invoked""))"">
+<MudTable Items=""@PeriodicTable.GetElements()"" Dense=""@dense"" Hover=""@hover"" Filter=""new Func<Element,bool>(FilterFunc)"" @bind-SelectedItem=""selected_item"" SortLabel=""Sort By"" CommitEditTooltip=""Commit Edit"" OnCommitEditClick=""@(() => Snackbar.Add(""Commit Edit Handler Invoked""))"" CommitEditCommand=""@samplecmd"">
     <ToolBarContent>
         <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
         <MudToolBarSpacer />
@@ -3297,10 +3321,15 @@ public const string TableInlineEditExample = @"@using MudBlazor.Docs.Data
 @code {
     bool dense = false;
     bool hover = true;
-    bool fixed_header = false;
     string search_string = """";
     Element selected_item = null;
     HashSet<Element> selected_items = new HashSet<Element>();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        samplecmd = new Utilities.SampleCommand(SampleCommand_Executed);
+    }
 
     bool FilterFunc(Element element)
     {
@@ -3314,6 +3343,14 @@ public const string TableInlineEditExample = @"@using MudBlazor.Docs.Data
             return true;
         return false;
     }
+
+    private Utilities.SampleCommand samplecmd;
+
+    private void SampleCommand_Executed(object parameter)
+    {
+        Snackbar.Add($""Commit Edit Command Executed for parameter '{parameter.ToString()}'"");
+    }
+
 }";
 
 public const string TableMultiSelectExample = @"@using MudBlazor.Docs.Data
@@ -3342,6 +3379,93 @@ public const string TableMultiSelectExample = @"@using MudBlazor.Docs.Data
 @code {
     bool hover = true;
     HashSet<Element> selected_items = new HashSet<Element>();
+}";
+
+public const string TableServerSidePaginateExample = @"@using MudBlazor.Docs.Data
+@using MudBlazor.Docs.Extensions; 
+
+<MudTable ServerData=""@(new Func<TableState, Task<TableData<Element>>>(ServerReload))""  
+                        Dense=""true"" Hover=""true"" @ref=""table"">
+    <ToolBarContent>
+        <MudText Typo=""Typo.h6"">Periodic Elements</MudText>
+        <MudToolBarSpacer />
+        <MudTextField T=""string"" ValueChanged=""@(s=>OnSearch(s))"" Placeholder=""Search"" Adornment=""Adornment.Start"" 
+                        AdornmentIcon=""@Icons.Material.Search"" IconSize=""Size.Medium"" Class=""mt-0""></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel=""nr_field"" T=""Element"">Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel=""sign_field"" T=""Element"">Sign</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel=""name_field"" T=""Element"">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel=""position_field"" T=""Element"">Position</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel=""mass_field"" T=""Element"">Molar mass</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel=""Nr"">@context.Number</MudTd>
+        <MudTd DataLabel=""Sign"">@context.Sign</MudTd>
+        <MudTd DataLabel=""Name"">@context.Name</MudTd>
+        <MudTd DataLabel=""Position"">@context.Position</MudTd>
+        <MudTd DataLabel=""Molar mass"">@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code { 
+    IEnumerable<Element> allData = PeriodicTable.GetElements();
+    IEnumerable<Element> pagedData;
+    MudTable<Element> table;
+
+    int totalItems;
+    string searchString = null;
+
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    async Task<TableData<Element>> ServerReload(TableState state)
+    {
+        // simulate a server delay
+        await Task.Delay(300);
+        IEnumerable<Element> data = PeriodicTable.GetElements().Where(element =>
+        {
+            if (string.IsNullOrWhiteSpace(searchString))
+                return true;
+            if (element.Sign.Contains(searchString))
+                return true;
+            if (element.Name.Contains(searchString))
+                return true;
+            if ($""{element.Number} {element.Position} {element.Molar}"".Contains(searchString))
+                return true;
+            return false;
+        }).ToArray();
+        totalItems = data.Count();
+        switch (state.SortLabel)
+        {
+            case ""nr_field"":
+                data = data.OrderByDirection(state.SortDirection, o => o.Number);
+                break;
+            case ""sign_field"":
+                data = data.OrderByDirection(state.SortDirection, o => o.Sign);
+                break;
+            case ""name_field"":
+                data = data.OrderByDirection(state.SortDirection, o => o.Name);
+                break;
+            case ""position_field"":
+                data = data.OrderByDirection(state.SortDirection, o => o.Position);
+                break;
+            case ""mass_field"":
+                data = data.OrderByDirection(state.SortDirection, o => o.Molar);
+                break;
+        }
+        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new TableData<Element>() {TotalItems = totalItems, Items = pagedData};
+    }
+
+    private void OnSearch(string text)
+    {
+        searchString = text;
+        table.ReloadServerData();
+    }
 }";
 
 public const string TableSortingExample = @"@using MudBlazor.Docs.Data

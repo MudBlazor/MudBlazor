@@ -388,7 +388,14 @@ public const string MudAutocomplete_ErrorText = @"The ErrorText that will be dis
 
 public const string MudAutocomplete_Error = @"If true, the label will be displayed in an error state.";
 
-public const string MudAutocomplete_Validation = @"";
+public const string MudAutocomplete_Validation = @"A validation func or a validation attribute. Supported types are:
+            ]]> ... will output the standard error message ""Invalid"" if false
+            ]]> ... outputs the result as error message, no error if null
+            >]]> ... outputs all the returned error messages, no error if empty
+            >]]> ... will output the standard error message ""Invalid"" if false
+            >]]> ... outputs the result as error message, no error if null
+            >>]]> ... outputs all the returned error messages, no error if empty
+            System.ComponentModel.DataAnnotations.ValidationAttribute instances";
 
 public const string MudAutocomplete_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -542,7 +549,14 @@ public const string MudBaseInput_ErrorText = @"The ErrorText that will be displa
 
 public const string MudBaseInput_Error = @"If true, the label will be displayed in an error state.";
 
-public const string MudBaseInput_Validation = @"";
+public const string MudBaseInput_Validation = @"A validation func or a validation attribute. Supported types are:
+            ]]> ... will output the standard error message ""Invalid"" if false
+            ]]> ... outputs the result as error message, no error if null
+            >]]> ... outputs all the returned error messages, no error if empty
+            >]]> ... will output the standard error message ""Invalid"" if false
+            >]]> ... outputs the result as error message, no error if null
+            >>]]> ... outputs all the returned error messages, no error if empty
+            System.ComponentModel.DataAnnotations.ValidationAttribute instances";
 
 public const string MudBaseInput_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -636,7 +650,14 @@ public const string MudBooleanInput_ErrorText = @"The ErrorText that will be dis
 
 public const string MudBooleanInput_Error = @"If true, the label will be displayed in an error state.";
 
-public const string MudBooleanInput_Validation = @"";
+public const string MudBooleanInput_Validation = @"A validation func or a validation attribute. Supported types are:
+            ]]> ... will output the standard error message ""Invalid"" if false
+            ]]> ... outputs the result as error message, no error if null
+            >]]> ... outputs all the returned error messages, no error if empty
+            >]]> ... will output the standard error message ""Invalid"" if false
+            >]]> ... outputs the result as error message, no error if null
+            >>]]> ... outputs all the returned error messages, no error if empty
+            System.ComponentModel.DataAnnotations.ValidationAttribute instances";
 
 public const string MudBooleanInput_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -848,7 +869,14 @@ public const string MudCheckBox_ErrorText = @"The ErrorText that will be display
 
 public const string MudCheckBox_Error = @"If true, the label will be displayed in an error state.";
 
-public const string MudCheckBox_Validation = @"";
+public const string MudCheckBox_Validation = @"A validation func or a validation attribute. Supported types are:
+            ]]> ... will output the standard error message ""Invalid"" if false
+            ]]> ... outputs the result as error message, no error if null
+            >]]> ... outputs all the returned error messages, no error if empty
+            >]]> ... will output the standard error message ""Invalid"" if false
+            >]]> ... outputs the result as error message, no error if null
+            >>]]> ... outputs all the returned error messages, no error if empty
+            System.ComponentModel.DataAnnotations.ValidationAttribute instances";
 
 public const string MudCheckBox_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -1108,7 +1136,14 @@ public const string MudDebouncedInput_ErrorText = @"The ErrorText that will be d
 
 public const string MudDebouncedInput_Error = @"If true, the label will be displayed in an error state.";
 
-public const string MudDebouncedInput_Validation = @"";
+public const string MudDebouncedInput_Validation = @"A validation func or a validation attribute. Supported types are:
+            ]]> ... will output the standard error message ""Invalid"" if false
+            ]]> ... outputs the result as error message, no error if null
+            >]]> ... outputs all the returned error messages, no error if empty
+            >]]> ... will output the standard error message ""Invalid"" if false
+            >]]> ... outputs the result as error message, no error if null
+            >>]]> ... outputs all the returned error messages, no error if empty
+            System.ComponentModel.DataAnnotations.ValidationAttribute instances";
 
 public const string MudDebouncedInput_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -1218,6 +1253,19 @@ public const string MudDrawerHeader_Style = @"User styles, applied on top of the
 public const string MudDrawerHeader_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
 
 public const string MudDrawerHeader_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
+
+public const string MudElement_ChildContent = @"Child content";
+
+public const string MudElement_HtmlTag = @"The HTML element that will be rendered in the root by the component";
+
+public const string MudElement_Class = @"User class names, separated by space";
+
+public const string MudElement_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudElement_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudElement_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
             will be splatted onto the underlying HTML tag.";
 
 public const string MudExpansionPanel_Text = @"The text to be displayed in the expansion panel.";
@@ -1367,7 +1415,14 @@ public const string MudFormComponent_ErrorText = @"The ErrorText that will be di
 
 public const string MudFormComponent_Error = @"If true, the label will be displayed in an error state.";
 
-public const string MudFormComponent_Validation = @"";
+public const string MudFormComponent_Validation = @"A validation func or a validation attribute. Supported types are:
+            ]]> ... will output the standard error message ""Invalid"" if false
+            ]]> ... outputs the result as error message, no error if null
+            >]]> ... outputs all the returned error messages, no error if empty
+            >]]> ... will output the standard error message ""Invalid"" if false
+            >]]> ... outputs the result as error message, no error if null
+            >>]]> ... outputs all the returned error messages, no error if empty
+            System.ComponentModel.DataAnnotations.ValidationAttribute instances";
 
 public const string MudFormComponent_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -1559,7 +1614,14 @@ public const string MudInput_ErrorText = @"The ErrorText that will be displayed 
 
 public const string MudInput_Error = @"If true, the label will be displayed in an error state.";
 
-public const string MudInput_Validation = @"";
+public const string MudInput_Validation = @"A validation func or a validation attribute. Supported types are:
+            ]]> ... will output the standard error message ""Invalid"" if false
+            ]]> ... outputs the result as error message, no error if null
+            >]]> ... outputs all the returned error messages, no error if empty
+            >]]> ... will output the standard error message ""Invalid"" if false
+            >]]> ... outputs the result as error message, no error if null
+            >>]]> ... outputs all the returned error messages, no error if empty
+            System.ComponentModel.DataAnnotations.ValidationAttribute instances";
 
 public const string MudInput_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -1704,7 +1766,14 @@ public const string MudInputString_ErrorText = @"The ErrorText that will be disp
 
 public const string MudInputString_Error = @"If true, the label will be displayed in an error state.";
 
-public const string MudInputString_Validation = @"";
+public const string MudInputString_Validation = @"A validation func or a validation attribute. Supported types are:
+            ]]> ... will output the standard error message ""Invalid"" if false
+            ]]> ... outputs the result as error message, no error if null
+            >]]> ... outputs all the returned error messages, no error if empty
+            >]]> ... will output the standard error message ""Invalid"" if false
+            >]]> ... outputs the result as error message, no error if null
+            >>]]> ... outputs all the returned error messages, no error if empty
+            System.ComponentModel.DataAnnotations.ValidationAttribute instances";
 
 public const string MudInputString_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -2371,7 +2440,14 @@ public const string MudSelect_ErrorText = @"The ErrorText that will be displayed
 
 public const string MudSelect_Error = @"If true, the label will be displayed in an error state.";
 
-public const string MudSelect_Validation = @"";
+public const string MudSelect_Validation = @"A validation func or a validation attribute. Supported types are:
+            ]]> ... will output the standard error message ""Invalid"" if false
+            ]]> ... outputs the result as error message, no error if null
+            >]]> ... outputs all the returned error messages, no error if empty
+            >]]> ... will output the standard error message ""Invalid"" if false
+            >]]> ... outputs the result as error message, no error if null
+            >>]]> ... outputs all the returned error messages, no error if empty
+            System.ComponentModel.DataAnnotations.ValidationAttribute instances";
 
 public const string MudSelect_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -2533,7 +2609,14 @@ public const string MudSwitch_ErrorText = @"The ErrorText that will be displayed
 
 public const string MudSwitch_Error = @"If true, the label will be displayed in an error state.";
 
-public const string MudSwitch_Validation = @"";
+public const string MudSwitch_Validation = @"A validation func or a validation attribute. Supported types are:
+            ]]> ... will output the standard error message ""Invalid"" if false
+            ]]> ... outputs the result as error message, no error if null
+            >]]> ... outputs all the returned error messages, no error if empty
+            >]]> ... will output the standard error message ""Invalid"" if false
+            >]]> ... outputs the result as error message, no error if null
+            >>]]> ... outputs all the returned error messages, no error if empty
+            System.ComponentModel.DataAnnotations.ValidationAttribute instances";
 
 public const string MudSwitch_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -2562,6 +2645,10 @@ public const string MudTable_SelectedItemChanged = @"Callback is called when a r
 public const string MudTable_SelectedItems = @"If MultiSelection is true, this returns the currently selected items. You can bind this property and the initial content of the HashSet you bind it to will cause these rows to be selected initially.";
 
 public const string MudTable_SelectedItemsChanged = @"Callback is called whenever items are selected or deselected in multi selection mode.";
+
+public const string MudTable_ServerData = @"Supply an async function which (re)loads filtered, paginated and sorted data from server.
+            Table will await this func and update based on the returned TableData.
+            Used only with ServerData";
 
 public const string MudTable_Elevation = @"The higher the number, the heavier the drop-shadow. 0 for no shadow.";
 
@@ -2611,9 +2698,11 @@ public const string MudTable_OnCommitEditClick = @"Button click event.";
 
 public const string MudTable_CommitEditCommand = @"Command executed when the user clicks on the CommitEdit Button.";
 
-public const string MudTable_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button.";
+public const string MudTable_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button. By default, will be the row level item model, if you won't set anything else.";
 
 public const string MudTable_CommitEditTooltip = @"Tooltip for the CommitEdit Button.";
+
+public const string MudTable_TotalItems = @"Number of items. Used only with ServerData=""true""";
 
 public const string MudTable_Class = @"User class names, separated by space";
 
@@ -2672,9 +2761,11 @@ public const string MudTableBase_OnCommitEditClick = @"Button click event.";
 
 public const string MudTableBase_CommitEditCommand = @"Command executed when the user clicks on the CommitEdit Button.";
 
-public const string MudTableBase_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button.";
+public const string MudTableBase_CommitEditCommandParameter = @"Command parameter for the CommitEdit Button. By default, will be the row level item model, if you won't set anything else.";
 
 public const string MudTableBase_CommitEditTooltip = @"Tooltip for the CommitEdit Button.";
+
+public const string MudTableBase_TotalItems = @"Number of items. Used only with ServerData=""true""";
 
 public const string MudTableBase_Class = @"User class names, separated by space";
 
@@ -2717,6 +2808,17 @@ public const string MudTableSortLabel_SortDirection = @"";
 public const string MudTableSortLabel_SortDirectionChanged = @"";
 
 public const string MudTableSortLabel_SortBy = @"";
+
+public const string MudTableSortLabel_SortLabel = @"";
+
+public const string MudTableSortLabel_Class = @"User class names, separated by space";
+
+public const string MudTableSortLabel_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudTableSortLabel_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudTableSortLabel_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
 
 public const string MudTabPanel_Text = @"Text will be displayed in the TabPanel as TabTitle.";
 
@@ -2772,9 +2874,16 @@ public const string MudTabs_UserAttributes = @"UserAttributes carries all attrib
 
 public const string MudTd_ChildContent = @"";
 
-public const string MudTd_Style = @"";
-
 public const string MudTd_DataLabel = @"";
+
+public const string MudTd_Class = @"User class names, separated by space";
+
+public const string MudTd_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudTd_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudTd_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
 
 public const string MudText_Typo = @"Applies the theme typography styles.";
 
@@ -2869,7 +2978,14 @@ public const string MudTextField_ErrorText = @"The ErrorText that will be displa
 
 public const string MudTextField_Error = @"If true, the label will be displayed in an error state.";
 
-public const string MudTextField_Validation = @"";
+public const string MudTextField_Validation = @"A validation func or a validation attribute. Supported types are:
+            ]]> ... will output the standard error message ""Invalid"" if false
+            ]]> ... outputs the result as error message, no error if null
+            >]]> ... outputs all the returned error messages, no error if empty
+            >]]> ... will output the standard error message ""Invalid"" if false
+            >]]> ... outputs the result as error message, no error if null
+            >>]]> ... outputs all the returned error messages, no error if empty
+            System.ComponentModel.DataAnnotations.ValidationAttribute instances";
 
 public const string MudTextField_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -2955,7 +3071,14 @@ public const string MudTextFieldString_ErrorText = @"The ErrorText that will be 
 
 public const string MudTextFieldString_Error = @"If true, the label will be displayed in an error state.";
 
-public const string MudTextFieldString_Validation = @"";
+public const string MudTextFieldString_Validation = @"A validation func or a validation attribute. Supported types are:
+            ]]> ... will output the standard error message ""Invalid"" if false
+            ]]> ... outputs the result as error message, no error if null
+            >]]> ... outputs all the returned error messages, no error if empty
+            >]]> ... will output the standard error message ""Invalid"" if false
+            >]]> ... outputs the result as error message, no error if null
+            >>]]> ... outputs all the returned error messages, no error if empty
+            System.ComponentModel.DataAnnotations.ValidationAttribute instances";
 
 public const string MudTextFieldString_For = @"Specify an expression which returns the model's field for which validation messages should be displayed.
             Currently only string fields are supported.";
@@ -2971,7 +3094,14 @@ public const string MudTextFieldString_UserAttributes = @"UserAttributes carries
 
 public const string MudTh_ChildContent = @"";
 
-public const string MudTh_Style = @"";
+public const string MudTh_Class = @"User class names, separated by space";
+
+public const string MudTh_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudTh_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudTh_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
 
 public const string MudThemeProvider_Theme = @"";
 
@@ -3126,6 +3256,15 @@ public const string MudTr_IsHeader = @"";
 public const string MudTr_IsCheckedChanged = @"";
 
 public const string MudTr_IsChecked = @"";
+
+public const string MudTr_Class = @"User class names, separated by space";
+
+public const string MudTr_Style = @"User styles, applied on top of the component's own classes and styles";
+
+public const string MudTr_Tag = @"Use Tag to attach any user data object to the component for your convenience.";
+
+public const string MudTr_UserAttributes = @"UserAttributes carries all attributes you add to the component that don't match any of its parameters. They
+            will be splatted onto the underlying HTML tag.";
 
 public const string Pie_InputData = @"";
 
