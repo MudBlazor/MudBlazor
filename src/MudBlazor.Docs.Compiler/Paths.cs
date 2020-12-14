@@ -10,6 +10,7 @@ public class Paths
     private const string componentTestsFile = "_AllComponents.cs";
     private const string apiPageTestsFile = "_AllApiPages.cs";
     public const string ExampleDiscriminator = "Example"; // example components must contain this string
+    
     public string SrcDirPath
     {
         get{

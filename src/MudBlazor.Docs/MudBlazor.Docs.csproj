@@ -12,8 +12,8 @@
   </PropertyGroup>
 
   <Target Name="CompileDocs" BeforeTargets="BeforeBuild;BeforeRebuild" DependsOnTargets="IncludeGeneratedFiles">
-    <Message Text="Generating Docs and Tests" />
-    <Exec Command="dotnet run --project $(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj" />
+    <Message Text="Generating Docs and Tests" Importance="high"/>
+    <Exec Command="dotnet run --configuration release --project $(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj" />
   </Target>
 
   <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild;BeforeRebuild" >

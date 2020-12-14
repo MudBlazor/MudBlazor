@@ -12,7 +12,6 @@ namespace UtilityTests
 {
     public class CssBuilderTests
     {
-
         [Test]
         public void ShouldConstructWithDefaultValue()
         {
