@@ -73,6 +73,9 @@ namespace MudBlazor
 
         private Func<T, string> _toStringFunc = x => x?.ToString();
 
+        /// <summary>
+        /// Defines how values are displayed in the drop-down list
+        /// </summary>
         [Parameter]
         public Func<T, string> ToStringFunc
         {
