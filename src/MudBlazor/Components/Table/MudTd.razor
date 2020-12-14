@@ -1,13 +1,6 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Utilities
+@inherits MudComponentBase
 
-<td class="mud-table-cell" data-label="@DataLabel" style="@Style">
+<td data-label="@DataLabel" style="@Style" class="@Classname" @attributes="@UserAttributes">
     @ChildContent
 </td>
-
-@code {
-
-    [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public string Style { get; set; }
-    [Parameter] public string DataLabel { get; set; }
-}
