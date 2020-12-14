@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 using System.Globalization;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
