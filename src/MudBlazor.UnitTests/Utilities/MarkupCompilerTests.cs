@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Utilities
         {
             // pull out quotation marks
             var source = "<span class=\"htmlAttributeValue\">&quot;Some random value&quot;</span>";
-            var actual = Docs.Compiler.Program.AttributePostprocessing(source);
+            var actual = Docs.Compiler.ExamplesMarkup.AttributePostprocessing(source);
             var expected = "<span class=\"quot\">&quot;</span><span class=\"htmlAttributeValue\">Some random value</span><span class=\"quot\">&quot;</span>";
             Assert.AreEqual(expected, actual);
         }
@@ -23,7 +23,7 @@ namespace MudBlazor.UnitTests.Utilities
         {
             // true, false
             var source = "<span class=\"htmlAttributeValue\">&quot;true&quot;</span>";
-            var actual = Docs.Compiler.Program.AttributePostprocessing(source);
+            var actual = Docs.Compiler.ExamplesMarkup.AttributePostprocessing(source);
             var expected = "<span class=\"quot\">&quot;</span><span class=\"keyword\">true</span><span class=\"quot\">&quot;</span>";
             Assert.AreEqual(expected, actual);
         }
@@ -33,7 +33,7 @@ namespace MudBlazor.UnitTests.Utilities
         {
             // handle enums
             var source = "<span class=\"htmlAttributeValue\">&quot;Color.Primary&quot;</span>";
-            var actual = Docs.Compiler.Program.AttributePostprocessing(source);
+            var actual = Docs.Compiler.ExamplesMarkup.AttributePostprocessing(source);
             var expected = "<span class=\"quot\">&quot;</span><span class=\"enum\">Color</span><span class=\"enumValue\">.Primary</span><span class=\"quot\">&quot;</span>";
             Assert.AreEqual(expected, actual);
         }

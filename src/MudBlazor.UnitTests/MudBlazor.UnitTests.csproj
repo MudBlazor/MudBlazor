@@ -1,8 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild;BeforeRebuild" >
+    <ItemGroup>
+      <Compile Include="Generated\_AllApiPages.cs" Condition="!Exists('Generated\_AllApiPages.cs')" />
+      <Compile Include="Generated\_AllComponents.cs" Condition="!Exists('Generated\_AllComponents.cs')" />
+    </ItemGroup>
+  </Target>
+
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
