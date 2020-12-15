@@ -10,9 +10,7 @@
             "args": [
                 "clean",
                 "src/MudBlazor.sln",
-                // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
-                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary"
             ],
             "group": "build",
@@ -25,9 +23,7 @@
             "args": [
                 "build",
                 "src/MudBlazor.sln",
-                // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
-                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary"
             ],
             "group": {
@@ -37,19 +33,28 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "build and test",
+            "label": "test",
             "command": "dotnet",
             "type": "shell",
             "args": [
                 "test",
-                "src/MudBlazor.sln",
-                // Ask dotnet build to generate full paths for file names.
+                "src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj",
                 "/property:GenerateFullPaths=true",
-                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary"
             ],
             "group": "build",
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build and test",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "build",
+                "test"
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ]
         },
         {
             "label": "compile docs",
@@ -59,9 +64,7 @@
                 "run",
                 "--project",
                 "src/MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj",
-                // Ask dotnet build to generate full paths for file names.
                 "/property:GenerateFullPaths=true",
-                // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary"
             ],
             "group": "build",

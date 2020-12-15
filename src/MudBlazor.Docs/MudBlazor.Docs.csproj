@@ -1,6 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
+    <BuildDependsOn>
+      CompileDocs;
+      $(BuildDependsOn)
+    </BuildDependsOn>
+  </PropertyGroup>
+    
+  <PropertyGroup>
+    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)..\</SolutionDir>
+  </PropertyGroup>
+
+  <Target Name="CompileDocs" BeforeTargets="BeforeBuild;BeforeRebuild" DependsOnTargets="IncludeGeneratedFiles">
+    <Message Text="Generating Docs and Tests" Importance="high"/>
+    <Exec Command="dotnet run --configuration release --project $(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj" />
+  </Target>
+
+  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild;BeforeRebuild" >
+    <ItemGroup>
+      <Compile Include="Models\Snippets.generated.cs" Condition="!Exists('Models\Snippets.generated.cs')" />
+      <Compile Include="Models\DocStrings.generated.cs" Condition="!Exists('Models\DocStrings.generated.cs')" />
+    </ItemGroup>
+  </Target>
+
+  <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
     <IsPackable>false</IsPackable>
@@ -33,16 +56,13 @@
   <ItemGroup>
     <Folder Include="Pages\Components\Overlay\Code\" />
   </ItemGroup>
-
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <!--<Exec Command="$(SolutionDir)MudBlazor.Docs.Compiler\bin\Debug\netcoreapp3.1\MudBlazor.Docs.Compiler.exe" />-->
-  </Target>
-
+  
   <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
     <ItemGroup>
       <FileWatch Include="**\*.razor;" Exclude="node_modules\**\*;obj\**\*;bin\**\*" />
       <Watch Include="%(FileWatch.FullPath)" />
     </ItemGroup>
   </Target>
+
   
 </Project>
