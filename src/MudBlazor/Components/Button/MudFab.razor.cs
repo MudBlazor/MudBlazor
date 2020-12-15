@@ -10,7 +10,7 @@ namespace MudBlazor
     public partial class MudFab : MudBaseButton
     {
         protected string Classname =>
-        new CssBuilder("mud-fab-root mud-fab")
+        new CssBuilder("mud-button-root mud-fab")
           .AddClass($"mud-fab-extended", !String.IsNullOrEmpty(Label))
           .AddClass($"mud-fab-{Color.ToDescriptionString()}")
           .AddClass($"mud-fab-size-{Size.ToDescriptionString()}")
