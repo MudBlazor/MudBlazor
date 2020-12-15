@@ -58,3 +58,27 @@
         background-color: var(--mud-palette-action-default-hover);
     }
 }
+
+.mud-simple-table.mud-table-sticky-header {
+    .mud-table-container {
+        overflow-x: auto;
+        max-height: 100%;
+    }
+
+    & * table {
+        border-collapse: separate;
+
+        thead {
+            & * th:first-child {
+                border-radius: var(--mud-default-borderradius) 0px 0px 0px;
+            }
+
+            & * th {
+                background-color: var(--mud-palette-surface);
+                position: sticky;
+                z-index: 1;
+                top: 0;
+            }
+        }
+    }
+}
