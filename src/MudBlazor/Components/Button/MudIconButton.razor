@@ -6,9 +6,11 @@
             Class="@Classname" 
             Style="@Style"
             @attributes="UserAttributes" 
-            @onclick="OnClickHandler" 
+            @onclick="OnClickHandler"
             type="@ButtonType.ToDescriptionString()" 
             href="@Link" 
+            target="@Target"
+            rel="@(Target=="_blank"?"noopener":null)"
             disabled="@Disabled">
 
         @if (!String.IsNullOrEmpty(Icon))

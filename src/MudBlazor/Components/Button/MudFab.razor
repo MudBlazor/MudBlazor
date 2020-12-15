@@ -9,6 +9,8 @@
             @onclick="OnClickHandler"
             type="@ButtonType.ToDescriptionString()"
             href="@Link"
+            target="@Target"
+            rel="@(Target=="_blank"?"noopener":null)"
             disabled="@Disabled">
     <span class="mud-fab-label">
         <MudIcon Icon="@Icon" Color="@IconColor"></MudIcon>
