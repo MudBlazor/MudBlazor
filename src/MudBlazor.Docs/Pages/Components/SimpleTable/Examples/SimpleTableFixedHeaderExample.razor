@@ -1,0 +1,43 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSimpleTable Hover="true" Dense="true" FixedHeader="@fixedheader" Style="@(fixedheader?"height:300px;":"")">
+    <thead>
+        <tr>
+            @foreach (var h in headings)
+            {
+                <th>@h</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in rows)
+        {
+            <tr>
+                @foreach (var x in row.Split())
+                {
+                    <td>@x</td>
+                }
+            </tr>
+        }
+    </tbody>
+</MudSimpleTable>
+<MudSwitch @bind-Checked="@fixedheader">Fixed Header</MudSwitch>
+
+@code {
+    bool fixedheader = true;
+    string[] headings = { "ID", "Name", "Email", "Gender", "IP Address" };
+    string[] rows = {
+        @"1 Krishna kpartner0@usatoday.com Male 28.25.250.202",
+        @"2 Webb wstitle1@ning.com Male 237.168.134.114",
+        @"3 Nathanil nneal2@cyberchimps.com Male 92.6.0.175",
+        @"4 Adara alockwood3@patch.com Female 182.174.217.152",
+        @"5 Cecilius cchaplin4@shinystat.com Male 195.124.144.18",
+        @"6 Cicely cemerine9@soup.io Female 138.94.191.43",
+        @"7 Caleb cwebber0@usatoday.com Male 28.25.250.202",
+        @"8 Grayson gcarlyle@bt.com Male 173.174.94.114",
+        @"9 Lori lo@independentweek.com Female 134.16.20.191",
+        @"10 Natasha nkerensky@ilclan.com Female 217.217.18.15",
+        @"11 Andrew aredburn@shinystat.com Male 20.114.244.58",
+        @"12 Katherine ksteiner@fedsun.io Female 122.64.153.22",
+    };
+}
