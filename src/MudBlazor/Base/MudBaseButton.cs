@@ -11,10 +11,7 @@ namespace MudBlazor
 {
     public abstract class MudBaseButton : MudComponentBase
     {
-        [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
-
-        [Inject] public IJSRuntime JsRuntime { get; set; }
-
+      
         /// <summary>
         /// The HTML element that will be rendered in the root by the component
         /// </summary>
