@@ -1,77 +1,80 @@
 using System.IO;
 using System.Linq;
 
-public class Paths
+namespace MudBlazor.Docs.Compiler
 {
-    private const string docsDirectory = "MudBlazor.Docs";
-    private const string testDirectory = "MudBlazor.UnitTests";
-    private const string snippetsFile = "Snippets.generated.cs";
-    private const string docStringsFile = "DocStrings.generated.cs";
-    private const string componentTestsFile = "_AllComponents.cs";
-    private const string apiPageTestsFile = "_AllApiPages.cs";
-    public const string ExampleDiscriminator = "Example"; // example components must contain this string
-    
-    public string SrcDirPath
+    public class Paths
     {
-        get{
-            var exePath = Path.GetFullPath(".");
-            return string.Join("/", exePath.Split('/', '\\').TakeWhile(x => x != "src").Concat(new[] { "src" }));
-        }
-    }
+        private const string docsDirectory = "MudBlazor.Docs";
+        private const string testDirectory = "MudBlazor.UnitTests";
+        private const string snippetsFile = "Snippets.generated.cs";
+        private const string docStringsFile = "DocStrings.generated.cs";
+        private const string componentTestsFile = "_AllComponents.cs";
+        private const string apiPageTestsFile = "_AllApiPages.cs";
+        public const string ExampleDiscriminator = "Example"; // example components must contain this string
 
-    public string DocsDirPath
-    {
-        get
+        public string SrcDirPath
         {
-            return Directory.EnumerateDirectories(SrcDirPath, docsDirectory).FirstOrDefault();
+            get{
+                var exePath = Path.GetFullPath(".");
+                return string.Join("/", exePath.Split('/', '\\').TakeWhile(x => x != "src").Concat(new[] { "src" }));
+            }
         }
-    }
 
-    public string TestDirPath
-    {
-        get
+        public string DocsDirPath
         {
-            return Path.Join(Directory.EnumerateDirectories(SrcDirPath, testDirectory).FirstOrDefault(), "Generated");
+            get
+            {
+                return Directory.EnumerateDirectories(SrcDirPath, docsDirectory).FirstOrDefault();
+            }
         }
-    }
 
-    public string DocsStringSnippetsDirPath
-    {
-        get
+        public string TestDirPath
         {
-            return Path.Join(DocsDirPath, "Models");
+            get
+            {
+                return Path.Join(Directory.EnumerateDirectories(SrcDirPath, testDirectory).FirstOrDefault(), "Generated");
+            }
         }
-    }
 
-    public string DocsStringsFilePath
-    {
-        get
+        public string DocsStringSnippetsDirPath
         {
-            return Path.Join(DocsStringSnippetsDirPath, docStringsFile);
+            get
+            {
+                return Path.Join(DocsDirPath, "Models");
+            }
         }
-    }
 
-    public string SnippetsFilePath
-    {
-        get
+        public string DocStringsFilePath
         {
-            return Path.Join(DocsStringSnippetsDirPath, snippetsFile);
+            get
+            {
+                return Path.Join(DocsStringSnippetsDirPath, docStringsFile);
+            }
         }
-    }
 
-    public string ComponentTestsFilePath
-    {
-        get
+        public string SnippetsFilePath
         {
-            return Path.Join(TestDirPath, componentTestsFile);
+            get
+            {
+                return Path.Join(DocsStringSnippetsDirPath, snippetsFile);
+            }
         }
-    }
 
-    public string ApiPageTestsFilePath
-    {
-        get
+        public string ComponentTestsFilePath
         {
-            return Path.Join(TestDirPath, apiPageTestsFile);
+            get
+            {
+                return Path.Join(TestDirPath, componentTestsFile);
+            }
+        }
+
+        public string ApiPageTestsFilePath
+        {
+            get
+            {
+                return Path.Join(TestDirPath, apiPageTestsFile);
+            }
         }
     }
 }
