@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudTableBase
 @using MudBlazor.Extensions
+@using MudBlazor.Components.Table
 @typeparam T
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
@@ -113,6 +114,21 @@
     /// A function that returns whether or not an item should be displayed in the table. You can use this to implement your own search function.
     /// </summary>
     [Parameter] public Func<T, bool> Filter { get; set; } = null;
+
+    /// <summary>
+    /// Button click event.
+    /// </summary>
+    [Parameter] public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
+
+    internal override void FireRowClickEvent(MouseEventArgs args, MudTr row, object item)
+    {
+        OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>()
+        {
+            MouseEventArgs = args,
+            Row = row,
+            Item = (T)item,
+        });
+    }
 
     /// <summary>
     /// Returns the item which was last clicked on in single selection mode (that is, if MultiSelection is false)

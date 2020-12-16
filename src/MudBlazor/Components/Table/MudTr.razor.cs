@@ -43,7 +43,7 @@ namespace MudBlazor
             }
         }
 
-        public void OnRowClicked()
+        public void OnRowClicked(MouseEventArgs args)
         {
             Context?.Table.SetSelectedItem(Item);
             if (_lockeditingentry == false) Context?.Table.SetEditingItem(Item);
@@ -52,7 +52,7 @@ namespace MudBlazor
             {
                 IsChecked = !IsChecked;
             }
-
+            Context?.Table.FireRowClickEvent(args, this, Item);
         }
 
         protected override Task OnInitializedAsync()
