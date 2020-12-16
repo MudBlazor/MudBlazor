@@ -153,7 +153,7 @@ namespace MudBlazor.UnitTests
             textField.Value.Should().BeNull();
 
             //More than 1000 ms had elapsed, so Value should be updated
-            await Task.Delay(510);
+            await Task.Delay(550);
             textField.Value.Should().Be("Some Value");
         }
 

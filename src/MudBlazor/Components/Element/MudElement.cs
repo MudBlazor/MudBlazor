@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
@@ -26,7 +27,14 @@ namespace MudBlazor
             builder.AddMultipleAttributes(1, UserAttributes);
             builder.AddAttribute(2, "class", Class);
             builder.AddAttribute(3, "style", Style);
-            builder.AddContent(4, ChildContent);
+           
+            //the order matters. This has to be before content is added
+            if (HtmlTag == "button")
+             builder.AddEventStopPropagationAttribute(5, "onclick", true); 
+            
+            builder.AddContent(10, ChildContent);
+
+
             builder.CloseElement();
         }
     }
