@@ -1,6 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using MudBlazor.Services;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Providers;
 
 namespace MudBlazor.Services

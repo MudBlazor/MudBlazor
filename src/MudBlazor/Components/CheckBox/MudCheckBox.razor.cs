@@ -1,12 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Windows.Input;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Utilities;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
-using MudBlazor.Interfaces;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {

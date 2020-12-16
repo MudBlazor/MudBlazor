@@ -1,9 +1,6 @@
-﻿using Bunit;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
-using System.Reflection.Metadata;
-using System.Threading.Tasks;
 namespace MudBlazor.UnitTests
 {
     [TestFixture]

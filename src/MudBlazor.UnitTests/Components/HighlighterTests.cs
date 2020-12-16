@@ -1,9 +1,7 @@
-﻿using Bunit;
+﻿using System.Collections.Generic;
+using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-
 using static Bunit.ComponentParameterFactory;
 using static MudBlazor.Components.Highlighter.Splitter;
 
