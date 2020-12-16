@@ -45,6 +45,8 @@ namespace MudBlazor
 
         public void OnRowClicked(MouseEventArgs args)
         {
+            if (IsHeader)
+                return;
             Context?.Table.SetSelectedItem(Item);
             if (_lockeditingentry == false) Context?.Table.SetEditingItem(Item);
             _lockeditingentry = false;

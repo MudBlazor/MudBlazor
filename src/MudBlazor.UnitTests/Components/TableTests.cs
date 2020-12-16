@@ -19,6 +19,28 @@ namespace MudBlazor.UnitTests
     [TestFixture]
     public class TableTests
     {
+
+        /// <summary>
+        /// OnRowClick event callback should be fired regardless of the selection state
+        /// </summary>
+        [Test]
+        public void TableRowClick()
+        {
+            using var ctx = new Bunit.TestContext();
+            var comp = ctx.RenderComponent<TableRowClickTest>();
+            Console.WriteLine(comp.Markup);
+            comp.Find("p").TextContent.Trim().Should().BeEmpty();
+            var trs = comp.FindAll("tr");
+            trs[1].Click();
+            comp.Find("p").TextContent.Trim().Should().Be("0");
+            trs[1].Click();
+            comp.Find("p").TextContent.Trim().Should().Be("0,0");
+            trs[2].Click();
+            comp.Find("p").TextContent.Trim().Should().Be("0,0,1");
+            trs[0].Click(); // clicking the header row shouldn't to anything
+            comp.Find("p").TextContent.Trim().Should().Be("0,0,1");
+        }
+
         [Test]
         [Ignore("todo")]
         public void TableSingleSelection()

@@ -120,13 +120,19 @@
     /// </summary>
     [Parameter] public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
 
-    internal override void FireRowClickEvent(MouseEventArgs args, MudTr row, object item)
+    internal override void FireRowClickEvent(MouseEventArgs args, MudTr row, object o)
     {
+        T item = default(T);
+        try
+        {
+            item = (T) o;
+        }
+        catch(Exception) { /*ignore*/}
         OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>()
         {
             MouseEventArgs = args,
             Row = row,
-            Item = (T)item,
+            Item = item,
         });
     }
 
