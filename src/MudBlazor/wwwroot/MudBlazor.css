@@ -122,7 +122,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
-html, svg {
+svg {
   height: 100%; }
 
 strong, b {
