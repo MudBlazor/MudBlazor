@@ -1,0 +1,26 @@
+﻿@using MudBlazor;
+@namespace MudBlazor.UnitTests
+
+<MudAutocomplete Label="State" SearchFunc="@SearchStateAsync" 
+                 @bind-Value="@StateDetails" Variant="Variant.Outlined" 
+                 Margin="MudBlazor.Margin.Dense" ResetValueOnEmptyText="true" />
+
+@code {
+    public static string __description__ = "Autocomplete should show 'Assam' even without a ToStringFunc.";
+    public IEnumerable<State> StateList { get; set; }
+    public State StateDetails { get; set; } = new State() { StateName = "Assam"};
+
+    public async Task<IEnumerable<State>> SearchStateAsync(string value)
+    {
+        return new State[0];
+    }
+
+    public class State
+    {
+        public string StateName { get; set; }
+        public override string ToString()
+        {
+            return StateName;
+        }
+    }
+}

@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Components.Select;
+using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
@@ -73,6 +72,9 @@ namespace MudBlazor
 
         private Func<T, string> _toStringFunc = x => x?.ToString();
 
+        /// <summary>
+        /// Defines how values are displayed in the drop-down list
+        /// </summary>
         [Parameter]
         public Func<T, string> ToStringFunc
         {

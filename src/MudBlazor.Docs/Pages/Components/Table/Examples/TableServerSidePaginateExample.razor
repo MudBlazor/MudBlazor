@@ -1,0 +1,89 @@
+@using MudBlazor.Docs.Data
+@using MudBlazor.Docs.Extensions; 
+@namespace MudBlazor.Docs.Examples
+
+<MudTable ServerData="@(new Func<TableState, Task<TableData<Element>>>(ServerReload))"  
+                        Dense="true" Hover="true" @ref="table">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudToolBarSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" 
+                        AdornmentIcon="@Icons.Material.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="nr_field" T="Element">Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="sign_field" T="Element">Sign</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="name_field" T="Element">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="position_field" T="Element">Position</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="mass_field" T="Element">Molar mass</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code { 
+    IEnumerable<Element> allData = PeriodicTable.GetElements();
+    IEnumerable<Element> pagedData;
+    MudTable<Element> table;
+
+    int totalItems;
+    string searchString = null;
+
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    async Task<TableData<Element>> ServerReload(TableState state)
+    {
+        // simulate a server delay
+        await Task.Delay(300);
+        IEnumerable<Element> data = PeriodicTable.GetElements().Where(element =>
+        {
+            if (string.IsNullOrWhiteSpace(searchString))
+                return true;
+            if (element.Sign.Contains(searchString))
+                return true;
+            if (element.Name.Contains(searchString))
+                return true;
+            if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
+                return true;
+            return false;
+        }).ToArray();
+        totalItems = data.Count();
+        switch (state.SortLabel)
+        {
+            case "nr_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Number);
+                break;
+            case "sign_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Sign);
+                break;
+            case "name_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Name);
+                break;
+            case "position_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Position);
+                break;
+            case "mass_field":
+                data = data.OrderByDirection(state.SortDirection, o => o.Molar);
+                break;
+        }
+        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new TableData<Element>() {TotalItems = totalItems, Items = pagedData};
+    }
+
+    private void OnSearch(string text)
+    {
+        searchString = text;
+        table.ReloadServerData();
+    }
+}
+
+

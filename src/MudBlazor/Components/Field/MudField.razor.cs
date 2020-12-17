@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {

@@ -100,6 +100,23 @@
             <SectionSource Code="TableInlineEditExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Server Side Filtering, Sorting and Pagination</Title>
+                <Description>
+                    Set <CodeInline>ServerData</CodeInline> to load data from the backend that is filtered, sorted and paginated. Table will call this async function whenever the user navigates 
+                    the pager or changes sorting by clicking on the sort header icons. In this example we also show how to force the table to update when the search textfield blurs, so that the table reloads server-filtered data.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        Note: with a <CodeInline>ServerData</CodeInline> func you don't need <CodeInline>Items</CodeInline> and <CodeInline>Filter</CodeInline>.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TableServerSidePaginateExample />
+            </SectionContent>
+            <SectionSource Code="TableServerSidePaginateExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
 

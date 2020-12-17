@@ -9,7 +9,7 @@
         @ChildContent
     </CascadingValue>
 </aside>
-<MudOverlay OnClick="@DrawerClose" Class="@OverlayClass" />
+<MudOverlay Visible="true" OnClick="@DrawerClose" Class="@OverlayClass" DarkBackground="true" />
 
 
 @code {
@@ -27,7 +27,7 @@
     .Build();
 
     protected string OverlayClass =>
-    new CssBuilder("mud-drawer-overlay")
+    new CssBuilder("mud-drawer-overlay mud-overlay-drawer")
       .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
       .AddClass($"mud-drawer--open", !Open)
       .AddClass($"mud-drawer--initial", _initial)
@@ -47,6 +47,11 @@
     /// The color of the component. It supports the theme colors.
     /// </summary>
     [Parameter] public Color Color { get; set; } = Color.Default;
+
+    /// <summary>
+    /// If true the drawer will initially be closed on mobiles or smaller screens.
+    /// </summary>
+    [Parameter] public bool MobileInitiallyClosed { get; set; } = true;
 
     /// <summary>
     /// Child content of component.

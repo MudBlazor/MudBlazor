@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -95,6 +94,7 @@ namespace MudBlazor
                     return;
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
+                InvokeServerLoadFunc();
             }
         }
 
@@ -154,6 +154,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string CommitEditTooltip { get; set; }
 
+        /// <summary>
+        /// Number of items. Used only with ServerData="true"
+        /// </summary>
+        [Parameter] public int TotalItems { get; set; }
+
         public abstract TableContext TableContext { get; }
 
         public void NavigateTo(Page page)
@@ -179,6 +184,7 @@ namespace MudBlazor
         {
             RowsPerPage = size;
             StateHasChanged();
+            InvokeServerLoadFunc();
         }
 
         protected abstract int NumPages { get; }
@@ -206,14 +212,10 @@ namespace MudBlazor
                 .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
                 .Build();
 
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-        }
+        internal abstract bool HasServerData { get; }
 
-        protected override Task OnInitializedAsync()
-        {
-            return base.OnInitializedAsync();
-        }
+        internal abstract Task InvokeServerLoadFunc();
+
+        internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
     }
 }

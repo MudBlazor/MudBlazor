@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Bunit;
 using Bunit.Rendering;
@@ -11,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.SelectWithEnumTest;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests
 {
@@ -99,5 +96,65 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-input-error").Count.Should().Be(1);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
+        /// <summary>
+        /// If Debounce Interval is null or 0, Value should change immediately
+        /// </summary>
+        [Test]
+        public void WithNoDebounceIntervalValueShouldChangeImmediatelyTest()
+        {
+            //Arrange
+            using var ctx = new Bunit.TestContext();
+            //no interval passed, so, by default is 0
+            // We pass the Immediate parameter set to true, in order to bind to oninput
+            var immediate = Parameter(nameof(MudTextField<string>.Immediate), true);
+            var comp = ctx.RenderComponent<MudTextField<string>>(immediate);
+            var textField = comp.Instance;
+            var input = comp.Find("input");
+
+            //Act
+            input.Input(new ChangeEventArgs() { Value = "Some Value" });
+
+            //Assert
+            //input value has changed, DebounceInterval is 0, so Value should change in TextField immediately
+          
+            textField.Value.Should().Be("Some Value");
+        }
+
+
+        /// <summary>
+        /// Value should not change immediately. Should respect the Debounce Interval
+        /// </summary>
+        [Test]
+        public async Task ShouldRespectDebounceIntervalPropertyInTextFieldTest()
+        {
+            //Arrange
+            using var ctx = new Bunit.TestContext();
+            var interval = Parameter(nameof(MudTextField<string>.DebounceInterval), 1000d);
+            var comp = ctx.RenderComponent<MudTextField<string>>(interval);
+            var textField = comp.Instance;
+            var input = comp.Find("input");
+            
+            //Act
+            input.Input(new ChangeEventArgs() { Value = "Some Value" });
+
+            //Assert
+            //if DebounceInterval is set, Immediate should be true by default
+            textField.Immediate.Should().BeTrue();
+
+            //input value has changed, but elapsed time is 0, so Value should not change in TextField
+            textField.Value.Should().BeNull();
+
+            //DebounceInterval is 1000 ms, so at 500 ms Value should not change in TextField
+            await Task.Delay(500);
+            textField.Value.Should().BeNull();
+
+            //More than 1000 ms had elapsed, so Value should be updated
+            await Task.Delay(550);
+            textField.Value.Should().Be("Some Value");
+        }
+
+
+
+
     }
 }

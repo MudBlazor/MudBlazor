@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Globalization;
+using System.Text;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 using MudColor = System.Drawing.Color;
-using System.Text;
-using System.Globalization;
 
 namespace MudBlazor
 {
@@ -138,6 +138,9 @@ namespace MudBlazor
             theme.AppendLine($"--{Palette}-grey-lighter: {Theme.Palette.GrayLighter};");
             theme.AppendLine($"--{Palette}-grey-dark: {Theme.Palette.GrayDark};");
             theme.AppendLine($"--{Palette}-grey-darker: {Theme.Palette.GrayDarker};");
+
+            theme.AppendLine($"--{Palette}-overlay-dark: {Theme.Palette.OverlayDark};");
+            theme.AppendLine($"--{Palette}-overlay-light: {Theme.Palette.OverlayLight};");
 
             //Elevations
             theme.AppendLine($"--{Elevation}-0: {Theme.Shadows.Elevation.GetValue(0)};");

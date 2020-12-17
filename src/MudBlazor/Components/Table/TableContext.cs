@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
@@ -10,12 +9,17 @@ namespace MudBlazor
     {
         public MudTableBase Table { get; set; }
         public Action TableStateHasChanged { get; set; }
+        public Action PagerStateHasChanged { get; set; }
         public abstract void Add(MudTr row, object item);
         public abstract void Remove(MudTr row, object item);
         public abstract void UpdateRowCheckBoxes();
         public MudTr HeaderRow { get; set; }
 
         public abstract void InitializeSorting();
+
+        public abstract string SortFieldLabel { get; internal set; }
+
+        public abstract SortDirection SortDirection { get; protected set; }        
     }
 
     public class TableContext<T> : TableContext
@@ -60,7 +64,7 @@ namespace MudBlazor
 
         #region --> Sorting
 
-        public SortDirection SortDirection {
+        public override SortDirection SortDirection {
             get;
             protected set;
         }
@@ -110,6 +114,8 @@ namespace MudBlazor
                     x.SetSortDirection(SortDirection.None);
             }
         }
+
+        public override string SortFieldLabel { get; internal set; }
 
         #endregion
 

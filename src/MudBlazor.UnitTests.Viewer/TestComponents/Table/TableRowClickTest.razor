@@ -1,0 +1,29 @@
+﻿@using MudBlazor;
+@using MudBlazor.Components.Table
+@namespace MudBlazor.UnitTests
+
+<MudTable T="int" Items="items" OnRowClick="@(args => OnRowClicked(args))">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+<p>
+    @(string.Join(",",clicked_items))
+</p>
+
+@code {
+    public static string __description__ = "The row click event should fire, regardless of the selection events.";
+
+    int[] items = new int[]{0,1,2};
+    List<int> clicked_items = new List<int>();
+
+    private void OnRowClicked(TableRowClickEventArgs<int> args )
+    {
+        clicked_items.Add(args.Item);
+    }
+
+}

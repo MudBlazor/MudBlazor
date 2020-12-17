@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudElement HtmlTag="@htmlTag">
+    This renders an <code style="color:red;">@htmlTag</code>  tag
+</MudElement>
+
+<MudButton OnClick="ChangeTag" Variant="Variant.Filled" Color="Color.Secondary">Change tag</MudButton>
+
+@code{ 
+
+    private string htmlTag="h1";
+    private int hNumber = 2;
+
+    private void ChangeTag()
+    {
+        htmlTag = "h" + hNumber;
+        hNumber++;
+        if (hNumber > 3) hNumber = 1;
+    }
+}

@@ -1,15 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Extensions;
-using MudBlazor.Utilities;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Services;
+using MudBlazor.Extensions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {

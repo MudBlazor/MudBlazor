@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace MudBlazor
 {
-    
+
     /// <summary>
     /// A universal T to string binding converter
     /// </summary>
@@ -155,7 +155,7 @@ namespace MudBlazor
                     {
                         return (T)(object)DateTime.ParseExact(value, Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
                     }
-                    catch (FormatException e)
+                    catch (FormatException)
                     {
                         UpdateGetError("Not a valid date time");
                         return default;
@@ -168,7 +168,7 @@ namespace MudBlazor
                     {
                         return (T)(object)TimeSpan.ParseExact(value, Format ?? DefaultTimeSpanFormat, Culture);
                     }
-                    catch (FormatException e )
+                    catch (FormatException)
                     {
                         UpdateGetError("Not a valid time span");
                         return default;
