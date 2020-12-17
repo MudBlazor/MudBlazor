@@ -68,5 +68,12 @@ namespace MudBlazor
                 }
             }
         }
+
+        protected ElementReference _elementReference;
+
+        public ValueTask FocusAsync()
+        {
+            return _elementReference.Context is WebElementReferenceContext ? _elementReference.FocusAsync() : ValueTask.CompletedTask;
+        }
     }
 }
