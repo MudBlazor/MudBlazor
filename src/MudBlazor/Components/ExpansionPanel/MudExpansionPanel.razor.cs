@@ -22,7 +22,7 @@ namespace MudBlazor
         /// <summary>
         /// RenderFragment to be displayed in the expansion panel which will override header text if defined.
         /// </summary>
-        [Parameter] public RenderFragment TitleFragment { get; set; }
+        [Parameter] public RenderFragment TitleContent { get; set; }
 
         /// <summary>
         /// The text to be displayed in the expansion panel.
@@ -30,10 +30,18 @@ namespace MudBlazor
         [Parameter] public string Text { get; set; }
 
         /// <summary>
-        /// decides wether expand icon is shown or not
+        /// If true, expand icon will not show
         /// </summary>
-        [Parameter] public bool IsExpandIconHidden { get; set; }
+        [Parameter] public bool HideIcon { get; set; }
 
+        /// <summary>
+        /// Raised when IsExpanded changes.
+        /// </summary>
+        [Parameter] public EventCallback<bool> IsExpandedChanged { get; set; }
+
+        /// <summary>
+        /// Expansion state of the panel (two-way bindable)
+        /// </summary>
         [Parameter]
         public bool IsExpanded
         {
@@ -47,7 +55,8 @@ namespace MudBlazor
                     Parent?.UpdateAll();
                 else
                     Parent?.CloseAllExcept(this);
-                InvokeAsync(StateHasChanged);
+                //InvokeAsync(StateHasChanged);
+                IsExpandedChanged.InvokeAsync(_isExpanded);
             }
         }
 
