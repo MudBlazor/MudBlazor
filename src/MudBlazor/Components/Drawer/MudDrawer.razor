@@ -107,6 +107,29 @@
         Layout?.Add(this);
     }
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _afterFirstRender = true;
+        }
+    }
+
+    private bool _afterFirstRender;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_afterFirstRender)
+        {
+            var browserSize = await CheckScreenSize();
+            if (browserSize.Width < 1280)
+            {
+                await OpenChanged.InvokeAsync(false);
+                _afterFirstRender = false;
+            }
+        }
+    }
+
     public void Dispose()
     {
         try
