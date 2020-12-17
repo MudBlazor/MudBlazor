@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MudBlazor.Extensions
+﻿namespace MudBlazor.Extensions
 {
     public static class ObjectExtensions
     {

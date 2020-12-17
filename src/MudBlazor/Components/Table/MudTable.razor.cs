@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -95,6 +94,7 @@ namespace MudBlazor
                     return;
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
+                InvokeServerLoadFunc();
             }
         }
 
@@ -145,14 +145,19 @@ namespace MudBlazor
         [Parameter] public ICommand CommitEditCommand { get; set; }
 
         /// <summary>
-        /// Command parameter for the CommitEdit Button.
+        /// Command parameter for the CommitEdit Button. By default, will be the row level item model, if you won't set anything else.
         /// </summary>
-        [Parameter] public string CommitEditCommandParameter { get; set; }
+        [Parameter] public object CommitEditCommandParameter { get; set; }
 
         /// <summary>
         /// Tooltip for the CommitEdit Button.
         /// </summary>
         [Parameter] public string CommitEditTooltip { get; set; }
+
+        /// <summary>
+        /// Number of items. Used only with ServerData="true"
+        /// </summary>
+        [Parameter] public int TotalItems { get; set; }
 
         public abstract TableContext TableContext { get; }
 
@@ -179,6 +184,7 @@ namespace MudBlazor
         {
             RowsPerPage = size;
             StateHasChanged();
+            InvokeServerLoadFunc();
         }
 
         protected abstract int NumPages { get; }
@@ -189,12 +195,15 @@ namespace MudBlazor
 
         public abstract void SetEditingItem(object item);
 
-        internal async Task OnCommitEditHandler(MouseEventArgs ev)
+        internal async Task OnCommitEditHandler(MouseEventArgs ev, object item)
         {
             await OnCommitEditClick.InvokeAsync(ev);
             if (CommitEditCommand?.CanExecute(CommitEditCommandParameter) ?? false)
             {
-                CommitEditCommand.Execute(CommitEditCommandParameter);
+                object parameter = CommitEditCommandParameter;
+                if (parameter == null)
+                    parameter = item;
+                CommitEditCommand.Execute(parameter);
             }
         }
 
@@ -203,14 +212,10 @@ namespace MudBlazor
                 .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
                 .Build();
 
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-        }
+        internal abstract bool HasServerData { get; }
 
-        protected override Task OnInitializedAsync()
-        {
-            return base.OnInitializedAsync();
-        }
+        internal abstract Task InvokeServerLoadFunc();
+
+        internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
     }
 }

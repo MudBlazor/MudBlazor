@@ -49,17 +49,22 @@
         get {
             foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>())
             {
-                var doc= DocStrings.GetPropertyDescription(Type,info.Name);
-                doc = Regex.Replace(doc??"", @"</?.+?>", "");
                 yield return new ApiProperty()
                 {
                     Name=info.Name,
                     Type = info.PropertyType.ConvertToCSharpSource(),
-                    Description = doc,
+                    Description = GetDescription(Type, info),
                     Default = GetDefaultValue(info),
                 };
             }
         }
+    }
+
+    private string GetDescription(Type type, PropertyInfo info)
+    {
+        var doc = DocStrings.GetPropertyDescription(type, info.Name);
+        doc = Regex.Replace(doc??"", @"</?.+?>", "");
+        return doc;
     }
 
     // used for default value getting

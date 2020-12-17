@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace MudBlazor
 {
-    
+
     /// <summary>
     /// A universal T to double binding converter
     /// </summary>

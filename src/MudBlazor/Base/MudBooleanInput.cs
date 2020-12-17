@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -14,7 +11,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T> CheckedChanged { get; set; }
 
-        private BoolConverter<T> _boolConverter = new BoolConverter<T>();
+        private Converter<T, bool?> _boolConverter = new BoolConverter<T>();
 
         protected bool? BoolValue
         {
@@ -39,6 +36,21 @@ namespace MudBlazor
                 EditFormValidate();
             }
         }
+
+        [Parameter]
+        public Converter<T, bool?> Converter
+        {
+            get => _boolConverter;
+            set
+            {
+                _boolConverter = value;
+                if (_boolConverter == null)
+                    return;
+                _boolConverter.OnError = OnConversionError;
+                BoolValue = Converter.Set(Checked);
+            }
+        }
+
 
         protected override Task OnInitializedAsync()
         {

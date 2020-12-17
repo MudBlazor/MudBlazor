@@ -1,15 +1,12 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -44,11 +41,27 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public int MaxHeight { get; set; } = 300;
 
+        private Func<T, string> _toStringFunc;
+
         /// <summary>
         /// Defines how values are displayed in the drop-down list
         /// </summary>
         [Parameter]
-        public Func<T, string> ToStringFunc { get; set; } = null;
+        public Func<T, string> ToStringFunc
+        {
+            get => _toStringFunc;
+            set
+            {
+                if (_toStringFunc == value)
+                    return;
+                _toStringFunc = value;
+                Converter = new Converter<T>
+                {
+                    SetFunc = _toStringFunc ?? (x => x?.ToString()),
+                    //GetFunc = LookupValue,
+                };
+            }
+        }
 
         /// <summary>
         /// The SearchFunc returns a list of items matching the typed text
@@ -193,21 +206,10 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private Func<T, object> _toStringFunc;
-
         private string GetItemString(T item)
         {
             if (item == null) 
                 return string.Empty;
-            if (ToStringFunc != null)
-            {
-                try
-                {
-                    return ToStringFunc(item);
-                }
-                catch (NullReferenceException) { }
-                return "null";
-            }
             try
             {
                 return Converter.Set(item);

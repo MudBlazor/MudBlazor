@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Components.Select;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {

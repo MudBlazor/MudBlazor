@@ -7,13 +7,12 @@
 // See https://github.com/Blazored
 
 
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-
-using System;
-using System.Linq;
 
 namespace MudBlazor.Dialog
 {

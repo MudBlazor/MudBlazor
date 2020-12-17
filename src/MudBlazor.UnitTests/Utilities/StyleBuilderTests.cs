@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using FluentAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
@@ -116,9 +114,9 @@ namespace UtilityTests
             //if (hasStyle.Font_Overline) td.Append("overline ");
             //if (hasStyle.Font_Strikeout) td.Append("line-through");
 
-            bool HasFontUnderline = true;
-            bool HasOverline = false;
-            bool HasStrikeout = true;
+            //bool HasFontUnderline = true;
+            //bool HasOverline = false;
+            //bool HasStrikeout = true;
 
             var StyleToRender = StyleBuilder.Empty()
                 .AddStyle("text-decoration", v => v

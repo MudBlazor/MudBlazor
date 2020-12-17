@@ -1,15 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudNavLink : MudBaseSelectItem
     {
-        [Inject] IJSRuntime JsRuntime { get; set; }
-
         protected string Classname =>
         new CssBuilder("mud-nav-item")
           .AddClass($"mud-ripple", !DisableRipple)
@@ -25,30 +22,12 @@ namespace MudBlazor
 
         [CascadingParameter] public MudDrawer Drawer { get; set; }
 
-        private async void OnNavigation(MouseEventArgs args)
+        private void OnNavigation(MouseEventArgs args)
         {
-            var browserSize = await JsRuntime.InvokeAsync<BrowserWindowSize>("resizeListener.getBrowserWindowSize");
-            if (browserSize.Width < 1280)
+            if (Drawer != null)
             {
-                OnClickHandler(args);
-                if (Drawer != null)
-                {
-                    if (Drawer.Open)
-                    {
-                        await Drawer.OpenChanged.InvokeAsync(false);
-                    }
-                    else
-                    {
-                        await Drawer.OpenChanged.InvokeAsync(true);
-                    }
-                }
+                Drawer.OnNavigation();
             }
-        }
-
-        private class BrowserWindowSize
-        {
-            public int Height { get; set; }
-            public int Width { get; set; }
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) MudBlazor
 
 using System;
-using System.Globalization;
 
 // ReSharper disable once CheckNamespace
 internal static class TimeSpanExtensions

@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudTableBase
 @using MudBlazor.Extensions
+@using MudBlazor.Components.Table
 @typeparam T
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
@@ -47,8 +48,8 @@
                             <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
                                 @if (RowEditingTemplate != null && object.Equals(_editingItem, item))
                                     @RowEditingTemplate(item)
-                                    else
-                                        @RowTemplate(item)
+                                else
+                                    @RowTemplate(item)
                             </MudTr>
 
                             @*@if(RowEditingTemplate != null && object.Equals(_editingItem, item))
@@ -95,12 +96,45 @@
     /// <summary>
     /// The data to display in the table. MudTable will render one row per item
     /// </summary>
-    [Parameter] public IEnumerable<T> Items { get; set; }
+    [Parameter]
+    public IEnumerable<T> Items
+    {
+        get => _items;
+        set
+        {
+            if (_items == value)
+                return;
+            _items = value;
+            if (Context?.PagerStateHasChanged != null)
+                InvokeAsync(Context.PagerStateHasChanged);
+        }
+    }
 
     /// <summary>
     /// A function that returns whether or not an item should be displayed in the table. You can use this to implement your own search function.
     /// </summary>
     [Parameter] public Func<T, bool> Filter { get; set; } = null;
+
+    /// <summary>
+    /// Button click event.
+    /// </summary>
+    [Parameter] public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
+
+    internal override void FireRowClickEvent(MouseEventArgs args, MudTr row, object o)
+    {
+        T item = default(T);
+        try
+        {
+            item = (T) o;
+        }
+        catch(Exception) { /*ignore*/}
+        OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>()
+        {
+            MouseEventArgs = args,
+            Row = row,
+            Item = item,
+        });
+    }
 
     /// <summary>
     /// Returns the item which was last clicked on in single selection mode (that is, if MultiSelection is false)
@@ -183,12 +217,30 @@
     {
         if (n < 0 || pageSize <= 0)
             return new T[0];
+
+        if (ServerData!=null)
+            return _server_data.Items;
+
         return FilteredItems.Skip(n * pageSize).Take(pageSize);
     }
 
-    protected override int NumPages => (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
+    protected override int NumPages
+    {
+        get
+        {
+            if (ServerData != null)
+                return (int)Math.Ceiling(_server_data.TotalItems / (double)RowsPerPage);
 
-    public override int GetFilteredItemsCount() => FilteredItems.Count();
+            return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
+        }
+    }
+
+    public override int GetFilteredItemsCount()
+    {
+        if (ServerData != null)
+            return _server_data.TotalItems;
+        return FilteredItems.Count();
+    }
 
     public override void SetSelectedItem(object item)
     {
@@ -236,15 +288,48 @@
         SelectedItemsChanged.InvokeAsync(SelectedItems);
     }
 
-    protected override Task OnInitializedAsync()
-    {
-        return base.OnInitializedAsync();
-    }
-
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         TableContext.UpdateRowCheckBoxes();
         return base.OnAfterRenderAsync(firstRender);
     }
 
+
+    /// <summary>
+    /// Supply an async function which (re)loads filtered, paginated and sorted data from server.
+    /// Table will await this func and update based on the returned TableData.
+    /// Used only with ServerData
+    /// </summary>
+    [Parameter] public Func<TableState, Task<TableData<T>>> ServerData { get; set; }
+
+    internal override bool HasServerData => ServerData != null;
+
+
+    TableData<T> _server_data = new TableData<T>() { TotalItems=0, Items=new T[0] };
+    private IEnumerable<T> _items;
+
+    internal override async Task InvokeServerLoadFunc()
+    {
+        if (ServerData ==null)
+            return;
+
+        var label = Context.CurrentSortLabel;
+
+        var state = new TableState
+        {
+            Page = CurrentPage,
+            PageSize = RowsPerPage,
+            SortDirection = Context.SortDirection,
+            SortLabel = label?.SortLabel
+        };
+
+        _server_data = await ServerData(state);
+        await InvokeAsync(StateHasChanged);
+        Context?.PagerStateHasChanged();
+    }
+
+    public void ReloadServerData()
+    {
+        InvokeServerLoadFunc();
+    }
 }

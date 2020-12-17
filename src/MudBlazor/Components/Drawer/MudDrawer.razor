@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
+@using Microsoft.JSInterop;
 @using MudBlazor.Extensions
 @inherits MudComponentBase
 @implements IDisposable
@@ -9,10 +10,12 @@
         @ChildContent
     </CascadingValue>
 </aside>
-<MudOverlay OnClick="@DrawerClose" Class="@OverlayClass" />
+<MudOverlay Visible="true" OnClick="@DrawerClose" Class="@OverlayClass" DarkBackground="true" />
 
 
 @code {
+
+    [Inject] IJSRuntime JsRuntime { get; set; }
 
     protected string Classname =>
     new CssBuilder("mud-drawer")
@@ -27,7 +30,7 @@
     .Build();
 
     protected string OverlayClass =>
-    new CssBuilder("mud-drawer-overlay")
+    new CssBuilder("mud-drawer-overlay mud-overlay-drawer")
       .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
       .AddClass($"mud-drawer--open", !Open)
       .AddClass($"mud-drawer--initial", _initial)
@@ -63,7 +66,9 @@
         set
         {
             if (_open == value)
+            {
                 return;
+            }
             _open = value;
             _initial = false;
             Layout?.FireDrawersChanged();
@@ -72,7 +77,6 @@
     }
 
     [Parameter] public EventCallback<bool> OpenChanged { get; set; }
-
 
     private bool _open;
     private bool _clipped;
@@ -85,7 +89,9 @@
         set
         {
             if (_clipped == value)
+            {
                 return;
+            }
             _clipped = value;
             Layout?.FireDrawersChanged();
             StateHasChanged();
@@ -99,6 +105,29 @@
     {
         base.OnInitialized();
         Layout?.Add(this);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _afterFirstRender = true;
+        }
+    }
+
+    private bool _afterFirstRender;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_afterFirstRender)
+        {
+            var browserSize = await CheckScreenSize();
+            if (browserSize.Width < 1280)
+            {
+                await OpenChanged.InvokeAsync(false);
+                _afterFirstRender = false;
+            }
+        }
     }
 
     public void Dispose()
@@ -120,5 +149,25 @@
         {
             OpenChanged.InvokeAsync(true);
         }
+    }
+
+    public async void OnNavigation()
+    {
+        var browserSize = await CheckScreenSize();
+        if (browserSize.Width < 1280)
+        {
+            DrawerClose();
+        }
+    }
+
+    private async Task<BrowserWindowSize> CheckScreenSize()
+    {
+        return await JsRuntime.InvokeAsync<BrowserWindowSize>("resizeListener.getBrowserWindowSize");
+    }
+
+    private class BrowserWindowSize
+    {
+        public int Height { get; set; }
+        public int Width { get; set; }
     }
 }

@@ -1,0 +1,8 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTimePicker PickerVariant="PickerVariant.Dialog" Label="12 hours" AmPm="true" @bind-Time="time" />
+<MudTimePicker PickerVariant="PickerVariant.Dialog" Label="24 hours" @bind-Time="time" />
+
+@code{
+    TimeSpan? time = new TimeSpan(00, 45, 00);
+}

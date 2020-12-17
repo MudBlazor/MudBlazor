@@ -1,0 +1,67 @@
+﻿@page "/components/overlay"
+
+<DocsPage>
+    <DocsPageHeader Title="Overlay" SubTitle="A short description of the component." />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Usage</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <OverlayUsageExample />
+            </SectionContent>
+            <SectionSource Code="OverlayUsageExample" GitHubFolderName="Overlay" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Absolute</Title>
+                <Description>You can contain the overlay inside its parent with the <CodeInline>Absolute</CodeInline> property.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" AutoMarginContent="false">
+                <OverlayAbsoluteExample />
+            </SectionContent>
+            <SectionSource Code="OverlayAbsoluteExample" GitHubFolderName="Overlay" ShowCode="false" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Z Index</Title>
+                <Description>With the <CodeInline>ZIndex</CodeInline> property you can control the stack order of the component.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <OverlayZIndexExample />
+            </SectionContent>
+            <SectionSource Code="OverlayZIndexExample" GitHubFolderName="Overlay" ShowCode="false" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>On Click</Title>
+                <Description>The component has a on click handler that can be used for various purposes.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <OverlayOnClickExample />
+            </SectionContent>
+            <SectionSource Code="OverlayOnClickExample" GitHubFolderName="Overlay" ShowCode="false" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Colors</Title>
+                <Description>By default the overlay is <CodeInline>transparent</CodeInline> but can be changed with <CodeInline>DarkBackground</CodeInline> and <CodeInline>LightBackground</CodeInline></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <OverlayColorsExample />
+            </SectionContent>
+            <SectionSource Code="OverlayColorsExample" GitHubFolderName="Overlay" ShowCode="false" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Loader</Title>
+                <Description>The Overlay component can take any childitem but for example here we are using it to display loading or progress time.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <OverlayLoaderExample />
+            </SectionContent>
+            <SectionSource Code="OverlayLoaderExample" GitHubFolderName="Overlay" ShowCode="false" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

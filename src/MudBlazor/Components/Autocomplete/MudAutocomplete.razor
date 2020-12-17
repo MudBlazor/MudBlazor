@@ -45,8 +45,6 @@
     </div>
 </CascadingValue>
 
-@if (IsOpen)
-{
-    <MudOverlay OnClick="@ToggleMenu" />
-}
+<MudOverlay Visible="IsOpen" OnClick="@ToggleMenu" />
+
 

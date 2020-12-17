@@ -28,8 +28,5 @@
     </div>
 </CascadingValue>
 
+<MudOverlay Visible="isOpen" OnClick="@CloseMenu" />
 
-@if (isOpen)
-{
-    <MudOverlay OnClick="@CloseMenu" />
-}

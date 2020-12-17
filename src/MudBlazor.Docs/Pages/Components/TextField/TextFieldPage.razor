@@ -56,6 +56,20 @@
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
+                <Title>Immediate vs Debounced</Title>
+                <Description>
+                    Per default, <CodeInline>MudTextField</CodeInline> updates the bound value on Enter or when it looses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br /> 
+                    You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the amount of milliseconds you want to await before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback. 
+                    Notice how in this example the debounced text only updates 500 ms after you stop typing.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <DebouncedTextFieldExample />
+            </SectionContent>
+            <SectionSource Code="DebouncedTextFieldExample" ShowCode="false" GitHubFolderName="TextField" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
                 <Title>Multiline</Title>
                 <Description></Description>
             </SectionHeader>
