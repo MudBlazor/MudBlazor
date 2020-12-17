@@ -3,9 +3,8 @@
 // Stripped and adapted by Meinrad Recheis for MudBlazor
 
 using System;
-using System.Drawing;
-using SystemMath = System.Math;
 using MudColor = System.Drawing.Color;
+using SystemMath = System.Math;
 
 namespace MudBlazor.Utilities
 {

@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using MudBlazor.Charts;
-using MudBlazor.Utilities;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {

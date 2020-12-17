@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Bunit;
 using Bunit.Rendering;
@@ -11,7 +8,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.SelectWithEnumTest;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests

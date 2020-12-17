@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Components.Select;
+using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor

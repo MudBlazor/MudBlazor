@@ -1,9 +1,9 @@
-﻿using FluentAssertions;
+﻿using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using MudBlazor.Providers;
 using MudBlazor.Services;
 using NUnit.Framework;
-using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Services
 {

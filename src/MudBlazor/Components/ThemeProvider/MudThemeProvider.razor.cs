@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Globalization;
+using System.Text;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 using MudColor = System.Drawing.Color;
-using System.Text;
-using System.Globalization;
 
 namespace MudBlazor
 {

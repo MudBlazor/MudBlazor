@@ -7,11 +7,11 @@
 // See https://github.com/Blazored
 
 
+using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
-using System;
-using System.Threading.Tasks;
 
 namespace MudBlazor.Dialog
 {

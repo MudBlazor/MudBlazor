@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.Docs.Extensions;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Docs.Extensions;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace MudBlazor.Docs.Client
