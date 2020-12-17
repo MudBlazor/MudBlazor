@@ -1,4 +1,4 @@
-﻿namespace MudBlazor.Components.Select
+﻿namespace MudBlazor
 {
     internal interface IMudSelect
     {

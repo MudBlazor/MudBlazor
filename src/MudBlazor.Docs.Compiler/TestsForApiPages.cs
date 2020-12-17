@@ -29,7 +29,6 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("using NUnit.Framework;");
                 cb.AddLine("using MudBlazor.UnitTests.Mocks;");
                 cb.AddLine("using MudBlazor.Docs.Examples;");
-                cb.AddLine("using MudBlazor.Dialog;");
                 cb.AddLine("using MudBlazor.Services;");
                 cb.AddLine("using MudBlazor.Docs.Components;");
                 cb.AddLine("using Bunit.Rendering;");
