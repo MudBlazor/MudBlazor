@@ -26,9 +26,9 @@
                     <div class="d-flex justify-center align-center mt-1 pl-12">
                         <MudText Typo="Typo.body1" Class="mx-auto">Drawer left + top appbar</MudText>
                         <MudTooltip Text="Show/Copy Wireframe">
-                            <MudIconButton Icon="@Icons.Material.Code" />
+                            <MudIconButton Icon="@Icons.Material.Code" OnClick="@(e => ToggleOverlay(true, "Layout1WireframeExample"))" />
                         </MudTooltip>
-                    </div>  
+                    </div>
                 </MudItem>
                 <MudItem>
                     <div class="wf-layout rounded" @onclick="@((e) => NavigateToWireFrame("/getting-started/wireframes/layout2"))">
@@ -42,7 +42,7 @@
                     <div class="d-flex justify-center align-center mt-1 pl-12">
                         <MudText Typo="Typo.body1" Class="mx-auto">Top appbar with clipped drawer</MudText>
                         <MudTooltip Text="Show/Copy Wireframe">
-                            <MudIconButton Icon="@Icons.Material.Code" />
+                            <MudIconButton Icon="@Icons.Material.Code" OnClick="@(e => ToggleOverlay(true, "Layout2WireframeExample"))" />
                         </MudTooltip>
                     </div>
                 </MudItem>
@@ -56,7 +56,7 @@
                     <div class="d-flex justify-center align-center mt-1 pl-12">
                         <MudText Typo="Typo.body1" Class="mx-auto">Appbar Only</MudText>
                         <MudTooltip Text="Show/Copy Wireframe">
-                            <MudIconButton Icon="@Icons.Material.Code" />
+                            <MudIconButton Icon="@Icons.Material.Code" OnClick="@(e => ToggleOverlay(true, "Layout3WireframeExample"))" />
                         </MudTooltip>
                     </div>
                 </MudItem>
@@ -97,7 +97,7 @@
                     <div class="d-flex justify-center align-center mt-1 pl-12">
                         <MudText Typo="Typo.body1" Class="mx-auto">Dashboard Grid</MudText>
                         <MudTooltip Text="Show/Copy Wireframe">
-                            <MudIconButton Icon="@Icons.Material.Code" />
+                            <MudIconButton Icon="@Icons.Material.Code" OnClick="@(e => ToggleOverlay(true, "Content1WireframeExample"))" />
                         </MudTooltip>
                     </div>
                 </MudItem>
@@ -126,7 +126,7 @@
                     <div class="d-flex justify-center align-center mt-1 pl-12">
                         <MudText Typo="Typo.body1" Class="mx-auto">Pricing</MudText>
                         <MudTooltip Text="Show/Copy Wireframe">
-                            <MudIconButton Icon="@Icons.Material.Code" />
+                            <MudIconButton Icon="@Icons.Material.Code" OnClick="@(e => ToggleOverlay(true, "Content2WireframeExample"))" />
                         </MudTooltip>
                     </div>
                 </MudItem>
@@ -167,23 +167,52 @@
                     <div class="d-flex justify-center align-center mt-1 pl-12">
                         <MudText Typo="Typo.body1" Class="mx-auto">Checkout</MudText>
                         <MudTooltip Text="Show/Copy Wireframe">
-                            <MudIconButton Icon="@Icons.Material.Code" />
+                            <MudIconButton Icon="@Icons.Material.Code" OnClick="@(e => ToggleOverlay(true, "Content3WireframeExample"))" />
                         </MudTooltip>
                     </div>
                 </MudItem>
             </MudGrid>
         </DocsPageSection>
     </DocsPageContent>
-    <MudDivider Class="my-16" Style="opacity:0;"/>
+    <MudOverlay Visible="isVisible" DarkBackground="true" ZIndex="9999" >
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+            <MudCard Class="docs-section-black" Elevation="24">
+                <MudCardHeader>
+                    <CardHeaderContent>
+
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+                        <MudIconButton Icon="@Icons.Material.Close" Color="Color.Secondary" OnClick="@(e => ToggleOverlay(false))" />
+                    </CardHeaderActions>
+                </MudCardHeader>
+                <MudCardContent Class="pa-0 docs-section-black">
+                    <SectionSource Code="@exampleCode" NoToolbar="true" Class="docs-section-wireframe" />
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Color="Color.Secondary" Class="ml-auto" OnClick="@(e => ToggleOverlay(false))">Close</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudContainer>
+    </MudOverlay>
+    <MudDivider Class="my-16" Style="opacity:0;" />
 </DocsPage>
 <Footer />
 
 @code {
     [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
 
+    private bool isVisible;
+    private string exampleCode;
+
     public void NavigateToWireFrame(string wireframe)
     {
         UriHelper.NavigateTo(wireframe);
+    }
+
+    public void ToggleOverlay(bool value, string code = null)
+    {
+        exampleCode = code;
+        isVisible = value;
     }
 }
 
