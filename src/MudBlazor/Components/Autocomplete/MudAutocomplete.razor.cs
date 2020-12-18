@@ -103,6 +103,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
+
         internal bool IsOpen { get; set; }
 
         public string CurrentIcon { get; set; }
