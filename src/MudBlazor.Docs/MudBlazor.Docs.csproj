@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <BuildDependsOn>
@@ -12,11 +12,6 @@
   </PropertyGroup>
 
   <Choose>
-    <When Condition="Exists('$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/netcoreapp3.1/MudBlazor.Docs.Compiler.dll')">
-      <PropertyGroup>
-        <RunCommand>dotnet "$(SolutionDir)MudBlazor.Docs.Compiler//bin/Debug/netcoreapp3.1/MudBlazor.Docs.Compiler.dll"</RunCommand>
-      </PropertyGroup>
-    </When>
     <When Condition="Exists('$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net5.0/MudBlazor.Docs.Compiler.dll')">
       <PropertyGroup>
         <RunCommand>dotnet "$(SolutionDir)MudBlazor.Docs.Compiler//bin/Debug/net5.0/MudBlazor.Docs.Compiler.dll"</RunCommand>
