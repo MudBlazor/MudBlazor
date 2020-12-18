@@ -24,6 +24,11 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
+        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+        /// </summary>
+        [Parameter] public string Label { get; set; }
+
+        /// <summary>
         /// If true, compact vertical padding will be applied to all select items.
         /// </summary>
         [Parameter] public bool Dense { get; set; }

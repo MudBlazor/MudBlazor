@@ -5,6 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    //TODO Maybe can inherit from MudBaseInput?
     public partial class MudField : MudComponentBase
     {
         protected string Classname =>
