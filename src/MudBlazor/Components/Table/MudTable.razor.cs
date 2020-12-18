@@ -13,7 +13,7 @@ namespace MudBlazor
     {
         internal object _editingItem = null;
         
-        private int _currentPage = 0;
+        private int _currentPage = 1;
         // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is here in MudTableBase
 
         protected string Classname =>
@@ -166,16 +166,16 @@ namespace MudBlazor
             switch (page)
             {
                 case Page.First:
-                    CurrentPage = 0;
+                    CurrentPage = 1;
                     break;
                 case Page.Last:
-                    CurrentPage = Math.Max(0, NumPages-1);
+                    CurrentPage = Math.Max(1, NumPages-1);
                     break;
                 case Page.Next:
                     CurrentPage = Math.Min(NumPages - 1, CurrentPage +1);
                     break;
                 case Page.Previous:
-                    CurrentPage = Math.Max(0, CurrentPage-1);
+                    CurrentPage = Math.Max(1, CurrentPage-1);
                     break;
             }
         }
