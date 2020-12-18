@@ -9,7 +9,7 @@
 
 using System.Threading.Tasks;
 
-namespace MudBlazor.Dialog
+namespace MudBlazor
 {
     public interface IDialogReference
     {

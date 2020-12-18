@@ -6,10 +6,10 @@
 // License: MIT
 // See https://github.com/Blazored
 
-using Microsoft.AspNetCore.Components;
 using System;
+using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor.Dialog
+namespace MudBlazor
 {
     public class DialogService : IDialogService
     {

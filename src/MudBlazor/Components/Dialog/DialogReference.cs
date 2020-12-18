@@ -7,11 +7,11 @@
 // See https://github.com/Blazored
 
 
-using Microsoft.AspNetCore.Components;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor.Dialog
+namespace MudBlazor
 {
     public class DialogReference : IDialogReference
     {

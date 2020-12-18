@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using NUnit.Framework;

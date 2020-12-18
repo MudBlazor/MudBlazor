@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MudBlazor
 {

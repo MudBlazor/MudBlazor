@@ -1,10 +1,7 @@
-﻿using System;
-using System.Windows.Input;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Utilities;
-using MudBlazor.Extensions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -43,8 +40,10 @@ namespace MudBlazor
             }
         }
 
-        public void OnRowClicked()
+        public void OnRowClicked(MouseEventArgs args)
         {
+            if (IsHeader)
+                return;
             Context?.Table.SetSelectedItem(Item);
             if (_lockeditingentry == false) Context?.Table.SetEditingItem(Item);
             _lockeditingentry = false;
@@ -52,7 +51,7 @@ namespace MudBlazor
             {
                 IsChecked = !IsChecked;
             }
-
+            Context?.Table.FireRowClickEvent(args, this, Item);
         }
 
         protected override Task OnInitializedAsync()

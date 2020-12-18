@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using MudBlazor.Components.Select;
+using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
@@ -75,6 +73,9 @@ namespace MudBlazor
 
         private MudInput<string> _elementReference;
 
+        /// <summary>
+        /// Defines how values are displayed in the drop-down list
+        /// </summary>
         [Parameter]
         public Func<T, string> ToStringFunc
         {

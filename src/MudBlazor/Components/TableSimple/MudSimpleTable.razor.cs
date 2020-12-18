@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 
@@ -14,6 +13,7 @@ namespace MudBlazor
            .AddClass($"mud-table-hover", Hover)
            .AddClass($"mud-table-outlined", Outlined)
            .AddClass($"mud-table-square", Square)
+           .AddClass($"mud-table-sticky-header", FixedHeader)
            .AddClass($"mud-elevation-{Elevation.ToString()}", !Outlined)
           .AddClass(Class)
         .Build();
@@ -42,8 +42,11 @@ namespace MudBlazor
         /// If true, card will be outlined.
         /// </summary>
         [Parameter] public bool Outlined { get; set; }
-        // todo: implement
-        [Parameter] public bool StickyHeader { get; set; }
+
+        /// <summary>
+        /// When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.
+        /// </summary>
+        [Parameter] public bool FixedHeader { get; set; }
 
         /// <summary>
         /// Child content of the component.

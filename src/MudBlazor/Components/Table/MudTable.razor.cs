@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -215,6 +214,8 @@ namespace MudBlazor
 
         internal abstract bool HasServerData { get; }
 
-        internal abstract Task InvokeServerLoadFunc();        
+        internal abstract Task InvokeServerLoadFunc();
+
+        internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
     }
 }

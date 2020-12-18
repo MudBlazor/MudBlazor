@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -79,6 +76,56 @@ namespace MudBlazor.UnitTests
             }
             watch.Stop();
             Console.WriteLine("Elapsed: " + watch.Elapsed);
+        }
+
+        /// <summary>
+        /// Datepicker should open on input click and close on outside click
+        /// </summary>
+        [Test]
+        public void OpenCloseTest1()
+        {
+            using var ctx = new Bunit.TestContext();
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            var comp = ctx.RenderComponent<MudDatePicker>();
+            Console.WriteLine(comp.Markup);
+            // should not be open
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+            // click to to open menu
+            comp.Find("input").Click();
+            Console.WriteLine(comp.Markup);
+            // now its open
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            // clicking outside to close
+            comp.Find("div.mud-overlay").Click();
+            // should not be open any more
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Datepicker should close on day button click and return a date
+        /// </summary>
+        [Test]
+        public async Task OpenCloseTest2()
+        {
+            using var ctx = new Bunit.TestContext();
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            var comp = ctx.RenderComponent<MudDatePicker>();
+            Console.WriteLine(comp.Markup);
+            // should not be open
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+            comp.Instance.Date.Should().BeNull();
+            // click to to open menu
+            comp.Find("input").Click();
+            Console.WriteLine(comp.Markup);
+            // now its open
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            comp.Instance.Date.Should().BeNull();
+            // clicking a day button to select a date and close
+            comp.FindAll("button.mud-day")[8].Click(); // take a day from the middle section (at the beginning buttons may be disabled)
+            await Task.Delay(100);
+            // should not be open any more
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+            comp.Instance.Date.Should().NotBeNull();
         }
     }
 }

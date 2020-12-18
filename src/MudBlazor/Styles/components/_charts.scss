@@ -67,6 +67,13 @@
     }
 }
 
+.mud-charts-yaxis {
+    fill: var(--mud-palette-text-primary);
+}
+
+.mud-charts-xaxis {
+    fill: var(--mud-palette-text-primary);
+}
 
 .mud-chart-donut {
     & .mud-donut-hole {
