@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests
                 .Should()
                 .StartWith("<button")
                 .And
-                .Contain("__internal_stopPropagation_onclick");
+                .Contain("stopPropagation");
 
         }
 
