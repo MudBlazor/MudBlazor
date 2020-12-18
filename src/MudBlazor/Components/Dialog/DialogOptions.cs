@@ -9,7 +9,7 @@
 
 using System.ComponentModel;
 
-namespace MudBlazor.Dialog
+namespace MudBlazor
 {
     public class DialogOptions
     {

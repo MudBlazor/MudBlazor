@@ -8,7 +8,7 @@
 
 using System;
 
-namespace MudBlazor.Dialog
+namespace MudBlazor
 {
     public class DialogResult
     {

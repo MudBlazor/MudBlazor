@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
-namespace MudBlazor.Dialog
+namespace MudBlazor
 {
     public partial class MudDialogProvider
     {

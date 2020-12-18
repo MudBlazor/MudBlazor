@@ -30,7 +30,6 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("using MudBlazor.UnitTests.Mocks;");
                 cb.AddLine("using MudBlazor.Docs.Examples;");
                 cb.AddLine("using MudBlazor.Docs.Wireframes;");
-                cb.AddLine("using MudBlazor.Dialog;");
                 cb.AddLine("using MudBlazor.Services;");
                 cb.AddLine();
                 cb.AddLine("namespace MudBlazor.UnitTests.Components");

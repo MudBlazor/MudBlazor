@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
-namespace MudBlazor.Dialog
+namespace MudBlazor
 {
     public partial class MudDialogInstance
     {
