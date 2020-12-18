@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -9,7 +7,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.SelectWithEnumTest;
 
 namespace MudBlazor.UnitTests
 {
@@ -61,7 +58,6 @@ namespace MudBlazor.UnitTests
         /// <summary>
         /// Popup should open when 3 characters are typed and close when below.
         /// </summary>
-        /// <returns></returns>
         [Test]
         public async Task AutocompleteTest2()
         {
@@ -92,6 +88,36 @@ namespace MudBlazor.UnitTests
             select.Instance.Text = "al";
             await Task.Delay(100);
             menu.ClassList.Should().NotContain("mud-popover-open");
+        }
+
+        /// <summary>
+        /// Autocomplete should show 'Assam' (using ToStringFunc)
+        /// </summary>
+        [Test]
+        public void AutocompleteTest3()
+        {
+            using var ctx = new Bunit.TestContext();
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            var comp = ctx.RenderComponent<AutocompleteTest3>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            var autocomplete=comp.FindComponent<MudAutocomplete<AutocompleteTest3.State>>().Instance;
+            autocomplete.Text.Should().Be("Assam");
+        }
+
+        /// <summary>
+        /// Autocomplete should show 'Assam' (using state.ToString())
+        /// </summary>
+        [Test]
+        public void AutocompleteTest4()
+        {
+            using var ctx = new Bunit.TestContext();
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            var comp = ctx.RenderComponent<AutocompleteTest4>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            var autocomplete = comp.FindComponent<MudAutocomplete<AutocompleteTest4.State>>().Instance;
+            autocomplete.Text.Should().Be("Assam");
         }
     }
 }

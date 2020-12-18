@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Bunit;
 using Bunit.Rendering;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.SelectWithEnumTest;
 
 namespace MudBlazor.UnitTests
 {

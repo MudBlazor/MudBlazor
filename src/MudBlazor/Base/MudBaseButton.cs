@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
     public abstract class MudBaseButton : MudComponentBase
     {
-        [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
+      
+        /// <summary>
+        /// The HTML element that will be rendered in the root by the component
+        /// </summary>
+        [Parameter] public string HtmlTag { get; set; }
 
-        [Inject] public IJSRuntime JsRuntime { get; set; }
 
         /// <summary>
         /// The button Type (Button, Submit, Refresh)
@@ -51,22 +50,28 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         protected async Task OnClickHandler(MouseEventArgs ev)
-        {
-            if (Link != null)
-            {
-                if (string.IsNullOrWhiteSpace(Target))
-                    UriHelper.NavigateTo(Link, ForceLoad);
-                else
-                    await JsRuntime.InvokeVoidAsync("blazorOpen", new object[2] { Link, Target });
-            }
-            else
-            {
+        {          
                 await OnClick.InvokeAsync(ev);
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
                     Command.Execute(CommandParameter);
-                }
+                }            
+        }
+
+        protected override void OnInitialized()
+        {
+            //default tag for a MudButton is "button"
+            if (string.IsNullOrWhiteSpace(HtmlTag))
+            {
+                HtmlTag = "button";
             }
+
+            //But if Link property is set, it changes to an anchor element automatically
+            if (!string.IsNullOrWhiteSpace(Link))
+            {
+                HtmlTag = "a";
+            }
+            base.OnInitialized();
         }
 
         protected ElementReference _elementReference;

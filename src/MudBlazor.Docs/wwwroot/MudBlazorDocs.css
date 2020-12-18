@@ -40,7 +40,7 @@
   position: fixed;
   width: 232px;
   height: 40px;
-  background-image: linear-gradient(to top, rgba(255, 0, 0, 0), var(--mud-palette-drawer-background));
+  background-image: linear-gradient(to top, rgba(255, 255, 255, 0), var(--mud-palette-drawer-background));
   z-index: 100; }
 
 .docs-nav-filler {
@@ -614,6 +614,12 @@
 
 .docs-content-outlined {
   border: 1px solid var(--mud-palette-lines-default); }
+
+.docs-section-wireframe {
+  height: 600px; }
+
+.docs-section-black {
+  background-color: var(--mud-palette-black); }
 
 .docs-icon-container {
   margin-top: 20px; }

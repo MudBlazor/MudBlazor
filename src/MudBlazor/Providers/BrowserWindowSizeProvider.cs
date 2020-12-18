@@ -1,6 +1,6 @@
-﻿using Microsoft.JSInterop;
+﻿using System.Threading.Tasks;
+using Microsoft.JSInterop;
 using MudBlazor.Services;
-using System.Threading.Tasks;
 
 namespace MudBlazor.Providers
 {

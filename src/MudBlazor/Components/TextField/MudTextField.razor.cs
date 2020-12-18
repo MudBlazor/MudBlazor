@@ -1,10 +1,5 @@
-﻿using System;
-using System.Windows.Input;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
 using MudBlazor.Utilities;
-using MudBlazor.Extensions;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {

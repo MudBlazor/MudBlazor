@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Utilities;
 using MudBlazor.Extensions;
+using MudBlazor.Utilities;
 
 
 namespace MudBlazor

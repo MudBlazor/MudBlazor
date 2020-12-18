@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Globalization;
 
 namespace MudBlazor
 {
-    
+
     /// <summary>
     /// A ready made DateTime? to string binding converter with configurable date format and culture
     /// </summary>

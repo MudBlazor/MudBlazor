@@ -95,12 +95,45 @@
     /// <summary>
     /// The data to display in the table. MudTable will render one row per item
     /// </summary>
-    [Parameter] public IEnumerable<T> Items { get; set; }
+    [Parameter]
+    public IEnumerable<T> Items
+    {
+        get => _items;
+        set
+        {
+            if (_items == value)
+                return;
+            _items = value;
+            if (Context?.PagerStateHasChanged != null)
+                InvokeAsync(Context.PagerStateHasChanged);
+        }
+    }
 
     /// <summary>
     /// A function that returns whether or not an item should be displayed in the table. You can use this to implement your own search function.
     /// </summary>
     [Parameter] public Func<T, bool> Filter { get; set; } = null;
+
+    /// <summary>
+    /// Button click event.
+    /// </summary>
+    [Parameter] public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
+
+    internal override void FireRowClickEvent(MouseEventArgs args, MudTr row, object o)
+    {
+        T item = default(T);
+        try
+        {
+            item = (T) o;
+        }
+        catch(Exception) { /*ignore*/}
+        OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>()
+        {
+            MouseEventArgs = args,
+            Row = row,
+            Item = item,
+        });
+    }
 
     /// <summary>
     /// Returns the item which was last clicked on in single selection mode (that is, if MultiSelection is false)
@@ -269,9 +302,10 @@
     [Parameter] public Func<TableState, Task<TableData<T>>> ServerData { get; set; }
 
     internal override bool HasServerData => ServerData != null;
-    
+
 
     TableData<T> _server_data = new TableData<T>() { TotalItems=0, Items=new T[0] };
+    private IEnumerable<T> _items;
 
     internal override async Task InvokeServerLoadFunc()
     {

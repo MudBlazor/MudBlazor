@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Utilities;
 using System.Timers;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
@@ -43,7 +42,9 @@ namespace MudBlazor
         /// </summary>
         /// <param name="_">discard, not used</param>
         /// <param name="__">discard, not used</param>
-        private void OnTimerComplete(object _, ElapsedEventArgs __)
+        private void OnTimerComplete(object _, ElapsedEventArgs __) => InvokeAsync(OnTimerCompleteGuiThread);
+        
+        private void OnTimerCompleteGuiThread()
         {
             base.StringValueChanged(Text);
             OnDebounceIntervalElapsed.InvokeAsync(Text);
