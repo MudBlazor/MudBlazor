@@ -6,26 +6,44 @@
         <MudTextField @bind-Value="@element.Name" Label="Name"/>
     </MudItem>
     <MudItem xs="12" sm="6" md="3">
-        <MudTextField @bind-Value="@element.Molar" Label="Molar"/>
+        <MudTextField @bind-Value="@element.Mass" Label="Mass"/>
     </MudItem>
     <MudItem xs="12" sm="6" md="3">
-        <MudTextField @bind-Value="@element.Number" Label="Number"/>
+        <MudTextField @bind-Value="@element.Electrons" Label="Electrons"/>
     </MudItem>
     <MudItem xs="12" sm="6" md="3">
-        <MudTextField @bind-Value="@updatedon" Format="yyyy/MM/dd" Label="Last Update"/>
+        <MudTextField @bind-Value="@element.Changed" Format="yyyy/MM/dd" Label="Last Update"/>
     </MudItem>
 </MudGrid>
-<div>
-    <MudText Typo="@MudBlazor.Typo.h6">Data:</MudText>
-    <MudText>Name: @element.Name</MudText>
-    <MudText>Molar: @element.Molar</MudText>
-    <MudText>Number: @element.Number</MudText>
-    <MudText>Last Update: @updatedon </MudText>
+<div class="mt-3 ml-0 d-flex">
+    <div>
+        <MudText>Name: @element.Name</MudText>
+        <MudText>Mass: @element.Mass u</MudText>
+        <MudText>Electrons: @element.Electrons</MudText>
+        <MudText>Last Update: @element.Changed.ToShortDateString()</MudText>
+    </div>
+    <div class="d-flex ml-auto align-center">
+        <MudButton Variant="Variant.Filled" OnClick="Reset">Reset Model</MudButton>
+    </div>
 </div>
 
 
 @code {
-    DateTime updatedon = DateTime.Today;
-    Data.Element element = new Data.Element { Group = "", Name = "Hydrogen", Molar = 1.00794, Number = 1 };
+    Atom element = new Atom { Name = "Hydrogen", Mass = 1.00794, Electrons = 1, Changed=DateTime.Today };
+
+    // A typical POCO
+    public class Atom
+    {
+        public string Name { get; set; }
+        public double Mass { get; set; }
+        public int Electrons { get; set; }
+        public DateTime Changed { get; set; }
+    }
+
+    private void Reset()
+    {
+        element = new Atom { Name = "Hydrogen", Mass = 1.00794, Electrons = 1, Changed = DateTime.Today };
+        StateHasChanged();
+    }
 
 }
