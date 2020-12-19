@@ -4,6 +4,7 @@ using Toolbelt.Blazor.HeadElement;
 
 namespace MudBlazor.UnitTests.Mocks
 {
+    #pragma warning disable CS1998 // Justification - Implementing IHeadElementHelper
     public class MockHeadElementHelper : IHeadElementHelper
     {
         public async ValueTask<IEnumerable<LinkElement>> GetDefaultLinkElementsAsync()

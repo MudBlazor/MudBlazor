@@ -139,7 +139,7 @@ namespace MudBlazor.UnitTests
         /// Initially we have a value of 17 which is not in the list. So we render it as text via MudInput
         /// </summary>
         [Test]
-        public async Task SelectUnrepresentableValueTest()
+        public void SelectUnrepresentableValueTest()
         {
             using var ctx = new Bunit.TestContext();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
@@ -190,7 +190,7 @@ namespace MudBlazor.UnitTests
         /// The items have no render fragments, so instead of RF the select must display the converted string value
         /// </summary>
         [Test]
-        public async Task SelectWithoutItemPresentersTest()
+        public void SelectWithoutItemPresentersTest()
         {
             using var ctx = new Bunit.TestContext();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());

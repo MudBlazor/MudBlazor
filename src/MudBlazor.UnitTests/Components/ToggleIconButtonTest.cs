@@ -22,7 +22,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ToggleTest()
+        public void ToggleTest()
         {
             using var ctx = new Bunit.TestContext();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());

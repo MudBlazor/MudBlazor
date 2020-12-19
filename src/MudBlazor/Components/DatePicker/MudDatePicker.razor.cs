@@ -237,10 +237,9 @@ namespace MudBlazor
             PickerMonth = GetMonthEnd().AddDays(1);
         }
 
-        private async void OnYearClick()
+        private void OnYearClick()
         {
             OpenTo = OpenTo.Year;
-            //await InvokeAsync(StateHasChanged);
             StateHasChanged();
             _scrollToYearAfterRender = true;
         }

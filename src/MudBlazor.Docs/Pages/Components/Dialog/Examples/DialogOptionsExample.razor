@@ -14,7 +14,7 @@
     DialogOptions noHeader = new DialogOptions() {  NoHeader = true };
     DialogOptions disableBackdropClick = new DialogOptions() { DisableBackdropClick = true };
 
-    async Task OpenDialog(DialogOptions options)
+    private void OpenDialog(DialogOptions options)
     {
         Dialog.Show<DialogUsageExample_Dialog>("Custom Options Dialog", options);
     }

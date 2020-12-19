@@ -12,7 +12,7 @@
 <div class="csharp"><pre>
 <span class="atSign">&#64;</span>code {
 
-    <span class="keyword">async</span> Task DeleteUser()
+    <span class="keyword">private</span> <span class="keyword">void</span> DeleteUser()
     {
         <span class="keyword">var</span> parameters = <span class="keyword">new</span> DialogParameters();
         parameters.Add(<span class="string">&quot;ContentText&quot;</span>, <span class="string">&quot;Do you really want to delete these records? This process cannot be undone.&quot;</span>);
@@ -24,7 +24,7 @@
         Dialog.Show&lt;DialogTemplateExample_Dialog&gt;(<span class="string">&quot;Delete&quot;</span>, parameters, options);
     }
 
-    <span class="keyword">async</span> Task Confirm()
+    <span class="keyword">private</span> <span class="keyword">void</span> Confirm()
     {
         <span class="keyword">var</span> parameters = <span class="keyword">new</span> DialogParameters();
         parameters.Add(<span class="string">&quot;ContentText&quot;</span>, <span class="string">&quot;Are you sure you want to remove thisguy<span class="atSign">&#64;</span>emailz.com from this account?&quot;</span>);
@@ -34,7 +34,7 @@
         Dialog.Show&lt;DialogTemplateExample_Dialog&gt;(<span class="string">&quot;Confirm&quot;</span>, parameters);
     }
 
-    <span class="keyword">async</span> Task Download()
+    <span class="keyword">private</span> <span class="keyword">void</span> Download()
     {
         <span class="keyword">var</span> parameters = <span class="keyword">new</span> DialogParameters();
         parameters.Add(<span class="string">&quot;ContentText&quot;</span>, <span class="string">&quot;Your computer seems very slow, click the download button to download free RAM.&quot;</span>);
