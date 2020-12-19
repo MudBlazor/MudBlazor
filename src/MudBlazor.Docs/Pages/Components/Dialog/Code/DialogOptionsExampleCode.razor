@@ -16,7 +16,7 @@
     DialogOptions noHeader = <span class="keyword">new</span> DialogOptions() {  NoHeader = <span class="keyword">true</span> };
     DialogOptions disableBackdropClick = <span class="keyword">new</span> DialogOptions() { DisableBackdropClick = <span class="keyword">true</span> };
 
-    <span class="keyword">async</span> Task OpenDialog(DialogOptions options)
+    <span class="keyword">private</span> <span class="keyword">void</span> OpenDialog(DialogOptions options)
     {
         Dialog.Show&lt;DialogUsageExample_Dialog&gt;(<span class="string">&quot;Custom Options Dialog&quot;</span>, options);
     }

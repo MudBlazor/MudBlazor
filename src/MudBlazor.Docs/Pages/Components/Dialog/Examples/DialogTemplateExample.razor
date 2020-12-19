@@ -9,7 +9,7 @@
 
 @code {
 
-    async Task DeleteUser()
+    private void DeleteUser()
     {
         var parameters = new DialogParameters();
         parameters.Add("ContentText", "Do you really want to delete these records? This process cannot be undone.");
@@ -21,7 +21,7 @@
         Dialog.Show<DialogTemplateExample_Dialog>("Delete", parameters, options);
     }
 
-    async Task Confirm()
+    private void Confirm()
     {
         var parameters = new DialogParameters();
         parameters.Add("ContentText", "Are you sure you want to remove thisguy@emailz.com from this account?");
@@ -31,7 +31,7 @@
         Dialog.Show<DialogTemplateExample_Dialog>("Confirm", parameters);
     }
 
-    async Task Download()
+    private void Download()
     {
         var parameters = new DialogParameters();
         parameters.Add("ContentText", "Your computer seems very slow, click the download button to download free RAM.");
