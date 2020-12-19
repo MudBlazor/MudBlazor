@@ -1,0 +1,37 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="intValue" Label="Enter an int" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="doubleValue" Label="Enter a double" Format="F1"/>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="enumValue" Label="Enum (Yes|No|Maybe)" />
+    </MudItem>
+</MudGrid>
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="nullableInt" HelperText="Enter an int" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="nullableDouble" HelperText="Enter a double" Format="F1" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="nullableEnum" HelperText="Enum (Yes|No|Maybe)" />
+    </MudItem>
+</MudGrid>
+
+
+@code { 
+    int intValue;
+    double doubleValue;
+    YesNoMaybe enumValue;
+    int? nullableInt;
+    double? nullableDouble;
+    YesNoMaybe? nullableEnum;
+
+    public enum YesNoMaybe { Maybe, Yes, No }
+}
