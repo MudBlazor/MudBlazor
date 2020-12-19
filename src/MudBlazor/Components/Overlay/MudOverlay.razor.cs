@@ -7,6 +7,8 @@ namespace MudBlazor
 {
     public partial class MudOverlay :  MudComponentBase
     {
+        private bool _visible;
+
         protected string Classname =>
             new CssBuilder("mud-overlay")
                 .AddClass("mud-overlay-absolute", Absolute)
@@ -32,9 +34,31 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// If true overlay will be visible.
+        /// Fires when Visible changes
         /// </summary>
-        [Parameter] public bool Visible { get; set; }
+        [Parameter]
+        public EventCallback<bool> VisibleChanged { get; set; }
+
+        /// <summary>
+        /// If true overlay will be visible. Two-way bindable.
+        /// </summary>
+        [Parameter]
+        public bool Visible
+        {
+            get => _visible;
+            set
+            {
+                if (_visible == value)
+                    return;
+                _visible = value;
+                VisibleChanged.InvokeAsync(_visible);
+            }
+        }
+
+        /// <summary>
+        /// If true overlay will set Visible false on click.
+        /// </summary>
+        [Parameter] public bool AutoClose { get; set; }
 
         /// <summary>
         /// If true applys the themes dark overlay color.
@@ -66,10 +90,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public ICommand Command { get; set; }
 
+        /// <summary>
+        /// Fired when the overlay is clicked
+        /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
         protected void OnClickHandler(MouseEventArgs ev)
         {
+            if (AutoClose)
+                Visible = false;
             OnClick.InvokeAsync(ev);
             if (Command?.CanExecute(CommandParameter) ?? false)
             {

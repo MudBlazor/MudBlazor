@@ -2,8 +2,7 @@
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenOverlay">Show Overlay</MudButton>
 
-<MudOverlay Visible="isVisible" DarkBackground="true"/>
-
+<MudOverlay @bind-Visible="isVisible" DarkBackground="true" AutoClose="true"/>
 
 @code {
     private bool isVisible;
@@ -11,8 +10,6 @@
     public async void OpenOverlay()
     {
         isVisible = true;
-        await Task.Delay(3000);
-        isVisible = false;
         StateHasChanged();
     }
 } 
