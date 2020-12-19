@@ -2,8 +2,8 @@
 @inherits MudBaseButton
 @using MudBlazor.Extensions
 
-@* @porkopek TODO add @ref="_elementReference"*@
-<MudElement HtmlTag="@HtmlTag"
+<MudElement Ref="@_elementReference"
+            HtmlTag="@HtmlTag"
             Class="@Classname" 
             Style="@Style"
             @attributes="UserAttributes"
