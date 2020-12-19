@@ -2,9 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
+using Bunit.TestDoubles.JSInterop;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
 
@@ -14,15 +16,28 @@ namespace MudBlazor.UnitTests
     [TestFixture]
     public class AutocompleteTests
     {
+        private Bunit.TestContext ctx;
+
+        [SetUp]
+        public void Setup()
+        {
+            ctx = new Bunit.TestContext();
+            ctx.Services.AddMockJSRuntime();
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            ctx.Services.AddSingleton<IDialogService>(new DialogService());
+            ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+            ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+        }
+
+        [TearDown]
+        public void TearDown() => ctx.Dispose();
+        
         /// <summary>
         /// Initial value should be shown and popup should not open.
         /// </summary>
         [Test]
         public async Task AutocompleteTest1() {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<AutocompleteTest1>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
@@ -61,10 +76,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task AutocompleteTest2()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<AutocompleteTest2>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudAutocomplete<string>>();
@@ -96,10 +108,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public void AutocompleteTest3()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<AutocompleteTest3>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             var autocomplete=comp.FindComponent<MudAutocomplete<AutocompleteTest3.State>>().Instance;
             autocomplete.Text.Should().Be("Assam");
@@ -111,10 +120,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public void AutocompleteTest4()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<AutocompleteTest4>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             var autocomplete = comp.FindComponent<MudAutocomplete<AutocompleteTest4.State>>().Instance;
             autocomplete.Text.Should().Be("Assam");
