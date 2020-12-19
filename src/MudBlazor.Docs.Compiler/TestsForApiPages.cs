@@ -24,6 +24,7 @@ namespace MudBlazor.Docs.Compiler
                 var cb = new CodeBuilder();
 
                 cb.AddHeader();
+                cb.AddLine("using Bunit.TestDoubles.JSInterop;");
                 cb.AddLine("using Microsoft.AspNetCore.Components;");
                 cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
                 cb.AddLine("using NUnit.Framework;");
@@ -50,7 +51,25 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("public class _AllApiPages");
                 cb.AddLine("{");
                 cb.IndentLevel++;
-
+                cb.AddLine("private Bunit.TestContext ctx;");
+                cb.AddLine();
+                cb.AddLine("[SetUp]");
+                cb.AddLine("public void Setup()");
+                cb.AddLine("{");
+                cb.IndentLevel++;
+                cb.AddLine("ctx = new Bunit.TestContext();");
+                cb.AddLine("ctx.Services.AddMockJSRuntime();");
+                cb.AddLine("ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());");
+                cb.AddLine("ctx.Services.AddSingleton<IDialogService>(new DialogService());");
+                cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());");
+                cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
+                cb.AddLine("ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());");
+                cb.IndentLevel--;
+                cb.AddLine("}");
+                cb.AddLine();
+                cb.AddLine("[TearDown]");
+                cb.AddLine("public void TearDown() => ctx.Dispose();");
+                cb.AddLine();
                 var mudBlazorComponents = typeof(MudAlert).Assembly.GetTypes().OrderBy(t => t.FullName).Where(t => t.IsSubclassOf(typeof(ComponentBase)));
                 foreach (var type in mudBlazorComponents)
                 {
@@ -64,13 +83,7 @@ namespace MudBlazor.Docs.Compiler
                     cb.AddLine($"public void {SafeTypeName(type, removeT: true)}_API_Test()");
                     cb.AddLine("{");
                     cb.IndentLevel++;
-                    cb.AddLine("using var ctx = new Bunit.TestContext();");
-                    cb.AddLine("ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());");
-                    cb.AddLine("ctx.Services.AddSingleton<IDialogService>(new DialogService());");
-                    cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
-                    cb.AddLine("ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());");
-                    cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());");
-                    cb.AddLine(@$"var comp = ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter(""Type"", typeof({SafeTypeName(type)})));");
+                    cb.AddLine(@$"ctx.RenderComponent<DocsApi>(ComponentParameter.CreateParameter(""Type"", typeof({SafeTypeName(type)})));");
                     cb.IndentLevel--;
                     cb.AddLine("}");
                 }
