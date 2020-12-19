@@ -22,7 +22,10 @@
 
     [Parameter] public Server server { get; set; } = new Server();
 
-    void Cancel() => MudDialog.Cancel();
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
 
     private void DeleteServer()
     {
