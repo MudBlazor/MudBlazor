@@ -53,4 +53,5 @@ namespace MudBlazor.UnitTests.Mocks
             _title = title;
         }
     }
+    #pragma warning restore CS1998
 }

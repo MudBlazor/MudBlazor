@@ -32,5 +32,4 @@ namespace MudBlazor.UnitTests.Mocks
             return default(Breakpoint);
         }   
     }
-   #pragma warning enable CS1998 // Justification - Implementing IResizeListenerService
-}
+   #pragma warning restore CS1998
