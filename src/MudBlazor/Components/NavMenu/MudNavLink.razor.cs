@@ -18,6 +18,26 @@ namespace MudBlazor
         /// Icon to use if set.
         /// </summary>
         [Parameter] public string Icon { get; set; }
+
+        /// <summary>
+        /// Font icon to use if set.
+        /// </summary>
+        [Parameter] public string FontIcon { get; set; }
+
+        /// <summary>
+        /// Font class to use if set.
+        /// </summary>
+        [Parameter] public string FontClass { get; set; }
+
+        /// <summary>
+        /// Size of icon to use if set.
+        /// </summary>
+        [Parameter] public Size IconSize { get; set; }
+
+        /// <summary>
+        /// Color of icon to use if set.
+        /// </summary>
+        [Parameter] public Color IconColor { get; set; }
         [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 
         [CascadingParameter] public MudDrawer Drawer { get; set; }

@@ -7,7 +7,17 @@
     <NavLink @onclick="@OnNavigation" class="mud-nav-link" style="@Style" href="@Href" Match="@Match" ActiveClass="active">
         @if (!String.IsNullOrEmpty(Icon))
         {
-            <MudIcon Icon="@Icon" Class="mud-nav-link-icon"></MudIcon>
+	        <MudIcon Icon="@Icon" Class="mud-nav-link-icon" Size="@IconSize" Color="@IconColor"></MudIcon>
+        }
+
+        @if (!String.IsNullOrEmpty(FontIcon))
+        {
+	        <MudIcon Icon="@FontIcon" Class="mud-nav-link-icon" Size="@IconSize" Color="@IconColor"></MudIcon>
+        }
+
+        @if (!String.IsNullOrEmpty(FontClass))
+        {
+	        <MudIcon Icon="@FontClass" Class="mud-nav-link-icon" Size="@IconSize" Color="@IconColor"></MudIcon>
         }
         <div Class="mud-nav-link-text">
             @ChildContent
