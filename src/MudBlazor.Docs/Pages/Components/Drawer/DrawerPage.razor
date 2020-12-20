@@ -7,8 +7,10 @@
             <SectionHeader>
                 <Title>Drawer usage</Title>
                 <Description>
-                    The drawer must be inside a <CodeInline>MudLayout</CodeInline> component because it interacts with <CodeInline>AppBar</CodeInline> and <CodeInline>MainContent</CodeInline>. It can be toggled open or closed by setting its <CodeInline>Open</CodeInline> parameter.
-                    If you set the <CodeInline>Open</CodeInline> parameter using two-way binding <CodeInline>@("@bind-Open=\"...\"")</CodeInline> the drawer will close itself on navigation.
+                    The drawer must be inside a <CodeInline>MudLayout</CodeInline> component because it interacts with <CodeInline>AppBar</CodeInline> and <CodeInline>MainContent</CodeInline>.
+                    If you use two-way binding <CodeInline>@("@bind-Open=\"...\"")</CodeInline> you can toggle the drawer and it will close itself on navigation. If you set its <CodeInline>Open</CodeInline> parameter without two-way binding
+                    you effectively force it to stay open or closed depending on the provided value.
+                    <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">Common pitfall: use <CodeInline>@("@bind-Open")</CodeInline> instead of <CodeInline>@("Open")</CodeInline> for auto-closing to work.</MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
@@ -40,7 +42,7 @@
                     <DrawerAnchorExample />
                 </iframe>
             </SectionContent>
-            <SectionSource Code="DrawerAnchorExample" GitHubFolderName="Drawer" />
+            <SectionSource Code="DrawerAnchorExample" ShowCode="false" GitHubFolderName="Drawer" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -52,7 +54,7 @@
                     <DrawerDoubleExample />
                 </iframe>
             </SectionContent>
-            <SectionSource Code="DrawerDoubleExample" GitHubFolderName="Drawer" />
+            <SectionSource Code="DrawerDoubleExample" ShowCode="false" GitHubFolderName="Drawer" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
