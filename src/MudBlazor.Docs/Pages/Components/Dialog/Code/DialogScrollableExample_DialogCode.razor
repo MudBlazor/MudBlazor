@@ -37,10 +37,10 @@
         <span class="keyword">await</span> <span class="keyword">base</span>.OnInitializedAsync();
     }
 
-    <span class="keyword">string</span> LicenseText;
-    <span class="keyword">bool</span> Loading = <span class="keyword">false</span>;
+    <span class="keyword">private</span> <span class="keyword">string</span> LicenseText;
+    <span class="keyword">private</span> <span class="keyword">bool</span> Loading = <span class="keyword">false</span>;
 
-    <span class="keyword">void</span> Ok()
+    <span class="keyword">private</span> <span class="keyword">void</span> Ok()
     {
         MudDialog.Close(DialogResult.Ok(<span class="keyword">true</span>));
     }

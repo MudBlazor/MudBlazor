@@ -33,28 +33,26 @@
 <span class="htmlTagDelimiter">&lt;/</span><span class="htmlElementName">MudTable</span><span class="htmlTagDelimiter">&gt;</span>
 </pre></div>
 <div class="csharp"><pre>
-<span class="atSign">&#64;</span>code { 
-    IEnumerable&lt;Element&gt; allData = PeriodicTable.GetElements();
-    IEnumerable&lt;Element&gt; pagedData;
-    MudTable&lt;Element&gt; table;
+<span class="atSign">&#64;</span>code {
+    <span class="keyword">private</span> IEnumerable&lt;Element&gt; pagedData;
+    <span class="keyword">private</span> MudTable&lt;Element&gt; table;
 
-    <span class="keyword">int</span> totalItems;
-    <span class="keyword">string</span> searchString = <span class="keyword">null</span>;
+    <span class="keyword">private</span> <span class="keyword">int</span> totalItems;
+    <span class="keyword">private</span> <span class="keyword">string</span> searchString = <span class="keyword">null</span>;
 
     <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;summary&gt;</span>
     <span class="xmlDocTag">///</span><span class="xmlDocComment"> Here we simulate getting the paged, filtered and ordered data from the server</span>
     <span class="xmlDocTag">///</span> <span class="xmlDocTag">&lt;/summary&gt;</span>
-    <span class="keyword">async</span> Task&lt;TableData&lt;Element&gt;&gt; ServerReload(TableState state)
+    <span class="keyword">private</span> <span class="keyword">async</span> Task&lt;TableData&lt;Element&gt;&gt; ServerReload(TableState state)
     {
-        <span class="comment">// simulate a server delay</span>
-        <span class="keyword">await</span> Task.Delay(<span class="number">300</span>);
-        IEnumerable&lt;Element&gt; data = PeriodicTable.GetElements().Where(element =&gt;
+        IEnumerable&lt;Element&gt; data = <span class="keyword">await</span> PeriodicTable.GetElementsAsync();
+        data = data.Where(element =&gt;
         {
             <span class="keyword">if</span> (<span class="keyword">string</span>.IsNullOrWhiteSpace(searchString))
                 <span class="keyword">return</span> <span class="keyword">true</span>;
-            <span class="keyword">if</span> (element.Sign.Contains(searchString))
+            <span class="keyword">if</span> (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                 <span class="keyword">return</span> <span class="keyword">true</span>;
-            <span class="keyword">if</span> (element.Name.Contains(searchString))
+            <span class="keyword">if</span> (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                 <span class="keyword">return</span> <span class="keyword">true</span>;
             <span class="keyword">if</span> ($<span class="string">&quot;{element.Number} {element.Position} {element.Molar}&quot;</span>.Contains(searchString))
                 <span class="keyword">return</span> <span class="keyword">true</span>;
@@ -79,6 +77,7 @@
                 data = data.OrderByDirection(state.SortDirection, o =&gt; o.Molar);
                 <span class="keyword">break</span>;
         }
+
         pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
         <span class="keyword">return</span> <span class="keyword">new</span> TableData&lt;Element&gt;() {TotalItems = totalItems, Items = pagedData};
     }

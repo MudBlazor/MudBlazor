@@ -29,28 +29,26 @@
     </PagerContent>
 </MudTable>
 
-@code { 
-    IEnumerable<Element> allData = PeriodicTable.GetElements();
-    IEnumerable<Element> pagedData;
-    MudTable<Element> table;
+@code {
+    private IEnumerable<Element> pagedData;
+    private MudTable<Element> table;
 
-    int totalItems;
-    string searchString = null;
+    private int totalItems;
+    private string searchString = null;
 
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
     /// </summary>
-    async Task<TableData<Element>> ServerReload(TableState state)
+    private async Task<TableData<Element>> ServerReload(TableState state)
     {
-        // simulate a server delay
-        await Task.Delay(300);
-        IEnumerable<Element> data = PeriodicTable.GetElements().Where(element =>
+        IEnumerable<Element> data = await PeriodicTable.GetElementsAsync();
+        data = data.Where(element =>
         {
             if (string.IsNullOrWhiteSpace(searchString))
                 return true;
-            if (element.Sign.Contains(searchString))
+            if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                 return true;
-            if (element.Name.Contains(searchString))
+            if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
                 return true;
             if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
                 return true;
@@ -75,6 +73,7 @@
                 data = data.OrderByDirection(state.SortDirection, o => o.Molar);
                 break;
         }
+
         pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
         return new TableData<Element>() {TotalItems = totalItems, Items = pagedData};
     }
