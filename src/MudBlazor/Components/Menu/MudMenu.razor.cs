@@ -30,13 +30,13 @@ namespace MudBlazor
         [Parameter] public bool DisableRipple { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        public async Task CloseMenu()
+        public void CloseMenu()
         {
             isOpen = false;
             StateHasChanged();
         }
 
-        public async Task OpenMenu()
+        public void OpenMenu()
         {
             if (Disabled)
                 return;
