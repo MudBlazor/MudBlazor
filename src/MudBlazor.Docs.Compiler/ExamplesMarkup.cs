@@ -12,6 +12,7 @@ namespace MudBlazor.Docs.Compiler
         public bool Execute()
         {
             var paths = new Paths();
+            StringBuilder newFiles = new StringBuilder();
             bool success = true;
             try
             {
@@ -66,7 +67,13 @@ namespace MudBlazor.Docs.Compiler
                     if (currentCode != cb.ToString())
                     {
                         File.WriteAllText(markupPath, cb.ToString());
+                        if (currentCode == string.Empty)
+                        {
+                            newFiles.AppendLine(markupPath);
+                        }
                     }
+
+                    File.WriteAllText(paths.NewFilesToBuildPath, newFiles.ToString());
                 }
             }
             catch (Exception e)
