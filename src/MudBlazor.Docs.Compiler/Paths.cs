@@ -11,6 +11,8 @@ namespace MudBlazor.Docs.Compiler
         private const string docStringsFile = "DocStrings.generated.cs";
         private const string componentTestsFile = "_AllComponents.cs";
         private const string apiPageTestsFile = "_AllApiPages.cs";
+        private const string newFilesToBuild = "NewFilesToBuild.txt";
+
         public const string ExampleDiscriminator = "Example"; // example components must contain this string
 
         public string SrcDirPath
@@ -74,6 +76,14 @@ namespace MudBlazor.Docs.Compiler
             get
             {
                 return Path.Join(TestDirPath, apiPageTestsFile);
+            }
+        }
+
+        public string NewFilesToBuildPath
+        {
+            get
+            {
+                return Path.Join(DocsDirPath, newFilesToBuild);
             }
         }
     }
