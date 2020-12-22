@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -72,7 +73,8 @@ namespace MudBlazor
                     Severity.Info => Outlined.InfoOutlined,
                     Severity.Success => Icons.Custom.AlertSuccess,
                     Severity.Warning => Outlined.ReportProblemOutlined,
-                    Severity.Error => Filled.ErrorOutline
+                    Severity.Error => Filled.ErrorOutline,
+                    _ => throw new ArgumentOutOfRangeException(nameof(Severity)),
                 };
             }
             }
