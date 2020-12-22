@@ -34,10 +34,10 @@
         await base.OnInitializedAsync();
     }
 
-    string LicenseText;
-    bool Loading = false;
+    private string LicenseText;
+    private bool Loading = false;
 
-    void Ok()
+    private void Ok()
     {
         MudDialog.Close(DialogResult.Ok(true));
     }

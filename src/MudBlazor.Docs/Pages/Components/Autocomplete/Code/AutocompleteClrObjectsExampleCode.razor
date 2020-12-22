@@ -27,14 +27,11 @@
 </pre></div>
 <div class="csharp"><pre>
 <span class="atSign">&#64;</span>code {
-    <span class="keyword">private</span> IEnumerable&lt;Element&gt; datasource = PeriodicTable.GetElements(); <span class="comment">//you can also search directly from database on Search()</span>
     <span class="keyword">private</span> Element value1, value2;
 
     <span class="keyword">private</span> <span class="keyword">async</span> Task&lt;IEnumerable&lt;Element&gt;&gt; Search(<span class="keyword">string</span> value)
     {
-        <span class="keyword">if</span> (<span class="keyword">string</span>.IsNullOrEmpty(value))
-            <span class="keyword">return</span> datasource;
-        <span class="keyword">return</span> datasource.Where(e =&gt; $<span class="string">&quot;{e.Name} ({e.Sign})&quot;</span>.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        <span class="keyword">return</span>  <span class="keyword">await</span> PeriodicTable.GetElementsAsync(value);
     }
 }
 </pre></div>

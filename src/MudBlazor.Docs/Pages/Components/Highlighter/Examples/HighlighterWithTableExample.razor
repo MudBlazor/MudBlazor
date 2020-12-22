@@ -21,17 +21,10 @@
 </MudTable>
 
 @code {
+    private string searchTerm = "ch";
 
-    string searchTerm = "ch";
-
-    IEnumerable<Element> GetElements()
+    private IEnumerable<Element> GetElements()
     {
-        var allElements = PeriodicTable.GetElements();
-        if (string.IsNullOrWhiteSpace(searchTerm)) return allElements;
-
-        var filteredElements = allElements
-            .Where(e => e.Name.ToUpper().Contains(searchTerm.ToUpper()));
-
-        return filteredElements;
+        return  PeriodicTable.GetElements(searchTerm);
     }
 }

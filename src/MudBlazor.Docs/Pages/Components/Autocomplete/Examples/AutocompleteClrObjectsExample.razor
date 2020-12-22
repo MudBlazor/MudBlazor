@@ -23,13 +23,10 @@
 </MudGrid>
 
 @code {
-    private IEnumerable<Element> datasource = PeriodicTable.GetElements(); //you can also search directly from database on Search()
     private Element value1, value2;
 
     private async Task<IEnumerable<Element>> Search(string value)
     {
-        if (string.IsNullOrEmpty(value))
-            return datasource;
-        return datasource.Where(e => $"{e.Name} ({e.Sign})".Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return  await PeriodicTable.GetElementsAsync(value);
     }
 }
