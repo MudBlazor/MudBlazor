@@ -49,6 +49,11 @@
     protected override void OnInitialized()
     {
         currentTheme = defaultTheme;
+        var url = NavMan;
+        if (url.Uri != url.BaseUri)
+        {
+            _drawerOpen = true;
+        }
     }
 
     void DarkMode()
