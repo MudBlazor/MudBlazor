@@ -43,13 +43,14 @@
     }
 
     & > .mud-input-label-inputcontrol {
-        color: var(--mud-palette-text-primary);
+        color: var(--mud-palette-text-secondary);
         padding: 0;
         font-size: 1rem;
         font-weight: 400;
         line-height: 1;
         letter-spacing: 0.00938em;
         z-index: 0;
+        pointer-events:none;
 
         &.mud-disabled {
             color: var(--mud-palette-text-disabled);
