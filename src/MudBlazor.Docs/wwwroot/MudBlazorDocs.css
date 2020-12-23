@@ -384,6 +384,12 @@
     background: transparent linear-gradient(18deg, #1dd6a7 0%, #1ee0b0 100%) 0% 0% no-repeat padding-box; }
   .docs-mud-button.try-mudblazor {
     background: transparent linear-gradient(90deg, #594AE2 0%, #776be7 100%) 0% 0% no-repeat padding-box; }
+  .docs-mud-button.discord-gitter {
+    background-color: transparent;
+    box-shadow: none;
+    max-height: 50px; }
+    .docs-mud-button.discord-gitter:hover {
+      background-color: transparent; }
 
 .mudblazor-app-text .mud-typography {
   font-family: monospace;
@@ -579,7 +585,8 @@
     justify-content: center; }
   .docs-section-content.docs-display-flex > .docs-section-content-inner {
     display: flex;
-    flex-grow: 1; }
+    flex-grow: 1;
+    flex-wrap: wrap; }
   .docs-section-content.docs-content-full-width > .docs-section-content-inner {
     width: 100%; }
   .docs-section-content.docs-section-content-darken {
