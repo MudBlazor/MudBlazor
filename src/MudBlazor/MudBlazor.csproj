@@ -57,7 +57,6 @@
     <None Include="bundleconfig.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-    <None Include="compilerconfig.build.json" />
     <None Include="compilerconfig.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
