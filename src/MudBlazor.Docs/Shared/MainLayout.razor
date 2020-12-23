@@ -49,8 +49,8 @@
     protected override void OnInitialized()
     {
         currentTheme = defaultTheme;
-        var url = NavMan;
-        if (url.Uri != url.BaseUri)
+        //if not home page, the navbar starts open
+        if (!NavMan.IsHomePage())
         {
             _drawerOpen = true;
         }
