@@ -728,7 +728,7 @@ ul {
   display: flex;
   overflow: hidden;
   position: relative;
-  font-size: 1.25rem;
+  display: inline-flex;
   align-items: center;
   flex-shrink: 0;
   line-height: 1;
@@ -739,13 +739,16 @@ ul {
   background-color: var(--mud-palette-grey-light); }
   .mud-avatar.mud-avatar-small {
     width: 24px;
-    height: 24px; }
+    height: 24px;
+    font-size: .875rem; }
   .mud-avatar.mud-avatar-medium {
     width: 40px;
-    height: 40px; }
+    height: 40px;
+    font-size: 1.25rem; }
   .mud-avatar.mud-avatar-large {
     width: 56px;
-    height: 56px; }
+    height: 56px;
+    font-size: 1.75rem; }
 
 .mud-avatar-rounded {
   border-radius: var(--mud-default-borderradius); }
