@@ -4,7 +4,9 @@
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
     <CascadingValue IsFixed="true" Value="@this">
+        <CascadingValue Value="@RightToLeft">
             @ChildContent
+        </CascadingValue>
     </CascadingValue>
 </div>
 
@@ -32,11 +34,11 @@
         get => _rtl;
         set
         {
-            if (_rtl == value)
-                return;
-            _rtl = value;
-            SwapDrawerAnchors();
-            StateHasChanged();
+            if (_rtl != value)
+            {
+                _rtl = value;
+                StateHasChanged();
+            }
         }
     }
 
@@ -66,7 +68,6 @@
 
     public void FireDrawersChanged()
     {
-        //DrawersChanged?.Invoke();
         StateHasChanged();
     }
 
@@ -74,20 +75,4 @@
     {
         return _drawers.Any(d => d.Anchor == anchor);
     }
-
-    public void SwapDrawerAnchors()
-    {
-        foreach (var drawer in _drawers)
-        {
-            if(drawer.Anchor == Anchor.Left)
-            {
-                drawer.Anchor = Anchor.Right;
-            }
-            else if(drawer.Anchor == Anchor.Right)
-            {
-                drawer.Anchor = Anchor.Left;
-            }
-        }
-    }
-
 }
