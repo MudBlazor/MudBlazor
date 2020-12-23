@@ -42,7 +42,7 @@
   </Target>
 
   <Target Name="PreBuild" AfterTargets="ToolRestore">
-      <Exec Command="dotnet webcompiler -c compilerconfig.build.json -f compilerconfig.build.files.conf" StandardOutputImportance="high" />
+      <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -o ./wwwroot -z disable" StandardOutputImportance="high" />
   </Target>
 
   <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
