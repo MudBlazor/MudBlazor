@@ -46,7 +46,7 @@ namespace MudBlazor.Docs.Services
                 return true;
             if (entry.SubTitle != null && entry.SubTitle.ToLowerInvariant().Contains(s))
                 return true;
-            if (entry.ComponentName.ToLowerInvariant().Contains(s))
+            if (entry.ComponentType!=null && entry.ComponentName.ToLowerInvariant().Contains(s))
                 return true;
             if (entry.Link.ToLowerInvariant().Contains(s))
                 return true;
@@ -60,7 +60,7 @@ namespace MudBlazor.Docs.Services
         public string Title { get; set; }
         public string SubTitle { get; set; }
         public Type ComponentType { get; set; }
-        public string ComponentName=> ComponentType.Name.Replace("`1", "<T>");
+        public string ComponentName=> ComponentType?.Name.Replace("`1", "<T>");
         
         public override string ToString()
         {

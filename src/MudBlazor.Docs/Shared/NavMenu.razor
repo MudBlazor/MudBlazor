@@ -9,16 +9,17 @@
                  Icon="@Icons.Material.School"
                  Expanded="@(_section == "getting-started")"
                  ExpandIcon="@Icons.Material.ExpandMore" Style="margin-top: 40px;">
-        <MudNavLink Href="getting-started/installation">Installation</MudNavLink>
-        <MudNavLink Href="getting-started/usage">Usage</MudNavLink>
-        <MudNavLink Href="getting-started/wireframes">Wireframes</MudNavLink>
+        @foreach (var link in GettingStarted)
+        {
+            <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
+        }
     </MudNavGroup>
 
     <MudNavGroup Title="Components"
                  Icon="@Icons.Material.Dashboard"
                  Expanded="@(_section == "components")"
                  ExpandIcon="@Icons.Material.ExpandMore">
-        @foreach (var item in DocsComponents.ToList().OrderBy(i => i.Name))
+        @foreach (var item in Components.ToList().OrderBy(i => i.Name))
         {
             if (item.IsNavGroup)
             {
@@ -40,27 +41,22 @@
 
     <MudNavGroup Title="API"
                  Icon="@Icons.Material.Api"
-                  Expanded="@(_section == "api")" 
+                 Expanded="@(_section == "api")" 
                  ExpandIcon="@Icons.Material.ExpandMore">
-        @foreach (var item in DocsComponentsAPI.ToList().OrderBy(i => i.Name))
+        @foreach (var item in API.ToList().OrderBy(i => i.Name))
         {
             <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Component)">@item.Name</MudNavLink>
         }
     </MudNavGroup>
 
     <MudNavGroup Title="Features"
-                 Icon="@Icons.Material.DeveloperBoard" 
-                  Expanded="@(_section == "features")"
+                 Icon="@Icons.Material.DeveloperBoard"
+                 Expanded="@(_section == "features")"
                  ExpandIcon="@Icons.Material.ExpandMore">
-        <MudNavLink Href="features/breakpoints">Breakpoints</MudNavLink>
-        <MudNavLink Href="features/border-radius">Border Radius</MudNavLink>
-        <MudNavLink Href="features/colors">Colors</MudNavLink>
-        <MudNavLink Href="features/converters">Converters</MudNavLink>
-        <MudNavLink Href="features/display">Display</MudNavLink>
-        <MudNavLink Href="features/elevation">Elevation</MudNavLink>
-        <MudNavLink Href="features/flex">Flex</MudNavLink>
-        <MudNavLink Href="features/icons">Icons</MudNavLink>
-        <MudNavLink Href="features/spacing">Spacing</MudNavLink>
+        @foreach (var link in Features.OrderBy(x=>x.Title))
+        {
+            <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
+        }
     </MudNavGroup>
 
     <MudNavGroup Title="Customization"
@@ -69,11 +65,10 @@
                  ExpandIcon="@Icons.Material.ExpandMore">
         <MudNavLink Href="customization/default-theme">Default Theme</MudNavLink>
         <MudNavGroup Title="Theming" Expanded="true" ExpandIcon="@Icons.Material.ExpandMore">
-            <MudNavLink Href="customization/theming/overview">Overview</MudNavLink>
-            <MudNavLink Href="customization/theming/palette">Palette</MudNavLink>
-            @*<MudNavLink Href="customization/theming/layoutprops">Layout Properties</MudNavLink>
-                <MudNavLink Href="customization/theming/shadows">Shadows</MudNavLink>*@
-            <MudNavLink Href="customization/theming/z-index">z-index</MudNavLink>
+            @foreach (var link in Theming.OrderBy(x=>x.Title))
+            {
+                <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
+            }
         </MudNavGroup>
     </MudNavGroup>
 
@@ -90,8 +85,12 @@
     [Inject]
     protected IApiLinkService ApiLinkService { get; set; }
 
-    DocsComponents DocsComponents = new DocsComponents();
-    DocsComponents DocsComponentsAPI = new DocsComponents();
+    List<DocsLink> GettingStarted;
+    DocsComponents Components = new DocsComponents();
+    DocsComponents API = new DocsComponents();
+    List<DocsLink> Features = new List<DocsLink>();
+    List<DocsLink> Theming = new List<DocsLink>();
+    //List<DocsLink> About = new List<DocsLink>();
 
     //sections are "getting-started","components", "api", ...
     string _section;
@@ -102,13 +101,27 @@
         _section = NavMan.GetSection();
         _componentLink = NavMan.GetComponentLink();
 
-        AddDocsComponents();
-        AddDocsComponentsApi();
+        AddGettingStarted();
+        AddComponents();
+        AddApi();
+        AddFeatures();
+        AddCustomization();
     }
 
-    void AddDocsComponents()
+    private void AddGettingStarted()
     {
-        DocsComponents.AddItem("Container", typeof(MudContainer))
+        GettingStarted = new List<DocsLink>()
+        {
+            new DocsLink {Title = "Installation", Href = "getting-started/installation"},
+            new DocsLink {Title = "Usage", Href = "getting-started/usage"},
+            new DocsLink {Title = "Wireframes", Href = "getting-started/wireframes"},
+        };
+        Register(GettingStarted);
+    }
+
+    void AddComponents()
+    {
+        Components.AddItem("Container", typeof(MudContainer))
                                 .AddItem("Grid", typeof(MudGrid))
                                 .AddItem("Hidden", typeof(MudHidden))
                                 .AddNavGroup("Buttons", false, new DocsComponents()
@@ -169,24 +182,55 @@
 
     }
 
-    void AddDocsComponentsApi()
+    void AddApi()
     {
-        foreach (var item in DocsComponents.ToList())
+        foreach (var item in Components.ToList())
         {
             if (item.IsNavGroup)
             {
                 foreach (var groupItem in item.GroupItems.ToList())
                 {
-                    DocsComponentsAPI.AddItem(groupItem.Name, groupItem.Component);
+                    API.AddItem(groupItem.Name, groupItem.Component);
                     Register(groupItem);
                 }
             }
             else
             {
-                DocsComponentsAPI.AddItem(item.Name, item.Component);
+                API.AddItem(item.Name, item.Component);
                 Register(item);
             }
         }
+    }
+
+    private void AddFeatures()
+    {
+        Features = new List<DocsLink>()
+        {
+            new DocsLink {Title = "Breakpoints", Href = "features/breakpoints"},
+            new DocsLink {Title = "Border Radius", Href = "features/border-radius"},
+            new DocsLink {Title = "Colors", Href = "features/colors"},
+            new DocsLink {Title = "Converters", Href = "features/converters"},
+            new DocsLink {Title = "Display", Href = "features/display"},
+            new DocsLink {Title = "Elevation", Href = "features/elevation"},
+            new DocsLink {Title = "Flex", Href = "features/flex"},
+            new DocsLink {Title = "Icons", Href = "features/icons"},
+            new DocsLink {Title = "Spacing", Href = "features/spacing"},
+        };
+        Register(Features);
+    }
+
+    private void AddCustomization()
+    {
+        ApiLinkService.RegisterPage( title:"Default Theme", link:"customization/default-theme", subtitle:null, componentType:null);
+        Theming = new List<DocsLink>()
+        {
+            new DocsLink {Title = "Overview", Href = "customization/theming/overview"},
+            new DocsLink {Title = "Palette", Href = "customization/theming/palette"},
+            //new DocsLink {Title = "Layout Properties", Href = "customization/theming/layoutprops"},
+            //new DocsLink {Title = "Shadows", Href = "customization/theming/shadows"},
+            new DocsLink {Title = "z-index", Href = "customization/theming/z-index"},
+        };
+        Register(Theming);
     }
 
     private void Register(MudComponent item)
@@ -203,6 +247,19 @@
             componentType:item.Component,
             link: ApiLink.GetApiLinkFor(item.Component)
             );
+    }
+
+    private void Register(List<DocsLink> list)
+    {
+        foreach (var link in list)
+        {
+            ApiLinkService.RegisterPage(
+                title:link.Title,
+                subtitle:"",
+                componentType:null,
+                link: link.Href
+                );
+        }
     }
 
     bool IsSubGroupExpanded(MudComponent item)
