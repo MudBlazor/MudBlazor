@@ -9,7 +9,7 @@
 
 using System.Collections.Generic;
 
-namespace MudBlazor.Dialog
+namespace MudBlazor
 {
     public class DialogParameters
     {

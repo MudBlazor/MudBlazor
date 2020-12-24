@@ -18,14 +18,37 @@
                 <Title>Interactive example</Title>
                 <Description>Change the rendered html element in an interactive way</Description>
             </SectionHeader>
-            <SectionContent Outlined="true"  
-                            Style="height:150px; 
+            <SectionContent Outlined="true"
+                            Style="height:150px;
                                    display:flex;
                                    justify-content:flex-start;
                                    align-items:flex-end;">
                 <MudElementChangingExample />
             </SectionContent>
             <SectionSource Code="MudElementChangingExample" GitHubFolderName="Element" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Passing a ref</Title>
+                <Description>
+                    You can pass an ElementReference to the root element that MudElement is going to render
+                    <br />
+                    Just make sure that you bind this reference to the 
+                    <CodeInline>
+                        Ref 
+                    </CodeInline>
+                    property of the MudElement
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true"
+                            Style="height:150px;
+                                   display:flex;
+                                   justify-content:flex-start;
+                                   align-items:flex-end;">
+                <MudElementRefExample />
+            </SectionContent>
+            <SectionSource Code="MudElementRefExample" GitHubFolderName="Element" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

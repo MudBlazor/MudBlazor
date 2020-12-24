@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests
         public async Task FormValidationTest1()
         {
             using var ctx = new Bunit.TestContext();
-            var validationFunc = new Func<string, Task<bool>>(async x => x?.StartsWith("Marilyn") == true);
+            var validationFunc = new Func<string, bool>(x => x?.StartsWith("Marilyn") == true);
             var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;

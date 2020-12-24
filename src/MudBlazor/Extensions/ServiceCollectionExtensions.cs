@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using MudBlazor.Dialog;
 
 namespace MudBlazor
 {

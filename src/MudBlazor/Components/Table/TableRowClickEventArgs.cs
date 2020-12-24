@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace MudBlazor.Components.Table
+namespace MudBlazor
 {
     public class TableRowClickEventArgs<T> : EventArgs
     {

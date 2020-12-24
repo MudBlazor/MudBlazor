@@ -101,6 +101,16 @@
     &.try-mudblazor {
         background: transparent linear-gradient(90deg, #594AE2 0%, rgb(119,107,231) 100%) 0% 0% no-repeat padding-box;
     }
+
+    &.discord-gitter {
+        background-color: transparent;
+        box-shadow: none;
+        max-height: 50px;
+
+        &:hover {
+            background-color: transparent;
+        }
+    }
 }
 
 .mudblazor-app-text {

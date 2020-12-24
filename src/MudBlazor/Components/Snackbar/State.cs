@@ -56,7 +56,7 @@ namespace MudBlazor
         {
             get
             {
-                var forceCursor = Options.ShowCloseIcon ? "" : " force-cursor";
+                var forceCursor = Options.Onclick == null ? "" : " force-cursor";
                 return $"mud-snackbar {Options.SnackbarTypeClass}{forceCursor}";
             }
         }

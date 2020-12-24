@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Components.Select;
 
 namespace MudBlazor
 {
@@ -111,5 +110,4 @@ namespace MudBlazor
             catch (Exception) { }
         }
     }
-
 }

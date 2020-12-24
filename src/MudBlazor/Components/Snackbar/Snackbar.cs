@@ -28,10 +28,12 @@ namespace MudBlazor
         {
             if (!fromCloseIcon)
             {
-                // Execute the click action only if it's not from the close icon
-                State.Options.Onclick?.Invoke(this);
-                // If the close icon is show do not start the hiding transition
-                if (State.Options.ShowCloseIcon) return;
+                // Do not start the hiding transition if no click action
+                if (State.Options.Onclick == null)
+                    return;
+
+                // Click action is executed only if it's not from the close icon
+                State.Options.Onclick.Invoke(this);
             }
 
             State.UserHasInteracted = true;
