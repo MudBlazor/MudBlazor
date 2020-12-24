@@ -1,3 +1,4 @@
+@using MudBlazor.Docs.Services
 @inherits LayoutComponentBase
 @inject NavigationManager NavMan
 
@@ -9,6 +10,12 @@
     <MudAppBar Elevation="25">
         <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text">Mudblazor</MudText>
+        <MudAppBarSpacer />
+        <MudAutocomplete T="ApiLinkServiceEntry" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult">
+            <ItemTemplate Context="result">
+                <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
+            </ItemTemplate>
+        </MudAutocomplete>
         <MudAppBarSpacer />
         <MudTooltip Text="Toggle light/dark theme">
             <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
@@ -97,5 +104,23 @@
             DrawerIcon = "rgba(255,255,255, 0.50)"
         }
     };
+
+    [Inject]
+    protected IApiLinkService ApiLinkService { get; set; }
+
+    private Task<IEnumerable<ApiLinkServiceEntry>> Search(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(new ApiLinkServiceEntry[0]);
+        return ApiLinkService.Search(text);
+    }
+
+    [Inject] public NavigationManager NavigationManager { get; set; }
+
+    private void OnSearchResult(ApiLinkServiceEntry entry)
+    {
+        NavigationManager.NavigateTo(entry.Link);
+    }
+
 }
 

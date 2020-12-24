@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 
 namespace MudBlazor.Docs.Extensions
@@ -21,6 +22,7 @@ namespace MudBlazor.Docs.Extensions
                 config.ShowTransitionDuration = 500;
                 config.SnackbarVariant = Variant.Filled;
             });
+            services.AddSingleton<IApiLinkService, ApiLinkService>();
         }
     }
 }
