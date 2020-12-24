@@ -1,14 +1,45 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 
-<MudTabs Elevation="1">
-    <MudTabPanel Text="Item One">
+<MudTabs @ref="tabs" Elevation="1">
+    <MudTabPanel @ref="panel01" Text="Item One">
         <MudText>Item One</MudText>
     </MudTabPanel>
-    <MudTabPanel Text="Item Two">
+    <MudTabPanel @ref="panel02" Text="Item Two">
         <MudText>Item Two</MudText>
     </MudTabPanel>
-    <MudTabPanel Text="Item Three">
+    <MudTabPanel @ref="panel03" Text="Item Three">
         <MudText>Item Three</MudText>
     </MudTabPanel>
 </MudTabs>
+
+<MudText>Set Active by Index:</MudText>
+<MudButton Variant="@Variant.Filled" OnClick="() => Activate(0)">Index 0</MudButton>
+<MudButton Variant="@Variant.Filled" OnClick="() => Activate(1)">Index 1</MudButton>
+<MudButton Variant="@Variant.Filled" OnClick="() => Activate(2)">Index 2</MudButton>
+
+<MudText>Set Active by Instance:</MudText>
+<MudButton Variant="@Variant.Filled" OnClick="() => Activate(panel01)">Item One</MudButton>
+<MudButton Variant="@Variant.Filled" OnClick="() => Activate(panel02)">Item Two</MudButton>
+<MudButton Variant="@Variant.Filled" OnClick="() => Activate(panel03)">Item Three</MudButton>
+
+@code {
+
+    MudTabs tabs;
+    MudTabPanel panel01;
+    MudTabPanel panel02;
+    MudTabPanel panel03;
+
+
+    void Activate(int index)
+    {
+        tabs.ActivatePanel(index);
+    }
+
+    void Activate(MudTabPanel panel)
+    {
+        tabs.ActivatePanel(panel);
+    }
+
+
+ }
