@@ -117,8 +117,21 @@ namespace MudBlazor
             {
                 ActivePanel = panel;
                 ActivePanelIndex = Panels.IndexOf(panel);
-                ActivePanel.OnClick.InvokeAsync(ev);
+                if (ev != null) 
+                    ActivePanel.OnClick.InvokeAsync(ev);
             }
         }
+
+        public void ActivatePanel(MudTabPanel panel)
+        {
+            ActivatePanel(panel, null);
+        }
+
+        public void ActivatePanel(int index)
+        {
+            MudTabPanel panel = Panels[index];
+            ActivatePanel(panel, null);
+        }
+
     }
 }
