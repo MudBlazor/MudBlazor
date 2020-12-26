@@ -2,13 +2,13 @@
 
 
 <MudTabs @ref="tabs" Elevation="1">
-    <MudTabPanel @ref="panel01" Text="Item One">
+    <MudTabPanel @ref="panel01" Text="Item One" ID='"pn_one"'>
         <MudText>Item One</MudText>
     </MudTabPanel>
-    <MudTabPanel @ref="panel02" Text="Item Two">
+    <MudTabPanel @ref="panel02" Text="Item Two" ID='"pn_two"'>
         <MudText>Item Two</MudText>
     </MudTabPanel>
-    <MudTabPanel @ref="panel03" Text="Item Three">
+    <MudTabPanel @ref="panel03" Text="Item Three" ID='"pn_three"'>
         <MudText>Item Three</MudText>
     </MudTabPanel>
 </MudTabs>
@@ -18,14 +18,17 @@
 <MudButton Variant="@Variant.Filled" OnClick="() => Activate(1)">Index 1</MudButton>
 <MudButton Variant="@Variant.Filled" OnClick="() => Activate(2)">Index 2</MudButton>
 
-<MudText>Set Active by Instance:</MudText>
+<MudText>Set Active by Instance Reference:</MudText>
 <MudButton Variant="@Variant.Filled" OnClick="() => Activate(panel01)">Item One</MudButton>
 <MudButton Variant="@Variant.Filled" OnClick="() => Activate(panel02)">Item Two</MudButton>
 <MudButton Variant="@Variant.Filled" OnClick="() => Activate(panel03)">Item Three</MudButton>
 
-@code {
+<MudText>Set Active by TabPanel ID:</MudText>
+<MudButton Variant="@Variant.Filled" OnClick='() => Activate("pn_one")'>ID 'on_one'</MudButton>
+<MudButton Variant="@Variant.Filled" OnClick='() => Activate("pn_two")'>ID 'pn_two'</MudButton>
+<MudButton Variant="@Variant.Filled" OnClick='() => Activate("pn_three")'>ID 'pn_three'</MudButton>
 
-    MudTabs tabs;
+@code { MudTabs tabs;
     MudTabPanel panel01;
     MudTabPanel panel02;
     MudTabPanel panel03;
@@ -41,5 +44,9 @@
         tabs.ActivatePanel(panel);
     }
 
+    void Activate(object id)
+    {
+        tabs.ActivatePanel(id);
+    } 
 
- }
+    }
