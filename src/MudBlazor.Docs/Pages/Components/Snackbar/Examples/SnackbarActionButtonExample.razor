@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@Show">
+    Open Action Snackbar
+</MudButton>
+
+@code {
+
+    void Show()
+    {
+        Snackbar.Add("Ooops. Something really bad happened!", Severity.Normal, config =>
+        {
+            config.Action = "Help";
+            config.ActionColor = Color.Primary;
+            config.Onclick = snackbar =>
+            {
+                Help();
+                return Task.CompletedTask;
+            };
+        });
+    }
+
+    public void Help()
+    {
+        Snackbar.Add("Please check the reactor temperature and try again");
+    }
+}

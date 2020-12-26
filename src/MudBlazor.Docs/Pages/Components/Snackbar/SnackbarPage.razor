@@ -8,14 +8,14 @@
     <DocsPageContent>
         <DocsPageSection>
             <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
-            <MudText>The Snackbar is dependant on <CodeInline Class="docs-code-tertiary">ISnackbar</CodeInline> service and <CodeInline>MudSnackbarProvider</CodeInline></MudText>
+            <MudText>The Snackbar is dependant on <CodeInline Class="docs-code-tertiary">ISnackbar</CodeInline> service and <CodeInline>MudSnackbarProvider</CodeInline>.</MudText>
             <MudText>Check the <MudLink Href="/getting-started/installation">Installation</MudLink> page for instructions regarding default setup.</MudText>
         </DocsPageSection>
 
         <DocsPageSection>
             <SectionHeader>
                 <Title>Usage</Title>
-                <Description>This is the simplest way of using the <CodeInline>Snackbar</CodeInline> it provides the user with a temporary an closable <CodeInline>Snackbar</CodeInline></Description>
+                <Description>This is the simplest way of using the <CodeInline>Snackbar</CodeInline>. It provides the user with a temporary closable <CodeInline>Snackbar</CodeInline></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <SnackbarUsageExample />
@@ -27,8 +27,8 @@
             <SectionHeader>
                 <Title>Alerts and Severity</Title>
                 <Description>
-                    By defaulty no <CodeInline>Severity</CodeInline> property has to be passed and the snackbar uses the normal level.<br />
-                    To change the snackbar into an alert snackbar simply pass down the <CodeInline>Severity</CodeInline> enum after the message.
+                    By default no <CodeInline>Severity</CodeInline> property has to be passed and the snackbar uses the normal level.<br />
+                    To change the snackbar into an alert snackbar, simply pass down the <CodeInline>Severity</CodeInline> enum after the message.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -50,7 +50,7 @@
             <SectionHeader>
                 <SubTitle>2. Per Snackbar</SubTitle>
                 <Description>
-                    This can be done in many ways, below is one of them and we will contiune to use it use it further down on this page.<br />
+                    This can be done in many ways, below is one of them and we will continue to use it use it further down on this page.<br />
                     Below we pass along a modified configuration that differs from our globally set <CodeInline>ShowCloseIcon</CodeInline> in this case it's also the Snackbar's default value.
                 </Description>
             </SectionHeader>
@@ -84,11 +84,35 @@
 
         <DocsPageSection>
             <SectionHeader>
-                <Title>Require Interacation</Title>
+                <Title>Custom Action Handling</Title>
+            </SectionHeader>
+            <SectionHeader>
+                <Description>
+                    A snackbar becomes clickable when a handler is defined in the <CodeInline>OnClick</CodeInline> property of the <CodeInline>SnackbarOptions</CodeInline> object.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SnackbarOnClickExample />
+            </SectionContent>
+            <SectionSource Code="SnackbarOnClickExample" GitHubFolderName="Snackbar" ShowCode="true" />
+            <SectionHeader>
+                <Description>
+                    Alternatively, the <CodeInline>OnClick</CodeInline> handler can be attached to an action button by setting a label in the <CodeInline>Action</CodeInline> property.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SnackbarActionButtonExample />
+            </SectionContent>
+            <SectionSource Code="SnackbarActionButtonExample" GitHubFolderName="Snackbar" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Require Interaction</Title>
                 <Description>With the <CodeInline>RequireInteraction</CodeInline> property set to true the snackbar will not dissapear until the user interacts with it.</Description>
             </SectionHeader>
             <SectionContent FullWidth="true" Class="pa-0" Outlined="true">
-                <SnackbarRequireInteractionExample/>
+                <SnackbarRequireInteractionExample />
             </SectionContent>
             <SectionSource Code="SnackbarRequireInteractionExample" GitHubFolderName="Snackbar" ShowCode="false" />
         </DocsPageSection>
