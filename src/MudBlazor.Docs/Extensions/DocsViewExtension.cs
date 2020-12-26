@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+
+using MudBlazor.Docs.Models;
 using MudBlazor.Services;
 
 namespace MudBlazor.Docs.Extensions
@@ -21,6 +23,10 @@ namespace MudBlazor.Docs.Extensions
                 config.ShowTransitionDuration = 500;
                 config.SnackbarVariant = Variant.Filled;
             });
+
+            services.AddScoped<IDocsNavigationService,DocsNavigationService>();
+            services.AddScoped<IMenuService,MenuService>();
+            
         }
     }
 }
