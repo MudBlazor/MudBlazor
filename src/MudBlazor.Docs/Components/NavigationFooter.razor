@@ -3,25 +3,24 @@
     <MudContainer MaxWidth=@(Section==NavigationSection.Components?MaxWidth.Medium:MaxWidth.Large)>
         <MudDivider />
         <br />
-       
-
             @if (!string.IsNullOrWhiteSpace(Previous))
-            {
-        <MudButton Color="Color.Primary"
-                   StartIcon="@Filled.NavigateBefore"
-                   Link="@($"/{Section.ToDescriptionString()}/{Previous}")">
-            @Previous
-        </MudButton>}
+             {
+                <MudButton Color="Color.Primary"
+                           StartIcon="@Filled.NavigateBefore"
+                           Link="@($"/{Section.ToDescriptionString()}/{Previous}")">
+                    @Previous
+                </MudButton>
+             }
             @if (!string.IsNullOrWhiteSpace(Next))
-            {
-        <MudButton Color="Color.Primary"
-                   Style="float:right;"
-                   EndIcon="@Filled.NavigateNext"
-                   Disabled="@(string.IsNullOrWhiteSpace(Next))"
-                   Link="@($"/{Section.ToDescriptionString()}/{Next}")">
-            @Next
-        </MudButton>}
-       
+             {
+                <MudButton Color="Color.Primary"
+                           Style="float:right;"
+                           EndIcon="@Filled.NavigateNext"
+                           Disabled="@(string.IsNullOrWhiteSpace(Next))"
+                           Link="@($"/{Section.ToDescriptionString()}/{Next}")">
+                    @Next
+                </MudButton>
+             }       
     </MudContainer>
  }
 
@@ -29,7 +28,4 @@
     [Parameter] public NavigationSection? Section { get; set; }
     [Parameter] public string Previous { get; set; }
     [Parameter] public  string Next { get; set; }
-
-       
-
 }
