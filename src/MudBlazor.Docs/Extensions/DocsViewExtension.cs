@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-using MudBlazor.Docs.Models;
+using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 
 namespace MudBlazor.Docs.Extensions

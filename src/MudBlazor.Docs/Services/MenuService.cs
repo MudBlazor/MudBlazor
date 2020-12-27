@@ -1,5 +1,5 @@
-﻿
-namespace MudBlazor.Docs.Models
+﻿using MudBlazor.Docs.Models;
+namespace MudBlazor.Docs.Services
 {
     public interface IMenuService
     {
@@ -56,7 +56,7 @@ namespace MudBlazor.Docs.Models
             .AddItem("Overlay", typeof(MudOverlay))
             .AddItem("Highlighter", typeof(MudHighlighter))
             .AddItem("Element", typeof(MudElement))
-            .AddItem("FileUpload", typeof(MudButton))
+            .AddItem("FileUpload", typeof(MudFileUploader))
 
             //GROUPS
 

@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 
 using MudBlazor.Docs.Extensions;
-using MudBlazor.Extensions;
+using MudBlazor.Docs.Models;
 
-
-namespace MudBlazor.Docs.Models
+namespace MudBlazor.Docs.Services
 {
     public interface IDocsNavigationService
     {
-        string Next { get; }
-        string Previous { get; }
+        NavigationFooterLink Next { get; }
+        NavigationFooterLink Previous { get; }
         NavigationSection? Section { get; }
     }
+
 
     /// <summary>
     /// The aim of this class is to provide the next and previous links for navigation footer
@@ -31,14 +31,14 @@ namespace MudBlazor.Docs.Models
         /// <summary>
         /// Previous link in the menu
         /// </summary>
-        public string Previous=> GetNavigationLink( NavigationOrder.Previous);       
-       
+        public NavigationFooterLink Previous => GetNavigationLink(NavigationOrder.Previous);
+
         /// <summary>
         /// Next link in the menu
         /// </summary>
-        public string Next=>GetNavigationLink( NavigationOrder.Next );          
+        public NavigationFooterLink Next => GetNavigationLink(NavigationOrder.Next);
 
-        
+
         /// TODO add "get-started" and remaining sections
         /// <summary>
         /// The section of the menu: components or api
@@ -62,7 +62,7 @@ namespace MudBlazor.Docs.Models
         {
             _navigationManager = navigationManager;
             _menuService = menuService;
-           
+
 
         }
 
@@ -71,14 +71,14 @@ namespace MudBlazor.Docs.Models
         /// </summary>
         /// <param name="order">next or previous</param>
         /// <returns></returns>
-        private string GetNavigationLink( NavigationOrder order)
-        {          
-            List<string> orderedLinks =
+        private NavigationFooterLink GetNavigationLink(NavigationOrder order)
+        {
+            List<NavigationFooterLink> orderedLinks =
                 Section == NavigationSection.Api
-                    ? GetOrderedMenuLinks( NavigationSection.Api)
-                    : GetOrderedMenuLinks( NavigationSection.Components);         
+                    ? GetOrderedMenuLinks(NavigationSection.Api)
+                    : GetOrderedMenuLinks(NavigationSection.Components);
 
-            var index = orderedLinks.FindIndex(e => e == CurrentLink);
+            var index = orderedLinks.FindIndex(e => e.Link == CurrentLink);
             int increment =
                 order == NavigationOrder.Next
                     ? 1
@@ -86,9 +86,9 @@ namespace MudBlazor.Docs.Models
 
             var position = index + increment;
             //if out of index
-            if (position< 0 || position>= orderedLinks.Count)
+            if (position < 0 || position >= orderedLinks.Count)
             {
-                return string.Empty;
+                return null;
             }
 
             var navigationLink = orderedLinks.ElementAt(position);
@@ -101,14 +101,14 @@ namespace MudBlazor.Docs.Models
         /// </summary>
         /// <param name="section"> components or api </param>
         /// <returns></returns>
-        private List<string> GetOrderedMenuLinks( NavigationSection? section)
+        private List<NavigationFooterLink> GetOrderedMenuLinks(NavigationSection? section)
         {
-            var menuElements = 
+            var menuElements =
                 section==NavigationSection.Components
                     ? _menuService.DocsComponents.Elements
                     : _menuService.DocsComponentsApi.Elements;
 
-            var links = new List<string>();
+            var links = new List<NavigationFooterLink>();
             foreach (var menuElement in menuElements)
             {
                 if (menuElement.Link != null)
@@ -117,11 +117,16 @@ namespace MudBlazor.Docs.Models
                         section ==
                         NavigationSection.Api
                             ? ApiLink.GetApiLinkFor(menuElement.Component).Split("/").Last()
-                            : ApiLink.GetComponentLinkFor(menuElement.Component).Split("/").Last();
-                    links.Add(link);
+                            : menuElement.Link; 
+
+                    var name = menuElement.Name;
+
+                    links.Add(new NavigationFooterLink(name, link));
                 }
                 if (menuElement.GroupItems != null)
-                    links.AddRange(menuElement.GroupItems.Elements.Select(i => i.Link).OrderBy(i => i));
+                    links.AddRange(menuElement.GroupItems
+                        .Elements
+                        .Select(i => new NavigationFooterLink(i.Name, i.Link)).OrderBy(i => i.Link));
             };
             return links;
         }
