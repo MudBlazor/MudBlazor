@@ -1,6 +1,7 @@
 @using System.Linq
 @using MudBlazor.Docs.Extensions
 @inject NavigationManager NavMan
+@inject IJSRuntime Js
 <MudNavMenu Class="mudblazor-navmenu">
     <div class="docs-nav-fader"></div>
     
@@ -88,7 +89,7 @@
 @code {
     DocsComponents DocsComponents = new DocsComponents();
     DocsComponents DocsComponentsAPI = new DocsComponents();
-    
+
     //sections are "getting-started","components", "api", ...
     string _section;
     //component links are the part of the url that tells us what component is featured
@@ -196,5 +197,10 @@
         //this route `/components/autocomplete` should open the subgroup "form inputs..."
         #endregion
         return item.GroupItems.ToList().Any(i => i.Link ==_componentLink);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await Js.InvokeVoidAsync("mudBlazorDocs.scrollToActiveNavLink");
     }
 }
