@@ -122,7 +122,7 @@ namespace MudBlazor.UnitTests
             comp.Instance.Date.Should().BeNull();
             // clicking a day button to select a date and close
             comp.FindAll("button.mud-day")[8].Click(); // take a day from the middle section (at the beginning buttons may be disabled)
-            await Task.Delay(comp.Instance.ClosingDelay + 10); // Check 10ms after closing
+            await Task.Delay(comp.Instance.ClosingDelay + 50); // Check 10ms after closing
             // should not be open any more
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
             comp.Instance.Date.Should().NotBeNull();

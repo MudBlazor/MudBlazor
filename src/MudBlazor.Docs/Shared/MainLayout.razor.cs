@@ -17,8 +17,12 @@ namespace MudBlazor.Docs.Shared
         NavMenu _navMenuRef;
 
         [Inject] IDocsNavigationService DocsService { get; set; }
+
         [Inject]  NavigationManager NavigationManager { get; set; }
-        
+
+        [Inject]
+        protected IApiLinkService ApiLinkService { get; set; }
+
         void DrawerToggle()
         {
             _drawerOpen = !_drawerOpen;
@@ -51,6 +55,20 @@ namespace MudBlazor.Docs.Shared
             //refresh nav menu because no parameters change in nav menu
             //but internal data does
             _navMenuRef.Refresh();
+        }
+
+        
+
+        private Task<IEnumerable<ApiLinkServiceEntry>> Search(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(new ApiLinkServiceEntry[0]);
+            return ApiLinkService.Search(text);
+        }
+
+        private void OnSearchResult(ApiLinkServiceEntry entry)
+        {
+            NavigationManager.NavigateTo(entry.Link);
         }
 
         #region Theme        

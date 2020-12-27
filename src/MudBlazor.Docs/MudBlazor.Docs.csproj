@@ -1,44 +1,28 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<!--https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-reference -->
+<!--Use: dotnet msbuild -preprocess:<fileName>.xml to evaluate this project-->
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
+  <!--Make sure this projects build targets run before other referenced projects-->
   <PropertyGroup>
     <BuildDependsOn>
       CompileDocs;
       $(BuildDependsOn)
     </BuildDependsOn>
   </PropertyGroup>
-    
+
+  <!--Outside Visual Studio SolutionDir is not available-->  
   <PropertyGroup>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)..\</SolutionDir>
   </PropertyGroup>
 
-  <Choose>
-    <When Condition="Exists('$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/netcoreapp3.1/MudBlazor.Docs.Compiler.dll')">
-      <PropertyGroup>
-        <RunCommand>dotnet "$(SolutionDir)MudBlazor.Docs.Compiler//bin/Debug/netcoreapp3.1/MudBlazor.Docs.Compiler.dll"</RunCommand>
-      </PropertyGroup>
-    </When>
-    <When Condition="Exists('$(SolutionDir)MudBlazor.Docs.Compiler/bin/Debug/net5.0/MudBlazor.Docs.Compiler.dll')">
-      <PropertyGroup>
-        <RunCommand>dotnet "$(SolutionDir)MudBlazor.Docs.Compiler//bin/Debug/net5.0/MudBlazor.Docs.Compiler.dll"</RunCommand>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <RunCommand>dotnet run --configuration release --project "$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj"</RunCommand>
-      </PropertyGroup>     
-    </Otherwise>
-  </Choose>
+  <PropertyGroup>
+    <RunCommand>dotnet run --configuration release --project "$(SolutionDir)MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj"</RunCommand>
+  </PropertyGroup>   
 
-  <Target Name="CompileDocs" BeforeTargets="BeforeBuild;BeforeRebuild" DependsOnTargets="IncludeGeneratedFiles">
+  <!--Execute the code generator-->
+  <Target Name="CompileDocs" BeforeTargets="BeforeBuild;BeforeRebuild">
     <Message Text="Generating Docs and Tests using $(RunCommand)" Importance="high" />
     <Exec Command="$(RunCommand)" />
-  </Target>
-
-  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild;BeforeRebuild">
-    <ItemGroup>
-      <Compile Include="Models\Snippets.generated.cs" Condition="!Exists('Models\Snippets.generated.cs')" />
-      <Compile Include="Models\DocStrings.generated.cs" Condition="!Exists('Models\DocStrings.generated.cs')" />
-    </ItemGroup>
   </Target>
 
   <PropertyGroup>
@@ -55,10 +39,29 @@
     <DefineConstants>TRACE;LIVESHARP_DISABLE</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Data\Elements.json" />
-  </ItemGroup>
+  <!--This file contains any ExampleCode that is new and needs including in the build -->
+  <Target Name="ReadFromFile" DependsOnTargets="CompileDocs">
+    <ItemGroup>
+      <NewFiles Include="NewFilesToBuild.txt" />
+    </ItemGroup>
+    <ReadLinesFromFile File="@(NewFiles)">
+      <Output TaskParameter="Lines" ItemName="NewExampleCodeToBuild" />
+    </ReadLinesFromFile>
+  </Target>
 
+  <!--Because we have a dynamic content .cs and .razor files comming from the code generator we need to add them -->  
+  <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild;BeforeRebuild" DependsOnTargets="CompileDocs;ReadFromFile">
+    <Message Text="Found '@(NewExampleCodeToBuild-&gt;Count())' new ExampleCode files" Importance="high" />
+    <ItemGroup>
+      <Compile Include="Models/Snippets.generated.cs" Condition="!Exists('Models/Snippets.generated.cs')" />
+      <Compile Include="Models/DocStrings.generated.cs" Condition="!Exists('Models/DocStrings.generated.cs')" />
+      <RazorComponent Include="@(NewExampleCodeToBuild)" Condition="@(NewExampleCodeToBuild-&gt;Count()) != 0" />
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data/Elements.json" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BlazorInputFile" Version="0.2.0" />
@@ -69,19 +72,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
+    <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\Components\Overlay\Code\" />
-  </ItemGroup>
-  
-  <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
-    <ItemGroup>
-      <FileWatch Include="**\*.razor;" Exclude="node_modules\**\*;obj\**\*;bin\**\*" />
-      <Watch Include="%(FileWatch.FullPath)" />
-    </ItemGroup>
-  </Target>
-
-  
 </Project>

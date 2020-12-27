@@ -1,3 +1,4 @@
+@using MudBlazor.Docs.Services
 @inherits LayoutComponentBase
 
 
@@ -9,6 +10,12 @@
     <MudAppBar Elevation="25">
         <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text">Mudblazor</MudText>
+        <MudAppBarSpacer />
+        <MudAutocomplete T="ApiLinkServiceEntry" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult">
+            <ItemTemplate Context="result">
+                <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
+            </ItemTemplate>
+        </MudAutocomplete>
         <MudAppBarSpacer />
         <MudTooltip Text="Toggle light/dark theme">
             <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
