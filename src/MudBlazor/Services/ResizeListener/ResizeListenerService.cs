@@ -130,6 +130,8 @@ namespace MudBlazor.Services
 
         public async Task<bool> IsMediaSize(Breakpoint breakpoint)
         {
+            if (breakpoint == Breakpoint.None)
+                return false;
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
             if (_onResized == null || _windowSize == null)
                 _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
