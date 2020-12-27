@@ -2,7 +2,7 @@
 
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
-using MudBlazor.Extensions;
+using MudBlazor.Docs.Services;
 
 namespace MudBlazor.Docs.Shared
 {
@@ -11,8 +11,8 @@ namespace MudBlazor.Docs.Shared
 
         bool _drawerOpen = false;
         bool _rightToLeft = false;
-        string _previous;
-        string _next;
+        NavigationFooterLink _previous;
+        NavigationFooterLink _next;
         NavigationSection? _section =null;
         NavMenu _navMenuRef;
 
