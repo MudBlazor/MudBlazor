@@ -45,19 +45,19 @@ namespace MudBlazor
             Title = title;
             StateHasChanged();
         }
-        public async Task Close()
+        public void Close()
         {
-            await Close(DialogResult.Ok<object>(null));
+            Close(DialogResult.Ok<object>(null));
         }
 
-        public async Task Close(DialogResult dialogResult)
+        public void Close(DialogResult dialogResult)
         {
-            await Parent.DismissInstance(Id, dialogResult);
+            _ = Parent.DismissInstance(Id, dialogResult);
         }
 
-        public async Task Cancel()
+        public void Cancel()
         {
-            await Close(DialogResult.Cancel());
+            Close(DialogResult.Cancel());
         }
 
         private void ConfigureInstance()
@@ -159,11 +159,11 @@ namespace MudBlazor
             return false;
         }
 
-        private async Task HandleBackgroundClick()
+        private void HandleBackgroundClick()
         {
             if (DisableBackdropClick) return;
 
-            await Cancel();
+            Cancel();
         }
 
     }
