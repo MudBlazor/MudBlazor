@@ -6,17 +6,6 @@
 
 - .NET Core 3.1
 - Visual Studio 2019 with the ASP.NET and Web development.
-- Web Compiler (Visual Studio Extension)
-
-
-## Generating the Documentation
-
-To update the generated parts of the documentation set the project 
-MudBlazor.Docs.Compiler as the active project and run it. It generates the following:
-
-- Markup for the documentation examples
-- The doc strings for the API pages
-- An automatic bUnit test case from every example
 
 ## Unit Testing and Continuous Integration
 
@@ -31,14 +20,8 @@ sure you run the entire test suite to see if anything broke.
 
 ### Make your code break-safe
 
-When you are writing complex logic, please add a unit test for it. Here are some
-examples for things that already have unit tests:
-
-- Conversion functions between different data formats (i.e. Date and Time formatsm, etc.)
-- Bindable two-way properties of components
-- State machines inside of components
-
-Basically everything you fear could break if other developers touch it. 
+When you are writing non-trivial logic, please add a unit test for it. Basically, think of it like this: By adding 
+a test for everything you fear could break you make sure your work is not undone by accident by future additions. 
 
 ### How to write a unit test?
 
