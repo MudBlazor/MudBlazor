@@ -44,7 +44,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string CloseIcon { get; set; } = Icons.Material.ArrowDropDown;
 
-        internal event Action<HashSet<T>> SelectionChangedFromOutside;
+        //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
         /// <summary>
         /// Sets the maxheight the select can have when open.
@@ -127,7 +127,7 @@ namespace MudBlazor
             _timer?.Dispose();
             IsOpen = false;
             UpdateIcon();
-            ValidateValue(Value);
+            _ = ValidateValue(Value);
             StateHasChanged();
         }
 
