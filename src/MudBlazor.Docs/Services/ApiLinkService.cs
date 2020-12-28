@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MudBlazor.Docs.Models;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +18,19 @@ namespace MudBlazor.Docs.Services
     public class ApiLinkService : IApiLinkService
     {
         private Dictionary<string, ApiLinkServiceEntry> _lookup = new Dictionary<string, ApiLinkServiceEntry>();
-        
+
+        //constructor with DI
+        public ApiLinkService(IMenuService menuService)
+        {
+
+            Register(menuService.Api);//this also registers components
+            Register(menuService.GettingStarted);
+            Register(menuService.Customization);
+            Register(menuService.Features);
+            Register(menuService.About);
+
+        }
+
         public void RegisterPage(string title, string subtitle, Type componentType, string link)
         {
             var entry = new ApiLinkServiceEntry { Title = title, SubTitle=subtitle, ComponentType = componentType, Link = link };
@@ -51,6 +65,45 @@ namespace MudBlazor.Docs.Services
             if (entry.Link.ToLowerInvariant().Contains(s))
                 return true;
             return false;
+        }
+
+
+        
+        private void Register(IEnumerable<MudComponent> items)
+        {
+            foreach (var item in items)
+            {
+                //components
+                RegisterPage(
+                title: item.Name,
+                subtitle: $"{item.ComponentName} usage examples",
+                componentType: item.Component,
+                link: $"components/{item.Link}"
+                );
+
+                //api
+                RegisterPage(
+                    title: item.ComponentName,
+                    subtitle: $"API documentation",
+                    componentType: item.Component,
+                    link: ApiLink.GetApiLinkFor(item.Component)
+                    );
+            }
+
+
+        }
+
+        private void Register(IEnumerable<DocsLink> list)
+        {
+            foreach (var link in list)
+            {
+                RegisterPage(
+                    title: link.Title,
+                    subtitle: "",
+                    componentType: null,
+                    link: link.Href
+                    );
+            }
         }
     }
 
