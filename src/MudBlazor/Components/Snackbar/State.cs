@@ -2,6 +2,7 @@
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
 using System;
+using static System.String;
 
 namespace MudBlazor
 {
@@ -20,6 +21,8 @@ namespace MudBlazor
             SnackbarState = SnackbarState.Init;
         }
         private string Opacity => ((decimal)Options.MaximumOpacity / 100).ToPercentage();
+
+        public bool ShowActionButton => !IsNullOrWhiteSpace(Options.Action);
         public bool ShowCloseIcon => Options.ShowCloseIcon;
 
         public string ProgressBarStyle
@@ -36,18 +39,22 @@ namespace MudBlazor
             get
             {
                 const string template = "opacity: {0}; animation: {1}ms linear {2};";
+
                 switch (SnackbarState)
                 {
                     case SnackbarState.Showing:
                         var showingDuration = RemainingTransitionMilliseconds(Options.ShowTransitionDuration);
-                        return string.Format(template, Opacity, showingDuration, AnimationId);
+                        return Format(template, Opacity, showingDuration, AnimationId);
+
                     case SnackbarState.Hiding:
                         var hidingDuration = RemainingTransitionMilliseconds(Options.HideTransitionDuration);
-                        return string.Format(template, 0, hidingDuration, AnimationId);
+                        return Format(template, 0, hidingDuration, AnimationId);
+
                     case SnackbarState.Visible:
                         return $"opacity: {Opacity};";
+
                     default:
-                        return string.Empty;
+                        return Empty;
                 }
             }
         }
@@ -56,8 +63,12 @@ namespace MudBlazor
         {
             get
             {
-                var forceCursor = Options.Onclick == null ? "" : " force-cursor";
-                return $"mud-snackbar {Options.SnackbarTypeClass}{forceCursor}";
+                var result = $"mud-snackbar {Options.SnackbarTypeClass}";
+
+                if (Options.Onclick != null && !ShowActionButton)
+                    result += " force-cursor";
+
+                return result;
             }
         }
 
@@ -70,13 +81,16 @@ namespace MudBlazor
                 switch (SnackbarState)
                 {
                     case SnackbarState.Showing:
-                        return string.Format(template, "opacity", "0%", Opacity);
+                        return Format(template, "opacity", "0%", Opacity);
+
                     case SnackbarState.Hiding:
-                        return string.Format(template, "opacity", Opacity, "0%");
+                        return Format(template, "opacity", Opacity, "0%");
+
                     case SnackbarState.Visible:
-                        return string.Format(template, "width", "100%", "0%");
+                        return Format(template, "width", "100%", "0%");
+
                     default:
-                        return string.Empty;
+                        return Empty;
                 }
             }
         }

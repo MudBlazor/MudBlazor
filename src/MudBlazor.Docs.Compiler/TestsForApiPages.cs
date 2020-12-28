@@ -34,6 +34,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("using MudBlazor.Docs.Components;");
                 cb.AddLine("using Bunit.Rendering;");
                 cb.AddLine("using System;");
+                cb.AddLine("using System.Net.Http;");
                 cb.AddLine("using Toolbelt.Blazor.HeadElement;");
                 cb.AddLine("using MudBlazor.UnitTests;");
                 cb.AddLine("using MudBlazor.Charts;");
@@ -64,6 +65,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());");
                 cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
                 cb.AddLine("ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());");
+                cb.AddLine("ctx.Services.AddScoped(sp => new HttpClient());");
                 cb.IndentLevel--;
                 cb.AddLine("}");
                 cb.AddLine();
