@@ -11,7 +11,7 @@
                  Icon="@Icons.Material.School"
                  Expanded="@(_section == "getting-started")"
                  ExpandIcon="@Icons.Material.ExpandMore" Style="margin-top: 40px;">
-        @foreach (var link in GettingStarted)
+        @foreach (var link in MenuService.GettingStarted)
         {
             <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
         }
@@ -22,7 +22,7 @@
                  Icon="@Icons.Material.Dashboard"
                  Expanded="@(_section == "components")"
                  ExpandIcon="@Icons.Material.ExpandMore">
-        @foreach (var item in Components.ToList().OrderBy(i => i.Name))
+        @foreach (var item in MenuService.Components)
         {
             if (item.IsNavGroup)
             {
@@ -47,244 +47,46 @@
                  Icon="@Icons.Material.Api"
                  Expanded="@(_section == "api")" 
                  ExpandIcon="@Icons.Material.ExpandMore">
-        @foreach (var item in API.ToList().OrderBy(i => i.Name))
+        @foreach (var item in MenuService.Api)
         {
             <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Component)">@item.Name</MudNavLink>
         }
     </MudNavGroup>
-
+    
+    @*FEATURES*@
     <MudNavGroup Title="Features"
                  Icon="@Icons.Material.DeveloperBoard"
                  Expanded="@(_section == "features")"
                  ExpandIcon="@Icons.Material.ExpandMore">
-        @foreach (var link in Features.OrderBy(x=>x.Title))
+        @foreach (var link in MenuService.Features)
         {
             <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
         }
     </MudNavGroup>
 
+    @*CUSTOMIZATION*@
     <MudNavGroup Title="Customization"
                  Icon="@Icons.Material.Handyman"
                  Expanded="@(_section == "customization")"
                  ExpandIcon="@Icons.Material.ExpandMore">
         <MudNavLink Href="customization/default-theme">Default Theme</MudNavLink>
         <MudNavGroup Title="Theming" Expanded="true" ExpandIcon="@Icons.Material.ExpandMore">
-            @foreach (var link in Theming.OrderBy(x=>x.Title))
+            @foreach (var link in MenuService.Customization)
             {
                 <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
             }
         </MudNavGroup>
     </MudNavGroup>
 
-    <MudNavGroup Title="About" Icon="@Icons.Custom.MudBlazor" Expanded="false" ExpandIcon="@Icons.Material.ExpandMore">
-        <MudNavLink Href="project/credit">Credits</MudNavLink>
-        <MudNavLink Href="project/about">How it started</MudNavLink>
-        <MudNavLink Href="project/team">Team & Contributors</MudNavLink>
-        <MudNavLink Href="versions">Versions</MudNavLink>
+    @*ABOUT*@
+    <MudNavGroup Title="About" Icon="@Icons.Custom.MudBlazor" Expanded="@(_section=="project")" ExpandIcon="@Icons.Material.ExpandMore">
+       @foreach (var link in MenuService.About)
+       {
+            <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
+       }
+       
     </MudNavGroup>
 </MudNavMenu>
 <div class="docs-nav-filler"></div>
 
-@code {
-    [Inject]
-    protected IApiLinkService ApiLinkService { get; set; }
 
-    List<DocsLink> GettingStarted;
-    DocsComponents Components = new DocsComponents();
-    DocsComponents API = new DocsComponents();
-    List<DocsLink> Features = new List<DocsLink>();
-    List<DocsLink> Theming = new List<DocsLink>();
-    //List<DocsLink> About = new List<DocsLink>();
-
-    //sections are "getting-started","components", "api", ...
-    string _section;
-
-    //component links are the part of the url that tells us what component is featured
-    string _componentLink;
-
-    protected override void OnInitialized()
-    {
-        
-
-        AddGettingStarted();
-        
-        AddFeatures();
-        AddCustomization();
-    }
-
-    public void Refresh()
-    {
-        _section = NavMan.GetSection();
-        _componentLink = NavMan.GetComponentLink();
-        StateHasChanged();
-    }
-
-    private void AddGettingStarted()
-    {
-        GettingStarted = new List<DocsLink>()
-        {
-            new DocsLink {Title = "Installation", Href = "getting-started/installation"},
-            new DocsLink {Title = "Usage", Href = "getting-started/usage"},
-            new DocsLink {Title = "Wireframes", Href = "getting-started/wireframes"},
-        };
-        Register(GettingStarted);
-    }
-
-    void AddComponents()
-    {
-        Components.AddItem("Container", typeof(MudContainer))
-                                .AddItem("Grid", typeof(MudGrid))
-                                .AddItem("Hidden", typeof(MudHidden))
-                                .AddNavGroup("Buttons", false, new DocsComponents()
-                                    .AddItem("Button", typeof(MudButton))
-                                    .AddItem("IconButton", typeof(MudIconButton))
-                                    .AddItem("ToggleIconButton", typeof(MudToggleIconButton))
-                                    .AddItem("Button FAB", typeof(MudFab)))
-                                .AddNavGroup("Charts", false, new DocsComponents()
-                                    .AddItem("Donut chart", typeof(MudComponent))
-                                    .AddItem("Line chart", typeof(MudComponent))
-                                    .AddItem("Pie chart", typeof(MudComponent)))
-                                .AddItem("Checkbox", typeof(MudCheckBox<T>))
-                                .AddItem("Chips", typeof(MudChip))
-                                .AddItem("ChipSet", typeof(MudChipSet))
-                                .AddItem("Badge", typeof(MudBadge))
-                                .AddNavGroup("Form Inputs & controls", true, new DocsComponents()
-                                    .AddItem("Radio", typeof(MudRadio))
-                                    .AddItem("Select", typeof(MudSelect<T>))
-                                    .AddItem("Slider", typeof(MudSlider<T>))
-                                    .AddItem("Switch", typeof(MudSwitch<T>))
-                                    .AddItem("Text Field", typeof(MudTextField<T>))
-                                    .AddItem("Form", typeof(MudForm))
-                                    .AddItem("Autocomplete", typeof(MudAutocomplete<T>))
-                                    .AddItem("Field", typeof(MudField))
-                                )
-                                .AddItem("AppBar", typeof(MudAppBar))
-                                .AddItem("Drawer", typeof(MudDrawer))
-                                .AddItem("Link", typeof(MudLink))
-                                .AddItem("Menu", typeof(MudMenu))
-                                .AddItem("Nav Menu", typeof(MudNavMenu))
-                                .AddItem("Tabs", typeof(MudTabs))
-                                .AddNavGroup("Pickers", false, new DocsComponents()
-                                    .AddItem("Date Picker", typeof(MudDatePicker))
-                                    .AddItem("Time Picker", typeof(MudTimePicker))
-                                )
-                                .AddItem("Progress", typeof(MudProgressCircular))
-                                .AddItem("Dialog", typeof(MudDialog))
-                                .AddItem("Snackbar", typeof(MudSnackbarProvider))
-                                .AddItem("Avatar", typeof(MudAvatar))
-                                .AddItem("Alert", typeof(MudAlert))
-                                .AddItem("Card", typeof(MudCard))
-                                .AddItem("Divider", typeof(MudDivider))
-                                .AddItem("Expansion Panel", typeof(MudExpansionPanel))
-                                .AddItem("Icons", typeof(MudIcon))
-                                .AddItem("List", typeof(MudList))
-                                .AddItem("Paper", typeof(MudPaper))
-                                .AddItem("Rating", typeof(MudRating))
-                                .AddItem("Skeleton", typeof(MudSkeleton))
-                                .AddItem("Table", typeof(MudTable<T>))
-                                .AddItem("Simple Table", typeof(MudSimpleTable))
-                                .AddItem("Tooltip", typeof(MudTooltip))
-                                .AddItem("Typography", typeof(MudText))
-                                .AddItem("Overlay", typeof(MudOverlay))
-                                .AddItem("Highlighter", typeof(MudHighlighter))
-                                .AddItem("Element", typeof(MudElement))
-                                .AddItem("FileUpload", typeof(MudElement));
-
-
-    }
-
-    void AddApi()
-    {
-        foreach (var item in Components.ToList())
-        {
-            if (item.IsNavGroup)
-            {
-                foreach (var groupItem in item.GroupItems.ToList())
-                {
-                    API.AddItem(groupItem.Name, groupItem.Component);
-                    Register(groupItem);
-                }
-            }
-            else
-            {
-                API.AddItem(item.Name, item.Component);
-                Register(item);
-            }
-        }
-    }
-
-    private void AddFeatures()
-    {
-        Features = new List<DocsLink>()
-        {
-            new DocsLink {Title = "Breakpoints", Href = "features/breakpoints"},
-            new DocsLink {Title = "Border Radius", Href = "features/border-radius"},
-            new DocsLink {Title = "Colors", Href = "features/colors"},
-            new DocsLink {Title = "Converters", Href = "features/converters"},
-            new DocsLink {Title = "Display", Href = "features/display"},
-            new DocsLink {Title = "Elevation", Href = "features/elevation"},
-            new DocsLink {Title = "Flex", Href = "features/flex"},
-            new DocsLink {Title = "Icons", Href = "features/icons"},
-            new DocsLink {Title = "Spacing", Href = "features/spacing"},
-        };
-        Register(Features);
-    }
-
-    private void AddCustomization()
-    {
-        ApiLinkService.RegisterPage( title:"Default Theme", link:"customization/default-theme", subtitle:null, componentType:null);
-        Theming = new List<DocsLink>()
-        {
-            new DocsLink {Title = "Overview", Href = "customization/theming/overview"},
-            new DocsLink {Title = "Palette", Href = "customization/theming/palette"},
-            //new DocsLink {Title = "Layout Properties", Href = "customization/theming/layoutprops"},
-            //new DocsLink {Title = "Shadows", Href = "customization/theming/shadows"},
-            new DocsLink {Title = "z-index", Href = "customization/theming/z-index"},
-        };
-        Register(Theming);
-    }
-
-    private void Register(MudComponent item)
-    {
-        ApiLinkService.RegisterPage(
-            title:item.Name,
-            subtitle:$"{item.ComponentName} usage examples",
-            componentType:item.Component,
-            link:$"components/{item.Link}"
-            );
-        ApiLinkService.RegisterPage(
-            title:item.ComponentName,
-            subtitle:$"API documentation",
-            componentType:item.Component,
-            link: ApiLink.GetApiLinkFor(item.Component)
-            );
-    }
-
-    private void Register(List<DocsLink> list)
-    {
-        foreach (var link in list)
-        {
-            ApiLinkService.RegisterPage(
-                title:link.Title,
-                subtitle:"",
-                componentType:null,
-                link: link.Href
-                );
-        }
-    }
-
-    bool IsSubGroupExpanded(MudComponent item)
-    {
-        #region comment about is subgroup expanded
-        //if the route contains any of the links of the subgroup, then the subgroup
-        //should be expanded
-        //Example:
-        //subgroup: form inputs & controls
-        //the subgroup "form inputs & controls" should be open if the current page has in the route
-        //a component included in the subgroup elements, that in this case are autocomplete, form, field,
-        //radio, select...
-        //this route `/components/autocomplete` should open the subgroup "form inputs..."
-        #endregion
-        return item.GroupItems.Elements.Any(i => i.Link ==_componentLink);
-    }
-}
