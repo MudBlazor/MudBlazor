@@ -67,7 +67,7 @@ namespace MudBlazor.Docs.Services
         }
 
         /// <summary>
-        /// Get the link (next or previous) for a given url and a given section
+        /// Gets the link (next or previous) for a given url and a given section
         /// </summary>
         /// <param name="order">next or previous</param>
         /// <returns></returns>
@@ -105,8 +105,8 @@ namespace MudBlazor.Docs.Services
         {
             var menuElements =
                 section==NavigationSection.Components
-                    ? _menuService.DocsComponents.Elements
-                    : _menuService.DocsComponentsApi.Elements;
+                    ? _menuService.Components
+                    : _menuService.Api;
 
             var links = new List<NavigationFooterLink>();
             foreach (var menuElement in menuElements)
