@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable 1998
+
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
