@@ -40,11 +40,19 @@ namespace MudBlazor
             ConfigureInstance();
         }
 
+        public void SetOptions(DialogOptions options)
+        {
+            Options = options;
+            ConfigureInstance();
+            StateHasChanged();
+        }
+
         public void SetTitle(string title)
         {
             Title = title;
             StateHasChanged();
         }
+
         public async Task Close()
         {
             await Close(DialogResult.Ok<object>(null));
@@ -165,6 +173,5 @@ namespace MudBlazor
 
             await Cancel();
         }
-
     }
 }
