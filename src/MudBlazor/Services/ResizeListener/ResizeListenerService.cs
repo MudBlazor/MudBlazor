@@ -46,7 +46,7 @@ namespace MudBlazor.Services
             _onResized -= value;
             if (_onResized == null)
             {
-                Cancel().RunSynchronously();
+                Cancel().ConfigureAwait(false);
             }
         }
 
@@ -54,15 +54,15 @@ namespace MudBlazor.Services
         {
             if (_onResized == null)
             {
-                Start().RunSynchronously();
+                Task.Run(async () => await Start());
             }
             _onResized += value;
         }
 
-        private async Task<bool> Start() =>
+        private async ValueTask<bool> Start() =>
             await _jsRuntime.InvokeAsync<bool>($"resizeListener.listenForResize", DotNetObjectReference.Create(this), _options);
 
-        private async Task Cancel()
+        private async ValueTask Cancel()
         {
             try
             {
@@ -194,11 +194,11 @@ namespace MudBlazor.Services
         }
 
         bool disposed;
-        protected async virtual void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!disposed)
             {
-                await Cancel();
+                Cancel();
                 if (disposing)
                 {
                     _onResized = null;
