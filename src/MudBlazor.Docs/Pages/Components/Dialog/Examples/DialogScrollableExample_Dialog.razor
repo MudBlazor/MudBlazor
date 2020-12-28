@@ -24,20 +24,22 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
+    [Inject] HttpClient HttpClient { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        Loading = true;
-        var bytes = await new WebClient().DownloadDataTaskAsync(new Uri("https://raw.githubusercontent.com/Garderoben/MudBlazor/master/LICENSE"));
-        LicenseText = Encoding.UTF8.GetString(bytes);
-        Loading = false;
         await base.OnInitializedAsync();
+        Loading = true;
+        var response = await HttpClient.GetAsync("https://raw.githubusercontent.com/Garderoben/MudBlazor/master/LICENSE");
+        LicenseText = await response.Content.ReadAsStringAsync();
+        Loading = false;
     }
 
     private string LicenseText;
     private bool Loading = false;
 
-    private void Ok()
+    private Task Ok()
     {
-        MudDialog.Close(DialogResult.Ok(true));
+        return MudDialog.Close(DialogResult.Ok(true));
     }
 }
