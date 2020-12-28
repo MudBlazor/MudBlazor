@@ -17,7 +17,7 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    Task Close() => MudDialog.Close(DialogResult.Ok(true));
+    void Close() => MudDialog.Close(DialogResult.Ok(true));
 
     void ChangeTitle()
     {
