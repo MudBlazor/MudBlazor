@@ -1,11 +1,5 @@
-﻿// Copyright (c) 2020 Jonny Larsson
-// License: MIT
-// See https://github.com/Garderoben/MudBlazor
-// Modified version of Blazored Modal
 // Copyright (c) 2019 Blazored
-// License: MIT
-// See https://github.com/Blazored
-
+// Copyright (c) 2020 Adapted by Jonny Larsson, Meinrad Recheis and Contributors
 
 using System;
 using System.Threading.Tasks;
@@ -52,20 +46,20 @@ namespace MudBlazor
             Title = title;
             StateHasChanged();
         }
-
-        public async Task Close()
+      
+        public void Close()
         {
-            await Close(DialogResult.Ok<object>(null));
+            Close(DialogResult.Ok<object>(null));
         }
 
-        public async Task Close(DialogResult dialogResult)
+        public void Close(DialogResult dialogResult)
         {
-            await Parent.DismissInstance(Id, dialogResult);
+            _ = Parent.DismissInstance(Id, dialogResult);
         }
 
-        public async Task Cancel()
+        public void Cancel()
         {
-            await Close(DialogResult.Cancel());
+            Close(DialogResult.Cancel());
         }
 
         private void ConfigureInstance()
@@ -167,11 +161,11 @@ namespace MudBlazor
             return false;
         }
 
-        private async Task HandleBackgroundClick()
+        private void HandleBackgroundClick()
         {
             if (DisableBackdropClick) return;
 
-            await Cancel();
+            Cancel();
         }
     }
 }
