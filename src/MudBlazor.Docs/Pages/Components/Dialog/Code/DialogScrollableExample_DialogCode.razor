@@ -41,9 +41,9 @@
     <span class="keyword">private</span> <span class="keyword">string</span> LicenseText;
     <span class="keyword">private</span> <span class="keyword">bool</span> Loading = <span class="keyword">false</span>;
 
-    <span class="keyword">private</span> Task Ok()
+    <span class="keyword">private</span> <span class="keyword">void</span> Ok()
     {
-        <span class="keyword">return</span> MudDialog.Close(DialogResult.Ok(<span class="keyword">true</span>));
+        MudDialog.Close(DialogResult.Ok(<span class="keyword">true</span>));
     }
 }
 </pre></div>

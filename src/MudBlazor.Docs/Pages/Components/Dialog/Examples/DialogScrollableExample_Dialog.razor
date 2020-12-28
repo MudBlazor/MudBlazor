@@ -38,8 +38,8 @@
     private string LicenseText;
     private bool Loading = false;
 
-    private Task Ok()
+    private void Ok()
     {
-        return MudDialog.Close(DialogResult.Ok(true));
+        MudDialog.Close(DialogResult.Ok(true));
     }
 }
