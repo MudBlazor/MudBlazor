@@ -8,6 +8,7 @@
         Xs, Sm, Md, Lg, Xl,
         SmAndDown, MdAndDown, LgAndDown,
         SmAndUp, MdAndUp, LgAndUp,
-        None
+        None,
+        Always
     }
 }
