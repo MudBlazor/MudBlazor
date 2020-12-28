@@ -11,6 +11,12 @@ namespace MudBlazor
     {
         public Func<Snackbar, Task> Onclick { get; set; }
 
+        public string Action { get; set; }
+
+        public Variant? ActionVariant { get; set; }
+
+        public Color ActionColor { get; set; } = Color.Default;
+
         public Severity Severity { get; }
 
         public string SnackbarTypeClass { get; set; }
