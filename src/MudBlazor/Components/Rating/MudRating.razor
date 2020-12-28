@@ -6,7 +6,9 @@
     <CascadingValue Value="this" >
         @for (int i = 1; i <= MaxValue; i++)
         {
-            <MudRatingItem Class="@RatingItemsClass" Style="@RatingItemsStyle" ItemValue="@i" DisableRipple="DisableRipple" Disabled="Disabled" Color="Color" Size="Size" ItemClicked="HandleItemClicked" ItemHovered="HandleItemHovered"/>
+            <MudRatingItem Class="@RatingItemsClass" Style="@RatingItemsStyle" ItemValue="@i"
+                           DisableRipple="DisableRipple" Disabled="Disabled" ReadOnly="ReadOnly" Color="Color"
+                           Size="Size" ItemClicked="HandleItemClicked" ItemHovered="HandleItemHovered"/>
         }
     </CascadingValue>
 </span>

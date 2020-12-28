@@ -22,6 +22,7 @@ namespace MudBlazor
           .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
           .AddClass($"mud-rating-item-active", IsActive)
           .AddClass($"mud-disabled", Disabled)
+          .AddClass($"mud-readonly", ReadOnly)
           .AddClass(Class)
         .Build();
 
@@ -59,6 +60,11 @@ namespace MudBlazor
         /// If true, the controls will be disabled.
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
+        /// If true, the item will be readonly.
+        /// </summary>
+        [Parameter] public bool ReadOnly { get; set; }
 
         /// <summary>
         /// Fires when element clicked.
