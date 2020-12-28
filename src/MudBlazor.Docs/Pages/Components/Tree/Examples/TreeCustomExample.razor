@@ -42,7 +42,7 @@
         if (treeItem.TreeItems.Count > 0)
         {
             return
-                @<MudTreeItem @bind-IsSelected="treeItem.IsSelected">
+                @<MudTreeItem @bind-Selected="treeItem.IsSelected">
                     <Content>
                         @CustomTreeContent(treeItem)
                     </Content>                
@@ -58,7 +58,7 @@
         else
         {
             return
-                @<MudTreeItem @bind-IsSelected="treeItem.IsSelected">
+                @<MudTreeItem @bind-Selected="treeItem.IsSelected">
                     <Content>
                         @CustomTreeContent(treeItem)
                     </Content>
