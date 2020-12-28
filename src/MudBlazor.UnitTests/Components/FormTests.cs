@@ -4,7 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Bunit;
 using Bunit.Rendering;
-using Bunit.TestDoubles.JSInterop;
+using Bunit.TestDoubles;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -26,7 +26,6 @@ namespace MudBlazor.UnitTests
         public void Setup()
         {
             ctx = new Bunit.TestContext();
-            ctx.Services.AddMockJSRuntime();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
             ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
