@@ -24,7 +24,8 @@ namespace MudBlazor.Docs.Compiler
 
                 cb.AddHeader();
 
-                cb.AddLine("using Bunit.TestDoubles.JSInterop;");
+                cb.AddLine("using Bunit;");
+                cb.AddLine("using Bunit.TestDoubles;");
                 cb.AddLine("using Microsoft.AspNetCore.Components;");
                 cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
                 cb.AddLine("using NUnit.Framework;");
@@ -49,7 +50,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("{");
                 cb.IndentLevel++;
                 cb.AddLine("ctx = new Bunit.TestContext();");
-                cb.AddLine("ctx.Services.AddMockJSRuntime();");
+                cb.AddLine("ctx.JSInterop.Mode = JSRuntimeMode.Loose;");
                 cb.AddLine("ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());");
                 cb.AddLine("ctx.Services.AddSingleton<IDialogService>(new DialogService());");
                 cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());");
