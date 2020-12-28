@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿#pragma warning disable 1998
+
+using FluentAssertions;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests

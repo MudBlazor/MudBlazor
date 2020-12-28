@@ -1,4 +1,6 @@
-﻿using Bunit;
+﻿#pragma warning disable 1998
+
+using Bunit;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests

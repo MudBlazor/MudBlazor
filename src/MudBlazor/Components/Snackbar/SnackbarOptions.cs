@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
+using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
@@ -10,24 +11,26 @@ namespace MudBlazor
     {
         public Func<Snackbar, Task> Onclick { get; set; }
 
+        public string Action { get; set; }
+
+        public Variant? ActionVariant { get; set; }
+
+        public Color ActionColor { get; set; } = Color.Default;
+
         public Severity Severity { get; }
 
         public string SnackbarTypeClass { get; set; }
 
-        public SnackbarOptions(Severity severity, SnackbarConfiguration configuration)
+        public SnackbarOptions(Severity severity, CommonSnackbarOptions options) : base(options)
         {
             Severity = severity;
-            SnackbarTypeClass = configuration.SnackbarTypeClass(severity, configuration.SnackbarVariant, configuration.BackgroundBlurred);
 
-            MaximumOpacity = configuration.MaximumOpacity;
+            SnackbarTypeClass = $"mud-alert-{SnackbarVariant.ToDescriptionString()}-{severity.ToDescriptionString()}";
 
-            ShowTransitionDuration = configuration.ShowTransitionDuration;
-
-            VisibleStateDuration = configuration.VisibleStateDuration;
-
-            HideTransitionDuration = configuration.HideTransitionDuration;
-
-            RequireInteraction = configuration.RequireInteraction;
+            if (SnackbarVariant != Variant.Filled)
+            {
+                SnackbarTypeClass += BackgroundBlurred ? " mud-snackbar-blurred" : " mud-snackbar-surface";
+            }
         }
     }
 }

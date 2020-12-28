@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable 1998
+
+using System;
 using Bunit;
 using Bunit.Rendering;
 using FluentAssertions;

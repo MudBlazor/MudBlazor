@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable 1998
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -127,12 +129,12 @@ namespace MudBlazor.UnitTests
             select.Instance.Text.Should().Be(default(MyEnum).ToString());
             await Task.Delay(50);
             comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("First");
-            comp.RenderCount.Should().Be(2);
+            comp.RenderCount.Should().Be(1);
             //Console.WriteLine(comp.Markup);
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("Second");
-            comp.RenderCount.Should().Be(3);
+            comp.RenderCount.Should().Be(2);
         }
 
         /// <summary>
@@ -202,14 +204,14 @@ namespace MudBlazor.UnitTests
             select.Instance.Value.Should().Be(1);
             select.Instance.Text.Should().Be("1");
             comp.FindAll("div.mud-input-slot").Count.Should().Be(0);
-            comp.RenderCount.Should().Be(2);
+            comp.RenderCount.Should().Be(1);
             //Console.WriteLine(comp.Markup);
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
             comp.FindAll("div.mud-input-slot").Count.Should().Be(0);
             select.Instance.Value.Should().Be(2);
             select.Instance.Text.Should().Be("2");
-            comp.RenderCount.Should().Be(3);
+            comp.RenderCount.Should().Be(2);
         }
     }
 }

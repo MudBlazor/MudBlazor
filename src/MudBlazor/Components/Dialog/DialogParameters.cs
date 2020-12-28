@@ -1,17 +1,12 @@
-﻿// Copyright (c) 2020 Jonny Larsson
-// License: MIT
-// See https://github.com/Garderoben/MudBlazor
-// Modified version of Blazored Modal
-// Copyright (c) 2019 Blazored
-// License: MIT
-// See https://github.com/Blazored
+﻿// Copyright (c) 2019 - Blazored
+// Copyright (c) 2020 - Adaptations by Jonny Larsson and Meinrad Recheis
 
-
+using System.Collections;
 using System.Collections.Generic;
 
 namespace MudBlazor
 {
-    public class DialogParameters
+    public class DialogParameters : IEnumerable
     {
         internal Dictionary<string, object> _parameters;
 
@@ -43,6 +38,17 @@ namespace MudBlazor
             }
 
             return default;
+        }
+
+        public object this[string parameterName]
+        {
+            get => Get<object>(parameterName);
+            set => _parameters[parameterName] = value;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _parameters.GetEnumerator();
         }
     }
 }

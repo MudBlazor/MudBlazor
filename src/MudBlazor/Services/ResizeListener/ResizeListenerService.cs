@@ -46,7 +46,7 @@ namespace MudBlazor.Services
             _onResized -= value;
             if (_onResized == null)
             {
-                Cancel().ConfigureAwait(false);
+                Cancel().RunSynchronously();
             }
         }
 
@@ -54,15 +54,15 @@ namespace MudBlazor.Services
         {
             if (_onResized == null)
             {
-                Task.Run(async () => await Start());
+                Start().RunSynchronously();
             }
             _onResized += value;
         }
 
-        private async ValueTask<bool> Start() =>
+        private async Task<bool> Start() =>
             await _jsRuntime.InvokeAsync<bool>($"resizeListener.listenForResize", DotNetObjectReference.Create(this), _options);
 
-        private async ValueTask Cancel()
+        private async Task Cancel()
         {
             try
             {
@@ -130,6 +130,8 @@ namespace MudBlazor.Services
 
         public async Task<bool> IsMediaSize(Breakpoint breakpoint)
         {
+            if (breakpoint == Breakpoint.None)
+                return false;
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
             if (_onResized == null || _windowSize == null)
                 _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
@@ -192,11 +194,11 @@ namespace MudBlazor.Services
         }
 
         bool disposed;
-        protected virtual void Dispose(bool disposing)
+        protected async virtual void Dispose(bool disposing)
         {
             if (!disposed)
             {
-                Cancel();
+                await Cancel();
                 if (disposing)
                 {
                     _onResized = null;
