@@ -5,7 +5,7 @@ using System.Linq;
 using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
-
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests
 {
@@ -14,7 +14,8 @@ namespace MudBlazor.UnitTests
     public class RatingTests
     {
         [Test]
-        public void RatingTest1() {
+        public void RatingTest1()
+        {
             // click should change selected value
             // setup
             using var ctx = new Bunit.TestContext();
@@ -165,5 +166,13 @@ namespace MudBlazor.UnitTests
         }
 
 
+        [Test]
+        public void ReadOnlyRating_ShouldNotRenderInputs()
+        {
+            using var ctx = new Bunit.TestContext();
+            var comp = ctx.RenderComponent<MudRating>(Parameter("ReadOnly", true));
+
+            comp.FindAll("input").Should().BeEmpty();
+        }
     }
 }
