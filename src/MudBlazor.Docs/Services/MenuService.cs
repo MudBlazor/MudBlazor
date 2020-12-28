@@ -1,28 +1,36 @@
 ﻿using MudBlazor.Docs.Models;
+
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace MudBlazor.Docs.Services
 {
     public interface IMenuService
     {
-        DocsComponents DocsComponents { get; }
-        DocsComponents DocsComponentsApi { get; }
+        //Menu sections
+        IEnumerable<DocsLink> GettingStarted { get; }
+        IEnumerable<MudComponent> Components { get; }
+        IEnumerable<MudComponent> Api { get; }
+        IEnumerable<DocsLink> Features{ get; }
+        IEnumerable<DocsLink> Customization { get; }
+        IEnumerable<DocsLink> About { get; }
+
+
+
     }
-        
+
     /// <summary>
     /// The aim of this class is to add new items to NavMenu
     /// </summary>
     public class MenuService : IMenuService
     {
-        private DocsComponents _docsComponents;
-
-        //cached property
-        //`??=` means If _docsComponents is null, assign it. The next time gets cached value
-
         /// <summary>
         /// Here is where the links for the Components Menu in NavMenu are added
         /// Add here the new menu elements without caring about the order.
         /// They will be reordered automatically
         /// </summary>
-        public DocsComponents DocsComponents => _docsComponents ??= new DocsComponents()
+        private readonly DocsComponents DocsComponents = new DocsComponents()
             //Individual elements
             .AddItem("Container", typeof(MudContainer))
             .AddItem("Grid", typeof(MudGrid))
@@ -93,14 +101,14 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Line chart", typeof(MudChart))
                 .AddItem("Pie chart", typeof(MudChart))
             );
+        public IEnumerable<MudComponent> Components => DocsComponents.Elements;
 
         private DocsComponents _docsComponentsApi;
-
         //cached property
         /// <summary>
         /// This autogenerates the Menu for the API
         /// </summary>
-        public DocsComponents DocsComponentsApi
+        private DocsComponents DocsComponentsApi
         {
             get
             {
@@ -108,7 +116,7 @@ namespace MudBlazor.Docs.Services
                 if (_docsComponentsApi != null) return _docsComponentsApi;
 
                 _docsComponentsApi = new DocsComponents();
-                foreach (var item in DocsComponents.Elements)
+                foreach (var item in Components)
                 {
                     if (item.IsNavGroup)
                     {
@@ -126,5 +134,62 @@ namespace MudBlazor.Docs.Services
                 return _docsComponentsApi;
             }
         }
+        public IEnumerable<MudComponent> Api => DocsComponentsApi.Elements;
+
+        //cached property
+        private IEnumerable <DocsLink> _gettingStarted;
+        /// <summary>
+        /// Getting started menu links
+        /// </summary>
+        public IEnumerable<DocsLink> GettingStarted=>_gettingStarted ??= new List<DocsLink>
+            {
+                new DocsLink {Title = "Installation", Href = "getting-started/installation"},
+                new DocsLink {Title = "Usage", Href = "getting-started/usage"},
+                new DocsLink {Title = "Wireframes", Href = "getting-started/wireframes"},
+            }.OrderBy(x => x.Title);
+
+
+        private IEnumerable<DocsLink> _features;
+        /// <summary>
+        /// Features menu links
+        /// </summary>
+        public IEnumerable<DocsLink> Features => _features ??= new List<DocsLink>
+            {
+                new DocsLink {Title = "Breakpoints", Href = "features/breakpoints"},
+                new DocsLink {Title = "Border Radius", Href = "features/border-radius"},
+                new DocsLink {Title = "Colors", Href = "features/colors"},
+                new DocsLink {Title = "Converters", Href = "features/converters"},
+                new DocsLink {Title = "Display", Href = "features/display"},
+                new DocsLink {Title = "Elevation", Href = "features/elevation"},
+                new DocsLink {Title = "Flex", Href = "features/flex"},
+                new DocsLink {Title = "Icons", Href = "features/icons"},
+                new DocsLink {Title = "Spacing", Href = "features/spacing"},
+            }.OrderBy(x => x.Title);
+
+
+        private IEnumerable<DocsLink> _customization;        
+        /// <summary>
+        /// Customization menu links
+        /// </summary>
+        public IEnumerable<DocsLink> Customization=>_customization ??= new List<DocsLink>()
+        {
+            //new DocsLink{Title="Default theme", Href="customization/default-theme"},
+            new DocsLink {Title = "Overview", Href = "customization/theming/overview"},
+            new DocsLink {Title = "Palette", Href = "customization/theming/palette"},
+            new DocsLink {Title = "z-index", Href = "customization/theming/z-index"},
+        }.OrderBy(x => x.Title);
+
+
+        private IEnumerable<DocsLink> _about;
+        /// <summary>
+        /// About menu links
+        /// </summary>
+        public IEnumerable<DocsLink> About => _about ??= new List<DocsLink>
+        {
+            new DocsLink{ Title="Credits" , Href="project/credit" },
+            new DocsLink{Href="project/about", Title="How it started" },
+            new DocsLink{Href="project/team", Title="Team & Contributors" },
+            new DocsLink{Href="versions", Title="Versions" },
+        }.OrderBy(x => x.Title);
     }
 }
