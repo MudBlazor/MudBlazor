@@ -10,10 +10,11 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
 
 namespace MudBlazor
 {
-    public partial class MudDialogProvider
+    public partial class MudDialogProvider : IDisposable
     {
         [Inject] private IDialogService DialogService { get; set; }
         [Inject] private NavigationManager NavigationManager { get; set; }
@@ -32,7 +33,7 @@ namespace MudBlazor
         {
             ((DialogService)DialogService).OnDialogInstanceAdded += AddInstance;
             ((DialogService)DialogService).OnDialogCloseRequested += DismissInstance;
-            NavigationManager.LocationChanged += (s, e) => DismissAll();
+            NavigationManager.LocationChanged += LocationChanged;
 
             GlobalDialogOptions.DisableBackdropClick = DisableBackdropClick;
             GlobalDialogOptions.CloseButton = CloseButton;
@@ -72,6 +73,17 @@ namespace MudBlazor
         private DialogReference GetDialogReference(Guid Id)
         {
             return Dialogs.SingleOrDefault(x => x.Id == Id);
+        }
+
+        private void LocationChanged(object sender, LocationChangedEventArgs args)
+        {
+            DismissAll();
+        }
+
+        public void Dispose()
+        {
+            if (NavigationManager != null)
+                NavigationManager.LocationChanged -= LocationChanged;
         }
     }
 }
