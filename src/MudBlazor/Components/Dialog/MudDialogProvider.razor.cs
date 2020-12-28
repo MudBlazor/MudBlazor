@@ -6,13 +6,10 @@
 // License: MIT
 // See https://github.com/Blazored
 
-
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Routing;
 
 namespace MudBlazor
 {
@@ -27,16 +24,15 @@ namespace MudBlazor
         [Parameter] public bool? FullWidth { get; set; }
         [Parameter] public DialogPosition? Position { get; set; }
         [Parameter] public MaxWidth? MaxWidth { get; set; }
-        
 
         private readonly Collection<DialogReference> Dialogs = new Collection<DialogReference>();
         private readonly DialogOptions GlobalDialogOptions = new DialogOptions();
 
         protected override void OnInitialized()
         {
-            ((DialogService)DialogService).OnDialogInstanceAdded += Update;
-            ((DialogService)DialogService).OnDialogCloseRequested += CloseInstance;
-            NavigationManager.LocationChanged += CancelDialogs;
+            ((DialogService)DialogService).OnDialogInstanceAdded += AddInstance;
+            ((DialogService)DialogService).OnDialogCloseRequested += DismissInstance;
+            NavigationManager.LocationChanged += (s, e) => DismissAll();
 
             GlobalDialogOptions.DisableBackdropClick = DisableBackdropClick;
             GlobalDialogOptions.CloseButton = CloseButton;
@@ -46,54 +42,31 @@ namespace MudBlazor
             GlobalDialogOptions.MaxWidth = MaxWidth;
         }
 
-        internal async void CloseInstance(DialogReference dialog, DialogResult result)
-        {
-            await DismissInstance(dialog, result);
-        }
-
-        internal void CloseInstance(Guid Id)
+        internal void DismissInstance(Guid Id, DialogResult result)
         {
             var reference = GetDialogReference(Id);
-            CloseInstance(reference, DialogResult.Ok<object>(null));
+            if (reference != null)
+                DismissInstance(reference, result);
         }
 
-        internal void CancelInstance(Guid Id)
+        private void AddInstance(DialogReference dialog)
         {
-            var reference = GetDialogReference(Id);
-            CloseInstance(reference, DialogResult.Cancel());
+            Dialogs.Add(dialog);
+            StateHasChanged();
         }
 
-        internal Task DismissInstance(Guid Id, DialogResult result)
+        private void DismissAll()
         {
-            var reference = GetDialogReference(Id);
-            return DismissInstance(reference, result);
-        }
-
-        internal async Task DismissInstance(DialogReference dialog, DialogResult result)
-        {
-            if (dialog != null)
-            {
-                dialog.Dismiss(result);
-                Dialogs.Remove(dialog);
-                await InvokeAsync(StateHasChanged);
-            }
-        }
-
-        private async void CancelDialogs(object sender, LocationChangedEventArgs e)
-        {
-            foreach (var DialogReference in Dialogs.ToList())
-            {
-                DialogReference.Dismiss(DialogResult.Cancel());
-            }
-
+            Dialogs.ToList().ForEach(r => r.Dismiss(DialogResult.Cancel()));
             Dialogs.Clear();
-            await InvokeAsync(StateHasChanged);
+            StateHasChanged();
         }
 
-        private async void Update(DialogReference DialogReference)
+        private void DismissInstance(DialogReference dialog, DialogResult result)
         {
-            Dialogs.Add(DialogReference);
-            await InvokeAsync(StateHasChanged);
+            dialog.Dismiss(result);
+            Dialogs.Remove(dialog);
+            StateHasChanged();
         }
 
         private DialogReference GetDialogReference(Guid Id)

@@ -54,7 +54,7 @@ namespace MudBlazor
 
         public void Close(DialogResult dialogResult)
         {
-            _ = Parent.DismissInstance(Id, dialogResult);
+            Parent.DismissInstance(Id, dialogResult);
         }
 
         public void Cancel()
