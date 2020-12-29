@@ -38,6 +38,11 @@ namespace MudBlazor
         [Parameter] public bool Disabled { get; set; }
 
         /// <summary>
+        /// If true, the picker will be readonly.
+        /// </summary>
+        [Parameter] public bool ReadOnly { get; set; } = true;
+
+        /// <summary>
         /// Hide toolbar and show only date/time views.
         /// </summary>
         [Parameter] public bool DisableToolbar { get; set; }

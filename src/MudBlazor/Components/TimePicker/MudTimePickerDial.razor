@@ -1,0 +1,31 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities;
+
+<div class="@Classname">
+    @ChildContent
+</div>
+
+@code {
+
+    /// <summary>
+    /// If true, activate the panel, otherwise hide it. Setting this prop enables control over the panel.
+    /// </summary>
+    [Parameter] public bool Active { get; set; }
+
+    /// <summary>
+    /// User class names, separated by space
+    /// </summary>
+    [Parameter] public string Class { get; set; }
+
+    /// <summary>
+    /// Child content of component.
+    /// </summary>
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    protected string Classname =>
+        new CssBuilder("mud-time-picker-dial")
+          .AddClass($"mud-time-picker-dial-out", !Active)
+          .AddClass($"mud-time-picker-dial-hidden", !Active)
+          .AddClass(Class)
+        .Build();
+}
