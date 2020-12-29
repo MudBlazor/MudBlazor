@@ -55,7 +55,7 @@ Do not save html elements you query via `Find` or `FindAll` in a variable!
    // wrong - this will fail:
    var textField = comp.Find("input");
    textField.Change("Garfield");
-   textField("input").Blur();
+   textField.Blur();
    comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
 ```
 
