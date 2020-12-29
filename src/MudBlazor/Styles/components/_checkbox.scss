@@ -42,7 +42,7 @@
     .mud-checkbox-#{$color} {
         color: var(--mud-palette-#{$color});
 
-        &:hover:before {
+        &:hover {
             background-color: var(--mud-palette-#{$color}-hover);
         }
     }
