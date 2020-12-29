@@ -2,6 +2,6 @@
 
 <MudTimePicker Label="12 hours" AmPm="true" />
 <MudTimePicker Label="24 hours" @bind-Time="time" />
-<MudTimePicker Label="24 hours (not readonly)" ReadOnly="false" />
+<MudTimePicker Label="24 hours (editable)" Editable="true" />
 
 @code{ TimeSpan? time = new TimeSpan(00, 45, 00); }
