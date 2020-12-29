@@ -46,6 +46,29 @@ In the Test make sure to instantiate the razor file you just prepared above.
  see how state changes affect the HTML or the class attributes. Then write 
  assertions that enforce those changes i.e. by checking that a certain html exists 
  or a certain class is contained or not contained in the class attributes of an element. 
+ 
+### What are common errors when writing tests?
+
+Do not save html elements you query via `Find` or `FindAll` in a variable!
+
+```c#
+   // wrong
+   var textFields = comp.FindAll("input");
+   textFields.Count.Should().Be(4); // three textfields, one checkbox
+   textFields[0].Change("Garfield");
+   textFields[0]("input")[0].Blur();
+   comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
+```
+
+As soon as you interact with html elements they are potentially re-rendered and your variable becomes stale.
+
+```c#
+   // correct   
+   comp.FindAll("input").Count.Should().Be(4); // three textfields, one checkbox
+   comp.FindAll("input")[0].Change("Garfield");
+   comp.FindAll("input")[0]("input")[0].Blur();
+   comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
+```
 
 ### What does not need to be tested?
 
