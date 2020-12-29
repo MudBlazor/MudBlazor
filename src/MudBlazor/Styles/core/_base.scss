@@ -6,7 +6,7 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-html, svg {
+ svg {
     height: 100%;
 }
 
@@ -15,7 +15,6 @@ strong, b {
 }
 
 body {
-    height: 100%;
     color: var(--mud-palette-text-primary);
     font-size: 0.875rem;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;
