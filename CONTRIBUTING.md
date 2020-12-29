@@ -52,11 +52,10 @@ In the Test make sure to instantiate the razor file you just prepared above.
 Do not save html elements you query via `Find` or `FindAll` in a variable!
 
 ```c#
-   // wrong
-   var textFields = comp.FindAll("input");
-   textFields.Count.Should().Be(4); // three textfields, one checkbox
-   textFields[0].Change("Garfield");
-   textFields[0]("input")[0].Blur();
+   // wrong - this will fail:
+   var textField = comp.Find("input");
+   textField.Change("Garfield");
+   textField("input").Blur();
    comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
 ```
 
@@ -64,11 +63,12 @@ As soon as you interact with html elements they are potentially re-rendered and 
 
 ```c#
    // correct   
-   comp.FindAll("input").Count.Should().Be(4); // three textfields, one checkbox
-   comp.FindAll("input")[0].Change("Garfield");
-   comp.FindAll("input")[0]("input")[0].Blur();
+   comp.Find("input").Change("Garfield");
+   comp.Find("input").Blur();
    comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
 ```
+
+So never save html element references in a variable in a bUnit test.
 
 ### What does not need to be tested?
 
