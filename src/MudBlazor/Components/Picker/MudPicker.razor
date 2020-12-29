@@ -5,8 +5,8 @@
 <div class="@PickerClass">
     @if (PickerVariant != PickerVariant.Static)
     {
-        <MudTextField Label="@Label" @bind-Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@ReadOnly" 
-                      @onclick="@(() => { if (ReadOnly) ToggleOpen(); })" OnAdornmentClick="ToggleOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
+        <MudTextField Label="@Label" @bind-Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" 
+                      @onclick="@(() => { if (!Editable) ToggleOpen(); })" OnAdornmentClick="ToggleOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
     }
     <CascadingValue Value="@this" IsFixed="true">
         @if (isOpen && PickerVariant != PickerVariant.Dialog)
