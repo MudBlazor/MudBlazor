@@ -252,3 +252,28 @@
         }
     }
 }
+
+.mud-time-picker-dial {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transition: transform 350ms,opacity 350ms;
+}
+
+.mud-time-picker-dial-out {
+    opacity: 0;
+}
+
+.mud-time-picker-hour.mud-time-picker-dial-out {
+    transform: scale(1.2,1.2);
+    transform-origin: center;
+}
+
+.mud-time-picker-minute.mud-time-picker-dial-out {
+    transform: scale(.8,.8);
+    transform-origin: center;
+}
+
+.mud-time-picker-dial-hidden {
+    visibility: hidden;
+}

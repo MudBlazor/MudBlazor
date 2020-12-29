@@ -1,0 +1,36 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using FluentValidation
+
+<div style="max-width: 400px;">
+    <MudCard>
+        <MudCardContent>
+            <MudForm>
+                <MudTextField @bind-Value="creditCardNr"
+                              Validation="@validationFunc"
+                              Immediate="true"
+                              Label="Credit card nr" />
+            </MudForm>
+        </MudCardContent>
+    </MudCard>
+</div>
+
+@code { 
+    // this is a valid test Visa card number
+    string creditCardNr = "4012 8888 8888 1881";
+
+    // This is a FluentValidation validator which we'll use to validate above MudTextfield
+    public class CreditCardValidator : AbstractValidator<string>
+    {
+        public CreditCardValidator() => RuleFor(x => x).CreditCard();
+    }
+
+    // Create a MudBlazor-esque validation func based on the fluent validator.
+    Func<string, IEnumerable<string>> validationFunc = new Func<string, IEnumerable<string>>(input =>
+    {
+        var validator = new CreditCardValidator();
+        var result = validator.Validate(input);
+        if (result.IsValid)
+            return new string[0];
+        return result.Errors.Select(e => e.ErrorMessage);
+    });
+}
