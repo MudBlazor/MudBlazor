@@ -203,6 +203,36 @@ namespace MudBlazor.UnitTests
             comp.FindAll("span.mud-chip-content")[1].TextContent.Trim().Should().EndWith("not changed");
             comp.FindAll("span.mud-chip-content")[2].TextContent.Trim().Should().EndWith("Field3 changed");
         }
+
+        /// <summary>
+        /// Based on error report. Clicking the checkbox should not influence the other form fields.
+        /// </summary>
+        [Test]
+        public async Task FormWithCheckboxTest()
+        {
+            var comp = ctx.RenderComponent<FormWithCheckboxTest>();
+            Console.WriteLine(comp.Markup);
+            var textFields = comp.FindAll("input");
+            textFields.Count.Should().Be(4); // three textfields, one checkbox
+            // let's fill in some values
+            comp.FindAll("input")[0].Change("Garfield");
+            comp.FindAll("input")[0].Blur();
+            comp.FindAll("input")[1].Change("Jon");
+            comp.FindAll("input")[1].Blur();
+            comp.FindAll("input")[2].Change("17"); // kg ;)
+            comp.FindAll("input")[2].Blur();
+            foreach (var tf in comp.FindComponents<MudTextField<string>>())
+                tf.Instance.Text.Should().NotBeNullOrEmpty();
+            comp.FindComponent<MudTextField<int>>().Instance.Value.Should().Be(17);
+            // then click the checkbox
+            comp.FindComponent<MudCheckBox<bool>>().Instance.Checked.Should().Be(true);
+            comp.FindAll("input")[3].Change(false); // it was on before
+            comp.FindComponent<MudCheckBox<bool>>().Instance.Checked.Should().Be(false);
+            // the text fields should be unchanged
+            foreach (var tf in comp.FindComponents<MudTextField<string>>())
+                tf.Instance.Text.Should().NotBeNullOrEmpty();
+            comp.FindComponent<MudTextField<int>>().Instance.Value.Should().Be(17);
+        }
     }
 }
 
