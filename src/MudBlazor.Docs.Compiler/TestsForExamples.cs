@@ -24,13 +24,18 @@ namespace MudBlazor.Docs.Compiler
 
                 cb.AddHeader();
 
+                cb.AddLine("using Bunit;");
+                cb.AddLine("using Bunit.TestDoubles;");
                 cb.AddLine("using Microsoft.AspNetCore.Components;");
+                cb.AddLine("using Microsoft.AspNetCore.Components.Forms;");
                 cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
+                cb.AddLine("using Microsoft.Extensions.Options;");
                 cb.AddLine("using NUnit.Framework;");
                 cb.AddLine("using MudBlazor.UnitTests.Mocks;");
                 cb.AddLine("using MudBlazor.Docs.Examples;");
                 cb.AddLine("using MudBlazor.Docs.Wireframes;");
                 cb.AddLine("using MudBlazor.Services;");
+                cb.AddLine("using System.Net.Http;");
                 cb.AddLine();
                 cb.AddLine("namespace MudBlazor.UnitTests.Components");
                 cb.AddLine("{");
@@ -40,6 +45,27 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("public class _AllComponents");
                 cb.AddLine("{");
                 cb.IndentLevel++;
+                cb.AddLine("private Bunit.TestContext ctx;");
+                cb.AddLine();
+                cb.AddLine("[SetUp]");
+                cb.AddLine("public void Setup()");
+                cb.AddLine("{");
+                cb.IndentLevel++;
+                cb.AddLine("ctx = new Bunit.TestContext();");
+                cb.AddLine("ctx.JSInterop.Mode = JSRuntimeMode.Loose;");
+                cb.AddLine("ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());");
+                cb.AddLine("ctx.Services.AddSingleton<IDialogService>(new DialogService());");
+                cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());");
+                cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
+                cb.AddLine("ctx.Services.AddScoped(sp => new HttpClient());");
+                // options required for fie upload
+                cb.AddLine("ctx.Services.AddOptions();");
+                cb.IndentLevel--;
+                cb.AddLine("}");
+                cb.AddLine();
+                cb.AddLine("[TearDown]");
+                cb.AddLine("public void TearDown() => ctx.Dispose();");
+                cb.AddLine();
 
                 foreach (var entry in Directory.EnumerateFiles(paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
                     .OrderBy(e => e.Replace("\\", "/"), StringComparer.Ordinal))
@@ -54,12 +80,7 @@ namespace MudBlazor.Docs.Compiler
                     cb.AddLine($"public void {componentName}_Test()");
                     cb.AddLine("{");
                     cb.IndentLevel++;
-                    cb.AddLine("using var ctx = new Bunit.TestContext();");
-                    cb.AddLine("ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());");
-                    cb.AddLine("ctx.Services.AddSingleton<IDialogService>(new DialogService());");
-                    cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());");
-                    cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
-                    cb.AddLine($"var comp = ctx.RenderComponent<{componentName}>();");
+                    cb.AddLine($"ctx.RenderComponent<{componentName}>();");
                     cb.IndentLevel--;
                     cb.AddLine("}");
                 }

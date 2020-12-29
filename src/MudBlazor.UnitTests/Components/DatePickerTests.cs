@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable 1998
+
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Bunit;
@@ -41,7 +43,7 @@ namespace MudBlazor.UnitTests
         /// Rendering 10.000 DatePickers to measure performance impact of initial render.
         /// </summary>
         [Test]
-        public async Task PerformanceTest1()
+        public void PerformanceTest1()
         {
             using var ctx = new Bunit.TestContext();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
@@ -82,7 +84,6 @@ namespace MudBlazor.UnitTests
         /// Datepicker should open on input click and close on outside click
         /// </summary>
         [Test]
-        [Ignore("Bunit bug? Bunit doesn't find div.mud-overlay even though it is clearly there in the markup")]
         public void OpenCloseTest1()
         {
             using var ctx = new Bunit.TestContext();
@@ -123,7 +124,7 @@ namespace MudBlazor.UnitTests
             comp.Instance.Date.Should().BeNull();
             // clicking a day button to select a date and close
             comp.FindAll("button.mud-day")[8].Click(); // take a day from the middle section (at the beginning buttons may be disabled)
-            await Task.Delay(comp.Instance.ClosingDelay + 10); // Check 10ms after closing
+            await Task.Delay(comp.Instance.ClosingDelay + 50); // Check 10ms after closing
             // should not be open any more
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
             comp.Instance.Date.Should().NotBeNull();

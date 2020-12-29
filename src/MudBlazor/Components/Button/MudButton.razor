@@ -4,6 +4,7 @@
 
 <MudElement @bind-Ref="@_elementReference"
             HtmlTag="@HtmlTag"
+
             Class="@Classname" 
             Style="@Style"
             @attributes="UserAttributes"
@@ -12,8 +13,8 @@
             href="@Link" 
             target="@Target"
             rel="@(Target=="_blank"?"noopener":null)"
-            disabled="@Disabled"
-           >
+            disabled="@Disabled">
+
     <span class="mud-button-label">
         @if (!string.IsNullOrWhiteSpace(StartIcon))
         {

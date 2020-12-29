@@ -1,0 +1,70 @@
+﻿@page "/components/fileupload"
+
+<DocsPage>
+    <DocsPageHeader Title="File Upload"
+                    SubTitle="Example on how to compose a file upload button"> 
+        <Description>
+           
+            <MudText Typo="@Typo.body1" Class="mt-4">
+                To create a file upload button, we must use two elements: a <CodeInline>label</CodeInline> and an <CodeInline>input</CodeInline>.
+            </MudText>
+            <br />
+            <MudText Typo="@Typo.body1">
+                When we set the <CodeInline>for</CodeInline> attribute to the same value as the <CodeInline>id</CodeInline> of the input, we enable the input to be triggered by clicking on the label. So the trick is to style the label to look like a button and hide the input.
+            </MudText>
+            <br />
+            <MudText Typo="@Typo.body1">
+                So, the styling part is solved. But to handle the files in Blazor without using javascript, we need an InputFile type component.
+            </MudText>
+            <br />
+            <MudText Typo="@Typo.body1">
+                If you are working with .Net Core 3.1 or earlier, you should install the
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Primary"
+                           EndIcon="@Filled.Link"
+                           Link="https://www.nuget.org/packages/BlazorInputFile" target="_blank" rel="noopener noreferrer">
+                    nuget package InputFile
+                </MudButton>
+                , created by Steve Sanderson and reference it in your _host.cshtml or index.html (Server Side Blazor or Client Side Blazor).
+            </MudText>
+            <br />
+            <MudText Typo="@Typo.body1">
+                See
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Primary"
+                           EndIcon="@Filled.Info"
+                           Link="https://blog.stevensanderson.com/2019/09/13/blazor-inputfile/" target="_blank" rel="noopener noreferrer">
+                    more info
+                </MudButton>
+                on how to install it.
+            </MudText>
+            <br />
+            <MudText Typo="@Typo.body1">
+                If your project is .Net 5.0, InputFile is a native component and you don't need to install it.
+            </MudText>
+        </Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Use any type of MudButton</Title>
+                <Description>Use a MudButton, a MudIconButton or a MudFab with the <CodeInline>HtmlTag</CodeInline> property set to "label" in combination with a hidden InputFile. That way, the MudButton will render a label element</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true">
+                <FileUploadButtonExample />
+            </SectionContent>
+            <SectionSource Code="FileUploadButtonExample" GitHubFolderName="Button" />
+        </DocsPageSection>
+
+        <DocsPageSection >
+            <SectionHeader>
+                <Title>Use a standard label</Title>
+                <Description>Use an html label styled to your liking in combination with a hidden InputFile</Description>
+            </SectionHeader>
+            <SectionContent FullWidth="true" DarkenBackground="true">
+                <FileUploadIconButtonExample />
+            </SectionContent>
+            <SectionSource Code="FileUploadIconButtonExample" GitHubFolderName="Button" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

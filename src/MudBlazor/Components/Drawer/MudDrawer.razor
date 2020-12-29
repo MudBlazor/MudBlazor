@@ -14,8 +14,9 @@
 
 
 @code {
-
     [Inject] IJSRuntime JsRuntime { get; set; }
+
+    private bool _rtl;
 
     protected string Classname =>
     new CssBuilder("mud-drawer")
@@ -35,6 +36,24 @@
       .AddClass($"mud-drawer--open", !Open)
       .AddClass($"mud-drawer--initial", _initial)
     .Build();
+
+    [CascadingParameter] MudLayout Layout { get; set; }
+    
+    [CascadingParameter] bool RightToLeft
+    { 
+        get
+        {
+            return _rtl;
+        }
+        set
+        {
+            if (_rtl != value)
+            {
+                _rtl = value;
+                this.Anchor = this.Anchor == Anchor.Left ? Anchor.Right : Anchor.Left;
+            }
+        }
+    }
 
     /// <summary>
     /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
@@ -97,9 +116,6 @@
             StateHasChanged();
         }
     }
-
-    [CascadingParameter] MudLayout Layout { get; set; }
-
 
     protected override void OnInitialized()
     {

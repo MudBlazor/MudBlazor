@@ -42,23 +42,20 @@
   <!--This file contains any ExampleCode that is new and needs including in the build -->
   <Target Name="ReadFromFile" DependsOnTargets="CompileDocs">
     <ItemGroup>
-      <NewFiles Include="NewFilesToBuild.txt"/>
+      <NewFiles Include="NewFilesToBuild.txt" />
     </ItemGroup>
-    <ReadLinesFromFile
-      File="@(NewFiles)" >
-      <Output
-        TaskParameter="Lines"
-        ItemName="NewExampleCodeToBuild"/>
+    <ReadLinesFromFile File="@(NewFiles)">
+      <Output TaskParameter="Lines" ItemName="NewExampleCodeToBuild" />
     </ReadLinesFromFile>
   </Target>
 
   <!--Because we have a dynamic content .cs and .razor files comming from the code generator we need to add them -->  
   <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild;BeforeRebuild" DependsOnTargets="CompileDocs;ReadFromFile">
-    <Message Text="Found '@(NewExampleCodeToBuild->Count())' new ExampleCode files" Importance="high" />
+    <Message Text="Found '@(NewExampleCodeToBuild-&gt;Count())' new ExampleCode files" Importance="high" />
     <ItemGroup>
       <Compile Include="Models/Snippets.generated.cs" Condition="!Exists('Models/Snippets.generated.cs')" />
       <Compile Include="Models/DocStrings.generated.cs" Condition="!Exists('Models/DocStrings.generated.cs')" />
-      <RazorComponent Include="@(NewExampleCodeToBuild)" Condition="@(NewExampleCodeToBuild->Count()) != 0" />
+      <RazorComponent Include="@(NewExampleCodeToBuild)" Condition="@(NewExampleCodeToBuild-&gt;Count()) != 0" />
     </ItemGroup>
   </Target>
 
@@ -67,8 +64,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.0.0" />
   </ItemGroup>

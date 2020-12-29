@@ -49,6 +49,11 @@
     protected override void OnInitialized()
     {
         currentTheme = defaultTheme;
+        //if not home page, the navbar starts open
+        if (!NavMan.IsHomePage())
+        {
+            _drawerOpen = true;
+        }
     }
 
     void DarkMode()

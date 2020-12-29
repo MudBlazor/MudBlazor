@@ -118,13 +118,13 @@ namespace MudBlazor
             Time = new TimeSpan(TimeSet.Hour, TimeSet.Minute, 0);
         }
 
-        private async void OnHourClick()
+        private void OnHourClick()
         {
             OpenTo = OpenTo.Hours;
             StateHasChanged();
         }
 
-        private async void OnMinutesClick()
+        private void OnMinutesClick()
         {
             OpenTo = OpenTo.Minutes;
             StateHasChanged();

@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿#pragma warning disable 1998
+
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -22,7 +24,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ToggleTest()
+        public void ToggleTest()
         {
             using var ctx = new Bunit.TestContext();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());

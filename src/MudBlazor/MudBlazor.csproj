@@ -4,11 +4,11 @@
     <TargetFramework>net5.0</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
     <Version>1.2.1-net5</Version>
-    <Authors>Garderoben</Authors>
-    <Company>Gardnet</Company>
+    <Authors>Garderoben, Henon and Contributors</Authors>
+    <Company>MudBlazor</Company>
     <Title>MudBlazor</Title>
-    <PackageTags>Blazor, MudBlazor, Material, Components, Blazor Component, Blazor Library</PackageTags>
-    <Description>Blazor Component Library based on Material design. The goal is to do more with Blazor, utilizing CSS and keeping Javascript to a bare minimum.</Description>
+    <PackageTags>Blazor, MudBlazor, Material, Material Design, Components, Blazor Components, Blazor Library</PackageTags>
+    <Description>MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure. It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers them to adapt, fix or extend the framework and the multitude of examples in the documentation makes learning MudBlazor very easy.</Description>
     <PackageProjectUrl>http://mudblazor.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Garderoben/MudBlazor</RepositoryUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/Garderoben/MudBlazor/master/content/Nuget.png</PackageIconUrl>
@@ -21,6 +21,7 @@
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -42,7 +43,7 @@
   </Target>
 
   <Target Name="PreBuild" AfterTargets="ToolRestore">
-      <Exec Command="dotnet webcompiler -c compilerconfig.build.json -f compilerconfig.build.files.conf" StandardOutputImportance="high" />
+      <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -o ./wwwroot -z disable" StandardOutputImportance="high" />
   </Target>
 
   <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
@@ -56,7 +57,6 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
     <None Include="bundleconfig.json">
     </None>
-    <None Include="compilerconfig.build.json" />
     <None Include="compilerconfig.json">
     </None>
   </ItemGroup>

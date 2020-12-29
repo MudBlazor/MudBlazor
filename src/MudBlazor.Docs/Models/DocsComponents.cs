@@ -43,11 +43,6 @@ namespace MudBlazor.Docs.Models
             return this;
         }
 
-        internal List<MudComponent> ToList()
-        {
-            var Item = _mudComponents.ToList();
-
-            return Item.ToList();
-        }
+        internal List<MudComponent> ToList() => _mudComponents;
     }
 }

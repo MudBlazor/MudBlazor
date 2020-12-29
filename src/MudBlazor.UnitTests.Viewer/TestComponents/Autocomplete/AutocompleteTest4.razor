@@ -12,6 +12,9 @@
 
     public async Task<IEnumerable<State>> SearchStateAsync(string value)
     {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5);
+
         return new State[0];
     }
 

@@ -2,11 +2,11 @@
 @inject ISnackbar Snackbar
 @namespace MudBlazor.Docs.Examples
 
-<MudTable Items="@PeriodicTable.GetElements()" Dense="@dense" Hover="@hover" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selected_item" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" CommitEditCommand="@samplecmd">
+<MudTable Items="@PeriodicTable.GetElements()" Dense="@dense" Hover="@hover" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" CommitEditCommand="@samplecmd" >
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudToolBarSpacer />
-        <MudTextField @bind-Value="search_string" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <ColGroup>
         <col style="width:50px;" />
@@ -51,14 +51,14 @@
 </MudTable>
 <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
 <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
-<MudText Inline="true">Selected: @selected_item?.Name</MudText>
+<MudText Inline="true">Selected: @selectedItem?.Name</MudText>
 
 @code {
-    bool dense = false;
-    bool hover = true;
-    string search_string = "";
-    Element selected_item = null;
-    HashSet<Element> selected_items = new HashSet<Element>();
+    private bool dense = false;
+    private bool hover = true;
+    private string searchString = "";
+    private Element selectedItem = null;
+    private HashSet<Element> selectedItems = new HashSet<Element>();
 
     protected override void OnInitialized()
     {
@@ -66,15 +66,15 @@
         samplecmd = new Utilities.SampleCommand(SampleCommand_Executed);
     }
 
-    bool FilterFunc(Element element)
+    private bool FilterFunc(Element element)
     {
-        if (string.IsNullOrWhiteSpace(search_string))
+        if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (element.Sign.Contains(search_string))
+        if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (element.Name.Contains(search_string))
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if ($"{element.Number} {element.Position} {element.Molar}".Contains(search_string))
+        if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
             return true;
         return false;
     }
@@ -83,7 +83,7 @@
 
     private void SampleCommand_Executed(object parameter)
     {
-        Snackbar.Add($"Commit Edit Command Executed for parameter '{parameter.ToString()}'");
+        Snackbar.Add($"Commit Edit Command Executed for parameter '{parameter.ToString()}'"); 
     }
 
 }

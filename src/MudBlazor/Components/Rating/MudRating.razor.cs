@@ -61,6 +61,10 @@ namespace MudBlazor
         /// If true, the controls will be disabled.
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
+        /// <summary>
+        /// If true, the ratings will show without interactions.
+        /// </summary>
+        [Parameter] public bool ReadOnly { get; set; }
 
         /// <summary>
         /// Fires when SelectedValue changes.

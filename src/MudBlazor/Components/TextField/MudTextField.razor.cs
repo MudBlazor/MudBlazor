@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -15,6 +16,17 @@ namespace MudBlazor
         {
             return _elementReference.FocusAsync();
         }
+
+        /// <summary>
+        /// The short hint displayed in the input before the user enters a value.
+        /// </summary>
+        [Parameter] public string Placeholder { get; set; }
+
+        /// <summary>
+        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+        /// </summary>
+        [Parameter] public string Label { get; set; }
+
     }
 
     public class MudTextFieldString : MudTextField<string> {}

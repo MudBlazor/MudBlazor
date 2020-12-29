@@ -2,7 +2,7 @@
 
 
 <DocsPage>
-    <DocsPageHeader Title="Text Field" SubTitle="A component that allows the user to input and edit text information." />
+    <DocsPageHeader Title="Text Field" SubTitle="Text field components are used for receiving user provided information."/>
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
@@ -44,22 +44,42 @@
             </SectionContent>
             <SectionSource Code="TextFieldAdornmentsExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
-                <Title>Binding against different types</Title>
-                <Description></Description>
+                <Title>Binding Properties of a POCO</Title>
+                <Description>
+                    The following text fields are bound against the properties of a POCO (Plain old C-Sharp Object). Edit them to see the model change. Reset the model and see the textfields change.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: always use two-way bindings (<CodeInline>@("@bind-Value")</CodeInline>) with textfields.</MudAlert>
+                </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <TextFieldBindingExample />
             </SectionContent>
             <SectionSource Code="TextFieldBindingExample" ShowCode="false" GitHubFolderName="TextField" />
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Binding Value Types vs Nullables</Title>
+                <Description>
+                    When you bind value types, the the text field will not be empty even if the user hasn't entered a value yet because a value type always has a value, even when unassigned.
+                    The two-way-bindable <CodeInline>Value</CodeInline> property will automatically assume the default value of that type  (i.e. <CodeInline>0</CodeInline> for <CodeInline>int</CodeInline>).<br />
+                    So if you want your text fields to be empty as long as nothing has been entered yet, use the nullable version of that type (i.e. <CodeInline>int?</CodeInline>).
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <TextFieldBindingValueTypesExample />
+            </SectionContent>
+            <SectionSource Code="TextFieldBindingValueTypesExample" ShowCode="false" GitHubFolderName="TextField" />
+        </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Immediate vs Debounced</Title>
                 <Description>
-                    Per default, <CodeInline>MudTextField</CodeInline> updates the bound value on Enter or when it looses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br /> 
-                    You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the amount of milliseconds you want to await before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback. 
+                    Per default, <CodeInline>MudTextField</CodeInline> updates the bound value on Enter or when it looses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br />
+                    You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the amount of milliseconds you want to await before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback.
                     Notice how in this example the debounced text only updates 500 ms after you stop typing.
                 </Description>
             </SectionHeader>

@@ -2,22 +2,16 @@
 
 @inject IDialogService Dialog
 
-<MudButton Variant="Variant.Outlined" Color="Color.Primary" @onclick="OpenSimpleDialog">Scrollable Dialog</MudButton>
+<MudButton OnClick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+    Scrollable Dialog
+</MudButton>
 
 @code {
-    bool HideSourceSimpleDialog = true;
-
-    public void ShowSimpleDialogSource()
-    {
-        HideSourceSimpleDialog = !HideSourceSimpleDialog;
-    }
-
     bool license_accepted = false;
 
-    async Task OpenSimpleDialog()
+    async Task OpenDialog()
     {
-        var userSelect = Dialog.Show<DialogScrollableExample_Dialog>("MudBlazor License");
-        var result = await userSelect.Result;
+        var result = await Dialog.Show<DialogScrollableExample_Dialog>("MudBlazor License").Result;
 
         if (!result.Cancelled)
         {

@@ -20,6 +20,16 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
+        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+        /// </summary>
+        [Parameter] public string Label { get; set; }
+
+        /// <summary>
+        /// The short hint displayed in the input before the user enters a value.
+        /// </summary>
+        [Parameter] public string Placeholder { get; set; }
+
+        /// <summary>
         /// If true, compact vertical padding will be applied to all select items.
         /// </summary>
         [Parameter] public bool Dense { get; set; }
@@ -34,7 +44,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string CloseIcon { get; set; } = Icons.Material.ArrowDropDown;
 
-        internal event Action<HashSet<T>> SelectionChangedFromOutside;
+        //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
         /// <summary>
         /// Sets the maxheight the select can have when open.
@@ -119,7 +129,7 @@ namespace MudBlazor
             _timer?.Dispose();
             IsOpen = false;
             UpdateIcon();
-            ValidateValue(Value);
+            _ = ValidateValue(Value);
             StateHasChanged();
         }
 

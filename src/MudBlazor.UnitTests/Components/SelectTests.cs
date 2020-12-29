@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable 1998
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -126,12 +128,12 @@ namespace MudBlazor.UnitTests
             select.Instance.Value.Should().Be(default(MyEnum));
             select.Instance.Text.Should().Be(default(MyEnum).ToString());
             await Task.Delay(50);
-            comp.Find("div.mud-input-slot").TextContent.Should().Be("First");
+            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("First");
             comp.RenderCount.Should().Be(1);
             //Console.WriteLine(comp.Markup);
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
-            comp.Find("div.mud-input-slot").TextContent.Should().Be("Second");
+            comp.Find("div.mud-input-slot").TextContent.Trim().Should().Be("Second");
             comp.RenderCount.Should().Be(2);
         }
 
@@ -139,7 +141,7 @@ namespace MudBlazor.UnitTests
         /// Initially we have a value of 17 which is not in the list. So we render it as text via MudInput
         /// </summary>
         [Test]
-        public async Task SelectUnrepresentableValueTest()
+        public void SelectUnrepresentableValueTest()
         {
             using var ctx = new Bunit.TestContext();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
@@ -190,7 +192,7 @@ namespace MudBlazor.UnitTests
         /// The items have no render fragments, so instead of RF the select must display the converted string value
         /// </summary>
         [Test]
-        public async Task SelectWithoutItemPresentersTest()
+        public void SelectWithoutItemPresentersTest()
         {
             using var ctx = new Bunit.TestContext();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
@@ -209,6 +211,7 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-input-slot").Count.Should().Be(0);
             select.Instance.Value.Should().Be(2);
             select.Instance.Text.Should().Be("2");
+            comp.RenderCount.Should().Be(2);
         }
     }
 }
