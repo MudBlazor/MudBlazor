@@ -307,6 +307,7 @@ namespace MudBlazor
             {
                 TimeSet.Hour = value;
                 UpdateTime();
+                OpenTo = OpenTo.Minutes;
             }
         }
 
@@ -325,6 +326,7 @@ namespace MudBlazor
             }
             TimeSet.Hour = h;
             UpdateTime();
+            OpenTo = OpenTo.Minutes;
         }
 
         /// <summary>
