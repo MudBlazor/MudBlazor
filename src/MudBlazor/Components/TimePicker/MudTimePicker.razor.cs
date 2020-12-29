@@ -275,10 +275,12 @@ namespace MudBlazor
         }
 
         private SetTime TimeSet = new SetTime();
+        private int _initialHour;
 
         protected override void OnInitialized()
         {
             UpdateTimeSetFromTime();
+            _initialHour = TimeSet.Hour;
         }
 
 
@@ -310,6 +312,10 @@ namespace MudBlazor
         private void OnMouseUp(MouseEventArgs e)
         {
             MouseDown = false;
+            if(OpenTo == OpenTo.Hours && TimeSet.Hour != _initialHour)
+            {
+                OpenTo = OpenTo.Minutes;
+            }
         }
 
         /// <summary>
@@ -321,7 +327,6 @@ namespace MudBlazor
             {
                 TimeSet.Hour = value;
                 UpdateTime();
-                OpenTo = OpenTo.Minutes;
             }
         }
 
