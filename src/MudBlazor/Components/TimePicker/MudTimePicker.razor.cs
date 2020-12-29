@@ -171,6 +171,20 @@ namespace MudBlazor
           .AddClass($"mud-timepicker-toolbar-text", !IsPm) // gray it out
         .Build();
 
+        private string HourDialClass =>
+        new CssBuilder("mud-time-picker-hour")
+          .AddClass($"mud-time-picker-dial")
+          .AddClass($"mud-time-picker-dial-out", OpenTo != OpenTo.Hours)
+          .AddClass($"mud-time-picker-dial-hidden", OpenTo != OpenTo.Hours)
+        .Build();
+
+        private string MinuteDialClass =>
+        new CssBuilder("mud-time-picker-minute")
+          .AddClass($"mud-time-picker-dial")
+          .AddClass($"mud-time-picker-dial-out", OpenTo != OpenTo.Minutes)
+          .AddClass($"mud-time-picker-dial-hidden", OpenTo != OpenTo.Minutes)
+        .Build();
+
         private bool IsAm => TimeSet.Hour >= 00 && TimeSet.Hour < 12; // am is 00:00 to 11:59 
         private bool IsPm => TimeSet.Hour >= 12 && TimeSet.Hour < 24; // pm is 12:00 to 23:59 
 
