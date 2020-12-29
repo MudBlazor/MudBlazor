@@ -99,8 +99,6 @@ namespace MudBlazor
 
         internal async virtual Task ValidateValue(T value)
         {
-            if (Form == null)
-                return;
             ValidationErrors = new List<string>();
             try
             {
@@ -141,7 +139,7 @@ namespace MudBlazor
                 // if Error and ErrorText are set by the user, setting them here will have no effect. 
                 Error = ValidationErrors.Count > 0;
                 ErrorText = ValidationErrors.FirstOrDefault();
-                Form.Update(this);
+                Form?.Update(this);
                 StateHasChanged();
             }
         }
