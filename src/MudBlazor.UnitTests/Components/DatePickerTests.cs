@@ -26,7 +26,6 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task SimpleTest() {
             using var ctx = new Bunit.TestContext();
-            ctx.Services.AddMockJSRuntime();
             ctx.Services.AddSingleton< NavigationManager >(new MockNavigationManager());
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             var comp = ctx.RenderComponent<MudDatePicker>();
@@ -50,7 +49,6 @@ namespace MudBlazor.UnitTests
         public void PerformanceTest1()
         {
             using var ctx = new Bunit.TestContext();
-            ctx.Services.AddMockJSRuntime();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             // warmup
@@ -71,7 +69,6 @@ namespace MudBlazor.UnitTests
         public async Task PerformanceTest2()
         {
             using var ctx = new Bunit.TestContext();
-            ctx.Services.AddMockJSRuntime();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             // warmup
@@ -95,7 +92,6 @@ namespace MudBlazor.UnitTests
         public void OpenCloseTest1()
         {
             using var ctx = new Bunit.TestContext();
-            ctx.Services.AddMockJSRuntime();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             var comp = ctx.RenderComponent<MudDatePicker>();
@@ -120,7 +116,6 @@ namespace MudBlazor.UnitTests
         public async Task OpenCloseTest2()
         {
             using var ctx = new Bunit.TestContext();
-            ctx.Services.AddMockJSRuntime();
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             var comp = ctx.RenderComponent<MudDatePicker>();
