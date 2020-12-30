@@ -122,37 +122,7 @@
             if (!isRendered && isOpen)
             {
                 isRendered = true;
-                var size = await WindowSizeListener.GetBrowserWindowSize();
-                var clientRect = await JSRuntime.InvokeAsync<BoundingClientRect>("getMudBoundingClientRect", PickerContainerRef);
-
-                if (size.Height < clientRect.Height)
-                {
-                    pickerPaperPosition = PickerPaperPosition.Top;
-                }
-                else if (size.Height < clientRect.Bottom)
-                {
-                    if (clientRect.Top > clientRect.Height)
-                    {
-                        pickerPaperPosition = PickerPaperPosition.Above;
-                    }
-                    else if (clientRect.Top > size.Height / 2)
-                    {
-                        pickerPaperPosition = PickerPaperPosition.Bottom;
-                    }
-                    else
-                    {
-                        pickerPaperPosition = PickerPaperPosition.Top;
-                    }
-                }
-                else if (clientRect.Top < 0)
-                {
-                    pickerPaperPosition = PickerPaperPosition.Top;
-                }
-                else
-                {
-                    pickerPaperPosition = PickerPaperPosition.Below;
-                }
-
+                await DeterminePosition();
                 StateHasChanged();
             }
             else if (isRendered && !isOpen)
@@ -163,5 +133,39 @@
         }
 
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task DeterminePosition()
+    {
+        var size = await WindowSizeListener.GetBrowserWindowSize();
+        var clientRect = await JSRuntime.InvokeAsync<BoundingClientRect>("getMudBoundingClientRect", PickerContainerRef);
+
+        if (size.Height < clientRect.Height)
+        {
+            pickerPaperPosition = PickerPaperPosition.Top;
+        }
+        else if (size.Height < clientRect.Bottom)
+        {
+            if (clientRect.Top > clientRect.Height)
+            {
+                pickerPaperPosition = PickerPaperPosition.Above;
+            }
+            else if (clientRect.Top > size.Height / 2)
+            {
+                pickerPaperPosition = PickerPaperPosition.Bottom;
+            }
+            else
+            {
+                pickerPaperPosition = PickerPaperPosition.Top;
+            }
+        }
+        else if (clientRect.Top < 0)
+        {
+            pickerPaperPosition = PickerPaperPosition.Top;
+        }
+        else
+        {
+            pickerPaperPosition = PickerPaperPosition.Below;
+        }
     }
 }
