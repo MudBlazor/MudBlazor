@@ -34,6 +34,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("using MudBlazor.Docs.Wireframes;");
                 cb.AddLine("using MudBlazor.Services;");
                 cb.AddLine("using System.Net.Http;");
+                cb.AddLine("using MudBlazor.Providers;");
                 cb.AddLine();
                 cb.AddLine("namespace MudBlazor.UnitTests.Components");
                 cb.AddLine("{");
@@ -55,6 +56,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("ctx.Services.AddSingleton<IDialogService>(new DialogService());");
                 cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());");
                 cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
+                cb.AddLine("ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());");
                 cb.AddLine("ctx.Services.AddScoped(sp => new HttpClient());");
                 cb.IndentLevel--;
                 cb.AddLine("}");
