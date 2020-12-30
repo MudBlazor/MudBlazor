@@ -3,27 +3,23 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
-    <Version>1.2.2</Version>
-    <Authors>Garderoben</Authors>
-    <Company>MudBlazor</Company>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <Title>MudBlazor</Title>
     <PackageId>MudBlazor</PackageId>
+    <Version>1.2.3</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>Nuget.png</PackageIcon>
+    <Company>Gardnet</Company>
+    <Authors>Garderoben, Henon and Contributors</Authors>
+    <Copyright>Copyright 2020-2021 Jonny Larsson</Copyright>
     <PackageTags>Blazor, MudBlazor, Material, Material Design, Components, Blazor Components, Blazor Library</PackageTags>
     <Description>MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure. It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers them to adapt, fix or extend the framework and the multitude of examples in the documentation makes learning MudBlazor very easy.</Description>
     <PackageProjectUrl>http://mudblazor.com/</PackageProjectUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Garderoben/MudBlazor</RepositoryUrl>
-    <IsPackable>true</IsPackable>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="..\..\LICENSE" Pack="true" Visible="false" PackagePath="" />
-    <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
-  </ItemGroup>
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -31,11 +27,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" Visible="false" PackagePath="" />
+    <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="bundleconfig.json" />
     <Content Remove="compilerconfig.build.json" />
     <Content Remove="compilerconfig.json" />
     <Content Remove="compilerconfig.build.conf" />
     <Content Remove="compilerconfig.build.files.conf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\MudBlazor.min.css" />
   </ItemGroup>
 
   <ItemGroup>
