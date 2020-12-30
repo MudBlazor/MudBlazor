@@ -8,7 +8,7 @@
   <PropertyGroup>
     <Title>MudBlazor</Title>
     <PackageId>MudBlazor</PackageId>
-    <Version>1.2.3</Version>
+    <Version>1.2.4</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>Nuget.png</PackageIcon>
     <Company>Gardnet</Company>
@@ -37,10 +37,6 @@
     <Content Remove="compilerconfig.json" />
     <Content Remove="compilerconfig.build.conf" />
     <Content Remove="compilerconfig.build.files.conf" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\MudBlazor.min.css" />
   </ItemGroup>
 
   <ItemGroup>
