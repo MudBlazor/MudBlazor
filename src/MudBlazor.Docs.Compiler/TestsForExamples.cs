@@ -46,6 +46,8 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());");
                 cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
                 cb.AddLine("ctx.Services.AddScoped(sp => new HttpClient());");
+                // options required for file upload in net
+                cb.AddLine("ctx.Services.AddOptions();");
                 cb.IndentLevel--;
                 cb.AddLine("}");
                 cb.AddLine();
