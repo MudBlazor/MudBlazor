@@ -114,3 +114,24 @@
         text-transform: none;
     }
 }
+
+.mud-picker-hidden {
+    visibility: hidden;
+}
+
+.mud-picker-pos-top {
+    top: 0px;
+    position: fixed;
+    visibility: visible;
+}
+
+.mud-picker-pos-above {
+    bottom: 0px;
+    visibility: visible;
+}
+
+.mud-picker-pos-bottom {
+    bottom: 10px;
+    position: fixed;
+    visibility: visible;
+}
