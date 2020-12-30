@@ -170,6 +170,55 @@ namespace MudBlazor.UnitTests
         }
 
         /// <summary>
+        /// Validate that first async validation call returning after second call will not override result of second call
+        /// </summary>
+        [Test]
+        public async Task FormAsyncValidationTest()
+        {
+            const int valid_delay = 100;
+            const int invalid_delay = 200;
+            const int wait_delay = 100;
+
+            var validationFunc = new Func<string, Task<string>>(async s =>
+            {
+                if (s == null)
+                    return null;
+
+                var valid = (s == "abc");
+                await Task.Delay(valid ? valid_delay : invalid_delay);
+
+                return valid ? null : "invalid";
+            });
+
+            var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+
+            // validate initial field state
+            textField.ValidationErrors.Should().BeEmpty();
+
+            // make sure error can be detected
+            _ = comp.InvokeAsync(() => textField.Value = "def");
+            await Task.Delay(invalid_delay + wait_delay);
+            textField.ValidationErrors.Should().ContainSingle("invalid");
+
+            // make sure success can be detected
+            _ = comp.InvokeAsync(() => textField.Value = "abc");
+            await Task.Delay(valid_delay + wait_delay);
+            textField.ValidationErrors.Should().BeEmpty();
+
+            // send invalid value, then valid value
+            _ = comp.InvokeAsync(() => textField.Value = "def");
+            await Task.Delay(wait_delay);
+            _ = comp.InvokeAsync(() => textField.Value = "abc");
+
+            // validate that first call result (invalid, longer return time) will not overwrite second call result (valid, shorter return time)
+            await Task.Delay(invalid_delay + wait_delay);
+            textField.ValidationErrors.Should().BeEmpty();
+        }
+
+        /// <summary>
         /// After changing any of the textfields with a For expression the corresponding chip should show a change message after the textfield blurred.
         /// </summary>
         /// <returns></returns>
