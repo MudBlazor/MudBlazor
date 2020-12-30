@@ -137,8 +137,20 @@
 
     private async Task DeterminePosition()
     {
+        if (WindowSizeListener == null || JSRuntime == null)
+        {
+            pickerPaperPosition = PickerPaperPosition.Below;
+            return;
+        }
+
         var size = await WindowSizeListener.GetBrowserWindowSize();
         var clientRect = await JSRuntime.InvokeAsync<BoundingClientRect>("getMudBoundingClientRect", PickerContainerRef);
+
+        if (size == null || clientRect == null)
+        {
+            pickerPaperPosition = PickerPaperPosition.Below;
+            return;
+        }
 
         if (size.Height < clientRect.Height)
         {
