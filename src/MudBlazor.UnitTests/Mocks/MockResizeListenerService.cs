@@ -13,9 +13,9 @@ namespace MudBlazor.UnitTests.Mocks
         }
 
 #nullable enable
-#pragma warning disable CS0067 // justification implementing interface  
+#pragma warning disable CS0414 // justification implementing interface  
         public event EventHandler<BrowserWindowSize>? OnResized;
-#pragma warning restore CS0067 
+#pragma warning restore CS0414 
 #nullable disable
         public async ValueTask<BrowserWindowSize> GetBrowserWindowSize()
         {
