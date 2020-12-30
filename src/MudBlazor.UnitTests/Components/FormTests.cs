@@ -1,8 +1,17 @@
-﻿using System;
+﻿#pragma warning disable 1998
+
+using System;
 using System.Threading.Tasks;
 using Bunit;
 using Bunit.Rendering;
+using Bunit.TestDoubles;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Services;
+using MudBlazor.UnitTests.Mocks;
+using MudBlazor.UnitTests.TestComponents.Form;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests
@@ -11,13 +20,27 @@ namespace MudBlazor.UnitTests
     [TestFixture]
     public class FormTests
     {
+        private Bunit.TestContext ctx;
+
+        [SetUp]
+        public void Setup()
+        {
+            ctx = new Bunit.TestContext();
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            ctx.Services.AddSingleton<IDialogService>(new DialogService());
+            ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+            ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+        }
+
+        [TearDown]
+        public void TearDown() => ctx.Dispose();
+        
         /// <summary>
         /// Setting the required textfield's value should set IsValid true
         /// Clearing the value of a required textfield should set form's IsValid to false.
         /// </summary>
         [Test]
         public async Task FormIsValidTest() {
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<FormIsValidTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
@@ -59,7 +82,6 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task FormValidationTest1()
         {
-            using var ctx = new Bunit.TestContext();
             var validationFunc = new Func<string, bool>(x => x?.StartsWith("Marilyn") == true);
             var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
             Console.WriteLine(comp.Markup);
@@ -100,7 +122,6 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task FormValidationTest2()
         {
-            using var ctx = new Bunit.TestContext();
             var validationFunc = new Func<string, string>(s =>
             {
                 if (!(s.StartsWith("Marilyn") || s.EndsWith("Manson")))
@@ -134,7 +155,6 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task FormValidationTest3()
         {
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<FormValidationTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
@@ -148,5 +168,71 @@ namespace MudBlazor.UnitTests
             textField.Text.Should().Be(null);
             form.IsValid.Should().Be(false); // because we did reset validation state as a side-effect.
         }
+
+        /// <summary>
+        /// After changing any of the textfields with a For expression the corresponding chip should show a change message after the textfield blurred.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task EditFormOnFieldChangedTest()
+        {
+            var comp = ctx.RenderComponent<EditFormOnFieldChangedTest>();
+            Console.WriteLine(comp.Markup);
+            var textFields = comp.FindAll("input");
+            textFields.Count.Should().Be(3);
+            var chips = comp.FindAll("span.mud-chip-content");
+            chips.Count.Should().Be(3);
+            foreach (var chip in chips)
+                chip.TextContent.Trim().Should().EndWith("not changed");
+            comp.FindAll("input")[0].Change(new ChangeEventArgs(){ Value = "asdf"});
+            comp.FindAll("input")[0].Blur();
+            comp.FindComponents<MudTextField<string>>()[0].Instance.Text.Should().Be("asdf");
+            comp.FindAll("span.mud-chip-content")[0].TextContent.Trim().Should().Be("Field1 changed");
+            comp.FindAll("span.mud-chip-content")[1].TextContent.Trim().Should().EndWith("not changed");
+            comp.FindAll("span.mud-chip-content")[2].TextContent.Trim().Should().EndWith("not changed");
+            comp.FindAll("input")[1].Change(new ChangeEventArgs() { Value = "yxcv" });
+            comp.FindAll("input")[1].Blur();
+            comp.FindComponents<MudTextField<string>>()[1].Instance.Text.Should().Be("yxcv");
+            comp.FindAll("span.mud-chip-content")[0].TextContent.Trim().Should().Be("Field1 changed");
+            comp.FindAll("span.mud-chip-content")[1].TextContent.Trim().Should().EndWith("not changed", "Because it has no For, so the change can not be forwarded to the edit context for lack of a FieldIdentifier");
+            comp.FindAll("span.mud-chip-content")[2].TextContent.Trim().Should().EndWith("not changed");
+            comp.FindAll("input")[2].Change(new ChangeEventArgs() { Value = "qwer" });
+            comp.FindAll("input")[2].Blur();
+            comp.FindComponents<MudTextField<string>>()[2].Instance.Text.Should().Be("qwer");
+            comp.FindAll("span.mud-chip-content")[0].TextContent.Trim().Should().Be("Field1 changed");
+            comp.FindAll("span.mud-chip-content")[1].TextContent.Trim().Should().EndWith("not changed");
+            comp.FindAll("span.mud-chip-content")[2].TextContent.Trim().Should().EndWith("Field3 changed");
+        }
+
+        /// <summary>
+        /// Based on error report. Clicking the checkbox should not influence the other form fields.
+        /// </summary>
+        [Test]
+        public async Task FormWithCheckboxTest()
+        {
+            var comp = ctx.RenderComponent<FormWithCheckboxTest>();
+            Console.WriteLine(comp.Markup);
+            var textFields = comp.FindAll("input");
+            textFields.Count.Should().Be(4); // three textfields, one checkbox
+            // let's fill in some values
+            comp.FindAll("input")[0].Change("Garfield");
+            comp.FindAll("input")[0].Blur();
+            comp.FindAll("input")[1].Change("Jon");
+            comp.FindAll("input")[1].Blur();
+            comp.FindAll("input")[2].Change("17"); // kg ;)
+            comp.FindAll("input")[2].Blur();
+            foreach (var tf in comp.FindComponents<MudTextField<string>>())
+                tf.Instance.Text.Should().NotBeNullOrEmpty();
+            comp.FindComponent<MudTextField<int>>().Instance.Value.Should().Be(17);
+            // then click the checkbox
+            comp.FindComponent<MudCheckBox<bool>>().Instance.Checked.Should().Be(true);
+            comp.FindAll("input")[3].Change(false); // it was on before
+            comp.FindComponent<MudCheckBox<bool>>().Instance.Checked.Should().Be(false);
+            // the text fields should be unchanged
+            foreach (var tf in comp.FindComponents<MudTextField<string>>())
+                tf.Instance.Text.Should().NotBeNullOrEmpty();
+            comp.FindComponent<MudTextField<int>>().Instance.Value.Should().Be(17);
+        }
     }
 }
+

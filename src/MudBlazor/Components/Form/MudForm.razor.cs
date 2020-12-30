@@ -94,7 +94,7 @@ namespace MudBlazor
             if (debounce && ValidationDelay > 0)
                 _timer = new Timer(OnTimerComplete, null, ValidationDelay, Timeout.Infinite);
             else
-                OnEvaluateForm();
+                _=OnEvaluateForm();
         }
 
         private void OnTimerComplete(object stateInfo) => InvokeAsync(OnEvaluateForm);

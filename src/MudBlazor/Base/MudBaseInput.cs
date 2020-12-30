@@ -132,7 +132,7 @@ namespace MudBlazor
 
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
-            ValidateValue(Value);
+            _=ValidateValue(Value);
             EditFormValidate();
             OnBlur.InvokeAsync(obj);
         }
@@ -175,7 +175,7 @@ namespace MudBlazor
                     _value = value;
                     GenericValueChanged(value);
                     ValueChanged.InvokeAsync(value);
-                    ValidateValue(value);
+                    _=ValidateValue(value);
                     EditFormValidate();
                 }
                 finally

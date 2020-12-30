@@ -5,7 +5,6 @@
 <MudDialog DisableSidePadding="true">
     <DialogContent>
         <MudContainer Style="max-height: 300px; overflow-y: scroll">
-            <MudText Class="mb-5" Typo="Typo.body1">Copyright (c) 2020 - The MudBlazor Team and Contributors</MudText>
             @if (Loading)
             {
                 <MudProgressCircular Indeterminate="true"></MudProgressCircular>
@@ -25,13 +24,15 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
+    [Inject] HttpClient HttpClient { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        Loading = true;
-        var bytes = await new WebClient().DownloadDataTaskAsync(new Uri("https://raw.githubusercontent.com/Garderoben/MudBlazor/master/LICENSE"));
-        LicenseText = Encoding.UTF8.GetString(bytes);
-        Loading = false;
         await base.OnInitializedAsync();
+        Loading = true;
+        var response = await HttpClient.GetAsync("https://raw.githubusercontent.com/Garderoben/MudBlazor/master/LICENSE");
+        LicenseText = await response.Content.ReadAsStringAsync();
+        Loading = false;
     }
 
     private string LicenseText;

@@ -54,7 +54,7 @@ namespace MudBlazor.Services
         {
             if (_onResized == null)
             {
-                Task.Run(async () => await Start());
+                _ = Task.Run(async () => await Start());
             }
             _onResized += value;
         }
@@ -110,7 +110,8 @@ namespace MudBlazor.Services
             [Breakpoint.Xs] = 0,
         };
 
-        public async Task<Breakpoint> GetBreakpoint( ) {
+        public async Task<Breakpoint> GetBreakpoint()
+        {
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
             if (_onResized == null || _windowSize == null)
                 _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
@@ -130,6 +131,8 @@ namespace MudBlazor.Services
 
         public async Task<bool> IsMediaSize(Breakpoint breakpoint)
         {
+            if (breakpoint == Breakpoint.None)
+                return false;
             // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
             if (_onResized == null || _windowSize == null)
                 _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
@@ -163,7 +166,7 @@ namespace MudBlazor.Services
                     maximumBreakpoint = null;
                     break;
 
-                    // * and down
+                // * and down
                 case Breakpoint.SmAndDown:
                     maximumBreakpoint = Breakpoint.Md;
                     break;
@@ -174,7 +177,7 @@ namespace MudBlazor.Services
                     maximumBreakpoint = Breakpoint.Xl;
                     break;
 
-                    // * and up
+                // * and up
                 case Breakpoint.SmAndUp:
                     minimumBreakpoint = Breakpoint.Sm;
                     break;
@@ -191,17 +194,18 @@ namespace MudBlazor.Services
                 && (!maximumBreakpoint.HasValue || _windowSize.Width < BreakpointDefinition[maximumBreakpoint.Value]);
         }
 
-        bool disposed;
+        bool _disposed;
+
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if (!_disposed)
             {
-                Cancel();
+                _ = Cancel();
                 if (disposing)
                 {
                     _onResized = null;
                 }
-                disposed = true;
+                _disposed = true;
             }
         }
 

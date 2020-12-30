@@ -32,7 +32,7 @@ namespace MudBlazor
                     return;
                 _value = value;
                 CheckedChanged.InvokeAsync(value);
-                ValidateValue(value);
+                _=ValidateValue(value);
                 EditFormValidate();
             }
         }
