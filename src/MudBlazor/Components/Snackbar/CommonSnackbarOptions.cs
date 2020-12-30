@@ -6,6 +6,7 @@ namespace MudBlazor
     public abstract class CommonSnackbarOptions
     {
         public int MaximumOpacity { get; set; } = 95;
+
         public int ShowTransitionDuration { get; set; } = 1000;
 
         public int VisibleStateDuration { get; set; } = 5000;
@@ -19,5 +20,19 @@ namespace MudBlazor
         public bool BackgroundBlurred { get; set; } = false;
 
         public Variant SnackbarVariant { get; set; } = Variant.Filled;
+
+        protected CommonSnackbarOptions() { }
+
+        protected CommonSnackbarOptions(CommonSnackbarOptions options)
+        {
+            MaximumOpacity = options.MaximumOpacity;
+            ShowTransitionDuration = options.ShowTransitionDuration;
+            VisibleStateDuration = options.VisibleStateDuration;
+            HideTransitionDuration = options.HideTransitionDuration;
+            ShowCloseIcon = options.ShowCloseIcon;
+            RequireInteraction = options.RequireInteraction;
+            BackgroundBlurred = options.BackgroundBlurred;
+            SnackbarVariant = options.SnackbarVariant;
+        }
     }
 }

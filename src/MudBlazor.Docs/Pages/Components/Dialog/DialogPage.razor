@@ -47,7 +47,7 @@
             </SectionHeader>
             <MarkdownDialogParameters />
             <SectionHeader>
-                <SubTitle>2. Per Dialog</SubTitle>
+                <SubTitle>2. Per Dialog (on open)</SubTitle>
                 <Description>
                     Below we pass along the DialogOptions class when we open the dialog, this can be done per dialog or you can predefine a bunch of them that you use for specific cases in your system.<br />
                 </Description>
@@ -56,6 +56,24 @@
                 <DialogOptionsExample />
             </SectionContent>
             <SectionSource Code="DialogOptionsExample" GitHubFolderName="Dialog" ShowCode="false" />
+            <SectionHeader>
+                <SubTitle>3. Per Dialog (from dialog)</SubTitle>
+                <Description>
+                    The title and the options can also be modified from the dialog component itself by calling <CodeInline>SetTitle</CodeInline> and <CodeInline>SetOptions</CodeInline> on the <CodeInline>MudDialogInstance</CodeInline> object.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <DialogSetOptionsExample />
+            </SectionContent>
+            <MudTabs Rounded="true" Outlined="true" Class="mt-4">
+                <MudTabPanel Text="Hide Source" />
+                <MudTabPanel Text="Page.razor">
+                    <SectionSource Code="DialogSetOptionsExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                </MudTabPanel>
+                <MudTabPanel Text="Dialog.razor">
+                    <SectionSource Code="DialogSetOptionsExample_Dialog" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                </MudTabPanel>
+            </MudTabs>
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>

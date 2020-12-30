@@ -2,7 +2,7 @@
 @inherits MudBasePicker
 
 
-<MudPicker @ref="Picker" Class="@Class" PickerVariant="@PickerVariant" Orientation="@Orientation" Label="@Label" Value="@Value" HelperText="@HelperText" InputVariant="@InputVariant" Disabled="@Disabled" Adornment="@Adornment" IconSize="@IconSize" InputIcon="@InputIcon" Elevation="@Elevation" Square="@Square" Rounded="@Rounded">
+<MudPicker @ref="Picker" Class="@Class" PickerVariant="@PickerVariant" Orientation="@Orientation" Label="@Label" @bind-Value="@Value" HelperText="@HelperText" InputVariant="@InputVariant" Editable="@Editable" Disabled="@Disabled" Adornment="@Adornment" IconSize="@IconSize" InputIcon="@InputIcon" Elevation="@Elevation" Square="@Square" Rounded="@Rounded">
     <MudPickerToolbar Class="@ToolbarClass" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
         <div class="mud-timepicker-hourminute">
             <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@HoursButtonClass" OnClick="@OnHourClick">@getHourString()</MudButton>
@@ -25,8 +25,7 @@
                     <div class="@GetClockPointerColor()" style="height: @GetPointerHeight(); transform: @GetPointerRotation()">
                         <div class="@GetClockPointerThumbColor()"></div>
                     </div>
-                    @if (OpenTo == OpenTo.Hours)
-                    {
+                    <div class="@HourDialClass">
                         @if (AmPm)
                         {
                             <MudText Class="@GetNumberColor(1)" Style="transform: translate(55px, 19.6px);">1</MudText>
@@ -130,10 +129,8 @@
                                 <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(00))" @onmouseover="@(() => OnMouseOverHour(00))"></div>
                             </div>
                         }
-
-                    }
-                    else if (OpenTo == OpenTo.Minutes)
-                    {
+                    </div>
+                    <div class="@MinuteDialClass">
                         <MudText Class="@GetNumberColor(05)" Style="transform: translate(55px, 19.6px);">05</MudText>
                         <MudText Class="@GetNumberColor(10)" Style="transform: translate(94.4px, 59.5px);">10</MudText>
                         <MudText Class="@GetNumberColor(15)" Style="transform: translate(109px, 114px);">15</MudText>
@@ -206,7 +203,7 @@
                         <div class="mud-picker-stick mud-minute" style="transform: rotateZ(342deg);" @onclick="@(() => OnMouseClickMinute(57))" @onmouseover="@(() => OnMouseOverMinute(57))"></div>
                         <div class="mud-picker-stick mud-minute" style="transform: rotateZ(348deg);" @onclick="@(() => OnMouseClickMinute(58))" @onmouseover="@(() => OnMouseOverMinute(58))"></div>
                         <div class="mud-picker-stick mud-minute" style="transform: rotateZ(354deg);" @onclick="@(() => OnMouseClickMinute(59))" @onmouseover="@(() => OnMouseOverMinute(59))"></div>
-                    }
+                    </div>
                 </div>
             </div>
         </div>

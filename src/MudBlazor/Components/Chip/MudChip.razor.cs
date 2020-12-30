@@ -153,10 +153,11 @@ namespace MudBlazor
         {
             if (ChipSet != null)
             {
-                ChipSet.OnChipClicked(this);
+                _=ChipSet.OnChipClicked(this);
             }
             if (Link != null)
             {
+                // TODO: use MudElement to render <a> and this code can be removed. we know that it has potential problems on iOS
                 if (string.IsNullOrWhiteSpace(Target))
                     UriHelper.NavigateTo(Link, ForceLoad);
                 else
@@ -193,7 +194,11 @@ namespace MudBlazor
             try
             {
                 ChipSet?.Remove(this);
-            }catch(Exception){}
+            }
+            catch (Exception)
+            {
+                /* ignore! */
+            }
         }
 
     }

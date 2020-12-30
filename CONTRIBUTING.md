@@ -6,17 +6,6 @@
 
 - .NET Core 3.1
 - Visual Studio 2019 with the ASP.NET and Web development.
-- Web Compiler (Visual Studio Extension)
-
-
-## Generating the Documentation
-
-To update the generated parts of the documentation set the project 
-MudBlazor.Docs.Compiler as the active project and run it. It generates the following:
-
-- Markup for the documentation examples
-- The doc strings for the API pages
-- An automatic bUnit test case from every example
 
 ## Unit Testing and Continuous Integration
 
@@ -31,14 +20,8 @@ sure you run the entire test suite to see if anything broke.
 
 ### Make your code break-safe
 
-When you are writing complex logic, please add a unit test for it. Here are some
-examples for things that already have unit tests:
-
-- Conversion functions between different data formats (i.e. Date and Time formatsm, etc.)
-- Bindable two-way properties of components
-- State machines inside of components
-
-Basically everything you fear could break if other developers touch it. 
+When you are writing non-trivial logic, please add a unit test for it. Basically, think of it like this: By adding 
+a test for everything you fear could break you make sure your work is not undone by accident by future additions. 
 
 ### How to write a unit test?
 
@@ -63,6 +46,29 @@ In the Test make sure to instantiate the razor file you just prepared above.
  see how state changes affect the HTML or the class attributes. Then write 
  assertions that enforce those changes i.e. by checking that a certain html exists 
  or a certain class is contained or not contained in the class attributes of an element. 
+ 
+### What are common errors when writing tests?
+
+Do not save html elements you query via `Find` or `FindAll` in a variable!
+
+```c#
+   // wrong - this will fail:
+   var textField = comp.Find("input");
+   textField.Change("Garfield");
+   textField.Blur();
+   comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
+```
+
+As soon as you interact with html elements they are potentially re-rendered and your variable becomes stale.
+
+```c#
+   // correct   
+   comp.Find("input").Change("Garfield");
+   comp.Find("input").Blur();
+   comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
+```
+
+So never save html element references in a variable in a bUnit test.
 
 ### What does not need to be tested?
 

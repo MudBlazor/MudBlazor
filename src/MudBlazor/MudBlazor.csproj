@@ -3,25 +3,33 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
-    <Version>1.2.1</Version>
-    <Authors>Garderoben</Authors>
-    <Company>Gardnet</Company>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <Title>MudBlazor</Title>
-    <PackageTags>Blazor, MudBlazor, Material, Components, Blazor Component, Blazor Library</PackageTags>
-    <Description>Blazor Component Library based on Material design. The goal is to do more with Blazor, utilizing CSS and keeping Javascript to a bare minimum.</Description>
+    <PackageId>MudBlazor</PackageId>
+    <Version>1.2.4</Version>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>Nuget.png</PackageIcon>
+    <Company>Gardnet</Company>
+    <Authors>Garderoben, Henon and Contributors</Authors>
+    <Copyright>Copyright 2020-2021 Jonny Larsson</Copyright>
+    <PackageTags>Blazor, MudBlazor, Material, Material Design, Components, Blazor Components, Blazor Library</PackageTags>
+    <Description>MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure. It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers them to adapt, fix or extend the framework and the multitude of examples in the documentation makes learning MudBlazor very easy.</Description>
     <PackageProjectUrl>http://mudblazor.com/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Garderoben/MudBlazor</RepositoryUrl>
-    <PackageIconUrl>https://raw.githubusercontent.com/Garderoben/MudBlazor/master/content/Nuget.png</PackageIconUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <RepositoryType>git</RepositoryType>
-    <IsPackable>true</IsPackable>
-    <PackageId>MudBlazor</PackageId>
   </PropertyGroup>
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Pack="true" Visible="false" PackagePath="" />
+    <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Remove="bundleconfig.json" />

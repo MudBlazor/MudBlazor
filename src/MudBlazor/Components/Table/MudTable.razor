@@ -327,8 +327,11 @@
         Context?.PagerStateHasChanged();
     }
 
+    /// <summary>
+    /// Call this to reload the server-filtered, -sorted and -paginated items
+    /// </summary>
     public void ReloadServerData()
     {
-        InvokeServerLoadFunc();
+        _=InvokeServerLoadFunc();
     }
 }

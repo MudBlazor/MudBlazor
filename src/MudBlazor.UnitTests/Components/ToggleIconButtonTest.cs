@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿#pragma warning disable 1998
+
+using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
