@@ -2,12 +2,10 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Bunit;
-using Bunit.TestDoubles.JSInterop;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
-using Moq;
 using MudBlazor.Providers;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
