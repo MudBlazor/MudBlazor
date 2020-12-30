@@ -64,8 +64,6 @@
         return _drawers.FirstOrDefault(d => d.Anchor == anchor)?.Clipped;
     }
 
-    public event Action DrawersChanged;
-
     public void FireDrawersChanged()
     {
         StateHasChanged();
