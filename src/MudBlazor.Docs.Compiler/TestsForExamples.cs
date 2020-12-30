@@ -24,7 +24,8 @@ namespace MudBlazor.Docs.Compiler
 
                 cb.AddHeader();
 
-                cb.AddLine("using Bunit.TestDoubles.JSInterop;");
+                cb.AddLine("using Bunit;");
+                cb.AddLine("using Bunit.TestDoubles;");
                 cb.AddLine("using Microsoft.AspNetCore.Components;");
                 cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
                 cb.AddLine("using NUnit.Framework;");
@@ -32,6 +33,8 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("using MudBlazor.Docs.Examples;");
                 cb.AddLine("using MudBlazor.Docs.Wireframes;");
                 cb.AddLine("using MudBlazor.Services;");
+                cb.AddLine("using System.Net.Http;");
+                cb.AddLine("using MudBlazor.Providers;");
                 cb.AddLine();
                 cb.AddLine("namespace MudBlazor.UnitTests.Components");
                 cb.AddLine("{");
@@ -48,11 +51,13 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("{");
                 cb.IndentLevel++;
                 cb.AddLine("ctx = new Bunit.TestContext();");
-                cb.AddLine("ctx.Services.AddMockJSRuntime();");
+                cb.AddLine("ctx.JSInterop.Mode = JSRuntimeMode.Loose;");
                 cb.AddLine("ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());");
                 cb.AddLine("ctx.Services.AddSingleton<IDialogService>(new DialogService());");
                 cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());");
                 cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
+                cb.AddLine("ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());");
+                cb.AddLine("ctx.Services.AddScoped(sp => new HttpClient());");
                 cb.IndentLevel--;
                 cb.AddLine("}");
                 cb.AddLine();

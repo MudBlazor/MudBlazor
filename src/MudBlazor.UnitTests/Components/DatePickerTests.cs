@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable 1998
+
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Bunit;
@@ -18,14 +20,22 @@ namespace MudBlazor.UnitTests
     [TestFixture]
     public class DatePickerTests
     {
+        private Bunit.TestContext ctx;
+
+        [SetUp]
+        public void Setup()
+        {
+            ctx = new Bunit.TestContext();
+            ctx.JSInterop.Mode = JSRuntimeMode.Loose;
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
+        }
+
         /// <summary>
         /// Setting the date should change the value and vice versa
         /// </summary>
         [Test]
         public async Task SimpleTest() {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton< NavigationManager >(new MockNavigationManager());
-            ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             var comp = ctx.RenderComponent<MudDatePicker>();
             // print the generated html
             Console.WriteLine(comp.Markup);
@@ -46,9 +56,6 @@ namespace MudBlazor.UnitTests
         [Test]
         public void PerformanceTest1()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-            ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             // warmup
             ctx.RenderComponent<DatePickerPerformanceTest>();
             // measure
@@ -66,9 +73,6 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task PerformanceTest2()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-            ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             // warmup
             var comp=ctx.RenderComponent<MudDatePicker>();
             var datepicker = comp.Instance;
@@ -89,9 +93,6 @@ namespace MudBlazor.UnitTests
         [Test]
         public void OpenCloseTest1()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-            ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             var comp = ctx.RenderComponent<MudDatePicker>();
             Console.WriteLine(comp.Markup);
             // should not be open
@@ -113,9 +114,6 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task OpenCloseTest2()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-            ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             var comp = ctx.RenderComponent<MudDatePicker>();
             Console.WriteLine(comp.Markup);
             // should not be open
