@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -28,12 +29,11 @@ namespace MudBlazor
             get => _value;
             set
             {
-                if (object.Equals(value, _value))
-                    return;
-                _value = value;
-                CheckedChanged.InvokeAsync(value);
-                _=ValidateValue(value);
-                EditFormValidate();
+                if (!EqualityComparer<T>.Default.Equals(_value, value))
+                {
+                    _value = value;
+                    BeginValidateAfter(CheckedChanged.InvokeAsync(value));
+                }
             }
         }
 

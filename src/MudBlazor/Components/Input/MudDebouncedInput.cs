@@ -21,13 +21,13 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
 
-        protected override void StringValueChanged(string text)
+        protected override void UpdateValueProperty()
         {
             //setting the Text property
 
             if (DebounceInterval == 0)
             {
-                base.StringValueChanged(text);
+                base.UpdateValueProperty();
                 return;
             }
             //stops previous timer
@@ -46,7 +46,7 @@ namespace MudBlazor
         
         private void OnTimerCompleteGuiThread()
         {
-            base.StringValueChanged(Text);
+            base.UpdateValueProperty();
             OnDebounceIntervalElapsed.InvokeAsync(Text);
         }
 
