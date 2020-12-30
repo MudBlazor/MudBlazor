@@ -2,6 +2,7 @@
     margin: 0;
     position: relative;
     list-style: none;
+    overscroll-behavior-y: contain;
 }
 
 .mud-nav-group {

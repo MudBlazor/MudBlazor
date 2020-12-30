@@ -1,11 +1,15 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
+
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudOverlay :  MudComponentBase
+    public partial class MudOverlay :  MudComponentBase, IDisposable
     {
         private bool _visible;
 
@@ -27,6 +31,8 @@ namespace MudBlazor
             .AddStyle("z-index", $"{ZIndex}", ZIndex != 5)
             .AddStyle(Style)
             .Build();
+
+        [Inject] public IJSRuntime  JS { get; set; }
 
         /// <summary>
         /// Child content of the component.
@@ -59,6 +65,11 @@ namespace MudBlazor
         /// If true overlay will set Visible false on click.
         /// </summary>
         [Parameter] public bool AutoClose { get; set; }
+
+        /// <summary>
+        /// If true (default), the Document.body element will not be able to scroll
+        /// </summary>
+        [Parameter] public bool LockScroll { get; set; } = true;
 
         /// <summary>
         /// If true applys the themes dark overlay color.
@@ -105,5 +116,40 @@ namespace MudBlazor
                 Command.Execute(CommandParameter);
             }
         }
+
+        //if not visible or CSS `position:absolute`, don't lock scroll
+        protected override void OnAfterRender(bool firstTime)
+        {
+            if (!Visible || Absolute)
+            {
+                UnblockScroll();
+                return;
+            }
+            if (LockScroll) 
+            {
+                BlockScroll(); 
+            }
+        }
+
+        //locks the scroll attaching a CSS class to the specified element, in this case the body
+        void BlockScroll()
+        {
+            JS.InvokeVoidAsync("blazorHelpers.lockScroll",
+                                          "body");
+        }
+
+        //removes the CSS class that prevented scrolling
+        void UnblockScroll()
+        {
+            JS.InvokeVoidAsync("blazorHelpers.unlockScroll", "body");
+        }
+       
+        //When disposing the overlay, remove the class that prevented scrolling
+        public void Dispose()
+        {
+           UnblockScroll();
+    
+        }
+        
     }
 }

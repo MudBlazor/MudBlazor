@@ -37,10 +37,15 @@
     [Parameter] public Color BadgeColor { get; set; } = Color.Primary;
 
     /// <summary>
+    /// Unique TabPanel ID. Usefull for actvation when Panels are dynamically generated.
+    /// </summary>
+    [Parameter] public object ID { get; set; }
+
+    /// <summary>
     /// Raised when tab is clicked
     /// </summary>
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
-    
+
     /// <summary>
     /// Child content of component.
     /// </summary>
