@@ -210,7 +210,6 @@ namespace MudBlazor.UnitTests
 
             // send invalid value, then valid value
             _ = comp.InvokeAsync(() => textField.Value = "def");
-            await Task.Delay(wait_delay);
             _ = comp.InvokeAsync(() => textField.Value = "abc");
 
             // validate that first call result (invalid, longer return time) will not overwrite second call result (valid, shorter return time)
