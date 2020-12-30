@@ -6,7 +6,6 @@
 .mud-main-drawer-closed {
     flex-grow: 1;
     transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
-    margin-left: 0px;
 }
 
 .mud-main-drawer-open {
@@ -20,15 +19,15 @@
             margin-left: var(--mud-drawer-width);
         }
 
-        &.mud-drawer--open {
-            & + .mud-drawer-anchor-right.mud-drawer--open {
+        &.mud-drawer--open + .mud-drawer-overlay {
+            & + .mud-drawer-anchor-right.mud-drawer--open + .mud-drawer-overlay {
                 & + .mud-main-drawer-open {
                     margin-right: var(--mud-drawer-width);
                     margin-left: var(--mud-drawer-width);
                 }
             }
 
-            & + .mud-drawer-anchor-right.mud-drawer--closed {
+            & + .mud-drawer-anchor-right.mud-drawer--closed + .mud-drawer-overlay {
                 & + .mud-main-drawer-open {
                     margin-right: auto;
                     margin-left: var(--mud-drawer-width);
@@ -42,15 +41,15 @@
             margin-right: var(--mud-drawer-width);
         }
 
-        &.mud-drawer--open {
-            & + .mud-drawer-anchor-left.mud-drawer--open {
+        &.mud-drawer--open + .mud-drawer-overlay {
+            & + .mud-drawer-anchor-left.mud-drawer--open + .mud-drawer-overlay {
                 & + .mud-main-drawer-open {
                     margin-right: var(--mud-drawer-width);
                     margin-left: var(--mud-drawer-width);
                 }
             }
 
-            & + .mud-drawer-anchor-left.mud-drawer--closed {
+            & + .mud-drawer-anchor-left.mud-drawer--closed + .mud-drawer-overlay {
                 & + .mud-main-drawer-open {
                     margin-right: var(--mud-drawer-width);
                     margin-left: auto;
