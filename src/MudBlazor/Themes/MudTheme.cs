@@ -18,8 +18,3 @@
         }
     }
 }
-
-namespace MudBlazor.Theme.Defaults
-{
-    //Old added so it dosent break projects on update durin minor
-}

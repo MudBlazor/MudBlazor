@@ -23,18 +23,8 @@ namespace MudBlazor.Docs.Compiler
                 var cb = new CodeBuilder();
 
                 cb.AddHeader();
-
-                cb.AddLine("using Bunit;");
-                cb.AddLine("using Bunit.TestDoubles;");
-                cb.AddLine("using Microsoft.AspNetCore.Components;");
-                cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
-                cb.AddLine("using NUnit.Framework;");
-                cb.AddLine("using MudBlazor.UnitTests.Mocks;");
-                cb.AddLine("using MudBlazor.Docs.Examples;");
-                cb.AddLine("using MudBlazor.Docs.Wireframes;");
-                cb.AddLine("using MudBlazor.Services;");
-                cb.AddLine("using System.Net.Http;");
-                cb.AddLine();
+                cb.AddUsings();
+                
                 cb.AddLine("namespace MudBlazor.UnitTests.Components");
                 cb.AddLine("{");
                 cb.IndentLevel++;

@@ -1,6 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
+    <ResolveStaticWebAssetsInputsDependsOn>
+      IncludeGeneratedStaticFiles;
+      $(ResolveStaticWebAssetsInputsDependsOn)
+    </ResolveStaticWebAssetsInputsDependsOn>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
   </PropertyGroup>
@@ -33,10 +40,8 @@
 
   <ItemGroup>
     <Content Remove="bundleconfig.json" />
-    <Content Remove="compilerconfig.build.json" />
     <Content Remove="compilerconfig.json" />
-    <Content Remove="compilerconfig.build.conf" />
-    <Content Remove="compilerconfig.build.files.conf" />
+
   </ItemGroup>
 
   <ItemGroup>
@@ -45,12 +50,19 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
   </ItemGroup>
 
-  <Target Name="ToolRestore" BeforeTargets="PreBuildEvent">
+  <Target Name="ToolRestore">
       <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
   </Target>
 
-  <Target Name="PreBuild" AfterTargets="ToolRestore">
+  <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
       <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -o ./wwwroot -z disable" StandardOutputImportance="high" />
+  </Target>
+
+  <Target Name="IncludeGeneratedStaticFiles" BeforeTargets="BeforeBuild;BeforeRebuild" DependsOnTargets="WebCompiler;ToolRestore">
+    <ItemGroup>
+      <Content Include="wwwroot/MudBlazor.min.css" Condition="!Exists('wwwroot/MudBlazor.min.css')" />
+      <Content Include="wwwroot/MudBlazor.min.js" Condition="!Exists('wwwroot/MudBlazor.min.js')" />
+    </ItemGroup>
   </Target>
 
   <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
