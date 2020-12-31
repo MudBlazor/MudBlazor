@@ -38,6 +38,9 @@
             "type": "shell",
             "args": [
                 "test",
+                "--blame-hang",
+                "--blame-hang-timeout",
+                "60s", 
                 "src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
