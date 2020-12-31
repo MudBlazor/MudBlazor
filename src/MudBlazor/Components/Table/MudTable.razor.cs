@@ -217,5 +217,6 @@ namespace MudBlazor
         internal abstract Task InvokeServerLoadFunc();
 
         internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
+        
     }
 }

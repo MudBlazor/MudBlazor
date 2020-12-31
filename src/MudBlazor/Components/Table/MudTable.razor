@@ -196,6 +196,9 @@
     {
         get
         {
+            if (ServerData!=null)
+                return _server_data.Items;
+
             if (Filter == null)
                 return Context.Sort(Items);
             return Context.Sort(Items.Where(Filter));
@@ -287,10 +290,19 @@
         SelectedItemsChanged.InvokeAsync(SelectedItems);
     }
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (firstRender)
+        {
+            if (!Context.HasPager)
+            {
+                await InvokeServerLoadFunc();
+                //await Task.Delay(1);
+                //StateHasChanged();
+            }
+        }
         TableContext.UpdateRowCheckBoxes();
-        return base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
     }
 
 
@@ -323,8 +335,8 @@
         };
 
         _server_data = await ServerData(state);
-        await InvokeAsync(StateHasChanged);
-        Context?.PagerStateHasChanged();
+        StateHasChanged();
+        Context?.PagerStateHasChanged?.Invoke();
     }
 
     /// <summary>

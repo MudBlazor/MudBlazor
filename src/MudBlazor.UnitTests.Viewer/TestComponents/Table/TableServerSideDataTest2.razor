@@ -1,0 +1,34 @@
+﻿<MudTable ServerData="@(new Func<TableState, Task<TableData<int>>>(ServerReload))">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="No." T="int">Nr</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    public static string __description__ = "The table should call ServerReload to get the items for the current page according to MudTablePager.";
+
+    private IEnumerable<int> pagedData;
+    private MudTable<int> table;
+
+    private int totalItems;
+    private string searchString = null;
+
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    private async Task<TableData<int>> ServerReload(TableState state)
+    {
+        var p = state.Page*3;
+        IEnumerable<int> data = new List<int>() { 1 + p, 2 + p, 3 + p };
+        totalItems = 99;
+        pagedData = data.ToArray();
+        return new TableData<int>() { TotalItems = totalItems, Items = pagedData };
+    }
+
+}

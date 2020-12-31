@@ -10,6 +10,7 @@ namespace MudBlazor
         public MudTableBase Table { get; set; }
         public Action TableStateHasChanged { get; set; }
         public Action PagerStateHasChanged { get; set; }
+        public bool HasPager { get; set; }
         public abstract void Add(MudTr row, object item);
         public abstract void Remove(MudTr row, object item);
         public abstract void UpdateRowCheckBoxes();
