@@ -14,6 +14,11 @@ namespace MudBlazor.UnitTests.Utilities
             var c1 = new DefaultConverter<string>();
             c1.Set("hello").Should().Be("hello");
             c1.Get("hello").Should().Be("hello");
+            c1.Set("").Should().Be("");
+            // TODO: activate this after the fix was merged: PR #428
+            //c1.Get("").Should().Be("");
+            c1.Get(null).Should().Be(null);
+            c1.Set(null).Should().Be(null);
             var c2 = new DefaultConverter<int>();
             c2.Set(17).Should().Be("17");
             c2.Get("17").Should().Be(17);
@@ -25,6 +30,10 @@ namespace MudBlazor.UnitTests.Utilities
             var c4 = new DefaultConverter<double?>() {Culture=CultureInfo.InvariantCulture };
             c4.Set(1.7).Should().Be("1.7");
             c4.Get("1.7").Should().Be(1.7);
+            c4.Get("1234567.15").Should().Be(1234567.15);
+            c4.Set(1234567.15).Should().Be("1234567.15");
+            c4.Set(c4.Get("1234567.15")).Should().Be("1234567.15");
+            c4.Get(c4.Set(1234567.15)).Should().Be(1234567.15);
             c4.Set(null).Should().Be(null);
             c4.Get(null).Should().Be(null);
             c4.Culture = CultureInfo.GetCultureInfo("de-AT");
