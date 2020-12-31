@@ -22,26 +22,21 @@ namespace MudBlazor
         {
             try
             {
+                // string
+                if (typeof(T) == typeof(string))
+                    return (T)(object)value;
+
                 // this is important, or otherwise all the TryParse down there might fail.
                 if (string.IsNullOrEmpty(value))
                     return default(T);
-                // string
-                if (typeof(T) == typeof(string))
-                {
-                    return (T)(object)value;
-                }
                 // char
                 else if (typeof(T) == typeof(char) || typeof(T) == typeof(char?))
                 {
-                    if (string.IsNullOrEmpty(value))
-                        return default(T);
                     return (T)(object)value[0];
                 }
                 // bool
                 else if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
                 {
-                    if (string.IsNullOrEmpty(value))
-                        return default(T);
                     var lowerValue = value.ToLowerInvariant();
                     if ( lowerValue=="true")
                         return (T)(object)true;
