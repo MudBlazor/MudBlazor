@@ -9,7 +9,9 @@ namespace MudBlazor.UnitTests.Mocks
 
         public SnackbarConfiguration Configuration => new SnackbarConfiguration();
 
+#pragma warning disable CS0067 // justification implementing interface 
         public event Action OnSnackbarsUpdated;
+#pragma warning restore CS0067
 
         public void Add(string message, Severity severity, Action<SnackbarOptions> configure)
         {
