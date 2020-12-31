@@ -49,9 +49,11 @@ In the Test make sure to instantiate the razor file you just prepared above.
  
 ### What are common errors when writing tests?
 
-Do not save html elements you query via `Find` or `FindAll` in a variable!
+#### Do not save html elements you query via `Find` or `FindAll` in a variable!
 
 ```c#
+   var comp = ctx.RenderComponent<MudTextField<string>>();
+   
    // wrong - this will fail:
    var textField = comp.Find("input");
    textField.Change("Garfield");
@@ -62,13 +64,31 @@ Do not save html elements you query via `Find` or `FindAll` in a variable!
 As soon as you interact with html elements they are potentially re-rendered and your variable becomes stale.
 
 ```c#
+   var comp = ctx.RenderComponent<MudTextField<string>>();
+   
    // correct   
    comp.Find("input").Change("Garfield");
    comp.Find("input").Blur();
    comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
 ```
+So never save html element references in a variable in a bUnit test. Note: you can save component references
+in variables just fine, so don't confuse that.
 
-So never save html element references in a variable in a bUnit test.
+#### Always use InvokeAsync to set parameter values on a component
+
+The bUnit test logic is not running on the blazor UI-thread, so whenever directly interacting with a component's 
+parameters or methods you need to use `await comp.InvokeAsync(()=> ... )`. That way the following test logic happens only after the 
+interaction with the component has been concluded.
+
+```c#
+   var comp = ctx.RenderComponent<MudTextField<string>>();
+   var textField=comp.FindComponent<MudTextField<string>>().Instance;
+   
+   // wrong!
+   textField.Value="I love dogs";
+   // correct
+   await comp.InvokeAsync(()=>textField.Value="I love dogs");
+```
 
 ### What does not need to be tested?
 
