@@ -85,7 +85,7 @@ interaction with the component has been concluded.
    var textField=comp.FindComponent<MudTextField<string>>().Instance;
    
    // wrong!
-   textField.Value="I love dogs";
+   textField.Value="Garfield";
    // correct
    await comp.InvokeAsync(()=>textField.Value="I love dogs");
 ```
@@ -106,12 +106,13 @@ Two things.
 
 The documentation has lots of examples for every component. We use those 
 examples as unit tests by instantiating them in a bUnit context and checking
-whether or not rendering them throws an error or not. While this is not a 
-replacing of a good hand-written unit test we can at least catch very basic
-breakages which would throw a runtime exception on render. The auto-tests are 
-all generated into the file _AllComponents.cs under MudBlazor.UnitTests.  
+whether rendering them throws an error or not. While this is not comparable
+to a good hand-written unit test we can at least catch exceptions thrown by
+the render logic. These tests are generated automatically on build and their
+cs files start with a underscore.
 
 ### Continuous Integration
 
 We have an Azure DevOps pipeline which will automatically execute the entire
-test suite on all pushes to the master branch. 
+test suite on all pushes and PRs. So if your commit or PR breaks the tests
+you'll be notified.
