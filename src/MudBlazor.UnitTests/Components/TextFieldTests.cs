@@ -40,7 +40,7 @@ namespace MudBlazor.UnitTests
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
         [Test]
-        public void TextFieldTest1() {
+        public async Task TextFieldTest1() {
             var comp = ctx.RenderComponent<MudTextField<double>>();
             // print the generated html
             Console.WriteLine(comp.Markup);
@@ -51,8 +51,8 @@ namespace MudBlazor.UnitTests
             //
             0.0.ToString("F1", CultureInfo.InvariantCulture).Should().Be("0.0");
             //
-            textfield.Culture = CultureInfo.InvariantCulture;
-            textfield.Format = "F1";
+            await comp.InvokeAsync(() => textfield.Format = "F1");
+            await comp.InvokeAsync(() => textfield.Culture = CultureInfo.InvariantCulture);
             textfield.Value.Should().Be(0.0);
             textfield.Text.Should().Be("0.0");
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
@@ -198,25 +198,29 @@ namespace MudBlazor.UnitTests
         public async Task TextFieldFluentValidationTest()
         {
             bool validatonFuncHasBeenCalled = false;
+
             // create a validation func based on a FluentValidation validator.
             var validationFunc = new Func<string, IEnumerable<string>>(input =>
             {
                 validatonFuncHasBeenCalled = true;
                 var validator = new TestValidator();
-                var result=validator.Validate(input);
+                var result = validator.Validate(input);
                 if (result.IsValid)
                     return new string[0];
                 return result.Errors.Select(e => e.ErrorMessage);
             });
-            var comp = ctx.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("Validation", validationFunc));
+
+            var comp = ctx.RenderComponent<MudTextField<string>>(Parameter(nameof(MudTextField<string>.Validation), validationFunc));
             Console.WriteLine(comp.Markup);
+
             // first try a valid credit card number
-            comp.Instance.Text = "4012 8888 8888 1881";
+            await comp.InvokeAsync(() => comp.Instance.Text = "4012 8888 8888 1881");
             validatonFuncHasBeenCalled.Should().BeTrue();
-            comp.Instance.Error.Should().BeFalse(because:"The number is a valid VISA test credit card number");
+            comp.Instance.Error.Should().BeFalse(because: "The number is a valid VISA test credit card number");
             comp.Instance.ErrorText.Should().BeNullOrEmpty();
+
             // now try something that produces a validation error
-            comp.Instance.Text = "0000 1111 2222 3333";
+            await comp.InvokeAsync(() => comp.Instance.Text = "0000 1111 2222 3333");
             comp.Instance.Error.Should().BeTrue(because: "The credit card number is fake");
             Console.WriteLine("Error message: " + comp.Instance.ErrorText);
             comp.Instance.ErrorText.Should().NotBeNullOrEmpty();
