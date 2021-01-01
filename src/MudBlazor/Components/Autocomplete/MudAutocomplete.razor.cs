@@ -127,7 +127,7 @@ namespace MudBlazor
             _timer?.Dispose();
             IsOpen = false;
             UpdateIcon();
-            _ = ValidateValue(Value);
+            BeginValidate();
             StateHasChanged();
         }
 
@@ -172,15 +172,15 @@ namespace MudBlazor
         private T[] _items;
         private int _selectedListItemIndex = 0;
 
-        protected override void GenericValueChanged(T value)
+        protected override void UpdateTextProperty(bool updateValue)
         {
-            base.GenericValueChanged(value);
+            base.UpdateTextProperty(updateValue);
             _timer?.Dispose();
         }
 
-        protected override void StringValueChanged(string text)
+        protected override void UpdateValueProperty(bool updateText)
         {
-            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(text))
+            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 Value = default(T);
             _timer?.Dispose();
             _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);

@@ -92,22 +92,50 @@ namespace MudBlazor
         /// </summary>
         protected T _value;
 
+        // These are the call-and-forget methods to launch an async validation process.
+        // After each async step, we make sure the current Value of the component has not changed while
+        // async code was executed to avoid race condition which could lead to incorrect validation results.
+        protected async void BeginValidateAfter(Task task)
+        {
+            var value = _value;
+
+            await task;
+
+            if (EqualityComparer<T>.Default.Equals(value, _value))
+            {
+                BeginValidate();
+            }
+        }
+
+        protected async void BeginValidate()
+        {
+            var value = _value;
+
+            await Validate();
+
+            if (EqualityComparer<T>.Default.Equals(value, _value))
+            {
+                EditFormValidate();
+            }
+        }
+
         /// <summary>
         /// Causes this component to validate its value
         /// </summary>
-        public async Task Validate() => await ValidateValue(_value);
+        public Task Validate() => ValidateValue();
 
-        internal async virtual Task ValidateValue(T value)
+        internal async virtual Task ValidateValue()
         {
-            ValidationErrors = new List<string>();
+            var changed = false;
+            var errors = new List<string>();
             try
             {
-                var hasValue = HasValue(value);
+                var hasValue = HasValue(_value);
                 if (Required)
                 {
                     if (!hasValue)
                     {
-                        ValidationErrors.Add(RequiredError);
+                        errors.Add(RequiredError);
                         return; // no need to call validation funcs if required value doesn't exist. we already have a required error.
                     }
                     // we have a required value, proceed to the validation funcs
@@ -118,130 +146,136 @@ namespace MudBlazor
                         return; // if nothing has been entered, we return OK without calling validation funcs
                     // proceed to the validation funcs
                 }
+
                 if (Validation is ValidationAttribute)
-                    ValidateWithAttribute(Validation as ValidationAttribute, value);
+                    ValidateWithAttribute(Validation as ValidationAttribute, _value, errors);
                 else if (Validation is Func<T, bool>)
-                    ValidateWithFunc(Validation as Func<T, bool>, value);
+                    ValidateWithFunc(Validation as Func<T, bool>, _value, errors);
                 else if (Validation is Func<T, string>)
-                    ValidateWithFunc(Validation as Func<T, string>, value);
+                    ValidateWithFunc(Validation as Func<T, string>, _value, errors);
                 else if (Validation is Func<T, IEnumerable<string>>)
-                    ValidateWithFunc(Validation as Func<T, IEnumerable<string>>, value);
-                else if (Validation is Func<T, Task<bool>>)
-                    await ValidateWithFunc(Validation as Func<T, Task<bool>>, value);
-                else if (Validation is Func<T, Task<string>>)
-                    await ValidateWithFunc(Validation as Func<T, Task<string>>, value);
-                else if (Validation is Func<T, Task<IEnumerable<string>>>)
-                    await ValidateWithFunc(Validation as Func<T, Task<IEnumerable<string>>>, value);
+                    ValidateWithFunc(Validation as Func<T, IEnumerable<string>>, _value, errors);
+                else
+                {
+                    var value = _value;
+
+                    if (Validation is Func<T, Task<bool>>)
+                        await ValidateWithFunc(Validation as Func<T, Task<bool>>, _value, errors);
+                    else if (Validation is Func<T, Task<string>>)
+                        await ValidateWithFunc(Validation as Func<T, Task<string>>, _value, errors);
+                    else if (Validation is Func<T, Task<IEnumerable<string>>>)
+                        await ValidateWithFunc(Validation as Func<T, Task<IEnumerable<string>>>, _value, errors);
+
+                    changed = !EqualityComparer<T>.Default.Equals(value, _value);
+                }
             }
             finally
             {
-                // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
-                // if Error and ErrorText are set by the user, setting them here will have no effect. 
-                Error = ValidationErrors.Count > 0;
-                ErrorText = ValidationErrors.FirstOrDefault();
-                Form?.Update(this);
-                StateHasChanged();
+                // If Value has changed while we were validating it, ignore results and exit
+                if (!changed)
+                {
+                    // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
+                    // if Error and ErrorText are set by the user, setting them here will have no effect. 
+                    ValidationErrors = errors;
+                    Error = errors.Count > 0;
+                    ErrorText = errors.FirstOrDefault();
+                    Form?.Update(this);
+                    StateHasChanged();
+                }
             }
         }
 
         protected virtual bool HasValue(T value)
         {
-            var hasValue = true;
             if (typeof(T) == typeof(string))
-                hasValue = !string.IsNullOrWhiteSpace((string)(object)value);
-            else if (value == null)
-                hasValue = false;
-            return hasValue;
+                return !string.IsNullOrWhiteSpace((string)(object)value);
+
+            return value != null;
         }
 
-        protected virtual void ValidateWithAttribute(ValidationAttribute attr, T value)
+        protected virtual void ValidateWithAttribute(ValidationAttribute attr, T value, List<string> errors)
         {
-            if (attr.IsValid(value))
-                return;
-            ValidationErrors.Add(attr.ErrorMessage);
+            if (!attr.IsValid(value))
+                errors.Add(attr.ErrorMessage);
         }
 
-        protected virtual void ValidateWithFunc(Func<T, bool> func, T value)
+        protected virtual void ValidateWithFunc(Func<T, bool> func, T value, List<string> errors)
         {
             try
             {
-                if (func(value))
-                    return;
-                ValidationErrors.Add("Invalid");
+                if (!func(value))
+                    errors.Add("Invalid");
             }
             catch (Exception e)
             {
-                ValidationErrors.Add("Error in validation func: " + e.Message);
+                errors.Add("Error in validation func: " + e.Message);
             }
         }
 
-        protected virtual void ValidateWithFunc(Func<T, string> func, T value)
+        protected virtual void ValidateWithFunc(Func<T, string> func, T value, List<string> errors)
         {
             try
             {
                 var error = func(value);
-                if (error == null)
-                    return;
-                ValidationErrors.Add(error);
+                if (error != null)
+                    errors.Add(error);
             }
             catch (Exception e)
             {
-                ValidationErrors.Add("Error in validation func: " + e.Message);
+                errors.Add("Error in validation func: " + e.Message);
             }
         }
 
-        protected virtual void ValidateWithFunc(Func<T, IEnumerable<string>> func, T value)
+        protected virtual void ValidateWithFunc(Func<T, IEnumerable<string>> func, T value, List<string> errors)
         {
             try
             {
                 foreach (var error in func(value))
-                    ValidationErrors.Add(error);
+                    errors.Add(error);
             }
             catch (Exception e)
             {
-                ValidationErrors.Add("Error in validation func: " + e.Message);
+                errors.Add("Error in validation func: " + e.Message);
             }
         }
 
-        protected async virtual Task ValidateWithFunc(Func<T, Task<bool>> func, T value)
+        protected async virtual Task ValidateWithFunc(Func<T, Task<bool>> func, T value, List<string> errors)
         {
             try
             {
-                if (await func(value))
-                    return;
-                ValidationErrors.Add("Invalid");
+                if (!await func(value))
+                    errors.Add("Invalid");
             }
             catch (Exception e)
             {
-                ValidationErrors.Add("Error in validation func: " + e.Message);
+                errors.Add("Error in validation func: " + e.Message);
             }
         }
 
-        protected async virtual Task ValidateWithFunc(Func<T, Task<string>> func, T value)
+        protected async virtual Task ValidateWithFunc(Func<T, Task<string>> func, T value, List<string> errors)
         {
             try
             {
                 var error = await func(value);
-                if (error == null)
-                    return;
-                ValidationErrors.Add(error);
+                if (error != null)
+                    errors.Add(error);
             }
             catch (Exception e)
             {
-                ValidationErrors.Add("Error in validation func: " + e.Message);
+                errors.Add("Error in validation func: " + e.Message);
             }
         }
 
-        protected async virtual Task ValidateWithFunc(Func<T, Task<IEnumerable<string>>> func, T value)
+        protected async virtual Task ValidateWithFunc(Func<T, Task<IEnumerable<string>>> func, T value, List<string> errors)
         {
             try
             {
                 foreach (var error in await func(value))
-                    ValidationErrors.Add(error);
+                    errors.Add(error);
             }
             catch (Exception e)
             {
-                ValidationErrors.Add("Error in validation func: " + e.Message);
+                errors.Add("Error in validation func: " + e.Message);
             }
         }
 
@@ -280,11 +314,10 @@ namespace MudBlazor
         /// </summary>
         internal void EditFormValidate()
         {
-            if (_fieldIdentifier.FieldName == null)
+            if (_fieldIdentifier.FieldName != null)
             {
-                return;
+                EditContext?.NotifyFieldChanged(_fieldIdentifier);
             }
-            EditContext?.NotifyFieldChanged(_fieldIdentifier);
         }
 
         /// <summary>
@@ -298,12 +331,13 @@ namespace MudBlazor
 
         private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
         {
-            if (EditContext == null)
-                return;
-            var error_msgs = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
-            Error = error_msgs.Length > 0;
-            ErrorText = (Error ? error_msgs[0] : null);
-            StateHasChanged();
+            if (EditContext != null)
+            {
+                var error_msgs = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
+                Error = error_msgs.Length > 0;
+                ErrorText = (Error ? error_msgs[0] : null);
+                StateHasChanged();
+            }
         }
 
         /// <summary>
@@ -327,30 +361,27 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if (EditContext == null)
-                return;
-            if (For == null)
-                return;
-            if (For != _currentFor)
+            if (EditContext != null && For != null)
             {
-                _fieldIdentifier = FieldIdentifier.Create(For);
-                _currentFor = For;
-            }
+                if (For != _currentFor)
+                {
+                    _fieldIdentifier = FieldIdentifier.Create(For);
+                    _currentFor = For;
+                }
 
-            if (EditContext != _currentEditContext)
-            {
-                DetachValidationStateChangedListener();
-                EditContext.OnValidationStateChanged += OnValidationStateChanged;
-                _currentEditContext = EditContext;
+                if (EditContext != _currentEditContext)
+                {
+                    DetachValidationStateChangedListener();
+                    EditContext.OnValidationStateChanged += OnValidationStateChanged;
+                    _currentEditContext = EditContext;
+                }
             }
         }
 
         private void DetachValidationStateChangedListener()
         {
             if (_currentEditContext != null)
-            {
                 _currentEditContext.OnValidationStateChanged -= OnValidationStateChanged;
-            }
         }
 
         #endregion
