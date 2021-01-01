@@ -222,7 +222,7 @@ namespace MudBlazor.UnitTests
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
-        [Test, MaxTime(1000)]
+        [Test, Timeout(1000)]
         public async Task TextFieldUpdateLoopProtectionTest()
         {
             var comp = ctx.RenderComponent<MudTextField<string>>();
