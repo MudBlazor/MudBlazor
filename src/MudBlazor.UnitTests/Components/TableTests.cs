@@ -285,5 +285,27 @@ namespace MudBlazor.UnitTests
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("3");
         }
 
+        /// <summary>
+        /// The server-side loaded table should reflect initial sort direction in its initial table state.
+        /// In this case, the items should be sorted with descending order.
+        /// </summary>
+        [Test]
+        public async Task TableServerSideDataTest3()
+        {
+            var comp = ctx.RenderComponent<TableServerSideDataTest3>();
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("3");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("1");
+            comp.FindAll("div.mud-table-pagination-actions button")[2].Click(); // next >
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("6");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("5");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("4");
+            comp.FindAll("div.mud-table-pagination-actions button")[0].Click(); // |<
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("3");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("1");
+        }
     }
 }
