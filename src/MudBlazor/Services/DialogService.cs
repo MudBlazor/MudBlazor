@@ -1,10 +1,6 @@
-﻿// Copyright (c) 2020 Jonny Larsson
+﻿// Copyright (c) 2019 Blazored (https://github.com/Blazored)
+// Copyright (c) 2020 Jonny Larsson (https://github.com/Garderoben/MudBlazor)
 // License: MIT
-// See https://github.com/Garderoben/MudBlazor
-// Modified version of Blazored Modal
-// Copyright (c) 2019 Blazored
-// License: MIT
-// See https://github.com/Blazored
 
 using System;
 using Microsoft.AspNetCore.Components;
