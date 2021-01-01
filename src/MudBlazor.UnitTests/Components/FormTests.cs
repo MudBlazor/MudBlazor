@@ -174,7 +174,6 @@ namespace MudBlazor.UnitTests
         /// Validate that first async validation call returning after second call will not override result of second call
         /// </summary>
         [Test]
-        [Ignore("TODO: unignore after the fix has been merged.")]
         public async Task FormAsyncValidationTest()
         {
             const int valid_delay = 100;

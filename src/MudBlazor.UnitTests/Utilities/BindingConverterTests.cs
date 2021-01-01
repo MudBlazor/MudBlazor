@@ -15,8 +15,7 @@ namespace MudBlazor.UnitTests.Utilities
             c1.Set("hello").Should().Be("hello");
             c1.Get("hello").Should().Be("hello");
             c1.Set("").Should().Be("");
-            // TODO: activate this after the fix was merged: PR #428
-            //c1.Get("").Should().Be("");
+            c1.Get("").Should().Be("");
             c1.Get(null).Should().Be(null);
             c1.Set(null).Should().Be(null);
             var c2 = new DefaultConverter<int>();
