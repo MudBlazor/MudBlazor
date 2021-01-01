@@ -2,17 +2,19 @@
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
     public abstract class MudBaseButton : MudComponentBase
     {
-      
+
+        [Inject] protected IJSRuntime JsRuntime { get; set; }
+
         /// <summary>
         /// The HTML element that will be rendered in the root by the component
         /// </summary>
         [Parameter] public string HtmlTag { get; set; }
-
 
         /// <summary>
         /// The button Type (Button, Submit, Refresh)
@@ -30,11 +32,6 @@ namespace MudBlazor
         [Parameter] public string Target { get; set; }
 
         /// <summary>
-        /// If true, force browser to redirect outside component router-space.
-        /// </summary>
-        [Parameter] public bool ForceLoad { get; set; }
-
-        /// <summary>
         /// Command executed when the user clicks on an element.
         /// </summary>
         [Parameter] public ICommand Command { get; set; }
@@ -45,17 +42,26 @@ namespace MudBlazor
         [Parameter] public object CommandParameter { get; set; }
 
         /// <summary>
+        /// If true, keep the focus on the button after click. Otherwise, blur() is called on the button.
+        /// </summary>
+        [Parameter] public bool RetainFocusOnClick { get; set; }
+        
+        /// <summary>
         /// Button click event.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         protected async Task OnClickHandler(MouseEventArgs ev)
-        {          
-                await OnClick.InvokeAsync(ev);
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }            
+        {
+            await OnClick.InvokeAsync(ev);
+            if (Command?.CanExecute(CommandParameter) ?? false)
+            {
+                Command.Execute(CommandParameter);
+            }
+            if (HtmlTag == "button" && !RetainFocusOnClick && _elementReference.Id != null)
+            {
+                await JsRuntime.InvokeVoidAsync("elementReference.blur", _elementReference);
+            }
         }
 
         protected override void OnInitialized()
@@ -65,7 +71,6 @@ namespace MudBlazor
             {
                 HtmlTag = "button";
             }
-
             //But if Link property is set, it changes to an anchor element automatically
             if (!string.IsNullOrWhiteSpace(Link))
             {
@@ -73,5 +78,7 @@ namespace MudBlazor
             }
             base.OnInitialized();
         }
+
+        protected ElementReference _elementReference;
     }
 }
