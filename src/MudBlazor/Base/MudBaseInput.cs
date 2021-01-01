@@ -96,15 +96,26 @@ namespace MudBlazor
         public string Text
         {
             get => _text;
-            set
+            set => SetText(value, true);
+        }
+
+        private void SetText(string text, bool updateValue)
+        {
+            if (_text != text)
             {
-                if (_text != value)
-                {
-                    _text = value;
-                    UpdateValueProperty();
-                    TextChanged.InvokeAsync(value);
-                }
+                _text = text;
+                if (updateValue)
+                    UpdateValueProperty(false);
+                TextChanged.InvokeAsync(_text);
             }
+        }
+
+        /// <summary>
+        /// Text change hook for descendants  
+        /// </summary>
+        protected virtual void UpdateTextProperty(bool updateValue)
+        {
+            SetText(Converter.Set(Value), updateValue);
         }
 
         [Parameter] public EventCallback<string> TextChanged { get; set; }
@@ -141,31 +152,26 @@ namespace MudBlazor
         public T Value
         {
             get => _value;
-            set
-            {
-                if (!EqualityComparer<T>.Default.Equals(_value, value))
-                {
-                    _value = value;
-                    UpdateTextProperty();
-                    BeginValidateAfter(ValueChanged.InvokeAsync(value));
-                }
-            }
+            set => SetValue(value, true);
         }
 
-        /// <summary>
-        /// Text change hook for descendants  
-        /// </summary>
-        protected virtual void UpdateTextProperty()
+        private void SetValue(T value, bool updateText)
         {
-            Text = Converter.Set(Value);
+            if (!EqualityComparer<T>.Default.Equals(_value, value))
+            {
+                _value = value;
+                if (updateText)
+                    UpdateTextProperty(false);
+                BeginValidateAfter(ValueChanged.InvokeAsync(_value));
+            }
         }
 
         /// <summary>
         /// Value change hook for descendants  
         /// </summary>
-        protected virtual void UpdateValueProperty()
+        protected virtual void UpdateValueProperty(bool updateText)
         {
-            Value = Converter.Get(Text);
+            SetValue(Converter.Get(Text), updateText);
         }
 
         private Converter<T> _converter = new DefaultConverter<T>();
@@ -182,7 +188,7 @@ namespace MudBlazor
                 if (_converter == null)
                     return;
                 _converter.OnError = OnConversionError;
-                UpdateTextProperty();
+                UpdateTextProperty(false);      // refresh only Text property from current Value
             }
         }
 
@@ -195,7 +201,7 @@ namespace MudBlazor
                 if (_converter == null)
                     _converter = new DefaultConverter<T>();
                 _converter.Culture = value;
-                UpdateTextProperty();
+                UpdateTextProperty(false);      // refresh only Text property from current Value
             }
         }
 
@@ -214,7 +220,7 @@ namespace MudBlazor
                 if (_converter==null)
                     _converter = new DefaultConverter<T>();
                 _converter.Format = _format;
-                UpdateTextProperty();
+                UpdateTextProperty(false);      // refresh only Text property from current Value
             }
         }
 
@@ -267,7 +273,7 @@ namespace MudBlazor
 
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
-            UpdateTextProperty(); 
+            UpdateTextProperty(false); 
         }
 
         protected override Task OnInitializedAsync()

@@ -172,13 +172,13 @@ namespace MudBlazor
         private T[] _items;
         private int _selectedListItemIndex = 0;
 
-        protected override void UpdateTextProperty()
+        protected override void UpdateTextProperty(bool updateValue)
         {
-            base.UpdateTextProperty();
+            base.UpdateTextProperty(updateValue);
             _timer?.Dispose();
         }
 
-        protected override void UpdateValueProperty()
+        protected override void UpdateValueProperty(bool updateText)
         {
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 Value = default(T);

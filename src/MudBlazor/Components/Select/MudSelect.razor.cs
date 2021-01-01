@@ -141,18 +141,17 @@ namespace MudBlazor
             return selected_item.ChildContent;
         }
 
-        protected override void UpdateValueProperty()
+        protected override void UpdateValueProperty(bool updateText)
         {
             // Select does not support updating the value through the Text property at all!
-            //base.StringValueChanged();
         }
 
-        protected override void UpdateTextProperty()
+        protected override void UpdateTextProperty(bool updateValue)
         {
             // when multiselection is true, we don't update the text when the value changes. 
             // instead the Text will be set with a comma separated list of selected values
             if (!MultiSelection)
-                base.UpdateTextProperty();
+                base.UpdateTextProperty(updateValue);
         }
 
         internal event Action<HashSet<T>> SelectionChangedFromOutside;
