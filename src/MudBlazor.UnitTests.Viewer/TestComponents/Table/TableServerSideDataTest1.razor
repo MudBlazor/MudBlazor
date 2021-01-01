@@ -8,13 +8,12 @@
 </MudTable>
 
 @code {
+#pragma warning disable 1998
     public static string __description__ = "Even without a MudTablePagination the table should call ServerReload to get the items on start.";
 
     private IEnumerable<int> pagedData;
-    private MudTable<int> table;
 
     private int totalItems;
-    private string searchString = null;
 
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server

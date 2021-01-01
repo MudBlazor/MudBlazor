@@ -11,13 +11,12 @@
 </MudTable>
 
 @code {
+#pragma warning disable 1998
     public static string __description__ = "The table should call ServerReload to get the items for the current page according to MudTablePager.";
 
     private IEnumerable<int> pagedData;
-    private MudTable<int> table;
 
     private int totalItems;
-    private string searchString = null;
 
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
