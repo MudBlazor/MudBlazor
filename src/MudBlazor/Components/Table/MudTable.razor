@@ -144,7 +144,7 @@
         get => _selectedItem;
         set
         {
-            if (Object.ReferenceEquals(SelectedItem, value))
+            if (EqualityComparer<T>.Default.Equals(SelectedItem, value))
                 return;
             _selectedItem = value;
             SelectedItemChanged.InvokeAsync(value);
