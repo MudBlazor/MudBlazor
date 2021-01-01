@@ -1,5 +1,8 @@
-﻿namespace MudBlazor
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace MudBlazor
 {
+    [ExcludeFromCodeCoverage]
     public static class Colors
     {
         public static partial class Red

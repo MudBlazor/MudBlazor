@@ -1,6 +1,8 @@
-﻿
+﻿using System.Diagnostics.CodeAnalysis;
+
 namespace MudBlazor
 {
+    [ExcludeFromCodeCoverage]
     public static partial class Icons
     {
         public class Custom : Brands

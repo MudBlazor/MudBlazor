@@ -1,5 +1,8 @@
-﻿namespace MudBlazor
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace MudBlazor
 {
+    [ExcludeFromCodeCoverage]
     public class FileFormats
     {
 
