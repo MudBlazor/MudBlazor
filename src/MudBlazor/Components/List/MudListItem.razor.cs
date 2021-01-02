@@ -1,20 +1,30 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudListItem : MudComponentBase
+    public partial class MudListItem : MudComponentBase, IDisposable
     {
         protected string Classname =>
         new CssBuilder("mud-list-item")
-          .AddClass("mud-list-item-dense", Dense || MudList?.Dense==true)
-          .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters==true))
+          .AddClass("mud-list-item-dense", Dense || MudList?.Dense == true)
+          .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters == true))
           .AddClass("mud-list-item-clickable", MudList?.Clickable)
-          .AddClass($"mud-ripple", MudList?.Clickable==true && !DisableRipple)
+          .AddClass($"mud-ripple", MudList?.Clickable == true && !DisableRipple)
+          .AddClass("mud-selected-item", _selected)
           .AddClass(Class)
         .Build();
+
+        [Inject] protected NavigationManager UriHelper { get; set; }
+        
+        [CascadingParameter] protected MudList MudList { get; set; }
+
+        /// <summary>
+        /// The text to display
+        /// </summary>
         [Parameter] public string Text { get; set; }
 
         /// <summary>
@@ -58,9 +68,31 @@ namespace MudBlazor
         [Parameter] public bool DisableGutters { get; set; }
 
         /// <summary>
-        /// If Nested list and If Expanded true expands the nested list, otherwise collapse it.
+        /// Expand or collapse nested list. Two-way bindable. Note: if you directly set this to
+        /// true or false (instead of using two-way binding) it will force the nested list's expansion state.
         /// </summary>
-        [Parameter] public bool Expanded { get; set; }
+        [Parameter]
+        public bool Expanded
+        {
+            get => _expanded;
+            set
+            {
+                if (_expanded == value)
+                    return;
+                _expanded = value;
+                _=ExpandedChanged.InvokeAsync(value);
+            }
+        }
+
+        private bool _expanded;
+        
+        [Parameter]
+        public EventCallback<bool> ExpandedChanged { get; set; }
+
+        /// <summary>
+        /// If true, expands the nested list on first display
+        /// </summary>
+        [Parameter] public bool InitiallyExpanded { get; set; }
 
         /// <summary>
         /// Command parameter.
@@ -71,9 +103,15 @@ namespace MudBlazor
         /// Command executed when the user clicks on an element.
         /// </summary>
         [Parameter] public ICommand Command { get; set; }
-        [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
-        [CascadingParameter] MudList MudList { get; set; }
+        
+        /// <summary>
+        /// Display content of this list item. If set, this overrides Text
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+        
+        /// <summary>
+        /// Add child list items here to create a nested list.
+        /// </summary>
         [Parameter] public RenderFragment NestedList { get; set; }
 
         /// <summary>
@@ -81,7 +119,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
-        
+
         protected void OnClickHandler(MouseEventArgs ev)
         {
             if (NestedList != null)
@@ -94,6 +132,7 @@ namespace MudBlazor
             }
             else
             {
+                MudList?.SetSelectedItem(this);
                 OnClick.InvokeAsync(ev);
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
@@ -102,18 +141,53 @@ namespace MudBlazor
             }
         }
 
-        public Typo textTypo { get; set; }
-
-        protected override void OnParametersSet()
+        protected override void OnInitialized()
         {
-           if(Dense || MudList?.Dense==true)
-           {
-                textTypo = Typo.body2;
-           }
-            else if(!Dense || !MudList?.Dense==true)
-           {
-                textTypo = Typo.body1;
+            _expanded = InitiallyExpanded;
+            if (MudList != null)
+            {
+                MudList.Register(this);
+                OnListParametersChanged();
+                MudList.ParametersChanged += OnListParametersChanged;
             }
         }
+        
+        private Typo _textTypo { get; set; }
+        
+        private void OnListParametersChanged()
+        {
+            if (Dense || MudList?.Dense == true)
+            {
+                _textTypo = Typo.body2;
+            }
+            else if (!Dense || !MudList?.Dense == true)
+            {
+                _textTypo = Typo.body1;
+            }
+            StateHasChanged();
+        }
+
+        private bool _selected;
+
+        internal void SetSelected(bool selected)
+        {
+            if (_selected == selected)
+                return;
+            _selected = selected;
+            StateHasChanged();
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                if (MudList == null)
+                    return;
+                MudList.ParametersChanged -= OnListParametersChanged;
+                MudList.Unregister(this);
+            }
+            catch(Exception) { /*ignore*/ }
+        }
+
     }
 }
