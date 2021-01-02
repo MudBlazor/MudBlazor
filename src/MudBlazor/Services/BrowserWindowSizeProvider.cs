@@ -2,7 +2,7 @@
 using Microsoft.JSInterop;
 using MudBlazor.Services;
 
-namespace MudBlazor.Providers
+namespace MudBlazor
 {
     public interface IBrowserWindowSizeProvider
     {
