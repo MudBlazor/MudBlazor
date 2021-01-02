@@ -11,7 +11,7 @@
         @ChildContent
     </CascadingValue>
 </aside>
-<MudOverlay Visible="true" OnClick="@DrawerClose" Class="@OverlayClass" DarkBackground="true" LockScroll=false />
+<MudOverlay Visible="true" OnClick="@ToggleDrawer" Class="@OverlayClass" DarkBackground="true" LockScroll=false />
 
 
 @code {
@@ -75,11 +75,6 @@
     [Parameter] public RenderFragment ChildContent { get; set; }
 
     /// <summary>
-    /// Automatically close drawer when window resized to &lt;= MD
-    /// </summary>
-    [Parameter] public bool AutoCloseOnResize { get; set; }
-
-    /// <summary>
     /// Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.
     /// </summary>
     [Parameter]
@@ -104,6 +99,8 @@
     private bool _open;
     private bool _clipped;
     private bool _initial = true;
+    private bool _openLarge = false;
+    private Breakpoint _breakpoint;
 
     [Parameter]
     public bool Clipped
@@ -128,6 +125,15 @@
         ResizeListener.OnResized += OnWindowResized;
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _breakpoint = await ResizeListener.GetBreakpoint();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
     public void Dispose()
     {
         try
@@ -138,7 +144,7 @@
         ResizeListener.OnResized -= OnWindowResized;
     }
 
-    private void DrawerClose()
+    private void ToggleDrawer()
     {
         if (Open)
         {
@@ -152,23 +158,28 @@
 
     public async void OnNavigation()
     {
-        var browserSize = await CheckScreenSize();
-        if (browserSize.Width < 1280)
+        if (Open && await ResizeListener.IsMediaSize(Breakpoint.MdAndDown))
         {
-            DrawerClose();
+            ToggleDrawer();
         }
     }
 
-    private void OnWindowResized(object sender, BrowserWindowSize browserSize)
+    private async void OnWindowResized(object sender, BrowserWindowSize browserSize)
     {
-        if (browserSize.Width < 1280 && Open && AutoCloseOnResize)
+        if (_breakpoint >= Breakpoint.Lg && await ResizeListener.IsMediaSize(Breakpoint.MdAndDown))
         {
-            DrawerClose();
+            _openLarge = Open;
+            if (Open)
+            {
+                ToggleDrawer();
+            }
         }
-    }
+        else if (await ResizeListener.IsMediaSize(Breakpoint.LgAndUp) && !Open && _openLarge)
+        {
+            ToggleDrawer();
+            _openLarge = false;
+        }
 
-    private async Task<BrowserWindowSize> CheckScreenSize()
-    {
-        return await ResizeListener.GetBrowserWindowSize();
+        _breakpoint = await ResizeListener.GetBreakpoint();
     }
 }
