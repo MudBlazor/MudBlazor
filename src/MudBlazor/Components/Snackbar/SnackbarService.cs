@@ -9,7 +9,7 @@ using System.Threading;
 namespace MudBlazor
 {
     /// <inheritdoc />
-    internal class Snackbars : ISnackbar
+    internal class SnackbarService : ISnackbar
     {
         public SnackbarConfiguration Configuration { get; }
         public event Action OnSnackbarsUpdated;
@@ -17,7 +17,7 @@ namespace MudBlazor
         private ReaderWriterLockSlim SnackBarLock { get; }
         private IList<Snackbar> SnackBarList { get; }
 
-        public Snackbars(SnackbarConfiguration configuration)
+        public SnackbarService(SnackbarConfiguration configuration)
         {
             Configuration = configuration;
             Configuration.OnUpdate += ConfigurationUpdated;

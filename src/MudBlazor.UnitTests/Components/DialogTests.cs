@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests
         public void TearDown() => ctx.Dispose();
 
         /// <summary>
-        /// Setting the date should change the value and vice versa
+        /// Opening and closing a simple dialog
         /// </summary>
         [Test]
         public async Task SimpleTest() {

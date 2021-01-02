@@ -14,7 +14,7 @@ namespace MudBlazor
         public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services, SnackbarConfiguration configuration)
         {
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-            services.TryAddScoped<ISnackbar>(builder => new Snackbars(configuration));
+            services.TryAddScoped<ISnackbar>(builder => new SnackbarService(configuration));
             return services;
         }
 
