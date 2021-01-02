@@ -159,7 +159,6 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
-        [Ignore("TODO: What should happen?")]
         public async Task TablePagingFilter()
         {
             var comp = ctx.RenderComponent<TablePagingTest1>();
@@ -170,7 +169,7 @@ namespace MudBlazor.UnitTests
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-3 of 3");
             // clear search
             searchString.Change(string.Empty);
-            comp.FindAll("tr").Count().Should().Be(59);
+            comp.FindAll("tr").Count().Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
         }
 

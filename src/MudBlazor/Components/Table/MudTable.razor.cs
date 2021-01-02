@@ -273,12 +273,19 @@ namespace MudBlazor
             Context?.PagerStateHasChanged?.Invoke();
         }
 
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+            if (!firstRender)
+                Context?.PagerStateHasChanged?.Invoke();
+        }
+
         /// <summary>
         /// Call this to reload the server-filtered, -sorted and -paginated items
         /// </summary>
-        public void ReloadServerData()
+        public Task ReloadServerData()
         {
-            _ = InvokeServerLoadFunc();
+            return InvokeServerLoadFunc();
         }
     }
 }
