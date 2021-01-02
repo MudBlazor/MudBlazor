@@ -2,7 +2,6 @@
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
 using System;
-using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
@@ -62,22 +61,6 @@ namespace MudBlazor
             NewestOnTop = false;
             PreventDuplicates = true;
             MaxDisplayedSnackbars = 5;
-        }
-
-        internal string SnackbarTypeClass(Severity severity, Variant variant, bool blurred)
-        {
-            string backgroundClass = "";
-
-            if (blurred && variant != Variant.Filled)
-            {
-                backgroundClass = "mud-snackbar-blurred";
-            }
-            else if(!blurred && variant != Variant.Filled)
-            {
-                backgroundClass = "mud-snackbar-surface";
-            }
-
-            return $"mud-alert-{variant.ToDescriptionString()}-{severity.ToDescriptionString()} {backgroundClass}";
         }
     }
 }
