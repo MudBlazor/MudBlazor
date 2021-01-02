@@ -113,7 +113,7 @@
     &.mud-tab-slider-horizontal {
         height: 2px;
         left: 0;
-        top: 46px;
+        bottom: 0;
         transition: left .3s cubic-bezier(.64,.09,.08,1);
         will-change: left;
 
