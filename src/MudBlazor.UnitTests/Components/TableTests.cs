@@ -109,12 +109,71 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
-        [Ignore("todo")]
-        public void TablePaging()
+        public void TablePagingNavigationButtons()
         {
-            // there must not be more rows than page size
-            // switch page and check the rows of the selected page
+            var comp = ctx.RenderComponent<TablePagingTest1>();
+            // print the generated html      
+            Console.WriteLine(comp.Markup);
+            // after initial load
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+            var pagingButtons = comp.FindAll("button");
+            // click next page
+            pagingButtons[2].Click();
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("11-20 of 59");
+            // last page
+            pagingButtons[3].Click();
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(9);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("51-59 of 59");
+            // previous page
+            pagingButtons[1].Click();
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("41-50 of 59");
+            // first page
+            pagingButtons[0].Click();
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
         }
+
+        [Test]
+        public async Task TablePagingChangePageSize()
+        {
+            var comp = ctx.RenderComponent<TablePagingTest1>();
+            // print the generated html      
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var pager = comp.FindComponent<MudSelect<string>>().Instance;
+            // change page size
+            await comp.InvokeAsync(() => pager.Value = "20");
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(20);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-20 of 59");
+            // change page size
+            await comp.InvokeAsync(() => pager.Value = "60");
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(59);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-59 of 59");
+            // change page size
+            await comp.InvokeAsync(() => pager.Value = "10");
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+        }
+
+        [Test]
+        [Ignore("TODO: What should happen?")]
+        public async Task TablePagingFilter()
+        {
+            var comp = ctx.RenderComponent<TablePagingTest1>();
+            var searchString = comp.Find("#searchString");
+            // search returns 3 items
+            searchString.Change("Ala");
+            comp.FindAll("tr").Count().Should().Be(3);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-3 of 3");
+            // clear search
+            searchString.Change(string.Empty);
+            comp.FindAll("tr").Count().Should().Be(59);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+        }
+
 
         /// <summary>
         /// the selected items (check-box click or row click) should be in SelectedItems
