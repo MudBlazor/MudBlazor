@@ -23,18 +23,8 @@ namespace MudBlazor.Docs.Compiler
                 var cb = new CodeBuilder();
 
                 cb.AddHeader();
-
-                cb.AddLine("using Bunit;");
-                cb.AddLine("using Bunit.TestDoubles;");
-                cb.AddLine("using Microsoft.AspNetCore.Components;");
-                cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
-                cb.AddLine("using NUnit.Framework;");
-                cb.AddLine("using MudBlazor.UnitTests.Mocks;");
-                cb.AddLine("using MudBlazor.Docs.Examples;");
-                cb.AddLine("using MudBlazor.Docs.Wireframes;");
-                cb.AddLine("using MudBlazor.Services;");
-                cb.AddLine("using System.Net.Http;");
-                cb.AddLine();
+                cb.AddUsings();
+                
                 cb.AddLine("namespace MudBlazor.UnitTests.Components");
                 cb.AddLine("{");
                 cb.IndentLevel++;
@@ -53,9 +43,11 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("ctx.JSInterop.Mode = JSRuntimeMode.Loose;");
                 cb.AddLine("ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());");
                 cb.AddLine("ctx.Services.AddSingleton<IDialogService>(new DialogService());");
-                cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());");
+                cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new SnackbarService());");
                 cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
                 cb.AddLine("ctx.Services.AddScoped(sp => new HttpClient());");
+                // options required for file upload in net
+                cb.AddLine("ctx.Services.AddOptions();");
                 cb.IndentLevel--;
                 cb.AddLine("}");
                 cb.AddLine();

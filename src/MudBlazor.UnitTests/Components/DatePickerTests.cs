@@ -2,11 +2,13 @@
 
 using System;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -18,13 +20,29 @@ namespace MudBlazor.UnitTests
     [TestFixture]
     public class DatePickerTests
     {
+        private Bunit.TestContext ctx;
+
+        [SetUp]
+        public void Setup()
+        {
+            ctx = new Bunit.TestContext();
+            ctx.JSInterop.Mode = JSRuntimeMode.Loose;
+            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            ctx.Services.AddSingleton<IDialogService>(new DialogService());
+            ctx.Services.AddSingleton<ISnackbar>(new SnackbarService());
+            ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+            ctx.Services.AddScoped(sp => new HttpClient());
+            ctx.Services.AddOptions();
+        }
+
+        [TearDown]
+        public void TearDown() => ctx.Dispose();
+
         /// <summary>
         /// Setting the date should change the value and vice versa
         /// </summary>
         [Test]
         public async Task SimpleTest() {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton< NavigationManager >(new MockNavigationManager());
             var comp = ctx.RenderComponent<MudDatePicker>();
             // print the generated html
             Console.WriteLine(comp.Markup);
@@ -45,8 +63,6 @@ namespace MudBlazor.UnitTests
         [Test]
         public void PerformanceTest1()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             // warmup
             ctx.RenderComponent<DatePickerPerformanceTest>();
             // measure
@@ -64,8 +80,6 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task PerformanceTest2()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             // warmup
             var comp=ctx.RenderComponent<MudDatePicker>();
             var datepicker = comp.Instance;
@@ -86,8 +100,6 @@ namespace MudBlazor.UnitTests
         [Test]
         public void OpenCloseTest1()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<MudDatePicker>();
             Console.WriteLine(comp.Markup);
             // should not be open
@@ -109,8 +121,6 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task OpenCloseTest2()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<MudDatePicker>();
             Console.WriteLine(comp.Markup);
             // should not be open

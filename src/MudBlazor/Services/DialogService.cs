@@ -1,16 +1,16 @@
-﻿// Copyright (c) 2020 Jonny Larsson
+﻿// Copyright (c) 2019 Blazored (https://github.com/Blazored)
+// Copyright (c) 2020 Jonny Larsson (https://github.com/Garderoben/MudBlazor)
 // License: MIT
-// See https://github.com/Garderoben/MudBlazor
-// Modified version of Blazored Modal
-// Copyright (c) 2019 Blazored
-// License: MIT
-// See https://github.com/Blazored
 
 using System;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
+    // MudBlazor.Dialog is obsolete but kept here for backwards compatibility reasons.
+    // Don't remove, it will cause massive breakages in user code
+    namespace Dialog { /* leave empty! */ }
+    
     public class DialogService : IDialogService
     {
         internal event Action<DialogReference> OnDialogInstanceAdded;

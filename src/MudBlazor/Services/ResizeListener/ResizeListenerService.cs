@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
-using MudBlazor.Providers;
 
 namespace MudBlazor.Services
 {

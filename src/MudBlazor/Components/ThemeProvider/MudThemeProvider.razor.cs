@@ -31,7 +31,7 @@ namespace MudBlazor
             return theme.ToString();
         }
 
-        private string Breakpoint = "mud-breakpoint";
+        // private string Breakpoint = "mud-breakpoint";
         private string Palette = "mud-palette";
         private string Elevation = "mud-elevation";
         private string LayoutProperties = "mud";

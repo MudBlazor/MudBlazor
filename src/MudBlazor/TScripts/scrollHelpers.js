@@ -1,4 +1,4 @@
-window.blazorHelpers = {
+window.scrollHelpers = {
     scrollToFragment: (elementId) => {
         var element = document.getElementById(elementId);
 

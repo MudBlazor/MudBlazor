@@ -134,14 +134,14 @@ namespace MudBlazor
         //locks the scroll attaching a CSS class to the specified element, in this case the body
         void BlockScroll()
         {
-            JS.InvokeVoidAsync("blazorHelpers.lockScroll",
+            JS.InvokeVoidAsync("scrollHelpers.lockScroll",
                                           "body");
         }
 
         //removes the CSS class that prevented scrolling
         void UnblockScroll()
         {
-            JS.InvokeVoidAsync("blazorHelpers.unlockScroll", "body");
+            JS.InvokeVoidAsync("scrollHelpers.unlockScroll", "body");
         }
        
         //When disposing the overlay, remove the class that prevented scrolling

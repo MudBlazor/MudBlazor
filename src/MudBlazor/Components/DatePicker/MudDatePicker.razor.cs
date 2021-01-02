@@ -258,7 +258,7 @@ namespace MudBlazor
         {
             _scrollToYearAfterRender = false;
             string id = $"{_componentId}{GetMonthStart().Year.ToString()}";
-            await JsRuntime.InvokeVoidAsync("blazorHelpers.scrollToFragment", id);
+            await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToFragment", id);
             StateHasChanged();
         }
 

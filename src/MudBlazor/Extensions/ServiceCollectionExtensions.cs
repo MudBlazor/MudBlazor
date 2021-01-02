@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace MudBlazor
 {
+    [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddMudBlazorDialog(this IServiceCollection services)
@@ -14,7 +16,7 @@ namespace MudBlazor
         public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services, SnackbarConfiguration configuration)
         {
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-            services.TryAddScoped<ISnackbar>(builder => new Snackbars(configuration));
+            services.TryAddScoped<ISnackbar>(builder => new SnackbarService(configuration));
             return services;
         }
 

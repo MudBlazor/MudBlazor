@@ -1,5 +1,5 @@
-﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
-//Changes and improvements Copyright (c) The MudBlazor Team.
+﻿//Copyright (c) 2019 Alessandro Ghidini.All rights reserved.
+//Copyright (c) 2020 Jonny Larson and Meinrad Recheis
 
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Threading;
 namespace MudBlazor
 {
     /// <inheritdoc />
-    internal class Snackbars : ISnackbar
+    public class SnackbarService : ISnackbar
     {
         public SnackbarConfiguration Configuration { get; }
         public event Action OnSnackbarsUpdated;
@@ -17,7 +17,9 @@ namespace MudBlazor
         private ReaderWriterLockSlim SnackBarLock { get; }
         private IList<Snackbar> SnackBarList { get; }
 
-        public Snackbars(SnackbarConfiguration configuration)
+        public SnackbarService() : this(new SnackbarConfiguration()) { }
+        
+        public SnackbarService(SnackbarConfiguration configuration)
         {
             Configuration = configuration;
             Configuration.OnUpdate += ConfigurationUpdated;
