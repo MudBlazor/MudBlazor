@@ -42,9 +42,9 @@ namespace MudBlazor
         [Parameter] public object CommandParameter { get; set; }
 
         /// <summary>
-        /// If true, keep the focus on the button after click. Otherwise, blur() is called on the button.
+        /// If true (the default), keep the focus on the button after click. Otherwise, blur() is called on the button.
         /// </summary>
-        [Parameter] public bool RetainFocusOnClick { get; set; }
+        [Parameter] public bool RetainFocusOnClick { get; set; } = true;
         
         /// <summary>
         /// Button click event.
@@ -58,7 +58,7 @@ namespace MudBlazor
             {
                 Command.Execute(CommandParameter);
             }
-            if (HtmlTag == "button" && !RetainFocusOnClick && _elementReference.Id != null)
+            if (!RetainFocusOnClick && _elementReference.Id != null && HtmlTag == "button")
             {
                 await JsRuntime.InvokeVoidAsync("elementReference.blur", _elementReference);
             }
