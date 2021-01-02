@@ -11,7 +11,9 @@ namespace MudBlazor
     {
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
+            .AddClass($"mud-tabs-reverse", !Vertical && TabsPlacement == Placement.Bottom)
             .AddClass($"mud-tabs-vertical", Vertical)
+            .AddClass($"mud-tabs-vertical-reverse", Vertical && TabsPlacement == Placement.End)
             .AddClass(Class)
             .Build();
 
@@ -60,6 +62,8 @@ namespace MudBlazor
         /// If true, displays the MudTabs verticaly.
         /// </summary>
         [Parameter] public bool Vertical { get; set; }
+
+        [Parameter] public Placement TabsPlacement { get; set; } = Placement.Top;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.

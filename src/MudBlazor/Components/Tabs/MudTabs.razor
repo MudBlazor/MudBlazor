@@ -22,8 +22,7 @@
                                 else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
                                 {
                                     <MudIcon Icon="@panel.Icon" Class="mud-tab-icon-text" />
-                                    @panel.Text
-                                }
+                                    @panel.Text}
                                 @if (panel.BadgeData != null)
                                 {
                                     <MudBadge Content="@panel.BadgeData" Color="@panel.BadgeColor" Class="mud-tab-badge" />
@@ -32,11 +31,11 @@
                         }
                         @if (!Vertical)
                         {
-                            <div class="mud-tab-slider mud-tab-slider-horizontal" style="width: calc(100% / @Panels.Count()); left: calc((100% / @Panels.Count()) * @ActivePanelIndex);"></div>
+                            <div class="mud-tab-slider mud-tab-slider-horizontal @(TabsPlacement == Placement.Bottom ? "mud-tab-slider-horizontal-reverse" : "")" style="width: calc(100% / @Panels.Count()); left: calc((100% / @Panels.Count()) * @ActivePanelIndex);"></div>
                         }
                         else
                         {
-                            <div class="mud-tab-slider mud-tab-slider-vertical" style="height: calc(100% / @Panels.Count()); top: calc((100% / @Panels.Count()) * @ActivePanelIndex);"></div>
+                            <div class="mud-tab-slider mud-tab-slider-vertical @(TabsPlacement == Placement.End ? "mud-tab-slider-vertical-reverse" : "")" style="height: calc(100% / @Panels.Count()); top: calc((100% / @Panels.Count()) * @ActivePanelIndex);"></div>
                         }
                     </div>
                 </div>
