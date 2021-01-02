@@ -1,9 +1,10 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
-@using Microsoft.JSInterop;
+@using MudBlazor.Services;
 @using MudBlazor.Extensions
 @inherits MudComponentBase
 @implements IDisposable
+@inject IResizeListenerService ResizeListener
 
 <aside @attributes="UserAttributes" class="@Classname" style="@Style">
     <CascadingValue Value="this" IsFixed="true">
@@ -14,8 +15,6 @@
 
 
 @code {
-    [Inject] IJSRuntime JsRuntime { get; set; }
-
     private bool _rtl;
 
     protected string Classname =>
@@ -33,14 +32,14 @@
     protected string OverlayClass =>
     new CssBuilder("mud-drawer-overlay mud-overlay-drawer")
       .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
-      .AddClass($"mud-drawer--open", !Open)
+      .AddClass($"mud-drawer--open", Open)
       .AddClass($"mud-drawer--initial", _initial)
     .Build();
 
     [CascadingParameter] MudLayout Layout { get; set; }
-    
+
     [CascadingParameter] bool RightToLeft
-    { 
+    {
         get
         {
             return _rtl;
@@ -74,6 +73,11 @@
     /// Child content of component.
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
+
+    /// <summary>
+    /// Automatically close drawer when window resized to &lt;= MD
+    /// </summary>
+    [Parameter] public bool AutoCloseOnResize { get; set; }
 
     /// <summary>
     /// Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.
@@ -121,29 +125,7 @@
     {
         base.OnInitialized();
         Layout?.Add(this);
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _afterFirstRender = true;
-        }
-    }
-
-    private bool _afterFirstRender;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        if (_afterFirstRender)
-        {
-            var browserSize = await CheckScreenSize();
-            if (browserSize.Width < 1280)
-            {
-                await OpenChanged.InvokeAsync(false);
-                _afterFirstRender = false;
-            }
-        }
+        ResizeListener.OnResized += OnWindowResized;
     }
 
     public void Dispose()
@@ -152,7 +134,8 @@
         {
             Layout?.Remove(this);
         }
-        catch (Exception) {}
+        catch (Exception) { }
+        ResizeListener.OnResized -= OnWindowResized;
     }
 
     private void DrawerClose()
@@ -176,14 +159,16 @@
         }
     }
 
-    private async Task<BrowserWindowSize> CheckScreenSize()
+    private void OnWindowResized(object sender, BrowserWindowSize browserSize)
     {
-        return await JsRuntime.InvokeAsync<BrowserWindowSize>("resizeListener.getBrowserWindowSize");
+        if (browserSize.Width < 1280 && Open && AutoCloseOnResize)
+        {
+            DrawerClose();
+        }
     }
 
-    private class BrowserWindowSize
+    private async Task<BrowserWindowSize> CheckScreenSize()
     {
-        public int Height { get; set; }
-        public int Width { get; set; }
+        return await ResizeListener.GetBrowserWindowSize();
     }
 }
