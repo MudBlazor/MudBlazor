@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests
             ctx.JSInterop.Mode = JSRuntimeMode.Loose;
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
-            ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
+            ctx.Services.AddSingleton<ISnackbar>(new SnackbarService());
             ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
         }
 
