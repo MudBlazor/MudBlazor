@@ -166,7 +166,10 @@
         get
         {
             if (!MultiSelection)
-                return new HashSet<T>(new T[] { _selectedItem });
+                if (_selectedItem is null)
+                    return new HashSet<T>(new T[] {});
+                else
+                    return new HashSet<T>(new T[] { _selectedItem });
             else
                 return Context.Selection;
         }

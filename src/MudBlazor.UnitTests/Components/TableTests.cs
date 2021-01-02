@@ -56,17 +56,27 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
-        [Ignore("todo")]
         public void TableSingleSelection()
         {
-            //var comp = ctx.RenderComponent<TableSingleSelection>();
-            // print the generated html
-            //Console.WriteLine(comp.Markup);
+            var comp = ctx.RenderComponent<TableSingleSelectionTest1>();
+            // print the generated html      
+            Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            //var group = comp.FindComponent<MudTable>();
-            // ...
-
-            // the item of the clicked row should be in SelectedItem
+            var table = comp.FindComponent<MudTable<int?>>().Instance;
+            table.SelectedItem.Should().BeNull();
+            table.SelectedItems.Count().Should().Be(0);
+            var trs = comp.FindAll("tr");
+            // Click on row 1 (index 0)
+            trs[0].Click();
+            // Check SelectedItem and SelectedItems count
+            table.SelectedItem.Should().Be(0);
+            table.SelectedItems.Count().Should().Be(1);
+            table.SelectedItems.First().Should().Be(0);
+            // Repeat
+            trs[2].Click();
+            table.SelectedItem.Should().Be(2);
+            table.SelectedItems.Count().Should().Be(1);
+            table.SelectedItems.First().Should().Be(2);
         }
 
         [Test]
