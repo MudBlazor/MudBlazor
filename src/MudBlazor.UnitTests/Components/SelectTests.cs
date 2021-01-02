@@ -18,12 +18,23 @@ namespace MudBlazor.UnitTests
     [TestFixture]
     public class SelectTests
     {
+        private Bunit.TestContext ctx;
+
+        [SetUp]
+        public void Setup()
+        {
+            ctx = new Bunit.TestContext();
+            ctx.AddMudBlazorServices();
+        }
+
+        [TearDown]
+        public void TearDown() => ctx.Dispose();
+
+        /// <summary>
+        /// Click should open the Menu and selecting a value should update the bindable value.
+        /// </summary>
         [Test]
         public void SelectTest1() {
-            // Click should open the Menu and selecting a value should update the bindable value.
-            // setup
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<SelectTest1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
@@ -31,14 +42,12 @@ namespace MudBlazor.UnitTests
             var select = comp.FindComponent<MudSelect<string>>();
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
-
             // check initial state
             select.Instance.Value.Should().BeNullOrEmpty();
             menu.ClassList.Should().NotContain("mud-popover-open");
             // click and check if it has toggled the menu
             input.Click();
             menu.ClassList.Should().Contain("mud-popover-open");
-
             // now click an item and see the value change
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
@@ -50,13 +59,12 @@ namespace MudBlazor.UnitTests
             select.Instance.Value.Should().Be("1");
         }
 
+        /// <summary>
+        /// Click should not close the menu and selecting multiple values should update the bindable value with a comma separated list.
+        /// </summary>
         [Test]
         public async Task MultiSelectTest1()
         {
-            //Click should not close the menu and selecting multiple values should update the bindable value with a comma separated list.
-            // setup
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<MultiSelectTest1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
@@ -64,14 +72,12 @@ namespace MudBlazor.UnitTests
             var select = comp.FindComponent<MudSelect<string>>();
                 var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
-
             // check initial state
             select.Instance.Value.Should().BeNullOrEmpty();
             menu.ClassList.Should().NotContain("mud-popover-open");
             // click and check if it has toggled the menu
             input.Click();
             menu.ClassList.Should().Contain("mud-popover-open");
-
             // now click an item and see the value change
             var items = comp.FindAll("div.mud-list-item").ToArray();
             items[1].Click();
@@ -97,31 +103,25 @@ namespace MudBlazor.UnitTests
             icons[0].Attributes["d"].Value.Should().Be(@unchecked);
             icons[1].Attributes["d"].Value.Should().Be(@checked);
             icons[2].Attributes["d"].Value.Should().Be(@checked);
-
             // now check how setting the SelectedValues makes items checked or unchecked
             await comp.InvokeAsync(() => {
                 select.Instance.SelectedValues = new HashSet<string>() { "1", "2" };
             });
-
             icons = comp.FindAll("div.mud-list-item path").ToArray();
             icons[0].Attributes["d"].Value.Should().Be(@checked);
             icons[1].Attributes["d"].Value.Should().Be(@checked);
             icons[2].Attributes["d"].Value.Should().Be(@unchecked);
-
         }
 
         /// <summary>
-        /// Initial render fragement in input should be the pre-selected value's items's render fragment. After clicking the second item, the render fragment should update
+        /// Initial Text should be enums default value
+        /// Initial render fragement in input should be the pre-selected value's items's render fragment.
+        /// After clicking the second item, the render fragment should update
         /// </summary>
         [Test]
         public async Task SelectWithEnumTest()
         {
-            // Initial Text should be enums default value
-            // setup
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<SelectWithEnumTest>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<MyEnum>>();
@@ -143,10 +143,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public void SelectUnrepresentableValueTest()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<SelectUnrepresentableValueTest>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<int>>();
@@ -167,10 +164,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task SelectUnrepresentableValueTest2()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<SelectUnrepresentableValueTest2>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<int>>();
@@ -194,10 +188,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public void SelectWithoutItemPresentersTest()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<SelectWithoutItemPresentersTest>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<int>>();
