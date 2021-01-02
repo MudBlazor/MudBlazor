@@ -28,7 +28,7 @@
         else
         {
         <MudTd>
-            @if (object.ReferenceEquals(Context?.Table._editingItem, Item))
+            @if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false))
             {
                 if (!string.IsNullOrEmpty(Context?.Table.CommitEditTooltip))
                 {

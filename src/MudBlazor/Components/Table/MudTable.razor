@@ -45,7 +45,7 @@
                         @foreach (var item in CurrentPageItems)
                         {
                             <MudTr Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
-                                @if (RowEditingTemplate != null && object.Equals(_editingItem, item))
+                                @if ((!ReadOnly) && RowEditingTemplate != null && object.Equals(_editingItem, item))
                                     @RowEditingTemplate(item)
                                 else
                                     @RowTemplate(item)

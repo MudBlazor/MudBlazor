@@ -135,6 +135,11 @@ namespace MudBlazor
         [Parameter] public RenderFragment PagerContent { get; set; }
 
         /// <summary>
+        /// Locks Inline Edit, if true.
+        /// </summary>
+        [Parameter] public bool ReadOnly { get; set; } = false;
+
+        /// <summary>
         /// Button click event.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnCommitEditClick { get; set; }
