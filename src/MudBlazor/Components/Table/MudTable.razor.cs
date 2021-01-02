@@ -126,7 +126,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
 
-        protected IEnumerable<T> FilteredItems
+        public IEnumerable<T> FilteredItems
         {
             get
             {
