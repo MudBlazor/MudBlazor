@@ -80,10 +80,32 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
-        [Ignore("todo")]
         public void TableFilter()
         {
-            // non-matching rows should disappear
+            var comp = ctx.RenderComponent<TableFilterTest1>();
+            // print the generated html      
+            Console.WriteLine(comp.Markup);
+            var table = comp.FindComponent<MudTable<string>>().Instance;
+            var searchString = comp.Find("#searchString");
+            // should return 3 items
+            searchString.Change("Ala");
+            table.GetFilteredItemsCount().Should().Be(3);
+            string.Join(",", table.FilteredItems).Should().Be("Alabama,Alaska,Palau");
+            comp.FindAll("tr").Count().Should().Be(3);
+            // no matches
+            searchString.Change("ZZZ");
+            table.GetFilteredItemsCount().Should().Be(0);
+            table.FilteredItems.Count().Should().Be(0);
+            comp.FindAll("tr").Count().Should().Be(0);
+            // should return 1 item
+            searchString.Change("Alaska");
+            table.GetFilteredItemsCount().Should().Be(1);
+            table.FilteredItems.First().Should().Be("Alaska");
+            comp.FindAll("tr").Count().Should().Be(1);
+            // clear search
+            searchString.Change(string.Empty);
+            table.GetFilteredItemsCount().Should().Be(59);
+            comp.FindAll("tr").Count().Should().Be(59);
         }
 
         [Test]
