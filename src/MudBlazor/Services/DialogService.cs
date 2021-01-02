@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
+    // MudBlazor.Dialog is obsolete but kept here for backwards compatibility reasons.
+    // Don't remove, it will cause massive breakages in user code
+    namespace Dialog { /* leave empty! */ }
+    
     public class DialogService : IDialogService
     {
         internal event Action<DialogReference> OnDialogInstanceAdded;
