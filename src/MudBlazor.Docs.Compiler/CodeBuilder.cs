@@ -65,7 +65,6 @@ namespace MudBlazor.Docs.Compiler
             AddLine("using MudBlazor.Docs.Components;");
             AddLine("using MudBlazor.Docs.Wireframes;");
             AddLine("using MudBlazor.Internal;");
-            AddLine("using MudBlazor.Providers;");
             AddLine("using MudBlazor.Services;");
             AddLine("using MudBlazor.UnitTests;");
             AddLine("using MudBlazor.UnitTests.Mocks;");
