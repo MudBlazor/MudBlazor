@@ -58,7 +58,7 @@ namespace MudBlazor.Docs.Compiler
             return success;
         }
 
-        private static string GetSaveTypename(Type t) => Regex.Replace(t.ConvertToCSharpSource(), @"[\.<>]", "_");
+        private static string GetSaveTypename(Type t) => Regex.Replace(t.ConvertToCSharpSource(), @"[\.,<>]", "_");
 
         private static string EscapeDescription(string doc)
         {
