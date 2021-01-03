@@ -5,11 +5,13 @@
         <Description>A dialog will overlay your current app content, providing the user with either information, a choice, or other tasks.</Description>
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
             <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
             <MudText>The Dialog is dependant on <CodeInline Class="docs-code-tertiary">IDialogService</CodeInline> and <CodeInline>MudDialogProvider</CodeInline></MudText>
             <MudText>Check the <MudLink Href="/getting-started/installation">Installation</MudLink> page for instructions regarding default setup.</MudText>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Usage</Title>
@@ -32,8 +34,9 @@
             </MudGrid>
         </DocsPageSection>
         <DocsPageSection>
-            <MudDivider Class="my-16" Style="opacity:0;" />
+            <MudDivider Class="my-16" Style="opacity: 0;" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Configuration</Title>
@@ -75,6 +78,7 @@
                 </MudTabPanel>
             </MudTabs>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Templating and Passing Simple Data</Title>
@@ -93,6 +97,7 @@
                 </MudTabPanel>
             </MudTabs>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Passing Data</Title>
@@ -111,6 +116,7 @@
                 </MudTabPanel>
             </MudTabs>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Scrollable Dialog</Title>
@@ -120,7 +126,7 @@
                 <DialogScrollableExample />
             </SectionContent>
             <MudTabs Rounded="true" Outlined="true" Class="mt-4">
-                <MudTabPanel Text="Hide Source"/>
+                <MudTabPanel Text="Hide Source" />
                 <MudTabPanel Text="Page.razor">
                     <SectionSource Code="DialogScrollableExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
                 </MudTabPanel>
@@ -129,5 +135,20 @@
                 </MudTabPanel>
             </MudTabs>
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Inlining Dialog</Title>
+                <Description>You can inline <CodeInline>MudDialog</CodeInline> directly in another component. This has several advantages: 
+                    You don't have to create an extra razor component for your dialog and you can easily share code and data between dialog and owning component via bindings.
+                    Moreover, an inline dialog can be opened only once at the same time.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <DialogInlineExample />
+            </SectionContent>
+            <SectionSource Code="DialogInlineExample" GitHubFolderName="Dialog" />
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
