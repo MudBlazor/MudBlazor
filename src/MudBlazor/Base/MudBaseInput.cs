@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
-    public abstract class MudBaseInput<T> : MudFormComponent<T>
+    public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
+        protected MudBaseInput() : base(new DefaultConverter<T>()) { }
+
         /// <summary>
         /// If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
         /// If it is sub-component, it will NOT do form validation!!
@@ -111,7 +113,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Text change hook for descendants  
+        /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.   
         /// </summary>
         protected virtual void UpdateTextProperty(bool updateValue)
         {
@@ -167,45 +169,30 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Value change hook for descendants  
+        /// Value change hook for descendants. Called when Value needs to be refreshed from current Text property.  
         /// </summary>
         protected virtual void UpdateValueProperty(bool updateText)
         {
             SetValue(Converter.Get(Text), updateText);
         }
 
-        private Converter<T> _converter = new DefaultConverter<T>();
-
-        [Parameter]
-        public Converter<T> Converter
+        protected override bool SetConverter(Converter<T, string> value)
         {
-            get => _converter;
-            set
-            {
-                if (_converter == value)
-                    return;
-                _converter = value;
-                if (_converter == null)
-                    return;
-                _converter.OnError = OnConversionError;
+            var changed = base.SetConverter(value);
+            if (changed)
                 UpdateTextProperty(false);      // refresh only Text property from current Value
-            }
+
+            return changed;
         }
 
-        [Parameter]
-        public CultureInfo Culture
+        protected override bool SetCulture(CultureInfo value)
         {
-            get => _converter?.Culture;
-            set
-            {
-                if (_converter == null)
-                    _converter = new DefaultConverter<T>();
-                _converter.Culture = value;
+            var changed = base.SetCulture(value);
+            if (changed)
                 UpdateTextProperty(false);      // refresh only Text property from current Value
-            }
-        }
 
-        private string _format = null;
+            return changed;
+        }
 
         /// <summary>
         /// Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans
@@ -213,52 +200,19 @@ namespace MudBlazor
         [Parameter]
         public string Format
         {
-            get => _format;
-            set
+            get => ((Converter<T>)Converter).Format;
+            set => SetFormat(value);
+        }
+
+        protected virtual bool SetFormat(string value)
+        {
+            var changed = (Format != value);
+            if (changed)
             {
-                _format = value;
-                if (_converter==null)
-                    _converter = new DefaultConverter<T>();
-                _converter.Format = _format;
+                ((Converter<T>)Converter).Format = value;
                 UpdateTextProperty(false);      // refresh only Text property from current Value
             }
-        }
-
-        /// <summary>
-        /// True if the conversion from string to T failed
-        /// </summary>
-        public override bool ConversionError
-        {
-            get
-            {
-                if (_converter == null)
-                    return false;
-                return _converter.GetError;
-            }
-        }
-
-        /// <summary>
-        /// The error message of the conversion error from string to T. Null otherwise
-        /// </summary>
-        public override string ConversionErrorMessage
-        {
-            get
-            {
-                if (_converter == null)
-                    return null;
-                return _converter.GetErrorMessage;
-            }
-        }
-
-
-        public string GetErrorText()
-        {
-            // ErrorText is either set from outside or the first validation error
-            if (!string.IsNullOrWhiteSpace(ErrorText))
-                return ErrorText; 
-            if (!string.IsNullOrWhiteSpace(ConversionErrorMessage))
-                return ConversionErrorMessage;
-            return null;
+            return changed;
         }
 
         internal override async Task ValidateValue()
@@ -276,13 +230,6 @@ namespace MudBlazor
             UpdateTextProperty(false); 
         }
 
-        protected override Task OnInitializedAsync()
-        {
-            if (_converter != null)
-                _converter.OnError = OnConversionError;
-            return base.OnInitializedAsync();
-        }
-
         protected override void RegisterAsFormComponent()
         {
             if (Standalone)
@@ -291,18 +238,14 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if (!Standalone)
-                return;
-            base.OnParametersSet();
+            if (Standalone)
+                base.OnParametersSet();
         }
 
         protected override void ResetValue()
         {
-            base.ResetValue();
-            if (string.IsNullOrWhiteSpace(_text))
-                return;
             _text = null;
-            StateHasChanged();
+            base.ResetValue();
         }
     }
 }

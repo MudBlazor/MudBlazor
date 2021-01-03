@@ -1,23 +1,22 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using System.Collections.Generic;
 
 namespace MudBlazor
 {
-    public class MudBooleanInput<T> : MudFormComponent<T>
+    public class MudBooleanInput<T> : MudFormComponent<T, bool?>
     {
+        public MudBooleanInput() : base(new BoolConverter<T>()) { }
+
         /// <summary>
         /// Fired when Checked changes.
         /// </summary>
         [Parameter]
         public EventCallback<T> CheckedChanged { get; set; }
 
-        private Converter<T, bool?> _boolConverter = new BoolConverter<T>();
-
         protected bool? BoolValue
         {
-            get => _boolConverter.Set(_value);
-            set => Checked = _boolConverter.Get(value);
+            get => Converter.Set(_value);
+            set => Checked = Converter.Get(value);
         }
 
         /// <summary>
@@ -37,26 +36,13 @@ namespace MudBlazor
             }
         }
 
-        [Parameter]
-        public Converter<T, bool?> Converter
+        protected override bool SetConverter(Converter<T, bool?> value)
         {
-            get => _boolConverter;
-            set
-            {
-                _boolConverter = value;
-                if (_boolConverter == null)
-                    return;
-                _boolConverter.OnError = OnConversionError;
+            var changed = base.SetConverter(value);
+            if (changed)
                 BoolValue = Converter.Set(Checked);
-            }
-        }
 
-
-        protected override Task OnInitializedAsync()
-        {
-            if (_boolConverter != null)
-                _boolConverter.OnError = OnConversionError;
-            return base.OnInitializedAsync();
+            return changed;
         }
 
         /// <summary>
