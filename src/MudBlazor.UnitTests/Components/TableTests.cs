@@ -55,6 +55,9 @@ namespace MudBlazor.UnitTests
             comp.Find("p").TextContent.Trim().Should().Be("0,0,1");
         }
 
+        /// <summary>
+        /// should only be able to select one item and selecteditems.count should never exceed 1
+        /// </summary>
         [Test]
         public void TableSingleSelection()
         {
@@ -79,6 +82,9 @@ namespace MudBlazor.UnitTests
             table.SelectedItems.First().Should().Be(2);
         }
 
+        /// <summary>
+        /// test filtereditems and rendering without pager
+        /// </summary>
         [Test]
         public void TableFilter()
         {
@@ -108,6 +114,9 @@ namespace MudBlazor.UnitTests
             comp.FindAll("tr").Count().Should().Be(59);
         }
 
+        /// <summary>
+        /// simple navigation using the paging buttons
+        /// </summary>
         [Test]
         public void TablePagingNavigationButtons()
         {
@@ -136,6 +145,9 @@ namespace MudBlazor.UnitTests
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
         }
 
+        /// <summary>
+        /// page size select tests
+        /// </summary>
         [Test]
         public async Task TablePagingChangePageSize()
         {
@@ -158,6 +170,9 @@ namespace MudBlazor.UnitTests
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
         }
 
+        /// <summary>
+        /// simple filter with pager
+        /// </summary>
         [Test]
         public async Task TablePagingFilter()
         {
@@ -173,6 +188,9 @@ namespace MudBlazor.UnitTests
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
         }
 
+        /// <summary>
+        /// adjust current page when filtereditems.count is less than the current page start item index
+        /// </summary>
         [Test]
         public async Task TablePagingFilterAdjustCurrentPage()
         {
