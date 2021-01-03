@@ -145,6 +145,17 @@ namespace MudBlazor
             {
                 if (@PagerContent == null)
                     return FilteredItems; // we have no pagination
+                if (ServerData == null)
+                {
+                    var filteredItemCount = GetFilteredItemsCount();
+                    int lastPageNo;
+                    if (filteredItemCount == 0)
+                        lastPageNo = 0;
+                    else
+                        lastPageNo = (filteredItemCount / RowsPerPage) - (filteredItemCount % RowsPerPage == 0 ? 1 : 0);
+                    CurrentPage = lastPageNo < CurrentPage ? lastPageNo : CurrentPage;
+                }
+
                 return GetItemsOfPage(CurrentPage, RowsPerPage);
             }
         }
