@@ -2,12 +2,16 @@
 
 @inherits MudComponentBase
 
-<div class="@ContentClass" style="@Style">
-    @DialogContent
-</div>
-@if (DialogActions != null)
+@*this makes dialog inlineable, it will only render inside a MudDialogInstance*@
+@if (!IsInline)
 {
-    <div class="@ActionClass">
-        @DialogActions
+    <div class="@ContentClass" style="@Style">
+        @DialogContent
     </div>
+    @if (DialogActions != null)
+    {
+        <div class="@ActionClass">
+            @DialogActions
+        </div>
+    }
 }
