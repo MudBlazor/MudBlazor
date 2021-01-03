@@ -1,4 +1,4 @@
-﻿using MudBlazor.Providers;
+﻿using MudBlazor;
 using MudBlazor.Services;
 using System;
 using System.Collections.Generic;
@@ -9,9 +9,9 @@ namespace MudBlazor.UnitTests.Mocks
 {
     public class MockBrowserWindowSizeProvider : IBrowserWindowSizeProvider
     {
-        public async ValueTask<BrowserWindowSize> GetBrowserWindowSize()
+        public ValueTask<BrowserWindowSize> GetBrowserWindowSize()
         {
-            return new BrowserWindowSize();
+            return new ValueTask<BrowserWindowSize>(new BrowserWindowSize());
         }
     }
 }

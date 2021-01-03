@@ -2,16 +2,10 @@
 
 using System;
 using System.Diagnostics;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
-using MudBlazor.Providers;
-using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
@@ -29,7 +23,6 @@ namespace MudBlazor.UnitTests
         {
             ctx = new Bunit.TestContext();
             ctx.AddMudBlazorServices();
-            ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
         }
 
         [TearDown]

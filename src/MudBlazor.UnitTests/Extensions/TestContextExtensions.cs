@@ -19,6 +19,7 @@ namespace MudBlazor.UnitTests
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
             ctx.Services.AddSingleton<ISnackbar>(new SnackbarService(new SnackbarConfiguration() { ShowTransitionDuration = 0, HideTransitionDuration = 0 }));
             ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+            ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             ctx.Services.AddScoped(sp => new HttpClient());
             ctx.Services.AddOptions();
         }
