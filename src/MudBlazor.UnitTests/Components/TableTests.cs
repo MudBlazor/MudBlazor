@@ -216,6 +216,26 @@ namespace MudBlazor.UnitTests
         }
 
         /// <summary>
+        /// setting the selecteditems to null should create a new selecteditems collection
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionSelectedItemsEqualsNull()
+        {
+            var comp = ctx.RenderComponent<TableMultiSelectionTest1>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+            table.SelectedItems.Count.Should().Be(0); // selected items should be empty
+            // click checkboxes and verify selection text
+            var inputs = comp.FindAll("input").ToArray();
+            inputs[0].Change(true);
+            table.SelectedItems.Count.Should().Be(1);
+            comp.InvokeAsync(() => { table.SelectedItems = null;});
+            table.SelectedItems.Count.Should().Be(0);
+        }
+
+        /// <summary>
         /// the selected items (check-box click or row click) should be in SelectedItems
         /// </summary>
         [Test]
