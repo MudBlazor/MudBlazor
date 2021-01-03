@@ -13,14 +13,25 @@ namespace MudBlazor.UnitTests
     [TestFixture]
     public class RatingTests
     {
+        private Bunit.TestContext ctx;
+
+        [SetUp]
+        public void Setup()
+        {
+            ctx = new Bunit.TestContext();
+            ctx.AddMudBlazorServices();
+        }
+
+        [TearDown]
+        public void TearDown() => ctx.Dispose();
+
+        /// <summary>
+        /// click should change selected value
+        /// </summary>
         [Test]
         public void RatingTest1()
         {
-            // click should change selected value
-            // setup
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<RatingTest1>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRating>();
@@ -55,14 +66,13 @@ namespace MudBlazor.UnitTests
             group.Instance.SelectedValue.Should().Be(2);
         }
 
+        /// <summary>
+        /// click already selected item should change selected value to 0
+        /// </summary>
         [Test]
         public void RatingTest2()
         {
-            // click already selected item should change selected value to 0
-            // setup
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<RatingTest2>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRating>();
@@ -96,12 +106,12 @@ namespace MudBlazor.UnitTests
             group.Instance.SelectedValue.Should().Be(1);
         }
 
+        /// <summary>
+        ///  initialized selected value by parameter should equal component selected value
+        /// </summary>
         [Test]
         public void RatingTest3()
         {
-            // initialized selected value by parameter should equal component selected value
-            // setup
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<RatingTest3>();
             // print the generated html
             Console.WriteLine(comp.Markup);
@@ -111,12 +121,12 @@ namespace MudBlazor.UnitTests
             group.Instance.SelectedValue.Should().Be(3);
         }
 
+        /// <summary>
+        /// Click disabled component don't change SelectedValue
+        /// </summary>
         [Test]
         public void RatingTest4()
         {
-            // Click disabled component don't change SelectedValue
-            // setup
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<RatingTest4>();
             // print the generated html
             Console.WriteLine(comp.Markup);
@@ -148,12 +158,12 @@ namespace MudBlazor.UnitTests
             group.Instance.SelectedValue.Should().Be(2);
         }
 
+        /// <summary>
+        /// Initialized MaxValue by parameter should equal rating items count.
+        /// </summary>
         [Test]
         public void RatingTest5()
         {
-            // Initialized MaxValue by parameter should equal rating items count.
-            // setup
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<RatingTest5>();
             // print the generated html
             Console.WriteLine(comp.Markup);
@@ -165,13 +175,10 @@ namespace MudBlazor.UnitTests
             Assert.AreEqual(ratingItemsSpans.Length, 12);
         }
 
-
         [Test]
         public void ReadOnlyRating_ShouldNotRenderInputs()
         {
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<MudRating>(Parameter("ReadOnly", true));
-
             comp.FindAll("input").Should().BeEmpty();
         }
     }

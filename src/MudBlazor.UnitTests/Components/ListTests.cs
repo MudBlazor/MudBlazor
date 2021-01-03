@@ -1,0 +1,59 @@
+﻿#pragma warning disable 1998
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using Bunit;
+using FluentAssertions;
+using MudBlazor.UnitTests.TestComponents.List;
+using NUnit.Framework;
+
+namespace MudBlazor.UnitTests
+{
+    [TestFixture]
+    public class ListTests
+    {
+        private Bunit.TestContext ctx;
+
+        [SetUp]
+        public void Setup()
+        {
+            ctx = new Bunit.TestContext();
+            ctx.AddMudBlazorServices();
+        }
+
+        [TearDown]
+        public void TearDown() => ctx.Dispose();
+
+        /// <summary>
+        /// Clicking the drinks selects them. The child lists are updated accordingly, meaning, only ever 1 list item can have the active class.
+        /// </summary>
+        [Test]
+        public async Task ListSelectionTest()
+        {
+            var comp = ctx.RenderComponent<ListSelectionTest>();
+            Console.WriteLine(comp.Markup);
+            var list=comp.FindComponent<MudList>().Instance;
+            list.SelectedItem.Should().Be(null);
+            // we have seven choices, none is active
+            comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(0);
+            // click water
+            comp.FindAll("div.mud-list-item")[0].Click();
+            list.SelectedItem.Text.Should().Be("Sparkling Water");
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
+            comp.FindComponents<MudListItem>()[0].Markup.Should().Contain("mud-selected-item");
+            // click Pu'er, a heavily fermented Chinese tea that tastes like an old leather glove
+            comp.FindAll("div.mud-list-item")[4].Click();
+            list.SelectedItem.Text.Should().Be("Pu'er");
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
+            comp.FindComponents<MudListItem>()[4].Markup.Should().Contain("mud-selected-item");
+            // click Cafe Latte
+            comp.FindAll("div.mud-list-item")[8].Click();
+            list.SelectedItem.Text.Should().Be("Cafe Latte");
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(1);
+            comp.FindComponents<MudListItem>()[8].Markup.Should().Contain("mud-selected-item");
+        }
+    }
+}

@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using MudBlazor.Providers;
+using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -26,10 +28,12 @@ namespace MudBlazor.UnitTests
         public void Setup()
         {
             ctx = new Bunit.TestContext();
-            ctx.JSInterop.Mode = JSRuntimeMode.Loose;
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
+            ctx.AddMudBlazorServices();
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
         }
+
+        [TearDown]
+        public void TearDown() => ctx.Dispose();
 
         /// <summary>
         /// Setting the date should change the value and vice versa
@@ -54,6 +58,7 @@ namespace MudBlazor.UnitTests
         /// Rendering 10.000 DatePickers to measure performance impact of initial render.
         /// </summary>
         [Test]
+        [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public void PerformanceTest1()
         {
             // warmup
@@ -71,6 +76,7 @@ namespace MudBlazor.UnitTests
         /// </summary>
         /// <returns></returns>
         [Test]
+        [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public async Task PerformanceTest2()
         {
             // warmup

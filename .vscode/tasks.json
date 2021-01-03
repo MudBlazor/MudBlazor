@@ -40,7 +40,8 @@
                 "test",
                 "src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj",
                 "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "/consoleloggerparameters:NoSummary",
+                "--collect:\"XPlat Code Coverage\"",
             ],
             "group": "build",
             "problemMatcher": "$msCompile"
@@ -51,6 +52,38 @@
             "dependsOn": [
                 "build",
                 "test"
+            ],
+            "problemMatcher": [
+                "$msCompile"
+            ]
+        },
+        {
+            
+            "label": "generate report",
+            "command": "reportgenerator",
+            "type": "shell",
+            "args": [
+                "-reports:src/MudBlazor.UnitTests/TestResults/**/*.xml",
+                "-targetdir:src/MudBlazor.UnitTests/TestResults/Reports/"
+            ],
+            "group": "build",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "open report",
+            "command": "open",
+            "type": "shell",
+            "args": [
+                "src/MudBlazor.UnitTests/TestResults/Reports/Index.html",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "view coverage report",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "generate report",
+                "open report"
             ],
             "problemMatcher": [
                 "$msCompile"
