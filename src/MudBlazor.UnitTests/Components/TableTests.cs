@@ -173,6 +173,33 @@ namespace MudBlazor.UnitTests
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
         }
 
+        [Test]
+        public async Task TablePagingFilterAdjustCurrentPage()
+        {
+            var comp = ctx.RenderComponent<TablePagingTest1>();
+            // print the generated html      
+            Console.WriteLine(comp.Markup);
+            // after initial load
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+            var pagingButtons = comp.FindAll("button");
+            // goto page 3
+            pagingButtons[2].Click();
+            pagingButtons[2].Click();
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("21-30 of 59");
+            // should return 3 items and 
+            var table = comp.FindComponent<MudTable<string>>().Instance;
+            var searchString = comp.Find("#searchString");
+            searchString.Change("Ala");
+            table.GetFilteredItemsCount().Should().Be(3);
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(3);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-3 of 3");
+            searchString.Change(string.Empty);
+            table.GetFilteredItemsCount().Should().Be(59);
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+        }
 
         /// <summary>
         /// the selected items (check-box click or row click) should be in SelectedItems
