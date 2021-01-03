@@ -65,7 +65,8 @@
             "args": [
                 "-reports:src/MudBlazor.UnitTests/TestResults/**/*.xml",
                 "-targetdir:src/MudBlazor.UnitTests/TestResults/Reports/",
-                "-historydir:src/MudBlazor.UnitTests/TestResults/"
+                "-historydir:src/MudBlazor.UnitTests/TestResults/",
+                "-assemblyfilters:+MudBlazor"
             ],
             "group": "build",
             "problemMatcher": "$msCompile"
