@@ -3,6 +3,7 @@ using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
@@ -11,6 +12,12 @@ namespace MudBlazor
 
         [Inject] protected IJSRuntime JsRuntime { get; set; }
 
+        /// <summary>
+        /// Potential activation target for this button. This enables RenderFragments with user-defined
+        /// buttons which will automatically activate the intended functionality. 
+        /// </summary>
+        [CascadingParameter] protected IActivatable Activateable { get; set; }
+        
         /// <summary>
         /// The HTML element that will be rendered in the root by the component
         /// </summary>
@@ -58,6 +65,7 @@ namespace MudBlazor
             {
                 Command.Execute(CommandParameter);
             }
+            Activateable?.Activate(this, ev);
             if (!RetainFocusOnClick && _elementReference.Id != null && HtmlTag == "button")
             {
                 await JsRuntime.InvokeVoidAsync("elementReference.blur", _elementReference);
