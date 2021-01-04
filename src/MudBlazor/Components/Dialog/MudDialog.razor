@@ -2,12 +2,17 @@
 
 @inherits MudComponentBase
 
-<div class="@ContentClass" style="@Style">
-    @DialogContent
-</div>
-@if (DialogActions != null)
-{
-    <div class="@ActionClass">
-        @DialogActions
+<MudFocusTrap>
+
+    <div class="@ContentClass" style="@Style">
+        @DialogContent
     </div>
-}
+
+    @if (DialogActions != null)
+    {
+        <div class="@ActionClass">
+            @DialogActions
+        </div>
+    }
+
+</MudFocusTrap>

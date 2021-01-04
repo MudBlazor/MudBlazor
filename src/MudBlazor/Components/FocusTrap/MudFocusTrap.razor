@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase;
+
+<div @ref="_root" @attributes="UserAttributes" class="@Class" style="@Style" @onkeydown="OnRootKeyDown" @onkeyup="OnRootKeyUp">
+
+    <div @ref="_firstBumper"
+         style="pointer-events:none; position:fixed;"
+         tabindex=@(Disabled ? "-1" : "0")
+         @onfocus="OnBumperFocus">
+    </div>
+
+    @ChildContent
+
+    <div @ref="_lastBumper"
+         style="pointer-events:none; position:fixed;"
+         tabindex=@(Disabled ? "-1" : "0")
+         @onfocus="OnBumperFocus">
+    </div>
+
+</div>
