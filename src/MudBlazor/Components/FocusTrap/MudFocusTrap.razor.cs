@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -35,43 +36,30 @@ namespace MudBlazor
                     _disabled = value;
 
                     if (!_disabled)
-                        FocusFirst();
+                        FocusFirstAsync().FireAndForget();
                 }
             }
         }
 
-        protected override void OnAfterRender(bool firstRender)
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            base.OnAfterRender(firstRender);
+            await base.OnAfterRenderAsync(firstRender);
 
             if (firstRender && !_disabled)
-                FocusFirst();
+                await FocusFirstAsync();
         }
 
-        private void OnBumperFocus(FocusEventArgs args)
+        private Task OnBumperFocusAsync(FocusEventArgs args)
         {
-            if (_tabDown)
-            {
-                if (_shiftDown)
-                    FocusLast();
-                else
-                    FocusFirst();
-            }
+            if (!_tabDown)
+                return Task.CompletedTask;
+
+            return _shiftDown ? FocusLastAsync() : FocusFirstAsync();
         }
 
-        private void OnRootFocus(FocusEventArgs args)
+        private Task OnRootFocusAsync(FocusEventArgs args)
         {
-            JsRuntime.InvokeVoidAsync("elementReference.focus", _fallback);
-        }
-
-        private void FocusFirst()
-        {
-            JsRuntime.InvokeVoidAsync("elementReference.focusFirst", _root, 1, 2);
-        }
-
-        private void FocusLast()
-        {
-            JsRuntime.InvokeVoidAsync("elementReference.focusLast", _root, 1, 2);
+            return FocusFallbackAsync();
         }
 
         private void OnRootKeyDown(KeyboardEventArgs args)
@@ -82,6 +70,21 @@ namespace MudBlazor
         private void OnRootKeyUp(KeyboardEventArgs args)
         {
             HandleKeyEvent(args, false);
+        }
+
+        private Task FocusFallbackAsync()
+        {
+            return JsRuntime.InvokeVoidAsync("elementReference.focus", _fallback).AsTask();
+        }
+
+        private Task FocusFirstAsync()
+        {
+            return JsRuntime.InvokeVoidAsync("elementReference.focusFirst", _root, 1, 2).AsTask();
+        }
+
+        private Task FocusLastAsync()
+        {
+            return JsRuntime.InvokeVoidAsync("elementReference.focusLast", _root, 1, 2).AsTask();
         }
 
         private void HandleKeyEvent(KeyboardEventArgs args, bool isDown)
