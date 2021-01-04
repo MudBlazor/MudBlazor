@@ -6,16 +6,16 @@ window.elementReference = {
     focus: function (element) {
         element.focus();
     },
-    focusFirst: function (element, skip = 0) {
+    focusFirst: function (element, skip = 0, min = 0) {
         var tabbables = getTabbableElements(element);
-        if (tabbables.length <= skip)
+        if (tabbables.length <= min)
             element.focus();
         else
             tabbables[skip].focus();
     },
-    focusLast: function (element, skip = 0) {
+    focusLast: function (element, skip = 0, min = 0) {
         var tabbables = getTabbableElements(element);
-        if (tabbables.length <= skip)
+        if (tabbables.length <= min)
             element.focus();
         else
             tabbables[tabbables.length - skip - 1].focus();

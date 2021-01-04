@@ -8,6 +8,7 @@ namespace MudBlazor
     {
         protected ElementReference _firstBumper;
         protected ElementReference _lastBumper;
+        protected ElementReference _fallback;
         protected ElementReference _root;
 
         private bool _tabDown;
@@ -22,7 +23,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// If true, the focus will no longer loops inside the element.
+        /// If true, the focus will no longer loop inside the element.
         /// </summary>
         [Parameter] public bool Disabled
         {
@@ -58,14 +59,19 @@ namespace MudBlazor
             }
         }
 
+        private void OnRootFocus(FocusEventArgs args)
+        {
+            JsRuntime.InvokeVoidAsync("elementReference.focus", _fallback);
+        }
+
         private void FocusFirst()
         {
-            JsRuntime.InvokeVoidAsync("elementReference.focusFirst", _root, 1);
+            JsRuntime.InvokeVoidAsync("elementReference.focusFirst", _root, 1, 2);
         }
 
         private void FocusLast()
         {
-            JsRuntime.InvokeVoidAsync("elementReference.focusLast", _root, 1);
+            JsRuntime.InvokeVoidAsync("elementReference.focusLast", _root, 1, 2);
         }
 
         private void OnRootKeyDown(KeyboardEventArgs args)
