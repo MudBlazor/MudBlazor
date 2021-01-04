@@ -168,6 +168,23 @@ namespace MudBlazor
                 ActivatePanel(panel, null);
         }
 
+        private Placement GetTooltipPlacement()
+        {
+            if (Vertical)
+            {
+                if (TabsPlacement == Placement.End)
+                    return Placement.Start;
+                else
+                    return Placement.End;
+            }
+            else
+            {
+                if (TabsPlacement == Placement.Bottom)
+                    return Placement.Top;
+                else
+                    return Placement.Bottom;
+            }
+        }
 
     }
 }

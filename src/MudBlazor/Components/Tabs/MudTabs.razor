@@ -10,7 +10,28 @@
                     <div class="@WrapperClassnames">
                         @foreach (MudTabPanel panel in Panels)
                         {
-                            <div class="@GetTabClass(panel)" @onclick=@( e => ActivatePanel(panel, e) )>
+                            <MudTooltip Placement="@GetTooltipPlacement()" Text="@panel.ToolTip">
+                                <div class="@GetTabClass(panel)" @onclick=@( e => ActivatePanel(panel, e) )>
+                                    @if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
+                                    {
+                                        @panel.Text
+                                    }
+                                    else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
+                                    {
+                                        <MudIcon Icon="@panel.Icon" />
+                                    }
+                                    else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
+                                    {
+                                        <MudIcon Icon="@panel.Icon" Class="mud-tab-icon-text" />
+                                        @panel.Text
+                                    }
+                                    @if (panel.BadgeData != null)
+                                    {
+                                        <MudBadge Content="@panel.BadgeData" Color="@panel.BadgeColor" Class="mud-tab-badge" />
+                                    }
+                                </div>
+                            </MudTooltip>
+                            @*<div class="@GetTabClass(panel)" @onclick=@( e => ActivatePanel(panel, e) )>
                                 @if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
                                 {
                                     @panel.Text
@@ -22,12 +43,13 @@
                                 else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
                                 {
                                     <MudIcon Icon="@panel.Icon" Class="mud-tab-icon-text" />
-                                    @panel.Text}
+                                    @panel.Text
+                                }
                                 @if (panel.BadgeData != null)
                                 {
                                     <MudBadge Content="@panel.BadgeData" Color="@panel.BadgeColor" Class="mud-tab-badge" />
                                 }
-                            </div>
+                            </div>*@
                         }
                         @if (!Vertical)
                         {
