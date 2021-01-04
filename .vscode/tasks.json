@@ -41,7 +41,12 @@
                 "src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary",
-                "--collect:\"XPlat Code Coverage\"",
+                "/p:CollectCoverage=true",
+                "/p:CoverletOutputFormat=cobertura",
+                "/p:ExcludeByAttribute=\"ExcludeFromCodeCoverage\"",
+                "/p:Include=\"[MudBlazor]*\"",
+                "/p:SkipAutoProps=true",
+                "/p:CoverletOutput='./TestResults/'"
             ],
             "group": "build",
             "problemMatcher": "$msCompile"
@@ -58,38 +63,13 @@
             ]
         },
         {
-            
-            "label": "generate report",
-            "command": "reportgenerator",
-            "type": "shell",
-            "args": [
-                "-reports:src/MudBlazor.UnitTests/TestResults/**/*.xml",
-                "-targetdir:src/MudBlazor.UnitTests/TestResults/Reports/",
-                "-historydir:src/MudBlazor.UnitTests/TestResults/",
-                "-assemblyfilters:+MudBlazor"
-            ],
-            "group": "build",
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "open report",
+            "label": "coverage report",
             "command": "open",
             "type": "shell",
             "args": [
-                "src/MudBlazor.UnitTests/TestResults/Reports/Index.html",
+                "src/MudBlazor.UnitTests/TestResults/Report/Index.html",
             ],
             "problemMatcher": []
-        },
-        {
-            "label": "view coverage report",
-            "dependsOrder": "sequence",
-            "dependsOn": [
-                "generate report",
-                "open report"
-            ],
-            "problemMatcher": [
-                "$msCompile"
-            ]
         },
         {
             "label": "compile docs",
