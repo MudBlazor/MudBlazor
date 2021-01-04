@@ -28,6 +28,7 @@ namespace MudBlazor
         }
 
         [Parameter] public string Title { get; set; }
+        [Parameter] public RenderFragment TitleContent { get; set; }
         [Parameter] public RenderFragment Content { get; set; }
         [Parameter] public Guid Id { get; set; }
 
@@ -178,6 +179,16 @@ namespace MudBlazor
             if (DisableBackdropClick) return;
 
             Cancel();
+        }
+
+        private MudDialog _dialog;
+        public void Register(MudDialog dialog)
+        {
+            if (dialog == null)
+                return;
+            _dialog = dialog;
+            TitleContent = dialog.TitleContent;
+            StateHasChanged();
         }
     }
 }

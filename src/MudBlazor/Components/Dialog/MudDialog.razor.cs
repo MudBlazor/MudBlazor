@@ -19,7 +19,7 @@ namespace MudBlazor
           .AddClass(ClassActions)
         .Build();
         
-        [CascadingParameter] private MudDialogInstance Instance { get; set; }
+        [CascadingParameter] private MudDialogInstance DialogInstance { get; set; }
         
         [Inject] public IDialogService DialogService { get; set; }
 
@@ -82,7 +82,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
 
-        private bool IsInline => Instance == null;
+        private bool IsInline => DialogInstance == null;
 
         private IDialogReference _reference; 
         
@@ -100,6 +100,7 @@ namespace MudBlazor
                 Close();
             var parameters = new DialogParameters()
             {
+                [nameof(TitleContent)] = TitleContent,
                 [nameof(DialogContent)]=DialogContent,
                 [nameof(DialogActions)]=DialogActions,
                 [nameof(DisableSidePadding)]= DisableSidePadding,
@@ -120,6 +121,12 @@ namespace MudBlazor
                 return;
             _reference.Close(result);
             _reference = null;
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            DialogInstance?.Register(this);
         }
     }
 }

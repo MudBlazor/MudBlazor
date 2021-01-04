@@ -139,9 +139,11 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Inlining Dialog</Title>
-                <Description>You can inline <CodeInline>MudDialog</CodeInline> directly in another component. This has several advantages: 
-                    You don't have to create an extra razor component for your dialog and you can easily share code and data between dialog and owning component via bindings.
-                    Moreover, an inline dialog can be opened only once at the same time.
+                <Description>
+                    You can inline <CodeInline>MudDialog</CodeInline> directly in another component which of course makes most sense for small dialogs that are not re-used somewhere else.
+                    The advantage is that you can easily share code and data between dialog and owning component via bindings.
+                    <br />
+                    This example also shows how to override the dialog title with a render fragment. 
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
