@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using System;
 using System.Threading.Tasks;
 
 namespace MudBlazor
 {
-    public partial class MudFocusTrap
+    public partial class MudFocusTrap : IDisposable
     {
         protected ElementReference _firstBumper;
         protected ElementReference _lastBumper;
@@ -46,7 +47,10 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
 
             if (firstRender && !_disabled)
+            {
+                await SaveFocusAsync();
                 await FocusFirstAsync();
+            }
         }
 
         private Task OnBumperFocusAsync(FocusEventArgs args)
@@ -99,6 +103,22 @@ namespace MudBlazor
                     _shiftDown = isDown;
                     break;
             }
+        }
+
+        private Task RestoreFocusAsync()
+        {
+            return JsRuntime.InvokeVoidAsync("elementReference.restoreFocus", _root).AsTask();
+        }
+
+        private Task SaveFocusAsync()
+        {
+            return JsRuntime.InvokeVoidAsync("elementReference.saveFocus", _root).AsTask();
+        }
+
+        public void Dispose()
+        {
+            if (!_disabled)
+                RestoreFocusAsync().FireAndForget();
         }
     }
 }

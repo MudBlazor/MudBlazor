@@ -19,6 +19,15 @@ window.elementReference = {
             element.focus();
         else
             tabbables[tabbables.length - skip - 1].focus();
+    },
+    saveFocus: function (element) {
+        element['mudblazor_savedFocus'] = document.activeElement;
+    },
+    restoreFocus: function (element) {
+        var previous = element['mudblazor_savedFocus'];
+        delete element['mudblazor_savedFocus']
+        if (previous)
+            previous.focus();
     }
 };
 
