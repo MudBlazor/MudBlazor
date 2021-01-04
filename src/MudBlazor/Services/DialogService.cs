@@ -3,6 +3,7 @@
 // License: MIT
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -95,6 +96,39 @@ namespace MudBlazor
             return dialogReference;
         }
 
+        public Task<bool?> ShowMessageBox(string title, string message) =>
+            ShowMessageBox(new MessageBoxOptions() {Title = title, Message = message});
+
+        public Task<bool?> ShowMessageBox(string title, string message, string yesText = "OK",
+            string noText = null, string cancelText = null, DialogOptions options = null)
+        {
+            return this.ShowMessageBox(new MessageBoxOptions
+            {
+                Title = title, 
+                Message = message,
+                YesText = yesText,
+                NoText = noText,
+                CancelText = cancelText,
+            }, options);
+        }
+        
+        public async Task<bool?> ShowMessageBox(MessageBoxOptions mboxOptions, DialogOptions options = null)
+        {
+            var parameters = new DialogParameters()
+            {
+                [nameof(MessageBoxOptions.Title)] = mboxOptions.Title,
+                [nameof(MessageBoxOptions.Message)] = mboxOptions.Message,
+                [nameof(MessageBoxOptions.CancelText)] = mboxOptions.CancelText,
+                [nameof(MessageBoxOptions.NoText)] = mboxOptions.NoText,
+                [nameof(MessageBoxOptions.YesText)] = mboxOptions.YesText,
+            };
+            var reference = Show<MudMessageBox>(parameters: parameters, options: options, title: mboxOptions.Title);
+            var result = await reference.Result;
+            if (result.Cancelled || !(result.Data is bool))
+                return null;
+            return (bool)result.Data;
+        }
+
         internal void Close(DialogReference Dialog)
         {
             Close(Dialog, DialogResult.Ok<object>(null));
@@ -104,5 +138,15 @@ namespace MudBlazor
         {
             OnDialogCloseRequested?.Invoke(Dialog, result);
         }
+
+    }
+
+    public class MessageBoxOptions
+    {
+        public string Title { get; set; }
+        public string Message { get; set; }
+        public string YesText { get; set; } = "OK";
+        public string NoText { get; set; }
+        public string CancelText { get; set; }
     }
 }

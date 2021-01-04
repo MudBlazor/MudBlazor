@@ -8,6 +8,7 @@
 
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -33,5 +34,11 @@ namespace MudBlazor
         IDialogReference Show(Type component, string title, DialogParameters parameters);
 
         IDialogReference Show(Type component, string title, DialogParameters parameters, DialogOptions options);
+        Task<bool?> ShowMessageBox(string warning, string deletingThisObjectCanNotBeUndone);
+
+        Task<bool?> ShowMessageBox(string title, string message, string yesText = "OK",
+            string noText = null, string cancelText = null, DialogOptions options = null);
+
+        Task<bool?> ShowMessageBox(MessageBoxOptions mboxOptions, DialogOptions options = null);
     }
 }

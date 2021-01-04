@@ -1,0 +1,50 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<MudDialog>
+    <TitleContent>
+        @TitleContent
+    </TitleContent>
+    <DialogContent>
+        @if(MessageContent!=null)
+        {
+            @MessageContent
+        }
+        else
+        {
+            @Message
+        }
+    </DialogContent>
+    <DialogActions>
+        @if (CancelButton != null)
+        {
+            <CascadingValue Value="@_cancelCallback">
+                @CancelButton
+            </CascadingValue>
+        }
+        else if(!string.IsNullOrWhiteSpace(CancelText))
+        {
+            <MudButton OnClick="OnCancelClicked">Cancel</MudButton>
+        }
+        @if (NoButton != null)
+        {
+            <CascadingValue Value="@_noCallback">
+                @NoButton
+            </CascadingValue>
+        }
+        else if(!string.IsNullOrWhiteSpace(NoText))
+        {
+            <MudButton OnClick="OnNoClicked">No</MudButton>
+        }
+        @if (YesButton != null)
+        {
+            <CascadingValue Value="@_yesCallback">
+                @YesButton
+            </CascadingValue>
+        }
+        else if(!string.IsNullOrWhiteSpace(YesText))
+        {
+            <MudButton Color="Color.Primary" OnClick="OnYesClicked">Ok</MudButton>
+        }
+    </DialogActions>
+</MudDialog>
