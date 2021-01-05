@@ -182,12 +182,6 @@ namespace MudBlazor
                     }
                     // we have a required value, proceed to the validation funcs
                 }
-                else
-                {
-                    if (!hasValue)
-                        return; // if nothing has been entered, we return OK without calling validation funcs
-                    // proceed to the validation funcs
-                }
 
                 if (Validation is ValidationAttribute)
                     ValidateWithAttribute(Validation as ValidationAttribute, _value, errors);
