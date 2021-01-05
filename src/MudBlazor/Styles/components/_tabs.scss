@@ -1,9 +1,19 @@
 ﻿@import '../abstracts/variables';
 
 .mud-tabs {
+    display: flex;
+    flex-direction: column;
+
+    &.mud-tabs-reverse {
+        flex-direction: column-reverse;
+    }
 
     &.mud-tabs-vertical {
-        display:flex;
+        flex-direction: row;
+    }
+
+    &.mud-tabs-vertical-reverse {
+        flex-direction: row-reverse;
     }
 }
 
@@ -18,8 +28,8 @@
 
     & .mud-tabs-toolbar-inner {
         display: flex;
-        overflow: hidden;
-        min-height: 48px;
+/*        overflow: hidden;
+*/        min-height: 48px;
     }
 }
 
@@ -103,9 +113,13 @@
     &.mud-tab-slider-horizontal {
         height: 2px;
         left: 0;
-        top: 46px;
+        bottom: 0;
         transition: left .3s cubic-bezier(.64,.09,.08,1);
         will-change: left;
+
+        &.mud-tab-slider-horizontal-reverse {
+            top: 0px;
+        }
     }
 
     &.mud-tab-slider-vertical {
@@ -113,6 +127,10 @@
         right: 0;
         transition: top .3s cubic-bezier(.64,.09,.08,1);
         will-change: top;
+
+        &.mud-tab-slider-vertical-reverse {
+            left: 0;
+        }
     }
 }
 
