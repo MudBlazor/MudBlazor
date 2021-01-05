@@ -1,6 +1,7 @@
 ﻿@using MudBlazor.Docs.Models
 @using System.Text.RegularExpressions
 @using System.Reflection
+@using System.Web
 @using Microsoft.Extensions.DependencyInjection
 @using System.Globalization
 @namespace MudBlazor.Docs.Components
@@ -28,7 +29,7 @@
                         <MudTd DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
                         <MudTd DataLabel="Type">@context.Type</MudTd>
                         <MudTd DataLabel="Default">@PresentDefaultValue(context.Default)</MudTd>
-                        <MudTd DataLabel="Description">@context.Description</MudTd>
+                        <MudTd DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                     </RowTemplate>
                 </MudTable>
             </SectionContent>
