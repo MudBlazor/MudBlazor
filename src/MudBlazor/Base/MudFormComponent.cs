@@ -118,13 +118,13 @@ namespace MudBlazor
 
         /// <summary>
         /// A validation func or a validation attribute. Supported types are:
-        /// <![CDATA[Func<T, bool>]]> ... will output the standard error message "Invalid" if false
-        /// <![CDATA[Func<T, string>]]> ... outputs the result as error message, no error if null
-        /// <![CDATA[Func<T, IEnumerable<string>>]]> ... outputs all the returned error messages, no error if empty
-        /// <![CDATA[Func<T, Task<bool>>]]> ... will output the standard error message "Invalid" if false
-        /// <![CDATA[Func<T, Task<string>>]]> ... outputs the result as error message, no error if null
-        /// <![CDATA[Func<T, Task<IEnumerable<string>>>]]> ... outputs all the returned error messages, no error if empty
-        /// System.ComponentModel.DataAnnotations.ValidationAttribute instances
+        /// <para>Func&lt;T, bool&gt; ... will output the standard error message "Invalid" if false</para>
+        /// <para>Func&lt;T, string&gt; ... outputs the result as error message, no error if null </para>
+        /// <para>Func&lt;T, IEnumerable&lt; string &gt;&gt; ... outputs all the returned error messages, no error if empty</para>
+        /// <para>Func&lt;T, Task&lt; boo l&gt;&gt; ... will output the standard error message "Invalid" if false</para>
+        /// <para>Func&lt;T, Task&lt; string &gt;&gt; ... outputs the result as error message, no error if null</para>
+        /// <para>Func&lt;T, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; ... outputs all the returned error messages, no error if empty</para>
+        /// <para>System.ComponentModel.DataAnnotations.ValidationAttribute instances</para>
         /// </summary>
         [Parameter]
         public object Validation { get; set; }
