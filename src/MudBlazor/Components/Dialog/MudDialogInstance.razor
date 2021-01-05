@@ -6,7 +6,14 @@
         @if (!NoHeader)
         {
             <div class="mud-dialog-title">
-                <MudText Typo="Typo.h6">@Title</MudText>
+                @if (TitleContent == null)
+                {
+                    <MudText Typo="Typo.h6">@Title</MudText>
+                }
+                else
+                {
+                    @TitleContent
+                }
                 @if (CloseButton)
                 {
                     <MudIconButton Icon="@Icons.Material.Close" @onclick="Cancel"/>

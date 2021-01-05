@@ -11,11 +11,24 @@ namespace MudBlazor
 {
     public partial class MudDialogInstance
     {
+        private DialogOptions _options = new DialogOptions();
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
-        [Parameter] public DialogOptions Options { get; set; } = new DialogOptions();
+        [Parameter]
+        public DialogOptions Options
+        {
+            get
+            {
+                if (_options == null)
+                    _options = new DialogOptions();
+                return _options;
+            }
+            set => _options = value;
+        }
+
         [Parameter] public string Title { get; set; }
+        [Parameter] public RenderFragment TitleContent { get; set; }
         [Parameter] public RenderFragment Content { get; set; }
         [Parameter] public Guid Id { get; set; }
 
@@ -77,7 +90,7 @@ namespace MudBlazor
         {
             DialogPosition position;
 
-            if (Options != null && Options.Position.HasValue)
+            if (Options.Position.HasValue)
             {
                 position = Options.Position.Value;
             }
@@ -166,6 +179,16 @@ namespace MudBlazor
             if (DisableBackdropClick) return;
 
             Cancel();
+        }
+
+        private MudDialog _dialog;
+        public void Register(MudDialog dialog)
+        {
+            if (dialog == null)
+                return;
+            _dialog = dialog;
+            TitleContent = dialog.TitleContent;
+            StateHasChanged();
         }
     }
 }

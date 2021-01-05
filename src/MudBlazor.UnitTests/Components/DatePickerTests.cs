@@ -55,6 +55,7 @@ namespace MudBlazor.UnitTests
         /// Rendering 10.000 DatePickers to measure performance impact of initial render.
         /// </summary>
         [Test]
+        [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public void PerformanceTest1()
         {
             // warmup
@@ -72,6 +73,7 @@ namespace MudBlazor.UnitTests
         /// </summary>
         /// <returns></returns>
         [Test]
+        [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public async Task PerformanceTest2()
         {
             // warmup
