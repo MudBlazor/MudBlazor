@@ -2,16 +2,12 @@
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
     public abstract class MudBaseButton : MudComponentBase
     {
-
-        [Inject] protected IJSRuntime JsRuntime { get; set; }
-
         /// <summary>
         /// Potential activation target for this button. This enables RenderFragments with user-defined
         /// buttons which will automatically activate the intended functionality. 
@@ -49,11 +45,6 @@ namespace MudBlazor
         [Parameter] public object CommandParameter { get; set; }
 
         /// <summary>
-        /// If true (the default), keep the focus on the button after click. Otherwise, blur() is called on the button.
-        /// </summary>
-        [Parameter] public bool RetainFocusOnClick { get; set; } = true;
-        
-        /// <summary>
         /// Button click event.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
@@ -66,10 +57,6 @@ namespace MudBlazor
                 Command.Execute(CommandParameter);
             }
             Activateable?.Activate(this, ev);
-            if (!RetainFocusOnClick && _elementReference.Id != null && HtmlTag == "button")
-            {
-                await JsRuntime.InvokeVoidAsync("elementReference.blur", _elementReference);
-            }
         }
 
         protected override void OnInitialized()
@@ -86,7 +73,5 @@ namespace MudBlazor
             }
             base.OnInitialized();
         }
-
-        protected ElementReference _elementReference;
     }
 }
