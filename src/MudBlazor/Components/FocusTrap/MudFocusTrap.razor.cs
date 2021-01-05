@@ -25,7 +25,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// If true, the focus will no longer loop inside the element.
+        /// If true, the focus will no longer loop inside the component.
         /// </summary>
         [Parameter] public bool Disabled
         {
@@ -35,21 +35,24 @@ namespace MudBlazor
                 if (_disabled != value)
                 {
                     _disabled = value;
-
-                    if (!_disabled)
-                        FocusFirstAsync().FireAndForget();
+                    InitializeFocusAsync().FireAndForget();
                 }
             }
         }
+
+        /// <summary>
+        /// If true, the focus will not be set to first tabbable element when component is created or enabled.
+        /// </summary>
+        [Parameter] public bool NoDefaultFocus { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
 
-            if (firstRender && !_disabled)
+            if (firstRender)
             {
                 await SaveFocusAsync();
-                await FocusFirstAsync();
+                await InitializeFocusAsync();
             }
         }
 
@@ -74,6 +77,14 @@ namespace MudBlazor
         private void OnRootKeyUp(KeyboardEventArgs args)
         {
             HandleKeyEvent(args, false);
+        }
+
+        private Task InitializeFocusAsync()
+        {
+            if (_disabled)
+                return Task.CompletedTask;
+
+            return NoDefaultFocus ? FocusFallbackAsync() : FocusFirstAsync();
         }
 
         private Task FocusFallbackAsync()
