@@ -199,6 +199,24 @@
                     color: var(--mud-palette-text-disabled);
                     pointer-events: none;
                 }
+
+                &.mud-range {
+                    margin: 0;
+                    width: 40px;
+
+                    &.mud-range-start-selected {
+                        border-radius: 50% 0% 0% 50%;
+                    }
+
+                    &.mud-range-end-selected {
+                        border-radius: 0% 50% 50% 0%;
+                    }
+
+                    &.mud-range-between {
+                        border-radius: 0;
+                        background-color: var(--mud-palette-action-default-hover);
+                    }
+                }
             }
         }
     }

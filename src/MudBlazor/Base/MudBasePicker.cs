@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
+using System;
 
 namespace MudBlazor
 {
     public abstract class MudBasePicker : MudComponentBase
     {
-
-
         private string _value;
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.
@@ -102,7 +101,7 @@ namespace MudBlazor
             get => _value;
             set
             {
-                if (value == _value)
+                if (value == null || value.Equals(_value))
                     return;
                 if (_setting_text)
                     return;
@@ -133,20 +132,24 @@ namespace MudBlazor
 
         internal bool IsOpen { get; set; }
 
-        public virtual void ToggleOpen()
+        internal Action<bool> OnOpenStateChanged;
+
+        public void ToggleOpen()
         {
             IsOpen = !IsOpen;
+            OnOpenStateChanged?.Invoke(IsOpen);
         }
 
         public void Close()
         {
             IsOpen = false;
-            StateHasChanged();
+            OnOpenStateChanged?.Invoke(IsOpen);
         }
 
         public virtual void Open()
         {
             IsOpen = true;
+            OnOpenStateChanged?.Invoke(IsOpen);
         }
     }
 }

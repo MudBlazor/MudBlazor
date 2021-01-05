@@ -9,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDatePicker : MudBasePicker
+    public abstract partial class MudBaseDatePicker : MudBasePicker
     {
         [Inject] IJSRuntime JsRuntime { get; set; }
         /// <summary>
@@ -31,45 +31,6 @@ namespace MudBlazor
         /// Sets the Input Icon.
         /// </summary>
         [Parameter] public string InputIcon { get; set; } = Icons.Material.Event;
-
-        protected DateTime? _date;
-
-        /// <summary>
-        /// The currently selected date (two-way bindable). If null, then nothing was selected.
-        /// </summary>
-        [Parameter] public DateTime? Date
-        {
-            get => _date;
-            set
-            {
-                if (value == _date)
-                    return;
-                if (_setting_date)
-                    return;
-                _setting_date = true;
-                try
-                {
-                    _date = value;
-                    if ((!string.IsNullOrEmpty(DateFormat)) && _date.HasValue)
-                        Value = _date.Value.ToString(DateFormat);
-                    else
-                        Value = _date.ToIsoDateString();
-                    InvokeAsync(StateHasChanged);
-                    DateChanged.InvokeAsync(value);
-                }
-                finally
-                {
-                    _setting_date = false;
-                }
-            }
-        }
-
-        private bool _setting_date;
-
-        /// <summary>
-        /// Fired when the DateFormat changes.
-        /// </summary>
-        [Parameter] public EventCallback<DateTime?> DateChanged { get; set; }
 
         /// <summary>
         /// String Format for selected date view
@@ -119,7 +80,9 @@ namespace MudBlazor
         /// <summary>
         /// Reference to the Picker, initialized via @ref
         /// </summary>
-        private MudPicker Picker;
+        protected MudPicker Picker;
+
+        protected virtual bool IsRange { get; } = false;
 
         private OpenTo _currentView;
         
@@ -128,15 +91,6 @@ namespace MudBlazor
             _currentView = OpenTo;
             if(_currentView == OpenTo.Year)
                 _scrollToYearAfterRender=true;
-        }
-
-        protected override void StringValueChanged(string value)
-        {
-            // update the date property
-            if (DateTime.TryParse(value, out var date))
-                Date = date;
-            else
-                Date = null;
         }
 
         /// <summary>
@@ -173,30 +127,14 @@ namespace MudBlazor
                 yield return week_first.AddDays(i);
         }
 
-        protected string GetDayClasses(DateTime day)
-        {
-            var b = new CssBuilder("mud-day");
-            if (day < GetMonthStart() || day > GetMonthEnd())
-                return b.AddClass("mud-hidden").Build();
-            if (_date.HasValue && _date.Value.Date == day)
-                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
-            if (day == DateTime.Today)
-                return b.AddClass("mud-current").AddClass($"mud-{Color.ToDescriptionString()}-text").Build();
-            return b.Build();
-        }
+        protected abstract string GetDayClasses(DateTime day);
 
         /// <summary>
         /// User clicked on a day
         /// </summary>
-        protected async void OnDayClicked(DateTime dateTime)
-        {
-            Date = dateTime;
-            if(PickerVariant != PickerVariant.Static)
-            {
-                await Task.Delay(ClosingDelay);
-                Picker.Close();
-            }
-        }
+        protected abstract void OnDayClicked(DateTime dateTime);
+
+        protected virtual void OnMouseOver(DateTime time) { }
 
         /// <summary>
         /// return Mo, Tu, We, Th, Fr, Sa, Su in the right culture
@@ -225,12 +163,8 @@ namespace MudBlazor
             return GetMonthStart().ToString(Culture.DateTimeFormat.YearMonthPattern, Culture);
         }
 
-        protected string GetFormattedDateString()
-        {
-            if (Date == null)
-                return "";
-            return Date.Value.ToString("ddd, dd MMM", Culture);
-        }        
+        protected abstract string GetFormattedDateString();
+
         protected string GetFormattedYearString()
         {
             return GetMonthStart().ToString("yyyy", Culture);
