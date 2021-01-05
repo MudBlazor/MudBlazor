@@ -45,7 +45,7 @@ namespace MudBlazor.UnitTests
             service.Should().NotBe(null);
             IDialogReference dialogReference=null;
             // open simple test dialog
-            await comp.InvokeAsync(()=> dialogReference=service?.Show<TestDialogOkCancel>());
+            await comp.InvokeAsync(()=> dialogReference=service?.Show<DialogOkCancel>());
             dialogReference.Should().NotBe(null);
             Console.WriteLine(comp.Markup);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
@@ -56,13 +56,13 @@ namespace MudBlazor.UnitTests
             var result=await dialogReference.Result;
             result.Cancelled.Should().BeTrue();
             // open simple test dialog
-            await comp.InvokeAsync(() => dialogReference = service?.Show<TestDialogOkCancel>());
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
             // close by click on cancel button
             comp.FindAll("button")[0].Click();
             result = await dialogReference.Result;
             result.Cancelled.Should().BeTrue();
             // open simple test dialog
-            await comp.InvokeAsync(() => dialogReference = service?.Show<TestDialogOkCancel>());
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
             // close by click on ok button
             comp.FindAll("button")[1].Click();
             result = await dialogReference.Result;
