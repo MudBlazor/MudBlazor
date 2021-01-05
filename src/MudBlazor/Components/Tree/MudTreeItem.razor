@@ -1,0 +1,43 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<li @attributes="UserAttributes" class="@Classname" style="@Style">
+    <div class="mud-tree-item-content" @onclick="OnClickHandler" @onclick:stopPropagation="true">
+        <div class="mud-tree-item-icon">
+            @if (ChildContent != null)
+            {
+                if (Expanded)
+                {
+                    <MudIcon Icon="@Icons.Material.ExpandMore"></MudIcon>
+                }
+                else
+                {
+                    <MudIcon Icon="@Icons.Material.ChevronRight"></MudIcon>
+                }
+            }
+        </div>
+        @if (Content != null)
+        {
+            <div class="mud-tree-item-label">
+                @Content
+            </div> 
+        }
+        else if (Text != null)
+        {
+            <MudText Typo="@Typo.body1" Class="mud-tree-item-label">
+                @Text
+            </MudText>            
+        }
+    </div>
+        
+    @if (ChildContent != null)
+    {
+        <MudCollapse Expanded="@Expanded">
+            <CascadingValue Value="@MudTreeRoot">
+                <MudTree Class="mud-tree-group">
+                    @ChildContent
+                </MudTree>
+            </CascadingValue>
+        </MudCollapse>
+    }
+</li>
