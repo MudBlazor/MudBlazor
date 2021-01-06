@@ -50,7 +50,7 @@ namespace MudBlazor
         public string GrayDark { get; set; } = Colors.Grey.Darken1;
         public string GrayDarker { get; set; } = Colors.Grey.Darken2;
 
-        public string OverlayDark { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.5);
+        public string OverlayDark { get; set; } = ColorManager.ToRgbaFromHex("#212121", 0.5);
         public string OverlayLight { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.White, 0.5);
     }
 }

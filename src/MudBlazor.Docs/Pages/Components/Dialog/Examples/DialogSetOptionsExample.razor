@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IDialogService Dialog
+
+<MudButton OnClick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
+    Options Dialog
+</MudButton>
+
+@code {
+
+    private void OpenDialog()
+    {
+       Dialog.Show<DialogSetOptionsExample_Dialog>("Options Dialog");
+    }
+}

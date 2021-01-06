@@ -44,6 +44,11 @@ namespace MudBlazor
         [Parameter] public Color Color { get; set; } = Color.Inherit;
 
         /// <summary>
+        /// The viewbox size of an svg element. Default: '0 0 24 24'
+        /// </summary>
+        [Parameter] public string ViewBox { get; set; } = "0 0 24 24";
+
+        /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }

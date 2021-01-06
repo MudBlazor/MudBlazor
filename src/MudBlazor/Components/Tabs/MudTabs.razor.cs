@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -10,7 +11,9 @@ namespace MudBlazor
     {
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
+            .AddClass($"mud-tabs-reverse", !Vertical && TabsPlacement == Placement.Bottom)
             .AddClass($"mud-tabs-vertical", Vertical)
+            .AddClass($"mud-tabs-vertical-reverse", Vertical && TabsPlacement == Placement.End)
             .AddClass(Class)
             .Build();
 
@@ -60,6 +63,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Vertical { get; set; }
 
+        [Parameter] public Placement TabsPlacement { get; set; } = Placement.Top;
+
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
@@ -85,9 +90,32 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string TabPanelClass { get; set; }
 
-
         public MudTabPanel ActivePanel { get; set; }
-        public int ActivePanelIndex { get; set; }
+
+        private int _activePanelIndex = 0;
+        /// <summary>
+        /// The current active panel index. Also with Bidirectional Binding
+        /// </summary>
+        [Parameter]
+        public int ActivePanelIndex
+        {
+            get => _activePanelIndex;
+            set
+            {
+                if (_activePanelIndex != value)
+                {
+                    _activePanelIndex = value;
+                    ActivatePanel(_activePanelIndex);
+                    ActivePanelIndexChanged.InvokeAsync(value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Fired when ActivePanelIndex changes.
+        /// </summary>
+        [Parameter]
+        public EventCallback<int> ActivePanelIndexChanged { get; set; }
 
         public List<MudTabPanel> Panels = new List<MudTabPanel>();
 
@@ -117,8 +145,46 @@ namespace MudBlazor
             {
                 ActivePanel = panel;
                 ActivePanelIndex = Panels.IndexOf(panel);
-                ActivePanel.OnClick.InvokeAsync(ev);
+                if (ev != null) 
+                    ActivePanel.OnClick.InvokeAsync(ev);
             }
         }
+
+        public void ActivatePanel(MudTabPanel panel)
+        {
+            ActivatePanel(panel, null);
+        }
+
+        public void ActivatePanel(int index)
+        {
+            MudTabPanel panel = Panels[index];
+            ActivatePanel(panel, null);
+        }
+
+        public void ActivatePanel(object id)
+        {
+            MudTabPanel panel = Panels.Where((p) => p.ID == id).FirstOrDefault();
+            if (panel != null)
+                ActivatePanel(panel, null);
+        }
+
+        private Placement GetTooltipPlacement()
+        {
+            if (Vertical)
+            {
+                if (TabsPlacement == Placement.End)
+                    return Placement.Start;
+                else
+                    return Placement.End;
+            }
+            else
+            {
+                if (TabsPlacement == Placement.Bottom)
+                    return Placement.Top;
+                else
+                    return Placement.Bottom;
+            }
+        }
+
     }
 }

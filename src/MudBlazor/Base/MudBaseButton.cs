@@ -2,17 +2,22 @@
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
     public abstract class MudBaseButton : MudComponentBase
     {
-      
+        /// <summary>
+        /// Potential activation target for this button. This enables RenderFragments with user-defined
+        /// buttons which will automatically activate the intended functionality. 
+        /// </summary>
+        [CascadingParameter] protected IActivatable Activateable { get; set; }
+        
         /// <summary>
         /// The HTML element that will be rendered in the root by the component
         /// </summary>
         [Parameter] public string HtmlTag { get; set; }
-
 
         /// <summary>
         /// The button Type (Button, Submit, Refresh)
@@ -30,11 +35,6 @@ namespace MudBlazor
         [Parameter] public string Target { get; set; }
 
         /// <summary>
-        /// If true, force browser to redirect outside component router-space.
-        /// </summary>
-        [Parameter] public bool ForceLoad { get; set; }
-
-        /// <summary>
         /// Command executed when the user clicks on an element.
         /// </summary>
         [Parameter] public ICommand Command { get; set; }
@@ -50,12 +50,13 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         protected async Task OnClickHandler(MouseEventArgs ev)
-        {          
-                await OnClick.InvokeAsync(ev);
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }            
+        {
+            await OnClick.InvokeAsync(ev);
+            if (Command?.CanExecute(CommandParameter) ?? false)
+            {
+                Command.Execute(CommandParameter);
+            }
+            Activateable?.Activate(this, ev);
         }
 
         protected override void OnInitialized()
@@ -65,7 +66,6 @@ namespace MudBlazor
             {
                 HtmlTag = "button";
             }
-
             //But if Link property is set, it changes to an anchor element automatically
             if (!string.IsNullOrWhiteSpace(Link))
             {

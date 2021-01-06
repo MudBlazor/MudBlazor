@@ -12,15 +12,14 @@
             target="@Target"
             rel="@(Target=="_blank"?"noopener":null)"
             disabled="@Disabled">
-
-        @if (!String.IsNullOrEmpty(Icon))
-        {
+    @if (!String.IsNullOrEmpty(Icon))
+    {
         <span class="mud-icon-button-label">
             <MudIcon Icon="@Icon" Size="@Size" />
         </span>
-        }else
-        {
-            <MudText Typo="Typo.body2" Color="Color.Inherit">@ChildContent</MudText>
-        }
-
+    }
+    else
+    {
+        <MudText Typo="Typo.body2" Color="Color.Inherit">@ChildContent</MudText>
+    }
 </MudElement>

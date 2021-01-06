@@ -1,0 +1,49 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTabs Elevation="1" Rounded="true" @ref="tabs">
+    <MudTabPanel Text="One" @ref="panel01" ID="@("pn_one")" />
+    <MudTabPanel Text="Two" @ref="panel02" ID="@("pn_two")" />
+    <MudTabPanel Text="Three" @ref="panel03" ID="@("pn_three")" />
+</MudTabs>
+
+
+<MudText GutterBottom="true" Align="Align.Center" Class="mt-8"><b>Set Active by Index</b></MudText>
+<div class="d-flex justify-center">
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="() => Activate(0)">Index 0</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="() => Activate(1)" Class="mx-2">Index 1</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="() => Activate(2)">Index 2</MudButton>
+</div>
+<MudText GutterBottom="true" Align="Align.Center" Class="mt-4"><b>Set Active by Instance</b></MudText>
+<div class="d-flex justify-center">
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="() => Activate(panel01)">Item One</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="() => Activate(panel02)" Class="mx-2">Item Two</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="() => Activate(panel03)">Item Three</MudButton>
+</div>
+<MudText GutterBottom="true" Align="Align.Center" Class="mt-4"><b>Set Active by TabPanel ID</b></MudText>
+<div class="d-flex justify-center">
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick='() => Activate("pn_one")'>Item One</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick='() => Activate("pn_two")' Class="mx-2">Item Two</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick='() => Activate("pn_three")'>Item Three</MudButton>
+</div>
+
+@code {
+    MudTabs tabs;
+    MudTabPanel panel01;
+    MudTabPanel panel02;
+    MudTabPanel panel03;
+
+    void Activate(int index)
+    {
+        tabs.ActivatePanel(index);
+    }
+
+    void Activate(MudTabPanel panel)
+    {
+        tabs.ActivatePanel(panel);
+    }
+
+    void Activate(object id)
+    {
+        tabs.ActivatePanel(id);
+    }
+}

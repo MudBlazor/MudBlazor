@@ -1,8 +1,10 @@
-﻿using System;
+﻿#pragma warning disable 1998
+
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
-using Bunit.TestDoubles.JSInterop;
+using Bunit.TestDoubles;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,11 +24,7 @@ namespace MudBlazor.UnitTests
         public void Setup()
         {
             ctx = new Bunit.TestContext();
-            ctx.Services.AddMockJSRuntime();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-            ctx.Services.AddSingleton<IDialogService>(new DialogService());
-            ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());
-            ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+            ctx.AddMudBlazorServices();
         }
 
         [TearDown]

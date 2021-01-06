@@ -48,6 +48,38 @@ namespace MudBlazor.Docs.Compiler
             AddLine();
         }
 
+        public void AddUsings()
+        {
+            AddLine("using System;");
+            AddLine("using System.Net.Http;");
+
+            AddLine("using Bunit;");
+            AddLine("using Bunit.Rendering;");
+            AddLine("using Bunit.TestDoubles;");
+
+            AddLine("using Microsoft.AspNetCore.Components;");
+            AddLine("using Microsoft.Extensions.DependencyInjection;");
+
+            AddLine("using MudBlazor.Charts;");
+            AddLine("using MudBlazor.Docs.Examples;");
+            AddLine("using MudBlazor.Docs.Components;");
+            AddLine("using MudBlazor.Docs.Wireframes;");
+            AddLine("using MudBlazor.Internal;");
+            AddLine("using MudBlazor.Services;");
+            AddLine("using MudBlazor.UnitTests;");
+            AddLine("using MudBlazor.UnitTests.Mocks;");
+
+            AddLine("using Toolbelt.Blazor.HeadElement;");
+
+            AddLine("using NUnit.Framework;");
+
+            AddLine();
+            AddLine("#if NET5_0");
+            AddLine("using ComponentParameter = Bunit.ComponentParameter;");
+            AddLine("#endif");
+            AddLine();
+        }
+
         public override string ToString()
         {
             return code.ToString();

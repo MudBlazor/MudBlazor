@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -21,6 +22,7 @@ namespace MudBlazor
           .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
           .AddClass($"mud-rating-item-active", IsActive)
           .AddClass($"mud-disabled", Disabled)
+          .AddClass($"mud-readonly", ReadOnly)
           .AddClass(Class)
         .Build();
 
@@ -60,6 +62,11 @@ namespace MudBlazor
         [Parameter] public bool Disabled { get; set; }
 
         /// <summary>
+        /// If true, the item will be readonly.
+        /// </summary>
+        [Parameter] public bool ReadOnly { get; set; }
+
+        /// <summary>
         /// Fires when element clicked.
         /// </summary>
         [Parameter] public EventCallback<int> ItemClicked { get; set; }
@@ -77,7 +84,7 @@ namespace MudBlazor
 
         private string SelectIcon()
         {
-            if (Rating==null)
+            if (Rating == null)
                 return null;
             if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value >= ItemValue)
             {
@@ -110,18 +117,15 @@ namespace MudBlazor
             if (Disabled) return;
             if (Rating == null)
                 return;
-            // onmouseout from current item will always fire before onmouseover, if we don't wait here for potential onmouseover from another item there will be a flicker issue
-            await Task.Delay(10);
-            if (Rating.HoveredValue.HasValue && Rating.HoveredValue.Value == ItemValue)
-            {
-                IsActive = false;
-                await ItemHovered.InvokeAsync(null);
-            }
+
+            IsActive = false;
+            await ItemHovered.InvokeAsync(null);
         }
 
         private void HandleMouseOver(MouseEventArgs e)
         {
             if (Disabled) return;
+
             IsActive = true;
             ItemHovered.InvokeAsync(ItemValue);
         }
@@ -129,7 +133,7 @@ namespace MudBlazor
         private void HandleClick(MouseEventArgs e)
         {
             if (Disabled) return;
-            IsActive = false;            
+            IsActive = false;
             if (Rating?.SelectedValue == ItemValue)
             {
                 ItemClicked.InvokeAsync(0);

@@ -29,8 +29,8 @@
                             {
                                 @if (ItemSelectedTemplate == null)
                                     @ItemTemplate(item)
-                                    else
-                                        @ItemSelectedTemplate(item)
+                                else
+                                    @ItemSelectedTemplate(item)
                             }
                             else
                             {
@@ -45,6 +45,6 @@
     </div>
 </CascadingValue>
 
-<MudOverlay Visible="IsOpen" OnClick="@ToggleMenu" />
+<MudOverlay Visible="IsOpen" OnClick="@ToggleMenu" LockScroll="false" />
 
 

@@ -1,0 +1,68 @@
+﻿.mud-tree {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+}
+
+.mud-tree-group {
+    margin: 0px;
+    padding: 0px;
+    margin-left: 17px;
+    list-style: none;
+}
+
+.mud-tree-item {
+    margin: 0;
+    outline: 0;
+    padding: 0;
+    list-style: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mud-tree-item-content {
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.mud-tree-item-icon {
+    width: 15px;
+    display: flex;
+    flex-shrink: 0;
+    margin-right: 4px;
+    justify-content: center;
+}
+
+.mud-tree-item-label {
+    width: 100%;
+    padding-left: 4px;
+}
+
+.mud-tree-item:focus > .mud-tree-item-content .mud-tree-item-label {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.mud-tree-item-selected > .mud-tree-item-content .mud-tree-item-label {
+    background-color: rgba(25, 118, 210, 0.08);
+}
+
+.mud-tree-item-selected > .mud-tree-item-content .mud-tree-item-label:hover, .mud-tree-item-selected:focus > .mud-tree-item-content .mud-tree-item-label {
+    background-color: rgba(25, 118, 210, 0.12);
+}
+
+@media (hover: none) {
+    .mud-tree-item-selected > .mud-tree-item-content .mud-tree-item-label:hover, .mud-tree-item-selected:focus > .mud-tree-item-content .mud-tree-item-label {
+        background-color: transparent;
+    }
+}
+
+.mud-tree-item-label:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+@media (hover: none) {
+    .mud-tree-item-label:hover {
+        background-color: transparent;
+    }
+}

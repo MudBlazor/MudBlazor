@@ -1,11 +1,5 @@
-﻿// Copyright (c) 2020 Jonny Larsson
-// License: MIT
-// See https://github.com/Garderoben/MudBlazor
-// Modified version of Blazored Modal
 // Copyright (c) 2019 Blazored
-// License: MIT
-// See https://github.com/Blazored
-
+// Copyright (c) 2020 Adapted by Jonny Larsson, Meinrad Recheis and Contributors
 
 using System;
 using System.Threading.Tasks;
@@ -17,11 +11,24 @@ namespace MudBlazor
 {
     public partial class MudDialogInstance
     {
+        private DialogOptions _options = new DialogOptions();
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
         [CascadingParameter] private DialogOptions GlobalDialogOptions { get; set; } = new DialogOptions();
 
-        [Parameter] public DialogOptions Options { get; set; } = new DialogOptions();
+        [Parameter]
+        public DialogOptions Options
+        {
+            get
+            {
+                if (_options == null)
+                    _options = new DialogOptions();
+                return _options;
+            }
+            set => _options = value;
+        }
+
         [Parameter] public string Title { get; set; }
+        [Parameter] public RenderFragment TitleContent { get; set; }
         [Parameter] public RenderFragment Content { get; set; }
         [Parameter] public Guid Id { get; set; }
 
@@ -40,24 +47,32 @@ namespace MudBlazor
             ConfigureInstance();
         }
 
+        public void SetOptions(DialogOptions options)
+        {
+            Options = options;
+            ConfigureInstance();
+            StateHasChanged();
+        }
+
         public void SetTitle(string title)
         {
             Title = title;
             StateHasChanged();
         }
-        public async Task Close()
+      
+        public void Close()
         {
-            await Close(DialogResult.Ok<object>(null));
+            Close(DialogResult.Ok<object>(null));
         }
 
-        public async Task Close(DialogResult dialogResult)
+        public void Close(DialogResult dialogResult)
         {
-            await Parent.DismissInstance(Id, dialogResult);
+            Parent.DismissInstance(Id, dialogResult);
         }
 
-        public async Task Cancel()
+        public void Cancel()
         {
-            await Close(DialogResult.Cancel());
+            Close(DialogResult.Cancel());
         }
 
         private void ConfigureInstance()
@@ -75,7 +90,7 @@ namespace MudBlazor
         {
             DialogPosition position;
 
-            if (Options != null && Options.Position.HasValue)
+            if (Options.Position.HasValue)
             {
                 position = Options.Position.Value;
             }
@@ -159,12 +174,21 @@ namespace MudBlazor
             return false;
         }
 
-        private async Task HandleBackgroundClick()
+        private void HandleBackgroundClick()
         {
             if (DisableBackdropClick) return;
 
-            await Cancel();
+            Cancel();
         }
 
+        private MudDialog _dialog;
+        public void Register(MudDialog dialog)
+        {
+            if (dialog == null)
+                return;
+            _dialog = dialog;
+            TitleContent = dialog.TitleContent;
+            StateHasChanged();
+        }
     }
 }

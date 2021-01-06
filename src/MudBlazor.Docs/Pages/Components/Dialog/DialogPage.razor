@@ -5,11 +5,13 @@
         <Description>A dialog will overlay your current app content, providing the user with either information, a choice, or other tasks.</Description>
     </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
             <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
             <MudText>The Dialog is dependant on <CodeInline Class="docs-code-tertiary">IDialogService</CodeInline> and <CodeInline>MudDialogProvider</CodeInline></MudText>
             <MudText>Check the <MudLink Href="/getting-started/installation">Installation</MudLink> page for instructions regarding default setup.</MudText>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Usage</Title>
@@ -32,8 +34,9 @@
             </MudGrid>
         </DocsPageSection>
         <DocsPageSection>
-            <MudDivider Class="my-16" Style="opacity:0;" />
+            <MudDivider Class="my-16" Style="opacity: 0;" />
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Configuration</Title>
@@ -47,7 +50,7 @@
             </SectionHeader>
             <MarkdownDialogParameters />
             <SectionHeader>
-                <SubTitle>2. Per Dialog</SubTitle>
+                <SubTitle>2. Per Dialog (on open)</SubTitle>
                 <Description>
                     Below we pass along the DialogOptions class when we open the dialog, this can be done per dialog or you can predefine a bunch of them that you use for specific cases in your system.<br />
                 </Description>
@@ -56,7 +59,26 @@
                 <DialogOptionsExample />
             </SectionContent>
             <SectionSource Code="DialogOptionsExample" GitHubFolderName="Dialog" ShowCode="false" />
+            <SectionHeader>
+                <SubTitle>3. Per Dialog (from dialog)</SubTitle>
+                <Description>
+                    The title and the options can also be modified from the dialog component itself by calling <CodeInline>SetTitle</CodeInline> and <CodeInline>SetOptions</CodeInline> on the <CodeInline>MudDialogInstance</CodeInline> object.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <DialogSetOptionsExample />
+            </SectionContent>
+            <MudTabs Rounded="true" Outlined="true" Class="mt-4">
+                <MudTabPanel Text="Hide Source" />
+                <MudTabPanel Text="Page.razor">
+                    <SectionSource Code="DialogSetOptionsExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                </MudTabPanel>
+                <MudTabPanel Text="Dialog.razor">
+                    <SectionSource Code="DialogSetOptionsExample_Dialog" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                </MudTabPanel>
+            </MudTabs>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Templating and Passing Simple Data</Title>
@@ -75,6 +97,7 @@
                 </MudTabPanel>
             </MudTabs>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Passing Data</Title>
@@ -93,6 +116,7 @@
                 </MudTabPanel>
             </MudTabs>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Scrollable Dialog</Title>
@@ -102,7 +126,7 @@
                 <DialogScrollableExample />
             </SectionContent>
             <MudTabs Rounded="true" Outlined="true" Class="mt-4">
-                <MudTabPanel Text="Hide Source"/>
+                <MudTabPanel Text="Hide Source" />
                 <MudTabPanel Text="Page.razor">
                     <SectionSource Code="DialogScrollableExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
                 </MudTabPanel>
@@ -111,5 +135,22 @@
                 </MudTabPanel>
             </MudTabs>
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Inlining Dialog</Title>
+                <Description>
+                    You can inline <CodeInline>MudDialog</CodeInline> directly in another component which of course makes most sense for small dialogs that are not re-used somewhere else.
+                    The advantage is that you can easily share code and data between dialog and owning component via bindings.
+                    <br />
+                    This example also shows how to override the dialog title with a render fragment. 
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <DialogInlineExample />
+            </SectionContent>
+            <SectionSource Code="DialogInlineExample" GitHubFolderName="Dialog" />
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

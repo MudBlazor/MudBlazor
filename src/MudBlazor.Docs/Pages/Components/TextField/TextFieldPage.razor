@@ -2,7 +2,7 @@
 
 
 <DocsPage>
-    <DocsPageHeader Title="Text Field" SubTitle="A component that allows the user to input and edit text information." />
+    <DocsPageHeader Title="Text Field" SubTitle="Text field components are used for receiving user provided information."/>
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
@@ -48,7 +48,10 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Binding Properties of a POCO</Title>
-                <Description>The following text fields are bound against the properties of a POCO (Plain old C-Sharp Object). Edit them to see the model change. Reset the model and see the textfields change.</Description>
+                <Description>
+                    The following text fields are bound against the properties of a POCO (Plain old C-Sharp Object). Edit them to see the model change. Reset the model and see the textfields change.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: always use two-way bindings (<CodeInline>@("@bind-Value")</CodeInline>) with textfields.</MudAlert>
+                </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <TextFieldBindingExample />

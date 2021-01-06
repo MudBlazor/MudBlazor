@@ -3,7 +3,7 @@
 
 @if (!string.IsNullOrEmpty(Icon))
 {
-    <svg @attributes="UserAttributes" class="@Classname" style="@Style" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
+    <svg @attributes="UserAttributes" class="@Classname" style="@Style" focusable="false" viewBox="@ViewBox" aria-hidden="true">
         <path d="@Icon" />
     </svg>
 }

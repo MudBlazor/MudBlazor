@@ -13,12 +13,12 @@
                 @Text
             }
         </div>
-            @if (!HideIcon)
-            {
-                <MudIcon Icon="@Icons.Material.ExpandMore" class="@(IsExpanded? "mud-expand-panel-icon mud-transform" : "mud-expand-panel-icon")"/>
-            }
+        @if (!HideIcon)
+        {
+            <MudIcon Icon="@Icons.Material.ExpandMore" class="@(IsExpanded? "mud-expand-panel-icon mud-transform" : "mud-expand-panel-icon")" />
+        }
     </div>
-    <MudCollapse Expanded="@IsExpanded">
+    <MudCollapse Expanded="@IsExpanded" MaxHeight="@MaxHeight">
         <div class="mud-expand-panel-content">
             @ChildContent
         </div>

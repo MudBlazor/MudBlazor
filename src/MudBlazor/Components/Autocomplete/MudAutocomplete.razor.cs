@@ -44,7 +44,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string CloseIcon { get; set; } = Icons.Material.ArrowDropDown;
 
-        internal event Action<HashSet<T>> SelectionChangedFromOutside;
+        //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
         /// <summary>
         /// Sets the maxheight the select can have when open.
@@ -127,7 +127,7 @@ namespace MudBlazor
             _timer?.Dispose();
             IsOpen = false;
             UpdateIcon();
-            ValidateValue(Value);
+            BeginValidate();
             StateHasChanged();
         }
 
@@ -172,15 +172,15 @@ namespace MudBlazor
         private T[] _items;
         private int _selectedListItemIndex = 0;
 
-        protected override void GenericValueChanged(T value)
+        protected override void UpdateTextProperty(bool updateValue)
         {
-            base.GenericValueChanged(value);
+            base.UpdateTextProperty(updateValue);
             _timer?.Dispose();
         }
 
-        protected override void StringValueChanged(string text)
+        protected override void UpdateValueProperty(bool updateText)
         {
-            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(text))
+            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 Value = default(T);
             _timer?.Dispose();
             _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
@@ -262,7 +262,7 @@ namespace MudBlazor
         public async void ScrollToListItem(int index)
         {
             string id = GetListItemId(index);
-            await JsRuntime.InvokeVoidAsync("blazorHelpers.scrollToFragment", id);
+            await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToFragment", id);
             StateHasChanged();
         }
 
@@ -285,8 +285,10 @@ namespace MudBlazor
         {
             if (!IsOpen)
                 CoerceTextToValue();
-            base.OnBlurred(args);
-        }
+            // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value, 
+            // resulting in a premature validation. thus, don't call base
+            //base.OnBlurred(args);
+    }
 
         private void CoerceTextToValue()
         {

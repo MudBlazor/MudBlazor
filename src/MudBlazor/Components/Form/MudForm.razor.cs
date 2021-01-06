@@ -46,6 +46,16 @@ namespace MudBlazor
         [Parameter] public bool SuppressRenderingOnValidation { get; set; } = true;
 
         /// <summary>
+        /// When true, will not cause a page refresh on Enter if any input has focus.
+        /// </summary>
+        /// <remarks>
+        /// https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission
+        /// Usually this is not wanted, as it can cause a page refresh in the middle of editing a form. 
+        /// When the form is in a dialog this will cause the dialog to close. So by default we suppress it.
+        /// </remarks>
+        [Parameter] public bool SuppressImplicitSubmission { get; set; } = true;
+        
+        /// <summary>
         /// Raised when IsValid changes.
         /// </summary>
         [Parameter] public EventCallback<bool> IsValidChanged { get; set; }
@@ -94,7 +104,7 @@ namespace MudBlazor
             if (debounce && ValidationDelay > 0)
                 _timer = new Timer(OnTimerComplete, null, ValidationDelay, Timeout.Infinite);
             else
-                OnEvaluateForm();
+                _=OnEvaluateForm();
         }
 
         private void OnTimerComplete(object stateInfo) => InvokeAsync(OnEvaluateForm);

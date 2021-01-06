@@ -7,14 +7,27 @@
             <SectionHeader>
                 <Title>Default Table</Title>
                 <Description>
-                   The default table displays your data in simple rows and is responsive, it breaks into mobile layout on <CodeInline>xs</CodeInline> unless changed.<br/>
-                   Add the <CodeInline>DataLabel</CodeInline> property to your <CodeInline>MudTd</CodeInline> cells to properly display the column label when the table has changed to mobile layout.
+                    The default table displays your data in simple rows and is responsive, it breaks into mobile layout on <CodeInline>xs</CodeInline> unless changed.<br />
+                    Add the <CodeInline>DataLabel</CodeInline> property to your <CodeInline>MudTd</CodeInline> cells to properly display the column label when the table has changed to mobile layout.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <TableBasicExample />
             </SectionContent>
             <SectionSource Code="TableBasicExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Table With related data</Title>
+                <Description>
+                    Making use of the <CodeInline>&lt;ChildRowContent&gt;</CodeInline> allows more control over the layout for scenarios such as showing the related address data for each person below.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TableRelationalExample />                
+            </SectionContent>
+            <SectionSource Code="TableRelationalExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -104,7 +117,7 @@
             <SectionHeader>
                 <Title>Server Side Filtering, Sorting and Pagination</Title>
                 <Description>
-                    Set <CodeInline>ServerData</CodeInline> to load data from the backend that is filtered, sorted and paginated. Table will call this async function whenever the user navigates 
+                    Set <CodeInline>ServerData</CodeInline> to load data from the backend that is filtered, sorted and paginated. Table will call this async function whenever the user navigates
                     the pager or changes sorting by clicking on the sort header icons. In this example we also show how to force the table to update when the search textfield blurs, so that the table reloads server-filtered data.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         Note: with a <CodeInline>ServerData</CodeInline> func you don't need <CodeInline>Items</CodeInline> and <CodeInline>Filter</CodeInline>.

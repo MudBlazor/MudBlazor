@@ -1,7 +1,7 @@
 ﻿/*!
  * MudBlazor (https://mudblazor.com/)
- * Copyright (c) 2020 Jonny Larsson
- * Licensed under MIT (https://github.com/Garderoben/MudBlazor/blob/develop/LICENSE)
+ * Copyright (c) 2020-2021 Jonny Larsson
+ * Licensed under MIT (https://github.com/Garderoben/MudBlazor/blob/master/LICENSE)
  */
 
 @import 'abstracts/_colors';
@@ -62,6 +62,7 @@
 @import 'components/_inputcontrol';
 @import 'components/_inputlabel';
 @import 'components/_overlay';
+@import 'components/_tree';
 
 @import 'utilities/_flex';
 @import 'utilities/_float';
@@ -69,6 +70,8 @@
 @import 'utilities/_spacing';
 @import 'utilities/_borders';
 @import 'utilities/_display';
+@import 'utilities/scroll';
+
 
 @import 'layout/_appbar';
 @import 'layout/_drawer';

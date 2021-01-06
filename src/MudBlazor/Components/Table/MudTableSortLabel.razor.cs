@@ -69,8 +69,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             Context?.SortLabels.Add(this);
-            if (SortBy != null)
-                Context?.InitializeSorting();
+            Context?.InitializeSorting();
         }
 
         public void Dispose()
