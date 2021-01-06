@@ -22,7 +22,8 @@ namespace MudBlazor.Docs.Extensions
                 config.SnackbarVariant = Variant.Filled;
             });
 
-            services.AddMudBlazorScrollServices();
+            services.AddMudBlazorScrollManager();
+            services.AddMudBlazorScrollListener();
         }
     }
 }

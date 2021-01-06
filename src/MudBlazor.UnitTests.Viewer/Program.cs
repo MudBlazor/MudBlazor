@@ -16,7 +16,8 @@ namespace MudBlazor.UnitTests
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddMudBlazorDialog();
             builder.Services.AddMudBlazorSnackbar();
-            builder.Services.AddMudBlazorScrollServices();
+            builder.Services.AddMudBlazorScrollManager();
+            builder.Services.AddMudBlazorScrollListener();
 
             await builder.Build().RunAsync();
         }

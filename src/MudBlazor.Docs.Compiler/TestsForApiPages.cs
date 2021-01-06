@@ -46,6 +46,8 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("ctx.Services.AddSingleton<IDialogService>(new DialogService());");
                 cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new SnackbarService());");
                 cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
+                cb.AddLine("ctx.Services.AddTransient<IScrollManager, MockScrollManager>();");
+                cb.AddLine("ctx.Services.AddTransient<IScrollListener, MockScrollListener>();");
                 cb.AddLine("ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());");
                 cb.AddLine("ctx.Services.AddScoped(sp => new HttpClient());");
                 cb.IndentLevel--;
