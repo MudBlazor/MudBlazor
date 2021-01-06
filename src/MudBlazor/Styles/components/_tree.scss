@@ -16,18 +16,40 @@
     outline: 0;
     padding: 0;
     list-style: none;
+    min-height: 2rem;
+    align-items: center;
     -webkit-tap-highlight-color: transparent;
+
+    .mud-icon-button {
+        padding: 4px;
+    }
+
+    &.mud-tree-open-on-click -mud-tree-item-content {
+        cursor: pointer;
+    }
 }
 
 .mud-tree-item-content {
     width: 100%;
-    cursor: pointer;
     display: flex;
+    padding: 4px;
     align-items: center;
+
+    &.mud-tree-item-activated {
+        background-color: rgba(25, 118, 210, 0.08);
+    }
+}
+
+.mud-tree-item-collapse-icon {
+    width: 2rem;
+    display: flex;
+    flex-shrink: 0;
+    margin: 0 4px;
+    justify-content: center;
 }
 
 .mud-tree-item-icon {
-    width: 15px;
+    width: 32px;
     display: flex;
     flex-shrink: 0;
     margin-right: 4px;
@@ -35,34 +57,14 @@
 }
 
 .mud-tree-item-label {
-    width: 100%;
+    flex-grow: 1;
     padding-left: 4px;
 }
 
-.mud-tree-item:focus > .mud-tree-item-content .mud-tree-item-label {
-    background-color: rgba(0, 0, 0, 0.04);
-}
-
-.mud-tree-item-selected > .mud-tree-item-content .mud-tree-item-label {
-    background-color: rgba(25, 118, 210, 0.08);
-}
-
-.mud-tree-item-selected > .mud-tree-item-content .mud-tree-item-label:hover, .mud-tree-item-selected:focus > .mud-tree-item-content .mud-tree-item-label {
+.mud-tree-hoverable .mud-tree-item-activated .mud-tree-item-content:hover {
     background-color: rgba(25, 118, 210, 0.12);
 }
 
-@media (hover: none) {
-    .mud-tree-item-selected > .mud-tree-item-content .mud-tree-item-label:hover, .mud-tree-item-selected:focus > .mud-tree-item-content .mud-tree-item-label {
-        background-color: transparent;
-    }
-}
-
-.mud-tree-item-label:hover {
+.mud-tree-hoverable .mud-tree-item-content:hover {
     background-color: rgba(0, 0, 0, 0.04);
-}
-
-@media (hover: none) {
-    .mud-tree-item-label:hover {
-        background-color: transparent;
-    }
 }

@@ -6,12 +6,26 @@ namespace MudBlazor
 {
     public partial class MudTree : MudComponentBase
     {
-        private MudTreeItem selectedItem;
+        private MudTreeItem activeItem;
 
         protected string Classname =>
         new CssBuilder("mud-tree")
+          .AddClass("mud-tree-hoverable", Hoverable)
+          .AddClass("mud-tree-open-on-click", OpenOnClick)
           .AddClass(Class)
         .Build();
+
+        [Parameter]
+        public bool Selectable { get; set; }
+
+        [Parameter]
+        public bool Activable { get; set; }
+
+        [Parameter]
+        public bool OpenOnClick { get; set; }
+
+        [Parameter]
+        public bool Hoverable { get; set; }
 
         /// <summary>
         /// Child content of component.
@@ -25,17 +39,17 @@ namespace MudBlazor
             MudTreeRoot = this;
         }
 
-        internal async Task UpdateSelection(MudTreeItem item)
+        internal async Task UpdateActivation(MudTreeItem item)
         {
-            if (selectedItem == item)
+            if (activeItem == item)
                 return;
 
-            if (selectedItem != null)
+            if (activeItem != null)
             {
-                await selectedItem.UnSelect();
+                await activeItem.Deactivate();
             }
 
-            selectedItem = item;
+            activeItem = item;
         }
     }
 }

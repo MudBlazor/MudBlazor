@@ -2,31 +2,50 @@
 @inherits MudComponentBase
 
 <li @attributes="UserAttributes" class="@Classname" style="@Style">
-    <div class="mud-tree-item-content" @onclick="OnClickHandler" @onclick:stopPropagation="true">
-        <div class="mud-tree-item-icon">
+    <div class="@ContentClassname" @onclick="OnItemClicked" @onclick:stopPropagation="true">
+        <div class="mud-tree-item-collapse-icon">
             @if (ChildContent != null)
             {
-                if (Expanded)
-                {
-                    <MudIcon Icon="@Icons.Material.ExpandMore"></MudIcon>
-                }
-                else
-                {
-                    <MudIcon Icon="@Icons.Material.ChevronRight"></MudIcon>
-                }
+                <MudIconButton OnClick="OnExpandClick" Icon="@(Expanded ? Icons.Material.ArrowDropDown : Icons.Material.ArrowRight)"></MudIconButton>
             }
         </div>
+
+        @if (MudTreeRoot.Selectable)
+        {
+            <MudCheckBox @bind-Checked="Selected"></MudCheckBox> 
+        }
+
+        @if (!string.IsNullOrEmpty(Icon))
+        {
+            <div class="mud-tree-item-icon">
+                <MudIcon Icon="@Icon" Color="@IconColor" />
+            </div>
+        }
+        else if (IconContent != null)
+        {
+            <div class="mud-tree-item-icon">
+                @IconContent
+            </div>
+        }
+
         @if (Content != null)
         {
             <div class="mud-tree-item-label">
                 @Content
             </div> 
         }
-        else if (Text != null)
+        else if (!string.IsNullOrEmpty(Text))
         {
-            <MudText Typo="@Typo.body1" Class="mud-tree-item-label">
+            <MudText Typo="@TextTypo" Class="@TextClassname">
                 @Text
             </MudText>            
+        }
+
+        @if (!string.IsNullOrEmpty(EndText))
+        {            
+            <MudText Typo="@EndTextTypo" Class="@EndTextClass">
+                @EndText
+            </MudText>  
         }
     </div>
         
@@ -34,9 +53,11 @@
     {
         <MudCollapse Expanded="@Expanded">
             <CascadingValue Value="@MudTreeRoot">
-                <MudTree Class="mud-tree-group">
-                    @ChildContent
-                </MudTree>
+                <CascadingValue Value="this">
+                    <MudTree Class="mud-tree-group">
+                        @ChildContent
+                    </MudTree>
+                </CascadingValue>
             </CascadingValue>
         </MudCollapse>
     }
