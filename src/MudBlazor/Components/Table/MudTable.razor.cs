@@ -19,6 +19,11 @@ namespace MudBlazor
         [Parameter] public RenderFragment<T> RowTemplate { get; set; }
 
         /// <summary>
+        /// Row Child content of the component.
+        /// </summary>
+        [Parameter] public RenderFragment<T> ChildRowContent { get; set; }
+
+        /// <summary>
         /// Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.
         /// </summary>
         [Parameter] public RenderFragment<T> RowEditingTemplate { get; set; }

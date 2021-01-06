@@ -1,0 +1,16 @@
+﻿<MudButton Variant="Variant.Filled" OnClick="()=>visible=true">Open</MudButton>
+
+<MudDialog @bind-IsVisible="visible">
+    <DialogContent>
+        <MudText>Wabalabadubdub!</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="()=>visible=false">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    public static string __description__ = "Click on open will open the inlined dialog";
+
+    bool visible;
+}

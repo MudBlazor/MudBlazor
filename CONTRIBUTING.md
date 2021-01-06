@@ -49,9 +49,11 @@ In the Test make sure to instantiate the razor file you just prepared above.
  
 ### What are common errors when writing tests?
 
-Do not save html elements you query via `Find` or `FindAll` in a variable!
+#### Do not save html elements you query via `Find` or `FindAll` in a variable!
 
 ```c#
+   var comp = ctx.RenderComponent<MudTextField<string>>();
+   
    // wrong - this will fail:
    var textField = comp.Find("input");
    textField.Change("Garfield");
@@ -62,13 +64,31 @@ Do not save html elements you query via `Find` or `FindAll` in a variable!
 As soon as you interact with html elements they are potentially re-rendered and your variable becomes stale.
 
 ```c#
+   var comp = ctx.RenderComponent<MudTextField<string>>();
+   
    // correct   
    comp.Find("input").Change("Garfield");
    comp.Find("input").Blur();
    comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
 ```
+So never save html element references in a variable in a bUnit test. Note: you can save component references
+in variables just fine, so don't confuse that.
 
-So never save html element references in a variable in a bUnit test.
+#### Always use InvokeAsync to set parameter values on a component
+
+The bUnit test logic is not running on the blazor UI-thread, so whenever directly interacting with a component's 
+parameters or methods you need to use `await comp.InvokeAsync(()=> ... )`. That way the following test logic happens only after the 
+interaction with the component has been concluded.
+
+```c#
+   var comp = ctx.RenderComponent<MudTextField<string>>();
+   var textField=comp.FindComponent<MudTextField<string>>().Instance;
+   
+   // wrong!
+   textField.Value="Garfield";
+   // correct
+   await comp.InvokeAsync(()=>textField.Value="I love dogs");
+```
 
 ### What does not need to be tested?
 
@@ -86,12 +106,13 @@ Two things.
 
 The documentation has lots of examples for every component. We use those 
 examples as unit tests by instantiating them in a bUnit context and checking
-whether or not rendering them throws an error or not. While this is not a 
-replacing of a good hand-written unit test we can at least catch very basic
-breakages which would throw a runtime exception on render. The auto-tests are 
-all generated into the file _AllComponents.cs under MudBlazor.UnitTests.  
+whether rendering them throws an error or not. While this is not comparable
+to a good hand-written unit test we can at least catch exceptions thrown by
+the render logic. These tests are generated automatically on build and their
+cs files start with a underscore.
 
 ### Continuous Integration
 
 We have an Azure DevOps pipeline which will automatically execute the entire
-test suite on all pushes to the master branch. 
+test suite on all pushes and PRs. So if your commit or PR breaks the tests
+you'll be notified.

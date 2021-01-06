@@ -50,6 +50,10 @@
                                 else
                                     @RowTemplate(item)
                             </MudTr>
+                            @if (ChildRowContent != null)
+                            {
+                                @ChildRowContent(item)
+                            }
 
                             @*@if(RowEditingTemplate != null && object.Equals(_editingItem, item))
                                 {

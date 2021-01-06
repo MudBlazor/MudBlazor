@@ -5,9 +5,12 @@
 
 <div class="mud-tooltip-root">
     @ChildContent
-    <span class="@Classname" style="@GetTimeDelay()">
-        @Text
-    </span>
+    @if (!String.IsNullOrEmpty(Text))
+    {
+<span class="@Classname" style="@GetTimeDelay()">
+    @Text
+</span>
+}
 </div>
 
 @code {

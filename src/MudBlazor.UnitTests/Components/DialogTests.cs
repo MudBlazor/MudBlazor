@@ -45,7 +45,7 @@ namespace MudBlazor.UnitTests
             service.Should().NotBe(null);
             IDialogReference dialogReference=null;
             // open simple test dialog
-            await comp.InvokeAsync(()=> dialogReference=service?.Show<TestDialogOkCancel>());
+            await comp.InvokeAsync(()=> dialogReference=service?.Show<DialogOkCancel>());
             dialogReference.Should().NotBe(null);
             Console.WriteLine(comp.Markup);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
@@ -56,18 +56,44 @@ namespace MudBlazor.UnitTests
             var result=await dialogReference.Result;
             result.Cancelled.Should().BeTrue();
             // open simple test dialog
-            await comp.InvokeAsync(() => dialogReference = service?.Show<TestDialogOkCancel>());
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
             // close by click on cancel button
             comp.FindAll("button")[0].Click();
             result = await dialogReference.Result;
             result.Cancelled.Should().BeTrue();
             // open simple test dialog
-            await comp.InvokeAsync(() => dialogReference = service?.Show<TestDialogOkCancel>());
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
             // close by click on ok button
             comp.FindAll("button")[1].Click();
             result = await dialogReference.Result;
             result.Cancelled.Should().BeFalse();
         }
 
+        /// <summary>
+        /// Opening and closing an inline dialog. Click on open will open the inlined dialog.
+        ///
+        /// Note: this test uses two different components, one containing the dialog provider and
+        /// one containing the open button and the inline dialog
+        /// </summary>
+        [Test]
+        public async Task InlineDialogTest()
+        {
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            // displaying the component with the inline dialog only renders the open button
+            var comp1 = ctx.RenderComponent<TestInlineDialog>();
+            comp1.FindComponents<MudButton>().Count.Should().Be(1);
+            Console.WriteLine("Open button: " + comp1.Markup);
+            // open the dialog
+            comp1.Find("button").Click();
+            Console.WriteLine("\nOpened dialog: " +comp.Markup);
+            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
+            // close by click on ok button
+            comp.Find("button").Click();
+            comp.Markup.Trim().Should().BeEmpty();
+        }
     }
 }

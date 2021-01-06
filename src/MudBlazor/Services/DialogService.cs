@@ -67,10 +67,9 @@ namespace MudBlazor
             {
                 throw new ArgumentException($"{contentComponent.FullName} must be a Blazor Component");
             }
-
-            var DialogInstanceId = Guid.NewGuid();
-            DialogReference DialogReference = null;
-            var DialogContent = new RenderFragment(builder =>
+            var dialogInstanceId = Guid.NewGuid();
+            DialogReference dialogReference = null;
+            var dialogContent = new RenderFragment(builder =>
             {
                 var i = 0;
                 builder.OpenComponent(i++, contentComponent);
@@ -80,20 +79,20 @@ namespace MudBlazor
                 }
                 builder.CloseComponent();
             });
-            var DialogInstance = new RenderFragment(builder =>
+            var dialogInstance = new RenderFragment(builder =>
             {
                 builder.OpenComponent<MudDialogInstance>(0);
                 builder.AddAttribute(1, "Options", options);
                 builder.AddAttribute(2, "Title", title);
-                builder.AddAttribute(3, "Content", DialogContent);
-                builder.AddAttribute(4, "Id", DialogInstanceId);
+                builder.AddAttribute(3, "Content", dialogContent);
+                builder.AddAttribute(4, "Id", dialogInstanceId);
                 builder.CloseComponent();
             });
-            DialogReference = new DialogReference(DialogInstanceId, DialogInstance, this);
+            dialogReference = new DialogReference(dialogInstanceId, dialogInstance, this);
 
-            OnDialogInstanceAdded?.Invoke(DialogReference);
+            OnDialogInstanceAdded?.Invoke(dialogReference);
 
-            return DialogReference;
+            return dialogReference;
         }
 
         internal void Close(DialogReference Dialog)

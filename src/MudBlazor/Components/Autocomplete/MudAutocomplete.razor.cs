@@ -285,8 +285,10 @@ namespace MudBlazor
         {
             if (!IsOpen)
                 CoerceTextToValue();
-            base.OnBlurred(args);
-        }
+            // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value, 
+            // resulting in a premature validation. thus, don't call base
+            //base.OnBlurred(args);
+    }
 
         private void CoerceTextToValue()
         {
