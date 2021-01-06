@@ -29,11 +29,8 @@ namespace MudBlazor.UnitTests.Components
         [TearDown]
         public void TearDown() => ctx.Dispose();
 
-        /// <summary>
-        /// Expand-collapse a node, and check 
-        /// </summary>
         [Test]
-        public void ExpandTest1()
+        public void ExpandCollapseNodeWithButtonClick()
         {
             var comp = ctx.RenderComponent<TreeTest1>();
             Console.WriteLine(comp.Markup);
@@ -46,11 +43,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("li.mud-tree-item .mud-collapse-container.mud-collapse-expanded").Count.Should().Be(0);
         }
 
-        /// <summary>
-        /// Expand-collapse a node, and check with Expand-On-Click
-        /// </summary>
         [Test]
-        public void ExpandTest2()
+        public void ExpandCollapseNodeWithContentClick()
         {
             var comp = ctx.RenderComponent<TreeTest2>();
             Console.WriteLine(comp.Markup);
@@ -65,11 +59,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("li.mud-tree-item .mud-collapse-container.mud-collapse-expanded").Count.Should().Be(0);
         }
 
-        /// <summary>
-        /// Select an item, then check it affects itself also all the childitems
-        /// </summary>
         [Test]
-        public void SelectionTest()
+        public void SelectAnItemThenDeselectAChild()
         {
             var comp = ctx.RenderComponent<TreeTest1>();
             Console.WriteLine(comp.Markup);
@@ -85,11 +76,8 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ParentItemSelected.Should().BeTrue();
         }
 
-        /// <summary>
-        /// Activate a node, then activate another. Check the binding values.
-        /// </summary>
         [Test]
-        public void ActivationTest()
+        public void ActivateThenDeactivateItemByClickOnAnother()
         {
             var comp = ctx.RenderComponent<TreeTest1>();
             Console.WriteLine(comp.Markup);
