@@ -5,13 +5,18 @@
     <DocsPageHeader Title="Scroll To Top" SubTitle="A ScrollToTop component is a component that allows the user to return to the top of the page without making too much effort" />
     <DocsPageContent>
         <DocsPageSection>
+            <MudText Typo="Typo.h6" GutterBottom="true">Note</MudText>
+            <MudText>The MudScrollToTop is dependant on <CodeInline>IScrollManager</CodeInline> and <CodeInline>IScrollListener</CodeInline> services. </MudText>
+            <MudText>Add this services with the AddMudBlazorScrollServices extension or check the <MudLink Href="/getting-started/installation">Installation</MudLink> page for instructions regarding default setup.</MudText>
+        </DocsPageSection>
+        <DocsPageSection>
             <SectionHeader>
-                <Title>Default values</Title>              
+                <Title>Default values</Title>
             </SectionHeader>
             <SectionContentBlock>
                 If your website follows a normal flow and you have not limited the body or html height, <b>you will not need to do anything</b> to configure it, and the component will behave like the one you've probably already noticed on our website. If you put it at the layout level, it will run on all the pages of your site.
             </SectionContentBlock>
-             
+
             <SectionSource ShowCode="true" Code="DefaultScrollToTopExample" GitHubFolderName="ScrollToTop" />
         </DocsPageSection>
 
