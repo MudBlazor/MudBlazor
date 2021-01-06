@@ -14,6 +14,11 @@ namespace MudBlazor.UnitTests.Mocks
         public string Selector { get ; set ; }
 
         public event EventHandler<ScrollEventArgs> OnScroll;
+
+        public MockScrollListener()
+        {
+            OnScroll.Invoke(this, new ScrollEventArgs());
+        }
     }
 
 
