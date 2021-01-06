@@ -31,7 +31,11 @@ namespace MudBlazor
             get => _valid;
             set { /* readonly parameter! */ }
         }
-        private bool _valid;
+        
+        // Note: w/o any children the form is automatically valid.
+        // It stays valid, as long as non-required fields are added or
+        // a required field is added or the user touches a field that fails validation.
+        private bool _valid = true;
 
         /// <summary>
         /// Validation debounce delay in milliseconds. This can help improve rendering performance of forms with real-time validation of inputs
@@ -61,7 +65,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<bool> IsValidChanged { get; set; }
 
         // keeps track of validation. if the input was validated at least once the value will be true
-        protected Dictionary<IFormComponent, bool> _formControls = new Dictionary<IFormComponent, bool>();
+        protected Dictionary<IFormComponent, bool> _touchedFormControls = new Dictionary<IFormComponent, bool>();
         protected HashSet<string> _errors = new HashSet<string>();
 
         /// <summary>
@@ -78,12 +82,14 @@ namespace MudBlazor
 
         internal void Add(IFormComponent formControl)
         {
-            _formControls[formControl] = false; // false means fresh, not yet validated!
+            if (formControl.Required)
+                _valid = false;
+            _touchedFormControls[formControl] = false; // false means untouched!
         }
 
         internal void Remove(IFormComponent formControl)
         {
-            _formControls.Remove(formControl);
+            _touchedFormControls.Remove(formControl);
         }
 
         private Timer _timer;
@@ -94,7 +100,7 @@ namespace MudBlazor
         /// <param name="formControl"></param>
         internal void Update(IFormComponent formControl)
         {
-            _formControls[formControl] = true;
+            _touchedFormControls[formControl] = true;
             EvaluateForm();
         }
 
@@ -114,12 +120,12 @@ namespace MudBlazor
         protected async Task OnEvaluateForm()
         {
             _errors.Clear();
-            foreach (var error in _formControls.Keys.SelectMany(control => control.ValidationErrors))
+            foreach (var error in _touchedFormControls.Keys.SelectMany(control => control.ValidationErrors))
                 _errors.Add(error);
             var old_valid = _valid;
             // form can only be valid if none have an error and all have been validated at least once!
-            var no_errors = _formControls.Keys.All(x => x.Error == false);
-            var all_validated = _formControls.Values.All(x => x == true);
+            var no_errors = _touchedFormControls.Keys.All(x => x.Error == false);
+            var all_validated = _touchedFormControls.Values.All(x => x == true);
             _valid = no_errors && all_validated;
             try
             {
@@ -146,7 +152,7 @@ namespace MudBlazor
         /// </summary>
         public void Validate()
         {
-            foreach (var control in _formControls.Keys.ToArray())
+            foreach (var control in _touchedFormControls.Keys.ToArray())
             {
                 control.Validate();
             }
@@ -158,10 +164,10 @@ namespace MudBlazor
         /// </summary>
         public void Reset()
         {
-            foreach (var control in _formControls.Keys.ToArray())
+            foreach (var control in _touchedFormControls.Keys.ToArray())
             {
                 control.Reset();
-                _formControls[control] = false;
+                _touchedFormControls[control] = false;
             }
             EvaluateForm(debounce: false);
         }
@@ -171,10 +177,10 @@ namespace MudBlazor
         /// </summary>
         public void ResetValidation()
         {
-            foreach (var control in _formControls.Keys.ToArray())
+            foreach (var control in _touchedFormControls.Keys.ToArray())
             {
                 control.ResetValidation();
-                _formControls[control] = false;
+                _touchedFormControls[control] = false;
             }
             EvaluateForm(debounce: false);
         }
