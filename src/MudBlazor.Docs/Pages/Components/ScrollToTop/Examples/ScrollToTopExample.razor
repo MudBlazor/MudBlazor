@@ -1,0 +1,66 @@
+﻿@namespace MudBlazor.Docs.Examples 
+<style>
+    .example-scroll-section{
+        height:300px;
+        overflow:auto;
+        padding:20px;
+    }
+    .example-inner-section{
+        height:3500px;        
+        display:flex;
+        flex-direction:column;
+        justify-content:space-between;
+        padding:3em;
+    }
+    .example-inner-section>h1, .example-inner-section>h2{
+        text-align:center;        
+    }
+    .visible-custom-position{
+        right:80px;
+        bottom:40px;
+        position:absolute;
+        transition:all .2s;
+    }
+    .hidden-custom-position{
+        right:-100px;
+        visibility:hidden;
+    }
+    
+</style>
+
+<div class="example-scroll-section" id="unique_id_scroll_section">
+    <MudPaper  Elevation="2" Class="example-inner-section" >
+        <h1>Scroll inside this container</h1>
+        <h2>Some initial long text</h2>
+        <h2>Middle text</h2>
+        <h2>Bottom text</h2>
+        <MudScrollToTop TopOffset="100"
+                     Style="z-index:2000"
+                     VisibleCssClass="visible-custom-position"
+                     HiddenCssClass="hidden-custom-position"
+                     Selector="#unique_id_scroll_section"
+                     OnScroll="OnScroll">
+         
+                <MudButton Variant="Variant.Filled"
+                           StartIcon="@Filled.ArrowUpward"
+                           Color="Color">
+                    Go to top
+                </MudButton>
+
+        </MudScrollToTop>
+    </MudPaper>
+</div>
+
+@code{
+    Color Color = Color.Success;
+    private void OnScroll(ScrollEventArgs e)
+    {
+        Color = (e.FirstChildBoundingClientRect.Top*-1) switch
+        {
+            var x when x<  500 => Color.Primary,
+            var x when x < 1500 => Color.Secondary,
+            var x when x < 2500 => Color.Tertiary,
+            _=>Color.Error
+        };
+    }
+}

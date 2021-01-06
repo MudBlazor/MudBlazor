@@ -21,6 +21,8 @@ namespace MudBlazor.Docs.Extensions
                 config.ShowTransitionDuration = 500;
                 config.SnackbarVariant = Variant.Filled;
             });
+
+            services.AddMudBlazorScrollServices();
         }
     }
 }
