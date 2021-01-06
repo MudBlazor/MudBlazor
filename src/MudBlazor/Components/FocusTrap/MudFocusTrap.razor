@@ -3,9 +3,14 @@
 
 <div @ref="_root" @attributes="UserAttributes" class="@Class" style="@("outline-style: none;" + Style)" @onkeydown="OnRootKeyDown" @onkeyup="OnRootKeyUp" @onfocus="OnRootFocusAsync" tabindex="-1">
 
+    <div style="pointer-events:none; position:fixed;"
+         tabindex="@TrapTabIndex"
+         @onfocus="OnTopFocusAsync">
+    </div>
+
     <div @ref="_firstBumper"
          style="pointer-events:none; position:fixed;"
-         tabindex="@BumperTabIndex"
+         tabindex="@TrapTabIndex"
          @onfocus="OnBumperFocusAsync">
     </div>
 
@@ -18,12 +23,17 @@
 
     <div @ref="_lastBumper"
          style="pointer-events:none; position:fixed;"
-         tabindex="@BumperTabIndex"
+         tabindex="@TrapTabIndex"
          @onfocus="OnBumperFocusAsync">
+    </div>
+
+    <div style="pointer-events:none; position:fixed;"
+         tabindex="@TrapTabIndex"
+         @onfocus="OnBottomFocusAsync">
     </div>
 
 </div>
 
 @code {
-    string BumperTabIndex => (Disabled? "-1" : "0");
+    string TrapTabIndex => (Disabled? "-1" : "0");
 }
