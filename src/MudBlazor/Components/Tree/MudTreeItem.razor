@@ -10,7 +10,7 @@
             }
         </div>
 
-        @if (MudTreeRoot != null && MudTreeRoot.Selectable)
+        @if (MudTreeRoot != null && MudTreeRoot.CanSelect)
         {
             <MudCheckBox @bind-Checked="Selected"></MudCheckBox> 
         }

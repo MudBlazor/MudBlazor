@@ -18,7 +18,7 @@ namespace MudBlazor
 
         protected string ContentClassname =>
         new CssBuilder("mud-tree-item-content")
-          .AddClass("mud-tree-item-activated", Activated && MudTreeRoot.Activable)
+          .AddClass("mud-tree-item-activated", Activated && MudTreeRoot.CanActivate)
         .Build();
 
         public string TextClassname =>
@@ -98,15 +98,15 @@ namespace MudBlazor
             }
             base.OnAfterRender(firstRender);
         }
-
+        
         protected async Task OnItemClicked(MouseEventArgs ev)
         {
-            if (MudTreeRoot.Activable)
+            if (MudTreeRoot.CanActivate)
             {
                 await Activate();
             }
 
-            if (ChildContent != null && MudTreeRoot.OpenOnClick)
+            if (ChildContent != null && MudTreeRoot.ExpandOnClick)
             {
                 Expanded = !Expanded;
                 await ExpandedChanged.InvokeAsync(Expanded);

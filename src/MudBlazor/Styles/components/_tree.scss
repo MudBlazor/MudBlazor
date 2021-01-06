@@ -2,6 +2,10 @@
     margin: 0px;
     padding: 0px;
     list-style: none;
+
+    &.mud-tree-expand-on-click .mud-tree-item-content {
+        cursor: pointer;
+    }
 }
 
 .mud-tree-group {
@@ -22,10 +26,6 @@
 
     .mud-icon-button {
         padding: 4px;
-    }
-
-    &.mud-tree-open-on-click -mud-tree-item-content {
-        cursor: pointer;
     }
 }
 
@@ -61,10 +61,10 @@
     padding-left: 4px;
 }
 
-.mud-tree-hoverable .mud-tree-item-activated .mud-tree-item-content:hover {
+.mud-tree-canhover .mud-tree-item-activated .mud-tree-item-content:hover {
     background-color: rgba(25, 118, 210, 0.12);
 }
 
-.mud-tree-hoverable .mud-tree-item-content:hover {
+.mud-tree-canhover .mud-tree-item-content:hover {
     background-color: rgba(0, 0, 0, 0.04);
 }

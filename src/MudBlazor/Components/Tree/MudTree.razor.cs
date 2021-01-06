@@ -10,22 +10,22 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-tree")
-          .AddClass("mud-tree-hoverable", Hoverable)
-          .AddClass("mud-tree-open-on-click", OpenOnClick)
+          .AddClass("mud-tree-canhover", CanHover)
+          .AddClass("mud-tree-expand-on-click", ExpandOnClick)
           .AddClass(Class)
         .Build();
 
         [Parameter]
-        public bool Selectable { get; set; }
+        public bool CanSelect { get; set; }
 
         [Parameter]
-        public bool Activable { get; set; }
+        public bool CanActivate { get; set; }
 
         [Parameter]
-        public bool OpenOnClick { get; set; }
+        public bool ExpandOnClick { get; set; }
 
         [Parameter]
-        public bool Hoverable { get; set; }
+        public bool CanHover { get; set; }
 
         /// <summary>
         /// Child content of component.
