@@ -12,7 +12,7 @@
 
         @if (MudTreeRoot != null && MudTreeRoot.CanSelect)
         {
-            <MudCheckBox @bind-Checked="Selected"></MudCheckBox> 
+            <MudCheckBox @bind-Checked="IsChecked"></MudCheckBox> 
         }
 
         @if (!string.IsNullOrEmpty(Icon))

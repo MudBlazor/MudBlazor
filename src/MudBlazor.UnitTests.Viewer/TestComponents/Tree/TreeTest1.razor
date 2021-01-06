@@ -1,0 +1,26 @@
+﻿<MudTree CanSelect="true" CanActivate="true">
+    <MudTreeItem Text="Applications" @bind-Activated="Item1Activated" @bind-Selected="ParentItemSelected">
+        <MudTreeItem Text="Calendar" />
+        <MudTreeItem Text="Chrome" @bind-Selected="SubItemSelected" />
+        <MudTreeItem Text="Webstorm" />
+    </MudTreeItem>
+    <MudTreeItem Text="Documents" @bind-Activated="Item2Activated">
+        <MudTreeItem Text="OSS" />
+        <MudTreeItem Text="Material-UI">
+            <MudTreeItem Text="src">
+                <MudTreeItem Text="index.js" />
+                <MudTreeItem Text="tree-view.js" />
+            </MudTreeItem>
+        </MudTreeItem>
+    </MudTreeItem>
+</MudTree>
+
+@code{
+    public bool SubItemSelected { get; set; }
+
+    public bool ParentItemSelected { get; set; }
+
+    public bool Item1Activated { get; set; }
+
+    public bool Item2Activated { get; set; }
+}

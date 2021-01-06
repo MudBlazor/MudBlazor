@@ -8,7 +8,6 @@ namespace MudBlazor
 {
     public partial class MudTreeItem : MudComponentBase
     {
-        private bool _selected;
         private List<MudTreeItem> childItems = new List<MudTreeItem>();
 
         protected string Classname =>
@@ -49,10 +48,13 @@ namespace MudBlazor
         [Parameter] public RenderFragment IconContent { get; set; }
         
         [Parameter]
-        public bool Expanded { get; set; } = false;
+        public bool Expanded { get; set; }
 
         [Parameter]
-        public bool Activated { get; set; } = false;
+        public bool Activated { get; set; }
+
+        [Parameter]
+        public bool Selected { get; set; }
 
         [Parameter]
         public string Icon { get; set; }
@@ -67,21 +69,6 @@ namespace MudBlazor
         public EventCallback<bool> ExpandedChanged { get; set; }
 
         [Parameter]
-        public bool Selected
-        {
-            get => _selected;
-            set
-            {
-                if (value == _selected)
-                    return;
-
-                _selected = value;
-                childItems.ForEach(c => c.Selected = value);
-                SelectedChanged.InvokeAsync(_selected);
-            }
-        }
-
-        [Parameter]
         public EventCallback<bool> SelectedChanged { get; set; }
         
         /// <summary>
@@ -89,6 +76,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        protected bool IsChecked
+        {
+            get => Selected;
+            set
+            {
+                if (value == Selected)
+                    return;
+
+                Selected = value;
+                childItems.ForEach(c => c.IsChecked = value);
+
+                SelectedChanged.InvokeAsync(value);
+            }
+        }
 
         protected override void OnAfterRender(bool firstRender)
         {
