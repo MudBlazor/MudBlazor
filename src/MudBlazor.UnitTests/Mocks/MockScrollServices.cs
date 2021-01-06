@@ -17,7 +17,7 @@ namespace MudBlazor.UnitTests.Mocks
 
         public MockScrollListener()
         {
-            OnScroll.Invoke(this, new ScrollEventArgs());
+            OnScroll?.Invoke(this, new ScrollEventArgs());
         }
     }
 
