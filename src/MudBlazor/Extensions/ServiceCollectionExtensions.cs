@@ -35,11 +35,14 @@ namespace MudBlazor
             return AddMudBlazorSnackbar(services, options);
         }
 
-        public static IServiceCollection AddMudBlazorScrollServices(this IServiceCollection services)
+        public static IServiceCollection AddMudBlazorScrollManager(this IServiceCollection services)
         {
-            services.AddTransient<IScrollManager, ScrollManager>();
-            return services.AddTransient<IScrollListener, ScrollListener>();
+          return  services.AddTransient<IScrollManager, ScrollManager>();
         }
 
+        public static IServiceCollection AddMudBlazorScrollListener(this IServiceCollection services)
+        {
+            return services.AddTransient<IScrollListener, ScrollListener>();
+        }
     }
 }
