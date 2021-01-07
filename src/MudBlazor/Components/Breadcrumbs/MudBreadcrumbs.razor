@@ -12,7 +12,14 @@
         if (i != Items.Count - 1)
         {
             <li class="mud-breadcrumb-separator">
-                <span>@Separator</span>
+                @if (SeparatorTemplate == null)
+                {
+                    <span>@Separator</span>
+                }
+                else
+                {
+                    @SeparatorTemplate
+                }
             </li>
         }
     }

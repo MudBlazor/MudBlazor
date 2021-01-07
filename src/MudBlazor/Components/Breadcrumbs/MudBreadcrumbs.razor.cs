@@ -10,6 +10,8 @@ namespace MudBlazor
 
         [Parameter] public string Separator { get; set; } = "/";
 
+        [Parameter] public RenderFragment SeparatorTemplate { get; set; }
+
         private static string GetItemClassname(BreadcrumbItem item)
         {
             return new CssBuilder("mud-breadcrumb-item")

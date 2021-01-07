@@ -3,18 +3,33 @@
 <DocsPage>
     <DocsPageHeader Title="Breadcrumbs"
                     SubTitle="A Material Design Button for actions, links and commands">
-        <Description>The <CodeInline>Mudbutton</CodeInline> component is a button with material design theme and comes with multiple functions.</Description>
+        <Description>The <CodeInline>MudBreadcrumbs</CodeInline> component is a button with material design theme and comes with multiple functions.</Description>
     </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
                 <Title>Basic Breadcrumbs</Title>
-                <Description></Description> 
+                <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <BreadcrumbsBasicExample />
             </SectionContent>
             <SectionSource Code="BreadcrumbsBasicExample" GitHubFolderName="Breadcrumbs" SnippetId="TODO" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Custom Separator</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <BreadcrumbsSeparatorExample />
+            </SectionContent>
+            <SectionSource Code="BreadcrumbsSeparatorExample" GitHubFolderName="Breadcrumbs" SnippetId="TODO" />
+            <MudText Class="mt-6" GutterBottom="true">It is also possible to provide a <CodeInline>RenderFragment</CodeInline> as a template.</MudText>
+            <SectionContent Outlined="true">
+                <BreadcrumbsSeparatorTemplateExample />
+            </SectionContent>
+            <SectionSource Code="BreadcrumbsSeparatorTemplateExample" GitHubFolderName="Breadcrumbs" SnippetId="TODO" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
