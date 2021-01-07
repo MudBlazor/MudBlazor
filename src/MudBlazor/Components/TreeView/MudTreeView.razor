@@ -2,14 +2,7 @@
 @inherits MudComponentBase
 
 <ul @attributes="UserAttributes" class="@Classname" style="@Style">
-    <CascadingValue Value="@MudTreeRoot">
-        @if (ItemTemplate != null)
-        {
-            @ItemTemplate
-        }
-        else
-        {
-            @ChildContent
-        }
+    <CascadingValue Value="@MudTreeRoot">        
+        @ChildContent
     </CascadingValue>
 </ul>

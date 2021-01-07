@@ -35,8 +35,6 @@ namespace MudBlazor
 
         [CascadingParameter] public MudTreeView MudTreeRoot { get; set; }
 
-        [Parameter] public RenderFragment ItemTemplate { get; set; }
-
         public MudTreeView()
         {
             MudTreeRoot = this;

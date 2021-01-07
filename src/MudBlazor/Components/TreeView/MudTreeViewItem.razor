@@ -68,10 +68,10 @@
             <CascadingValue Value="@MudTreeRoot">
                 <CascadingValue Value="this">
                     <MudTreeView Class="mud-treeview-group">
-                        @if (MudTreeRoot != null && MudTreeRoot.ItemTemplate != null)
+                        @if (MudTreeRoot != null && Items != null && Items.Count() > 0)
                         {
                             <CascadingValue Value="Items">
-                                @MudTreeRoot.ItemTemplate
+                                @MudTreeRoot.ChildContent
                             </CascadingValue>
                         }
                         else

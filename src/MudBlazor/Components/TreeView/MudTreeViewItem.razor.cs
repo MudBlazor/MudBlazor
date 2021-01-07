@@ -25,7 +25,7 @@ namespace MudBlazor
         new CssBuilder("mud-treeview-item-label")
             .AddClass(TextClass)
         .Build();
-        
+
         [Parameter] public string Text { get; set; }
 
         [Parameter] public Typo TextTypo { get; set; } = Typo.body1;
@@ -88,7 +88,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        bool HasChild => ChildContent != null || (MudTreeRoot != null && MudTreeRoot.ItemTemplate != null && Items != null && Items.Count() != 0);
+        bool HasChild => ChildContent != null || (MudTreeRoot != null && Items != null && Items.Count() != 0);
 
         protected bool IsChecked
         {
