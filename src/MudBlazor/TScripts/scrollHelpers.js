@@ -3,7 +3,7 @@ window.scrollHelpers = {
         var element = document.getElementById(elementId);
 
         if (element) {
-            element.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'start' });
+            element.parentNode.scrollTop = element.offsetTop - element.parentNode.offsetTop;
         }
     },
     lockScroll: (selector) => {

@@ -1,5 +1,6 @@
+@using MudBlazor.Docs.Services
 @inherits LayoutComponentBase
-@inject NavigationManager NavMan
+
 
 <MudThemeProvider Theme="currentTheme"/>
 <MudDialogProvider FullWidth="true" MaxWidth="MaxWidth.ExtraSmall" />
@@ -9,6 +10,12 @@
     <MudAppBar Elevation="25">
         <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text">Mudblazor</MudText>
+        <MudAppBarSpacer />
+        <MudAutocomplete T="ApiLinkServiceEntry" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar">
+            <ItemTemplate Context="result">
+                <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
+            </ItemTemplate>
+        </MudAutocomplete>
         <MudAppBarSpacer />
         <MudTooltip Text="Toggle light/dark theme">
             <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
@@ -20,82 +27,18 @@
             <MudIconButton Icon="@Icons.Material.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
         </MudTooltip>
     </MudAppBar>
-    <MudDrawer @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
-        <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
-            <MudBlazorLogo />
-        </MudDrawerHeader>
-        <NavMenu />
-    </MudDrawer>
-    <MudMainContent Class="mudblazor-main-content">
-        @Body
-    </MudMainContent>
+    
+        <MudDrawer @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
+            <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
+                <MudBlazorLogo />
+            </MudDrawerHeader>
+            <NavMenu @ref="@_navMenuRef"/>
+        </MudDrawer>
+        <MudMainContent Class="mudblazor-main-content">
+            @Body            
+            <NavigationFooter Section=_section Previous="@_previous" Next="@_next" />
+        </MudMainContent>
+    
 </MudLayout>
 
-@code {
-
-    bool _drawerOpen = false;
-    bool _rightToLeft = false;
-
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
-
-    void RightToLeftToggle()
-    {
-        _rightToLeft = !_rightToLeft;
-    }
-
-    protected override void OnInitialized()
-    {
-        currentTheme = defaultTheme;
-        //if not home page, the navbar starts open
-        if (!NavMan.IsHomePage())
-        {
-            _drawerOpen = true;
-        }
-    }
-
-    void DarkMode()
-    {
-        if (currentTheme == defaultTheme)
-        {
-            currentTheme = darkTheme;
-        }
-        else
-        {
-            currentTheme = defaultTheme;
-        }
-    }
-
-    MudTheme currentTheme = new MudTheme();
-    MudTheme defaultTheme = new MudTheme()
-    {
-        Palette = new Palette()
-        {
-            Black = "#272c34"
-        }
-    };
-
-    MudTheme darkTheme = new MudTheme()
-    {
-        Palette = new Palette()
-        {
-            Black = "#27272f",
-            Background = "#32333d",
-            BackgroundGrey = "#27272f",
-            Surface = "#373740",
-            DrawerBackground = "#27272f",
-            DrawerText = "rgba(255,255,255, 0.50)",
-            AppbarBackground = "#27272f",
-            AppbarText = "rgba(255,255,255, 0.70)",
-            TextPrimary = "rgba(255,255,255, 0.70)",
-            TextSecondary = "rgba(255,255,255, 0.50)",
-            ActionDefault = "#adadb1",
-            ActionDisabled = "rgba(255,255,255, 0.26)",
-            ActionDisabledBackground = "rgba(255,255,255, 0.12)",
-            DrawerIcon = "rgba(255,255,255, 0.50)"
-        }
-    };
-}
 

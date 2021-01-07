@@ -74,6 +74,23 @@ namespace MudBlazor.UnitTests
         }
 
         /// <summary>
+        /// Form's isvalid should be true, no matter whether or not the field was touched
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task FormIsValidTest2()
+        {
+            var comp = ctx.RenderComponent<FormIsValidTest2>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            // check initial state: form should be valid due to field not being required!
+            form.IsValid.Should().Be(true);
+            await comp.InvokeAsync(() => textField.Value = "This value doesn't matter");
+            form.IsValid.Should().Be(true);
+        }
+        
+        /// <summary>
         /// Custom validation func should be called to determine whether or not a form value is good
         /// </summary>
         [Test]
@@ -278,6 +295,19 @@ namespace MudBlazor.UnitTests
             foreach (var tf in comp.FindComponents<MudTextField<string>>())
                 tf.Instance.Text.Should().NotBeNullOrEmpty();
             comp.FindComponent<MudTextField<int>>().Instance.Value.Should().Be(17);
+        }
+
+        /// <summary>
+        /// Based on error report. Even without clicking the checkbox the form should
+        /// be valid if the checkbox is not required.
+        /// </summary>
+        [Test]
+        public async Task FormWithCheckboxTest2()
+        {
+            var comp = ctx.RenderComponent<FormWithCheckboxTest>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            form.IsValid.Should().BeTrue(because: "none of the fields are required");
         }
     }
 }

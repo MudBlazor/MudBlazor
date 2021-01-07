@@ -105,3 +105,25 @@
         }
     }
 }
+
+.docs-search-bar {
+    & .mud-input {
+        height: 42px;
+    }
+
+    &.mud-input-control {
+        background-color: rgba(white,.15);
+        margin-bottom: 5px;
+        height: 42px;
+        border-radius: var(--mud-default-borderradius);
+
+        & .mud-input-root, .mud-icon-default {
+            color: #fafafa;
+        }
+    }
+
+    & .mud-input.mud-input-outlined .mud-input-outlined-border {
+        border: none;
+        border-radius: var(--mud-default-borderradius);
+    }
+}
