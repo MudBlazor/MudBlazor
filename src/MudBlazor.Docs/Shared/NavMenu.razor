@@ -1,7 +1,6 @@
 @using System.Linq
 @using MudBlazor.Docs.Extensions
-@inject NavigationManager NavMan
-@inject IJSRuntime Js
+
 <MudNavMenu Class="mudblazor-navmenu">
     <div class="docs-nav-fader"></div>
     
@@ -9,24 +8,26 @@
                  Icon="@Icons.Material.School"
                  Expanded="@(_section == "getting-started")"
                  ExpandIcon="@Icons.Material.ExpandMore" Style="margin-top: 40px;">
-        <MudNavLink Href="getting-started/installation">Installation</MudNavLink>
-        <MudNavLink Href="getting-started/usage">Usage</MudNavLink>
-        <MudNavLink Href="getting-started/wireframes">Wireframes</MudNavLink>
+        @foreach (var link in MenuService.GettingStarted)
+        {
+            <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
+        }
     </MudNavGroup>
 
+    @*COMPONENTS*@
     <MudNavGroup Title="Components"
                  Icon="@Icons.Material.Dashboard"
                  Expanded="@(_section == "components")"
                  ExpandIcon="@Icons.Material.ExpandMore">
-        @foreach (var item in DocsComponents.ToList().OrderBy(i => i.Name))
+        @foreach (var item in MenuService.Components)
         {
             if (item.IsNavGroup)
             {
                 <MudNavGroup Title="@item.Name" Expanded="@(IsSubGroupExpanded(item))" ExpandIcon="@Icons.Material.ExpandMore">
-                    @foreach (var item in item.GroupItems.ToList().OrderBy(i => i.Name))
+                    @foreach (var subItem in item.GroupItems.Elements) 
                     {
-                        string href = $"components/{item.Link}";
-                        <MudNavLink Href="@href">@item.Name</MudNavLink>
+                        string href = $"components/{subItem.Link}";
+                        <MudNavLink Href="@href">@subItem.Name</MudNavLink>
                     }
                 </MudNavGroup>
             }
@@ -37,51 +38,50 @@
             }
         }
     </MudNavGroup>
-
+    
+    @*API*@
     <MudNavGroup Title="API"
                  Icon="@Icons.Material.Api"
-                  Expanded="@(_section == "api")" 
+                 Expanded="@(_section == "api")" 
                  ExpandIcon="@Icons.Material.ExpandMore">
-        @foreach (var item in DocsComponentsAPI.ToList().OrderBy(i => i.Name))
+        @foreach (var item in MenuService.Api)
         {
             <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Component)">@item.Name</MudNavLink>
         }
     </MudNavGroup>
-
+    
+    @*FEATURES*@
     <MudNavGroup Title="Features"
-                 Icon="@Icons.Material.DeveloperBoard" 
-                  Expanded="@(_section == "features")"
+                 Icon="@Icons.Material.DeveloperBoard"
+                 Expanded="@(_section == "features")"
                  ExpandIcon="@Icons.Material.ExpandMore">
-        <MudNavLink Href="features/breakpoints">Breakpoints</MudNavLink>
-        <MudNavLink Href="features/border-radius">Border Radius</MudNavLink>
-        <MudNavLink Href="features/colors">Colors</MudNavLink>
-        <MudNavLink Href="features/converters">Converters</MudNavLink>
-        <MudNavLink Href="features/display">Display</MudNavLink>
-        <MudNavLink Href="features/elevation">Elevation</MudNavLink>
-        <MudNavLink Href="features/flex">Flex</MudNavLink>
-        <MudNavLink Href="features/icons">Icons</MudNavLink>
-        <MudNavLink Href="features/spacing">Spacing</MudNavLink>
+        @foreach (var link in MenuService.Features)
+        {
+            <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
+        }
     </MudNavGroup>
 
+    @*CUSTOMIZATION*@
     <MudNavGroup Title="Customization"
                  Icon="@Icons.Material.Handyman"
                  Expanded="@(_section == "customization")"
                  ExpandIcon="@Icons.Material.ExpandMore">
         <MudNavLink Href="customization/default-theme">Default Theme</MudNavLink>
         <MudNavGroup Title="Theming" Expanded="true" ExpandIcon="@Icons.Material.ExpandMore">
-            <MudNavLink Href="customization/theming/overview">Overview</MudNavLink>
-            <MudNavLink Href="customization/theming/palette">Palette</MudNavLink>
-            @*<MudNavLink Href="customization/theming/layoutprops">Layout Properties</MudNavLink>
-                <MudNavLink Href="customization/theming/shadows">Shadows</MudNavLink>*@
-            <MudNavLink Href="customization/theming/z-index">z-index</MudNavLink>
+            @foreach (var link in MenuService.Customization)
+            {
+                <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
+            }
         </MudNavGroup>
     </MudNavGroup>
 
-    <MudNavGroup Title="About" Icon="@Icons.Custom.MudBlazor" Expanded="false" ExpandIcon="@Icons.Material.ExpandMore">
-        <MudNavLink Href="project/credit">Credits</MudNavLink>
-        <MudNavLink Href="project/about">How it started</MudNavLink>
-        <MudNavLink Href="project/team">Team & Contributors</MudNavLink>
-        <MudNavLink Href="versions">Versions</MudNavLink>
+    @*ABOUT*@
+    <MudNavGroup Title="About" Icon="@Icons.Custom.MudBlazor" Expanded="@(_section=="project")" ExpandIcon="@Icons.Material.ExpandMore">
+       @foreach (var link in MenuService.About)
+       {
+            <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
+       }
+       
     </MudNavGroup>
 </MudNavMenu>
 <div class="docs-nav-filler"></div>
@@ -200,8 +200,3 @@
         return item.GroupItems.ToList().Any(i => i.Link ==_componentLink);
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await Js.InvokeVoidAsync("mudBlazorDocs.scrollToActiveNavLink");
-    }
-}
