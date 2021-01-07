@@ -1,0 +1,22 @@
+﻿.mud-breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 0 1 auto;
+    align-items: center;
+    list-style-type: none;
+    margin: 0;
+    padding: 16px 12px;
+}
+
+.mud-breadcrumb-separator {
+    padding: 0 12px;
+}
+
+.mud-breadcrumb-separator > span {
+    color: rgba(0, 0, 0, 0.38);
+}
+
+.mud-breadcrumb-item.mud-disabled > a {
+    pointer-events: none;
+    color: var(--mud-palette-action-disabled);
+}

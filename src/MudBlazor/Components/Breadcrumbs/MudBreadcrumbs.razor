@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<ul class="mud-breadcrumbs">
+    @for (var i = 0; i < Items.Count; i++)
+    {
+        var item = Items[i];
+        <li class="@GetItemClassname(item)">
+            <a href="@(item.Href ?? "#")">@item.Text</a>
+        </li>
+
+        if (i != Items.Count - 1)
+        {
+            <li class="mud-breadcrumb-separator">
+                <span>@Separator</span>
+            </li>
+        }
+    }
+</ul>
