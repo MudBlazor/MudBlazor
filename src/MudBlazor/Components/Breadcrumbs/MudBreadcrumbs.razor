@@ -1,12 +1,18 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<ul class="mud-breadcrumbs">
+<ul class="mud-breadcrumbs mud-typography-body1">
     @for (var i = 0; i < Items.Count; i++)
     {
         var item = Items[i];
         <li class="@GetItemClassname(item)">
-            <a href="@(item.Href ?? "#")">@item.Text</a>
+            <a href="@(item.Href ?? "#")">
+                @if (item.Icon != null)
+                {
+                    <MudIcon Icon="@item.Icon" Size="Size.Small" />
+                }
+                @item.Text
+            </a>
         </li>
 
         if (i != Items.Count - 1)

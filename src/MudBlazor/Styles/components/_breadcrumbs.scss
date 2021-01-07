@@ -16,6 +16,14 @@
     color: rgba(0, 0, 0, 0.38);
 }
 
+.mud-breadcrumb-item > a {
+    display: flex;
+}
+
+.mud-breadcrumb-item > a > svg.mud-svg-icon-root {
+    margin-right: 4px;
+}
+
 .mud-breadcrumb-item.mud-disabled > a {
     pointer-events: none;
     color: var(--mud-palette-action-disabled);
