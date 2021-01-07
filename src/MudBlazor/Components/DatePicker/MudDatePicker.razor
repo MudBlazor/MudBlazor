@@ -22,6 +22,15 @@
         }
         else if (OpenTo == OpenTo.Month)
         {
+            <div class="mud-picker-calendar-header">
+                <div class="mud-picker-calendar-header-switch">
+                    <MudIconButton Icon="@Icons.Material.ChevronLeft" OnClick="@OnPreviousYearClick"/>
+                    <div class="mud-picker-slide-transition mud-picker-calendar-header-transition" @onclick="OnYearClick"  @onclick:stopPropagation="true">
+                        <MudText Typo="Typo.body1" Align="Align.Center">@PickerMonth?.Year</MudText>
+                    </div>
+                    <MudIconButton Icon="@Icons.Material.ChevronRight" OnClick="@OnNextYearClick"/>
+                </div>
+            </div>
             <div class="mud-picker-month-container">
                 @foreach (var month in GetAllMonths())
                 {
