@@ -1,7 +1,7 @@
 window.scrollHelpers = {
     //scrolls to an Id. Useful for navigation to fragments
     scrollToFragment: (elementId, behavior) => {
-        var element = document.getElementById(elementId);
+        let element = document.getElementById(elementId);
 
         if (element) {
             element.scrollIntoView({
@@ -9,6 +9,15 @@ window.scrollHelpers = {
                 block: 'center',
                 inline: 'start',
             });
+        }
+    },
+
+    //scrolls to year in MudDatePicker
+    scrollToYear: (elementId) => {
+        let element = document.getElementById(elementId);
+
+        if (element) {
+            element.parentNode.scrollTop = element.offsetTop - element.parentNode.offsetTop;
         }
     },
 
