@@ -3,7 +3,7 @@
 
 <MudNavMenu Class="mudblazor-navmenu">
     <div class="docs-nav-fader"></div>
-    
+
     <MudNavGroup Title="Getting Started"
                  Icon="@Icons.Material.School"
                  Expanded="@(_section == "getting-started")"
@@ -24,7 +24,7 @@
             if (item.IsNavGroup)
             {
                 <MudNavGroup Title="@item.Name" Expanded="@(IsSubGroupExpanded(item))" ExpandIcon="@Icons.Material.ExpandMore">
-                    @foreach (var subItem in item.GroupItems.Elements) 
+                    @foreach (var subItem in item.GroupItems.Elements)
                     {
                         string href = $"components/{subItem.Link}";
                         <MudNavLink Href="@href">@subItem.Name</MudNavLink>
@@ -38,18 +38,18 @@
             }
         }
     </MudNavGroup>
-    
+
     @*API*@
     <MudNavGroup Title="API"
                  Icon="@Icons.Material.Api"
-                 Expanded="@(_section == "api")" 
+                 Expanded="@(_section == "api")"
                  ExpandIcon="@Icons.Material.ExpandMore">
         @foreach (var item in MenuService.Api)
         {
             <MudNavLink Href="@ApiLink.GetApiLinkFor(item.Component)">@item.Name</MudNavLink>
         }
     </MudNavGroup>
-    
+
     @*FEATURES*@
     <MudNavGroup Title="Features"
                  Icon="@Icons.Material.DeveloperBoard"
@@ -77,13 +77,12 @@
 
     @*ABOUT*@
     <MudNavGroup Title="About" Icon="@Icons.Custom.MudBlazor" Expanded="@(_section=="project")" ExpandIcon="@Icons.Material.ExpandMore">
-       @foreach (var link in MenuService.About)
-       {
+        @foreach (var link in MenuService.About)
+        {
             <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
-       }
-       
+        }
+
     </MudNavGroup>
 </MudNavMenu>
 <div class="docs-nav-filler"></div>
-
 
