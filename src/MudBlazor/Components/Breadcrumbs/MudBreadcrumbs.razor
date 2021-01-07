@@ -6,13 +6,20 @@
     {
         var item = Items[i];
         <li class="@GetItemClassname(item)">
-            <a href="@(item.Href ?? "#")">
-                @if (item.Icon != null)
-                {
-                    <MudIcon Icon="@item.Icon" Size="Size.Small" />
-                }
-                @item.Text
-            </a>
+            @if (ItemTemplate == null)
+            {
+                <a href="@(item.Href ?? "#")">
+                    @if (item.Icon != null)
+                    {
+                        <MudIcon Icon="@item.Icon" Size="Size.Small" />
+                    }
+                    @item.Text
+                </a>
+            }
+            else
+            {
+                @ItemTemplate(item);
+            }
         </li>
 
         if (i != Items.Count - 1)
