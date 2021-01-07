@@ -65,7 +65,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Highlighter", typeof(MudHighlighter))
             .AddItem("Element", typeof(MudElement))
             .AddItem("FileUpload", typeof(MudFileUploader))
-            .AddItem("Tree", typeof(MudTree))
+            .AddItem("TreeView", typeof(MudTreeView))
 
             //GROUPS
 

@@ -4,6 +4,7 @@ window.scrollHelpers = {
         let element = document.getElementById(elementId);
 
         if (element) {
+          
             element.scrollIntoView({
                 behavior,
                 block: 'center',

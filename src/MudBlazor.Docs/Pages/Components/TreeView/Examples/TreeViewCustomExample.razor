@@ -42,7 +42,7 @@
         if (treeItem.TreeItems.Count > 0)
         {
             return
-                @<MudTreeItem @bind-Selected="treeItem.IsSelected">
+                @<MudTreeViewItem @bind-Selected="treeItem.IsSelected">
                     <Content>
                         @CustomTreeContent(treeItem)
                     </Content>                
@@ -52,28 +52,28 @@
                             @renderSubTree(child)
                         }
                     </ChildContent>
-                </MudTreeItem>
+                </MudTreeViewItem>
                 ;
         }
         else
         {
             return
-                @<MudTreeItem @bind-Selected="treeItem.IsSelected">
+                @<MudTreeViewItem @bind-Selected="treeItem.IsSelected">
                     <Content>
                         @CustomTreeContent(treeItem)
                     </Content>
-                </MudTreeItem>
+                </MudTreeViewItem>
             ;
         }
     }
 }
 
-<MudTree Class="my-tree">
+<MudTreeView Class="my-tree">
     @foreach (var treeItem in TreeItems)
     {
         @renderSubTree(treeItem)
     }
-</MudTree>
+</MudTreeView>
 
 @code {
     class CustomTreeItem
@@ -91,7 +91,7 @@
 
     List<CustomTreeItem> TreeItems { get; set; } = new List<CustomTreeItem>();
 
-    public TreeCustomExample()
+    public TreeViewCustomExample()
     {
         TreeItems.Add(new CustomTreeItem()
         {

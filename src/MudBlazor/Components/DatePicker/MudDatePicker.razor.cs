@@ -237,6 +237,16 @@ namespace MudBlazor
             PickerMonth = GetMonthEnd().AddDays(1);
         }
 
+        private void OnPreviousYearClick()
+        {
+            PickerMonth = GetMonthStart().AddYears(-1);
+        }
+
+        private void OnNextYearClick()
+        {
+            PickerMonth = GetMonthStart().AddYears(1);
+        }
+
         private void OnYearClick()
         {
             OpenTo = OpenTo.Year;
@@ -296,7 +306,7 @@ namespace MudBlazor
 
         private void OnYearClicked(int year)
         {
-            OpenTo = OpenTo.Date;
+            OpenTo = OpenTo.Month;
             var current = GetMonthStart();
             PickerMonth = new DateTime(year, current.Month,  1);
         }
@@ -341,6 +351,12 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if (firstRender)
+            {
+                if(_picker_month == null)
+                    _picker_month = GetMonthStart();
+            }
+
             if (firstRender && OpenTo == OpenTo.Year)
             {
                 ScrollToYear();
