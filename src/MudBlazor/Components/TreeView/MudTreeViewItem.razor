@@ -3,8 +3,8 @@
 
 <li @attributes="UserAttributes" class="@Classname" style="@Style">
     <div class="@ContentClassname" @onclick="OnItemClicked" @onclick:stopPropagation="true">
-        <div class="mud-tree-item-collapse-icon">
-            @if (ChildContent != null)
+        <div class="mud-treeview-item-collapse-icon">
+            @if (HasChild)
             {
                 <MudIconButton OnClick="OnExpandClick" Icon="@(Expanded ? Icons.Material.ArrowDropDown : Icons.Material.ArrowRight)"></MudIconButton>
             }
@@ -17,20 +17,20 @@
 
         @if (!string.IsNullOrEmpty(Icon))
         {
-            <div class="mud-tree-item-icon">
+            <div class="mud-treeview-item-icon">
                 <MudIcon Icon="@Icon" Color="@IconColor" />
             </div>
         }
         else if (IconContent != null)
         {
-            <div class="mud-tree-item-icon">
+            <div class="mud-treeview-item-icon">
                 @IconContent
             </div>
         }
 
         @if (Content != null)
         {
-            <div class="mud-tree-item-label">
+            <div class="mud-treeview-item-label">
                 @Content
             </div> 
         }
@@ -47,16 +47,38 @@
                 @EndText
             </MudText>  
         }
+
+        @if (!string.IsNullOrEmpty(EndIcon))
+        {
+            <div class="mud-treeview-item-icon">
+                <MudIcon Icon="@EndIcon" Color="@EndIconColor" />
+            </div>
+        }
+        else if (EndIconContent != null)
+        {
+            <div class="mud-treeview-item-icon">
+                @EndIconContent
+            </div>
+        }
     </div>
         
-    @if (ChildContent != null)
+    @if (HasChild)
     {
         <MudCollapse Expanded="@Expanded">
             <CascadingValue Value="@MudTreeRoot">
                 <CascadingValue Value="this">
-                    <MudTree Class="mud-tree-group">
-                        @ChildContent
-                    </MudTree>
+                    <MudTreeView Class="mud-treeview-group">
+                        @if (MudTreeRoot != null && MudTreeRoot.ItemTemplate != null)
+                        {
+                            <CascadingValue Value="Items">
+                                @MudTreeRoot.ItemTemplate
+                            </CascadingValue>
+                        }
+                        else
+                        {
+                            @ChildContent
+                        }
+                    </MudTreeView>
                 </CascadingValue>
             </CascadingValue>
         </MudCollapse>

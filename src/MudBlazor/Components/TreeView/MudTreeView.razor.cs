@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MudBlazor
 {
-    public partial class MudTree : MudComponentBase
+    public partial class MudTreeView : MudComponentBase
     {
-        private MudTreeItem activeItem;
+        private MudTreeViewItem activeItem;
 
         protected string Classname =>
-        new CssBuilder("mud-tree")
-          .AddClass("mud-tree-canhover", CanHover)
-          .AddClass("mud-tree-expand-on-click", ExpandOnClick)
+        new CssBuilder("mud-treeview")
+          .AddClass("mud-treeview-canhover", CanHover)
+          .AddClass("mud-treeview-expand-on-click", ExpandOnClick)
           .AddClass(Class)
         .Build();
 
@@ -32,14 +33,16 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        [CascadingParameter] public MudTree MudTreeRoot { get; set; }
+        [CascadingParameter] public MudTreeView MudTreeRoot { get; set; }
 
-        public MudTree()
+        [Parameter] public RenderFragment ItemTemplate { get; set; }
+
+        public MudTreeView()
         {
             MudTreeRoot = this;
         }
 
-        internal async Task UpdateActivation(MudTreeItem item)
+        internal async Task UpdateActivation(MudTreeViewItem item)
         {
             if (activeItem == item)
                 return;

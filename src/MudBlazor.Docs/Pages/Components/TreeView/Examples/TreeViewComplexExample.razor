@@ -1,38 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-@{
-    RenderFragment renderSubTree(CustomTreeItem treeItem)
-    {
-        if (treeItem.TreeItems.Count > 0)
-        {
-            return
-                @<MudTreeItem @bind-Activated="treeItem.IsSelected" @bind-Expanded="treeItem.IsExpanded" Icon="@treeItem.Icon"
-                              Text="@treeItem.Title" EndText="@treeItem.Number" EndTextTypo="@Typo.caption">
-                    <ChildContent>
-                        @foreach (var child in treeItem.TreeItems)
-                        {
-                            @renderSubTree(child)
-                        }
-                    </ChildContent>
-                </MudTreeItem>
-            ;
-        }
-        else
-        {
-            return
-                @<MudTreeItem @bind-Activated="treeItem.IsSelected" @bind-Expanded="treeItem.IsExpanded" Icon="@treeItem.Icon"
-                              Text="@treeItem.Title" EndText="@treeItem.Number" EndTextTypo="@Typo.caption" />
-            ;
-        }
-    }
-}
-
-<MudTree CanActivate="true" Style="width: 500px;">
-    @foreach (var treeItem in TreeItems)
-    {
-        @renderSubTree(treeItem)
-    }
-</MudTree>
+<MudTreeView CanActivate="true" CanSelect="true" Style="width: 500px;">
+    <ItemTemplate>
+        <MudTreeViewItemTemplate Items="TreeItems">
+            <MudTreeViewItem @bind-Activated="@context.IsSelected" @bind-Expanded="@context.IsExpanded" Icon="@context.Icon"
+                             Text="@context.Title" EndText="@context.Number" EndTextTypo="@Typo.caption" Items="@context.TreeItems" />
+        </MudTreeViewItemTemplate>
+    </ItemTemplate>
+</MudTreeView>
 
 @code { 
         class CustomTreeItem
@@ -52,7 +27,7 @@
 
         List<CustomTreeItem> TreeItems { get; set; } = new List<CustomTreeItem>();
 
-        public TreeComplexExample()
+        public TreeViewComplexExample()
         {
             TreeItems.Add(new CustomTreeItem()
             {
