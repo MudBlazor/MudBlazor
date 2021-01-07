@@ -104,11 +104,8 @@ namespace MudBlazor.UnitTests
             return comp;
         }
 
-        /// <summary>
-        /// Datepicker should open on input click and close on outside click
-        /// </summary>
         [Test]
-        public void Open_CloseByClickingOutsidePicker()
+        public void Open_CloseByClickingOutsidePicker_CheckClosed()
         {
             var comp = OpenPicker();
             // clicking outside to close
@@ -136,6 +133,44 @@ namespace MudBlazor.UnitTests
             var comp = OpenPicker(Parameter("OpenTo", OpenTo.Year));
             comp.Instance.Date.Should().BeNull();
             // should show years
+            comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void OpenToYear_ClickYear_CheckMonthsShown()
+        {
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Year));
+            comp.Instance.Date.Should().BeNull();
+            // should show years
+            comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-year").First().Click();
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void OpenToMonth_CheckMonthsShown()
+        {
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Month));
+            comp.Instance.Date.Should().BeNull();
+            // should show months
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void Open_ClickCalendarHeader_CheckMonthsShown()
+        {
+            var comp = OpenPicker();
+            // should show months
+            comp.FindAll("div.mud-picker-calendar-header-transition").First().Click();
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void Open_ClickYear_CheckYearsShown()
+        {
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Month));
+            // should show years
+            comp.FindAll("div.mud-picker-calendar-header-transition").First().Click();
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
         }
 
@@ -196,17 +231,19 @@ namespace MudBlazor.UnitTests
         }
      
         [Test]
-        public void Open_ClickYear_ClickCurrentYear_Click1_CheckDate()
+        public void Open_ClickYear_ClickCurrentYear_Click2ndMonth_Click1_CheckDate()
         {
             var comp = OpenPicker();
             comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
             comp.FindAll("div.mud-picker-content > div.mud-picker-year-container").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-content > div.mud-picker-year-container > div.mud-picker-year")
                 .Where(x=>x.TrimmedText().Contains("2022")).First().Click();
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-content > div.mud-picker-month-container > div.mud-picker-month").Skip(1).First().Click();
             comp.FindAll("div.mud-picker-content > div.mud-picker-calendar-header").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x=>x.TrimmedText().Equals("1")).First().Click();
-            comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, DateTime.Now.Month, 1));
+            comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, 2, 1));
         }
     }
 }
