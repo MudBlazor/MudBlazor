@@ -1,4 +1,6 @@
 @namespace MudBlazor
+@using Microsoft.JSInterop
+@using MudBlazor.Interop
 @using MudBlazor.Utilities
 @inherits MudBasePicker
 
@@ -12,7 +14,7 @@
         @if (IsOpen && PickerVariant != PickerVariant.Dialog)
         {
             <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@PickerElevation" Square="@PickerSquare">
-                <div class="@PickerContainerClass">
+                <div @ref="PickerContainerRef" class="@PickerContainerClass">
                     @ChildContent
                 </div>
             </MudPaper>
@@ -21,7 +23,7 @@
         {
             <MudOverlay Visible="IsOpen" OnClick="@Close" DarkBackground="true" Class="mud-overlay-dialog">
                 <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@PickerElevation" Square="@PickerSquare">
-                    <div class="@PickerContainerClass">
+                    <div @ref="PickerContainerRef" class="@PickerContainerClass">
                         @ChildContent
                     </div>
                 </MudPaper>
