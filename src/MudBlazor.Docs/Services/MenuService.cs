@@ -42,6 +42,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Drawer", typeof(MudDrawer))
             .AddItem("Link", typeof(MudLink))
             .AddItem("Menu", typeof(MudMenu))
+            .AddItem("Message Box", typeof(MudMessageBox))
             .AddItem("Nav Menu", typeof(MudNavMenu))
             .AddItem("Tabs", typeof(MudTabs))
             .AddItem("Progress", typeof(MudProgressCircular))
