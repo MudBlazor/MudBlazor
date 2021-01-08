@@ -126,6 +126,8 @@ namespace MudBlazor
         private void OnPickerOpened()
         {
             _currentView = OpenTo;
+            if(_currentView == OpenTo.Year)
+                _scrollToYearAfterRender=true;
         }
 
         protected override void StringValueChanged(string value)
@@ -275,7 +277,7 @@ namespace MudBlazor
         {
             _scrollToYearAfterRender = false;
             string id = $"{_componentId}{GetMonthStart().Year.ToString()}";
-            await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToFragment", id);
+            await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToYear", id);
             StateHasChanged();
         }
 
@@ -369,6 +371,7 @@ namespace MudBlazor
                 ScrollToYear();
                 return;
             }
+
             if (_scrollToYearAfterRender)
                 ScrollToYear();
             await base.OnAfterRenderAsync(firstRender);
