@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
-using System;
 
 namespace MudBlazor
 {
@@ -134,7 +133,7 @@ namespace MudBlazor
 
         internal Action<bool> OnOpenStateChanged;
 
-        public void ToggleOpen()
+        public virtual void ToggleOpen()
         {
             IsOpen = !IsOpen;
             OnOpenStateChanged?.Invoke(IsOpen);
@@ -143,6 +142,7 @@ namespace MudBlazor
         public void Close()
         {
             IsOpen = false;
+            StateHasChanged();
             OnOpenStateChanged?.Invoke(IsOpen);
         }
 

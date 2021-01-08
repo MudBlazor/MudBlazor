@@ -51,10 +51,15 @@ namespace MudBlazor
 
         protected string PickerContainerClass =>
         new CssBuilder("mud-picker-container")
-            .AddClass("mud-paper-square", PickerSquare)
-            .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
-            .Build();
+        .AddClass("mud-paper-square", PickerSquare)
+        .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
+        .Build();
+        
+        protected string PickerInputClass =>
+        new CssBuilder("mud-input-input-control").AddClass(Class)
+        .Build();
 
+        [Parameter] public bool IsRange { get; set; } = false;
         [Parameter] public string InputIcon { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
 

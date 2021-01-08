@@ -8,8 +8,7 @@ namespace MudBlazor
 {
     public class MudDateRangePicker : MudBaseDatePicker, IDisposable
     {
-        private DateTime? _minDate;
-        private DateTime? _startDate = null, _currentDate;
+        private DateTime? _firstDate = null, _currentDate;
         protected DateRange _dateRange;
 
         protected override bool IsRange => true;
@@ -90,24 +89,40 @@ namespace MudBlazor
             if (day < GetMonthStart() || day > GetMonthEnd())
                 return b.AddClass("mud-hidden").Build();
 
-            if ((_startDate != null && day > _startDate && day < _currentDate) ||
-                (_startDate == null && _dateRange != null && _dateRange.Start < day && _dateRange.End > day))
+            if ((_firstDate != null && ((day > _firstDate && day < _currentDate) || (day < _firstDate && day > _currentDate))) ||
+                (_firstDate == null && _dateRange != null && _dateRange.Start < day && _dateRange.End > day))
             {
                 return b.AddClass("mud-range").AddClass("mud-range-between").Build();
             }
 
-            if ((_startDate != null && day == _startDate) ||
-                (_startDate == null && _dateRange != null && _dateRange.Start == day))
+            if (_firstDate == null && _dateRange != null && (_dateRange.Start == day || _dateRange.End == day))
             {
-                return b.AddClass("mud-selected").AddClass("mud-range")
-                    .AddClass("mud-range-start-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
+                return b.AddClass("mud-selected")
+                    .AddClass("mud-range")
+                    .AddClass("mud-range-start-selected", _dateRange.Start == day)
+                    .AddClass("mud-range-end-selected", _dateRange.End == day)
+                    .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+                    .Build();
             }
 
-            if ((_startDate != null && day == _currentDate) ||
-                (_startDate == null && _dateRange != null && _dateRange.End == day))
+            if (_firstDate != null && day == _firstDate)
             {
-                return b.AddClass("mud-selected").AddClass("mud-range")
-                    .AddClass("mud-range-end-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
+                return b.AddClass("mud-selected")
+                    .AddClass("mud-range")
+                    .AddClass("mud-range-start-selected", _currentDate == null || _firstDate <= _currentDate)
+                    .AddClass("mud-range-end-selected", _currentDate != null && _firstDate > _currentDate)
+                    .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+                    .Build();
+            }
+
+            if (_firstDate != null && day == _currentDate)
+            {
+                return b.AddClass("mud-selected")
+                    .AddClass("mud-range")
+                    .AddClass("mud-range-start-selected", _firstDate > _currentDate)
+                    .AddClass("mud-range-end-selected", _firstDate < _currentDate)
+                    .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+                    .Build();
             }
 
             if (day == DateTime.Today)
@@ -117,20 +132,20 @@ namespace MudBlazor
 
         protected override async void OnDayClicked(DateTime dateTime)
         {
-            if (_startDate == null)
+            if (_firstDate == null)
             {
-                _startDate = dateTime;
-                _minDate = MinDate;
-                MinDate = dateTime;
+                _firstDate = dateTime;
 
                 return;
             }
 
-            DateRange = new DateRange(_startDate, dateTime);
+            if (_firstDate == dateTime)
+                return;
 
-            _startDate = null;
+            DateRange = _firstDate < dateTime ? new DateRange(_firstDate, dateTime) : new DateRange(dateTime, _firstDate);
+
+            _firstDate = null;
             _currentDate = null;
-            MinDate = _minDate;
 
             if (PickerVariant != PickerVariant.Static)
             {
@@ -141,7 +156,7 @@ namespace MudBlazor
 
         protected override void OnMouseOver(DateTime dateTime)
         {
-            if (_startDate != null)
+            if (_firstDate != null)
             {
                 _currentDate = dateTime;
             }
@@ -161,8 +176,7 @@ namespace MudBlazor
         {
             if (!args)
             {
-                _startDate = null;
-                MinDate = _minDate;
+                _firstDate = null;
             }
         }
     }
