@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
@@ -130,24 +131,22 @@ namespace MudBlazor
             /* to be overridden by descendants */
         }
 
-        internal bool isOpen { get; set; }
+        internal bool IsOpen { get; set; }
 
-        public void ToggleOpen()
+        public virtual void ToggleOpen()
         {
-            isOpen = !isOpen;
-            StateHasChanged();
+            IsOpen = !IsOpen;
         }
 
         public void Close()
         {
-            isOpen = false;
+            IsOpen = false;
             StateHasChanged();
         }
 
-        public void Open()
+        public virtual void Open()
         {
-            isOpen = true;
-            StateHasChanged();
+            IsOpen = true;
         }
     }
 }

@@ -168,44 +168,41 @@ namespace MudBlazor.UnitTests
         [Test]
         public void OpenToHours_CheckMinutesHidden() 
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>(("OpenTo", OpenTo.Hours));
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Hours));
             // Are hours displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
-        public void OpenToMinutes_CheckHoursHidden() 
+        public void OpenToHours_ChangeTo_Minutes_ReOpen_CheckStillHours() 
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>(("OpenTo", OpenTo.Minutes));
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Hours));
+            // Are minutes hidden
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            // click on the minutes input
+            comp.FindAll("button.mud-timepicker-button").Skip(1).First().Click();
+            // clicking outside to close
+            comp.Find("div.mud-overlay").Click();
             // should not be open
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
-            // Any hours displayed
+            comp.FindAll("input").First().Click();
+            // Are hours displayed
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
+        }
+
+
+        [Test]
+        public void OpenToMinutes_CheckHoursHidden()
+        {
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Minutes));
+            // Are Hours hidden
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
         public void ChangeToMinutes_FromHours_CheckHoursHidden() 
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>();
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            var comp = OpenPicker();
             // click on the minutes input
             comp.FindAll("button.mud-timepicker-button").Skip(1).First().Click();
             // Are minutes displayed
