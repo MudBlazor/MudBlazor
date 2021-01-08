@@ -28,3 +28,17 @@
     pointer-events: none;
     color: var(--mud-palette-action-disabled);
 }
+
+.mud-breadcrumbs-expander {
+    cursor: pointer;
+    display: flex;
+    background-color: #EEEEEE;
+}
+
+.mud-breadcrumbs-expander:hover {
+    background-color: #E0E0E0;
+}
+
+.mud-breadcrumbs-expander > svg {
+    width: 26px;
+}

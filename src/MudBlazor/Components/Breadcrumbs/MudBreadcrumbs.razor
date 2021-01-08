@@ -1,39 +1,31 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<ul class="mud-breadcrumbs mud-typography-body1">
-    @for (var i = 0; i < Items.Count; i++)
-    {
-        var item = Items[i];
-        <li class="@GetItemClassname(item)">
-            @if (ItemTemplate == null)
-            {
-                <a href="@(item.Href ?? "#")">
-                    @if (item.Icon != null)
-                    {
-                        <MudIcon Icon="@item.Icon" Size="Size.Small" />
-                    }
-                    @item.Text
-                </a>
-            }
-            else
-            {
-                @ItemTemplate(item);
-            }
-        </li>
-
-        if (i != Items.Count - 1)
+<CascadingValue Value="this" IsFixed="true">
+    <ul class="mud-breadcrumbs mud-typography-body1">
+        @if (MaxItems != null && Collapsed && Items.Count >= MaxItems)
         {
-            <li class="mud-breadcrumb-separator">
-                @if (SeparatorTemplate == null)
-                {
-                    <span>@Separator</span>
-                }
-                else
-                {
-                    @SeparatorTemplate
-                }
+            // Collapse items
+            <BreadcrumbLink Item="Items[0]"></BreadcrumbLink>
+            <BreadcrumbSeparator></BreadcrumbSeparator>
+            <li class="mud-breadcrumbs-expander" @onclick="Expand">
+                <MudIcon Icon="@Icons.Material.SettingsEthernet" Size="Size.Small"></MudIcon>
             </li>
+            <BreadcrumbSeparator></BreadcrumbSeparator>
+            <BreadcrumbLink Item="Items[Items.Count - 1]"></BreadcrumbLink>
         }
-    }
-</ul>
+        else
+        {
+            @for (var i = 0; i < Items.Count; i++)
+            {
+                var item = Items[i];
+                <BreadcrumbLink Item="item"></BreadcrumbLink>
+
+                if (i != Items.Count - 1)
+                {
+                    <BreadcrumbSeparator></BreadcrumbSeparator>
+                }
+            }
+        }
+    </ul>
+</CascadingValue>
