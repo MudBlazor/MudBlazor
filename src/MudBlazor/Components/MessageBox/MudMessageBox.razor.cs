@@ -139,7 +139,7 @@ namespace MudBlazor
                 [nameof(Title)] = Title,
                 [nameof(TitleContent)] = TitleContent,
                 [nameof(Message)] = Message,
-                [nameof(MessageContent)] = CancelText,
+                [nameof(MessageContent)] = MessageContent,
                 [nameof(CancelText)] = CancelText,
                 [nameof(CancelButton)] = CancelButton,
                 [nameof(NoText)] = NoText,
