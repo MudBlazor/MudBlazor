@@ -280,5 +280,7 @@ namespace MudBlazor
         {
             _ = InvokeServerLoadFunc();
         }
+
+
     }
 }

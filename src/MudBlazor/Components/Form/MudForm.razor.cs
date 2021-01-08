@@ -9,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudForm : MudComponentBase, IDisposable
+    public partial class MudForm : MudComponentBase, IDisposable, IForm
     {
 
         protected string Classname =>
@@ -26,6 +26,7 @@ namespace MudBlazor
         /// Validation status. True if the form is valid and without errors. This parameter is readonly.
         /// </summary>
         [Parameter]
+        //public bool IForm.IsValid => _valid;
         public bool IsValid
         {
             get => _valid;
@@ -76,12 +77,12 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<string[]> ErrorsChanged { get; set; }
 
-        internal void Add(IFormComponent formControl)
+        void IForm.Add(IFormComponent formControl)
         {
             _formControls[formControl] = false; // false means fresh, not yet validated!
         }
 
-        internal void Remove(IFormComponent formControl)
+        void IForm.Remove(IFormComponent formControl)
         {
             _formControls.Remove(formControl);
         }
@@ -92,7 +93,7 @@ namespace MudBlazor
         /// Called by any input of the form to signal that its value changed. 
         /// </summary>
         /// <param name="formControl"></param>
-        internal void Update(IFormComponent formControl)
+        void IForm.Update(IFormComponent formControl)
         {
             _formControls[formControl] = true;
             EvaluateForm();
@@ -183,5 +184,6 @@ namespace MudBlazor
         {
             _timer?.Dispose();
         }
+
     }
 }

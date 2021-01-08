@@ -12,7 +12,7 @@ namespace MudBlazor
 {
     public class MudFormComponent<T> : MudComponentBase, IFormComponent, IDisposable
     {       
-        [CascadingParameter] internal MudForm Form { get; set; }
+        [CascadingParameter] internal IForm Form { get; set; }
 
         /// <summary>
         /// If true, this form input is required to be filled out.

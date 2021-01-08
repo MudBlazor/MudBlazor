@@ -82,6 +82,7 @@ namespace MudBlazor
         private bool _lockeditingentry = false;
         private void FinishEdit(MouseEventArgs ev)
         {
+            if (!Context?.Table.Validator.IsValid ?? true) return;
             Context?.Table.SetEditingItem(null);
             _lockeditingentry = true;
             Context?.Table.OnCommitEditHandler(ev, Item);
