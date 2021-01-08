@@ -1,0 +1,54 @@
+﻿@namespace MudBlazor.Docs.Examples
+@using BlazorInputFile
+<style>
+    
+    .drag-drop-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+    }
+    .drag-enter {
+        box-shadow:var(--mud-elevation-10);
+    }
+
+</style>
+
+<MudPaper @ondragenter="@(()=>_dragEnterStyle="drag-enter")"
+              @ondragleave="@(()=>_dragEnterStyle=null)" 
+              @ondragend="@(()=>_dragEnterStyle=null)"
+              Class=@("drag-drop-zone "+ _dragEnterStyle)
+              Style="display:flex; 
+                    align-items:center;
+                    justify-content:center;
+                    transition:all .4s;
+                    height:400px;"
+              
+          >
+    <InputFile OnChange="ViewFile" multiple id="some-unique-id" Class="drag-drop-input"/>
+    @if (fileNames.Count()== 0)
+    {
+    <MudText Typo="Typo.h3">Drop and drag files here or click</MudText>    }
+    else
+    {
+        <MudList>
+
+            @foreach (var file in fileNames)
+            {
+                <MudListItem  Icon="@Filled.Pages" Text="@file" />
+            }
+        </MudList>
+    }
+
+</MudPaper>
+
+
+
+@code {
+    string _dragEnterStyle;
+    IEnumerable<string> fileNames = new List<string>();
+    void ViewFile(IFileListEntry[] files)
+    {
+        fileNames = files.Select(f => f.Name).ToList();
+    }
+}
