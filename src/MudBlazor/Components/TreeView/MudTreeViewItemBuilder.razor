@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor
 @typeparam TItem
 
-<CascadingValue Value="@MudTreeRoot">
-    <CascadingValue Value="@MudTreeItemParent">
+<CascadingValue Value="@MudTreeRoot" IsFixed="true">
+    <CascadingValue Value="@MudTreeItemParent" IsFixed="true">
         @if (SubItems != null)
         {
             @foreach (var item in SubItems)

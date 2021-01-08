@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MudBlazor
 {
-    public partial class MudTreeViewItemTemplate<TItem> : ComponentBase
+    public partial class MudTreeViewItemBuilder<TItem> : ComponentBase
     {
         [Parameter] public IReadOnlyList<TItem> Items { get; set; }
 

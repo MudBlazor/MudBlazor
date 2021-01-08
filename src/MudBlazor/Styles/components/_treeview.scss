@@ -3,6 +3,10 @@
     padding: 0px;
     list-style: none;
 
+    &.mud-treeview-canactivate .mud-treeview-item-content {
+        cursor: pointer;
+    }
+
     &.mud-treeview-expand-on-click .mud-treeview-item-content {
         cursor: pointer;
     }
@@ -19,6 +23,7 @@
     margin: 0;
     outline: 0;
     padding: 0;
+    cursor: default;
     list-style: none;
     min-height: 2rem;
     align-items: center;
@@ -40,7 +45,7 @@
     }
 }
 
-.mud-treeview-item-collapse-icon {
+.mud-treeview-item-arrow {
     width: 2rem;
     display: flex;
     flex-shrink: 0;
