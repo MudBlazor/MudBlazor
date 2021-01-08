@@ -46,6 +46,7 @@ namespace MudBlazor
             .AddClass("mud-picker-hidden", pickerPaperPosition == PickerPaperPosition.Unknown && PickerVariant == PickerVariant.Inline)
             .AddClass("mud-picker-pos-top", pickerPaperPosition == PickerPaperPosition.Top)
             .AddClass("mud-picker-pos-above", pickerPaperPosition == PickerPaperPosition.Above)
+            .AddClass("mud-picker-pos-bottom", pickerPaperPosition == PickerPaperPosition.Bottom)
             .Build();
 
         protected string PickerContainerClass =>
