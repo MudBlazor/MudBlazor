@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTreeView Style="width: 500px;" CanActivate="true">
+<MudTreeView Style="width: 500px;" CanActivate="true" @bind-ActivatedItem="ActivatedItem">
     <MudTreeViewItem Text="Applications">
         <MudTreeViewItem Text="Calendar" />
         <MudTreeViewItem Text="Chrome" />
@@ -16,3 +16,9 @@
         </MudTreeViewItem>
     </MudTreeViewItem>
 </MudTreeView>
+
+<MudText Style="width: 100%" Typo="@Typo.subtitle1">Activated item: @ActivatedItem?.Text</MudText>
+
+@code {
+    MudTreeViewItem ActivatedItem { get; set; }
+}

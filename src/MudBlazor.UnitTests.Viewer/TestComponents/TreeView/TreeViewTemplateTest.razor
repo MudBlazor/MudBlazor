@@ -1,0 +1,50 @@
+﻿<MudTreeView CanActivate="true" CanSelect="true" Style="width: 500px;">
+    <MudTreeViewItemBuilder Items="TreeItems">
+        <MudTreeViewItem @bind-Activated="@context.IsSelected" @bind-Expanded="@context.IsExpanded" Icon="@context.Icon"
+                         Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" Items="@context.TreeItems" />
+    </MudTreeViewItemBuilder>
+</MudTreeView>
+
+@code { 
+    class TreeItemData
+    {
+        public string Title { get; set; }
+
+        public string Icon { get; set; }
+
+        public int? Number { get; set; } = null;
+
+        public bool IsSelected { get; set; }
+
+        public bool IsExpanded { get; set; }
+
+        public List<TreeItemData> TreeItems { get; set; } = new List<TreeItemData>();
+
+        public TreeItemData(string title, string icon, int? number = null)
+        {
+            Title = title;
+            Icon = icon;
+            Number = number;
+        }
+    }
+
+    List<TreeItemData> TreeItems { get; set; } = new List<TreeItemData>();
+
+    public TreeViewTemplateTest()
+    {
+        TreeItems.Add(new TreeItemData("All Mail", Icons.Material.Email));
+        TreeItems.Add(new TreeItemData("Trash", Icons.Material.Delete));
+        TreeItems.Add(new TreeItemData("Categories", Icons.Material.Label)
+        {
+            IsExpanded = true,
+            TreeItems = new List<TreeItemData>()
+            {
+                new TreeItemData("Social", Icons.Material.Group, 90),
+                new TreeItemData("Updates", Icons.Material.Info, 2294),
+                new TreeItemData("Forums", Icons.Material.QuestionAnswer, 3566),
+                new TreeItemData("Promotions", Icons.Material.LocalOffer, 733)
+            }
+        });
+        TreeItems.Add(new TreeItemData("History", Icons.Material.Label));
+    }
+}

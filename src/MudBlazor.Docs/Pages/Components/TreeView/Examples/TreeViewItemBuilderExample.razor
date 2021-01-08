@@ -1,0 +1,65 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTreeView Style="width: 500px;" CanActivate="true" CanSelect="true" @bind-ActivatedItem="ActivatedItem" @bind-SelectedItems="SelectedItems">
+    <MudTreeViewItemBuilder Items="TreeItems">
+        <MudTreeViewItem @bind-Expanded="@context.IsExpanded"
+                         Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption"
+                         Items="@context.TreeItems" Tag="@context" />
+    </MudTreeViewItemBuilder>
+</MudTreeView>
+
+<div style="width: 100%">
+    <MudText Typo="@Typo.subtitle1">Activated item: @((ActivatedItem?.Tag as TreeItemData)?.Title)</MudText>
+    <MudText Typo="@Typo.subtitle1">Sum of selected items: @GetSelectedSum()</MudText>
+</div>
+
+@code {
+    class TreeItemData
+    {
+        public string Title { get; set; }
+
+        public string Icon { get; set; }
+
+        public int? Number { get; set; }
+
+        public bool IsExpanded { get; set; }
+
+        public List<TreeItemData> TreeItems { get; set; }
+
+        public TreeItemData(string title, string icon, int? number = null)
+        {
+            Title = title;
+            Icon = icon;
+            Number = number;
+        }
+    }
+
+    MudTreeViewItem ActivatedItem { get; set; }
+
+    HashSet<MudTreeViewItem> SelectedItems { get; set; }
+
+    List<TreeItemData> TreeItems { get; set; } = new List<TreeItemData>();
+
+    public TreeViewItemBuilderExample()
+    {
+        TreeItems.Add(new TreeItemData("All Mail", Icons.Material.Email));
+        TreeItems.Add(new TreeItemData("Trash", Icons.Material.Delete));
+        TreeItems.Add(new TreeItemData("Categories", Icons.Material.Label)
+        {
+            IsExpanded = true,
+            TreeItems = new List<TreeItemData>()
+        {
+                new TreeItemData("Social", Icons.Material.Group, 90),
+                new TreeItemData("Updates", Icons.Material.Info, 2294),
+                new TreeItemData("Forums", Icons.Material.QuestionAnswer, 3566),
+                new TreeItemData("Promotions", Icons.Material.LocalOffer, 733)
+            }
+        });
+        TreeItems.Add(new TreeItemData("History", Icons.Material.Label));
+    }
+
+    public int GetSelectedSum()
+    {
+        return SelectedItems?.Select(i => (TreeItemData)i.Tag).Sum(i => i.Number ?? 0) ?? 0;
+    }
+}
