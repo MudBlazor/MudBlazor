@@ -1,14 +1,13 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Utilities
 
 <li class="mud-breadcrumb-separator">
-    @if (Parent.SeparatorTemplate == null)
+    @if (Parent?.SeparatorTemplate == null)
     {
-        <span>@Parent.Separator</span>
+        <span>@Parent?.Separator</span>
     }
     else
     {
-        @Parent.SeparatorTemplate
+        @Parent?.SeparatorTemplate
     }
 </li>
 

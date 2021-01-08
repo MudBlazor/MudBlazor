@@ -1,11 +1,15 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
+@if (Items == null || Items.Count == 0)
+{
+    return;
+}
+
 <CascadingValue Value="this" IsFixed="true">
     <ul class="mud-breadcrumbs mud-typography-body1">
         @if (MaxItems != null && Collapsed && Items.Count >= MaxItems)
         {
-            // Collapse items
             <BreadcrumbLink Item="Items[0]"></BreadcrumbLink>
             <BreadcrumbSeparator></BreadcrumbSeparator>
             <li class="mud-breadcrumbs-expander" @onclick="Expand">
