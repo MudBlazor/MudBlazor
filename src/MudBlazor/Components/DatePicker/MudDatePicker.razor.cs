@@ -121,6 +121,15 @@ namespace MudBlazor
         /// </summary>
         private MudPicker Picker;
 
+        private OpenTo _currentView;
+        
+        private void OnPickerOpened()
+        {
+            _currentView = OpenTo;
+            if(_currentView == OpenTo.Year)
+                _scrollToYearAfterRender=true;
+        }
+
         protected override void StringValueChanged(string value)
         {
             // update the date property
@@ -237,9 +246,19 @@ namespace MudBlazor
             PickerMonth = GetMonthEnd().AddDays(1);
         }
 
+        private void OnPreviousYearClick()
+        {
+            PickerMonth = GetMonthStart().AddYears(-1);
+        }
+
+        private void OnNextYearClick()
+        {
+            PickerMonth = GetMonthStart().AddYears(1);
+        }
+
         private void OnYearClick()
         {
-            OpenTo = OpenTo.Year;
+            _currentView = OpenTo.Year;
             StateHasChanged();
             _scrollToYearAfterRender = true;
         }
@@ -258,7 +277,7 @@ namespace MudBlazor
         {
             _scrollToYearAfterRender = false;
             string id = $"{_componentId}{GetMonthStart().Year.ToString()}";
-            await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToFragment", id);
+            await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToYear", id);
             StateHasChanged();
         }
 
@@ -296,7 +315,7 @@ namespace MudBlazor
 
         private void OnYearClicked(int year)
         {
-            OpenTo = OpenTo.Date;
+            _currentView = OpenTo.Month;
             var current = GetMonthStart();
             PickerMonth = new DateTime(year, current.Month,  1);
         }
@@ -329,23 +348,30 @@ namespace MudBlazor
 
         private void OnMonthClicked()
         {
-            OpenTo = OpenTo.Month;
+            _currentView = OpenTo.Month;
             StateHasChanged();
         }
 
         private void OnMonthSelected(in DateTime month)
         {
-            OpenTo = OpenTo.Date;
+            _currentView = OpenTo.Date;
             PickerMonth = month;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender && OpenTo == OpenTo.Year)
+            if (firstRender)
+            {
+                if(_picker_month == null)
+                    _picker_month = GetMonthStart();
+            }
+
+            if (firstRender && _currentView == OpenTo.Year)
             {
                 ScrollToYear();
                 return;
             }
+
             if (_scrollToYearAfterRender)
                 ScrollToYear();
             await base.OnAfterRenderAsync(firstRender);

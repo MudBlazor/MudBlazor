@@ -1,0 +1,31 @@
+﻿@if (Section == NavigationSection.Components || Section == NavigationSection.Api)
+ {
+    <MudContainer MaxWidth=@(Section==NavigationSection.Components?MaxWidth.Medium:MaxWidth.Large)>
+        <MudDivider />
+        <br />
+            @if (Previous!=null)
+             {
+                <MudButton Color="Color.Primary"
+                           Style="text-transform:none;"
+                           StartIcon="@Filled.NavigateBefore"
+                           Link="@($"/{Section.ToDescriptionString()}/{Previous.Link}")">
+                    @Previous.Name
+                </MudButton>
+             }
+            @if (Next!=null)
+             {
+                <MudButton Color="Color.Primary"
+                           Style="float:right;text-transform:none;"
+                           EndIcon="@Filled.NavigateNext"                          
+                           Link="@($"/{Section.ToDescriptionString()}/{Next.Link}")">
+                    @Next.Name
+                </MudButton>
+             }       
+    </MudContainer>
+ }
+
+@code{
+    [Parameter] public NavigationSection? Section { get; set; }
+    [Parameter] public NavigationFooterLink Previous { get; set; }
+    [Parameter] public NavigationFooterLink Next { get; set; }
+}

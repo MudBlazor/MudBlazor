@@ -1,11 +1,10 @@
-#pragma warning disable 1998
-
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Bunit;
+using static Bunit.ComponentParameterFactory;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,21 +31,37 @@ namespace MudBlazor.UnitTests
         [TearDown]
         public void TearDown() => ctx.Dispose();
 
-        /// <summary>
-        /// open and close the picker
-        /// </summary>
-        [Test]
-        public void OpenCloseTest()
+
+        public IRenderedComponent<MudTimePicker> OpenPicker(ComponentParameter parameter)
         {
-            var comp = ctx.RenderComponent<MudTimePicker>();
-            Console.WriteLine(comp.Markup);
+            return OpenPicker(new ComponentParameter[]{parameter});
+        }
+
+        public IRenderedComponent<MudTimePicker> OpenPicker(ComponentParameter[] parameters = null)
+        {
+            IRenderedComponent<MudTimePicker> comp;
+            if(parameters is null)
+            {
+                comp = ctx.RenderComponent<MudTimePicker>();
+            }
+            else
+            {
+                comp = ctx.RenderComponent<MudTimePicker>(parameters);
+            }
+
             // should not be open
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
             // click to to open menu
             comp.Find("input").Click();
-            Console.WriteLine(comp.Markup);
             // now its open
             comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            return comp;
+        }
+
+        [Test]
+        public void Open_ClickOutside_CheckClosed()
+        {
+            var comp = OpenPicker();
             // clicking outside to close
             comp.Find("div.mud-overlay").Click();
             // should not be open any more
@@ -54,21 +69,11 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
         }
 
-        /// <summary>
-        /// change from 24 to 12 hours and count rendered hours
-        /// </summary>
         [Test]
-        public async Task ChangeTo12Hours() 
+        public async Task Change_24hrsTo12Hours_CheckHours() 
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>();
+            var comp = OpenPicker();
             var picker = comp.Instance;
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             // count hours
             picker.AmPm.Should().Be(false);
             comp.FindAll("div.mud-hour").Count.Should().Be(24);
@@ -80,22 +85,11 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-hour").Count.Should().Be(12);
         }
 
-        /// <summary>
-        /// select the time in 24 hour mode
-        /// click the hour and select a new time
-        /// </summary>
         [Test]
-        public async Task SelectTime24Hours() 
+        public void SelectTime_UsingClicks_24HourMode_CheckTime() 
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>();
+            var comp = OpenPicker();
             var picker = comp.Instance;
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             // select 16 hours on outer dial and 30 mins
             comp.FindAll("div.mud-picker-stick-outer.mud-hour").Skip(3).First().Click();
             picker.Time.Value.Hours.Should().Be(16);
@@ -119,22 +113,11 @@ namespace MudBlazor.UnitTests
             picker.Time.Value.Minutes.Should().Be(56);
         }
 
-        /// <summary>
-        /// select the time in 12 hour mode
-        /// click the hour and select a new time
-        /// </summary>
         [Test]
-        public async Task SelectTime12Hours() 
+        public void SelectTime_UsingClicks_12HourMode_CheckTime()
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>(("AmPm", true));
+            var comp = OpenPicker(Parameter("AmPm", true));
             var picker = comp.Instance;
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             // select 11 hours on outer dial and 30 mins
             comp.FindAll("div.mud-hour").Skip(10).First().Click();
             comp.FindAll("div.mud-minute").Skip(30).First().Click();
@@ -159,22 +142,11 @@ namespace MudBlazor.UnitTests
             picker.Time.Value.Minutes.Should().Be(56);
         }
 
-        /// <summary>
-        /// select the time in 12 hour mode
-        /// am/pm buttons
-        /// </summary>
         [Test]
-        public async Task SelectTime12HoursAmPm() 
+        public void SelectTime_UsingClicks_12HourMode_ChangeAmPm_CheckTime()
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>(("AmPm", true));
+            var comp = OpenPicker(Parameter("AmPm", true));
             var picker = comp.Instance;
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             // select 11 hours on outer dial and 30 mins
             comp.FindAll("div.mud-hour").Skip(10).First().Click();
             comp.FindAll("div.mud-minute").Skip(30).First().Click();
@@ -193,77 +165,56 @@ namespace MudBlazor.UnitTests
             picker.Time.Value.Minutes.Should().Be(30);
         }
 
-        /// <summary>
-        /// opento hours
-        /// </summary>
         [Test]
-        public async Task OpenToHours() 
+        public void OpenToHours_CheckMinutesHidden() 
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>(("OpenTo", OpenTo.Hours));
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Hours));
             // Are hours displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
-        /// <summary>
-        /// opento minutes
-        /// </summary>
         [Test]
-        public async Task OpenToMinutes() 
+        public void OpenToHours_ChangeTo_Minutes_ReOpen_CheckStillHours() 
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>(("OpenTo", OpenTo.Minutes));
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Hours));
+            // Are minutes hidden
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
+            // click on the minutes input
+            comp.FindAll("button.mud-timepicker-button").Skip(1).First().Click();
+            // clicking outside to close
+            comp.Find("div.mud-overlay").Click();
             // should not be open
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
-            // Any hours displayed
+            comp.FindAll("input").First().Click();
+            // Are hours displayed
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
+        }
+
+
+        [Test]
+        public void OpenToMinutes_CheckHoursHidden()
+        {
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Minutes));
+            // Are Hours hidden
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
-        /// <summary>
-        /// change to minutes
-        /// </summary>
         [Test]
-        public async Task ChangeToMinutes() 
+        public void ChangeToMinutes_FromHours_CheckHoursHidden() 
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>();
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            var comp = OpenPicker();
             // click on the minutes input
             comp.FindAll("button.mud-timepicker-button").Skip(1).First().Click();
             // Are minutes displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
-        /// <summary>
-        /// drag hours
-        /// </summary>
+
         [Test]
-        public async Task DragMouseHour() 
+        public void DragMouse_SelectHour_CheckMinutesAppear() 
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>();
+            var comp = OpenPicker();
             var picker = comp.Instance;
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             // click on the minutes input
             comp.Find("div.mud-time-picker-hour").MouseDown();
             comp.FindAll("div.mud-picker-stick-outer.mud-hour").Skip(3).First().MouseOver();
@@ -277,21 +228,12 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
-        /// <summary>
-        /// drag minutes
-        /// </summary>
         [Test]
-        public async Task DragMouseMinutes() 
+        public void DragMouse_SelectMinutes() 
         {
             // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>(("OpenTo", OpenTo.Minutes));
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Minutes));
             var picker = comp.Instance;
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             // Any hours displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
             // click and drag
@@ -305,14 +247,10 @@ namespace MudBlazor.UnitTests
             picker.Time.Value.Minutes.Should().Be(5);
         }
 
-        /// <summary>
-        /// test imput parsing
-        /// </summary>
         [Test]
-        public async Task SetValues() 
+        public void InputStringValues_CheckParsing() 
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>(("OpenTo", OpenTo.Minutes));
+            var comp = ctx.RenderComponent<MudTimePicker>();
             var picker = comp.Instance;
             // valid time
             comp.Find("input").Change("23:02");
@@ -325,21 +263,12 @@ namespace MudBlazor.UnitTests
             picker.Time.Should().BeNull();
         }
 
-        /// <summary>
-        /// drag and click 12 hours for test coverage
-        /// </summary>
         [Test]
-        public async Task DragAndClickAllHours12h() 
+        public void DragAndClick_AllHours12h_TestCoverage() 
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>(("OpenTo", OpenTo.Hours),("AmPm", true));
+            var comp = OpenPicker(new ComponentParameter[]{Parameter("OpenTo", OpenTo.Hours), Parameter("AmPm", true)});
             var picker = comp.Instance;
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            Console.Write(comp.Markup);
             // Any hours displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
             // click and drag
@@ -355,21 +284,11 @@ namespace MudBlazor.UnitTests
             }
         }
 
-        /// <summary>
-        /// drag and click 24 hours for test coverage
-        /// </summary>
         [Test]
-        public async Task DragAndClickAllHours24h() 
+        public void DragAndClick_AllHours24h_TestCoverage() 
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>(("OpenTo", OpenTo.Hours));
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Hours));
             var picker = comp.Instance;
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             // Any hours displayed
             comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
             // click and drag 13 to 00 on outer dial
@@ -399,19 +318,12 @@ namespace MudBlazor.UnitTests
         /// <summary>
         /// drag and click minutes for test coverage
         /// </summary>
-        [Test]
-        public async Task DragAndClickAllMinutes() 
+        [Test] 
+        public void DragAndClick_AllMinutes() 
         {
-            // Use bare component
-            var comp = ctx.RenderComponent<MudTimePicker>(("OpenTo", OpenTo.Minutes));
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Minutes));
             var picker = comp.Instance;
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            // click to to open menu
-            comp.Find("input").Click();
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
-            // Any hours displayed
+            // Any minutes displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
             // click and drag
             for (int i = 0; i < 60; i++) 

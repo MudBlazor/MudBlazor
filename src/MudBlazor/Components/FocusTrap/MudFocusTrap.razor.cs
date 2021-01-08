@@ -13,9 +13,9 @@ namespace MudBlazor
         protected ElementReference _fallback;
         protected ElementReference _root;
 
-        private bool _tabDown;
         private bool _shiftDown;
         private bool _disabled;
+        private bool _initialized;
 
         [Inject] protected IJSRuntime JsRuntime { get; set; }
 
@@ -35,32 +35,35 @@ namespace MudBlazor
                 if (_disabled != value)
                 {
                     _disabled = value;
-                    InitializeFocusAsync().FireAndForget();
+                    _initialized = false;
                 }
             }
         }
 
         /// <summary>
-        /// If true, the focus will not be set to first tabbable element when component is created or enabled.
+        /// Defines on which element to set the focus when the component is created or enabled.
+        /// When DefaultFocus.Element is used, the focus will be set to the FocusTrap itself, so the user will have to press TAB key once to focus the first tabbable element.
         /// </summary>
-        [Parameter] public bool NoDefaultFocus { get; set; }
+        [Parameter] public DefaultFocus DefaultFocus { get; set; } = DefaultFocus.FirstChild;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
 
             if (firstRender)
-            {
                 await SaveFocusAsync();
+
+            if (!_initialized)
                 await InitializeFocusAsync();
-            }
+        }
+
+        private Task OnBottomFocusAsync(FocusEventArgs args)
+        {
+            return FocusLastAsync();
         }
 
         private Task OnBumperFocusAsync(FocusEventArgs args)
         {
-            if (!_tabDown)
-                return Task.CompletedTask;
-
             return _shiftDown ? FocusLastAsync() : FocusFirstAsync();
         }
 
@@ -79,12 +82,25 @@ namespace MudBlazor
             HandleKeyEvent(args, false);
         }
 
+        private Task OnTopFocusAsync(FocusEventArgs args)
+        {
+            return FocusFirstAsync();
+        }
+
         private Task InitializeFocusAsync()
         {
-            if (_disabled)
-                return Task.CompletedTask;
+            _initialized = true;
 
-            return NoDefaultFocus ? FocusFallbackAsync() : FocusFirstAsync();
+            if (!_disabled)
+            {
+                switch (DefaultFocus)
+                {
+                    case DefaultFocus.Element: return FocusFallbackAsync();
+                    case DefaultFocus.FirstChild: return FocusFirstAsync();
+                    case DefaultFocus.LastChild: return FocusLastAsync();
+                }
+            }
+            return Task.CompletedTask;
         }
 
         private Task FocusFallbackAsync()
@@ -94,26 +110,18 @@ namespace MudBlazor
 
         private Task FocusFirstAsync()
         {
-            return JsRuntime.InvokeVoidAsync("elementReference.focusFirst", _root, 1, 2).AsTask();
+            return JsRuntime.InvokeVoidAsync("elementReference.focusFirst", _root, 2, 4).AsTask();
         }
 
         private Task FocusLastAsync()
         {
-            return JsRuntime.InvokeVoidAsync("elementReference.focusLast", _root, 1, 2).AsTask();
+            return JsRuntime.InvokeVoidAsync("elementReference.focusLast", _root, 2, 4).AsTask();
         }
 
         private void HandleKeyEvent(KeyboardEventArgs args, bool isDown)
         {
-            switch (args.Key)
-            {
-                case "Tab":
-                    _tabDown = isDown;
-                    break;
-
-                case "Shift":
-                    _shiftDown = isDown;
-                    break;
-            }
+            if (args.Key == "Tab")
+                _shiftDown = args.ShiftKey;
         }
 
         private Task RestoreFocusAsync()

@@ -121,7 +121,7 @@ namespace MudBlazor
         /// <para>Func&lt;T, bool&gt; ... will output the standard error message "Invalid" if false</para>
         /// <para>Func&lt;T, string&gt; ... outputs the result as error message, no error if null </para>
         /// <para>Func&lt;T, IEnumerable&lt; string &gt;&gt; ... outputs all the returned error messages, no error if empty</para>
-        /// <para>Func&lt;T, Task&lt; boo l&gt;&gt; ... will output the standard error message "Invalid" if false</para>
+        /// <para>Func&lt;T, Task&lt; bool &gt;&gt; ... will output the standard error message "Invalid" if false</para>
         /// <para>Func&lt;T, Task&lt; string &gt;&gt; ... outputs the result as error message, no error if null</para>
         /// <para>Func&lt;T, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; ... outputs all the returned error messages, no error if empty</para>
         /// <para>System.ComponentModel.DataAnnotations.ValidationAttribute instances</para>
@@ -181,12 +181,6 @@ namespace MudBlazor
                         return; // no need to call validation funcs if required value doesn't exist. we already have a required error.
                     }
                     // we have a required value, proceed to the validation funcs
-                }
-                else
-                {
-                    if (!hasValue)
-                        return; // if nothing has been entered, we return OK without calling validation funcs
-                    // proceed to the validation funcs
                 }
 
                 if (Validation is ValidationAttribute)
