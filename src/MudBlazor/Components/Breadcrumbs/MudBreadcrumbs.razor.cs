@@ -6,14 +6,29 @@ namespace MudBlazor
 {
     public partial class MudBreadcrumbs : MudComponentBase
     {
+        /// <summary>
+        /// A list of breadcrumb items/links.
+        /// </summary>
         [Parameter] public List<BreadcrumbItem> Items { get; set; }
 
+        /// <summary>
+        /// Specifies the separator between the items.
+        /// </summary>
         [Parameter] public string Separator { get; set; } = "/";
 
+        /// <summary>
+        /// Specifies a RenderFragment to use as the separator.
+        /// </summary>
         [Parameter] public RenderFragment SeparatorTemplate { get; set; }
 
+        /// <summary>
+        /// Specifies a RenderFragment to use as the items' contents.
+        /// </summary>
         [Parameter] public RenderFragment<BreadcrumbItem> ItemTemplate { get; set; }
 
+        /// <summary>
+        /// Controls when (and if) the breadcrumbs will automatically collapse.
+        /// </summary>
         [Parameter] public byte? MaxItems { get; set; }
 
         public bool Collapsed { get; private set; } = true;
