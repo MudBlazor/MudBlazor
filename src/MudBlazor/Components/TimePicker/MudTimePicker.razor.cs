@@ -16,7 +16,7 @@ namespace MudBlazor
         /// </summary>
         private MudPicker Picker;
 
-        private OpenTo _currentMode = OpenTo.Hours;
+        private OpenTo _currentView;
 
         /// <summary>
         /// First view to show in the MudDatePicker.
@@ -76,6 +76,11 @@ namespace MudBlazor
             Time = ParseTimeValue(value);
         }
 
+        private void OnPickerOpened()
+        {
+            _currentView = OpenTo;
+        }
+
         private TimeSpan? ParseTimeValue(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -122,13 +127,13 @@ namespace MudBlazor
 
         private void OnHourClick()
         {
-            _currentMode = OpenTo.Hours;
+            _currentView = OpenTo.Hours;
             StateHasChanged();
         }
 
         private void OnMinutesClick()
         {
-            _currentMode = OpenTo.Minutes;
+            _currentView = OpenTo.Minutes;
             StateHasChanged();
         }
 
@@ -155,12 +160,12 @@ namespace MudBlazor
 
         protected string HoursButtonClass =>
         new CssBuilder("mud-timepicker-button")
-          .AddClass($"mud-timepicker-toolbar-text", _currentMode == OpenTo.Minutes)
+          .AddClass($"mud-timepicker-toolbar-text", _currentView == OpenTo.Minutes)
         .Build();
 
         protected string MinuteButtonClass =>
         new CssBuilder("mud-timepicker-button")
-          .AddClass($"mud-timepicker-toolbar-text", _currentMode == OpenTo.Hours)
+          .AddClass($"mud-timepicker-toolbar-text", _currentView == OpenTo.Hours)
         .Build();
 
         protected string AmButtonClass =>
@@ -176,15 +181,15 @@ namespace MudBlazor
         private string HourDialClass =>
         new CssBuilder("mud-time-picker-hour")
           .AddClass($"mud-time-picker-dial")
-          .AddClass($"mud-time-picker-dial-out", _currentMode != OpenTo.Hours)
-          .AddClass($"mud-time-picker-dial-hidden", _currentMode != OpenTo.Hours)
+          .AddClass($"mud-time-picker-dial-out", _currentView != OpenTo.Hours)
+          .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Hours)
         .Build();
 
         private string MinuteDialClass =>
         new CssBuilder("mud-time-picker-minute")
           .AddClass($"mud-time-picker-dial")
-          .AddClass($"mud-time-picker-dial-out", _currentMode != OpenTo.Minutes)
-          .AddClass($"mud-time-picker-dial-hidden", _currentMode != OpenTo.Minutes)
+          .AddClass($"mud-time-picker-dial-out", _currentView != OpenTo.Minutes)
+          .AddClass($"mud-time-picker-dial-hidden", _currentView != OpenTo.Minutes)
         .Build();
 
         private bool IsAm => _timeSet.Hour >= 00 && _timeSet.Hour < 12; // am is 00:00 to 11:59 
@@ -222,7 +227,7 @@ namespace MudBlazor
 
         private string GetNumberColor(int value)
         {
-            if(_currentMode == OpenTo.Hours)
+            if(_currentView == OpenTo.Hours)
             {
                 var h = _timeSet.Hour;
                 if (AmPm)
@@ -234,7 +239,7 @@ namespace MudBlazor
                 if (h==value)
                     return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
             }
-            else if (_currentMode == OpenTo.Minutes && _timeSet.Minute == value)
+            else if (_currentView == OpenTo.Minutes && _timeSet.Minute == value)
             {
                 return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
             }
@@ -244,9 +249,9 @@ namespace MudBlazor
         private double GetDeg()
         {
             double deg = 0;
-            if (_currentMode == OpenTo.Hours)
+            if (_currentView == OpenTo.Hours)
                 deg = (_timeSet.Hour * 30) % 360;
-            if (_currentMode == OpenTo.Minutes)
+            if (_currentView == OpenTo.Minutes)
                 deg = (_timeSet.Minute * 6) % 360;
             return deg;
         }
@@ -254,9 +259,9 @@ namespace MudBlazor
         private string GetPointerRotation()
         {
             double deg = 0;
-            if (_currentMode == OpenTo.Hours)
+            if (_currentView == OpenTo.Hours)
                 deg = (_timeSet.Hour * 30) % 360;
-            if (_currentMode == OpenTo.Minutes)
+            if (_currentView == OpenTo.Minutes)
                 deg = (_timeSet.Minute * 6) % 360;
             return $"rotateZ({deg}deg);";
         }
@@ -264,9 +269,9 @@ namespace MudBlazor
         private string GetPointerHeight()
         {
             int height = 40;
-            if (_currentMode == OpenTo.Minutes)
+            if (_currentView == OpenTo.Minutes)
                 height = 40;
-            if (_currentMode == OpenTo.Hours)
+            if (_currentView == OpenTo.Hours)
             {
                 if (!AmPm && _timeSet.Hour > 0 && _timeSet.Hour < 13)
                     height = 26;
@@ -282,7 +287,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             UpdateTimeSetFromTime();
-            _currentMode = OpenTo;
+            _currentView = OpenTo;
             _initialHour = _timeSet.Hour;
         }
 
@@ -315,9 +320,9 @@ namespace MudBlazor
         private void OnMouseUp(MouseEventArgs e)
         {
             MouseDown = false;
-            if(_currentMode == OpenTo.Hours && _timeSet.Hour != _initialHour)
+            if(_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour)
             {
-                _currentMode = OpenTo.Minutes;
+                _currentView = OpenTo.Minutes;
             }
         }
 
@@ -348,7 +353,7 @@ namespace MudBlazor
             }
             _timeSet.Hour = h;
             UpdateTime();
-            _currentMode = OpenTo.Minutes;
+            _currentView = OpenTo.Minutes;
         }
 
         /// <summary>

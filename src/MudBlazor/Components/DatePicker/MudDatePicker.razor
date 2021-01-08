@@ -2,13 +2,15 @@
 @inherits MudBasePicker
 
 
-<MudPicker @ref="Picker" Class="@Class" PickerVariant="@PickerVariant" Orientation="@Orientation" Label="@Label" @bind-Value="@Value" HelperText="@HelperText" Editable="@Editable" InputVariant="@InputVariant" Disabled="@Disabled" Adornment="@Adornment" IconSize="@IconSize" InputIcon="@InputIcon" Elevation="@Elevation" Square="@Square" Rounded="@Rounded">
+<MudPicker @ref="Picker" Class="@Class" PickerVariant="@PickerVariant" Orientation="@Orientation" Label="@Label" @bind-Value="@Value"
+        HelperText="@HelperText" Editable="@Editable" InputVariant="@InputVariant" Disabled="@Disabled" Adornment="@Adornment"
+        IconSize="@IconSize" InputIcon="@InputIcon" Elevation="@Elevation" Square="@Square" Rounded="@Rounded" PickerOpened="OnPickerOpened">
     <MudPickerToolbar Class="mud-picker-datepicker-toolbar" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
         <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year" OnClick="@OnYearClick">@GetFormattedYearString()</MudButton>
         <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="@OnFormattedDateClick">@GetFormattedDateString()</MudButton>
     </MudPickerToolbar>
     <MudPickerContent>
-        @if (OpenTo == OpenTo.Year)
+        @if (_currentView == OpenTo.Year)
         {
             <div id="pickerYears" class="mud-picker-year-container">
                 @for (int i = GetMinYear(); i <= GetMaxYear(); i++)
@@ -20,7 +22,7 @@
                 }
             </div>
         }
-        else if (OpenTo == OpenTo.Month)
+        else if (_currentView == OpenTo.Month)
         {
             <div class="mud-picker-calendar-header">
                 <div class="mud-picker-calendar-header-switch">
