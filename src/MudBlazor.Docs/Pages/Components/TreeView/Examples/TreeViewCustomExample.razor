@@ -1,0 +1,144 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<style>
+    .my-tree {
+        width: 500px;
+        color: rgba(0, 0, 0, 0.54);
+    }
+
+    .my-tree-item {
+        display: flex;
+        padding: 4px 4px 4px 0px;
+        align-items: center;
+    }
+
+    .my-tree-item-title {
+        flex-grow: 1;
+        font-weight: inherit;
+    }
+
+    .my-tree-item-icon {
+        margin-right: 8px;
+    }
+</style>
+
+@{
+    RenderFragment CustomTreeContent(CustomTreeItem treeItem)
+    {
+        return
+            @<div class="my-tree-item">
+                <MudIcon Class="my-tree-item-icon" Icon="@treeItem.Icon"></MudIcon>
+                <MudText Typo="@Typo.body2" Class="my-tree-item-title">@treeItem.Title</MudText>
+                @if (treeItem.Number != null)
+                {
+                    <MudText Typo="@Typo.caption">@treeItem.Number</MudText>
+                }
+            </div>
+        ;
+    }
+
+    RenderFragment renderSubTree(CustomTreeItem treeItem)
+    {
+        if (treeItem.TreeItems.Count > 0)
+        {
+            return
+                @<MudTreeViewItem @bind-Selected="treeItem.IsSelected">
+                    <Content>
+                        @CustomTreeContent(treeItem)
+                    </Content>                
+                    <ChildContent>
+                        @foreach (var child in treeItem.TreeItems)
+                        {
+                            @renderSubTree(child)
+                        }
+                    </ChildContent>
+                </MudTreeViewItem>
+                ;
+        }
+        else
+        {
+            return
+                @<MudTreeViewItem @bind-Selected="treeItem.IsSelected">
+                    <Content>
+                        @CustomTreeContent(treeItem)
+                    </Content>
+                </MudTreeViewItem>
+            ;
+        }
+    }
+}
+
+<MudTreeView Class="my-tree">
+    @foreach (var treeItem in TreeItems)
+    {
+        @renderSubTree(treeItem)
+    }
+</MudTreeView>
+
+@code {
+    class CustomTreeItem
+    {
+        public string Title { get; set; }
+
+        public string Icon { get; set; }
+
+        public string Number { get; set; } = null;
+
+        public bool IsSelected { get; set; }
+
+        public List<CustomTreeItem> TreeItems { get; set; } = new List<CustomTreeItem>();
+    }
+
+    List<CustomTreeItem> TreeItems { get; set; } = new List<CustomTreeItem>();
+
+    public TreeViewCustomExample()
+    {
+        TreeItems.Add(new CustomTreeItem()
+        {
+            Title = "All Mail",
+            Icon = Icons.Material.Email
+        });
+        TreeItems.Add(new CustomTreeItem()
+        {
+            Title = "Trash",
+            Icon = Icons.Material.Delete
+        });
+        TreeItems.Add(new CustomTreeItem()
+        {
+            Title = "Categories",
+            Icon = Icons.Material.Label,
+            TreeItems = new List<CustomTreeItem>()
+            {
+                new CustomTreeItem()
+                {
+                    Title = "Social",
+                    Icon = Icons.Material.Group,
+                    Number = "90"
+                },
+                new CustomTreeItem()
+                {
+                    Title = "Updates",
+                    Icon = Icons.Material.Info,
+                    Number = "2,294"
+                },
+                new CustomTreeItem()
+                {
+                    Title = "Forums",
+                    Icon = Icons.Material.QuestionAnswer,
+                    Number = "3,566"
+                },
+                new CustomTreeItem()
+                {
+                    Title = "Promotions",
+                    Icon = Icons.Material.LocalOffer,
+                    Number = "733"
+                }
+            }
+        });
+        TreeItems.Add(new CustomTreeItem()
+        {
+            Title = "History",
+            Icon = Icons.Material.Label
+        });
+    }
+}

@@ -10,7 +10,6 @@ using Bunit;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
@@ -28,13 +27,7 @@ namespace MudBlazor.UnitTests
         public void Setup()
         {
             ctx = new Bunit.TestContext();
-            ctx.JSInterop.Mode = JSRuntimeMode.Loose;
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-            ctx.Services.AddSingleton<IDialogService>(new DialogService());
-            ctx.Services.AddSingleton<ISnackbar>(new SnackbarService());
-            ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-            ctx.Services.AddScoped(sp => new HttpClient());
-            ctx.Services.AddOptions();
+            ctx.AddMudBlazorServices();
         }
 
         [TearDown]
@@ -177,39 +170,42 @@ namespace MudBlazor.UnitTests
         }
 
         /// <summary>
-        /// This is a FluentValidation validator which we'll use to validate a MudTextfield
+        /// A glue class to make it easy to define validation rules for single values using FluentValidation
         /// </summary>
-        public class TestValidator : AbstractValidator<string>
+        /// <typeparam name="T"></typeparam>
+        public class FluentValueValidator<T> : AbstractValidator<T>
         {
-            public TestValidator()
+            public FluentValueValidator(Action<IRuleBuilderInitial<T, T>> rule)
             {
-                RuleFor(x => x).CreditCard();
+                rule(RuleFor(x => x));
             }
+
+            private IEnumerable<string> ValidateValue(T arg)
+            {
+                var result = Validate(arg);
+                if (result.IsValid)
+                    return new string[0];
+                return result.Errors.Select(e => e.ErrorMessage);
+            }
+
+            public Func<T, IEnumerable<string>> Validation => ValidateValue;
         }
         
         /// <summary>
         /// FluentValidation rules can be used for validating a TextFields
         /// </summary>
         [Test]
-        public async Task TextFieldFluentValidationTest()
+        public async Task TextFieldFluentValidationTest1()
         {
-            bool validatonFuncHasBeenCalled = false;
-            // create a validation func based on a FluentValidation validator.
-            var validationFunc = new Func<string, IEnumerable<string>>(input =>
-            {
-                validatonFuncHasBeenCalled = true;
-                var validator = new TestValidator();
-                var result = validator.Validate(input);
-                if (result.IsValid)
-                    return new string[0];
-                return result.Errors.Select(e => e.ErrorMessage);
-            });
-            var comp = ctx.RenderComponent<MudTextField<string>>(Parameter(nameof(MudTextField<string>.Validation), validationFunc));
+            var validator = new FluentValueValidator<string>(x => x.Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .Length(1, 100)
+                .CreditCard());
+            var comp = ctx.RenderComponent<MudTextField<string>>(Parameter(nameof(MudTextField<string>.Validation), validator.Validation));
             var textfield = comp.Instance;
             Console.WriteLine(comp.Markup);
             // first try a valid credit card number
             await comp.InvokeAsync(() => textfield.Text = "4012 8888 8888 1881");
-            validatonFuncHasBeenCalled.Should().BeTrue();
             textfield.Error.Should().BeFalse(because: "The number is a valid VISA test credit card number");
             textfield.ErrorText.Should().BeNullOrEmpty();
             // now try something that produces a validation error
@@ -219,6 +215,7 @@ namespace MudBlazor.UnitTests
             textfield.ErrorText.Should().NotBeNullOrEmpty();
         }
 
+
         /// <summary>
         /// An unstable converter should not cause an infinite update loop. This test must complete in under 1 sec!
         /// </summary>
@@ -226,7 +223,7 @@ namespace MudBlazor.UnitTests
         public async Task TextFieldUpdateLoopProtectionTest()
         {
             var comp = ctx.RenderComponent<MudTextField<string>>();
-            // these convertsion funcs are nonsense of course, but they are designed this way to
+            // these conversion funcs are nonsense of course, but they are designed this way to
             // test against an infinite update loop that textfields and other inputs are now protected against.
             var textfield = comp.Instance;
             textfield.Converter.SetFunc = s => $"{s}x";
@@ -239,4 +236,5 @@ namespace MudBlazor.UnitTests
             textfield.Text.Should().Be("B");
         }
     }
+
 }

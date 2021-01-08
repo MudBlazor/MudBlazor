@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using FluentAssertions;
+using MudBlazor.Docs.Examples;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities
@@ -51,6 +52,58 @@ namespace MudBlazor.UnitTests.Utilities
             c7.Get(c7.Set(time)).Should().Be(time);
             c7.Set(null).Should().Be(null);
             c7.Get(null).Should().Be(null);
+            var c8 = new DefaultConverter<bool>();
+            c8.Set(true).Should().Be("True");
+            c8.Set(false).Should().Be("False");
+            c8.Get("true").Should().Be(true);
+            c8.Get("True").Should().Be(true);
+            c8.Get("false").Should().Be(false);
+            c8.Get("ON").Should().Be(true);
+            c8.Get("off").Should().Be(false);
+            c8.Get("").Should().Be(false);
+            c8.Get("asdf").Should().Be(false);
+            var c9 = new DefaultConverter<bool?>();
+            c9.Set(true).Should().Be("True");
+            c9.Get("true").Should().Be(true);
+            c9.Set(false).Should().Be("False");
+            c9.Get("false").Should().Be(false);
+            c9.Set(null).Should().Be(null);
+            c9.Get(null).Should().Be(null);
+        }
+
+        public enum YesNoMaybe { Maybe, Yes, No }
+        
+        [Test]
+        public void DefaultConverterTest2()
+        {
+            var c1 = new DefaultConverter<char>();
+            c1.Set('x').Should().Be("x");
+            c1.Get("a").Should().Be('a');
+            c1.Get("").Should().Be(default(char));
+            c1.Get(null).Should().Be(default(char));
+            var c2 = new DefaultConverter<char?>();
+            c2.Set('x').Should().Be("x");
+            c2.Get("a").Should().Be('a');
+            c2.Get("").Should().Be(null);
+            c2.Get(null).Should().Be(null);
+            c2.Set(null).Should().Be(null);
+            var c3 = new DefaultConverter<Guid>();
+            var guid = Guid.NewGuid();
+            c3.Set(guid).Should().Be(guid.ToString());
+            c3.Get(guid.ToString()).Should().Be(guid);
+            c3.Get("").Should().Be(Guid.Empty);
+            c3.Get(null).Should().Be(Guid.Empty);
+            var c4 = new DefaultConverter<YesNoMaybe>();
+            c4.Set(YesNoMaybe.Yes).Should().Be("Yes");
+            c4.Get("No").Should().Be(YesNoMaybe.No);
+            c4.Get("").Should().Be(default(YesNoMaybe));
+            c4.Get(null).Should().Be(default(YesNoMaybe));
+            var c5 = new DefaultConverter<YesNoMaybe?>();
+            c5.Set(YesNoMaybe.Maybe).Should().Be("Maybe");
+            c5.Get("Maybe").Should().Be(YesNoMaybe.Maybe);
+            c5.Get("").Should().Be(null);
+            c5.Get(null).Should().Be(null);
+            c5.Set(null).Should().Be(null);
         }
 
         [Test]

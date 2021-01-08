@@ -51,6 +51,11 @@
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
 
+    /// <summary>
+    /// TabPanel Tooltip
+    /// </summary>
+    [Parameter] public string ToolTip { get; set; }
+
     protected override void OnInitialized()
     {
         // NOTE: we must not throw here because we need the component to be able to live for the API docs to be able to infer default values

@@ -21,13 +21,7 @@ namespace MudBlazor.UnitTests.Components
         public void Setup()
         {
             ctx = new Bunit.TestContext();
-            ctx.JSInterop.Mode = JSRuntimeMode.Loose;
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-            ctx.Services.AddSingleton<IDialogService>(new DialogService());
-            ctx.Services.AddSingleton<ISnackbar>(new SnackbarService());
-            ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
-            ctx.Services.AddScoped(sp => new HttpClient());
-            ctx.Services.AddOptions();
+            ctx.AddMudBlazorServices();
         }
 
         [TearDown]

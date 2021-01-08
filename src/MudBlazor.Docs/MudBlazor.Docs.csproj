@@ -10,6 +10,13 @@
     </BuildDependsOn>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <ResolveStaticWebAssetsInputsDependsOn>
+      IncludeGeneratedStaticFiles;
+      $(ResolveStaticWebAssetsInputsDependsOn)
+    </ResolveStaticWebAssetsInputsDependsOn>
+  </PropertyGroup>
+
   <!--Outside Visual Studio SolutionDir is not available-->  
   <PropertyGroup>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)..\</SolutionDir>
@@ -75,5 +82,20 @@
   <ItemGroup>
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
   </ItemGroup>
+
+  <Target Name="ToolRestore">
+      <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
+  </Target>
+
+  <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
+      <Exec Command="dotnet webcompiler ./Styles/MudBlazorDocs.scss -o ./wwwroot -z disable" StandardOutputImportance="high" />
+  </Target>
+
+  <Target Name="IncludeGeneratedStaticFiles" BeforeTargets="BeforeBuild;BeforeRebuild" DependsOnTargets="WebCompiler;ToolRestore">
+    <ItemGroup>
+      <Content Include="wwwroot/MudBlazorDocs.min.css" Condition="!Exists('wwwroot/MudBlazorDocs.min.css')" />
+      <Content Include="wwwroot/MudBlazorDocs.min.js" Condition="!Exists('wwwroot/MudBlazorDocs.min.js')" />
+    </ItemGroup>
+  </Target>
 
 </Project>

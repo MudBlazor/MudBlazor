@@ -1,18 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor.Interfaces;
+using static System.String;
 
 namespace MudBlazor
 {
-    public class MudFormComponent<T> : MudComponentBase, IFormComponent, IDisposable
-    {       
-        [CascadingParameter] internal IForm Form { get; set; }
+    public abstract class MudFormComponent<T, U> : MudComponentBase, IFormComponent, IDisposable
+    {
+        private Converter<T, U> _converter;
+
+        protected MudFormComponent(Converter<T, U> converter)
+        {
+            _converter = converter ?? throw new ArgumentNullException(nameof(converter));
+            _converter.OnError = OnConversionError;
+        }
+
+        [CascadingParameter] internal MudForm Form { get; set; }
 
         /// <summary>
         /// If true, this form input is required to be filled out.
@@ -34,34 +44,55 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Error { get; set; }
 
+        [Parameter]
+        public Converter<T, U> Converter
+        {
+            get => _converter;
+            set => SetConverter(value);
+        }
+
+        protected virtual bool SetConverter(Converter<T, U> value)
+        {
+            var changed = (_converter != value);
+            if (changed)
+            {
+                _converter = value ?? throw new ArgumentNullException(nameof(value));   // converter is mandatory at all times
+                _converter.OnError = OnConversionError;
+            }
+            return changed;
+        }
+
+        [Parameter]
+        public CultureInfo Culture
+        {
+            get => _converter.Culture;
+            set => SetCulture(value);
+        }
+
+        protected virtual bool SetCulture(CultureInfo value)
+        {
+            var changed = (_converter.Culture != value);
+            if (changed)
+            {
+                _converter.Culture = value;
+            }
+            return changed;
+        }
+
         protected virtual void OnConversionError(string error)
         {
-            /* to be overridden */
+            /* Descendants can override this method to catch conversion errors */
         }
 
         /// <summary>
         /// True if the conversion from string to T failed
         /// </summary>
-        public virtual bool ConversionError
-        {
-            get
-            {
-                /* to be overridden */
-                return false;
-            }
-        }
+        public bool ConversionError => _converter.GetError;
 
         /// <summary>
         /// The error message of the conversion error from string to T. Null otherwise
         /// </summary>
-        public virtual string ConversionErrorMessage
-        {
-            get
-            {
-                /* to be overridden */
-                return null;
-            }
-        }
+        public string ConversionErrorMessage => _converter.GetErrorMessage;
 
         /// <summary>
         /// True if the input has any of the following errors: An error set from outside, a conversion error or
@@ -69,6 +100,17 @@ namespace MudBlazor
         /// </summary>
         public bool HasErrors => Error || ConversionError || ValidationErrors.Count > 0;
 
+        public string GetErrorText()
+        {
+            // ErrorText is either set from outside or the first validation error
+            if (!IsNullOrWhiteSpace(ErrorText))
+                return ErrorText;
+
+            if (!IsNullOrWhiteSpace(ConversionErrorMessage))
+                return ConversionErrorMessage;
+
+            return null;
+        }
 
         #region MudForm Validation
 
@@ -76,13 +118,13 @@ namespace MudBlazor
 
         /// <summary>
         /// A validation func or a validation attribute. Supported types are:
-        /// <![CDATA[Func<T, bool>]]> ... will output the standard error message "Invalid" if false
-        /// <![CDATA[Func<T, string>]]> ... outputs the result as error message, no error if null
-        /// <![CDATA[Func<T, IEnumerable<string>>]]> ... outputs all the returned error messages, no error if empty
-        /// <![CDATA[Func<T, Task<bool>>]]> ... will output the standard error message "Invalid" if false
-        /// <![CDATA[Func<T, Task<string>>]]> ... outputs the result as error message, no error if null
-        /// <![CDATA[Func<T, Task<IEnumerable<string>>>]]> ... outputs all the returned error messages, no error if empty
-        /// System.ComponentModel.DataAnnotations.ValidationAttribute instances
+        /// <para>Func&lt;T, bool&gt; ... will output the standard error message "Invalid" if false</para>
+        /// <para>Func&lt;T, string&gt; ... outputs the result as error message, no error if null </para>
+        /// <para>Func&lt;T, IEnumerable&lt; string &gt;&gt; ... outputs all the returned error messages, no error if empty</para>
+        /// <para>Func&lt;T, Task&lt; bool &gt;&gt; ... will output the standard error message "Invalid" if false</para>
+        /// <para>Func&lt;T, Task&lt; string &gt;&gt; ... outputs the result as error message, no error if null</para>
+        /// <para>Func&lt;T, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; ... outputs all the returned error messages, no error if empty</para>
+        /// <para>System.ComponentModel.DataAnnotations.ValidationAttribute instances</para>
         /// </summary>
         [Parameter]
         public object Validation { get; set; }
@@ -139,12 +181,6 @@ namespace MudBlazor
                         return; // no need to call validation funcs if required value doesn't exist. we already have a required error.
                     }
                     // we have a required value, proceed to the validation funcs
-                }
-                else
-                {
-                    if (!hasValue)
-                        return; // if nothing has been entered, we return OK without calling validation funcs
-                    // proceed to the validation funcs
                 }
 
                 if (Validation is ValidationAttribute)
@@ -289,6 +325,7 @@ namespace MudBlazor
         {
             /* to be overridden */
             _value = default;
+            StateHasChanged();
         }
 
         public void ResetValidation()

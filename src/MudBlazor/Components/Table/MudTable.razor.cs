@@ -19,6 +19,11 @@ namespace MudBlazor
         [Parameter] public RenderFragment<T> RowTemplate { get; set; }
 
         /// <summary>
+        /// Row Child content of the component.
+        /// </summary>
+        [Parameter] public RenderFragment<T> ChildRowContent { get; set; }
+
+        /// <summary>
         /// Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.
         /// </summary>
         [Parameter] public RenderFragment<T> RowEditingTemplate { get; set; }
@@ -145,6 +150,17 @@ namespace MudBlazor
             {
                 if (@PagerContent == null)
                     return FilteredItems; // we have no pagination
+                if (ServerData == null)
+                {
+                    var filteredItemCount = GetFilteredItemsCount();
+                    int lastPageNo;
+                    if (filteredItemCount == 0)
+                        lastPageNo = 0;
+                    else
+                        lastPageNo = (filteredItemCount / RowsPerPage) - (filteredItemCount % RowsPerPage == 0 ? 1 : 0);
+                    CurrentPage = lastPageNo < CurrentPage ? lastPageNo : CurrentPage;
+                }
+
                 return GetItemsOfPage(CurrentPage, RowsPerPage);
             }
         }
@@ -273,12 +289,19 @@ namespace MudBlazor
             Context?.PagerStateHasChanged?.Invoke();
         }
 
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+            if (!firstRender)
+                Context?.PagerStateHasChanged?.Invoke();
+        }
+
         /// <summary>
         /// Call this to reload the server-filtered, -sorted and -paginated items
         /// </summary>
-        public void ReloadServerData()
+        public Task ReloadServerData()
         {
-            _ = InvokeServerLoadFunc();
+            return InvokeServerLoadFunc();
         }
 
 

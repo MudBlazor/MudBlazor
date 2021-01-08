@@ -26,11 +26,7 @@ namespace MudBlazor.UnitTests
         public void Setup()
         {
             ctx = new Bunit.TestContext();
-            ctx.JSInterop.Mode = JSRuntimeMode.Loose;
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-            ctx.Services.AddSingleton<IDialogService>(new DialogService());
-            ctx.Services.AddSingleton<ISnackbar>(new SnackbarService());
-            ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
+            ctx.AddMudBlazorServices();
         }
 
         [TearDown]
@@ -78,6 +74,23 @@ namespace MudBlazor.UnitTests
         }
 
         /// <summary>
+        /// Form's isvalid should be true, no matter whether or not the field was touched
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task FormIsValidTest2()
+        {
+            var comp = ctx.RenderComponent<FormIsValidTest2>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            // check initial state: form should be valid due to field not being required!
+            form.IsValid.Should().Be(true);
+            await comp.InvokeAsync(() => textField.Value = "This value doesn't matter");
+            form.IsValid.Should().Be(true);
+        }
+        
+        /// <summary>
         /// Custom validation func should be called to determine whether or not a form value is good
         /// </summary>
         [Test]
@@ -103,12 +116,17 @@ namespace MudBlazor.UnitTests
             form.Errors.Length.Should().Be(1);
             textField.Error.Should().BeTrue();
             textField.ErrorText.Should().Be("Invalid");
-            // value is not required, so don't call the validation func on empty text
-            await comp.InvokeAsync(() => textField.Value = "");
-            form.IsValid.Should().Be(true);
-            form.Errors.Length.Should().Be(0);
-            textField.Error.Should().BeFalse();
-            textField.ErrorText.Should().BeNullOrEmpty();
+            
+            // note: this logic is invalid, so it was removed. Validaton funcs are always called
+            // the validation func must validate non-required empty fields as valid. 
+            //
+            //// value is not required, so don't call the validation func on empty text
+            //await comp.InvokeAsync(() => textField.Value = "");
+            //form.IsValid.Should().Be(true);
+            //form.Errors.Length.Should().Be(0);
+            //textField.Error.Should().BeFalse();
+            //textField.ErrorText.Should().BeNullOrEmpty();
+            
             // ok, not a rock star, but a star nonetheless
             await comp.InvokeAsync(() => textField.Value = "Marilyn Monroe");
             form.IsValid.Should().Be(true);
@@ -139,9 +157,14 @@ namespace MudBlazor.UnitTests
             // this one might not be a star, but our custom validation func deems him valid nonetheless
             await comp.InvokeAsync(() => textField.Value = "Charles Manson");
             form.IsValid.Should().Be(true);
-            // value is not required, so don't call the validation func on empty text
-            await comp.InvokeAsync(() => textField.Value = "");
-            form.IsValid.Should().Be(true);
+
+            // note: this logic is invalid, so it was removed. Validaton funcs are always called
+            // the validation func must validate non-required empty fields as valid. 
+            //
+            //// value is not required, so don't call the validation func on empty text
+            //await comp.InvokeAsync(() => textField.Value = "");
+            //form.IsValid.Should().Be(true);
+
             // clearly a star
             await comp.InvokeAsync(() => textField.Value = "Marilyn Monroe");
             form.IsValid.Should().Be(true);
@@ -272,6 +295,19 @@ namespace MudBlazor.UnitTests
             foreach (var tf in comp.FindComponents<MudTextField<string>>())
                 tf.Instance.Text.Should().NotBeNullOrEmpty();
             comp.FindComponent<MudTextField<int>>().Instance.Value.Should().Be(17);
+        }
+
+        /// <summary>
+        /// Based on error report. Even without clicking the checkbox the form should
+        /// be valid if the checkbox is not required.
+        /// </summary>
+        [Test]
+        public async Task FormWithCheckboxTest2()
+        {
+            var comp = ctx.RenderComponent<FormWithCheckboxTest>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            form.IsValid.Should().BeTrue(because: "none of the fields are required");
         }
     }
 }

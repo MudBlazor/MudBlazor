@@ -81,7 +81,7 @@ namespace MudBlazor
         [Parameter] public int RowsPerPage { get; set; } = 10;
 
         /// <summary>
-        /// The page index of the currently displayed page. Usually called by MudTablePager.
+        /// The page index of the currently displayed page (Zero based). Usually called by MudTablePager.
         /// Note: requires a MudTablePager in PagerContent.
         /// </summary>
         [Parameter]

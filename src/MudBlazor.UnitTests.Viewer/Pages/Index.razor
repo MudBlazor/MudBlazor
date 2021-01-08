@@ -61,6 +61,8 @@
                 continue;
             if (type.Name.StartsWith("<"))
                 continue;
+            if (!type.GetInterfaces().Contains(typeof(IComponent)))
+                continue;
             yield return type;
         }
         //foreach (var type in typeof(MudBlazor.Docs.Components.DocsPage).Assembly.GetTypes())
