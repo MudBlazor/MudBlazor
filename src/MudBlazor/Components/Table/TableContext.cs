@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MudBlazor.Extensions;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
@@ -20,7 +21,8 @@ namespace MudBlazor
 
         public abstract string SortFieldLabel { get; internal set; }
 
-        public abstract SortDirection SortDirection { get; protected set; }        
+        public abstract SortDirection SortDirection { get; protected set; }
+
     }
 
     public class TableContext<T> : TableContext
@@ -106,7 +108,6 @@ namespace MudBlazor
             initial_sortlabel.SetSortDirection( initial_sortlabel.InitialDirection);
             SortDirection = initial_sortlabel.SortDirection;
         }
-
 
         private void UpdateSortLabels(MudTableSortLabel<T> label)
         {
