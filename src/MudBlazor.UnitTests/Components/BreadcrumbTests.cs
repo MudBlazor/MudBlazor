@@ -36,6 +36,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void MudBreadcrumbs_ShouldRenderItemsWithIcons()
+        {
+            var comp = ctx.RenderComponent<MudBreadcrumbs>(Parameter("Items", new List<BreadcrumbItem>
+            {
+                new BreadcrumbItem("Link 1", "link1", icon: Icons.Material.Home),
+                new BreadcrumbItem("Link 2", "link2", icon: Icons.Material.List),
+                new BreadcrumbItem("Link 3", "link3", disabled: true, icon: Icons.Material.Create)
+            }));
+
+            comp.FindAll("li>a>svg").Should().HaveCount(3);
+        }
+
+        [Test]
         public void MudBreadcrumbs_ShouldCollapseWhenMaxItemsIsReached()
         {
             var comp = ctx.RenderComponent<MudBreadcrumbs>(Parameter("MaxItems", (byte)5), Parameter("Items", new List<BreadcrumbItem>
