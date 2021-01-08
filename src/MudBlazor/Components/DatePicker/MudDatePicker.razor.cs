@@ -276,8 +276,8 @@ namespace MudBlazor
         public async void ScrollToYear()
         {
             _scrollToYearAfterRender = false;
-            string id = $"{_componentId}{GetMonthStart().Year.ToString()}";
-            await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToYear", id);
+            string id = $"{_componentId}{GetMonthStart().Year}";
+            await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToListItem", id, 3);
             StateHasChanged();
         }
 

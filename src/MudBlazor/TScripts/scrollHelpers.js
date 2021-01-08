@@ -6,11 +6,11 @@ window.scrollHelpers = {
             element.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'start' });
         }
     },
-    scrollToYear: (elementId) => {
+    scrollToListItem: (elementId, offset) => {
         var element = document.getElementById(elementId);
 
         if (element) {
-            element.parentNode.scrollTop = element.offsetTop - element.parentNode.offsetTop - element.scrollHeight * 3;
+            element.parentNode.scrollTop = element.offsetTop - element.parentNode.offsetTop - element.scrollHeight * offset;
         }
     },
     lockScroll: (selector) => {

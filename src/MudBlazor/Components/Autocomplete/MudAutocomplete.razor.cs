@@ -262,7 +262,7 @@ namespace MudBlazor
         public async void ScrollToListItem(int index)
         {
             string id = GetListItemId(index);
-            await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToFragment", id);
+            await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToListItem", id, 0);
             StateHasChanged();
         }
 
