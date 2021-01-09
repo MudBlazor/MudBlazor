@@ -80,14 +80,14 @@ namespace MudBlazor
         /// <summary>
         /// Number of months to display.
         /// </summary>
-        [Parameter] public int DisplayMonth { get; set; } = 3;
+        [Parameter] public int DisplayMonth { get; set; } = 1;
 
         /// <summary>
         /// Maximum number of months in one row
         /// </summary>
-        [Parameter] public int MaxMonthColumns { get; set; } = 2;
+        [Parameter] public int? MaxMonthColumns { get; set; }
 
-        [Parameter] public bool ShowWeekNumbers { get; set; };
+        [Parameter] public bool ShowWeekNumbers { get; set; }
 
         /// <summary>
         /// Reference to the Picker, initialized via @ref

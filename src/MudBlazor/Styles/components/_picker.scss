@@ -124,15 +124,51 @@
     top: 0px;
     position: fixed;
     visibility: visible;
+
+    &.mud-picker-pos-left {
+        left: 10px;
+    }
+
+    &.mud-picker-pos-right {
+        right: 10px;
+    }
 }
 
 .mud-picker-pos-above {
     bottom: 0px;
     visibility: visible;
+
+    &.mud-picker-pos-left {
+        left: 10px;
+    }
+
+    &.mud-picker-pos-right {
+        right: 10px;
+    }
 }
 
 .mud-picker-pos-bottom {
     bottom: 10px;
     position: fixed;
     visibility: visible;
+
+    &.mud-picker-pos-left {
+        left: 10px;
+    }
+
+    &.mud-picker-pos-right {
+        right: 10px;
+    }
+}
+
+.mud-picker-pos-below {
+    visibility: visible;
+
+    &.mud-picker-pos-left {
+        left: 10px;
+    }
+
+    &.mud-picker-pos-right {
+        right: 10px;
+    }
 }

@@ -15,6 +15,7 @@ namespace MudBlazor
 
         public MudDateRangePicker()
         {
+            DisplayMonth = 2;
             //DisableToolbar = true;
         }
 

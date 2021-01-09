@@ -231,7 +231,7 @@ namespace MudBlazor.UnitTests
             comp.Instance.DateRange.Should().BeNull();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-content > div.mud-picker-month-container > div.mud-picker-month")
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")
                 .Skip(2).First().Click();
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x=>x.TrimmedText().Equals("2")).First().Click();
@@ -255,7 +255,7 @@ namespace MudBlazor.UnitTests
             comp.Find("div.mud-picker-calendar-header-transition").Click();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-content > div.mud-picker-month-container > div.mud-picker-month")
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")
                 .Skip(3).First().Click();
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x=>x.TrimmedText().Equals("10")).First().Click();
@@ -285,16 +285,16 @@ namespace MudBlazor.UnitTests
         }
      
         [Test]
-        public void Open_ClickYear_ClickCurrentYear_Click2ndMonth_Click1_CheckDateRange()
+        public void Open_ClickYear_ClickCurrentYear_Click2ndMonth_Click1_Click3_CheckDateRange()
         {
             var comp = OpenPicker();
             comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
-            comp.FindAll("div.mud-picker-content > div.mud-picker-year-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-content > div.mud-picker-year-container > div.mud-picker-year")
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container > div.mud-picker-year")
                 .Where(x=>x.TrimmedText().Contains("2022")).First().Click();
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-content > div.mud-picker-month-container > div.mud-picker-month").Skip(1).First().Click();
-            comp.FindAll("div.mud-picker-content > div.mud-picker-calendar-header").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month").Skip(1).First().Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(2);
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x=>x.TrimmedText().Equals("1")).First().Click();
             comp.FindAll("div.mud-picker-calendar-day > button")

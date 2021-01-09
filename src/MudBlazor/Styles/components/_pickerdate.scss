@@ -165,7 +165,7 @@
 
 @media(min-width: 600px) {
     .mud-picker-calendar-content:not(.mud-picker-calendar-content-1) {
-        grid-template-columns: auto auto;
+        grid-template-columns: repeat(2, minmax(auto, 1fr));
 
         .mud-picker-calendar-header-1,
         .mud-picker-calendar-header-3,
@@ -201,7 +201,7 @@
 
 @media(min-width: 960px) {
     .mud-picker-calendar-content:not(.mud-picker-calendar-content-1):not(.mud-picker-calendar-content-2) {
-        grid-template-columns: auto auto auto;
+        grid-template-columns: repeat(3, minmax(auto, 1fr));
 
         .mud-picker-calendar-header-1,
         .mud-picker-calendar-header-4,
@@ -248,6 +248,7 @@
 
 .mud-picker-calendar-container {
     display: flex;
+    width: 310px;
     flex-direction: column;
 }
 
@@ -316,6 +317,7 @@
 }
 
 .mud-week-number {
+    width: 15px;
     margin: auto 0 !important;
     color: var(--mud-palette-text-secondary);
 }
