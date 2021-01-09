@@ -57,10 +57,10 @@ namespace MudBlazor
                 Date = null;
         }
 
-        protected override string GetDayClasses(DateTime day)
+        protected override string GetDayClasses(int month, DateTime day)
         {
             var b = new CssBuilder("mud-day");
-            if (day < GetMonthStart() || day > GetMonthEnd())
+            if (day < GetMonthStart(month) || day > GetMonthEnd(month))
                 return b.AddClass("mud-hidden").Build();
             if (_date.HasValue && _date.Value.Date == day)
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();

@@ -74,6 +74,18 @@ namespace MudBlazor.UnitTests
             picker.Value.Should().Be(RangeConverter<DateTime>.Join("2020-12-26", "2021-02-01"));
         }
 
+        [Test]
+        public void Open_SelectTheSameDateTwice_RangeStartShouldEqualsEnd()
+        {
+            var comp = OpenPicker();
+            // clicking a day button to select a date and close
+            comp.FindAll("div.mud-picker-calendar-day > button")
+                .Where(x => x.TrimmedText().Equals("10")).First().Click();
+            comp.FindAll("div.mud-picker-calendar-day > button")
+                .Where(x => x.TrimmedText().Equals("10")).First().Click();
+            comp.Instance.DateRange.Start.Should().Be(comp.Instance.DateRange.End);
+        }
+
         public IRenderedComponent<MudDateRangePicker> OpenPicker(ComponentParameter parameter)
         {
             return OpenPicker(new ComponentParameter[]{parameter});
@@ -117,6 +129,28 @@ namespace MudBlazor.UnitTests
             // clicking a day button to select a date and close
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x=>x.TrimmedText().Equals("10")).First().Click();
+            comp.FindAll("div.mud-picker-calendar-day > button")
+                .Where(x => x.TrimmedText().Equals("23")).First().Click();
+            await Task.Delay(comp.Instance.ClosingDelay + 50); // allow a delay
+            // should not be open any more
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+            comp.Instance.DateRange.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task Open_SelectEndDateLowerThanStart_CheckNotClosed_SelectRange_CheckClosed()
+        {
+            var comp = OpenPicker();
+            // clicking a day button to select a date and close
+            comp.FindAll("div.mud-picker-calendar-day > button")
+                .Where(x => x.TrimmedText().Equals("10")).First().Click();
+            comp.FindAll("div.mud-picker-calendar-day > button")
+                .Where(x => x.TrimmedText().Equals("8")).First().Click();
+            await Task.Delay(comp.Instance.ClosingDelay + 50); // allow a delay
+            // should not be open any more
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            comp.Instance.DateRange.Should().BeNull();
+
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x => x.TrimmedText().Equals("23")).First().Click();
             await Task.Delay(comp.Instance.ClosingDelay + 50); // allow a delay

@@ -83,66 +83,67 @@ namespace MudBlazor
                 DateRange = null;
         }
 
-        protected override string GetDayClasses(DateTime day)
+        protected override string GetDayClasses(int month, DateTime day)
         {
             var b = new CssBuilder("mud-day");
-            if (day < GetMonthStart() || day > GetMonthEnd())
+            if (day < GetMonthStart(month) || day > GetMonthEnd(month))
+            {
                 return b.AddClass("mud-hidden").Build();
-
-            if ((_firstDate != null && ((day > _firstDate && day < _currentDate) || (day < _firstDate && day > _currentDate))) ||
-                (_firstDate == null && _dateRange != null && _dateRange.Start < day && _dateRange.End > day))
-            {
-                return b.AddClass("mud-range").AddClass("mud-range-between").Build();
             }
 
-            if (_firstDate == null && _dateRange != null && (_dateRange.Start == day || _dateRange.End == day))
+            if ((_firstDate != null && day > _firstDate && day < _currentDate) ||
+               (_firstDate == null && _dateRange != null && _dateRange.Start < day && _dateRange.End > day))
+            {
+                return b.AddClass("mud-range")
+                    .AddClass("mud-range-between")
+                    .Build();
+            }
+
+            if ((_firstDate != null && day == _firstDate) ||
+                (_firstDate == null && _dateRange != null && _dateRange.Start == day && DateRange.End != day))
             {
                 return b.AddClass("mud-selected")
                     .AddClass("mud-range")
-                    .AddClass("mud-range-start-selected", _dateRange.Start == day)
-                    .AddClass("mud-range-end-selected", _dateRange.End == day)
+                    .AddClass("mud-range-start-selected")
                     .AddClass($"mud-theme-{Color.ToDescriptionString()}")
                     .Build();
             }
 
-            if (_firstDate != null && day == _firstDate)
+            if ((_firstDate != null && day == _currentDate && day > _firstDate) ||
+                (_firstDate == null && _dateRange != null && _dateRange.Start != day && _dateRange.End == day))
             {
                 return b.AddClass("mud-selected")
                     .AddClass("mud-range")
-                    .AddClass("mud-range-start-selected", _currentDate == null || _firstDate <= _currentDate)
-                    .AddClass("mud-range-end-selected", _currentDate != null && _firstDate > _currentDate)
-                    .AddClass($"mud-theme-{Color.ToDescriptionString()}")
-                    .Build();
-            }
-
-            if (_firstDate != null && day == _currentDate)
-            {
-                return b.AddClass("mud-selected")
-                    .AddClass("mud-range")
-                    .AddClass("mud-range-start-selected", _firstDate > _currentDate)
-                    .AddClass("mud-range-end-selected", _firstDate < _currentDate)
+                    .AddClass("mud-range-end-selected")
                     .AddClass($"mud-theme-{Color.ToDescriptionString()}")
                     .Build();
             }
 
             if (day == DateTime.Today)
-                return b.AddClass("mud-current").AddClass($"mud-{Color.ToDescriptionString()}-text").Build();
+            {
+                return b.AddClass("mud-current")
+                    .AddClass($"mud-{Color.ToDescriptionString()}-text")
+                    .Build();
+            }
+
+            if(_firstDate == null && _dateRange != null && _dateRange.Start == _dateRange.End && _dateRange.Start == day)
+            {
+                return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
+            }
+
             return b.Build();
         }
 
         protected override async void OnDayClicked(DateTime dateTime)
         {
-            if (_firstDate == null)
+            if (_firstDate == null || _firstDate > dateTime)
             {
                 _firstDate = dateTime;
 
                 return;
             }
 
-            if (_firstDate == dateTime)
-                return;
-
-            DateRange = _firstDate < dateTime ? new DateRange(_firstDate, dateTime) : new DateRange(dateTime, _firstDate);
+            DateRange = new DateRange(_firstDate, dateTime);
 
             _firstDate = null;
             _currentDate = null;
