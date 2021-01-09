@@ -141,7 +141,6 @@ namespace MudBlazor
             if (IsOpen)
             {
                 OnSearch();
-                InvokeAsync(() => ScrollToListItem(_selectedListItemIndex));
             }
             else
             {
@@ -218,7 +217,7 @@ namespace MudBlazor
 
         private string GetItemString(T item)
         {
-            if (item == null) 
+            if (item == null)
                 return string.Empty;
             try
             {
@@ -228,7 +227,7 @@ namespace MudBlazor
             return "null";
         }
 
-        protected virtual void OnInputKeyDown(KeyboardEventArgs args)
+        protected virtual async Task OnInputKeyDown(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
@@ -236,21 +235,21 @@ namespace MudBlazor
                     OnEnterKey();
                     break;
                 case "ArrowDown":
-                    SelectNextItem(+1);
+                    await SelectNextItem(+1);
                     break;
                 case "ArrowUp":
-                    SelectNextItem(-1);
+                    await SelectNextItem(-1);
                     break;
             }
             base.onKeyDown(args);
         }
 
-        private void SelectNextItem(int increment)
+        private async Task SelectNextItem(int increment)
         {
             if (_items == null || _items.Length == 0)
                 return;
             _selectedListItemIndex = Math.Max(0, Math.Min(_items.Length - 1, _selectedListItemIndex + increment));
-            ScrollToListItem(_selectedListItemIndex);
+            await ScrollToListItem(_selectedListItemIndex, increment);
             StateHasChanged();
         }
 
@@ -259,11 +258,31 @@ namespace MudBlazor
         /// </summary>
         private string _componentId = Guid.NewGuid().ToString();
 
-        public async void ScrollToListItem(int index)
+        public async Task ScrollToListItem(int index, int increment)
         {
             string id = GetListItemId(index);
-            await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToFragment", id);
+            //id of the scrolled element
+            //increment 1 down; -1 up
+            //onEdges, last param, boolean. If true, only scrolls when elements reaches top or bottom of container.
+            //If false, scrolls always
+            await JsRuntime
+                .InvokeVoidAsync("scrollHelpers.scrollToListItem", id, increment, true);
             StateHasChanged();
+        }
+
+      
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender ) return;
+            RestoreScrollPosition();
+        }
+
+        //This restores the scroll position after closing the menu and element being 0
+        private void RestoreScrollPosition()
+        {
+            if (_selectedListItemIndex != 0) return;            
+            JsRuntime
+             .InvokeVoidAsync("scrollHelpers.scrollToListItem", GetListItemId(0), 0);
         }
 
         private string GetListItemId(in int index)
@@ -288,7 +307,7 @@ namespace MudBlazor
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value, 
             // resulting in a premature validation. thus, don't call base
             //base.OnBlurred(args);
-    }
+        }
 
         private void CoerceTextToValue()
         {
