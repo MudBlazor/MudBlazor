@@ -13,12 +13,6 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T> CheckedChanged { get; set; }
 
-        protected bool? BoolValue
-        {
-            get => Converter.Set(_value);
-            set => Checked = Converter.Get(value);
-        }
-
         /// <summary>
         /// The state of the component
         /// </summary>
@@ -34,6 +28,12 @@ namespace MudBlazor
                     BeginValidateAfter(CheckedChanged.InvokeAsync(value));
                 }
             }
+        }
+
+        protected bool? BoolValue
+        {
+            get => Converter.Set(_value);
+            set => Checked = Converter.Get(value);
         }
 
         protected override bool SetConverter(Converter<T, bool?> value)
