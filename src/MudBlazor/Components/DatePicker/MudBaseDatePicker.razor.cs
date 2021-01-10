@@ -342,16 +342,15 @@ namespace MudBlazor
             PickerMonth = month;
         }
 
+        protected override void OnInitialized()
+        {
+            _currentView = OpenTo;
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                if (PickerVariant == PickerVariant.Static && _currentView == OpenTo.None)
-                {
-                    _currentView = OpenTo;
-                    StateHasChanged();
-                }
-
                 if (_picker_month == null)
                     _picker_month = StartMonth?.StartOfMonth() ?? GetMonthStart(0);
             }
