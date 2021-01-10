@@ -10,8 +10,8 @@
         <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="@OnFormattedDateClick">@GetFormattedDateString()</MudButton>
     </MudPickerToolbar>
     <MudPickerContent>          
-        <div class="mud-picker-calendar-content @($"mud-picker-calendar-content-{MaxMonthColumns ?? DisplayMonth}")">
-            @for (int displayMonth = 0; displayMonth < DisplayMonth; ++displayMonth)
+        <div class="mud-picker-calendar-content @($"mud-picker-calendar-content-{MaxMonthColumns ?? DisplayMonths}")">
+            @for (int displayMonth = 0; displayMonth < DisplayMonths; ++displayMonth)
             {
                 int tempMonth = displayMonth; //without local variable month names are wrong
 

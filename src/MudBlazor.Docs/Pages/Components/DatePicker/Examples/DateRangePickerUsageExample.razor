@@ -3,3 +3,4 @@
 <MudDateRangePicker Label="Basic range picker" DateRange="@(new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(5).Date))" />
 <MudDateRangePicker Label="Basic range picker (editable)" Editable="true" DateRange="@(new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(5).Date))" />
 <MudDateRangePicker Label="Range picker format" HelperText="For custom cultures" DateFormat="dd/MM/yyyy" DateRange="@(new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(5).Date))" />
+<MudDateRangePicker Label="Custom start month" StartMonth="@DateTime.Now.AddMonths(-1)" DateRange="@(new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(5).Date))" />

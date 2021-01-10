@@ -78,15 +78,23 @@ namespace MudBlazor
         [Parameter] public int ClosingDelay { get; set; } = 100;
 
         /// <summary>
-        /// Number of months to display.
+        /// Number of months to display in the calendar
         /// </summary>
-        [Parameter] public int DisplayMonth { get; set; } = 1;
+        [Parameter] public int DisplayMonths { get; set; } = 1;
 
         /// <summary>
         /// Maximum number of months in one row
         /// </summary>
         [Parameter] public int? MaxMonthColumns { get; set; }
 
+        /// <summary>
+        /// Start month when opening the picker. 
+        /// </summary>
+        [Parameter] public DateTime? StartMonth { get; set; }
+
+        /// <summary>
+        /// Display week numbers according to the <see cref="Culture" /> parameter. If no culture is defined, CultureInfo.CurrentCulture will be used.
+        /// </summary>
         [Parameter] public bool ShowWeekNumbers { get; set; }
 
         /// <summary>
@@ -271,7 +279,7 @@ namespace MudBlazor
         {
             return new CssBuilder("mud-picker-calendar-header")
                 .AddClass($"mud-picker-calendar-header-{month + 1}")
-                .AddClass($"mud-picker-calendar-header-last", month == DisplayMonth - 1)
+                .AddClass($"mud-picker-calendar-header-last", month == DisplayMonths - 1)
                 .Build();
         }
 
@@ -337,8 +345,8 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                if(_picker_month == null)
-                    _picker_month = GetMonthStart(0);
+                if (_picker_month == null)
+                    _picker_month = StartMonth?.StartOfMonth() ?? GetMonthStart(0);
             }
 
             if (firstRender && _currentView == OpenTo.Year)

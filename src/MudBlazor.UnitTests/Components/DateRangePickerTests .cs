@@ -78,12 +78,28 @@ namespace MudBlazor.UnitTests
         public void Open_SelectTheSameDateTwice_RangeStartShouldEqualsEnd()
         {
             var comp = OpenPicker();
-            // clicking a day button to select a date and close
+            // clicking a day button to select a date
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x => x.TrimmedText().Equals("10")).First().Click();
+            // clicking a same date then close
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x => x.TrimmedText().Equals("10")).First().Click();
             comp.Instance.DateRange.Start.Should().Be(comp.Instance.DateRange.End);
+        }
+
+        [Test]
+        public void OpenPickerWithCustomStartMonth_SetDateRange_CheckValue()
+        {
+            var start = DateTime.Now.AddMonths(-1);
+            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.StartMonth), start));
+            // clicking a day buttons to select a range and close
+            comp.FindAll("div.mud-picker-calendar-day > button")
+                .Where(x => x.TrimmedText().Equals("10")).First().Click();
+            comp.FindAll("div.mud-picker-calendar-day > button")
+                .Where(x => x.TrimmedText().Equals("12")).First().Click();
+            //check result
+            comp.Instance.DateRange.Start.Value.Month.Should().Be(start.Month);
+            comp.Instance.DateRange.End.Value.Month.Should().Be(start.Month);
         }
 
         public IRenderedComponent<MudDateRangePicker> OpenPicker(ComponentParameter parameter)
@@ -126,7 +142,7 @@ namespace MudBlazor.UnitTests
         public async Task Open_CloseBySelectingADateRange_CheckClosed()
         {
             var comp = OpenPicker();
-            // clicking a day button to select a date and close
+            // clicking a day buttons to select a range and close
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x=>x.TrimmedText().Equals("10")).First().Click();
             comp.FindAll("div.mud-picker-calendar-day > button")
@@ -141,7 +157,7 @@ namespace MudBlazor.UnitTests
         public async Task Open_SelectEndDateLowerThanStart_CheckNotClosed_SelectRange_CheckClosed()
         {
             var comp = OpenPicker();
-            // clicking a day button to select a date and close
+            // clicking a day buttons to select a range and close
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x => x.TrimmedText().Equals("10")).First().Click();
             comp.FindAll("div.mud-picker-calendar-day > button")

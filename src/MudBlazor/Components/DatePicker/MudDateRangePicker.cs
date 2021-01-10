@@ -15,7 +15,7 @@ namespace MudBlazor
 
         public MudDateRangePicker()
         {
-            DisplayMonth = 2;
+            DisplayMonths = 2;
             //DisableToolbar = true;
         }
 
@@ -40,7 +40,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<DateRange> DateRangeChanged { get; set; }
 
         /// <summary>
-        /// The currently selected date (two-way bindable). If null, then nothing was selected.
+        /// The currently selected range (two-way bindable). If null, then nothing was selected.
         /// </summary>
         [Parameter]
         public DateRange DateRange
