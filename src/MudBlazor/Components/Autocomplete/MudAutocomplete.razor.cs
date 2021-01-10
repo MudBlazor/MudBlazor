@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudAutocomplete<T> : IDisposable
+    public partial class MudAutocomplete<T> : MudStringInput<T>, IDisposable
     {
         [Inject] IJSRuntime JsRuntime { get; set; }
 
