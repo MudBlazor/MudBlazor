@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public abstract class MudDebouncedInput<T> : MudStringInput<T>, IDisposable
+    public abstract class MudDebouncedInput<T> : MudBaseInput<T>, IDisposable
     {
         private Timer _timer;
 

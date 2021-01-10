@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
-    public abstract class MudStringInput<T> : MudFormComponent<T, string>
+    public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
-        protected MudStringInput() : base(new DefaultConverter<T>()) { }
+        protected MudBaseInput() : base(new DefaultConverter<T>()) { }
 
         /// <summary>
         /// If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
