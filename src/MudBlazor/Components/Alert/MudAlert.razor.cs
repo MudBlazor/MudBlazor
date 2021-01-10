@@ -77,17 +77,12 @@ namespace MudBlazor
                     _ => throw new ArgumentOutOfRangeException(nameof(Severity)),
                 };
             }
-            }
+        }
 
         /// <summary>
         /// Raised when the alert is clicked
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
-
-        private void OnClicked(MouseEventArgs ev)
-        {
-            OnClick.InvokeAsync(ev);
-        }
     }
 }
    
