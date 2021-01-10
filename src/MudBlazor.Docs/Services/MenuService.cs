@@ -42,6 +42,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Drawer", typeof(MudDrawer))
             .AddItem("Link", typeof(MudLink))
             .AddItem("Menu", typeof(MudMenu))
+            .AddItem("Message Box", typeof(MudMessageBox))
             .AddItem("Nav Menu", typeof(MudNavMenu))
             .AddItem("Tabs", typeof(MudTabs))
             .AddItem("Progress", typeof(MudProgressCircular))
@@ -64,13 +65,14 @@ namespace MudBlazor.Docs.Services
             .AddItem("Overlay", typeof(MudOverlay))
             .AddItem("Highlighter", typeof(MudHighlighter))
             .AddItem("Element", typeof(MudElement))
-            .AddItem("FileUpload", typeof(MudFileUploader))
+            .AddItem("Focus Trap", typeof(MudFocusTrap))
+            .AddItem("File Upload", typeof(MudFileUploader))
             .AddItem("TreeView", typeof(MudTreeView))
 
             //GROUPS
 
             //Inputs
-            .AddNavGroup("Form Inputs & controls", false, new DocsComponents()
+            .AddNavGroup("Form Inputs & Controls", false, new DocsComponents()
                 .AddItem("Radio", typeof(MudRadio))
                 .AddItem("Checkbox", typeof(MudCheckBox<T>))
                 .AddItem("Select", typeof(MudSelect<T>))

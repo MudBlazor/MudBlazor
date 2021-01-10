@@ -148,6 +148,25 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
+        public void OpenToYear_ClickYear_CheckMonthsShown_Close_Reopen_CheckYearsShown()
+        {
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Year));
+            comp.Instance.Date.Should().BeNull();
+            // should show years
+            comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-year").First().Click();
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+            // clicking outside to close
+            comp.Find("div.mud-overlay").Click();
+            // should not be open any more
+            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+            comp.Find("input").Click();
+            // should show years
+            comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);            
+        }
+
+
+        [Test]
         public void OpenToMonth_CheckMonthsShown()
         {
             var comp = OpenPicker(Parameter("OpenTo", OpenTo.Month));

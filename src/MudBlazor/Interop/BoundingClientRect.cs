@@ -15,4 +15,6 @@ namespace MudBlazor.Interop
         public double Bottom { get; set; }
         public double Left { get; set; }
     }
+
 }
+

@@ -4,12 +4,16 @@ window.scrollHelpers = {
         let element = document.getElementById(elementId);
 
         if (element) {
-          
-            element.scrollIntoView({
-                behavior,
-                block: 'center',
-                inline: 'start',
-            });
+
+            element.scrollIntoView({ behavior, block: 'center', inline: 'start' });
+        }
+    },
+    scrollToYear: (elementId) => {
+        var element = document.getElementById(elementId);
+
+        if (element) {
+            element.parentNode.scrollTop = element.offsetTop - element.parentNode.offsetTop - element.scrollHeight * 3;
+
         }
     },
 

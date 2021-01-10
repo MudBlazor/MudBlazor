@@ -2,7 +2,7 @@
 @inject ISnackbar Snackbar
 @namespace MudBlazor.Docs.Examples
 
-<MudTable Items="@PeriodicTable.GetElements()" Dense="@dense" Hover="@hover" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" CommitEditCommand="@samplecmd" >
+<MudTable Items="@PeriodicTable.GetElements()" Dense="@dense" Hover="@hover" ReadOnly="@ronly" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" CommitEditCommand="@samplecmd">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudToolBarSpacer />
@@ -33,16 +33,16 @@
     <RowEditingTemplate>
         <MudTd>@context.Number</MudTd>
         <MudTd>
-            <MudTextField @bind-Value="@context.Sign" />
+            <MudTextField @bind-Value="@context.Sign" Required/>
         </MudTd>
         <MudTd>
-            <MudTextField @bind-Value="@context.Name" />
+            <MudTextField @bind-Value="@context.Name" Required/>
         </MudTd>
         <MudTd>
-            <MudTextField @bind-Value="@context.Position" />
+            <MudTextField @bind-Value="@context.Position" Required/>
         </MudTd>
         <MudTd>
-            <MudTextField @bind-Value="@context.Molar" />
+            <MudTextField @bind-Value="@context.Molar" Required/>
         </MudTd>
     </RowEditingTemplate>
     <PagerContent>
@@ -51,39 +51,38 @@
 </MudTable>
 <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
 <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
+<MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
 <MudText Inline="true">Selected: @selectedItem?.Name</MudText>
 
-@code {
-    private bool dense = false;
-    private bool hover = true;
-    private string searchString = "";
-    private Element selectedItem = null;
-    private HashSet<Element> selectedItems = new HashSet<Element>();
+@code { private bool dense = false;
+            private bool hover = true;
+            private bool ronly = false;
+            private string searchString = "";
+            private Element selectedItem = null;
+            private HashSet<Element> selectedItems = new HashSet<Element>();
 
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        samplecmd = new Utilities.SampleCommand(SampleCommand_Executed);
-    }
+            protected override void OnInitialized()
+            {
+                base.OnInitialized();
+                samplecmd = new Utilities.SampleCommand(SampleCommand_Executed);
+            }
 
-    private bool FilterFunc(Element element)
-    {
-        if (string.IsNullOrWhiteSpace(searchString))
-            return true;
-        if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
-            return true;
-        return false;
-    }
+            private bool FilterFunc(Element element)
+            {
+                if (string.IsNullOrWhiteSpace(searchString))
+                    return true;
+                if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
+                if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
+                    return true;
+                return false;
+            }
 
-    private Utilities.SampleCommand samplecmd;
+            private Utilities.SampleCommand samplecmd;
 
-    private void SampleCommand_Executed(object parameter)
-    {
-        Snackbar.Add($"Commit Edit Command Executed for parameter '{parameter.ToString()}'"); 
-    }
-
-}
+            private void SampleCommand_Executed(object parameter)
+            {
+                Snackbar.Add($"Commit Edit Command Executed for parameter '{parameter.ToString()}'");
+            } }

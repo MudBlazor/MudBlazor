@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="bunit" Version="1.0.0-preview-01" />
-    <PackageReference Include="coverlet.msbuild" Version="2.9.0">
+    <PackageReference Include="coverlet.msbuild" Version="3.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -38,8 +38,8 @@
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
   </ItemGroup>
 
-  <Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest" Condition="Exists('./TestResults/coverage.cobertura.xml')" >
-    <ReportGenerator ReportFiles="./TestResults/coverage.cobertura.xml" TargetDirectory="./TestResults/Report" HistoryDirectory="./TestResults/ReportHistory" />
+  <Target Name="GenerateHtmlCoverageReport" AfterTargets="GenerateCoverageResultAfterTest" Condition="'@(CoverletReport->Count())' != 0" >
+    <ReportGenerator ReportFiles="@(CoverletReport)" TargetDirectory="./TestResults/Report" HistoryDirectory="./TestResults/ReportHistory" />
   </Target>
 
 </Project>

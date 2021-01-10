@@ -134,6 +134,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment PagerContent { get; set; }
 
+
+        /// <summary>
+        /// Locks Inline Edit mode, if true.
+        /// </summary>
+        [Parameter] public bool ReadOnly { get; set; } = false;
+
         /// <summary>
         /// Button click event.
         /// </summary>
@@ -217,6 +223,8 @@ namespace MudBlazor
         internal abstract Task InvokeServerLoadFunc();
 
         internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
+
+        internal Interfaces.IForm Validator { get; } = new TableRowValidator();
 
     }
 }
