@@ -127,9 +127,13 @@ namespace MudBlazor
                     .Build();
             }
 
-            if(_firstDate == null && _dateRange != null && _dateRange.Start == _dateRange.End && _dateRange.Start == day)
+            if (_firstDate == null && _dateRange != null && _dateRange.Start == _dateRange.End && _dateRange.Start == day)
             {
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
+            }
+            else if (_firstDate != null)
+            {
+                return b.AddClass("mud-range").Build();
             }
 
             return b.Build();

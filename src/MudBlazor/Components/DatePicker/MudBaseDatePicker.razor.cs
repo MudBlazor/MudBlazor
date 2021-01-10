@@ -104,7 +104,7 @@ namespace MudBlazor
 
         protected virtual bool IsRange { get; } = false;
 
-        private OpenTo _currentView;
+        private OpenTo _currentView = OpenTo.Date;
         
         private void OnPickerOpened()
         {
