@@ -7,7 +7,6 @@ namespace MudBlazor
 {
     public partial class MudBadge : MudComponentBase
     {
-        
         protected string Classname =>
         new CssBuilder("mud-badge")
           .AddClass(Class)
@@ -18,7 +17,7 @@ namespace MudBlazor
             .AddClass("mud-badge-dot", Dot)
             .AddClass("mud-badge-bordered", Bordered)
             .AddClass("mud-badge-icon", !String.IsNullOrEmpty(Icon) && !Dot)
-            .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+            .AddClass("mud-theme-" + Color.ToDescriptionString())
             .AddClass("mud-badge-top", !Bottom)
             .AddClass("mud-badge-bottom", Bottom)
             .AddClass("mud-badge-right", !Left)
@@ -62,12 +61,12 @@ namespace MudBlazor
         [Parameter] public string Icon { get; set; }
 
         /// <summary>
-        /// Max lenght of content to show.
+        /// Max value to show when content is integer type.
         /// </summary>
         [Parameter] public int Max { get; set; } = 99;
 
         /// <summary>
-        /// Content you want as text inside the badge.
+        /// Content you want inside the badge. Supported types are string and integer.
         /// </summary>
         [Parameter] public object Content { get; set; }
 
@@ -80,27 +79,22 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if (Content != null)
+            if (Content is string stringContent)
             {
-                if (Content is String)
+                content = stringContent;
+            }
+            else if (Content is int numberContent)
+            {
+                if (numberContent > Max)
                 {
-                    content = Content as String;
+                    content = Max + "+";
                 }
-                else if (Content is int)
+                else
                 {
-                    int numberContent = (int)Content;
-
-                    if (numberContent > Max)
-                    {
-                        content = $"{Max.ToString()}+";
-                    }
-                    else
-                    {
-                        content = numberContent.ToString();
-                    }
+                    content = numberContent.ToString();
                 }
             }
-            else if(Content == null)
+            else
             {
                 content = null;
             }
