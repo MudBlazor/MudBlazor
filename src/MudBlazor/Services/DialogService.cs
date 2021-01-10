@@ -96,9 +96,6 @@ namespace MudBlazor
             return dialogReference;
         }
 
-        public Task<bool?> ShowMessageBox(string title, string message) =>
-            ShowMessageBox(new MessageBoxOptions() {Title = title, Message = message});
-
         public Task<bool?> ShowMessageBox(string title, string message, string yesText = "OK",
             string noText = null, string cancelText = null, DialogOptions options = null)
         {
