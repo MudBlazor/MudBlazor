@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
-    public abstract class MudBaseInput<T> : MudFormComponent<T, string>
+    public abstract class MudStringInput<T> : MudFormComponent<T, string>
     {
-        protected MudBaseInput() : base(new DefaultConverter<T>()) { }
+        protected MudStringInput() : base(new DefaultConverter<T>()) { }
 
         /// <summary>
         /// If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
@@ -72,6 +72,7 @@ namespace MudBlazor
         /// Button click event if set and Adornment used.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
+
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
         /// </summary>
@@ -108,7 +109,7 @@ namespace MudBlazor
                 _text = text;
                 if (updateValue)
                     UpdateValueProperty(false);
-                TextChanged.InvokeAsync(_text);
+                TextChanged.InvokeAsync(_text).FireAndForget();
             }
         }
 
@@ -131,15 +132,15 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
-        protected virtual void onKeyDown(KeyboardEventArgs obj) => OnKeyDown.InvokeAsync(obj);
+        protected virtual void onKeyDown(KeyboardEventArgs obj) => OnKeyDown.InvokeAsync(obj).FireAndForget();
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
-        protected virtual void onKeyPress(KeyboardEventArgs obj) => OnKeyPress.InvokeAsync(obj);
+        protected virtual void onKeyPress(KeyboardEventArgs obj) => OnKeyPress.InvokeAsync(obj).FireAndForget();
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
-        protected virtual void onKeyUp(KeyboardEventArgs obj) => OnKeyUp.InvokeAsync(obj);
+        protected virtual void onKeyUp(KeyboardEventArgs obj) => OnKeyUp.InvokeAsync(obj).FireAndForget();
 
         /// <summary>
         /// Fired when the Value property changes. 

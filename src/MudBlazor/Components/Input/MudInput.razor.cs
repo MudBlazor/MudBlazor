@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudInput<T> : MudBaseInput<T>
+    public partial class MudInput<T>
     {
         protected string Classname =>
             new CssBuilder("mud-input")

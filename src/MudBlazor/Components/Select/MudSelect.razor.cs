@@ -8,7 +8,7 @@ using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor
 {
-    public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect
+    public partial class MudSelect<T> : IMudSelect
     {
         private HashSet<T> _selectedValues;
 
