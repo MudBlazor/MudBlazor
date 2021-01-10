@@ -61,7 +61,9 @@
                             <div class="mud-picker-calendar-header-day">
                                 @if (ShowWeekNumbers)
                                 {
-                                    <MudText Typo="Typo.caption" Class="mud-week-number"></MudText>
+                                    <div class="mud-picker-calendar-week">
+                                        <MudText Typo="Typo.caption" Class="mud-picker-calendar-week-text"></MudText>
+                                    </div>
                                 }
                                 @foreach (var dayname in GetAbbreviatedDayNames())
                                 {
@@ -78,7 +80,9 @@
                                     <div class="mud-picker-calendar-week">
                                         @if (ShowWeekNumbers)
                                         {
-                                            <MudText Typo="Typo.caption" Class="mud-week-number">@GetWeekNumber(tempMonth, tempWeek)</MudText>
+                                            <div class="mud-picker-calendar-week">
+                                                <MudText class="mud-picker-calendar-week-text" Typo="Typo.caption">@GetWeekNumber(tempMonth, tempWeek)</MudText>
+                                            </div>
                                         }
                                         @foreach (var day in GetWeek(tempMonth, tempWeek))
                                         {

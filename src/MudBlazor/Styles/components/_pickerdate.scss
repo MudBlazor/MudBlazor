@@ -316,8 +316,15 @@
     }
 }
 
-.mud-week-number {
-    width: 15px;
-    margin: auto 0 !important;
-    color: var(--mud-palette-text-secondary);
+.mud-picker-calendar-week {
+    display: flex;
+    margin: 0 5px;
+    justify-content: center;
+    align-items: center;
+
+    .mud-picker-calendar-week-text {
+        width: 15px;
+        margin-top: 2px !important;
+        color: var(--mud-palette-text-disabled);
+    }
 }

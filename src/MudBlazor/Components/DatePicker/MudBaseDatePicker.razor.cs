@@ -104,7 +104,7 @@ namespace MudBlazor
 
         protected virtual bool IsRange { get; } = false;
 
-        private OpenTo _currentView = OpenTo.Date;
+        private OpenTo _currentView;
         
         private void OnPickerOpened()
         {
@@ -154,15 +154,16 @@ namespace MudBlazor
                 throw new ArgumentException("Index must be between 0 and 5");
             var month_first = GetMonthStart(month);
             var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
-            for (int i = 0; i < 7; i++)
+            //january 1st
+            if (month_first.Month == 1 && index == 0)
             {
-                if (week_first.AddDays(i).Month == month_first.Month)
-                    break;
-                else if (i == 6)
-                    return "";
+                week_first = month_first;
             }
 
-            return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(week_first,
+            if (week_first.Month != month_first.Month && week_first.AddDays(6).Month != month_first.Month)
+                return "";
+
+            return Culture.Calendar.GetWeekOfYear(week_first,
                 Culture.DateTimeFormat.CalendarWeekRule, FirstDayOfWeek ?? Culture.DateTimeFormat.FirstDayOfWeek).ToString();
         }
 
@@ -345,6 +346,12 @@ namespace MudBlazor
         {
             if (firstRender)
             {
+                if (PickerVariant == PickerVariant.Static && _currentView == OpenTo.None)
+                {
+                    _currentView = OpenTo;
+                    StateHasChanged();
+                }
+
                 if (_picker_month == null)
                     _picker_month = StartMonth?.StartOfMonth() ?? GetMonthStart(0);
             }
