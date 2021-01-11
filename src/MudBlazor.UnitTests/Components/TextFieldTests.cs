@@ -235,6 +235,24 @@ namespace MudBlazor.UnitTests
             textfield.Value.Should().Be("By");
             textfield.Text.Should().Be("B");
         }
+
+        [Test]
+        public async Task TextField_Should_FireValueChanged()
+        {
+            string changed_value=null;
+            string changed_text = null;
+            var comp = ctx.RenderComponent<MudTextField<string>>(
+                EventCallback<string>("ValueChanged", x=> changed_value=x),
+                EventCallback<string>("TextChanged", x => changed_text = x)
+            );
+            var textfield = comp.Instance;
+            await comp.InvokeAsync(() => textfield.Value = "A");
+            changed_value.Should().Be("A");
+            changed_text.Should().Be("A");
+            await comp.InvokeAsync(() => textfield.Text = "B");
+            changed_value.Should().Be("B");
+            changed_text.Should().Be("B");
+        }
     }
 
 }
