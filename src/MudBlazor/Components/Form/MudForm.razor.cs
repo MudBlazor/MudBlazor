@@ -124,10 +124,12 @@ namespace MudBlazor
             foreach (var error in _touchedFormControls.Keys.SelectMany(control => control.ValidationErrors))
                 _errors.Add(error);
             var old_valid = _valid;
-            // form can only be valid if none have an error and all have been validated at least once!
+            // form can only be valid if:
+            // - none have an error
+            // - all required fields have been touched (and thus validated)
             var no_errors = _touchedFormControls.Keys.All(x => x.Error == false);
-            var all_validated = _touchedFormControls.Values.All(x => x == true);
-            _valid = no_errors && all_validated;
+            var required_all_touched = _touchedFormControls.Where(pair => pair.Key.Required).All(pair => pair.Value == true);
+            _valid = no_errors && required_all_touched;
             try
             {
                 _shouldRender = false;
