@@ -109,7 +109,7 @@ namespace MudBlazor
                 _text = text;
                 if (updateValue)
                     UpdateValueProperty(false);
-                TextChanged.InvokeAsync(_text).FireAndForget();
+                TextChanged.InvokeAsync(_text).AndForget();
             }
         }
 
@@ -132,15 +132,15 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
-        protected virtual void onKeyDown(KeyboardEventArgs obj) => OnKeyDown.InvokeAsync(obj).FireAndForget();
+        protected virtual void onKeyDown(KeyboardEventArgs obj) => OnKeyDown.InvokeAsync(obj).AndForget();
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
-        protected virtual void onKeyPress(KeyboardEventArgs obj) => OnKeyPress.InvokeAsync(obj).FireAndForget();
+        protected virtual void onKeyPress(KeyboardEventArgs obj) => OnKeyPress.InvokeAsync(obj).AndForget();
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
-        protected virtual void onKeyUp(KeyboardEventArgs obj) => OnKeyUp.InvokeAsync(obj).FireAndForget();
+        protected virtual void onKeyUp(KeyboardEventArgs obj) => OnKeyUp.InvokeAsync(obj).AndForget();
 
         /// <summary>
         /// Fired when the Value property changes. 

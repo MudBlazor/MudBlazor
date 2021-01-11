@@ -3,14 +3,26 @@ using System.Threading.Tasks;
 
 namespace MudBlazor
 {
-    internal static class TaskExtensions
+    public enum TaskOption
     {
-        public static void FireAndForget(this Task task)
+        None,
+        Safe
+    }
+
+    public static class TaskExtensions
+    {
+        /// <summary>
+        /// Task will be awaited and exceptions will be managed by the Blazor framework.
+        /// </summary>
+        public static async void AndForget(this Task task)
         {
-            task.FireAndForget(ex => Console.WriteLine(ex));
+            await task;
         }
 
-        public static async void FireAndForget(this Task task, Action<Exception> handler)
+        /// <summary>
+        /// Task will be awaited and exceptions will be logged to console (TaskOption.Safe) or managed by the Blazor framework (TaskOption.None).
+        /// </summary>
+        public static async void AndForget(this Task task, TaskOption option)
         {
             try
             {
@@ -18,16 +30,25 @@ namespace MudBlazor
             }
             catch(Exception ex)
             {
-                handler(ex);
+                if (option != TaskOption.Safe)
+                    throw;
+
+                Console.WriteLine(ex);
             }
         }
 
-        public static void FireAndForget(this ValueTask task)
+        /// <summary>
+        /// ValueTask will be awaited and exceptions will be managed by the Blazor framework.
+        /// </summary>
+        public static async void AndForget(this ValueTask task)
         {
-            task.FireAndForget(ex => Console.WriteLine(ex));
+            await task;
         }
 
-        public static async void FireAndForget(this ValueTask task, Action<Exception> handler)
+        /// <summary>
+        /// ValueTask will be awaited and exceptions will be logged to console (TaskOption.Safe) or managed by the Blazor framework (TaskOption.None).
+        /// </summary>
+        public static async void AndForget(this ValueTask task, TaskOption option)
         {
             try
             {
@@ -35,7 +56,10 @@ namespace MudBlazor
             }
             catch (Exception ex)
             {
-                handler(ex);
+                if (option != TaskOption.Safe)
+                    throw;
+
+                Console.WriteLine(ex);
             }
         }
     }
