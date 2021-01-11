@@ -21,8 +21,7 @@
                     @foreach (T item in _items)
                     {
                         bool is_selected = i == _selectedListItemIndex;
-                        //TODO Should this have a @key? because is inside a loop
-                        <MudListItem id="@GetListItemId(i)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
+                        <MudListItem @key="@item" id="@GetListItemId(i)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
                             @if (ItemTemplate == null)
                             {
                                 @GetItemString(item)
