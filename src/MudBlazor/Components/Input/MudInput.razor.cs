@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -51,6 +52,17 @@ namespace MudBlazor
             //The context must be a WebElementReferenceContext otherwise the JSRuntime is not available otherwise we just return a completed task and pretend everything is ok
             return _elementReference.Context is WebElementReferenceContext ? _elementReference.FocusAsync() : ValueTask.CompletedTask;
         }
+
+        public override ValueTask SelectAsnyc()
+        {
+            return _elementReference.Context is WebElementReferenceContext ? JSRuntime.InvokeVoidAsync("mbSelectHelper.select", _elementReference) : ValueTask.CompletedTask;
+        }
+
+        public override ValueTask SelectRangeAsync(int pos1, int pos2)
+        {
+            return _elementReference.Context is WebElementReferenceContext ? JSRuntime.InvokeVoidAsync("mbSelectHelper.selectRange", _elementReference, pos1, pos2) : ValueTask.CompletedTask;
+        }
+
         /// <summary>
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>

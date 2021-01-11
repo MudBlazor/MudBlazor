@@ -1,7 +1,9 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
@@ -95,6 +97,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public int Lines { get; set; } = 1;
 
+        [Inject] public IJSRuntime JSRuntime { get; set; }
+
         protected bool _settingText;
         protected string _text;
         [Parameter]
@@ -129,6 +133,10 @@ namespace MudBlazor
         /// </summary>
         /// <returns>The ValueTask</returns>
         public abstract ValueTask FocusAsync();
+
+        public abstract ValueTask SelectAsnyc();
+
+        public abstract ValueTask SelectRangeAsync(int pos1, int pos2);
 
         /// <summary>
         /// Text change hook for descendants  
@@ -306,7 +314,7 @@ namespace MudBlazor
             base.OnInitialized();
             // this is important for value type T's where the initial Value is equal to the default(T) because the way the Value setter is built,
             // it won't cause an update if the incoming value is equal to the internal value. That's why we trigger that update here
-            GenericValueChanged(Value); 
+            GenericValueChanged(Value);
         }
 
         protected override Task OnInitializedAsync()

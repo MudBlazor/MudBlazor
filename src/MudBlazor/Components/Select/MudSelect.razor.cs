@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
@@ -282,6 +283,16 @@ namespace MudBlazor
         public override ValueTask FocusAsync()
         {
             return _elementReference.FocusAsync();
+        }
+
+        public override ValueTask SelectAsnyc()
+        {
+            return _elementReference.SelectAsnyc();
+        }
+
+        public override ValueTask SelectRangeAsync(int pos1, int pos2)
+        {
+            return _elementReference.SelectRangeAsync(pos1, pos2);
         }
     }
 
