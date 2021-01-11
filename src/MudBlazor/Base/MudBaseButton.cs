@@ -3,6 +3,7 @@ using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
+using static System.String;
 
 namespace MudBlazor
 {
@@ -61,16 +62,18 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            //default tag for a MudButton is "button"
-            if (string.IsNullOrWhiteSpace(HtmlTag))
-            {
-                HtmlTag = "button";
-            }
-            //But if Link property is set, it changes to an anchor element automatically
-            if (!string.IsNullOrWhiteSpace(Link))
+            // Use anchor element if Link property is set
+            if (!IsNullOrWhiteSpace(Link))
             {
                 HtmlTag = "a";
             }
+            else
+                // Default tag for a MudButton is "button" if no HtmlTag defined
+                if (IsNullOrWhiteSpace(HtmlTag))
+                {
+                    HtmlTag = "button";
+                }
+
             base.OnInitialized();
         }
     }

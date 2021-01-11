@@ -40,7 +40,21 @@
             </MudText>
             <br />
             <MudText Typo="@Typo.body1">
+                After uploading the files, you will receive an <CodeInline>IFileListEntry[]</CodeInline> and then you will have to manage the upload or make the appropriate validations
+            </MudText>
+            <br />
+            <br />
+
+            <MudText Typo="@Typo.body1">
                 If your project is .Net 5.0, InputFile is a native component and you don't need to install it.
+                See more info
+                <MudButton Variant="Variant.Text"
+                           Color="Color.Primary"
+                           EndIcon="@Filled.Info"
+                           Link="https://docs.microsoft.com/en-us/aspnet/core/blazor/file-uploads?view=aspnetcore-5.0" target="_blank" rel="noopener noreferrer">
+                   here
+                </MudButton>
+
             </MudText>
         </Description>
     </DocsPageHeader>
@@ -53,7 +67,7 @@
             <SectionContent DarkenBackground="true">
                 <FileUploadButtonExample />
             </SectionContent>
-            <SectionSource Code="FileUploadButtonExample" GitHubFolderName="Button" />
+            <SectionSource ShowCode="false" Code="FileUploadButtonExample" GitHubFolderName="Button" />
         </DocsPageSection>
 
         <DocsPageSection>
@@ -64,7 +78,30 @@
             <SectionContent FullWidth="true" DarkenBackground="true">
                 <FileUploadIconButtonExample />
             </SectionContent>
-            <SectionSource Code="FileUploadIconButtonExample" GitHubFolderName="Button" />
+            <SectionSource ShowCode="false" Code="FileUploadIconButtonExample" GitHubFolderName="Button" />
+        </DocsPageSection>
+
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Validation</Title>
+                <Description>Use the <CodeInline>accept</CodeInline> attribute to limit the type of files you want</Description>
+            </SectionHeader>            
+            <SectionContent FullWidth="true" DarkenBackground="true">
+                <FileUploadValidationExample />
+            </SectionContent>
+            <SectionSource ShowCode="false"  Code="FileUploadValidationExample" GitHubFolderName="Button" SnippetId="" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Drag and Drop Example</Title>
+                <Description>Using the example below, you can compose a drag and drop uploader</Description>
+            </SectionHeader>            
+            <SectionContent FullWidth="true" DarkenBackground="true">
+                <DragAndDropFileUploadExample />
+            </SectionContent>
+            <SectionSource ShowCode="false"  Code="DragAndDropFileUploadExample" GitHubFolderName="Button" SnippetId="" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

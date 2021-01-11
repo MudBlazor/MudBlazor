@@ -134,31 +134,39 @@ namespace MudBlazor
         /// </summary>
         protected T _value;
 
-        // These are the call-and-forget methods to launch an async validation process.
+        // These are the fire-and-forget methods to launch an async validation process.
         // After each async step, we make sure the current Value of the component has not changed while
         // async code was executed to avoid race condition which could lead to incorrect validation results.
-        protected async void BeginValidateAfter(Task task)
+        protected void BeginValidateAfter(Task task)
         {
-            var value = _value;
-
-            await task;
-
-            if (EqualityComparer<T>.Default.Equals(value, _value))
+            ((Func<Task>)(async () =>
             {
-                BeginValidate();
-            }
+                var value = _value;
+
+                await task;
+
+                if (EqualityComparer<T>.Default.Equals(value, _value))
+                {
+                    BeginValidate();
+                }
+            }))
+            ().FireAndForget();
         }
 
-        protected async void BeginValidate()
+        protected void BeginValidate()
         {
-            var value = _value;
-
-            await Validate();
-
-            if (EqualityComparer<T>.Default.Equals(value, _value))
+            ((Func<Task>)(async () =>
             {
-                EditFormValidate();
-            }
+                var value = _value;
+
+                await Validate();
+
+                if (EqualityComparer<T>.Default.Equals(value, _value))
+                {
+                    EditFormValidate();
+                }
+            }))
+            ().FireAndForget();
         }
 
         /// <summary>

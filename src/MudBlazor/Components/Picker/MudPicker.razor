@@ -7,8 +7,20 @@
 <div class="@PickerClass">
     @if (PickerVariant != PickerVariant.Static)
     {
-        <MudTextField Label="@Label" @bind-Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" 
-                      @onclick="@(() => { if (!Editable) ToggleOpen(); })" OnAdornmentClick="ToggleOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
+        @if (!IsRange) 
+        { 
+            <MudTextField Label="@Label" @bind-Text="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string"
+                          @onclick="@(() => { if (!Editable) ToggleOpen(); })" OnAdornmentClick="ToggleOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
+        }
+        else 
+        {
+            <MudInputControl Label="@Label" Variant="@InputVariant" HelperText="@HelperText" Disabled="@Disabled" @onclick="@(() => { if (!Editable) ToggleOpen(); })">
+                <InputContent>
+                    <MudRangeInput @attributes="UserAttributes" InputType="@InputType.Text" Class="@PickerInputClass" Style="@Style" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string"
+                                   @bind-Text="@Value" Disabled=@Disabled Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" OnAdornmentClick="ToggleOpen"/>
+                </InputContent>
+            </MudInputControl>
+        }
     }
     <CascadingValue Value="@this" IsFixed="true">
         @if (IsOpen && PickerVariant != PickerVariant.Dialog)

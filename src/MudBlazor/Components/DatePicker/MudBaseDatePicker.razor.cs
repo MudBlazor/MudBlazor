@@ -9,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDatePicker : MudBasePicker
+    public abstract partial class MudBaseDatePicker : MudBasePicker
     {
         [Inject] IJSRuntime JsRuntime { get; set; }
         /// <summary>
@@ -31,45 +31,6 @@ namespace MudBlazor
         /// Sets the Input Icon.
         /// </summary>
         [Parameter] public string InputIcon { get; set; } = Icons.Material.Event;
-
-        protected DateTime? _date;
-
-        /// <summary>
-        /// The currently selected date (two-way bindable). If null, then nothing was selected.
-        /// </summary>
-        [Parameter] public DateTime? Date
-        {
-            get => _date;
-            set
-            {
-                if (value == _date)
-                    return;
-                if (_setting_date)
-                    return;
-                _setting_date = true;
-                try
-                {
-                    _date = value;
-                    if ((!string.IsNullOrEmpty(DateFormat)) && _date.HasValue)
-                        Value = _date.Value.ToString(DateFormat);
-                    else
-                        Value = _date.ToIsoDateString();
-                    InvokeAsync(StateHasChanged);
-                    DateChanged.InvokeAsync(value);
-                }
-                finally
-                {
-                    _setting_date = false;
-                }
-            }
-        }
-
-        private bool _setting_date;
-
-        /// <summary>
-        /// Fired when the DateFormat changes.
-        /// </summary>
-        [Parameter] public EventCallback<DateTime?> DateChanged { get; set; }
 
         /// <summary>
         /// String Format for selected date view
@@ -117,9 +78,31 @@ namespace MudBlazor
         [Parameter] public int ClosingDelay { get; set; } = 100;
 
         /// <summary>
+        /// Number of months to display in the calendar
+        /// </summary>
+        [Parameter] public int DisplayMonths { get; set; } = 1;
+
+        /// <summary>
+        /// Maximum number of months in one row
+        /// </summary>
+        [Parameter] public int? MaxMonthColumns { get; set; }
+
+        /// <summary>
+        /// Start month when opening the picker. 
+        /// </summary>
+        [Parameter] public DateTime? StartMonth { get; set; }
+
+        /// <summary>
+        /// Display week numbers according to the <see cref="Culture" /> parameter. If no culture is defined, CultureInfo.CurrentCulture will be used.
+        /// </summary>
+        [Parameter] public bool ShowWeekNumbers { get; set; }
+
+        /// <summary>
         /// Reference to the Picker, initialized via @ref
         /// </summary>
-        private MudPicker Picker;
+        protected MudPicker Picker;
+
+        protected virtual bool IsRange { get; } = false;
 
         private OpenTo _currentView;
         
@@ -129,27 +112,18 @@ namespace MudBlazor
             if(_currentView == OpenTo.Year)
                 _scrollToYearAfterRender=true;
         }
-
-        protected override void StringValueChanged(string value)
-        {
-            // update the date property
-            if (DateTime.TryParse(value, out var date))
-                Date = date;
-            else
-                Date = null;
-        }
-
+        
         /// <summary>
         /// Get the first of the month to display
         /// </summary>
         /// <returns></returns>
-        protected DateTime GetMonthStart() => _picker_month == null ? DateTime.Today.StartOfMonth() : _picker_month.Value;
+        protected DateTime GetMonthStart(int month) => _picker_month == null ? DateTime.Today.AddMonths(month).StartOfMonth() : _picker_month.Value.AddMonths(month);
 
         /// <summary>
         /// Get the last of the month to display
         /// </summary>
         /// <returns></returns>
-        protected DateTime GetMonthEnd() => _picker_month == null ? DateTime.Today.EndOfMonth() : _picker_month.Value.EndOfMonth();
+        protected DateTime GetMonthEnd(int month) => _picker_month == null ? DateTime.Today.AddMonths(month).EndOfMonth() : _picker_month.Value.AddMonths(month).EndOfMonth();
 
         protected DayOfWeek GetFirstDayOfWeek()
         {
@@ -161,42 +135,46 @@ namespace MudBlazor
         /// <summary>
         /// Gets the n-th week of the currently displayed month. 
         /// </summary>
+        /// <param name="month">offset from _picker_month</param>
         /// <param name="index">between 0 and 4</param>
         /// <returns></returns>
-        protected IEnumerable<DateTime> GetWeek(int index)
+        protected IEnumerable<DateTime> GetWeek(int month, int index)
         {
             if (index < 0 || index > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
-            var month_first = GetMonthStart();
+            var month_first = GetMonthStart(month);
             var week_first = month_first.AddDays(index*7).StartOfWeek(GetFirstDayOfWeek( ));
             for (int i = 0; i < 7; i++)
                 yield return week_first.AddDays(i);
         }
 
-        protected string GetDayClasses(DateTime day)
+        private string GetWeekNumber(int month, int index)
         {
-            var b = new CssBuilder("mud-day");
-            if (day < GetMonthStart() || day > GetMonthEnd())
-                return b.AddClass("mud-hidden").Build();
-            if (_date.HasValue && _date.Value.Date == day)
-                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
-            if (day == DateTime.Today)
-                return b.AddClass("mud-current").AddClass($"mud-{Color.ToDescriptionString()}-text").Build();
-            return b.Build();
+            if (index < 0 || index > 5)
+                throw new ArgumentException("Index must be between 0 and 5");
+            var month_first = GetMonthStart(month);
+            var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
+            //january 1st
+            if (month_first.Month == 1 && index == 0)
+            {
+                week_first = month_first;
+            }
+
+            if (week_first.Month != month_first.Month && week_first.AddDays(6).Month != month_first.Month)
+                return "";
+
+            return Culture.Calendar.GetWeekOfYear(week_first,
+                Culture.DateTimeFormat.CalendarWeekRule, FirstDayOfWeek ?? Culture.DateTimeFormat.FirstDayOfWeek).ToString();
         }
+
+        protected abstract string GetDayClasses(int month, DateTime day);
 
         /// <summary>
         /// User clicked on a day
         /// </summary>
-        protected async void OnDayClicked(DateTime dateTime)
-        {
-            Date = dateTime;
-            if(PickerVariant != PickerVariant.Static)
-            {
-                await Task.Delay(ClosingDelay);
-                Picker.Close();
-            }
-        }
+        protected abstract void OnDayClicked(DateTime dateTime);
+
+        protected virtual void OnMouseOver(DateTime time) { }
 
         /// <summary>
         /// return Mo, Tu, We, Th, Fr, Sa, Su in the right culture
@@ -220,40 +198,36 @@ namespace MudBlazor
             return copy;
         }
 
-        protected string GetMonthName()
+        protected string GetMonthName(int month)
         {
-            return GetMonthStart().ToString(Culture.DateTimeFormat.YearMonthPattern, Culture);
+            return GetMonthStart(month).ToString(Culture.DateTimeFormat.YearMonthPattern, Culture);
         }
 
-        protected string GetFormattedDateString()
-        {
-            if (Date == null)
-                return "";
-            return Date.Value.ToString("ddd, dd MMM", Culture);
-        }        
+        protected abstract string GetFormattedDateString();
+
         protected string GetFormattedYearString()
         {
-            return GetMonthStart().ToString("yyyy", Culture);
+            return GetMonthStart(0).ToString("yyyy", Culture);
         }
 
         private void OnPreviousMonthClick()
         {
-            PickerMonth = GetMonthStart().AddDays(-1).StartOfMonth();
+            PickerMonth = GetMonthStart(0).AddDays(-1).StartOfMonth();
         }
 
         private void OnNextMonthClick()
         {
-            PickerMonth = GetMonthEnd().AddDays(1);
+            PickerMonth = GetMonthEnd(0).AddDays(1);
         }
 
         private void OnPreviousYearClick()
         {
-            PickerMonth = GetMonthStart().AddYears(-1);
+            PickerMonth = GetMonthStart(0).AddYears(-1);
         }
 
         private void OnNextYearClick()
         {
-            PickerMonth = GetMonthStart().AddYears(1);
+            PickerMonth = GetMonthStart(0).AddYears(1);
         }
 
         private void OnYearClick()
@@ -276,7 +250,7 @@ namespace MudBlazor
         public async void ScrollToYear()
         {
             _scrollToYearAfterRender = false;
-            string id = $"{_componentId}{GetMonthStart().Year.ToString()}";
+            string id = $"{_componentId}{GetMonthStart(0).Year.ToString()}";
             await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToYear", id);
             StateHasChanged();
         }
@@ -297,13 +271,22 @@ namespace MudBlazor
 
         private string GetYearClasses(int year)
         {
-            if (year == GetMonthStart().Year)
+            if (year == GetMonthStart(0).Year)
                 return $"mud-picker-year-selected mud-{Color.ToDescriptionString()}-text";
             return null;
         }
+
+        private string GetCalendarHeaderClasses(int month)
+        {
+            return new CssBuilder("mud-picker-calendar-header")
+                .AddClass($"mud-picker-calendar-header-{month + 1}")
+                .AddClass($"mud-picker-calendar-header-last", month == DisplayMonths - 1)
+                .Build();
+        }
+
         private Typo GetYearTypo(int year)
         {
-            if (year == GetMonthStart().Year)
+            if (year == GetMonthStart(0).Year)
                 return Typo.h5;
             return Typo.subtitle1;
         }
@@ -316,13 +299,13 @@ namespace MudBlazor
         private void OnYearClicked(int year)
         {
             _currentView = OpenTo.Month;
-            var current = GetMonthStart();
+            var current = GetMonthStart(0);
             PickerMonth = new DateTime(year, current.Month,  1);
         }
 
         private IEnumerable<DateTime> GetAllMonths()
         {
-            var current = GetMonthStart();
+            var current = GetMonthStart(0);
             for (int i = 1; i <= 12; i++)
                 yield return new DateTime(current.Year, i, 1);
         }
@@ -334,21 +317,22 @@ namespace MudBlazor
 
         private string GetMonthClasses(DateTime month)
         {
-            if (GetMonthStart() == month)
+            if (GetMonthStart(0) == month)
                 return $"mud-picker-month-selected mud-color-text-{Color.ToDescriptionString()}";
             return null;
         }
 
         private Typo GetMonthTypo(in DateTime month)
         {
-            if (GetMonthStart() == month)
+            if (GetMonthStart(0) == month)
                 return Typo.h5;
             return Typo.subtitle1;
         }
 
-        private void OnMonthClicked()
+        private void OnMonthClicked(int month)
         {
             _currentView = OpenTo.Month;
+            _picker_month = _picker_month?.AddMonths(month);
             StateHasChanged();
         }
 
@@ -358,12 +342,17 @@ namespace MudBlazor
             PickerMonth = month;
         }
 
+        protected override void OnInitialized()
+        {
+            _currentView = OpenTo;
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                if(_picker_month == null)
-                    _picker_month = GetMonthStart();
+                if (_picker_month == null)
+                    _picker_month = StartMonth?.StartOfMonth() ?? GetMonthStart(0);
             }
 
             if (firstRender && _currentView == OpenTo.Year)

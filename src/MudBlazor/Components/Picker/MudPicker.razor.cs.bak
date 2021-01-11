@@ -9,7 +9,7 @@ namespace MudBlazor
 {
     public partial class MudPicker : MudBasePicker
     {
-        enum PickerVerticalPosition
+        enum PickerPaperPosition
         {
             Unknown,
             Below,
@@ -18,12 +18,6 @@ namespace MudBlazor
             Bottom
         }
 
-        enum PickerHorizontalPosition
-        {
-            Unknown,
-            Left,
-            Right
-        }
 
         [Inject]
         private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
@@ -49,17 +43,19 @@ namespace MudBlazor
             .AddClass("mud-picker-open", IsOpen && PickerVariant == PickerVariant.Inline)
             .AddClass("mud-picker-popover-paper", PickerVariant == PickerVariant.Inline)
             .AddClass("mud-dialog", PickerVariant == PickerVariant.Dialog)
-            .AddClass("mud-picker-hidden", pickerVerticalPosition == PickerVerticalPosition.Unknown && PickerVariant == PickerVariant.Inline)
-            .AddClass("mud-picker-pos-top", pickerVerticalPosition == PickerVerticalPosition.Top)
-            .AddClass("mud-picker-pos-above", pickerVerticalPosition == PickerVerticalPosition.Above)
-            .AddClass("mud-picker-pos-bottom", pickerVerticalPosition == PickerVerticalPosition.Bottom)
-            .AddClass("mud-picker-pos-below", pickerVerticalPosition == PickerVerticalPosition.Below)
-            .AddClass("mud-picker-pos-left", pickerHorizontalPosition == PickerHorizontalPosition.Left)
-            .AddClass("mud-picker-pos-right", pickerHorizontalPosition == PickerHorizontalPosition.Right)
+            .AddClass("mud-picker-hidden", pickerPaperPosition == PickerPaperPosition.Unknown && PickerVariant == PickerVariant.Inline)
+            .AddClass("mud-picker-pos-top", pickerPaperPosition == PickerPaperPosition.Top)
+            .AddClass("mud-picker-pos-above", pickerPaperPosition == PickerPaperPosition.Above)
+            .AddClass("mud-picker-pos-bottom", pickerPaperPosition == PickerPaperPosition.Bottom)
             .Build();
 
         protected string PickerContainerClass =>
         new CssBuilder("mud-picker-container")
+<<<<<<< HEAD
+            .AddClass("mud-paper-square", PickerSquare)
+            .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
+            .Build();
+=======
         .AddClass("mud-paper-square", PickerSquare)
         .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
         .Build();
@@ -67,6 +63,7 @@ namespace MudBlazor
         protected string PickerInputClass =>
         new CssBuilder("mud-input-input-control").AddClass(Class)
         .Build();
+>>>>>>> 07fc63e4... minor fixes+tests
 
         [Parameter] public bool IsRange { get; set; } = false;
         [Parameter] public string InputIcon { get; set; }
@@ -79,8 +76,7 @@ namespace MudBlazor
         private bool isRendered = false;
         private ElementReference PickerContainerRef { get; set; }
 
-        private PickerVerticalPosition pickerVerticalPosition = PickerVerticalPosition.Unknown;
-        private PickerHorizontalPosition pickerHorizontalPosition = PickerHorizontalPosition.Unknown;
+        private PickerPaperPosition pickerPaperPosition = PickerPaperPosition.Unknown;
 
         protected override void OnInitialized()
         {
@@ -142,7 +138,7 @@ namespace MudBlazor
                 else if (isRendered && !IsOpen)
                 {
                     isRendered = false;
-                    pickerVerticalPosition = PickerVerticalPosition.Unknown;
+                    pickerPaperPosition = PickerPaperPosition.Unknown;
                 }
             }
 
@@ -153,7 +149,7 @@ namespace MudBlazor
         {
             if (WindowSizeListener == null || JSRuntime == null)
             {
-                pickerVerticalPosition = PickerVerticalPosition.Below;
+                pickerPaperPosition = PickerPaperPosition.Below;
                 return;
             }
 
@@ -162,42 +158,36 @@ namespace MudBlazor
 
             if (size == null || clientRect == null)
             {
-                pickerVerticalPosition = PickerVerticalPosition.Below;
+                pickerPaperPosition = PickerPaperPosition.Below;
                 return;
-            }
-
-            if (size.Width < clientRect.Right)
-            {
-                pickerHorizontalPosition = size.Width > clientRect.Width ?
-                    PickerHorizontalPosition.Right : PickerHorizontalPosition.Left;
             }
 
             if (size.Height < clientRect.Height)
             {
-                pickerVerticalPosition = PickerVerticalPosition.Top;
+                pickerPaperPosition = PickerPaperPosition.Top;
             }
             else if (size.Height < clientRect.Bottom)
             {
                 if (clientRect.Top > clientRect.Height)
                 {
-                    pickerVerticalPosition = PickerVerticalPosition.Above;
+                    pickerPaperPosition = PickerPaperPosition.Above;
                 }
                 else if (clientRect.Top > size.Height / 2)
                 {
-                    pickerVerticalPosition = PickerVerticalPosition.Bottom;
+                    pickerPaperPosition = PickerPaperPosition.Bottom;
                 }
                 else
                 {
-                    pickerVerticalPosition = PickerVerticalPosition.Top;
+                    pickerPaperPosition = PickerPaperPosition.Top;
                 }
             }
             else if (clientRect.Top < 0)
             {
-                pickerVerticalPosition = PickerVerticalPosition.Top;
+                pickerPaperPosition = PickerPaperPosition.Top;
             }
             else
             {
-                pickerVerticalPosition = PickerVerticalPosition.Below;
+                pickerPaperPosition = PickerPaperPosition.Below;
             }
         }
     }

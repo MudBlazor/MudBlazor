@@ -1,0 +1,12 @@
+﻿@using MudBlazor;
+@namespace MudBlazor.UnitTests
+
+@for (int i = 0; i < 100; i++)
+{
+    <MudDateRangePicker @bind-DateRange="range" @key="i"></MudDateRangePicker>
+}
+
+@code {
+    public static string __description__ = "Creating 100 DatePickers to measure performance impact of optimizations.";
+    DateRange range;
+}
