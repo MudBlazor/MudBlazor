@@ -309,6 +309,21 @@ namespace MudBlazor.UnitTests
             var form = comp.FindComponent<MudForm>().Instance;
             form.IsValid.Should().BeTrue(because: "none of the fields are required");
         }
+
+        /// <summary>
+        /// Form should become valid as soon as all required fields are filled in correctly.
+        /// </summary>
+        [Test]
+        public async Task Form_Should_BecomeValidIfUntouchedFieldsAreNotRequired()
+        {
+            var comp = ctx.RenderComponent<FormValidationTest2>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            form.IsValid.Should().BeFalse(because: "textfield is required");
+            var textfield=comp.FindComponent<MudTextField<string>>().Instance;
+            await comp.InvokeAsync(() => textfield.Text = "Moby Dick");
+            form.IsValid.Should().BeTrue(because: "select is not required");
+        }
     }
 }
 
