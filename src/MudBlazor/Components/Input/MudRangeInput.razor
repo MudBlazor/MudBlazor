@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits MudBaseInput<Range<T>>
+@using MudBlazor.Internal
+
+<div class="@Classname" style="@Style">
+    @if (Adornment == Adornment.Start)
+    {
+        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" />
+    }
+
+    @if (InputType == InputType.Hidden && ChildContent != null)
+    {
+        <div class="@InputClassname">
+            @ChildContent
+        </div>
+    }
+
+    <input @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@TextStart" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
+           placeholder="@PlaceholderStart" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp" />
+    <MudIcon Class="mud-range-input-separator" Icon="@Icons.Material.ArrowRightAlt" Color="@Color.Default" />
+    <input @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@TextEnd" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
+           placeholder="@PlaceholderEnd" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp" />
+
+    @if (Adornment == Adornment.End)
+    {
+        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
+    }
+
+    @if (Variant == Variant.Outlined)
+    {
+        <div class="mud-input-outlined-border"></div>
+    }
+</div>
