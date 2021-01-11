@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@implements IDisposable
 
 @if (Parent?.ActivePanel == this && ChildContent != null)
 {
@@ -63,5 +64,10 @@
         //    throw new ArgumentNullException(nameof(Parent), "TabPanel must exist within a Tabs component");
         base.OnInitialized();
         Parent?.AddPanel(this);
+    }
+
+    public void Dispose()
+    {
+        Parent?.RemovePanel(this);
     }
 }
