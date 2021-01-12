@@ -12,7 +12,9 @@
 </MudButton>
 
 
-@code{ private void UploadFiles(IFileListEntry[] entries)
+@code
+{
+    private void UploadFiles(IFileListEntry[] entries)
     {
         //Do your validations here
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
@@ -21,4 +23,5 @@
         Snackbar.Add($"This file has the extension {entries.FirstOrDefault().Name.Split(".").Last()}", Severity.Info);
 
         //TODO upload the files to the server
-    } }
+    }
+}

@@ -375,7 +375,6 @@ FodyWeavers.xsd
 **/MudBlazorDocs.min.css
 **/MudBlazorDocs.css
 MudBlazor.xml
-
 src/MudBlazor.Docs/Models/DocStrings.generated.cs
 src/MudBlazor.Docs/Models/Snippets.generated.cs
 src/MudBlazor.UnitTests/Generated/_AllApiPages.cs

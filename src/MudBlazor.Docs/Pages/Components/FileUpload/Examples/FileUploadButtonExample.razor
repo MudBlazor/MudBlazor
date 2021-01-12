@@ -29,7 +29,7 @@
 </MudIconButton>
 
 @if (files != null)
- {
+{
     <MudText Typo="@Typo.h6">@files.Count() File@(files.Count()>1?"s":""):</MudText>
     <MudList>
     @foreach (var file in files)
@@ -39,13 +39,16 @@
      </MudListItem>
     }
     </MudList>
- }
+}
 
 
 
-@code{ IEnumerable<IFileListEntry> files;
+@code
+{
+    IEnumerable<IFileListEntry> files;
     private void UploadFiles(IFileListEntry[] entries)
     {
         files = entries;
         //TODO upload the files to the server
-    } }
+    }
+}
