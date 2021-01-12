@@ -59,6 +59,8 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new SnackbarService());");
                 cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
                 cb.AddLine("ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new Mock<IBrowserWindowSizeProvider>().Object);");
+                cb.AddLine("ctx.Services.AddSingleton<IScrollListener>(new Mock<IScrollListener>().Object);");
+                cb.AddLine("ctx.Services.AddSingleton<IScrollManager>(new Mock<IScrollManager>().Object);");
                 cb.AddLine("ctx.Services.AddScoped(sp => new HttpClient());");
                 // options required for fie upload
                 cb.AddLine("ctx.Services.AddOptions();");
