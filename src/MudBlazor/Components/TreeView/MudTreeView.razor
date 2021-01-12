@@ -1,0 +1,8 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<ul @attributes="UserAttributes" class="@Classname" style="@Style">
+    <CascadingValue Value="@MudTreeRoot">        
+        @ChildContent
+    </CascadingValue>
+</ul>

@@ -13,12 +13,21 @@ namespace MudBlazor.UnitTests
     [TestFixture]
     public class RadioTests
     {
+        private Bunit.TestContext ctx;
+
+        [SetUp]
+        public void Setup()
+        {
+            ctx = new Bunit.TestContext();
+            ctx.AddMudBlazorServices();
+        }
+
+        [TearDown]
+        public void TearDown() => ctx.Dispose();
+
         [Test]
         public void RadioGroupTest1() {
-            // setup
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<RadioGroupTest1>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup>();
@@ -67,10 +76,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public void RadioGroupTest2()
         {
-            // setup
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<RadioGroupTest2>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup>();
@@ -87,10 +93,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public void RadioGroupTest3()
         {
-            // setup
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<RadioGroupTest3>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup>();
@@ -132,10 +135,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public void RadioGroupTest4()
         {
-            // setup
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<RadioGroupTest4>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup>();

@@ -1,221 +1,309 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
-
 
 
 namespace MudBlazor
 {
-    public abstract class MudTableBase : MudComponentBase
+    public partial class MudTable<T> : MudTableBase
     {
-        internal object _editingItem = null;
-        
-        private int _currentPage = 0;
-        // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is here in MudTableBase
-
-        protected string Classname =>
-        new CssBuilder("mud-table")
-           .AddClass($"mud-sm-table", Breakpoint == Breakpoint.Sm)
-           .AddClass($"mud-md-table", Breakpoint == Breakpoint.Md)
-           .AddClass($"mud-lg-table", Breakpoint == Breakpoint.Lg)
-           .AddClass($"mud-xl-table", Breakpoint == Breakpoint.Xl)
-           .AddClass($"mud-table-dense", Dense)
-           .AddClass($"mud-table-hover", Hover)
-           .AddClass($"mud-table-outlined", Outlined)
-           .AddClass($"mud-table-square", Square)
-           .AddClass($"mud-table-sticky-header", FixedHeader)
-           .AddClass($"mud-elevation-{Elevation.ToString()}", !Outlined)
-          .AddClass(Class)
-        .Build();
-
         /// <summary>
-        /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
+        /// Defines how a table row looks like. Use MudTd to define the table cells and their content.
         /// </summary>
-        [Parameter] public int Elevation { set; get; } = 1;
+        [Parameter] public RenderFragment<T> RowTemplate { get; set; }
 
         /// <summary>
-        /// Set true to disable rounded corners
+        /// Row Child content of the component.
         /// </summary>
-        [Parameter] public bool Square { get; set; }
-
-        [Parameter] public bool Outlined { get; set; }
+        [Parameter] public RenderFragment<T> ChildRowContent { get; set; }
 
         /// <summary>
-        /// Set true for rows with a narrow height
+        /// Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter] public RenderFragment<T> RowEditingTemplate { get; set; }
 
         /// <summary>
-        /// Set true to see rows hover on mouse-over.
-        /// </summary>
-        [Parameter] public bool Hover { get; set; }
-
-        /// <summary>
-        /// At what breakpoint the table should switch to mobile layout. Takes Sm, Md, Lg and Xl the default behavior is breaking on Xs.
-        /// </summary>
-        [Parameter] public Breakpoint Breakpoint { get; set; }
-
-        /// <summary>
-        /// When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.
-        /// </summary>
-        [Parameter] public bool FixedHeader { get; set; }
-
-        /// <summary>
-        /// Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
-        /// attribute 'height' accepts, i.e. 500px. 
-        /// </summary>
-        [Parameter] public string Height { get; set; }
-
-        /// <summary>
-        /// If table is in smalldevice mode and uses any kind of sorting the text applied here will be the sort selects label.
-        /// </summary>
-        [Parameter] public string SortLabel { get; set; }
-
-        /// <summary>
-        /// If the table has more items than this number, it will break the rows into pages of said size.
-        /// Note: requires a MudTablePager in PagerContent.
-        /// </summary>
-        [Parameter] public int RowsPerPage { get; set; } = 10;
-
-        /// <summary>
-        /// The page index of the currently displayed page. Usually called by MudTablePager.
-        /// Note: requires a MudTablePager in PagerContent.
+        /// The data to display in the table. MudTable will render one row per item
         /// </summary>
         [Parameter]
-        public int CurrentPage
+        public IEnumerable<T> Items
         {
-            get => _currentPage;
+            get => _items;
             set
             {
-                if (_currentPage == value)
+                if (_items == value)
                     return;
-                _currentPage = value;
-                InvokeAsync(StateHasChanged);
-                InvokeServerLoadFunc();
+                _items = value;
+                if (Context?.PagerStateHasChanged != null)
+                    InvokeAsync(Context.PagerStateHasChanged);
             }
         }
 
         /// <summary>
-        /// Set to true to enable selection of multiple rows with check boxes. 
+        /// A function that returns whether or not an item should be displayed in the table. You can use this to implement your own search function.
         /// </summary>
-        [Parameter] public bool MultiSelection { get; set; }
-
-        /// <summary>
-        /// Optional. Add any kind of toolbar to this render fragment.
-        /// </summary>
-        [Parameter] public RenderFragment ToolBarContent { get; set; }
-
-        /// <summary>
-        /// Add MudTh cells here to define the table header.
-        /// </summary>
-        [Parameter] public RenderFragment HeaderContent { get; set; }
-
-        /// <summary>
-        /// Specifies a group of one or more columns in a table for formatting.
-        /// Ex:
-        /// table
-        ///     colgroup
-        ///        col span="2" style="background-color:red"
-        ///        col style="background-color:yellow"
-        ///      colgroup
-        ///      header
-        ///      body
-        /// table
-        /// </summary>
-        [Parameter] public RenderFragment ColGroup { get; set; }
-
-        //[Parameter] public RenderFragment<T> RowTemplate { get; set; } <-- see MudTable.razor
-
-        /// <summary>
-        /// Add MudTablePager here to enable breaking the rows in to multiple pages.
-        /// </summary>
-        [Parameter] public RenderFragment PagerContent { get; set; }
+        [Parameter] public Func<T, bool> Filter { get; set; } = null;
 
         /// <summary>
         /// Button click event.
         /// </summary>
-        [Parameter] public EventCallback<MouseEventArgs> OnCommitEditClick { get; set; }
+        [Parameter] public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
 
-        /// <summary>
-        /// Command executed when the user clicks on the CommitEdit Button.
-        /// </summary>
-        [Parameter] public ICommand CommitEditCommand { get; set; }
-
-        /// <summary>
-        /// Command parameter for the CommitEdit Button. By default, will be the row level item model, if you won't set anything else.
-        /// </summary>
-        [Parameter] public object CommitEditCommandParameter { get; set; }
-
-        /// <summary>
-        /// Tooltip for the CommitEdit Button.
-        /// </summary>
-        [Parameter] public string CommitEditTooltip { get; set; }
-
-        /// <summary>
-        /// Number of items. Used only with ServerData="true"
-        /// </summary>
-        [Parameter] public int TotalItems { get; set; }
-
-        public abstract TableContext TableContext { get; }
-
-        public void NavigateTo(Page page)
+        internal override void FireRowClickEvent(MouseEventArgs args, MudTr row, object o)
         {
-            switch (page)
+            T item = default(T);
+            try
             {
-                case Page.First:
-                    CurrentPage = 0;
-                    break;
-                case Page.Last:
-                    CurrentPage = Math.Max(0, NumPages-1);
-                    break;
-                case Page.Next:
-                    CurrentPage = Math.Min(NumPages - 1, CurrentPage +1);
-                    break;
-                case Page.Previous:
-                    CurrentPage = Math.Max(0, CurrentPage-1);
-                    break;
+                item = (T)o;
+            }
+            catch (Exception) { /*ignore*/}
+            OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>()
+            {
+                MouseEventArgs = args,
+                Row = row,
+                Item = item,
+            });
+        }
+
+        /// <summary>
+        /// Returns the item which was last clicked on in single selection mode (that is, if MultiSelection is false)
+        /// </summary>
+        [Parameter]
+        public T SelectedItem
+        {
+            get => _selectedItem;
+            set
+            {
+                if (EqualityComparer<T>.Default.Equals(SelectedItem, value))
+                    return;
+                _selectedItem = value;
+                SelectedItemChanged.InvokeAsync(value);
+            }
+        }
+        private T _selectedItem;
+
+        /// <summary>
+        /// Callback is called when a row has been clicked and returns the selected item.
+        /// </summary>
+        [Parameter] public EventCallback<T> SelectedItemChanged { get; set; }
+
+        /// <summary>
+        /// If MultiSelection is true, this returns the currently selected items. You can bind this property and the initial content of the HashSet you bind it to will cause these rows to be selected initially.
+        /// </summary>
+        [Parameter]
+        public HashSet<T> SelectedItems
+        {
+            get
+            {
+                if (!MultiSelection)
+                    if (_selectedItem is null)
+                        return new HashSet<T>(new T[] { });
+                    else
+                        return new HashSet<T>(new T[] { _selectedItem });
+                else
+                    return Context.Selection;
+            }
+            set
+            {
+                if (value == Context.Selection)
+                    return;
+                if (value == null)
+                {
+                    if (Context.Selection.Count == 0)
+                        return;
+                    Context.Selection = new HashSet<T>();
+                }
+                else
+                    Context.Selection = value;
+                SelectedItemsChanged.InvokeAsync(Context.Selection);
+                InvokeAsync(StateHasChanged);
             }
         }
 
-        public void SetRowsPerPage(int size)
+        /// <summary>
+        /// Callback is called whenever items are selected or deselected in multi selection mode.
+        /// </summary>
+        [Parameter] public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
+
+        public IEnumerable<T> FilteredItems
         {
-            RowsPerPage = size;
+            get
+            {
+                if (ServerData != null)
+                    return _server_data.Items;
+
+                if (Filter == null)
+                    return Context.Sort(Items);
+                return Context.Sort(Items.Where(Filter));
+            }
+        }
+
+        protected IEnumerable<T> CurrentPageItems
+        {
+            get
+            {
+                if (@PagerContent == null)
+                    return FilteredItems; // we have no pagination
+                if (ServerData == null)
+                {
+                    var filteredItemCount = GetFilteredItemsCount();
+                    int lastPageNo;
+                    if (filteredItemCount == 0)
+                        lastPageNo = 0;
+                    else
+                        lastPageNo = (filteredItemCount / RowsPerPage) - (filteredItemCount % RowsPerPage == 0 ? 1 : 0);
+                    CurrentPage = lastPageNo < CurrentPage ? lastPageNo : CurrentPage;
+                }
+
+                return GetItemsOfPage(CurrentPage, RowsPerPage);
+            }
+        }
+
+        protected IEnumerable<T> GetItemsOfPage(int n, int pageSize)
+        {
+            if (n < 0 || pageSize <= 0)
+                return new T[0];
+
+            if (ServerData != null)
+                return _server_data.Items;
+
+            return FilteredItems.Skip(n * pageSize).Take(pageSize);
+        }
+
+        protected override int NumPages
+        {
+            get
+            {
+                if (ServerData != null)
+                    return (int)Math.Ceiling(_server_data.TotalItems / (double)RowsPerPage);
+
+                return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
+            }
+        }
+
+        public override int GetFilteredItemsCount()
+        {
+            if (ServerData != null)
+                return _server_data.TotalItems;
+            return FilteredItems.Count();
+        }
+
+        public override void SetSelectedItem(object item)
+        {
+            SelectedItem = item.As<T>();
+        }
+
+        public override void SetEditingItem(object item)
+        {
+            if (!Object.ReferenceEquals(_editingItem, item))
+                _editingItem = item;
+        }
+
+        public override TableContext TableContext
+        {
+            get
+            {
+                Context.Table = this;
+                Context.TableStateHasChanged = this.StateHasChanged;
+                return Context;
+            }
+        }
+
+        // TableContext provides shared functionality between all table sub-components
+        public TableContext<T> Context { get; } = new TableContext<T>();
+
+        private void OnRowCheckboxChanged(bool value, T item)
+        {
+            if (value)
+                Context.Selection.Add(item);
+            else
+                Context.Selection.Remove(item);
+            SelectedItemsChanged.InvokeAsync(SelectedItems);
+        }
+
+        private void OnHeaderCheckboxClicked(bool value)
+        {
+            if (!value)
+                Context.Selection.Clear();
+            else
+            {
+                foreach (var item in FilteredItems)
+                    Context.Selection.Add(item);
+            }
+            Context.UpdateRowCheckBoxes();
+            SelectedItemsChanged.InvokeAsync(SelectedItems);
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                if (!Context.HasPager)
+                {
+                    await InvokeServerLoadFunc();
+                    //await Task.Delay(1);
+                    //StateHasChanged();
+                }
+            }
+            TableContext.UpdateRowCheckBoxes();
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+
+        /// <summary>
+        /// Supply an async function which (re)loads filtered, paginated and sorted data from server.
+        /// Table will await this func and update based on the returned TableData.
+        /// Used only with ServerData
+        /// </summary>
+        [Parameter] public Func<TableState, Task<TableData<T>>> ServerData { get; set; }
+
+        internal override bool HasServerData => ServerData != null;
+
+
+        TableData<T> _server_data = new TableData<T>() { TotalItems = 0, Items = new T[0] };
+        private IEnumerable<T> _items;
+
+        internal override async Task InvokeServerLoadFunc()
+        {
+            if (ServerData == null)
+                return;
+
+            var label = Context.CurrentSortLabel;
+
+            var state = new TableState
+            {
+                Page = CurrentPage,
+                PageSize = RowsPerPage,
+                SortDirection = Context.SortDirection,
+                SortLabel = label?.SortLabel
+            };
+
+            _server_data = await ServerData(state);
             StateHasChanged();
-            InvokeServerLoadFunc();
+            Context?.PagerStateHasChanged?.Invoke();
         }
 
-        protected abstract int NumPages { get; }
-
-        public abstract int GetFilteredItemsCount();
-
-        public abstract void SetSelectedItem(object item);
-
-        public abstract void SetEditingItem(object item);
-
-        internal async Task OnCommitEditHandler(MouseEventArgs ev, object item)
+        protected override void OnAfterRender(bool firstRender)
         {
-            await OnCommitEditClick.InvokeAsync(ev);
-            if (CommitEditCommand?.CanExecute(CommitEditCommandParameter) ?? false)
-            {
-                object parameter = CommitEditCommandParameter;
-                if (parameter == null)
-                    parameter = item;
-                CommitEditCommand.Execute(parameter);
-            }
+            base.OnAfterRender(firstRender);
+            if (!firstRender)
+                Context?.PagerStateHasChanged?.Invoke();
         }
 
-        protected string TableStyle 
-            => new StyleBuilder()
-                .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
-                .Build();
+        /// <summary>
+        /// Call this to reload the server-filtered, -sorted and -paginated items
+        /// </summary>
+        public Task ReloadServerData()
+        {
+            return InvokeServerLoadFunc();
+        }
 
-        internal abstract bool HasServerData { get; }
 
-        internal abstract Task InvokeServerLoadFunc();
-
-        internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
     }
 }

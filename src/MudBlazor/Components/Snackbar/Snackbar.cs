@@ -102,7 +102,7 @@ namespace MudBlazor
         {
             if (!disposing) return;
             StopTimer();
-            Timer.Dispose();
+            Timer?.Dispose();
         }
     }
 }

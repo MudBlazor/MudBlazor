@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace MudBlazor
@@ -6,7 +7,11 @@ namespace MudBlazor
 
     /// <summary>
     /// A universal T to double binding converter
+    ///
+    /// Note: currently not in use. Should we ever use it, remove
+    /// the  [ExcludeFromCodeCoverage] attribute
     /// </summary>
+    [ExcludeFromCodeCoverage] 
     public class NumericConverter<T> : Converter<T, double>
     {
        

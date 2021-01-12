@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public abstract partial class MudDebouncedInput<T> : MudBaseInput<T>, IDisposable
+    public abstract class MudDebouncedInput<T> : MudBaseInput<T>, IDisposable
     {
-
+    
         private Timer _timer;
 
         /// <summary>
@@ -21,20 +21,26 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
 
-        protected override void StringValueChanged(string text)
+        private bool _updateTextOnTimerComplete;
+
+        protected override void UpdateValueProperty(bool updateText)
         {
-            //setting the Text property
+            // This method is called when Value property needs to be refreshed from the current Text property, so typically because Text property has changed.
+            // If a debounce interval is defined, we want to delay the update of Value property.
 
             if (DebounceInterval == 0)
             {
-                base.StringValueChanged(text);
-                return;
+                base.UpdateValueProperty(updateText);
             }
-            //stops previous timer
-            _timer.Stop();
+            else
+            {
+                // store the value to use when timer will complete
+                _updateTextOnTimerComplete = updateText;
 
-            //starts the timer while user is typing
-            _timer.Start();
+                // restart the timer while user is typing
+                _timer.Stop();
+                _timer.Start();
+            }
         }
 
         /// <summary>
@@ -46,7 +52,7 @@ namespace MudBlazor
         
         private void OnTimerCompleteGuiThread()
         {
-            base.StringValueChanged(Text);
+            base.UpdateValueProperty(_updateTextOnTimerComplete);
             OnDebounceIntervalElapsed.InvokeAsync(Text);
         }
 
@@ -81,9 +87,5 @@ namespace MudBlazor
             _timer.Elapsed -= OnTimerComplete;
             _timer.Dispose();
         }
-
-
     }
-
-
 }

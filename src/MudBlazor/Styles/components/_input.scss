@@ -439,3 +439,16 @@
 .mud-input-adornment-disable-pointerevents {
   pointer-events: none;
 }
+
+.mud-range-input-separator {
+    visibility: hidden;
+    margin: 0 4px;
+}
+
+.mud-input:focus-within .mud-range-input-separator {
+    visibility: visible;
+}
+
+.mud-picker .mud-shrink .mud-range-input-separator {
+    visibility: visible;
+}

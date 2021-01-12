@@ -1,0 +1,26 @@
+﻿<MudGrid>
+    @for (int i = 0; i < amenities.Length; i++)
+    {
+        var local = i;
+        <MudItem xs="6" md="6">
+            <MudCheckBox @bind-Checked="@values[local]" Color="Color.Tertiary">@amenities[local]</MudCheckBox>
+        </MudItem>
+    }
+    <p>@selected</p>
+</MudGrid>
+
+@code {
+    public static string __description__ = "Binding checkboxes two-way against an array of bools";
+    private string[] amenities =
+    {
+        "A", "B", "C", "D", "E"
+    };
+
+    private bool[] values =
+    {
+        true, false, true, false, true
+    };
+
+    string selected => string.Join(", ", amenities.Zip(values, (a, b)=>$"{a}={b}"));
+
+}

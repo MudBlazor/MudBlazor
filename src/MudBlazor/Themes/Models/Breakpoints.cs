@@ -1,6 +1,8 @@
-﻿
+﻿using System.Diagnostics.CodeAnalysis;
+
 namespace MudBlazor
 {
+    [ExcludeFromCodeCoverage]
     public class Breakpoints
     {
         public string xs { get; set; } = "0px";

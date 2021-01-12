@@ -6,6 +6,7 @@ namespace MudBlazor.Interfaces
     public interface IFormComponent
     {
 
+        public bool Required { get; set; }
         public bool Error { get; set; }
         public List<string> ValidationErrors { get; set; }
 

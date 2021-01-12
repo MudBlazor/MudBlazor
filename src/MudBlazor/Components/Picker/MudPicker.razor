@@ -1,27 +1,41 @@
 @namespace MudBlazor
+@using Microsoft.JSInterop
+@using MudBlazor.Interop
 @using MudBlazor.Utilities
 @inherits MudBasePicker
 
 <div class="@PickerClass">
     @if (PickerVariant != PickerVariant.Static)
     {
-        <MudTextField Label="@Label" @bind-Value="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" 
-                      @onclick="@(() => { if (!Editable) ToggleOpen(); })" OnAdornmentClick="ToggleOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
+        @if (!IsRange) 
+        { 
+            <MudTextField Label="@Label" @bind-Text="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string"
+                          @onclick="@(() => { if (!Editable) ToggleOpen(); })" OnAdornmentClick="ToggleOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
+        }
+        else 
+        {
+            <MudInputControl Label="@Label" Variant="@InputVariant" HelperText="@HelperText" Disabled="@Disabled" @onclick="@(() => { if (!Editable) ToggleOpen(); })">
+                <InputContent>
+                    <MudRangeInput @attributes="UserAttributes" InputType="@InputType.Text" Class="@PickerInputClass" Style="@Style" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string"
+                                   @bind-Text="@Value" Disabled=@Disabled Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" OnAdornmentClick="ToggleOpen"/>
+                </InputContent>
+            </MudInputControl>
+        }
     }
     <CascadingValue Value="@this" IsFixed="true">
-        @if (isOpen && PickerVariant != PickerVariant.Dialog)
+        @if (IsOpen && PickerVariant != PickerVariant.Dialog)
         {
             <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@PickerElevation" Square="@PickerSquare">
-                <div class="@PickerContainerClass">
+                <div @ref="PickerContainerRef" class="@PickerContainerClass">
                     @ChildContent
                 </div>
             </MudPaper>
         }
-        else if(isOpen && PickerVariant == PickerVariant.Dialog)
+        else if(IsOpen && PickerVariant == PickerVariant.Dialog)
         {
-            <MudOverlay Visible="isOpen" OnClick="@Close" DarkBackground="true" Class="mud-overlay-dialog">
+            <MudOverlay Visible="IsOpen" OnClick="@Close" DarkBackground="true" Class="mud-overlay-dialog">
                 <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@PickerElevation" Square="@PickerSquare">
-                    <div class="@PickerContainerClass">
+                    <div @ref="PickerContainerRef" class="@PickerContainerClass">
                         @ChildContent
                     </div>
                 </MudPaper>
@@ -31,66 +45,5 @@
 </div>
 @if (PickerVariant == PickerVariant.Inline)
 {
-    <MudOverlay Visible="isOpen" OnClick="@Close" LockScroll="false" />
-}
-
-@code {
-
-    protected string PickerClass =>
-        new CssBuilder("mud-picker")
-           .AddClass($"mud-picker-inline", PickerVariant != PickerVariant.Static)
-           .AddClass($"mud-picker-static", PickerVariant == PickerVariant.Static)
-           .AddClass($"mud-rounded", PickerVariant == PickerVariant.Static && !PickerSquare)
-           .AddClass($"mud-elevation-{PickerElevation.ToString()}", PickerVariant == PickerVariant.Static)
-           .AddClass($"mud-picker-input-button", !AllowKeyboardInput && PickerVariant != PickerVariant.Static)
-           .AddClass($"mud-picker-input-text", AllowKeyboardInput && PickerVariant != PickerVariant.Static)
-           .AddClass($"mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
-           .AddClass(Class)
-        .Build();
-
-    protected string PickerPaperClass =>
-    new CssBuilder("mud-picker-paper")
-      .AddClass("mud-picker-view", PickerVariant == PickerVariant.Inline)
-      .AddClass("mud-picker-open", isOpen && PickerVariant == PickerVariant.Inline)
-      .AddClass("mud-picker-popover-paper", PickerVariant == PickerVariant.Inline)
-      .AddClass("mud-dialog", PickerVariant == PickerVariant.Dialog)
-    .Build();
-
-    protected string PickerContainerClass =>
-    new CssBuilder("mud-picker-container")
-      .AddClass("mud-paper-square", PickerSquare)
-      .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
-    .Build();
-
-    [Parameter] public string InputIcon { get; set; }
-    [Parameter] public RenderFragment ChildContent { get; set; }
-
-    private bool PickerSquare { get; set; }
-    private int PickerElevation { get; set; }
-
-    protected override void OnInitialized()
-    {
-        if (PickerVariant == PickerVariant.Static)
-        {
-            isOpen = true;
-            if (Elevation == 8)
-            {
-                PickerElevation = 0;
-            }
-            else
-            {
-                PickerElevation = Elevation;
-            }
-
-            if (!Rounded)
-            {
-                PickerSquare = true;
-            }
-        }
-        else
-        {
-            PickerSquare = Square;
-            PickerElevation = Elevation;
-        }
-    }
+    <MudOverlay Visible="IsOpen" OnClick="@Close" LockScroll="false" />
 }

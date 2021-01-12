@@ -17,8 +17,8 @@
         </div>
     }
     <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
-        <MudText Typo="@textTypo">
-            @if (String.IsNullOrEmpty(Text))
+        <MudText Typo="@_textTypo">
+            @if (ChildContent!=null)
             {
                 @ChildContent
             }
@@ -30,7 +30,7 @@
     </div>
     @if (NestedList != null)
     {
-        @if (Expanded)
+        @if (_expanded)
         {
             <MudIcon Icon="@Icons.Material.ExpandLess"/>
         }

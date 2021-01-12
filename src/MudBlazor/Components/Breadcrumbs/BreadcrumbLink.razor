@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Utilities
+
+<li class="@Classname">
+    @if (Parent?.ItemTemplate == null)
+    {
+        <a href="@(Item?.Href ?? "#")">
+            @if (Item?.Icon != null)
+            {
+                <MudIcon Icon="@Item?.Icon" Size="Size.Small" />
+            }
+            @Item?.Text
+        </a>
+    }
+    else
+    {
+        @Parent?.ItemTemplate(Item);
+    }
+</li>
+
+@code {
+    [Parameter] public BreadcrumbItem Item { get; set; }
+
+    [CascadingParameter] public MudBreadcrumbs Parent { get; set; }
+
+    private string Classname => new CssBuilder("mud-breadcrumb-item")
+        .AddClass("mud-disabled", Item?.Disabled)
+        .Build();
+}

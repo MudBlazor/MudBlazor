@@ -1,0 +1,17 @@
+@using MudBlazor;
+@namespace MudBlazor.UnitTests
+
+<MudText>Seleted Item: @(selectedItem.ToString())</MudText>
+<MudTable Items="items"  @bind-SelectedItems="selectedItems" @bind-SelectedItem="selectedItem" Hover="true" MultiSelection="false">
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate> 
+</MudTable>
+
+@code {
+    public static string __description__ = "can only select one item";
+
+    private HashSet<int?> selectedItems;
+    private int? selectedItem;
+    int?[] items = new int?[]{0,1,2};
+}
