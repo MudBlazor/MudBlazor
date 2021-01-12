@@ -1,0 +1,44 @@
+﻿.mud-breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 0 1 auto;
+    align-items: center;
+    list-style-type: none;
+    margin: 0;
+    padding: 16px 12px;
+}
+
+.mud-breadcrumb-separator {
+    padding: 0 12px;
+}
+
+.mud-breadcrumb-separator > span {
+    color: rgba(0, 0, 0, 0.38);
+}
+
+.mud-breadcrumb-item > a {
+    display: flex;
+}
+
+.mud-breadcrumb-item > a > svg.mud-svg-icon-root {
+    margin-right: 4px;
+}
+
+.mud-breadcrumb-item.mud-disabled > a {
+    pointer-events: none;
+    color: var(--mud-palette-action-disabled);
+}
+
+.mud-breadcrumbs-expander {
+    cursor: pointer;
+    display: flex;
+    background-color: #EEEEEE;
+}
+
+.mud-breadcrumbs-expander:hover {
+    background-color: #E0E0E0;
+}
+
+.mud-breadcrumbs-expander > svg {
+    width: 26px;
+}
