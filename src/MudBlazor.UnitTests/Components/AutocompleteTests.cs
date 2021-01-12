@@ -29,7 +29,7 @@ namespace MudBlazor.UnitTests
 
         [TearDown]
         public void TearDown() => ctx.Dispose();
-        
+
         /// <summary>
         /// Initial value should be shown and popup should not open.
         /// </summary>
@@ -123,5 +123,56 @@ namespace MudBlazor.UnitTests
             var autocomplete = comp.FindComponent<MudAutocomplete<AutocompleteTest4.State>>().Instance;
             autocomplete.Text.Should().Be("Assam");
         }
+
+        /// <summary>
+        /// We search for a value not in list and coercion will go back to the last valid value,
+        /// discarding the current search text.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task AutocompleteCoercionTest()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTest1>();
+            Console.WriteLine(comp.Markup);
+            var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
+            await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
+            // check initial state
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama");
+            // set a value the search won't find
+            await comp.InvokeAsync(() =>
+            {
+                autocomplete.Text = "Austria"; // not part of the U.S. thank god
+                autocomplete.ToggleMenu();
+            });
+            // now trigger the coercion by closing the menu 
+            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama");
+        }
+
+        [Test]
+        public async Task AutocompleteCoercionOffTest()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTest1>();
+            Console.WriteLine(comp.Markup);
+            var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
+            await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
+            await comp.InvokeAsync(() => autocomplete.CoerceText=false);
+            // check initial state
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama");
+            // set a value the search won't find
+            await comp.InvokeAsync(() =>
+            {
+                autocomplete.Text = "Austria";
+                autocomplete.ToggleMenu();
+            });
+            // now trigger the coercion by closing the menu 
+            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Austria");
+        }
+
     }
 }
