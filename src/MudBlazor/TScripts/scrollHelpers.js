@@ -1,6 +1,8 @@
 window.scrollHelpers = {
+
+    //scrolls to an Id. Useful for navigation to fragments
     scrollToFragment: (elementId, behavior) => {
-        var element = document.getElementById(elementId);
+        let element = document.getElementById(elementId);
 
         if (element) {
             element.scrollIntoView({ behavior, block: 'center', inline: 'start' });
@@ -11,9 +13,9 @@ window.scrollHelpers = {
         var element = document.getElementById(elementId);
 
         if (element) {
-            element.parentNode.scrollTop = element.offsetTop - element.parentNode.offsetTop - element.scrollHeight * offset;
+            element.parentNode.scrollTop = element.offsetTop - element.parentNode.offsetTop - element.scrollHeight * 3;
         }
-    },
+    },   
 
     // scrolls down or up in a select input
     //increment is 1 if moving dow and -1 if moving up
@@ -48,18 +50,23 @@ window.scrollHelpers = {
                 parent.scrollTop += eHeight* increment;                
             }
         }
+    },   
+
+    //scrolls to the selected element. Default is documentElement (i.e., html element)
+    scrollTo: (selector, left, top, behavior) => {
+        element = document.querySelector(selector) || document.documentElement;
+        element.scrollTo({ left, top, behavior });
     },
 
+    //locks the scroll of the selected element. Useful for dialogs. Default is body
     lockScroll: (selector) => {
-        let element = document.querySelector(selector);
-        if (element) {
-            element.classList.add('scroll-locked');
-        }
+        let element = document.querySelector(selector) || document.body;
+        element.classList.add('scroll-locked');
     },
+
+    //unlocks the scroll. Default is body
     unlockScroll: (selector) => {
-        let element = document.querySelector(selector);
-        if (element) {
-            element.classList.remove('scroll-locked');
-        }
-    }
+        let element = document.querySelector(selector) || document.body;
+        element.classList.remove('scroll-locked');
+    },
 };

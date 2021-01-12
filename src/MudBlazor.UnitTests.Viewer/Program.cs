@@ -18,6 +18,8 @@ namespace MudBlazor.UnitTests
             builder.Services.AddMudBlazorResizeListener();
             builder.Services.AddMudBlazorDialog();
             builder.Services.AddMudBlazorSnackbar();
+            builder.Services.AddMudBlazorScrollManager();
+            builder.Services.AddMudBlazorScrollListener();
 
             await builder.Build().RunAsync();
         }

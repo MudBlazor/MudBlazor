@@ -26,6 +26,9 @@ namespace MudBlazor.Docs.Extensions
             services.AddSingleton<IMenuService,MenuService>();
             services.AddScoped<IDocsNavigationService,DocsNavigationService>();
             
+
+            services.AddMudBlazorScrollManager();
+            services.AddMudBlazorScrollListener();
         }
     }
 }
