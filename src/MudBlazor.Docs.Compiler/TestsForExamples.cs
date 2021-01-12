@@ -51,7 +51,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());");
 
                 cb.AddLine("ctx.Services.AddScoped(sp => new HttpClient());");
-                // options required for file upload in net
+                // options required for file upload
                 cb.AddLine("ctx.Services.AddOptions();");
                 cb.IndentLevel--;
                 cb.AddLine("}");
