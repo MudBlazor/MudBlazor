@@ -1,5 +1,4 @@
 ﻿@namespace MudBlazor.Docs.Examples
-@using BlazorInputFile
 @inject ISnackbar Snackbar
 <InputFile id="fileInput112" OnChange="UploadFiles" hidden multiple accept=".jpg, .jpeg, .png" />
 
@@ -12,8 +11,10 @@
 </MudButton>
 
 
-@code{ private void UploadFiles(IFileListEntry[] entries)
+@code{ 
+    private void UploadFiles(InputFileChangeEventArgs e)
     {
+        var entries = e.GetMultipleFiles();
         //Do your validations here
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
         Snackbar.Add($"Files with {entries.FirstOrDefault().Size} bytes size are not allowed", Severity.Error);
@@ -21,4 +22,5 @@
         Snackbar.Add($"This file has the extension {entries.FirstOrDefault().Name.Split(".").Last()}", Severity.Info);
 
         //TODO upload the files to the server
-    } }
+    }
+}
