@@ -113,6 +113,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
+        /// <summary>
+        /// On drop-down close override Text with selected Value. This makes it clear to the user
+        /// which list value is currently selected and disallows incomplete values in Text.
+        /// </summary>
+        [Parameter] public bool CoerceText { get; set; } = true;
 
         internal bool IsOpen { get; set; }
 
@@ -258,7 +263,7 @@ namespace MudBlazor
         /// <summary>
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
         /// </summary>
-        private string _componentId = Guid.NewGuid().ToString();
+        private readonly string _componentId = Guid.NewGuid().ToString();
 
         public async Task ScrollToListItem(int index, int increment)
         {
@@ -313,6 +318,8 @@ namespace MudBlazor
 
         private void CoerceTextToValue()
         {
+            if (CoerceText == false)
+                return;
             if (Value == null)
             {
                 Text = null;

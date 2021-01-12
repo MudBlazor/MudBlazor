@@ -174,7 +174,7 @@ namespace MudBlazor
         /// </summary>
         public Task Validate() => ValidateValue();
 
-        internal async virtual Task ValidateValue()
+        internal virtual async Task ValidateValue()
         {
             var changed = false;
             var errors = new List<string>();
@@ -283,7 +283,7 @@ namespace MudBlazor
             }
         }
 
-        protected async virtual Task ValidateWithFunc(Func<T, Task<bool>> func, T value, List<string> errors)
+        protected virtual async Task ValidateWithFunc(Func<T, Task<bool>> func, T value, List<string> errors)
         {
             try
             {
@@ -296,7 +296,7 @@ namespace MudBlazor
             }
         }
 
-        protected async virtual Task ValidateWithFunc(Func<T, Task<string>> func, T value, List<string> errors)
+        protected virtual async Task ValidateWithFunc(Func<T, Task<string>> func, T value, List<string> errors)
         {
             try
             {
@@ -310,7 +310,7 @@ namespace MudBlazor
             }
         }
 
-        protected async virtual Task ValidateWithFunc(Func<T, Task<IEnumerable<string>>> func, T value, List<string> errors)
+        protected virtual async Task ValidateWithFunc(Func<T, Task<IEnumerable<string>>> func, T value, List<string> errors)
         {
             try
             {

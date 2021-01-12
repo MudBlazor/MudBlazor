@@ -292,5 +292,8 @@ file_header_template = Not Used
 # Dont use BOM
 charset = utf
 
+# IDE0055: Fix formatting
+dotnet_diagnostic.IDE0055.severity = suggestion
+
 [*]
 end_of_line = lf
