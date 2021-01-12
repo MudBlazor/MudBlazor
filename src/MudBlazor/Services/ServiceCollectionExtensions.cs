@@ -20,29 +20,17 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds a Snackbar Service as a Scoped instance with default options.
-        /// </summary>
-        /// <param name="services">IServiceCollection</param>
-        /// <returns>Continues the IServiceCollection chain.</returns>
-        public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services)
-        {
-            return AddMudBlazorSnackbar(services, new SnackbarConfiguration());
-        }
-
-        /// <summary>
         /// Adds a Snackbar Service as a Scoped instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
-        /// <param name="configurationFunction">Defines a function that is passed a default configuration for further customisation for this instance.</param>
+        /// <param name="configuration">Defines SnackbarConfiguration for this instance.</param>
         /// <returns>Continues the IServiceCollection chain.</returns>
-        public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services, Action<SnackbarConfiguration> configurationFunction)
+        public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services, SnackbarConfiguration configuration = null)
         {
-            if (configurationFunction == null) throw new ArgumentNullException(nameof(configurationFunction));
-
-            var options = new SnackbarConfiguration();
-            configurationFunction(options);
-
-            return AddMudBlazorSnackbar(services, options);
+            if (configuration == null)
+                configuration = new SnackbarConfiguration();
+            services.TryAddScoped<ISnackbar>(builder => new SnackbarService(configuration));
+            return services;
         }
 
         /// <summary>
@@ -51,25 +39,28 @@ namespace MudBlazor.Services
         /// <param name="services">IServiceCollection</param>
         /// <param name="configuration">Defines SnackbarConfiguration for this instance.</param>
         /// <returns>Continues the IServiceCollection chain.</returns>
-        public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services, SnackbarConfiguration configuration)
+        public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services, Action<SnackbarConfiguration> configuration)
         {
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-            services.TryAddScoped<ISnackbar>(builder => new SnackbarService(configuration));
-            return services;
+
+            var options = new SnackbarConfiguration();
+            configuration(options);
+            return AddMudBlazorSnackbar(services, options);
         }
 
         /// <summary>
         /// Adds a ResizeListener as a Scoped instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
+        /// <param name="options">Defines ResizeOptions for this instance</param>
         /// <returns>Continues the IServiceCollection chain.</returns>
-        public static IServiceCollection AddMudBlazorResizeListener(this IServiceCollection services)
+        public static IServiceCollection AddMudBlazorResizeListener(this IServiceCollection services, ResizeOptions options = null)
         {
-            services.AddMudBlazorResizeListener(options =>
+            if (options == null)
+                options = new ResizeOptions();
+            services.AddMudBlazorResizeListener(o =>
             {
-                options.ReportRate = 100; // ms delay
-                options.EnableLogging = true;
-                options.SuppressInitEvent = false;
+                o = options;
             });
             return services;
         }
@@ -112,13 +103,36 @@ namespace MudBlazor.Services
         /// Adds common services required by MudBlazor components
         /// </summary>
         /// <param name="services">IServiceCollection</param>
+        /// <param name="configuration">Defines options for all MudBlazor services.</param>
         /// <returns>Continues the IServiceCollection chain.</returns>
-        public static IServiceCollection AddMudBlazor(this IServiceCollection services)
+        public static IServiceCollection AddMudBlazor(this IServiceCollection services, MudServicesConfiguration configuration = null)
         {
+            if (configuration == null)
+                configuration = new MudServicesConfiguration();
             return services
                 .AddMudBlazorDialog()
-                .AddMudBlazorSnackbar()
-                .AddMudBlazorResizeListener()
+                .AddMudBlazorSnackbar(configuration.SnackbarConfiguration)
+                .AddMudBlazorResizeListener(configuration.ResizeOptions)
+                .AddMudBlazorScrollManager()
+                .AddMudBlazorScrollListener();
+        }
+
+        /// <summary>
+        /// Adds common services required by MudBlazor components
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <param name="configuration">Defines options for all MudBlazor services.</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddMudBlazor(this IServiceCollection services, Action<MudServicesConfiguration> configuration)
+        {
+            if (configuration == null) throw new ArgumentNullException(nameof(configuration));
+
+            var options = new MudServicesConfiguration();
+            configuration(options);
+            return services 
+                .AddMudBlazorDialog()
+                .AddMudBlazorSnackbar(options.SnackbarConfiguration)
+                .AddMudBlazorResizeListener(options.ResizeOptions)
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener();
         }
