@@ -23,21 +23,8 @@ namespace MudBlazor.Docs.Compiler
                 var cb = new CodeBuilder();
 
                 cb.AddHeader();
-
-                cb.AddLine("using Bunit;");
-                cb.AddLine("using Bunit.TestDoubles;");
-                cb.AddLine("using Microsoft.AspNetCore.Components;");
-                cb.AddLine("using Microsoft.AspNetCore.Components.Forms;");
-                cb.AddLine("using Microsoft.Extensions.DependencyInjection;");
-                cb.AddLine("using Microsoft.Extensions.Options;");
-                cb.AddLine("using NUnit.Framework;");
-                cb.AddLine("using MudBlazor.UnitTests.Mocks;");
-                cb.AddLine("using MudBlazor.Docs.Examples;");
-                cb.AddLine("using MudBlazor.Docs.Wireframes;");
-                cb.AddLine("using MudBlazor.Services;");
-                cb.AddLine("using System.Net.Http;");
-                cb.AddLine("using Moq;");
-                cb.AddLine();
+                cb.AddUsings();
+                
                 cb.AddLine("namespace MudBlazor.UnitTests.Components");
                 cb.AddLine("{");
                 cb.IndentLevel++;
@@ -58,11 +45,13 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("ctx.Services.AddSingleton<IDialogService>(new DialogService());");
                 cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new SnackbarService());");
                 cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
-                cb.AddLine("ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new Mock<IBrowserWindowSizeProvider>().Object);");
-                cb.AddLine("ctx.Services.AddSingleton<IScrollListener>(new Mock<IScrollListener>().Object);");
-                cb.AddLine("ctx.Services.AddSingleton<IScrollManager>(new Mock<IScrollManager>().Object);");
+
+                cb.AddLine("ctx.Services.AddTransient<IScrollManager, MockScrollManager>();");
+                cb.AddLine("ctx.Services.AddTransient<IScrollListener, MockScrollListener>();");
+                cb.AddLine("ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());");
+
                 cb.AddLine("ctx.Services.AddScoped(sp => new HttpClient());");
-                // options required for fie upload
+                // options required for file upload
                 cb.AddLine("ctx.Services.AddOptions();");
                 cb.IndentLevel--;
                 cb.AddLine("}");
