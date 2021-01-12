@@ -1,9 +1,10 @@
 ﻿@namespace MudBlazor
 @using MudBlazor.Utilities
-@using Microsoft.JSInterop;
 @using MudBlazor.Extensions
+@using MudBlazor.Services
 @inherits MudComponentBase
 @implements IDisposable
+@inject IBrowserWindowSizeProvider BrowserWindowSizeProvider
 
 <aside @attributes="UserAttributes" class="@Classname" style="@Style">
     <CascadingValue Value="this" IsFixed="true">
@@ -13,9 +14,8 @@
 <MudOverlay Visible="true" OnClick="@DrawerClose" Class="@OverlayClass" DarkBackground="true" LockScroll=false />
 
 
-@code {
-    [Inject] IJSRuntime JsRuntime { get; set; }
-
+@code
+{
     private bool _rtl;
 
     protected string Classname =>
@@ -178,12 +178,6 @@
 
     private async Task<BrowserWindowSize> CheckScreenSize()
     {
-        return await JsRuntime.InvokeAsync<BrowserWindowSize>("resizeListener.getBrowserWindowSize");
-    }
-
-    private class BrowserWindowSize
-    {
-        public int Height { get; set; }
-        public int Width { get; set; }
+        return await BrowserWindowSizeProvider.GetBrowserWindowSize();
     }
 }
