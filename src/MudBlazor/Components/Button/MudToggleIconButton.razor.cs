@@ -73,12 +73,5 @@ namespace MudBlazor
             _toggled = !_toggled;
             await ToggledChanged.InvokeAsync(_toggled);
         }
-
-        private MudIconButton _elementReference;
-
-        public ValueTask FocusAsync()
-        {
-            return _elementReference.FocusAsync();
-        }
     }
 }
