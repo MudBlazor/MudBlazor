@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Threading.Tasks;
+using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -35,11 +36,13 @@ namespace MudBlazor
         /// Command executed when the user clicks on an element.
         /// </summary>
         [Parameter] public ICommand Command { get; set; }
-        [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
+
+        [Inject] private NavigationManager UriHelper { get; set; }
 
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
-        protected void OnClickHandler(MouseEventArgs ev)
+
+        protected async Task OnClickHandler(MouseEventArgs ev)
         {
             if (Href != null)
             {
@@ -47,7 +50,7 @@ namespace MudBlazor
             }
             else
             {
-                OnClick.InvokeAsync(ev);
+                await OnClick.InvokeAsync(ev);
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
                     Command.Execute(CommandParameter);

@@ -39,6 +39,7 @@ namespace MudBlazor
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
             .AddClass($"mud-tabs-vertical", Vertical)
+            .AddClass(PanelClass)
             .Build();
 
         /// <summary>
@@ -92,6 +93,11 @@ namespace MudBlazor
         /// Custom class/classes for TabPanel
         /// </summary>
         [Parameter] public string TabPanelClass { get; set; }
+
+        /// <summary>
+        /// Custom class/classes for Selected Content Panel
+        /// </summary>
+        [Parameter] public string PanelClass { get; set; }
 
         public MudTabPanel ActivePanel { get; set; }
 
