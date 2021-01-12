@@ -36,6 +36,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("using MudBlazor.Docs.Wireframes;");
                 cb.AddLine("using MudBlazor.Services;");
                 cb.AddLine("using System.Net.Http;");
+                cb.AddLine("using Moq;");
                 cb.AddLine();
                 cb.AddLine("namespace MudBlazor.UnitTests.Components");
                 cb.AddLine("{");
@@ -55,8 +56,9 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("ctx.JSInterop.Mode = JSRuntimeMode.Loose;");
                 cb.AddLine("ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());");
                 cb.AddLine("ctx.Services.AddSingleton<IDialogService>(new DialogService());");
-                cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new MockSnackbar());");
+                cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new SnackbarService());");
                 cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
+                cb.AddLine("ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new Mock<IBrowserWindowSizeProvider>().Object);");
                 cb.AddLine("ctx.Services.AddScoped(sp => new HttpClient());");
                 // options required for fie upload
                 cb.AddLine("ctx.Services.AddOptions();");
