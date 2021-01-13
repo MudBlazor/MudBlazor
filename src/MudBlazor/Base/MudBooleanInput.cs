@@ -6,6 +6,11 @@ namespace MudBlazor
     public class MudBooleanInput<T> : MudFormComponent<T, bool?>
     {
         public MudBooleanInput() : base(new BoolConverter<T>()) { }
+        
+        /// <summary>
+        /// If true, the input will be read only.
+        /// </summary>
+        [Parameter] public bool ReadOnly { get; set; }
 
         /// <summary>
         /// Fired when Checked changes.
