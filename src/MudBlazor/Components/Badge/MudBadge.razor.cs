@@ -16,7 +16,7 @@ namespace MudBlazor
         new CssBuilder("mud-badge-badge")
             .AddClass("mud-badge-dot", Dot)
             .AddClass("mud-badge-bordered", Bordered)
-            .AddClass("mud-badge-icon", !String.IsNullOrEmpty(Icon) && !Dot)
+            .AddClass("mud-badge-icon", !string.IsNullOrEmpty(Icon) && !Dot)
             .AddClass("mud-theme-" + Color.ToDescriptionString())
             .AddClass("mud-badge-top", !Bottom)
             .AddClass("mud-badge-bottom", Bottom)

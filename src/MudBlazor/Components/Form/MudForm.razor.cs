@@ -32,7 +32,7 @@ namespace MudBlazor
             get => _valid;
             set { /* readonly parameter! */ }
         }
-        
+
         // Note: w/o any children the form is automatically valid.
         // It stays valid, as long as non-required fields are added or
         // a required field is added or the user touches a field that fails validation.
@@ -59,7 +59,7 @@ namespace MudBlazor
         /// When the form is in a dialog this will cause the dialog to close. So by default we suppress it.
         /// </remarks>
         [Parameter] public bool SuppressImplicitSubmission { get; set; } = true;
-        
+
         /// <summary>
         /// Raised when IsValid changes.
         /// </summary>
@@ -105,18 +105,18 @@ namespace MudBlazor
             EvaluateForm();
         }
 
-        private void EvaluateForm(bool debounce=true)
+        private void EvaluateForm(bool debounce = true)
         {
             _timer?.Dispose();
             if (debounce && ValidationDelay > 0)
                 _timer = new Timer(OnTimerComplete, null, ValidationDelay, Timeout.Infinite);
             else
-                _=OnEvaluateForm();
+                _ = OnEvaluateForm();
         }
 
         private void OnTimerComplete(object stateInfo) => InvokeAsync(OnEvaluateForm);
 
-        private bool _shouldRender=true; // <-- default is true, we need the form children to render
+        private bool _shouldRender = true; // <-- default is true, we need the form children to render
 
         protected async Task OnEvaluateForm()
         {
@@ -159,7 +159,7 @@ namespace MudBlazor
             {
                 control.Validate();
             }
-            EvaluateForm(debounce:false);
+            EvaluateForm(debounce: false);
         }
 
         /// <summary>

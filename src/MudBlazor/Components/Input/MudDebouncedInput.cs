@@ -48,7 +48,7 @@ namespace MudBlazor
         /// <param name="_">discard, not used</param>
         /// <param name="__">discard, not used</param>
         private void OnTimerComplete(object _, ElapsedEventArgs __) => InvokeAsync(OnTimerCompleteGuiThread);
-        
+
         private void OnTimerCompleteGuiThread()
         {
             base.UpdateValueProperty(_updateTextOnTimerComplete);

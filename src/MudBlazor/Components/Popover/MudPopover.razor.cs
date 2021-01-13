@@ -15,7 +15,7 @@ namespace MudBlazor
             .AddClass("mud-popover-offset-x", OffsetX)
             .AddClass("mud-paper")
             .AddClass("mud-paper-square", Square)
-            .AddClass($"mud-elevation-{Elevation.ToString()}")
+            .AddClass($"mud-elevation-{Elevation}")
             .AddClass(Class)
            .Build();
 

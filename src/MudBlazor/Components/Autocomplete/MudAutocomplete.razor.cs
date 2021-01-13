@@ -267,7 +267,7 @@ namespace MudBlazor
 
         public async Task ScrollToListItem(int index, int increment)
         {
-            string id = GetListItemId(index);
+            var id = GetListItemId(index);
             //id of the scrolled element
             //increment 1 down; -1 up
             //onEdges, last param, boolean. If true, only scrolls when elements reaches top or bottom of container.
@@ -277,17 +277,17 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-      
+
         protected override void OnAfterRender(bool firstRender)
         {
-            if (firstRender ) return;
+            if (firstRender) return;
             RestoreScrollPosition();
         }
 
         //This restores the scroll position after closing the menu and element being 0
         private void RestoreScrollPosition()
         {
-            if (_selectedListItemIndex != 0) return;            
+            if (_selectedListItemIndex != 0) return;
             JsRuntime
              .InvokeVoidAsync("scrollHelpers.scrollToListItem", GetListItemId(0), 0);
         }
@@ -326,7 +326,7 @@ namespace MudBlazor
                 _timer?.Dispose();
                 return;
             }
-            string actualvalueStr = GetItemString(Value);
+            var actualvalueStr = GetItemString(Value);
             if (!object.Equals(actualvalueStr, Text))
             {
                 Text = actualvalueStr;

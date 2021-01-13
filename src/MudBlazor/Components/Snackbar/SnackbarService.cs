@@ -18,7 +18,7 @@ namespace MudBlazor
         private IList<Snackbar> SnackBarList { get; }
 
         public SnackbarService() : this(new SnackbarConfiguration()) { }
-        
+
         public SnackbarService(SnackbarConfiguration configuration)
         {
             Configuration = configuration;

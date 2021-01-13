@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudAppBar :  MudComponentBase
+    public partial class MudAppBar : MudComponentBase
     {
         protected string Classname =>
             new CssBuilder("mud-appbar")
@@ -12,10 +12,10 @@ namespace MudBlazor
                 .AddClass($"mud-appbar-drawer-open", Layout?.IsDrawerOpen(Anchor.Left) == true || Layout?.IsDrawerOpen(Anchor.Right) == true)
                 .AddClass($"mud-appbar-drawer-open-left", Layout?.IsDrawerOpen(Anchor.Left))
                 .AddClass($"mud-appbar-drawer-open-right", Layout?.IsDrawerOpen(Anchor.Right))
-                .AddClass($"mud-appbar-drawer-clipped", Layout?.IsDrawerClipped(Anchor.Left) == true  && !Layout?.HasDrawer(Anchor.Right) == true || Layout?.IsDrawerClipped(Anchor.Right) == true && !Layout?.HasDrawer(Anchor.Left) == true || Layout?.IsDrawerClipped(Anchor.Left) == true && Layout?.IsDrawerClipped(Anchor.Right) == true)
+                .AddClass($"mud-appbar-drawer-clipped", Layout?.IsDrawerClipped(Anchor.Left) == true && !Layout?.HasDrawer(Anchor.Right) == true || Layout?.IsDrawerClipped(Anchor.Right) == true && !Layout?.HasDrawer(Anchor.Left) == true || Layout?.IsDrawerClipped(Anchor.Left) == true && Layout?.IsDrawerClipped(Anchor.Right) == true)
                 .AddClass($"mud-appbar-drawer-clipped-left", Layout?.IsDrawerClipped(Anchor.Left) == true && !Layout?.IsDrawerClipped(Anchor.Right) == true)
                 .AddClass($"mud-appbar-drawer-clipped-right", Layout?.IsDrawerClipped(Anchor.Right) == true && !Layout?.IsDrawerClipped(Anchor.Left) == true)
-                .AddClass($"mud-elevation-{Elevation.ToString()}")
+                .AddClass($"mud-elevation-{Elevation}")
                 .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass(Class)
                 .Build();

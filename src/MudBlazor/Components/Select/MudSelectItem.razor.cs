@@ -28,20 +28,20 @@ namespace MudBlazor
                 if (MudSelect != null && _parent.MultiSelection)
                 {
                     MudSelect.SelectionChangedFromOutside += OnUpdateSelectionStateFromOutside;
-                    InvokeAsync(()=>OnUpdateSelectionStateFromOutside(MudSelect.SelectedValues));
+                    InvokeAsync(() => OnUpdateSelectionStateFromOutside(MudSelect.SelectedValues));
                 }
             }
         }
 
-        internal MudSelect<T> MudSelect => (MudSelect<T>) IMudSelect;
+        internal MudSelect<T> MudSelect => (MudSelect<T>)IMudSelect;
 
         private void OnUpdateSelectionStateFromOutside(HashSet<T> selection)
         {
-            if (selection==null)
+            if (selection == null)
                 return;
             var old_is_selected = IsSelected;
             IsSelected = selection.Contains(Value);
-            if (old_is_selected!=IsSelected)
+            if (old_is_selected != IsSelected)
                 InvokeAsync(StateHasChanged);
         }
 
@@ -96,7 +96,7 @@ namespace MudBlazor
         {
             if (MultiSelection)
                 IsSelected = !IsSelected;
-            
+
             MudSelect?.SelectOption(Value);
             InvokeAsync(StateHasChanged);
         }

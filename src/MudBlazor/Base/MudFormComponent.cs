@@ -369,10 +369,10 @@ namespace MudBlazor
         /// Specify an expression which returns the model's field for which validation messages should be displayed.
         /// Currently only string fields are supported.
         /// </summary>
-        # nullable enable
+#nullable enable
         [Parameter]
         public Expression<Func<T>>? For { get; set; }
-        # nullable disable
+#nullable disable
 
         private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
         {
@@ -393,16 +393,16 @@ namespace MudBlazor
         /// <summary>
         /// To find out whether or not For parameter has changed we keep a separate reference
         /// </summary>
-        #nullable enable
+#nullable enable
         private Expression<Func<T>>? _currentFor;
-        #nullable disable
+#nullable disable
 
         /// <summary>
         /// To find out whether or not EditContext parameter has changed we keep a separate reference
         /// </summary>
-        #nullable enable
+#nullable enable
         private EditContext? _currentEditContext;
-        #nullable disable
+#nullable disable
 
         protected override void OnParametersSet()
         {

@@ -72,7 +72,7 @@ namespace MudBlazor
             set
             {
                 var d = Converter.Set(value);
-                if (_value==d)
+                if (_value == d)
                     return;
                 _value = d;
                 ValueChanged.InvokeAsync(value);

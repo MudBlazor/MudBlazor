@@ -40,6 +40,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
-      
+
     }
 }

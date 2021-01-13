@@ -62,14 +62,14 @@ namespace MudBlazor
             set
             {
                 var set = value ?? new HashSet<T>();
-                if (SelectedValues.Count==set.Count && SelectedValues.All(x => set.Contains(x)))
+                if (SelectedValues.Count == set.Count && SelectedValues.All(x => set.Contains(x)))
                     return;
                 _selectedValues = new HashSet<T>(set);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
                     Value = _selectedValues.FirstOrDefault();
                 else
-                    Text = string.Join(", ", SelectedValues.Select(x=> Converter.Set(x)));
+                    Text = string.Join(", ", SelectedValues.Select(x => Converter.Set(x)));
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
             }
         }
@@ -168,7 +168,7 @@ namespace MudBlazor
         internal void Add(MudSelectItem<T> item)
         {
             _items.Add(item);
-            if (item.Value!=null)
+            if (item.Value != null)
                 _value_lookup[item.Value] = item;
         }
 
@@ -209,7 +209,7 @@ namespace MudBlazor
 
         public async Task SelectOption(object obj)
         {
-            var value = (T) obj;
+            var value = (T)obj;
             if (!MultiSelection)
             {
                 // single selection
@@ -226,7 +226,7 @@ namespace MudBlazor
                     SelectedValues.Add(value);
                 else
                     SelectedValues.Remove(value);
-                Text = string.Join(", ", SelectedValues.Select(x=>Converter.Set(x)));
+                Text = string.Join(", ", SelectedValues.Select(x => Converter.Set(x)));
             }
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
@@ -263,7 +263,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            UpdateIcon();            
+            UpdateIcon();
             if (MultiSelection && MaxHeight == null)
             {
                 MaxHeight = 300;
@@ -272,7 +272,7 @@ namespace MudBlazor
 
         public void CheckGenericTypeMatch(object select_item)
         {
-            var itemT=select_item.GetType().GenericTypeArguments[0];
+            var itemT = select_item.GetType().GenericTypeArguments[0];
             if (itemT != typeof(T))
                 throw new GenericTypeMismatchException("MudSelect", "MudSelectItem", typeof(T), itemT);
         }

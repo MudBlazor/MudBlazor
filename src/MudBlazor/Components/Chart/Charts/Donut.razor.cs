@@ -20,13 +20,13 @@ namespace MudBlazor.Charts
             Legends.Clear();
             double counterClockwiseOffset = 25;
             double totalPercent = 0;
-            double offset = counterClockwiseOffset;
+            var offset = counterClockwiseOffset;
 
-            int counter = 0;
-            foreach (double data in GetNormalizedData())
+            var counter = 0;
+            foreach (var data in GetNormalizedData())
             {
-                double percent = data*100;
-                double reversePercent = 100 - percent;
+                var percent = data * 100;
+                var reversePercent = 100 - percent;
                 offset = 100 - totalPercent + counterClockwiseOffset;
                 totalPercent = totalPercent + percent;
 
@@ -42,18 +42,18 @@ namespace MudBlazor.Charts
                 Circles.Add(circle);
 
 
-                string labels = "";
+                var labels = "";
                 if (counter < InputLabels.Length)
                 {
                     labels = InputLabels[counter];
                 }
-                SvgLegend Legend = new SvgLegend()
+                var legend = new SvgLegend()
                 {
                     Index = counter,
                     Labels = labels,
                     Data = data.ToString()
                 };
-                Legends.Add(Legend);
+                Legends.Add(legend);
 
                 counter += 1;
             }
