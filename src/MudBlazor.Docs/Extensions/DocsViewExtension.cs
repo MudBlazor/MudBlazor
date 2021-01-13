@@ -23,9 +23,9 @@ namespace MudBlazor.Docs.Extensions
                 config.SnackbarVariant = Variant.Filled;
             });
             services.AddSingleton<IApiLinkService, ApiLinkService>();
-            services.AddSingleton<IMenuService,MenuService>();
-            services.AddScoped<IDocsNavigationService,DocsNavigationService>();
-            
+            services.AddSingleton<IMenuService, MenuService>();
+            services.AddScoped<IDocsNavigationService, DocsNavigationService>();
+
 
             services.AddMudBlazorScrollManager();
             services.AddMudBlazorScrollListener();

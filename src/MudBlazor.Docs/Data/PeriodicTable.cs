@@ -51,16 +51,16 @@ namespace MudBlazor.Docs.Data
 
         private static async Task<IList<Element>> LoadElements()
         {
-            _loadTime=DateTime.Now;
-            _elements =new List<Element>();
+            _loadTime = DateTime.Now;
+            _elements = new List<Element>();
             var key = GetResourceKey(typeof(PeriodicTable).Assembly, "Elements.json");
-            using (Stream stream = typeof(PeriodicTable).Assembly.GetManifestResourceStream(key))
+            using (var stream = typeof(PeriodicTable).Assembly.GetManifestResourceStream(key))
             using (var reader = new JsonTextReader(new StreamReader(stream)))
             {
                 var periodicTable = await JObject.LoadAsync(reader);
                 foreach (var row in periodicTable["table"].Values<JObject>())
                 {
-                    foreach(var el in row["elements"].Values<JObject>())
+                    foreach (var el in row["elements"].Values<JObject>())
                         _elements.Add(el.ToObject<Element>());
                 }
             }

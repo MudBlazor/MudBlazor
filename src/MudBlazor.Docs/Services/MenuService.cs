@@ -12,7 +12,7 @@ namespace MudBlazor.Docs.Services
         IEnumerable<DocsLink> GettingStarted { get; }
         IEnumerable<MudComponent> Components { get; }
         IEnumerable<MudComponent> Api { get; }
-        IEnumerable<DocsLink> Features{ get; }
+        IEnumerable<DocsLink> Features { get; }
         IEnumerable<DocsLink> Customization { get; }
         IEnumerable<DocsLink> About { get; }
 
@@ -30,7 +30,7 @@ namespace MudBlazor.Docs.Services
         /// Add here the new menu elements without caring about the order.
         /// They will be reordered automatically
         /// </summary>
-        private readonly DocsComponents DocsComponents = new DocsComponents()
+        private readonly DocsComponents _docsComponents = new DocsComponents()
             //Individual elements
             .AddItem("Container", typeof(MudContainer))
             .AddItem("Grid", typeof(MudGrid))
@@ -105,7 +105,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Line chart", typeof(MudChart))
                 .AddItem("Pie chart", typeof(MudChart))
             );
-        public IEnumerable<MudComponent> Components => DocsComponents.Elements;
+        public IEnumerable<MudComponent> Components => _docsComponents.Elements;
 
         private DocsComponents _docsComponentsApi;
         //cached property
@@ -124,9 +124,9 @@ namespace MudBlazor.Docs.Services
                 {
                     if (item.IsNavGroup)
                     {
-                        foreach (var ApiItem in item.GroupItems.Elements)
+                        foreach (var apiItem in item.GroupItems.Elements)
                         {
-                            _docsComponentsApi.AddItem(ApiItem.Name, ApiItem.Component);
+                            _docsComponentsApi.AddItem(apiItem.Name, apiItem.Component);
                         }
                     }
                     else
@@ -141,11 +141,11 @@ namespace MudBlazor.Docs.Services
         public IEnumerable<MudComponent> Api => DocsComponentsApi.Elements;
 
         //cached property
-        private IEnumerable <DocsLink> _gettingStarted;
+        private IEnumerable<DocsLink> _gettingStarted;
         /// <summary>
         /// Getting started menu links
         /// </summary>
-        public IEnumerable<DocsLink> GettingStarted=>_gettingStarted ??= new List<DocsLink>
+        public IEnumerable<DocsLink> GettingStarted => _gettingStarted ??= new List<DocsLink>
             {
                 new DocsLink {Title = "Installation", Href = "getting-started/installation"},
                 new DocsLink {Title = "Usage", Href = "getting-started/usage"},
@@ -171,11 +171,11 @@ namespace MudBlazor.Docs.Services
             }.OrderBy(x => x.Title);
 
 
-        private IEnumerable<DocsLink> _customization;        
+        private IEnumerable<DocsLink> _customization;
         /// <summary>
         /// Customization menu links
         /// </summary>
-        public IEnumerable<DocsLink> Customization=>_customization ??= new List<DocsLink>()
+        public IEnumerable<DocsLink> Customization => _customization ??= new List<DocsLink>()
         {
             //new DocsLink{Title="Default theme", Href="customization/default-theme"},
             new DocsLink {Title = "Overview", Href = "customization/theming/overview"},

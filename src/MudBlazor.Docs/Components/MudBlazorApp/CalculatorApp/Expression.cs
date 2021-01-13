@@ -31,7 +31,7 @@ namespace PrimitiveCalculator
     public class Expression
     {
         public List<Operation> Operations = new List<Operation>();
-        SimpleParser parser;  
+        SimpleParser parser;
         public bool MustConsumeClosingBracket;
         public double? Value;
 
@@ -97,13 +97,13 @@ namespace PrimitiveCalculator
             }
             if (!Operations.Any())
                 return double.NaN;
-            var first_op=Operations.First();
+            var first_op = Operations.First();
             if (string.IsNullOrEmpty(first_op.Operator))
                 first_op.Operator = "+";
             else if (first_op.Operator == "-")
             {
                 first_op.Operator = "+";
-                first_op.Expression.Value = (first_op.Expression.Value ??Double.NaN) * (-1);
+                first_op.Expression.Value = (first_op.Expression.Value ?? double.NaN) * (-1);
             }
             if (Operations.Count == 1)
             {
@@ -118,14 +118,14 @@ namespace PrimitiveCalculator
             }
             else if (Operations.Count == 2)
             {
-                Value=Operations[1].Apply(Operations[0].Apply(0));
+                Value = Operations[1].Apply(Operations[0].Apply(0));
             }
             else
             {
                 if (Precedence(Operations[0].Operator) > 0)
                     return double.NaN; // only + and minus may be first operator!
                 // repeated contraction by precedence
-                while (Operations.Count>1)
+                while (Operations.Count > 1)
                 {
                     var highest_op = Operations.Select(x => x.Operator).OrderByDescending(x => Precedence(x)).First();
                     if (Precedence(highest_op) == 0)
@@ -136,13 +136,13 @@ namespace PrimitiveCalculator
                         return sum;
                     }
                     var ops = new List<Operation>();
-                    int i = 0;
+                    var i = 0;
                     foreach (var op in Operations)
                     {
                         if (op.Operator == highest_op)
                         {
-                            var last_op = ops[ops.Count-1];
-                            last_op.Expression.Value=op.Apply(last_op.Expression.Value ?? double.NaN);
+                            var last_op = ops[ops.Count - 1];
+                            last_op.Expression.Value = op.Apply(last_op.Expression.Value ?? double.NaN);
                             i++;
                             continue;
                         }
@@ -192,24 +192,18 @@ namespace PrimitiveCalculator
         {
             if (Expression == null)
                 return double.NaN;
-            switch(Operator)
+            return Operator switch
             {
-                case "+":
-                    return v + Expression.Value ?? double.NaN;
-                case "-":
-                    return v - Expression.Value ?? double.NaN;
-                case "*":
-                    return v * Expression.Value ?? double.NaN;
-                case "/":
-                    return v / Expression.Value ?? double.NaN;
-                case "%":
-                    return v % Expression.Value ?? double.NaN;
-                case "^":
-                    return Math.Pow(v , Expression.Value ?? double.NaN);
-            }
-            return double.NaN;
+                "+" => v + Expression.Value ?? double.NaN,
+                "-" => v - Expression.Value ?? double.NaN,
+                "*" => v * Expression.Value ?? double.NaN,
+                "/" => v / Expression.Value ?? double.NaN,
+                "%" => v % Expression.Value ?? double.NaN,
+                "^" => Math.Pow(v, Expression.Value ?? double.NaN),
+                _ => double.NaN,
+            };
         }
     }
 
-  
+
 }

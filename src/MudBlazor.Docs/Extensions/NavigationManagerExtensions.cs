@@ -15,8 +15,9 @@ namespace MudBlazor.Docs.Extensions
         /// Gets the section part of the documentation page
         /// Ex: /components/button;  "components" is the section
         /// </summary>
-        public static string GetSection (this NavigationManager navMan) {
-            var currentUri = new Uri( navMan.Uri);            
+        public static string GetSection(this NavigationManager navMan)
+        {
+            var currentUri = new Uri(navMan.Uri);
             return currentUri.AbsolutePath
                 .Split("/", StringSplitOptions.RemoveEmptyEntries)
                 .FirstOrDefault();

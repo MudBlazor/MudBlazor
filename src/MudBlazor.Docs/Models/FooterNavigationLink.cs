@@ -7,13 +7,13 @@ namespace MudBlazor.Docs.Models
 
         public string Link { get; set; }
 
-        public NavigationFooterLink() {}
+        public NavigationFooterLink() { }
 
         public NavigationFooterLink(string name, string link)
         {
             Name = name;
             Link = link;
         }
-        
+
     }
 }

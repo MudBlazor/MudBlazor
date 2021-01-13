@@ -6,12 +6,12 @@ namespace MudBlazor.Docs.Models
 {
     public class DocsComponents
     {
-        private List<MudComponent> _mudComponents=new List<MudComponent>();
+        private List<MudComponent> _mudComponents = new List<MudComponent>();
 
         /// <summary>
         /// The elements of the list of mudcomponents
         /// </summary>
-        internal IEnumerable<MudComponent> Elements => _mudComponents.OrderBy(e=>e.Name);       
+        internal IEnumerable<MudComponent> Elements => _mudComponents.OrderBy(e => e.Name);
 
         public DocsComponents AddItem(string name, Type component)
         {
@@ -43,6 +43,6 @@ namespace MudBlazor.Docs.Models
             return this;
         }
 
-        
+
     }
 }
