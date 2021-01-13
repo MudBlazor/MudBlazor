@@ -48,7 +48,7 @@ namespace MudBlazor
             {
                 StateHasChanged();
             }
-            catch(InvalidOperationException) { /* this happens on page reload, probably a Blazor bug */ }
+            catch (InvalidOperationException) { /* this happens on page reload, probably a Blazor bug */ }
         }
 
         public void UpdateAll()
@@ -68,11 +68,11 @@ namespace MudBlazor
             {
                 if (p == panel)
                     continue;
-                p.Collapse(update_parent:false);
+                p.Collapse(update_parent: false);
             }
             UpdateAll();
         }
 
-     
+
     }
 }

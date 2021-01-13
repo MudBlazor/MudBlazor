@@ -45,7 +45,7 @@ namespace MudBlazor
         /// If true, the label will be displayed in an error state.
         /// </summary>
         [Parameter] public bool Error { get; set; }
-        
+
         /// <summary>
         /// The ErrorText that will be displayed if Error true
         /// </summary>
@@ -60,7 +60,7 @@ namespace MudBlazor
         /// If true, the input will take up the full width of its container.
         /// </summary>
         [Parameter] public bool FullWidth { get; set; }
-        
+
         /// <summary>
         /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
         /// </summary>

@@ -19,7 +19,7 @@ namespace MudBlazor
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
         protected string AdornmentClassname => MudInputCssHelper.GetAdornmentClassname(this);
-                
+
         /// <summary>
         /// The short hint displayed in the start input before the user enters a value.
         /// </summary>

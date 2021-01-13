@@ -14,7 +14,7 @@ namespace MudBlazor
         /// buttons which will automatically activate the intended functionality. 
         /// </summary>
         [CascadingParameter] protected IActivatable Activateable { get; set; }
-        
+
         /// <summary>
         /// The HTML element that will be rendered in the root by the component
         /// </summary>
@@ -70,9 +70,9 @@ namespace MudBlazor
             else
                 // Default tag for a MudButton is "button" if no HtmlTag defined
                 if (IsNullOrWhiteSpace(HtmlTag))
-                {
-                    HtmlTag = "button";
-                }
+            {
+                HtmlTag = "button";
+            }
 
             base.OnInitialized();
         }

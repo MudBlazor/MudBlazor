@@ -18,9 +18,9 @@ namespace MudBlazor
         protected string ActionClass => new CssBuilder("mud-dialog-actions")
           .AddClass(ClassActions)
         .Build();
-        
+
         [CascadingParameter] private MudDialogInstance DialogInstance { get; set; }
-        
+
         [Inject] public IDialogService DialogService { get; set; }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace MudBlazor
         /// Define the dialog body here
         /// </summary>
         [Parameter] public RenderFragment DialogContent { get; set; }
-        
+
         /// <summary>
         /// Define the action buttons here
         /// </summary>
@@ -47,7 +47,7 @@ namespace MudBlazor
         /// CSS class that will be applied to the body container
         /// </summary>
         [Parameter] public string ClassContent { get; set; }
-        
+
         /// <summary>
         /// CSS class that will be applied to the action buttons container
         /// </summary>
@@ -84,15 +84,15 @@ namespace MudBlazor
 
         private bool IsInline => DialogInstance == null;
 
-        private IDialogReference _reference; 
-        
+        private IDialogReference _reference;
+
         /// <summary>
         /// Show this inlined dialog
         /// </summary>
         /// <param name="title"></param>
         /// <param name="options"></param>
         /// <returns></returns>
-        public IDialogReference Show(string title=null, DialogOptions options=null)
+        public IDialogReference Show(string title = null, DialogOptions options = null)
         {
             if (!IsInline)
                 throw new InvalidOperationException("You can only show an inlined dialog.");
@@ -101,10 +101,10 @@ namespace MudBlazor
             var parameters = new DialogParameters()
             {
                 [nameof(TitleContent)] = TitleContent,
-                [nameof(DialogContent)]=DialogContent,
-                [nameof(DialogActions)]=DialogActions,
-                [nameof(DisableSidePadding)]= DisableSidePadding,
-                [nameof(ClassContent)]= ClassContent,
+                [nameof(DialogContent)] = DialogContent,
+                [nameof(DialogActions)] = DialogActions,
+                [nameof(DisableSidePadding)] = DisableSidePadding,
+                [nameof(ClassContent)] = ClassContent,
                 [nameof(ClassActions)] = ClassActions,
             };
             _reference = DialogService.Show<MudDialog>(title, parameters, options);
@@ -117,7 +117,7 @@ namespace MudBlazor
         /// <param name="result"></param>
         public void Close(DialogResult result = null)
         {
-            if (!IsInline || _reference==null)
+            if (!IsInline || _reference == null)
                 return;
             _reference.Close(result);
             _reference = null;

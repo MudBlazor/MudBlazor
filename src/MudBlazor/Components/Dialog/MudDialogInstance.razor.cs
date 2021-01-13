@@ -59,7 +59,7 @@ namespace MudBlazor
             Title = title;
             StateHasChanged();
         }
-      
+
         public void Close()
         {
             Close(DialogResult.Ok<object>(null));

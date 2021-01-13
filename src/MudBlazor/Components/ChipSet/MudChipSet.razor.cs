@@ -9,7 +9,7 @@ namespace MudBlazor
 {
     public partial class MudChipSet : MudComponentBase
     {
-  
+
         protected string Classname =>
         new CssBuilder("mud-chipset")
           .AddClass(Class)
@@ -134,7 +134,7 @@ namespace MudBlazor
             _chips.Add(chip);
         }
 
-        private  void OnChipClickHandler(MouseEventArgs args) {}
+        private void OnChipClickHandler(MouseEventArgs args) { }
 
         internal void Remove(MudChip chip)
         {
@@ -146,7 +146,7 @@ namespace MudBlazor
 
         internal async Task OnChipClicked(MudChip chip)
         {
-            var was_selected=chip.IsSelected;
+            var was_selected = chip.IsSelected;
             if (MultiSelection)
             {
                 chip.IsSelected = !chip.IsSelected;
@@ -155,7 +155,7 @@ namespace MudBlazor
             {
                 foreach (var ch in _chips)
                 {
-                     ch.IsSelected = (ch==chip); // <-- exclusively select the one chip only, thus all others must be deselected
+                    ch.IsSelected = (ch == chip); // <-- exclusively select the one chip only, thus all others must be deselected
                 }
                 if (!Mandatory)
                     chip.IsSelected = !was_selected;

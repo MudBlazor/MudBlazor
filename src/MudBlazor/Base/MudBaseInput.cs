@@ -247,7 +247,7 @@ namespace MudBlazor
 
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
-            UpdateTextProperty(false); 
+            UpdateTextProperty(false);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

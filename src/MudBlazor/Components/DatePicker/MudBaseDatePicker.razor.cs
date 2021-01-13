@@ -105,14 +105,14 @@ namespace MudBlazor
         protected virtual bool IsRange { get; } = false;
 
         private OpenTo _currentView;
-        
+
         private void OnPickerOpened()
         {
             _currentView = OpenTo;
-            if(_currentView == OpenTo.Year)
-                _scrollToYearAfterRender=true;
+            if (_currentView == OpenTo.Year)
+                _scrollToYearAfterRender = true;
         }
-        
+
         /// <summary>
         /// Get the first of the month to display
         /// </summary>
@@ -143,8 +143,8 @@ namespace MudBlazor
             if (index < 0 || index > 5)
                 throw new ArgumentException("Index must be between 0 and 5");
             var month_first = GetMonthStart(month);
-            var week_first = month_first.AddDays(index*7).StartOfWeek(GetFirstDayOfWeek( ));
-            for (int i = 0; i < 7; i++)
+            var week_first = month_first.AddDays(index * 7).StartOfWeek(GetFirstDayOfWeek());
+            for (var i = 0; i < 7; i++)
                 yield return week_first.AddDays(i);
         }
 
@@ -182,8 +182,8 @@ namespace MudBlazor
         /// <returns></returns>
         protected IEnumerable<string> GetAbbreviatedDayNames()
         {
-            string[] dayNamesNormal = Culture.DateTimeFormat.AbbreviatedDayNames;
-            string[] dayNamesShifted = Shift(dayNamesNormal, (int)GetFirstDayOfWeek());
+            var dayNamesNormal = Culture.DateTimeFormat.AbbreviatedDayNames;
+            var dayNamesShifted = Shift(dayNamesNormal, (int)GetFirstDayOfWeek());
             return dayNamesShifted;
         }
 
@@ -192,7 +192,7 @@ namespace MudBlazor
         /// </summary>
         private static T[] Shift<T>(T[] array, int positions)
         {
-            T[] copy = new T[array.Length];
+            var copy = new T[array.Length];
             Array.Copy(array, 0, copy, array.Length - positions, positions);
             Array.Copy(array, positions, copy, 0, array.Length - positions);
             return copy;
@@ -250,7 +250,7 @@ namespace MudBlazor
         public async void ScrollToYear()
         {
             _scrollToYearAfterRender = false;
-            string id = $"{_componentId}{GetMonthStart(0).Year.ToString()}";
+            var id = $"{_componentId}{GetMonthStart(0).Year}";
             await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToYear", id);
             StateHasChanged();
         }
@@ -300,19 +300,19 @@ namespace MudBlazor
         {
             _currentView = OpenTo.Month;
             var current = GetMonthStart(0);
-            PickerMonth = new DateTime(year, current.Month,  1);
+            PickerMonth = new DateTime(year, current.Month, 1);
         }
 
         private IEnumerable<DateTime> GetAllMonths()
         {
             var current = GetMonthStart(0);
-            for (int i = 1; i <= 12; i++)
+            for (var i = 1; i <= 12; i++)
                 yield return new DateTime(current.Year, i, 1);
         }
 
         private string GetAbbreviatedMontName(in DateTime month)
         {
-            return Culture.DateTimeFormat.AbbreviatedMonthNames[month.Month-1];
+            return Culture.DateTimeFormat.AbbreviatedMonthNames[month.Month - 1];
         }
 
         private string GetMonthClasses(DateTime month)
