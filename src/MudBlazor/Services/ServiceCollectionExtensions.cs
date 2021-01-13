@@ -105,7 +105,7 @@ namespace MudBlazor.Services
         /// <param name="services">IServiceCollection</param>
         /// <param name="configuration">Defines options for all MudBlazor services.</param>
         /// <returns>Continues the IServiceCollection chain.</returns>
-        public static IServiceCollection AddMudBlazor(this IServiceCollection services, MudServicesConfiguration configuration = null)
+        public static IServiceCollection AddMudServices(this IServiceCollection services, MudServicesConfiguration configuration = null)
         {
             if (configuration == null)
                 configuration = new MudServicesConfiguration();
@@ -123,13 +123,13 @@ namespace MudBlazor.Services
         /// <param name="services">IServiceCollection</param>
         /// <param name="configuration">Defines options for all MudBlazor services.</param>
         /// <returns>Continues the IServiceCollection chain.</returns>
-        public static IServiceCollection AddMudBlazor(this IServiceCollection services, Action<MudServicesConfiguration> configuration)
+        public static IServiceCollection AddMudServices(this IServiceCollection services, Action<MudServicesConfiguration> configuration)
         {
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
 
             var options = new MudServicesConfiguration();
             configuration(options);
-            return services 
+            return services
                 .AddMudBlazorDialog()
                 .AddMudBlazorSnackbar(options.SnackbarConfiguration)
                 .AddMudBlazorResizeListener(options.ResizeOptions)

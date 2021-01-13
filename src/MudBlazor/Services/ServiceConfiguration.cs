@@ -1,4 +1,4 @@
-namespace MudBlazor.Services
+﻿namespace MudBlazor.Services
 {
     // Add additional configuration objects here when adding new services
 
@@ -12,7 +12,7 @@ namespace MudBlazor.Services
 
         public MudServicesConfiguration()
         {
-            SnackbarConfiguration  = new SnackbarConfiguration();
+            SnackbarConfiguration = new SnackbarConfiguration();
             ResizeOptions = new ResizeOptions();
         }
     }
