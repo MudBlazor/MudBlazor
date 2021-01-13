@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
-using MudBlazor.Utilities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
