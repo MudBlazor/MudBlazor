@@ -4,7 +4,7 @@ namespace MudBlazor.Docs.Compiler
     {
         public static int Main()
         {
-            bool success =
+            var success =
                 new CodeSnippets().Execute()
                 && new DocStrings().Execute()
                 && new ExamplesMarkup().Execute()

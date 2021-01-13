@@ -5,19 +5,20 @@ namespace MudBlazor.Docs.Compiler
 {
     public class Paths
     {
-        private const string docsDirectory = "MudBlazor.Docs";
-        private const string testDirectory = "MudBlazor.UnitTests";
-        private const string snippetsFile = "Snippets.generated.cs";
-        private const string docStringsFile = "DocStrings.generated.cs";
-        private const string componentTestsFile = "_AllComponents.cs";
-        private const string apiPageTestsFile = "_AllApiPages.cs";
-        private const string newFilesToBuild = "NewFilesToBuild.txt";
+        private const string DocsDirectory = "MudBlazor.Docs";
+        private const string TestDirectory = "MudBlazor.UnitTests";
+        private const string SnippetsFile = "Snippets.generated.cs";
+        private const string DocStringsFile = "DocStrings.generated.cs";
+        private const string ComponentTestsFile = "_AllComponents.cs";
+        private const string ApiPageTestsFile = "_AllApiPages.cs";
+        private const string NewFilesToBuild = "NewFilesToBuild.txt";
 
         public const string ExampleDiscriminator = "Example"; // example components must contain this string
 
         public string SrcDirPath
         {
-            get{
+            get
+            {
                 var exePath = Path.GetFullPath(".");
                 return string.Join("/", exePath.Split('/', '\\').TakeWhile(x => x != "src").Concat(new[] { "src" }));
             }
@@ -27,7 +28,7 @@ namespace MudBlazor.Docs.Compiler
         {
             get
             {
-                return Directory.EnumerateDirectories(SrcDirPath, docsDirectory).FirstOrDefault();
+                return Directory.EnumerateDirectories(SrcDirPath, DocsDirectory).FirstOrDefault();
             }
         }
 
@@ -35,7 +36,7 @@ namespace MudBlazor.Docs.Compiler
         {
             get
             {
-                return Path.Join(Directory.EnumerateDirectories(SrcDirPath, testDirectory).FirstOrDefault(), "Generated");
+                return Path.Join(Directory.EnumerateDirectories(SrcDirPath, TestDirectory).FirstOrDefault(), "Generated");
             }
         }
 
@@ -51,7 +52,7 @@ namespace MudBlazor.Docs.Compiler
         {
             get
             {
-                return Path.Join(DocsStringSnippetsDirPath, docStringsFile);
+                return Path.Join(DocsStringSnippetsDirPath, DocStringsFile);
             }
         }
 
@@ -59,7 +60,7 @@ namespace MudBlazor.Docs.Compiler
         {
             get
             {
-                return Path.Join(DocsStringSnippetsDirPath, snippetsFile);
+                return Path.Join(DocsStringSnippetsDirPath, SnippetsFile);
             }
         }
 
@@ -67,7 +68,7 @@ namespace MudBlazor.Docs.Compiler
         {
             get
             {
-                return Path.Join(TestDirPath, componentTestsFile);
+                return Path.Join(TestDirPath, ComponentTestsFile);
             }
         }
 
@@ -75,7 +76,7 @@ namespace MudBlazor.Docs.Compiler
         {
             get
             {
-                return Path.Join(TestDirPath, apiPageTestsFile);
+                return Path.Join(TestDirPath, ApiPageTestsFile);
             }
         }
 
@@ -83,7 +84,7 @@ namespace MudBlazor.Docs.Compiler
         {
             get
             {
-                return Path.Join(DocsDirPath, newFilesToBuild);
+                return Path.Join(DocsDirPath, NewFilesToBuild);
             }
         }
     }
