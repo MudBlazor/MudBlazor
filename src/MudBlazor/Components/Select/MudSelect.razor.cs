@@ -76,6 +76,8 @@ namespace MudBlazor
 
         private Func<T, string> _toStringFunc = x => x?.ToString();
 
+        private MudInput<string> _elementReference;
+
         /// <summary>
         /// Defines how values are displayed in the drop-down list
         /// </summary>

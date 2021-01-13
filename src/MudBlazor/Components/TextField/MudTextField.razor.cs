@@ -10,6 +10,7 @@ namespace MudBlazor
            new CssBuilder("mud-input-input-control").AddClass(Class)
            .Build();
 
+        private MudInput<string> _elementReference;
 
         /// <summary>
         /// The short hint displayed in the input before the user enters a value.

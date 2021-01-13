@@ -21,6 +21,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
+        private ElementReference _elementReference;
+
         /// <summary>
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>

@@ -123,6 +123,8 @@ namespace MudBlazor
 
         public string CurrentIcon { get; set; }
 
+        private MudInput<string> _elementReference;
+
         public void SelectOption(T value)
         {
             Value = value;
