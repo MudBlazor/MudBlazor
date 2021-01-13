@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" @onclick:stopPropagation="true" style="@Style" onpointerdown="ripplet(arguments[0])">
+<div @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" @onclick:stopPropagation="true" style="@Style">
     @if (!String.IsNullOrEmpty(Avatar))
     {
         <div class="mud-list-item-avatar">
