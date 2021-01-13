@@ -1,4 +1,4 @@
-// Copyright (c) 2011 - 2019 Ed Charbeneau
+﻿// Copyright (c) 2011 - 2019 Ed Charbeneau
 // License: MIT
 // See https://github.com/EdCharbeneau
 

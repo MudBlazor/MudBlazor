@@ -11,10 +11,10 @@ namespace MudBlazor
     /// Note: currently not in use. Should we ever use it, remove
     /// the  [ExcludeFromCodeCoverage] attribute
     /// </summary>
-    [ExcludeFromCodeCoverage] 
+    [ExcludeFromCodeCoverage]
     public class NumericConverter<T> : Converter<T, double>
     {
-       
+
         public NumericConverter()
         {
             SetFunc = OnSet;
@@ -27,7 +27,7 @@ namespace MudBlazor
             {
                 // double
                 if (typeof(T) == typeof(double) || typeof(T) == typeof(double?))
-                        return (T)(object)value;
+                    return (T)(object)value;
                 // string
                 else if (typeof(T) == typeof(string))
                     return (T)(object)value.ToString(Culture);
@@ -68,7 +68,7 @@ namespace MudBlazor
             }
             catch (Exception e)
             {
-                UpdateGetError("Conversion error: "+e.Message);
+                UpdateGetError("Conversion error: " + e.Message);
                 return default(T);
             }
             return default(T);
@@ -81,7 +81,7 @@ namespace MudBlazor
             try
             {
                 // double
-                 if (typeof(T) == typeof(double))
+                if (typeof(T) == typeof(double))
                     return (double)(object)arg;
                 else if (typeof(T) == typeof(double?))
                     return ((double?)(object)arg).Value;
@@ -109,7 +109,7 @@ namespace MudBlazor
                 if (typeof(T) == typeof(ushort?))
                     return Convert.ToDouble(((ushort?)(object)arg).Value);
                 // int
-                else if (typeof(T) == typeof(int) )
+                else if (typeof(T) == typeof(int))
                     return Convert.ToDouble((int)(object)arg);
                 else if (typeof(T) == typeof(int?))
                     return Convert.ToDouble(((int?)(object)arg).Value);
@@ -146,7 +146,7 @@ namespace MudBlazor
             }
             catch (FormatException e)
             {
-                UpdateSetError("Conversion error: "+e.Message);
+                UpdateSetError("Conversion error: " + e.Message);
                 return double.NaN;
             }
         }

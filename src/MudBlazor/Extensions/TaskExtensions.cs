@@ -28,7 +28,7 @@ namespace MudBlazor
             {
                 await task;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (option != TaskOption.Safe)
                     throw;

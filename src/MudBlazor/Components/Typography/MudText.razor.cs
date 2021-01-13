@@ -39,7 +39,7 @@ namespace MudBlazor
         /// <summary>
         /// Child content of component.
         /// </summary>
-        [Parameter]  public RenderFragment ChildContent { get; set; }
+        [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
         /// If true, Sets display inine

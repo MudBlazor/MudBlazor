@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using System;
-using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -27,7 +27,8 @@ namespace MudBlazor
         /// <summary>
         /// If true, the focus will no longer loop inside the component.
         /// </summary>
-        [Parameter] public bool Disabled
+        [Parameter]
+        public bool Disabled
         {
             get => _disabled;
             set

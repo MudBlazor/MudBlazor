@@ -1,7 +1,7 @@
-﻿using Bunit;
+﻿using System.Collections.Generic;
+using Bunit;
 using FluentAssertions;
 using NUnit.Framework;
-using System.Collections.Generic;
 using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
