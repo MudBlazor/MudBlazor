@@ -11,7 +11,7 @@ namespace MudBlazor
     // MudBlazor.Dialog is obsolete but kept here for backwards compatibility reasons.
     // Don't remove, it will cause massive breakages in user code
     namespace Dialog { /* leave empty! */ }
-    
+
     public class DialogService : IDialogService
     {
         internal event Action<DialogReference> OnDialogInstanceAdded;
@@ -101,14 +101,14 @@ namespace MudBlazor
         {
             return this.ShowMessageBox(new MessageBoxOptions
             {
-                Title = title, 
+                Title = title,
                 Message = message,
                 YesText = yesText,
                 NoText = noText,
                 CancelText = cancelText,
             }, options);
         }
-        
+
         public async Task<bool?> ShowMessageBox(MessageBoxOptions mboxOptions, DialogOptions options = null)
         {
             var parameters = new DialogParameters()

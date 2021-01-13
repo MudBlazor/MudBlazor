@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
 

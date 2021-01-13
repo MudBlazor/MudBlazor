@@ -3,10 +3,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
-using static Bunit.ComponentParameterFactory;
 using FluentAssertions;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests
 {

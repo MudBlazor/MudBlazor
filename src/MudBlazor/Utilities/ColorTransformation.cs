@@ -14,7 +14,7 @@ namespace MudBlazor.Utilities
     public static class ColorTransformation
     {
         private static double EPSILON => 0.000000000000001;
- 
+
         public class HSLColor
         {
             public double H;
@@ -70,9 +70,9 @@ namespace MudBlazor.Utilities
 
             return new HSLColor
             {
-                H=SystemMath.Max(0D, SystemMath.Min(360D, h)),
-                S=SystemMath.Max(0D, SystemMath.Min(1D, s)),
-                L=SystemMath.Max(0D, SystemMath.Min(1D, l))
+                H = SystemMath.Max(0D, SystemMath.Min(360D, h)),
+                S = SystemMath.Max(0D, SystemMath.Min(1D, s)),
+                L = SystemMath.Max(0D, SystemMath.Min(1D, l))
             };
         }
 
@@ -135,8 +135,8 @@ namespace MudBlazor.Utilities
                     a,
                     SystemMath.Max(0, SystemMath.Min(255, (int)Math.Round(T[0] * 255D))),
                     SystemMath.Max(0, SystemMath.Min(255, (int)Math.Round(T[1] * 255D))),
-                    SystemMath.Max(0, SystemMath.Min(255, (int) Math.Round(T[2] * 255D))));
+                    SystemMath.Max(0, SystemMath.Min(255, (int)Math.Round(T[2] * 255D))));
         }
- 
+
     }
 }
