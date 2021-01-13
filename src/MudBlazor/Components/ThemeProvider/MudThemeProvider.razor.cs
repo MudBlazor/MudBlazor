@@ -31,12 +31,12 @@ namespace MudBlazor
             return theme.ToString();
         }
 
-        // private string Breakpoint = "mud-breakpoint";
-        private string Palette = "mud-palette";
-        private string Elevation = "mud-elevation";
-        private string Typography = "mud-typography";
-        private string LayoutProperties = "mud";
-        private string Zindex = "mud-zindex";
+        // private const string Breakpoint = "mud-breakpoint";
+        private const string Palette = "mud-palette";
+        private const string Elevation = "mud-elevation";
+        private const string Typography = "mud-typography";
+        private const string LayoutProperties = "mud";
+        private const string Zindex = "mud-zindex";
 
         public static string ColorRgbDarken(string hex)
         {
