@@ -1,4 +1,4 @@
-namespace MudBlazor.Docs.Compiler
+﻿namespace MudBlazor.Docs.Compiler
 {
     public class Program
     {

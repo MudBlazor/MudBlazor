@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Services.Scroll
 {
@@ -23,6 +22,6 @@ namespace MudBlazor.Services.Scroll
         /// <summary>
         /// Suppress the first OnScroll that is invoked when a new event handler is added.
         /// </summary>
-        public bool SuppressInitEvent { get; set; } 
+        public bool SuppressInitEvent { get; set; }
     }
 }

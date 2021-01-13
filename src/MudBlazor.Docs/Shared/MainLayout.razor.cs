@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
-
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
-
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace MudBlazor.Docs.Shared
 {

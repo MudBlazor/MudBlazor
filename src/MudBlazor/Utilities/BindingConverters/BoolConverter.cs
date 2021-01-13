@@ -8,7 +8,7 @@ namespace MudBlazor
     /// </summary>
     public class BoolConverter<T> : Converter<T, bool?>
     {
-       
+
         public BoolConverter()
         {
             SetFunc = OnSet;
@@ -36,7 +36,7 @@ namespace MudBlazor
             }
             catch (Exception e)
             {
-                UpdateGetError("Conversion error: "+e.Message);
+                UpdateGetError("Conversion error: " + e.Message);
                 return default(T);
             }
             return default(T);
@@ -75,7 +75,7 @@ namespace MudBlazor
             }
             catch (FormatException e)
             {
-                UpdateSetError("Conversion error: "+e.Message);
+                UpdateSetError("Conversion error: " + e.Message);
                 return null;
             }
         }

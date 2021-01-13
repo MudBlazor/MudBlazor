@@ -11,7 +11,7 @@ namespace MudBlazor
         IEnumerable<Snackbar> ShownSnackbars { get; }
 
         SnackbarConfiguration Configuration { get; }
-        
+
         event Action OnSnackbarsUpdated;
 
         void Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null);

@@ -1,6 +1,6 @@
-﻿using MudBlazor.Extensions;
+﻿using System;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
-using System;
 
 namespace MudBlazor
 {

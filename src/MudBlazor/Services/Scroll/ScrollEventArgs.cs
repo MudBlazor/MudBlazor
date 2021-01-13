@@ -1,10 +1,9 @@
-﻿using MudBlazor.Interop;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MudBlazor.Interop;
 
 namespace MudBlazor
 {
@@ -34,7 +33,7 @@ namespace MudBlazor
         /// <summary>
         /// The ScrollWidth property is a measurement of the width of an element's content, including content not visible on the screen due to overflow
         /// </summary>
-        public int  ScrollWidth { get; set; }
+        public int ScrollWidth { get; set; }
 
         /// <summary>
         /// Node name of the scrolled element

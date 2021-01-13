@@ -9,7 +9,7 @@ namespace MudBlazor
     /// </summary>
     public class DefaultConverter<T> : Converter<T>
     {
-       
+
         public DefaultConverter()
         {
             SetFunc = OnSet;
@@ -38,7 +38,7 @@ namespace MudBlazor
                 else if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
                 {
                     var lowerValue = value.ToLowerInvariant();
-                    if ( lowerValue=="true" || lowerValue=="on")
+                    if (lowerValue == "true" || lowerValue == "on")
                         return (T)(object)true;
                     if (lowerValue == "false" || lowerValue == "off")
                         return (T)(object)false;
@@ -176,7 +176,7 @@ namespace MudBlazor
             }
             catch (Exception e)
             {
-                UpdateGetError("Conversion error: "+e.Message);
+                UpdateGetError("Conversion error: " + e.Message);
                 return default(T);
             }
             return default(T);
@@ -222,7 +222,7 @@ namespace MudBlazor
                 if (typeof(T) == typeof(ushort?))
                     return ((ushort?)(object)arg).Value.ToString(Format, Culture);
                 // int
-                else if (typeof(T) == typeof(int) )
+                else if (typeof(T) == typeof(int))
                     return ((int)(object)arg).ToString(Format, Culture);
                 else if (typeof(T) == typeof(int?))
                     return ((int?)(object)arg).Value.ToString(Format, Culture);
@@ -259,7 +259,7 @@ namespace MudBlazor
                 // guid
                 else if (typeof(T) == typeof(Guid))
                 {
-                    var value = (Guid) (object) arg;
+                    var value = (Guid)(object)arg;
                     return value.ToString();
                 }
                 else if (typeof(T) == typeof(Guid?))
@@ -268,43 +268,43 @@ namespace MudBlazor
                     return value.Value.ToString();
                 }
                 // enum
-                else if(IsNullableEnum(typeof(T))) 
+                else if (IsNullableEnum(typeof(T)))
                 {
                     var value = (Enum)(object)arg;
                     return value.ToString();
                 }
                 else if (typeof(T).IsEnum)
                 {
-                    var value = (Enum) (object) arg;
+                    var value = (Enum)(object)arg;
                     return value.ToString();
                 }
                 // datetime
                 else if (typeof(T) == typeof(DateTime))
                 {
-                    var value = (DateTime) (object) arg;
+                    var value = (DateTime)(object)arg;
                     return value.ToString(Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
-                }  
+                }
                 else if (typeof(T) == typeof(DateTime?))
                 {
-                    var value = (DateTime?) (object) arg;
+                    var value = (DateTime?)(object)arg;
                     return value.Value.ToString(Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
-                }      
+                }
                 // timespan
                 else if (typeof(T) == typeof(TimeSpan))
                 {
-                    var value = (TimeSpan) (object) arg;
+                    var value = (TimeSpan)(object)arg;
                     return value.ToString(Format ?? Culture.DateTimeFormat.ShortTimePattern, Culture);
-                }  
+                }
                 else if (typeof(T) == typeof(TimeSpan?))
                 {
-                    var value = (TimeSpan?) (object) arg;
+                    var value = (TimeSpan?)(object)arg;
                     return value.Value.ToString(Format ?? DefaultTimeSpanFormat, Culture);
-                }               
-                return arg.ToString( );
+                }
+                return arg.ToString();
             }
             catch (FormatException e)
             {
-                UpdateSetError("Conversion error: "+e.Message);
+                UpdateSetError("Conversion error: " + e.Message);
                 return null;
             }
         }
