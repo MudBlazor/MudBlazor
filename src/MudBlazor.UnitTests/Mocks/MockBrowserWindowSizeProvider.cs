@@ -1,9 +1,9 @@
-﻿using MudBlazor;
-using MudBlazor.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using MudBlazor;
+using MudBlazor.Services;
 
 namespace MudBlazor.UnitTests.Mocks
 {

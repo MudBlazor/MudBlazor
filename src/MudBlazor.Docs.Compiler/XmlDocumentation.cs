@@ -1,4 +1,4 @@
-// Borrowed from https://github.com/ZacharyPatten/Towel
+﻿// Borrowed from https://github.com/ZacharyPatten/Towel
 // Copyright (c) Zachary Patten
 // License MIT
 // Minor adaptations by Meinrad Recheis

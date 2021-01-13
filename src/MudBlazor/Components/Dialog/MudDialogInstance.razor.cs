@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Blazored
+﻿// Copyright (c) 2019 Blazored
 // Copyright (c) 2020 Adapted by Jonny Larsson, Meinrad Recheis and Contributors
 
 using System;

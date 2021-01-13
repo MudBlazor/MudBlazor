@@ -63,7 +63,7 @@ namespace MudBlazor.Utilities
         /// <param name="value">CSS Class to conditionally add.</param>
         /// <param name="when">Nullable condition in which the CSS Class is added.</param>
         /// <returns>CssBuilder</returns>
-        public CssBuilder AddClass(string value, bool? when = true) => when==true ? this.AddClass(value) : this;
+        public CssBuilder AddClass(string value, bool? when = true) => when == true ? this.AddClass(value) : this;
 
         /// <summary>
         /// Adds a conditional CSS Class to the builder with space separator.

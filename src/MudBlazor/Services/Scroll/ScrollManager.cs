@@ -1,13 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-
-using MudBlazor.Extensions;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
@@ -17,12 +15,12 @@ namespace MudBlazor
     public interface IScrollManager
     {
         string Selector { get; set; }
-        Task ScrollTo( int left, int top, ScrollBehavior scrollBehavior);
+        Task ScrollTo(int left, int top, ScrollBehavior scrollBehavior);
         Task ScrollToFragment(string id, ScrollBehavior behavior);
-        Task ScrollToTop( ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
+        Task ScrollToTop(ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
     }
 
-    
+
 
 
     public class ScrollManager : IScrollManager
@@ -33,7 +31,7 @@ namespace MudBlazor
         public ScrollManager(IJSRuntime jSRuntime)
         {
             _jSRuntime = jSRuntime;
-            
+
         }
 
 
@@ -46,7 +44,7 @@ namespace MudBlazor
         public async Task ScrollToFragment(string id, ScrollBehavior behavior)
         {
             await _jSRuntime
-                .InvokeVoidAsync("scrollHelpers.scrollToFragment", 
+                .InvokeVoidAsync("scrollHelpers.scrollToFragment",
                                             id,
                                             behavior.ToDescriptionString());
         }
@@ -58,9 +56,9 @@ namespace MudBlazor
         /// <param name="top">y coordinate</param>
         /// <param name="behavior">smooth or auto</param>
         /// <returns></returns>
-        public async Task ScrollTo(int left=0, int top=0, ScrollBehavior behavior=ScrollBehavior.Auto)
+        public async Task ScrollTo(int left = 0, int top = 0, ScrollBehavior behavior = ScrollBehavior.Auto)
         {
-            
+
             await _jSRuntime
                 .InvokeVoidAsync("scrollHelpers.scrollTo",
                                             Selector,
@@ -74,7 +72,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="scrollBehavior">smooth or auto</param>
         /// <returns></returns>
-        public async Task ScrollToTop( ScrollBehavior scrollBehavior = ScrollBehavior.Auto)
+        public async Task ScrollToTop(ScrollBehavior scrollBehavior = ScrollBehavior.Auto)
         {
             await ScrollTo(0, 0, scrollBehavior);
         }
@@ -86,7 +84,7 @@ namespace MudBlazor
     /// </summary>
     public enum ScrollBehavior
     {
-        Smooth, 
-        Auto 
+        Smooth,
+        Auto
     }
 }

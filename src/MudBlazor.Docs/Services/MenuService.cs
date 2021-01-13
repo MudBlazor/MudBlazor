@@ -1,8 +1,7 @@
-﻿using MudBlazor.Docs.Models;
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Services
 {

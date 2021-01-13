@@ -8,7 +8,7 @@ namespace MudBlazor
     /// </summary>
     public class NullableDateConverter : Converter<DateTime?>
     {
-        public string DateFormat { get; set; }="yyyy-MM-dd";
+        public string DateFormat { get; set; } = "yyyy-MM-dd";
 
         public NullableDateConverter(string format)
         {
@@ -36,7 +36,7 @@ namespace MudBlazor
                 return null;
             try
             {
-                return arg.Value.ToString( DateFormat, Culture);
+                return arg.Value.ToString(DateFormat, Culture);
             }
             catch (FormatException e)
             {
