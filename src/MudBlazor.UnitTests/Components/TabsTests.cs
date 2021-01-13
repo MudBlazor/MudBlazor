@@ -35,7 +35,8 @@ namespace MudBlazor.UnitTests
         public void TearDown() => ctx.Dispose();
 
         [Test]
-        public async Task AddingAndRemovingTabPanels() {
+        public async Task AddingAndRemovingTabPanels()
+        {
             var comp = ctx.RenderComponent<TabsAddingRemovingTabsTest>();
             Console.WriteLine(comp.Markup);
             comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().BeEmpty();
@@ -50,7 +51,7 @@ namespace MudBlazor.UnitTests
             comp.FindAll("button")[0].Click();
             Console.WriteLine("\n" + comp.Markup);
             comp.FindAll("div.mud-tab").Count.Should().Be(2);
-            comp.FindAll("p.mud-typography").Count.Should().Be(1, because:"Only the current tab panel is displayed");
+            comp.FindAll("p.mud-typography").Count.Should().Be(1, because: "Only the current tab panel is displayed");
             // we are now on tab 0
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Tab 0");
             // switch to tab1

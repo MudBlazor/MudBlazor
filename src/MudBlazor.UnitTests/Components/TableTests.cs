@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests
 
         [TearDown]
         public void TearDown() => ctx.Dispose();
-        
+
         /// <summary>
         /// OnRowClick event callback should be fired regardless of the selection state
         /// </summary>
@@ -231,7 +231,7 @@ namespace MudBlazor.UnitTests
             var inputs = comp.FindAll("input").ToArray();
             inputs[0].Change(true);
             table.SelectedItems.Count.Should().Be(1);
-            comp.InvokeAsync(() => { table.SelectedItems = null;});
+            comp.InvokeAsync(() => { table.SelectedItems = null; });
             table.SelectedItems.Count.Should().Be(0);
         }
 
@@ -246,7 +246,6 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
-            var text = comp.FindComponent<MudText>();
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(3);
             var td = comp.FindAll("td").ToArray();
@@ -279,7 +278,7 @@ namespace MudBlazor.UnitTests
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
-            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x=>x.Instance).ToArray();
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
             var tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(4); // <-- one header, three rows
             var th = comp.FindAll("th").ToArray();
@@ -320,10 +319,11 @@ namespace MudBlazor.UnitTests
             checkboxes[0].Checked.Should().Be(false);
             checkboxes[2].Checked.Should().Be(true);
             // uncheck it
-            comp.InvokeAsync(() => { 
+            comp.InvokeAsync(() =>
+            {
                 checkboxes[2].Checked = false;
             });
-            comp.WaitForState(()=>checkboxes[2].Checked==false);
+            comp.WaitForState(() => checkboxes[2].Checked == false);
             table.SelectedItems.Count.Should().Be(0);
             comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
             checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
@@ -342,11 +342,12 @@ namespace MudBlazor.UnitTests
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
             var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
-            table.SelectedItems.Count.Should().Be(3); 
+            table.SelectedItems.Count.Should().Be(3);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
             checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4);
             // uncheck only row 1 => header checkbox should be off then
-            comp.InvokeAsync(() => {
+            comp.InvokeAsync(() =>
+            {
                 checkboxes[2].Checked = false;
             });
             comp.WaitForState(() => checkboxes[2].Checked == false);
@@ -370,7 +371,7 @@ namespace MudBlazor.UnitTests
             var table = comp.FindComponent<MudTable<int>>().Instance;
             var text = comp.FindComponent<MudText>();
             var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
-            table.SelectedItems.Count.Should().Be(4); 
+            table.SelectedItems.Count.Should().Be(4);
             comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2, 3 }");
             checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(3);
             // uncheck a row then switch to page 2 and both checkboxes on page 2 should be checked

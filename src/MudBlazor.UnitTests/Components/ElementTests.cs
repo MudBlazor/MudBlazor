@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests
         public void ShouldRenderAnAnchorAndThenAButton()
         {
             var htmlTag = Parameter(nameof(MudElement.HtmlTag), "a");
-            var className= Parameter(nameof(MudElement.Class), "mud-button-root");
+            var className = Parameter(nameof(MudElement.Class), "mud-button-root");
             var comp = ctx.RenderComponent<MudElement>(htmlTag, className);
             comp.MarkupMatches("<a class=\"mud-button-root\"></a>");
             htmlTag = Parameter(nameof(MudElement.HtmlTag), "button");

@@ -36,13 +36,14 @@ namespace MudBlazor.UnitTests
         /// single checkbox, initialized false, check -  uncheck
         /// </summary>
         [Test]
-        public void CheckBoxTest1() {
+        public void CheckBoxTest1()
+        {
             var comp = ctx.RenderComponent<MudCheckBox<bool>>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var box = comp.Instance;
-            var input =comp.Find("input");
+            var input = comp.Find("input");
             // check initial state
             box.Checked.Should().Be(false);
             // click and check if it has toggled
@@ -58,7 +59,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public void CheckBoxTest2()
         {
-            var comp = ctx.RenderComponent<MudCheckBox<bool>>( new []{ ComponentParameter.CreateParameter("Checked", true), });
+            var comp = ctx.RenderComponent<MudCheckBox<bool>>(new[] { ComponentParameter.CreateParameter("Checked", true), });
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var box = comp.Instance;

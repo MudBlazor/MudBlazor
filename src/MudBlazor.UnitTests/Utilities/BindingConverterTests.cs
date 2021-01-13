@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Utilities
             c3.Get("17").Should().Be(17);
             c3.Set(null).Should().Be(null);
             c3.Get(null).Should().Be(null);
-            var c4 = new DefaultConverter<double?>() {Culture=CultureInfo.InvariantCulture };
+            var c4 = new DefaultConverter<double?>() { Culture = CultureInfo.InvariantCulture };
             c4.Set(1.7).Should().Be("1.7");
             c4.Get("1.7").Should().Be(1.7);
             c4.Get("1234567.15").Should().Be(1234567.15);
@@ -72,7 +72,7 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         public enum YesNoMaybe { Maybe, Yes, No }
-        
+
         [Test]
         public void DefaultConverterTest2()
         {
@@ -185,7 +185,7 @@ namespace MudBlazor.UnitTests.Utilities
 
             var dt1 = new DefaultConverter<DateTime>() { Format = "MM/dd/yyyy" };
             dt1.Culture = new CultureInfo("en-US");
-            dt1.Set(new DateTime(2020,11,03)).Should().Be("11/03/2020");
+            dt1.Set(new DateTime(2020, 11, 03)).Should().Be("11/03/2020");
             dt1.Get("11/03/2020").Should().Be(new DateTime(2020, 11, 03));
             dt1.Culture = new CultureInfo("pt-BR");
             dt1.Format = "dd/MM/yyyy";

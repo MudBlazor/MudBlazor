@@ -4,7 +4,7 @@ using MudBlazor.Services;
 
 namespace MudBlazor.UnitTests.Mocks
 {
-    #pragma warning disable CS1998 // Justification - Implementing IResizeListenerService
+#pragma warning disable CS1998 // Justification - Implementing IResizeListenerService
     public class MockResizeListenerService : IResizeListenerService
     {
         public void Dispose()
@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests.Mocks
         {
             // TODO: implement this fake service for tests
             return default(Breakpoint);
-        }   
+        }
     }
-   #pragma warning restore CS1998
+#pragma warning restore CS1998
 }

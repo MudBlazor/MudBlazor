@@ -37,7 +37,8 @@ namespace MudBlazor.UnitTests
         /// Initial Text for double should be 0, with F1 format it should be 0.0
         /// </summary>
         [Test]
-        public async Task TextFieldTest1() {
+        public async Task TextFieldTest1()
+        {
             var comp = ctx.RenderComponent<MudTextField<double>>();
             // print the generated html
             Console.WriteLine(comp.Markup);
@@ -81,7 +82,7 @@ namespace MudBlazor.UnitTests
             // print the generated html
             Console.WriteLine(comp.Markup);
             var textfield = comp.Instance;
-            await comp.InvokeAsync(()=>textfield.Value=null);
+            await comp.InvokeAsync(() => textfield.Value = null);
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
             await comp.InvokeAsync(() => textfield.Text = "");
@@ -104,7 +105,7 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-input-error").Count.Should().Be(1);
             comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
-        
+
         /// <summary>
         /// If Debounce Interval is null or 0, Value should change immediately
         /// </summary>
@@ -162,10 +163,10 @@ namespace MudBlazor.UnitTests
             var label = Parameter(nameof(MudTextField<string>.Label), "label");
             var placeholder = Parameter(nameof(MudTextField<string>.Placeholder), "placeholder");
             //with no placeholder, label is not shrinked
-            var comp = ctx.RenderComponent<MudTextField<string>>( label);
+            var comp = ctx.RenderComponent<MudTextField<string>>(label);
             comp.Markup.Should().NotContain("shrink");
             //with placeholder label is shrinked
-            comp.SetParametersAndRender( placeholder);
+            comp.SetParametersAndRender(placeholder);
             comp.Markup.Should().Contain("shrink");
         }
 
@@ -190,7 +191,7 @@ namespace MudBlazor.UnitTests
 
             public Func<T, IEnumerable<string>> Validation => ValidateValue;
         }
-        
+
         /// <summary>
         /// FluentValidation rules can be used for validating a TextFields
         /// </summary>
@@ -239,10 +240,10 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task TextField_Should_FireValueChanged()
         {
-            string changed_value=null;
+            string changed_value = null;
             string changed_text = null;
             var comp = ctx.RenderComponent<MudTextField<string>>(
-                EventCallback<string>("ValueChanged", x=> changed_value=x),
+                EventCallback<string>("ValueChanged", x => changed_value = x),
                 EventCallback<string>("TextChanged", x => changed_text = x)
             );
             var textfield = comp.Instance;
