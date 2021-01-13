@@ -63,7 +63,7 @@ namespace MudBlazor
         .AddClass("mud-paper-square", PickerSquare)
         .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
         .Build();
-        
+
         protected string PickerInputClass =>
         new CssBuilder("mud-input-input-control").AddClass(Class)
         .Build();
@@ -112,7 +112,7 @@ namespace MudBlazor
         public override void ToggleOpen()
         {
             base.ToggleOpen();
-            if(IsOpen)
+            if (IsOpen)
                 OnPickerOpened();
             else
                 StateHasChanged();

@@ -27,7 +27,7 @@ namespace MudBlazor
             .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default)
             .AddClass($"mud-border-right", Border)
             .AddClass($"mud-paper-outlined", Outlined)
-            .AddClass($"mud-elevation-{Elevation.ToString()}", Elevation != 0)
+            .AddClass($"mud-elevation-{Elevation}", Elevation != 0)
             .Build();
 
         protected string WrapperClassnames =>
@@ -147,7 +147,7 @@ namespace MudBlazor
             if (ActivePanelIndex == index && index == Panels.Count - 1)
             {
                 ActivePanelIndex = index > 0 ? index - 1 : 0;
-                if(Panels.Count == 1)
+                if (Panels.Count == 1)
                     ActivePanel = null;
             }
             Panels.Remove(tabPanel);
@@ -156,14 +156,14 @@ namespace MudBlazor
 
         string GetTabClass(MudTabPanel panel)
         {
-            var TabClass = new CssBuilder("mud-tab")
+            var tabClass = new CssBuilder("mud-tab")
               .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
               .AddClass($"mud-disabled", panel.Disabled)
               .AddClass($"mud-ripple", !DisableRipple)
               .AddClass(TabPanelClass)
             .Build();
 
-            return TabClass;
+            return tabClass;
         }
         void ActivatePanel(MudTabPanel panel, MouseEventArgs ev)
         {
@@ -183,13 +183,13 @@ namespace MudBlazor
 
         public void ActivatePanel(int index)
         {
-            MudTabPanel panel = Panels[index];
+            var panel = Panels[index];
             ActivatePanel(panel, null);
         }
 
         public void ActivatePanel(object id)
         {
-            MudTabPanel panel = Panels.Where((p) => p.ID == id).FirstOrDefault();
+            var panel = Panels.Where((p) => p.ID == id).FirstOrDefault();
             if (panel != null)
                 ActivatePanel(panel, null);
         }

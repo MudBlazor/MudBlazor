@@ -71,7 +71,7 @@ namespace MudBlazor
                     _checked = value;
                     StateHasChanged();
                 }
-            }   
+            }
         }
 
         public void Select()
@@ -85,7 +85,7 @@ namespace MudBlazor
         {
             if (RadioGroup == null)
                 return;
-            if ((string) args.Value == "on")
+            if ((string)args.Value == "on")
                 RadioGroup.SetSelectedRadio(this);
         }
 

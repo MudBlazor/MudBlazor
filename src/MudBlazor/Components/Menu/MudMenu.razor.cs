@@ -22,7 +22,7 @@ namespace MudBlazor
         [Parameter] public Color Color { get; set; } = Color.Default;
         [Parameter] public Size Size { get; set; } = Size.Medium;
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
-        
+
 
         /// <summary>
         /// If true, compact vertical padding will be applied to all menu items.
@@ -43,7 +43,7 @@ namespace MudBlazor
         /// override the standard button and all parameters which concern it.
         /// </summary>
         [Parameter] public RenderFragment ActivatorContent { get; set; }
-        
+
         /// <summary>
         /// Add menu items here
         /// </summary>

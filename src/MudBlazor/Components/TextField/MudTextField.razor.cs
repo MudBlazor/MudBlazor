@@ -41,5 +41,5 @@ namespace MudBlazor
 
     }
 
-    public class MudTextFieldString : MudTextField<string> {}
+    public class MudTextFieldString : MudTextField<string> { }
 }

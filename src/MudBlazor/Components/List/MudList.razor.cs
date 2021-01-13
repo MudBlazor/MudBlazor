@@ -76,16 +76,16 @@ namespace MudBlazor
                 CanSelect = SelectedItemChanged.HasDelegate;
             }
         }
-        
+
         internal event Action ParametersChanged;
-        
+
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
             ParametersChanged?.Invoke();
         }
-        
-        private HashSet<MudListItem> _items=new HashSet<MudListItem>();
+
+        private HashSet<MudListItem> _items = new HashSet<MudListItem>();
         private HashSet<MudList> _childLists = new HashSet<MudList>();
         private MudListItem _selectedItem;
 
@@ -98,7 +98,7 @@ namespace MudBlazor
         {
             _items.Remove(item);
         }
-        
+
         internal void Register(MudList child)
         {
             _childLists.Add(child);
@@ -109,14 +109,14 @@ namespace MudBlazor
             _childLists.Remove(child);
         }
 
-        internal void SetSelectedItem(MudListItem item, bool force=false)
+        internal void SetSelectedItem(MudListItem item, bool force = false)
         {
             if ((!CanSelect || !Clickable) && !force)
                 return;
             if (_selectedItem == item)
                 return;
             _selectedItem = item;
-            _=SelectedItemChanged.InvokeAsync(item);
+            _ = SelectedItemChanged.InvokeAsync(item);
             foreach (var listItem in _items.ToArray())
             {
                 listItem.SetSelected(item == listItem);
@@ -125,9 +125,9 @@ namespace MudBlazor
                 childList.SetSelectedItem(item);
             ParentList?.SetSelectedItem(item);
         }
-        
+
         internal bool CanSelect { get; private set; }
-        
+
         public void Dispose()
         {
             ParametersChanged = null;
