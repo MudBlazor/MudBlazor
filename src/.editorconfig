@@ -294,6 +294,8 @@ charset = utf
 
 # IDE0055: Fix formatting
 dotnet_diagnostic.IDE0055.severity = suggestion
+# IDE0044: Make field readonly
+dotnet_diagnostic.IDE0044.severity = suggestion
 
 [*]
 end_of_line = lf
