@@ -13,8 +13,7 @@ namespace MudBlazor.Docs.Utilities
         public Action<object> Action { get; } = null;
         public void Execute(object parameter)
         {
-            if (Action != null)
-                Action(parameter);
+            Action?.Invoke(parameter);
         }
 
 

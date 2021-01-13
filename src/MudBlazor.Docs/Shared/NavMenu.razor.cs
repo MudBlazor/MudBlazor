@@ -15,7 +15,7 @@ namespace MudBlazor.Docs.Shared
     public partial class NavMenu
     {
         [Inject] IMenuService MenuService { get; set; }
-        [Inject] NavigationManager NavMan{ get; set; }
+        [Inject] NavigationManager NavMan { get; set; }
 
         //sections are "getting-started","components", "api", ...
         string _section;
@@ -23,7 +23,7 @@ namespace MudBlazor.Docs.Shared
         //component links are the part of the url that tells us what component is featured
         string _componentLink;
 
-        
+
 
         public void Refresh()
         {
@@ -31,8 +31,8 @@ namespace MudBlazor.Docs.Shared
             _componentLink = NavMan.GetComponentLink();
             StateHasChanged();
         }
-        
-        
+
+
 
         bool IsSubGroupExpanded(MudComponent item)
         {

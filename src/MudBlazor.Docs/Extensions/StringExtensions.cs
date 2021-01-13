@@ -8,11 +8,11 @@ namespace MudBlazor.Docs.Extensions
     {
         public static string ToKebabCase(this string source)
         {
-            if (source is null) 
+            if (source is null)
                 return null;
-            if (source.Length == 0) 
+            if (source.Length == 0)
                 return string.Empty;
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             for (var i = 0; i < source.Length; i++)
             {
                 if (char.IsLower(source[i])) // if current char is already lowercase
@@ -37,7 +37,7 @@ namespace MudBlazor.Docs.Extensions
                     builder.Append("-");
                     builder.Append(char.ToLower(source[i]));
                 }
-                else 
+                else
                 {
                     builder.Append(char.ToLower(source[i]));
                 }
