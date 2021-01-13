@@ -34,7 +34,7 @@ namespace MudBlazor.UnitTests
         {
             var comp = ctx.RenderComponent<ListSelectionTest>();
             Console.WriteLine(comp.Markup);
-            var list=comp.FindComponent<MudList>().Instance;
+            var list = comp.FindComponent<MudList>().Instance;
             list.SelectedItem.Should().Be(null);
             // we have seven choices, none is active
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups

@@ -34,7 +34,8 @@ namespace MudBlazor.UnitTests
         /// Initial value should be shown and popup should not open.
         /// </summary>
         [Test]
-        public async Task AutocompleteTest1() {
+        public async Task AutocompleteTest1()
+        {
             var comp = ctx.RenderComponent<AutocompleteTest1>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
@@ -55,7 +56,7 @@ namespace MudBlazor.UnitTests
             menu = comp.Find("div.mud-popover");
             menu.ClassList.Should().Contain("mud-popover-open");
             Console.WriteLine(comp.Markup);
-            var items=comp.FindComponents<MudListItem>().ToArray();
+            var items = comp.FindComponents<MudListItem>().ToArray();
             items.Length.Should().Be(1);
             items.First().Markup.Should().Contain("California");
             // click on California!
@@ -108,7 +109,7 @@ namespace MudBlazor.UnitTests
         {
             var comp = ctx.RenderComponent<AutocompleteTest3>();
             Console.WriteLine(comp.Markup);
-            var autocomplete=comp.FindComponent<MudAutocomplete<AutocompleteTest3.State>>().Instance;
+            var autocomplete = comp.FindComponent<MudAutocomplete<AutocompleteTest3.State>>().Instance;
             autocomplete.Text.Should().Be("Assam");
         }
 
@@ -158,7 +159,7 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
             await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
-            await comp.InvokeAsync(() => autocomplete.CoerceText=false);
+            await comp.InvokeAsync(() => autocomplete.CoerceText = false);
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
