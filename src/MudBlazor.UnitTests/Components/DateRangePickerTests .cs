@@ -139,7 +139,7 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
-        public async Task Open_CloseBySelectingADateRange_CheckClosed()
+        public void Open_CloseBySelectingADateRange_CheckClosed()
         {
             var comp = OpenPicker();
             // clicking a day buttons to select a range and close
@@ -147,14 +147,12 @@ namespace MudBlazor.UnitTests
                 .Where(x => x.TrimmedText().Equals("10")).First().Click();
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x => x.TrimmedText().Equals("23")).First().Click();
-            await Task.Delay(comp.Instance.ClosingDelay + 50); // allow a delay
-            // should not be open any more
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.DateRange.Should().NotBeNull();
         }
 
         [Test]
-        public async Task Open_SelectEndDateLowerThanStart_CheckNotClosed_SelectRange_CheckClosed()
+        public void Open_SelectEndDateLowerThanStart_CheckNotClosed_SelectRange_CheckClosed()
         {
             var comp = OpenPicker();
             // clicking a day buttons to select a range and close
@@ -162,16 +160,12 @@ namespace MudBlazor.UnitTests
                 .Where(x => x.TrimmedText().Equals("10")).First().Click();
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x => x.TrimmedText().Equals("8")).First().Click();
-            await Task.Delay(comp.Instance.ClosingDelay + 50); // allow a delay
-            // should not be open any more
             comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
             comp.Instance.DateRange.Should().BeNull();
 
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x => x.TrimmedText().Equals("23")).First().Click();
-            await Task.Delay(comp.Instance.ClosingDelay + 50); // allow a delay
-            // should not be open any more
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.DateRange.Should().NotBeNull();
         }
 
