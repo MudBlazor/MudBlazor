@@ -38,14 +38,15 @@ namespace MudBlazor.UnitTests
         /// Opening and closing a simple dialog
         /// </summary>
         [Test]
-        public async Task SimpleTest() {
+        public async Task SimpleTest()
+        {
             var comp = ctx.RenderComponent<MudDialogProvider>();
             comp.Markup.Trim().Should().BeEmpty();
-            var service=ctx.Services.GetService<IDialogService>() as DialogService;
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
             service.Should().NotBe(null);
-            IDialogReference dialogReference=null;
+            IDialogReference dialogReference = null;
             // open simple test dialog
-            await comp.InvokeAsync(()=> dialogReference=service?.Show<DialogOkCancel>());
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
             dialogReference.Should().NotBe(null);
             Console.WriteLine(comp.Markup);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
@@ -53,7 +54,7 @@ namespace MudBlazor.UnitTests
             // close by click outside the dialog
             comp.Find("div.mud-overlay").Click();
             comp.Markup.Trim().Should().BeEmpty();
-            var result=await dialogReference.Result;
+            var result = await dialogReference.Result;
             result.Cancelled.Should().BeTrue();
             // open simple test dialog
             await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
@@ -88,7 +89,7 @@ namespace MudBlazor.UnitTests
             Console.WriteLine("Open button: " + comp1.Markup);
             // open the dialog
             comp1.Find("button").Click();
-            Console.WriteLine("\nOpened dialog: " +comp.Markup);
+            Console.WriteLine("\nOpened dialog: " + comp.Markup);
             comp.Find("div.mud-dialog-container").Should().NotBe(null);
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Wabalabadubdub!");
             // close by click on ok button

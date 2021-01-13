@@ -31,13 +31,14 @@ namespace MudBlazor.UnitTests
 
         [TearDown]
         public void TearDown() => ctx.Dispose();
-        
+
         /// <summary>
         /// Setting the required textfield's value should set IsValid true
         /// Clearing the value of a required textfield should set form's IsValid to false.
         /// </summary>
         [Test]
-        public async Task FormIsValidTest() {
+        public async Task FormIsValidTest()
+        {
             var comp = ctx.RenderComponent<FormIsValidTest>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
@@ -46,7 +47,7 @@ namespace MudBlazor.UnitTests
             form.IsValid.Should().Be(false);
             textField.Error.Should().BeFalse();
             textField.ErrorText.Should().BeNullOrEmpty();
-            await comp.InvokeAsync(()=> textField.Value = "Marilyn Manson");
+            await comp.InvokeAsync(() => textField.Value = "Marilyn Manson");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
             textField.Error.Should().BeFalse();
@@ -89,7 +90,7 @@ namespace MudBlazor.UnitTests
             await comp.InvokeAsync(() => textField.Value = "This value doesn't matter");
             form.IsValid.Should().Be(true);
         }
-        
+
         /// <summary>
         /// Custom validation func should be called to determine whether or not a form value is good
         /// </summary>
@@ -111,12 +112,12 @@ namespace MudBlazor.UnitTests
             textField.Error.Should().BeFalse();
             textField.ErrorText.Should().BeNullOrEmpty();
             // this rock star doesn't start with Marilyn
-            await comp.InvokeAsync(() => textField.Value = "Kurt Cobain"); 
+            await comp.InvokeAsync(() => textField.Value = "Kurt Cobain");
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             textField.Error.Should().BeTrue();
             textField.ErrorText.Should().Be("Invalid");
-            
+
             // note: this logic is invalid, so it was removed. Validaton funcs are always called
             // the validation func must validate non-required empty fields as valid. 
             //
@@ -126,7 +127,7 @@ namespace MudBlazor.UnitTests
             //form.Errors.Length.Should().Be(0);
             //textField.Error.Should().BeFalse();
             //textField.ErrorText.Should().BeNullOrEmpty();
-            
+
             // ok, not a rock star, but a star nonetheless
             await comp.InvokeAsync(() => textField.Value = "Marilyn Monroe");
             form.IsValid.Should().Be(true);
@@ -187,7 +188,7 @@ namespace MudBlazor.UnitTests
             await comp.InvokeAsync(() => textField.Value = "Some value");
             form.IsValid.Should().Be(true);
             // calling Reset() should reset the textField's value
-            await comp.InvokeAsync(() =>form.Reset());
+            await comp.InvokeAsync(() => form.Reset());
             textField.Value.Should().Be(null);
             textField.Text.Should().Be(null);
             form.IsValid.Should().Be(false); // because we did reset validation state as a side-effect.
@@ -199,15 +200,15 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task FormAsyncValidationTest()
         {
-            const int valid_delay = 100;
-            const int invalid_delay = 200;
-            const int wait_delay = 100;
+            const int ValidDelay = 100;
+            const int InValidDelay = 200;
+            const int WaitDelay = 100;
             var validationFunc = new Func<string, Task<string>>(async s =>
             {
                 if (s == null)
                     return null;
                 var valid = (s == "abc");
-                await Task.Delay(valid ? valid_delay : invalid_delay);
+                await Task.Delay(valid ? ValidDelay : InValidDelay);
                 return valid ? null : "invalid";
             });
             var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
@@ -218,17 +219,17 @@ namespace MudBlazor.UnitTests
             textField.ValidationErrors.Should().BeEmpty();
             // make sure error can be detected
             _ = comp.InvokeAsync(() => textField.Value = "def");
-            await Task.Delay(invalid_delay + wait_delay);
+            await Task.Delay(InValidDelay + WaitDelay);
             textField.ValidationErrors.Should().ContainSingle("invalid");
             // make sure success can be detected
             _ = comp.InvokeAsync(() => textField.Value = "abc");
-            await Task.Delay(valid_delay + wait_delay);
+            await Task.Delay(ValidDelay + WaitDelay);
             textField.ValidationErrors.Should().BeEmpty();
             // send invalid value, then valid value
             _ = comp.InvokeAsync(() => textField.Value = "def");
             _ = comp.InvokeAsync(() => textField.Value = "abc");
             // validate that first call result (invalid, longer return time) will not overwrite second call result (valid, shorter return time)
-            await Task.Delay(invalid_delay + wait_delay);
+            await Task.Delay(InValidDelay + WaitDelay);
             textField.ValidationErrors.Should().BeEmpty();
         }
 
@@ -247,7 +248,7 @@ namespace MudBlazor.UnitTests
             chips.Count.Should().Be(3);
             foreach (var chip in chips)
                 chip.TextContent.Trim().Should().EndWith("not changed");
-            comp.FindAll("input")[0].Change(new ChangeEventArgs(){ Value = "asdf"});
+            comp.FindAll("input")[0].Change(new ChangeEventArgs() { Value = "asdf" });
             comp.FindAll("input")[0].Blur();
             comp.FindComponents<MudTextField<string>>()[0].Instance.Text.Should().Be("asdf");
             comp.FindAll("span.mud-chip-content")[0].TextContent.Trim().Should().Be("Field1 changed");
@@ -320,7 +321,7 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             form.IsValid.Should().BeFalse(because: "textfield is required");
-            var textfield=comp.FindComponent<MudTextField<string>>().Instance;
+            var textfield = comp.FindComponent<MudTextField<string>>().Instance;
             await comp.InvokeAsync(() => textfield.Text = "Moby Dick");
             form.IsValid.Should().BeTrue(because: "select is not required");
         }
