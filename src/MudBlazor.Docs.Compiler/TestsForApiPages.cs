@@ -10,12 +10,12 @@ namespace MudBlazor.Docs.Compiler
         public bool Execute()
         {
             var paths = new Paths();
-            bool success = true;
+            var success = true;
             try
             {
                 Directory.CreateDirectory(paths.TestDirPath);
 
-                string currentCode = string.Empty;
+                var currentCode = string.Empty;
                 if (File.Exists(paths.ApiPageTestsFilePath))
                 {
                     currentCode = File.ReadAllText(paths.ApiPageTestsFilePath);
@@ -25,7 +25,7 @@ namespace MudBlazor.Docs.Compiler
 
                 cb.AddHeader();
                 cb.AddUsings();
-                
+
                 cb.AddLine("namespace MudBlazor.UnitTests.Components");
                 cb.AddLine("{");
                 cb.IndentLevel++;

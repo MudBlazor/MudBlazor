@@ -11,10 +11,10 @@ namespace MudBlazor.Docs.Compiler
         public bool Execute()
         {
             var paths = new Paths();
-            bool success = true;
+            var success = true;
             try
             {
-                string currentCode = string.Empty;
+                var currentCode = string.Empty;
                 if (File.Exists(paths.SnippetsFilePath))
                 {
                     currentCode = File.ReadAllText(paths.SnippetsFilePath);

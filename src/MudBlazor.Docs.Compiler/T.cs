@@ -1,4 +1,4 @@
-﻿namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests
 {
-    public class T  { }
+    public class T { }
 }
