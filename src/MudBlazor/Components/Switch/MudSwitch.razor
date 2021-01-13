@@ -6,7 +6,7 @@
     <span class="mud-switch-span">
         <span class="@SwitchClassname">
             <span class="mud-switch-button">
-                <input @attributes="UserAttributes" type="checkbox" class="mud-switch-input" @bind="@BoolValue" disabled="@Disabled" />
+                <input @attributes="UserAttributes" type="checkbox" class="mud-switch-input" @bind="@BoolValue" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
                 <span class="mud-switch-thumb"></span>
             </span>
         </span>
