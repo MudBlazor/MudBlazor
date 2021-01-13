@@ -30,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
         public void TearDown() => ctx.Dispose();
 
         [Test]
-        public void ExpandCollapseNodeWithButtonClick()
+        public void Collapsed_ClickOnArrowButton_CheckClose()
         {
             var comp = ctx.RenderComponent<TreeViewTest1>();
             Console.WriteLine(comp.Markup);
@@ -44,7 +44,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ExpandCollapseNodeWithContentClick()
+        public void Collapsed_ClickOnTreeItem_CheckClose()
         {
             var comp = ctx.RenderComponent<TreeViewTest2>();
             Console.WriteLine(comp.Markup);
@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void SelectAnItemThenDeselectAChild()
+        public void Unselected_Select_CheckSelected_Deselect_CheckDeselected()
         {
             var comp = ctx.RenderComponent<TreeViewTest1>();
             Console.WriteLine(comp.Markup);
@@ -77,7 +77,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void ActivateThenDeactivateItemByClickOnAnother()
+        public void Normal_Activate_CheckActivated_ActivateAnother_CheckBoth()
         {
             var comp = ctx.RenderComponent<TreeViewTest1>();
             Console.WriteLine(comp.Markup);
@@ -90,6 +90,14 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Item1Activated.Should().BeFalse();
             comp.Instance.Item2Activated.Should().BeTrue();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-activated").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void RenderWithTemplate_CheckResult()
+        {
+            var comp = ctx.RenderComponent<TreeViewTemplateTest>();
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
         }
     }
 }

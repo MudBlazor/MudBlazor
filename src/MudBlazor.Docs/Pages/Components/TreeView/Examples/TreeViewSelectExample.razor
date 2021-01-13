@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTreeView Style="width: 500px;" CanSelect="true">
+<MudTreeView Style="width: 500px;" CanSelect="true" @bind-SelectedItems="SelectedItems">
     <MudTreeViewItem Text="Applications">
         <MudTreeViewItem Text="Calendar" />
         <MudTreeViewItem Text="Chrome" />
@@ -16,3 +16,9 @@
         </MudTreeViewItem>
     </MudTreeViewItem>
 </MudTreeView>
+
+<MudText Style="width: 100%" Typo="@Typo.subtitle1">Number of selected items: @(SelectedItems?.Count ?? 0)</MudText>
+
+@code {
+    HashSet<MudTreeViewItem> SelectedItems { get; set; }
+}

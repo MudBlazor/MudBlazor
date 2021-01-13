@@ -9,7 +9,8 @@ namespace MudBlazor
 {
     public partial class MudTreeViewItem : MudComponentBase
     {
-        private List<MudTreeViewItem> childItems = new List<MudTreeViewItem>();
+        private bool _isSelected, _isActivated, _isExpanded;
+        private readonly List<MudTreeViewItem> childItems = new List<MudTreeViewItem>();
 
         protected string Classname =>
         new CssBuilder("mud-treeview-item")
@@ -46,20 +47,46 @@ namespace MudBlazor
 
         [Parameter] public RenderFragment Content { get; set; }
 
-        [Parameter] public RenderFragment IconContent { get; set; }
-
-        [Parameter] public RenderFragment EndIconContent { get; set; }
-
         [Parameter] public IEnumerable<object> Items { get; set; }
 
         [Parameter]
-        public bool Expanded { get; set; }
+        public bool Expanded
+        {
+            get => _isExpanded;
+            set
+            {
+                if (_isExpanded == value)
+                    return;
+
+                _isExpanded = value;
+                ExpandedChanged.InvokeAsync(_isExpanded);
+            }
+        }
 
         [Parameter]
-        public bool Activated { get; set; }
+        public bool Activated
+        {
+            get => _isActivated;
+            set
+            {
+                _ = MudTreeRoot?.UpdateActivatedItem(this, value);
+            }
+        }
 
         [Parameter]
-        public bool Selected { get; set; }
+        public bool Selected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected == value)
+                    return;
+
+                _isSelected = value;
+                MudTreeRoot?.UpdateSelectedItems();
+                SelectedChanged.InvokeAsync(_isSelected);
+            }
+        }
 
         [Parameter]
         public string Icon { get; set; }
@@ -81,7 +108,7 @@ namespace MudBlazor
 
         [Parameter]
         public EventCallback<bool> SelectedChanged { get; set; }
-        
+
         /// <summary>
         /// Tree item click event.
         /// </summary>
@@ -93,72 +120,94 @@ namespace MudBlazor
         protected bool IsChecked
         {
             get => Selected;
+            set { _ = Select(value, this); }
+        }
+
+        protected bool ArrowExpanded
+        {
+            get => Expanded;
             set
             {
-                if (value == Selected)
+                if (value == Expanded)
                     return;
 
-                Selected = value;
-                childItems.ForEach(c => c.IsChecked = value);
-
-                SelectedChanged.InvokeAsync(value);
+                Expanded = value;
+                ExpandedChanged.InvokeAsync(value);
             }
         }
 
-        protected override void OnAfterRender(bool firstRender)
+        protected override void OnInitialized()
         {
-            if (firstRender && Parent != null)
+            if (Parent != null)
             {
                 Parent.AddChild(this);
             }
-            base.OnAfterRender(firstRender);
+            else
+            {
+                MudTreeRoot?.AddChild(this);
+            }
         }
-        
+
         protected async Task OnItemClicked(MouseEventArgs ev)
         {
-            if (MudTreeRoot.CanActivate)
+            if (MudTreeRoot?.CanActivate ?? false)
             {
-                await Activate();
+                await MudTreeRoot.UpdateActivatedItem(this, !_isActivated);
             }
 
-            if (HasChild && MudTreeRoot.ExpandOnClick)
+            if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
             {
-                Expanded = !Expanded;
-                await ExpandedChanged.InvokeAsync(Expanded);
+                _isExpanded = !_isExpanded;
+                await ExpandedChanged.InvokeAsync(_isExpanded);
             }
 
             await OnClick.InvokeAsync(ev);
         }
 
-        protected async void OnExpandClick(MouseEventArgs args)
+        internal async Task Activate(bool value)
+        {            
+            if (_isActivated == value)
+                return;
+
+            _isActivated = value;
+
+            StateHasChanged();
+
+            await ActivatedChanged.InvokeAsync(_isActivated);
+        }
+
+        internal async Task Select(bool value, MudTreeViewItem source = null)
         {
-            if (HasChild)
+            if (value == _isSelected)
+                return;
+
+            _isSelected = value;
+            childItems.ForEach(async c => await c.Select(value, source));
+
+            StateHasChanged();
+
+            await SelectedChanged.InvokeAsync(_isSelected);
+
+            if (source == this)
             {
-                Expanded = !Expanded;
-                await ExpandedChanged.InvokeAsync(Expanded);
+                await MudTreeRoot?.UpdateSelectedItems();
             }
         }
 
-        public async Task Activate()
+        private void AddChild(MudTreeViewItem item) => childItems.Add(item);
+
+        internal IEnumerable<MudTreeViewItem> GetSelectedItems()
         {
-            Activated = true;
+            if (_isSelected)
+                yield return this;
 
-            await MudTreeRoot.UpdateActivation(this);
-
-            StateHasChanged();
-
-            await ActivatedChanged.InvokeAsync(Activated);
+            foreach (var treeItem in childItems)
+            {
+                foreach (var selected in treeItem.GetSelectedItems())
+                {
+                    yield return selected;
+                }
+            }
         }
-
-        public async Task Deactivate()
-        {
-            Activated = false;
-
-            StateHasChanged();
-
-            await ActivatedChanged.InvokeAsync(Activated);
-        }
-
-        internal void AddChild(MudTreeViewItem item) => childItems.Add(item);
     }
 }
