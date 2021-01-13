@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTr:MudComponentBase
+    public partial class MudTr : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-table-row")
             .AddClass(Class).Build();
@@ -88,4 +88,4 @@ namespace MudBlazor
             Context?.Table.OnCommitEditHandler(ev, Item);
         }
     }
-    }
+}

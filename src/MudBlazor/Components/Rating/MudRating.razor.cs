@@ -82,7 +82,7 @@ namespace MudBlazor
             {
                 if (_selectedValue == value)
                     return;
-   
+
                 _selectedValue = value;
 
                 SelectedValueChanged.InvokeAsync(_selectedValue);
@@ -113,7 +113,8 @@ namespace MudBlazor
 
         internal bool IsRatingHover => HoveredValue.HasValue;
 
-        private void HandleItemClicked(int itemValue) {
+        private void HandleItemClicked(int itemValue)
+        {
             SelectedValue = itemValue;
 
             if (itemValue == 0)

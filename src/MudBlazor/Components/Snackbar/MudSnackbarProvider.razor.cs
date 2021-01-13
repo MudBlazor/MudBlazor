@@ -18,7 +18,7 @@ namespace MudBlazor
                 ? Snackbars.ShownSnackbars.Reverse()
                 : Snackbars.ShownSnackbars;
 
-        protected string Classname => 
+        protected string Classname =>
             new CssBuilder(Class)
             .AddClass(Snackbars.Configuration.PositionClass)
         .Build();

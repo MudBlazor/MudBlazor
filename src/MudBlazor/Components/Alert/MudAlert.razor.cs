@@ -13,7 +13,7 @@ namespace MudBlazor
           .AddClass($"mud-alert-{Variant.ToDescriptionString()}-{Severity.ToDescriptionString()}")
           .AddClass($"mud-dense", Dense)
           .AddClass($"mud-square", Square)
-          .AddClass($"mud-elevation-{Elevation.ToString()}")
+          .AddClass($"mud-elevation-{Elevation}")
           .AddClass(Class)
         .Build();
 
@@ -65,7 +65,7 @@ namespace MudBlazor
             {
                 _icon = Icon;
             }
-            else 
+            else
             {
                 _icon = Severity switch
                 {
@@ -85,5 +85,5 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
     }
 }
-   
+
 

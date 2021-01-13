@@ -85,7 +85,7 @@ namespace MudBlazor
         {
             if (string.IsNullOrWhiteSpace(value))
                 return null;
-            bool pm = false;
+            var pm = false;
             var value1 = value.Trim();
             var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
             if (m.Success)
@@ -98,7 +98,7 @@ namespace MudBlazor
             if (TimeSpan.TryParse(value1, out var time))
             {
                 if (pm)
-                    time = new TimeSpan((time.Hours + 12)%24, time.Minutes, 0);
+                    time = new TimeSpan((time.Hours + 12) % 24, time.Minutes, 0);
                 return time;
             }
 
@@ -139,7 +139,7 @@ namespace MudBlazor
 
         private void OnAmClicked()
         {
-            _timeSet.Hour = _timeSet.Hour % 12;  // "12:-- am" is "00:--" in 24h
+            _timeSet.Hour %= 12;  // "12:-- am" is "00:--" in 24h
             UpdateTime();
             StateHasChanged();
         }
@@ -147,8 +147,8 @@ namespace MudBlazor
         private void OnPmClicked()
         {
             if (_timeSet.Hour <= 12) // "12:-- pm" is "12:--" in 24h
-                _timeSet.Hour = _timeSet.Hour + 12;
-            _timeSet.Hour = _timeSet.Hour % 24;
+                _timeSet.Hour += 12;
+            _timeSet.Hour %= 24;
             UpdateTime();
             StateHasChanged();
         }
@@ -209,12 +209,12 @@ namespace MudBlazor
             {
                 return $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-{Color.ToDescriptionString()}";
             }
-            
+
         }
 
         private string GetClockPointerThumbColor()
         {
-            double deg = GetDeg();
+            var deg = GetDeg();
             if (deg % 30 == 0)
             {
                 return $"mud-picker-time-clock-pointer-thumb mud-onclock-text mud-onclock-primary mud-{Color.ToDescriptionString()}";
@@ -227,7 +227,7 @@ namespace MudBlazor
 
         private string GetNumberColor(int value)
         {
-            if(_currentView == OpenTo.Hours)
+            if (_currentView == OpenTo.Hours)
             {
                 var h = _timeSet.Hour;
                 if (AmPm)
@@ -236,7 +236,7 @@ namespace MudBlazor
                     if (_timeSet.Hour % 12 == 0)
                         h = 12;
                 }
-                if (h==value)
+                if (h == value)
                     return $"mud-clock-number mud-theme-{Color.ToDescriptionString()}";
             }
             else if (_currentView == OpenTo.Minutes && _timeSet.Minute == value)
@@ -268,7 +268,7 @@ namespace MudBlazor
 
         private string GetPointerHeight()
         {
-            int height = 40;
+            var height = 40;
             if (_currentView == OpenTo.Minutes)
                 height = 40;
             if (_currentView == OpenTo.Hours)
@@ -320,7 +320,7 @@ namespace MudBlazor
         private void OnMouseUp(MouseEventArgs e)
         {
             MouseDown = false;
-            if(_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour)
+            if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour)
             {
                 _currentView = OpenTo.Minutes;
             }

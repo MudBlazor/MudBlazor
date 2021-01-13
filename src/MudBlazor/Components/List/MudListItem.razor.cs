@@ -19,7 +19,7 @@ namespace MudBlazor
         .Build();
 
         [Inject] protected NavigationManager UriHelper { get; set; }
-        
+
         [CascadingParameter] protected MudList MudList { get; set; }
 
         /// <summary>
@@ -80,12 +80,12 @@ namespace MudBlazor
                 if (_expanded == value)
                     return;
                 _expanded = value;
-                _=ExpandedChanged.InvokeAsync(value);
+                _ = ExpandedChanged.InvokeAsync(value);
             }
         }
 
         private bool _expanded;
-        
+
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
@@ -103,12 +103,12 @@ namespace MudBlazor
         /// Command executed when the user clicks on an element.
         /// </summary>
         [Parameter] public ICommand Command { get; set; }
-        
+
         /// <summary>
         /// Display content of this list item. If set, this overrides Text
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
-        
+
         /// <summary>
         /// Add child list items here to create a nested list.
         /// </summary>
@@ -151,9 +151,9 @@ namespace MudBlazor
                 MudList.ParametersChanged += OnListParametersChanged;
             }
         }
-        
+
         private Typo _textTypo { get; set; }
-        
+
         private void OnListParametersChanged()
         {
             if (Dense || MudList?.Dense == true)
@@ -186,7 +186,7 @@ namespace MudBlazor
                 MudList.ParametersChanged -= OnListParametersChanged;
                 MudList.Unregister(this);
             }
-            catch(Exception) { /*ignore*/ }
+            catch (Exception) { /*ignore*/ }
         }
 
     }

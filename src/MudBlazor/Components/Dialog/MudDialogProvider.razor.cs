@@ -43,9 +43,9 @@ namespace MudBlazor
             GlobalDialogOptions.MaxWidth = MaxWidth;
         }
 
-        internal void DismissInstance(Guid Id, DialogResult result)
+        internal void DismissInstance(Guid id, DialogResult result)
         {
-            var reference = GetDialogReference(Id);
+            var reference = GetDialogReference(id);
             if (reference != null)
                 DismissInstance(reference, result);
         }
@@ -70,9 +70,9 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private DialogReference GetDialogReference(Guid Id)
+        private DialogReference GetDialogReference(Guid id)
         {
-            return Dialogs.SingleOrDefault(x => x.Id == Id);
+            return Dialogs.SingleOrDefault(x => x.Id == id);
         }
 
         private void LocationChanged(object sender, LocationChangedEventArgs args)

@@ -4,11 +4,11 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudScrollToTop:IDisposable
+    public partial class MudScrollToTop : IDisposable
     {
         protected string Classname =>
         new CssBuilder("mud-scroll-to-top")
-            .AddClass("visible", Visible && string.IsNullOrWhiteSpace(VisibleCssClass))           
+            .AddClass("visible", Visible && string.IsNullOrWhiteSpace(VisibleCssClass))
             .AddClass("hidden", !Visible && string.IsNullOrWhiteSpace(HiddenCssClass))
             .AddClass(VisibleCssClass, Visible && !string.IsNullOrWhiteSpace(VisibleCssClass))
             .AddClass(HiddenCssClass, !Visible && !string.IsNullOrWhiteSpace(HiddenCssClass))
@@ -16,7 +16,7 @@ namespace MudBlazor
 
         [Inject] IScrollListener ScrollListener { get; set; }
         [Inject] IScrollManager ScrollManager { get; set; }
-       
+
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace MudBlazor
         /// that will happen when the component becomes visible
         /// </summary>
         [Parameter] public string VisibleCssClass { get; set; }
-        
+
         /// <summary>
         /// CSS class for the Hidden state. Here, apply some transitions and animations
         /// that will happen when the component becomes invisible
@@ -60,7 +60,8 @@ namespace MudBlazor
 
         protected override void OnAfterRender(bool firstRender)
         {
-            if (firstRender) {
+            if (firstRender)
+            {
                 var selector = !string.IsNullOrWhiteSpace(Selector)
                     ? Selector
                     : null;// null is defaulted to document element in JS function
@@ -68,10 +69,11 @@ namespace MudBlazor
                 ScrollListener.Selector = selector;
 
                 //suscribe to event
-                ScrollListener.OnScroll += ScrollListener_OnScroll; ; }
+                ScrollListener.OnScroll += ScrollListener_OnScroll; ;
+            }
         }
 
-        
+
 
         /// <summary>
         /// event received when scroll in the selected element happens
@@ -82,21 +84,21 @@ namespace MudBlazor
         {
             await OnScroll.InvokeAsync(e);
 
-            var topOffset = e.NodeName=="#document" 
-                ? e.FirstChildBoundingClientRect.Top*-1 
+            var topOffset = e.NodeName == "#document"
+                ? e.FirstChildBoundingClientRect.Top * -1
                 : e.ScrollTop;
 
-            if (topOffset >= TopOffset && Visible!=true)
+            if (topOffset >= TopOffset && Visible != true)
             {
                 Visible = true;
                 await InvokeAsync(() => StateHasChanged());
             }
 
-            if(topOffset < TopOffset && Visible == true)
+            if (topOffset < TopOffset && Visible == true)
             {
                 Visible = false;
                 await InvokeAsync(() => StateHasChanged());
-            }           
+            }
         }
 
         /// <summary>
@@ -104,7 +106,7 @@ namespace MudBlazor
         /// </summary>
         private void OnClick()
         {
-            ScrollManager.ScrollToTop( ScrollBehavior);
+            ScrollManager.ScrollToTop(ScrollBehavior);
         }
 
         /// <summary>

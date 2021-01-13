@@ -23,7 +23,7 @@ namespace MudBlazor
                 if (_selectedLabel == value)
                     return;
                 _selectedLabel = value;
-                SetSelectedRadio(_radios.FirstOrDefault(r=>r.Label==value));
+                SetSelectedRadio(_radios.FirstOrDefault(r => r.Label == value));
                 SelectedLabelChanged.InvokeAsync(value);
             }
         }
@@ -47,13 +47,13 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<string> SelectedOptionChanged { get; set; }
 
-        HashSet<MudRadio> _radios=new HashSet<MudRadio>();
+        HashSet<MudRadio> _radios = new HashSet<MudRadio>();
 
 
 
         internal void SetSelectedRadio(MudRadio radio)
         {
-            if (radio==null || radio.Checked)
+            if (radio == null || radio.Checked)
                 return;
             foreach (var registered_radio in _radios.ToArray())
                 registered_radio.Checked = (registered_radio == radio);
@@ -66,7 +66,7 @@ namespace MudBlazor
             if (radio == null)
                 return;
             _radios.Add(radio);
-            if (!string.IsNullOrWhiteSpace(radio.Label) && radio.Label == SelectedLabel 
+            if (!string.IsNullOrWhiteSpace(radio.Label) && radio.Label == SelectedLabel
                 || !string.IsNullOrWhiteSpace(radio.Option) && radio.Option == SelectedOption)
             {
                 radio.Checked = true;

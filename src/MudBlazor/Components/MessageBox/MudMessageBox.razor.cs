@@ -151,7 +151,7 @@ namespace MudBlazor
             var result = await _reference.Result;
             if (result.Cancelled || !(result.Data is bool))
                 return null;
-            return (bool) result.Data;
+            return (bool)result.Data;
         }
 
         public void Close()
@@ -165,11 +165,11 @@ namespace MudBlazor
         {
             base.OnInitialized();
             if (YesButton != null)
-                _yesCallback = new ActivatableCallback() {ActivateCallback = OnYesActivated};
+                _yesCallback = new ActivatableCallback() { ActivateCallback = OnYesActivated };
             if (NoButton != null)
-                _noCallback = new ActivatableCallback() {ActivateCallback = OnNoActivated};
+                _noCallback = new ActivatableCallback() { ActivateCallback = OnNoActivated };
             if (CancelButton != null)
-                _cancelCallback = new ActivatableCallback() {ActivateCallback = OnCancelActivated};
+                _cancelCallback = new ActivatableCallback() { ActivateCallback = OnCancelActivated };
         }
 
         private void OnYesActivated(object arg1, MouseEventArgs arg2) => OnYesClicked();

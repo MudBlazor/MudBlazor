@@ -9,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudOverlay :  MudComponentBase, IDisposable
+    public partial class MudOverlay : MudComponentBase, IDisposable
     {
         private bool _visible;
 
@@ -32,7 +32,7 @@ namespace MudBlazor
             .AddStyle(Style)
             .Build();
 
-        [Inject] public IJSRuntime  JS { get; set; }
+        [Inject] public IJSRuntime JS { get; set; }
 
         /// <summary>
         /// Child content of the component.
@@ -125,9 +125,9 @@ namespace MudBlazor
                 UnblockScroll();
                 return;
             }
-            if (LockScroll) 
+            if (LockScroll)
             {
-                BlockScroll(); 
+                BlockScroll();
             }
         }
 
@@ -143,13 +143,13 @@ namespace MudBlazor
         {
             JS.InvokeVoidAsync("scrollHelpers.unlockScroll", "body");
         }
-       
+
         //When disposing the overlay, remove the class that prevented scrolling
         public void Dispose()
         {
-           UnblockScroll();
-    
+            UnblockScroll();
+
         }
-        
+
     }
 }
