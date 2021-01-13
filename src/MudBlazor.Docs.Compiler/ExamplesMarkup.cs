@@ -12,8 +12,8 @@ namespace MudBlazor.Docs.Compiler
         public bool Execute()
         {
             var paths = new Paths();
-            StringBuilder newFiles = new StringBuilder();
-            bool success = true;
+            var newFiles = new StringBuilder();
+            var success = true;
             try
             {
                 var formatter = new HtmlClassFormatter();
@@ -43,7 +43,7 @@ namespace MudBlazor.Docs.Compiler
                     var html = formatter.GetHtmlString(blocks0, Languages.Html).Replace("PlaceholdeR", "@");
                     html = AttributePostprocessing(html).Replace("@", "<span class=\"atSign\">&#64;</span>");
 
-                    string currentCode = string.Empty;
+                    var currentCode = string.Empty;
                     if (File.Exists(markupPath))
                     {
                         currentCode = File.ReadAllText(markupPath);
