@@ -50,7 +50,7 @@ namespace MudBlazor.Docs.Services
                 // return the enum corresponding to the section
                 return _navigationManager.GetSection() switch
                 {
-                    "components"=> NavigationSection.Components,
+                    "components" => NavigationSection.Components,
                     "api" => NavigationSection.Api,
                     _ => null,
                 };
@@ -73,13 +73,13 @@ namespace MudBlazor.Docs.Services
         /// <returns></returns>
         private NavigationFooterLink GetNavigationLink(NavigationOrder order)
         {
-            List<NavigationFooterLink> orderedLinks =
+            var orderedLinks =
                 Section == NavigationSection.Api
                     ? GetOrderedMenuLinks(NavigationSection.Api)
                     : GetOrderedMenuLinks(NavigationSection.Components);
 
             var index = orderedLinks.FindIndex(e => e.Link == CurrentLink);
-            int increment =
+            var increment =
                 order == NavigationOrder.Next
                     ? 1
                     : -1;
@@ -104,7 +104,7 @@ namespace MudBlazor.Docs.Services
         private List<NavigationFooterLink> GetOrderedMenuLinks(NavigationSection? section)
         {
             var menuElements =
-                section==NavigationSection.Components
+                section == NavigationSection.Components
                     ? _menuService.Components
                     : _menuService.Api;
 
@@ -117,7 +117,7 @@ namespace MudBlazor.Docs.Services
                         section ==
                         NavigationSection.Api
                             ? ApiLink.GetApiLinkFor(menuElement.Component).Split("/").Last()
-                            : menuElement.Link; 
+                            : menuElement.Link;
 
                     var name = menuElement.Name;
 

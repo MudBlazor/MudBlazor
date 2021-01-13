@@ -8,9 +8,9 @@ namespace MudBlazor.Docs.Models
     {
         public static string GetCode(string component)
         {
-            var field= typeof(Snippets).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField)
+            var field = typeof(Snippets).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.GetField)
                 .FirstOrDefault(f => f.Name == component);
-            if (field==null)
+            if (field == null)
                 return $"Snippet for component '{component}' not found!";
             return (string)field.GetValue(null);
         }

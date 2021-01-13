@@ -9,19 +9,19 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.Docs.Shared
 {
-    public partial class MainLayout:LayoutComponentBase
+    public partial class MainLayout : LayoutComponentBase
     {
 
         bool _drawerOpen = false;
         bool _rightToLeft = false;
         NavigationFooterLink _previous;
         NavigationFooterLink _next;
-        NavigationSection? _section =null;
+        NavigationSection? _section = null;
         NavMenu _navMenuRef;
 
         [Inject] IDocsNavigationService DocsService { get; set; }
 
-        [Inject]  NavigationManager NavigationManager { get; set; }
+        [Inject] NavigationManager NavigationManager { get; set; }
 
         [Inject]
         protected IApiLinkService ApiLinkService { get; set; }
@@ -60,7 +60,7 @@ namespace MudBlazor.Docs.Shared
             _navMenuRef.Refresh();
         }
 
-        
+
 
         private Task<IEnumerable<ApiLinkServiceEntry>> Search(string text)
         {

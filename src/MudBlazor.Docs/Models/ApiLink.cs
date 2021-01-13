@@ -11,7 +11,7 @@ namespace MudBlazor.Docs.Models
         {
             if (!SpecialCaseComponents.TryGetValue(type, out var component))
                 component = type.ToString().Replace("MudBlazor.Mud", "").ToLowerInvariant();
-            string href = $"/api/{component}";
+            var href = $"/api/{component}";
             return href;
         }
 
@@ -21,7 +21,7 @@ namespace MudBlazor.Docs.Models
                 component = type.ToString().Replace("MudBlazor.Mud", "").ToLowerInvariant();
             if (ComponentLinkTranslation.ContainsKey(component))
                 component = ComponentLinkTranslation[component];
-            string href = $"/components/{component}";
+            var href = $"/components/{component}";
             return href;
         }
 
@@ -39,9 +39,9 @@ namespace MudBlazor.Docs.Models
             if (InverseSpecialCase.TryGetValue(component, out var type))
                 return type;
             var assembly = typeof(MudComponentBase).Assembly;
-            var lookup = new Dictionary<string, Type>(); 
-            foreach(var x in assembly.GetTypes())
-                lookup[x.Name.ToLowerInvariant()]=x;            
+            var lookup = new Dictionary<string, Type>();
+            foreach (var x in assembly.GetTypes())
+                lookup[x.Name.ToLowerInvariant()] = x;
             var type_lower = $"mud{component}".ToLowerInvariant();
             if (!lookup.TryGetValue(type_lower, out type))
                 return null;
@@ -55,13 +55,13 @@ namespace MudBlazor.Docs.Models
             [typeof(MudSelect<T>)] = "select",
             [typeof(MudInput<T>)] = "input",
             [typeof(MudAutocomplete<T>)] = "autocomplete",
-            [typeof(MudSlider<T>)]="slider",
+            [typeof(MudSlider<T>)] = "slider",
             [typeof(MudCheckBox<T>)] = "checkbox",
             [typeof(MudSwitch<T>)] = "switch",
             [typeof(MudFab)] = "buttonfab",
             [typeof(MudIcon)] = "icons",
             [typeof(MudProgressCircular)] = "progress",
-            [typeof(MudText)]= "typography",
+            [typeof(MudText)] = "typography",
         };
 
         // this is the inversion of above lookup
@@ -70,8 +70,8 @@ namespace MudBlazor.Docs.Models
 
         private static Dictionary<string, string> ComponentLinkTranslation = new Dictionary<string, string>()
         {
-            ["icon"]="icons",
-            ["chip"]="chips",
+            ["icon"] = "icons",
+            ["chip"] = "chips",
         };
 
     }

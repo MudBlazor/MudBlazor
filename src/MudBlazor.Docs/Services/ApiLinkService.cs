@@ -14,7 +14,7 @@ namespace MudBlazor.Docs.Services
         void RegisterPage(string title, string subtitle, Type componentType, string link);
         Task<IEnumerable<ApiLinkServiceEntry>> Search(string text);
     }
-    
+
     public class ApiLinkService : IApiLinkService
     {
         private Dictionary<string, ApiLinkServiceEntry> _lookup = new Dictionary<string, ApiLinkServiceEntry>();
@@ -33,11 +33,11 @@ namespace MudBlazor.Docs.Services
 
         public void RegisterPage(string title, string subtitle, Type componentType, string link)
         {
-            var entry = new ApiLinkServiceEntry { Title = title, SubTitle=subtitle, ComponentType = componentType, Link = link };
+            var entry = new ApiLinkServiceEntry { Title = title, SubTitle = subtitle, ComponentType = componentType, Link = link };
             _lookup[title.ToLowerInvariant()] = entry;
-            if (componentType!=null)
+            if (componentType != null)
                 _lookup[componentType.Name.ToLowerInvariant()] = entry;
-            if (subtitle!=null)
+            if (subtitle != null)
                 _lookup[subtitle.ToLowerInvariant()] = entry;
         }
 
@@ -46,8 +46,8 @@ namespace MudBlazor.Docs.Services
             if (string.IsNullOrWhiteSpace(text))
                 return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(null);
             var s = text.ToLowerInvariant();
-            return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>( 
-                _lookup.Where(x=>IsMatch(x,s)).Select(x => x.Value).Distinct().ToArray()
+            return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(
+                _lookup.Where(x => IsMatch(x, s)).Select(x => x.Value).Distinct().ToArray()
             );
         }
 
@@ -60,7 +60,7 @@ namespace MudBlazor.Docs.Services
                 return true;
             if (entry.SubTitle != null && entry.SubTitle.ToLowerInvariant().Contains(s))
                 return true;
-            if (entry.ComponentType!=null && entry.ComponentName.ToLowerInvariant().Contains(s))
+            if (entry.ComponentType != null && entry.ComponentName.ToLowerInvariant().Contains(s))
                 return true;
             if (entry.Link.ToLowerInvariant().Contains(s))
                 return true;
@@ -68,7 +68,7 @@ namespace MudBlazor.Docs.Services
         }
 
 
-        
+
         private void Register(IEnumerable<MudComponent> items)
         {
             foreach (var item in items)
@@ -113,8 +113,8 @@ namespace MudBlazor.Docs.Services
         public string Title { get; set; }
         public string SubTitle { get; set; }
         public Type ComponentType { get; set; }
-        public string ComponentName=> ComponentType?.Name.Replace("`1", "<T>");
-        
+        public string ComponentName => ComponentType?.Name.Replace("`1", "<T>");
+
         public override string ToString()
         {
             return Title;

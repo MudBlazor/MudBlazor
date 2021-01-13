@@ -50,15 +50,18 @@ namespace PrimitiveCalculator
         public bool NextIs(string s)
         {
             var current_i = i;
-            try {
-                foreach (var ch in s) {
+            try
+            {
+                foreach (var ch in s)
+                {
                     if (!NextIs(ch))
                         return false;
                     Skip(1);
                 }
                 return true;
             }
-            finally {
+            finally
+            {
                 i = current_i;
             }
         }
@@ -89,7 +92,7 @@ namespace PrimitiveCalculator
             var s = new StringBuilder();
             while (i < m_data.Length)
             {
-                char c1 = m_data[i];
+                var c1 = m_data[i];
                 LastChar = c1;
                 i += 1;
                 if (stop_chars.Any(stop_char => stop_char == c1))
@@ -175,7 +178,7 @@ namespace PrimitiveCalculator
         {
             while (i < m_data.Length)
             {
-                char c1 = m_data[i];
+                var c1 = m_data[i];
                 LastChar = c1;
                 i += 1;
                 if (stop_chars.Any(stop_char => stop_char == c1))
