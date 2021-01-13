@@ -76,5 +76,7 @@ namespace MudBlazor
 
             base.OnInitialized();
         }
+
+        protected ElementReference _elementReference;
     }
 }

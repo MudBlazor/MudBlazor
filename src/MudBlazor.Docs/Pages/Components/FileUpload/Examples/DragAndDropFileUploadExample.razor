@@ -22,7 +22,7 @@
           @ondragend="@(()=>_dragEnterStyle=null)"
           Class=@("drag-drop-zone "+ _dragEnterStyle)>
 
-    <InputFile OnChange="ViewFile" multiple  class="drag-drop-input" />
+    <InputFile OnChange="OnInputFileChanged" multiple  class="drag-drop-input" />
 
     @if (fileNames.Count() == 0)
     {
@@ -55,7 +55,7 @@
 @code { 
         string _dragEnterStyle;
         IList<string> fileNames = new List<string>();
-        void ViewFile(IFileListEntry[] files)
+        void OnInputFileChanged (IFileListEntry[] files)
         {
             fileNames = files.Select(f => f.Name).ToList();
         }

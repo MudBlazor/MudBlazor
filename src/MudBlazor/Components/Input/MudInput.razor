@@ -11,7 +11,7 @@
 
     @if (Lines > 1)
     {
-        <textarea rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly"
+        <textarea @ref="_elementReference" rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly"
                   @bind-value="@Text" @bind-value:event="@((Immediate ? "oninput" : "onchange"))" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp">
             @Text
         </textarea>
@@ -25,7 +25,7 @@
             </div>
         }
 
-        <input @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@Text" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
+        <input @ref="_elementReference" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@Text" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
                placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp" />
     }
 
