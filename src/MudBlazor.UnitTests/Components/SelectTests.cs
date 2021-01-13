@@ -34,7 +34,8 @@ namespace MudBlazor.UnitTests
         /// Click should open the Menu and selecting a value should update the bindable value.
         /// </summary>
         [Test]
-        public void SelectTest1() {
+        public void SelectTest1()
+        {
             var comp = ctx.RenderComponent<SelectTest1>();
             // print the generated html
             Console.WriteLine(comp.Markup);
@@ -70,7 +71,7 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
-                var menu = comp.Find("div.mud-popover");
+            var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // check initial state
             select.Instance.Value.Should().BeNullOrEmpty();
@@ -104,7 +105,8 @@ namespace MudBlazor.UnitTests
             icons[1].Attributes["d"].Value.Should().Be(@checked);
             icons[2].Attributes["d"].Value.Should().Be(@checked);
             // now check how setting the SelectedValues makes items checked or unchecked
-            await comp.InvokeAsync(() => {
+            await comp.InvokeAsync(() =>
+            {
                 select.Instance.SelectedValues = new HashSet<string>() { "1", "2" };
             });
             icons = comp.FindAll("div.mud-list-item path").ToArray();

@@ -26,12 +26,13 @@ namespace MudBlazor.UnitTests
         public void TearDown() => ctx.Dispose();
 
         [Test]
-        public void RadioGroupTest1() {
+        public void RadioGroupTest1()
+        {
             var comp = ctx.RenderComponent<RadioGroupTest1>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup>();
-            var inputs =comp.FindAll("input").ToArray();
+            var inputs = comp.FindAll("input").ToArray();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
             // check initial state
             group.Instance.SelectedOption.Should().Be(null);

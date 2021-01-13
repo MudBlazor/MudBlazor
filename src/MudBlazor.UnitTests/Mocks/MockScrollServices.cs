@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.UnitTests.Mocks
 {
- /// <summary>
- /// Mock for scroll listener
- /// </summary>
+    /// <summary>
+    /// Mock for scroll listener
+    /// </summary>
     public class MockScrollListener : IScrollListener
     {
-        public string Selector { get ; set ; }
+        public string Selector { get; set; }
 
         public event EventHandler<ScrollEventArgs> OnScroll;
 
@@ -27,7 +27,7 @@ namespace MudBlazor.UnitTests.Mocks
     /// </summary>
     public class MockScrollManager : IScrollManager
     {
-        public string Selector { get ; set ; }
+        public string Selector { get; set; }
 
         public Task ScrollTo(int left, int top, ScrollBehavior scrollBehavior)
         {

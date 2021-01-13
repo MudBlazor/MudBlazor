@@ -13,9 +13,9 @@ namespace MudBlazor.UnitTests
     [TestFixture]
     public class EnumExtensionsTests
     {
-        
 
-       
+
+
 
         [Test]
         public void ToDescriptionString()

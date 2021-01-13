@@ -16,10 +16,10 @@ namespace UtilityTests
         public void ShouldConstructWithDefaultValue()
         {
             //arrange
-            var ClassToRender = CssBuilder.Default("item-one").Build();
+            var classToRender = CssBuilder.Default("item-one").Build();
 
             //assert
-            ClassToRender.Should().Be("item-one");
+            classToRender.Should().Be("item-one");
         }
 
 
@@ -27,10 +27,10 @@ namespace UtilityTests
         public void ShouldConstructWithEmpty()
         {
             //arrange
-            var ClassToRender = CssBuilder.Empty().NullIfEmpty();
+            var classToRender = CssBuilder.Empty().NullIfEmpty();
 
             //assert
-            ClassToRender.Should().BeNull();
+            classToRender.Should().BeNull();
         }
 
         [Test]
@@ -42,14 +42,14 @@ namespace UtilityTests
             Func<bool> hasFive = () => false;
 
             //act
-            var ClassToRender = new CssBuilder("item-one")
+            var classToRender = new CssBuilder("item-one")
                             .AddClass("item-two", when: hasTwo)
                             .AddClass("item-three", when: hasThree)
                             .AddClass("item-four")
                             .AddClass("item-five", when: hasFive)
                             .Build();
             //assert
-            ClassToRender.Should().Be("item-one item-three item-four");
+            classToRender.Should().Be("item-one item-three item-four");
         }
         [Test]
         public void ShouldBulidConditionalCssBuilderClasses()
@@ -60,7 +60,7 @@ namespace UtilityTests
             Func<bool> hasFive = () => false;
 
             //act
-            var ClassToRender = new CssBuilder("item-one")
+            var classToRender = new CssBuilder("item-one")
                             .AddClass("item-two", when: hasTwo)
                             .AddClass(new CssBuilder("item-three")
                                             .AddClass("item-foo", false)
@@ -70,7 +70,7 @@ namespace UtilityTests
                             .AddClass("item-five", when: hasFive)
                             .Build();
             //assert
-            ClassToRender.Should().Be("item-one item-three item-sub-three item-four");
+            classToRender.Should().Be("item-one item-three item-sub-three item-four");
         }
         [Test]
         public void ShouldBulidEmptyClasses()
@@ -79,11 +79,11 @@ namespace UtilityTests
             var shouldShow = false;
 
             //act
-            var ClassToRender = new CssBuilder()
+            var classToRender = new CssBuilder()
                             .AddClass("some-class", shouldShow)
                             .Build();
             //assert
-            ClassToRender.Should().Be(string.Empty);
+            classToRender.Should().Be(string.Empty);
         }
 
         [Test]
@@ -95,11 +95,11 @@ namespace UtilityTests
                 IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "class", "my-custom-class-1" } };
 
                 //act
-                var ClassToRender = new CssBuilder("item-one")
+                var classToRender = new CssBuilder("item-one")
                                 .AddClass(() => attributes["class"].ToString(), when: attributes.ContainsKey("class"))
                                 .Build();
                 //assert
-                ClassToRender.Should().Be("item-one my-custom-class-1");
+                classToRender.Should().Be("item-one my-custom-class-1");
             }
         }
 
@@ -112,11 +112,11 @@ namespace UtilityTests
                 IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "class", "my-custom-class-1" } };
 
                 //act
-                var ClassToRender = new CssBuilder("item-one")
+                var classToRender = new CssBuilder("item-one")
                                 .AddClassFromAttributes(attributes)
                                 .Build();
                 //assert
-                ClassToRender.Should().Be("item-one my-custom-class-1");
+                classToRender.Should().Be("item-one my-custom-class-1");
             }
         }
 
@@ -129,11 +129,11 @@ namespace UtilityTests
                 IReadOnlyDictionary<string, object> attributes = null;
 
                 //act
-                var ClassToRender = new CssBuilder("item-one")
+                var classToRender = new CssBuilder("item-one")
                                 .AddClassFromAttributes(attributes)
                                 .Build();
                 //assert
-                ClassToRender.Should().Be("item-one");
+                classToRender.Should().Be("item-one");
             }
         }
 
@@ -146,11 +146,11 @@ namespace UtilityTests
                 IReadOnlyDictionary<string, object> attributes = null;
 
                 //act
-                var ClassToRender = new CssBuilder()
+                var classToRender = new CssBuilder()
                                 .AddClassFromAttributes(attributes)
                                 .NullIfEmpty();
                 //assert
-                ClassToRender.Should().BeNull();
+                classToRender.Should().BeNull();
             }
         }
 
@@ -163,11 +163,11 @@ namespace UtilityTests
                 IReadOnlyDictionary<string, object> attributes = new Dictionary<string, object> { { "foo", "bar" } };
 
                 //act
-                var ClassToRender = new CssBuilder("item-one")
+                var classToRender = new CssBuilder("item-one")
                                 .AddClass(() => attributes["string"].ToString(), when: attributes.ContainsKey("class"))
                                 .Build();
                 //assert
-                ClassToRender.Should().Be("item-one");
+                classToRender.Should().Be("item-one");
             }
         }
     }
