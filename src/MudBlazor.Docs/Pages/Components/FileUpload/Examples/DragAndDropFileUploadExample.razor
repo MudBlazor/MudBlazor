@@ -54,18 +54,15 @@
 @code { 
     string _dragEnterStyle;
     IList<string> fileNames = new List<string>();
-
-    private void OnInputFileChanged(InputFileChangeEventArgs e)
+    void OnInputFileChanged(InputFileChangeEventArgs e)
     {
         var files = e.GetMultipleFiles();
         fileNames = files.Select(f => f.Name).ToList();
     }
-
     void Upload()
     {
         //Upload the files here
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
         Snackbar.Add("TODO: Upload your files!", Severity.Normal);
     }
-
 }
