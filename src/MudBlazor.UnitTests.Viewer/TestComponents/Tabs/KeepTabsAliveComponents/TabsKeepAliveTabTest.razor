@@ -1,0 +1,14 @@
+﻿<h3>TabsKeepAliveTab01</h3>
+
+@code {
+
+    [Parameter] public string ComponentName { get; set; }
+    public int Counter { get; set; } = 0;
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine($"Component {ComponentName} is rendered. First render: {firstRender}");
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+}
