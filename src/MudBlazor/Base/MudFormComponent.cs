@@ -79,7 +79,15 @@ namespace MudBlazor
             return changed;
         }
 
-        protected virtual void OnConversionError(string error)
+        private void OnConversionError(string error)
+        {
+            // note: we need to update the form here because the conversion error might lead to not updating the value
+            // ... which leads to not updating the form
+            Form?.Update(this);
+            OnConversionErrorOccurred(error);
+        }
+
+        protected virtual void OnConversionErrorOccurred(string error)
         {
             /* Descendants can override this method to catch conversion errors */
         }
@@ -190,7 +198,8 @@ namespace MudBlazor
                     }
                     // we have a required value, proceed to the validation funcs
                 }
-
+                if (ConversionError)
+                    errors.Add(ConversionErrorMessage);
                 if (Validation is ValidationAttribute)
                     ValidateWithAttribute(Validation as ValidationAttribute, _value, errors);
                 else if (Validation is Func<T, bool>)

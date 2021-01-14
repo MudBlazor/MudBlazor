@@ -127,7 +127,7 @@ namespace MudBlazor
             // form can only be valid if:
             // - none have an error
             // - all required fields have been touched (and thus validated)
-            var no_errors = _touchedFormControls.Keys.All(x => x.Error == false);
+            var no_errors = _touchedFormControls.Keys.All(x => x.HasErrors == false);
             var required_all_touched = _touchedFormControls.Where(pair => pair.Key.Required).All(pair => pair.Value == true);
             _valid = no_errors && required_all_touched;
             try
