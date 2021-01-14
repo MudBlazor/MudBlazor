@@ -8,6 +8,7 @@ namespace MudBlazor.Interfaces
 
         public bool Required { get; set; }
         public bool Error { get; set; }
+        public bool HasErrors { get; }
         public List<string> ValidationErrors { get; set; }
 
         public Task Validate();

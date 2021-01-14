@@ -325,6 +325,23 @@ namespace MudBlazor.UnitTests
             await comp.InvokeAsync(() => textfield.Text = "Moby Dick");
             form.IsValid.Should().BeTrue(because: "select is not required");
         }
+
+        /// <summary>
+        /// Form should become invalid as soon as an in-convertible value is entered.
+        /// </summary>
+        [Test]
+        public async Task Form_Should_BecomeInValidWhenAConversionErrorOccurs()
+        {
+            var comp = ctx.RenderComponent<FormConversionErrorTest>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            form.IsValid.Should().BeTrue();
+            var textfield = comp.FindComponent<MudTextField<int>>().Instance;
+            await comp.InvokeAsync(() => textfield.Text = "Not and int");
+            form.IsValid.Should().BeFalse(because: "conversion error is forwarded to form");
+            await comp.InvokeAsync(() => textfield.Text = "17");
+            form.IsValid.Should().BeTrue(because: "conversion error is gone");
+        }
     }
 }
 

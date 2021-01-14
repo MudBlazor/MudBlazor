@@ -1,0 +1,9 @@
+﻿<MudForm @bind-IsValid="@_isValid" ValidationDelay="0">
+    <MudTextField T="int" Immediate="true" />
+</MudForm>
+<MudButton Disabled="@(!_isValid)" Variant="Variant.Filled" Color="Color.Primary">Submit</MudButton>
+
+@code
+{
+    private bool _isValid = true;
+}
