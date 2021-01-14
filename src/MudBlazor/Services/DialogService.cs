@@ -126,14 +126,14 @@ namespace MudBlazor
             return (bool)result.Data;
         }
 
-        internal void Close(DialogReference Dialog)
+        internal void Close(DialogReference dialog)
         {
-            Close(Dialog, DialogResult.Ok<object>(null));
+            Close(dialog, DialogResult.Ok<object>(null));
         }
 
-        internal void Close(DialogReference Dialog, DialogResult result)
+        internal void Close(DialogReference dialog, DialogResult result)
         {
-            OnDialogCloseRequested?.Invoke(Dialog, result);
+            OnDialogCloseRequested?.Invoke(dialog, result);
         }
 
     }

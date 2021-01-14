@@ -156,7 +156,7 @@ namespace MudBlazor.Charts
                     Index = colorcounter,
                     Labels = item.Name
                 };
-                colorcounter = colorcounter + 1;
+                colorcounter++;
                 ChartLines.Add(line);
                 Legends.Add(legend);
             }

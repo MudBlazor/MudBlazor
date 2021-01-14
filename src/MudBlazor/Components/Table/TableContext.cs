@@ -52,7 +52,7 @@ namespace MudBlazor
         public override void Add(MudTr row, object item)
         {
             var t = item.As<T>();
-            if (ReferenceEquals(t, null))
+            if (t is null)
                 return;
             Rows[t] = row;
         }
@@ -60,7 +60,7 @@ namespace MudBlazor
         public override void Remove(MudTr row, object item)
         {
             var t = item.As<T>();
-            if (ReferenceEquals(t, null))
+            if (t is null)
                 return;
             Rows.Remove(t);
         }

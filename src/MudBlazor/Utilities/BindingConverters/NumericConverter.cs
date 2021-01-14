@@ -159,9 +159,9 @@ namespace MudBlazor
         public static bool AreEqual(double a, double b, double epsilon = MinNormal)
         {
             // Copyright (c) Michael Borgwardt
-            double absA = Math.Abs(a);
-            double absB = Math.Abs(b);
-            double diff = Math.Abs(a - b);
+            var absA = Math.Abs(a);
+            var absB = Math.Abs(b);
+            var diff = Math.Abs(a - b);
 
             if (a.Equals(b))
             { // shortcut, handles infinities

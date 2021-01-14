@@ -206,7 +206,7 @@ namespace MudBlazor
             await OnCommitEditClick.InvokeAsync(ev);
             if (CommitEditCommand?.CanExecute(CommitEditCommandParameter) ?? false)
             {
-                object parameter = CommitEditCommandParameter;
+                var parameter = CommitEditCommandParameter;
                 if (parameter == null)
                     parameter = item;
                 CommitEditCommand.Execute(parameter);

@@ -10,7 +10,7 @@ namespace MudBlazor
     public partial class MudTreeViewItem : MudComponentBase
     {
         private bool _isSelected, _isActivated, _isExpanded;
-        private readonly List<MudTreeViewItem> childItems = new List<MudTreeViewItem>();
+        private readonly List<MudTreeViewItem> _childItems = new List<MudTreeViewItem>();
 
         protected string Classname =>
         new CssBuilder("mud-treeview-item")
@@ -182,7 +182,7 @@ namespace MudBlazor
                 return;
 
             _isSelected = value;
-            childItems.ForEach(async c => await c.Select(value, source));
+            _childItems.ForEach(async c => await c.Select(value, source));
 
             StateHasChanged();
 
@@ -194,14 +194,14 @@ namespace MudBlazor
             }
         }
 
-        private void AddChild(MudTreeViewItem item) => childItems.Add(item);
+        private void AddChild(MudTreeViewItem item) => _childItems.Add(item);
 
         internal IEnumerable<MudTreeViewItem> GetSelectedItems()
         {
             if (_isSelected)
                 yield return this;
 
-            foreach (var treeItem in childItems)
+            foreach (var treeItem in _childItems)
             {
                 foreach (var selected in treeItem.GetSelectedItems())
                 {

@@ -14,7 +14,7 @@ namespace MudBlazor
         /// <summary>
         /// Reference to the Picker, initialized via @ref
         /// </summary>
-        private MudPicker Picker;
+        protected MudPicker Picker { get; set; }
 
         private OpenTo _currentView;
 

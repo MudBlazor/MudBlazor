@@ -29,7 +29,7 @@ internal static class DateTimeExtensions
 
     public static DateTime StartOfWeek(this DateTime self, DayOfWeek firstDayOfWeek)
     {
-        int diff = (7 + (self.DayOfWeek - firstDayOfWeek)) % 7;
+        var diff = (7 + (self.DayOfWeek - firstDayOfWeek)) % 7;
         return self.AddDays(-1 * diff).Date;
     }
 

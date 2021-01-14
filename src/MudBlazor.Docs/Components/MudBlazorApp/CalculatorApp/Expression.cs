@@ -30,19 +30,19 @@ namespace PrimitiveCalculator
 {
     public class Expression
     {
-        public List<Operation> Operations = new List<Operation>();
-        SimpleParser parser;
-        public bool MustConsumeClosingBracket;
-        public double? Value;
+        private List<Operation> _operations = new List<Operation>();
+        private SimpleParser _parser;
+        private bool _mustConsumeClosingBracket;
+        public double? Value { get; set; }
 
         public Expression(string expression)
         {
-            parser = new SimpleParser(expression.Trim());
+            _parser = new SimpleParser(expression.Trim());
         }
 
         public Expression(SimpleParser parser)
         {
-            this.parser = parser;
+            this._parser = parser;
         }
 
         public Expression(double nr)
@@ -53,51 +53,51 @@ namespace PrimitiveCalculator
         public double Eval()
         {
             var op_count = -1;
-            while (parser.HasNext)
+            while (_parser.HasNext)
             {
-                if (Operations.Count > op_count)
-                    op_count = Operations.Count;
+                if (_operations.Count > op_count)
+                    op_count = _operations.Count;
                 else
                     break;
-                parser.ConsumeAny(' ');
-                if (parser.NextIs('('))
+                _parser.ConsumeAny(' ');
+                if (_parser.NextIs('('))
                 {
-                    parser.Skip(1);
-                    var exp = new Expression(parser) { MustConsumeClosingBracket = true };
+                    _parser.Skip(1);
+                    var exp = new Expression(_parser) { _mustConsumeClosingBracket = true };
                     exp.Eval();
                     var op = new Operation { Operator = "+", Expression = exp };
-                    Operations.Add(op);
+                    _operations.Add(op);
                 }
-                else if (parser.NextIs("+-*^/%".ToCharArray()))
+                else if (_parser.NextIs("+-*^/%".ToCharArray()))
                 {
-                    var op = new Operation() { Operator = parser.NextChar.ToString() };
-                    parser.Skip(1);
-                    parser.ConsumeAny(' ');
-                    if (parser.NextIs('('))
+                    var op = new Operation() { Operator = _parser.NextChar.ToString() };
+                    _parser.Skip(1);
+                    _parser.ConsumeAny(' ');
+                    if (_parser.NextIs('('))
                     {
-                        parser.Skip(1);
-                        var exp = new Expression(parser);
-                        exp.MustConsumeClosingBracket = true;
+                        _parser.Skip(1);
+                        var exp = new Expression(_parser);
+                        exp._mustConsumeClosingBracket = true;
                         op.Expression = exp;
                         exp.Eval();
                     }
                     else
-                        op.Expression = new Expression(ReadNumber(parser));
-                    Operations.Add(op);
+                        op.Expression = new Expression(ReadNumber(_parser));
+                    _operations.Add(op);
                 }
-                else if (parser.NextIs("0.123456789".ToCharArray()))
+                else if (_parser.NextIs("0.123456789".ToCharArray()))
                 {
-                    Operations.Add(new Operation { Operator = "+", Expression = new Expression(ReadNumber(parser)) });
+                    _operations.Add(new Operation { Operator = "+", Expression = new Expression(ReadNumber(_parser)) });
                 }
-                else if (parser.NextIs(')') && MustConsumeClosingBracket)
+                else if (_parser.NextIs(')') && _mustConsumeClosingBracket)
                 {
-                    parser.Skip(1);
+                    _parser.Skip(1);
                     break;
                 }
             }
-            if (!Operations.Any())
+            if (!_operations.Any())
                 return double.NaN;
-            var first_op = Operations.First();
+            var first_op = _operations.First();
             if (string.IsNullOrEmpty(first_op.Operator))
                 first_op.Operator = "+";
             else if (first_op.Operator == "-")
@@ -105,9 +105,9 @@ namespace PrimitiveCalculator
                 first_op.Operator = "+";
                 first_op.Expression.Value = (first_op.Expression.Value ?? double.NaN) * (-1);
             }
-            if (Operations.Count == 1)
+            if (_operations.Count == 1)
             {
-                var op = Operations[0];
+                var op = _operations[0];
                 var val = op.Expression.Value;
                 if (val == null)
                     return double.NaN;
@@ -116,28 +116,28 @@ namespace PrimitiveCalculator
                 else
                     Value = val;
             }
-            else if (Operations.Count == 2)
+            else if (_operations.Count == 2)
             {
-                Value = Operations[1].Apply(Operations[0].Apply(0));
+                Value = _operations[1].Apply(_operations[0].Apply(0));
             }
             else
             {
-                if (Precedence(Operations[0].Operator) > 0)
+                if (Precedence(_operations[0].Operator) > 0)
                     return double.NaN; // only + and minus may be first operator!
                 // repeated contraction by precedence
-                while (Operations.Count > 1)
+                while (_operations.Count > 1)
                 {
-                    var highest_op = Operations.Select(x => x.Operator).OrderByDescending(x => Precedence(x)).First();
+                    var highest_op = _operations.Select(x => x.Operator).OrderByDescending(x => Precedence(x)).First();
                     if (Precedence(highest_op) == 0)
                     {
                         double sum = 0;
-                        foreach (var op in Operations)
+                        foreach (var op in _operations)
                             sum = op.Apply(sum);
                         return sum;
                     }
                     var ops = new List<Operation>();
                     var i = 0;
-                    foreach (var op in Operations)
+                    foreach (var op in _operations)
                     {
                         if (op.Operator == highest_op)
                         {
@@ -149,9 +149,9 @@ namespace PrimitiveCalculator
                         ops.Add(op);
                         i++;
                     }
-                    Operations = ops;
+                    _operations = ops;
                 }
-                return Operations[0].Apply(0);
+                return _operations[0].Apply(0);
             }
             return Value ?? double.NaN;
         }
@@ -185,8 +185,8 @@ namespace PrimitiveCalculator
 
     public class Operation
     {
-        public string Operator;
-        public Expression Expression;
+        public string Operator { get; set; }
+        public Expression Expression { get; set; }
 
         public double Apply(double v)
         {
