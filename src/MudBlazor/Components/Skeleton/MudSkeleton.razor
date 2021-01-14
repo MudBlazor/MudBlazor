@@ -1,55 +1,5 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Utilities
-@using MudBlazor.Extensions
 @inherits MudComponentBase;
 
 <span class="@Classname" style="@StyleString"></span>
 
-@code {
-
-    protected string Classname =>
-    new CssBuilder("mud-skeleton")
-      .AddClass($"mud-skeleton-{SkeletonType.ToDescriptionString()}")
-      .AddClass($"mud-skeleton-{Animation.ToDescriptionString()}")
-      .AddClass(Class)
-    .Build();
-
-    /// <summary>
-    /// With defined in string, needs px or % or equal prefix.
-    /// </summary>
-    [Parameter] public string Width { set; get; }
-
-    /// <summary>
-    /// Height defined in string, needs px or % or equal prefix.
-    /// </summary>
-    [Parameter] public string Height { set; get; }
-
-    /// <summary>
-    /// Shape of the skeleton that will be renderd.
-    /// </summary>
-    [Parameter] public SkeletonType SkeletonType { set; get; } = SkeletonType.Text;
-
-    /// <summary>
-    /// Animation style, if false it will be disabled.
-    /// </summary>
-    [Parameter] public Animation Animation { set; get; } = Animation.Pulse;
-
-    private string _width { get; set; }
-    private string _height { get; set; }
-    private string StyleString { get; set; }
-
-    protected override void OnInitialized()
-    {
-        if(!String.IsNullOrEmpty(Width))
-        {
-            _width = $"width:{Width};";
-        }
-
-        if (!String.IsNullOrEmpty(Height))
-        {
-            _height = $"height:{Height};";
-        }
-
-        StyleString = $"{_width}{_height}{Style}";
-    }
-}

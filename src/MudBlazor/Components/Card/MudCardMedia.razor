@@ -1,15 +1,4 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Utilities
 @inherits MudComponentBase
 
-
-<div title="@Title" class="@Classname" style="@StyleString">
-</div>
-
-@code {
-    protected string Classname =>
-    new CssBuilder("mud-card-media")
-      .AddClass(Class)
-    .Build();
-}
-
+<div title="@Title" class="@Classname" style="@StyleString"></div>
