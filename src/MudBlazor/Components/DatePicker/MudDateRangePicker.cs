@@ -3,13 +3,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
+using static System.String;
 
 namespace MudBlazor
 {
     public class MudDateRangePicker : MudBaseDatePicker, IDisposable
     {
         private DateTime? _firstDate = null, _currentDate;
-        protected DateRange _dateRange;
+        private DateRange _dateRange;
 
         protected override bool IsRange => true;
 
@@ -46,42 +47,41 @@ namespace MudBlazor
         public DateRange DateRange
         {
             get => _dateRange;
-            set
+            set => SetDateRangeAsync(value, true).AndForget();
+        }
+
+        protected async Task SetDateRangeAsync(DateRange range, bool updateValue)
+        {
+            if (_dateRange != range)
             {
-                if (value == _dateRange)
-                    return;
-                if (_setting_date)
-                    return;
-                _setting_date = true;
-                try
+                _dateRange = range;
+
+                if (updateValue)
                 {
-                    _dateRange = value;
-                    if (value != null)
+                    if (_dateRange == null)
+                        await SetValueAsync(null, false);
+                    else
                     {
-                        if ((!string.IsNullOrEmpty(DateFormat)) && _dateRange != null)
-                            Value = _dateRange.ToString(DateFormat);
+                        if (!IsNullOrEmpty(DateFormat))
+                            await SetValueAsync(_dateRange.ToString(DateFormat), false);
                         else
-                            Value = _dateRange.ToIsoDateString();
+                            await SetValueAsync(_dateRange.ToIsoDateString(), false);
                     }
-                    InvokeAsync(StateHasChanged);
-                    DateRangeChanged.InvokeAsync(value);
                 }
-                finally
-                {
-                    _setting_date = false;
-                }
+
+                await DateRangeChanged.InvokeAsync(_dateRange);
             }
         }
 
-        private bool _setting_date;
-
-        protected override void StringValueChanged(string value)
+        protected override Task StringValueChanged(string value)
         {
-            // update the date property
-            if (DateRange.TryParse(value, out var dateRange))
-                DateRange = dateRange;
-            else
-                DateRange = null;
+            // Update the daterange property (without updating back the Value property)
+            return SetDateRangeAsync(ParseDateRangeValue(value), false);
+        }
+
+        private DateRange ParseDateRangeValue(string value)
+        {
+            return DateRange.TryParse(value, out var dateRange) ? dateRange : null;
         }
 
         protected override string GetDayClasses(int month, DateTime day)
@@ -144,11 +144,10 @@ namespace MudBlazor
             if (_firstDate == null || _firstDate > dateTime)
             {
                 _firstDate = dateTime;
-
                 return;
             }
 
-            DateRange = new DateRange(_firstDate, dateTime);
+            await SetDateRangeAsync(new DateRange(_firstDate, dateTime), true);
 
             _firstDate = null;
             _currentDate = null;
