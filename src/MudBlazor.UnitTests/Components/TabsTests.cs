@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests
             Console.WriteLine($"{comp.Instance.content3.ComponentName} Counter : {comp.Instance.content3.Counter}");
             Console.WriteLine("=======================");
 
-            comp.Instance.Increase(1);
+            comp.Instance.IncrementCountOfTab(1);
             comp.Instance.content1.Counter.Should().Be(1);
             comp.Instance.tabs.ActivatePanel(1);
             comp.Instance.content1.Counter.Should().Be(1);
@@ -90,11 +90,10 @@ namespace MudBlazor.UnitTests
             Console.WriteLine($"{comp.Instance.content3.ComponentName} Counter : {comp.Instance.content3.Counter}");
             Console.WriteLine("=======================");
 
-            comp.Instance.Increase(2);
-            comp.Instance.Increase(2);
+            comp.Instance.IncrementCountOfTab(2);
+            comp.Instance.IncrementCountOfTab(2);
             comp.Instance.content1.Counter.Should().Be(1);
             comp.Instance.content2.Counter.Should().Be(2);
-
             comp.Instance.tabs.ActivatePanel(2);
             comp.Instance.content1.Counter.Should().Be(1);
             comp.Instance.content2.Counter.Should().Be(2);
@@ -106,16 +105,14 @@ namespace MudBlazor.UnitTests
             Console.WriteLine($"{comp.Instance.content3.ComponentName} Counter : {comp.Instance.content3.Counter}");
             Console.WriteLine("=======================");
 
-            comp.Instance.Increase(3);
+            comp.Instance.IncrementCountOfTab(3);
             comp.Instance.content1.Counter.Should().Be(1);
             comp.Instance.content2.Counter.Should().Be(2);
             comp.Instance.content3.Counter.Should().Be(1);
-
             comp.Instance.tabs.ActivatePanel(0);
             comp.Instance.content1.Counter.Should().Be(1);
             comp.Instance.content2.Counter.Should().Be(2);
             comp.Instance.content3.Counter.Should().Be(1);
-
             Console.WriteLine(comp.Markup);
             Console.WriteLine($"Active Panel index: {comp.Instance.tabs.ActivePanelIndex}");
             Console.WriteLine($"{comp.Instance.content1.ComponentName} Counter : {comp.Instance.content1.Counter}");

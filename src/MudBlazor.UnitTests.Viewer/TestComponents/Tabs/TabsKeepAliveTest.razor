@@ -17,7 +17,7 @@
     public KeepTabsAliveComponents.TabsKeepAliveTabTest content2;
     public KeepTabsAliveComponents.TabsKeepAliveTabTest content3;
 
-    public void Increase(int index)
+    public void IncrementCountOfTab(int index)
     {
         switch (index)
         {
@@ -32,6 +32,6 @@
                 break;
 
         }
+        InvokeAsync(() => StateHasChanged());
     }
-
 }
