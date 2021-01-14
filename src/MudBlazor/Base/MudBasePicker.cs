@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -6,6 +7,7 @@ namespace MudBlazor
     public abstract class MudBasePicker : MudComponentBase
     {
         private string _value;
+
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.
         /// </summary>
@@ -98,58 +100,50 @@ namespace MudBlazor
         public string Value
         {
             get => _value;
-            set
+            set => SetValueAsync(value).AndForget();
+        }
+
+        private async Task SetValueAsync(string value)
+        {
+            if (_value != value)
             {
-                if (value == null || value.Equals(_value))
-                    return;
-                if (_setting_text)
-                    return;
-                _setting_text = true;
-                try
-                {
-                    _value = value;
-                    StringValueChanged(_value);
-                    ValueChanged.InvokeAsync(value);
-                }
-                finally
-                {
-                    _setting_text = false;
-                }
+                _value = value;
+                StringValueChanged(_value);
+                await ValueChanged.InvokeAsync(_value);
             }
         }
 
-        private bool _setting_text;
-
         /// <summary>
-        /// 
+        /// Value change hook for descendants.
         /// </summary>
-        /// <param name="value"></param>
         protected virtual void StringValueChanged(string value)
         {
-            /* to be overridden by descendants */
         }
 
-        internal bool IsOpen { get; set; }
+        protected bool IsOpen { get; set; }
 
         internal Action<bool> OnOpenStateChanged;
 
-        public virtual void ToggleOpen()
+        public void ToggleOpen()
         {
-            IsOpen = !IsOpen;
-            OnOpenStateChanged?.Invoke(IsOpen);
+            if (IsOpen)
+                Close();
+            else
+                Open();
         }
 
-        public void Close()
+        public virtual void Close()
         {
             IsOpen = false;
-            StateHasChanged();
             OnOpenStateChanged?.Invoke(IsOpen);
+            StateHasChanged();
         }
 
         public virtual void Open()
         {
             IsOpen = true;
             OnOpenStateChanged?.Invoke(IsOpen);
+            StateHasChanged();
         }
     }
 }
