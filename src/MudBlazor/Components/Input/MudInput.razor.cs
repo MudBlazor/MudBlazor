@@ -27,18 +27,17 @@ namespace MudBlazor
 
         public override ValueTask FocusAsync()
         {
-            //The context must be a WebElementReferenceContext otherwise the JSRuntime is not available otherwise we just return a completed task and pretend everything is ok
-            return _elementReference.Context is WebElementReferenceContext ? _elementReference.FocusAsync() : ValueTask.CompletedTask;
+            return JSRuntime.InvokeVoidAsync("elementReference.focus", _elementReference);
         }
 
         public override ValueTask SelectAsnyc()
         {
-            return _elementReference.Context is WebElementReferenceContext ? JSRuntime.InvokeVoidAsync("mbSelectHelper.select", _elementReference) : ValueTask.CompletedTask;
+            return JSRuntime.InvokeVoidAsync("mbSelectHelper.select", _elementReference);
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            return _elementReference.Context is WebElementReferenceContext ? JSRuntime.InvokeVoidAsync("mbSelectHelper.selectRange", _elementReference, pos1, pos2) : ValueTask.CompletedTask;
+            return JSRuntime.InvokeVoidAsync("mbSelectHelper.selectRange", _elementReference, pos1, pos2);
         }
 
         /// <summary>

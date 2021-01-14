@@ -126,11 +126,11 @@ namespace MudBlazor
         /// Focuses the element
         /// </summary>
         /// <returns>The ValueTask</returns>
-        public virtual ValueTask FocusAsync() { return ValueTask.CompletedTask; }
+        public virtual ValueTask FocusAsync() { return new ValueTask(); }
 
-        public virtual ValueTask SelectAsnyc() { return ValueTask.CompletedTask; }
+        public virtual ValueTask SelectAsnyc() { return new ValueTask(); }
 
-        public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return ValueTask.CompletedTask; }
+        public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return new ValueTask(); }
 
         /// <summary>
         /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.   
