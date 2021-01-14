@@ -43,6 +43,11 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
+        /// If true, render all tabs and hide (display:none) every non-active.
+        /// </summary>
+        [Parameter] public bool KeepPanelsAlive { get; set; } = false;
+
+        /// <summary>
         /// If true, sets the border-radius to theme default.
         /// </summary>
         [Parameter] public bool Rounded { get; set; }
