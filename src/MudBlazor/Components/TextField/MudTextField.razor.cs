@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
-
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -12,6 +14,21 @@ namespace MudBlazor
 
         private MudInput<string> _elementReference;
 
+        public override ValueTask FocusAsync()
+        {
+            return _elementReference.FocusAsync();
+        }
+
+        public override ValueTask SelectAsnyc()
+        {
+            return _elementReference.SelectAsnyc();
+        }
+
+        public override ValueTask SelectRangeAsync(int pos1, int pos2)
+        {
+            return _elementReference.SelectRangeAsync(pos1, pos2);
+        }
+
         /// <summary>
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>
@@ -21,7 +38,6 @@ namespace MudBlazor
         /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
         /// </summary>
         [Parameter] public string Label { get; set; }
-
 
     }
 

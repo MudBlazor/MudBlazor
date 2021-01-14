@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -22,6 +24,21 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private ElementReference _elementReference;
+
+        public override ValueTask FocusAsync()
+        {
+            return JSRuntime.InvokeVoidAsync("elementReference.focus", _elementReference);
+        }
+
+        public override ValueTask SelectAsnyc()
+        {
+            return JSRuntime.InvokeVoidAsync("mbSelectHelper.select", _elementReference);
+        }
+
+        public override ValueTask SelectRangeAsync(int pos1, int pos2)
+        {
+            return JSRuntime.InvokeVoidAsync("mbSelectHelper.selectRange", _elementReference, pos1, pos2);
+        }
 
         /// <summary>
         /// The short hint displayed in the input before the user enters a value.
