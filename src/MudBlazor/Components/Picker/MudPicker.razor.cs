@@ -109,15 +109,6 @@ namespace MudBlazor
             }
         }
 
-        public override void ToggleOpen()
-        {
-            base.ToggleOpen();
-            if (IsOpen)
-                OnPickerOpened();
-            else
-                StateHasChanged();
-        }
-
         public override void Open()
         {
             base.Open();

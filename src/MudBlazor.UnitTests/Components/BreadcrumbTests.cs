@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
         public void Setup()
         {
             ctx = new Bunit.TestContext();
-            ctx.AddMudBlazorServices();
+            ctx.AddTestServices();
         }
 
         [TearDown]

@@ -293,6 +293,8 @@ file_header_template = Not Used
 dotnet_diagnostic.IDE0055.severity = suggestion
 # IDE0044: Make field readonly
 dotnet_diagnostic.IDE0044.severity = none
+# IDE0034: 'default' expression can be simplified
+dotnet_diagnostic.IDE0034.severity = none
 
 [*]
 end_of_line = lf
