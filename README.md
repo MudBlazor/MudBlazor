@@ -7,16 +7,16 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/garderoben/mudblazor?style=flat-square)](https://github.com/Garderoben/MudBlazor)
 [![Nuget](https://img.shields.io/nuget/v/MudBlazor?style=flat-square)](https://www.nuget.org/packages/MudBlazor/)
 
-MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure. It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers them to adapt, fix or extend the framework and the multitude of examples in the documentation makes learning MudBlazor very easy. 
+MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure. It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers you to adapt, fix or extend the framework. There are plenty of examples in the documentation, which makes understanding and learning MudBlazor very easy. 
 ### Design goals:
- - Clean and aesthetic graphic design based on Material Design
- - Clear and easy to understand structure
- - Good documentation with many examples and source snippets
- - All components are written entirely in C#, no JavaScript allowed (except absolutely necessary)
+ - Clean and aesthetic graphic design based on Material Design.
+ - Clear and easy to understand structure.
+ - Good documentation with many examples and source snippets.
+ - All components are written entirely in C#, no JavaScript allowed (except where absolutely necessary).
  - Users can make beautiful apps without needing CSS (but they can of course use CSS too)
- - No dependencies on other component libraries, 100% control over components and features
+ - No dependencies on other component libraries, 100% control over components and features.
  - Stability! We strive for a complete test coverage. 
- - Releasing often so developers can get their PRs and fixes in a timely fashion
+ - Releasing often so developers can get their PRs and fixes in a timely fashion.
 ## Documentation & Demo
 - [MudBlazor.com](https://mudblazor.com)
 - [Try.MudBlazor.com](https://try.mudblazor.com/)
@@ -24,7 +24,7 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 - [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
 ## Getting Started 
 - Full installation instructions can be found at [mudblazor.com](https://mudblazor.com/getting-started/installation)  
-- Alternatively use one of our templates from our [MudBlazor.Templates](https://github.com/Garderoben/MudBlazor.Templates) repo. 
+- Alternatively use one of our templates from the [MudBlazor.Templates](https://github.com/Garderoben/MudBlazor.Templates) repo. 
 ### Quick Installation Guide
 #### Common Configuration (Client-Side or Server-Side)
 Install Package
