@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
@@ -89,9 +90,16 @@ namespace MudBlazor
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
+        /// If true the input will focus automatically
+        /// </summary>
+        [Parameter] public bool AutoFocus { get; set; }
+
+        /// <summary>
         ///  A multiline input (textarea) will be shown, if set to more than one line.
         /// </summary>
         [Parameter] public int Lines { get; set; } = 1;
+
+        [Inject] public IJSRuntime JSRuntime { get; set; }
 
         protected string _text;
 
@@ -112,6 +120,16 @@ namespace MudBlazor
                 TextChanged.InvokeAsync(_text).AndForget();
             }
         }
+
+        /// <summary>
+        /// Focuses the element
+        /// </summary>
+        /// <returns>The ValueTask</returns>
+        public virtual ValueTask FocusAsync() { return new ValueTask(); }
+
+        public virtual ValueTask SelectAsnyc() { return new ValueTask(); }
+
+        public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return new ValueTask(); }
 
         /// <summary>
         /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.   
@@ -229,6 +247,15 @@ namespace MudBlazor
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
             UpdateTextProperty(false);
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            //Only focus automatically after the first render cycle!
+            if (firstRender && AutoFocus)
+            {
+                await FocusAsync();
+            }
         }
 
         protected override void RegisterAsFormComponent()

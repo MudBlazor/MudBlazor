@@ -7,6 +7,7 @@ namespace MudBlazor
 {
     public abstract class MudDebouncedInput<T> : MudBaseInput<T>, IDisposable
     {
+
         private Timer _timer;
 
         /// <summary>

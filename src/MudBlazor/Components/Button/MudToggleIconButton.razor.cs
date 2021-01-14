@@ -73,6 +73,5 @@ namespace MudBlazor
             _toggled = !_toggled;
             await ToggledChanged.InvokeAsync(_toggled);
         }
-
     }
 }

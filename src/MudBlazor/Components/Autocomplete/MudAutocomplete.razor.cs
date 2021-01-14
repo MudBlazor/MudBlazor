@@ -339,5 +339,21 @@ namespace MudBlazor
             _timer?.Dispose();
             base.Dispose(disposing);
         }
+
+        public override ValueTask FocusAsync()
+        {
+            return _elementReference.FocusAsync();
+        }
+
+        public override ValueTask SelectAsnyc()
+        {
+            return _elementReference.SelectAsnyc();
+        }
+
+        public override ValueTask SelectRangeAsync(int pos1, int pos2)
+        {
+            return _elementReference.SelectRangeAsync(pos1, pos2);
+        }
+
     }
 }
