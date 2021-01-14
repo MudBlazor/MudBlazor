@@ -100,15 +100,16 @@ namespace MudBlazor
         public string Value
         {
             get => _value;
-            set => SetValueAsync(value).AndForget();
+            set => SetValueAsync(value, true).AndForget();
         }
 
-        private async Task SetValueAsync(string value)
+        protected async Task SetValueAsync(string value, bool callback)
         {
             if (_value != value)
             {
                 _value = value;
-                StringValueChanged(_value);
+                if (callback)
+                    await StringValueChanged(_value);
                 await ValueChanged.InvokeAsync(_value);
             }
         }
@@ -116,8 +117,9 @@ namespace MudBlazor
         /// <summary>
         /// Value change hook for descendants.
         /// </summary>
-        protected virtual void StringValueChanged(string value)
+        protected virtual Task StringValueChanged(string value)
         {
+            return Task.CompletedTask;
         }
 
         protected bool IsOpen { get; set; }
