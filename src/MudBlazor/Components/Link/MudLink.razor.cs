@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -38,8 +40,24 @@ namespace MudBlazor
         [Parameter] public string Target { get; set; }
 
         /// <summary>
+        /// Event to handle OnClick.  Proceeds to Href after click if specified.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+        [Inject] private NavigationManager UriHelper { get; set; }
+
+        /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        protected async Task OnClickHandler(MouseEventArgs args)
+        {
+            await OnClick.InvokeAsync(args);
+            if (!string.IsNullOrWhiteSpace(Href))
+            {
+                UriHelper.NavigateTo(Href);
+            }
+        }
     }
 }
