@@ -115,15 +115,13 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
-        public async Task Open_CloseBySelectingADate_CheckClosed()
+        public void Open_CloseBySelectingADate_CheckClosed()
         {
             var comp = OpenPicker();
             // clicking a day button to select a date and close
             comp.FindAll("div.mud-picker-calendar-day > button")
                 .Where(x => x.TrimmedText().Equals("23")).First().Click();
-            await Task.Delay(comp.Instance.ClosingDelay + 50); // allow a delay
-            // should not be open any more
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.Date.Should().NotBeNull();
         }
 
