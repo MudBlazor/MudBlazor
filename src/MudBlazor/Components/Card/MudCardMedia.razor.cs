@@ -5,8 +5,14 @@ namespace MudBlazor
 {
     public partial class MudCardMedia : MudComponentBase
     {
-        protected string StyleString => StyleBuilder.Default($"background-image:url({_imageUrl});{_height};")
+        protected string StyleString =>
+            StyleBuilder.Default($"background-image:url({_imageUrl});{_height};")
                 .AddStyle(this.Style)
+                .Build();
+
+        protected string Classname =>
+            new CssBuilder("mud-card-media")
+                .AddClass(Class)
                 .Build();
 
         [Parameter] public string Title { get; set; }
@@ -15,8 +21,8 @@ namespace MudBlazor
 
         [Parameter] public int Height { get; set; } = 300;
 
-        private string _height { get; set; }
-        private string _imageUrl { get; set; }
+        private string _height;
+        private string _imageUrl;
 
         protected override void OnInitialized()
         {
