@@ -100,7 +100,7 @@ namespace MudBlazor
         /// <summary>
         /// Reference to the Picker, initialized via @ref
         /// </summary>
-        protected MudPicker Picker;
+        protected MudPicker Picker { get; set; }
 
         protected virtual bool IsRange { get; } = false;
 

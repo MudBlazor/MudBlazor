@@ -7,13 +7,7 @@
     /// </summary>
     public class MudServicesConfiguration
     {
-        public SnackbarConfiguration SnackbarConfiguration;
-        public ResizeOptions ResizeOptions;
-
-        public MudServicesConfiguration()
-        {
-            SnackbarConfiguration = new SnackbarConfiguration();
-            ResizeOptions = new ResizeOptions();
-        }
+        public SnackbarConfiguration SnackbarConfiguration { get; set; } = new SnackbarConfiguration();
+        public ResizeOptions ResizeOptions { get; set; } = new ResizeOptions();
     }
 }

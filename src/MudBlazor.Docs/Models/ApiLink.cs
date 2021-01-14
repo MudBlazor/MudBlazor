@@ -9,7 +9,7 @@ namespace MudBlazor.Docs.Models
     {
         public static string GetApiLinkFor(Type type)
         {
-            if (!SpecialCaseComponents.TryGetValue(type, out var component))
+            if (!s_specialCaseComponents.TryGetValue(type, out var component))
                 component = type.ToString().Replace("MudBlazor.Mud", "").ToLowerInvariant();
             var href = $"/api/{component}";
             return href;
@@ -17,10 +17,10 @@ namespace MudBlazor.Docs.Models
 
         public static string GetComponentLinkFor(Type type)
         {
-            if (!SpecialCaseComponents.TryGetValue(type, out var component))
+            if (!s_specialCaseComponents.TryGetValue(type, out var component))
                 component = type.ToString().Replace("MudBlazor.Mud", "").ToLowerInvariant();
-            if (ComponentLinkTranslation.ContainsKey(component))
-                component = ComponentLinkTranslation[component];
+            if (s_componentLinkTranslation.ContainsKey(component))
+                component = s_componentLinkTranslation[component];
             var href = $"/components/{component}";
             return href;
         }
@@ -36,7 +36,7 @@ namespace MudBlazor.Docs.Models
         {
             if (string.IsNullOrEmpty(component))
                 return null;
-            if (InverseSpecialCase.TryGetValue(component, out var type))
+            if (s_inverseSpecialCase.TryGetValue(component, out var type))
                 return type;
             var assembly = typeof(MudComponentBase).Assembly;
             var lookup = new Dictionary<string, Type>();
@@ -48,31 +48,33 @@ namespace MudBlazor.Docs.Models
             return type;
         }
 
-        static Dictionary<Type, string> SpecialCaseComponents = new Dictionary<Type, string>()
-        {
-            [typeof(MudTable<T>)] = "table",
-            [typeof(MudTextField<T>)] = "textfield",
-            [typeof(MudSelect<T>)] = "select",
-            [typeof(MudInput<T>)] = "input",
-            [typeof(MudAutocomplete<T>)] = "autocomplete",
-            [typeof(MudSlider<T>)] = "slider",
-            [typeof(MudCheckBox<T>)] = "checkbox",
-            [typeof(MudSwitch<T>)] = "switch",
-            [typeof(MudFab)] = "buttonfab",
-            [typeof(MudIcon)] = "icons",
-            [typeof(MudProgressCircular)] = "progress",
-            [typeof(MudText)] = "typography",
-        };
+        private static Dictionary<Type, string> s_specialCaseComponents =
+            new Dictionary<Type, string>()
+            {
+                [typeof(MudTable<T>)] = "table",
+                [typeof(MudTextField<T>)] = "textfield",
+                [typeof(MudSelect<T>)] = "select",
+                [typeof(MudInput<T>)] = "input",
+                [typeof(MudAutocomplete<T>)] = "autocomplete",
+                [typeof(MudSlider<T>)] = "slider",
+                [typeof(MudCheckBox<T>)] = "checkbox",
+                [typeof(MudSwitch<T>)] = "switch",
+                [typeof(MudFab)] = "buttonfab",
+                [typeof(MudIcon)] = "icons",
+                [typeof(MudProgressCircular)] = "progress",
+                [typeof(MudText)] = "typography",
+            };
 
         // this is the inversion of above lookup
-        private static Dictionary<string, Type> InverseSpecialCase =
-            SpecialCaseComponents.ToDictionary(pair => pair.Value, pair => pair.Key);
+        private static Dictionary<string, Type> s_inverseSpecialCase =
+            s_specialCaseComponents.ToDictionary(pair => pair.Value, pair => pair.Key);
 
-        private static Dictionary<string, string> ComponentLinkTranslation = new Dictionary<string, string>()
-        {
-            ["icon"] = "icons",
-            ["chip"] = "chips",
-        };
+        private static Dictionary<string, string> s_componentLinkTranslation =
+            new Dictionary<string, string>()
+            {
+                ["icon"] = "icons",
+                ["chip"] = "chips",
+            };
 
     }
 }

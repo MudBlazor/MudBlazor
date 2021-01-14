@@ -34,23 +34,23 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Animation Animation { set; get; } = Animation.Pulse;
 
-        private string _width { get; set; }
-        private string _height { get; set; }
-        private string StyleString { get; set; }
+        private string _width;
+        private string _height;
+        private string _styleString;
 
         protected override void OnInitialized()
         {
-            if (!String.IsNullOrEmpty(Width))
+            if (!string.IsNullOrEmpty(Width))
             {
                 _width = $"width:{Width};";
             }
 
-            if (!String.IsNullOrEmpty(Height))
+            if (!string.IsNullOrEmpty(Height))
             {
                 _height = $"height:{Height};";
             }
 
-            StyleString = $"{_width}{_height}{Style}";
+            _styleString = $"{_width}{_height}{Style}";
         }
     }
 }
