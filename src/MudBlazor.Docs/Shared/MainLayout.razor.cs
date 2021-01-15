@@ -9,34 +9,32 @@ namespace MudBlazor.Docs.Shared
 {
     public partial class MainLayout : LayoutComponentBase
     {
+        private bool _drawerOpen = false;
+        private bool _rightToLeft = false;
+        private NavigationFooterLink _previous;
+        private NavigationFooterLink _next;
+        private NavigationSection? _section = null;
+        private NavMenu _navMenuRef;
 
-        bool _drawerOpen = false;
-        bool _rightToLeft = false;
-        NavigationFooterLink _previous;
-        NavigationFooterLink _next;
-        NavigationSection? _section = null;
-        NavMenu _navMenuRef;
+        [Inject] private IDocsNavigationService DocsService { get; set; }
 
-        [Inject] IDocsNavigationService DocsService { get; set; }
+        [Inject] private NavigationManager NavigationManager { get; set; }
 
-        [Inject] NavigationManager NavigationManager { get; set; }
+        [Inject] private IApiLinkService ApiLinkService { get; set; }
 
-        [Inject]
-        protected IApiLinkService ApiLinkService { get; set; }
-
-        void DrawerToggle()
+        private void DrawerToggle()
         {
             _drawerOpen = !_drawerOpen;
         }
 
-        void RightToLeftToggle()
+        private void RightToLeftToggle()
         {
             _rightToLeft = !_rightToLeft;
         }
 
         protected override void OnInitialized()
         {
-            currentTheme = defaultTheme;
+            _currentTheme = _defaultTheme;
             //if not home page, the navbar starts open
             if (!NavigationManager.IsHomePage())
             {
@@ -58,8 +56,6 @@ namespace MudBlazor.Docs.Shared
             _navMenuRef.Refresh();
         }
 
-
-
         private Task<IEnumerable<ApiLinkServiceEntry>> Search(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
@@ -74,46 +70,48 @@ namespace MudBlazor.Docs.Shared
 
         #region Theme        
 
-        void DarkMode()
+        private void DarkMode()
         {
-            if (currentTheme == defaultTheme)
+            if (_currentTheme == _defaultTheme)
             {
-                currentTheme = darkTheme;
+                _currentTheme = _darkTheme;
             }
             else
             {
-                currentTheme = defaultTheme;
+                _currentTheme = _defaultTheme;
             }
         }
 
-        MudTheme currentTheme = new MudTheme();
-        readonly MudTheme defaultTheme = new MudTheme()
-        {
-            Palette = new Palette()
+        private MudTheme _currentTheme = new MudTheme();
+        private readonly MudTheme _defaultTheme =
+            new MudTheme()
             {
-                Black = "#272c34"
-            }
-        };
-        readonly MudTheme darkTheme = new MudTheme()
-        {
-            Palette = new Palette()
+                Palette = new Palette()
+                {
+                    Black = "#272c34"
+                }
+            };
+        private readonly MudTheme _darkTheme =
+            new MudTheme()
             {
-                Black = "#27272f",
-                Background = "#32333d",
-                BackgroundGrey = "#27272f",
-                Surface = "#373740",
-                DrawerBackground = "#27272f",
-                DrawerText = "rgba(255,255,255, 0.50)",
-                AppbarBackground = "#27272f",
-                AppbarText = "rgba(255,255,255, 0.70)",
-                TextPrimary = "rgba(255,255,255, 0.70)",
-                TextSecondary = "rgba(255,255,255, 0.50)",
-                ActionDefault = "#adadb1",
-                ActionDisabled = "rgba(255,255,255, 0.26)",
-                ActionDisabledBackground = "rgba(255,255,255, 0.12)",
-                DrawerIcon = "rgba(255,255,255, 0.50)"
-            }
-        };
+                Palette = new Palette()
+                {
+                    Black = "#27272f",
+                    Background = "#32333d",
+                    BackgroundGrey = "#27272f",
+                    Surface = "#373740",
+                    DrawerBackground = "#27272f",
+                    DrawerText = "rgba(255,255,255, 0.50)",
+                    AppbarBackground = "#27272f",
+                    AppbarText = "rgba(255,255,255, 0.70)",
+                    TextPrimary = "rgba(255,255,255, 0.70)",
+                    TextSecondary = "rgba(255,255,255, 0.50)",
+                    ActionDefault = "#adadb1",
+                    ActionDisabled = "rgba(255,255,255, 0.26)",
+                    ActionDisabledBackground = "rgba(255,255,255, 0.12)",
+                    DrawerIcon = "rgba(255,255,255, 0.50)"
+                }
+            };
 
         #endregion
     }

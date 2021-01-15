@@ -5,17 +5,17 @@ using MudBlazor.Charts.SVG.Models;
 
 namespace MudBlazor.Charts
 {
-    public class PieBase : MudChartBase
+    partial class Pie : MudChartBase
     {
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 
-        public List<SvgPath> Paths = new List<SvgPath>();
-        public List<SvgLegend> Legends = new List<SvgLegend>();
+        private List<SvgPath> _paths = new List<SvgPath>();
+        private List<SvgLegend> _legends = new List<SvgLegend>();
 
         protected override void OnParametersSet()
         {
-            Paths.Clear();
-            Legends.Clear();
+            _paths.Clear();
+            _legends.Clear();
             double startx, starty, endx, endy;
             var ndata = GetNormalizedData();
             double cumulativeRadians = 0;
@@ -33,7 +33,7 @@ namespace MudBlazor.Charts
                     Index = i,
                     Data = $"M {ToS(startx)} {ToS(starty)} A 1 1 0 {ToS(largeArcFlag)} 1 {ToS(endx)} {ToS(endy)} L 0 0"
                 };
-                Paths.Add(path);
+                _paths.Add(path);
             }
 
             var counter = 0;
@@ -45,13 +45,13 @@ namespace MudBlazor.Charts
                 {
                     labels = InputLabels[counter];
                 }
-                var Legend = new SvgLegend()
+                var legend = new SvgLegend()
                 {
                     Index = counter,
                     Labels = labels,
                     Data = ToS(Math.Round(percent, 1))
                 };
-                Legends.Add(Legend);
+                _legends.Add(legend);
                 counter += 1;
             }
         }
