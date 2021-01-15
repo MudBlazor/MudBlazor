@@ -72,7 +72,7 @@ namespace MudBlazor.Docs.Services
             //GROUPS
 
             //Inputs
-            .AddNavGroup("Form Inputs & Controls", false, new DocsComponents()
+            .AddNavGroup("Form Inputs & controls", false, new DocsComponents()
                 .AddItem("Radio", typeof(MudRadio))
                 .AddItem("Checkbox", typeof(MudCheckBox<T>))
                 .AddItem("Select", typeof(MudSelect<T>))
@@ -103,6 +103,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Donut chart", typeof(MudChart))
                 .AddItem("Line chart", typeof(MudChart))
                 .AddItem("Pie chart", typeof(MudChart))
+                .AddItem("Bar chart", typeof(MudChart))
             );
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;
 

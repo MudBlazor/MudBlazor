@@ -28,6 +28,11 @@ namespace MudBlazor
         [Parameter] public bool HideExpandIcon { get; set; }
 
         /// <summary>
+        /// Explicitly sets the height for the Collapse element to override the css default.
+        /// </summary>
+        [Parameter] public int? MaxHeight { get; set; }
+
+        /// <summary>
         /// If set, overrides the default expand icon.
         /// </summary>
         [Parameter] public string ExpandIcon { get; set; } = @Icons.Material.ArrowDropDown;

@@ -4,7 +4,7 @@
 
 @if ((bool)((Parent?.KeepPanelsAlive ?? false)))
 {
-    <div style="display:@(Parent?.ActivePanel == this && ChildContent != null ? "default" : "none")">
+    <div style="display:@(Parent?.ActivePanel == this && ChildContent != null ? "contents" : "none")">
         @ChildContent
     </div>
 }
