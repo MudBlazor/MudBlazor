@@ -45,10 +45,11 @@ namespace MudBlazor
         [Parameter] public int ValidationDelay { get; set; } = 300;
 
         /// <summary>
-        /// When true, the form will not re-render its child contents on validation updates (i.e. when IsValid changes). This is an optimization which is necessary
+        /// When true, the form will not re-render its child contents on validation updates (i.e. when IsValid changes).
+        /// This is an optimization which can be necessary
         /// especially for larger forms on older devices.
         /// </summary>
-        [Parameter] public bool SuppressRenderingOnValidation { get; set; } = true;
+        [Parameter] public bool SuppressRenderingOnValidation { get; set; } = false;
 
         /// <summary>
         /// When true, will not cause a page refresh on Enter if any input has focus.
