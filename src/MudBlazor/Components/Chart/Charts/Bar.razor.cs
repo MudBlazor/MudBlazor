@@ -29,7 +29,7 @@ namespace MudBlazor.Charts
             Legends.Clear();
             ChartLines.Clear();
 
-            if (MudChartParent!=null)
+            if (MudChartParent != null)
                 Series = MudChartParent.ChartSeries;
 
             double maxY = 0.0;
@@ -37,13 +37,13 @@ namespace MudBlazor.Charts
             int numXLabels = XAxisLabels.Length;
             foreach (var item in Series)
             {
-                if(numValues < item.Data.Length)
+                if (numValues < item.Data.Length)
                 {
                     numValues = item.Data.Length;
                 }
                 foreach (int i in item.Data)
                 {
-                    if(maxY < i)
+                    if (maxY < i)
                     {
                         maxY = i;
                     }
@@ -101,12 +101,12 @@ namespace MudBlazor.Charts
                 VerticalLines.Add(Line);
 
                 string xLabels = "";
-                if(counter < numXLabels)
+                if (counter < numXLabels)
                 {
                     xLabels = XAxisLabels[counter];
                 }
 
-                SvgText LineValue = new SvgText() { X = x, Y = boundHeight -2, Value = xLabels };
+                SvgText LineValue = new SvgText() { X = x, Y = boundHeight - 2, Value = xLabels };
                 VerticalValues.Add(LineValue);
 
                 startGridX = startGridX + gridXUnits;
@@ -123,7 +123,7 @@ namespace MudBlazor.Charts
                 double gridValueY = 0;
                 bool firstTime = true;
 
-                foreach(var line in item.Data)
+                foreach (var line in item.Data)
                 {
                     if (firstTime)
                     {
