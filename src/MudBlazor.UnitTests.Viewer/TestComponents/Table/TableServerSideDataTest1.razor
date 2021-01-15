@@ -8,7 +8,7 @@
 </MudTable>
 
 @code {
-#pragma warning disable 1998
+#pragma warning disable CS1998 // async without await
     public static string __description__ = "Even without a MudTablePagination the table should call ServerReload to get the items on start.";
 
     private IEnumerable<int> pagedData;

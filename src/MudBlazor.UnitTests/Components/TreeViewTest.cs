@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable IDE1006 // leading underscore
+
+using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;

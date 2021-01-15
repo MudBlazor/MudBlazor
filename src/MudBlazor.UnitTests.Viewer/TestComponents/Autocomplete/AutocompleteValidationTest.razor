@@ -9,7 +9,7 @@
     </MudItem>
 </MudGrid>
 @code {
-#pragma warning disable 1998
+#pragma warning disable CS1998 // async without await
     public static string __description__ = "Based on a bug report. Selecting a value should not trigger the validation error message.";
     MudForm form;
     string value;
