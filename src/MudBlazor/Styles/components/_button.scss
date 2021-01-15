@@ -33,14 +33,15 @@
 
 .mud-button {
     padding: 6px 16px;
-    font-size: 0.875rem;
+    font-family: var(--mud-typography-button-family);
+    font-size: var(--mud-typography-button-size);
+    font-weight: var(--mud-typography-button-weight);
+    line-height: var(--mud-typography-button-lineheight);
+    letter-spacing: var(--mud-typography-button-letterspacing);
     min-width: 64px;
     box-sizing: border-box;
     transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    font-weight: 500;
-    line-height: 1.75;
     border-radius: var(--mud-default-borderradius);
-    letter-spacing: 0.02857em;
     text-transform: uppercase;
     color: var(--mud-palette-text-primary);
 
