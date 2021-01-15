@@ -27,14 +27,14 @@
 
 .mud-collapse-container {
     .mud-select {
-        position: unset;
+        //position: unset;
 
         .mud-input-control.mud-select {
             position: relative;
         }
 
         .mud-popover {
-            width: calc(calc(100% - 48px));
+            //width: calc(calc(100% - 48px));
 
             &.mud-popover-top {
                 &.mud-popover-offset-y {
