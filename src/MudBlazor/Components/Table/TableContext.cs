@@ -27,11 +27,11 @@ namespace MudBlazor
 
     public class TableContext<T> : TableContext
     {
-        public HashSet<T> Selection = new HashSet<T>();
+        public HashSet<T> Selection { get; set; } = new HashSet<T>();
 
-        public Dictionary<T, MudTr> Rows = new Dictionary<T, MudTr>();
+        public Dictionary<T, MudTr> Rows { get; set; } = new Dictionary<T, MudTr>();
 
-        public List<MudTableSortLabel<T>> SortLabels = new List<MudTableSortLabel<T>>();
+        public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
 
         public override void UpdateRowCheckBoxes()
         {

@@ -13,7 +13,7 @@ namespace MudBlazor
         .AddClass(Class)
        .Build();
 
-        public bool isOpen { get; set; }
+        private bool _isOpen;
 
         [Parameter] public string Label { get; set; }
         [Parameter] public string Icon { get; set; }
@@ -65,7 +65,7 @@ namespace MudBlazor
 
         public void CloseMenu()
         {
-            isOpen = false;
+            _isOpen = false;
             PopoverStyle = null;
             StateHasChanged();
         }
@@ -75,7 +75,7 @@ namespace MudBlazor
             if (Disabled)
                 return;
             PopoverStyle = PositionAtCurser ? $"position:fixed; left:{args.ClientX}px; top:{args.ClientY}px;" : null;
-            isOpen = true;
+            _isOpen = true;
             StateHasChanged();
         }
 
@@ -83,7 +83,7 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            if (isOpen)
+            if (_isOpen)
                 CloseMenu();
             else
                 OpenMenu(args);

@@ -131,7 +131,7 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-                return _value_lookup.TryGetValue(Value, out var item);
+                return _value_lookup.TryGetValue(Value, out var _);
             }
         }
 
