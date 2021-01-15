@@ -33,17 +33,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        public List<MudExpansionPanel> Panels = new List<MudExpansionPanel>();
+        private List<MudExpansionPanel> _panels = new List<MudExpansionPanel>();
 
         internal void AddPanel(MudExpansionPanel panel)
         {
-            Panels.Add(panel);
+            _panels.Add(panel);
             StateHasChanged();
         }
 
         public void RemovePanel(MudExpansionPanel panel)
         {
-            Panels.Remove(panel);
+            _panels.Remove(panel);
             try
             {
                 StateHasChanged();
@@ -54,7 +54,7 @@ namespace MudBlazor
         public void UpdateAll()
         {
             MudExpansionPanel last = null;
-            foreach (var panel in Panels)
+            foreach (var panel in _panels)
             {
                 if (last != null)
                     last.NextPanelExpanded = panel.IsExpanded;
@@ -64,7 +64,7 @@ namespace MudBlazor
 
         public void CloseAllExcept(MudExpansionPanel panel)
         {
-            foreach (var p in Panels)
+            foreach (var p in _panels)
             {
                 if (p == panel)
                     continue;

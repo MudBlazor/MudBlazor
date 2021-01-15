@@ -75,28 +75,28 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        private string content { get; set; }
+        private string _content;
 
         protected override void OnParametersSet()
         {
             if (Content is string stringContent)
             {
-                content = stringContent;
+                _content = stringContent;
             }
             else if (Content is int numberContent)
             {
                 if (numberContent > Max)
                 {
-                    content = Max + "+";
+                    _content = Max + "+";
                 }
                 else
                 {
-                    content = numberContent.ToString();
+                    _content = numberContent.ToString();
                 }
             }
             else
             {
-                content = null;
+                _content = null;
             }
         }
     }

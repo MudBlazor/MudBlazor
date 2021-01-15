@@ -98,12 +98,13 @@ namespace MudBlazor.UnitTests
         {
             var comp = ctx.RenderComponent<MudTextField<int?>>();
             // print the generated html
-            Console.WriteLine(comp.Markup);
+            //Console.WriteLine(comp.Markup);
             var textfield = comp.Instance;
             await comp.InvokeAsync(() => textfield.Text = "seventeen");
             comp.Find("input").Blur();
-            comp.FindAll("div.mud-input-error").Count.Should().Be(1);
-            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("p.mud-input-error").Count.Should().Be(1);
+            comp.Find("p.mud-input-error").TextContent.Trim().Should().Be("Not a valid number");
         }
 
         /// <summary>

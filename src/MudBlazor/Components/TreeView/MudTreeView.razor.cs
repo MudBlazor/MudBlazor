@@ -9,7 +9,7 @@ namespace MudBlazor
     {
         private MudTreeViewItem _activatedItem;
         private HashSet<MudTreeViewItem> _selectedItems;
-        private List<MudTreeViewItem> childItems = new List<MudTreeViewItem>();
+        private List<MudTreeViewItem> _childItems = new List<MudTreeViewItem>();
 
         protected string Classname =>
         new CssBuilder("mud-treeview")
@@ -123,7 +123,7 @@ namespace MudBlazor
 
             //collect selected items
             _selectedItems.Clear();
-            foreach (var item in childItems)
+            foreach (var item in _childItems)
             {
                 foreach (var selectedItem in item.GetSelectedItems())
                 {
@@ -134,6 +134,6 @@ namespace MudBlazor
             await SelectedItemsChanged.InvokeAsync(_selectedItems);
         }
 
-        internal void AddChild(MudTreeViewItem item) => childItems.Add(item);
+        internal void AddChild(MudTreeViewItem item) => _childItems.Add(item);
     }
 }

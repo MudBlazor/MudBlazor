@@ -26,8 +26,8 @@ namespace MudBlazor
         [Parameter] public DialogPosition? Position { get; set; }
         [Parameter] public MaxWidth? MaxWidth { get; set; }
 
-        private readonly Collection<DialogReference> Dialogs = new Collection<DialogReference>();
-        private readonly DialogOptions GlobalDialogOptions = new DialogOptions();
+        private readonly Collection<DialogReference> _dialogs = new Collection<DialogReference>();
+        private readonly DialogOptions _globalDialogOptions = new DialogOptions();
 
         protected override void OnInitialized()
         {
@@ -35,12 +35,12 @@ namespace MudBlazor
             ((DialogService)DialogService).OnDialogCloseRequested += DismissInstance;
             NavigationManager.LocationChanged += LocationChanged;
 
-            GlobalDialogOptions.DisableBackdropClick = DisableBackdropClick;
-            GlobalDialogOptions.CloseButton = CloseButton;
-            GlobalDialogOptions.NoHeader = NoHeader;
-            GlobalDialogOptions.Position = Position;
-            GlobalDialogOptions.FullWidth = FullWidth;
-            GlobalDialogOptions.MaxWidth = MaxWidth;
+            _globalDialogOptions.DisableBackdropClick = DisableBackdropClick;
+            _globalDialogOptions.CloseButton = CloseButton;
+            _globalDialogOptions.NoHeader = NoHeader;
+            _globalDialogOptions.Position = Position;
+            _globalDialogOptions.FullWidth = FullWidth;
+            _globalDialogOptions.MaxWidth = MaxWidth;
         }
 
         internal void DismissInstance(Guid id, DialogResult result)
@@ -52,27 +52,27 @@ namespace MudBlazor
 
         private void AddInstance(DialogReference dialog)
         {
-            Dialogs.Add(dialog);
+            _dialogs.Add(dialog);
             StateHasChanged();
         }
 
         private void DismissAll()
         {
-            Dialogs.ToList().ForEach(r => r.Dismiss(DialogResult.Cancel()));
-            Dialogs.Clear();
+            _dialogs.ToList().ForEach(r => r.Dismiss(DialogResult.Cancel()));
+            _dialogs.Clear();
             StateHasChanged();
         }
 
         private void DismissInstance(DialogReference dialog, DialogResult result)
         {
             dialog.Dismiss(result);
-            Dialogs.Remove(dialog);
+            _dialogs.Remove(dialog);
             StateHasChanged();
         }
 
         private DialogReference GetDialogReference(Guid id)
         {
-            return Dialogs.SingleOrDefault(x => x.Id == id);
+            return _dialogs.SingleOrDefault(x => x.Id == id);
         }
 
         private void LocationChanged(object sender, LocationChangedEventArgs args)

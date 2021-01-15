@@ -69,6 +69,58 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-tab").Should().BeEmpty();
         }
 
+        [Test]
+        public async Task KeepTabsAliveTest()
+        {
+            var comp = ctx.RenderComponent<TabsKeepAliveTest>();
+            Console.WriteLine(comp.Markup);
+            Console.WriteLine($"{comp.Instance.content1.ComponentName} Counter : {comp.Instance.content1.Counter}");
+            Console.WriteLine($"{comp.Instance.content2.ComponentName} Counter : {comp.Instance.content2.Counter}");
+            Console.WriteLine($"{comp.Instance.content3.ComponentName} Counter : {comp.Instance.content3.Counter}");
+            Console.WriteLine("=======================");
+
+            comp.Instance.IncrementCountOfTab(1);
+            comp.Instance.content1.Counter.Should().Be(1);
+            comp.Instance.tabs.ActivatePanel(1);
+            comp.Instance.content1.Counter.Should().Be(1);
+            Console.WriteLine(comp.Markup);
+            Console.WriteLine($"Active Panel index: {comp.Instance.tabs.ActivePanelIndex}");
+            Console.WriteLine($"{comp.Instance.content1.ComponentName} Counter : {comp.Instance.content1.Counter}");
+            Console.WriteLine($"{comp.Instance.content2.ComponentName} Counter : {comp.Instance.content2.Counter}");
+            Console.WriteLine($"{comp.Instance.content3.ComponentName} Counter : {comp.Instance.content3.Counter}");
+            Console.WriteLine("=======================");
+
+            comp.Instance.IncrementCountOfTab(2);
+            comp.Instance.IncrementCountOfTab(2);
+            comp.Instance.content1.Counter.Should().Be(1);
+            comp.Instance.content2.Counter.Should().Be(2);
+            comp.Instance.tabs.ActivatePanel(2);
+            comp.Instance.content1.Counter.Should().Be(1);
+            comp.Instance.content2.Counter.Should().Be(2);
+            comp.Instance.content3.Counter.Should().Be(0);
+            Console.WriteLine(comp.Markup);
+            Console.WriteLine($"Active Panel index: {comp.Instance.tabs.ActivePanelIndex}");
+            Console.WriteLine($"{comp.Instance.content1.ComponentName} Counter : {comp.Instance.content1.Counter}");
+            Console.WriteLine($"{comp.Instance.content2.ComponentName} Counter : {comp.Instance.content2.Counter}");
+            Console.WriteLine($"{comp.Instance.content3.ComponentName} Counter : {comp.Instance.content3.Counter}");
+            Console.WriteLine("=======================");
+
+            comp.Instance.IncrementCountOfTab(3);
+            comp.Instance.content1.Counter.Should().Be(1);
+            comp.Instance.content2.Counter.Should().Be(2);
+            comp.Instance.content3.Counter.Should().Be(1);
+            comp.Instance.tabs.ActivatePanel(0);
+            comp.Instance.content1.Counter.Should().Be(1);
+            comp.Instance.content2.Counter.Should().Be(2);
+            comp.Instance.content3.Counter.Should().Be(1);
+            Console.WriteLine(comp.Markup);
+            Console.WriteLine($"Active Panel index: {comp.Instance.tabs.ActivePanelIndex}");
+            Console.WriteLine($"{comp.Instance.content1.ComponentName} Counter : {comp.Instance.content1.Counter}");
+            Console.WriteLine($"{comp.Instance.content2.ComponentName} Counter : {comp.Instance.content2.Counter}");
+            Console.WriteLine($"{comp.Instance.content3.ComponentName} Counter : {comp.Instance.content3.Counter}");
+
+        }
+
 
     }
 

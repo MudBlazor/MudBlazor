@@ -46,7 +46,7 @@ namespace MudBlazor
             foreach (var control in _formControls.Keys.ToArray())
             {
                 control.Validate();
-                foreach (string err in control.ValidationErrors)
+                foreach (var err in control.ValidationErrors)
                 {
                     _errors.Add(err);
                 }

@@ -9,7 +9,7 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-button-root mud-fab")
-          .AddClass($"mud-fab-extended", !String.IsNullOrEmpty(Label))
+          .AddClass($"mud-fab-extended", !string.IsNullOrEmpty(Label))
           .AddClass($"mud-fab-{Color.ToDescriptionString()}")
           .AddClass($"mud-fab-size-{Size.ToDescriptionString()}")
           .AddClass($"mud-ripple", !DisableRipple && !Disabled)
