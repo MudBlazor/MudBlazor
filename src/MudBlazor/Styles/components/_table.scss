@@ -173,6 +173,17 @@
             margin-bottom: -8px;
         }
     }
+
+    & > .mud-select {
+        & > .mud-input-control {
+            & > div.mud-input.mud-input-text {
+                color: var(--mud-theme-on-surface);
+                font-size: 0.875rem;
+                margin-top: -14px;
+                margin-bottom: -8px;
+            }
+        }
+    }
 }
 
 .mud-table-cell-align {
