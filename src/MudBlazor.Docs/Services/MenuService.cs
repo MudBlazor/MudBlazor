@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MudBlazor.Docs.Models;
@@ -72,7 +72,7 @@ namespace MudBlazor.Docs.Services
             //GROUPS
 
             //Inputs
-            .AddNavGroup("Form Inputs & Controls", false, new DocsComponents()
+            .AddNavGroup("Form Inputs & controls", false, new DocsComponents()
                 .AddItem("Radio", typeof(MudRadio))
                 .AddItem("Checkbox", typeof(MudCheckBox<T>))
                 .AddItem("Select", typeof(MudSelect<T>))
