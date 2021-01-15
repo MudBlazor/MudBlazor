@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Globalization;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -38,6 +39,13 @@ namespace MudBlazor
                 return 1;
             }
             set { }
+        }
+
+        private string GetTranstionDurations()
+        {
+            var d1 = CalculatedTransitionDuration;
+            var d2 = d1 / 2;
+            return $"{d1.ToString(CultureInfo.InvariantCulture)}s, {d2.ToString(CultureInfo.InvariantCulture)}s";
         }
 
         protected string Classname =>
