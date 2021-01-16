@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -11,7 +11,20 @@ namespace MudBlazor
         /// <summary>
         /// The toggled value.
         /// </summary>
-        [Parameter] public bool Toggled { get; set; }
+        [Parameter] public bool Toggled
+        {
+            get => _toggled;
+            set => SetToggledAsync(value).AndForget();
+        }
+
+        protected async Task SetToggledAsync(bool toggled)
+        {
+            if (_toggled != toggled)
+            {
+                _toggled = toggled;
+                await ToggledChanged.InvokeAsync(_toggled);
+            }
+        }
 
         /// <summary>
         /// Fires whenever toggled is changed. 
@@ -63,15 +76,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
-        protected override void OnInitialized()
+        public Task Toggle()
         {
-            _toggled = Toggled;
-        }
-
-        public async Task Toggle()
-        {
-            _toggled = !_toggled;
-            await ToggledChanged.InvokeAsync(_toggled);
+            return SetToggledAsync(!Toggled);
         }
     }
 }
