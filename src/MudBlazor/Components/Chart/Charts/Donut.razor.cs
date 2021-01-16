@@ -4,23 +4,23 @@ using MudBlazor.Charts.SVG.Models;
 
 namespace MudBlazor.Charts
 {
-    public class DonutBase : MudChartBase
+    partial class Donut : MudChartBase
     {
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 
-        public List<SvgCircle> Circles = new List<SvgCircle>();
-        public List<SvgLegend> Legends = new List<SvgLegend>();
+        private List<SvgCircle> _circles = new List<SvgCircle>();
+        private List<SvgLegend> _legends = new List<SvgLegend>();
 
         protected string ParentWidth => MudChartParent?.Width;
         protected string ParentHeight => MudChartParent?.Height;
 
         protected override void OnParametersSet()
         {
-            Circles.Clear();
-            Legends.Clear();
+            _circles.Clear();
+            _legends.Clear();
             double counterClockwiseOffset = 25;
             double totalPercent = 0;
-            var offset = counterClockwiseOffset;
+            double offset;
 
             var counter = 0;
             foreach (var data in GetNormalizedData())
@@ -28,7 +28,7 @@ namespace MudBlazor.Charts
                 var percent = data * 100;
                 var reversePercent = 100 - percent;
                 offset = 100 - totalPercent + counterClockwiseOffset;
-                totalPercent = totalPercent + percent;
+                totalPercent += percent;
 
                 var circle = new SvgCircle()
                 {
@@ -39,7 +39,7 @@ namespace MudBlazor.Charts
                     StrokeDashArray = $"{ToS(percent)} {ToS(reversePercent)}",
                     StrokeDashOffset = offset
                 };
-                Circles.Add(circle);
+                _circles.Add(circle);
 
 
                 var labels = "";
@@ -53,7 +53,7 @@ namespace MudBlazor.Charts
                     Labels = labels,
                     Data = data.ToString()
                 };
-                Legends.Add(legend);
+                _legends.Add(legend);
 
                 counter += 1;
             }

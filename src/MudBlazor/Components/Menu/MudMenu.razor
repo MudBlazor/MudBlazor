@@ -31,7 +31,7 @@
         <MudIconButton Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" @onclick="@ToggleMenu" />
     }
     <CascadingValue Value="@this">
-        <MudPopover Open="@isOpen" Class="mud-menu-container" Style="@PopoverStyle">
+        <MudPopover Open="@_isOpen" Class="mud-menu-container" Style="@PopoverStyle" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
             <MudList Clickable="true" Dense="@Dense">
                 @ChildContent
             </MudList>
@@ -39,5 +39,5 @@
     </CascadingValue>
 </div>
 
-<MudOverlay Visible="isOpen" OnClick="@ToggleMenu" LockScroll="false" />
+<MudOverlay Visible="_isOpen" OnClick="@ToggleMenu" LockScroll="false" />
 

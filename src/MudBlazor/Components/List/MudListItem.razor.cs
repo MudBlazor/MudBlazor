@@ -152,8 +152,7 @@ namespace MudBlazor
             }
         }
 
-        private Typo _textTypo { get; set; }
-
+        private Typo _textTypo;
         private void OnListParametersChanged()
         {
             if (Dense || MudList?.Dense == true)

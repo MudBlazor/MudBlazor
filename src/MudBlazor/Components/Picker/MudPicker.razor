@@ -25,8 +25,8 @@
     <CascadingValue Value="@this" IsFixed="true">
         @if (IsOpen && PickerVariant != PickerVariant.Dialog)
         {
-            <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@PickerElevation" Square="@PickerSquare">
-                <div @ref="PickerContainerRef" class="@PickerContainerClass">
+            <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
+                <div @ref="_pickerContainerRef" class="@PickerContainerClass">
                     @ChildContent
                 </div>
             </MudPaper>
@@ -34,8 +34,8 @@
         else if(IsOpen && PickerVariant == PickerVariant.Dialog)
         {
             <MudOverlay Visible="IsOpen" OnClick="@Close" DarkBackground="true" Class="mud-overlay-dialog">
-                <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@PickerElevation" Square="@PickerSquare">
-                    <div @ref="PickerContainerRef" class="@PickerContainerClass">
+                <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
+                    <div @ref="_pickerContainerRef" class="@PickerContainerClass">
                         @ChildContent
                     </div>
                 </MudPaper>

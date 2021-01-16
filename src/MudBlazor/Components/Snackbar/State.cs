@@ -78,20 +78,13 @@ namespace MudBlazor
             {
                 var template = "@keyframes " + AnimationId + " {{from{{ {0}: {1}; }} to{{ {0}: {2}; }}}}";
 
-                switch (SnackbarState)
+                return SnackbarState switch
                 {
-                    case SnackbarState.Showing:
-                        return Format(template, "opacity", "0%", Opacity);
-
-                    case SnackbarState.Hiding:
-                        return Format(template, "opacity", Opacity, "0%");
-
-                    case SnackbarState.Visible:
-                        return Format(template, "width", "100%", "0%");
-
-                    default:
-                        return Empty;
-                }
+                    SnackbarState.Showing => Format(template, "opacity", "0%", Opacity),
+                    SnackbarState.Hiding => Format(template, "opacity", Opacity, "0%"),
+                    SnackbarState.Visible => Format(template, "width", "100%", "0%"),
+                    _ => Empty,
+                };
             }
         }
 

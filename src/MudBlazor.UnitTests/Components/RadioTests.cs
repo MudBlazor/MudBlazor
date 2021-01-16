@@ -1,4 +1,5 @@
-﻿#pragma warning disable 1998
+﻿#pragma warning disable CS1998 // async without await
+#pragma warning disable IDE1006 // leading underscore
 
 using System;
 using System.Linq;
@@ -81,7 +82,6 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup>();
-            var inputs = comp.FindAll("input").ToArray();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
             // check initial state, should be initialized to second radio by default
             group.Instance.SelectedOption.Should().Be("2");
