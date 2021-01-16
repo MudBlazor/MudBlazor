@@ -1,3 +1,9 @@
 ﻿@namespace MudBlazor
 
-<MudIconButton Icon="@(_toggled?ToggledIcon:Icon)" Size="@(_toggled?ToggledSize:Size)" Color="@(_toggled?ToggledColor:Color)" Disabled="@Disabled" Edge="@Edge" DisableRipple="@DisableRipple" OnClick="@Toggle" />
+<MudIconButton Icon="@(Toggled ? ToggledIcon : Icon)" 
+               Size="@(Toggled ? ToggledSize : Size)" 
+               Color="@(Toggled ? ToggledColor : Color)" 
+               Disabled="@Disabled" 
+               Edge="@Edge" 
+               DisableRipple="@DisableRipple" 
+               OnClick="@Toggle" />
