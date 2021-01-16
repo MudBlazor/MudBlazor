@@ -128,7 +128,48 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none");
         }
 
-
+        /// <summary>
+        /// When KeepPanelsAlive="true" the panels are not destroyed and recreated on tab-switch. We prove that by using a button click counter on every tab and
+        /// a callback that is fired only when OnRenderAsync of the tab panel happens the first time (which outputs a message at the bottom).
+        /// </summary>
+        [Test]
+        public async Task KeepTabs_Not_AliveTest()
+        {
+            var comp = ctx.RenderComponent<TabsKeepAliveTest>(ComponentParameter.CreateParameter("KeepPanelsAlive", false));
+            Console.WriteLine(comp.Markup);
+            // only one panel should be evident in the markup:
+            comp.FindAll("button").Count().Should().Be(1);
+            // only the first panel should be rendered first
+            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br></p>");
+            // no child divs in div.mud-tabs-panels
+            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(0);
+            // click first button and show button click counters
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
+            comp.FindAll("button")[0].Click();
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
+            // switch to the second tab:
+            comp.FindAll("div.mud-tab")[1].Click();
+            // first and second panel were rendered once with firstRender==true:
+            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br></p>");
+            // only one panel should be evident in the markup:
+            comp.FindAll("button").Count().Should().Be(1);
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 2=0");
+            // click the button twice
+            comp.FindAll("button")[0].Click();
+            comp.FindAll("button")[0].Click();
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 2=2");
+            // switch to the third tab:
+            comp.FindAll("div.mud-tab")[2].Click();
+            // second panel should be displayed
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 3=0");
+            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            // switch back to the first tab:
+            comp.FindAll("div.mud-tab")[0].Click();
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
+            comp.FindAll("button")[0].Click();
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
+            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br>Panel 1<br></p>");
+        }
     }
 
 }
