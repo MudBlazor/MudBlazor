@@ -50,6 +50,7 @@
     }
   },
   "Output": {
-    "Preserve": true
+    "Preserve": true,
+    "Directory": "./wwwroot"
   }
 }
