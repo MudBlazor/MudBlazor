@@ -124,8 +124,6 @@ namespace MudBlazor
 
         protected bool IsOpen { get; set; }
 
-        internal Action<bool> OnOpenStateChanged;
-
         public void ToggleOpen()
         {
             if (IsOpen)
@@ -137,14 +135,12 @@ namespace MudBlazor
         public virtual void Close()
         {
             IsOpen = false;
-            OnOpenStateChanged?.Invoke(IsOpen);
             StateHasChanged();
         }
 
         public virtual void Open()
         {
             IsOpen = true;
-            OnOpenStateChanged?.Invoke(IsOpen);
             StateHasChanged();
         }
     }

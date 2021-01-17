@@ -1,7 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudBasePicker
 
-
 <MudPicker @ref="Picker" Class="@Class" PickerVariant="@PickerVariant" Orientation="@Orientation" Label="@Label" @bind-Value="@Value"
         HelperText="@HelperText" Editable="@Editable" InputVariant="@InputVariant" Disabled="@Disabled" Adornment="@Adornment"
         IconSize="@IconSize" InputIcon="@InputIcon" Elevation="@Elevation" Square="@Square" Rounded="@Rounded" PickerOpened="OnPickerOpened" IsRange="@IsRange">
@@ -11,6 +10,9 @@
     </MudPickerToolbar>
     <MudPickerContent>          
         <div class="mud-picker-calendar-content @($"mud-picker-calendar-content-{MaxMonthColumns ?? DisplayMonths}")">
+            @{
+                int dayId = 0;
+            }
             @for (int displayMonth = 0; displayMonth < DisplayMonths; ++displayMonth)
             {
                 int tempMonth = displayMonth; //without local variable month names are wrong
@@ -76,21 +78,24 @@
                                 @for (int week = 0; week < 6; week++)
                                 {
                                     int tempWeek = week;
-
-                                    <div class="mud-picker-calendar-week">
-                                        @if (ShowWeekNumbers)
-                                        {
-                                            <div class="mud-picker-calendar-week">
-                                                <MudText class="mud-picker-calendar-week-text" Typo="Typo.caption">@GetWeekNumber(tempMonth, tempWeek)</MudText>
-                                            </div>
-                                        }
-                                        @foreach (var day in GetWeek(tempMonth, tempWeek))
-                                        {
-                                            <div role="presentation" class="mud-picker-calendar-day">
-                                                <MudIconButton Class="@GetDayClasses(tempMonth, day)" @onmouseover="@(() => { var d = day; OnMouseOver(d); })" OnClick="@(() => { var d = day; OnDayClicked(d); })" Disabled="@((day < MinDate) || (day > MaxDate))">@day.Day</MudIconButton>
-                                            </div>
-                                        }
-                                    </div>
+                                    
+                                    @if (ShowWeekNumbers)
+                                    {
+                                        <div class="mud-picker-calendar-week">
+                                            <MudText class="mud-picker-calendar-week-text" Typo="Typo.caption">@GetWeekNumber(tempMonth, tempWeek)</MudText>
+                                        </div>
+                                    }
+                                    @foreach (var day in GetWeek(tempMonth, tempWeek))
+                                    {
+                                        var tempId = ++dayId;
+                                        <button @key="day" ticks="@day.Ticks" type="button" style="--day-id: @tempId;"
+                                                class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon @GetDayClasses(tempMonth, day)"
+                                                @onclick="(() => { var d = day; OnDayClicked(d); })" 
+                                                @onmouseover="(()=> { var d = day; OnMouseOver(tempId, day); })"
+                                                disabled="@((day < MinDate) || (day > MaxDate))">
+                                            <p class="mud-typography mud-typography-body2 mud-inherit-text">@day.Day</p>
+                                        </button>
+                                    }
                                 }
                             </div>
                         </div>

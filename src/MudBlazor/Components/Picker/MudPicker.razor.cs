@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Interop;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -25,11 +26,10 @@ namespace MudBlazor
             Right
         }
 
-        [Inject]
-        private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
+        [Inject] IDomService DomService { get; set; }
 
         [Inject]
-        protected IJSRuntime JSRuntime { get; set; }
+        private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
 
         protected string PickerClass =>
         new CssBuilder("mud-picker")
@@ -76,8 +76,7 @@ namespace MudBlazor
 
         private bool _pickerSquare;
         private int _pickerElevation;
-        private bool _isRendered = false;
-        private ElementReference _pickerContainerRef;
+        private ElementReference _pickerPaperRef;
 
         private PickerVerticalPosition _pickerVerticalPosition = PickerVerticalPosition.Unknown;
         private PickerHorizontalPosition _pickerHorizontalPosition = PickerHorizontalPosition.Unknown;
@@ -111,8 +110,24 @@ namespace MudBlazor
 
         public override void Open()
         {
-            base.Open();
+            IsOpen = true;
             OnPickerOpened();
+
+            if (PickerVariant == PickerVariant.Inline)
+            {
+                InvokeAsync(async () =>
+                {
+                    await DeterminePosition();
+                    //StateHasChanged();
+                    await DomService.ChangeCss(_pickerPaperRef, PickerPaperClass);
+                });
+            }
+        }
+
+        public override void Close()
+        {
+            base.Close();
+            _pickerVerticalPosition = PickerVerticalPosition.Unknown;
         }
 
         protected virtual void OnPickerOpened()
@@ -120,36 +135,16 @@ namespace MudBlazor
             PickerOpened.InvokeAsync(this);
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (PickerVariant == PickerVariant.Inline)
-            {
-                if (!_isRendered && IsOpen)
-                {
-                    _isRendered = true;
-                    await DeterminePosition();
-                    StateHasChanged();
-                }
-                else if (_isRendered && !IsOpen)
-                {
-                    _isRendered = false;
-                    _pickerVerticalPosition = PickerVerticalPosition.Unknown;
-                }
-            }
-
-            await base.OnAfterRenderAsync(firstRender);
-        }
-
         private async Task DeterminePosition()
         {
-            if (WindowSizeListener == null || JSRuntime == null)
+            if (WindowSizeListener == null || DomService == null)
             {
                 _pickerVerticalPosition = PickerVerticalPosition.Below;
                 return;
             }
 
             var size = await WindowSizeListener.GetBrowserWindowSize();
-            var clientRect = await JSRuntime.InvokeAsync<BoundingClientRect>("getMudBoundingClientRect", _pickerContainerRef);
+            var clientRect = await DomService.GetBoundingClientRect(_pickerPaperRef);
 
             if (size == null || clientRect == null)
             {

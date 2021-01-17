@@ -100,6 +100,17 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Adds Dom manipulation service as a Scoped instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddMudBlazorDom(this IServiceCollection services)
+        {
+            services.TryAddScoped<IDomService, DomService>();
+            return services;
+        }
+
+        /// <summary>
         /// Adds common services required by MudBlazor components
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -114,7 +125,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorSnackbar(configuration.SnackbarConfiguration)
                 .AddMudBlazorResizeListener(configuration.ResizeOptions)
                 .AddMudBlazorScrollManager()
-                .AddMudBlazorScrollListener();
+                .AddMudBlazorScrollListener()
+                .AddMudBlazorDom();
         }
 
         /// <summary>
@@ -134,7 +146,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorSnackbar(options.SnackbarConfiguration)
                 .AddMudBlazorResizeListener(options.ResizeOptions)
                 .AddMudBlazorScrollManager()
-                .AddMudBlazorScrollListener();
+                .AddMudBlazorScrollListener()
+                .AddMudBlazorDom();
         }
     }
 }
