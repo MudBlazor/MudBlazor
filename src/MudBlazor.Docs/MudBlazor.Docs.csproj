@@ -95,6 +95,9 @@
   </Target>
 
   <Target Name="IncludeGeneratedStaticFiles" BeforeTargets="BeforeBuild;BeforeRebuild" DependsOnTargets="WebCompiler;ToolRestore">
+    <Error Condition="!Exists('wwwroot/MudBlazorDocs.min.css')" Text="Missing MudBlazorDocs.min.css in wwwroot" />
+    <!--If we ever bundle js  for the docs site uncomment the below check-->
+    <!--<Error Condition="!Exists('wwwroot/MudBlazorDocs.min.js')" Text="Missing MudBlazorDocs.min.js in wwwroot" />-->
     <ItemGroup>
       <Content Include="wwwroot/MudBlazorDocs.min.css" Condition="!Exists('wwwroot/MudBlazorDocs.min.css')" />
       <Content Include="wwwroot/MudBlazorDocs.min.js" Condition="!Exists('wwwroot/MudBlazorDocs.min.js')" />
