@@ -22,7 +22,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/MudBlazor.Docs.Server/bin/Debug/netcoreapp3.1/MudBlazor.Docs.Server.dll",
+            "program": "${workspaceFolder}/src/MudBlazor.Docs.Server/bin/Debug/net5.0/MudBlazor.Docs.Server.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/MudBlazor.Docs.Server",
             "stopAtEntry": false,
