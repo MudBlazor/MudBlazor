@@ -29,13 +29,35 @@
 
         <DocsPageSection>
             <SectionHeader>
-                <Title>Direction and offset</Title>
-                <Description>Control where the opened menu should be located.</Description>
+                <Title>Menu Width</Title>
+                <Description>The default width of the menu popover is determen by the contents width, you can override this with the <CodeInline>FullWidth</CodeInline> property to make it as wide as the parent.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
-                <MenuInteractiveExample />
+                <MenuWithExample />
             </SectionContent>
-            <SectionSource Code="MenuInteractiveExample" ShowCode="false" GitHubFolderName="Menu" />
+            <SectionSource Code="MenuWithExample" ShowCode="false" GitHubFolderName="Menu" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Direction</Title>
+                <Description>Control where the menu should be located withing the parent. Where Top-Left is the default.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MenuDirectionExample />
+            </SectionContent>
+            <SectionSource Code="MenuDirectionExample" ShowCode="false" GitHubFolderName="Menu" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Offset</Title>
+                <Description>Offset the menu to be located outside of the parent.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MenuOffsetExample />
+            </SectionContent>
+            <SectionSource Code="MenuOffsetExample" ShowCode="false" GitHubFolderName="Menu" />
         </DocsPageSection>
 
         <DocsPageSection>
