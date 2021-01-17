@@ -2,15 +2,15 @@
 @inherits MudComponentBase
 @implements IDisposable
 
-@if ((bool)((Parent?.KeepPanelsAlive ?? false)))
+@if (Parent?.KeepPanelsAlive==true)
 {
-    <div style="display:@(Parent?.ActivePanel == this && ChildContent != null ? "contents" : "none")">
+    <div style="display:@(Parent?.ActivePanel == this ? "contents" : "none")">
         @ChildContent
     </div>
 }
 else
 {
-    @if (Parent?.ActivePanel == this && ChildContent != null)
+    @if (Parent?.ActivePanel == this)
     {
         @ChildContent
     }

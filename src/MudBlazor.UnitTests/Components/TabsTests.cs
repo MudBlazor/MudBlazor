@@ -70,59 +70,106 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-tab").Should().BeEmpty();
         }
 
+        /// <summary>
+        /// When KeepPanelsAlive="true" the panels are not destroyed and recreated on tab-switch. We prove that by using a button click counter on every tab and
+        /// a callback that is fired only when OnRenderAsync of the tab panel happens the first time (which outputs a message at the bottom).
+        /// </summary>
         [Test]
         public async Task KeepTabsAliveTest()
         {
             var comp = ctx.RenderComponent<TabsKeepAliveTest>();
             Console.WriteLine(comp.Markup);
-            Console.WriteLine($"{comp.Instance.content1.ComponentName} Counter : {comp.Instance.content1.Counter}");
-            Console.WriteLine($"{comp.Instance.content2.ComponentName} Counter : {comp.Instance.content2.Counter}");
-            Console.WriteLine($"{comp.Instance.content3.ComponentName} Counter : {comp.Instance.content3.Counter}");
-            Console.WriteLine("=======================");
-
-            comp.Instance.IncrementCountOfTab(1);
-            comp.Instance.content1.Counter.Should().Be(1);
-            comp.Instance.tabs.ActivatePanel(1);
-            comp.Instance.content1.Counter.Should().Be(1);
-            Console.WriteLine(comp.Markup);
-            Console.WriteLine($"Active Panel index: {comp.Instance.tabs.ActivePanelIndex}");
-            Console.WriteLine($"{comp.Instance.content1.ComponentName} Counter : {comp.Instance.content1.Counter}");
-            Console.WriteLine($"{comp.Instance.content2.ComponentName} Counter : {comp.Instance.content2.Counter}");
-            Console.WriteLine($"{comp.Instance.content3.ComponentName} Counter : {comp.Instance.content3.Counter}");
-            Console.WriteLine("=======================");
-
-            comp.Instance.IncrementCountOfTab(2);
-            comp.Instance.IncrementCountOfTab(2);
-            comp.Instance.content1.Counter.Should().Be(1);
-            comp.Instance.content2.Counter.Should().Be(2);
-            comp.Instance.tabs.ActivatePanel(2);
-            comp.Instance.content1.Counter.Should().Be(1);
-            comp.Instance.content2.Counter.Should().Be(2);
-            comp.Instance.content3.Counter.Should().Be(0);
-            Console.WriteLine(comp.Markup);
-            Console.WriteLine($"Active Panel index: {comp.Instance.tabs.ActivePanelIndex}");
-            Console.WriteLine($"{comp.Instance.content1.ComponentName} Counter : {comp.Instance.content1.Counter}");
-            Console.WriteLine($"{comp.Instance.content2.ComponentName} Counter : {comp.Instance.content2.Counter}");
-            Console.WriteLine($"{comp.Instance.content3.ComponentName} Counter : {comp.Instance.content3.Counter}");
-            Console.WriteLine("=======================");
-
-            comp.Instance.IncrementCountOfTab(3);
-            comp.Instance.content1.Counter.Should().Be(1);
-            comp.Instance.content2.Counter.Should().Be(2);
-            comp.Instance.content3.Counter.Should().Be(1);
-            comp.Instance.tabs.ActivatePanel(0);
-            comp.Instance.content1.Counter.Should().Be(1);
-            comp.Instance.content2.Counter.Should().Be(2);
-            comp.Instance.content3.Counter.Should().Be(1);
-            Console.WriteLine(comp.Markup);
-            Console.WriteLine($"Active Panel index: {comp.Instance.tabs.ActivePanelIndex}");
-            Console.WriteLine($"{comp.Instance.content1.ComponentName} Counter : {comp.Instance.content1.Counter}");
-            Console.WriteLine($"{comp.Instance.content2.ComponentName} Counter : {comp.Instance.content2.Counter}");
-            Console.WriteLine($"{comp.Instance.content3.ComponentName} Counter : {comp.Instance.content3.Counter}");
-
+            // all panels should be evident in the markup:
+            comp.FindAll("button").Count().Should().Be(3);
+            // every panel should be rendered first exactly once throughout the test:
+            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            // only the first panel should be active:
+            comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:contents");
+            comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:none");
+            comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none");
+            // click first button and show button click counters
+            comp.FindAll("button")[0].Click();
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
+            comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=0");
+            comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
+            // switch to the second tab:
+            comp.FindAll("div.mud-tab")[1].Click();
+            // none of the panels should have had a render pass with firstRender==true, so this must be as before:
+            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            // second panel should be displayed
+            comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:none");
+            comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:contents");
+            comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none");
+            // click second button twice and show button click counters. the click of the first button should still be evident 
+            comp.FindAll("button")[1].Click();
+            comp.FindAll("button")[1].Click();
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
+            comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=2");
+            comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
+            // switch to the third tab:
+            comp.FindAll("div.mud-tab")[2].Click();
+            // second panel should be displayed
+            comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:none");
+            comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:none");
+            comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:contents");
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
+            comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=2");
+            comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
+            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            // switch back to the first tab:
+            comp.FindAll("div.mud-tab")[0].Click();
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
+            comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=2");
+            comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
+            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            // only the first panel should be active:
+            comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:contents");
+            comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:none");
+            comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none");
         }
 
-
+        /// <summary>
+        /// When KeepPanelsAlive="true" the panels are not destroyed and recreated on tab-switch. We prove that by using a button click counter on every tab and
+        /// a callback that is fired only when OnRenderAsync of the tab panel happens the first time (which outputs a message at the bottom).
+        /// </summary>
+        [Test]
+        public async Task KeepTabs_Not_AliveTest()
+        {
+            var comp = ctx.RenderComponent<TabsKeepAliveTest>(ComponentParameter.CreateParameter("KeepPanelsAlive", false));
+            Console.WriteLine(comp.Markup);
+            // only one panel should be evident in the markup:
+            comp.FindAll("button").Count().Should().Be(1);
+            // only the first panel should be rendered first
+            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br></p>");
+            // no child divs in div.mud-tabs-panels
+            comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(0);
+            // click first button and show button click counters
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
+            comp.FindAll("button")[0].Click();
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
+            // switch to the second tab:
+            comp.FindAll("div.mud-tab")[1].Click();
+            // first and second panel were rendered once with firstRender==true:
+            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br></p>");
+            // only one panel should be evident in the markup:
+            comp.FindAll("button").Count().Should().Be(1);
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 2=0");
+            // click the button twice
+            comp.FindAll("button")[0].Click();
+            comp.FindAll("button")[0].Click();
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 2=2");
+            // switch to the third tab:
+            comp.FindAll("div.mud-tab")[2].Click();
+            // second panel should be displayed
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 3=0");
+            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            // switch back to the first tab:
+            comp.FindAll("div.mud-tab")[0].Click();
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
+            comp.FindAll("button")[0].Click();
+            comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
+            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br>Panel 1<br></p>");
+        }
     }
 
 }
