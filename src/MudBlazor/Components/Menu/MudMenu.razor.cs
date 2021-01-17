@@ -43,6 +43,11 @@ namespace MudBlazor
         [Parameter] public bool FullWidth { get; set; }
 
         /// <summary>
+        /// Sets the maxheight the menu can have when open.
+        /// </summary>
+        [Parameter] public int? MaxHeight { get; set; }
+
+        /// <summary>
         /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
         /// This makes sense for larger activators
         /// </summary>
