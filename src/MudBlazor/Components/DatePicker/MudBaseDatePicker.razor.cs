@@ -5,13 +5,19 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Extensions;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public abstract partial class MudBaseDatePicker : MudBasePicker
     {
-        [Inject] IJSRuntime JsRuntime { get; set; }
+        protected bool PreventRender = false;
+
+        [Inject] protected IJSRuntime JsRuntime { get; set; }
+
+        [Inject] protected IDomService DomService { get; set; }
+
         /// <summary>
         /// Max selectable date.
         /// </summary>
@@ -174,7 +180,10 @@ namespace MudBlazor
         /// </summary>
         protected abstract void OnDayClicked(DateTime dateTime);
 
-        protected virtual void OnMouseOver(DateTime time) { }
+        public virtual void OnMouseOver(int id, DateTime day)
+        {
+            PreventRender = true;
+        }
 
         /// <summary>
         /// return Mo, Tu, We, Th, Fr, Sa, Su in the right culture
@@ -345,6 +354,16 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             _currentView = OpenTo;
+        }
+
+        protected override bool ShouldRender()
+        {
+            if (PreventRender)
+            {
+                PreventRender = false;
+                return false;
+            }
+            return base.ShouldRender();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
