@@ -38,6 +38,11 @@ namespace MudBlazor
         [Parameter] public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
+        /// The size of the icon.
+        /// </summary>
+        [Parameter] public Size IconSize { get; set; } = Size.Medium;
+
+        /// <summary>
         /// If applied the text will be added to the component.
         /// </summary>
         [Parameter] public string Label { get; set; }
