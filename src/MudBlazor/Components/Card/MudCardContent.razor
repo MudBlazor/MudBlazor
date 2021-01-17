@@ -1,20 +1,6 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Utilities
 @inherits MudComponentBase
 
 <div class="@Classname" style="@Style">
     @ChildContent
 </div>
-
-@code {
-
-    /// <summary>
-    /// Child content of the component.
-    /// </summary>
-    [Parameter] public RenderFragment ChildContent { get; set; }
-
-    protected string Classname =>
-    new CssBuilder("mud-card-content")
-      .AddClass(Class)
-    .Build();
-}
