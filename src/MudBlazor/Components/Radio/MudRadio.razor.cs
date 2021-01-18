@@ -104,7 +104,7 @@ namespace MudBlazor
         public void Dispose()
         {
             if (RadioGroup != null)
-                RadioGroup.UnregisterRadioAsync(this).AndForget();
+                RadioGroup.UnregisterRadio(this);
         }
     }
 }
