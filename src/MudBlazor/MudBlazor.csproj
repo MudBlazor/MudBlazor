@@ -30,7 +30,7 @@
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -54,7 +54,7 @@
   </ItemGroup>
 
   <Target Name="ToolRestore">
-      <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
+    <Exec Command="dotnet tool update excubo.webcompiler" StandardOutputImportance="high" />
   </Target>
 
   <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
@@ -68,7 +68,7 @@
       <Exec Command="dotnet webcompiler ./TScripts/combined/MudBlazor.js -c excubowebcompiler.json" StandardOutputImportance="high" />
   </Target>
 
-  <Target Name="IncludeGeneratedStaticFiles" BeforeTargets="BeforeBuild;BeforeRebuild" DependsOnTargets="WebCompiler;ToolRestore">
+  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler">
     <Error Condition="!Exists('wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
     <Error Condition="!Exists('wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
     <ItemGroup>
