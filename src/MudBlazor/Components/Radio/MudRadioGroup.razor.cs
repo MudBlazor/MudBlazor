@@ -102,7 +102,10 @@ namespace MudBlazor
         {
             _radios.Remove(radio);
 
-            return radio == _selectedRadio ? SetSelectedRadioAsync(null, true, true) : Task.CompletedTask;
+            if (radio == _selectedRadio)
+                return SetSelectedRadioAsync(null, true, true);
+
+            return Task.CompletedTask;
         }
     }
 }
