@@ -92,20 +92,18 @@ namespace MudBlazor
 
             if (_selectedRadio == null)
             {
-                if (radio.Option == _selectedOption || radio.Label == _selectedLabel)
-                    return SetSelectedRadioAsync(radio, true, true);
+                if (radio.Option == _selectedOption)
+                    return SetSelectedRadioAsync(radio, false, true);
+
+                if (radio.Label == _selectedLabel)
+                    return SetSelectedRadioAsync(radio, true, false);
             }
             return Task.CompletedTask;
         }
 
-        internal Task UnregisterRadioAsync(MudRadio radio)
+        internal void UnregisterRadio(MudRadio radio)
         {
             _radios.Remove(radio);
-
-            if (radio == _selectedRadio)
-                return SetSelectedRadioAsync(null, true, true);
-
-            return Task.CompletedTask;
         }
     }
 }
