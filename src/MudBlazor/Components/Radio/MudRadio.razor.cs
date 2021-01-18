@@ -1,19 +1,23 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudRadio : MudComponentBase
+    public partial class MudRadio : MudComponentBase, IDisposable
     {
-        [CascadingParameter] public MudRadioGroup RadioGroup { get; set; }
+        private bool _checked;
+
+        [CascadingParameter] protected MudRadioGroup RadioGroup { get; set; }
 
         protected string Classname =>
         new CssBuilder("mud-radio")
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-radio-label-placement-{Placement.ToDescriptionString()}", when: () => Placement != Placement.End)
-          .AddClass(Class)
-        .Build();
+            .AddClass(Class)
+            .Build();
 
         protected string ButtonClassname =>
         new CssBuilder("mud-button-root mud-icon-button")
@@ -21,8 +25,8 @@ namespace MudBlazor
             .AddClass($"mud-radio-color-{Color.ToDescriptionString()}")
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-checked", Checked)
-          .AddClass(Class)
-        .Build();
+            .AddClass(Class)
+            .Build();
 
         protected string RadioIconsClassNames =>
         new CssBuilder("mud-radio-icons")
@@ -40,9 +44,13 @@ namespace MudBlazor
         [Parameter] public Placement Placement { get; set; } = Placement.End;
 
         /// <summary>
-        /// The text/label will be displayed next to the switch if set.
+        /// The text to display next to the button.
         /// </summary>
         [Parameter] public string Label { get; set; }
+
+        /// <summary>
+        /// The value to associate to the button.
+        /// </summary>
         [Parameter] public string Option { get; set; }
 
         /// <summary>
@@ -60,42 +68,43 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        private bool _checked;
-        internal bool Checked
+        internal bool Checked => _checked;
+
+        internal void SetChecked(bool value)
         {
-            get => _checked;
-            set
+            if (_checked != value)
             {
-                if (value != _checked)
-                {
-                    _checked = value;
-                    StateHasChanged();
-                }
+                _checked = value;
+                StateHasChanged();
             }
         }
 
         public void Select()
         {
-            if (RadioGroup == null)
-                return;
-            RadioGroup.SetSelectedRadio(this);
+            if (RadioGroup != null)
+                RadioGroup.SetSelectedRadioAsync(this).AndForget();
         }
 
-        private void OnValueChanged(ChangeEventArgs args)
+        private Task OnClick()
         {
-            if (RadioGroup == null)
-                return;
-            if ((string)args.Value == "on")
-                RadioGroup.SetSelectedRadio(this);
+            if (RadioGroup != null)
+                return RadioGroup.SetSelectedRadioAsync(this);
+            
+            return Task.CompletedTask;
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
-            if (RadioGroup == null)
-                return;
-            RadioGroup.RegisterRadio(this);
+            await base.OnInitializedAsync();
+
+            if (RadioGroup != null)
+                await RadioGroup.RegisterRadioAsync(this);
         }
 
+        public void Dispose()
+        {
+            if (RadioGroup != null)
+                RadioGroup.UnregisterRadioAsync(this).AndForget();
+        }
     }
 }

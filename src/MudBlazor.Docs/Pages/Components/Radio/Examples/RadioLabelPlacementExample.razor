@@ -2,7 +2,7 @@
 
 <MudGrid>
     <MudItem xs="12" md="2">
-        <MudRadioGroup SelectedOptionChanged="@OnRadioSelect" SelectedOption="@SelectedOption">
+        <MudRadioGroup SelectedOptionChanged="@OnRadioSelect">
             <MudRadio Color="Color.Primary" Option="1">Bottom</MudRadio>
             <MudRadio Color="Color.Primary" Option="2">Start</MudRadio>
             <MudRadio Color="Color.Primary" Option="3">Top</MudRadio>
@@ -18,8 +18,6 @@
 </MudGrid>
 
 @code {
-    public string SelectedOption { get; set; }
-
     public Placement LabelPlacement { get; set; } = Placement.End;
 
     public void OnRadioSelect(string value)
