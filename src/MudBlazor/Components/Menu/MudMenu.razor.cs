@@ -13,6 +13,11 @@ namespace MudBlazor
         .AddClass(Class)
        .Build();
 
+        protected string MenuClassname =>
+        new CssBuilder("mud-menu-container")
+        .AddClass("mud-menu-fullwidth", FullWidth)
+       .Build();
+
         private bool _isOpen;
 
         [Parameter] public string Label { get; set; }
@@ -33,6 +38,16 @@ namespace MudBlazor
         [Parameter] public bool DisableRipple { get; set; }
 
         /// <summary>
+        /// If true, the list menu will be same width as the parent.
+        /// </summary>
+        [Parameter] public bool FullWidth { get; set; }
+
+        /// <summary>
+        /// Sets the maxheight the menu can have when open.
+        /// </summary>
+        [Parameter] public int? MaxHeight { get; set; }
+
+        /// <summary>
         /// If true, instead of positioning the menu at the left upper corner, position at the exact cursor location.
         /// This makes sense for larger activators
         /// </summary>
@@ -47,7 +62,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the direction the select menu should be.
         /// </summary>
-        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
+        [Parameter] public Direction Direction { get; set; } = Direction.Top;
 
         /// <summary>
         /// If true, the select menu will open either before or after the input.

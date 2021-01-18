@@ -15,7 +15,7 @@
   <PropertyGroup>
     <Title>MudBlazor</Title>
     <PackageId>MudBlazor</PackageId>
-    <Version>1.2.4.7-dev</Version>
+    <Version>1.2.4.8-dev</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>Nuget.png</PackageIcon>
     <Company>MudBlazor</Company>
@@ -59,10 +59,12 @@
   </Target>
 
   <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
-      <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -o ./wwwroot -c excubowebcompiler.json" StandardOutputImportance="high" />
+      <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json" StandardOutputImportance="high" />
   </Target>
 
   <Target Name="IncludeGeneratedStaticFiles" BeforeTargets="BeforeBuild;BeforeRebuild" DependsOnTargets="WebCompiler;ToolRestore">
+    <Error Condition="!Exists('wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
+    <Error Condition="!Exists('wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
     <ItemGroup>
       <Content Include="wwwroot/MudBlazor.min.css" Condition="!Exists('wwwroot/MudBlazor.min.css')" />
       <Content Include="wwwroot/MudBlazor.min.js" Condition="!Exists('wwwroot/MudBlazor.min.js')" />
