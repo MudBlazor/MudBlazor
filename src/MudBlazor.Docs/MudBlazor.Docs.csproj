@@ -88,14 +88,14 @@
   </ItemGroup>
 
   <Target Name="ToolRestore">
-      <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
+      <Exec Command="dotnet tool update excubo.webcompiler" StandardOutputImportance="high" />
   </Target>
 
   <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
       <Exec Command="dotnet webcompiler ./Styles/MudBlazorDocs.scss -c excubowebcompiler.json" StandardOutputImportance="high" />
   </Target>
 
-  <Target Name="IncludeGeneratedStaticFiles" BeforeTargets="BeforeBuild;BeforeRebuild" DependsOnTargets="WebCompiler;ToolRestore">
+  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler">
     <Error Condition="!Exists('wwwroot/MudBlazorDocs.min.css')" Text="Missing MudBlazorDocs.min.css in wwwroot" />
     <!--If we ever bundle js  for the docs site uncomment the below check-->
     <!--<Error Condition="!Exists('wwwroot/MudBlazorDocs.min.js')" Text="Missing MudBlazorDocs.min.js in wwwroot" />-->
