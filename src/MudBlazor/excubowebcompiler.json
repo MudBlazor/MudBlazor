@@ -7,6 +7,14 @@
       "OutputMode": "SingleLine",
     }
   },
+  "Javascript": {
+    "RenameLocals": true,
+    "PreserveImportantComments": true,
+    "EvalTreatment": "Ignore",
+    "TermSemicolons": true,
+    "OutputMode": "SingleLine",
+    "IndentSize": 2
+  },
   "CompilerSettings": {
     "Sass": {
       "IndentType": "Space",
