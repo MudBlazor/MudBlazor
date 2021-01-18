@@ -104,6 +104,9 @@ namespace MudBlazor
         internal void UnregisterRadio(MudRadio radio)
         {
             _radios.Remove(radio);
+
+            if (_selectedRadio == radio)
+                _selectedRadio = null;
         }
     }
 }
