@@ -16,5 +16,5 @@
     },
     select: (el) => {
         el.select();
-    }
-}
+    },
+};
