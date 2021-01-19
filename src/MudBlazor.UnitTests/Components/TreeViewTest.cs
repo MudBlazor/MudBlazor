@@ -38,11 +38,11 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
             comp.Find("button").Click();
-            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expanded").Count.Should().Be(1);
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expand").Count.Should().Be(1);
             comp.Find("button").Click();
-            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expanded").Count.Should().Be(0);
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expand").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
-            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expanded").Count.Should().Be(0);
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expand").Count.Should().Be(0);
         }
 
         [Test]
@@ -52,13 +52,13 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
             comp.Find("button").Click();
-            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expanded").Count.Should().Be(1);
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expand").Count.Should().Be(1);
             comp.Find("button").Click();
-            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expanded").Count.Should().Be(0);
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expand").Count.Should().Be(0);
             comp.Find("div.mud-treeview-item-content").Click();
-            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expanded").Count.Should().Be(1);
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expand").Count.Should().Be(1);
             comp.Find("div.mud-treeview-item-content").Click();
-            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expanded").Count.Should().Be(0);
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expand").Count.Should().Be(0);
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
             comp.Find("button").Click();
-            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expanded").Count.Should().Be(1);
+            comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-expand").Count.Should().Be(1);
             comp.FindAll("input.mud-checkbox-input").Count.Should().Be(10);
             comp.Find("input.mud-checkbox-input").Change(true);
             comp.Instance.SubItemSelected.Should().BeTrue();
