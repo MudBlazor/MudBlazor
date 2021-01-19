@@ -204,7 +204,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Strict { get; set; }
 
-        internal bool isOpen { get; set; }
+        internal bool _isOpen;
 
         public string CurrentIcon { get; set; }
 
@@ -215,7 +215,7 @@ namespace MudBlazor
             {
                 // single selection
                 Value = value;
-                isOpen = false;
+                _isOpen = false;
                 UpdateIcon();
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
@@ -237,21 +237,21 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
-            isOpen = !isOpen;
+            _isOpen = !_isOpen;
             UpdateIcon();
             StateHasChanged();
         }
 
         public void CloseMenu()
         {
-            isOpen = false;
+            _isOpen = false;
             UpdateIcon();
             StateHasChanged();
         }
 
         public void UpdateIcon()
         {
-            if (isOpen)
+            if (_isOpen)
             {
                 CurrentIcon = OpenIcon;
             }
