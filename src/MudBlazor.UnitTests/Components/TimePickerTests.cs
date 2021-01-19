@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
+using MudBlazor.UnitTests.TestComponents.TimePicker;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using static Bunit.ComponentParameterFactory;
@@ -338,6 +339,22 @@ namespace MudBlazor.UnitTests
                 comp.FindAll("div.mud-minute").Skip(i).First().Click();
                 picker.Time.Value.Minutes.Should().Be(i);
             }
+        }
+
+        [Test]
+        public void OpenTimepickerProgrammatically()
+        {
+            var comp = ctx.RenderComponent<OpenTimePickerProgrammaticallyTest>();
+            Console.WriteLine(comp.Markup+"\n");
+            comp.FindAll("div.mud-picker-content").Count.Should().Be(0); 
+            // clicking the button should open the picker
+            comp.Find("button").Click();
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("div.mud-picker-content").Count.Should().Be(1);
+            // closing programmatically
+            var picker=comp.FindComponent<MudTimePicker>();
+            picker.InvokeAsync(() => picker.Instance.Close());
+            comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
         }
     }
 }

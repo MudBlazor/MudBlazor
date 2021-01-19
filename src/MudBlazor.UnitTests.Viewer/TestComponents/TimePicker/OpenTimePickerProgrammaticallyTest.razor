@@ -1,0 +1,10 @@
+﻿<MudButton OnClick="OnClick">Open time picker</MudButton>
+<MudTimePicker @ref="timePicker"  />
+@code
+{
+    private MudTimePicker timePicker;
+
+    void OnClick() {
+        timePicker.Open();
+    }
+}
