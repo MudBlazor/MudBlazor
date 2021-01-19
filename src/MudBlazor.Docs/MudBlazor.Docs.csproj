@@ -58,7 +58,6 @@
 
   <!--Because we have a dynamic content .cs and .razor files comming from the code generator we need to add them -->  
   <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild;BeforeRebuild" DependsOnTargets="CompileDocs;ReadFromFile">
-    <Message Text="Found '@(NewExampleCodeToBuild-&gt;Count())' new ExampleCode files" Importance="high" />
     <ItemGroup>
       <Compile Include="Models/Snippets.generated.cs" Condition="!Exists('Models/Snippets.generated.cs')" />
       <Compile Include="Models/DocStrings.generated.cs" Condition="!Exists('Models/DocStrings.generated.cs')" />
