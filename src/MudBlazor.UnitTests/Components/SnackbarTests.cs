@@ -53,5 +53,18 @@ namespace MudBlazor.UnitTests
             comp.WaitForAssertion(() => comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty(), TimeSpan.FromMilliseconds(100));
         }
 
+        [Test]
+        public async Task HtmlInMessages()
+        {
+            var comp = ctx.RenderComponent<MudSnackbarProvider>();
+            Console.WriteLine(comp.Markup);
+            comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<ISnackbar>() as SnackbarService;
+            service.Should().NotBe(null);
+            // shoot out a snackbar
+            await comp.InvokeAsync(() => service?.Add("Hello <span>World</span>"));
+            comp.Find("#mud-snackbar-container").InnerHtml.Trim().Should().NotBeEmpty();
+            comp.Find("div.mud-snackbar-content-message>span").Should().NotBeNull();
+        }
     }
 }

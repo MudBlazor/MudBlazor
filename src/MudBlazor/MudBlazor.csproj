@@ -30,7 +30,7 @@
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,20 +49,26 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.1" />
   </ItemGroup>
 
   <Target Name="ToolRestore">
-      <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
+    <Exec Command="dotnet tool update excubo.webcompiler" StandardOutputImportance="high" />
   </Target>
 
   <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
-      <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json" StandardOutputImportance="high" />
+    <!--compile and minify scss-->
+    <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json" StandardOutputImportance="high" />
+    <!--concatenate js files-->
+    <Exec Command="mkdir combined" WorkingDirectory="TScripts" IgnoreExitCode="true" StandardErrorImportance="low" />
+    <Exec Command="cat ./TScripts/*.js > ./TScripts/combined/MudBlazor.js" Condition=" '$(OS)' != 'Windows_NT' " StandardOutputImportance="high" />
+    <Exec Command="powershell -noprofile -c &quot;cat ./TScripts/*.js > ./TScripts/combined/MudBlazor.js&quot;" Condition=" '$(OS)' == 'Windows_NT' " StandardOutputImportance="high" />
+    <!--minify js-->
+    <Exec Command="dotnet webcompiler ./TScripts/combined/MudBlazor.js -c excubowebcompiler.json" StandardOutputImportance="high" />
   </Target>
 
-  <Target Name="IncludeGeneratedStaticFiles" BeforeTargets="BeforeBuild;BeforeRebuild" DependsOnTargets="WebCompiler;ToolRestore">
+  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler">
     <Error Condition="!Exists('wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
     <Error Condition="!Exists('wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
     <ItemGroup>

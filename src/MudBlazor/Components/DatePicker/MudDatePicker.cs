@@ -26,6 +26,18 @@ namespace MudBlazor
             set => SetDateAsync(value, true).AndForget();
         }
 
+        public override void Open()
+        {
+            base.Open();
+            Picker.Open();
+        }
+
+        public override void Close()
+        {
+            base.Close();
+            Picker.Close();
+        }
+
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
             if (_date != date)

@@ -3,6 +3,7 @@
 // License: MIT
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -138,6 +139,7 @@ namespace MudBlazor
 
     }
 
+    [ExcludeFromCodeCoverage]
     public class MessageBoxOptions
     {
         public string Title { get; set; }

@@ -374,5 +374,18 @@ namespace MudBlazor
             public int Minute { get; set; }
 
         }
+
+        public override void Open()
+        {
+            base.Open();
+            Picker.Open();
+        }
+
+        public override void Close()
+        {
+            base.Close();
+            Picker.Close();
+        }
+
     }
 }

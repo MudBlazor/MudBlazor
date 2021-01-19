@@ -14,26 +14,41 @@ namespace MudBlazor.Docs.Compiler
             var paths = new Paths();
             var newFiles = new StringBuilder();
             var success = true;
+            var noOfFilesUpdated = 0;
+            var noOfFilesCreated = 0;
+
             try
             {
                 var formatter = new HtmlClassFormatter();
-
-                foreach (var entry in Directory.EnumerateFiles(paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
-                    .OrderBy(e => e.Replace("\\", "/"), StringComparer.Ordinal))
+                var lastCheckedTime = new DateTime();
+                if (File.Exists(paths.NewFilesToBuildPath))
                 {
-                    if (entry.EndsWith("Code.razor"))
+                    var lastNewFilesToBuild = new FileInfo(paths.NewFilesToBuildPath);
+                    lastCheckedTime = lastNewFilesToBuild.LastWriteTime;
+                }
+
+                var directoryInfo = new DirectoryInfo(paths.DocsDirPath);
+
+                foreach (var entry in directoryInfo.GetFileSystemInfos("*.razor", SearchOption.AllDirectories)
+                    .OrderBy(e => e.FullName.Replace("\\", "/"), StringComparer.Ordinal))
+                {
+                    if (entry.Name.EndsWith("Code.razor"))
                         continue;
-                    var filename = Path.GetFileName(entry);
-                    if (!filename.Contains(Paths.ExampleDiscriminator))
+                    if (!entry.Name.Contains(Paths.ExampleDiscriminator))
                         continue;
-                    var markupPath = entry.Replace("Examples", "Code").Replace(".razor", "Code.razor");
+                    var markupPath = entry.FullName.Replace("Examples", "Code").Replace(".razor", "Code.razor");
+                    if (entry.LastWriteTime < lastCheckedTime && File.Exists(markupPath))
+                    {
+                        continue;
+                    }
+
                     var markupDir = Path.GetDirectoryName(markupPath);
                     if (!Directory.Exists(markupDir))
                     {
                         Directory.CreateDirectory(markupDir);
                     }
 
-                    var src = StripComponentSource(entry);
+                    var src = StripComponentSource(entry.FullName);
                     var blocks = src.Split("@code");
                     var blocks0 = Regex.Replace(blocks[0], @"</?DocsFrame>", string.Empty)
                         .Replace("@", "PlaceholdeR")
@@ -70,10 +85,16 @@ namespace MudBlazor.Docs.Compiler
                         if (currentCode == string.Empty)
                         {
                             newFiles.AppendLine(markupPath);
+                            noOfFilesCreated++;
+                        }
+                        else
+                        {
+                            noOfFilesUpdated++;
                         }
                     }
 
                     File.WriteAllText(paths.NewFilesToBuildPath, newFiles.ToString());
+
                 }
             }
             catch (Exception e)
@@ -82,6 +103,8 @@ namespace MudBlazor.Docs.Compiler
                 success = false;
             }
 
+            Console.WriteLine($"Docs.Compiler updated {noOfFilesUpdated} generated files");
+            Console.WriteLine($"Docs.Compiler generated {noOfFilesCreated} new files");
             return success;
         }
 

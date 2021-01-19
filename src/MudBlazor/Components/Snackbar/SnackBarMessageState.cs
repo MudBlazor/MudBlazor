@@ -6,7 +6,7 @@ using static System.String;
 
 namespace MudBlazor
 {
-    internal class State
+    internal class SnackBarMessageState
     {
         private string AnimationId { get; }
         public bool UserHasInteracted { get; set; }
@@ -14,7 +14,7 @@ namespace MudBlazor
         public SnackbarState SnackbarState { get; set; }
         public DateTime TransitionStartTime { get; set; }
 
-        public State(SnackbarOptions options)
+        public SnackBarMessageState(SnackbarOptions options)
         {
             Options = options;
             AnimationId = $"snackbar-{Guid.NewGuid()}";

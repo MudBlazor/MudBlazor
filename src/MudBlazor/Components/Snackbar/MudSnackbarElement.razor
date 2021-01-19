@@ -10,7 +10,7 @@
 <div class="@SnackbarClass" style="@AnimationStyle" @onclick="@SnackbarClicked">
 
     <div class="mud-snackbar-content-message">
-        @Message
+        @((MarkupString)Message)
     </div>
 
     @if (ShowCloseIcon || ShowActionButton)
