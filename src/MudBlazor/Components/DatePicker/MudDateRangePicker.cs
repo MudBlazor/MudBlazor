@@ -26,6 +26,7 @@ namespace MudBlazor
         {
             base.Close();
             Picker.Close();
+            _firstDate = null;
         }
 
         public MudDateRangePicker()
@@ -165,7 +166,7 @@ namespace MudBlazor
 
         public override void OnMouseOver(int id, DateTime day)
         {
-            DomService.ChangeGlobalVariable("--selected-day", id);
+            DomService.ChangeGlobalCssVariable("--selected-day", id);
             base.OnMouseOver(id, day);
         }
 
@@ -177,12 +178,6 @@ namespace MudBlazor
                 return DateRange.Start.Value.ToString("dd MMM", Culture);
 
             return $"{DateRange.Start.Value.ToString("dd MMM", Culture)} - {DateRange.End.Value.ToString("dd MMM", Culture)}";
-        }
-
-        public override void Close()
-        {
-            base.Close();
-            _firstDate = null;
         }
     }
 }

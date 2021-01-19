@@ -13,10 +13,10 @@ namespace MudBlazor.UnitTests.Mocks
         public ValueTask ChangeCssById(string id, string css)
             => new ValueTask();
 
-        public ValueTask ChangeGlobalVariable(string variableName, int value)
+        public ValueTask ChangeGlobalCssVariable(string variableName, int value)
             => new ValueTask();
 
-        public ValueTask ChangeVariable(ElementReference element, string variableName, int value)
+        public ValueTask ChangeCssVariable(ElementReference element, string variableName, int value)
             => new ValueTask();
 
         public ValueTask<BoundingClientRect> GetBoundingClientRect(ElementReference elementReference)

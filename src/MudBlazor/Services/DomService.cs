@@ -10,8 +10,8 @@ namespace MudBlazor.Services
         ValueTask ChangeCssById(string id, string css);
         ValueTask ChangeCss(ElementReference elementReference, string css);
         ValueTask<BoundingClientRect> GetBoundingClientRect(ElementReference elementReference);
-        ValueTask ChangeGlobalVariable(string variableName, int value);
-        ValueTask ChangeVariable(ElementReference element, string variableName, int value);
+        ValueTask ChangeGlobalCssVariable(string variableName, int value);
+        ValueTask ChangeCssVariable(ElementReference element, string variableName, int value);
     }
 
     public class DomService : IDomService
@@ -32,10 +32,10 @@ namespace MudBlazor.Services
         public ValueTask<BoundingClientRect> GetBoundingClientRect(ElementReference elementReference) =>
             _jsRuntime.InvokeAsync<BoundingClientRect>("getMudBoundingClientRect", elementReference);
 
-        public ValueTask ChangeGlobalVariable(string variableName, int value) =>
-            _jsRuntime.InvokeVoidAsync("changeGlobalVariable", variableName, value);
-
-        public ValueTask ChangeVariable(ElementReference element, string variableName, int value) =>
-            _jsRuntime.InvokeVoidAsync("changeGlobalVariable", element, variableName, value);
+        public ValueTask ChangeGlobalCssVariable(string variableName, int value) =>
+            _jsRuntime.InvokeVoidAsync("changeGlobalCssVariable", variableName, value);
+        
+        public ValueTask ChangeCssVariable(ElementReference element, string variableName, int value) =>
+            _jsRuntime.InvokeVoidAsync("changeGlobalCssVariable", element, variableName, value);
     }
 }
