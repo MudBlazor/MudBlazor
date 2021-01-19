@@ -134,8 +134,6 @@ namespace MudBlazor
             _chips.Add(chip);
         }
 
-        private void OnChipClickHandler(MouseEventArgs args) { }
-
         internal void Remove(MudChip chip)
         {
             _chips.Remove(chip);

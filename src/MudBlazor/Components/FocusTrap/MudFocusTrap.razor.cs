@@ -75,12 +75,12 @@ namespace MudBlazor
 
         private void OnRootKeyDown(KeyboardEventArgs args)
         {
-            HandleKeyEvent(args, true);
+            HandleKeyEvent(args);
         }
 
         private void OnRootKeyUp(KeyboardEventArgs args)
         {
-            HandleKeyEvent(args, false);
+            HandleKeyEvent(args);
         }
 
         private Task OnTopFocusAsync(FocusEventArgs args)
@@ -119,7 +119,7 @@ namespace MudBlazor
             return JsRuntime.InvokeVoidAsync("elementReference.focusLast", _root, 2, 4).AsTask();
         }
 
-        private void HandleKeyEvent(KeyboardEventArgs args, bool isDown)
+        private void HandleKeyEvent(KeyboardEventArgs args)
         {
             if (args.Key == "Tab")
                 _shiftDown = args.ShiftKey;

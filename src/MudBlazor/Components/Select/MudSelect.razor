@@ -18,7 +18,7 @@
             </InputContent>
         </MudInputControl>
         <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-            <MudPopover Open="@isOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
+            <MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
                 <MudList Clickable="true" Dense="@Dense">
                     @ChildContent
                 </MudList>
@@ -27,5 +27,5 @@
     </div>
 </CascadingValue>
 
-<MudOverlay Visible="isOpen" OnClick="@CloseMenu" LockScroll="false" />
+<MudOverlay Visible="_isOpen" OnClick="@CloseMenu" LockScroll="false" />
 
