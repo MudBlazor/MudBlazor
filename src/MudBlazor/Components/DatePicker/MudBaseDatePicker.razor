@@ -89,7 +89,7 @@
                                     {
                                         var tempId = ++dayId;
                                         <button @key="day" ticks="@day.Ticks" type="button" style="--day-id: @tempId;"
-                                                class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon @GetDayClasses(tempMonth, day)"
+                                                class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @GetDayClasses(tempMonth, day)"
                                                 @onclick="(() => { var d = day; OnDayClicked(d); })" 
                                                 @onmouseover="(()=> { var d = day; OnMouseOver(tempId, day); })"
                                                 disabled="@((day < MinDate) || (day > MaxDate))">

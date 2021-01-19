@@ -26,10 +26,9 @@ namespace MudBlazor
             Right
         }
 
-        [Inject] IDomService DomService { get; set; }
+        [Inject] private IDomService DomService { get; set; }
 
-        [Inject]
-        private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
+        [Inject] private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
 
         protected string PickerClass =>
         new CssBuilder("mud-picker")

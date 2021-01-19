@@ -13,11 +13,11 @@ window.changeCssById = (id, css) => {
     }
 };
 
-window.changeGlobalVariable = (name, newValue) => {
+window.changeGlobalCssVariable = (name, newValue) => {
     document.documentElement.style.setProperty(name, newValue);
 };
 
-window.changeVariable = (element, name, newValue) => {
+window.changeCssVariable = (element, name, newValue) => {
     element.style.setProperty(name, newValue);
 };
 

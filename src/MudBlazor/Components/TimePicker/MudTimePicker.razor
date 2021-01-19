@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudBasePicker
-
+@using System.Globalization 
 
 <MudPicker @ref="Picker" Class="@Class" PickerVariant="@PickerVariant" 
         Orientation="@Orientation" Label="@Label" @bind-Value="@Value" HelperText="@HelperText" InputVariant="@InputVariant" 
@@ -34,13 +34,14 @@
                             @*Hours from 1 to 12*@
                             for(int i = 1; i <= 12; ++i)
                             {
-                                var angle =  (6 - i) * 30;
-                                <MudText Class="@GetNumberColor(i)" Style="@($"transform: translate{Math.Sin(angle) * 109}px, {(Math.Cos(angle) + 1) * 109 + 5}px);")">i</MudText>
+                                var _i = i;
+                                var angle =  (6 - _i) * 30;
+                                <MudText Class="@GetNumberColor(_i)" Style="@GetTransform(angle, 109, 0, 5)">@_i</MudText>
                             }
                             for(int i = 1; i <= 12; ++i)
                             {
                                 var _i = i;
-                                <div class="mud-picker-stick mud-hour" style="@($"transform: rotateZ({i * 30}deg);")" @onclick="@(() => OnMouseClickHour(_i))" @onmouseover="@(() => OnMouseOverHour(_i))" @onclick:stopPropagation="true"></div>
+                                <div class="mud-picker-stick mud-hour" style="@($"transform: rotateZ({_i * 30}deg);")" @onclick="@(() => OnMouseClickHour(_i))" @onmouseover="@(() => OnMouseOverHour(_i))" @onclick:stopPropagation="true"></div>
                             }
                         }
                         else
@@ -48,19 +49,21 @@
                             @*Hours from 13 to 24 (00)*@
                             for(int i = 1; i <= 12; ++i)
                             {
-                                var angle =  (6 - i) * 30;
-                                <MudText Class="@GetNumberColor((i + 12) % 24)" Style="@($"transform: translate{Math.Sin(angle) * 109}px, {(Math.Cos(angle) + 1) * 109 + 5}px);")">((i + 12) % 24).ToString("D2")</MudText>
+                                var _i = i;
+                                var angle =  (6 - _i) * 30;
+                                <MudText Class="@GetNumberColor((_i + 12) % 24)" Style="@GetTransform(angle, 109, 0, 5)">@(((_i + 12) % 24).ToString("D2"))</MudText>
                             }
                             @*Hours from 1 to 12*@
                             for(int i = 1; i <= 12; ++i)
                             {
-                                var angle =  (6 - i) * 30;
-                                <MudText Class="@GetNumberColor(i)" Typo="Typo.body2" Style="@($"transform: translate{Math.Sin(angle) * 74}px, {(Math.Cos(angle) + 1) * 138 + 40}px);")">i.ToString("D2")</MudText>
+                                var _i = i;
+                                var angle =  (6 - _i) * 30;
+                                <MudText Class="@GetNumberColor(_i)" Typo="Typo.body2" Style="@GetTransform(angle, 74, 0, 40)">@(_i.ToString("D2"))</MudText>
                             }
                             for(int i = 1; i <= 12; ++i)
                             {
                                 var _i = i;
-                                <div class="mud-picker-stick" style="@($"transform: rotateZ({i * 30}deg);")">
+                                <div class="mud-picker-stick" style="@($"transform: rotateZ({_i * 30}deg);")">
                                     <div class="mud-picker-stick-inner mud-hour" @onclick="@(() => OnMouseClickHour(_i))" @onmouseover="@(() => OnMouseOverHour(_i))" @onclick:stopPropagation="true"></div>
                                     <div class="mud-picker-stick-outer mud-hour" @onclick="@(() => OnMouseClickHour(_i + 12))" @onmouseover="@(() => OnMouseOverHour(_i + 12))" @onclick:stopPropagation="true"></div>
                                 </div>
@@ -71,13 +74,14 @@
                         @*Minutes from 05 to 60 (00) - step 5*@                     
                         @for (int i = 0; i < 12; ++i)
                         {
-                            var angle =  (6 - i) * 30;
-                            <MudText Class="@GetNumberColor(i * 5)" Style="@($"transform: translate{Math.Sin(angle) * 109}px, {(Math.Cos(angle) + 1) * 109 + 5}px);")">(i * 5).ToString("D2")</MudText>
+                            var _i = i;
+                            var angle =  (6 - _i) * 30;
+                            <MudText Class="@GetNumberColor(_i * 5)" Style="@GetTransform(angle, 109, 0, 5)">@((_i * 5).ToString("D2"))</MudText>
                         }
                         @for (int i = 0; i < 60; ++i)
                         {
                             var _i = i;
-                            <div class="mud-picker-stick mud-minute" style="@($"transform: rotateZ({i * 6}deg);")" @onclick="@(() => OnMouseClickMinute(_i))" @onmouseover="@(() => OnMouseOverMinute(_i))" @onclick:stopPropagation="true"></div>
+                            <div class="mud-picker-stick mud-minute" style="@($"transform: rotateZ({_i * 6}deg);")" @onclick="@(() => OnMouseClickMinute(_i))" @onmouseover="@(() => OnMouseOverMinute(_i))" @onclick:stopPropagation="true"></div>
                         }
                     </div>
                 </div>
