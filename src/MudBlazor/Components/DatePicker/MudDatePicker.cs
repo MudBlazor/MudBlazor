@@ -26,15 +26,13 @@ namespace MudBlazor
             set => SetDateAsync(value, true).AndForget();
         }
 
-        public override void Open()
+        protected override void OnOpened()
         {
-            base.Open();
             Picker.Open();
         }
 
-        public override void Close()
+        protected override void OnClosed()
         {
-            base.Close();
             Picker.Close();
         }
 
