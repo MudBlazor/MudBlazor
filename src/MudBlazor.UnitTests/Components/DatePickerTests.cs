@@ -266,7 +266,7 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
-        public async void Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
+        public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
             var comp = ctx.RenderComponent<MudDatePicker>();
             Console.WriteLine(comp.Markup + "\n");
