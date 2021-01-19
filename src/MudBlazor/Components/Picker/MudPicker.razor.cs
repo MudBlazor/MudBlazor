@@ -107,9 +107,22 @@ namespace MudBlazor
             }
         }
 
-        public override void Open()
+        private void ToggleState()
         {
-            IsOpen = true;
+            if (IsOpen)
+            {
+                IsOpen = false;
+                OnClosed();
+            }
+            else
+            {
+                IsOpen = true;
+                OnOpened();
+            }
+        }
+
+        protected override void OnOpened()
+        {
             OnPickerOpened();
 
             if (PickerVariant == PickerVariant.Inline)
@@ -123,9 +136,8 @@ namespace MudBlazor
             }
         }
 
-        public override void Close()
+        protected override void OnClosed()
         {
-            base.Close();
             _pickerVerticalPosition = PickerVerticalPosition.Unknown;
         }
 

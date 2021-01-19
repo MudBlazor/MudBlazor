@@ -132,16 +132,21 @@ namespace MudBlazor
                 Open();
         }
 
-        public virtual void Close()
+        public void Close()
         {
             IsOpen = false;
             StateHasChanged();
+            OnClosed();
         }
 
-        public virtual void Open()
+        public void Open()
         {
             IsOpen = true;
             StateHasChanged();
+            OnOpened();
         }
+
+        protected virtual void OnClosed() { }
+        protected virtual void OnOpened() { }
     }
 }

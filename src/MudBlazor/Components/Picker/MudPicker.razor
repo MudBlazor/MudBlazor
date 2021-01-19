@@ -10,14 +10,14 @@
         @if (!IsRange) 
         { 
             <MudTextField Label="@Label" @bind-Text="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string"
-                          @onclick="@(() => { if (!Editable) ToggleOpen(); })" OnAdornmentClick="ToggleOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
+                          @onclick="@(() => { if (!Editable) ToggleState(); })" OnAdornmentClick="ToggleState" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
         }
         else 
         {
-            <MudInputControl Label="@Label" Variant="@InputVariant" HelperText="@HelperText" Disabled="@Disabled" @onclick="@(() => { if (!Editable) ToggleOpen(); })">
+            <MudInputControl Label="@Label" Variant="@InputVariant" HelperText="@HelperText" Disabled="@Disabled" @onclick="@(() => { if (!Editable) ToggleState(); })">
                 <InputContent>
                     <MudRangeInput @attributes="UserAttributes" InputType="@InputType.Text" Class="@PickerInputClass" Style="@Style" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string"
-                                   @bind-Text="@Value" Disabled=@Disabled Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" OnAdornmentClick="ToggleOpen"/>
+                                   @bind-Text="@Value" Disabled=@Disabled Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" OnAdornmentClick="ToggleState"/>
                 </InputContent>
             </MudInputControl>
         }
