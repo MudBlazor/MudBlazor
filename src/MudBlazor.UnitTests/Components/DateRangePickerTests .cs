@@ -313,5 +313,20 @@ namespace MudBlazor.UnitTests
                 .Where(x => x.TrimmedText().Equals("3")).First().Click();
             comp.Instance.DateRange.End.Should().Be(new DateTime(2022, 2, 3));
         }
+
+        [Test]
+        public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
+        {
+            var comp = ctx.RenderComponent<MudDateRangePicker>();
+            Console.WriteLine(comp.Markup + "\n");
+            comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
+            // open programmatically
+            await comp.InvokeAsync(() => comp.Instance.Open());
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("div.mud-picker-content").Count.Should().Be(1);
+            // closing programmatically
+            await comp.InvokeAsync(() => comp.Instance.Close());
+            comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
+        }
     }
 }
