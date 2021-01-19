@@ -22,7 +22,7 @@ namespace MudBlazor
 
         public override void Close()
         {
-            base.Open();
+            base.Close();
             Picker.Close();
         }
 
