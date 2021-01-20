@@ -6,46 +6,46 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public partial class MudRadioGroup : MudComponentBase
+    public partial class MudRadioGroup<T> : MudComponentBase
     {
-        private string _selectedOption;
-        private MudRadio _selectedRadio;
+        private T _selectedOption;
+        private MudRadio<T> _selectedRadio;
 
-        private HashSet<MudRadio> _radios = new HashSet<MudRadio>();
+        private HashSet<MudRadio<T>> _radios = new HashSet<MudRadio<T>>();
 
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         [Parameter] public string Name { get; set; } = Guid.NewGuid().ToString();
 
         [Parameter]
-        public string SelectedOption
+        public T SelectedOption
         {
             get => _selectedOption;
             set => SetSelectedOptionAsync(value, true).AndForget();
         }
 
-        protected async Task SetSelectedOptionAsync(string option, bool updateRadio)
+        protected async Task SetSelectedOptionAsync(T option, bool updateRadio)
         {
-            if (_selectedOption != option)
+            if (!OptionEquals(_selectedOption, option))
             {
                 _selectedOption = option;
 
                 if (updateRadio)
-                    await SetSelectedRadioAsync(_radios.FirstOrDefault(r => r.Option == _selectedOption), false);
+                    await SetSelectedRadioAsync(_radios.FirstOrDefault(r => OptionEquals(r.Option, _selectedOption)), false);
 
                 await SelectedOptionChanged.InvokeAsync(_selectedOption);
             }
         }
 
         [Parameter]
-        public EventCallback<string> SelectedOptionChanged { get; set; }
+        public EventCallback<T> SelectedOptionChanged { get; set; }
 
-        internal Task SetSelectedRadioAsync(MudRadio radio)
+        internal Task SetSelectedRadioAsync(MudRadio<T> radio)
         {
             return SetSelectedRadioAsync(radio, true);
         }
 
-        protected async Task SetSelectedRadioAsync(MudRadio radio, bool updateOption)
+        protected async Task SetSelectedRadioAsync(MudRadio<T> radio, bool updateOption)
         {
             if (_selectedRadio != radio)
             {
@@ -55,28 +55,38 @@ namespace MudBlazor
                     item.SetChecked(item == _selectedRadio);
 
                 if (updateOption)
-                    await SetSelectedOptionAsync(_selectedRadio?.Option, false);
+                    await SetSelectedOptionAsync(GetOptionOrDefault(_selectedRadio), false);
             }
         }
 
-        internal Task RegisterRadioAsync(MudRadio radio)
+        internal Task RegisterRadioAsync(MudRadio<T> radio)
         {
             _radios.Add(radio);
 
             if (_selectedRadio == null)
             {
-                if (radio.Option == _selectedOption)
+                if (OptionEquals(radio.Option, _selectedOption))
                     return SetSelectedRadioAsync(radio, false);
             }
             return Task.CompletedTask;
         }
 
-        internal void UnregisterRadio(MudRadio radio)
+        internal void UnregisterRadio(MudRadio<T> radio)
         {
             _radios.Remove(radio);
 
             if (_selectedRadio == radio)
                 _selectedRadio = null;
+        }
+
+        private static T GetOptionOrDefault(MudRadio<T> radio)
+        {
+            return radio != null ? radio.Option : default;
+        }
+
+        private static bool OptionEquals(T option1, T option2)
+        {
+            return EqualityComparer<T>.Default.Equals(option1, option2);
         }
     }
 }

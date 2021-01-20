@@ -6,11 +6,11 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudRadio : MudComponentBase, IDisposable
+    public partial class MudRadio<T> : MudComponentBase, IDisposable
     {
         private bool _checked;
 
-        [CascadingParameter] protected MudRadioGroup RadioGroup { get; set; }
+        [CascadingParameter] protected MudRadioGroup<T> RadioGroup { get; set; }
 
         protected string Classname =>
         new CssBuilder("mud-radio")
@@ -46,7 +46,7 @@ namespace MudBlazor
         /// <summary>
         /// The value to associate to the button.
         /// </summary>
-        [Parameter] public string Option { get; set; }
+        [Parameter] public T Option { get; set; }
 
         /// <summary>
         /// If true, disables ripple effect.

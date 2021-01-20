@@ -27,7 +27,7 @@
                 <Title>Material Icons</Title>
             </SectionHeader>
             <SectionContent Class="docs-icon-material-container" FullWidth="true">
-                <MudRadioGroup SelectedOption="@SelectedIconType" SelectedOptionChanged="HandleSelectedOptionChanged">
+                <MudRadioGroup T="string" SelectedOption="@SelectedIconType" SelectedOptionChanged="HandleSelectedOptionChanged">
                     @foreach (var item in IconTypes)
                     {
                         <MudRadio Option="@item.Key" Color="Color.Primary">@item.Key</MudRadio>
