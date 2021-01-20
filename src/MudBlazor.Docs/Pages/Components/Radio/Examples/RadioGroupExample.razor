@@ -1,15 +1,24 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudForm>
-    <MudRadioGroup @bind-SelectedLabel="@SelectedLabel" @bind-SelectedOption="@SelectedOption">
-        <MudRadio Color="Color.Primary" Option="Radio 1">Primary</MudRadio>
-        <MudRadio Color="Color.Secondary" Option="Radio 2">Secondary</MudRadio>
+    <MudRadioGroup @bind-SelectedOption="@SelectedOption">
+        <MudRadio Option="Radio 1" Color="Color.Primary">Primary</MudRadio>
+        <MudRadio Option="Radio 2" Color="Color.Secondary">Secondary</MudRadio>
         <MudRadio Option="Radio 3">Default</MudRadio>
-        <MudRadio Color="Color.Primary" Disabled="true" Option="Radio 4">Disabled</MudRadio>
+        <MudRadio Option="Radio 4" Color="Color.Primary" Disabled="true">Disabled</MudRadio>
     </MudRadioGroup>
-</MudForm> 
+</MudForm>
+
+<div class="d-flex align-center">
+    <MudButton Variant="Variant.Outlined" OnClick="Reset">Reset</MudButton>
+    <MudText Class="ml-4">Selected Option: @SelectedOption</MudText>
+</div>
 
 @code {
-    public string SelectedLabel { get; set; } = "Primary";
     public string SelectedOption { get; set; }
+
+    private void Reset()
+    {
+        SelectedOption = null;
+    }
 }

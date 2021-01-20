@@ -9,7 +9,6 @@ namespace MudBlazor
     public partial class MudRadioGroup : MudComponentBase
     {
         private string _selectedOption;
-        private string _selectedLabel;
         private MudRadio _selectedRadio;
 
         private HashSet<MudRadio> _radios = new HashSet<MudRadio>();
@@ -32,7 +31,7 @@ namespace MudBlazor
                 _selectedOption = option;
 
                 if (updateRadio)
-                    await SetSelectedRadioAsync(_radios.FirstOrDefault(r => r.Option == _selectedOption), false, true);
+                    await SetSelectedRadioAsync(_radios.FirstOrDefault(r => r.Option == _selectedOption), false);
 
                 await SelectedOptionChanged.InvokeAsync(_selectedOption);
             }
@@ -41,35 +40,12 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<string> SelectedOptionChanged { get; set; }
 
-        [Parameter]
-        public string SelectedLabel
-        {
-            get => _selectedRadio?.Label;
-            set => SetSelectedLabelAsync(value, true).AndForget();
-        }
-
-        protected async Task SetSelectedLabelAsync(string label, bool updateRadio)
-        {
-            if (_selectedLabel != label)
-            {
-                _selectedLabel = label;
-
-                if (updateRadio)
-                    await SetSelectedRadioAsync(_radios.FirstOrDefault(r => r.Label == _selectedLabel), true, false);
-
-                await SelectedLabelChanged.InvokeAsync(_selectedLabel);
-            }
-        }
-
-        [Parameter]
-        public EventCallback<string> SelectedLabelChanged { get; set; }
-
         internal Task SetSelectedRadioAsync(MudRadio radio)
         {
-            return SetSelectedRadioAsync(radio, true, true);
+            return SetSelectedRadioAsync(radio, true);
         }
 
-        protected async Task SetSelectedRadioAsync(MudRadio radio, bool updateOption, bool updateLabel)
+        protected async Task SetSelectedRadioAsync(MudRadio radio, bool updateOption)
         {
             if (_selectedRadio != radio)
             {
@@ -80,9 +56,6 @@ namespace MudBlazor
 
                 if (updateOption)
                     await SetSelectedOptionAsync(_selectedRadio?.Option, false);
-
-                if (updateLabel)
-                    await SetSelectedLabelAsync(_selectedRadio?.Label, false);
             }
         }
 
@@ -93,10 +66,7 @@ namespace MudBlazor
             if (_selectedRadio == null)
             {
                 if (radio.Option == _selectedOption)
-                    return SetSelectedRadioAsync(radio, false, true);
-
-                if (radio.Label == _selectedLabel)
-                    return SetSelectedRadioAsync(radio, true, false);
+                    return SetSelectedRadioAsync(radio, false);
             }
             return Task.CompletedTask;
         }

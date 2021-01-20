@@ -15,13 +15,8 @@
             </span>
         </span>
     </span>
-
-    @if (!String.IsNullOrEmpty(Label))
-    {
-        <span class="mud-radio-label mud-typography mud-typography-body1">@Label</span>
-    }
     @if (ChildContent != null)
     {
-        <span class="mud-radio-label mud-typography mud-typography-body1">@ChildContent</span>
+        <span class="mud-radio-content mud-typography mud-typography-body1">@ChildContent</span>
     }
 </label>
