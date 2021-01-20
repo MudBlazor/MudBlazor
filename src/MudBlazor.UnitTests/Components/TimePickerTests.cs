@@ -345,8 +345,8 @@ namespace MudBlazor.UnitTests
         public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
         {
             var comp = ctx.RenderComponent<MudTimePicker>();
-            Console.WriteLine(comp.Markup+"\n");
-            comp.FindAll("div.mud-picker-content").Count.Should().Be(0); 
+            Console.WriteLine(comp.Markup + "\n");
+            comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
             // clicking the button should open the picker
             await comp.InvokeAsync(() => comp.Instance.Open());
             Console.WriteLine(comp.Markup);
