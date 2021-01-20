@@ -34,6 +34,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\LICENSE" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
@@ -51,6 +56,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
   <Target Name="ToolRestore">
@@ -62,8 +71,8 @@
     <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json" StandardOutputImportance="high" />
     <!--concatenate js files-->
     <Exec Command="mkdir combined" WorkingDirectory="TScripts" IgnoreExitCode="true" StandardErrorImportance="low" />
-    <Exec Command="cat ./TScripts/*.js > ./TScripts/combined/MudBlazor.js" Condition=" '$(OS)' != 'Windows_NT' " StandardOutputImportance="high" />
-    <Exec Command="powershell -noprofile -c &quot;cat ./TScripts/*.js > ./TScripts/combined/MudBlazor.js&quot;" Condition=" '$(OS)' == 'Windows_NT' " StandardOutputImportance="high" />
+    <Exec Command="cat ./TScripts/*.js &gt; ./TScripts/combined/MudBlazor.js" Condition=" '$(OS)' != 'Windows_NT' " StandardOutputImportance="high" />
+    <Exec Command="powershell -noprofile -c &quot;cat ./TScripts/*.js &gt; ./TScripts/combined/MudBlazor.js&quot;" Condition=" '$(OS)' == 'Windows_NT' " StandardOutputImportance="high" />
     <!--minify js-->
     <Exec Command="dotnet webcompiler ./TScripts/combined/MudBlazor.js -c excubowebcompiler.json" StandardOutputImportance="high" />
   </Target>
