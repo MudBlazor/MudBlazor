@@ -1,9 +1,5 @@
 ﻿@import '../abstracts/variables';
 
-:root {
-    --selected-day: 0;
-}
-
 .mud-picker-datepicker-toolbar {
     align-items: flex-start;
     flex-direction: column;
@@ -165,6 +161,7 @@
 
 .mud-picker-calendar-content {
     display: grid;
+    --selected-day: 0;
     grid-column-gap: 10px;
     grid-template-columns: auto;
 }
@@ -246,9 +243,11 @@
     }
 }
 
-.mud-picker-calendar-header-last {
-    .mud-picker-nav-button-next {
-        visibility: visible !important;
+:not(.mud-picker-hidden) {
+    .mud-picker-calendar-header-last {
+        .mud-picker-nav-button-next {
+            visibility: visible !important;
+        }
     }
 }
 

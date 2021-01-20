@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using MudBlazor.Extensions;
-using MudBlazor.Services;
 using MudBlazor.Utilities;
 using static System.String;
 
@@ -24,13 +22,11 @@ namespace MudBlazor
         protected override void OnClosed()
         {
             Picker.Close();
-            _firstDate = null;
         }
 
         public MudDateRangePicker()
         {
             DisplayMonths = 2;
-            //DisableToolbar = true;
         }
 
         /// <summary>
@@ -80,6 +76,12 @@ namespace MudBlazor
         private DateRange ParseDateRangeValue(string value)
         {
             return DateRange.TryParse(value, out var dateRange) ? dateRange : null;
+        }
+
+        protected override void OnPickerClosed()
+        {
+            _firstDate = null;
+            base.OnPickerClosed();
         }
 
         protected override string GetDayClasses(int month, DateTime day)
@@ -160,12 +162,6 @@ namespace MudBlazor
                 await Task.Delay(ClosingDelay);
                 Picker.Close();
             }
-        }
-
-        public override void OnMouseOver(int id, DateTime day)
-        {
-            DomService.ChangeGlobalCssVariable("--selected-day", id);
-            base.OnMouseOver(id, day);
         }
 
         protected override string GetFormattedDateString()
