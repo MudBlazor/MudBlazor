@@ -20,7 +20,7 @@ namespace MudBlazor
         [Parameter]
         public string SelectedOption
         {
-            get => _selectedRadio?.Option;
+            get => _selectedOption;
             set => SetSelectedOptionAsync(value, true).AndForget();
         }
 
