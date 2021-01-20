@@ -19,7 +19,7 @@
     }
   },
   "Autoprefix": {
-    "Enabled": true,
+    "Enabled": false,
     "ProcessingOptions": {
       "Browsers": [
         "last 4 versions"
