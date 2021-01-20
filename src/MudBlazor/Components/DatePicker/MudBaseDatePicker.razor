@@ -3,12 +3,12 @@
 
 <MudPicker @ref="Picker" Class="@Class" PickerVariant="@PickerVariant" Orientation="@Orientation" Label="@Label" @bind-Value="@Value"
         HelperText="@HelperText" Editable="@Editable" InputVariant="@InputVariant" Disabled="@Disabled" Adornment="@Adornment"
-        IconSize="@IconSize" InputIcon="@InputIcon" Elevation="@Elevation" Square="@Square" Rounded="@Rounded" PickerOpened="OnPickerOpened" IsRange="@IsRange">
+        IconSize="@IconSize" InputIcon="@InputIcon" Elevation="@Elevation" Square="@Square" Rounded="@Rounded" PickerOpened="OnPickerOpened" PickerClosed="OnPickerClosed" IsRange="@IsRange">
     <MudPickerToolbar Class="mud-picker-datepicker-toolbar" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
         <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year" OnClick="@OnYearClick">@GetFormattedYearString()</MudButton>
         <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="@OnFormattedDateClick">@GetFormattedDateString()</MudButton>
     </MudPickerToolbar>
-    <MudPickerContent>          
+    <MudPickerContent>       
         <div class="mud-picker-calendar-content @($"mud-picker-calendar-content-{MaxMonthColumns ?? DisplayMonths}")">
             @{
                 int dayId = 0;
@@ -88,10 +88,10 @@
                                     @foreach (var day in GetWeek(tempMonth, tempWeek))
                                     {
                                         var tempId = ++dayId;
-                                        <button @key="day" ticks="@day.Ticks" type="button" style="--day-id: @tempId;"
+                                        <button @key="day" type="button" style="--day-id: @tempId;"
                                                 class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @GetDayClasses(tempMonth, day)"
                                                 @onclick="(() => { var d = day; OnDayClicked(d); })" 
-                                                @onmouseover="(()=> { var d = day; OnMouseOver(tempId, day); })"
+                                                onmouseover="this.closest('.mud-picker-calendar-content').style.setProperty('--selected-day', @tempId);"
                                                 disabled="@((day < MinDate) || (day > MaxDate))">
                                             <p class="mud-typography mud-typography-body2 mud-inherit-text">@day.Day</p>
                                         </button>

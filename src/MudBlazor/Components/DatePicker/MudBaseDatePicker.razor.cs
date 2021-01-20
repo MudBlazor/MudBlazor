@@ -12,8 +12,6 @@ namespace MudBlazor
 {
     public abstract partial class MudBaseDatePicker : MudBasePicker
     {
-        protected bool PreventRender = false;
-
         [Inject] protected IJSRuntime JsRuntime { get; set; }
 
         [Inject] protected IDomService DomService { get; set; }
@@ -112,12 +110,14 @@ namespace MudBlazor
 
         private OpenTo _currentView;
 
-        private void OnPickerOpened()
+        protected virtual void OnPickerOpened()
         {
             _currentView = OpenTo;
             if (_currentView == OpenTo.Year)
                 _scrollToYearAfterRender = true;
         }
+
+        protected virtual void OnPickerClosed() { }
 
         /// <summary>
         /// Get the first of the month to display
@@ -179,11 +179,6 @@ namespace MudBlazor
         /// User clicked on a day
         /// </summary>
         protected abstract void OnDayClicked(DateTime dateTime);
-
-        public virtual void OnMouseOver(int id, DateTime day)
-        {
-            PreventRender = true;
-        }
 
         /// <summary>
         /// return Mo, Tu, We, Th, Fr, Sa, Su in the right culture
@@ -354,16 +349,6 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             _currentView = OpenTo;
-        }
-
-        protected override bool ShouldRender()
-        {
-            if (PreventRender)
-            {
-                PreventRender = false;
-                return false;
-            }
-            return base.ShouldRender();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

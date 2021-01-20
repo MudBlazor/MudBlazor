@@ -1,8 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using MudBlazor.Extensions;
-using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
@@ -72,6 +69,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         [Parameter] public EventCallback PickerOpened { get; set; }
+        [Parameter] public EventCallback PickerClosed { get; set; }
 
         private bool _pickerSquare;
         private int _pickerElevation;
@@ -121,29 +119,31 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnOpened()
+        protected override async void OnOpened()
         {
             OnPickerOpened();
 
             if (PickerVariant == PickerVariant.Inline)
             {
-                InvokeAsync(async () =>
-                {
-                    await DeterminePosition();
-                    //StateHasChanged();
-                    await DomService.ChangeCss(_pickerPaperRef, PickerPaperClass);
-                });
+                await DeterminePosition();
+                await DomService.ChangeCss(_pickerPaperRef, PickerPaperClass);
             }
         }
 
         protected override void OnClosed()
         {
+            OnPickerClosed();
             _pickerVerticalPosition = PickerVerticalPosition.Unknown;
         }
 
         protected virtual void OnPickerOpened()
         {
             PickerOpened.InvokeAsync(this);
+        }
+
+        protected virtual void OnPickerClosed()
+        {
+            PickerClosed.InvokeAsync(this);
         }
 
         private async Task DeterminePosition()
