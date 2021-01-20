@@ -92,10 +92,9 @@ namespace MudBlazor.Docs.Compiler
                             noOfFilesUpdated++;
                         }
                     }
-
-                    File.WriteAllText(paths.NewFilesToBuildPath, newFiles.ToString());
-
                 }
+
+                File.WriteAllText(paths.NewFilesToBuildPath, newFiles.ToString());
             }
             catch (Exception e)
             {

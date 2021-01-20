@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@using System.Globalization; 
 
-<div class="@Classname" style="@(MaxHeight.HasValue && Expanded ? $"max-height:{MaxHeight}px;transition-duration: {GetTranstionDurations()};" : "")">
-    <div class="mud-collapse-wrapper">
+<div @ref="_container"  class="@Classname" style="@(MaxHeight.HasValue && Expanded ? $"max-height:{MaxHeight}px;transition-duration: {CalculatedTransitionDuration.ToString(CultureInfo.InvariantCulture)};" : "")">    <div class="mud-collapse-wrapper">
         <div class="mud-collapse-wrapper-inner">
             @ChildContent
         </div>

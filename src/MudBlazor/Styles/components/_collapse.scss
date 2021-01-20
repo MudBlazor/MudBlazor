@@ -1,22 +1,26 @@
 ﻿.mud-collapse-container {
     max-height: 0;
-    overflow: initial;
-    transform: scaleY(0);
-    transform-origin: top;
-    transition: max-height 0.5s cubic-bezier(0, 1, 0, 1), transform 0.25s ease-out;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
 
     &.mud-navgroup-collapse {
-        transition: max-height 300ms cubic-bezier(0, 1, 0, 1), transform 150ms ease-out;
+        transition: max-height 300ms cubic-bezier(0, 1, 0, 1);
     }
 }
 
-.mud-collapse-expanded {
+.mud-collapse-expand {
     max-height: 2000px;
-    transform: none;
-    transition: max-height 1s ease-in-out, transform 0.5s ease-out;
+
+    &:not(.mud-navgroup-collapse) {
+        transition: max-height 1s ease-in-out;
+    }
 
     &.mud-navgroup-collapse {
-        transition: max-height 300ms ease-in-out, transform 150ms ease-out;
+        transition: max-height 300ms ease-in-out;
+    }
+
+    &.mud-collapse-expanded {
+        overflow: initial;
     }
 }
 

@@ -1,11 +1,18 @@
 ﻿using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudCollapse : MudComponentBase
     {
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
+
+        private ElementReference _container;
+        private bool _transitionEnds { get; set; }
 
         /// <summary>
         /// If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.
@@ -21,6 +28,8 @@ namespace MudBlazor
         /// Child content of component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        [Parameter] public EventCallback OnTransitionEnd { get; set; }
 
         /// <summary>
         /// Modified transition duration that scales with height parameter.
@@ -41,16 +50,41 @@ namespace MudBlazor
             set { }
         }
 
-        private string GetTranstionDurations()
+        public override Task SetParametersAsync(ParameterView parameters)
         {
-            var d1 = CalculatedTransitionDuration;
-            var d2 = d1 / 2;
-            return $"{d1.ToString(CultureInfo.InvariantCulture)}s, {d2.ToString(CultureInfo.InvariantCulture)}s";
+            var expanded = parameters.GetValueOrDefault<bool>(nameof(Expanded));
+            if (expanded != Expanded)
+            {
+                _transitionEnds = false;
+            }
+
+            return base.SetParametersAsync(parameters);
+        }
+
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                JSRuntime.InvokeVoidAsync("addTranstionEndListener", _container, DotNetObjectReference.Create(this));
+            }
+            return base.OnAfterRenderAsync(firstRender);
+        }
+
+        [JSInvokable]
+        public void TransitionEnd()
+        {
+            if (!_transitionEnds)
+            {
+                _transitionEnds = true;
+                OnTransitionEnd.InvokeAsync(Expanded);
+                StateHasChanged();
+            }
         }
 
         protected string Classname =>
             new CssBuilder("mud-collapse-container")
-            .AddClass($"mud-collapse-expanded", Expanded)
+            .AddClass($"mud-collapse-expand", Expanded)
+            .AddClass($"mud-collapse-expanded", Expanded && _transitionEnds)
             .AddClass(Class)
             .Build();
     }
