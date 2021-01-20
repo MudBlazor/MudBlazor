@@ -77,13 +77,6 @@
     </ItemGroup>
   </Target>
 
-  <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
-    <ItemGroup>
-      <FileWatch Include="**\*.razor;" Exclude="node_modules\**\*;obj\**\*;bin\**\*" />
-      <Watch Include="%(FileWatch.FullPath)" />
-    </ItemGroup>
-  </Target>
-  
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
     <None Include="bundleconfig.json">
