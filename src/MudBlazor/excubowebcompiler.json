@@ -4,7 +4,7 @@
     "Enabled": true,
     "Css": {
       "TermSemicolons": true,
-      "OutputMode": "SingleLine",
+      "OutputMode": "SingleLine"
     }
   },
   "Javascript": {
