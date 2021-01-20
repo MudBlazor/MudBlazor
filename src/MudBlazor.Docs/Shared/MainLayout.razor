@@ -36,7 +36,10 @@
             <NavMenu @ref="@_navMenuRef"/>
         </MudDrawer>
         <MudMainContent Class="mudblazor-main-content">
-            @Body            
+            @Body
+            <MudScrollToTop TopOffset="400">
+                <MudFab Icon="@Icons.Material.KeyboardArrowUp" Color="Color.Primary" />
+            </MudScrollToTop>
             <NavigationFooter Section=_section Previous="@_previous" Next="@_next" />
         </MudMainContent>
     

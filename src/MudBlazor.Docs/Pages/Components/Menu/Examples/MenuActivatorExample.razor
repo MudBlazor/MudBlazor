@@ -1,21 +1,15 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudMenu PositionAtCurser="true">
+
+<MudMenu FullWidth="true">
     <ActivatorContent>
-        <MudCard>
-            <MudCardMedia Image="_content/MudBlazor.Docs/images/content-template-door.png" Height="200" />
-            <MudCardContent>
-                <MudText Typo="Typo.h5">Old Paint</MudText>
-                <MudText Typo="Typo.body2">Old paint found on a stone house door.</MudText>
-                <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
-            </MudCardContent>
-        </MudCard>
+        <MudChip Icon="@Icons.Material.Person" Color="Color.Primary">Account</MudChip>
     </ActivatorContent>
     <ChildContent>
-        <MudMenuItem>Cut</MudMenuItem>
-        <MudMenuItem>Copy</MudMenuItem>
-        <MudMenuItem>Paste</MudMenuItem>
-        <MudMenuItem>Delete</MudMenuItem>
+        <MudMenuItem>Profile</MudMenuItem>
+        <MudMenuItem>Theme</MudMenuItem>
+        <MudMenuItem>Usage</MudMenuItem>
+        <MudMenuItem>Sign Out</MudMenuItem>
     </ChildContent>
 </MudMenu>
 
@@ -30,3 +24,18 @@
         <MudMenuItem>Sign Out</MudMenuItem>
     </ChildContent>
 </MudMenu>
+
+<MudMenu FullWidth="true">
+    <ActivatorContent>
+        <MudAlert Severity="Severity.Error" Variant="Variant.Filled" Dense="true">Dense Error</MudAlert>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem>Profile</MudMenuItem>
+        <MudMenuItem>Theme</MudMenuItem>
+        <MudMenuItem>Usage</MudMenuItem>
+        <MudMenuItem>Sign Out</MudMenuItem>
+    </ChildContent>
+</MudMenu>
+
+
+
