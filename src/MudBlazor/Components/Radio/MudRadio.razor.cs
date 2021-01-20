@@ -15,7 +15,7 @@ namespace MudBlazor
         protected string Classname =>
         new CssBuilder("mud-radio")
             .AddClass($"mud-disabled", Disabled)
-            .AddClass($"mud-radio-label-placement-{Placement.ToDescriptionString()}", when: () => Placement != Placement.End)
+            .AddClass($"mud-radio-content-placement-{Placement.ToDescriptionString()}", when: () => Placement != Placement.End)
             .AddClass(Class)
             .Build();
 
@@ -39,14 +39,9 @@ namespace MudBlazor
         [Parameter] public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The position of the label.
+        /// The position of the child content.
         /// </summary>
         [Parameter] public Placement Placement { get; set; } = Placement.End;
-
-        /// <summary>
-        /// The text to display next to the button.
-        /// </summary>
-        [Parameter] public string Label { get; set; }
 
         /// <summary>
         /// The value to associate to the button.
