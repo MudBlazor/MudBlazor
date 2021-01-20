@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<RadioGroupTest1>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var group = comp.FindComponent<MudRadioGroup>();
+            var group = comp.FindComponent<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
             // check initial state
@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<RadioGroupTest2>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var group = comp.FindComponent<MudRadioGroup>();
+            var group = comp.FindComponent<MudRadioGroup<string>>();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
             // check initial state, should be initialized to second radio by default
             group.Instance.SelectedOption.Should().Be("2");
@@ -91,7 +91,7 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<RadioGroupTest3>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var groups = comp.FindComponents<MudRadioGroup>();
+            var groups = comp.FindComponents<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
             // check initial state, should be initialized to second radio by default for both groups
@@ -127,7 +127,7 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<RadioGroupTest4>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var groups = comp.FindComponents<MudRadioGroup>();
+            var groups = comp.FindComponents<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
             // check initial state, should be uninitialized
@@ -163,7 +163,7 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<RadioGroupTest5>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var group = comp.FindComponent<MudRadioGroup>();
+            var group = comp.FindComponent<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
             var spans = comp.FindAll("span.mud-radio-icons").ToArray();
             // check initial state

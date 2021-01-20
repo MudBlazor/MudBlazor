@@ -2,43 +2,21 @@
 
 <MudGrid>
     <MudItem xs="12" md="2">
-        <MudRadioGroup SelectedOption="@SelectedOption" SelectedOptionChanged="@OnSelected">
-            <MudRadio Color="Color.Primary" Option="1">Bottom</MudRadio>
-            <MudRadio Color="Color.Primary" Option="2">Start</MudRadio>
-            <MudRadio Color="Color.Primary" Option="3">Top</MudRadio>
-            <MudRadio Color="Color.Primary" Option="4">End</MudRadio>
+        <MudRadioGroup @bind-SelectedOption="@Placement">
+            <MudRadio Color="Color.Primary" Option="@(Placement.Bottom)">Bottom</MudRadio>
+            <MudRadio Color="Color.Primary" Option="@(Placement.Start)">Start</MudRadio>
+            <MudRadio Color="Color.Primary" Option="@(Placement.Top)">Top</MudRadio>
+            <MudRadio Color="Color.Primary" Option="@(Placement.End)">End</MudRadio>
         </MudRadioGroup>
     </MudItem>
     <MudItem xs="12" md="8" Class="mud-text-align-center my-auto">
-        <MudRadioGroup>
-            <MudRadio Placement="@Placement" Color="Color.Secondary">Content Placement</MudRadio>
+        <MudRadioGroup T="string">
+            <MudRadio T="string" Placement="@Placement" Color="Color.Secondary">Content Placement</MudRadio>
         </MudRadioGroup>
     </MudItem>
     <MudItem xs="12" md="2" Style="width:100%"></MudItem>
 </MudGrid>
 
 @code {
-    public string SelectedOption { get; set; } = "4";
     public Placement Placement { get; set; } = Placement.End;
-
-    public void OnSelected(string value)
-    {
-        SelectedOption = value;
-
-        switch (value)
-        {
-            case "1":
-                Placement = Placement.Bottom;
-                break;
-            case "2":
-                Placement = Placement.Start;
-                break;
-            case "3":
-                Placement = Placement.Top;
-                break;
-            case "4":
-                Placement = Placement.End;
-                break;
-        }
-    }
 }

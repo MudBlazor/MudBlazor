@@ -74,7 +74,7 @@ namespace MudBlazor.Docs.Services
 
             //Inputs
             .AddNavGroup("Form Inputs & controls", false, new DocsComponents()
-                .AddItem("Radio", typeof(MudRadio))
+                .AddItem("Radio", typeof(MudRadio<T>))
                 .AddItem("Checkbox", typeof(MudCheckBox<T>))
                 .AddItem("Select", typeof(MudSelect<T>))
                 .AddItem("Slider", typeof(MudSlider<T>))
