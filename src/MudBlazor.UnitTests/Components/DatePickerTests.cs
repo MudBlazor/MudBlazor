@@ -46,8 +46,6 @@ namespace MudBlazor.UnitTests
             Console.WriteLine("Elapsed: " + watch.Elapsed);
         }
 
-        /// <summary>
-
         [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public async Task Open_Close_DatePicker_10000_Times_CheckPerformance()
