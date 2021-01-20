@@ -17,8 +17,4 @@
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TestComponents\TextField\" />
-  </ItemGroup>
-
 </Project>

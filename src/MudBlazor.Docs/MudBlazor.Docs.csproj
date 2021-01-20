@@ -82,10 +82,6 @@
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\Components\MessageBox\Code\" />
-  </ItemGroup>
-
   <Target Name="ToolRestore">
       <Exec Command="dotnet tool update excubo.webcompiler" StandardOutputImportance="high" />
   </Target>
