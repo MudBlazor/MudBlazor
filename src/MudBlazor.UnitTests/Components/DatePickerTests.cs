@@ -37,13 +37,14 @@ namespace MudBlazor.UnitTests
         public void RenderDatePicker_10000_Times_CheckPerformance()
         {
             // warmup
-            ctx.RenderComponent<DatePickerPerformanceTest>();
+            ctx.RenderComponent<MudDatePicker>();
             // measure
             var watch = Stopwatch.StartNew();
             for (var i = 0; i < 10000; i++)
-                ctx.RenderComponent<DatePickerPerformanceTest>();
+                ctx.RenderComponent<MudDatePicker>();
             watch.Stop();
             Console.WriteLine("Elapsed: " + watch.Elapsed);
+            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
         [Test]
@@ -62,6 +63,7 @@ namespace MudBlazor.UnitTests
             }
             watch.Stop();
             Console.WriteLine("Elapsed: " + watch.Elapsed);
+            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
         [Test]
