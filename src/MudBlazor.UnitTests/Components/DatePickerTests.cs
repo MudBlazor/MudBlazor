@@ -46,8 +46,6 @@ namespace MudBlazor.UnitTests
             Console.WriteLine("Elapsed: " + watch.Elapsed);
         }
 
-        /// <summary>
-
         [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
         public async Task Open_Close_DatePicker_10000_Times_CheckPerformance()
@@ -125,6 +123,22 @@ namespace MudBlazor.UnitTests
                 .Where(x => x.TrimmedText().Equals("23")).First().Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.Date.Should().NotBeNull();
+        }
+
+        [Test]
+        public void Open_CloseBySelectingADate_CheckClosed_Check_DateChangedCount()
+        {
+            var eventCount = 0;
+            DateTime? returnDate = null;
+            var comp = OpenPicker(EventCallback("DateChanged", (DateTime? date) => { eventCount++; returnDate = date; }));
+            // clicking a day button to select a date and close
+            comp.FindAll("div.mud-picker-calendar-day > button")
+                .Where(x => x.TrimmedText().Equals("23")).First().Click();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
+            comp.Instance.Date.Should().NotBeNull();
+            eventCount.Should().Be(1);
+            var now = DateTime.Now;
+            returnDate.Should().Be(new DateTime(now.Year, now.Month, 23));
         }
 
         [Test]

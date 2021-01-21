@@ -43,7 +43,6 @@ namespace MudBlazor
                     if (lowerValue == "false" || lowerValue == "off")
                         return (T)(object)false;
                     UpdateGetError("Not a valid boolean");
-                    return default(T);
                 }
                 // sbyte
                 else if (typeof(T) == typeof(sbyte) || typeof(T) == typeof(sbyte?))
@@ -153,7 +152,6 @@ namespace MudBlazor
                     catch (FormatException)
                     {
                         UpdateGetError("Not a valid date time");
-                        return default;
                     }
                 }
                 // timespan
@@ -166,7 +164,6 @@ namespace MudBlazor
                     catch (FormatException)
                     {
                         UpdateGetError("Not a valid time span");
-                        return default;
                     }
                 }
                 else
@@ -177,8 +174,8 @@ namespace MudBlazor
             catch (Exception e)
             {
                 UpdateGetError("Conversion error: " + e.Message);
-                return default(T);
             }
+
             return default(T);
         }
 
@@ -293,7 +290,7 @@ namespace MudBlazor
                 else if (typeof(T) == typeof(TimeSpan))
                 {
                     var value = (TimeSpan)(object)arg;
-                    return value.ToString(Format ?? Culture.DateTimeFormat.ShortTimePattern, Culture);
+                    return value.ToString(Format ?? DefaultTimeSpanFormat, Culture);
                 }
                 else if (typeof(T) == typeof(TimeSpan?))
                 {

@@ -7,8 +7,15 @@
     <MudRadio Option="@("3")" />
 </MudRadioGroup>
 
-@code {
-    public static string __description__ = "Radio 2 should be pre-selected.";
+<MudButton OnClick="OnClick" />
 
-    string option = "2";
+@code {
+    public static string __description__ = "RadioGroup should be resettable";
+
+    string option;
+
+    private void OnClick()
+    {
+        option = null;
+    }
 }

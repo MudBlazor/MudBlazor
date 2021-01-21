@@ -10,7 +10,7 @@
     -webkit-tap-highlight-color: transparent;
     color: var(--mud-palette-action-default);
 
-    & > .mud-radio-label {
+    & > .mud-radio-content {
         color: var(--mud-palette-text-primary);
     }
 
@@ -18,7 +18,7 @@
         cursor: default;
         background-color: transparent !important;
 
-        & > .mud-radio-label {
+        & > .mud-radio-content {
             color: var(--mud-palette-text-disabled);
         }
 
@@ -86,7 +86,7 @@
 }
 
 
-.mud-radio-label-placement- {
+.mud-radio-content-placement- {
     &start {
         margin-left: 16px;
         margin-right: -11px;
