@@ -386,7 +386,7 @@ namespace MudBlazor.UnitTests.Utilities
             var tm2n = new DefaultConverter<TimeSpan?>();
             tm2n.Get("25:00").Should().Be(null);
 
-            // not qa valid number
+            // not a valid number
             var c1 = new DefaultConverter<sbyte>();
             c1.Get("a-z").Should().Be(default);
             var cn1 = new DefaultConverter<sbyte?>();
@@ -439,6 +439,11 @@ namespace MudBlazor.UnitTests.Utilities
             c13.Get("a-z").Should().Be(YesNoMaybe.Maybe);
             var c14 = new DefaultConverter<YesNoMaybe?>();
             c14.Get("a-z").Should().Be(null);
+
+            // invalid format for type supplied
+            var c16 = new DefaultConverter<int?>();
+            c16.Format = "dd/mm/yy";
+            c16.Get(c16.Set(22)).Should().Be(null);
         }
     }
 }
