@@ -134,7 +134,7 @@ namespace MudBlazor.UnitTests
             DateTime? returnDate = null;
             var comp = OpenPicker(EventCallback("DateChanged", (DateTime? date) => { eventCount++; returnDate = date; }));
             // clicking a day button to select a date and close
-            comp.FindAll("div.mud-picker-calendar-day > button")
+            comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("23")).First().Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.Date.Should().NotBeNull();
