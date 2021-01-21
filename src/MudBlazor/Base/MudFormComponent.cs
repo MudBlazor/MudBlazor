@@ -153,6 +153,8 @@ namespace MudBlazor
 
                 await task;
 
+                // we validate only if the value hasn't changed while we waited for task.
+                // if it has in fact changed, another validate call will follow anyway
                 if (EqualityComparer<T>.Default.Equals(value, _value))
                 {
                     BeginValidate();
