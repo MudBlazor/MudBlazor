@@ -371,42 +371,74 @@ namespace MudBlazor.UnitTests.Utilities
             //format exception
             var dt1 = new DefaultConverter<DateTime>();
             dt1.Get("12/34/56").Should().Be(default);
+            var dtn1 = new DefaultConverter<DateTime?>();
+            dtn1.Get("12/34/56").Should().Be(null);
+
             // format exception
             var tm1 = new DefaultConverter<TimeSpan>();
             tm1.Get("12:o1").Should().Be(default);
+            var tmn1 = new DefaultConverter<TimeSpan?>();
+            tmn1.Get("12:o1").Should().Be(null);
+
             // overflow
             var tm2 = new DefaultConverter<TimeSpan>();
             tm2.Get("25:00").Should().Be(default);
+            var tm2n = new DefaultConverter<TimeSpan?>();
+            tm2n.Get("25:00").Should().Be(null);
+
             // not qa valid number
             var c1 = new DefaultConverter<sbyte>();
             c1.Get("a-z").Should().Be(default);
+            var cn1 = new DefaultConverter<sbyte?>();
+            cn1.Get("a-z").Should().Be(null);
             var c2 = new DefaultConverter<byte>();
             c2.Get("a-z").Should().Be(default);
+            var cn2 = new DefaultConverter<byte?>();
+            cn2.Get("a-z").Should().Be(null);
             var c3 = new DefaultConverter<short>();
             c3.Get("a-z").Should().Be(default);
+            var c3n = new DefaultConverter<short?>();
+            c3n.Get("a-z").Should().Be(null);
             var c4 = new DefaultConverter<ushort>();
             c4.Get("a-z").Should().Be(default);
+            var c4n = new DefaultConverter<ushort?>();
+            c4n.Get("a-z").Should().Be(null);
             var c5 = new DefaultConverter<int>();
             c5.Get("a-z").Should().Be(default);
+            var c5n = new DefaultConverter<int?>();
+            c5n.Get("a-z").Should().Be(null);
             var c6 = new DefaultConverter<uint>();
             c6.Get("a-z").Should().Be(default);
+            var c6n = new DefaultConverter<uint?>();
+            c6n.Get("a-z").Should().Be(null);
             var c7 = new DefaultConverter<long>();
             c7.Get("a-z").Should().Be(default);
+            var c7n = new DefaultConverter<long?>();
+            c7n.Get("a-z").Should().Be(null);
             var c8 = new DefaultConverter<ulong>();
             c8.Get("a-z").Should().Be(default);
-
+            var c8n = new DefaultConverter<ulong?>();
+            c8n.Get("a-z").Should().Be(null);
             var c9 = new DefaultConverter<float>();
             c9.Get("a-z").Should().Be(default);
+            var c9n = new DefaultConverter<float?>();
+            c9n.Get("a-z").Should().Be(null);
             var c10 = new DefaultConverter<double>();
             c10.Get("a-z").Should().Be(default);
+            var c10n = new DefaultConverter<double?>();
+            c10n.Get("a-z").Should().Be(null);
             var c11 = new DefaultConverter<decimal>();
             c11.Get("a-z").Should().Be(default);
+            var c11n = new DefaultConverter<decimal?>();
+            c11n.Get("a-z").Should().Be(null);
             var c12 = new DefaultConverter<Guid>();
             c12.Get("a-z").Should().Be(Guid.Empty);
+            var c12n = new DefaultConverter<Guid?>();
+            c12n.Get("a-z").Should().Be(null);
             var c13 = new DefaultConverter<YesNoMaybe>();
             c13.Get("a-z").Should().Be(YesNoMaybe.Maybe);
             var c14 = new DefaultConverter<YesNoMaybe?>();
-            c14.Get("a-z").Should().Be(default);
+            c14.Get("a-z").Should().Be(null);
         }
     }
 }
