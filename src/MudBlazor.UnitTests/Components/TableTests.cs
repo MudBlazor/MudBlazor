@@ -364,7 +364,6 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task TableMultiSelectionTest5()
         {
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<TableMultiSelectionTest5>();
             // print the generated html
             Console.WriteLine(comp.Markup);
