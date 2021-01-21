@@ -20,15 +20,23 @@
         }
     }
     <CascadingValue Value="@this" IsFixed="true">
-        @if (IsOpen && PickerVariant != PickerVariant.Dialog)
+        @if (IsOpen && PickerVariant == PickerVariant.Inline)
         {
-            <div @ref="_pickerPaperRef" class="@PickerPaperClass">
-                <MudPaper @attributes="UserAttributes" Elevation="@_pickerElevation" Square="@_pickerSquare">
+            <div @ref="_pickerInlineRef" class="@PickerInlineClass">
+                <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
                     <div class="@PickerContainerClass">
                         @ChildContent
                     </div>
                 </MudPaper>
             </div>
+        }
+        else if (IsOpen && PickerVariant == PickerVariant.Static)
+        {
+            <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
+                <div class="@PickerContainerClass">
+                    @ChildContent
+                </div>
+            </MudPaper>
         }
         else if(IsOpen && PickerVariant == PickerVariant.Dialog)
         {

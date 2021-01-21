@@ -45,6 +45,10 @@ namespace MudBlazor
             .AddClass("mud-picker-open", IsOpen && PickerVariant == PickerVariant.Inline)
             .AddClass("mud-picker-popover-paper", PickerVariant == PickerVariant.Inline)
             .AddClass("mud-dialog", PickerVariant == PickerVariant.Dialog)
+            .Build();
+
+        protected string PickerInlineClass =>
+        new CssBuilder("mud-picker-inline-paper")
             .AddClass("mud-picker-hidden", _pickerVerticalPosition == PickerVerticalPosition.Unknown && PickerVariant == PickerVariant.Inline)
             .AddClass("mud-picker-pos-top", _pickerVerticalPosition == PickerVerticalPosition.Top)
             .AddClass("mud-picker-pos-above", _pickerVerticalPosition == PickerVerticalPosition.Above)
@@ -52,7 +56,7 @@ namespace MudBlazor
             .AddClass("mud-picker-pos-below", _pickerVerticalPosition == PickerVerticalPosition.Below)
             .AddClass("mud-picker-pos-left", _pickerHorizontalPosition == PickerHorizontalPosition.Left)
             .AddClass("mud-picker-pos-right", _pickerHorizontalPosition == PickerHorizontalPosition.Right)
-            .Build();
+        .Build();
 
         protected string PickerContainerClass =>
         new CssBuilder("mud-picker-container")
@@ -73,7 +77,7 @@ namespace MudBlazor
 
         private bool _pickerSquare;
         private int _pickerElevation;
-        private ElementReference _pickerPaperRef;
+        private ElementReference _pickerInlineRef;
 
         private PickerVerticalPosition _pickerVerticalPosition = PickerVerticalPosition.Unknown;
         private PickerHorizontalPosition _pickerHorizontalPosition = PickerHorizontalPosition.Unknown;
@@ -126,7 +130,7 @@ namespace MudBlazor
             if (PickerVariant == PickerVariant.Inline)
             {
                 await DeterminePosition();
-                await DomService.ChangeCss(_pickerPaperRef, PickerPaperClass);
+                await DomService.ChangeCss(_pickerInlineRef, PickerInlineClass);
             }
         }
 
@@ -155,7 +159,7 @@ namespace MudBlazor
             }
 
             var size = await WindowSizeListener.GetBrowserWindowSize();
-            var clientRect = await DomService.GetBoundingClientRect(_pickerPaperRef);
+            var clientRect = await DomService.GetBoundingClientRect(_pickerInlineRef);
 
             if (size == null || clientRect == null)
             {
