@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents.TimePicker;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using static Bunit.ComponentParameterFactory;
