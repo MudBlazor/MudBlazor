@@ -53,5 +53,15 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-list-item").Skip(1).First().Click();
             comp.FindAll("div.mud-popover-open").Count().Should().Be(0);
         }
+
+        [Test]
+        public void OpenMenu_ClickThirdItem_CheckClosed()
+        {
+            var comp = ctx.RenderComponent<MenuTest1>();
+            comp.FindAll("button.mud-button-root").First().Click();
+            comp.FindAll("div.mud-list-item").Count().Should().Be(3);
+            comp.FindAll("div.mud-list-item").Skip(2).First().Click();
+            comp.FindAll("div.mud-popover-open").Count().Should().Be(0);
+        }
     }
 }

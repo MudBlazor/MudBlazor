@@ -128,6 +128,8 @@ namespace MudBlazor
             }
             else if (Href != null)
             {
+                MudList?.SetSelectedItem(this);
+                OnClick.InvokeAsync(ev);
                 UriHelper.NavigateTo(Href);
             }
             else
