@@ -251,6 +251,12 @@
     }
 }
 
+.mud-picker-hidden {
+    .mud-picker-nav-button-next, .mud-picker-nav-button-prev {
+        visibility: hidden !important;
+    }
+}
+
 .mud-picker-calendar-container {
     display: flex;
     width: 310px;

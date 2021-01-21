@@ -167,12 +167,6 @@ namespace MudBlazor
                 return;
             }
 
-            if (size.Width < clientRect.Right)
-            {
-                _pickerHorizontalPosition = size.Width > clientRect.Width ?
-                    PickerHorizontalPosition.Right : PickerHorizontalPosition.Left;
-            }
-
             if (size.Height < clientRect.Height)
             {
                 _pickerVerticalPosition = PickerVerticalPosition.Top;
@@ -199,6 +193,25 @@ namespace MudBlazor
             else
             {
                 _pickerVerticalPosition = PickerVerticalPosition.Below;
+            }
+
+            if (size.Width < clientRect.Right &&
+                (_pickerVerticalPosition == PickerVerticalPosition.Above ||
+                _pickerVerticalPosition == PickerVerticalPosition.Below))
+            {
+                if (clientRect.Left - clientRect.Width + 226 /*width of the input*/ > 0)
+                {
+                    _pickerHorizontalPosition = PickerHorizontalPosition.Right;
+                }
+                else if (clientRect.Left + clientRect.Width / 2 < size.Width)
+                {
+                    _pickerHorizontalPosition = PickerHorizontalPosition.Left;
+                }
+            }
+            else if (size.Width < clientRect.Right)
+            {
+                _pickerHorizontalPosition = size.Width > clientRect.Width ?
+                    PickerHorizontalPosition.Right : PickerHorizontalPosition.Left;
             }
         }
     }

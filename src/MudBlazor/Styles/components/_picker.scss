@@ -148,11 +148,12 @@
     visibility: visible;
 
     &.mud-picker-pos-left {
-        left: 10px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     &.mud-picker-pos-right {
-        right: 10px;
+        right: 0px;
     }
 }
 
@@ -174,10 +175,11 @@
     visibility: visible;
 
     &.mud-picker-pos-left {
-        left: 10px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     &.mud-picker-pos-right {
-        right: 10px;
+        right: 0px;
     }
 }
