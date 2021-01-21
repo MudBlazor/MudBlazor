@@ -32,13 +32,14 @@ namespace MudBlazor.UnitTests
         public void RenderDateRangePicker_10000_Times_CheckPerformance()
         {
             // warmup
-            ctx.RenderComponent<DateRangePickerPerformanceTest>();
+            ctx.RenderComponent<MudDateRangePicker>();
             // measure
             var watch = Stopwatch.StartNew();
             for (var i = 0; i < 10000; i++)
-                ctx.RenderComponent<DateRangePickerPerformanceTest>();
+                ctx.RenderComponent<MudDateRangePicker>();
             watch.Stop();
             Console.WriteLine("Elapsed: " + watch.Elapsed);
+            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
         /// <summary>
@@ -59,6 +60,7 @@ namespace MudBlazor.UnitTests
             }
             watch.Stop();
             Console.WriteLine("Elapsed: " + watch.Elapsed);
+            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
         [Test]
