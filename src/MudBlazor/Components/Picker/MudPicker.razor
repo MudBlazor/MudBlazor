@@ -1,7 +1,4 @@
 @namespace MudBlazor
-@using Microsoft.JSInterop
-@using MudBlazor.Interop
-@using MudBlazor.Utilities
 @inherits MudBasePicker
 
 <div class="@PickerClass">
@@ -9,24 +6,34 @@
     {
         @if (!IsRange) 
         { 
-            <MudTextField Label="@Label" @bind-Text="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string"
-                          @onclick="@(() => { if (!Editable) ToggleOpen(); })" OnAdornmentClick="ToggleOpen" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
+            <MudTextField Label="@Label" @bind-Text="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string" Style="@Style"
+                          @onclick="@(() => { if (!Editable) ToggleState(); })" OnAdornmentClick="ToggleState" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
         }
         else 
         {
-            <MudInputControl Label="@Label" Variant="@InputVariant" HelperText="@HelperText" Disabled="@Disabled" @onclick="@(() => { if (!Editable) ToggleOpen(); })">
+            <MudInputControl Label="@Label" Variant="@InputVariant" HelperText="@HelperText" Disabled="@Disabled" @onclick="@(() => { if (!Editable) ToggleState(); })">
                 <InputContent>
                     <MudRangeInput @attributes="UserAttributes" InputType="@InputType.Text" Class="@PickerInputClass" Style="@Style" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string"
-                                   @bind-Text="@Value" Disabled=@Disabled Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" OnAdornmentClick="ToggleOpen"/>
+                                   @bind-Text="@Value" Disabled=@Disabled Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" OnAdornmentClick="ToggleState"/>
                 </InputContent>
             </MudInputControl>
         }
     }
     <CascadingValue Value="@this" IsFixed="true">
-        @if (IsOpen && PickerVariant != PickerVariant.Dialog)
+        @if (IsOpen && PickerVariant == PickerVariant.Inline)
+        {
+            <div @ref="_pickerInlineRef" class="@PickerInlineClass">
+                <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
+                    <div class="@PickerContainerClass">
+                        @ChildContent
+                    </div>
+                </MudPaper>
+            </div>
+        }
+        else if (IsOpen && PickerVariant == PickerVariant.Static)
         {
             <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
-                <div @ref="_pickerContainerRef" class="@PickerContainerClass">
+                <div class="@PickerContainerClass">
                     @ChildContent
                 </div>
             </MudPaper>
@@ -35,7 +42,7 @@
         {
             <MudOverlay Visible="IsOpen" OnClick="@Close" DarkBackground="true" Class="mud-overlay-dialog">
                 <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
-                    <div @ref="_pickerContainerRef" class="@PickerContainerClass">
+                    <div class="@PickerContainerClass">
                         @ChildContent
                     </div>
                 </MudPaper>

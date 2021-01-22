@@ -38,7 +38,11 @@ namespace MudBlazor
         protected bool? BoolValue
         {
             get => Converter.Set(_value);
-            set => Checked = Converter.Get(value);
+            set
+            {
+                Touched = true;
+                Checked = Converter.Get(value);
+            }
         }
 
         protected override bool SetConverter(Converter<T, bool?> value)

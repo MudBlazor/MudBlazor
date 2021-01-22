@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="bunit" Version="1.0.0-preview-01" />
-    <PackageReference Include="coverlet.msbuild" Version="3.0.0">
+    <PackageReference Include="coverlet.msbuild" Version="3.0.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

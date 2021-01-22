@@ -67,7 +67,7 @@ namespace MudBlazor
         [Parameter] public EventCallback<bool> IsValidChanged { get; set; }
 
         // keeps track of validation. if the input was validated at least once the value will be true
-        protected Dictionary<IFormComponent, bool> _touchedFormControls = new Dictionary<IFormComponent, bool>();
+        protected HashSet<IFormComponent> _formControls = new HashSet<IFormComponent>();
         protected HashSet<string> _errors = new HashSet<string>();
 
         /// <summary>
@@ -86,12 +86,12 @@ namespace MudBlazor
         {
             if (formControl.Required)
                 _valid = false;
-            _touchedFormControls[formControl] = false; // false means untouched!
+            _formControls.Add(formControl);
         }
 
         void IForm.Remove(IFormComponent formControl)
         {
-            _touchedFormControls.Remove(formControl);
+            _formControls.Remove(formControl);
         }
 
         private Timer _timer;
@@ -102,7 +102,6 @@ namespace MudBlazor
         /// <param name="formControl"></param>
         void IForm.Update(IFormComponent formControl)
         {
-            _touchedFormControls[formControl] = true;
             EvaluateForm();
         }
 
@@ -122,14 +121,14 @@ namespace MudBlazor
         protected async Task OnEvaluateForm()
         {
             _errors.Clear();
-            foreach (var error in _touchedFormControls.Keys.SelectMany(control => control.ValidationErrors))
+            foreach (var error in _formControls.SelectMany(control => control.ValidationErrors))
                 _errors.Add(error);
             var old_valid = _valid;
             // form can only be valid if:
             // - none have an error
             // - all required fields have been touched (and thus validated)
-            var no_errors = _touchedFormControls.Keys.All(x => x.HasErrors == false);
-            var required_all_touched = _touchedFormControls.Where(pair => pair.Key.Required).All(pair => pair.Value == true);
+            var no_errors = _formControls.All(x => x.HasErrors == false);
+            var required_all_touched = _formControls.Where(x => x.Required).All(x => x.Touched);
             _valid = no_errors && required_all_touched;
             try
             {
@@ -156,7 +155,7 @@ namespace MudBlazor
         /// </summary>
         public void Validate()
         {
-            foreach (var control in _touchedFormControls.Keys.ToArray())
+            foreach (var control in _formControls.ToArray())
             {
                 control.Validate();
             }
@@ -168,10 +167,9 @@ namespace MudBlazor
         /// </summary>
         public void Reset()
         {
-            foreach (var control in _touchedFormControls.Keys.ToArray())
+            foreach (var control in _formControls.ToArray())
             {
                 control.Reset();
-                _touchedFormControls[control] = false;
             }
             EvaluateForm(debounce: false);
         }
@@ -181,10 +179,9 @@ namespace MudBlazor
         /// </summary>
         public void ResetValidation()
         {
-            foreach (var control in _touchedFormControls.Keys.ToArray())
+            foreach (var control in _formControls.ToArray())
             {
                 control.ResetValidation();
-                _touchedFormControls[control] = false;
             }
             EvaluateForm(debounce: false);
         }

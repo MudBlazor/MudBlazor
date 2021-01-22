@@ -10,7 +10,7 @@
       "IndentSize": 2
     },
     "Javascript": {
-      "RenameLocals": true,
+      "RenameLocals": false,
       "PreserveImportantComments": true,
       "EvalTreatment": "Ignore",
       "TermSemicolons": true,

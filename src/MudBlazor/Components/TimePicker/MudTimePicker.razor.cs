@@ -246,6 +246,14 @@ namespace MudBlazor
             return deg;
         }
 
+        private string GetTransform(double angle, double radius, double offsetX, double offsetY)
+        {
+            angle = angle / 180 * Math.PI;
+            var x = (Math.Sin(angle) * radius + offsetX).ToString("F3", CultureInfo.InvariantCulture);
+            var y = ((Math.Cos(angle) + 1) * radius + offsetY).ToString("F3", CultureInfo.InvariantCulture);
+            return $"transform: translate({x}px, {y}px);";
+        }
+
         private string GetPointerRotation()
         {
             double deg = 0;
@@ -375,15 +383,13 @@ namespace MudBlazor
 
         }
 
-        public override void Open()
+        protected override void OnOpened()
         {
-            base.Open();
             Picker.Open();
         }
 
-        public override void Close()
+        protected override void OnClosed()
         {
-            base.Close();
             Picker.Close();
         }
 

@@ -7,44 +7,26 @@ using static System.String;
 
 namespace MudBlazor
 {
-    public class MudDateRangePicker : MudBaseDatePicker, IDisposable
+    public class MudDateRangePicker : MudBaseDatePicker
     {
-        private DateTime? _firstDate = null, _currentDate;
+        private DateTime? _firstDate = null;
         private DateRange _dateRange;
 
         protected override bool IsRange => true;
 
-        public override void Open()
+        protected override void OnOpened()
         {
-            base.Open();
             Picker.Open();
         }
 
-        public override void Close()
+        protected override void OnClosed()
         {
-            base.Close();
             Picker.Close();
         }
 
         public MudDateRangePicker()
         {
             DisplayMonths = 2;
-            //DisableToolbar = true;
-        }
-
-        protected override void OnAfterRender(bool firstRender)
-        {
-            base.OnAfterRender(firstRender);
-
-            if (firstRender)
-            {
-                Picker.OnOpenStateChanged += OnPickerStateChanged;
-            }
-        }
-
-        public void Dispose()
-        {
-            Picker.OnOpenStateChanged -= OnPickerStateChanged;
         }
 
         /// <summary>
@@ -96,6 +78,12 @@ namespace MudBlazor
             return DateRange.TryParse(value, out var dateRange) ? dateRange : null;
         }
 
+        protected override void OnPickerClosed()
+        {
+            _firstDate = null;
+            base.OnPickerClosed();
+        }
+
         protected override string GetDayClasses(int month, DateTime day)
         {
             var b = new CssBuilder("mud-day");
@@ -104,10 +92,10 @@ namespace MudBlazor
                 return b.AddClass("mud-hidden").Build();
             }
 
-            if ((_firstDate != null && day > _firstDate && day < _currentDate) ||
-               (_firstDate == null && _dateRange != null && _dateRange.Start < day && _dateRange.End > day))
+            if (_firstDate == null && _dateRange != null && _dateRange.Start < day && _dateRange.End > day)
             {
-                return b.AddClass("mud-range")
+                return b
+                    .AddClass("mud-range")
                     .AddClass("mud-range-between")
                     .Build();
             }
@@ -118,12 +106,12 @@ namespace MudBlazor
                 return b.AddClass("mud-selected")
                     .AddClass("mud-range")
                     .AddClass("mud-range-start-selected")
+                    .AddClass("mud-range-selection", _firstDate != null)
                     .AddClass($"mud-theme-{Color.ToDescriptionString()}")
                     .Build();
             }
 
-            if ((_firstDate != null && day == _currentDate && day > _firstDate) ||
-                (_firstDate == null && _dateRange != null && _dateRange.Start != day && _dateRange.End == day))
+            if (_firstDate == null && _dateRange != null && _dateRange.Start != day && _dateRange.End == day)
             {
                 return b.AddClass("mud-selected")
                     .AddClass("mud-range")
@@ -135,6 +123,9 @@ namespace MudBlazor
             if (day == DateTime.Today)
             {
                 return b.AddClass("mud-current")
+                    .AddClass("mud-range", _firstDate != null && day > _firstDate)
+                    .AddClass("mud-range-selection", _firstDate != null && day > _firstDate)
+                    .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate != null && day > _firstDate)
                     .AddClass($"mud-{Color.ToDescriptionString()}-text")
                     .Build();
             }
@@ -143,9 +134,12 @@ namespace MudBlazor
             {
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
             }
-            else if (_firstDate != null)
+            else if (_firstDate != null && day > _firstDate)
             {
-                return b.AddClass("mud-range").Build();
+                return b.AddClass("mud-range")
+                    .AddClass("mud-range-selection")
+                    .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate != null)
+                    .Build();
             }
 
             return b.Build();
@@ -162,20 +156,11 @@ namespace MudBlazor
             await SetDateRangeAsync(new DateRange(_firstDate, dateTime), true);
 
             _firstDate = null;
-            _currentDate = null;
 
             if (PickerVariant != PickerVariant.Static)
             {
                 await Task.Delay(ClosingDelay);
                 Picker.Close();
-            }
-        }
-
-        protected override void OnMouseOver(DateTime dateTime)
-        {
-            if (_firstDate != null)
-            {
-                _currentDate = dateTime;
             }
         }
 
@@ -187,14 +172,6 @@ namespace MudBlazor
                 return DateRange.Start.Value.ToString("dd MMM", Culture);
 
             return $"{DateRange.Start.Value.ToString("dd MMM", Culture)} - {DateRange.End.Value.ToString("dd MMM", Culture)}";
-        }
-
-        private void OnPickerStateChanged(bool args)
-        {
-            if (!args)
-            {
-                _firstDate = null;
-            }
         }
     }
 }

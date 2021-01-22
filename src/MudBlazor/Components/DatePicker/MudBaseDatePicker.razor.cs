@@ -5,13 +5,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using MudBlazor.Extensions;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public abstract partial class MudBaseDatePicker : MudBasePicker
     {
-        [Inject] IJSRuntime JsRuntime { get; set; }
+        [Inject] protected IJSRuntime JsRuntime { get; set; }
+
+        [Inject] protected IDomService DomService { get; set; }
+
         /// <summary>
         /// Max selectable date.
         /// </summary>
@@ -106,12 +110,14 @@ namespace MudBlazor
 
         private OpenTo _currentView;
 
-        private void OnPickerOpened()
+        protected virtual void OnPickerOpened()
         {
             _currentView = OpenTo;
             if (_currentView == OpenTo.Year)
                 _scrollToYearAfterRender = true;
         }
+
+        protected virtual void OnPickerClosed() { }
 
         /// <summary>
         /// Get the first of the month to display
@@ -173,8 +179,6 @@ namespace MudBlazor
         /// User clicked on a day
         /// </summary>
         protected abstract void OnDayClicked(DateTime dateTime);
-
-        protected virtual void OnMouseOver(DateTime time) { }
 
         /// <summary>
         /// return Mo, Tu, We, Th, Fr, Sa, Su in the right culture

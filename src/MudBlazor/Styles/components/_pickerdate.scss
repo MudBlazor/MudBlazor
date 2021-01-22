@@ -1,4 +1,6 @@
-﻿.mud-picker-datepicker-toolbar {
+﻿@import '../abstracts/variables';
+
+.mud-picker-datepicker-toolbar {
     align-items: flex-start;
     flex-direction: column;
 
@@ -159,6 +161,7 @@
 
 .mud-picker-calendar-content {
     display: grid;
+    --selected-day: 0;
     grid-column-gap: 10px;
     grid-template-columns: auto;
 }
@@ -240,9 +243,17 @@
     }
 }
 
-.mud-picker-calendar-header-last {
-    .mud-picker-nav-button-next {
-        visibility: visible !important;
+:not(.mud-picker-hidden) {
+    .mud-picker-calendar-header-last {
+        .mud-picker-nav-button-next {
+            visibility: visible !important;
+        }
+    }
+}
+
+.mud-picker-hidden {
+    .mud-picker-nav-button-next, .mud-picker-nav-button-prev {
+        visibility: hidden !important;
     }
 }
 
@@ -253,65 +264,87 @@
 }
 
 .mud-picker-calendar {
-    .mud-picker-calendar-week {
-        display: flex;
-        justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 
-        .mud-picker-calendar-day {
-            .mud-day {
-                color: var(--mud-palette-text-primary);
-                width: 36px;
-                height: 36px;
-                margin: 0 2px;
-                padding: 0;
-                font-size: 0.75rem;
-                font-weight: 500;
+    .mud-day {
+        color: var(--mud-palette-text-primary);
+        width: 36px;
+        height: 36px;
+        margin: 0 2px;
+        padding: 0;
+        font-size: 0.75rem;
+        font-weight: 500;
 
-                &:hover {
-                    background-color: var(--mud-palette-action-default-hover);
+        &:hover {
+            background-color: var(--mud-palette-action-default-hover);
+        }
+
+        &.mud-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        &.mud-current {
+            font-weight: 600;
+        }
+
+        &.mud-selected {
+            font-weight: 500;
+        }
+
+        .mud-typography {
+            margin-top: 2px;
+        }
+
+        &.mud-disabled {
+            color: var(--mud-palette-text-disabled);
+            pointer-events: none;
+        }
+
+        &.mud-range {
+            margin: 0;
+            width: 40px;
+            transition: none;
+
+            &.mud-range-start-selected {
+                border-radius: 50% 0% 0% 50%;
+            }
+
+            &.mud-range-end-selected {
+                border-radius: 0% 50% 50% 0%;
+            }
+
+            &.mud-range-between {
+                border-radius: 0;
+                background-color: var(--mud-palette-action-default-hover);
+            }
+
+            &.mud-range-selection:hover {
+                &.mud-range-start-selected {
+                    border-radius: 50%;
                 }
 
-                &.mud-hidden {
-                    opacity: 0;
-                    pointer-events: none;
-                }
-
-                &.mud-current {
-                    font-weight: 600;
-                }
-
-                &.mud-selected {
-                    font-weight: 500;
-                }
-
-                .mud-typography {
-                    margin-top: 2px;
-                }
-
-                &.mud-disabled {
-                    color: var(--mud-palette-text-disabled);
-                    pointer-events: none;
-                }
-
-                &.mud-range {
-                    margin: 0;
-                    width: 40px;
-                    transition: none;
-
-                    &.mud-range-start-selected {
-                        border-radius: 50% 0% 0% 50%;
-                    }
-
-                    &.mud-range-end-selected {
-                        border-radius: 0% 50% 50% 0%;
-                    }
-
-                    &.mud-range-between {
-                        border-radius: 0;
-                        background-color: var(--mud-palette-action-default-hover);
-                    }
+                &:not(.mud-range-start-selected) {
+                    border-radius: 0% 50% 50% 0%;
                 }
             }
+
+            &.mud-range-selection:not(:hover):not(.mud-range-start-selected) {
+                border-radius: 0;
+                background: linear-gradient(var(--mud-palette-action-default-hover) 100%, var(--mud-palette-action-default-hover) 100%, transparent 0%);
+                background-size: 100% calc(100% * (var(--selected-day) - var(--day-id)));
+            }
+        }
+    }
+}
+
+@each $color in $mud-palette-colors {
+    .mud-range-selection-#{$color} {
+        &:hover {
+            color: var(--mud-palette-#{$color}-text) !important;
+            background-color: var(--mud-palette-#{$color}) !important;
         }
     }
 }

@@ -37,13 +37,14 @@ namespace MudBlazor.UnitTests
         public void RenderDatePicker_10000_Times_CheckPerformance()
         {
             // warmup
-            ctx.RenderComponent<DatePickerPerformanceTest>();
+            ctx.RenderComponent<MudDatePicker>();
             // measure
             var watch = Stopwatch.StartNew();
             for (var i = 0; i < 10000; i++)
-                ctx.RenderComponent<DatePickerPerformanceTest>();
+                ctx.RenderComponent<MudDatePicker>();
             watch.Stop();
             Console.WriteLine("Elapsed: " + watch.Elapsed);
+            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
         [Test]
@@ -62,6 +63,7 @@ namespace MudBlazor.UnitTests
             }
             watch.Stop();
             Console.WriteLine("Elapsed: " + watch.Elapsed);
+            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
         [Test]
@@ -119,7 +121,7 @@ namespace MudBlazor.UnitTests
         {
             var comp = OpenPicker();
             // clicking a day button to select a date and close
-            comp.FindAll("div.mud-picker-calendar-day > button")
+            comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("23")).First().Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.Date.Should().NotBeNull();
@@ -132,7 +134,7 @@ namespace MudBlazor.UnitTests
             DateTime? returnDate = null;
             var comp = OpenPicker(EventCallback("DateChanged", (DateTime? date) => { eventCount++; returnDate = date; }));
             // clicking a day button to select a date and close
-            comp.FindAll("div.mud-picker-calendar-day > button")
+            comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("23")).First().Click();
             comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
             comp.Instance.Date.Should().NotBeNull();
@@ -216,7 +218,7 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")
                 .Skip(2).First().Click();
-            comp.FindAll("div.mud-picker-calendar-day > button")
+            comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("2")).First().Click();
             comp.Instance.Date.Value.Date.Should().Be(new DateTime(DateTime.Now.Year, 3, 2));
         }
@@ -238,7 +240,7 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")
                 .Skip(3).First().Click();
-            comp.FindAll("div.mud-picker-calendar-day > button")
+            comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("23")).First().Click();
             comp.Instance.Date.Value.Date.Should().Be(new DateTime(DateTime.Now.Year, 4, 23));
         }
@@ -274,7 +276,7 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month").Skip(1).First().Click();
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-calendar-day > button")
+            comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("1")).First().Click();
             comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, 2, 1));
         }

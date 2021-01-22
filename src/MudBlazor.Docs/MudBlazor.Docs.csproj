@@ -82,7 +82,7 @@
   </ItemGroup>
 
   <Target Name="ToolRestore">
-      <Exec Command="dotnet tool update excubo.webcompiler" StandardOutputImportance="high" />
+      <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
   </Target>
 
   <Target Name="WebCompiler" DependsOnTargets="ToolRestore">

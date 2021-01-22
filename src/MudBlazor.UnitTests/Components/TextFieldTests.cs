@@ -13,6 +13,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
+using MudBlazor.UnitTests.TestComponents.TextField;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -255,6 +256,36 @@ namespace MudBlazor.UnitTests
             await comp.InvokeAsync(() => textfield.Text = "B");
             changed_value.Should().Be("B");
             changed_text.Should().Be("B");
+        }
+
+        /// <summary>
+        /// Instead of RequiredError it should show the conversion error, because typing something (even if not a number) should
+        /// already fulfill the requirement of Required="true". If it is a valid value is a different question.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TextField_ShouldNot_ShowRequiredErrorWhenThereIsAConversionError()
+        {
+            var comp = ctx.RenderComponent<MudTextField<int?>>(ComponentParameter.CreateParameter("Required", true));
+            var textfield = comp.Instance;
+            await comp.InvokeAsync(() => textfield.Text = "A");
+            comp.Find("input").Blur();
+            textfield.HasErrors.Should().Be(true);
+            textfield.ErrorText.Should().Be("Not a valid number");
+        }
+
+        /// <summary>
+        /// Instead of RequiredError it should show the conversion error, because typing something (even if not a number) should
+        /// already fulfill the requirement of Required="true". If it is a valid value is a different question.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TextField_ShouldNot_ShowRequiredErrorWhenInitialTextIsEmpty()
+        {
+            var comp = ctx.RenderComponent<TextFieldRequiredTest>();
+            var textfield = comp.FindComponent<MudTextField<string>>().Instance;
+            textfield.HasErrors.Should().Be(false);
+            textfield.ErrorText.Should().BeNullOrEmpty();
         }
     }
 
