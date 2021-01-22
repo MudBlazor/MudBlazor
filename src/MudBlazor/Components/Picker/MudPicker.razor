@@ -6,7 +6,7 @@
     {
         @if (!IsRange) 
         { 
-            <MudTextField Label="@Label" @bind-Text="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string"
+            <MudTextField Label="@Label" @bind-Text="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string" Style="@Style"
                           @onclick="@(() => { if (!Editable) ToggleState(); })" OnAdornmentClick="ToggleState" Disabled="@Disabled" Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" />
         }
         else 
