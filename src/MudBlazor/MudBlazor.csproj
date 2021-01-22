@@ -68,15 +68,13 @@
   </Target>
 
   <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="bundleconfig.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Include="compilerconfig.json">
+    <None Include="..\.editorconfig" Link=".editorconfig">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Include="excubocompilerconfig.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+    <None Remove="compilerconfig.json"/>
+    <None Remove="DoNotRemove.txt"/>
   </ItemGroup>
 </Project>
