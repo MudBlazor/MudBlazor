@@ -15,7 +15,7 @@
   <PropertyGroup>
     <Title>MudBlazor</Title>
     <PackageId>MudBlazor</PackageId>
-    <Version>1.2.4.8-dev</Version>
+    <Version>1.2.4.9-dev</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>Nuget.png</PackageIcon>
     <Company>MudBlazor</Company>
@@ -62,8 +62,8 @@
     <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json" StandardOutputImportance="high" />
     <!--concatenate js files-->
     <Exec Command="mkdir combined" WorkingDirectory="TScripts" IgnoreExitCode="true" StandardErrorImportance="low" />
-    <Exec Command="cat ./TScripts/*.js > ./TScripts/combined/MudBlazor.js" Condition=" '$(OS)' != 'Windows_NT' " StandardOutputImportance="high" />
-    <Exec Command="powershell -noprofile -c &quot;cat ./TScripts/*.js > ./TScripts/combined/MudBlazor.js&quot;" Condition=" '$(OS)' == 'Windows_NT' " StandardOutputImportance="high" />
+    <Exec Command="cat ./TScripts/*.js &gt; ./TScripts/combined/MudBlazor.js" Condition=" '$(OS)' != 'Windows_NT' " StandardOutputImportance="high" />
+    <Exec Command="powershell -noprofile -c &quot;cat ./TScripts/*.js &gt; ./TScripts/combined/MudBlazor.js&quot;" Condition=" '$(OS)' == 'Windows_NT' " StandardOutputImportance="high" />
     <!--minify js-->
     <Exec Command="dotnet webcompiler ./TScripts/combined/MudBlazor.js -c excubowebcompiler.json" StandardOutputImportance="high" />
   </Target>
