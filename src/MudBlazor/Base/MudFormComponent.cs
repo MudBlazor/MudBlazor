@@ -83,6 +83,7 @@ namespace MudBlazor
         {
             // note: we need to update the form here because the conversion error might lead to not updating the value
             // ... which leads to not updating the form
+            Touched = true;
             Form?.Update(this);
             OnConversionErrorOccurred(error);
         }
@@ -119,6 +120,15 @@ namespace MudBlazor
 
             return null;
         }
+
+        /// <summary>
+        /// This manages the state of having been "touched" by the user. A form control always starts out untouched
+        /// but becomes touched when the user performed input or the blur event was raised.
+        ///
+        /// The touched state is only relevant for inputs that have no value (i.e. empty text fields). Being untouched will
+        /// suppress RequiredError
+        /// </summary>
+        public bool Touched { get; protected set; }
 
         #region MudForm Validation
 
@@ -190,18 +200,10 @@ namespace MudBlazor
             var errors = new List<string>();
             try
             {
-                var hasValue = HasValue(_value);
-                if (Required)
-                {
-                    if (!hasValue)
-                    {
-                        errors.Add(RequiredError);
-                        return; // no need to call validation funcs if required value doesn't exist. we already have a required error.
-                    }
-                    // we have a required value, proceed to the validation funcs
-                }
+                // conversion error
                 if (ConversionError)
                     errors.Add(ConversionErrorMessage);
+                // validation errors
                 if (Validation is ValidationAttribute)
                     ValidateWithAttribute(Validation as ValidationAttribute, _value, errors);
                 else if (Validation is Func<T, bool>)
@@ -222,6 +224,16 @@ namespace MudBlazor
                         await ValidateWithFunc(Validation as Func<T, Task<IEnumerable<string>>>, _value, errors);
 
                     changed = !EqualityComparer<T>.Default.Equals(value, _value);
+                }
+                // required error (must be last, because it is least important!)
+                var hasValue = HasValue(_value);
+                if (Required)
+                {
+                    if (!hasValue && Touched)
+                    {
+                        errors.Add(RequiredError);
+                    }
+                    // we have a required value, proceed to the validation funcs
                 }
             }
             finally
@@ -344,6 +356,7 @@ namespace MudBlazor
         {
             /* to be overridden */
             _value = default;
+            Touched = false;
             StateHasChanged();
         }
 

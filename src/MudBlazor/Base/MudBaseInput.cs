@@ -115,6 +115,8 @@ namespace MudBlazor
             if (_text != text)
             {
                 _text = text;
+                if (!string.IsNullOrWhiteSpace(text))
+                    Touched = true;
                 if (updateValue)
                     UpdateValueProperty(false);
                 TextChanged.InvokeAsync(_text).AndForget();
@@ -145,6 +147,7 @@ namespace MudBlazor
 
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
+            Touched = true;
             BeginValidateAfter(OnBlur.InvokeAsync(obj));
         }
 
