@@ -271,7 +271,7 @@ namespace MudBlazor.UnitTests
             await comp.InvokeAsync(() => textfield.Text = "A");
             comp.Find("input").Blur();
             textfield.HasErrors.Should().Be(true);
-            textfield.ErrorText.Should().Be("Invalid number");
+            textfield.ErrorText.Should().Be("Not a valid number");
         }
 
         /// <summary>
