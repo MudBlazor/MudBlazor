@@ -2,14 +2,6 @@
 <!--Use: dotnet msbuild -preprocess:<fileName>.xml to evaluate this project-->
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <!--Make sure this projects build targets run before other referenced projects-->
-  <PropertyGroup>
-    <BuildDependsOn>
-      CompileDocs;
-      $(BuildDependsOn)
-    </BuildDependsOn>
-  </PropertyGroup>
-
   <PropertyGroup>
     <ResolveStaticWebAssetsInputsDependsOn>
       IncludeGeneratedStaticFiles;
