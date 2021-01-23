@@ -89,11 +89,15 @@
     {
         var result = new List<MudIcons>();
 
-        foreach (var prop in typeof(Icons.Custom).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+        foreach (var prop in typeof(Brands).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
         {
             result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
         }
         foreach (var prop in typeof(FileFormats).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+        {
+            result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
+        }
+        foreach (var prop in typeof(Uncategorized).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
         {
             result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
         }
