@@ -36,12 +36,12 @@ namespace MudBlazor
         /// <summary>
         /// The Open Select Icon
         /// </summary>
-        [Parameter] public string OpenIcon { get; set; } = Icons.Material.ArrowDropUp;
+        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
         /// The Open Select Icon
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.ArrowDropDown;
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
         /// Fires when SelectedValues changes.

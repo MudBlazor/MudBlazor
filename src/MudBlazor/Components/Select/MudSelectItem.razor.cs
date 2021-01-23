@@ -77,7 +77,7 @@ namespace MudBlazor
             {
                 if (!MultiSelection)
                     return null;
-                return IsSelected ? Icons.Material.CheckBox : Icons.Material.CheckBoxOutlineBlank;
+                return IsSelected ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank;
             }
         }
 
