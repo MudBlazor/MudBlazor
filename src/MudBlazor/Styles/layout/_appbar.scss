@@ -1,4 +1,6 @@
-﻿.mud-appbar {
+﻿@import '../abstracts/variables';
+
+.mud-appbar {
     width: 100%;
     display: flex;
     position: relative;
@@ -8,48 +10,45 @@
     flex-direction: column;
     color: var(--mud-palette-appbar-text);
     background-color: var(--mud-palette-appbar-background);
-    transition: margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms,width 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
+    transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,width 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
 }
 
-@media (min-width:1280px) {
-    .mud-appbar-drawer-open {
-        width: calc(100% - var(--mud-drawer-width));
-        transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,width 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+.mud-appbar-drawer-open {
+    &-responsive {
+        @media (min-width:$breakpoint-lg) {
+            &-left {
+                margin-left: var(--mud-drawer-width);
+            }
 
-        &-left:not(.mud-appbar-drawer-clipped):not(.mud-appbar-drawer-clipped-left) {
-            margin-left: var(--mud-drawer-width);
-        }
+            &-right {
+                margin-right: var(--mud-drawer-width);
+            }
 
-        &-right:not(.mud-appbar-drawer-clipped):not(.mud-appbar-drawer-clipped-right) {
-            margin-right: var(--mud-drawer-width);
+            &-left#{&}-right {
+                width: calc(100% - 2 * var(--mud-drawer-width));
+            }
+
+            &-left:not(&-right), &-right:not(&-left) {
+                width: calc(100% - var(--mud-drawer-width));
+            }
         }
     }
-}
 
-.mud-appbar-drawer-open-left:not(.mud-appbar-drawer-clipped):not(.mud-appbar-drawer-clipped-left):not(.mud-appbar-drawer-clipped-right).mud-appbar-drawer-open-right:not(.mud-appbar-drawer-clipped):not(.mud-appbar-drawer-clipped-left):not(.mud-appbar-drawer-clipped-right) {
-    width: calc(100% - var(--mud-drawer-width) - var(--mud-drawer-width));
-}
-
-.mud-appbar-drawer-clipped {
-    width: 100%;
-
-    @media (min-width:1280px) {
+    &-persistent {
         &-left {
-            margin-right: var(--mud-drawer-width);
-
-            &:not(.mud-appbar-drawer-open-right) {
-                width: 100%;
-                margin-right: auto;
-            }
+            margin-left: var(--mud-drawer-width);
         }
 
         &-right {
-            margin-left: var(--mud-drawer-width);
+            margin-right: var(--mud-drawer-width);
+        }
 
-            &:not(.mud-appbar-drawer-open-left) {
-                width: 100%;
-                margin-left: auto;
-            }
+        &-left#{&}-right {
+            width: calc(100% - 2 * var(--mud-drawer-width));
+        }
+
+        &-left:not(&-right), &-right:not(&-left) {
+            width: calc(100% - var(--mud-drawer-width));
         }
     }
 }

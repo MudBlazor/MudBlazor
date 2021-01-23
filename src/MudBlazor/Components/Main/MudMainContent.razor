@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Extensions
 @using MudBlazor.Utilities
 @inherits MudComponentBase
 
@@ -10,9 +11,8 @@
 
     protected string Classname =>
     new CssBuilder("mud-main-content")
-        .AddClass($"mud-main-drawer-open", Layout?.IsDrawerOpen(Anchor.Left) == true || Layout?.IsDrawerOpen(Anchor.Right) == true)
-        .AddClass($"mud-main-drawer-closed", !Layout?.IsDrawerOpen(Anchor.Left) == true || !Layout?.IsDrawerOpen(Anchor.Right) == true)
-        .AddClass($"mud-main-drawer-clipped", Layout?.IsDrawerClipped(Anchor.Left) == true || Layout?.IsDrawerClipped(Anchor.Right) == true)
+        .AddClass(GetDrawerClass(Anchor.Left))
+        .AddClass(GetDrawerClass(Anchor.Right))
         .AddClass(Class)
      .Build();
 
@@ -20,4 +20,12 @@
 
     [CascadingParameter] MudLayout Layout { get; set; }
 
+    private string GetDrawerClass(Anchor anchor)
+    {
+        var drawer = Layout?.DrawerContainer.GetDrawerOrDefault(anchor);
+        if (drawer == null)
+            return string.Empty;
+
+        return $"mud-main-drawer-{(drawer.Open ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}-{anchor.ToDescriptionString()}";
+    }
 }

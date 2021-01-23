@@ -10,11 +10,13 @@ namespace MudBlazor.UnitTests.Mocks
         public void Dispose()
         {
             OnResized = null;
+            OnBreakpointChanged = null;
         }
 
 #nullable enable
 #pragma warning disable CS0414 // justification implementing interface  
         public event EventHandler<BrowserWindowSize>? OnResized;
+        public event EventHandler<Breakpoint>? OnBreakpointChanged;
 #pragma warning restore CS0414 
 #nullable disable
         public async ValueTask<BrowserWindowSize> GetBrowserWindowSize()
@@ -23,6 +25,12 @@ namespace MudBlazor.UnitTests.Mocks
         }
 
         public async Task<bool> IsMediaSize(Breakpoint breakpoint)
+        {
+            // TODO: implement this fake service for tests
+            return false;
+        }
+
+        public bool IsMediaSize(Breakpoint breakpoint, Breakpoint reference)
         {
             // TODO: implement this fake service for tests
             return false;
