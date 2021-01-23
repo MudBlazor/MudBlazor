@@ -179,7 +179,7 @@ namespace MudBlazor
             {
                 var value = _value;
 
-                await Validate();
+                await ValidateValue();
 
                 if (EqualityComparer<T>.Default.Equals(value, _value))
                 {
@@ -201,7 +201,7 @@ namespace MudBlazor
             return ValidateValue();
         }
 
-        internal virtual async Task ValidateValue()
+        protected virtual async Task ValidateValue()
         {
             var changed = false;
             var errors = new List<string>();
@@ -240,7 +240,6 @@ namespace MudBlazor
                     {
                         errors.Add(RequiredError);
                     }
-                    // we have a required value, proceed to the validation funcs
                 }
             }
             finally

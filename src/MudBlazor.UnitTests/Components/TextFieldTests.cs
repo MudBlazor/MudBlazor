@@ -284,8 +284,9 @@ namespace MudBlazor.UnitTests
         {
             var comp = ctx.RenderComponent<TextFieldRequiredTest>();
             var textfield = comp.FindComponent<MudTextField<string>>().Instance;
-            textfield.HasErrors.Should().Be(false);
+            textfield.Touched.Should().BeFalse();
             textfield.ErrorText.Should().BeNullOrEmpty();
+            textfield.HasErrors.Should().Be(false);
         }
     }
 

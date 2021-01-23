@@ -237,7 +237,7 @@ namespace MudBlazor
             return changed;
         }
 
-        internal override async Task ValidateValue()
+        protected override async Task ValidateValue()
         {
             if (Standalone)
                 await base.ValidateValue();
