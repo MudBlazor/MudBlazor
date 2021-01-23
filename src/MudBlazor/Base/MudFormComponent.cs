@@ -192,7 +192,14 @@ namespace MudBlazor
         /// <summary>
         /// Causes this component to validate its value
         /// </summary>
-        public Task Validate() => ValidateValue();
+        public Task Validate()
+        {
+            // when a validation is forced, we must set Touched to true, because for untouched fields with
+            // no value, validation does nothing due to the way forms are expected to work (display errors
+            // only after fields have been touched).
+            Touched = true;
+            return ValidateValue();
+        }
 
         internal virtual async Task ValidateValue()
         {
@@ -364,6 +371,7 @@ namespace MudBlazor
         {
             Error = false;
             ValidationErrors.Clear();
+            ErrorText = null;
             StateHasChanged();
         }
 
