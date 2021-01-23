@@ -6,25 +6,10 @@ namespace MudBlazor
 {
     public partial class MudToggleIconButton
     {
-        private bool _toggled;
-
         /// <summary>
         /// The toggled value.
         /// </summary>
-        [Parameter] public bool Toggled
-        {
-            get => _toggled;
-            set => SetToggledAsync(value).AndForget();
-        }
-
-        protected async Task SetToggledAsync(bool toggled)
-        {
-            if (_toggled != toggled)
-            {
-                _toggled = toggled;
-                await ToggledChanged.InvokeAsync(_toggled);
-            }
-        }
+        [Parameter] public bool Toggled { get; set; }
 
         /// <summary>
         /// Fires whenever toggled is changed. 
@@ -78,7 +63,8 @@ namespace MudBlazor
 
         public Task Toggle()
         {
-            return SetToggledAsync(!Toggled);
+            Toggled = !Toggled;
+            return ToggledChanged.InvokeAsync(Toggled);
         }
     }
 }
