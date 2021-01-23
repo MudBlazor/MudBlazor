@@ -23,7 +23,7 @@ namespace MudBlazor
         /// <summary>
         /// The Icon used to display sortdirection.
         /// </summary>
-        [Parameter] public string SortIcon { get; set; } = Icons.Material.ArrowUpward;
+        [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
 
         /// <summary>
         /// If true the icon will be placed before the label text.
