@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -13,35 +14,40 @@ namespace MudBlazor
         [Parameter] public bool ReadOnly { get; set; }
 
         /// <summary>
-        /// Fired when Checked changes.
-        /// </summary>
-        [Parameter]
-        public EventCallback<T> CheckedChanged { get; set; }
-
-        /// <summary>
         /// The state of the component
         /// </summary>
         [Parameter]
         public T Checked
         {
             get => _value;
-            set
-            {
-                if (!EqualityComparer<T>.Default.Equals(_value, value))
-                {
-                    _value = value;
-                    BeginValidateAfter(CheckedChanged.InvokeAsync(value));
-                }
-            }
+            set => _value = value;
         }
 
-        protected bool? BoolValue
+        /// <summary>
+        /// Fired when Checked changes.
+        /// </summary>
+        [Parameter] public EventCallback<T> CheckedChanged { get; set; }
+
+        protected bool? BoolValue => Converter.Set(Checked);
+
+        protected Task OnChange(ChangeEventArgs args)
         {
-            get => Converter.Set(_value);
-            set
+            Touched = true;
+            return SetBoolValueAsync((bool?)args.Value);
+        }
+
+        protected Task SetBoolValueAsync(bool? value)
+        {
+            return SetCheckedAsync(Converter.Get(value));
+        }
+
+        protected async Task SetCheckedAsync(T value)
+        {
+            if (!EqualityComparer<T>.Default.Equals(Checked, value))
             {
-                Touched = true;
-                Checked = Converter.Get(value);
+                Checked = value;
+                await CheckedChanged.InvokeAsync(value);
+                BeginValidate();
             }
         }
 
@@ -49,7 +55,7 @@ namespace MudBlazor
         {
             var changed = base.SetConverter(value);
             if (changed)
-                BoolValue = Converter.Set(Checked);
+                SetBoolValueAsync(Converter.Set(Checked)).AndForget();
 
             return changed;
         }
