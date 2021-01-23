@@ -63,8 +63,16 @@ namespace MudBlazor
 
         public Task Toggle()
         {
-            Toggled = !Toggled;
-            return ToggledChanged.InvokeAsync(Toggled);
+            return SetToggledAsync(!Toggled);
+        }
+
+        protected async Task SetToggledAsync(bool toggled)
+        {
+            if (Toggled != toggled)
+            {
+                Toggled = toggled;
+                await ToggledChanged.InvokeAsync(Toggled);
+            }
         }
     }
 }
