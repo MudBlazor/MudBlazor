@@ -29,14 +29,15 @@ namespace MudBlazor.Docs.Compiler
 
                 var directoryInfo = new DirectoryInfo(paths.DocsDirPath);
 
-                foreach (var entry in directoryInfo.GetFileSystemInfos("*.razor", SearchOption.AllDirectories)
-                    .OrderBy(e => e.FullName.Replace("\\", "/"), StringComparer.Ordinal))
+                foreach (var entry in directoryInfo.GetFiles("*.razor", SearchOption.AllDirectories))
                 {
                     if (entry.Name.EndsWith("Code.razor"))
+                    {
                         continue;
+                    }
                     if (!entry.Name.Contains(Paths.ExampleDiscriminator))
                         continue;
-                    var markupPath = entry.FullName.Replace("Examples", "Code").Replace(".razor", "Code.razor");
+                    var markupPath = entry.FullName.Replace("Examples", "Code").Replace(".razor", "Code.html");
                     if (entry.LastWriteTime < lastCheckedTime && File.Exists(markupPath))
                     {
                         continue;
@@ -65,8 +66,8 @@ namespace MudBlazor.Docs.Compiler
                     }
 
                     var cb = new CodeBuilder();
-                    cb.AddLine("@* Auto-generated markup. Any changes will be overwritten *@");
-                    cb.AddLine("@namespace MudBlazor.Docs.Examples.Markup");
+                    // cb.AddLine("@* Auto-generated markup. Any changes will be overwritten *@");
+                    // cb.AddLine("@namespace MudBlazor.Docs.Examples.Markup");
                     cb.AddLine("<div class=\"mud-codeblock\">");
                     cb.AddLine(html.ToLfLineEndings());
                     if (blocks.Length == 2)
