@@ -59,12 +59,12 @@
     private List<MudIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
         ? MudIconsMaterial
         : MudIconsMaterial.Where(m => m.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
-    private readonly IDictionary<string, Type> IconTypes = new Dictionary<string, Type>()
-{
-        { IconType.Filled, typeof(Filled)},
-        { IconType.Outlined, typeof(Outlined)},
-        { IconType.Rounded, typeof(Rounded)},
-        { IconType.Sharp, typeof(Sharp)},
+    private readonly IDictionary<string, object> IconTypes = new Dictionary<string, object>()
+    {
+        { IconType.Filled,new Filled()},
+        { IconType.Outlined, new Outlined()},
+        { IconType.Rounded, new Rounded()},
+        { IconType.Sharp, new Sharp()},
     };
 
     protected override async Task OnInitializedAsync()
@@ -76,10 +76,10 @@
     public async Task LoadMaterialIcons(string selectedIcoType)
     {
         var result = new List<MudIcons>();
-
-        foreach (var prop in IconTypes[selectedIcoType].GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
+        var icons = IconTypes[selectedIcoType];
+        foreach (var prop in icons.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty ))
         {
-            result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
+            result.Add(new MudIcons(prop.Name, prop.GetValue(icons).ToString()));
         }
         await Task.WhenAll();
         MudIconsMaterial = result;
@@ -88,20 +88,15 @@
     public async Task LoadCustomIcons()
     {
         var result = new List<MudIcons>();
-
-        foreach (var prop in typeof(Brands).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-        {
-            result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
-        }
-        foreach (var prop in typeof(FileFormats).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-        {
-            result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
-        }
-        foreach (var prop in typeof(Uncategorized).GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
-        {
-            result.Add(new MudIcons(prop.Name, prop.GetValue(null).ToString()));
-        }
-
+        var brands = new Brands();
+        foreach (var prop in typeof(Brands).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
+            result.Add(new MudIcons(prop.Name, prop.GetValue(brands).ToString()));
+        var fileFormats = new FileFormats();
+        foreach (var prop in typeof(FileFormats).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
+            result.Add(new MudIcons(prop.Name, prop.GetValue(fileFormats).ToString()));
+        var uncategorized = new Uncategorized();
+        foreach (var prop in typeof(Uncategorized).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty))
+            result.Add(new MudIcons(prop.Name, prop.GetValue(uncategorized).ToString()));
         await Task.WhenAll();
         MudIconsCustom = result;
     }
