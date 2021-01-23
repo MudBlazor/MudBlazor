@@ -10,6 +10,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Docs.Examples;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents.Form;
@@ -342,6 +343,71 @@ namespace MudBlazor.UnitTests
             form.IsValid.Should().BeFalse(because: "conversion error is forwarded to form");
             await comp.InvokeAsync(() => textfield.Text = "17");
             form.IsValid.Should().BeTrue(because: "conversion error is gone");
+        }
+
+        /// <summary>
+        /// Testing the functionality of the MudForm example from the docs.
+        /// </summary>
+        [Test]
+        public async Task MudFormExampleTest()
+        {
+            var comp = ctx.RenderComponent<MudFormExample>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            form.IsValid.Should().BeFalse(because:"it contains required fields that are not filled out");
+            var buttons = comp.FindComponents<MudButton>();
+            // click validate button
+            var validateButton = buttons[1];
+            validateButton.Find("button").Click();
+            var textfields = comp.FindComponents<MudTextField<string>>();
+            textfields[0].Instance.HasErrors.Should().BeTrue();
+            textfields[0].Instance.ErrorText.Should().Be("User name is required!");
+            textfields[1].Instance.HasErrors.Should().BeTrue();
+            textfields[1].Instance.ErrorText.Should().Be("Email is required!");
+            textfields[2].Instance.HasErrors.Should().BeTrue();
+            textfields[2].Instance.ErrorText.Should().Be("Password is required!");
+            var checkbox=comp.FindComponent<MudCheckBox<bool>>();
+            checkbox.Instance.HasErrors.Should().BeTrue();
+            checkbox.Instance.ErrorText.Should().Be("You must agree");
+            // click reset validation
+            var resetValidationButton = buttons[3];
+            resetValidationButton.Find("button").Click();
+            comp.WaitForState(() => form.Errors.Length == 0);
+            textfields[0].Instance.HasErrors.Should().BeFalse();
+            textfields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[1].Instance.HasErrors.Should().BeFalse();
+            textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[2].Instance.HasErrors.Should().BeFalse();
+            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            checkbox.Instance.HasErrors.Should().BeFalse();
+            checkbox.Instance.ErrorText.Should().BeNullOrEmpty();
+            // fill in the form to make it valid
+            await comp.InvokeAsync(() => { 
+                textfields[0].Instance.Text = "Rick Sanchez";
+                textfields[1].Instance.Text = "rick.sanchez@citadel-of-ricks.com";
+                textfields[2].Instance.Text = "Wabalabadubdub1234!";
+                textfields[3].Instance.Text = "Wabalabadubdub1234!";
+                checkbox.Instance.Checked = true;
+            });
+            comp.WaitForAssertion(()=>form.IsValid.Should().BeTrue());
+            comp.WaitForState(() => form.Errors.Length == 0);
+            // click reset 
+            var resetButton = buttons[2];
+            resetButton.Find("button").Click();
+            comp.WaitForState(() => form.Errors.Length == 0);
+            textfields[0].Instance.HasErrors.Should().BeFalse();
+            textfields[0].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[0].Instance.Text.Should().BeNullOrEmpty();
+            textfields[1].Instance.HasErrors.Should().BeFalse();
+            textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[1].Instance.Text.Should().BeNullOrEmpty();
+            textfields[2].Instance.HasErrors.Should().BeFalse();
+            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[2].Instance.Text.Should().BeNullOrEmpty();
+            checkbox.Instance.HasErrors.Should().BeFalse();
+            checkbox.Instance.ErrorText.Should().BeNullOrEmpty();
+            checkbox.Instance.Checked.Should().BeFalse();
+            // TODO: fill out the form with errors, field after field, check how fields get validation erros after blur
         }
     }
 }
