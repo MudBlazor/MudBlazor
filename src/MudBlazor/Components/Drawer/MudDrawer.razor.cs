@@ -1,0 +1,225 @@
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
+using MudBlazor.Services;
+using MudBlazor.Utilities;
+
+namespace MudBlazor
+{
+    public partial class MudDrawer : MudComponentBase, IDisposable
+    {
+        private double _height;
+        private Breakpoint _breakpoint;
+        private ElementReference _contentRef;
+        private bool? _isOpenWhenLarge = null;
+        private bool _open, _clipped, _rtl, _isRendered, _initial = true;
+
+        private bool OverlayVisible => _open && 
+            (Variant == DrawerVariant.Temporary || 
+            (ResizeListener.IsMediaSize(Breakpoint.MdAndDown, _breakpoint) && Variant == DrawerVariant.Responsive));
+        
+        protected string Classname =>
+        new CssBuilder("mud-drawer")
+          .AddClass($"mud-drawer-fixed", Fixed)
+          .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
+          .AddClass($"mud-drawer--open", Open)
+          .AddClass($"mud-drawer--closed", !Open)
+          .AddClass($"mud-drawer--initial", _initial)
+          .AddClass($"mud-drawer-clipped", Clipped)
+          .AddClass($"mud-drawer-color-{Color.ToDescriptionString()}", Color != Color.Default)
+          .AddClass($"mud-elevation-{Elevation}")
+          .AddClass($"mud-drawer-{Variant.ToDescriptionString()}")
+          .AddClass(Class)
+        .Build();
+
+        protected string OverlayClass =>
+        new CssBuilder("mud-drawer-overlay mud-overlay-drawer")
+          .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
+          .AddClass($"mud-drawer-overlay--open", Open)
+          .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
+          .AddClass($"mud-drawer-overlay--initial", _initial)
+        .Build();
+        
+        protected string Stylename =>
+        new StyleBuilder()
+            .AddStyle("--mud-drawer-content-height", $"{_height}px", Anchor == Anchor.Bottom || Anchor == Anchor.Top)
+            .AddStyle(Style)
+        .Build();
+
+        [Inject] public IDomService DomService { get; set; }
+
+        [Inject] public IResizeListenerService ResizeListener { get; set; }
+
+        [CascadingParameter] MudLayout Layout { get; set; }
+
+        [CascadingParameter]
+        bool RightToLeft
+        {
+            get
+            {
+                return _rtl;
+            }
+            set
+            {
+                if (_rtl != value)
+                {
+                    _rtl = value;
+                    this.Anchor = this.Anchor == Anchor.Left ? Anchor.Right : Anchor.Left;
+                }
+            }
+        }
+        
+        /// <summary>
+        /// If true, drawer will be Fixed.
+        /// </summary>
+        [Parameter] public bool Fixed { get; set; } = true;
+
+        /// <summary>
+        /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
+        /// </summary>
+        [Parameter] public int Elevation { set; get; } = 1;
+
+        /// <summary>
+        /// Side from which the drawer will appear.
+        /// </summary>
+        [Parameter] public Anchor Anchor { get; set; }
+
+        /// <summary>
+        /// The color of the component. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color Color { get; set; } = Color.Default;
+
+        /// <summary>
+        /// Variant of the drawer. It affects how the component behaves on different screen sizes.
+        /// </summary>
+        [Parameter] public DrawerVariant Variant { get; set; } = DrawerVariant.Responsive;
+
+        /// <summary>
+        /// Child content of component.
+        /// </summary>
+        [Parameter] public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.
+        /// </summary>
+        [Parameter]
+        public bool Open
+        {
+            get => _open;
+            set
+            {
+                if (_open == value)
+                {
+                    return;
+                }
+                _open = value;
+                if (_isRendered && _initial)
+                {
+                    _initial = false;
+                }
+                if (_isRendered && value && (Anchor == Anchor.Top || Anchor == Anchor.Bottom))
+                {
+                    _ = UpdateHeight();
+                }
+                if (Layout != null && Fixed)
+                {
+                    Layout.FireDrawersChanged();
+                }
+                OpenChanged.InvokeAsync(_open);
+            }
+        }
+
+        [Parameter] public EventCallback<bool> OpenChanged { get; set; }
+
+        [Parameter]
+        public bool Clipped
+        {
+            get => _clipped;
+            set
+            {
+                if (_clipped == value)
+                {
+                    return;
+                }
+                _clipped = value;
+                if (Fixed)
+                {
+                    Layout?.FireDrawersChanged();
+                }
+                StateHasChanged();
+            }
+        }
+
+        protected override void OnInitialized()
+        {
+            if (Fixed)
+            {
+                Layout?.DrawerContainer?.Add(this);
+            }
+            base.OnInitialized();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                _isRendered = true;
+                await UpdateHeight();
+                ResizeListener.OnBreakpointChanged += ResizeListener_OnBreakpointChanged;
+
+                if (await ResizeListener.IsMediaSize(Breakpoint.MdAndDown))
+                {
+                    await OpenChanged.InvokeAsync(false);
+                }
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        public void Dispose()
+        {
+            Layout?.DrawerContainer?.Remove(this);
+            ResizeListener.OnBreakpointChanged -= ResizeListener_OnBreakpointChanged;
+        }
+
+        private void CloseDrawer()
+        {
+            if (Open)
+            {
+                OpenChanged.InvokeAsync(false);
+            }
+        }
+
+        public async void OnNavigation()
+        {
+            if (await ResizeListener.IsMediaSize(Breakpoint.MdAndDown))
+            {
+                await OpenChanged.InvokeAsync(false);
+            }
+        }
+
+        private void ResizeListener_OnBreakpointChanged(object sender, Breakpoint breakpoint)
+        {
+            _breakpoint = breakpoint;
+            if (ResizeListener.IsMediaSize(Breakpoint.MdAndDown, breakpoint) && Variant == DrawerVariant.Responsive)
+            {
+                _isOpenWhenLarge = Open;
+
+                OpenChanged.InvokeAsync(false);
+                StateHasChanged();
+            }
+            else if (ResizeListener.IsMediaSize(Breakpoint.LgAndUp, breakpoint) && _isOpenWhenLarge != null && Variant == DrawerVariant.Responsive)
+            {
+                OpenChanged.InvokeAsync(_isOpenWhenLarge.Value);
+                StateHasChanged();
+                _isOpenWhenLarge = null;
+            }
+        }
+
+        private async Task UpdateHeight()
+        {
+            _height = (await DomService.GetBoundingClientRect(_contentRef)).Height;
+        }
+    }
+}

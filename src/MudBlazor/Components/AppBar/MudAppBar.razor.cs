@@ -9,12 +9,8 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-appbar")
                 .AddClass($"mud-appbar-fixed", Fixed)
-                .AddClass($"mud-appbar-drawer-open", Layout?.IsDrawerOpen(Anchor.Left) == true || Layout?.IsDrawerOpen(Anchor.Right) == true)
-                .AddClass($"mud-appbar-drawer-open-left", Layout?.IsDrawerOpen(Anchor.Left))
-                .AddClass($"mud-appbar-drawer-open-right", Layout?.IsDrawerOpen(Anchor.Right))
-                .AddClass($"mud-appbar-drawer-clipped", Layout?.IsDrawerClipped(Anchor.Left) == true && !Layout?.HasDrawer(Anchor.Right) == true || Layout?.IsDrawerClipped(Anchor.Right) == true && !Layout?.HasDrawer(Anchor.Left) == true || Layout?.IsDrawerClipped(Anchor.Left) == true && Layout?.IsDrawerClipped(Anchor.Right) == true)
-                .AddClass($"mud-appbar-drawer-clipped-left", Layout?.IsDrawerClipped(Anchor.Left) == true && !Layout?.IsDrawerClipped(Anchor.Right) == true)
-                .AddClass($"mud-appbar-drawer-clipped-right", Layout?.IsDrawerClipped(Anchor.Right) == true && !Layout?.IsDrawerClipped(Anchor.Left) == true)
+                .AddClass(GetDrawerClass(Anchor.Left))
+                .AddClass(GetDrawerClass(Anchor.Right))
                 .AddClass($"mud-elevation-{Elevation}")
                 .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass(Class)
@@ -46,5 +42,14 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         [CascadingParameter] MudLayout Layout { get; set; }
+
+        private string GetDrawerClass(Anchor anchor)
+        {
+            var drawer = Layout?.DrawerContainer.GetDrawerOrDefault(anchor);
+            if (drawer == null)
+                return string.Empty;
+
+            return $"mud-appbar-drawer-{(drawer.Open && !drawer.Clipped ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}-{anchor.ToDescriptionString()}";
+        }
     }
 }

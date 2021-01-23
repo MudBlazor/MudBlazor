@@ -1,4 +1,6 @@
-﻿namespace MudBlazor.Services
+﻿using System.Collections.Generic;
+
+namespace MudBlazor.Services
 {
     public class ResizeOptions
     {
@@ -17,5 +19,15 @@
         /// Suppress the first OnResized that is invoked when a new event handler is added.
         /// </summary>
         public bool SuppressInitEvent { get; set; } = false;
+
+        /// <summary>
+        /// If true, RaiseOnResized is called only when breakpoint has changed.
+        /// </summary>
+        public bool NotifyOnBreakpointOnly { get; set; } = false;
+
+        /// <summary>
+        /// Breakpoint definitions.
+        /// </summary>
+        public Dictionary<string, int> BreakpointDefinition { get; set; }
     }
 }

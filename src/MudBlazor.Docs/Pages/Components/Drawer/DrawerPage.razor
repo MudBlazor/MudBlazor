@@ -1,29 +1,52 @@
 ﻿@page "/components/drawer"
 
 <DocsPage MaxWidth="MaxWidth.ExtraLarge">
-    <DocsPageHeader Title="Drawer" />
+    <DocsPageHeader Title="Drawer">
+        <Description>
+            If you use two-way binding <CodeInline>@("@bind-Open=\"...\"")</CodeInline> you can toggle the drawer and it will close itself on navigation. If you set its <CodeInline>Open</CodeInline> parameter without two-way binding
+            you effectively force it to stay open or closed depending on the provided value.
+            <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">Common pitfall: use <CodeInline>@("@bind-Open")</CodeInline> instead of <CodeInline>@("Open")</CodeInline> for auto-closing to work.</MudAlert>
+        </Description>
+    </DocsPageHeader>
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Drawer usage</Title>
+                <Title>Temporary drawer</Title>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <DrawerTemporaryExample />
+            </SectionContent>
+            <SectionSource Code="DrawerTemporaryExample" ShowCode="false" GitHubFolderName="Drawer" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Persistent drawer</Title>
                 <Description>
-                    The drawer must be inside a <CodeInline>MudLayout</CodeInline> component because it interacts with <CodeInline>AppBar</CodeInline> and <CodeInline>MainContent</CodeInline>.
-                    If you use two-way binding <CodeInline>@("@bind-Open=\"...\"")</CodeInline> you can toggle the drawer and it will close itself on navigation. If you set its <CodeInline>Open</CodeInline> parameter without two-way binding
-                    you effectively force it to stay open or closed depending on the provided value.
-                    <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">Common pitfall: use <CodeInline>@("@bind-Open")</CodeInline> instead of <CodeInline>@("Open")</CodeInline> for auto-closing to work.</MudAlert>
+                    Set <CodeInline>Fixed="false"</CodeInline> to use drawer inside a custom container.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
-                <iframe src="/iframe/docs/examples/drawer/persistent" class="docs-iframe">
-                    <DrawerPersistentExample />
-                </iframe>
+            <SectionContent Outlined="true" FullWidth="true">
+                <DrawerPersistentExample />
             </SectionContent>
-            <SectionSource Code="DrawerPersistentExample" GitHubFolderName="Drawer" />
+            <SectionSource Code="DrawerPersistentExample" ShowCode="false" GitHubFolderName="Drawer" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Anchor drawer</Title>
+                <Description>With the <CodeInline>Anchor</CodeInline> property you can set it to left or right, the default mode is left.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <DrawerAnchorExample />
+            </SectionContent>
+            <SectionSource Code="DrawerAnchorExample" ShowCode="false" GitHubFolderName="Drawer" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
                 <Title>Clipping</Title>
-                <Description>A drawer with <CodeInline>Clipped="true"</CodeInline> will not push the AppBar to the side when opening.</Description>
+                <Description>
+                    A drawer with <CodeInline>Clipped="true"</CodeInline> will not push the AppBar to the side when opening.
+                    Clipped parameter is evaluated only when <CodeInline>Responsive</CodeInline> and <CodeInline>Persistent</CodeInline> drawers used inside a <CodeInline>MudLayout</CodeInline>.
+                </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
                 <iframe src="/iframe/docs/examples/drawer/clipped" class="docs-iframe">
@@ -34,27 +57,14 @@
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Anchor drawer</Title>
-                <Description>With the <CodeInline>Anchor</CodeInline> property you can set it to left or right, the default mode is left.</Description>
+                <Title>Responsive drawer</Title>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
-                <iframe src="/iframe/docs/examples/drawer/anchor" class="docs-iframe">
-                    <DrawerAnchorExample />
+                <iframe src="/iframe/docs/examples/drawer/persistent" class="docs-iframe">
+                    <DrawerResponsiveExample />
                 </iframe>
             </SectionContent>
-            <SectionSource Code="DrawerAnchorExample" ShowCode="false" GitHubFolderName="Drawer" />
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader>
-                <Title>Double Drawers</Title>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
-                <iframe src="/iframe/docs/examples/drawer/double" class="docs-iframe">
-                    <DrawerDoubleExample />
-                </iframe>
-            </SectionContent>
-            <SectionSource Code="DrawerDoubleExample" ShowCode="false" GitHubFolderName="Drawer" />
+            <SectionSource Code="DrawerResponsiveExample" GitHubFolderName="Drawer" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
