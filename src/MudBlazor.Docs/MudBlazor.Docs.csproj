@@ -53,9 +53,13 @@
     <ItemGroup>
       <Compile Include="Models/Snippets.generated.cs" Condition="!Exists('Models/Snippets.generated.cs')" />
       <Compile Include="Models/DocStrings.generated.cs" Condition="!Exists('Models/DocStrings.generated.cs')" />
-      <RazorComponent Include="@(NewExampleCodeToBuild)" Condition="@(NewExampleCodeToBuild-&gt;Count()) != 0" />
+      <EmbeddedResource Include="@(NewExampleCodeToBuild)" Condition="@(NewExampleCodeToBuild-&gt;Count()) != 0" />
     </ItemGroup>
   </Target>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Pages\**\*.html" />
+  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Data/Elements.json" />
