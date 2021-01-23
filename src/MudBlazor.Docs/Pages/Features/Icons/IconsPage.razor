@@ -33,7 +33,7 @@
                         <MudRadio Option="@item.Key" Color="Color.Primary">@item.Key</MudRadio>
                     }
                 </MudRadioGroup>
-                <MudTextField Immediate="true" @bind-Value="SearchText" Variant="Variant.Outlined" Placeholder="Search icons..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Search" />
+                <MudTextField Immediate="true" @bind-Value="SearchText" Variant="Variant.Outlined" Placeholder="Search icons..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
                 <MudText Class="mx-3" Typo="Typo.body1">@SelectedIcons.Count() matching results</MudText>
                 <MudDivider />
                 @if (MudIconsMaterial != null)
@@ -61,10 +61,9 @@
         : MudIconsMaterial.Where(m => m.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList();
     private readonly IDictionary<string, Type> IconTypes = new Dictionary<string, Type>()
 {
-        { IconType.Filled, typeof(Icons.Material)},
+        { IconType.Filled, typeof(Filled)},
         { IconType.Outlined, typeof(Outlined)},
         { IconType.Rounded, typeof(Rounded)},
-        { IconType.TwoTone, typeof(TwoTone)},
         { IconType.Sharp, typeof(Sharp)},
     };
 
@@ -114,7 +113,6 @@
         public const string Filled = "Filled",
                             Outlined = "Outlined",
                             Rounded = "Rounded",
-                            TwoTone = "Two tone",
                             Sharp = "Sharp";
     }
 }

@@ -9,7 +9,7 @@
 
 <MudLayout RightToLeft="@_rightToLeft">
     <MudAppBar Elevation="25">
-        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text">Mudblazor</MudText>
         <MudAppBarSpacer />
         <MudAutocomplete T="ApiLinkServiceEntry" Placeholder="Search" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar">
@@ -19,13 +19,13 @@
         </MudAutocomplete>
         <MudAppBarSpacer />
         <MudTooltip Text="Toggle light/dark theme">
-            <MudIconButton Icon="@Icons.Material.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
+            <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
         </MudTooltip>
         <MudTooltip Text="GitHub repository">
-            <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
+            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
         </MudTooltip>
         <MudTooltip Text="Toggle right-to-left/left-to-right">
-            <MudIconButton Icon="@Icons.Material.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
+            <MudIconButton Icon="@Icons.Material.Filled.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
         </MudTooltip>
     </MudAppBar>
     
@@ -38,7 +38,7 @@
         <MudMainContent Class="mudblazor-main-content">
             @Body
             <MudScrollToTop TopOffset="400">
-                <MudFab Icon="@Icons.Material.KeyboardArrowUp" Color="Color.Primary" />
+                <MudFab Icon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
             </MudScrollToTop>
             <NavigationFooter Section=_section Previous="@_previous" Next="@_next" />
         </MudMainContent>

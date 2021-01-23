@@ -71,10 +71,7 @@
     <None Include="..\.editorconfig" Link=".editorconfig">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-    <None Include="excubocompilerconfig.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Remove="compilerconfig.json"/>
-    <None Remove="DoNotRemove.txt"/>
+    <None Remove="compilerconfig.json" />
+    <None Remove="DoNotRemove.txt" />
   </ItemGroup>
 </Project>

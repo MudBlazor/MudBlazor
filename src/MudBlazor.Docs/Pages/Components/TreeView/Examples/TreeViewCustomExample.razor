@@ -42,34 +42,34 @@
 
     public TreeViewCustomExample()
     {
-        TreeItems.Add(new TreeItemData(".azure", Icons.Material.Folder));
-        TreeItems.Add(new TreeItemData(".github",Icons.Material.Folder));
-        TreeItems.Add(new TreeItemData(".vscode",Icons.Material.Folder));
-        TreeItems.Add(new TreeItemData("content", Icons.Material.Folder));
-        TreeItems.Add(new TreeItemData("src", Icons.Material.Folder)
+        TreeItems.Add(new TreeItemData(".azure", Icons.Filled.Folder));
+        TreeItems.Add(new TreeItemData(".github",Icons.Filled.Folder));
+        TreeItems.Add(new TreeItemData(".vscode",Icons.Filled.Folder));
+        TreeItems.Add(new TreeItemData("content", Icons.Filled.Folder));
+        TreeItems.Add(new TreeItemData("src", Icons.Filled.Folder)
         {
             TreeItems = new List<TreeItemData>()
             {
-                new TreeItemData("MudBlazor", Icons.Material.Folder),
-                new TreeItemData("MudBlazor.Docs", Icons.Material.Folder)
+                new TreeItemData("MudBlazor", Icons.Filled.Folder),
+                new TreeItemData("MudBlazor.Docs", Icons.Filled.Folder)
                 {
                     TreeItems = new List<TreeItemData>()
                     {
-                        new TreeItemData("_Imports.razor", Icons.Material.AlternateEmail),
+                        new TreeItemData("_Imports.razor", Icons.Filled.AlternateEmail),
                         new TreeItemData( "compilerconfig.json", IconJson),
                         new TreeItemData( "MudBlazor.Docs.csproj", IconProject),
                         new TreeItemData("NewFilesToBuild.txt" , IconFile),
                     }
                 },
-                new TreeItemData("MudBlazor.Docs.Client", Icons.Material.Folder),
-                new TreeItemData("MudBlazor.Docs.Compiler", Icons.Material.Folder),
-                new TreeItemData("MudBlazor.Docs.Server", Icons.Material.Folder),
-                new TreeItemData("MudBlazor.UnitTests", Icons.Material.Folder),
-                new TreeItemData("MudBlazor.UnitTests.Viewer", Icons.Material.Folder),
+                new TreeItemData("MudBlazor.Docs.Client", Icons.Filled.Folder),
+                new TreeItemData("MudBlazor.Docs.Compiler", Icons.Filled.Folder),
+                new TreeItemData("MudBlazor.Docs.Server", Icons.Filled.Folder),
+                new TreeItemData("MudBlazor.UnitTests", Icons.Filled.Folder),
+                new TreeItemData("MudBlazor.UnitTests.Viewer", Icons.Filled.Folder),
                 new TreeItemData(".editorconfig", IconFile),
                 new TreeItemData("MudBlazor.sln", IconSolution)
             }
         });
-        TreeItems.Add(new TreeItemData("History", Icons.Material.Folder));
+        TreeItems.Add(new TreeItemData("History", Icons.Filled.Folder));
     }
 }
