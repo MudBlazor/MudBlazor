@@ -1,15 +1,15 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTreeView Style="width: 500px;">
-    <MudTreeViewItemBuilder Items="@TreeItems">
+<MudTreeView Style="width: 500px;" Items="@TreeItems">
+    <ItemTemplate>
         <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems">
             <Content>
-                <MudTreeViewItemArrow @bind-Expanded="@context.IsExpanded" Visible="@context.HasChild" />
+                <MudTreeViewItemToggleButton @bind-Expanded="@context.IsExpanded" Visible="@context.HasChild" />
                 <MudIcon Icon="@context.Icon" Class="ml-0 mr-2" Color="@Color.Default" />
                 <MudText>@context.Text</MudText>
             </Content>
         </MudTreeViewItem>
-    </MudTreeViewItemBuilder>
+    </ItemTemplate>
 </MudTreeView>
 
 @code {
@@ -29,7 +29,7 @@
 
         public bool HasChild => TreeItems != null && TreeItems.Count > 0;
 
-        public List<TreeItemData> TreeItems { get; set; } = new List<TreeItemData>();
+        public HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
 
         public TreeItemData(string text, string icon)
         {
@@ -38,7 +38,7 @@
         }
     }
 
-    List<TreeItemData> TreeItems { get; set; } = new List<TreeItemData>();
+    HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
 
     public TreeViewCustomExample()
     {
@@ -48,12 +48,12 @@
         TreeItems.Add(new TreeItemData("content", Icons.Filled.Folder));
         TreeItems.Add(new TreeItemData("src", Icons.Filled.Folder)
         {
-            TreeItems = new List<TreeItemData>()
+            TreeItems = new HashSet<TreeItemData>()
             {
                 new TreeItemData("MudBlazor", Icons.Filled.Folder),
                 new TreeItemData("MudBlazor.Docs", Icons.Filled.Folder)
                 {
-                    TreeItems = new List<TreeItemData>()
+                    TreeItems = new HashSet<TreeItemData>()
                     {
                         new TreeItemData("_Imports.razor", Icons.Filled.AlternateEmail),
                         new TreeItemData( "compilerconfig.json", IconJson),

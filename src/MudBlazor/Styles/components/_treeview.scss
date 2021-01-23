@@ -51,6 +51,16 @@
     flex-shrink: 0;
     margin: 0 4px;
     justify-content: center;
+
+    .mud-treeview-item-arrow-expand {
+        color: var(--mud-palette-drawer-icon);
+        transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
+
+        &.mud-transform {
+            transform: rotate(90deg);
+            fill: var(--mud-palette-primary);
+        }
+    }
 }
 
 .mud-treeview-item-icon {

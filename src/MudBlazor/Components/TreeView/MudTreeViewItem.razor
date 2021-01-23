@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@typeparam T
 
 <li @attributes="UserAttributes" class="@Classname" style="@Style">
     <div class="@ContentClassname" @onclick="OnItemClicked" @onclick:stopPropagation="true">
@@ -9,7 +10,7 @@
         }
         else
         {
-            <MudTreeViewItemArrow @bind-Expanded="@ArrowExpanded" Visible="@HasChild"></MudTreeViewItemArrow>
+            <MudTreeViewItemToggleButton Expanded="Expanded" ExpandedChanged="OnItemExpanded" Visible="@HasChild"></MudTreeViewItemToggleButton>
 
             @if (MudTreeRoot != null && MudTreeRoot.CanSelect)
             {
@@ -48,17 +49,8 @@
         <MudCollapse Expanded="@Expanded">
             <CascadingValue Value="@MudTreeRoot" IsFixed="true">
                 <CascadingValue Value="this" IsFixed="true">
-                    <MudTreeView Class="mud-treeview-group">
-                        @if (MudTreeRoot != null && Items != null && Items.Count() > 0)
-                        {
-                            <CascadingValue Value="Items" IsFixed="true">
-                                @MudTreeRoot.ChildContent
-                            </CascadingValue>
-                        }
-                        else
-                        {
-                            @ChildContent
-                        }
+                    <MudTreeView Items="Items" ItemTemplate="MudTreeRoot.ItemTemplate" Class="mud-treeview-group">
+                        @ChildContent
                     </MudTreeView>
                 </CascadingValue>
             </CascadingValue>

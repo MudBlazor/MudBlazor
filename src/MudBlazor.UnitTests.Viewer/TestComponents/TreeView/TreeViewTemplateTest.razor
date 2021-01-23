@@ -1,8 +1,8 @@
-﻿<MudTreeView CanActivate="true" CanSelect="true" Style="width: 500px;">
-    <MudTreeViewItemBuilder Items="TreeItems">
+﻿<MudTreeView CanActivate="true" CanSelect="true" Items="TreeItems" Style="width: 500px;">
+    <ItemTemplate>
         <MudTreeViewItem @bind-Activated="@context.IsSelected" @bind-Expanded="@context.IsExpanded" Icon="@context.Icon"
                          Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" Items="@context.TreeItems" />
-    </MudTreeViewItemBuilder>
+    </ItemTemplate>
 </MudTreeView>
 
 @code { 
@@ -18,7 +18,7 @@
 
         public bool IsExpanded { get; set; }
 
-        public List<TreeItemData> TreeItems { get; set; } = new List<TreeItemData>();
+        public HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
 
         public TreeItemData(string title, string icon, int? number = null)
         {
@@ -28,7 +28,7 @@
         }
     }
 
-    List<TreeItemData> TreeItems { get; set; } = new List<TreeItemData>();
+    HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
 
     public TreeViewTemplateTest()
     {
@@ -37,7 +37,7 @@
         TreeItems.Add(new TreeItemData("Categories", Icons.Filled.Label)
         {
             IsExpanded = true,
-            TreeItems = new List<TreeItemData>()
+            TreeItems = new HashSet<TreeItemData>()
             {
                 new TreeItemData("Social", Icons.Filled.Group, 90),
                 new TreeItemData("Updates", Icons.Filled.Info, 2294),
