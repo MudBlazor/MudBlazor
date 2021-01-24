@@ -107,10 +107,10 @@ namespace MudBlazor
         public string Text
         {
             get => _text;
-            set => SetText(value, true);
+            set => SetTextAsync(value, true).AndForget();
         }
 
-        private void SetText(string text, bool updateValue)
+        protected async Task SetTextAsync(string text, bool updateValue)
         {
             if (_text != text)
             {
@@ -118,9 +118,17 @@ namespace MudBlazor
                 if (!string.IsNullOrWhiteSpace(text))
                     Touched = true;
                 if (updateValue)
-                    UpdateValueProperty(false);
-                TextChanged.InvokeAsync(_text).AndForget();
+                    await UpdateValuePropertyAsync(false);
+                await TextChanged.InvokeAsync(_text);
             }
+        }
+
+        /// <summary>
+        /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.   
+        /// </summary>
+        protected virtual Task UpdateTextPropertyAsync(bool updateValue)
+        {
+            return SetTextAsync(Converter.Set(Value), updateValue);
         }
 
         /// <summary>
@@ -132,14 +140,6 @@ namespace MudBlazor
         public virtual ValueTask SelectAsnyc() { return new ValueTask(); }
 
         public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return new ValueTask(); }
-
-        /// <summary>
-        /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.   
-        /// </summary>
-        protected virtual void UpdateTextProperty(bool updateValue)
-        {
-            SetText(Converter.Set(Value), updateValue);
-        }
 
         [Parameter] public EventCallback<string> TextChanged { get; set; }
 
@@ -176,33 +176,34 @@ namespace MudBlazor
         public T Value
         {
             get => _value;
-            set => SetValue(value, true);
+            set => SetValueAsync(value, true).AndForget();
         }
 
-        private void SetValue(T value, bool updateText)
+        protected async Task SetValueAsync(T value, bool updateText)
         {
             if (!EqualityComparer<T>.Default.Equals(_value, value))
             {
                 _value = value;
                 if (updateText)
-                    UpdateTextProperty(false);
-                BeginValidateAfter(ValueChanged.InvokeAsync(_value));
+                    await UpdateTextPropertyAsync(false);
+                await ValueChanged.InvokeAsync(_value);
+                BeginValidate();
             }
         }
 
         /// <summary>
         /// Value change hook for descendants. Called when Value needs to be refreshed from current Text property.  
         /// </summary>
-        protected virtual void UpdateValueProperty(bool updateText)
+        protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
-            SetValue(Converter.Get(Text), updateText);
+            return SetValueAsync(Converter.Get(Text), updateText);
         }
 
         protected override bool SetConverter(Converter<T, string> value)
         {
             var changed = base.SetConverter(value);
             if (changed)
-                UpdateTextProperty(false);      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
 
             return changed;
         }
@@ -211,7 +212,7 @@ namespace MudBlazor
         {
             var changed = base.SetCulture(value);
             if (changed)
-                UpdateTextProperty(false);      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
 
             return changed;
         }
@@ -232,7 +233,7 @@ namespace MudBlazor
             if (changed)
             {
                 ((Converter<T>)Converter).Format = value;
-                UpdateTextProperty(false);      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
             }
             return changed;
         }
@@ -243,13 +244,13 @@ namespace MudBlazor
                 await base.ValidateValue();
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
+            await base.OnInitializedAsync();
 
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
-            UpdateTextProperty(false);
+            await UpdateTextPropertyAsync(false);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

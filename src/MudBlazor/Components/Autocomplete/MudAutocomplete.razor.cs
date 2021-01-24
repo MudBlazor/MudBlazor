@@ -178,17 +178,17 @@ namespace MudBlazor
         private T[] _items;
         private int _selectedListItemIndex = 0;
 
-        protected override void UpdateTextProperty(bool updateValue)
+        protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            base.UpdateTextProperty(updateValue);
             _timer?.Dispose();
+            return base.UpdateTextPropertyAsync(updateValue);
         }
 
-        protected override void UpdateValueProperty(bool updateText)
+        protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
-            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
-                Value = default(T);
             _timer?.Dispose();
+            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
+                await SetValueAsync(default(T), updateText);
             _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
         }
 

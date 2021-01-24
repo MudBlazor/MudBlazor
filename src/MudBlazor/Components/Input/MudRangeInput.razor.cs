@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
@@ -61,16 +62,16 @@ namespace MudBlazor
             }
         }
 
-        protected override void UpdateTextProperty(bool updateValue)
+        protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {
-            base.UpdateTextProperty(updateValue);
+            await base.UpdateTextPropertyAsync(updateValue);
 
             RangeConverter<T>.Split(Text, out _textStart, out _textEnd);
         }
 
-        protected override void UpdateValueProperty(bool updateText)
+        protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
-            base.UpdateValueProperty(updateText);
+            await base.UpdateValuePropertyAsync(updateText);
 
             RangeConverter<T>.Split(Text, out _textStart, out _textEnd);
         }

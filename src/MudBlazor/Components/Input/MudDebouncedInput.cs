@@ -32,7 +32,7 @@ namespace MudBlazor
                 else
                 {
                     if (ClearTimer())
-                        await OnTimerCompleteGuiThread();
+                        await OnTimerCompleteGuiThreadAsync();
                 }
             }
         }
@@ -45,30 +45,28 @@ namespace MudBlazor
 
         private bool _updateTextOnTimerComplete;
 
-        protected override void UpdateValueProperty(bool updateText)
+        protected override Task UpdateValuePropertyAsync(bool updateText)
         {
             // This method is called when Value property needs to be refreshed from the current Text property, so typically because Text property has changed.
             // If a debounce interval is defined, we want to delay the update of Value property.
 
             if (DebounceInterval <= 0)
-            {
-                base.UpdateValueProperty(updateText);
-            }
-            else
-            {
-                // store the value to use when timer will complete
-                _updateTextOnTimerComplete = updateText;
+                return base.UpdateValuePropertyAsync(updateText);
 
-                // restart the timer while user is typing
-                _timer.Stop();
-                _timer.Start();
-            }
+            // store the value to use when timer will complete
+            _updateTextOnTimerComplete = updateText;
+
+            // restart the timer while user is typing
+            _timer.Stop();
+            _timer.Start();
+
+            return Task.CompletedTask;
         }
 
-        private Task OnTimerCompleteGuiThread()
+        private async Task OnTimerCompleteGuiThreadAsync()
         {
-            base.UpdateValueProperty(_updateTextOnTimerComplete);
-            return OnDebounceIntervalElapsed.InvokeAsync(Text);
+            await base.UpdateValuePropertyAsync(_updateTextOnTimerComplete);
+            await OnDebounceIntervalElapsed.InvokeAsync(Text);
         }
 
         protected override void OnParametersSet()
@@ -86,7 +84,7 @@ namespace MudBlazor
             if (_timer == null)
             {
                 _timer = new Timer();
-                _timer.Elapsed += (o, a) => InvokeAsync(OnTimerCompleteGuiThread).AndForget();
+                _timer.Elapsed += (o, a) => InvokeAsync(OnTimerCompleteGuiThreadAsync).AndForget();
                 _timer.AutoReset = false;
             }
             _timer.Interval = DebounceInterval;
