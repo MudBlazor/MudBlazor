@@ -152,17 +152,17 @@ namespace MudBlazor.UnitTests
             // print the generated html      
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var pager = comp.FindComponent<MudSelect<string>>().Instance;
+            var pager = comp.FindComponent<MudSelect<string>>();
             // change page size
-            await comp.InvokeAsync(() => pager.Value = "20");
+            pager.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "20"));
             comp.FindAll("tr.mud-table-row").Count.Should().Be(20);
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-20 of 59");
             // change page size
-            await comp.InvokeAsync(() => pager.Value = "60");
+            pager.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "60"));
             comp.FindAll("tr.mud-table-row").Count.Should().Be(59);
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-59 of 59");
             // change page size
-            await comp.InvokeAsync(() => pager.Value = "10");
+            pager.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "10"));
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
         }

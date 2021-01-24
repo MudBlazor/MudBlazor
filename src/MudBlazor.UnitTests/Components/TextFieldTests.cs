@@ -83,11 +83,10 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<MudTextField<int?>>(ComponentParameter.CreateParameter("Value", 17));
             // print the generated html
             Console.WriteLine(comp.Markup);
-            var textfield = comp.Instance;
-            await comp.InvokeAsync(() => textfield.Value = null);
+            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
-            await comp.InvokeAsync(() => textfield.Text = "");
+            comp.Find("input").Change("");
             comp.Find("input").Blur();
             comp.FindAll("div.mud-input-error").Count.Should().Be(0);
         }
@@ -101,8 +100,7 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<MudTextField<int?>>();
             // print the generated html
             //Console.WriteLine(comp.Markup);
-            var textfield = comp.Instance;
-            await comp.InvokeAsync(() => textfield.Text = "seventeen");
+            comp.Find("input").Change("seventeen");
             comp.Find("input").Blur();
             Console.WriteLine(comp.Markup);
             comp.FindAll("p.mud-input-error").Count.Should().Be(1);
@@ -209,11 +207,11 @@ namespace MudBlazor.UnitTests
             var textfield = comp.Instance;
             Console.WriteLine(comp.Markup);
             // first try a valid credit card number
-            await comp.InvokeAsync(() => textfield.Text = "4012 8888 8888 1881");
+            comp.Find("input").Change("4012 8888 8888 1881");
             textfield.Error.Should().BeFalse(because: "The number is a valid VISA test credit card number");
             textfield.ErrorText.Should().BeNullOrEmpty();
             // now try something that produces a validation error
-            await comp.InvokeAsync(() => textfield.Text = "0000 1111 2222 3333");
+            comp.Find("input").Change("0000 1111 2222 3333");
             textfield.Error.Should().BeTrue(because: "The credit card number is fake");
             Console.WriteLine("Error message: " + textfield.ErrorText);
             textfield.ErrorText.Should().NotBeNullOrEmpty();
@@ -232,10 +230,10 @@ namespace MudBlazor.UnitTests
             var textfield = comp.Instance;
             textfield.Converter.SetFunc = s => $"{s}x";
             textfield.Converter.GetFunc = s => $"{s}y";
-            await comp.InvokeAsync(() => textfield.Value = "A");
+            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "A"));
             textfield.Value.Should().Be("A");
             textfield.Text.Should().Be("Ax");
-            await comp.InvokeAsync(() => textfield.Text = "B");
+            comp.Find("input").Change("B");
             textfield.Value.Should().Be("By");
             textfield.Text.Should().Be("B");
         }
@@ -250,10 +248,10 @@ namespace MudBlazor.UnitTests
                 EventCallback<string>("TextChanged", x => changed_text = x)
             );
             var textfield = comp.Instance;
-            await comp.InvokeAsync(() => textfield.Value = "A");
+            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "A"));
             changed_value.Should().Be("A");
             changed_text.Should().Be("A");
-            await comp.InvokeAsync(() => textfield.Text = "B");
+            comp.Find("input").Change("B");
             changed_value.Should().Be("B");
             changed_text.Should().Be("B");
         }
@@ -268,7 +266,7 @@ namespace MudBlazor.UnitTests
         {
             var comp = ctx.RenderComponent<MudTextField<int?>>(ComponentParameter.CreateParameter("Required", true));
             var textfield = comp.Instance;
-            await comp.InvokeAsync(() => textfield.Text = "A");
+            comp.Find("input").Change("A");
             comp.Find("input").Blur();
             textfield.HasErrors.Should().Be(true);
             textfield.ErrorText.Should().Be("Not a valid number");
