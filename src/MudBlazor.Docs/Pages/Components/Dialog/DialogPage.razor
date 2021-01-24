@@ -16,9 +16,13 @@
             <SectionHeader>
                 <Title>Usage</Title>
                 <Description>
-                    The Dialog is its own .razor file and can be used as a kind of template where you populate it by passing data.<br />
-                    We will start with a simple example, then some configration options and further down on this page more advanced examples.
-                    You can either have one Dialog.razor file for eatch type of dialog you want to have or build a few of them and reuse them across the system.
+                    Suppose you define a <CodeInline>MudDialog</CodeInline> in <CodeInline Class="docs-code-tertiary">TermsOfServiceDialog.razor</CodeInline>. 
+                    To show the dialog you simply call:
+                    <p> 
+                    <CodeInline>DialogService.Show&lt;<CodeInline Class="docs-code-tertiary">TermsOfServiceDialog</CodeInline>&gt;("Terms");</CodeInline>
+                    </p>
+                    The advantage of having the dialog in its own razor component is obviously the ability to reuse it throughout your code-base. 
+                    You can pass parameters to your dialog on show which allow you to load the dialog with custom data.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -73,7 +77,7 @@
                 <MudTabPanel Text="Page.razor">
                     <SectionSource Code="DialogSetOptionsExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
                 </MudTabPanel>
-                <MudTabPanel Text="DialogSetOptionsExample_Dialog.razor">
+                <MudTabPanel Text="Dialog.razor">
                     <SectionSource Code="DialogSetOptionsExample_Dialog" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
                 </MudTabPanel>
             </MudTabs>
@@ -92,7 +96,7 @@
                 <MudTabPanel Text="Page.razor">
                     <SectionSource Code="DialogTemplateExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
                 </MudTabPanel>
-                <MudTabPanel Text="DialogSetOptionsExample_Dialog.razor">
+                <MudTabPanel Text="Dialog.razor">
                     <SectionSource Code="DialogTemplateExample_Dialog" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
                 </MudTabPanel>
             </MudTabs>
@@ -111,7 +115,7 @@
                 <MudTabPanel Text="Page.razor">
                     <SectionSource Code="DialogPassingDataExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
                 </MudTabPanel>
-                <MudTabPanel Text="DialogPassingDataExample_Dialog.razor">
+                <MudTabPanel Text="Dialog.razor">
                     <SectionSource Code="DialogPassingDataExample_Dialog" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
                 </MudTabPanel>
             </MudTabs>
@@ -130,7 +134,7 @@
                 <MudTabPanel Text="Page.razor">
                     <SectionSource Code="DialogScrollableExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
                 </MudTabPanel>
-                <MudTabPanel Text="DialogScrollableExample_Dialog.razor">
+                <MudTabPanel Text="Dialog.razor">
                     <SectionSource Code="DialogScrollableExample_Dialog" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
                 </MudTabPanel>
             </MudTabs>

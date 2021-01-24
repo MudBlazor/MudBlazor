@@ -102,18 +102,19 @@ namespace MudBlazor.UnitTests
                 "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
             var icons = comp.FindAll("div.mud-list-item path").ToArray();
             // check that the correct items are checked
-            icons[0].Attributes["d"].Value.Should().Be(@unchecked);
-            icons[1].Attributes["d"].Value.Should().Be(@checked);
-            icons[2].Attributes["d"].Value.Should().Be(@checked);
+            icons[1].Attributes["d"].Value.Should().Be(@unchecked);
+            icons[3].Attributes["d"].Value.Should().Be(@checked);
+            icons[5].Attributes["d"].Value.Should().Be(@checked);
             // now check how setting the SelectedValues makes items checked or unchecked
             await comp.InvokeAsync(() =>
             {
                 select.Instance.SelectedValues = new HashSet<string>() { "1", "2" };
             });
             icons = comp.FindAll("div.mud-list-item path").ToArray();
-            icons[0].Attributes["d"].Value.Should().Be(@checked);
             icons[1].Attributes["d"].Value.Should().Be(@checked);
-            icons[2].Attributes["d"].Value.Should().Be(@unchecked);
+            icons[3].Attributes["d"].Value.Should().Be(@checked);
+            icons[5].Attributes["d"].Value.Should().Be(@unchecked);
+            Console.WriteLine(comp.Markup);
         }
 
         /// <summary>

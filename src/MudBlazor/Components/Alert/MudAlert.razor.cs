@@ -69,11 +69,11 @@ namespace MudBlazor
             {
                 _icon = Severity switch
                 {
-                    Severity.Normal => Outlined.EventNoteOutlined,
-                    Severity.Info => Outlined.InfoOutlined,
-                    Severity.Success => Icons.Custom.AlertSuccess,
-                    Severity.Warning => Outlined.ReportProblemOutlined,
-                    Severity.Error => Filled.ErrorOutline,
+                    Severity.Normal => Icons.Material.Outlined.EventNote,
+                    Severity.Info => Icons.Material.Outlined.Info,
+                    Severity.Success => Icons.Custom.Uncategorized.AlertSuccess,
+                    Severity.Warning => Icons.Material.Outlined.ReportProblem,
+                    Severity.Error => Icons.Material.Filled.ErrorOutline,
                     _ => throw new ArgumentOutOfRangeException(nameof(Severity)),
                 };
             }

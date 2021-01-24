@@ -20,7 +20,6 @@ namespace MudBlazor
     }
 
     internal class ScrollListener : IScrollListener, IDisposable
-
     {
         private readonly IJSRuntime _js;
         private DotNetObjectReference<ScrollListener> _dotnetRef;
@@ -98,11 +97,7 @@ namespace MudBlazor
                     "scrollListener.cancelListener",
                                Selector);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                /* ignore */
-            }
+            catch { /* ignore */ }
         }
 
         public void Dispose()

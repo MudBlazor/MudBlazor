@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Docs\MudBlazor.Docs.csproj" />
-    <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
   </ItemGroup>
 
 </Project>

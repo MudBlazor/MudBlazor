@@ -5,9 +5,9 @@
 
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawerOne" />
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawerOne" />
         <MudAppBarSpacer />
-        <MudIconButton Icon="@Icons.Material.Settings" Color="Color.Inherit" OnClick="@ToggleDrawerTwo"  />
+        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" OnClick="@ToggleDrawerTwo"  />
     </MudAppBar>
     <MudDrawer @bind-Open="@drawerOneOpen" Clipped="@drawerOneClipped" Anchor="Anchor.Left" Elevation="25">
         <MudDrawerHeader>

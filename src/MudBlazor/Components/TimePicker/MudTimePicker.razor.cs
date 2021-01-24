@@ -33,7 +33,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the Input Icon.
         /// </summary>
-        [Parameter] public string InputIcon { get; set; } = Icons.Material.Event;
+        [Parameter] public string InputIcon { get; set; } = Icons.Material.Filled.Event;
 
         private TimeSpan? _time;
 

@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+<MudChipSet @bind-SelectedChips="selected" MultiSelection="true" Filter="true">
+    <MudChip Text="Milk" Default="true"></MudChip>
+    <MudChip Text="Eggs"></MudChip>
+    <MudChip Text="Soap"></MudChip>
+    <MudChip Text="Cornflakes" Default="true"></MudChip>
+    <MudChip Text="Salad"></MudChip>
+    <MudChip Text="Apples"></MudChip>
+    <MudChip Text="Red wine"></MudChip>
+</MudChipSet>
+
+
+@if (selected != null && selected.Length>0)
+{
+    <MudText>You selected @string.Join(", ", selected.Select(chip=>chip.Text)).</MudText>
+}
+else
+{
+    <MudText>Nothing selected.</MudText>
+}
+
+@code
+{
+    MudChip[] selected;
+}
+

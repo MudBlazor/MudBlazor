@@ -13,7 +13,7 @@
         padding:16px;
         background-color: #4caf50;"         
        for="fileInput2">
-    Upload <MudIcon Icon="@Filled.CloudUpload"/>
+    Upload <MudIcon Icon="@Icons.Filled.CloudUpload"/>
 </label>
 
 <InputFile id="fileInput2" OnChange="UploadFiles" hidden multiple />
@@ -23,7 +23,7 @@
     <MudList>
         @foreach (var file in files)
         {
-            <MudListItem Icon="@Filled.AttachFile">
+            <MudListItem Icon="@Icons.Filled.AttachFile">
                 @file.Name <code>@file.Size bytes</code>
             </MudListItem>
         }

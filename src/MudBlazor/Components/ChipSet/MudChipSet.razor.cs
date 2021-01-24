@@ -62,7 +62,7 @@ namespace MudBlazor
         [Parameter]
         public MudChip SelectedChip
         {
-            get { return _chips.OfType<MudChip>().Where(x => x.IsSelected).FirstOrDefault(); }
+            get { return _chips.OfType<MudChip>().FirstOrDefault(x => x.IsSelected); }
             set
             {
                 if (value == null)
@@ -144,7 +144,7 @@ namespace MudBlazor
 
         internal async Task OnChipClicked(MudChip chip)
         {
-            var was_selected = chip.IsSelected;
+            var wasSelected = chip.IsSelected;
             if (MultiSelection)
             {
                 chip.IsSelected = !chip.IsSelected;
@@ -156,7 +156,7 @@ namespace MudBlazor
                     ch.IsSelected = (ch == chip); // <-- exclusively select the one chip only, thus all others must be deselected
                 }
                 if (!Mandatory)
-                    chip.IsSelected = !was_selected;
+                    chip.IsSelected = !wasSelected;
             }
             await NotifySelection();
         }
@@ -172,6 +172,39 @@ namespace MudBlazor
         {
             Remove(chip);
             OnClose.InvokeAsync(chip);
+        }
+
+        protected override async void OnAfterRender(bool firstRender)
+        {
+            if (firstRender)
+                await SelectDefaultChips();
+            base.OnAfterRender(firstRender);
+        }
+
+        private async Task SelectDefaultChips()
+        {
+            var anySelected = false;
+            if (MultiSelection)
+            {
+                foreach (var chip in _chips)
+                {
+                    if (!chip.Default)
+                        continue;
+                    chip.IsSelected = chip.Default;
+                    anySelected = true;
+                }
+            }
+            else
+            {
+                var defaultChip = _chips.LastOrDefault(chip => chip.Default);
+                if (defaultChip != null)
+                {
+                    defaultChip.IsSelected = true;
+                    anySelected = true;
+                }
+            }
+            if (anySelected)
+                await NotifySelection();
         }
     }
 }

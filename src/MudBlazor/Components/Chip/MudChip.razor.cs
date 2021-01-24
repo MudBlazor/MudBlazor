@@ -107,6 +107,11 @@ namespace MudBlazor
         [Parameter] public bool ForceLoad { get; set; }
 
         /// <summary>
+        /// If true, this chip is selected per default if used in a ChipSet. 
+        /// </summary>
+        [Parameter] public bool Default { get; set; }
+
+        /// <summary>
         /// Command executed when the user clicks on an element.
         /// </summary>
         [Parameter] public ICommand Command { get; set; }

@@ -39,16 +39,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="bundleconfig.json" />
-    <Content Remove="compilerconfig.json" />
-
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\MudBlazor.css" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.1" />
   </ItemGroup>
@@ -62,8 +52,8 @@
     <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json" StandardOutputImportance="high" />
     <!--concatenate js files-->
     <Exec Command="mkdir combined" WorkingDirectory="TScripts" IgnoreExitCode="true" StandardErrorImportance="low" />
-    <Exec Command="cat ./TScripts/*.js > ./TScripts/combined/MudBlazor.js" Condition=" '$(OS)' != 'Windows_NT' " StandardOutputImportance="high" />
-    <Exec Command="powershell -noprofile -c &quot;cat ./TScripts/*.js > ./TScripts/combined/MudBlazor.js&quot;" Condition=" '$(OS)' == 'Windows_NT' " StandardOutputImportance="high" />
+    <Exec Command="cat ./TScripts/*.js &gt; ./TScripts/combined/MudBlazor.js" Condition=" '$(OS)' != 'Windows_NT' " StandardOutputImportance="high" />
+    <Exec Command="powershell -noprofile -c &quot;cat ./TScripts/*.js &gt; ./TScripts/combined/MudBlazor.js&quot;" Condition=" '$(OS)' == 'Windows_NT' " StandardOutputImportance="high" />
     <!--minify js-->
     <Exec Command="dotnet webcompiler ./TScripts/combined/MudBlazor.js -c excubowebcompiler.json" StandardOutputImportance="high" />
   </Target>
@@ -78,12 +68,10 @@
   </Target>
 
   <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="bundleconfig.json">
+    <None Include="..\.editorconfig" Link=".editorconfig">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-    <None Include="compilerconfig.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
+    <None Remove="compilerconfig.json" />
+    <None Remove="DoNotRemove.txt" />
   </ItemGroup>
 </Project>
