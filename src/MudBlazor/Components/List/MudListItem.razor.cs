@@ -53,6 +53,11 @@ namespace MudBlazor
         [Parameter] public string Icon { get; set; }
 
         /// <summary>
+        /// The color of the icon.
+        /// </summary>
+        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
         /// If true, the List Subheader will be indented.
         /// </summary>
         [Parameter] public bool Inset { get; set; }
