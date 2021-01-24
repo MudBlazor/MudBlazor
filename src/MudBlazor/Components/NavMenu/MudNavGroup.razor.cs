@@ -18,12 +18,29 @@ namespace MudBlazor
         /// Icon to use if set.
         /// </summary>
         [Parameter] public string Icon { get; set; }
+
+        /// <summary>
+        /// The color of the icon. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
+        /// If true, the button will be disabled.
+        /// </summary>
         [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
+        /// If true, disables ripple effect.
+        /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
+
+        /// <summary>
+        /// If true, expands the nav group, otherwise collapse it. Setting this prop enables control over the panel.
+        /// </summary>
         [Parameter] public bool Expanded { get; set; }
 
         /// <summary>
-        /// If true, hides expand-icon at the end of the NavGroup. Set to true by default.
+        /// If true, hides expand-icon at the end of the NavGroup.
         /// </summary>
         [Parameter] public bool HideExpandIcon { get; set; }
 
