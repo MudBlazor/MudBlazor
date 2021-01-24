@@ -15,7 +15,7 @@
         <MudTh>Age</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd><MudButton Variant="Variant.Outlined" OnClick="@(() => ShowBtnPress(context.Number))">@((context.ShowDetails == true)? "Hide" : "Show") Address Details</MudButton></MudTd>
+        <MudTd><MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => ShowBtnPress(context.Number))">@((context.ShowDetails == true)? "Hide" : "Show") Address Details</MudButton></MudTd>
         <MudTd DataLabel="Nr">@context.Number</MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Age">@context.Age</MudTd>
@@ -25,14 +25,14 @@
         {
 <MudTr>
     <td colspan="4">
-        <MudCard Style="margin:15px">
+        <MudCard Elevation="0">
             <MudCardHeader>
                 <CardHeaderContent>
                     <MudText Typo="Typo.body1">Address Details for <strong>@context.Name</strong></MudText>
                 </CardHeaderContent>
             </MudCardHeader>
-            <MudCardContent>
-                <MudTable Items="@context.Addresses" Context="AddressContext" Hover="true" Breakpoint="Breakpoint.Sm">
+            <MudCardContent Class="pa-0">
+                <MudTable Items="@context.Addresses" Context="AddressContext" Hover="true" Breakpoint="Breakpoint.Sm" Elevation="0">
                     <ColGroup>
                         <col />
                         <col />
