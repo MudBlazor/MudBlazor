@@ -125,20 +125,20 @@ namespace MudBlazor
 
         private MudInput<string> _elementReference;
 
-        public void SelectOption(T value)
+        public async Task SelectOption(T value)
         {
-            Value = value;
+            _timer?.Dispose();
+            await SetValueAsync(value, true);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
             _text = GetItemString(value);
-            _timer?.Dispose();
             IsOpen = false;
             UpdateIcon();
             BeginValidate();
             StateHasChanged();
         }
 
-        public void ToggleMenu()
+        public async Task ToggleMenu()
         {
             if (Disabled || MinCharacters > 0 && (string.IsNullOrEmpty(Text) || Text.Length < MinCharacters))
                 return;
@@ -151,7 +151,7 @@ namespace MudBlazor
             }
             else
             {
-                CoerceTextToValue();
+                await CoerceTextToValue();
             }
             UpdateIcon();
             StateHasChanged();
@@ -307,30 +307,29 @@ namespace MudBlazor
                 SelectOption(_items[_selectedListItemIndex]);
         }
 
-        private void OnInputBlurred(FocusEventArgs args)
+        private Task OnInputBlurred(FocusEventArgs args)
         {
-            if (!IsOpen)
-                CoerceTextToValue();
+            return !IsOpen ? CoerceTextToValue() : Task.CompletedTask;
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value, 
             // resulting in a premature validation. thus, don't call base
             //base.OnBlurred(args);
         }
 
-        private void CoerceTextToValue()
+        private async Task CoerceTextToValue()
         {
             if (CoerceText == false)
                 return;
             if (Value == null)
             {
-                Text = null;
                 _timer?.Dispose();
+                await SetTextAsync(null, true);
                 return;
             }
             var actualvalueStr = GetItemString(Value);
             if (!object.Equals(actualvalueStr, Text))
             {
-                Text = actualvalueStr;
                 _timer?.Dispose();
+                await SetTextAsync(actualvalueStr, true);
             }
         }
 
