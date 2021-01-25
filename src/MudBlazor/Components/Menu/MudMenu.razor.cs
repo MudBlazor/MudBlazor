@@ -103,7 +103,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the direction the select menu should be.
         /// </summary>
-        [Parameter] public Direction Direction { get; set; } = Direction.Top;
+        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the select menu will open either before or after the input.
