@@ -4,6 +4,12 @@
     padding-right: 8px; //the width of scroll-bar
 }
 
+.scroll-locked-dialog {
+    height: 100%;
+    overflow-y: hidden;
+    padding-right: 8px; //the width of scroll-bar
+}
+
 .mud-scroll-to-top {
     position: fixed;
     cursor: pointer;
