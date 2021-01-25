@@ -10,7 +10,7 @@ namespace MudBlazor
 
         public MudRangeInput()
         {
-            _value = new Range<T>();
+            Value = new Range<T>();
             Converter = new RangeConverter<T>();
         }
 

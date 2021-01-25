@@ -50,27 +50,27 @@ namespace MudBlazor.UnitTests
             form.IsValid.Should().Be(false);
             textField.Error.Should().BeFalse();
             textField.ErrorText.Should().BeNullOrEmpty();
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "Marilyn Manson"));
+            textFieldcomp.Find("input").Change("Marilyn Manson");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
             textField.Error.Should().BeFalse();
             textField.ErrorText.Should().BeNullOrEmpty();
             // clear value to null
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", null));
+            textFieldcomp.Find("input").Change(null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Enter a rock star");
             textField.Error.Should().BeTrue();
             textField.ErrorText.Should().Be("Enter a rock star");
             // set value to "" -> should also be an error
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", ""));
+            textFieldcomp.Find("input").Change("");
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Enter a rock star");
             textField.Error.Should().BeTrue();
             textField.ErrorText.Should().Be("Enter a rock star");
             //
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "Kurt Cobain"));
+            textFieldcomp.Find("input").Change("Kurt Cobain");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
             textField.Error.Should().BeFalse();
@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
             // check initial state: form should be valid due to field not being required!
             form.IsValid.Should().Be(true);
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "This value doesn't matter"));
+            textFieldcomp.Find("input").Change("This value doesn't matter");
             form.IsValid.Should().Be(true);
         }
 
@@ -110,14 +110,14 @@ namespace MudBlazor.UnitTests
             form.IsValid.Should().Be(false);
             textField.Error.Should().BeFalse();
             textField.ErrorText.Should().BeNullOrEmpty();
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "Marilyn Manson"));
-
+            // this rock star starts with Marilyn
+            textFieldcomp.Find("input").Change("Marilyn Manson");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
             textField.Error.Should().BeFalse();
             textField.ErrorText.Should().BeNullOrEmpty();
             // this rock star doesn't start with Marilyn
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "Kurt Cobain"));
+            textFieldcomp.Find("input").Change("Kurt Cobain");
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             textField.Error.Should().BeTrue();
@@ -134,7 +134,7 @@ namespace MudBlazor.UnitTests
             //textField.ErrorText.Should().BeNullOrEmpty();
 
             // ok, not a rock star, but a star nonetheless
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "Marilyn Monroe"));
+            textFieldcomp.Find("input").Change("Marilyn Monroe");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
             textField.Error.Should().BeFalse();
@@ -158,10 +158,10 @@ namespace MudBlazor.UnitTests
             var form = comp.FindComponent<MudForm>().Instance;
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
             form.IsValid.Should().Be(false);
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "Marilyn Manson"));
+            textFieldcomp.Find("input").Change("Marilyn Manson");
             form.IsValid.Should().Be(true);
             // this one might not be a star, but our custom validation func deems him valid nonetheless
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "Charles Manson"));
+            textFieldcomp.Find("input").Change("Charles Manson");
             form.IsValid.Should().Be(true);
 
             // note: this logic is invalid, so it was removed. Validaton funcs are always called
@@ -172,10 +172,10 @@ namespace MudBlazor.UnitTests
             //form.IsValid.Should().Be(true);
 
             // clearly a star
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "Marilyn Monroe"));
+            textFieldcomp.Find("input").Change("Marilyn Monroe");
             form.IsValid.Should().Be(true);
             // not a star according to our validation func
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "Manson Marilyn"));
+            textFieldcomp.Find("input").Change("Manson Marilyn");
             form.IsValid.Should().Be(false);
         }
 
@@ -191,7 +191,7 @@ namespace MudBlazor.UnitTests
             var textFieldcomp = comp.FindComponent<MudTextField<string>>();
             var textField = textFieldcomp.Instance;
             form.IsValid.Should().Be(false);
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "Some value"));
+            textFieldcomp.Find("input").Change("Some value");
             form.IsValid.Should().Be(true);
             // calling Reset() should reset the textField's value
             await comp.InvokeAsync(() => form.Reset());
@@ -225,16 +225,16 @@ namespace MudBlazor.UnitTests
             // validate initial field state
             textField.ValidationErrors.Should().BeEmpty();
             // make sure error can be detected
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "def"));
+            textFieldcomp.Find("input").Change("def");
             await Task.Delay(InValidDelay + WaitDelay);
             textField.ValidationErrors.Should().ContainSingle("invalid");
             // make sure success can be detected
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "abc"));
+            textFieldcomp.Find("input").Change("abc");
             await Task.Delay(ValidDelay + WaitDelay);
             textField.ValidationErrors.Should().BeEmpty();
             // send invalid value, then valid value
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "def"));
-            textFieldcomp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "abc"));
+            textFieldcomp.Find("input").Change("def");
+            textFieldcomp.Find("input").Change("abc");
             // validate that first call result (invalid, longer return time) will not overwrite second call result (valid, shorter return time)
             await Task.Delay(InValidDelay + WaitDelay);
             textField.ValidationErrors.Should().BeEmpty();

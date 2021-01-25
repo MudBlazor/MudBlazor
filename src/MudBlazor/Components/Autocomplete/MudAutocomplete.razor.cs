@@ -131,7 +131,7 @@ namespace MudBlazor
             await SetValueAsync(value);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
-            _text = GetItemString(value);
+            Text = GetItemString(value);
             IsOpen = false;
             UpdateIcon();
             BeginValidate();

@@ -101,25 +101,19 @@ namespace MudBlazor
 
         [Inject] public IJSRuntime JSRuntime { get; set; }
 
-        protected string _text;
-
         [Parameter]
-        public string Text
-        {
-            get => _text;
-            set => SetTextAsync(value).AndForget();
-        }
+        public string Text { get; set; }
 
         protected async Task SetTextAsync(string text, bool updateValue = true)
         {
-            if (_text != text)
+            if (Text != text)
             {
-                _text = text;
-                if (!string.IsNullOrWhiteSpace(text))
+                Text = text;
+                if (!string.IsNullOrWhiteSpace(Text))
                     Touched = true;
                 if (updateValue)
                     await UpdateValuePropertyAsync(false);
-                await TextChanged.InvokeAsync(_text);
+                await TextChanged.InvokeAsync(Text);
             }
         }
 
@@ -176,17 +170,17 @@ namespace MudBlazor
         public T Value
         {
             get => _value;
-            set => SetValueAsync(value).AndForget();
+            set => _value = value;
         }
 
         protected async Task SetValueAsync(T value, bool updateText = true)
         {
-            if (!EqualityComparer<T>.Default.Equals(_value, value))
+            if (!EqualityComparer<T>.Default.Equals(Value, value))
             {
-                _value = value;
+                Value = value;
                 if (updateText)
                     await UpdateTextPropertyAsync(false);
-                await ValueChanged.InvokeAsync(_value);
+                await ValueChanged.InvokeAsync(Value);
                 BeginValidate();
             }
         }
@@ -253,6 +247,22 @@ namespace MudBlazor
             await UpdateTextPropertyAsync(false);
         }
 
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            await base.SetParametersAsync(parameters);
+
+            var hasText = parameters.Contains<string>(nameof(Text));
+            var hasValue = parameters.Contains<T>(nameof(Value));
+
+            // Refresh Value from Text
+            if (hasText && !hasValue)
+                await UpdateValuePropertyAsync(false);
+
+            // Refresh Text from Value
+            if (hasValue && !hasText)
+                await UpdateTextPropertyAsync(false);
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             //Only focus automatically after the first render cycle!
@@ -276,7 +286,7 @@ namespace MudBlazor
 
         protected override void ResetValue()
         {
-            _text = null;
+            Text = null;
             base.ResetValue();
         }
     }

@@ -20,12 +20,12 @@ namespace MudBlazor
 
         protected Task OnInput(ChangeEventArgs args)
         {
-            return Immediate ? SetTextAsync(args.Value as string) : Task.CompletedTask;
+            return Immediate ? SetTextAsync(args?.Value as string) : Task.CompletedTask;
         }
 
         protected Task OnChange(ChangeEventArgs args)
         {
-            return Immediate ? Task.CompletedTask : SetTextAsync(args.Value as string);
+            return Immediate ? Task.CompletedTask : SetTextAsync(args?.Value as string);
         }
 
         /// <summary>

@@ -243,14 +243,8 @@ namespace MudBlazor
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
-            {
-                if (!Context.HasPager)
-                {
-                    await InvokeServerLoadFunc();
-                    //await Task.Delay(1);
-                    //StateHasChanged();
-                }
-            }
+                await InvokeServerLoadFunc();
+
             TableContext.UpdateRowCheckBoxes();
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -303,7 +297,5 @@ namespace MudBlazor
         {
             return InvokeServerLoadFunc();
         }
-
-
     }
 }

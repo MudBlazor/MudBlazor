@@ -239,7 +239,25 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
-        public async Task TextField_Should_FireValueChanged()
+        public async Task TextField_Should_FireValueChangedOnTextParameterChange()
+        {
+            string changed_value = null;
+            var comp = ctx.RenderComponent<MudTextField<string>>(EventCallback<string>("ValueChanged", x => changed_value = x));
+            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Text", "A"));
+            changed_value.Should().Be("A");
+        }
+
+        [Test]
+        public async Task TextField_Should_FireTextChangedOnValueParameterChange()
+        {
+            string changed_text = null;
+            var comp = ctx.RenderComponent<MudTextField<string>>(EventCallback<string>("TextChanged", x => changed_text = x));
+            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "A"));
+            changed_text.Should().Be("A");
+        }
+
+        [Test]
+        public async Task TextField_Should_FireTextAndValueChangedOnTextInput()
         {
             string changed_value = null;
             string changed_text = null;
@@ -247,10 +265,6 @@ namespace MudBlazor.UnitTests
                 EventCallback<string>("ValueChanged", x => changed_value = x),
                 EventCallback<string>("TextChanged", x => changed_text = x)
             );
-            var textfield = comp.Instance;
-            comp.SetParametersAndRender(ComponentParameter.CreateParameter("Value", "A"));
-            changed_value.Should().Be("A");
-            changed_text.Should().Be("A");
             comp.Find("input").Change("B");
             changed_value.Should().Be("B");
             changed_text.Should().Be("B");
