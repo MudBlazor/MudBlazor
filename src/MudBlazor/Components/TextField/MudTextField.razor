@@ -6,7 +6,7 @@
     <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
         <InputContent>
             <MudInput T="string" @ref="_elementReference" @attributes="UserAttributes" InputType="@InputType" Lines="@Lines" Class="@Classname" Style="@Style" Variant="@Variant" Value="@Text" ValueChanged="(s) => SetTextAsync(s)" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly"
-                      Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
+                      Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
                       OnBlur="@OnBlurred" OnKeyDown="@onKeyDown" OnKeyPress="@onKeyPress" OnKeyUp="@onKeyUp" />
         </InputContent>
     </MudInputControl>

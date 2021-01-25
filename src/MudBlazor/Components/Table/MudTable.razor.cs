@@ -11,6 +11,8 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
+
     public partial class MudTable<T> : MudTableBase
     {
         /// <summary>
