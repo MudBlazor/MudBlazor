@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
@@ -218,7 +219,7 @@ namespace MudBlazor.UnitTests
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
-            select.InvokeAsync(() =>select.Instance.TextChanged = new EventCallback<string>(null, new Action<string>(x => text = x)));
+            select.InvokeAsync(() => select.Instance.TextChanged = new EventCallback<string>(null, new Action<string>(x => text = x)));
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // check initial state
@@ -352,6 +353,22 @@ namespace MudBlazor.UnitTests
             string.Join(",", selectedValues).Should().Be("2,1");
             selectedValuesChangedCount.Should().Be(3);
             textChangedCount.Should().Be(2);
+        }
+
+        [Test]
+        public void Select_Should_FireOnBlur()
+        {
+            var comp = ctx.RenderComponent<SelectTest1>();
+            Console.WriteLine(comp.Markup);
+            var select = comp.FindComponent<MudSelect<string>>();
+            int eventCounter = 0;
+            select.InvokeAsync(() =>
+            {
+                @select.Instance.OnBlur = new EventCallback<FocusEventArgs>(null, new Action<FocusEventArgs>(x => eventCounter++));
+                @select.Instance.OpenMenu();
+                @select.Instance.CloseMenu();
+            });
+            eventCounter.Should().Be(1);
         }
     }
 }

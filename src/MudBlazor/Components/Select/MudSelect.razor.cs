@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
@@ -237,16 +238,27 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
-            _isOpen = !_isOpen;
+            if (_isOpen)
+                CloseMenu();
+            else
+                OpenMenu();
+        }
+
+        public void OpenMenu()
+        {
+            if (Disabled || ReadOnly)
+                return;
+            _isOpen = true;
             UpdateIcon();
             StateHasChanged();
         }
 
-        public void CloseMenu()
+        public async void CloseMenu()
         {
             _isOpen = false;
             UpdateIcon();
             StateHasChanged();
+            await OnBlur.InvokeAsync(new FocusEventArgs());
         }
 
         public void UpdateIcon()
