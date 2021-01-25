@@ -239,7 +239,7 @@ namespace MudBlazor
             switch (args.Key)
             {
                 case "Enter":
-                    OnEnterKey();
+                    await OnEnterKey();
                     break;
                 case "ArrowDown":
                     await SelectNextItem(+1);
@@ -297,14 +297,15 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
-        private void OnEnterKey()
+        private Task OnEnterKey()
         {
             if (IsOpen == false)
-                return;
+                return Task.CompletedTask;
             if (_items == null || _items.Length == 0)
-                return;
+                return Task.CompletedTask;
             if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
-                SelectOption(_items[_selectedListItemIndex]);
+                return SelectOption(_items[_selectedListItemIndex]);
+            return Task.CompletedTask;
         }
 
         private Task OnInputBlurred(FocusEventArgs args)
