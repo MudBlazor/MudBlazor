@@ -46,7 +46,7 @@ namespace MudBlazor
                 if (_textStart == value)
                     return;
                 _textStart = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd), true).AndForget();
+                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).AndForget();
             }
         }
 
@@ -58,7 +58,7 @@ namespace MudBlazor
                 if (_textEnd == value)
                     return;
                 _textEnd = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd), true).AndForget();
+                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).AndForget();
             }
         }
 

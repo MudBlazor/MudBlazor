@@ -128,7 +128,7 @@ namespace MudBlazor
         public async Task SelectOption(T value)
         {
             _timer?.Dispose();
-            await SetValueAsync(value, true);
+            await SetValueAsync(value);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
             _text = GetItemString(value);
@@ -322,14 +322,14 @@ namespace MudBlazor
             if (Value == null)
             {
                 _timer?.Dispose();
-                await SetTextAsync(null, true);
+                await SetTextAsync(null);
                 return;
             }
             var actualvalueStr = GetItemString(Value);
             if (!object.Equals(actualvalueStr, Text))
             {
                 _timer?.Dispose();
-                await SetTextAsync(actualvalueStr, true);
+                await SetTextAsync(actualvalueStr);
             }
         }
 

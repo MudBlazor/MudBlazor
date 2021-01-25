@@ -107,10 +107,10 @@ namespace MudBlazor
         public string Text
         {
             get => _text;
-            set => SetTextAsync(value, true).AndForget();
+            set => SetTextAsync(value).AndForget();
         }
 
-        protected async Task SetTextAsync(string text, bool updateValue)
+        protected async Task SetTextAsync(string text, bool updateValue = true)
         {
             if (_text != text)
             {
@@ -176,10 +176,10 @@ namespace MudBlazor
         public T Value
         {
             get => _value;
-            set => SetValueAsync(value, true).AndForget();
+            set => SetValueAsync(value).AndForget();
         }
 
-        protected async Task SetValueAsync(T value, bool updateText)
+        protected async Task SetValueAsync(T value, bool updateText = true)
         {
             if (!EqualityComparer<T>.Default.Equals(_value, value))
             {

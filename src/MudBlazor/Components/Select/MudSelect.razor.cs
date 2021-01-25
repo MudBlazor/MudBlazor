@@ -68,9 +68,9 @@ namespace MudBlazor
                 _selectedValues = new HashSet<T>(set);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
-                    SetValueAsync(_selectedValues.FirstOrDefault(), true).AndForget();
+                    SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
                 else
-                    SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))), true).AndForget();
+                    SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x)))).AndForget();
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
             }
         }
@@ -214,7 +214,7 @@ namespace MudBlazor
             if (!MultiSelection)
             {
                 // single selection
-                await SetValueAsync(value, true);
+                await SetValueAsync(value);
                 _isOpen = false;
                 UpdateIcon();
                 SelectedValues.Clear();
@@ -227,7 +227,7 @@ namespace MudBlazor
                     SelectedValues.Add(value);
                 else
                     SelectedValues.Remove(value);
-                await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))), true);
+                await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))));
             }
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
