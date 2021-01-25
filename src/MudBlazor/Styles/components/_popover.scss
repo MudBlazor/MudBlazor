@@ -13,7 +13,7 @@
     }
 
     &.mud-popover-top {
-        top:0;
+        bottom:0;
         &.mud-popover-offset-y {
             bottom: 100%;
             top:auto;
@@ -21,7 +21,7 @@
     }
 
     &.mud-popover-bottom {
-        bottom:0;
+        top:0;
         &.mud-popover-offset-y {
             top: 100%;
             bottom:auto;
