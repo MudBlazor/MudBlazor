@@ -211,16 +211,7 @@ namespace MudBlazor
         public async Task SelectOption(object obj)
         {
             var value = (T)obj;
-            if (!MultiSelection)
-            {
-                // single selection
-                Value = value;
-                _isOpen = false;
-                UpdateIcon();
-                SelectedValues.Clear();
-                SelectedValues.Add(value);
-            }
-            else
+            if (MultiSelection)
             {
                 // multi-selection: menu stays open
                 if (!SelectedValues.Contains(value))
@@ -228,6 +219,15 @@ namespace MudBlazor
                 else
                     SelectedValues.Remove(value);
                 Text = string.Join(", ", SelectedValues.Select(x => Converter.Set(x)));
+            }
+            else
+            {
+                // single selection
+                Value = value;
+                _isOpen = false;
+                UpdateIcon();
+                SelectedValues.Clear();
+                SelectedValues.Add(value);
             }
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
