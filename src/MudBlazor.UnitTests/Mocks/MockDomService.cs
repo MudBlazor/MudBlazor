@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Interop;
 using MudBlazor.Services;
 
@@ -21,5 +22,8 @@ namespace MudBlazor.UnitTests.Mocks
 
         public ValueTask<BoundingClientRect> GetBoundingClientRect(ElementReference elementReference)
             => new ValueTask<BoundingClientRect>(new BoundingClientRect());
+
+        public ValueTask AddEventListener<T>(ElementReference element, DotNetObjectReference<T> dotnet, string @event, string callback) where T : class =>
+            new ValueTask();
     }
 }

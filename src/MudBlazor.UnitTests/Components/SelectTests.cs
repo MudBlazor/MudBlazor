@@ -208,5 +208,150 @@ namespace MudBlazor.UnitTests
             select.Instance.Text.Should().Be("2");
             comp.RenderCount.Should().Be(2);
         }
+
+        [Test]
+        public void Select_Should_FireTextChangedWithNewValue()
+        {
+            var comp = ctx.RenderComponent<SelectTest1>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var select = comp.FindComponent<MudSelect<string>>();
+            string text = null;
+            select.InvokeAsync(() =>select.Instance.TextChanged = new EventCallback<string>(null, new Action<string>(x => text = x)));
+            var menu = comp.Find("div.mud-popover");
+            var input = comp.Find("div.mud-input-control");
+            // check initial state
+            select.Instance.Value.Should().BeNullOrEmpty();
+            menu.ClassList.Should().NotContain("mud-popover-open");
+            // click and check if it has toggled the menu
+            input.Click();
+            menu.ClassList.Should().Contain("mud-popover-open");
+            // now click an item and see the value change
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+            // menu should be closed now
+            menu.ClassList.Should().NotContain("mud-popover-open");
+            select.Instance.Value.Should().Be("2");
+            select.Instance.Text.Should().Be("2");
+            text.Should().Be("2");
+            // now we cheat and click the list without opening the menu ;)
+            items[0].Click();
+            select.Instance.Value.Should().Be("1");
+            select.Instance.Text.Should().Be("1");
+            text.Should().Be("1");
+        }
+
+        /// <summary>
+        /// SingleSelect: SelectedValuesChanged should be fired before TextChanged
+        /// We test this by checking the counter. The event which should be fired first must always
+        /// find an even counter value, the second must always find an odd value.
+        /// </summary>
+        [Test]
+        public void SingleSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
+        {
+            var comp = ctx.RenderComponent<SelectTest1>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var select = comp.FindComponent<MudSelect<string>>();
+            string text = null;
+            HashSet<string> selectedValues = null;
+            int eventCounter = 0;
+            int textChangedCount = 0;
+            int selectedValuesChangedCount = 0;
+            select.InvokeAsync(() =>
+            {
+                @select.Instance.TextChanged = new EventCallback<string>(null, new Action<string>(x =>
+                {
+                    textChangedCount = eventCounter++;
+                    text = x;
+                }));
+                @select.Instance.SelectedValuesChanged = new EventCallback<HashSet<string>>(null, new Action<HashSet<string>>(x =>
+                {
+                    selectedValuesChangedCount = eventCounter++;
+                    selectedValues = x;
+                }));
+            });
+            var menu = comp.Find("div.mud-popover");
+            var input = comp.Find("div.mud-input-control");
+            // check initial state
+            select.Instance.Value.Should().BeNullOrEmpty();
+            menu.ClassList.Should().NotContain("mud-popover-open");
+            // click and check if it has toggled the menu
+            input.Click();
+            menu.ClassList.Should().Contain("mud-popover-open");
+            // now click an item and see the value change
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+            // menu should be closed now
+            menu.ClassList.Should().NotContain("mud-popover-open");
+            select.Instance.Value.Should().Be("2");
+            select.Instance.Text.Should().Be("2");
+            text.Should().Be("2");
+            selectedValuesChangedCount.Should().Be(1);
+            textChangedCount.Should().Be(0);
+            string.Join(",", selectedValues).Should().Be("2");
+            // now we cheat and click the list without opening the menu ;)
+            items[0].Click();
+            select.Instance.Value.Should().Be("1");
+            select.Instance.Text.Should().Be("1");
+            text.Should().Be("1");
+            string.Join(",", selectedValues).Should().Be("1");
+            selectedValuesChangedCount.Should().Be(3);
+            textChangedCount.Should().Be(2);
+        }
+
+        /// <summary>
+        /// MultiSelect: SelectedValuesChanged should be fired before TextChanged
+        /// We test this by checking the counter. The event which should be fired first must always
+        /// find an even counter value, the second must always find an odd value.
+        /// </summary>
+        [Test]
+        public void MulitSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
+        {
+            var comp = ctx.RenderComponent<SelectTest1>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var select = comp.FindComponent<MudSelect<string>>();
+            string text = null;
+            HashSet<string> selectedValues = null;
+            int eventCounter = 0;
+            int textChangedCount = 0;
+            int selectedValuesChangedCount = 0;
+            select.InvokeAsync(() =>
+            {
+                @select.Instance.MultiSelection = true;
+                @select.Instance.TextChanged = new EventCallback<string>(null, new Action<string>(x =>
+                {
+                    textChangedCount = eventCounter++;
+                    text = x;
+                }));
+                @select.Instance.SelectedValuesChanged = new EventCallback<HashSet<string>>(null, new Action<HashSet<string>>(x =>
+                {
+                    selectedValuesChangedCount = eventCounter++;
+                    selectedValues = x;
+                }));
+            });
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            // click list item
+            items[1].Click();
+            select.Instance.Value.Should().Be(null);
+            select.Instance.Text.Should().Be("2");
+            text.Should().Be("2");
+            selectedValuesChangedCount.Should().Be(1);
+            textChangedCount.Should().Be(0);
+            string.Join(",", selectedValues).Should().Be("2");
+            // click another list item
+            items = comp.FindAll("div.mud-list-item").ToArray();
+            items[0].Click();
+            select.Instance.Value.Should().Be(null);
+            select.Instance.Text.Should().Be("2, 1");
+            text.Should().Be("2, 1");
+            string.Join(",", selectedValues).Should().Be("2,1");
+            selectedValuesChangedCount.Should().Be(3);
+            textChangedCount.Should().Be(2);
+        }
     }
 }

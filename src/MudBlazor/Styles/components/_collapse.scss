@@ -1,26 +1,37 @@
 ﻿.mud-collapse-container {
-    max-height: 0;
+    height: 0px;
     overflow: hidden;
-    transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+}
 
-    &.mud-navgroup-collapse {
-        transition: max-height 300ms cubic-bezier(0, 1, 0, 1);
+@keyframes mud-expand-anim {
+    from {
+        height: 0;
     }
 }
 
-.mud-collapse-expand {
-    max-height: 2000px;
-
-    &:not(.mud-navgroup-collapse) {
-        transition: max-height 1s ease-in-out;
-    }
+.mud-collapse-entering {
+    animation: mud-expand-anim 1s ease-in-out 0ms 1 forwards;
 
     &.mud-navgroup-collapse {
-        transition: max-height 300ms ease-in-out;
+        animation-duration: 300ms !important;
     }
+}
 
-    &.mud-collapse-expanded {
-        overflow: initial;
+.mud-collapse-entered {
+    overflow: initial;
+}
+
+@keyframes mud-collapse-anim {
+    to {
+        height: 0;
+    }
+}
+
+.mud-collapse-exiting {
+    animation: mud-collapse-anim 0.5s cubic-bezier(0, 1, 0, 1) 0ms 1 forwards;
+
+    &.mud-navgroup-collapse {
+        animation-duration: 300ms;
     }
 }
 
