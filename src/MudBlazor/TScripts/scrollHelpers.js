@@ -58,15 +58,15 @@ window.scrollHelpers = {
         element.scrollTo({ left, top, behavior });
     },
 
-    //locks the scroll of the selected element. Useful for dialogs. Default is body
-    lockScroll: (selector) => {
+    //locks the scroll of the selected element. Default is body
+    lockScroll: (selector, lockclass) => {
         let element = document.querySelector(selector) || document.body;
-        element.classList.add('scroll-locked');
+        element.classList.add(lockclass);
     },
 
     //unlocks the scroll. Default is body
-    unlockScroll: (selector) => {
+    unlockScroll: (selector, lockclass) => {
         let element = document.querySelector(selector) || document.body;
-        element.classList.remove('scroll-locked');
+        element.classList.remove(lockclass);
     },
 };
