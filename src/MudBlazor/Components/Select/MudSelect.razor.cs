@@ -69,9 +69,9 @@ namespace MudBlazor
                 _selectedValues = new HashSet<T>(set);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
-                    Value = _selectedValues.FirstOrDefault();
+                    SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
                 else
-                    Text = string.Join(", ", SelectedValues.Select(x => Converter.Set(x)));
+                    SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x)))).AndForget();
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
             }
         }
@@ -145,17 +145,17 @@ namespace MudBlazor
             return selected_item.ChildContent;
         }
 
-        protected override void UpdateValueProperty(bool updateText)
+        protected override Task UpdateValuePropertyAsync(bool updateText)
         {
             // Select does not support updating the value through the Text property at all!
+            return Task.CompletedTask;
         }
 
-        protected override void UpdateTextProperty(bool updateValue)
+        protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
             // when multiselection is true, we don't update the text when the value changes. 
             // instead the Text will be set with a comma separated list of selected values
-            if (!MultiSelection)
-                base.UpdateTextProperty(updateValue);
+            return MultiSelection ? Task.CompletedTask : base.UpdateTextPropertyAsync(updateValue);
         }
 
         internal event Action<HashSet<T>> SelectionChangedFromOutside;
@@ -219,12 +219,12 @@ namespace MudBlazor
                     SelectedValues.Add(value);
                 else
                     SelectedValues.Remove(value);
-                Text = string.Join(", ", SelectedValues.Select(x => Converter.Set(x)));
+                await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))));
             }
             else
             {
                 // single selection
-                Value = value;
+                await SetValueAsync(value);
                 _isOpen = false;
                 UpdateIcon();
                 SelectedValues.Clear();

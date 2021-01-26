@@ -125,20 +125,20 @@ namespace MudBlazor
 
         private MudInput<string> _elementReference;
 
-        public void SelectOption(T value)
+        public async Task SelectOption(T value)
         {
-            Value = value;
+            _timer?.Dispose();
+            await SetValueAsync(value);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
-            _text = GetItemString(value);
-            _timer?.Dispose();
+            Text = GetItemString(value);
             IsOpen = false;
             UpdateIcon();
             BeginValidate();
             StateHasChanged();
         }
 
-        public void ToggleMenu()
+        public async Task ToggleMenu()
         {
             if (Disabled || MinCharacters > 0 && (string.IsNullOrEmpty(Text) || Text.Length < MinCharacters))
                 return;
@@ -151,7 +151,7 @@ namespace MudBlazor
             }
             else
             {
-                CoerceTextToValue();
+                await CoerceTextToValue();
             }
             UpdateIcon();
             StateHasChanged();
@@ -178,17 +178,17 @@ namespace MudBlazor
         private T[] _items;
         private int _selectedListItemIndex = 0;
 
-        protected override void UpdateTextProperty(bool updateValue)
+        protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            base.UpdateTextProperty(updateValue);
             _timer?.Dispose();
+            return base.UpdateTextPropertyAsync(updateValue);
         }
 
-        protected override void UpdateValueProperty(bool updateText)
+        protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
-            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
-                Value = default(T);
             _timer?.Dispose();
+            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
+                await SetValueAsync(default(T), updateText);
             _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
@@ -239,7 +239,7 @@ namespace MudBlazor
             switch (args.Key)
             {
                 case "Enter":
-                    OnEnterKey();
+                    await OnEnterKey();
                     break;
                 case "ArrowDown":
                     await SelectNextItem(+1);
@@ -297,40 +297,40 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
-        private void OnEnterKey()
+        private Task OnEnterKey()
         {
             if (IsOpen == false)
-                return;
+                return Task.CompletedTask;
             if (_items == null || _items.Length == 0)
-                return;
+                return Task.CompletedTask;
             if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
-                SelectOption(_items[_selectedListItemIndex]);
+                return SelectOption(_items[_selectedListItemIndex]);
+            return Task.CompletedTask;
         }
 
-        private void OnInputBlurred(FocusEventArgs args)
+        private Task OnInputBlurred(FocusEventArgs args)
         {
-            if (!IsOpen)
-                CoerceTextToValue();
+            return !IsOpen ? CoerceTextToValue() : Task.CompletedTask;
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value, 
             // resulting in a premature validation. thus, don't call base
             //base.OnBlurred(args);
         }
 
-        private void CoerceTextToValue()
+        private async Task CoerceTextToValue()
         {
             if (CoerceText == false)
                 return;
             if (Value == null)
             {
-                Text = null;
                 _timer?.Dispose();
+                await SetTextAsync(null);
                 return;
             }
             var actualvalueStr = GetItemString(Value);
             if (!object.Equals(actualvalueStr, Text))
             {
-                Text = actualvalueStr;
                 _timer?.Dispose();
+                await SetTextAsync(actualvalueStr);
             }
         }
 
