@@ -214,12 +214,10 @@ namespace MudBlazor.UnitTests
         public void Select_Should_FireTextChangedWithNewValue()
         {
             var comp = ctx.RenderComponent<SelectTest1>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
-            // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
-            select.InvokeAsync(() => select.Instance.TextChanged = new EventCallback<string>(null, new Action<string>(x => text = x)));
+            select.SetCallback(s=>s.TextChanged, x => text = x);
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // check initial state
@@ -252,27 +250,22 @@ namespace MudBlazor.UnitTests
         public void SingleSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
         {
             var comp = ctx.RenderComponent<SelectTest1>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
-            // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
             HashSet<string> selectedValues = null;
             int eventCounter = 0;
             int textChangedCount = 0;
             int selectedValuesChangedCount = 0;
-            select.InvokeAsync(() =>
+            select.SetCallback(s=>s.TextChanged, x =>
             {
-                @select.Instance.TextChanged = new EventCallback<string>(null, new Action<string>(x =>
-                {
-                    textChangedCount = eventCounter++;
-                    text = x;
-                }));
-                @select.Instance.SelectedValuesChanged = new EventCallback<HashSet<string>>(null, new Action<HashSet<string>>(x =>
-                {
-                    selectedValuesChangedCount = eventCounter++;
-                    selectedValues = x;
-                }));
+                textChangedCount = eventCounter++;
+                text = x;
+            });
+            select.SetCallback(s=>s.SelectedValuesChanged, x =>
+            {
+                selectedValuesChangedCount = eventCounter++;
+                selectedValues = x;
             });
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
@@ -312,28 +305,23 @@ namespace MudBlazor.UnitTests
         public void MulitSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
         {
             var comp = ctx.RenderComponent<SelectTest1>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
-            // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
             HashSet<string> selectedValues = null;
             int eventCounter = 0;
             int textChangedCount = 0;
             int selectedValuesChangedCount = 0;
-            select.InvokeAsync(() =>
+            select.SetParam(s=>s.MultiSelection, true);
+            select.SetCallback(s=>s.TextChanged, x =>
             {
-                @select.Instance.MultiSelection = true;
-                @select.Instance.TextChanged = new EventCallback<string>(null, new Action<string>(x =>
-                {
-                    textChangedCount = eventCounter++;
-                    text = x;
-                }));
-                @select.Instance.SelectedValuesChanged = new EventCallback<HashSet<string>>(null, new Action<HashSet<string>>(x =>
-                {
-                    selectedValuesChangedCount = eventCounter++;
-                    selectedValues = x;
-                }));
+                textChangedCount = eventCounter++;
+                text = x;
+            });
+            select.SetCallback(s=>s.SelectedValuesChanged, x =>
+            {
+                selectedValuesChangedCount = eventCounter++;
+                selectedValues = x;
             });
             var items = comp.FindAll("div.mud-list-item").ToArray();
             // click list item
@@ -362,11 +350,11 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
             int eventCounter = 0;
-            select.InvokeAsync(() =>
+            select.SetCallback(s=>s.OnBlur, x => eventCounter++);
+            comp.InvokeAsync(() =>
             {
-                @select.Instance.OnBlur = new EventCallback<FocusEventArgs>(null, new Action<FocusEventArgs>(x => eventCounter++));
-                @select.Instance.OpenMenu();
-                @select.Instance.CloseMenu();
+                select.Instance.OpenMenu();
+                select.Instance.CloseMenu();
             });
             eventCounter.Should().Be(1);
         }
