@@ -123,7 +123,7 @@ namespace MudBlazor.Charts
                 double gridValueY = 0;
                 var firstTime = true;
 
-                foreach (var line in item.Data)
+                foreach (var lineItem in item.Data)
                 {
                     if (firstTime)
                     {
@@ -131,7 +131,7 @@ namespace MudBlazor.Charts
                         firstTime = false;
                         gridValueX = horizontalStartSpace;
                         gridValueY = verticalStartSpace;
-                        var gridValue = ((double)line) * verticalSpace / gridYUnits;
+                        var gridValue = ((double)lineItem) * verticalSpace / gridYUnits;
                         gridValueY = boundHeight - (gridValueY + gridValue);
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
@@ -141,7 +141,7 @@ namespace MudBlazor.Charts
                         gridValueX += horizontalSpace;
                         gridValueY = verticalStartSpace;
 
-                        var gridValue = ((double)line) * verticalSpace / gridYUnits;
+                        var gridValue = ((double)lineItem) * verticalSpace / gridYUnits;
                         gridValueY = boundHeight - (gridValueY + gridValue);
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
