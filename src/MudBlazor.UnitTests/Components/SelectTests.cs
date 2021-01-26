@@ -350,7 +350,7 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<SelectTest1>();
             Console.WriteLine(comp.Markup);
             var select = comp.FindComponent<MudSelect<string>>();
-            int eventCounter = 0;
+            var eventCounter = 0;
             select.SetCallback(s => s.OnBlur, x => eventCounter++);
             comp.InvokeAsync(() =>
             {
