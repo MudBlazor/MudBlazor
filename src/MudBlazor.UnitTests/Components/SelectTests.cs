@@ -255,9 +255,9 @@ namespace MudBlazor.UnitTests
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
             HashSet<string> selectedValues = null;
-            int eventCounter = 0;
-            int textChangedCount = 0;
-            int selectedValuesChangedCount = 0;
+            var eventCounter = 0;
+            var textChangedCount = 0;
+            var selectedValuesChangedCount = 0;
             select.SetCallback(s => s.TextChanged, x =>
               {
                   textChangedCount = eventCounter++;
@@ -310,9 +310,9 @@ namespace MudBlazor.UnitTests
             var select = comp.FindComponent<MudSelect<string>>();
             string text = null;
             HashSet<string> selectedValues = null;
-            int eventCounter = 0;
-            int textChangedCount = 0;
-            int selectedValuesChangedCount = 0;
+            var eventCounter = 0;
+            var textChangedCount = 0;
+            var selectedValuesChangedCount = 0;
             select.SetParam(s => s.MultiSelection, true);
             select.SetCallback(s => s.TextChanged, x =>
               {
