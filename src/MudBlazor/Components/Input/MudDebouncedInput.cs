@@ -13,7 +13,8 @@ namespace MudBlazor
         /// <summary>
         /// Interval to be awaited in milliseconds before changing the Text value
         /// </summary>
-        [Parameter] public double DebounceInterval
+        [Parameter]
+        public double DebounceInterval
         {
             get => _debounceInterval;
             set => SetDebounceIntervalAsync(value).AndForget();

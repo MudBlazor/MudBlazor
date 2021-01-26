@@ -84,7 +84,7 @@ namespace MudBlazor
         {
             if (RadioGroup != null)
                 return RadioGroup.SetSelectedRadioAsync(this);
-            
+
             return Task.CompletedTask;
         }
 

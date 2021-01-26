@@ -35,7 +35,7 @@ namespace MudBlazor.Services
 
         public ValueTask ChangeGlobalCssVariable(string variableName, int value) =>
             _jsRuntime.InvokeVoidAsync("changeGlobalCssVariable", variableName, value);
-        
+
         public ValueTask ChangeCssVariable(ElementReference element, string variableName, int value) =>
             _jsRuntime.InvokeVoidAsync("changeCssVariable", element, variableName, value);
 
