@@ -104,7 +104,7 @@ namespace MudBlazor.UnitTests
         {
             DateTime? date = new DateTime(2021, 1, 13);
             var comp = ctx.RenderComponent<MudDatePicker>(parameters => parameters
-                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.Culture, CultureInfo.GetCultureInfo("en-GB"))
                 .Add(p => p.DateFormat, "dd/MM/yyyy")
                 .Add(p => p.Date, date)
             );
