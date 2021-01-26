@@ -160,6 +160,10 @@ namespace MudBlazor
         [Parameter] public int TotalItems { get; set; }
 
         public abstract TableContext TableContext { get; }
+        /// <summary>
+        /// Add MudTd cells here to define the table footer.
+        /// </summary>
+        [Parameter] public RenderFragment FooterContent { get; set; }
 
         public void NavigateTo(Page page)
         {

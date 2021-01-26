@@ -68,5 +68,10 @@
     <None Include="compilerconfig.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+    <None Include="Components\DataTable\MudAvatarColumn.razor" />
+    <None Include="Components\DataTable\MudColumn.razor" />
+    <None Include="Components\DataTable\MudDataTable.razor" />
+    <None Include="Components\DataTable\MudSortedColumn.razor" />
+    <None Include="Components\DataTable\MudTemplateColumn.razor" />
   </ItemGroup>
 </Project>

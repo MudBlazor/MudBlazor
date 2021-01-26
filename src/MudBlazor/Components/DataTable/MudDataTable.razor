@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits MudComponentBase
+
+@if (Items != null && Items.Any())
+{
+    <MudTable Items="@Items" Class="@Class"  style="@Style">
+        <HeaderContent>
+            <CascadingValue Value="MudBaseColumn.Rendermode.Header" Name="Mode">
+                @Columns(Def)
+            </CascadingValue>
+        </HeaderContent>
+        <RowTemplate>
+            <CascadingValue Value="MudBaseColumn.Rendermode.Item" Name="Mode">
+                @Columns(context)
+            </CascadingValue>
+        </RowTemplate>
+        <RowEditingTemplate>
+            <CascadingValue Value="MudBaseColumn.Rendermode.Edit" Name="Mode">
+                @Columns(context)
+            </CascadingValue>
+        </RowEditingTemplate>
+        <FooterContent>
+            <CascadingValue Value="MudBaseColumn.Rendermode.Footer" Name="Mode">
+                @Columns(Def)
+            </CascadingValue>
+        </FooterContent>
+    </MudTable>
+}
+else if (EmptyDataText != null)
+{
+    @EmptyDataText
+}
+

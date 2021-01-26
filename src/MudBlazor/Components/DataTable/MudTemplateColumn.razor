@@ -1,0 +1,32 @@
+﻿@namespace MudBlazor
+@typeparam T
+@inherits MudBaseColumn
+@if (Visible)
+{
+    @if (Mode == Rendermode.Header)
+    {
+        @Header(DataContext)
+    }
+    else if (Mode == Rendermode.Item)
+    {
+        @Row(DataContext)
+    }
+    else if (Mode == Rendermode.Edit)
+    {
+        @Edit(DataContext)
+    }
+    else if (Mode == Rendermode.Footer)
+    {
+        @Footer(DataContext)
+    }
+}
+@code {
+
+    [Parameter] public T DataContext { get; set; }
+    #region Templates
+    [Parameter] public RenderFragment<T> Header { get; set; }
+    [Parameter] public RenderFragment<T> Row { get; set; }
+    [Parameter] public RenderFragment<T> Edit { get; set; }
+    [Parameter] public RenderFragment<T> Footer { get; set; }
+    #endregion
+}
