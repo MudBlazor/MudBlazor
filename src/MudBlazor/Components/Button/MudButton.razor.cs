@@ -34,7 +34,7 @@ namespace MudBlazor
         [Parameter] public string StartIcon { get; set; }
 
         /// <summary>
-        /// Icon placed before the text if set.
+        /// Icon placed after the text if set.
         /// </summary>
         [Parameter] public string EndIcon { get; set; }
 

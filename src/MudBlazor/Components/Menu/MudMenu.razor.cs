@@ -21,11 +21,40 @@ namespace MudBlazor
         private bool _isOpen;
 
         [Parameter] public string Label { get; set; }
+
+        /// <summary>
+        /// Icon to use if set will turn the button into a MudIconButton.
+        /// </summary>
         [Parameter] public string Icon { get; set; }
+
+        /// <summary>
+        /// The color of the icon. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
+        /// Icon placed before the text if set.
+        /// </summary>
         [Parameter] public string StartIcon { get; set; }
+
+        /// <summary>
+        /// Icon placed after the text if set.
+        /// </summary>
         [Parameter] public string EndIcon { get; set; }
+
+        /// <summary>
+        /// The color of the button. It supports the theme colors.
+        /// </summary>
         [Parameter] public Color Color { get; set; } = Color.Default;
+
+        /// <summary>
+        /// The button Size of the component.
+        /// </summary>
         [Parameter] public Size Size { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The button variant to use.
+        /// </summary>
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
 
 
@@ -33,8 +62,20 @@ namespace MudBlazor
         /// If true, compact vertical padding will be applied to all menu items.
         /// </summary>
         [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
+        /// If true, no drop-shadow will be used.
+        /// </summary>
         [Parameter] public bool DisableElevation { get; set; }
+
+        /// <summary>
+        /// If true, the button will be disabled.
+        /// </summary>
         [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
+        /// If true, disables ripple effect.
+        /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
 
         /// <summary>
@@ -62,7 +103,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the direction the select menu should be.
         /// </summary>
-        [Parameter] public Direction Direction { get; set; } = Direction.Top;
+        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
         /// If true, the select menu will open either before or after the input.

@@ -18,6 +18,11 @@ namespace MudBlazor
         /// Icon to use if set.
         /// </summary>
         [Parameter] public string Icon { get; set; }
+
+        /// <summary>
+        /// The color of the icon. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
         [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 
         [CascadingParameter] public MudDrawer Drawer { get; set; }

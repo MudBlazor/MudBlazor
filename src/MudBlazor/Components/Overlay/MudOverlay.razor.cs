@@ -72,6 +72,11 @@ namespace MudBlazor
         [Parameter] public bool LockScroll { get; set; } = true;
 
         /// <summary>
+        /// The css class that will be added to body if lockscroll is used.
+        /// </summary>
+        [Parameter] public string LockScrollClass { get; set; } = "scroll-locked";
+
+        /// <summary>
         /// If true applys the themes dark overlay color.
         /// </summary>
         [Parameter] public bool DarkBackground { get; set; }
@@ -134,21 +139,19 @@ namespace MudBlazor
         //locks the scroll attaching a CSS class to the specified element, in this case the body
         void BlockScroll()
         {
-            JS.InvokeVoidAsync("scrollHelpers.lockScroll",
-                                          "body");
+            JS.InvokeVoidAsync("scrollHelpers.lockScroll", "body", LockScrollClass);
         }
 
         //removes the CSS class that prevented scrolling
         void UnblockScroll()
         {
-            JS.InvokeVoidAsync("scrollHelpers.unlockScroll", "body");
+            JS.InvokeVoidAsync("scrollHelpers.unlockScroll", "body", LockScrollClass);
         }
 
         //When disposing the overlay, remove the class that prevented scrolling
         public void Dispose()
         {
             UnblockScroll();
-
         }
 
     }

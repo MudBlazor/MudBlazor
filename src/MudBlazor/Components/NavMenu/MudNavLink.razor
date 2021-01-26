@@ -7,7 +7,7 @@
     <NavLink @onclick="@OnNavigation" class="mud-nav-link" style="@Style" href="@Href" Match="@Match" ActiveClass="active">
         @if (!String.IsNullOrEmpty(Icon))
         {
-            <MudIcon Icon="@Icon" Class="mud-nav-link-icon"></MudIcon>
+            <MudIcon Icon="@Icon" Color="@IconColor" Class="mud-nav-link-icon"></MudIcon>
         }
         <div Class="mud-nav-link-text">
             @ChildContent

@@ -72,6 +72,11 @@ namespace MudBlazor
         [Parameter] public string Icon { get; set; }
 
         /// <summary>
+        /// The color of the icon.
+        /// </summary>
+        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
         /// Overrides the default close icon, only shown if OnClose is set.
         /// </summary>
         [Parameter] public string CloseIcon { get; set; }

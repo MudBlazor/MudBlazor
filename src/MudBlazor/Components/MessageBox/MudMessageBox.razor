@@ -13,15 +13,15 @@
         }
     </DialogContent>
     <DialogActions>
-        @if (CancelButton != null)
+        @if (YesButton != null)
         {
-            <CascadingValue Value="@_cancelCallback">
-                @CancelButton
+            <CascadingValue Value="@_yesCallback">
+                @YesButton
             </CascadingValue>
         }
-        else if(!string.IsNullOrWhiteSpace(CancelText))
+        else if(!string.IsNullOrWhiteSpace(YesText))
         {
-            <MudButton OnClick="OnCancelClicked">Cancel</MudButton>
+            <MudButton Color="Color.Primary" OnClick="OnYesClicked">@YesText</MudButton>
         }
         @if (NoButton != null)
         {
@@ -31,17 +31,17 @@
         }
         else if(!string.IsNullOrWhiteSpace(NoText))
         {
-            <MudButton OnClick="OnNoClicked">No</MudButton>
+            <MudButton OnClick="OnNoClicked">@NoText</MudButton>
         }
-        @if (YesButton != null)
+        @if (CancelButton != null)
         {
-            <CascadingValue Value="@_yesCallback">
-                @YesButton
+            <CascadingValue Value="@_cancelCallback">
+                @CancelButton
             </CascadingValue>
         }
-        else if(!string.IsNullOrWhiteSpace(YesText))
+        else if(!string.IsNullOrWhiteSpace(CancelText))
         {
-            <MudButton Color="Color.Primary" OnClick="OnYesClicked">Ok</MudButton>
+            <MudButton OnClick="OnCancelClicked">@CancelText</MudButton>
         }
     </DialogActions>
 </MudDialog>

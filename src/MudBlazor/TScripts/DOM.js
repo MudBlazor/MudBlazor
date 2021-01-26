@@ -21,8 +21,8 @@ window.changeCssVariable = (element, name, newValue) => {
     element.style.setProperty(name, newValue);
 };
 
-window.addTranstionEndListener = (element, dotnet) => {
-    element.addEventListener("transitionend", function () {
-        dotnet.invokeMethodAsync("TransitionEnd");
+window.addMudEventListener = (element, dotnet, event, callback) => {
+    element.addEventListener(event, function () {
+        dotnet.invokeMethodAsync(callback);
     });
 };

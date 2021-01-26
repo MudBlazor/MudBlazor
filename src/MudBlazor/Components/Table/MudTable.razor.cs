@@ -11,6 +11,8 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
+
     public partial class MudTable<T> : MudTableBase
     {
         /// <summary>
@@ -243,14 +245,8 @@ namespace MudBlazor
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
-            {
-                if (!Context.HasPager)
-                {
-                    await InvokeServerLoadFunc();
-                    //await Task.Delay(1);
-                    //StateHasChanged();
-                }
-            }
+                await InvokeServerLoadFunc();
+
             TableContext.UpdateRowCheckBoxes();
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -303,7 +299,5 @@ namespace MudBlazor
         {
             return InvokeServerLoadFunc();
         }
-
-
     }
 }

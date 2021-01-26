@@ -9,12 +9,13 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is here in MudTableBase
+
     public abstract class MudTableBase : MudComponentBase
     {
         internal object _editingItem = null;
 
         private int _currentPage = 0;
-        // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is here in MudTableBase
 
         protected string Classname =>
         new CssBuilder("mud-table")
@@ -164,6 +165,16 @@ namespace MudBlazor
         /// Number of items. Used only with ServerData="true"
         /// </summary>
         [Parameter] public int TotalItems { get; set; }
+
+        /// <summary>
+        /// CSS class for the table rows. Note, many CSS settings are overridden by MudTd though
+        /// </summary>
+        [Parameter] public string RowClass { get; set; }
+
+        /// <summary>
+        /// CSS styles for the table rows. Note, many CSS settings are overridden by MudTd though
+        /// </summary>
+        [Parameter] public string RowStyle { get; set; }
 
         public abstract TableContext TableContext { get; }
 
