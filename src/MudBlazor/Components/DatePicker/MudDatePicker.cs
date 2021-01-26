@@ -44,10 +44,7 @@ namespace MudBlazor
 
                 if (updateValue)
                 {
-                    if ((!IsNullOrEmpty(DateFormat)) && _date.HasValue)
-                        await SetValueAsync(_date.Value.ToString(DateFormat, Culture), false);
-                    else
-                        await SetValueAsync(_date.ToIsoDateString(), false);
+                    await SetValueAsync(Converter.Set(_date), false);
                 }
 
                 await DateChanged.InvokeAsync(_date);
@@ -57,12 +54,7 @@ namespace MudBlazor
         protected override Task StringValueChanged(string value)
         {
             // Update the date property (without updating back the Value property)
-            return SetDateAsync(ParseDateValue(value), false);
-        }
-
-        private DateTime? ParseDateValue(string value)
-        {
-            return DateTime.TryParse(value, out var date) ? date : (DateTime?)null;
+            return SetDateAsync(Converter.Get(value), false);
         }
 
         protected override string GetDayClasses(int month, DateTime day)

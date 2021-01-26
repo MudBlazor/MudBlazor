@@ -12,6 +12,8 @@ namespace MudBlazor
 {
     public abstract partial class MudBaseDatePicker : MudBasePicker
     {
+        private DefaultConverter<DateTime?> _converter;
+
         [Inject] protected IJSRuntime JsRuntime { get; set; }
 
         [Inject] protected IDomService DomService { get; set; }
@@ -39,7 +41,18 @@ namespace MudBlazor
         /// <summary>
         /// String Format for selected date view
         /// </summary>
-        [Parameter] public string DateFormat { get; set; }
+        [Parameter]
+        public string DateFormat
+        {
+            get
+            {
+                return Converter.Format;
+            }
+            set
+            {
+                Converter.Format = value;
+            }
+        }
 
         /// <summary>
         /// Defines on which day the week starts. Depends on the value of Culture. 
@@ -72,9 +85,46 @@ namespace MudBlazor
         [Parameter] public EventCallback<DateTime?> PickerMonthChanged { get; set; }
 
         /// <summary>
-        /// The display culture
+        /// The display and converter culture
         /// </summary>
-        [Parameter] public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
+        [Parameter]
+        public CultureInfo Culture
+        {
+            get
+            {
+                return Converter.Culture;
+            }
+            set
+            {
+                Converter.Culture = value;
+            }
+        }
+
+        /// <summary>
+        /// The date converter to use
+        /// </summary>
+        [Parameter]
+        public DefaultConverter<DateTime?> Converter
+        {
+            get
+            {
+                if (_converter == null)
+                {
+                    var converter = new DefaultConverter<DateTime?>
+                    {
+                        Format = "yyyy-MM-dd",
+                        Culture = CultureInfo.CurrentCulture
+                    };
+                    _converter = converter;
+                }
+
+                return _converter;
+            }
+            set
+            {
+                _converter = value;
+            }
+        }
 
         /// <summary>
         /// Milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.
