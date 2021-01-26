@@ -4,6 +4,7 @@
 <div class="@PickerClass">
     @if (PickerVariant != PickerVariant.Static)
     {
+        <CascadingValue Name="Standalone" Value="false" IsFixed="true">
         @if (!IsRange) 
         { 
             <MudTextField Label="@Label" @bind-Text="@Value" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string" Style="@Style"
@@ -18,6 +19,7 @@
                 </InputContent>
             </MudInputControl>
         }
+        </CascadingValue>
     }
     <CascadingValue Value="@this" IsFixed="true">
         @if (IsOpen && PickerVariant == PickerVariant.Inline)
