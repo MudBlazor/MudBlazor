@@ -23,10 +23,7 @@ namespace MudBlazor
         public DateTime? Date
         {
             get => _date;
-            set
-            {
-                SetDateAsync(value, true).AndForget();
-            }
+            set => SetDateAsync(value, true).AndForget();
         }
 
         protected override void OnOpened()
@@ -39,32 +36,21 @@ namespace MudBlazor
             Picker.Close();
         }
 
-        private bool _settingDate = false;
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
             if (_date != date)
             {
-                try
-                {
-                    if (_settingDate)
-                        return;
-                    _settingDate = true;
-                    _date = date;
+                _date = date;
 
-                    if (updateValue)
-                    {
-                        if ((!IsNullOrEmpty(DateFormat)) && _date.HasValue)
-                            await SetValueAsync(_date.Value.ToString(DateFormat, Culture), false);
-                        else
-                            await SetValueAsync(_date.ToIsoDateString(), false);
-                    }
-
-                    await DateChanged.InvokeAsync(_date);
-                }
-                finally
+                if (updateValue)
                 {
-                    _settingDate = false;
+                    if ((!IsNullOrEmpty(DateFormat)) && _date.HasValue)
+                        await SetValueAsync(_date.Value.ToString(DateFormat, Culture), false);
+                    else
+                        await SetValueAsync(_date.ToIsoDateString(), false);
                 }
+
+                await DateChanged.InvokeAsync(_date);
             }
         }
 
