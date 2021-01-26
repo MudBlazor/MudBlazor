@@ -144,7 +144,7 @@ namespace MudBlazor.UnitTests
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
-            autocompletecomp.Find("input").Input("Austria"); // not part of the U.S. thank god
+            autocompletecomp.SetParam(a=>a.Text, "Austria"); // not part of the U.S. 
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             // now trigger the coercion by closing the menu 
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
@@ -165,7 +165,7 @@ namespace MudBlazor.UnitTests
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
-            autocompletecomp.Find("Input").Input("Austria");
+            autocompletecomp.SetParam(a => a.Text, "Austria");
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             // now trigger the coercion by closing the menu 
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
