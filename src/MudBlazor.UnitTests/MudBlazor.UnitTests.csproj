@@ -12,10 +12,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <NoWarn>BL0005</NoWarn>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="bunit" Version="1.0.0-preview-01" />
     <PackageReference Include="coverlet.msbuild" Version="3.0.1">

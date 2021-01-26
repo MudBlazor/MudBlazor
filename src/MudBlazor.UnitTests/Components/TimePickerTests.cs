@@ -1,4 +1,5 @@
 ﻿#pragma warning disable IDE1006 // leading underscore
+#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
 using System.Diagnostics;
