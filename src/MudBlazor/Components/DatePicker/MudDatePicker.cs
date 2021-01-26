@@ -45,7 +45,7 @@ namespace MudBlazor
                 if (updateValue)
                 {
                     if ((!IsNullOrEmpty(DateFormat)) && _date.HasValue)
-                        await SetValueAsync(_date.Value.ToString(DateFormat), false);
+                        await SetValueAsync(_date.Value.ToString(DateFormat, Culture), false);
                     else
                         await SetValueAsync(_date.ToIsoDateString(), false);
                 }
