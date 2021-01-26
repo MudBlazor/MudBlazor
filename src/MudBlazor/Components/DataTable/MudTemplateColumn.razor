@@ -3,21 +3,25 @@
 @inherits MudBaseColumn
 @if (Visible)
 {
-    @if (Mode == Rendermode.Header)
+    @if (Mode == Rendermode.Header && Header!= null)
     {
         @Header(DataContext)
     }
-    else if (Mode == Rendermode.Item)
+    else if (Mode == Rendermode.Item && Row != null)
     {
         @Row(DataContext)
     }
-    else if (Mode == Rendermode.Edit)
+    else if (Mode == Rendermode.Edit && Edit != null)
     {
         @Edit(DataContext)
     }
-    else if (Mode == Rendermode.Footer)
+    else if (Mode == Rendermode.Footer && Footer != null)
     {
         @Footer(DataContext)
+    }
+    else
+    {
+        <MudTd></MudTd>
     }
 }
 @code {

@@ -4,7 +4,7 @@
 @inherits MudBaseColumn
 @if (Visible)
 {
-    @if (Mode == Rendermode.Header)
+    if (Mode == Rendermode.Header)
     {
         if (SortBy == null)
         {
@@ -25,8 +25,15 @@
     }
     else if (Mode == Rendermode.Footer)
     {
-        <MudTd>
-            @GetFormattedString(FooterValue)
-        </MudTd>
+        @if (!IsDefault<T>(FooterValue))
+        {
+            <MudTd>
+                @GetFormattedString(FooterValue)
+            </MudTd>
+        }
+        else
+        {
+            <MudTd></MudTd>
+        }
     }
 }

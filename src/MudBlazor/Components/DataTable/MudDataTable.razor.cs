@@ -31,7 +31,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string EmptyDataText { get; set; }
 
-
+        /// <summary>
+        /// Gets or sets the data source that the DataTable is displaying data for.
+        /// </summary>
         [Parameter]
         public List<T> DataSource
         {
@@ -44,8 +46,23 @@ namespace MudBlazor
         }
 
         protected List<T> Items { set; get; }
+        /// <summary>
+        /// Gets or sets a value indicating whether table footer is displayed.
+        /// </summary>
+        [Parameter]
+        public bool ShowFooter{ set; get; }
+        /// <summary>
+        /// Gets or sets a value indicating whether editing feature is enabled.
+        /// </summary>
+        [Parameter]
+        public bool AllowEditing { set; get; }
+        #region Parameters forwarded to internal MudTable
 
-
+        /// <summary>
+        /// Set true for rows with a narrow height
+        /// </summary>
+        [Parameter] public bool Dense { get; set; }
+        #endregion
         #region Templates
         [Parameter] public RenderFragment<T> Columns { get; set; }
         #endregion
