@@ -193,7 +193,7 @@ namespace MudBlazor
 
         public async void OnNavigation()
         {
-            if (await ResizeListener.IsMediaSize(Breakpoint.MdAndDown))
+            if (await ResizeListener.IsMediaSize(Breakpoint.MdAndDown) || Variant == DrawerVariant.Temporary)
             {
                 await OpenChanged.InvokeAsync(false);
             }
