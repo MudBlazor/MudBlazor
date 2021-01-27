@@ -84,10 +84,11 @@
 
   <!--Cleanup old ExampleCode files-->
   <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" >
-    <Exec Command='find ./Pages -type f -name *ExampleCode.* -delete' Condition=" '$(OS)' != 'Windows_NT' " />
-    <Exec Command='find . -type f -name NewFilesToBuild.txt -delete' Condition=" '$(OS)' != 'Windows_NT' " />
-    <Exec Command='powershell -noprofile -c &quot;Remove-Item -path ./Pages/ -recurse -include *ExampleCode.razor,*ExampleCode.html&quot;' Condition=" '$(OS)' == 'Windows_NT' " />
-    <Exec Command='powershell -noprofile -c &quot;if (test-path ./NewFilesToBuild.txt) {Remove-Item ./NewFilesToBuild.txt}&quot;' Condition=" '$(OS)' == 'Windows_NT' " />
+    <ItemGroup>
+      <FilesToClean Include="./Pages/**/*ExampleCode.*" />
+      <FilesToClean Include="./NewFilesToBuild.txt" />
+    </ItemGroup>
+    <Delete Files="@(FilesToClean)" />
   </Target>
 
   <!--Packages-->
