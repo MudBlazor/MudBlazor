@@ -47,13 +47,20 @@
     <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
   </Target>
 
-  <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
+  <!--combine js files-->
+  <Target Name="CombineJS">
+    <CreateItem Include="./TScripts/*.js">
+      <Output TaskParameter="Include" ItemName="jsFilesToCombine" />
+    </CreateItem>
+    <ReadLinesFromFile File="%(jsFilesToCombine.FullPath)">
+      <Output TaskParameter="Lines" ItemName="jsLines" />
+    </ReadLinesFromFile>
+    <WriteLinesToFile File="./TScripts/combined/MudBlazor.js" Lines="@(jsLines)" Overwrite="true" />
+  </Target>
+
+  <Target Name="WebCompiler" DependsOnTargets="ToolRestore;CombineJS">
     <!--compile and minify scss-->
     <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json" StandardOutputImportance="high" />
-    <!--concatenate js files-->
-    <Exec Command="mkdir combined" WorkingDirectory="TScripts" IgnoreExitCode="true" StandardErrorImportance="low" />
-    <Exec Command="cat ./TScripts/*.js &gt; ./TScripts/combined/MudBlazor.js" Condition=" '$(OS)' != 'Windows_NT' " StandardOutputImportance="high" />
-    <Exec Command="powershell -noprofile -c &quot;cat ./TScripts/*.js &gt; ./TScripts/combined/MudBlazor.js&quot;" Condition=" '$(OS)' == 'Windows_NT' " StandardOutputImportance="high" />
     <!--minify js-->
     <Exec Command="dotnet webcompiler ./TScripts/combined/MudBlazor.js -c excubowebcompiler.json" StandardOutputImportance="high" />
   </Target>
