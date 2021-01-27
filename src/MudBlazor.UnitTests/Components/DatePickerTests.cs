@@ -75,12 +75,12 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
-            picker.Value.Should().Be(null);
+            picker.Text.Should().Be(null);
             picker.Date.Should().Be(null);
-            comp.SetParam(p => p.Value, "2020-10-23");
+            comp.SetParam(p => p.Text, "2020-10-23");
             picker.Date.Should().Be(new DateTime(2020, 10, 23));
             comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
-            picker.Value.Should().Be("2020-10-26");
+            picker.Text.Should().Be("2020-10-26");
         }
 
         [Test]
@@ -89,14 +89,14 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
-            picker.Value.Should().Be(null);
+            picker.Text.Should().Be(null);
             picker.Date.Should().Be(null);
             comp.SetParam(p => p.DateFormat, "dd/MM/yyyy");
             comp.SetParam(p => p.Culture, CultureInfo.InvariantCulture); // <-- this makes a huge difference!
-            comp.SetParam(p => p.Value, "23/10/2020");
+            comp.SetParam(p => p.Text, "23/10/2020");
             picker.Date.Should().Be(new DateTime(2020, 10, 23));
             comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
-            picker.Value.Should().Be("26/10/2020");
+            picker.Text.Should().Be("26/10/2020");
         }
 
         [Test]
@@ -112,7 +112,7 @@ namespace MudBlazor.UnitTests
             var picker = comp.Instance;
             var instance = comp.Instance;
             picker.Date.Should().Be(new DateTime(2021, 1, 13));
-            picker.Value.Should().Be("13/01/2021");
+            picker.Text.Should().Be("13/01/2021");
         }
 
         public IRenderedComponent<MudDatePicker> OpenPicker(ComponentParameter parameter)

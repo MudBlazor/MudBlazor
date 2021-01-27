@@ -53,13 +53,13 @@ namespace MudBlazor
                 if (updateValue)
                 {
                     if (_dateRange == null)
-                        await SetValueAsync(null, false);
+                        await SetTextAsync(null, false);
                     else
                     {
                         if (!IsNullOrEmpty(DateFormat))
-                            await SetValueAsync(_dateRange.ToString(DateFormat), false);
+                            await SetTextAsync(_dateRange.ToString(DateFormat), false);
                         else
-                            await SetValueAsync(_dateRange.ToIsoDateString(), false);
+                            await SetTextAsync(_dateRange.ToIsoDateString(), false);
                     }
                 }
 

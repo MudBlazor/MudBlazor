@@ -6,7 +6,7 @@ namespace MudBlazor
 {
     public abstract class MudBasePicker : MudComponentBase
     {
-        private string _value;
+        private string _text;
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.
@@ -59,7 +59,7 @@ namespace MudBlazor
         [Parameter] public PickerVariant PickerVariant { get; set; } = PickerVariant.Inline;
 
         /// <summary>
-        /// InputVariant, if Picker is static this option will not change anything.
+        /// Variant of the text input
         /// </summary>
         [Parameter] public Variant InputVariant { get; set; } = Variant.Text;
 
@@ -89,28 +89,28 @@ namespace MudBlazor
         [Parameter] public bool AllowKeyboardInput { get; set; }
 
         /// <summary>
-        /// Fired when the value changes.
+        /// Fired when the text changes.
         /// </summary>
-        [Parameter] public EventCallback<string> ValueChanged { get; set; }
+        [Parameter] public EventCallback<string> TextChanged { get; set; }
 
         /// <summary>
-        /// The currently selected value represented as a string (two-way bindable)
+        /// The currently selected string value (two-way bindable)
         /// </summary>
         [Parameter]
-        public string Value
+        public string Text
         {
-            get => _value;
-            set => SetValueAsync(value, true).AndForget();
+            get => _text;
+            set => SetTextAsync(value, true).AndForget();
         }
 
-        protected async Task SetValueAsync(string value, bool callback)
+        protected async Task SetTextAsync(string value, bool callback)
         {
-            if (_value != value)
+            if (_text != value)
             {
-                _value = value;
+                _text = value;
                 if (callback)
-                    await StringValueChanged(_value);
-                await ValueChanged.InvokeAsync(_value);
+                    await StringValueChanged(_text);
+                await TextChanged.InvokeAsync(_text);
             }
         }
 

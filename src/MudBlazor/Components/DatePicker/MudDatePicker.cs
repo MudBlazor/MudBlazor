@@ -44,7 +44,7 @@ namespace MudBlazor
 
                 if (updateValue)
                 {
-                    await SetValueAsync(Converter.Set(_date), false);
+                    await SetTextAsync(Converter.Set(_date), false);
                 }
 
                 await DateChanged.InvokeAsync(_date);
