@@ -59,7 +59,7 @@ namespace MudBlazor
 
         internal override void FireRowClickEvent(MouseEventArgs args, MudTr row, object o)
         {
-            T item = default(T);
+            var item = default(T);
             try
             {
                 item = (T)o;

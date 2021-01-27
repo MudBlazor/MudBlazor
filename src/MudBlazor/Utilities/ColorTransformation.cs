@@ -17,9 +17,9 @@ namespace MudBlazor.Utilities
 
         public class HSLColor
         {
-            public double H;
-            public double S;
-            public double L;
+            public double H { get; set; }
+            public double S { get; set; }
+            public double L { get; set; }
         }
 
         /// <summary>
@@ -29,17 +29,17 @@ namespace MudBlazor.Utilities
         /// <param name="color">The color to convert.</param>
         public static HSLColor RgBtoHsl(MudColor color)
         {
-            double h = 0D;
-            double s = 0D;
+            var h = 0D;
+            var s = 0D;
             double l;
 
             // normalize red, green, blue values
-            double r = color.R / 255D;
-            double g = color.G / 255D;
-            double b = color.B / 255D;
+            var r = color.R / 255D;
+            var g = color.G / 255D;
+            var b = color.B / 255D;
 
-            double max = SystemMath.Max(r, SystemMath.Max(g, b));
-            double min = SystemMath.Min(r, SystemMath.Min(g, b));
+            var max = SystemMath.Max(r, SystemMath.Max(g, b));
+            var min = SystemMath.Min(r, SystemMath.Min(g, b));
 
             // hue
             if (SystemMath.Abs(max - min) < EPSILON)
@@ -103,18 +103,18 @@ namespace MudBlazor.Utilities
                         SystemMath.Max(0, SystemMath.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}")))));
             }
 
-            double q = l < .5D
+            var q = l < .5D
                     ? l * (1D + s)
                     : (l + s) - (l * s);
-            double p = (2D * l) - q;
+            var p = (2D * l) - q;
 
-            double hk = h / 360D;
-            double[] T = new double[3];
+            var hk = h / 360D;
+            var T = new double[3];
             T[0] = hk + (1D / 3D); // Tr
             T[1] = hk; // Tb
             T[2] = hk - (1D / 3D); // Tg
 
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
                 if (T[i] < 0D)
                     T[i] += 1D;
