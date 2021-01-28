@@ -359,7 +359,7 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<MudFormExample>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
-            form.IsValid.Should().BeFalse(because:"it contains required fields that are not filled out");
+            form.IsValid.Should().BeFalse(because: "it contains required fields that are not filled out");
             var buttons = comp.FindComponents<MudButton>();
             // click validate button
             var validateButton = buttons[1];
@@ -371,7 +371,7 @@ namespace MudBlazor.UnitTests
             textfields[1].Instance.ErrorText.Should().Be("Email is required!");
             textfields[2].Instance.HasErrors.Should().BeTrue();
             textfields[2].Instance.ErrorText.Should().Be("Password is required!");
-            var checkbox=comp.FindComponent<MudCheckBox<bool>>();
+            var checkbox = comp.FindComponent<MudCheckBox<bool>>();
             checkbox.Instance.HasErrors.Should().BeTrue();
             checkbox.Instance.ErrorText.Should().Be("You must agree");
             // click reset validation

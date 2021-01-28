@@ -74,7 +74,7 @@ namespace MudBlazor
             {
                 return UncheckedIcon;
             }
-                
+
             return IndeterminateIcon;
         }
     }

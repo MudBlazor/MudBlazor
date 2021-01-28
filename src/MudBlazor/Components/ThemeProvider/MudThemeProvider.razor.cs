@@ -14,8 +14,8 @@ namespace MudBlazor
         {
             if (Theme == null)
             {
-                MudTheme _theme = new MudTheme();
-                Theme = _theme;
+                var theme = new MudTheme();
+                Theme = theme;
             }
         }
 
@@ -40,27 +40,27 @@ namespace MudBlazor
 
         public static string ColorRgbDarken(string hex)
         {
-            MudColor Color = ColorManager.FromHex(hex);
-            Color = ColorManager.ColorDarken(Color, 0.075);
-            return $"rgb({Color.R},{Color.G},{Color.B})";
+            var color = ColorManager.FromHex(hex);
+            color = ColorManager.ColorDarken(color, 0.075);
+            return $"rgb({color.R},{color.G},{color.B})";
         }
         public static string ColorRgbLighten(string hex)
         {
-            MudColor Color = ColorManager.FromHex(hex);
-            Color = ColorManager.ColorLighten(Color, 0.075);
-            return $"rgb({Color.R},{Color.G},{Color.B})";
+            var color = ColorManager.FromHex(hex);
+            color = ColorManager.ColorLighten(color, 0.075);
+            return $"rgb({color.R},{color.G},{color.B})";
         }
 
         public static string ColorRgb(string hex)
         {
-            MudColor Color = ColorManager.FromHex(hex);
-            return $"rgb({Color.R},{Color.G},{Color.B})";
+            var color = ColorManager.FromHex(hex);
+            return $"rgb({color.R},{color.G},{color.B})";
         }
 
         public static string ColorRgba(string hex, double alpha)
         {
-            MudColor Color = ColorManager.FromHex(hex);
-            return $"rgba({Color.R},{Color.G},{Color.B}, {alpha.ToString(CultureInfo.InvariantCulture)})";
+            var color = ColorManager.FromHex(hex);
+            return $"rgba({color.R},{color.G},{color.B}, {alpha.ToString(CultureInfo.InvariantCulture)})";
         }
 
         protected virtual void GenerateTheme(StringBuilder theme)

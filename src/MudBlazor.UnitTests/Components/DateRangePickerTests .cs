@@ -70,13 +70,13 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<MudDateRangePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
-            picker.Value.Should().Be(string.Empty);
+            picker.Text.Should().BeNullOrEmpty();
             picker.DateRange.Should().Be(null);
-            await comp.InvokeAsync(() => picker.Value = RangeConverter<DateTime>.Join("2021-01-01", "2021-01-10"));
+            await comp.InvokeAsync(() => picker.Text = RangeConverter<DateTime>.Join("2021-01-01", "2021-01-10"));
             picker.DateRange.Start.Should().Be(new DateTime(2021, 01, 01));
             picker.DateRange.End.Should().Be(new DateTime(2021, 01, 10));
             await comp.InvokeAsync(() => picker.DateRange = new DateRange(new DateTime(2020, 12, 26), new DateTime(2021, 02, 01)));
-            picker.Value.Should().Be(RangeConverter<DateTime>.Join("2020-12-26", "2021-02-01"));
+            picker.Text.Should().Be(RangeConverter<DateTime>.Join("2020-12-26", "2021-02-01"));
         }
 
         [Test]

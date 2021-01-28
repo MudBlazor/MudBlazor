@@ -53,7 +53,7 @@ namespace MudBlazor
             {
                 _time = time;
                 if (updateValue)
-                    await SetValueAsync(AmPm ? _time.ToAmPmString() : _time.ToIsoString(), false);
+                    await SetTextAsync(AmPm ? _time.ToAmPmString() : _time.ToIsoString(), false);
                 UpdateTimeSetFromTime();
                 await TimeChanged.InvokeAsync(_time);
             }

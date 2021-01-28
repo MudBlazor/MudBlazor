@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.UnitTests
 {
-    public static class IRenderedComponentExtensions 
+    public static class IRenderedComponentExtensions
     {
         public static void SetParam<T>(this IRenderedComponentBase<T> self, string name, object? value) where T : IComponent
         {
