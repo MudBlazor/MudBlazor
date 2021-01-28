@@ -1,10 +1,10 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudPaper Style="height: 300px; position: relative; overflow: hidden;">
+<MudPaper Class="demo-drawer">
     <MudDrawer @bind-Open="@openLeft" Fixed="false" Anchor="Anchor.Left" Elevation="1" Variant="@DrawerVariant.Persistent">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">My App</MudText>
-        </MudDrawerHeader>
+        </MudDrawerHeader>  
         <MudNavMenu>
             <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
@@ -21,7 +21,7 @@
             <MudNavLink Match="NavLinkMatch.All">Order History</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
-    <div class="d-table mr-auto ml-auto">
+    <div class="mud-paper-content">
         <MudButton OnClick="@ToggleLeftDrawer">Toggle left</MudButton>
         <MudButton OnClick="@ToggleRightDrawer">Toggle right</MudButton>
     </div>

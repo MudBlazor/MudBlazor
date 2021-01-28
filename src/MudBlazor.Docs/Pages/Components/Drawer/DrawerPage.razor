@@ -23,10 +23,22 @@
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
+                <Title>Hide overlay</Title>
+                <Description>
+                    With parameter <CodeInline>DisableOverlay</CodeInline> overlay can be turned off for responsive and temporary drawers.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <DrawerOverlayExample />
+            </SectionContent>
+            <SectionSource Code="DrawerOverlayExample" ShowCode="false" GitHubFolderName="Drawer" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
                 <Title>Persistent drawer</Title>
                 <Description>
-                    Set <CodeInline>Fixed="false"</CodeInline> to use drawer inside a custom container. 
-                    Persistent drawer is outside of the page, when opens it forces other contents to change their size.
+                    Set <CodeInline>Fixed="false"</CodeInline> to use drawer inside a custom container.
+                    Persistent drawer is outside of its container, when opens it forces other contents to change their size.
                     Persistent drawer will be opened until the <CodeInline>Open</CodeInline> parameter is not changed.
                 </Description>
             </SectionHeader>
@@ -50,22 +62,6 @@
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Clipping</Title>
-                <Description>
-                    A drawer with <CodeInline>Clipped="true"</CodeInline> will not push the AppBar to the side when opening.
-                    Clipped parameter is evaluated only when <CodeInline>Responsive</CodeInline> and <CodeInline>Persistent</CodeInline> drawers used inside a <CodeInline>MudLayout</CodeInline>.
-                    This example uses persistent drawer.
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
-                <iframe src="/iframe/docs/examples/drawer/clipped" class="docs-iframe">
-                    <DrawerClippingExample />
-                </iframe>
-            </SectionContent>
-            <SectionSource Code="DrawerClippingExample" ShowCode="false" GitHubFolderName="Drawer" />
-        </DocsPageSection>
-        <DocsPageSection>
-            <SectionHeader>
                 <Title>Responsive drawer</Title>
                 <Description>
                     Reposive drawers are behaves persistent on wider screens and temporary on smaller ones.
@@ -78,6 +74,22 @@
                 </iframe>
             </SectionContent>
             <SectionSource Code="DrawerResponsiveExample" GitHubFolderName="Drawer" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Clipping</Title>
+                <Description>
+                    A drawer with <CodeInline>ClipMode="Docked"</CodeInline> or <CodeInline>ClipMode="Always"</CodeInline> will not push the AppBar to the side when opening.
+                    This parameter is evaluated only when drawers used inside a <CodeInline>MudLayout</CodeInline> directly.
+                    This example show how a different options work with a responsive drawer. Change the size of the window to test all possiblities.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <iframe src="/iframe/docs/examples/drawer/clipped" class="docs-iframe">
+                    <DrawerClippingExample />
+                </iframe>
+            </SectionContent>
+            <SectionSource Code="DrawerClippingExample" ShowCode="false" GitHubFolderName="Drawer" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

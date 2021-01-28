@@ -12,10 +12,11 @@ namespace MudBlazor
         private double _height;
         private Breakpoint _breakpoint;
         private ElementReference _contentRef;
+        private DrawerClipMode _clipMode;
         private bool? _isOpenWhenLarge = null;
-        private bool _open, _clipped, _rtl, _isRendered, _initial = true;
+        private bool _open, _rtl, _isRendered, _initial = true;
 
-        private bool OverlayVisible => _open && 
+        private bool OverlayVisible => _open && !DisableOverlay &&
             (Variant == DrawerVariant.Temporary || 
             (ResizeListener.IsMediaSize(Breakpoint.MdAndDown, _breakpoint) && Variant == DrawerVariant.Responsive));
         
@@ -26,7 +27,7 @@ namespace MudBlazor
           .AddClass($"mud-drawer--open", Open)
           .AddClass($"mud-drawer--closed", !Open)
           .AddClass($"mud-drawer--initial", _initial)
-          .AddClass($"mud-drawer-clipped", Clipped)
+          .AddClass($"mud-drawer-clipped-{_clipMode.ToDescriptionString()}")
           .AddClass($"mud-drawer-color-{Color.ToDescriptionString()}", Color != Color.Default)
           .AddClass($"mud-elevation-{Elevation}")
           .AddClass($"mud-drawer-{Variant.ToDescriptionString()}")
@@ -89,16 +90,21 @@ namespace MudBlazor
         /// The color of the component. It supports the theme colors.
         /// </summary>
         [Parameter] public Color Color { get; set; } = Color.Default;
-
+        
         /// <summary>
         /// Variant of the drawer. It affects how the component behaves on different screen sizes.
         /// </summary>
         [Parameter] public DrawerVariant Variant { get; set; } = DrawerVariant.Responsive;
-
+        
         /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// Show overlay for responsive and temporary drawers.
+        /// </summary>
+        [Parameter] public bool DisableOverlay { get; set; } = false;
 
         /// <summary>
         /// Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.
@@ -133,16 +139,16 @@ namespace MudBlazor
         [Parameter] public EventCallback<bool> OpenChanged { get; set; }
 
         [Parameter]
-        public bool Clipped
+        public DrawerClipMode ClipMode
         {
-            get => _clipped;
+            get => _clipMode;
             set
             {
-                if (_clipped == value)
+                if (_clipMode == value)
                 {
                     return;
                 }
-                _clipped = value;
+                _clipMode = value;
                 if (Fixed)
                 {
                     Layout?.FireDrawersChanged();
@@ -193,7 +199,8 @@ namespace MudBlazor
 
         public async void OnNavigation()
         {
-            if (await ResizeListener.IsMediaSize(Breakpoint.MdAndDown) || Variant == DrawerVariant.Temporary)
+            if (Variant == DrawerVariant.Temporary ||
+                (Variant == DrawerVariant.Responsive && await ResizeListener.IsMediaSize(Breakpoint.MdAndDown)))
             {
                 await OpenChanged.InvokeAsync(false);
             }
