@@ -8,7 +8,7 @@
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
     </MudAppBar>
-    <MudDrawer @bind-Open="@open" Clipped="@clipped" Elevation="1" Variant="@DrawerVariant.Persistent">
+    <MudDrawer @bind-Open="@open" ClipMode="clipMode" Elevation="1" Variant="@DrawerVariant.Responsive">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">My App</MudText>
         </MudDrawerHeader>
@@ -20,7 +20,11 @@
     </MudDrawer>
     <MudMainContent Class="pt-16 px-16">
         <MudContainer Class="mt-6">
-            <MudSwitch @bind-Checked="clipped" Color="@Color.Secondary">Drawer clipped</MudSwitch>
+            <MudSelect Label="Select clip mode" @bind-Value="clipMode">
+                <MudSelectItem Value="@DrawerClipMode.Never">Not clipped (DrawerClipMode.Never)</MudSelectItem>
+                <MudSelectItem Value="@DrawerClipMode.Docked">Drawer is docked (DrawerClipMode.Docked)</MudSelectItem>
+                <MudSelectItem Value="@DrawerClipMode.Always">Always (DrawerClipMode.Always)</MudSelectItem>
+            </MudSelect>
             <LoremIpsum/>
         </MudContainer>
     </MudMainContent>
@@ -29,7 +33,8 @@
 
 @code{
     bool open = true;
-    bool clipped = true;
+    DrawerClipMode clipMode = DrawerClipMode.Never;
+
     void ToggleDrawer()
     {
         open = !open;
