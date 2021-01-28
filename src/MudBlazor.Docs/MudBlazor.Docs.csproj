@@ -74,7 +74,7 @@
  
   <!--Update ExampleCode-->
   <ItemGroup>
-    <EmbeddedResource Update="Pages\**\*.html" />
+    <EmbeddedResource Include="Pages\**\*.html" />
   </ItemGroup>
 
   <!--Used for the periodic table examples-->
@@ -82,8 +82,15 @@
     <EmbeddedResource Include="Data/Elements.json" />
   </ItemGroup>
 
+  <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
+  <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
+    <PropertyGroup>
+      <CleanGeneratedFiles>false</CleanGeneratedFiles>
+    </PropertyGroup>
+  </Target>
+  
   <!--Cleanup old ExampleCode files-->
-  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" >
+  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
     <ItemGroup>
       <FilesToClean Include="./Pages/**/*ExampleCode.*" />
       <FilesToClean Include="./NewFilesToBuild.txt" />
