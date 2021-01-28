@@ -1,7 +1,7 @@
 @using System.Linq
 @using MudBlazor.Docs.Extensions
 
-<MudNavMenu Class="mudblazor-navmenu">
+<MudNavMenu Class="mudblazor-navmenu" OnNavigation="@HandleNavigation">
     <div class="docs-nav-fader"></div>
 
     <MudNavGroup Title="Getting Started"

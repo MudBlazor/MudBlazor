@@ -29,11 +29,11 @@
         </MudTooltip>
     </MudAppBar>
     
-        <MudDrawer @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
+        <MudDrawer @ref="_drawer" @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
             <MudDrawerHeader Class="mudblazor-brand" LinkToIndex="true">
                 <MudBlazorLogo />
             </MudDrawerHeader>
-            <NavMenu @ref="@_navMenuRef"/>
+            <NavMenu @ref="@_navMenuRef" OnNavigation="_drawer.OnNavigation"/>
         </MudDrawer>
         <MudMainContent Class="mudblazor-main-content">
             @Body

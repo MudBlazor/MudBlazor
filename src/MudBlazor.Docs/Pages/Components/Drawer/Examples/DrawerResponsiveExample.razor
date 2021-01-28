@@ -9,11 +9,11 @@
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
     </MudAppBar>
-    <MudDrawer @bind-Open="@open" Elevation="1">
+    <MudDrawer @ref="drawer" @bind-Open="@open" Elevation="1">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">My App</MudText>
         </MudDrawerHeader>
-        <MudNavMenu>
+        <MudNavMenu OnNavigation="drawer.OnNavigation">
             <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
@@ -29,6 +29,7 @@
 
 @code{
     bool open = true;
+    MudDrawer drawer;
 
     void ToggleDrawer()
     {

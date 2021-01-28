@@ -15,6 +15,7 @@ namespace MudBlazor.Docs.Shared
         private NavigationFooterLink _next;
         private NavigationSection? _section = null;
         private NavMenu _navMenuRef;
+        private MudDrawer _drawer;
 
         [Inject] private IDocsNavigationService DocsService { get; set; }
 
