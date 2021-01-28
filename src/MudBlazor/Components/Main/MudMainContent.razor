@@ -26,6 +26,6 @@
         if (drawer == null)
             return string.Empty;
 
-        return $"mud-main-drawer-{(drawer.Open ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}-{anchor.ToDescriptionString()}";
+        return $"mud-main-drawer-{(drawer.Open ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}-{drawer.Breakpoint.ToDescriptionString()}-{anchor.ToDescriptionString()}";
     }
 }

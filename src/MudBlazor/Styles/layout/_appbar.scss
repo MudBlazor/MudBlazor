@@ -15,21 +15,25 @@
 
 .mud-appbar-drawer-open {
     &-responsive {
-        @media (min-width:$breakpoint-lg) {
-            &-left {
-                margin-left: var(--mud-drawer-width);
-            }
+        @each $breakpoint in map-keys($breakpoints) {
+            &-#{$breakpoint} {
+                @media (min-width: map-get($breakpoints, $breakpoint)) {
+                    &-left {
+                        margin-left: var(--mud-drawer-width);
+                    }
 
-            &-right {
-                margin-right: var(--mud-drawer-width);
-            }
+                    &-right {
+                        margin-right: var(--mud-drawer-width);
+                    }
 
-            &-left#{&}-right {
-                width: calc(100% - 2 * var(--mud-drawer-width));
-            }
+                    &-left#{&}-right {
+                        width: calc(100% - 2 * var(--mud-drawer-width));
+                    }
 
-            &-left:not(&-right), &-right:not(&-left) {
-                width: calc(100% - var(--mud-drawer-width));
+                    &-left:not(&-right), &-right:not(&-left) {
+                        width: calc(100% - var(--mud-drawer-width));
+                    }
+                }
             }
         }
     }

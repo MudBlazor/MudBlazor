@@ -27,9 +27,11 @@
         position: absolute;
     }
 
-    &.mud-drawer-responsive {
-        @media (max-width: $breakpoint-lg) {
-            z-index: calc(var(--mud-zindex-dialog) + 1);
+    @each $breakpoint in map-keys($breakpoints) {
+        &.mud-drawer-responsive.mud-drawer-#{$breakpoint} {
+            @media (max-width: map-get($breakpoints, $breakpoint)) {
+                z-index: calc(var(--mud-zindex-dialog) + 1);
+            }
         }
     }
 
@@ -205,9 +207,11 @@
         top: var(--mud-appbar-min-height);
     }
 
-    &.mud-drawer-responsive.mud-drawer-clipped-docked {
-        @media (min-width:$breakpoint-lg) {
-            top: var(--mud-appbar-min-height);
+    @each $breakpoint in map-keys($breakpoints) {
+        &.mud-drawer-responsive.mud-drawer-clipped-docked.mud-drawer-#{$breakpoint} {
+            @media (min-width: map-get($breakpoints, $breakpoint)) {
+                top: var(--mud-appbar-min-height);
+            }
         }
     }
 }
@@ -216,12 +220,14 @@
     display: none;
 
     &.mud-drawer-overlay--open {
-        @media (max-width: $breakpoint-lg) {
-            &.mud-drawer-overlay-responsive {
-                display: block;
+        @each $breakpoint in map-keys($breakpoints) {
+            &.mud-drawer-overlay-responsive.mud-drawer-overlay-#{$breakpoint} {
+                @media (max-width: map-get($breakpoints, $breakpoint)) {
+                    display: block;
 
-                &.mud-drawer--initial {
-                    display: none;
+                    &.mud-drawer--initial {
+                        display: none;
+                    }
                 }
             }
         }

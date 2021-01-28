@@ -1,6 +1,6 @@
 ﻿@layout IframeLayout
 @namespace MudBlazor.Docs.Examples
-@page "/iframe/docs/examples/drawer/clipped"
+@page "/iframe/docs/examples/drawer/breakpoint"
 
 <MudLayout>
     <MudAppBar Elevation="1">
@@ -8,7 +8,7 @@
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
     </MudAppBar>
-    <MudDrawer @bind-Open="@open" ClipMode="clipMode" Elevation="1" Variant="@DrawerVariant.Responsive">
+    <MudDrawer @bind-Open="@open" Breakpoint="@breakpoint" Elevation="1" Variant="@DrawerVariant.Responsive">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">My App</MudText>
         </MudDrawerHeader>
@@ -20,10 +20,11 @@
     </MudDrawer>
     <MudMainContent Class="pt-16 px-16">
         <MudContainer Class="mt-6">
-            <MudSelect Label="Select clip mode" @bind-Value="clipMode">
-                <MudSelectItem Value="@DrawerClipMode.Never">Not clipped (DrawerClipMode.Never)</MudSelectItem>
-                <MudSelectItem Value="@DrawerClipMode.Docked">Drawer is docked (DrawerClipMode.Docked)</MudSelectItem>
-                <MudSelectItem Value="@DrawerClipMode.Always">Always (DrawerClipMode.Always)</MudSelectItem>
+            <MudSelect Label="Select clip mode" @bind-Value="breakpoint">
+                <MudSelectItem Value="@Breakpoint.Sm">Breakpoint.Sm</MudSelectItem>
+                <MudSelectItem Value="@Breakpoint.Md">Breakpoint.Md</MudSelectItem>
+                <MudSelectItem Value="@Breakpoint.Lg">Breakpoint.Lg</MudSelectItem>
+                <MudSelectItem Value="@Breakpoint.Xl">Breakpoint.Xl</MudSelectItem>
             </MudSelect>
         </MudContainer>
     </MudMainContent>
@@ -32,7 +33,7 @@
 
 @code{
     bool open = false;
-    DrawerClipMode clipMode = DrawerClipMode.Never;
+    Breakpoint breakpoint = Breakpoint.Lg;
 
     void ToggleDrawer()
     {

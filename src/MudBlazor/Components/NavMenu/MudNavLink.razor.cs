@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -26,14 +27,8 @@ namespace MudBlazor
 
         [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 
-        [Parameter] public EventCallback<MouseEventArgs> OnNavigation { get; set; }
+        [CascadingParameter] INavigationEventReceiver NavigationEventReceiver { get; set; }
 
-        [CascadingParameter] MudNavMenu NavMenu { get; set; }
-
-        private async Task HandleNavigation(MouseEventArgs args)
-        {
-            await OnNavigation.InvokeAsync(args);
-            await NavMenu?.RaiseOnNavigation(this);
-        }
+        private Task HandleNavigation() => NavigationEventReceiver?.OnNavigation() ?? Task.CompletedTask;
     }
 }
