@@ -49,7 +49,7 @@ namespace MudBlazor
             if (drawer == null)
                 return string.Empty;
 
-            return $"mud-appbar-drawer-{(drawer.Open && drawer.ClipMode == DrawerClipMode.Never ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}-{anchor.ToDescriptionString()}";
+            return $"mud-appbar-drawer-{(drawer.Open && drawer.ClipMode == DrawerClipMode.Never ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}-{drawer.Breakpoint.ToDescriptionString()}-{anchor.ToDescriptionString()}";
         }
     }
 }

@@ -2,12 +2,13 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDrawer : MudComponentBase, IDisposable
+    public partial class MudDrawer : MudComponentBase, IDisposable, INavigationEventReceiver
     {
         private double _height;
         private Breakpoint _breakpoint;
@@ -18,15 +19,16 @@ namespace MudBlazor
 
         private bool OverlayVisible => _open && !DisableOverlay &&
             (Variant == DrawerVariant.Temporary || 
-            (ResizeListener.IsMediaSize(Breakpoint.MdAndDown, _breakpoint) && Variant == DrawerVariant.Responsive));
+            (_breakpoint < Breakpoint && Variant == DrawerVariant.Responsive));
         
         protected string Classname =>
         new CssBuilder("mud-drawer")
-          .AddClass($"mud-drawer-fixed", Fixed)
+          .AddClass($"mud-drawer-fixed", IsFixed)
           .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
           .AddClass($"mud-drawer--open", Open)
           .AddClass($"mud-drawer--closed", !Open)
           .AddClass($"mud-drawer--initial", _initial)
+          .AddClass($"mud-drawer-{Breakpoint.ToDescriptionString()}")
           .AddClass($"mud-drawer-clipped-{_clipMode.ToDescriptionString()}")
           .AddClass($"mud-drawer-color-{Color.ToDescriptionString()}", Color != Color.Default)
           .AddClass($"mud-elevation-{Elevation}")
@@ -39,6 +41,7 @@ namespace MudBlazor
           .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
           .AddClass($"mud-drawer-overlay--open", Open)
           .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
+          .AddClass($"mud-drawer-overlay-{Breakpoint.ToDescriptionString()}")
           .AddClass($"mud-drawer-overlay--initial", _initial)
         .Build();
         
@@ -72,9 +75,9 @@ namespace MudBlazor
         }
         
         /// <summary>
-        /// If true, drawer will be Fixed.
+        /// If true, drawer will be fixed.
         /// </summary>
-        [Parameter] public bool Fixed { get; set; } = true;
+        [Parameter] public bool IsFixed { get; set; } = true;
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
@@ -107,6 +110,11 @@ namespace MudBlazor
         [Parameter] public bool DisableOverlay { get; set; } = false;
 
         /// <summary>
+        /// Switching point for responsive drawers
+        /// </summary>
+        [Parameter] public Breakpoint Breakpoint { get; set; } = Breakpoint.Lg;
+
+        /// <summary>
         /// Sets the opened state on the drawer. Can be used with two-way binding to close itself on navigation.
         /// </summary>
         [Parameter]
@@ -128,7 +136,7 @@ namespace MudBlazor
                 {
                     _ = UpdateHeight();
                 }
-                if (Layout != null && Fixed)
+                if (Layout != null && IsFixed)
                 {
                     Layout.FireDrawersChanged();
                 }
@@ -149,7 +157,7 @@ namespace MudBlazor
                     return;
                 }
                 _clipMode = value;
-                if (Fixed)
+                if (IsFixed)
                 {
                     Layout?.FireDrawersChanged();
                 }
@@ -159,7 +167,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            if (Fixed)
+            if (IsFixed)
             {
                 Layout?.DrawerContainer?.Add(this);
             }
@@ -174,7 +182,7 @@ namespace MudBlazor
                 await UpdateHeight();
                 ResizeListener.OnBreakpointChanged += ResizeListener_OnBreakpointChanged;
 
-                if (await ResizeListener.IsMediaSize(Breakpoint.MdAndDown))
+                if (await ResizeListener.GetBreakpoint() < Breakpoint)
                 {
                     await OpenChanged.InvokeAsync(false);
                 }
@@ -197,10 +205,10 @@ namespace MudBlazor
             }
         }
 
-        public async void OnNavigation()
+        public async Task OnNavigation()
         {
             if (Variant == DrawerVariant.Temporary ||
-                (Variant == DrawerVariant.Responsive && await ResizeListener.IsMediaSize(Breakpoint.MdAndDown)))
+                (Variant == DrawerVariant.Responsive && await ResizeListener.GetBreakpoint() < Breakpoint))
             {
                 await OpenChanged.InvokeAsync(false);
             }
@@ -209,14 +217,14 @@ namespace MudBlazor
         private void ResizeListener_OnBreakpointChanged(object sender, Breakpoint breakpoint)
         {
             _breakpoint = breakpoint;
-            if (ResizeListener.IsMediaSize(Breakpoint.MdAndDown, breakpoint) && Variant == DrawerVariant.Responsive)
+            if (_breakpoint < Breakpoint && Variant == DrawerVariant.Responsive)
             {
                 _isOpenWhenLarge = Open;
 
                 OpenChanged.InvokeAsync(false);
                 StateHasChanged();
             }
-            else if (ResizeListener.IsMediaSize(Breakpoint.LgAndUp, breakpoint) && _isOpenWhenLarge != null && Variant == DrawerVariant.Responsive)
+            else if (_breakpoint >= Breakpoint && _isOpenWhenLarge != null && Variant == DrawerVariant.Responsive)
             {
                 OpenChanged.InvokeAsync(_isOpenWhenLarge.Value);
                 StateHasChanged();

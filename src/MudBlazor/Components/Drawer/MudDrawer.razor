@@ -3,7 +3,9 @@
 
 <aside @attributes="UserAttributes" class="@Classname" style="@Stylename">
     <div @ref="_contentRef" class="mud-drawer-content">
-        @ChildContent
+        <CascadingValue Value="this" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
     </div>
 </aside>
 <MudOverlay Visible="@OverlayVisible" OnClick="@CloseDrawer" Class="@OverlayClass" DarkBackground="true" LockScroll=false />

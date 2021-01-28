@@ -8,20 +8,24 @@
 
 .mud-main-drawer-open {
     &-responsive {
-        @media (min-width:$breakpoint-lg) {
-            &-left:not(&-right) {
-                margin-right: auto;
-                margin-left: var(--mud-drawer-width);
-            }
+        @each $breakpoint in map-keys($breakpoints) {
+            &-#{$breakpoint} {
+                @media (min-width: map-get($breakpoints, $breakpoint)) {
+                    &-left:not(&-right) {
+                        margin-right: auto;
+                        margin-left: var(--mud-drawer-width);
+                    }
 
-            &-right:not(&-left) {
-                margin-right: var(--mud-drawer-width);
-                margin-left: auto;
-            }
+                    &-right:not(&-left) {
+                        margin-right: var(--mud-drawer-width);
+                        margin-left: auto;
+                    }
 
-            &-left#{&}-right {
-                margin-right: var(--mud-drawer-width);
-                margin-left: var(--mud-drawer-width);
+                    &-left#{&}-right {
+                        margin-right: var(--mud-drawer-width);
+                        margin-left: var(--mud-drawer-width);
+                    }
+                }
             }
         }
     }

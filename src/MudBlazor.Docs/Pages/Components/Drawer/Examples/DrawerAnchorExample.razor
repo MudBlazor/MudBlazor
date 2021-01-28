@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Class="demo-drawer">
-    <MudDrawer @bind-Open="@openLeft" Fixed="false" Anchor="Anchor.Left" Elevation="1" Variant="@DrawerVariant.Persistent">
+    <MudDrawer @bind-Open="@openLeft" IsFixed="false" Anchor="Anchor.Left" Elevation="1" Variant="@DrawerVariant.Persistent">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">My App</MudText>
         </MudDrawerHeader>  
@@ -11,7 +11,7 @@
             <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
-    <MudDrawer @bind-Open="@openRight" Fixed="false" Anchor="Anchor.Right" Elevation="1" Variant="@DrawerVariant.Persistent">
+    <MudDrawer @bind-Open="@openRight" IsFixed="false" Anchor="Anchor.Right" Elevation="1" Variant="@DrawerVariant.Persistent">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">Settings</MudText>
         </MudDrawerHeader>
