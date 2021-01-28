@@ -15,6 +15,8 @@ namespace MudBlazor.Docs.Shared
         [Inject] IMenuService MenuService { get; set; }
         [Inject] NavigationManager NavMan { get; set; }
 
+        [Parameter] public EventCallback<MudNavLink> OnNavigation { get; set; }
+
         //sections are "getting-started","components", "api", ...
         string _section;
 
@@ -30,7 +32,7 @@ namespace MudBlazor.Docs.Shared
             StateHasChanged();
         }
 
-
+        private Task HandleNavigation() => OnNavigation.InvokeAsync(null);
 
         bool IsSubGroupExpanded(MudComponent item)
         {
