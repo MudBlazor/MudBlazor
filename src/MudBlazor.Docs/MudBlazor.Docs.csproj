@@ -16,14 +16,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>TRACE;LIVESHARP_DISABLE</DefineConstants>
-  </PropertyGroup>
-
   <!--Outside Visual Studio SolutionDir is not available-->  
   <PropertyGroup>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
