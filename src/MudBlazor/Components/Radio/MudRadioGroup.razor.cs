@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public partial class MudRadioGroup<T> : MudComponentBase
+    public partial class MudRadioGroup<T> : MudFormComponent<T, T>
     {
-        private T _selectedOption;
+        public MudRadioGroup() : base(new Converter<T, T>()) { }
+
         private MudRadio<T> _selectedRadio;
 
         private HashSet<MudRadio<T>> _radios = new HashSet<MudRadio<T>>();
@@ -20,20 +21,22 @@ namespace MudBlazor
         [Parameter]
         public T SelectedOption
         {
-            get => _selectedOption;
+            get => _value;
             set => SetSelectedOptionAsync(value, true).AndForget();
         }
 
         protected async Task SetSelectedOptionAsync(T option, bool updateRadio)
         {
-            if (!OptionEquals(_selectedOption, option))
+            if (!OptionEquals(_value, option))
             {
-                _selectedOption = option;
+                _value = option;
 
                 if (updateRadio)
-                    await SetSelectedRadioAsync(_radios.FirstOrDefault(r => OptionEquals(r.Option, _selectedOption)), false);
+                    await SetSelectedRadioAsync(_radios.FirstOrDefault(r => OptionEquals(r.Option, _value)), false);
 
-                await SelectedOptionChanged.InvokeAsync(_selectedOption);
+                await SelectedOptionChanged.InvokeAsync(_value);
+
+                BeginValidate();
             }
         }
 
@@ -65,7 +68,7 @@ namespace MudBlazor
 
             if (_selectedRadio == null)
             {
-                if (OptionEquals(radio.Option, _selectedOption))
+                if (OptionEquals(radio.Option, _value))
                     return SetSelectedRadioAsync(radio, false);
             }
             return Task.CompletedTask;
@@ -77,6 +80,17 @@ namespace MudBlazor
 
             if (_selectedRadio == radio)
                 _selectedRadio = null;
+        }
+
+        protected override void ResetValue()
+        {
+            if (_selectedRadio != null)
+            {
+                _selectedRadio.SetChecked(false);
+                _selectedRadio = null;
+            }
+
+            base.ResetValue();
         }
 
         private static T GetOptionOrDefault(MudRadio<T> radio)
