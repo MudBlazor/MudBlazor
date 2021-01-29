@@ -8,14 +8,3 @@ var mudBlazorDocs = {
         element.scrollIntoView({ block: 'center', behavior:'smooth' })
     }
 }
-
-
-//Functions for examples
-var mudBlazorExamples = {
-
-    //focus an element
-    focusElement: function (el) {
-        el.focus();
-    }
-}
-
