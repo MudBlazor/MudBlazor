@@ -8,7 +8,7 @@
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
     </MudAppBar>
-    <MudDrawer @bind-Open="@open" Breakpoint="@breakpoint" Elevation="1" Variant="@DrawerVariant.Responsive">
+    <MudDrawer @bind-Open="@open" Breakpoint="@breakpoint" Elevation="1" Variant="@DrawerVariant.Responsive" PreserveOpenState="@preserveOpenState">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">My App</MudText>
         </MudDrawerHeader>
@@ -26,6 +26,7 @@
                 <MudSelectItem Value="@Breakpoint.Lg">Breakpoint.Lg</MudSelectItem>
                 <MudSelectItem Value="@Breakpoint.Xl">Breakpoint.Xl</MudSelectItem>
             </MudSelect>
+            <MudSwitch @bind-Checked="@preserveOpenState" Label="Preserve open state" Color="Color.Primary" Style="width:100%;" />
         </MudContainer>
     </MudMainContent>
 </MudLayout>
@@ -33,6 +34,7 @@
 
 @code{
     bool open = false;
+    bool preserveOpenState = false;
     Breakpoint breakpoint = Breakpoint.Lg;
 
     void ToggleDrawer()

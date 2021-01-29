@@ -37,7 +37,7 @@
             <SectionHeader>
                 <Title>Persistent drawer</Title>
                 <Description>
-                    Set <CodeInline>IsFixed="false"</CodeInline> to use drawer inside a custom container.
+                    Set <CodeInline>Fixed="false"</CodeInline> to use drawer inside a custom container.
                     Persistent drawer is outside of its container, when opens it forces other contents to change their size.
                     Persistent drawer will be opened until the <CodeInline>Open</CodeInline> parameter is not changed.
                 </Description>
@@ -51,7 +51,7 @@
             <SectionHeader>
                 <Title>Anchor drawer</Title>
                 <Description>
-                    With the <CodeInline>Anchor</CodeInline> property you can set the drawer to left or right, the default mode is left.
+                    With the <CodeInline>Anchor</CodeInline> property you can set the drawer to left or right. The default mode is left.
                     This example uses persistent drawers.
                 </Description>
             </SectionHeader>
@@ -64,9 +64,8 @@
             <SectionHeader>
                 <Title>Responsive drawer</Title>
                 <Description>
-                    Reposive drawers are behaves persistent on wider screens and temporary on smaller ones.
-                    Opened drawer closes automatically when window size become small, and opens after orginal state has been restored.
-                    This example also shows how to use drawers default navigation behaviour.
+                    Responsive drawers are behaves persistent on wider screens and temporary on smaller ones.
+                    Opened drawer closes automatically when window size becomes small, and opens after orginal state has been restored.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
@@ -81,8 +80,8 @@
                 <Title>Clipping</Title>
                 <Description>
                     A drawer with <CodeInline>ClipMode="Docked"</CodeInline> or <CodeInline>ClipMode="Always"</CodeInline> will not push the AppBar to the side when opening.
-                    This parameter is evaluated only when drawers used inside a <CodeInline>MudLayout</CodeInline> directly.
-                    This example show how a different options work with a responsive drawer. Change the size of the window to test all possiblities.
+                    This parameter is evaluated only when drawers are used inside a <CodeInline>MudLayout</CodeInline> directly.
+                    This example shows how a different options work with a responsive drawer. Change the size of the window to test all possiblities.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
@@ -96,7 +95,7 @@
             <SectionHeader>
                 <Title>Custom Breakpoint</Title>
                 <Description>
-                    The switching point for responsive drawers can be changed using <CodeInline>Breakpoint</CodeInline> parameter. The default is <CodeInline>Breakpoint.Lg</CodeInline> (1280px)
+                    The switching point for responsive drawers can be changed using <CodeInline>Breakpoint</CodeInline> parameter. The default is <CodeInline>Breakpoint.Md</CodeInline>
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
