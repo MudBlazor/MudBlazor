@@ -19,9 +19,9 @@ namespace MudBlazor
             return _elementReference.FocusAsync();
         }
 
-        public override ValueTask SelectAsnyc()
+        public override ValueTask SelectAsync()
         {
-            return _elementReference.SelectAsnyc();
+            return _elementReference.SelectAsync();
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
