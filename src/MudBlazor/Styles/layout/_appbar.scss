@@ -15,9 +15,9 @@
 
 .mud-appbar-drawer-open {
     &-responsive {
-        @each $breakpoint in map-keys($breakpoints) {
+        @each $breakpoint in map-keys($breakpoints-max) {
             &-#{$breakpoint} {
-                @media (min-width: map-get($breakpoints, $breakpoint)) {
+                @media (min-width: map-get($breakpoints-min, $breakpoint)) {
                     &-left {
                         margin-left: var(--mud-drawer-width);
                     }

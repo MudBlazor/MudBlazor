@@ -71,13 +71,13 @@
     },
 
     getBreakpoint: function (width) {
-        if (width >= this.options.breakpointDefinition["Xl"])
+        if (width >= this.options.breakpointDefinitions["Xl"])
             return 4;
-        else if (width >= this.options.breakpointDefinition["Lg"])
+        else if (width >= this.options.breakpointDefinitions["Lg"])
             return 3;
-        else if (width >= this.options.breakpointDefinition["Md"])
+        else if (width >= this.options.breakpointDefinitions["Md"])
             return 2;
-        else if (width >= this.options.breakpointDefinition["Sm"])
+        else if (width >= this.options.breakpointDefinitions["Sm"])
             return 1;
         else //Xs
             return 0;

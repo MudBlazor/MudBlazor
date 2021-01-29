@@ -22,7 +22,7 @@ namespace MudBlazor.Services
         {
             this._dotNetRef = DotNetObjectReference.Create(this);
             this._options = options?.Value ?? new ResizeOptions();
-            this._options.BreakpointDefinition = BreakpointDefinition.ToDictionary(x => x.Key.ToString(), x => x.Value);
+            this._options.BreakpointDefinitions = BreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
             this._jsRuntime = jsRuntime;
             this._browserWindowSizeProvider = browserWindowSizeProvider;
         }
@@ -123,7 +123,7 @@ namespace MudBlazor.Services
 
         private BrowserWindowSize _windowSize;
 
-        public Dictionary<Breakpoint, int> BreakpointDefinition { get; set; } = new Dictionary<Breakpoint, int>()
+        public Dictionary<Breakpoint, int> BreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
         {
             [Breakpoint.Xl] = 1920,
             [Breakpoint.Lg] = 1280,
@@ -139,13 +139,13 @@ namespace MudBlazor.Services
                 _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
             if (_windowSize == null)
                 return Breakpoint.Xs;
-            if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Xl])
+            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xl])
                 return Breakpoint.Xl;
-            else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Lg])
+            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Lg])
                 return Breakpoint.Lg;
-            else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Md])
+            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Md])
                 return Breakpoint.Md;
-            else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Sm])
+            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Sm])
                 return Breakpoint.Sm;
             else
                 return Breakpoint.Xs;

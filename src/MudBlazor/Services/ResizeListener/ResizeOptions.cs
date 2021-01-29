@@ -28,6 +28,6 @@ namespace MudBlazor.Services
         /// <summary>
         /// Breakpoint definitions.
         /// </summary>
-        public Dictionary<string, int> BreakpointDefinition { get; set; }
+        public Dictionary<string, int> BreakpointDefinitions { get; set; }
     }
 }
