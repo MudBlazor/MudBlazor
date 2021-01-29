@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public abstract partial class MudBaseDatePicker : MudBasePicker
+    public abstract partial class MudBaseDatePicker : MudPicker
     {
         private DefaultConverter<DateTime?> _converter;
 
@@ -33,10 +33,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Date;
 
-        /// <summary>
-        /// Sets the Input Icon.
-        /// </summary>
-        [Parameter] public string InputIcon { get; set; } = Icons.Filled.Event;
+        ///// <summary>
+        ///// Sets the Input Icon.
+        ///// </summary>
+        //[Parameter] public string InputIcon { get; set; } = Icons.Filled.Event;
 
         /// <summary>
         /// String Format for selected date view
@@ -151,23 +151,19 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool ShowWeekNumbers { get; set; }
 
-        /// <summary>
-        /// Reference to the Picker, initialized via @ref
-        /// </summary>
-        protected MudPicker Picker { get; set; }
-
         protected virtual bool IsRange { get; } = false;
 
         private OpenTo _currentView;
 
-        protected virtual void OnPickerOpened()
+        protected override void OnPickerOpened()
         {
+            base.OnPickerOpened();
             _currentView = OpenTo;
             if (_currentView == OpenTo.Year)
                 _scrollToYearAfterRender = true;
         }
 
-        protected virtual void OnPickerClosed() { }
+        //protected virtual void OnPickerClosed() { }
 
         /// <summary>
         /// Get the first of the month to display
@@ -347,7 +343,7 @@ namespace MudBlazor
 
         private void OnFormattedDateClick()
         {
-            // todo: raise an event the user can handdle
+            // todo: raise an event the user can handle
         }
 
         private void OnYearClicked(int year)
@@ -398,6 +394,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             _currentView = OpenTo;
         }
 
