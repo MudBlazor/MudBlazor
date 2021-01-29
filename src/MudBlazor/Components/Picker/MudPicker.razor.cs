@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudPicker : MudBasePicker
+    public partial class MudPicker : MudComponentBase
     {
         enum PickerVerticalPosition
         {
@@ -28,16 +28,16 @@ namespace MudBlazor
         [Inject] private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
 
         protected string PickerClass =>
-        new CssBuilder("mud-picker")
-            .AddClass($"mud-picker-inline", PickerVariant != PickerVariant.Static)
-            .AddClass($"mud-picker-static", PickerVariant == PickerVariant.Static)
-            .AddClass($"mud-rounded", PickerVariant == PickerVariant.Static && !_pickerSquare)
-            .AddClass($"mud-elevation-{_pickerElevation}", PickerVariant == PickerVariant.Static)
-            .AddClass($"mud-picker-input-button", !AllowKeyboardInput && PickerVariant != PickerVariant.Static)
-            .AddClass($"mud-picker-input-text", AllowKeyboardInput && PickerVariant != PickerVariant.Static)
-            .AddClass($"mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
-            .AddClass(Class)
-            .Build();
+   new CssBuilder("mud-picker")
+       .AddClass($"mud-picker-inline", PickerVariant != PickerVariant.Static)
+       .AddClass($"mud-picker-static", PickerVariant == PickerVariant.Static)
+       .AddClass($"mud-rounded", PickerVariant == PickerVariant.Static && !_pickerSquare)
+       .AddClass($"mud-elevation-{_pickerElevation}", PickerVariant == PickerVariant.Static)
+       .AddClass($"mud-picker-input-button", !AllowKeyboardInput && PickerVariant != PickerVariant.Static)
+       .AddClass($"mud-picker-input-text", AllowKeyboardInput && PickerVariant != PickerVariant.Static)
+       .AddClass($"mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
+       .AddClass(Class)
+       .Build();
 
         protected string PickerPaperClass =>
         new CssBuilder("mud-picker-paper")
@@ -68,12 +68,152 @@ namespace MudBlazor
         new CssBuilder("mud-input-input-control").AddClass(Class)
         .Build();
 
-        [Parameter] public bool IsRange { get; set; } = false;
         [Parameter] public string InputIcon { get; set; }
-        [Parameter] public RenderFragment ChildContent { get; set; }
+
+        //protected virtual RenderFragment InputContent() { return null; }
+        protected virtual RenderFragment DropdownContent() { return null; }
 
         [Parameter] public EventCallback PickerOpened { get; set; }
         [Parameter] public EventCallback PickerClosed { get; set; }
+
+        /// <summary>
+        /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default in inline mode and 0 in static mode.
+        /// </summary>
+        [Parameter] public int Elevation { set; get; } = 8;
+
+        /// <summary>
+        /// If true, border-radius is set to 0 this is set to true automaticly in static mode but can be overridden with Rounded bool.
+        /// </summary>
+        [Parameter] public bool Square { get; set; }
+
+        /// <summary>
+        /// If true, border-radius is set to theme default when in Static Mode.
+        /// </summary>
+        [Parameter] public bool Rounded { get; set; }
+
+        /// <summary>
+        /// If string has value, helpertext will be applied.
+        /// </summary>
+        [Parameter] public string HelperText { get; set; }
+
+        /// <summary>
+        /// If string has value the label text will be displayed in the input, and scaled down at the top if the input has value.
+        /// </summary>
+        [Parameter] public string Label { get; set; }
+
+        /// <summary>
+        /// If true, the picker will be disabled.
+        /// </summary>
+        [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
+        /// If true, the picker will be editable.
+        /// </summary>
+        [Parameter] public bool Editable { get; set; } = false;
+
+        /// <summary>
+        /// Hide toolbar and show only date/time views.
+        /// </summary>
+        [Parameter] public bool DisableToolbar { get; set; }
+
+        /// <summary>
+        /// User class names for picker's ToolBar, separated by space
+        /// </summary>
+        [Parameter] public string ToolBarClass { get; set; }
+
+        /// <summary>
+        /// Picker container option
+        /// </summary>
+        [Parameter] public PickerVariant PickerVariant { get; set; } = PickerVariant.Inline;
+
+        /// <summary>
+        /// Variant of the text input
+        /// </summary>
+        [Parameter] public Variant InputVariant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// Sets if the icon will be att start or end, set to false to disable.
+        /// </summary>
+        [Parameter] public Adornment Adornment { get; set; } = Adornment.End;
+
+        /// <summary>
+        /// What orientation to render in when in PickerVariant Static Mode.
+        /// </summary>
+        [Parameter] public Orientation Orientation { get; set; } = Orientation.Portrait;
+
+        /// <summary>
+        /// Sets the Icon Size.
+        /// </summary>
+        [Parameter] public Size IconSize { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The color of the toolbar, selected and active. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color Color { get; set; } = Color.Primary;
+
+        /// <summary>
+        /// Allows text input from keyboard.
+        /// </summary>
+        [Parameter] public bool AllowKeyboardInput { get; set; }
+
+        /// <summary>
+        /// Fired when the text changes.
+        /// </summary>
+        [Parameter] public EventCallback<string> TextChanged { get; set; }
+
+        /// <summary>
+        /// The currently selected string value (two-way bindable)
+        /// </summary>
+        [Parameter]
+        public string Text
+        {
+            get => _text;
+            set => SetTextAsync(value, true).AndForget();
+        }
+        private string _text;
+
+        protected async Task SetTextAsync(string value, bool callback)
+        {
+            if (_text != value)
+            {
+                _text = value;
+                if (callback)
+                    await StringValueChanged(_text);
+                await TextChanged.InvokeAsync(_text);
+            }
+        }
+
+        /// <summary>
+        /// Value change hook for descendants.
+        /// </summary>
+        protected virtual Task StringValueChanged(string value)
+        {
+            return Task.CompletedTask;
+        }
+
+        protected bool IsOpen { get; set; }
+
+        public void ToggleOpen()
+        {
+            if (IsOpen)
+                Close();
+            else
+                Open();
+        }
+
+        public void Close()
+        {
+            IsOpen = false;
+            StateHasChanged();
+            OnClosed();
+        }
+
+        public void Open()
+        {
+            IsOpen = true;
+            StateHasChanged();
+            OnOpened();
+        }
 
         private bool _pickerSquare;
         private int _pickerElevation;
@@ -87,7 +227,6 @@ namespace MudBlazor
             if (PickerVariant == PickerVariant.Static)
             {
                 IsOpen = true;
-
                 if (Elevation == 8)
                 {
                     _pickerElevation = 0;
@@ -96,7 +235,6 @@ namespace MudBlazor
                 {
                     _pickerElevation = Elevation;
                 }
-
                 if (!Rounded)
                 {
                     _pickerSquare = true;
@@ -109,7 +247,7 @@ namespace MudBlazor
             }
         }
 
-        private void ToggleState()
+        protected void ToggleState()
         {
             if (IsOpen)
             {
@@ -123,7 +261,7 @@ namespace MudBlazor
             }
         }
 
-        protected override async void OnOpened()
+        protected virtual async void OnOpened()
         {
             OnPickerOpened();
 
@@ -134,7 +272,7 @@ namespace MudBlazor
             }
         }
 
-        protected override void OnClosed()
+        protected virtual void OnClosed()
         {
             OnPickerClosed();
             _pickerVerticalPosition = PickerVerticalPosition.Unknown;
@@ -157,16 +295,13 @@ namespace MudBlazor
                 _pickerVerticalPosition = PickerVerticalPosition.Below;
                 return;
             }
-
             var size = await WindowSizeListener.GetBrowserWindowSize();
             var clientRect = await DomService.GetBoundingClientRect(_pickerInlineRef);
-
             if (size == null || clientRect == null)
             {
                 _pickerVerticalPosition = PickerVerticalPosition.Below;
                 return;
             }
-
             if (size.Height < clientRect.Height)
             {
                 _pickerVerticalPosition = PickerVerticalPosition.Top;

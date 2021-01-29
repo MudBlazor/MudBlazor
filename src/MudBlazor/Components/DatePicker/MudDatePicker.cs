@@ -26,15 +26,15 @@ namespace MudBlazor
             set => SetDateAsync(value, true).AndForget();
         }
 
-        protected override void OnOpened()
-        {
-            Picker.Open();
-        }
+        //protected override void OnOpened()
+        //{
+        //    Open();
+        //}
 
-        protected override void OnClosed()
-        {
-            Picker.Close();
-        }
+        //protected override void OnClosed()
+        //{
+        //    Close();
+        //}
 
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
@@ -76,7 +76,7 @@ namespace MudBlazor
             if (PickerVariant != PickerVariant.Static)
             {
                 await Task.Delay(ClosingDelay);
-                Picker.Close();
+                Close();
             }
         }
 
