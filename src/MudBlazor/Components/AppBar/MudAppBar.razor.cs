@@ -49,7 +49,15 @@ namespace MudBlazor
             if (drawer == null)
                 return string.Empty;
 
-            return $"mud-appbar-drawer-{(drawer.Open && drawer.ClipMode == DrawerClipMode.Never ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}-{drawer.Breakpoint.ToDescriptionString()}-{anchor.ToDescriptionString()}";
+
+            var className = $"mud-appbar-drawer-{(drawer.Open && drawer.ClipMode == DrawerClipMode.Never ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}";
+            if (drawer.Variant == DrawerVariant.Responsive)
+            {
+                className += $"-{drawer.Breakpoint.ToDescriptionString()}";
+            }
+            className += $"-{anchor.ToDescriptionString()}";
+
+            return className;
         }
     }
 }
