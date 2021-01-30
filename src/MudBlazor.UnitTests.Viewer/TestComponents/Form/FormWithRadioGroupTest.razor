@@ -1,0 +1,16 @@
+﻿@using MudBlazor;
+@namespace MudBlazor.UnitTests
+
+<MudForm ValidationDelay="0">
+    <MudRadioGroup T="string" Required="true" @bind-SelectedOption="Selected">
+        <MudRadio Option="@("A")">Option A</MudRadio>
+        <MudRadio Option="@("B")">Option B</MudRadio>
+    </MudRadioGroup>
+</MudForm>
+
+@code {
+    public static string __description__ = "Clearing the value of a required radiogroup should set form's isvalid to false.";
+
+    [Parameter]
+    public string Selected { get; set; }
+}

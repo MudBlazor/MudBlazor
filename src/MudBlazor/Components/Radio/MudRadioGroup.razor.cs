@@ -45,6 +45,7 @@ namespace MudBlazor
 
         internal Task SetSelectedRadioAsync(MudRadio<T> radio)
         {
+            Touched = true;
             return SetSelectedRadioAsync(radio, true);
         }
 

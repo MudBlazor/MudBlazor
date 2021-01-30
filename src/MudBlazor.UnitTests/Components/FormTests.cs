@@ -412,6 +412,37 @@ namespace MudBlazor.UnitTests
             checkbox.Instance.Checked.Should().BeFalse();
             // TODO: fill out the form with errors, field after field, check how fields get validation erros after blur
         }
+
+        /// <summary>
+        /// Setting the required radiogroup value should set IsValid true
+        /// Clearing the value of a required radiogroup should set form's IsValid to false.
+        /// </summary>
+        [Test]
+        public async Task FormWithRadioGroupIsValidTest()
+        {
+            var comp = ctx.RenderComponent<FormWithRadioGroupTest>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            var radioGroupcomp = comp.FindComponent<MudRadioGroup<string>>();
+            var radioGroup = radioGroupcomp.Instance;
+            // check initial state: form should not be valid
+            form.IsValid.Should().Be(false);
+            radioGroup.Error.Should().BeFalse();
+            radioGroup.ErrorText.Should().BeNullOrEmpty();
+            // click on first radio: form should be valid now
+            radioGroupcomp.Find("input").Click();
+            form.IsValid.Should().Be(true);
+            form.Errors.Length.Should().Be(0);
+            radioGroup.Error.Should().BeFalse();
+            radioGroup.ErrorText.Should().BeNullOrEmpty();
+            // clear selection
+            comp.SetParam("Selected", null);
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            radioGroup.Error.Should().BeTrue();
+            radioGroup.ErrorText.Should().Be("Required");
+        }
     }
 }
 
