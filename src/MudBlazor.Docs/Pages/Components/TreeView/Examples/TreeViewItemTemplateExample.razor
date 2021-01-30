@@ -1,15 +1,14 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTreeView Style="width: 500px;" CanActivate="true" CanSelect="true" @bind-ActivatedItem="ActivatedItem" @bind-SelectedItems="SelectedItems">
-    <MudTreeViewItemBuilder Items="TreeItems">
-        <MudTreeViewItem @bind-Expanded="@context.IsExpanded"
-                         Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption"
-                         Items="@context.TreeItems" Tag="@context" />
-    </MudTreeViewItemBuilder>
+<MudTreeView Style="width: 500px;" CanActivate="true" Items="TreeItems" CanSelect="true" @bind-ActivatedValue="ActivatedValue" @bind-SelectedValues="SelectedValues">
+    <ItemTemplate>
+        <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems" Value="@context"
+                         Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
+    </ItemTemplate>
 </MudTreeView>
 
 <div style="width: 100%">
-    <MudText Typo="@Typo.subtitle1">Activated item: @((ActivatedItem?.Tag as TreeItemData)?.Title)</MudText>
+    <MudText Typo="@Typo.subtitle1">Activated item: @(ActivatedValue?.Title)</MudText>
     <MudText Typo="@Typo.subtitle1">Sum of selected items: @GetSelectedSum()</MudText>
 </div>
 
@@ -24,7 +23,7 @@
 
         public bool IsExpanded { get; set; }
 
-        public List<TreeItemData> TreeItems { get; set; }
+        public HashSet<TreeItemData> TreeItems { get; set; }
 
         public TreeItemData(string title, string icon, int? number = null)
         {
@@ -34,21 +33,21 @@
         }
     }
 
-    MudTreeViewItem ActivatedItem { get; set; }
+    TreeItemData ActivatedValue { get; set; }
 
-    HashSet<MudTreeViewItem> SelectedItems { get; set; }
+    HashSet<TreeItemData> SelectedValues { get; set; }
 
-    List<TreeItemData> TreeItems { get; set; } = new List<TreeItemData>();
+    HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
 
-    public TreeViewItemBuilderExample()
+    public TreeViewItemTemplateExample()
     {
         TreeItems.Add(new TreeItemData("All Mail", Icons.Filled.Email));
         TreeItems.Add(new TreeItemData("Trash", Icons.Filled.Delete));
         TreeItems.Add(new TreeItemData("Categories", Icons.Filled.Label)
         {
             IsExpanded = true,
-            TreeItems = new List<TreeItemData>()
-        {
+            TreeItems = new HashSet<TreeItemData>()
+            {
                 new TreeItemData("Social", Icons.Filled.Group, 90),
                 new TreeItemData("Updates", Icons.Filled.Info, 2294),
                 new TreeItemData("Forums", Icons.Filled.QuestionAnswer, 3566),
@@ -60,6 +59,6 @@
 
     public int GetSelectedSum()
     {
-        return SelectedItems?.Select(i => (TreeItemData)i.Tag).Sum(i => i.Number ?? 0) ?? 0;
+        return SelectedValues?.Sum(i => i.Number ?? 0) ?? 0;
     }
 }

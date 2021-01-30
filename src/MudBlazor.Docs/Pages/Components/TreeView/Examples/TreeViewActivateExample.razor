@@ -1,24 +1,24 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTreeView Style="width: 500px;" CanActivate="true" @bind-ActivatedItem="ActivatedItem">
-    <MudTreeViewItem Text="Applications">
-        <MudTreeViewItem Text="Calendar" />
-        <MudTreeViewItem Text="Chrome" />
-        <MudTreeViewItem Text="Webstorm" />
+<MudTreeView Style="width: 500px;" CanActivate="true" @bind-ActivatedValue="ActivatedValue">
+    <MudTreeViewItem Value='"content"'>
+        <MudTreeViewItem Value='"logo.png"' />
+        <MudTreeViewItem Value='"MudBlazor.svg"' />
+        <MudTreeViewItem Value='"Nuget.png"' />
     </MudTreeViewItem>
-    <MudTreeViewItem Text="Documents">
-        <MudTreeViewItem Text="OSS" />
-        <MudTreeViewItem Text="Material-UI">
-            <MudTreeViewItem Text="src">
-                <MudTreeViewItem Text="index.js" />
-                <MudTreeViewItem Text="tree-view.js" />
+    <MudTreeViewItem Value='"src"'>
+        <MudTreeViewItem Value='"MudBlazor"' />
+        <MudTreeViewItem Value='"MudBlazor.Docs"'>
+            <MudTreeViewItem Value='"wwwroot"'>
+                <MudTreeViewItem Value='"MudAppbarCorner.svg"' />
+                <MudTreeViewItem Value='"MudBlazorDocs.min.css"' />
             </MudTreeViewItem>
         </MudTreeViewItem>
     </MudTreeViewItem>
 </MudTreeView>
 
-<MudText Style="width: 100%" Typo="@Typo.subtitle1">Activated item: @ActivatedItem?.Text</MudText>
+<MudText Style="width: 100%" Typo="@Typo.subtitle1">Activated item: @ActivatedValue</MudText>
 
 @code {
-    MudTreeViewItem ActivatedItem { get; set; }
+    string ActivatedValue { get; set; }
 }

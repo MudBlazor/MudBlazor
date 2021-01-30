@@ -166,7 +166,7 @@
     grid-template-columns: auto;
 }
 
-@media(min-width: 600px) {
+@media(min-width: $breakpoint-sm) {
     .mud-picker-calendar-content:not(.mud-picker-calendar-content-1) {
         grid-template-columns: repeat(2, minmax(auto, 1fr));
 
@@ -202,7 +202,7 @@
     }
 }
 
-@media(min-width: 960px) {
+@media(min-width: $breakpoint-md) {
     .mud-picker-calendar-content:not(.mud-picker-calendar-content-1):not(.mud-picker-calendar-content-2) {
         grid-template-columns: repeat(3, minmax(auto, 1fr));
 

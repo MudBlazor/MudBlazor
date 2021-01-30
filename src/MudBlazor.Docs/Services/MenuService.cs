@@ -66,7 +66,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Element", typeof(MudElement))
             .AddItem("Focus Trap", typeof(MudFocusTrap))
             .AddItem("File Upload", typeof(MudFileUploader))
-            .AddItem("TreeView", typeof(MudTreeView))
+            .AddItem("TreeView", typeof(MudTreeView<T>))
             .AddItem("Breadcrumbs", typeof(MudBreadcrumbs))
             .AddItem("ScrollToTop", typeof(MudScrollToTop))
 

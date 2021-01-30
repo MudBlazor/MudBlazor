@@ -1,0 +1,28 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Left))">Left</MudButton>
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Right))">Right</MudButton>
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Top))">Top</MudButton>
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Bottom))">Bottom</MudButton>
+
+<MudDrawer @bind-Open="@open" Anchor="@anchor" Elevation="1" Variant="@DrawerVariant.Temporary">
+    <MudDrawerHeader>
+        <MudText Typo="Typo.h6">My App</MudText>
+    </MudDrawerHeader>
+    <MudNavMenu>
+        <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
+        <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
+        <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
+    </MudNavMenu>
+</MudDrawer>
+
+@code{ 
+    bool open;
+    Anchor anchor;
+    
+    void OpenDrawer(Anchor anchor)
+    {
+        open = true;
+        this.anchor = anchor;
+    }
+}

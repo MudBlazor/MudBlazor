@@ -16,14 +16,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>TRACE;LIVESHARP_DISABLE</DefineConstants>
-  </PropertyGroup>
-
   <!--Outside Visual Studio SolutionDir is not available-->  
   <PropertyGroup>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)../</SolutionDir>
@@ -48,7 +40,7 @@
   <Target Name="CompileDocs" BeforeTargets="BeforeBuild">
     <!--Command-line for the code generator-->
     <Message Text="Generating Docs and Tests" Importance="high" />
-    <Exec Command='dotnet "$(BinDocsCompiler)"' Condition="Exists('$(BinDocsCompiler)')" />
+    <Exec Command="dotnet &quot;$(BinDocsCompiler)&quot;" Condition="Exists('$(BinDocsCompiler)')" />
     <Exec Command="dotnet run $(ProjectDocsCompiler)" Condition="!Exists('$(BinDocsCompiler)')" />
   </Target>
 
@@ -74,7 +66,7 @@
  
   <!--Update ExampleCode-->
   <ItemGroup>
-    <EmbeddedResource Update="Pages\**\*.html" />
+    <EmbeddedResource Include="Pages\**\*.html" />
   </ItemGroup>
 
   <!--Used for the periodic table examples-->
@@ -82,8 +74,15 @@
     <EmbeddedResource Include="Data/Elements.json" />
   </ItemGroup>
 
+  <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
+  <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
+    <PropertyGroup>
+      <CleanGeneratedFiles>false</CleanGeneratedFiles>
+    </PropertyGroup>
+  </Target>
+  
   <!--Cleanup old ExampleCode files-->
-  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" >
+  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
     <ItemGroup>
       <FilesToClean Include="./Pages/**/*ExampleCode.*" />
       <FilesToClean Include="./NewFilesToBuild.txt" />
@@ -93,7 +92,7 @@
 
   <!--Packages-->
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="9.3.0" />
+    <PackageReference Include="FluentValidation" Version="9.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />

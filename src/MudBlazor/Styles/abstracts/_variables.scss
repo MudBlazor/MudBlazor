@@ -1,1 +1,10 @@
 ﻿$mud-palette-colors: primary, secondary, tertiary, info, success, warning, error, dark;
+
+$breakpoint-xs: 0px;
+$breakpoint-sm: 600px;
+$breakpoint-md: 960px;
+$breakpoint-lg: 1280px;
+$breakpoint-xl: 1920px;
+
+$breakpoints-max: ( xs: 599px, sm: 959px, md: 1279px, lg: 1919px );
+$breakpoints-min: ( xs: $breakpoint-xs, sm: $breakpoint-sm, md: $breakpoint-md, lg: $breakpoint-lg, xl: $breakpoint-xl );

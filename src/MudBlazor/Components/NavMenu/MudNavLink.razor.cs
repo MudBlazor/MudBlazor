@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -13,7 +15,6 @@ namespace MudBlazor
           .AddClass(Class)
         .Build();
 
-
         /// <summary>
         /// Icon to use if set.
         /// </summary>
@@ -23,16 +24,11 @@ namespace MudBlazor
         /// The color of the icon. It supports the theme colors.
         /// </summary>
         [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+
         [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 
-        [CascadingParameter] public MudDrawer Drawer { get; set; }
+        [CascadingParameter] INavigationEventReceiver NavigationEventReceiver { get; set; }
 
-        private void OnNavigation(MouseEventArgs args)
-        {
-            if (Drawer != null)
-            {
-                Drawer.OnNavigation();
-            }
-        }
+        private Task HandleNavigation() => NavigationEventReceiver?.OnNavigation() ?? Task.CompletedTask;
     }
 }

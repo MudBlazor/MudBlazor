@@ -1,15 +1,15 @@
-﻿<MudTreeView CanSelect="true" CanActivate="true">
-    <MudTreeViewItem Text="Applications" @bind-Activated="Item1Activated" @bind-Selected="ParentItemSelected">
-        <MudTreeViewItem Text="Calendar" />
-        <MudTreeViewItem Text="Chrome" @bind-Selected="SubItemSelected" />
-        <MudTreeViewItem Text="Webstorm" />
+﻿<MudTreeView T="string" CanSelect="true" CanActivate="true">
+    <MudTreeViewItem Value='"content"' @bind-Activated="Item1Activated" @bind-Selected="ParentItemSelected">
+        <MudTreeViewItem Value='"logo.png"' />
+        <MudTreeViewItem Value='"MudBlazor.svg"' @bind-Selected="SubItemSelected" />
+        <MudTreeViewItem Value='"Nuget.png"' />
     </MudTreeViewItem>
-    <MudTreeViewItem Text="Documents" @bind-Activated="Item2Activated">
-        <MudTreeViewItem Text="OSS" />
-        <MudTreeViewItem Text="Material-UI">
-            <MudTreeViewItem Text="src">
-                <MudTreeViewItem Text="index.js" />
-                <MudTreeViewItem Text="tree-view.js" />
+    <MudTreeViewItem Value='"src"' @bind-Activated="Item2Activated">
+        <MudTreeViewItem Value='"MudBlazor"' />
+        <MudTreeViewItem Value='"MudBlazor.Docs"'>
+            <MudTreeViewItem Value='"wwwroot"'>
+                <MudTreeViewItem Value='"MudAppbarCorner.svg"' />
+                <MudTreeViewItem Value='"MudBlazorDocs.min.css"' />
             </MudTreeViewItem>
         </MudTreeViewItem>
     </MudTreeViewItem>

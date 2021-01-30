@@ -1,6 +1,7 @@
 ﻿@layout IframeLayout
 @namespace MudBlazor.Docs.Examples
-@page "/iframe/docs/examples/drawer/clipped"
+@page "/iframe/docs/examples/drawer/persistent"
+
 
 <MudLayout>
     <MudAppBar Elevation="1">
@@ -8,7 +9,7 @@
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
     </MudAppBar>
-    <MudDrawer @bind-Open="@open" ClipMode="clipMode" Elevation="1" Variant="@DrawerVariant.Responsive">
+    <MudDrawer @bind-Open="@open" Elevation="1">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">My App</MudText>
         </MudDrawerHeader>
@@ -20,11 +21,7 @@
     </MudDrawer>
     <MudMainContent Class="pt-16 px-16">
         <MudContainer Class="mt-6">
-            <MudSelect Label="Select clip mode" @bind-Value="clipMode">
-                <MudSelectItem Value="@DrawerClipMode.Never">Not clipped (DrawerClipMode.Never)</MudSelectItem>
-                <MudSelectItem Value="@DrawerClipMode.Docked">Drawer is docked (DrawerClipMode.Docked)</MudSelectItem>
-                <MudSelectItem Value="@DrawerClipMode.Always">Always (DrawerClipMode.Always)</MudSelectItem>
-            </MudSelect>
+            <LoremIpsum />
         </MudContainer>
     </MudMainContent>
 </MudLayout>
@@ -32,7 +29,6 @@
 
 @code{
     bool open = false;
-    DrawerClipMode clipMode = DrawerClipMode.Never;
 
     void ToggleDrawer()
     {
