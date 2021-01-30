@@ -157,6 +157,18 @@ namespace MudBlazor.UnitTests
                 .Should()
                 .StartWith("<a");
         }
+
+        /// <summary>
+        /// MudFab should only render an icon if one is specified.
+        /// </summary>
+        [Test]
+        public void MudFabShouldNotRenderIconIfNoneSpecified()
+        {
+            var comp = ctx.RenderComponent<MudFab>();
+            comp.Markup
+                .Should()
+                .NotContainAny("mud-icon-root");
+        }
     }
 }
 
