@@ -70,9 +70,6 @@ namespace MudBlazor
 
         [Parameter] public string InputIcon { get; set; }
 
-        //protected virtual RenderFragment InputContent() { return null; }
-        protected virtual RenderFragment DropdownContent() { return null; }
-
         [Parameter] public EventCallback PickerOpened { get; set; }
         [Parameter] public EventCallback PickerClosed { get; set; }
 

@@ -12,7 +12,6 @@ namespace MudBlazor
 {
     public abstract partial class MudBaseDatePicker : MudPicker
     {
-        private DefaultConverter<DateTime?> _converter;
 
         [Inject] protected IJSRuntime JsRuntime { get; set; }
 
@@ -125,6 +124,7 @@ namespace MudBlazor
                 _converter = value;
             }
         }
+        private DefaultConverter<DateTime?> _converter;
 
         /// <summary>
         /// Milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.
