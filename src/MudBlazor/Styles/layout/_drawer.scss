@@ -201,7 +201,7 @@
 }
 
 .mud-drawer-fixed {
-    &.mud-drawer-persistent:not(.mud-drawer-clipped-not),
+    &.mud-drawer-persistent:not(.mud-drawer-clipped-never),
     &.mud-drawer-responsive.mud-drawer-clipped-always,
     &.mud-drawer-temporary.mud-drawer-clipped-always {
         top: var(--mud-appbar-min-height);

@@ -11,12 +11,12 @@
         @each $breakpoint in map-keys($breakpoints-max) {
             &-#{$breakpoint} {
                 @media (min-width: map-get($breakpoints-min, $breakpoint)) {
-                    &-left:not(&-right) {
+                    &-left:not(#{&}-right) {
                         margin-right: auto;
                         margin-left: var(--mud-drawer-width);
                     }
 
-                    &-right:not(&-left) {
+                    &-right:not(#{&}-left) {
                         margin-right: var(--mud-drawer-width);
                         margin-left: auto;
                     }

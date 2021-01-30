@@ -30,7 +30,7 @@
                         width: calc(100% - 2 * var(--mud-drawer-width));
                     }
 
-                    &-left:not(&-right), &-right:not(&-left) {
+                    &-left:not(#{&}-right), &-right:not(#{&}-left) {
                         width: calc(100% - var(--mud-drawer-width));
                     }
                 }
