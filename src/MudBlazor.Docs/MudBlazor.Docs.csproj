@@ -86,6 +86,8 @@
     <ItemGroup>
       <FilesToClean Include="./Pages/**/*ExampleCode.*" />
       <FilesToClean Include="./NewFilesToBuild.txt" />
+      <FilesToClean Include="./Models/Snippets.generated.cs" />
+      <FilesToClean Include="./Models/DocStrings.generated.cs" />
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
   </Target>
