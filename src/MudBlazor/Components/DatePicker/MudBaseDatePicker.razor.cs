@@ -15,8 +15,6 @@ namespace MudBlazor
 
         [Inject] protected IJSRuntime JsRuntime { get; set; }
 
-        [Inject] protected IDomService DomService { get; set; }
-
         /// <summary>
         /// Max selectable date.
         /// </summary>

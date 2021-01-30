@@ -6,7 +6,8 @@
 
 @code{
 
-    protected override RenderFragment DropdownContent=> @<Node>
+    protected override RenderFragment PickerContent=> 
+    @<Node>
         <MudPickerToolbar Class="@ToolbarClass" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
             <div class="mud-timepicker-hourminute">
                 <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@HoursButtonClass" OnClick="OnHourClick">@GetHourString()</MudButton>

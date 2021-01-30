@@ -6,13 +6,15 @@
 @code 
 {
 
-    protected virtual RenderFragment InputContent => @<MudTextField Label="@Label" @bind-Text="@Text" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string" Style="@Style"
-                                  @onclick="(() => { if (!Editable) ToggleState(); })" OnAdornmentClick="ToggleState" Disabled="@Disabled" Adornment="@Adornment"
-                                  AdornmentIcon="@InputIcon" IconSize="@IconSize"/>;
+    protected virtual RenderFragment InputContent => 
+        @<MudTextField Label="@Label" @bind-Text="@Text" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string" Style="@Style"
+                  @onclick="(() => { if (!Editable) ToggleState(); })" OnAdornmentClick="ToggleState" Disabled="@Disabled" Adornment="@Adornment"
+                  AdornmentIcon="@InputIcon" IconSize="@IconSize"/>;
 
-    protected virtual RenderFragment DropdownContent => null;
+    protected virtual RenderFragment PickerContent => null;
 
-    protected virtual RenderFragment Render => @<Node>
+    protected virtual RenderFragment Render => 
+    @<Node>
         <div class="@PickerClass">
             @if (PickerVariant != PickerVariant.Static)
             {
@@ -24,7 +26,7 @@
                    <div @ref="_pickerInlineRef" class="@PickerInlineClass">
                        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
                            <div class="@PickerContainerClass">
-                               @DropdownContent
+                               @PickerContent
                            </div>
                        </MudPaper>
                    </div>
@@ -33,7 +35,7 @@
                {
                    <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
                        <div class="@PickerContainerClass">
-                           @DropdownContent
+                           @PickerContent
                        </div>
                    </MudPaper>
                }
@@ -42,7 +44,7 @@
                    <MudOverlay Visible="IsOpen" OnClick="Close" DarkBackground="true" Class="mud-overlay-dialog">
                        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
                            <div class="@PickerContainerClass">
-                               @DropdownContent
+                               @PickerContent
                            </div>
                        </MudPaper>
                    </MudOverlay>
@@ -53,7 +55,7 @@
         {
             <MudOverlay Visible="IsOpen" OnClick="Close" LockScroll="false"/>
         }
-        </Node>;
+    </Node>;
 }
 
 

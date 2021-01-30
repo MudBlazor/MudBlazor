@@ -28,49 +28,59 @@ namespace MudBlazor
         [Inject] private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
 
         protected string PickerClass =>
-   new CssBuilder("mud-picker")
-       .AddClass($"mud-picker-inline", PickerVariant != PickerVariant.Static)
-       .AddClass($"mud-picker-static", PickerVariant == PickerVariant.Static)
-       .AddClass($"mud-rounded", PickerVariant == PickerVariant.Static && !_pickerSquare)
-       .AddClass($"mud-elevation-{_pickerElevation}", PickerVariant == PickerVariant.Static)
-       .AddClass($"mud-picker-input-button", !AllowKeyboardInput && PickerVariant != PickerVariant.Static)
-       .AddClass($"mud-picker-input-text", AllowKeyboardInput && PickerVariant != PickerVariant.Static)
-       .AddClass($"mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
-       .AddClass(Class)
-       .Build();
+            new CssBuilder("mud-picker")
+                .AddClass($"mud-picker-inline", PickerVariant != PickerVariant.Static)
+                .AddClass($"mud-picker-static", PickerVariant == PickerVariant.Static)
+                .AddClass($"mud-rounded", PickerVariant == PickerVariant.Static && !_pickerSquare)
+                .AddClass($"mud-elevation-{_pickerElevation}", PickerVariant == PickerVariant.Static)
+                .AddClass($"mud-picker-input-button", !AllowKeyboardInput && PickerVariant != PickerVariant.Static)
+                .AddClass($"mud-picker-input-text", AllowKeyboardInput && PickerVariant != PickerVariant.Static)
+                .AddClass($"mud-disabled", Disabled && PickerVariant != PickerVariant.Static)
+                .AddClass(Class)
+            .Build();
 
         protected string PickerPaperClass =>
-        new CssBuilder("mud-picker-paper")
-            .AddClass("mud-picker-view", PickerVariant == PickerVariant.Inline)
-            .AddClass("mud-picker-open", IsOpen && PickerVariant == PickerVariant.Inline)
-            .AddClass("mud-picker-popover-paper", PickerVariant == PickerVariant.Inline)
-            .AddClass("mud-dialog", PickerVariant == PickerVariant.Dialog)
+            new CssBuilder("mud-picker-paper")
+                .AddClass("mud-picker-view", PickerVariant == PickerVariant.Inline)
+                .AddClass("mud-picker-open", IsOpen && PickerVariant == PickerVariant.Inline)
+                .AddClass("mud-picker-popover-paper", PickerVariant == PickerVariant.Inline)
+                .AddClass("mud-dialog", PickerVariant == PickerVariant.Dialog)
             .Build();
 
         protected string PickerInlineClass =>
-        new CssBuilder("mud-picker-inline-paper")
-            .AddClass("mud-picker-hidden", _pickerVerticalPosition == PickerVerticalPosition.Unknown && PickerVariant == PickerVariant.Inline)
-            .AddClass("mud-picker-pos-top", _pickerVerticalPosition == PickerVerticalPosition.Top)
-            .AddClass("mud-picker-pos-above", _pickerVerticalPosition == PickerVerticalPosition.Above)
-            .AddClass("mud-picker-pos-bottom", _pickerVerticalPosition == PickerVerticalPosition.Bottom)
-            .AddClass("mud-picker-pos-below", _pickerVerticalPosition == PickerVerticalPosition.Below)
-            .AddClass("mud-picker-pos-left", _pickerHorizontalPosition == PickerHorizontalPosition.Left)
-            .AddClass("mud-picker-pos-right", _pickerHorizontalPosition == PickerHorizontalPosition.Right)
-        .Build();
+            new CssBuilder("mud-picker-inline-paper")
+                .AddClass("mud-picker-hidden", _pickerVerticalPosition == PickerVerticalPosition.Unknown && PickerVariant == PickerVariant.Inline)
+                .AddClass("mud-picker-pos-top", _pickerVerticalPosition == PickerVerticalPosition.Top)
+                .AddClass("mud-picker-pos-above", _pickerVerticalPosition == PickerVerticalPosition.Above)
+                .AddClass("mud-picker-pos-bottom", _pickerVerticalPosition == PickerVerticalPosition.Bottom)
+                .AddClass("mud-picker-pos-below", _pickerVerticalPosition == PickerVerticalPosition.Below)
+                .AddClass("mud-picker-pos-left", _pickerHorizontalPosition == PickerHorizontalPosition.Left)
+                .AddClass("mud-picker-pos-right", _pickerHorizontalPosition == PickerHorizontalPosition.Right)
+            .Build();
 
         protected string PickerContainerClass =>
-        new CssBuilder("mud-picker-container")
-        .AddClass("mud-paper-square", _pickerSquare)
-        .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
-        .Build();
+            new CssBuilder("mud-picker-container")
+                .AddClass("mud-paper-square", _pickerSquare)
+                .AddClass("mud-picker-container-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
+            .Build();
 
         protected string PickerInputClass =>
-        new CssBuilder("mud-input-input-control").AddClass(Class)
-        .Build();
+            new CssBuilder("mud-input-input-control").AddClass(Class)
+            .Build();
 
+        /// <summary>
+        /// Sets the icon of the input text field
+        /// </summary>
         [Parameter] public string InputIcon { get; set; } = Icons.Filled.Event;
 
+        /// <summary>
+        /// Fired when the dropdown / dialog opens
+        /// </summary>
         [Parameter] public EventCallback PickerOpened { get; set; }
+
+        /// <summary>
+        /// Fired when the dropdown / dialog closes
+        /// </summary>
         [Parameter] public EventCallback PickerClosed { get; set; }
 
         /// <summary>
@@ -326,7 +336,6 @@ namespace MudBlazor
             {
                 _pickerVerticalPosition = PickerVerticalPosition.Below;
             }
-
             if (size.Width < clientRect.Right &&
                 (_pickerVerticalPosition == PickerVerticalPosition.Above ||
                 _pickerVerticalPosition == PickerVerticalPosition.Below))
