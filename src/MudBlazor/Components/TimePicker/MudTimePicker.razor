@@ -2,14 +2,11 @@
 @namespace MudBlazor
 @inherits MudPicker
 
-@Render()
+@Render
 
-@code
-{
+@code{
 
-    protected override RenderFragment DropdownContent()
-    {
-        return @<Node>
+    protected override RenderFragment DropdownContent=> @<Node>
         <MudPickerToolbar Class="@ToolbarClass" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
             <div class="mud-timepicker-hourminute">
                 <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@HoursButtonClass" OnClick="OnHourClick">@GetHourString()</MudButton>
@@ -93,5 +90,5 @@
             </div>
         </MudPickerContent>
     </Node>;
-    }
+    
 }

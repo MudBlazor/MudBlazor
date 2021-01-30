@@ -3,14 +3,11 @@
 @namespace MudBlazor
 @inherits MudPicker
 
-@Render()
+@Render
 
-@code
-{
+@code{
 
-    protected override RenderFragment DropdownContent()
-    {
-        return @<Node>
+    protected override RenderFragment DropdownContent=> @<Node>
             <MudPickerToolbar Class="mud-picker-datepicker-toolbar" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
                 <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year" OnClick="OnYearClick">@GetFormattedYearString()</MudButton>
                 <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="OnFormattedDateClick">@GetFormattedDateString()</MudButton>
@@ -112,5 +109,4 @@
     </div>
     </MudPickerContent>
     </Node>;
-    }
 }

@@ -3,23 +3,20 @@
 @inherits MudComponentBase
 
 
-@code
+@code 
 {
 
-    protected virtual RenderFragment InputContent()
-    {
-        return @<MudTextField Label="@Label" @bind-Text="@Text" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string" Style="@Style"
-                              @onclick="(() => { if (!Editable) ToggleState(); })" OnAdornmentClick="ToggleState" Disabled="@Disabled" Adornment="@Adornment"
-                              AdornmentIcon="@InputIcon" IconSize="@IconSize"/>;
-    }
+    protected virtual RenderFragment InputContent => @<MudTextField Label="@Label" @bind-Text="@Text" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string" Style="@Style"
+                                  @onclick="(() => { if (!Editable) ToggleState(); })" OnAdornmentClick="ToggleState" Disabled="@Disabled" Adornment="@Adornment"
+                                  AdornmentIcon="@InputIcon" IconSize="@IconSize"/>;
 
-    protected RenderFragment Render()
-    {
-        return @<Node>
+    protected virtual RenderFragment DropdownContent => null;
+
+    protected virtual RenderFragment Render => @<Node>
         <div class="@PickerClass">
             @if (PickerVariant != PickerVariant.Static)
             {
-               @InputContent()
+               @InputContent
             }
             <CascadingValue Value="@this" IsFixed="true">
                @if (IsOpen && PickerVariant == PickerVariant.Inline)
@@ -27,7 +24,7 @@
                    <div @ref="_pickerInlineRef" class="@PickerInlineClass">
                        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
                            <div class="@PickerContainerClass">
-                               @DropdownContent()
+                               @DropdownContent
                            </div>
                        </MudPaper>
                    </div>
@@ -36,7 +33,7 @@
                {
                    <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
                        <div class="@PickerContainerClass">
-                           @DropdownContent()
+                           @DropdownContent
                        </div>
                    </MudPaper>
                }
@@ -45,7 +42,7 @@
                    <MudOverlay Visible="IsOpen" OnClick="Close" DarkBackground="true" Class="mud-overlay-dialog">
                        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
                            <div class="@PickerContainerClass">
-                               @DropdownContent()
+                               @DropdownContent
                            </div>
                        </MudPaper>
                    </MudOverlay>
@@ -54,11 +51,9 @@
         </div>
         @if (PickerVariant == PickerVariant.Inline)
         {
-        <MudOverlay Visible="IsOpen" OnClick="Close" LockScroll="false"/>
+            <MudOverlay Visible="IsOpen" OnClick="Close" LockScroll="false"/>
         }
         </Node>;
-    }
-
 }
 
 
