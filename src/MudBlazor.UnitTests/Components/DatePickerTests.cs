@@ -37,13 +37,13 @@ namespace MudBlazor.UnitTests
 
         [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
-        public void RenderDatePicker_10000_Times_CheckPerformance()
+        public void DatePicker_Render_Performance()
         {
             // warmup
             ctx.RenderComponent<MudDatePicker>();
             // measure
             var watch = Stopwatch.StartNew();
-            for (var i = 0; i < 10000; i++)
+            for (var i = 0; i < 1000; i++)
                 ctx.RenderComponent<MudDatePicker>();
             watch.Stop();
             Console.WriteLine("Elapsed: " + watch.Elapsed);
@@ -52,21 +52,21 @@ namespace MudBlazor.UnitTests
 
         [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
-        public async Task Open_Close_DatePicker_10000_Times_CheckPerformance()
+        public async Task DatePicker_OpenClose_Performance()
         {
             // warmup
             var comp = ctx.RenderComponent<MudDatePicker>();
             var datepicker = comp.Instance;
             // measure
             var watch = Stopwatch.StartNew();
-            for (var i = 0; i < 10000; i++)
+            for (var i = 0; i < 1000; i++)
             {
                 await comp.InvokeAsync(() => datepicker.Open());
                 await comp.InvokeAsync(() => datepicker.Close());
             }
             watch.Stop();
             Console.WriteLine("Elapsed: " + watch.Elapsed);
-            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(60));
+            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
         [Test]
