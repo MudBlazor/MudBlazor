@@ -32,11 +32,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Date;
 
-        ///// <summary>
-        ///// Sets the Input Icon.
-        ///// </summary>
-        //[Parameter] public string InputIcon { get; set; } = Icons.Filled.Event;
-
         /// <summary>
         /// String Format for selected date view
         /// </summary>
@@ -162,8 +157,6 @@ namespace MudBlazor
             if (_currentView == OpenTo.Year)
                 _scrollToYearAfterRender = true;
         }
-
-        //protected virtual void OnPickerClosed() { }
 
         /// <summary>
         /// Get the first of the month to display

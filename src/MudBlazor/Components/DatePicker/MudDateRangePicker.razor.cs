@@ -14,16 +14,6 @@ namespace MudBlazor
 
         protected override bool IsRange => true;
 
-        //protected override void OnOpened()
-        //{
-        //    Picker.Open();
-        //}
-
-        //protected override void OnClosed()
-        //{
-        //    Picker.Close();
-        //}
-
         public MudDateRangePicker()
         {
             DisplayMonths = 2;

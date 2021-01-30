@@ -66,7 +66,7 @@ namespace MudBlazor.UnitTests
             }
             watch.Stop();
             Console.WriteLine("Elapsed: " + watch.Elapsed);
-            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
+            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(60));
         }
 
         [Test]

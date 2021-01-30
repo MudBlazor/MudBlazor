@@ -26,16 +26,6 @@ namespace MudBlazor
             set => SetDateAsync(value, true).AndForget();
         }
 
-        //protected override void OnOpened()
-        //{
-        //    Open();
-        //}
-
-        //protected override void OnClosed()
-        //{
-        //    Close();
-        //}
-
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
             if (_date != date)

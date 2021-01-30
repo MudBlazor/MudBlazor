@@ -68,7 +68,7 @@ namespace MudBlazor
         new CssBuilder("mud-input-input-control").AddClass(Class)
         .Build();
 
-        [Parameter] public string InputIcon { get; set; }
+        [Parameter] public string InputIcon { get; set; } = Icons.Filled.Event;
 
         [Parameter] public EventCallback PickerOpened { get; set; }
         [Parameter] public EventCallback PickerClosed { get; set; }
