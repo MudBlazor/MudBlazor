@@ -59,7 +59,7 @@ namespace MudBlazor
 
         internal override void FireRowClickEvent(MouseEventArgs args, MudTr row, object o)
         {
-            T item = default(T);
+            var item = default(T);
             try
             {
                 item = (T)o;
@@ -245,14 +245,8 @@ namespace MudBlazor
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
-            {
-                if (!Context.HasPager)
-                {
-                    await InvokeServerLoadFunc();
-                    //await Task.Delay(1);
-                    //StateHasChanged();
-                }
-            }
+                await InvokeServerLoadFunc();
+
             TableContext.UpdateRowCheckBoxes();
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -305,7 +299,5 @@ namespace MudBlazor
         {
             return InvokeServerLoadFunc();
         }
-
-
     }
 }
