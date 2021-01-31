@@ -55,7 +55,7 @@ namespace MudBlazor
         /// Gets or sets a value indicating whether editing feature is enabled.
         /// </summary>
         [Parameter]
-        public bool AllowEditing { set; get; }
+        public bool ReadOnly { set; get; }
         #region Parameters forwarded to internal MudTable
 
         /// <summary>

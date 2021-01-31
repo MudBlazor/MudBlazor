@@ -62,6 +62,14 @@
                         }
                     }
                 </tbody>
+                @if (ShowFooter && FooterContent != null)
+                {
+                <tfoot class="mud-table-head">
+                    <MudTr IsHeader="false" IsEditable="false" @ref="TableContext.HeaderRow">
+                        @FooterContent
+                    </MudTr>
+                </tfoot>                
+                }
             </table>
         </div>
         @if (PagerContent != null)

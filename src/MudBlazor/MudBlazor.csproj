@@ -86,13 +86,4 @@
     <None Include="Components\DataTable\MudSortedColumn.razor" />
     <None Include="Components\DataTable\MudTemplateColumn.razor" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Page Include="Components\DataTable\MudDataTable.razor.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Components\DataTable\MudDataTable.razor.xaml" />
-  </ItemGroup>
 </Project>

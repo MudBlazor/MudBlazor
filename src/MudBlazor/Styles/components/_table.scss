@@ -354,9 +354,10 @@
     }
 }
 
+/* Don't want a default table-display-smalldevices
 @media (max-width:$breakpoint-sm) {
     @include table-display-smalldevices("");
-}
+}*/
 
 @media (max-width:$breakpoint-md) {
     @include table-display-smalldevices("sm-");

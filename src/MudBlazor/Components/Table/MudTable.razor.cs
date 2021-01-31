@@ -29,7 +29,11 @@ namespace MudBlazor
         /// Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.
         /// </summary>
         [Parameter] public RenderFragment<T> RowEditingTemplate { get; set; }
-
+        /// <summary>
+        /// Definition of the footer section
+        /// </summary>
+        [Parameter] public RenderFragment FooterContent { get; set; }
+        [Parameter] public bool ShowFooter { get; set; }
         /// <summary>
         /// The data to display in the table. MudTable will render one row per item
         /// </summary>
