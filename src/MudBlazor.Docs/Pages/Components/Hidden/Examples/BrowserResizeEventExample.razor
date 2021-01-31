@@ -1,9 +1,12 @@
 ﻿@using MudBlazor.Services
-@namespace  MudBlazor.Docs.Examples
+@namespace MudBlazor.Docs.Examples
+@implements IDisposable
 
 <MudCard Class="pa-5">
-    <MudText>Resize the window and see width and height change:<br /> 
-        Browser window is @(width)x@(height)px</MudText>
+    <MudText>
+        Resize the window and see width and height change:<br />
+        Browser window is @(width)x@(height)px
+    </MudText>
 </MudCard>
 
 @code
@@ -23,10 +26,13 @@
         if (firstRender)
         {
             ResizeListener.OnResized += OnResized;
+
+            var size = await ResizeListener.GetBrowserWindowSize();
+            height = size.Height;
+            width = size.Width;
+            StateHasChanged();
         }
-        var size = await ResizeListener.GetBrowserWindowSize();
-        height = size.Height;
-        width = size.Width;
+
         await base.OnAfterRenderAsync(firstRender);
     }
 
@@ -35,5 +41,10 @@
         width = size.Width;
         height = size.Height;
         InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ResizeListener.OnResized -= OnResized;
     }
 }

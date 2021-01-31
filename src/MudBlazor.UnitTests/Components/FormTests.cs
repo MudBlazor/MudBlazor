@@ -207,37 +207,32 @@ namespace MudBlazor.UnitTests
         public async Task FormAsyncValidationTest()
         {
             const int ValidDelay = 100;
-            const int InValidDelay = 200;
-            const int WaitDelay = 100;
+            const int InvalidDelay = 200;
             var validationFunc = new Func<string, Task<string>>(async s =>
             {
                 if (s == null)
                     return null;
                 var valid = (s == "abc");
-                await Task.Delay(valid ? ValidDelay : InValidDelay);
+                await Task.Delay(valid ? ValidDelay : InvalidDelay);
                 return valid ? null : "invalid";
             });
             var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
             Console.WriteLine(comp.Markup);
-            var form = comp.FindComponent<MudForm>().Instance;
-            var textFieldcomp = comp.FindComponent<MudTextField<string>>();
-            var textField = textFieldcomp.Instance;
+            var textFieldComp = comp.FindComponent<MudTextField<string>>();
+            var textField = textFieldComp.Instance;
             // validate initial field state
             textField.ValidationErrors.Should().BeEmpty();
             // make sure error can be detected
-            textFieldcomp.Find("input").Change("def");
-            await Task.Delay(InValidDelay + WaitDelay);
-            textField.ValidationErrors.Should().ContainSingle("invalid");
+            textFieldComp.Find("input").Change("def");
+            comp.WaitForAssertion(() => textField.ValidationErrors.Should().ContainSingle("invalid"), TimeSpan.FromSeconds(5));
             // make sure success can be detected
-            textFieldcomp.Find("input").Change("abc");
-            await Task.Delay(ValidDelay + WaitDelay);
-            textField.ValidationErrors.Should().BeEmpty();
+            textFieldComp.Find("input").Change("abc");
+            comp.WaitForAssertion(() => textField.ValidationErrors.Should().BeEmpty(), TimeSpan.FromSeconds(5));
             // send invalid value, then valid value
-            textFieldcomp.Find("input").Change("def");
-            textFieldcomp.Find("input").Change("abc");
+            textFieldComp.Find("input").Change("def");
+            textFieldComp.Find("input").Change("abc");
             // validate that first call result (invalid, longer return time) will not overwrite second call result (valid, shorter return time)
-            await Task.Delay(InValidDelay + WaitDelay);
-            textField.ValidationErrors.Should().BeEmpty();
+            comp.WaitForAssertion(() => textField.ValidationErrors.Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
 
         /// <summary>
