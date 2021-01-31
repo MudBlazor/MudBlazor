@@ -40,7 +40,13 @@
                 "test",
                 "src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj",
                 "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
+                "/consoleloggerparameters:NoSummary",
+                "/p:CollectCoverage=true",
+                "/p:CoverletOutputFormat=cobertura",
+                "/p:ExcludeByAttribute=\"ExcludeFromCodeCoverage\"",
+                "/p:Include=\"[MudBlazor]*\"",
+                "/p:SkipAutoProps=true",
+                "/p:CoverletOutput='./TestResults/'"
             ],
             "group": "build",
             "problemMatcher": "$msCompile"
@@ -55,6 +61,15 @@
             "problemMatcher": [
                 "$msCompile"
             ]
+        },
+        {
+            "label": "coverage report",
+            "command": "open",
+            "type": "shell",
+            "args": [
+                "src/MudBlazor.UnitTests/TestResults/Report/Index.html",
+            ],
+            "problemMatcher": []
         },
         {
             "label": "compile docs",

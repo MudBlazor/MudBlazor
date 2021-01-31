@@ -3,8 +3,6 @@
 <div class="mud-codeblock">
 <div class="csharp">
     <pre>
-<span class="keyword">using</span> MudBlazor;
-<span class="keyword">using</span> MudBlazor.Dialog;
 <span class="keyword">using</span> MudBlazor.Services;
 
 <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">async</span> <span class="class">Task</span> <span class="function">Main</span>(<span class="keyword">string</span>[] <span class="localVar">args</span>)
@@ -13,9 +11,7 @@
     <span class="localVar">builder</span>.RootComponents.Add&lt;<span class="class">App</span>&gt;(<span class="string">&quot;app&quot;</span>);
 
     <span class="localVar">builder</span>.Services.<span class="function">AddScoped</span>(<span class="localVar">sp</span> =&gt; <span class="keyword">new</span> <span class="class">HttpClient</span> { BaseAddress = <span class="keyword">new</span> <span class="class">Uri</span>(<span class="localVar">builder</span>.HostEnvironment.BaseAddress) });
-    <span class="localVar">builder</span>.Services.<span class="function">AddMudBlazorDialog</span>();
-    <span class="localVar">builder</span>.Services.<span class="function">AddMudBlazorSnackbar</span>();
-    <span class="localVar">builder</span>.Services.<span class="function">AddMudBlazorResizeListener</span>();
+    <span class="localVar">builder</span>.Services.<span class="function">AddMudServices</span>();
 
     <span class="keyword">await</span> <span class="localVar">builder</span>.<span class="function">Build</span>().<span class="function">RunAsync</span>();
 }

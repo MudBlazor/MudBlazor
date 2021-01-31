@@ -7,7 +7,7 @@ namespace MudBlazor
     {
         protected string Classnames =>
             new CssBuilder("mud-timeline")
-            .AddClass($"mud-elevation-{Elevation.ToString()}", Elevation != 0)
+            .AddClass($"mud-elevation-{Elevation}", Elevation != 0)
             .AddClass(Class)
             .Build();
 

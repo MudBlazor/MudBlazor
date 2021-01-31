@@ -5,7 +5,7 @@
         <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentText="Kr" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.AttachMoney" />
+        <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudTextField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Text" Adornment="Adornment.End" AdornmentText="Kg" />
@@ -14,7 +14,7 @@
         <MudTextField @bind-Value="Password" Label="Password" Variant="Variant.Text" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Filled" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.AttachMoney" />
+        <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Filled" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudTextField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Filled" Adornment="Adornment.End" AdornmentText="Kg" />
@@ -23,7 +23,7 @@
         <MudTextField  @bind-Value="Password" Label="Password"  Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="ButtonTestclick" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.AttachMoney" />
+        <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudTextField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentText="Kg" />
@@ -41,19 +41,19 @@
 
     bool isShow;
     InputType PasswordInput = InputType.Password;
-    string PasswordInputIcon = Icons.Material.VisibilityOff;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
 
     void ButtonTestclick()
     {
         @if (isShow)
         {
             isShow = false;
-            PasswordInputIcon = Icons.Material.VisibilityOff;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
             PasswordInput = InputType.Password;
         }
         else {
             isShow = true;
-            PasswordInputIcon = Icons.Material.Visibility;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
             PasswordInput = InputType.Text;
         }
     }

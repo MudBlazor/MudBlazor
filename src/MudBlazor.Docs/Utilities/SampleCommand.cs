@@ -13,8 +13,7 @@ namespace MudBlazor.Docs.Utilities
         public Action<object> Action { get; } = null;
         public void Execute(object parameter)
         {
-            if (Action != null)
-                Action(parameter);
+            Action?.Invoke(parameter);
         }
 
 
@@ -22,7 +21,8 @@ namespace MudBlazor.Docs.Utilities
         {
             return true;
         }
+#pragma warning disable CS0067 // justification implementing interface     
         public event EventHandler CanExecuteChanged;
-
+#pragma warning restore CS0067
     }
 }

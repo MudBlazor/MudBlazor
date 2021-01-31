@@ -1,12 +1,22 @@
 ﻿@namespace MudBlazor
-@inherits ComponentBaseMudMenu
+@using MudBlazor.Interfaces
+@inherits MudBaseButton
 
 
 <div class="@Classname">
-    @if (String.IsNullOrEmpty(Icon))
+    @if (ActivatorContent != null)
+    {
+        <CascadingValue Value="@((IActivatable) this)" IsFixed="true">
+            <div style="cursor: pointer;" @onclick="ToggleMenu">
+                @ActivatorContent
+            </div>
+        </CascadingValue>
+    }
+    else if (String.IsNullOrEmpty(Icon))
     {
         <MudButton StartIcon="@StartIcon"
                    EndIcon="@EndIcon"
+                   IconColor="@IconColor"
                    Color="@Color"
                    Size="@Size"
                    Variant="@Variant"
@@ -22,7 +32,7 @@
         <MudIconButton Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" @onclick="@ToggleMenu" />
     }
     <CascadingValue Value="@this">
-        <MudPopover Open="@isOpen" Class="mud-menu-container">
+        <MudPopover Open="@_isOpen" Class="@MenuClassname" MaxHeight="@MaxHeight" Style="@PopoverStyle" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
             <MudList Clickable="true" Dense="@Dense">
                 @ChildContent
             </MudList>
@@ -30,5 +40,5 @@
     </CascadingValue>
 </div>
 
-<MudOverlay Visible="isOpen" OnClick="@ToggleMenu" LockScroll="false" />
+<MudOverlay Visible="_isOpen" OnClick="@ToggleMenu" LockScroll="false" />
 

@@ -1,7 +1,14 @@
 ﻿.mud-menu {
-    display:inline-flex;
+    display: inline-flex;
+    position: relative;
 }
 
 .mud-menu-container {
     max-width: max-content;
+    width: max-content !important;
+
+    &.mud-menu-fullwidth {
+        width: 100% !important;
+        max-width: none;
+    }
 }

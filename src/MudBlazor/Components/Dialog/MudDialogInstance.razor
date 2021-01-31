@@ -1,15 +1,22 @@
 ﻿@namespace MudBlazor
 
 <div class="mud-dialog-container @Position">
-    <MudOverlay Visible="true" OnClick="HandleBackgroundClick" Class="mud-overlay-dialog" DarkBackground="true" />
+    <MudOverlay Visible="true" OnClick="HandleBackgroundClick" Class="mud-overlay-dialog" DarkBackground="true" LockScrollClass="scroll-locked-dialog" />
     <div id="_@Id.ToString("N")" class="@Classname">
         @if (!NoHeader)
         {
             <div class="mud-dialog-title">
-                <MudText Typo="Typo.h6">@Title</MudText>
+                @if (TitleContent == null)
+                {
+                    <MudText Typo="Typo.h6">@Title</MudText>
+                }
+                else
+                {
+                    @TitleContent
+                }
                 @if (CloseButton)
                 {
-                    <MudIconButton Icon="@Icons.Material.Close" @onclick="Cancel"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Close" @onclick="Cancel"/>
                 }
             </div>
          }

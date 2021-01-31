@@ -8,7 +8,9 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Basic Usage</Title>
-                <Description></Description>
+                <Description>
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: Always use the two-way binding <CodeInline>@@bind-Date</CodeInline> to bind to a field of type <CodeInline>DateTime?</CodeInline></MudAlert>
+                </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <DatePickerBasicUsageExample />
@@ -64,6 +66,16 @@
                 <DatePickerElevationExample />
             </SectionContent>
             <SectionSource Code="DatePickerElevationExample" GitHubFolderName="DatePicker" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Range Picker Usage</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <DateRangePickerUsageExample />
+            </SectionContent>
+            <SectionSource Code="DateRangePickerUsageExample" GitHubFolderName="DatePicker" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

@@ -8,8 +8,8 @@ namespace MudBlazor
         public static CultureInfo DefaultCulture = CultureInfo.CurrentUICulture;
 
         #region --> Date converters
-        public static Converter<DateTime> IsoDate 
-            => new Converter<DateTime> {SetFunc = SetIsoDate, GetFunc = GetIsoDate};
+        public static Converter<DateTime> IsoDate
+            => new Converter<DateTime> { SetFunc = SetIsoDate, GetFunc = GetIsoDate };
 
         private static DateTime GetIsoDate(string value)
         {
@@ -22,9 +22,9 @@ namespace MudBlazor
         {
             return value.ToIsoDateString();
         }
-        
-        public static Converter<DateTime?> NullableIsoDate 
-            => new Converter<DateTime?> {SetFunc = SetNullableIsoDate, GetFunc = GetNullableIsoDate};
+
+        public static Converter<DateTime?> NullableIsoDate
+            => new Converter<DateTime?> { SetFunc = SetNullableIsoDate, GetFunc = GetNullableIsoDate };
 
         private static DateTime? GetNullableIsoDate(string value)
         {
@@ -40,8 +40,8 @@ namespace MudBlazor
 
         public static DateConverter DateFormat(string format)
         {
-            if (format==null)
-               format="yyyy-MM-dd";
+            if (format == null)
+                format = "yyyy-MM-dd";
             return new DateConverter(format);
         }
 

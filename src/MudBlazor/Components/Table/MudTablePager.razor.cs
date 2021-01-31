@@ -24,9 +24,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string InfoFormat { get; set; } = "{first_item}-{last_item} of {all_items}";
 
-        private string Info => Table==null ? "Table==null" : InfoFormat
-            .Replace("{first_item}", $"{Table?.CurrentPage * Table.RowsPerPage+1}")
-            .Replace("{last_item}", $"{Math.Min((Table.CurrentPage+1) * Table.RowsPerPage, Table.GetFilteredItemsCount())}")
+        private string Info => Table == null ? "Table==null" : InfoFormat
+            .Replace("{first_item}", $"{Table?.CurrentPage * Table.RowsPerPage + 1}")
+            .Replace("{last_item}", $"{Math.Min((Table.CurrentPage + 1) * Table.RowsPerPage, Table.GetFilteredItemsCount())}")
             .Replace("{all_items}", $"{Table.GetFilteredItemsCount()}");
 
         /// <summary>
@@ -45,7 +45,10 @@ namespace MudBlazor
         {
             base.OnInitialized();
             if (Context != null)
+            {
+                Context.HasPager = true;
                 Context.PagerStateHasChanged = StateHasChanged;
+            }
         }
 
     }

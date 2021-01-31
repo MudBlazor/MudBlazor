@@ -11,6 +11,8 @@ namespace MudBlazor
         [Description("email")]
         Email,
         [Description("hidden")]
-        Hidden
+        Hidden,
+        [Description("number")]
+        Number,
     }
 }

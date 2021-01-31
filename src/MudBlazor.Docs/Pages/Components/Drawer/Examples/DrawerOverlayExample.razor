@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton Variant="Variant.Text" OnClick="@(() => ToggleDrawer())">Toggle drawer</MudButton>
+
+<MudDrawer @bind-Open="@open" DisableOverlay="true" Elevation="1" Variant="@DrawerVariant.Temporary">
+    <MudDrawerHeader>
+        <MudText Typo="Typo.h6">My App</MudText>
+    </MudDrawerHeader>
+    <MudNavMenu>
+        <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
+        <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
+        <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
+    </MudNavMenu>
+</MudDrawer>
+
+@code{ 
+    bool open;
+    
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+}

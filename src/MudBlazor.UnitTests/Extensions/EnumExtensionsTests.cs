@@ -8,14 +8,14 @@ using MudBlazor.Extensions;
 using NUnit.Framework;
 
 
-namespace MudBlazor.UnitTests.Extensions
+namespace MudBlazor.UnitTests
 {
     [TestFixture]
     public class EnumExtensionsTests
     {
-        
 
-       
+
+
 
         [Test]
         public void ToDescriptionString()

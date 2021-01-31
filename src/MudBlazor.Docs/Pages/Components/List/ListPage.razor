@@ -5,45 +5,62 @@
         <Description>Easily customizable and scrollable lists. Make them suit your needs with avatars, icons, or something like checkboxes.</Description>
         </DocsPageHeader>
     <DocsPageContent>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Simple List</Title>
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
-                <ListSimpleExample />
+                <ListSimpleExample/>
             </SectionContent>
-            <SectionSource Code="ListSimpleExample" GitHubFolderName="List" SnippetId="cElumkPk35NwLcdp28" />
+            <SectionSource Code="ListSimpleExample" GitHubFolderName="List" SnippetId="cElumkPk35NwLcdp28"/>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Nested List</Title>
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
-                <ListNestedExample />
+                <ListNestedExample/>
             </SectionContent>
-            <SectionSource Code="ListNestedExample" GitHubFolderName="List" SnippetId="QOlEcklu37ICrdRU15" />
+            <SectionSource Code="ListNestedExample" GitHubFolderName="List" SnippetId="QOlEcklu37ICrdRU15"/>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
-                <Title>Folder List</Title>
+                <Title>Avatar List</Title>
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
-                <ListFolderExample />
+                <ListFolderExample/>
             </SectionContent>
-            <SectionSource Code="ListFolderExample" GitHubFolderName="List" SnippetId="QuPkQOlE386hIgjV06" />
+            <SectionSource Code="ListFolderExample" GitHubFolderName="List" SnippetId="QuPkQOlE386hIgjV06"/>
         </DocsPageSection>
+
         <DocsPageSection>
             <SectionHeader>
                 <Title>Interactive</Title>
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
-                <ListInteractiveExample />
+                <ListInteractiveExample/>
             </SectionContent>
-            <SectionSource ShowCode="false" Code="ListInteractiveExample" GitHubFolderName="List" />
+            <SectionSource ShowCode="false" Code="ListInteractiveExample" GitHubFolderName="List"/>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Selection</Title>
+                <Description>
+                    If you set <CodeInline>Clickable="true"</CodeInline> and use <CodeInline>@@bind-SelectedItem</CodeInline> MudList will manage an exclusive single-selection across all its nested lists for you. 
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
+                <ListSelectionExample/>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="ListSelectionExample" GitHubFolderName="List"/>
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

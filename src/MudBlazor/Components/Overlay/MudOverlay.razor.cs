@@ -9,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudOverlay :  MudComponentBase, IDisposable
+    public partial class MudOverlay : MudComponentBase, IDisposable
     {
         private bool _visible;
 
@@ -32,7 +32,7 @@ namespace MudBlazor
             .AddStyle(Style)
             .Build();
 
-        [Inject] public IJSRuntime  JS { get; set; }
+        [Inject] public IJSRuntime JS { get; set; }
 
         /// <summary>
         /// Child content of the component.
@@ -70,6 +70,11 @@ namespace MudBlazor
         /// If true (default), the Document.body element will not be able to scroll
         /// </summary>
         [Parameter] public bool LockScroll { get; set; } = true;
+
+        /// <summary>
+        /// The css class that will be added to body if lockscroll is used.
+        /// </summary>
+        [Parameter] public string LockScrollClass { get; set; } = "scroll-locked";
 
         /// <summary>
         /// If true applys the themes dark overlay color.
@@ -125,31 +130,29 @@ namespace MudBlazor
                 UnblockScroll();
                 return;
             }
-            if (LockScroll) 
+            if (LockScroll)
             {
-                BlockScroll(); 
+                BlockScroll();
             }
         }
 
         //locks the scroll attaching a CSS class to the specified element, in this case the body
         void BlockScroll()
         {
-            JS.InvokeVoidAsync("blazorHelpers.lockScroll",
-                                          "body");
+            JS.InvokeVoidAsync("scrollHelpers.lockScroll", "body", LockScrollClass);
         }
 
         //removes the CSS class that prevented scrolling
         void UnblockScroll()
         {
-            JS.InvokeVoidAsync("blazorHelpers.unlockScroll", "body");
+            JS.InvokeVoidAsync("scrollHelpers.unlockScroll", "body", LockScrollClass);
         }
-       
+
         //When disposing the overlay, remove the class that prevented scrolling
         public void Dispose()
         {
-           UnblockScroll();
-    
+            UnblockScroll();
         }
-        
+
     }
 }

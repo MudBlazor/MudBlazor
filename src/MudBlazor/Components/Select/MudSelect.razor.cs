@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
@@ -35,12 +37,12 @@ namespace MudBlazor
         /// <summary>
         /// The Open Select Icon
         /// </summary>
-        [Parameter] public string OpenIcon { get; set; } = Icons.Material.ArrowDropUp;
+        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
         /// The Open Select Icon
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.ArrowDropDown;
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
         /// Fires when SelectedValues changes.
@@ -62,19 +64,21 @@ namespace MudBlazor
             set
             {
                 var set = value ?? new HashSet<T>();
-                if (SelectedValues.Count==set.Count && SelectedValues.All(x => set.Contains(x)))
+                if (SelectedValues.Count == set.Count && SelectedValues.All(x => set.Contains(x)))
                     return;
                 _selectedValues = new HashSet<T>(set);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
-                    Value = _selectedValues.FirstOrDefault();
+                    SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
                 else
-                    Text = string.Join(", ", SelectedValues.Select(x=> Converter.Set(x)));
+                    SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x)))).AndForget();
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
             }
         }
 
         private Func<T, string> _toStringFunc = x => x?.ToString();
+
+        private MudInput<string> _elementReference;
 
         /// <summary>
         /// Defines how values are displayed in the drop-down list
@@ -128,7 +132,7 @@ namespace MudBlazor
             {
                 if (Value == null)
                     return false;
-                return _value_lookup.TryGetValue(Value, out var item);
+                return _value_lookup.TryGetValue(Value, out var _);
             }
         }
 
@@ -141,19 +145,17 @@ namespace MudBlazor
             return selected_item.ChildContent;
         }
 
-        protected override void StringValueChanged(string text)
+        protected override Task UpdateValuePropertyAsync(bool updateText)
         {
             // Select does not support updating the value through the Text property at all!
-            //base.StringValueChanged(text);
+            return Task.CompletedTask;
         }
 
-        protected override void GenericValueChanged(T value)
+        protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
             // when multiselection is true, we don't update the text when the value changes. 
             // instead the Text will be set with a comma separated list of selected values
-            if (MultiSelection)
-                return;
-            base.GenericValueChanged(value);
+            return MultiSelection ? Task.CompletedTask : base.UpdateTextPropertyAsync(updateValue);
         }
 
         internal event Action<HashSet<T>> SelectionChangedFromOutside;
@@ -168,7 +170,7 @@ namespace MudBlazor
         internal void Add(MudSelectItem<T> item)
         {
             _items.Add(item);
-            if (item.Value!=null)
+            if (item.Value != null)
                 _value_lookup[item.Value] = item;
         }
 
@@ -203,30 +205,30 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Strict { get; set; }
 
-        internal bool isOpen { get; set; }
+        internal bool _isOpen;
 
         public string CurrentIcon { get; set; }
 
         public async Task SelectOption(object obj)
         {
-            var value = (T) obj;
-            if (!MultiSelection)
-            {
-                // single selection
-                Value = value;
-                isOpen = false;
-                UpdateIcon();
-                SelectedValues.Clear();
-                SelectedValues.Add(value);
-            }
-            else
+            var value = (T)obj;
+            if (MultiSelection)
             {
                 // multi-selection: menu stays open
                 if (!SelectedValues.Contains(value))
                     SelectedValues.Add(value);
                 else
                     SelectedValues.Remove(value);
-                Text = string.Join(", ", SelectedValues.Select(x=>Converter.Set(x)));
+                await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))));
+            }
+            else
+            {
+                // single selection
+                await SetValueAsync(value);
+                _isOpen = false;
+                UpdateIcon();
+                SelectedValues.Clear();
+                SelectedValues.Add(value);
             }
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
@@ -236,21 +238,32 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
-            isOpen = !isOpen;
+            if (_isOpen)
+                CloseMenu();
+            else
+                OpenMenu();
+        }
+
+        public void OpenMenu()
+        {
+            if (Disabled || ReadOnly)
+                return;
+            _isOpen = true;
             UpdateIcon();
             StateHasChanged();
         }
 
-        public void CloseMenu()
+        public async void CloseMenu()
         {
-            isOpen = false;
+            _isOpen = false;
             UpdateIcon();
             StateHasChanged();
+            await OnBlur.InvokeAsync(new FocusEventArgs());
         }
 
         public void UpdateIcon()
         {
-            if (isOpen)
+            if (_isOpen)
             {
                 CurrentIcon = OpenIcon;
             }
@@ -263,7 +276,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            UpdateIcon();            
+            UpdateIcon();
             if (MultiSelection && MaxHeight == null)
             {
                 MaxHeight = 300;
@@ -272,11 +285,25 @@ namespace MudBlazor
 
         public void CheckGenericTypeMatch(object select_item)
         {
-            var itemT=select_item.GetType().GenericTypeArguments[0];
+            var itemT = select_item.GetType().GenericTypeArguments[0];
             if (itemT != typeof(T))
                 throw new GenericTypeMismatchException("MudSelect", "MudSelectItem", typeof(T), itemT);
         }
 
+        public override ValueTask FocusAsync()
+        {
+            return _elementReference.FocusAsync();
+        }
+
+        public override ValueTask SelectAsync()
+        {
+            return _elementReference.SelectAsync();
+        }
+
+        public override ValueTask SelectRangeAsync(int pos1, int pos2)
+        {
+            return _elementReference.SelectRangeAsync(pos1, pos2);
+        }
     }
 
 }

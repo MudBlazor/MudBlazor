@@ -9,7 +9,7 @@ namespace MudBlazor
     /// </summary>
     public class DefaultConverter<T> : Converter<T>
     {
-       
+
         public DefaultConverter()
         {
             SetFunc = OnSet;
@@ -22,33 +22,27 @@ namespace MudBlazor
         {
             try
             {
+                // string
+                if (typeof(T) == typeof(string))
+                    return (T)(object)value;
+
                 // this is important, or otherwise all the TryParse down there might fail.
                 if (string.IsNullOrEmpty(value))
                     return default(T);
-                // string
-                if (typeof(T) == typeof(string))
-                {
-                    return (T)(object)value;
-                }
                 // char
                 else if (typeof(T) == typeof(char) || typeof(T) == typeof(char?))
                 {
-                    if (string.IsNullOrEmpty(value))
-                        return default(T);
                     return (T)(object)value[0];
                 }
                 // bool
                 else if (typeof(T) == typeof(bool) || typeof(T) == typeof(bool?))
                 {
-                    if (string.IsNullOrEmpty(value))
-                        return default(T);
                     var lowerValue = value.ToLowerInvariant();
-                    if ( lowerValue=="true")
+                    if (lowerValue == "true" || lowerValue == "on")
                         return (T)(object)true;
-                    if (lowerValue == "false")
+                    if (lowerValue == "false" || lowerValue == "off")
                         return (T)(object)false;
                     UpdateGetError("Not a valid boolean");
-                    return default(T);
                 }
                 // sbyte
                 else if (typeof(T) == typeof(sbyte) || typeof(T) == typeof(sbyte?))
@@ -158,7 +152,6 @@ namespace MudBlazor
                     catch (FormatException)
                     {
                         UpdateGetError("Not a valid date time");
-                        return default;
                     }
                 }
                 // timespan
@@ -171,7 +164,6 @@ namespace MudBlazor
                     catch (FormatException)
                     {
                         UpdateGetError("Not a valid time span");
-                        return default;
                     }
                 }
                 else
@@ -181,9 +173,9 @@ namespace MudBlazor
             }
             catch (Exception e)
             {
-                UpdateGetError("Conversion error: "+e.Message);
-                return default(T);
+                UpdateGetError("Conversion error: " + e.Message);
             }
+
             return default(T);
         }
 
@@ -227,7 +219,7 @@ namespace MudBlazor
                 if (typeof(T) == typeof(ushort?))
                     return ((ushort?)(object)arg).Value.ToString(Format, Culture);
                 // int
-                else if (typeof(T) == typeof(int) )
+                else if (typeof(T) == typeof(int))
                     return ((int)(object)arg).ToString(Format, Culture);
                 else if (typeof(T) == typeof(int?))
                     return ((int?)(object)arg).Value.ToString(Format, Culture);
@@ -264,7 +256,7 @@ namespace MudBlazor
                 // guid
                 else if (typeof(T) == typeof(Guid))
                 {
-                    var value = (Guid) (object) arg;
+                    var value = (Guid)(object)arg;
                     return value.ToString();
                 }
                 else if (typeof(T) == typeof(Guid?))
@@ -273,50 +265,50 @@ namespace MudBlazor
                     return value.Value.ToString();
                 }
                 // enum
-                else if(IsNullableEnum(typeof(T))) 
+                else if (IsNullableEnum(typeof(T)))
                 {
                     var value = (Enum)(object)arg;
                     return value.ToString();
                 }
                 else if (typeof(T).IsEnum)
                 {
-                    var value = (Enum) (object) arg;
+                    var value = (Enum)(object)arg;
                     return value.ToString();
                 }
                 // datetime
                 else if (typeof(T) == typeof(DateTime))
                 {
-                    var value = (DateTime) (object) arg;
+                    var value = (DateTime)(object)arg;
                     return value.ToString(Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
-                }  
+                }
                 else if (typeof(T) == typeof(DateTime?))
                 {
-                    var value = (DateTime?) (object) arg;
+                    var value = (DateTime?)(object)arg;
                     return value.Value.ToString(Format ?? Culture.DateTimeFormat.ShortDatePattern, Culture);
-                }      
+                }
                 // timespan
                 else if (typeof(T) == typeof(TimeSpan))
                 {
-                    var value = (TimeSpan) (object) arg;
-                    return value.ToString(Format ?? Culture.DateTimeFormat.ShortTimePattern, Culture);
-                }  
+                    var value = (TimeSpan)(object)arg;
+                    return value.ToString(Format ?? DefaultTimeSpanFormat, Culture);
+                }
                 else if (typeof(T) == typeof(TimeSpan?))
                 {
-                    var value = (TimeSpan?) (object) arg;
+                    var value = (TimeSpan?)(object)arg;
                     return value.Value.ToString(Format ?? DefaultTimeSpanFormat, Culture);
-                }               
-                return arg.ToString( );
+                }
+                return arg.ToString();
             }
             catch (FormatException e)
             {
-                UpdateSetError("Conversion error: "+e.Message);
+                UpdateSetError("Conversion error: " + e.Message);
                 return null;
             }
         }
 
         public static bool IsNullableEnum(Type t)
         {
-            Type u = Nullable.GetUnderlyingType(t);
+            var u = Nullable.GetUnderlyingType(t);
             return (u != null) && u.IsEnum;
         }
     }

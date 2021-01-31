@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-@inject IDialogService Dialog
+@inject IDialogService DialogService
 
 
 <MudButton @onclick="DeleteUser" Variant="Variant.Filled" Color="Color.Error">Delete Records</MudButton>
@@ -18,7 +18,7 @@
 
         var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall };
 
-        Dialog.Show<DialogTemplateExample_Dialog>("Delete", parameters, options);
+        DialogService.Show<DialogTemplateExample_Dialog>("Delete", parameters, options);
     }
 
     private void Confirm()
@@ -28,7 +28,7 @@
         parameters.Add("ButtonText", "Yes");
         parameters.Add("Color", Color.Success);
 
-        Dialog.Show<DialogTemplateExample_Dialog>("Confirm", parameters);
+        DialogService.Show<DialogTemplateExample_Dialog>("Confirm", parameters);
     }
 
     private void Download()
@@ -38,6 +38,6 @@
         parameters.Add("ButtonText", "Download");
         parameters.Add("Color", Color.Info);
 
-        Dialog.Show<DialogTemplateExample_Dialog>("Slow Computer Detected", parameters);
+        DialogService.Show<DialogTemplateExample_Dialog>("Slow Computer Detected", parameters);
     }
 }

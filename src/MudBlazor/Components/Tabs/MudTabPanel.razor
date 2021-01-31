@@ -1,9 +1,19 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@implements IDisposable
 
-@if (Parent?.ActivePanel == this && ChildContent != null)
+@if (Parent?.KeepPanelsAlive==true)
 {
-    @ChildContent
+    <div style="display:@(Parent?.ActivePanel == this ? "contents" : "none")">
+        @ChildContent
+    </div>
+}
+else
+{
+    @if (Parent?.ActivePanel == this)
+    {
+        @ChildContent
+    }
 }
 
 @code {
@@ -51,6 +61,11 @@
     /// </summary>
     [Parameter] public RenderFragment ChildContent { get; set; }
 
+    /// <summary>
+    /// TabPanel Tooltip
+    /// </summary>
+    [Parameter] public string ToolTip { get; set; }
+
     protected override void OnInitialized()
     {
         // NOTE: we must not throw here because we need the component to be able to live for the API docs to be able to infer default values
@@ -58,5 +73,10 @@
         //    throw new ArgumentNullException(nameof(Parent), "TabPanel must exist within a Tabs component");
         base.OnInitialized();
         Parent?.AddPanel(this);
+    }
+
+    public void Dispose()
+    {
+        Parent?.RemovePanel(this);
     }
 }

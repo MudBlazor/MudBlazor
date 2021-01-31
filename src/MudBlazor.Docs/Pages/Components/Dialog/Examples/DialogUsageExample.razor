@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-@inject IDialogService Dialog
+@inject IDialogService DialogService
 
 
 <MudButton @onclick="OpenDialog" Variant="Variant.Filled" Color="Color.Primary">
@@ -12,6 +12,6 @@
 
     private void OpenDialog()
     {
-       Dialog.Show<DialogUsageExample_Dialog>("Simple Dialog");
+        DialogService.Show<DialogUsageExample_Dialog>("Simple Dialog");
     }
 }

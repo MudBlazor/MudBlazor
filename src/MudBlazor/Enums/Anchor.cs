@@ -7,6 +7,10 @@ namespace MudBlazor
         [Description("left")]
         Left,
         [Description("right")]
-        Right
+        Right,
+        [Description("top")]
+        Top,
+        [Description("bottom")]
+        Bottom
     }
 }

@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
-
-using System;
-using System.Threading.Tasks;
 
 namespace MudBlazor
 {
@@ -26,11 +25,11 @@ namespace MudBlazor
         /// The ElementReference to bind to.
         /// Use like @bind-Ref="myRef"
         /// </summary>
-        [Parameter] public ElementReference? Ref { get; set; } 
+        [Parameter] public ElementReference? Ref { get; set; }
 
-        [Parameter] public EventCallback<ElementReference> RefChanged { get; set; } 
-       
-        
+        [Parameter] public EventCallback<ElementReference> RefChanged { get; set; }
+
+
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
             base.BuildRenderTree(builder);
@@ -43,11 +42,11 @@ namespace MudBlazor
             builder.AddAttribute(2, "class", Class);
             //Style
             builder.AddAttribute(3, "style", Style);
-           
+
             // StopPropagation
             //the order matters. This has to be before content is added
             if (HtmlTag == "button")
-             builder.AddEventStopPropagationAttribute(5, "onclick", true);
+                builder.AddEventStopPropagationAttribute(5, "onclick", true);
 
             //Reference capture
             if (Ref != null)

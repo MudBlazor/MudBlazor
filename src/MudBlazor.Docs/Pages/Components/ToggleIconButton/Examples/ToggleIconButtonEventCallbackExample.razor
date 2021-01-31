@@ -1,32 +1,29 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudToggleIconButton Toggled="@AlarmOn" ToggledChanged="(toggleValue) => IncrementSwitchedOn(toggleValue)"
-                     Icon="@Icons.Material.AlarmOff" Color="@Color.Error" 
-                     ToggledIcon="@Icons.Material.AlarmOn" ToggledColor="@Color.Success" />
+<MudToggleIconButton Toggled="@AlarmOn" ToggledChanged="OnToggledChanged"
+                     Icon="@Icons.Material.Filled.AlarmOff" Color="@Color.Error" 
+                     ToggledIcon="@Icons.Material.Filled.AlarmOn" ToggledColor="@Color.Success" />
 
 <span>Alarm is @(AlarmOn ? "On" : "Off")</span>
-<span>@($"I have been switched on {SwitchedOnCount} times.")</span>
+<span>@($"I have been switched on {SwitchedOnCount} times (Remaining: {MaxCount - SwitchedOnCount})")</span>
 
 @code {
     public bool AlarmOn { get; set; }
     public int SwitchedOnCount { get; set; }
 
-    public void IncrementSwitchedOn(bool toggleValue)
+    private const int MaxCount = 5;
+
+    public void OnToggledChanged(bool toggled)
     {
-        // You can do things before assignment
-        // ...
-
-        // Assignment of one-way bound parameter
-        AlarmOn = toggleValue;
-
-        // And after assignment has been made
-        // ...
+        // Because variable is not two-way bound, we need to update it ourself
+        AlarmOn = toggled;
 
         if (AlarmOn)
         {
-            SwitchedOnCount++;
+            if (SwitchedOnCount < MaxCount)
+                SwitchedOnCount++;
+            else
+                AlarmOn = false;    // We can force a state under specific condition (max count reached)
         }
-
     }
 }
-

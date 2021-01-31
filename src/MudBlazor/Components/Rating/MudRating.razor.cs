@@ -38,12 +38,12 @@ namespace MudBlazor
         /// <summary>
         /// Selected or hovered icon. Default @Icons.Material.Star
         /// </summary>
-        [Parameter] public string FullIcon { get; set; } = Icons.Material.Star;
+        [Parameter] public string FullIcon { get; set; } = Icons.Material.Filled.Star;
 
         /// <summary>
         /// Non selected item icon. Default @Icons.Material.StarBorder
         /// </summary>
-        [Parameter] public string EmptyIcon { get; set; } = Icons.Material.StarBorder;
+        [Parameter] public string EmptyIcon { get; set; } = Icons.Material.Filled.StarBorder;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -82,7 +82,7 @@ namespace MudBlazor
             {
                 if (_selectedValue == value)
                     return;
-   
+
                 _selectedValue = value;
 
                 SelectedValueChanged.InvokeAsync(_selectedValue);
@@ -113,7 +113,8 @@ namespace MudBlazor
 
         internal bool IsRatingHover => HoveredValue.HasValue;
 
-        private void HandleItemClicked(int itemValue) {
+        private void HandleItemClicked(int itemValue)
+        {
             SelectedValue = itemValue;
 
             if (itemValue == 0)

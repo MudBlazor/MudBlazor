@@ -22,7 +22,7 @@ namespace MudBlazor
           .AddClass($"mud-chip-size-{Size.ToDescriptionString()}")
           .AddClass($"mud-chip-color-{Color.ToDescriptionString()}")
           .AddClass("mud-clickable", (OnClick.HasDelegate || ChipSet != null))
-          .AddClass($"mud-ripple", !DisableRipple && (OnClick.HasDelegate || ChipSet!=null))
+          .AddClass($"mud-ripple", !DisableRipple && (OnClick.HasDelegate || ChipSet != null))
           .AddClass("mud-chip-label", Label)
           .AddClass("mud-disabled", Disabled)
           .AddClass("mud-chip-selected", IsSelected)
@@ -72,6 +72,11 @@ namespace MudBlazor
         [Parameter] public string Icon { get; set; }
 
         /// <summary>
+        /// The color of the icon.
+        /// </summary>
+        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
         /// Overrides the default close icon, only shown if OnClose is set.
         /// </summary>
         [Parameter] public string CloseIcon { get; set; }
@@ -107,6 +112,11 @@ namespace MudBlazor
         [Parameter] public bool ForceLoad { get; set; }
 
         /// <summary>
+        /// If true, this chip is selected per default if used in a ChipSet. 
+        /// </summary>
+        [Parameter] public bool Default { get; set; }
+
+        /// <summary>
         /// Command executed when the user clicks on an element.
         /// </summary>
         [Parameter] public ICommand Command { get; set; }
@@ -131,7 +141,7 @@ namespace MudBlazor
         /// </summary>
         public bool IsChecked
         {
-            get => _isSelected && ChipSet?.Filter==true;
+            get => _isSelected && ChipSet?.Filter == true;
         }
 
         /// <summary>
@@ -153,7 +163,7 @@ namespace MudBlazor
         {
             if (ChipSet != null)
             {
-                _=ChipSet.OnChipClicked(this);
+                _ = ChipSet.OnChipClicked(this);
             }
             if (Link != null)
             {
@@ -187,7 +197,7 @@ namespace MudBlazor
         }
 
         internal void ForceRerender() => StateHasChanged();
-             
+
 
         public void Dispose()
         {

@@ -1,9 +1,17 @@
-﻿#pragma warning disable 1998
+﻿#pragma warning disable CS1998 // async without await
+#pragma warning disable IDE1006 // leading underscore
 
 using System;
+using System.Linq;
+using System.Net.Http;
 using Bunit;
 using Bunit.Rendering;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Services;
+using MudBlazor.UnitTests.Mocks;
+using MudBlazor.UnitTests.TestComponents.CheckBox;
 using NUnit.Framework;
 
 
@@ -13,18 +21,30 @@ namespace MudBlazor.UnitTests
     [TestFixture]
     public class CheckBoxTests
     {
+        private Bunit.TestContext ctx;
+
+        [SetUp]
+        public void Setup()
+        {
+            ctx = new Bunit.TestContext();
+            ctx.AddTestServices();
+        }
+
+        [TearDown]
+        public void TearDown() => ctx.Dispose();
+
         /// <summary>
         /// single checkbox, initialized false, check -  uncheck
         /// </summary>
         [Test]
-        public void CheckBoxTest1() {
-            using var ctx = new Bunit.TestContext();
+        public void CheckBoxTest1()
+        {
             var comp = ctx.RenderComponent<MudCheckBox<bool>>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var box = comp.Instance;
-            var input =comp.Find("input");
+            var input = comp.Find("input");
             // check initial state
             box.Checked.Should().Be(false);
             // click and check if it has toggled
@@ -40,9 +60,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public void CheckBoxTest2()
         {
-            using var ctx = new Bunit.TestContext();
-            var comp = ctx.RenderComponent<MudCheckBox<bool>>( new []{ ComponentParameter.CreateParameter("Checked", true), });
-            // print the generated html
+            var comp = ctx.RenderComponent<MudCheckBox<bool>>(new[] { ComponentParameter.CreateParameter("Checked", true), });
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var box = comp.Instance;
@@ -62,9 +80,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public void CheckBoxTest3()
         {
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<CheckBoxTest3>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var boxes = comp.FindComponents<MudCheckBox<bool>>();
@@ -96,9 +112,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public void CheckBoxFormTest1()
         {
-            using var ctx = new Bunit.TestContext();
             var comp = ctx.RenderComponent<CheckBoxFormTest1>();
-            // print the generated html
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
             form.IsValid.Should().BeFalse();
@@ -119,6 +133,21 @@ namespace MudBlazor.UnitTests
             form.IsValid.Should().BeTrue();
             checkbox.Instance.Error.Should().BeFalse();
             checkbox.Instance.ErrorText.Should().Be(null);
+        }
+
+        /// <summary>
+        /// Binding checkboxes two-way against an array of bools
+        /// </summary>
+        [Test]
+        public void CheckBoxesBindAgainstArrayTest()
+        {
+            var comp = ctx.RenderComponent<CheckBoxesBindAgainstArrayTest>();
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("p").Last().TrimmedText().Should().Be("A=True, B=False, C=True, D=False, E=True");
+            comp.FindAll("input")[0].Change(false);
+            comp.FindAll("p").Last().TrimmedText().Should().Be("A=False, B=False, C=True, D=False, E=True");
+            comp.FindAll("input")[1].Change(true);
+            comp.FindAll("p").Last().TrimmedText().Should().Be("A=False, B=True, C=True, D=False, E=True");
         }
     }
 }

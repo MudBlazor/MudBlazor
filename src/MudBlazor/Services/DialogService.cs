@@ -1,12 +1,10 @@
-﻿// Copyright (c) 2020 Jonny Larsson
+﻿// Copyright (c) 2019 Blazored (https://github.com/Blazored)
+// Copyright (c) 2020 Jonny Larsson (https://github.com/Garderoben/MudBlazor)
 // License: MIT
-// See https://github.com/Garderoben/MudBlazor
-// Modified version of Blazored Modal
-// Copyright (c) 2019 Blazored
-// License: MIT
-// See https://github.com/Blazored
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -67,10 +65,9 @@ namespace MudBlazor
             {
                 throw new ArgumentException($"{contentComponent.FullName} must be a Blazor Component");
             }
-
-            var DialogInstanceId = Guid.NewGuid();
-            DialogReference DialogReference = null;
-            var DialogContent = new RenderFragment(builder =>
+            var dialogInstanceId = Guid.NewGuid();
+            DialogReference dialogReference = null;
+            var dialogContent = new RenderFragment(builder =>
             {
                 var i = 0;
                 builder.OpenComponent(i++, contentComponent);
@@ -80,30 +77,82 @@ namespace MudBlazor
                 }
                 builder.CloseComponent();
             });
-            var DialogInstance = new RenderFragment(builder =>
+            var dialogInstance = new RenderFragment(builder =>
             {
                 builder.OpenComponent<MudDialogInstance>(0);
                 builder.AddAttribute(1, "Options", options);
                 builder.AddAttribute(2, "Title", title);
-                builder.AddAttribute(3, "Content", DialogContent);
-                builder.AddAttribute(4, "Id", DialogInstanceId);
+                builder.AddAttribute(3, "Content", dialogContent);
+                builder.AddAttribute(4, "Id", dialogInstanceId);
                 builder.CloseComponent();
             });
-            DialogReference = new DialogReference(DialogInstanceId, DialogInstance, this);
+            dialogReference = new DialogReference(dialogInstanceId, dialogInstance, this);
 
-            OnDialogInstanceAdded?.Invoke(DialogReference);
+            OnDialogInstanceAdded?.Invoke(dialogReference);
 
-            return DialogReference;
+            return dialogReference;
         }
 
-        internal void Close(DialogReference Dialog)
+        public Task<bool?> ShowMessageBox(string title, string message, string yesText = "OK",
+            string noText = null, string cancelText = null, DialogOptions options = null)
         {
-            Close(Dialog, DialogResult.Ok<object>(null));
+            return this.ShowMessageBox(new MessageBoxOptions
+            {
+                Title = title,
+                Message = message,
+                YesText = yesText,
+                NoText = noText,
+                CancelText = cancelText,
+            }, options);
         }
 
-        internal void Close(DialogReference Dialog, DialogResult result)
+        public async Task<bool?> ShowMessageBox(MessageBoxOptions mboxOptions, DialogOptions options = null)
         {
-            OnDialogCloseRequested?.Invoke(Dialog, result);
+            var parameters = new DialogParameters()
+            {
+                [nameof(MessageBoxOptions.Title)] = mboxOptions.Title,
+                [nameof(MessageBoxOptions.Message)] = mboxOptions.Message,
+                [nameof(MessageBoxOptions.CancelText)] = mboxOptions.CancelText,
+                [nameof(MessageBoxOptions.NoText)] = mboxOptions.NoText,
+                [nameof(MessageBoxOptions.YesText)] = mboxOptions.YesText,
+            };
+            var reference = Show<MudMessageBox>(parameters: parameters, options: options, title: mboxOptions.Title);
+            var result = await reference.Result;
+            if (result.Cancelled || !(result.Data is bool))
+                return null;
+            return (bool)result.Data;
+        }
+
+        internal void Close(DialogReference dialog)
+        {
+            Close(dialog, DialogResult.Ok<object>(null));
+        }
+
+        internal void Close(DialogReference dialog, DialogResult result)
+        {
+            OnDialogCloseRequested?.Invoke(dialog, result);
+        }
+
+    }
+
+    [ExcludeFromCodeCoverage]
+    public class MessageBoxOptions
+    {
+        public string Title { get; set; }
+        public string Message { get; set; }
+        public string YesText { get; set; } = "OK";
+        public string NoText { get; set; }
+        public string CancelText { get; set; }
+    }
+
+    // MudBlazor.Dialog is obsolete but kept here for backwards compatibility reasons.
+    // Don't remove, it will cause massive breakages in user code
+    namespace Dialog
+    {
+        // Inside at least one Class needs to be kept or it will be stripped from assembly
+        public class ObsoleteNamespace
+        {
+            public const string DoNotRemove = "because of backwards compatibility";
         }
     }
 }

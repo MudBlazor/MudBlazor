@@ -4,31 +4,31 @@ using MudBlazor.Charts.SVG.Models;
 
 namespace MudBlazor.Charts
 {
-    public class DonutBase : MudChartBase
+    partial class Donut : MudChartBase
     {
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 
-        public List<SvgCircle> Circles = new List<SvgCircle>();
-        public List<SvgLegend> Legends = new List<SvgLegend>();
+        private List<SvgCircle> _circles = new List<SvgCircle>();
+        private List<SvgLegend> _legends = new List<SvgLegend>();
 
         protected string ParentWidth => MudChartParent?.Width;
         protected string ParentHeight => MudChartParent?.Height;
 
         protected override void OnParametersSet()
         {
-            Circles.Clear();
-            Legends.Clear();
+            _circles.Clear();
+            _legends.Clear();
             double counterClockwiseOffset = 25;
             double totalPercent = 0;
-            double offset = counterClockwiseOffset;
+            double offset;
 
-            int counter = 0;
-            foreach (double data in GetNormalizedData())
+            var counter = 0;
+            foreach (var data in GetNormalizedData())
             {
-                double percent = data*100;
-                double reversePercent = 100 - percent;
+                var percent = data * 100;
+                var reversePercent = 100 - percent;
                 offset = 100 - totalPercent + counterClockwiseOffset;
-                totalPercent = totalPercent + percent;
+                totalPercent += percent;
 
                 var circle = new SvgCircle()
                 {
@@ -39,21 +39,21 @@ namespace MudBlazor.Charts
                     StrokeDashArray = $"{ToS(percent)} {ToS(reversePercent)}",
                     StrokeDashOffset = offset
                 };
-                Circles.Add(circle);
+                _circles.Add(circle);
 
 
-                string labels = "";
+                var labels = "";
                 if (counter < InputLabels.Length)
                 {
                     labels = InputLabels[counter];
                 }
-                SvgLegend Legend = new SvgLegend()
+                var legend = new SvgLegend()
                 {
                     Index = counter,
                     Labels = labels,
                     Data = data.ToString()
                 };
-                Legends.Add(Legend);
+                _legends.Add(legend);
 
                 counter += 1;
             }

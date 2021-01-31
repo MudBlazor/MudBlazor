@@ -21,7 +21,7 @@ namespace MudBlazor
         /// Child content of component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
-        
+
         /// <summary>
         /// If true, the input element will be disabled.
         /// </summary>

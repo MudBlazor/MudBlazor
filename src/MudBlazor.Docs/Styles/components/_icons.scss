@@ -1,0 +1,38 @@
+﻿
+.docs-icon-container {
+    margin-top: 20px;
+
+    & .mud-divider {
+        margin-bottom: 20px;
+    }
+}
+
+
+.docs-icon-panel {
+    height: 120px;
+    width: 19%;
+    padding: 20px 10px;
+    display: inline-block;
+    text-align: center;
+
+    & .mud-typography {
+        margin-top: 10px;
+    }
+}
+
+.docs-icon-panel-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    & .mud-svg-icon {
+        font-size: 40px;
+    }
+}
+
+.docs-icon-material-container {
+    & .mud-input-control {
+        background-color: var(--mud-palette-surface);
+    }
+}

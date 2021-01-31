@@ -11,5 +11,12 @@ namespace MudBlazor.Docs.Models
         public DocsComponents GroupItems { get; set; }
         public Type Component { get; set; }
 
+        public string ComponentName
+        {
+            get
+            {
+                return Component.Name.Replace("`1", "<T>");
+            }
+        }
     }
 }

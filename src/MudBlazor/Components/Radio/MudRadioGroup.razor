@@ -1,8 +1,7 @@
 ﻿@namespace MudBlazor
-@inherits MudComponentBase
+@typeparam T
+@inherits MudFormComponent<T, T>
 
 <CascadingValue Value="this" IsFixed="true">
     @ChildContent
 </CascadingValue>
-
-

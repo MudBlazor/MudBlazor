@@ -1,4 +1,6 @@
-﻿@mixin display-mixin ($breakpoint) {
+﻿@import '../abstracts/variables';
+
+@mixin display-mixin ($breakpoint) {
     .d-#{$breakpoint}none {
         display: none !important;
     }
@@ -42,22 +44,18 @@
 // XS >
 @include display-mixin("");
 
-// SM
-@media (min-width:600px) {
+@media (min-width:$breakpoint-sm) {
     @include display-mixin("sm-");
 }
 
-// MD
-@media (min-width:960px) {
+@media (min-width:$breakpoint-md) {
     @include display-mixin("md-");
 }
 
-// LG
-@media (min-width:1280px) {
+@media (min-width:$breakpoint-lg) {
     @include display-mixin("lg-");
 }
 
-// XL
-@media (min-width:1920px) {
+@media (min-width:$breakpoint-xl) {
     @include display-mixin("xl-");
 }

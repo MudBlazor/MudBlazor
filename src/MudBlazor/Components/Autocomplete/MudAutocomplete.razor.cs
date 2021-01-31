@@ -37,12 +37,12 @@ namespace MudBlazor
         /// <summary>
         /// The Open Select Icon
         /// </summary>
-        [Parameter] public string OpenIcon { get; set; } = Icons.Material.ArrowDropUp;
+        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
         /// The Open Select Icon
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.ArrowDropDown;
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
@@ -113,25 +113,32 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment<T> ItemSelectedTemplate { get; set; }
 
+        /// <summary>
+        /// On drop-down close override Text with selected Value. This makes it clear to the user
+        /// which list value is currently selected and disallows incomplete values in Text.
+        /// </summary>
+        [Parameter] public bool CoerceText { get; set; } = true;
 
         internal bool IsOpen { get; set; }
 
         public string CurrentIcon { get; set; }
 
-        public void SelectOption(T value)
+        private MudInput<string> _elementReference;
+
+        public async Task SelectOption(T value)
         {
-            Value = value;
+            _timer?.Dispose();
+            await SetValueAsync(value);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
-            _text = GetItemString(value);
-            _timer?.Dispose();
+            Text = GetItemString(value);
             IsOpen = false;
             UpdateIcon();
-            _ = ValidateValue(Value);
+            BeginValidate();
             StateHasChanged();
         }
 
-        public void ToggleMenu()
+        public async Task ToggleMenu()
         {
             if (Disabled || MinCharacters > 0 && (string.IsNullOrEmpty(Text) || Text.Length < MinCharacters))
                 return;
@@ -141,11 +148,10 @@ namespace MudBlazor
             if (IsOpen)
             {
                 OnSearch();
-                InvokeAsync(() => ScrollToListItem(_selectedListItemIndex));
             }
             else
             {
-                CoerceTextToValue();
+                await CoerceTextToValue();
             }
             UpdateIcon();
             StateHasChanged();
@@ -172,17 +178,17 @@ namespace MudBlazor
         private T[] _items;
         private int _selectedListItemIndex = 0;
 
-        protected override void GenericValueChanged(T value)
+        protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            base.GenericValueChanged(value);
             _timer?.Dispose();
+            return base.UpdateTextPropertyAsync(updateValue);
         }
 
-        protected override void StringValueChanged(string text)
+        protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
-            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(text))
-                Value = default(T);
             _timer?.Dispose();
+            if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
+                await SetValueAsync(default(T), updateText);
             _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
@@ -218,7 +224,7 @@ namespace MudBlazor
 
         private string GetItemString(T item)
         {
-            if (item == null) 
+            if (item == null)
                 return string.Empty;
             try
             {
@@ -228,42 +234,62 @@ namespace MudBlazor
             return "null";
         }
 
-        protected virtual void OnInputKeyDown(KeyboardEventArgs args)
+        protected virtual async Task OnInputKeyDown(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
                 case "Enter":
-                    OnEnterKey();
+                    await OnEnterKey();
                     break;
                 case "ArrowDown":
-                    SelectNextItem(+1);
+                    await SelectNextItem(+1);
                     break;
                 case "ArrowUp":
-                    SelectNextItem(-1);
+                    await SelectNextItem(-1);
                     break;
             }
             base.onKeyDown(args);
         }
 
-        private void SelectNextItem(int increment)
+        private async Task SelectNextItem(int increment)
         {
             if (_items == null || _items.Length == 0)
                 return;
             _selectedListItemIndex = Math.Max(0, Math.Min(_items.Length - 1, _selectedListItemIndex + increment));
-            ScrollToListItem(_selectedListItemIndex);
+            await ScrollToListItem(_selectedListItemIndex, increment);
             StateHasChanged();
         }
 
         /// <summary>
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
         /// </summary>
-        private string _componentId = Guid.NewGuid().ToString();
+        private readonly string _componentId = Guid.NewGuid().ToString();
 
-        public async void ScrollToListItem(int index)
+        public async Task ScrollToListItem(int index, int increment)
         {
-            string id = GetListItemId(index);
-            await JsRuntime.InvokeVoidAsync("blazorHelpers.scrollToFragment", id);
+            var id = GetListItemId(index);
+            //id of the scrolled element
+            //increment 1 down; -1 up
+            //onEdges, last param, boolean. If true, only scrolls when elements reaches top or bottom of container.
+            //If false, scrolls always
+            await JsRuntime
+                .InvokeVoidAsync("scrollHelpers.scrollToListItem", id, increment, true);
             StateHasChanged();
+        }
+
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender) return;
+            RestoreScrollPosition();
+        }
+
+        //This restores the scroll position after closing the menu and element being 0
+        private void RestoreScrollPosition()
+        {
+            if (_selectedListItemIndex != 0) return;
+            JsRuntime
+             .InvokeVoidAsync("scrollHelpers.scrollToListItem", GetListItemId(0), 0);
         }
 
         private string GetListItemId(in int index)
@@ -271,36 +297,40 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
-        private void OnEnterKey()
+        private Task OnEnterKey()
         {
             if (IsOpen == false)
-                return;
+                return Task.CompletedTask;
             if (_items == null || _items.Length == 0)
-                return;
+                return Task.CompletedTask;
             if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items.Length)
-                SelectOption(_items[_selectedListItemIndex]);
+                return SelectOption(_items[_selectedListItemIndex]);
+            return Task.CompletedTask;
         }
 
-        private void OnInputBlurred(FocusEventArgs args)
+        private Task OnInputBlurred(FocusEventArgs args)
         {
-            if (!IsOpen)
-                CoerceTextToValue();
-            base.OnBlurred(args);
+            return !IsOpen ? CoerceTextToValue() : Task.CompletedTask;
+            // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value, 
+            // resulting in a premature validation. thus, don't call base
+            //base.OnBlurred(args);
         }
 
-        private void CoerceTextToValue()
+        private async Task CoerceTextToValue()
         {
+            if (CoerceText == false)
+                return;
             if (Value == null)
             {
-                Text = null;
                 _timer?.Dispose();
+                await SetTextAsync(null);
                 return;
             }
-            string actualvalueStr = GetItemString(Value);
+            var actualvalueStr = GetItemString(Value);
             if (!object.Equals(actualvalueStr, Text))
             {
-                Text = actualvalueStr;
                 _timer?.Dispose();
+                await SetTextAsync(actualvalueStr);
             }
         }
 
@@ -309,5 +339,21 @@ namespace MudBlazor
             _timer?.Dispose();
             base.Dispose(disposing);
         }
+
+        public override ValueTask FocusAsync()
+        {
+            return _elementReference.FocusAsync();
+        }
+
+        public override ValueTask SelectAsync()
+        {
+            return _elementReference.SelectAsync();
+        }
+
+        public override ValueTask SelectRangeAsync(int pos1, int pos2)
+        {
+            return _elementReference.SelectRangeAsync(pos1, pos2);
+        }
+
     }
 }

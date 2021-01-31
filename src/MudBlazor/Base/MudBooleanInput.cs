@@ -1,23 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public class MudBooleanInput<T> : MudFormComponent<T>
+    public class MudBooleanInput<T> : MudFormComponent<T, bool?>
     {
+        public MudBooleanInput() : base(new BoolConverter<T>()) { }
+
         /// <summary>
-        /// Fired when Checked changes.
+        /// If true, the input will be read only.
         /// </summary>
-        [Parameter]
-        public EventCallback<T> CheckedChanged { get; set; }
-
-        private Converter<T, bool?> _boolConverter = new BoolConverter<T>();
-
-        protected bool? BoolValue
-        {
-            get => _boolConverter.Set(_value);
-            set => Checked = _boolConverter.Get(value);
-        }
+        [Parameter] public bool ReadOnly { get; set; }
 
         /// <summary>
         /// The state of the component
@@ -26,37 +20,44 @@ namespace MudBlazor
         public T Checked
         {
             get => _value;
-            set
+            set => _value = value;
+        }
+
+        /// <summary>
+        /// Fired when Checked changes.
+        /// </summary>
+        [Parameter] public EventCallback<T> CheckedChanged { get; set; }
+
+        protected bool? BoolValue => Converter.Set(Checked);
+
+        protected Task OnChange(ChangeEventArgs args)
+        {
+            Touched = true;
+            return SetBoolValueAsync((bool?)args.Value);
+        }
+
+        protected Task SetBoolValueAsync(bool? value)
+        {
+            return SetCheckedAsync(Converter.Get(value));
+        }
+
+        protected async Task SetCheckedAsync(T value)
+        {
+            if (!EqualityComparer<T>.Default.Equals(Checked, value))
             {
-                if (object.Equals(value, _value))
-                    return;
-                _value = value;
-                CheckedChanged.InvokeAsync(value);
-                _=ValidateValue(value);
-                EditFormValidate();
+                Checked = value;
+                await CheckedChanged.InvokeAsync(value);
+                BeginValidate();
             }
         }
 
-        [Parameter]
-        public Converter<T, bool?> Converter
+        protected override bool SetConverter(Converter<T, bool?> value)
         {
-            get => _boolConverter;
-            set
-            {
-                _boolConverter = value;
-                if (_boolConverter == null)
-                    return;
-                _boolConverter.OnError = OnConversionError;
-                BoolValue = Converter.Set(Checked);
-            }
-        }
+            var changed = base.SetConverter(value);
+            if (changed)
+                SetBoolValueAsync(Converter.Set(Checked)).AndForget();
 
-
-        protected override Task OnInitializedAsync()
-        {
-            if (_boolConverter != null)
-                _boolConverter.OnError = OnConversionError;
-            return base.OnInitializedAsync();
+            return changed;
         }
 
         /// <summary>

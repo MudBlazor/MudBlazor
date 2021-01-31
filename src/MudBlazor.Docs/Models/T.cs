@@ -1,4 +1,4 @@
 ﻿namespace MudBlazor.Docs.Models
 {
-    public class T  { }
+    public class T { }
 }

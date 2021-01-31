@@ -9,7 +9,7 @@ namespace MudBlazor
 {
     public partial class MudChipSet : MudComponentBase
     {
-  
+
         protected string Classname =>
         new CssBuilder("mud-chipset")
           .AddClass(Class)
@@ -62,7 +62,7 @@ namespace MudBlazor
         [Parameter]
         public MudChip SelectedChip
         {
-            get { return _chips.OfType<MudChip>().Where(x => x.IsSelected).FirstOrDefault(); }
+            get { return _chips.OfType<MudChip>().FirstOrDefault(x => x.IsSelected); }
             set
             {
                 if (value == null)
@@ -134,8 +134,6 @@ namespace MudBlazor
             _chips.Add(chip);
         }
 
-        private  void OnChipClickHandler(MouseEventArgs args) {}
-
         internal void Remove(MudChip chip)
         {
             _chips.Remove(chip);
@@ -146,7 +144,7 @@ namespace MudBlazor
 
         internal async Task OnChipClicked(MudChip chip)
         {
-            var was_selected=chip.IsSelected;
+            var wasSelected = chip.IsSelected;
             if (MultiSelection)
             {
                 chip.IsSelected = !chip.IsSelected;
@@ -155,10 +153,10 @@ namespace MudBlazor
             {
                 foreach (var ch in _chips)
                 {
-                     ch.IsSelected = (ch==chip); // <-- exclusively select the one chip only, thus all others must be deselected
+                    ch.IsSelected = (ch == chip); // <-- exclusively select the one chip only, thus all others must be deselected
                 }
                 if (!Mandatory)
-                    chip.IsSelected = !was_selected;
+                    chip.IsSelected = !wasSelected;
             }
             await NotifySelection();
         }
@@ -174,6 +172,39 @@ namespace MudBlazor
         {
             Remove(chip);
             OnClose.InvokeAsync(chip);
+        }
+
+        protected override async void OnAfterRender(bool firstRender)
+        {
+            if (firstRender)
+                await SelectDefaultChips();
+            base.OnAfterRender(firstRender);
+        }
+
+        private async Task SelectDefaultChips()
+        {
+            var anySelected = false;
+            if (MultiSelection)
+            {
+                foreach (var chip in _chips)
+                {
+                    if (!chip.Default)
+                        continue;
+                    chip.IsSelected = chip.Default;
+                    anySelected = true;
+                }
+            }
+            else
+            {
+                var defaultChip = _chips.LastOrDefault(chip => chip.Default);
+                if (defaultChip != null)
+                {
+                    defaultChip.IsSelected = true;
+                    anySelected = true;
+                }
+            }
+            if (anySelected)
+                await NotifySelection();
         }
     }
 }

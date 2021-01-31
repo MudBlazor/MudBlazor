@@ -16,7 +16,7 @@ namespace MudBlazor
         public Type DataType { get; }
         public bool Cancelled { get; }
 
-        protected DialogResult(object data, Type resultType, bool cancelled)
+        protected internal DialogResult(object data, Type resultType, bool cancelled)
         {
             Data = data;
             DataType = resultType;
