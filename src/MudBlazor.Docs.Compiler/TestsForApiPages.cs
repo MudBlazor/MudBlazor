@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
@@ -101,8 +102,8 @@ namespace MudBlazor.Docs.Compiler
                 return type.Name;
             var genericTypename = type.Name;
             if (removeT)
-                return genericTypename.Replace("`1", string.Empty);
-            return genericTypename.Replace("`1", "<T>");
+                return genericTypename.Replace("`1", string.Empty).Replace("`2", string.Empty);
+            return genericTypename.Replace("`1", "<T>").Replace("`2", "<T, U>");
         }
     }
 }
