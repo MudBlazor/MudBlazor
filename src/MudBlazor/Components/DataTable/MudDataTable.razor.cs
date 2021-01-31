@@ -11,16 +11,16 @@ namespace MudBlazor
     {
         protected string Classname =>
        new CssBuilder("mud-datatable")
-          //.AddClass($"mud-sm-table", Breakpoint == Breakpoint.Sm)
-          //.AddClass($"mud-md-table", Breakpoint == Breakpoint.Md)
-          //.AddClass($"mud-lg-table", Breakpoint == Breakpoint.Lg)
-          //.AddClass($"mud-xl-table", Breakpoint == Breakpoint.Xl)
-          //.AddClass($"mud-table-dense", Dense)
-          //.AddClass($"mud-table-hover", Hover)
-          //.AddClass($"mud-table-outlined", Outlined)
-          //.AddClass($"mud-table-square", Square)
-          //.AddClass($"mud-table-sticky-header", FixedHeader)
-          //.AddClass($"mud-elevation-{Elevation.ToString()}", !Outlined)
+           //.AddClass($"mud-sm-table", Breakpoint == Breakpoint.Sm)
+           //.AddClass($"mud-md-table", Breakpoint == Breakpoint.Md)
+           //.AddClass($"mud-lg-table", Breakpoint == Breakpoint.Lg)
+           //.AddClass($"mud-xl-table", Breakpoint == Breakpoint.Xl)
+           .AddClass($"mud-datatable-dense", Dense)
+         //.AddClass($"mud-table-hover", Hover)
+         //.AddClass($"mud-table-outlined", Outlined)
+         //.AddClass($"mud-table-square", Square)
+         //.AddClass($"mud-table-sticky-header", FixedHeader)
+         //.AddClass($"mud-elevation-{Elevation.ToString()}", !Outlined)
          .AddClass(Class)
        .Build();
 

@@ -4,7 +4,7 @@
 
 @if (Items != null && Items.Any())
 {
-<MudTable Items="@Items" Class="@Class" Style="@Style" Dense="@Dense">
+<MudTable Items="@Items" Class="@Classname" Style="@Style" AllowEditing="@AllowEditing">
     <HeaderContent>
         <CascadingValue Value="MudBaseColumn.Rendermode.Header" Name="Mode">
             @Columns(Def)
@@ -22,7 +22,7 @@
                 @Columns(context)
             </CascadingValue>
         }
-                    </RowEditingTemplate>
+    </RowEditingTemplate>
     <FooterContent>
         @if (ShowFooter)
         {

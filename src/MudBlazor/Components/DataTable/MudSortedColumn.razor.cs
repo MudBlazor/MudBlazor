@@ -19,7 +19,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public T FooterValue { get; set; }
-        
+
+        /// <summary>
+        /// Used if no FooterValue is available
+        /// </summary>
+        [Parameter]
+        public string FooterText { get; set; }
 
         /// <summary>
         /// Specifies which string format should be used.

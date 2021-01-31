@@ -18,7 +18,17 @@
     }
     else if (Mode == Rendermode.Footer)
     {
-        <MudTd>@GetFormattedString(FooterValue)</MudTd>
+        @if (FooterValue != null)
+        {
+            <MudTd>
+                @GetFormattedString(FooterValue)
+            </MudTd>
+        }
+        else
+        {
+            <MudTd>
+                 @FooterText
+            </MudTd>
+        }
     }
-
 }

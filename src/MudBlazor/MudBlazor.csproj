@@ -40,6 +40,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Components\DataTable\MudDataTable.razor.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\MudBlazor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
@@ -73,5 +81,11 @@
     <None Include="Components\DataTable\MudDataTable.razor" />
     <None Include="Components\DataTable\MudSortedColumn.razor" />
     <None Include="Components\DataTable\MudTemplateColumn.razor" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Page Include="Components\DataTable\MudDataTable.razor.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

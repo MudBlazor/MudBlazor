@@ -25,7 +25,7 @@
     }
     else if (Mode == Rendermode.Footer)
     {
-        @if (!IsDefault<T>(FooterValue))
+        @if (FooterValue != null)
         {
             <MudTd>
                 @GetFormattedString(FooterValue)
@@ -33,7 +33,9 @@
         }
         else
         {
-            <MudTd></MudTd>
+            <MudTd>
+                 @FooterText
+            </MudTd>
         }
     }
 }
