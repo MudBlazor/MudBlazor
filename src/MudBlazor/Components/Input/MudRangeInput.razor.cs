@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
@@ -9,7 +10,7 @@ namespace MudBlazor
 
         public MudRangeInput()
         {
-            _value = new Range<T>();
+            Value = new Range<T>();
             Converter = new RangeConverter<T>();
         }
 
@@ -45,7 +46,7 @@ namespace MudBlazor
                 if (_textStart == value)
                     return;
                 _textStart = value;
-                Text = RangeConverter<T>.Join(_textStart, _textEnd);
+                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).AndForget();
             }
         }
 
@@ -57,20 +58,20 @@ namespace MudBlazor
                 if (_textEnd == value)
                     return;
                 _textEnd = value;
-                Text = RangeConverter<T>.Join(_textStart, _textEnd);
+                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).AndForget();
             }
         }
 
-        protected override void UpdateTextProperty(bool updateValue)
+        protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {
-            base.UpdateTextProperty(updateValue);
+            await base.UpdateTextPropertyAsync(updateValue);
 
             RangeConverter<T>.Split(Text, out _textStart, out _textEnd);
         }
 
-        protected override void UpdateValueProperty(bool updateText)
+        protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
-            base.UpdateValueProperty(updateText);
+            await base.UpdateValuePropertyAsync(updateText);
 
             RangeConverter<T>.Split(Text, out _textStart, out _textEnd);
         }

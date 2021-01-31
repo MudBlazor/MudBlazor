@@ -1,5 +1,6 @@
 ﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
+#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
 using System.Linq;
@@ -40,7 +41,8 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<AutocompleteTest1>();
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
-            var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
             var menu = comp.Find("div.mud-popover");
 
             // check initial state
@@ -52,7 +54,7 @@ namespace MudBlazor.UnitTests
             menu.ClassList.Should().NotContain("mud-popover-open");
 
             // now let's type a different state to see the popup open
-            autocomplete.Text = "Calif";
+            autocompletecomp.Find("input").Input("Calif");
             await Task.Delay(100);
             menu = comp.Find("div.mud-popover");
             menu.ClassList.Should().Contain("mud-popover-open");
@@ -92,12 +94,12 @@ namespace MudBlazor.UnitTests
             menu.ClassList.Should().NotContain("mud-popover-open");
 
             // type 3 characters and check if it has toggled the menu
-            select.Instance.Text = "ala";
+            select.Find("input").Input("ala");
             await Task.Delay(100);
             menu.ClassList.Should().Contain("mud-popover-open");
 
             // type 2 characters and check if it has toggled the menu
-            select.Instance.Text = "al";
+            select.Find("input").Input("al");
             await Task.Delay(100);
             menu.ClassList.Should().NotContain("mud-popover-open");
         }
@@ -136,17 +138,15 @@ namespace MudBlazor.UnitTests
         {
             var comp = ctx.RenderComponent<AutocompleteTest1>();
             Console.WriteLine(comp.Markup);
-            var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
             await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
-            await comp.InvokeAsync(() =>
-            {
-                autocomplete.Text = "Austria"; // not part of the U.S. thank god
-                autocomplete.ToggleMenu();
-            });
+            autocompletecomp.SetParam(a => a.Text, "Austria"); // not part of the U.S. 
+            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             // now trigger the coercion by closing the menu 
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             autocomplete.Value.Should().Be("Alabama");
@@ -158,18 +158,16 @@ namespace MudBlazor.UnitTests
         {
             var comp = ctx.RenderComponent<AutocompleteTest1>();
             Console.WriteLine(comp.Markup);
-            var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
             await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
             await comp.InvokeAsync(() => autocomplete.CoerceText = false);
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
-            await comp.InvokeAsync(() =>
-            {
-                autocomplete.Text = "Austria";
-                autocomplete.ToggleMenu();
-            });
+            autocompletecomp.SetParam(a => a.Text, "Austria");
+            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             // now trigger the coercion by closing the menu 
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             autocomplete.Value.Should().Be("Alabama");

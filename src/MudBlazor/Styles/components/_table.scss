@@ -1,4 +1,5 @@
-﻿
+﻿@import '../abstracts/variables';
+
 .mud-table {
     color: var(--mud-palette-text-primary);
     background-color: var(--mud-palette-surface);
@@ -353,27 +354,22 @@
     }
 }
 
-// < XS
-@media (max-width:600px) {
+@media (max-width:$breakpoint-sm) {
     @include table-display-smalldevices("");
 }
 
-// SM
-@media (max-width:960px) {
+@media (max-width:$breakpoint-md) {
     @include table-display-smalldevices("sm-");
 }
 
-// MD
-@media (max-width:1280px) {
+@media (max-width:$breakpoint-lg) {
     @include table-display-smalldevices("md-");
 }
 
-// LG
-@media (max-width:1920px) {
+@media (max-width:$breakpoint-xl) {
     @include table-display-smalldevices("lg-");
 }
 
-// XL
-@media (min-width:1920px) {
+@media (min-width:$breakpoint-xl) {
     @include table-display-smalldevices("xl-");
 }

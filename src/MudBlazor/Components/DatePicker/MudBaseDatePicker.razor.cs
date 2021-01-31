@@ -10,11 +10,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public abstract partial class MudBaseDatePicker : MudBasePicker
+    public abstract partial class MudBaseDatePicker : MudPicker
     {
-        [Inject] protected IJSRuntime JsRuntime { get; set; }
 
-        [Inject] protected IDomService DomService { get; set; }
+        [Inject] protected IJSRuntime JsRuntime { get; set; }
 
         /// <summary>
         /// Max selectable date.
@@ -32,14 +31,20 @@ namespace MudBlazor
         [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Date;
 
         /// <summary>
-        /// Sets the Input Icon.
-        /// </summary>
-        [Parameter] public string InputIcon { get; set; } = Icons.Filled.Event;
-
-        /// <summary>
         /// String Format for selected date view
         /// </summary>
-        [Parameter] public string DateFormat { get; set; }
+        [Parameter]
+        public string DateFormat
+        {
+            get
+            {
+                return Converter.Format;
+            }
+            set
+            {
+                Converter.Format = value;
+            }
+        }
 
         /// <summary>
         /// Defines on which day the week starts. Depends on the value of Culture. 
@@ -72,9 +77,47 @@ namespace MudBlazor
         [Parameter] public EventCallback<DateTime?> PickerMonthChanged { get; set; }
 
         /// <summary>
-        /// The display culture
+        /// The display and converter culture
         /// </summary>
-        [Parameter] public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
+        [Parameter]
+        public CultureInfo Culture
+        {
+            get
+            {
+                return Converter.Culture;
+            }
+            set
+            {
+                Converter.Culture = value;
+            }
+        }
+
+        /// <summary>
+        /// The date converter to use
+        /// </summary>
+        [Parameter]
+        public DefaultConverter<DateTime?> Converter
+        {
+            get
+            {
+                if (_converter == null)
+                {
+                    var converter = new DefaultConverter<DateTime?>
+                    {
+                        Format = "yyyy-MM-dd",
+                        Culture = CultureInfo.CurrentCulture
+                    };
+                    _converter = converter;
+                }
+
+                return _converter;
+            }
+            set
+            {
+                _converter = value;
+            }
+        }
+        private DefaultConverter<DateTime?> _converter;
 
         /// <summary>
         /// Milliseconds to wait before closing the picker. This helps the user see that the date was selected before the popover disappears.
@@ -101,23 +144,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool ShowWeekNumbers { get; set; }
 
-        /// <summary>
-        /// Reference to the Picker, initialized via @ref
-        /// </summary>
-        protected MudPicker Picker { get; set; }
-
         protected virtual bool IsRange { get; } = false;
 
         private OpenTo _currentView;
 
-        protected virtual void OnPickerOpened()
+        protected override void OnPickerOpened()
         {
+            base.OnPickerOpened();
             _currentView = OpenTo;
             if (_currentView == OpenTo.Year)
                 _scrollToYearAfterRender = true;
         }
-
-        protected virtual void OnPickerClosed() { }
 
         /// <summary>
         /// Get the first of the month to display
@@ -297,7 +334,7 @@ namespace MudBlazor
 
         private void OnFormattedDateClick()
         {
-            // todo: raise an event the user can handdle
+            // todo: raise an event the user can handle
         }
 
         private void OnYearClicked(int year)
@@ -348,6 +385,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             _currentView = OpenTo;
         }
 

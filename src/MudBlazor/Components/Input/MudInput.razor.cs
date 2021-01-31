@@ -18,6 +18,16 @@ namespace MudBlazor
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
+        protected Task OnInput(ChangeEventArgs args)
+        {
+            return Immediate ? SetTextAsync(args?.Value as string) : Task.CompletedTask;
+        }
+
+        protected Task OnChange(ChangeEventArgs args)
+        {
+            return Immediate ? Task.CompletedTask : SetTextAsync(args?.Value as string);
+        }
+
         /// <summary>
         /// ChildContent of the MudInput will only be displayed if InputType.Hidden and if its not null.
         /// </summary>
@@ -30,7 +40,7 @@ namespace MudBlazor
             return JSRuntime.InvokeVoidAsync("elementReference.focus", _elementReference);
         }
 
-        public override ValueTask SelectAsnyc()
+        public override ValueTask SelectAsync()
         {
             return JSRuntime.InvokeVoidAsync("mbSelectHelper.select", _elementReference);
         }

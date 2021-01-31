@@ -10,13 +10,8 @@ using static System.String;
 
 namespace MudBlazor
 {
-    public partial class MudTimePicker : MudBasePicker
+    public partial class MudTimePicker : MudPicker
     {
-
-        /// <summary>
-        /// Reference to the Picker, initialized via @ref
-        /// </summary>
-        protected MudPicker Picker { get; set; }
 
         private OpenTo _currentView;
 
@@ -29,11 +24,6 @@ namespace MudBlazor
         /// If true, sets 12 hour selection clock.
         /// </summary>
         [Parameter] public bool AmPm { get; set; }
-
-        /// <summary>
-        /// Sets the Input Icon.
-        /// </summary>
-        [Parameter] public string InputIcon { get; set; } = Icons.Material.Filled.Event;
 
         private TimeSpan? _time;
 
@@ -53,7 +43,7 @@ namespace MudBlazor
             {
                 _time = time;
                 if (updateValue)
-                    await SetValueAsync(AmPm ? _time.ToAmPmString() : _time.ToIsoString(), false);
+                    await SetTextAsync(AmPm ? _time.ToAmPmString() : _time.ToIsoString(), false);
                 UpdateTimeSetFromTime();
                 await TimeChanged.InvokeAsync(_time);
             }
@@ -70,8 +60,9 @@ namespace MudBlazor
             return SetTimeAsync(ParseTimeValue(value), false);
         }
 
-        private void OnPickerOpened()
+        protected override void OnPickerOpened()
         {
+            base.OnPickerOpened();
             _currentView = OpenTo;
         }
 
@@ -284,6 +275,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             UpdateTimeSetFromTime();
             _currentView = OpenTo;
             _initialHour = _timeSet.Hour;
@@ -383,15 +375,6 @@ namespace MudBlazor
 
         }
 
-        protected override void OnOpened()
-        {
-            Picker.Open();
-        }
-
-        protected override void OnClosed()
-        {
-            Picker.Close();
-        }
 
     }
 }

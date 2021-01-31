@@ -7,7 +7,7 @@
         <MudTextField @ref="multilineReference" T="string" Label="Multiline Select" Lines="3" Variant="Variant.Text" Text="@sampleText" />
     </MudItem>
     <MudItem xs="12" Class="d-flex justify-end">
-        <MudButton @onclick="() => multilineReference.SelectAsnyc()">
+        <MudButton @onclick="() => multilineReference.SelectAsync()">
             Select
         </MudButton>
     </MudItem>
@@ -15,7 +15,7 @@
         <MudTextField @ref="singleLineReference" T="string" Label="Single Select" Variant="Variant.Filled" Text="@sampleText" />
     </MudItem>
     <MudItem xs="12" Class="d-flex justify-end">
-        <MudButton @onclick="() => singleLineReference.SelectAsnyc()">
+        <MudButton @onclick="() => singleLineReference.SelectAsync()">
             Select
         </MudButton>
     </MudItem>

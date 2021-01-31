@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -7,10 +8,12 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTreeViewItem : MudComponentBase
+    public partial class MudTreeViewItem<T> : MudComponentBase
     {
-        private bool _isSelected, _isActivated, _isExpanded;
-        private readonly List<MudTreeViewItem> _childItems = new List<MudTreeViewItem>();
+        private string _text;
+        private bool _isSelected, _isActivated;
+        private Converter<T> _converter = new DefaultConverter<T>();
+        private readonly List<MudTreeViewItem<T>> _childItems = new List<MudTreeViewItem<T>>();
 
         protected string Classname =>
         new CssBuilder("mud-treeview-item")
@@ -27,7 +30,17 @@ namespace MudBlazor
             .AddClass(TextClass)
         .Build();
 
-        [Parameter] public string Text { get; set; }
+        [Parameter]
+        public string Text
+        {
+            get => string.IsNullOrEmpty(_text) ? _converter.Set(Value) : _text;
+            set => _text = value;
+        }
+
+        [Parameter]
+        public T Value { get; set; }
+
+        [Parameter] public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
 
         [Parameter] public Typo TextTypo { get; set; } = Typo.body1;
 
@@ -39,29 +52,18 @@ namespace MudBlazor
 
         [Parameter] public string EndTextClass { get; set; }
 
-        [CascadingParameter] MudTreeView MudTreeRoot { get; set; }
+        [CascadingParameter] MudTreeView<T> MudTreeRoot { get; set; }
 
-        [CascadingParameter] MudTreeViewItem Parent { get; set; }
+        [CascadingParameter] MudTreeViewItem<T> Parent { get; set; }
 
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         [Parameter] public RenderFragment Content { get; set; }
 
-        [Parameter] public IEnumerable<object> Items { get; set; }
+        [Parameter] public HashSet<T> Items { get; set; }
 
         [Parameter]
-        public bool Expanded
-        {
-            get => _isExpanded;
-            set
-            {
-                if (_isExpanded == value)
-                    return;
-
-                _isExpanded = value;
-                ExpandedChanged.InvokeAsync(_isExpanded);
-            }
-        }
+        public bool Expanded { get; set; }
 
         [Parameter]
         public bool Activated
@@ -157,11 +159,20 @@ namespace MudBlazor
 
             if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
             {
-                _isExpanded = !_isExpanded;
-                await ExpandedChanged.InvokeAsync(_isExpanded);
+                Expanded = !Expanded;
+                await ExpandedChanged.InvokeAsync(Expanded);
             }
 
             await OnClick.InvokeAsync(ev);
+        }
+
+        protected Task OnItemExpanded(bool expanded)
+        {
+            if (Expanded == expanded)
+                return Task.CompletedTask;
+
+            Expanded = expanded;
+            return ExpandedChanged.InvokeAsync(expanded);
         }
 
         internal async Task Activate(bool value)
@@ -176,7 +187,7 @@ namespace MudBlazor
             await ActivatedChanged.InvokeAsync(_isActivated);
         }
 
-        internal async Task Select(bool value, MudTreeViewItem source = null)
+        internal async Task Select(bool value, MudTreeViewItem<T> source = null)
         {
             if (value == _isSelected)
                 return;
@@ -194,9 +205,9 @@ namespace MudBlazor
             }
         }
 
-        private void AddChild(MudTreeViewItem item) => _childItems.Add(item);
+        private void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
 
-        internal IEnumerable<MudTreeViewItem> GetSelectedItems()
+        internal IEnumerable<MudTreeViewItem<T>> GetSelectedItems()
         {
             if (_isSelected)
                 yield return this;

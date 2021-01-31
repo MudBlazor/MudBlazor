@@ -1,5 +1,6 @@
 ﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
+#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
 using System.Linq;
@@ -152,17 +153,21 @@ namespace MudBlazor.UnitTests
             // print the generated html      
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
+            var table = comp.FindComponent<MudTable<string>>();
             var pager = comp.FindComponent<MudSelect<string>>().Instance;
             // change page size
-            await comp.InvokeAsync(() => pager.Value = "20");
+            table.SetParametersAndRender(ComponentParameter.CreateParameter("RowsPerPage", 20));
+            pager.Value.Should().Be("20");
             comp.FindAll("tr.mud-table-row").Count.Should().Be(20);
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-20 of 59");
             // change page size
-            await comp.InvokeAsync(() => pager.Value = "60");
+            table.SetParametersAndRender(ComponentParameter.CreateParameter("RowsPerPage", 60));
+            pager.Value.Should().Be("60");
             comp.FindAll("tr.mud-table-row").Count.Should().Be(59);
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-59 of 59");
             // change page size
-            await comp.InvokeAsync(() => pager.Value = "10");
+            table.SetParametersAndRender(ComponentParameter.CreateParameter("RowsPerPage", 10));
+            pager.Value.Should().Be("10");
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
         }

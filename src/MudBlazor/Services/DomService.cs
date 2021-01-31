@@ -12,6 +12,7 @@ namespace MudBlazor.Services
         ValueTask<BoundingClientRect> GetBoundingClientRect(ElementReference elementReference);
         ValueTask ChangeGlobalCssVariable(string variableName, int value);
         ValueTask ChangeCssVariable(ElementReference element, string variableName, int value);
+        ValueTask AddEventListener<T>(ElementReference element, DotNetObjectReference<T> dotnet, string @event, string callback) where T : class;
     }
 
     public class DomService : IDomService
@@ -34,8 +35,11 @@ namespace MudBlazor.Services
 
         public ValueTask ChangeGlobalCssVariable(string variableName, int value) =>
             _jsRuntime.InvokeVoidAsync("changeGlobalCssVariable", variableName, value);
-        
+
         public ValueTask ChangeCssVariable(ElementReference element, string variableName, int value) =>
             _jsRuntime.InvokeVoidAsync("changeCssVariable", element, variableName, value);
+
+        public ValueTask AddEventListener<T>(ElementReference element, DotNetObjectReference<T> dotnet, string @event, string callback) where T : class =>
+            _jsRuntime.InvokeVoidAsync("addMudEventListener", element, dotnet, @event, callback);
     }
 }

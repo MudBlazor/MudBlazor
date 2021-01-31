@@ -1,5 +1,6 @@
 ﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
+#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
 using System.Collections.Generic;
@@ -128,7 +129,7 @@ namespace MudBlazor.UnitTests
             // select milk
             comp.FindAll("div.mud-chip")[0].Click();
             comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Milk");
-            string.Join(", ", chipset.Instance.SelectedChips.Select(x=>x.Text).OrderBy(x=>x)).Should().Be("Corn flakes, Milk");
+            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Corn flakes, Milk");
             // select red wine
             comp.FindAll("div.mud-chip")[6].Click();
             comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Milk, Red wine");
@@ -147,7 +148,7 @@ namespace MudBlazor.UnitTests
             // select elements needed for the test
             var chipset = comp.FindComponent<MudChipSet>();
             comp.FindAll("div.mud-chip").Count.Should().Be(7);
-            comp.WaitForAssertion(()=> chipset.Instance.SelectedChip.Text.Should().Be("Salad"), TimeSpan.FromSeconds(1));
+            comp.WaitForAssertion(() => chipset.Instance.SelectedChip.Text.Should().Be("Salad"), TimeSpan.FromSeconds(1));
             comp.FindAll("p")[0].TrimmedText().Should().Be("Salad");
             // select cornflakes
             comp.FindAll("div.mud-chip")[3].Click();

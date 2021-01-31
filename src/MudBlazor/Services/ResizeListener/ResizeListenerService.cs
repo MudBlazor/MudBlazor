@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
@@ -19,7 +20,9 @@ namespace MudBlazor.Services
         /// <param name="options"></param>
         public ResizeListenerService(IJSRuntime jsRuntime, IBrowserWindowSizeProvider browserWindowSizeProvider, IOptions<ResizeOptions> options = null)
         {
+            this._dotNetRef = DotNetObjectReference.Create(this);
             this._options = options?.Value ?? new ResizeOptions();
+            this._options.BreakpointDefinitions = BreakpointDefinitions.ToDictionary(x => x.Key.ToString(), x => x.Value);
             this._jsRuntime = jsRuntime;
             this._browserWindowSizeProvider = browserWindowSizeProvider;
         }
@@ -27,45 +30,63 @@ namespace MudBlazor.Services
         private readonly IJSRuntime _jsRuntime;
         private readonly IBrowserWindowSizeProvider _browserWindowSizeProvider;
         private readonly ResizeOptions _options;
+        private readonly DotNetObjectReference<ResizeListenerService> _dotNetRef;
 #nullable enable
         private EventHandler<BrowserWindowSize>? _onResized;
+        private EventHandler<Breakpoint>? _onBreakpointChanged;
 
         /// <summary>
         /// Subscribe to the browsers resize() event.
         /// </summary>
         public event EventHandler<BrowserWindowSize>? OnResized
         {
-            add => Subscribe(value);
-            remove => Unsubscribe(value);
-        }
-#nullable disable
-
-        private void Unsubscribe(EventHandler<BrowserWindowSize> value)
-        {
-            _onResized -= value;
-            if (_onResized == null)
+            add
             {
+                _onResized += value;
+                Start();
+            }
+            remove
+            {
+                _onResized -= value;
                 Cancel().ConfigureAwait(false);
             }
         }
 
-        private void Subscribe(EventHandler<BrowserWindowSize> value)
+        /// <summary>
+        /// Subscribe to the browsers resize() event.
+        /// </summary>
+        public event EventHandler<Breakpoint>? OnBreakpointChanged
         {
-            if (_onResized == null)
+            add
             {
-                _ = Task.Run(async () => await Start());
+                _onBreakpointChanged += value;
+                Start();
             }
-            _onResized += value;
+            remove
+            {
+                _onBreakpointChanged -= value;
+                Cancel().ConfigureAwait(false);
+            }
         }
-
-        private async ValueTask<bool> Start() =>
-            await _jsRuntime.InvokeAsync<bool>($"resizeListener.listenForResize", DotNetObjectReference.Create(this), _options);
+#nullable disable
+        
+        private void Start()
+        {
+            _options.NotifyOnBreakpointOnly = _onResized == null;
+            if (_onResized == null || _onBreakpointChanged == null)
+            {
+                _ = Task.Run(async () => await _jsRuntime.InvokeVoidAsync($"resizeListener.listenForResize", _dotNetRef, _options));
+            }
+        }
 
         private async ValueTask Cancel()
         {
             try
             {
-                await _jsRuntime.InvokeVoidAsync($"resizeListener.cancelListener");
+                if (_onResized == null && _onBreakpointChanged == null)
+                {
+                    await _jsRuntime.InvokeVoidAsync($"resizeListener.cancelListener");
+                }
             }
             catch (Exception)
             {
@@ -91,16 +112,18 @@ namespace MudBlazor.Services
         /// Invoked by jsInterop, use the OnResized event handler to subscribe.
         /// </summary>
         /// <param name="browserWindowSize"></param>
+        /// <param name="breakpoint"></param>
         [JSInvokable]
-        public void RaiseOnResized(BrowserWindowSize browserWindowSize)
+        public void RaiseOnResized(BrowserWindowSize browserWindowSize, Breakpoint breakpoint)
         {
             _windowSize = browserWindowSize;
             _onResized?.Invoke(this, browserWindowSize);
+            _onBreakpointChanged?.Invoke(this, breakpoint);
         }
 
         private BrowserWindowSize _windowSize;
 
-        public Dictionary<Breakpoint, int> BreakpointDefinition { get; set; } = new Dictionary<Breakpoint, int>()
+        public Dictionary<Breakpoint, int> BreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
         {
             [Breakpoint.Xl] = 1920,
             [Breakpoint.Lg] = 1280,
@@ -116,13 +139,13 @@ namespace MudBlazor.Services
                 _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
             if (_windowSize == null)
                 return Breakpoint.Xs;
-            if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Xl])
+            if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Xl])
                 return Breakpoint.Xl;
-            else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Lg])
+            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Lg])
                 return Breakpoint.Lg;
-            else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Md])
+            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Md])
                 return Breakpoint.Md;
-            else if (_windowSize.Width >= BreakpointDefinition[Breakpoint.Sm])
+            else if (_windowSize.Width >= BreakpointDefinitions[Breakpoint.Sm])
                 return Breakpoint.Sm;
             else
                 return Breakpoint.Xs;
@@ -132,65 +155,32 @@ namespace MudBlazor.Services
         {
             if (breakpoint == Breakpoint.None)
                 return false;
-            // note: we don't need to get the size if we are listening for updates, so only if onResized==null, get the actual size
-            if (_onResized == null || _windowSize == null)
-                _windowSize = await _browserWindowSizeProvider.GetBrowserWindowSize();
 
-            if (_windowSize == null)
+            return IsMediaSize(breakpoint, await GetBreakpoint());
+        }
+
+        public bool IsMediaSize(Breakpoint breakpoint, Breakpoint reference)
+        {
+            if (breakpoint == Breakpoint.None)
                 return false;
 
-            Breakpoint? minimumBreakpoint = null;
-            Breakpoint? maximumBreakpoint = null;
-
-            switch (breakpoint)
+            return breakpoint switch
             {
-                case Breakpoint.Xs:
-                    minimumBreakpoint = breakpoint;
-                    maximumBreakpoint = Breakpoint.Sm;
-                    break;
-                case Breakpoint.Sm:
-                    minimumBreakpoint = breakpoint;
-                    maximumBreakpoint = Breakpoint.Md;
-                    break;
-                case Breakpoint.Md:
-                    minimumBreakpoint = breakpoint;
-                    maximumBreakpoint = Breakpoint.Lg;
-                    break;
-                case Breakpoint.Lg:
-                    minimumBreakpoint = breakpoint;
-                    maximumBreakpoint = Breakpoint.Xl;
-                    break;
-                case Breakpoint.Xl:
-                    minimumBreakpoint = breakpoint;
-                    maximumBreakpoint = null;
-                    break;
-
+                Breakpoint.Xs => reference == Breakpoint.Xs,
+                Breakpoint.Sm => reference == Breakpoint.Sm,
+                Breakpoint.Md => reference == Breakpoint.Md,
+                Breakpoint.Lg => reference == Breakpoint.Lg,
+                Breakpoint.Xl => reference == Breakpoint.Xl,
                 // * and down
-                case Breakpoint.SmAndDown:
-                    maximumBreakpoint = Breakpoint.Md;
-                    break;
-                case Breakpoint.MdAndDown:
-                    maximumBreakpoint = Breakpoint.Lg;
-                    break;
-                case Breakpoint.LgAndDown:
-                    maximumBreakpoint = Breakpoint.Xl;
-                    break;
-
+                Breakpoint.SmAndDown => reference <= Breakpoint.Sm,
+                Breakpoint.MdAndDown => reference <= Breakpoint.Md,
+                Breakpoint.LgAndDown => reference <= Breakpoint.Lg,
                 // * and up
-                case Breakpoint.SmAndUp:
-                    minimumBreakpoint = Breakpoint.Sm;
-                    break;
-                case Breakpoint.MdAndUp:
-                    minimumBreakpoint = Breakpoint.Md;
-                    break;
-                case Breakpoint.LgAndUp:
-                    minimumBreakpoint = Breakpoint.Lg;
-                    break;
-            }
-
-            return
-                (!minimumBreakpoint.HasValue || _windowSize.Width >= BreakpointDefinition[minimumBreakpoint.Value])
-                && (!maximumBreakpoint.HasValue || _windowSize.Width < BreakpointDefinition[maximumBreakpoint.Value]);
+                Breakpoint.SmAndUp => reference >= Breakpoint.Sm,
+                Breakpoint.MdAndUp => reference >= Breakpoint.Md,
+                Breakpoint.LgAndUp => reference >= Breakpoint.Lg,
+                _ => false,
+            };
         }
 
         bool _disposed;
@@ -203,6 +193,7 @@ namespace MudBlazor.Services
                 if (disposing)
                 {
                     _onResized = null;
+                    _onBreakpointChanged = null;
                 }
                 _disposed = true;
             }
@@ -220,9 +211,11 @@ namespace MudBlazor.Services
     {
 #nullable enable
         event EventHandler<BrowserWindowSize>? OnResized;
+        event EventHandler<Breakpoint>? OnBreakpointChanged;
 #nullable disable
         ValueTask<BrowserWindowSize> GetBrowserWindowSize();
         Task<bool> IsMediaSize(Breakpoint breakpoint);
+        bool IsMediaSize(Breakpoint breakpoint, Breakpoint reference);
         Task<Breakpoint> GetBreakpoint();
     }
 }

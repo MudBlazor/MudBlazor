@@ -1,4 +1,6 @@
-﻿.mud-grid {
+﻿@import '../abstracts/variables';
+
+.mud-grid {
     width: 100%;
     display: flex;
     flex-wrap: wrap;
@@ -264,7 +266,7 @@
     flex-basis: 100%;
 }
 
-@media (min-width:600px) {
+@media (min-width:$breakpoint-sm) {
     .mud-grid-item-sm-auto {
         flex-grow: 0;
         max-width: none;
@@ -350,7 +352,7 @@
     }
 }
 
-@media (min-width:960px) {
+@media (min-width:$breakpoint-md) {
     .mud-grid-item-md-auto {
         flex-grow: 0;
         max-width: none;
@@ -436,7 +438,7 @@
     }
 }
 
-@media (min-width:1280px) {
+@media (min-width:$breakpoint-lg) {
     .mud-grid-item-lg-auto {
         flex-grow: 0;
         max-width: none;
@@ -522,7 +524,7 @@
     }
 }
 
-@media (min-width:1920px) {
+@media (min-width:$breakpoint-xl) {
     .mud-grid-item-xl-auto {
         flex-grow: 0;
         max-width: none;

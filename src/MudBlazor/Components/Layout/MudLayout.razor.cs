@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -37,36 +35,11 @@ namespace MudBlazor
             }
         }
 
-        List<MudDrawer> _drawers = new List<MudDrawer>();
-
-        public void Add(MudDrawer drawer)
-        {
-            _drawers.Add(drawer);
-        }
-
-        public void Remove(MudDrawer drawer)
-        {
-            _drawers.Remove(drawer);
-        }
-
-        public bool? IsDrawerOpen(Anchor anchor)
-        {
-            return _drawers.FirstOrDefault(d => d.Anchor == anchor)?.Open;
-        }
-
-        public bool? IsDrawerClipped(Anchor anchor)
-        {
-            return _drawers.FirstOrDefault(d => d.Anchor == anchor)?.Clipped;
-        }
+        public DrawerContainer DrawerContainer { get; private set; } = new DrawerContainer();
 
         public void FireDrawersChanged()
         {
             StateHasChanged();
-        }
-
-        public bool HasDrawer(Anchor anchor)
-        {
-            return _drawers.Any(d => d.Anchor == anchor);
         }
     }
 }

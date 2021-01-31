@@ -26,16 +26,6 @@ namespace MudBlazor
             set => SetDateAsync(value, true).AndForget();
         }
 
-        protected override void OnOpened()
-        {
-            Picker.Open();
-        }
-
-        protected override void OnClosed()
-        {
-            Picker.Close();
-        }
-
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
             if (_date != date)
@@ -44,10 +34,7 @@ namespace MudBlazor
 
                 if (updateValue)
                 {
-                    if ((!IsNullOrEmpty(DateFormat)) && _date.HasValue)
-                        await SetValueAsync(_date.Value.ToString(DateFormat), false);
-                    else
-                        await SetValueAsync(_date.ToIsoDateString(), false);
+                    await SetTextAsync(Converter.Set(_date), false);
                 }
 
                 await DateChanged.InvokeAsync(_date);
@@ -57,12 +44,7 @@ namespace MudBlazor
         protected override Task StringValueChanged(string value)
         {
             // Update the date property (without updating back the Value property)
-            return SetDateAsync(ParseDateValue(value), false);
-        }
-
-        private DateTime? ParseDateValue(string value)
-        {
-            return DateTime.TryParse(value, out var date) ? date : (DateTime?)null;
+            return SetDateAsync(Converter.Get(value), false);
         }
 
         protected override string GetDayClasses(int month, DateTime day)
@@ -84,7 +66,7 @@ namespace MudBlazor
             if (PickerVariant != PickerVariant.Static)
             {
                 await Task.Delay(ClosingDelay);
-                Picker.Close();
+                Close();
             }
         }
 

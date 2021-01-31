@@ -17,6 +17,12 @@
                 <MudTextField T="string" Class="mt-3"
                               Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
                               Validation="@(new Func<string, string>(PasswordMatch))"/>
+                <div class="d-flex">
+                    <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">
+                        <MudRadio Option="@("Personal")">Personal</MudRadio>
+                        <MudRadio Option="@("Professional")">Professional</MudRadio>
+                    </MudRadioGroup>
+                </div>
                 <MudCheckBox T="bool" Required="true" RequiredError="You must agree" Class="ml-n2"
                              Label="I agree that MudBlazor is awesome!"/>
             </MudForm>

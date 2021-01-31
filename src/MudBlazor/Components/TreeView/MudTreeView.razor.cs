@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTreeView : MudComponentBase
+    public partial class MudTreeView<T> : MudComponentBase
     {
-        private MudTreeViewItem _activatedItem;
-        private HashSet<MudTreeViewItem> _selectedItems;
-        private List<MudTreeViewItem> _childItems = new List<MudTreeViewItem>();
+        private MudTreeViewItem<T> _activatedValue;
+        private HashSet<MudTreeViewItem<T>> _selectedValues;
+        private List<MudTreeViewItem<T>> _childItems = new List<MudTreeViewItem<T>>();
 
         protected string Classname =>
         new CssBuilder("mud-treeview")
@@ -31,109 +32,71 @@ namespace MudBlazor
         [Parameter]
         public bool CanHover { get; set; }
 
-        [Parameter]
-        public MudTreeViewItem ActivatedItem
-        {
-            get => _activatedItem;
-            set
-            {
-                if (_activatedItem == value)
-                    return;
+        [Parameter] public HashSet<T> Items { get; set; }
 
-                InvokeAsync(() => UpdateActivatedItem(_activatedItem, true));
-            }
-        }
+        [Parameter] public EventCallback<T> ActivatedValueChanged { get; set; }
 
-        [Parameter]
-        public HashSet<MudTreeViewItem> SelectedItems
-        {
-            get => _selectedItems;
-            set
-            {
-                if (_selectedItems == value)
-                    return;
-
-                if (_selectedItems != null)
-                {
-                    foreach (var item in _selectedItems)
-                    {
-                        _ = item.Select(false);
-                    }
-                }
-
-                if (value != null)
-                {
-                    foreach (var item in value)
-                    {
-                        _ = item.Select(true);
-                    }
-                }
-
-                _selectedItems = value;
-                SelectedItemsChanged.InvokeAsync(_selectedItems);
-            }
-        }
-
-        [Parameter]
-        public EventCallback<MudTreeViewItem> ActivatedItemChanged { get; set; }
-
-        [Parameter]
-        public EventCallback<HashSet<MudTreeViewItem>> SelectedItemsChanged { get; set; }
+        [Parameter] public EventCallback<HashSet<T>> SelectedValuesChanged { get; set; }
 
         /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        [CascadingParameter] MudTreeView MudTreeRoot { get; set; }
+        /// <summary>
+        /// ItemTemplate for rendering childre.
+        /// </summary>
+        [Parameter] public RenderFragment<T> ItemTemplate { get; set; }
+
+        [CascadingParameter] MudTreeView<T> MudTreeRoot { get; set; }
 
         public MudTreeView()
         {
             MudTreeRoot = this;
         }
 
-        internal async Task UpdateActivatedItem(MudTreeViewItem item, bool requestedValue)
+        internal async Task UpdateActivatedItem(MudTreeViewItem<T> item, bool requestedValue)
         {
-            if ((_activatedItem == item && requestedValue) ||
-                (_activatedItem != item && !requestedValue))
+            if ((_activatedValue == item && requestedValue) ||
+                (_activatedValue != item && !requestedValue))
                 return;
 
-            if (_activatedItem == item && !requestedValue)
+            if (_activatedValue == item && !requestedValue)
             {
-                _activatedItem = null;
+                _activatedValue = default;
                 await item.Activate(requestedValue);
-                await ActivatedItemChanged.InvokeAsync(_activatedItem);
+                await ActivatedValueChanged.InvokeAsync(_activatedValue.Value);
                 return;
             }
 
-            if (_activatedItem != null)
+            if (_activatedValue != null)
             {
-                await _activatedItem.Activate(false);
+                await _activatedValue.Activate(false);
             }
 
-            _activatedItem = item;
+            _activatedValue = item;
             await item?.Activate(requestedValue);
-            await ActivatedItemChanged.InvokeAsync(item);
+            await ActivatedValueChanged.InvokeAsync(item.Value);
         }
 
         internal async Task UpdateSelectedItems()
         {
-            if (_selectedItems == null)
-                _selectedItems = new HashSet<MudTreeViewItem>();
+            if (_selectedValues == null)
+                _selectedValues = new HashSet<MudTreeViewItem<T>>();
 
             //collect selected items
-            _selectedItems.Clear();
+            _selectedValues.Clear();
             foreach (var item in _childItems)
             {
                 foreach (var selectedItem in item.GetSelectedItems())
                 {
-                    _selectedItems.Add(selectedItem);
+                    _selectedValues.Add(selectedItem);
                 }
             }
 
-            await SelectedItemsChanged.InvokeAsync(_selectedItems);
+            await SelectedValuesChanged.InvokeAsync(new HashSet<T>(_selectedValues.Select(i => i.Value)));
         }
 
-        internal void AddChild(MudTreeViewItem item) => _childItems.Add(item);
+        internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
     }
 }

@@ -106,26 +106,28 @@ namespace MudBlazor
 
         [Inject] public IJSRuntime JSRuntime { get; set; }
 
-        protected string _text;
-
         [Parameter]
-        public string Text
-        {
-            get => _text;
-            set => SetText(value, true);
-        }
+        public string Text { get; set; }
 
-        private void SetText(string text, bool updateValue)
+        protected async Task SetTextAsync(string text, bool updateValue = true)
         {
-            if (_text != text)
+            if (Text != text)
             {
-                _text = text;
-                if (!string.IsNullOrWhiteSpace(text))
+                Text = text;
+                if (!string.IsNullOrWhiteSpace(Text))
                     Touched = true;
                 if (updateValue)
-                    UpdateValueProperty(false);
-                TextChanged.InvokeAsync(_text).AndForget();
+                    await UpdateValuePropertyAsync(false);
+                await TextChanged.InvokeAsync(Text);
             }
+        }
+
+        /// <summary>
+        /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.   
+        /// </summary>
+        protected virtual Task UpdateTextPropertyAsync(bool updateValue)
+        {
+            return SetTextAsync(Converter.Set(Value), updateValue);
         }
 
         /// <summary>
@@ -134,17 +136,9 @@ namespace MudBlazor
         /// <returns>The ValueTask</returns>
         public virtual ValueTask FocusAsync() { return new ValueTask(); }
 
-        public virtual ValueTask SelectAsnyc() { return new ValueTask(); }
+        public virtual ValueTask SelectAsync() { return new ValueTask(); }
 
         public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return new ValueTask(); }
-
-        /// <summary>
-        /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.   
-        /// </summary>
-        protected virtual void UpdateTextProperty(bool updateValue)
-        {
-            SetText(Converter.Set(Value), updateValue);
-        }
 
         [Parameter] public EventCallback<string> TextChanged { get; set; }
 
@@ -181,33 +175,34 @@ namespace MudBlazor
         public T Value
         {
             get => _value;
-            set => SetValue(value, true);
+            set => _value = value;
         }
 
-        private void SetValue(T value, bool updateText)
+        protected async Task SetValueAsync(T value, bool updateText = true)
         {
-            if (!EqualityComparer<T>.Default.Equals(_value, value))
+            if (!EqualityComparer<T>.Default.Equals(Value, value))
             {
-                _value = value;
+                Value = value;
                 if (updateText)
-                    UpdateTextProperty(false);
-                BeginValidateAfter(ValueChanged.InvokeAsync(_value));
+                    await UpdateTextPropertyAsync(false);
+                await ValueChanged.InvokeAsync(Value);
+                BeginValidate();
             }
         }
 
         /// <summary>
         /// Value change hook for descendants. Called when Value needs to be refreshed from current Text property.  
         /// </summary>
-        protected virtual void UpdateValueProperty(bool updateText)
+        protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
-            SetValue(Converter.Get(Text), updateText);
+            return SetValueAsync(Converter.Get(Text), updateText);
         }
 
         protected override bool SetConverter(Converter<T, string> value)
         {
             var changed = base.SetConverter(value);
             if (changed)
-                UpdateTextProperty(false);      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
 
             return changed;
         }
@@ -216,7 +211,7 @@ namespace MudBlazor
         {
             var changed = base.SetCulture(value);
             if (changed)
-                UpdateTextProperty(false);      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
 
             return changed;
         }
@@ -237,7 +232,7 @@ namespace MudBlazor
             if (changed)
             {
                 ((Converter<T>)Converter).Format = value;
-                UpdateTextProperty(false);      // refresh only Text property from current Value
+                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
             }
             return changed;
         }
@@ -248,13 +243,30 @@ namespace MudBlazor
                 await base.ValidateValue();
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
+            await base.OnInitializedAsync();
 
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
-            UpdateTextProperty(false);
+            if (typeof(T) != typeof(string))
+                await UpdateTextPropertyAsync(false);
+        }
+
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            await base.SetParametersAsync(parameters);
+
+            var hasText = parameters.Contains<string>(nameof(Text));
+            var hasValue = parameters.Contains<T>(nameof(Value));
+
+            // Refresh Value from Text
+            if (hasText && !hasValue)
+                await UpdateValuePropertyAsync(false);
+
+            // Refresh Text from Value
+            if (hasValue && !hasText)
+                await UpdateTextPropertyAsync(false);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -280,7 +292,7 @@ namespace MudBlazor
 
         protected override void ResetValue()
         {
-            _text = null;
+            Text = null;
             base.ResetValue();
         }
     }

@@ -1,7 +1,10 @@
-﻿#pragma warning disable IDE1006 // leading underscore
+﻿#pragma warning disable CS1998 // async without await
+#pragma warning disable IDE1006 // leading underscore
+#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -34,13 +37,13 @@ namespace MudBlazor.UnitTests
 
         [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
-        public void RenderDatePicker_10000_Times_CheckPerformance()
+        public void DatePicker_Render_Performance()
         {
             // warmup
             ctx.RenderComponent<MudDatePicker>();
             // measure
             var watch = Stopwatch.StartNew();
-            for (var i = 0; i < 10000; i++)
+            for (var i = 0; i < 1000; i++)
                 ctx.RenderComponent<MudDatePicker>();
             watch.Stop();
             Console.WriteLine("Elapsed: " + watch.Elapsed);
@@ -49,14 +52,14 @@ namespace MudBlazor.UnitTests
 
         [Test]
         [Ignore("Unignore for performance measurements, not needed for code coverage")]
-        public async Task Open_Close_DatePicker_10000_Times_CheckPerformance()
+        public async Task DatePicker_OpenClose_Performance()
         {
             // warmup
             var comp = ctx.RenderComponent<MudDatePicker>();
             var datepicker = comp.Instance;
             // measure
             var watch = Stopwatch.StartNew();
-            for (var i = 0; i < 10000; i++)
+            for (var i = 0; i < 1000; i++)
             {
                 await comp.InvokeAsync(() => datepicker.Open());
                 await comp.InvokeAsync(() => datepicker.Close());
@@ -72,12 +75,44 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<MudDatePicker>();
             // select elements needed for the test
             var picker = comp.Instance;
-            picker.Value.Should().Be(null);
+            picker.Text.Should().Be(null);
             picker.Date.Should().Be(null);
-            await comp.InvokeAsync(() => picker.Value = "2020-10-23");
+            comp.SetParam(p => p.Text, "2020-10-23");
             picker.Date.Should().Be(new DateTime(2020, 10, 23));
-            await comp.InvokeAsync(() => picker.Date = new DateTime(2020, 10, 26));
-            picker.Value.Should().Be("2020-10-26");
+            comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
+            picker.Text.Should().Be("2020-10-26");
+        }
+
+        [Test]
+        public async Task DatePicker_Should_ApplyDateFormat()
+        {
+            var comp = ctx.RenderComponent<MudDatePicker>();
+            // select elements needed for the test
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+            comp.SetParam(p => p.DateFormat, "dd/MM/yyyy");
+            comp.SetParam(p => p.Culture, CultureInfo.InvariantCulture); // <-- this makes a huge difference!
+            comp.SetParam(p => p.Text, "23/10/2020");
+            picker.Date.Should().Be(new DateTime(2020, 10, 23));
+            comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
+            picker.Text.Should().Be("26/10/2020");
+        }
+
+        [Test]
+        public void Check_Intial_Date_Format()
+        {
+            DateTime? date = new DateTime(2021, 1, 13);
+            var comp = ctx.RenderComponent<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.DateFormat, "dd/MM/yyyy")
+                .Add(p => p.Date, date)
+            );
+            Console.WriteLine(comp.Markup);
+            var picker = comp.Instance;
+            var instance = comp.Instance;
+            picker.Date.Should().Be(new DateTime(2021, 1, 13));
+            picker.Text.Should().Be("13/01/2021");
         }
 
         public IRenderedComponent<MudDatePicker> OpenPicker(ComponentParameter parameter)

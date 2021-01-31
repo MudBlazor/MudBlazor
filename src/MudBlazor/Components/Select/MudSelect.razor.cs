@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
@@ -68,9 +69,9 @@ namespace MudBlazor
                 _selectedValues = new HashSet<T>(set);
                 SelectionChangedFromOutside?.Invoke(_selectedValues);
                 if (!MultiSelection)
-                    Value = _selectedValues.FirstOrDefault();
+                    SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
                 else
-                    Text = string.Join(", ", SelectedValues.Select(x => Converter.Set(x)));
+                    SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x)))).AndForget();
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
             }
         }
@@ -144,17 +145,17 @@ namespace MudBlazor
             return selected_item.ChildContent;
         }
 
-        protected override void UpdateValueProperty(bool updateText)
+        protected override Task UpdateValuePropertyAsync(bool updateText)
         {
             // Select does not support updating the value through the Text property at all!
+            return Task.CompletedTask;
         }
 
-        protected override void UpdateTextProperty(bool updateValue)
+        protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
             // when multiselection is true, we don't update the text when the value changes. 
             // instead the Text will be set with a comma separated list of selected values
-            if (!MultiSelection)
-                base.UpdateTextProperty(updateValue);
+            return MultiSelection ? Task.CompletedTask : base.UpdateTextPropertyAsync(updateValue);
         }
 
         internal event Action<HashSet<T>> SelectionChangedFromOutside;
@@ -211,23 +212,23 @@ namespace MudBlazor
         public async Task SelectOption(object obj)
         {
             var value = (T)obj;
-            if (!MultiSelection)
-            {
-                // single selection
-                Value = value;
-                _isOpen = false;
-                UpdateIcon();
-                SelectedValues.Clear();
-                SelectedValues.Add(value);
-            }
-            else
+            if (MultiSelection)
             {
                 // multi-selection: menu stays open
                 if (!SelectedValues.Contains(value))
                     SelectedValues.Add(value);
                 else
                     SelectedValues.Remove(value);
-                Text = string.Join(", ", SelectedValues.Select(x => Converter.Set(x)));
+                await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))));
+            }
+            else
+            {
+                // single selection
+                await SetValueAsync(value);
+                _isOpen = false;
+                UpdateIcon();
+                SelectedValues.Clear();
+                SelectedValues.Add(value);
             }
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
@@ -237,16 +238,27 @@ namespace MudBlazor
         {
             if (Disabled || ReadOnly)
                 return;
-            _isOpen = !_isOpen;
+            if (_isOpen)
+                CloseMenu();
+            else
+                OpenMenu();
+        }
+
+        public void OpenMenu()
+        {
+            if (Disabled || ReadOnly)
+                return;
+            _isOpen = true;
             UpdateIcon();
             StateHasChanged();
         }
 
-        public void CloseMenu()
+        public async void CloseMenu()
         {
             _isOpen = false;
             UpdateIcon();
             StateHasChanged();
+            await OnBlur.InvokeAsync(new FocusEventArgs());
         }
 
         public void UpdateIcon()
@@ -283,9 +295,9 @@ namespace MudBlazor
             return _elementReference.FocusAsync();
         }
 
-        public override ValueTask SelectAsnyc()
+        public override ValueTask SelectAsync()
         {
-            return _elementReference.SelectAsnyc();
+            return _elementReference.SelectAsync();
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)

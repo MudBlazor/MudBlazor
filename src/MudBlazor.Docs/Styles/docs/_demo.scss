@@ -68,10 +68,22 @@
 }
 
 .demo-drawer {
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+
     & .mud-main-content {
         background-color: var(--mud-palette-surface);
         padding: 20px;
         padding-top: 86px;
+    }
+
+    & .mud-paper-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
     }
 }
 

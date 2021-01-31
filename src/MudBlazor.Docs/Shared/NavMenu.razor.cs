@@ -30,8 +30,6 @@ namespace MudBlazor.Docs.Shared
             StateHasChanged();
         }
 
-
-
         bool IsSubGroupExpanded(MudComponent item)
         {
             #region comment about is subgroup expanded

@@ -295,6 +295,10 @@ dotnet_diagnostic.IDE0055.severity = suggestion
 dotnet_diagnostic.IDE0044.severity = none
 # IDE0034: 'default' expression can be simplified
 dotnet_diagnostic.IDE0034.severity = none
+# IDE0056 Indexing can be simplified
+dotnet_diagnostic.IDE0056.severity = none
+# IDE0057 Substring can be simplified
+dotnet_diagnostic.IDE0057.severity = none
 
 [*]
 end_of_line = lf
