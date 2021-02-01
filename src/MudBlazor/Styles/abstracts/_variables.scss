@@ -6,5 +6,5 @@ $breakpoint-md: 960px;
 $breakpoint-lg: 1280px;
 $breakpoint-xl: 1920px;
 
-$breakpoints-max: ( xs: 599px, sm: 959px, md: 1279px, lg: 1919px );
+$breakpoints-max: ( xs: 599px, sm: 959px, md: 1279px, lg: 1919px, xl: 10000px );
 $breakpoints-min: ( xs: $breakpoint-xs, sm: $breakpoint-sm, md: $breakpoint-md, lg: $breakpoint-lg, xl: $breakpoint-xl );
