@@ -129,7 +129,7 @@ namespace MudBlazor.Services
 
         private BrowserWindowSize _windowSize;
 
-        public Dictionary<Breakpoint, int> BreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
+        public static Dictionary<Breakpoint, int> BreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
         {
             [Breakpoint.Xl] = 1920,
             [Breakpoint.Lg] = 1280,
