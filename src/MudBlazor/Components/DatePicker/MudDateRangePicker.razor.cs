@@ -7,22 +7,12 @@ using static System.String;
 
 namespace MudBlazor
 {
-    public class MudDateRangePicker : MudBaseDatePicker
+    public partial class MudDateRangePicker : MudBaseDatePicker
     {
         private DateTime? _firstDate = null;
         private DateRange _dateRange;
 
         protected override bool IsRange => true;
-
-        protected override void OnOpened()
-        {
-            Picker.Open();
-        }
-
-        protected override void OnClosed()
-        {
-            Picker.Close();
-        }
 
         public MudDateRangePicker()
         {
@@ -160,7 +150,7 @@ namespace MudBlazor
             if (PickerVariant != PickerVariant.Static)
             {
                 await Task.Delay(ClosingDelay);
-                Picker.Close();
+                Close();
             }
         }
 

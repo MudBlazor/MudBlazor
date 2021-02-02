@@ -12,6 +12,21 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
+  <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
+  <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
+    <PropertyGroup>
+      <CleanGeneratedFiles>false</CleanGeneratedFiles>
+    </PropertyGroup>
+  </Target>
+  
+  <!--Cleanup old ExampleCode files-->
+  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
+    <ItemGroup>
+      <FilesToClean Include="./Generated/*.cs" />
+    </ItemGroup>
+    <Delete Files="@(FilesToClean)" />
+  </Target>
+
   <ItemGroup>
     <PackageReference Include="bunit" Version="1.0.0-preview-01" />
     <PackageReference Include="coverlet.msbuild" Version="3.0.2">

@@ -44,7 +44,7 @@ namespace MudBlazor
           .AddClass($"mud-drawer-overlay-{Breakpoint.ToDescriptionString()}")
           .AddClass($"mud-drawer-overlay--initial", _initial)
         .Build();
-        
+
         protected string Stylename =>
         new StyleBuilder()
             .AddStyle("--mud-drawer-content-height", $"{_height}px", Anchor == Anchor.Bottom || Anchor == Anchor.Top)
@@ -73,7 +73,7 @@ namespace MudBlazor
                 }
             }
         }
-        
+
         /// <summary>
         /// If true, drawer will be fixed.
         /// </summary>
@@ -93,12 +93,12 @@ namespace MudBlazor
         /// The color of the component. It supports the theme colors.
         /// </summary>
         [Parameter] public Color Color { get; set; } = Color.Default;
-        
+
         /// <summary>
         /// Variant of the drawer. It affects how the component behaves on different screen sizes.
         /// </summary>
         [Parameter] public DrawerVariant Variant { get; set; } = DrawerVariant.Responsive;
-        
+
         /// <summary>
         /// Child content of component.
         /// </summary>
@@ -202,7 +202,8 @@ namespace MudBlazor
                 await UpdateHeight();
                 ResizeListener.OnBreakpointChanged += ResizeListener_OnBreakpointChanged;
 
-                if (await ResizeListener.GetBreakpoint() < Breakpoint)
+                _screenBreakpoint = await ResizeListener.GetBreakpoint();
+                if (_screenBreakpoint < Breakpoint)
                 {
                     await OpenChanged.InvokeAsync(false);
                 }
@@ -237,12 +238,12 @@ namespace MudBlazor
         private void ResizeListener_OnBreakpointChanged(object sender, Breakpoint breakpoint)
         {
             _screenBreakpoint = breakpoint;
-            UpdateBreakpointState();
+            InvokeAsync(() => UpdateBreakpointState());
         }
 
         private async Task UpdateHeight()
         {
-            _height = (await DomService.GetBoundingClientRect(_contentRef)).Height;
+            _height = (await DomService.GetBoundingClientRect(_contentRef))?.Height ?? 0;
         }
 
         private async void UpdateBreakpointState()
@@ -266,7 +267,7 @@ namespace MudBlazor
                     Layout?.FireDrawersChanged();
                     StateHasChanged();
                 }
-                else if(_isOpenWhenLarge != null)
+                else if (_isOpenWhenLarge != null)
                 {
                     await OpenChanged.InvokeAsync(_isOpenWhenLarge.Value);
                     _isOpenWhenLarge = null;

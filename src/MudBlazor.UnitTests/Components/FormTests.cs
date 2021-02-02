@@ -207,37 +207,32 @@ namespace MudBlazor.UnitTests
         public async Task FormAsyncValidationTest()
         {
             const int ValidDelay = 100;
-            const int InValidDelay = 200;
-            const int WaitDelay = 100;
+            const int InvalidDelay = 200;
             var validationFunc = new Func<string, Task<string>>(async s =>
             {
                 if (s == null)
                     return null;
                 var valid = (s == "abc");
-                await Task.Delay(valid ? ValidDelay : InValidDelay);
+                await Task.Delay(valid ? ValidDelay : InvalidDelay);
                 return valid ? null : "invalid";
             });
             var comp = ctx.RenderComponent<FormValidationTest>(ComponentParameter.CreateParameter("validation", validationFunc));
             Console.WriteLine(comp.Markup);
-            var form = comp.FindComponent<MudForm>().Instance;
-            var textFieldcomp = comp.FindComponent<MudTextField<string>>();
-            var textField = textFieldcomp.Instance;
+            var textFieldComp = comp.FindComponent<MudTextField<string>>();
+            var textField = textFieldComp.Instance;
             // validate initial field state
             textField.ValidationErrors.Should().BeEmpty();
             // make sure error can be detected
-            textFieldcomp.Find("input").Change("def");
-            await Task.Delay(InValidDelay + WaitDelay);
-            textField.ValidationErrors.Should().ContainSingle("invalid");
+            textFieldComp.Find("input").Change("def");
+            comp.WaitForAssertion(() => textField.ValidationErrors.Should().ContainSingle("invalid"), TimeSpan.FromSeconds(5));
             // make sure success can be detected
-            textFieldcomp.Find("input").Change("abc");
-            await Task.Delay(ValidDelay + WaitDelay);
-            textField.ValidationErrors.Should().BeEmpty();
+            textFieldComp.Find("input").Change("abc");
+            comp.WaitForAssertion(() => textField.ValidationErrors.Should().BeEmpty(), TimeSpan.FromSeconds(5));
             // send invalid value, then valid value
-            textFieldcomp.Find("input").Change("def");
-            textFieldcomp.Find("input").Change("abc");
+            textFieldComp.Find("input").Change("def");
+            textFieldComp.Find("input").Change("abc");
             // validate that first call result (invalid, longer return time) will not overwrite second call result (valid, shorter return time)
-            await Task.Delay(InValidDelay + WaitDelay);
-            textField.ValidationErrors.Should().BeEmpty();
+            comp.WaitForAssertion(() => textField.ValidationErrors.Should().BeEmpty(), TimeSpan.FromSeconds(5));
         }
 
         /// <summary>
@@ -411,6 +406,37 @@ namespace MudBlazor.UnitTests
             checkbox.Instance.ErrorText.Should().BeNullOrEmpty();
             checkbox.Instance.Checked.Should().BeFalse();
             // TODO: fill out the form with errors, field after field, check how fields get validation erros after blur
+        }
+
+        /// <summary>
+        /// Setting the required radiogroup value should set IsValid true
+        /// Clearing the value of a required radiogroup should set form's IsValid to false.
+        /// </summary>
+        [Test]
+        public async Task FormWithRadioGroupIsValidTest()
+        {
+            var comp = ctx.RenderComponent<FormWithRadioGroupTest>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            var radioGroupcomp = comp.FindComponent<MudRadioGroup<string>>();
+            var radioGroup = radioGroupcomp.Instance;
+            // check initial state: form should not be valid
+            form.IsValid.Should().Be(false);
+            radioGroup.Error.Should().BeFalse();
+            radioGroup.ErrorText.Should().BeNullOrEmpty();
+            // click on first radio: form should be valid now
+            radioGroupcomp.Find("input").Click();
+            form.IsValid.Should().Be(true);
+            form.Errors.Length.Should().Be(0);
+            radioGroup.Error.Should().BeFalse();
+            radioGroup.ErrorText.Should().BeNullOrEmpty();
+            // clear selection
+            comp.SetParam("Selected", null);
+            form.IsValid.Should().Be(false);
+            form.Errors.Length.Should().Be(1);
+            form.Errors[0].Should().Be("Required");
+            radioGroup.Error.Should().BeTrue();
+            radioGroup.ErrorText.Should().Be("Required");
         }
     }
 }

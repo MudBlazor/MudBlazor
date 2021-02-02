@@ -42,8 +42,9 @@ namespace MudBlazor.Services
         {
             add
             {
-                _onResized += value;
+                _options.NotifyOnBreakpointOnly = false;
                 Start();
+                _onResized += value;
             }
             remove
             {
@@ -59,8 +60,9 @@ namespace MudBlazor.Services
         {
             add
             {
-                _onBreakpointChanged += value;
+                _options.NotifyOnBreakpointOnly = _onResized == null;
                 Start();
+                _onBreakpointChanged += value;
             }
             remove
             {
@@ -69,10 +71,9 @@ namespace MudBlazor.Services
             }
         }
 #nullable disable
-        
+
         private void Start()
         {
-            _options.NotifyOnBreakpointOnly = _onResized == null;
             if (_onResized == null || _onBreakpointChanged == null)
             {
                 _ = Task.Run(async () => await _jsRuntime.InvokeVoidAsync($"resizeListener.listenForResize", _dotNetRef, _options));
@@ -86,6 +87,11 @@ namespace MudBlazor.Services
                 if (_onResized == null && _onBreakpointChanged == null)
                 {
                     await _jsRuntime.InvokeVoidAsync($"resizeListener.cancelListener");
+                }
+                else if (_onResized == null && _onBreakpointChanged != null && !_options.NotifyOnBreakpointOnly)
+                {
+                    _options.NotifyOnBreakpointOnly = true;
+                    Start();
                 }
             }
             catch (Exception)
@@ -123,7 +129,7 @@ namespace MudBlazor.Services
 
         private BrowserWindowSize _windowSize;
 
-        public Dictionary<Breakpoint, int> BreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
+        public static Dictionary<Breakpoint, int> BreakpointDefinitions { get; set; } = new Dictionary<Breakpoint, int>()
         {
             [Breakpoint.Xl] = 1920,
             [Breakpoint.Lg] = 1280,
