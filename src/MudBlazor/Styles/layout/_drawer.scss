@@ -205,12 +205,14 @@
     &.mud-drawer-responsive.mud-drawer-clipped-always,
     &.mud-drawer-temporary.mud-drawer-clipped-always {
         top: var(--mud-appbar-min-height);
+        height: calc(100% - var(--mud-appbar-min-height));
     }
 
     @each $breakpoint in map-keys($breakpoints-max) {
         &.mud-drawer-responsive.mud-drawer-clipped-docked.mud-drawer-#{$breakpoint} {
             @media (min-width: map-get($breakpoints-min, $breakpoint)) {
                 top: var(--mud-appbar-min-height);
+                height: calc(100% - var(--mud-appbar-min-height));
             }
         }
     }
