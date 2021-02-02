@@ -69,6 +69,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("TreeView", typeof(MudTreeView<T>))
             .AddItem("Breadcrumbs", typeof(MudBreadcrumbs))
             .AddItem("ScrollToTop", typeof(MudScrollToTop))
+            .AddItem("Popover", typeof(MudPopover))
 
             //GROUPS
 
