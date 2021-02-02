@@ -7,11 +7,11 @@
         <div class="@ToolbarClassnames">
             <div class="mud-tabs-toolbar-inner">
                 <div class="mud-tabs-toolbar-content">
-                    <div class="@WrapperClassnames">
+                    <div @ref="@TabsRef" class="@WrapperClassnames">
                         @foreach (MudTabPanel panel in Panels)
                         {
                             <MudTooltip Placement="@GetTooltipPlacement()" Text="@panel.ToolTip">
-                                <div class="@GetTabClass(panel)" @onclick=@( e => ActivatePanel(panel, e) )>
+                                <div @ref="panel.PanelRef" class="@GetTabClass(panel)" @onclick=@( e => ActivatePanel(panel, e) )>
                                     @if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
                                     {
                                         @panel.Text
@@ -32,14 +32,7 @@
                                 </div>
                             </MudTooltip>
                         }
-                        @if (!Vertical)
-                        {
-                            <div class="mud-tab-slider mud-tab-slider-horizontal @(TabsPlacement == Placement.Bottom ? "mud-tab-slider-horizontal-reverse" : "")" style="width: calc(100% / @Panels.Count()); left: calc((100% / @Panels.Count()) * @ActivePanelIndex);"></div>
-                        }
-                        else
-                        {
-                            <div class="mud-tab-slider mud-tab-slider-vertical @(TabsPlacement == Placement.End ? "mud-tab-slider-vertical-reverse" : "")" style="height: calc(100% / @Panels.Count()); top: calc((100% / @Panels.Count()) * @ActivePanelIndex);"></div>
-                        }
+                        <div class="@SliderClass" style="@SliderStyle"></div>
                     </div>
                 </div>
             </div>

@@ -1,16 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
+using MudBlazor.Services;
+using System.Globalization;
 
 namespace MudBlazor
 {
     public partial class MudTabs : MudComponentBase, IDisposable
     {
         private bool _isDisposed;
+        public ElementReference TabsRef;
+        private double _size;
+        private double _position;
 
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
@@ -41,6 +47,24 @@ namespace MudBlazor
             .AddClass($"mud-tabs-vertical", Vertical)
             .AddClass(PanelClass)
             .Build();
+
+        protected string SliderClass =>
+            new CssBuilder("mud-tab-slider")
+            .AddClass($"mud-tab-slider-horizontal", !Vertical)
+            .AddClass($"mud-tab-slider-vertical", Vertical)
+            .AddClass($"mud-tab-slider-horizontal-reverse", !Vertical && TabsPlacement == Placement.Bottom)
+            .AddClass($"mud-tab-slider-vertical-reverse", Vertical && TabsPlacement == Placement.End)
+            .Build();
+
+        protected string SliderStyle =>
+        new StyleBuilder()
+            .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", !Vertical)
+            .AddStyle("left", $"{_position.ToString(CultureInfo.InvariantCulture)}px", !Vertical)
+            .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Vertical)
+            .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Vertical)
+        .Build();
+
+        [Inject] public IDomService DomService { get; set; }
 
         /// <summary>
         /// If true, render all tabs and hide (display:none) every non-active.
@@ -176,6 +200,7 @@ namespace MudBlazor
             {
                 ActivePanel = panel;
                 ActivePanelIndex = Panels.IndexOf(panel);
+                _ = UpdateSlider();
                 if (ev != null)
                     ActivePanel.OnClick.InvokeAsync(ev);
             }
@@ -217,5 +242,45 @@ namespace MudBlazor
             }
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await UpdateSlider();
+            }
+        }
+
+        private async Task UpdateSlider()
+        {
+            if(ActivePanel != null)
+            {
+                if (!Vertical)
+                    _size = (await DomService.GetBoundingClientRect(ActivePanel.PanelRef))?.Width ?? 0;
+                else
+                    _size = (await DomService.GetBoundingClientRect(ActivePanel.PanelRef))?.Height ?? 0;
+
+                _position = 0;
+
+                if (ActivePanelIndex != 0)
+                {
+                    double position = 0;
+                    var counter = 0;
+                    foreach (var panel in Panels) if (counter < ActivePanelIndex)
+                        {
+                            if (!Vertical)
+                            {
+                                position += (await DomService.GetBoundingClientRect(panel.PanelRef))?.Width ?? 0;
+                            }
+                            else
+                            {
+                                position += (await DomService.GetBoundingClientRect(panel.PanelRef))?.Height ?? 0;
+                            }
+                            counter++;
+                        }
+                    _position = position;
+                }
+                StateHasChanged();
+            }
+        }
     }
 }
