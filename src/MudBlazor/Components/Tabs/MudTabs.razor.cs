@@ -20,16 +20,16 @@ namespace MudBlazor
 
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
-            .AddClass($"mud-tabs-reverse", !Vertical && TabsPlacement == Placement.Bottom)
-            .AddClass($"mud-tabs-vertical", Vertical)
-            .AddClass($"mud-tabs-vertical-reverse", Vertical && TabsPlacement == Placement.End)
+            .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
+            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
+            .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right)
             .AddClass(Class)
             .Build();
 
         protected string ToolbarClassnames =>
             new CssBuilder("mud-tabs-toolbar")
             .AddClass($"mud-tabs-rounded", Rounded)
-            .AddClass($"mud-tabs-vertical", Vertical)
+            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
             .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default)
             .AddClass($"mud-border-right", Border)
             .AddClass($"mud-paper-outlined", Outlined)
@@ -39,29 +39,29 @@ namespace MudBlazor
         protected string WrapperClassnames =>
             new CssBuilder("mud-tabs-toolbar-wrapper")
             .AddClass($"mud-tabs-centered", Centered)
-            .AddClass($"mud-tabs-vertical", Vertical)
+            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
             .Build();
 
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
-            .AddClass($"mud-tabs-vertical", Vertical)
+            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
             .AddClass(PanelClass)
             .Build();
 
         protected string SliderClass =>
             new CssBuilder("mud-tab-slider")
-            .AddClass($"mud-tab-slider-horizontal", !Vertical)
-            .AddClass($"mud-tab-slider-vertical", Vertical)
-            .AddClass($"mud-tab-slider-horizontal-reverse", !Vertical && TabsPlacement == Placement.Bottom)
-            .AddClass($"mud-tab-slider-vertical-reverse", Vertical && TabsPlacement == Placement.End)
+            .AddClass($"mud-tab-slider-horizontal", Position == Position.Top || Position == Position.Bottom)
+            .AddClass($"mud-tab-slider-vertical", Position == Position.Left || Position == Position.Right)
+            .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
+            .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right)
             .Build();
 
         protected string SliderStyle =>
         new StyleBuilder()
-            .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", !Vertical)
-            .AddStyle("left", $"{_position.ToString(CultureInfo.InvariantCulture)}px", !Vertical)
-            .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Vertical)
-            .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Vertical)
+            .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
+            .AddStyle("left", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
+            .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
+            .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
         .Build();
 
         [Inject] public IDomService DomService { get; set; }
@@ -92,11 +92,9 @@ namespace MudBlazor
         [Parameter] public bool Centered { get; set; }
 
         /// <summary>
-        /// If true, displays the MudTabs verticaly.
+        /// Sets the position of the tabs itself.
         /// </summary>
-        [Parameter] public bool Vertical { get; set; }
-
-        [Parameter] public Placement TabsPlacement { get; set; } = Placement.Top;
+        [Parameter] public Position Position { get; set; } = Position.Top;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -226,20 +224,14 @@ namespace MudBlazor
 
         private Placement GetTooltipPlacement()
         {
-            if (Vertical)
-            {
-                if (TabsPlacement == Placement.End)
-                    return Placement.Start;
-                else
-                    return Placement.End;
-            }
+            if (Position == Position.Right)
+                return Placement.Start;
+            else if (Position == Position.Left)
+                return Placement.End;
+            else if (Position == Position.Bottom)
+                return Placement.Top;
             else
-            {
-                if (TabsPlacement == Placement.Bottom)
-                    return Placement.Top;
-                else
-                    return Placement.Bottom;
-            }
+                return Placement.Bottom;
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -254,7 +246,7 @@ namespace MudBlazor
         {
             if(ActivePanel != null)
             {
-                if (!Vertical)
+                if (Position == Position.Top || Position == Position.Bottom)
                     _size = (await DomService.GetBoundingClientRect(ActivePanel.PanelRef))?.Width ?? 0;
                 else
                     _size = (await DomService.GetBoundingClientRect(ActivePanel.PanelRef))?.Height ?? 0;
@@ -267,7 +259,7 @@ namespace MudBlazor
                     var counter = 0;
                     foreach (var panel in Panels) if (counter < ActivePanelIndex)
                         {
-                            if (!Vertical)
+                            if (Position == Position.Top || Position == Position.Bottom)
                             {
                                 position += (await DomService.GetBoundingClientRect(panel.PanelRef))?.Width ?? 0;
                             }
