@@ -23,8 +23,11 @@ namespace MudBlazor.UnitTests.Mocks
         public ValueTask<BoundingClientRect> GetBoundingClientRect(ElementReference elementReference)
             => new ValueTask<BoundingClientRect>(new BoundingClientRect());
 
-        public ValueTask AddEventListener<T>(ElementReference element, DotNetObjectReference<T> dotnet, string @event, string callback) where T : class =>
-            new ValueTask();
+        public ValueTask<int> AddEventListener<T>(ElementReference element, DotNetObjectReference<T> dotnet, string @event, string callback, bool stopPropagation = false) where T : class 
+            => new ValueTask<int>(0);
+
+        public ValueTask RemoveEventListener(ElementReference element, string @event, int eventId)
+            => new ValueTask();
         
         public ValueTask OpenInNewTab(string url) =>
             new ValueTask();
