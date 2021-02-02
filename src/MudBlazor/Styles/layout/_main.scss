@@ -9,9 +9,9 @@
 
 .mud-main-drawer-open {
     &-responsive {
-        @each $breakpoint in map-keys($breakpoints-max) {
+        @each $breakpoint in map-keys($breakpoints) {
             &-#{$breakpoint} {
-                @media (min-width: map-get($breakpoints-min, $breakpoint)) {
+                @media (min-width: map-get($breakpoints, $breakpoint)) {
                     &-left:not(#{&}-right) {
                         margin-left: var(--mud-drawer-width);
                     }
