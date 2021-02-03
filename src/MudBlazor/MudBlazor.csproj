@@ -38,6 +38,23 @@
     <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
 
+  <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
+  <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
+    <PropertyGroup>
+      <CleanGeneratedFiles>false</CleanGeneratedFiles>
+    </PropertyGroup>
+  </Target>
+  
+  <!--Cleanup old ExampleCode files-->
+  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
+    <ItemGroup>
+      <FilesToClean Include="./TScripts/combined/MudBlazor.js" />
+      <FilesToClean Include="./wwwroot/MudBlazor.min.js" />
+      <FilesToClean Include="./wwwroot/MudBlazor.min.css" />
+    </ItemGroup>
+    <Delete Files="@(FilesToClean)" />
+  </Target>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />

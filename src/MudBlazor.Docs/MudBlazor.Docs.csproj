@@ -88,6 +88,7 @@
       <FilesToClean Include="./NewFilesToBuild.txt" />
       <FilesToClean Include="./Models/Snippets.generated.cs" />
       <FilesToClean Include="./Models/DocStrings.generated.cs" />
+      <FilesToClean Include="./wwwroot/MudBlazorDocs.min.css" />
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
   </Target>
