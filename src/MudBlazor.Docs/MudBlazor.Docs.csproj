@@ -80,8 +80,7 @@
       <CleanGeneratedFiles>false</CleanGeneratedFiles>
     </PropertyGroup>
   </Target>
-  
-  <!--Cleanup old ExampleCode files-->
+
   <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
     <ItemGroup>
       <FilesToClean Include="./Pages/**/*ExampleCode.*" />
