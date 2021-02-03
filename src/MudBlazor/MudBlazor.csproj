@@ -74,11 +74,11 @@
     </ItemGroup>
   </Target>
 
+  <!--Dont Include in build output-->
   <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Remove="compilerconfig.json" />
-    <None Remove="DoNotRemove.txt" />
+    <Content Remove="compilerconfig.json" />
+    <Content Remove="excubowebcompiler.json" />
+    <Content Remove="**/*/DoNotRemove.txt" />
   </ItemGroup>
+
 </Project>
