@@ -1,13 +1,13 @@
 ﻿@using MudBlazor.Internal
 @namespace MudBlazor
-@inherits MudPicker
+@inherits MudPicker<TimeSpan?>
 
 @Render
 
 @code{
 
     protected override RenderFragment PickerContent=> 
-    @<Node>
+    @<CascadingValue Value="@this" IsFixed="true">
         <MudPickerToolbar Class="@ToolbarClass" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
             <div class="mud-timepicker-hourminute">
                 <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="@HoursButtonClass" OnClick="OnHourClick">@GetHourString()</MudButton>
@@ -90,6 +90,6 @@
                 </div>
             </div>
         </MudPickerContent>
-    </Node>;
+    </CascadingValue>;
     
 }

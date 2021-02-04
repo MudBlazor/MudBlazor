@@ -10,8 +10,40 @@ using static System.String;
 
 namespace MudBlazor
 {
-    public partial class MudTimePicker : MudPicker
+    public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
+        public MudTimePicker() : base(new DefaultConverter<TimeSpan?>())
+        {
+            Converter.GetFunc = OnGet;
+            Converter.SetFunc = OnSet;
+        }
+
+        private string OnSet(TimeSpan? time)
+        {
+            return AmPm ? time.ToAmPmString() : time.ToIsoString();
+        }
+
+        private TimeSpan? OnGet(string value)
+        {
+            if (IsNullOrWhiteSpace(value))
+                return null;
+            var pm = false;
+            var value1 = value.Trim();
+            var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
+            if (m.Success)
+            {
+                AmPm = true; // <-- this is kind of a hack, but we need to make sure it is set or else the string value might be converted to 24h format.
+                pm = m.Value.ToLower() == "pm";
+                value1 = Regex.Replace(value, "(AM|am|PM|pm)", "").Trim();
+            }
+            if (TimeSpan.TryParse(value1, out var time))
+            {
+                if (pm)
+                    time = new TimeSpan((time.Hours + 12) % 24, time.Minutes, 0);
+                return time;
+            }
+            return null;
+        }
 
         private OpenTo _currentView;
 
@@ -43,7 +75,7 @@ namespace MudBlazor
             {
                 _time = time;
                 if (updateValue)
-                    await SetTextAsync(AmPm ? _time.ToAmPmString() : _time.ToIsoString(), false);
+                    await SetTextAsync(Converter.Set(_time), false);
                 UpdateTimeSetFromTime();
                 await TimeChanged.InvokeAsync(_time);
             }
@@ -57,37 +89,13 @@ namespace MudBlazor
         protected override Task StringValueChanged(string value)
         {
             // Update the time property (without updating back the Value property)
-            return SetTimeAsync(ParseTimeValue(value), false);
+            return SetTimeAsync(Converter.Get(value), false);
         }
 
         protected override void OnPickerOpened()
         {
             base.OnPickerOpened();
             _currentView = OpenTo;
-        }
-
-        private TimeSpan? ParseTimeValue(string value)
-        {
-            if (IsNullOrWhiteSpace(value))
-                return null;
-            var pm = false;
-            var value1 = value.Trim();
-            var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
-            if (m.Success)
-            {
-                AmPm = true; // <-- this is kind of a hack, but we need to make sure it is set or else the string value might be converted to 24h format.
-                pm = m.Value.ToLower() == "pm";
-                value1 = Regex.Replace(value, "(AM|am|PM|pm)", "").Trim();
-            }
-
-            if (TimeSpan.TryParse(value1, out var time))
-            {
-                if (pm)
-                    time = new TimeSpan((time.Hours + 12) % 24, time.Minutes, 0);
-                return time;
-            }
-
-            return null;
         }
 
         private string GetHourString()
@@ -180,30 +188,22 @@ namespace MudBlazor
         {
             return $"mud-picker-time-clock-pin mud-{Color.ToDescriptionString()}";
         }
+
         private string GetClockPointerColor()
         {
             if (MouseDown)
-            {
                 return $"mud-picker-time-clock-pointer mud-{Color.ToDescriptionString()}";
-            }
             else
-            {
                 return $"mud-picker-time-clock-pointer mud-picker-time-clock-pointer-animation mud-{Color.ToDescriptionString()}";
-            }
-
         }
 
         private string GetClockPointerThumbColor()
         {
             var deg = GetDeg();
             if (deg % 30 == 0)
-            {
                 return $"mud-picker-time-clock-pointer-thumb mud-onclock-text mud-onclock-primary mud-{Color.ToDescriptionString()}";
-            }
             else
-            {
                 return $"mud-picker-time-clock-pointer-thumb mud-onclock-minute mud-{Color.ToDescriptionString()}-text";
-            }
         }
 
         private string GetNumberColor(int value)
@@ -374,7 +374,6 @@ namespace MudBlazor
             public int Minute { get; set; }
 
         }
-
 
     }
 }

@@ -25,6 +25,13 @@ namespace MudBlazor
         [CascadingParameter] internal IForm Form { get; set; }
 
         /// <summary>
+        /// If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
+        /// If it is sub-component, it will NOT do form validation!!
+        /// </summary>
+        [CascadingParameter(Name = "Standalone")]
+        internal bool Standalone { get; set; } = true;
+
+        /// <summary>
         /// If true, this form input is required to be filled out.
         /// </summary>
         [Parameter] public bool Required { get; set; }

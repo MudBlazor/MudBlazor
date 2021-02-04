@@ -1,11 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudPicker : MudComponentBase
+    public partial class MudPicker<T> : MudFormComponent<T,string>
     {
         enum PickerVerticalPosition
         {
@@ -22,6 +23,9 @@ namespace MudBlazor
             Left,
             Right
         }
+
+        public MudPicker() : base(new Converter<T, string>()) { }
+        protected MudPicker(Converter<T, string> converter) : base(converter) {}
 
         [Inject] private IDomService DomService { get; set; }
 
