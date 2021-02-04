@@ -2,7 +2,7 @@
 
 namespace MudBlazor
 {
-    public enum LegendPosition
+    public enum Position
     {
         [Description("bottom")]
         Bottom,

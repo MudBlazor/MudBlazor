@@ -101,15 +101,18 @@ namespace MudBlazor
         [Parameter] public RenderFragment ActivatorContent { get; set; }
 
         /// <summary>
-        /// Sets the direction the select menu should be.
+        /// Sets the direction the select menu will start from relative to its parent.
         /// </summary>
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
-        /// If true, the select menu will open either before or after the input.
+        /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
         [Parameter] public bool OffsetY { get; set; }
 
+        /// <summary>
+        /// If true, the select menu will open either above or bellow the input depending on the direction.
+        /// </summary>
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>

@@ -460,5 +460,33 @@ namespace MudBlazor.UnitTests
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("1");
         }
+
+        /// <summary>
+        /// The table should render the classes and style to the tr using the RowStyleFunc and RowClassFunc parameters
+        /// </summary>
+        [Test]
+        public async Task TableRowClassStyleTest()
+        {
+            var comp = ctx.RenderComponent<TableRowClassStyleTest>();
+            Console.WriteLine(comp.Markup);
+            var trs = comp.FindAll("tr");
+            trs.Count.Should().Be(5); // four rows + header row
+            
+            var tds = comp.FindAll("td");
+            tds[0].TextContent.Trim().Should().Be("0");
+            tds[1].TextContent.Trim().Should().Be("1");
+            tds[2].TextContent.Trim().Should().Be("2");
+            tds[3].TextContent.Trim().Should().Be("3");
+
+            trs[1].GetAttribute("style").Contains("color: red");
+            trs[2].GetAttribute("style").Contains("color: red");
+            trs[3].GetAttribute("style").Contains("color: blue");
+            trs[4].GetAttribute("style").Contains("color: blue");
+
+            trs[1].GetAttribute("class").Contains("even");
+            trs[2].GetAttribute("class").Contains("odd");
+            trs[3].GetAttribute("class").Contains("even");
+            trs[4].GetAttribute("class").Contains("odd");
+        }
     }
 }

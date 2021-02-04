@@ -45,10 +45,19 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Open { get; set; }
 
+        /// <summary>
+        /// Sets the direction the popover will start from relative to its parent.
+        /// </summary>
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
+        /// <summary>
+        /// If true, the select menu will open either above or bellow the input depending on the direction.
+        /// </summary>
         [Parameter] public bool OffsetX { get; set; }
 
+        /// <summary>
+        /// If true, the select menu will open either before or after the input depending on the direction.
+        /// </summary>
         [Parameter] public bool OffsetY { get; set; }
 
         /// <summary>

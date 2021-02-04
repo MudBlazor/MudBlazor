@@ -51,7 +51,7 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
-        [Ignore("Unignore for performance measurements, not needed for code coverage")]
+        //[Ignore("Unignore for performance measurements, not needed for code coverage")]
         public async Task DatePicker_OpenClose_Performance()
         {
             // warmup

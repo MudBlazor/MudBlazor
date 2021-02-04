@@ -69,6 +69,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("TreeView", typeof(MudTreeView<T>))
             .AddItem("Breadcrumbs", typeof(MudBreadcrumbs))
             .AddItem("ScrollToTop", typeof(MudScrollToTop))
+            .AddItem("Popover", typeof(MudPopover))
 
             //GROUPS
 
@@ -104,7 +105,6 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Donut chart", typeof(MudChart))
                 .AddItem("Line chart", typeof(MudChart))
                 .AddItem("Pie chart", typeof(MudChart))
-                .AddItem("Bar chart", typeof(MudChart))
             );
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;
 
