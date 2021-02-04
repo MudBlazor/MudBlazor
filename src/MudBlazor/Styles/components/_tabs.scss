@@ -39,11 +39,13 @@
     display: inline-block;
     position: relative;
     white-space: nowrap;
+    overflow: hidden;
 
     & .mud-tabs-toolbar-wrapper {
         width: max-content;
         position: inherit;
         display: flex;
+        transition: .3s cubic-bezier(.25,.8,.5,1);
 
         &.mud-tabs-centered {
             margin: auto;
@@ -57,6 +59,7 @@
 
 .mud-tabs-panels {
     position: relative;
+    transition: .3s cubic-bezier(.25,.8,.5,1);
 
     &.mud-tabs-vertical {
         display: flex;
@@ -91,7 +94,7 @@
         color: var(--mud-palette-primary);
 
         &:hover {
-            background-color: var(--mud-theme-primary-hover);
+            background-color: var(--mud-palette-primary-hover);
         }
     }
 
@@ -145,13 +148,49 @@
 @each $color in $mud-palette-colors {
     .mud-tabs-toolbar-#{$color} {
         background-color: var(--mud-palette-#{$color});
-
-        .mud-tab {
-            color: var(--mud-palette-#{$color}-text);
-        }
+        color: var(--mud-palette-#{$color}-text);
 
         .mud-tab-slider {
             background: var(--mud-palette-#{$color}-text);
         }
+
+        .mud-tab {
+            &.mud-tab-active {
+                color: var(--mud-palette-#{$color}-text);
+
+                &:hover {
+                    background-color: var(--mud-palette-#{$color}-lighten);
+                }
+            }
+        }
+    }
+}
+
+
+.tab-transition {
+    &-enter {
+        transform: translate(100%, 0);
+    }
+
+    &-leave, &-leave-active {
+        position: absolute;
+        top: 0;
+    }
+
+    &-leave-to {
+        position: absolute;
+        transform: translate(-100%, 0);
+    }
+}
+
+.tab-reverse-transition {
+    &-enter {
+        transform: translate(-100%, 0);
+    }
+
+    &-leave, &-leave-to {
+        top: 0;
+        position: absolute;
+        transform: translate(100%, 0);
     }
 }

@@ -2,6 +2,7 @@
 @inherits MudComponentBase
 @implements IDisposable
 
+
 @if (Parent?.KeepPanelsAlive==true)
 {
     <div style="display:@(Parent?.ActivePanel == this ? "contents" : "none")">
