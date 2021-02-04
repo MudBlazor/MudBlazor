@@ -370,9 +370,13 @@ namespace MudBlazor
         {
             _prevButtonDisabled = false;
             _scrollValue -= _toolbarContentSize;
-            if(Math.Abs(_scrollValue) + _toolbarContentSize >= _allTabsSize)
+            if (Math.Abs(_scrollValue) + _toolbarContentSize >= _allTabsSize)
+            {
                 _nextButtonDisabled = true;
-            _scrollPosition = _scrollValue;
+                _scrollPosition = _toolbarContentSize - _allTabsSize - 96;
+            }
+            else
+                _scrollPosition = _scrollValue;
         }
     }
 }
