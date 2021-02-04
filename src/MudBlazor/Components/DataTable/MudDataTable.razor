@@ -4,7 +4,7 @@
 
 @if (Items != null && Items.Any())
 {
-<MudTable Items="@Items" Class="@Classname" Style="@Style" ShowFooter="@ShowFooter" ReadOnly="@ReadOnly">
+<MudTable Items="@Items" Class="@Classname" Style="@Style" ShowFooter="@ShowFooter" ReadOnly="@ReadOnly" ServerData="@ServerData">
     <HeaderContent>
         <CascadingValue Value="MudBaseColumn.Rendermode.Header" Name="Mode">
             @Columns(Def)
@@ -31,6 +31,12 @@
             </CascadingValue>
         }
      </FooterContent>
+    <PagerContent>
+        @if (ServerData != null)
+        {
+            <MudTablePager></MudTablePager>
+        }
+    </PagerContent>
 </MudTable>
 }
 else if (EmptyDataText != null)

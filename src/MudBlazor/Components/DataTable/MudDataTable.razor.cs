@@ -62,6 +62,12 @@ namespace MudBlazor
         /// Set true for rows with a narrow height
         /// </summary>
         [Parameter] public bool Dense { get; set; }
+        /// <summary>
+        /// Supply an async function which (re)loads filtered, paginated and sorted data from server.
+        /// Table will await this func and update based on the returned TableData.
+        /// Used only with ServerData
+        /// </summary>
+        [Parameter] public Func<TableState, Task<TableData<T>>> ServerData { get; set; }
         #endregion
         #region Templates
         [Parameter] public RenderFragment<T> Columns { get; set; }
