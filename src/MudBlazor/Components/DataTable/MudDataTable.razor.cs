@@ -24,7 +24,24 @@ namespace MudBlazor
          .AddClass(Class)
        .Build();
 
-        protected T Def => Items.First();
+        protected T Def
+        {
+            get
+            {
+                T t;
+                T t1 = default(T);
+                if (t1 == null)
+                {
+                    t = Activator.CreateInstance<T>();
+                }
+                else
+                {
+                    t1 = default(T);
+                    t = t1;
+                }
+                return t;
+            }
+        }
         //protected ItemType Def => new ItemType();
         /// <summary>
         /// Text to show when there are no items to show
