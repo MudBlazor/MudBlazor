@@ -103,7 +103,7 @@ namespace MudBlazor
         [Parameter] public DateTime? StartMonth { get; set; }
 
         /// <summary>
-        /// Display week numbers according to the <see cref="Culture" /> parameter. If no culture is defined, CultureInfo.CurrentCulture will be used.
+        /// Display week numbers according to the Culture parameter. If no culture is defined, CultureInfo.CurrentCulture will be used.
         /// </summary>
         [Parameter] public bool ShowWeekNumbers { get; set; }
 
