@@ -351,11 +351,10 @@ namespace MudBlazor
             _allTabsSize = totalTabsSize;
         }
 
-        private async Task ScrollPrev()
+        private void ScrollPrev()
         {
             _nextButtonDisabled = false;
             _scrollValue += _toolbarContentSize;
-
             if(_scrollValue >= 0)
             {
                 _scrollPosition = 0;
@@ -367,22 +366,13 @@ namespace MudBlazor
             }
         }
 
-        private async Task ScrollNext()
+        private void ScrollNext()
         {
             _prevButtonDisabled = false;
             _scrollValue -= _toolbarContentSize;
-
-            var rawValue = Math.Abs(_scrollValue);
-
-            if(rawValue >= _allTabsSize)
-            {
+            if(Math.Abs(_scrollValue) + _toolbarContentSize >= _allTabsSize)
                 _nextButtonDisabled = true;
-            }
-            else
-            {
-                _scrollPosition = _scrollValue;
-            }
-            var kuk = _scrollPosition;
+            _scrollPosition = _scrollValue;
         }
     }
 }
