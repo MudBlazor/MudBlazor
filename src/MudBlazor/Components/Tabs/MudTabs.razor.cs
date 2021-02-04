@@ -56,7 +56,6 @@ namespace MudBlazor
 
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
-            .AddClass($"tab-transition-enter")
             .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
             .AddClass(PanelClass)
             .Build();
