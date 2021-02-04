@@ -57,27 +57,26 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool AmPm { get; set; }
 
-        private TimeSpan? _time;
-
         /// <summary>
         /// The currently selected time (two-way bindable). If null, then nothing was selected.
         /// </summary>
         [Parameter]
         public TimeSpan? Time
         {
-            get => _time;
+            get => _value;
             set => SetTimeAsync(value, true).AndForget();
         }
 
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue)
         {
-            if (_time != time)
+            if (_value != time)
             {
-                _time = time;
+                _value = time;
                 if (updateValue)
-                    await SetTextAsync(Converter.Set(_time), false);
+                    await SetTextAsync(Converter.Set(_value), false);
                 UpdateTimeSetFromTime();
-                await TimeChanged.InvokeAsync(_time);
+                await TimeChanged.InvokeAsync(_value);
+                BeginValidate();
             }
         }
 
@@ -88,6 +87,7 @@ namespace MudBlazor
 
         protected override Task StringValueChanged(string value)
         {
+            Touched = true;
             // Update the time property (without updating back the Value property)
             return SetTimeAsync(Converter.Get(value), false);
         }
@@ -100,17 +100,17 @@ namespace MudBlazor
 
         private string GetHourString()
         {
-            if (_time == null)
+            if (_value == null)
                 return "--";
-            var h = AmPm ? _time.Value.ToAmPmHour() : _time.Value.Hours;
+            var h = AmPm ? _value.Value.ToAmPmHour() : _value.Value.Hours;
             return Math.Min(23, Math.Max(0, h)).ToString(CultureInfo.InvariantCulture);
         }
 
         private string GetMinuteString()
         {
-            if (_time == null)
+            if (_value == null)
                 return "--";
-            return $"{Math.Min(59, Math.Max(0, _time.Value.Minutes)):D2}";
+            return $"{Math.Min(59, Math.Max(0, _value.Value.Minutes)):D2}";
         }
 
         private void UpdateTime()
@@ -284,14 +284,14 @@ namespace MudBlazor
 
         private void UpdateTimeSetFromTime()
         {
-            if (_time == null)
+            if (_value == null)
             {
                 _timeSet.Hour = 0;
                 _timeSet.Minute = 0;
                 return;
             }
-            _timeSet.Hour = _time.Value.Hours;
-            _timeSet.Minute = _time.Value.Minutes;
+            _timeSet.Hour = _value.Value.Hours;
+            _timeSet.Minute = _value.Value.Minutes;
         }
 
         public bool MouseDown { get; set; }
