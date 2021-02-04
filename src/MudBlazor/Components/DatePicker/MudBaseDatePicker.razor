@@ -1,14 +1,14 @@
 ﻿@using MudBlazor.Internal
 
 @namespace MudBlazor
-@inherits MudPicker
+@inherits MudPicker<DateTime?>
 
 @Render
 
 @code{
 
     protected override RenderFragment PickerContent=> 
-    @<Node>
+    @<CascadingValue Value="@this" IsFixed="true">
         <MudPickerToolbar Class="mud-picker-datepicker-toolbar" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
             <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year" OnClick="OnYearClick">@GetFormattedYearString()</MudButton>
             <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="OnFormattedDateClick">@GetFormattedDateString()</MudButton>
@@ -107,7 +107,7 @@
                     }
                 </div>
             }
-</div>
-</MudPickerContent>
-    </Node>;
+        </div>
+    </MudPickerContent>
+    </CascadingValue>;
 }
