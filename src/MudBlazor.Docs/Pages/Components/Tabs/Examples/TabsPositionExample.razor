@@ -1,10 +1,10 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect Label="Tabs Position" OffsetY="true" Dense="true" T="@Position" ValueChanged="OnSelectedValue" Class="mb-4">
-    <MudSelectItem T="Position" Value="Position.Top">Top</MudSelectItem>
-    <MudSelectItem T="Position" Value="Position.Left">Left</MudSelectItem>
-    <MudSelectItem T="Position" Value="Position.Right">Right</MudSelectItem>
-    <MudSelectItem T="Position" Value="Position.Bottom">Bottom</MudSelectItem>
+<MudSelect Label="Tabs Position" OffsetY="true" Dense="true" T="@Position" @bind-Value="Position" Class="mb-4">
+    <MudSelectItem T="Position" Value="@Position.Top">Top</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Left">Left</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Right">Right</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Bottom">Bottom</MudSelectItem>
 </MudSelect>
 
 <MudTabs Elevation="1" Position="@Position">
