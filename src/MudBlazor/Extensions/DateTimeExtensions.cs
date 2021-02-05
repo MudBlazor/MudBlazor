@@ -12,7 +12,7 @@ internal static class DateTimeExtensions
 
     public static string ToIsoDateString(this DateTime? self)
     {
-        if(self==null)
+        if (self == null)
             return null;
         return $"{self.Value.Year:D4}-{self.Value.Month:D2}-{self.Value.Day:D2}";
     }
@@ -29,8 +29,8 @@ internal static class DateTimeExtensions
 
     public static DateTime StartOfWeek(this DateTime self, DayOfWeek firstDayOfWeek)
     {
-        int diff = (7 + (self.DayOfWeek - firstDayOfWeek)) % 7;
+        var diff = (7 + (self.DayOfWeek - firstDayOfWeek)) % 7;
         return self.AddDays(-1 * diff).Date;
     }
-    
+
 }

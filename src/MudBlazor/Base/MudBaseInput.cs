@@ -1,19 +1,15 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    public abstract class MudBaseInput<T> : MudFormComponent<T>
+    public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
-
-        /// <summary>
-        /// If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
-        /// If it is sub-component, it will NOT do form validation!!
-        /// </summary>
-        [CascadingParameter(Name = "Standalone")]
-        internal bool Standalone { get; set; } = true;
+        protected MudBaseInput() : base(new DefaultConverter<T>()) { }
 
         /// <summary>
         /// If true, the input element will be disabled.
@@ -62,6 +58,11 @@ namespace MudBlazor
         [Parameter] public Adornment Adornment { get; set; } = Adornment.None;
 
         /// <summary>
+        /// The color of the adornment if used. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color AdornmentColor { get; set; } = Color.Default;
+
+        /// <summary>
         /// Sets the Icon Size.
         /// </summary>
         [Parameter] public Size IconSize { get; set; } = Size.Small;
@@ -70,6 +71,7 @@ namespace MudBlazor
         /// Button click event if set and Adornment used.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
+
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
         /// </summary>
@@ -86,69 +88,72 @@ namespace MudBlazor
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
         /// <summary>
+        /// If true the input will focus automatically
+        /// </summary>
+        [Parameter] public bool AutoFocus { get; set; }
+
+        /// <summary>
         ///  A multiline input (textarea) will be shown, if set to more than one line.
         /// </summary>
         [Parameter] public int Lines { get; set; } = 1;
 
-        protected bool _settingText;
-        protected string _text;
+        [Inject] public IJSRuntime JSRuntime { get; set; }
+
         [Parameter]
-        public string Text
+        public string Text { get; set; }
+
+        protected async Task SetTextAsync(string text, bool updateValue = true)
         {
-            get => _text;
-            set
+            if (Text != text)
             {
-                if (_text == value)
-                    return;
-                // update loop protection!
-                if (_settingText)
-                    return;
-                _settingText = true;
-                try
-                {
-                    _text = value;
-                    StringValueChanged(value);
-                    TextChanged.InvokeAsync(value);
-                }
-                finally
-                {
-                    _settingText = false;
-                }
+                Text = text;
+                if (!string.IsNullOrWhiteSpace(Text))
+                    Touched = true;
+                if (updateValue)
+                    await UpdateValuePropertyAsync(false);
+                await TextChanged.InvokeAsync(Text);
             }
         }
 
-        [Parameter] public EventCallback<string> TextChanged { get; set; }
+        /// <summary>
+        /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.   
+        /// </summary>
+        protected virtual Task UpdateTextPropertyAsync(bool updateValue)
+        {
+            return SetTextAsync(Converter.Set(Value), updateValue);
+        }
 
         /// <summary>
-        /// Text change hook for descendants  
+        /// Focuses the element
         /// </summary>
-        /// <param name="text"></param>
-        protected virtual void StringValueChanged(string text)
-        {
-            Value = Converter.Get(text);
-        }
+        /// <returns>The ValueTask</returns>
+        public virtual ValueTask FocusAsync() { return new ValueTask(); }
+
+        public virtual ValueTask SelectAsync() { return new ValueTask(); }
+
+        public virtual ValueTask SelectRangeAsync(int pos1, int pos2) { return new ValueTask(); }
+
+        [Parameter] public EventCallback<string> TextChanged { get; set; }
 
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
-            _=ValidateValue(Value);
-            EditFormValidate();
-            OnBlur.InvokeAsync(obj);
+            Touched = true;
+            BeginValidateAfter(OnBlur.InvokeAsync(obj));
         }
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
-        protected virtual void onKeyDown(KeyboardEventArgs obj) => OnKeyDown.InvokeAsync(obj);
+        protected virtual void onKeyDown(KeyboardEventArgs obj) => OnKeyDown.InvokeAsync(obj).AndForget();
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
-        protected virtual void onKeyPress(KeyboardEventArgs obj) => OnKeyPress.InvokeAsync(obj);
+        protected virtual void onKeyPress(KeyboardEventArgs obj) => OnKeyPress.InvokeAsync(obj).AndForget();
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
-        protected virtual void onKeyUp(KeyboardEventArgs obj) => OnKeyUp.InvokeAsync(obj);
-
+        protected virtual void onKeyUp(KeyboardEventArgs obj) => OnKeyUp.InvokeAsync(obj).AndForget();
 
         /// <summary>
         /// Fired when the Value property changes. 
@@ -163,71 +168,46 @@ namespace MudBlazor
         public T Value
         {
             get => _value;
-            set
-            {
-                if (object.Equals(value, _value))
-                    return;
-                if (_settingValue)
-                    return;
-                _settingValue = true;
-                try
-                {
-                    _value = value;
-                    GenericValueChanged(value);
-                    ValueChanged.InvokeAsync(value);
-                    _=ValidateValue(value);
-                    EditFormValidate();
-                }
-                finally
-                {
-                    _settingValue = false;
-                }
-            }
+            set => _value = value;
         }
 
-        private bool _settingValue;
+        protected async Task SetValueAsync(T value, bool updateText = true)
+        {
+            if (!EqualityComparer<T>.Default.Equals(Value, value))
+            {
+                Value = value;
+                if (updateText)
+                    await UpdateTextPropertyAsync(false);
+                await ValueChanged.InvokeAsync(Value);
+                BeginValidate();
+            }
+        }
 
         /// <summary>
-        /// Value change hook for descendants
+        /// Value change hook for descendants. Called when Value needs to be refreshed from current Text property.  
         /// </summary>
-        /// <param name="value"></param>
-        protected virtual void GenericValueChanged(T value)
+        protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
-            Text = Converter.Set(value);
+            return SetValueAsync(Converter.Get(Text), updateText);
         }
 
-        private Converter<T> _converter = new DefaultConverter<T>();
-
-        [Parameter]
-        public Converter<T> Converter
+        protected override bool SetConverter(Converter<T, string> value)
         {
-            get => _converter;
-            set
-            {
-                if (_converter == value)
-                    return;
-                _converter = value;
-                if (_converter == null)
-                    return;
-                _converter.OnError = OnConversionError;
-                Text = Converter.Set(Value);
-            }
+            var changed = base.SetConverter(value);
+            if (changed)
+                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
+
+            return changed;
         }
 
-        [Parameter]
-        public CultureInfo Culture
+        protected override bool SetCulture(CultureInfo value)
         {
-            get => _converter?.Culture;
-            set
-            {
-                if (_converter == null)
-                    _converter = new DefaultConverter<T>();
-                _converter.Culture = value;
-                Text = Converter.Set(Value);
-            }
-        }
+            var changed = base.SetCulture(value);
+            if (changed)
+                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
 
-        private string _format = null;
+            return changed;
+        }
 
         /// <summary>
         /// Conversion format parameter for ToString(), can be used for formatting primitive types, DateTimes and TimeSpans
@@ -235,74 +215,60 @@ namespace MudBlazor
         [Parameter]
         public string Format
         {
-            get => _format;
-            set
+            get => ((Converter<T>)Converter).Format;
+            set => SetFormat(value);
+        }
+
+        protected virtual bool SetFormat(string value)
+        {
+            var changed = (Format != value);
+            if (changed)
             {
-                _format = value;
-                if (_converter==null)
-                    _converter = new DefaultConverter<T>();
-                _converter.Format = _format;
-                Text = Converter.Set(Value);
+                ((Converter<T>)Converter).Format = value;
+                UpdateTextPropertyAsync(false).AndForget();      // refresh only Text property from current Value
             }
+            return changed;
         }
 
-        /// <summary>
-        /// True if the conversion from string to T failed
-        /// </summary>
-        public override bool ConversionError
+        protected override async Task ValidateValue()
         {
-            get
+            if (Standalone)
+                await base.ValidateValue();
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+
+            // Because the way the Value setter is built, it won't cause an update if the incoming Value is
+            // equal to the initial value. This is why we force an update to the Text property here.
+            if (typeof(T) != typeof(string))
+                await UpdateTextPropertyAsync(false);
+        }
+
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            await base.SetParametersAsync(parameters);
+
+            var hasText = parameters.Contains<string>(nameof(Text));
+            var hasValue = parameters.Contains<T>(nameof(Value));
+
+            // Refresh Value from Text
+            if (hasText && !hasValue)
+                await UpdateValuePropertyAsync(false);
+
+            // Refresh Text from Value
+            if (hasValue && !hasText)
+                await UpdateTextPropertyAsync(false);
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            //Only focus automatically after the first render cycle!
+            if (firstRender && AutoFocus)
             {
-                if (_converter == null)
-                    return false;
-                return _converter.GetError;
+                await FocusAsync();
             }
-        }
-
-        /// <summary>
-        /// The error message of the conversion error from string to T. Null otherwise
-        /// </summary>
-        public override string ConversionErrorMessage
-        {
-            get
-            {
-                if (_converter == null)
-                    return null;
-                return _converter.GetErrorMessage;
-            }
-        }
-
-
-        public string GetErrorText()
-        {
-            // ErrorText is either set from outside or the first validation error
-            if (!string.IsNullOrWhiteSpace(ErrorText))
-                return ErrorText; 
-            if (!string.IsNullOrWhiteSpace(ConversionErrorMessage))
-                return ConversionErrorMessage;
-            return null;
-        }
-
-        internal override async Task ValidateValue(T value)
-        {
-            if (!Standalone)
-                return;
-            await base.ValidateValue(value);
-        }
-
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            // this is important for value type T's where the initial Value is equal to the default(T) because the way the Value setter is built,
-            // it won't cause an update if the incoming value is equal to the internal value. That's why we trigger that update here
-            GenericValueChanged(Value); 
-        }
-
-        protected override Task OnInitializedAsync()
-        {
-            if (_converter != null)
-                _converter.OnError = OnConversionError;
-            return base.OnInitializedAsync();
         }
 
         protected override void RegisterAsFormComponent()
@@ -313,18 +279,14 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if (!Standalone)
-                return;
-            base.OnParametersSet();
+            if (Standalone)
+                base.OnParametersSet();
         }
 
         protected override void ResetValue()
         {
+            Text = null;
             base.ResetValue();
-            if (string.IsNullOrWhiteSpace(_text))
-                return;
-            _text = null;
-            StateHasChanged();
         }
     }
 }

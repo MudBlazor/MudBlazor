@@ -1,4 +1,5 @@
-﻿
+﻿@import '../abstracts/variables';
+
 .mud-table {
     color: var(--mud-palette-text-primary);
     background-color: var(--mud-palette-surface);
@@ -173,6 +174,17 @@
             margin-bottom: -8px;
         }
     }
+
+    & > .mud-select {
+        & > .mud-input-control {
+            & > div.mud-input.mud-input-text {
+                color: var(--mud-theme-on-surface);
+                font-size: 0.875rem;
+                margin-top: -14px;
+                margin-bottom: -8px;
+            }
+        }
+    }
 }
 
 .mud-table-cell-align {
@@ -279,6 +291,13 @@
             display: flex;
             border: none;
             padding: 14px 16px;
+            text-align: left !important;
+        }
+
+        &.mud-table-dense {
+            & .mud-table-cell {
+                padding: 6px 16px;
+            }
         }
 
         .mud-table-cell:before {
@@ -342,27 +361,22 @@
     }
 }
 
-// < XS
-@media (max-width:600px) {
-    @include table-display-smalldevices("");
+@media (max-width:$breakpoint-sm) {
+    @include table-display-smalldevices("xs-");
 }
 
-// SM
-@media (max-width:960px) {
+@media (max-width:$breakpoint-md) {
     @include table-display-smalldevices("sm-");
 }
 
-// MD
-@media (max-width:1280px) {
+@media (max-width:$breakpoint-lg) {
     @include table-display-smalldevices("md-");
 }
 
-// LG
-@media (max-width:1920px) {
+@media (max-width:$breakpoint-xl) {
     @include table-display-smalldevices("lg-");
 }
 
-// XL
-@media (min-width:1920px) {
+@media (min-width:$breakpoint-xl) {
     @include table-display-smalldevices("xl-");
 }

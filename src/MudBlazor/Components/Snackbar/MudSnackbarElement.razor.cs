@@ -1,4 +1,4 @@
-// Copyright (c) Alessandro Ghidini. All rights reserved.
+﻿// Copyright (c) Alessandro Ghidini. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 // Changes and improvements Copyright (c) The MudBlazor Team
 

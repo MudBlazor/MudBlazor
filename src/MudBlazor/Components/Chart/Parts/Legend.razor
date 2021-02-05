@@ -8,7 +8,7 @@
         @foreach (var item in Data)
         {
             <div class="mud-chart-legend-item">
-                <span class="mud-chart-legend-marker" style="@($"background-color:{ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count())}")"></span>
+                <span class="mud-chart-legend-marker" style="@($"background-color:{MudChartParent.ChartOptions.ChartPalette.GetValue(item.Index % ChartOptions.ChartPalette.Count())}")"></span>
                 <MudText Typo="Typo.body2" Inline="true">@item.Labels</MudText>
             </div>
         }

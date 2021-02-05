@@ -1,0 +1,64 @@
+﻿@page "/components/breadcrumbs"
+
+<DocsPage>
+    <DocsPageHeader Title="Breadcrumbs"
+                    SubTitle="A useful way to show the user's location.">
+    </DocsPageHeader>
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Basic Breadcrumbs</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <BreadcrumbsBasicExample />
+            </SectionContent>
+            <SectionSource Code="BreadcrumbsBasicExample" GitHubFolderName="Breadcrumbs" SnippetId="TODO" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Custom Separator</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <BreadcrumbsSeparatorExample />
+            </SectionContent>
+            <SectionSource Code="BreadcrumbsSeparatorExample" GitHubFolderName="Breadcrumbs" SnippetId="TODO" />
+            <MudText Class="mt-6" GutterBottom="true">It is also possible to provide a <CodeInline>RenderFragment</CodeInline> as a template.</MudText>
+            <SectionContent Outlined="true">
+                <BreadcrumbsSeparatorTemplateExample />
+            </SectionContent>
+            <SectionSource Code="BreadcrumbsSeparatorTemplateExample" GitHubFolderName="Breadcrumbs" SnippetId="TODO" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Item Icons</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <BreadcrumbsItemIconsExample />
+            </SectionContent>
+            <SectionSource Code="BreadcrumbsItemIconsExample" GitHubFolderName="Breadcrumbs" SnippetId="TODO" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Item Template</Title>
+                <Description>If you use the <CodeInline>ItemTemplate</CodeInline> parameter, MudBlazor doesn't wrap the content in anchors.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <BreadcrumbsItemTemplateExample />
+            </SectionContent>
+            <SectionSource Code="BreadcrumbsItemTemplateExample" GitHubFolderName="Breadcrumbs" SnippetId="TODO" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Collapsed</Title>
+                <Description>You can set the <CodeInline>MaxItems</CodeInline> parameter in order to automatically collapse the breadcrumbs when it exceeds a number of items.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <BreadcrumbsCollapsedExample />
+            </SectionContent>
+            <SectionSource Code="BreadcrumbsCollapsedExample" GitHubFolderName="Breadcrumbs" SnippetId="TODO" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

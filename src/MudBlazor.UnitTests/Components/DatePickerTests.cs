@@ -1,133 +1,334 @@
-﻿#pragma warning disable 1998
+﻿#pragma warning disable CS1998 // async without await
+#pragma warning disable IDE1006 // leading underscore
+#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
-
+using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests
 {
-
     [TestFixture]
     public class DatePickerTests
     {
-        /// <summary>
-        /// Setting the date should change the value and vice versa
-        /// </summary>
-        [Test]
-        public async Task SimpleTest() {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton< NavigationManager >(new MockNavigationManager());
-            var comp = ctx.RenderComponent<MudDatePicker>();
-            // print the generated html
-            Console.WriteLine(comp.Markup);
-            // select elements needed for the test
-            var picker = comp.Instance;
-            picker.Value.Should().Be(null);
-            picker.Date.Should().Be(null);
-            await comp.InvokeAsync(() => picker.Value = "2020-10-23");
-            picker.Date.Should().Be(new DateTime(2020, 10, 23)); // time of this writing ;)
-            await comp.InvokeAsync(() => picker.Date = new DateTime(2020, 10, 26)); // <-- Austrian National Holiday
-            picker.Value.Should().Be("2020-10-26");
+        private Bunit.TestContext ctx;
+
+        [SetUp]
+        public void Setup()
+        {
+            ctx = new Bunit.TestContext();
+            ctx.AddTestServices();
         }
 
+        [TearDown]
+        public void TearDown() => ctx.Dispose();
 
-        /// <summary>
-        /// Rendering 10.000 DatePickers to measure performance impact of initial render.
-        /// </summary>
         [Test]
-        public void PerformanceTest1()
+        [Ignore("Unignore for performance measurements, not needed for code coverage")]
+        public void DatePicker_Render_Performance()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             // warmup
-            ctx.RenderComponent<DatePickerPerformanceTest>();
+            ctx.RenderComponent<MudDatePicker>();
             // measure
             var watch = Stopwatch.StartNew();
-            for(int i = 0; i<10; i++)
-                ctx.RenderComponent<DatePickerPerformanceTest>();
+            for (var i = 0; i < 1000; i++)
+                ctx.RenderComponent<MudDatePicker>();
             watch.Stop();
             Console.WriteLine("Elapsed: " + watch.Elapsed);
+            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
-        /// <summary>
-        /// Measuring performance impact of drop-down opening
-        /// </summary>
-        /// <returns></returns>
         [Test]
-        public async Task PerformanceTest2()
+        //[Ignore("Unignore for performance measurements, not needed for code coverage")]
+        public async Task DatePicker_OpenClose_Performance()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             // warmup
-            var comp=ctx.RenderComponent<MudDatePicker>();
+            var comp = ctx.RenderComponent<MudDatePicker>();
             var datepicker = comp.Instance;
             // measure
             var watch = Stopwatch.StartNew();
-            for (int i = 0; i < 10000; i++)
+            for (var i = 0; i < 1000; i++)
             {
                 await comp.InvokeAsync(() => datepicker.Open());
                 await comp.InvokeAsync(() => datepicker.Close());
             }
             watch.Stop();
             Console.WriteLine("Elapsed: " + watch.Elapsed);
+            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
-        /// <summary>
-        /// Datepicker should open on input click and close on outside click
-        /// </summary>
         [Test]
-        public void OpenCloseTest1()
+        public async Task SetPickerValue_CheckDate_SetPickerDate_CheckValue()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             var comp = ctx.RenderComponent<MudDatePicker>();
+            // select elements needed for the test
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+            comp.SetParam(p => p.Text, "2020-10-23");
+            picker.Date.Should().Be(new DateTime(2020, 10, 23));
+            comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
+            picker.Text.Should().Be("2020-10-26");
+        }
+
+        [Test]
+        public async Task DatePicker_Should_ApplyDateFormat()
+        {
+            var comp = ctx.RenderComponent<MudDatePicker>();
+            // select elements needed for the test
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+            comp.SetParam(p => p.DateFormat, "dd/MM/yyyy");
+            comp.SetParam(p => p.Culture, CultureInfo.InvariantCulture); // <-- this makes a huge difference!
+            comp.SetParam(p => p.Text, "23/10/2020");
+            picker.Date.Should().Be(new DateTime(2020, 10, 23));
+            comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
+            picker.Text.Should().Be("26/10/2020");
+        }
+
+        [Test]
+        public void Check_Intial_Date_Format()
+        {
+            DateTime? date = new DateTime(2021, 1, 13);
+            var comp = ctx.RenderComponent<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.DateFormat, "dd/MM/yyyy")
+                .Add(p => p.Date, date)
+            );
             Console.WriteLine(comp.Markup);
+            var picker = comp.Instance;
+            var instance = comp.Instance;
+            picker.Date.Should().Be(new DateTime(2021, 1, 13));
+            picker.Text.Should().Be("13/01/2021");
+        }
+
+        public IRenderedComponent<MudDatePicker> OpenPicker(ComponentParameter parameter)
+        {
+            return OpenPicker(new ComponentParameter[] { parameter });
+        }
+
+        public IRenderedComponent<MudDatePicker> OpenPicker(ComponentParameter[] parameters = null)
+        {
+            IRenderedComponent<MudDatePicker> comp;
+            if (parameters is null)
+            {
+                comp = ctx.RenderComponent<MudDatePicker>();
+            }
+            else
+            {
+                comp = ctx.RenderComponent<MudDatePicker>(parameters);
+            }
+
             // should not be open
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
             // click to to open menu
             comp.Find("input").Click();
-            Console.WriteLine(comp.Markup);
             // now its open
             comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
+            return comp;
+        }
+
+        [Test]
+        public void Open_CloseByClickingOutsidePicker_CheckClosed()
+        {
+            var comp = OpenPicker();
             // clicking outside to close
             comp.Find("div.mud-overlay").Click();
             // should not be open any more
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
         }
 
-        /// <summary>
-        /// Datepicker should close on day button click and return a date
-        /// </summary>
         [Test]
-        public async Task OpenCloseTest2()
+        public void Open_CloseBySelectingADate_CheckClosed()
         {
-            using var ctx = new Bunit.TestContext();
-            ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
-            var comp = ctx.RenderComponent<MudDatePicker>();
-            Console.WriteLine(comp.Markup);
-            // should not be open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            comp.Instance.Date.Should().BeNull();
-            // click to to open menu
-            comp.Find("input").Click();
-            Console.WriteLine(comp.Markup);
-            // now its open
-            comp.FindAll("div.mud-picker-open").Count.Should().Be(1);
-            comp.Instance.Date.Should().BeNull();
+            var comp = OpenPicker();
             // clicking a day button to select a date and close
-            comp.FindAll("button.mud-day")[8].Click(); // take a day from the middle section (at the beginning buttons may be disabled)
-            await Task.Delay(comp.Instance.ClosingDelay + 50); // Check 10ms after closing
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("23")).First().Click();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
+            comp.Instance.Date.Should().NotBeNull();
+        }
+
+        [Test]
+        public void Open_CloseBySelectingADate_CheckClosed_Check_DateChangedCount()
+        {
+            var eventCount = 0;
+            DateTime? returnDate = null;
+            var comp = OpenPicker(EventCallback("DateChanged", (DateTime? date) => { eventCount++; returnDate = date; }));
+            // clicking a day button to select a date and close
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("23")).First().Click();
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0), TimeSpan.FromSeconds(5));
+            comp.Instance.Date.Should().NotBeNull();
+            eventCount.Should().Be(1);
+            var now = DateTime.Now;
+            returnDate.Should().Be(new DateTime(now.Year, now.Month, 23));
+        }
+
+        [Test]
+        public void OpenToYear_CheckYearsShown()
+        {
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Year));
+            comp.Instance.Date.Should().BeNull();
+            // should show years
+            comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void OpenToYear_ClickYear_CheckMonthsShown()
+        {
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Year));
+            comp.Instance.Date.Should().BeNull();
+            // should show years
+            comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-year").First().Click();
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void OpenToYear_ClickYear_CheckMonthsShown_Close_Reopen_CheckYearsShown()
+        {
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Year));
+            comp.Instance.Date.Should().BeNull();
+            // should show years
+            comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-year").First().Click();
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+            // clicking outside to close
+            comp.Find("div.mud-overlay").Click();
             // should not be open any more
             comp.FindAll("div.mud-picker-open").Count.Should().Be(0);
-            comp.Instance.Date.Should().NotBeNull();
+            comp.Find("input").Click();
+            // should show years
+            comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
+        }
+
+
+        [Test]
+        public void OpenToMonth_CheckMonthsShown()
+        {
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Month));
+            comp.Instance.Date.Should().BeNull();
+            // should show months
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void Open_ClickCalendarHeader_CheckMonthsShown()
+        {
+            var comp = OpenPicker();
+            // should show months
+            comp.FindAll("div.mud-picker-calendar-header-transition").First().Click();
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void Open_ClickYear_CheckYearsShown()
+        {
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Month));
+            // should show years
+            comp.FindAll("div.mud-picker-calendar-header-transition").First().Click();
+            comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void OpenToMonth_Select3rdMonth_Select2ndDay_CheckDate()
+        {
+            var comp = OpenPicker(Parameter("OpenTo", OpenTo.Month));
+            comp.Instance.Date.Should().BeNull();
+            // should show months
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")
+                .Skip(2).First().Click();
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("2")).First().Click();
+            comp.Instance.Date.Value.Date.Should().Be(new DateTime(DateTime.Now.Year, 3, 2));
+        }
+
+        public IRenderedComponent<MudDatePicker> OpenTo12thMonth()
+        {
+            var comp = OpenPicker(Parameter("PickerMonth", new DateTime(DateTime.Now.Year, 12, 01)));
+            comp.Instance.PickerMonth.Value.Month.Should().Be(12);
+            return comp;
+        }
+
+        [Test]
+        public void Open_ClickCalendarHeader_Click4thMonth_Click23rdDay_CheckDate()
+        {
+            var comp = OpenPicker();
+            var picker = comp.Instance;
+            comp.Find("div.mud-picker-calendar-header-transition").Click();
+            // should show months
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")
+                .Skip(3).First().Click();
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("23")).First().Click();
+            comp.Instance.Date.Value.Date.Should().Be(new DateTime(DateTime.Now.Year, 4, 23));
+        }
+
+        [Test]
+        public void OpenTo12thMonth_NavigateBack_CheckMonth()
+        {
+            var comp = OpenTo12thMonth();
+            var picker = comp.Instance;
+            comp.Find("div.mud-picker-calendar-header-switch > button:nth-child(1)").Click();
+            picker.PickerMonth.Value.Month.Should().Be(11);
+            picker.PickerMonth.Value.Year.Should().Be(DateTime.Now.Year);
+        }
+
+        [Test]
+        public void OpenTo12thMonth_NavigateForward_CheckYear()
+        {
+            var comp = OpenTo12thMonth();
+            var picker = comp.Instance;
+            comp.Find("div.mud-picker-calendar-header-switch > button:nth-child(3)").Click();
+            picker.PickerMonth.Value.Month.Should().Be(1);
+            picker.PickerMonth.Value.Year.Should().Be(DateTime.Now.Year + 1);
+        }
+
+        [Test]
+        public void Open_ClickYear_ClickCurrentYear_Click2ndMonth_Click1_CheckDate()
+        {
+            var comp = OpenPicker();
+            comp.Find("div.mud-picker-datepicker-toolbar > button.mud-button-year").Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container > div.mud-picker-year")
+                .Where(x => x.TrimmedText().Contains("2022")).First().Click();
+            comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month").Skip(1).First().Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(1);
+            comp.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.TrimmedText().Equals("1")).First().Click();
+            comp.Instance.Date.Value.Date.Should().Be(new DateTime(2022, 2, 1));
+        }
+
+        [Test]
+        public async Task Open_Programmatically_CheckOpen_Close_Programmatically_CheckClosed()
+        {
+            var comp = ctx.RenderComponent<MudDatePicker>();
+            Console.WriteLine(comp.Markup + "\n");
+            comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
+            // open programmatically
+            await comp.InvokeAsync(() => comp.Instance.Open());
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("div.mud-picker-content").Count.Should().Be(1);
+            // closing programmatically
+            await comp.InvokeAsync(() => comp.Instance.Close());
+            comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
         }
     }
 }

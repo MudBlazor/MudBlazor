@@ -6,7 +6,6 @@
 // License: MIT
 // See https://github.com/Blazored
 
-
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -17,15 +16,12 @@ namespace MudBlazor
     {
         private readonly TaskCompletionSource<DialogResult> _resultCompletion = new TaskCompletionSource<DialogResult>();
 
-        private readonly Action<DialogResult> _closed;
-
         private readonly DialogService _dialogService;
 
         public DialogReference(Guid dialogInstanceId, RenderFragment dialogInstance, DialogService dialogService)
         {
             Id = dialogInstanceId;
             DialogInstance = dialogInstance;
-            _closed = HandleClosed;
             _dialogService = dialogService;
         }
 
@@ -39,19 +35,15 @@ namespace MudBlazor
             _dialogService.Close(this, result);
         }
 
-        private void HandleClosed(DialogResult obj)
+        internal void Dismiss(DialogResult result)
         {
-            _ = _resultCompletion.TrySetResult(obj);
+            _resultCompletion.TrySetResult(result);
         }
 
         internal Guid Id { get; }
+
         internal RenderFragment DialogInstance { get; }
 
         public Task<DialogResult> Result => _resultCompletion.Task;
-
-        internal void Dismiss(DialogResult result)
-        {
-            _closed.Invoke(result);
-        }
     }
 }

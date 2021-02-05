@@ -1,0 +1,109 @@
+﻿.docs-section-header {
+    margin-bottom: 20px;
+
+    .mud-typography-h4 {
+        font-size:30px;
+        margin: 40px 0 16px;
+    }
+}
+
+.docs-section-content {
+    padding: 20px;
+    border-radius: 4px;
+    margin-bottom: 40px;
+    background-color: var(--mud-palette-surface);
+    margin: auto;
+    display: flex;
+    outline: 0;
+    position: relative;
+    justify-content: center;
+
+    & .docs-section-content-inner {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        outline: 0;
+        position: relative;
+        justify-content: center;
+    }
+
+    &.docs-display-flex {
+        & > .docs-section-content-inner {
+            display: flex;
+            flex-grow: 1;
+            flex-wrap:wrap;
+        }
+    }
+
+    &.docs-content-full-width {
+        & > .docs-section-content-inner {
+            width: 100%;
+        }
+    }
+
+    &.docs-section-content-darken {
+        background-color: var(--mud-palette-background-grey);
+    }
+
+    &.docs-section-content-outlined {
+        border: 1px solid var(--mud-palette-lines-default);
+    }
+
+    &.docs-section-content-display-grid {
+        display: grid;
+    }
+
+    &.docs-section-auto-margin-content > .docs-section-content-inner {
+        & > *:not(.mud-grid) {
+            margin: 8px;
+        }
+    }
+}
+
+.docs-section-content-row {
+    & > * {
+        margin: 8px;
+    }
+}
+
+.docs-section-source {
+    height: 100%;
+
+    .docs-content-toolbar {
+        width: 100%;
+        display: flex;
+
+        & > .mud-tooltip-root .mud-icon-button .mud-svg-icon {
+            font-size: 1.25rem;
+        }
+    }
+
+    & .docs-source-code {
+        height: 100%;
+
+        &.docs-show-code {
+            display: block;
+        }
+
+        &.docs-hide-code {
+            display: none;
+        }
+    }
+}
+
+.docs-content-api {
+    padding: 0px;
+    width:100%;
+}
+
+.docs-content-outlined {
+    border: 1px solid var(--mud-palette-lines-default);
+}
+
+.docs-section-wireframe {
+    height: calc(80vh - 124px);
+}
+
+.docs-section-black {
+    background-color: var(--mud-palette-black);
+}

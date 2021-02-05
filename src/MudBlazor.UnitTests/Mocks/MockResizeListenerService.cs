@@ -4,33 +4,92 @@ using MudBlazor.Services;
 
 namespace MudBlazor.UnitTests.Mocks
 {
-    #pragma warning disable CS1998 // Justification - Implementing IResizeListenerService
+#pragma warning disable CS1998 // Justification - Implementing IResizeListenerService
     public class MockResizeListenerService : IResizeListenerService
     {
+        private int _width, _height;
+
         public void Dispose()
         {
             OnResized = null;
+            OnBreakpointChanged = null;
         }
 
-        #nullable enable
+        internal void ApplyScreenSize(int width, int height)
+        {
+            _width = width;
+            _height = height;
+
+            OnResized?.Invoke(this, new BrowserWindowSize()
+            {
+                Width = _width,
+                Height = _height
+            });
+            OnBreakpointChanged?.Invoke(this, GetBreakpointInternal());
+        }
+
+#nullable enable
+#pragma warning disable CS0414 // justification implementing interface  
         public event EventHandler<BrowserWindowSize>? OnResized;
-        #nullable disable
+        public event EventHandler<Breakpoint>? OnBreakpointChanged;
+#pragma warning restore CS0414 
+#nullable disable
         public async ValueTask<BrowserWindowSize> GetBrowserWindowSize()
         {
-            return new BrowserWindowSize();
+            return new BrowserWindowSize()
+            {
+                Width = _width,
+                Height = _height
+            };
         }
 
         public async Task<bool> IsMediaSize(Breakpoint breakpoint)
         {
-            // TODO: implement this fake service for tests
-            return false;
+            if (breakpoint == Breakpoint.None)
+                return false;
+
+            return IsMediaSize(breakpoint, await GetBreakpoint());
         }
 
-        public async Task<Breakpoint> GetBreakpoint()
+        public bool IsMediaSize(Breakpoint breakpoint, Breakpoint reference)
         {
-            // TODO: implement this fake service for tests
-            return default(Breakpoint);
-        }   
+            if (breakpoint == Breakpoint.None)
+                return false;
+
+            return breakpoint switch
+            {
+                Breakpoint.Xs => reference == Breakpoint.Xs,
+                Breakpoint.Sm => reference == Breakpoint.Sm,
+                Breakpoint.Md => reference == Breakpoint.Md,
+                Breakpoint.Lg => reference == Breakpoint.Lg,
+                Breakpoint.Xl => reference == Breakpoint.Xl,
+                // * and down
+                Breakpoint.SmAndDown => reference <= Breakpoint.Sm,
+                Breakpoint.MdAndDown => reference <= Breakpoint.Md,
+                Breakpoint.LgAndDown => reference <= Breakpoint.Lg,
+                // * and up
+                Breakpoint.SmAndUp => reference >= Breakpoint.Sm,
+                Breakpoint.MdAndUp => reference >= Breakpoint.Md,
+                Breakpoint.LgAndUp => reference >= Breakpoint.Lg,
+                _ => false,
+            };
+        }
+
+        public async Task<Breakpoint> GetBreakpoint() => GetBreakpointInternal();
+
+        private Breakpoint GetBreakpointInternal()
+        {
+            if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Xl])
+                return Breakpoint.Xl;
+            else if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Lg])
+                return Breakpoint.Lg;
+            else if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Md])
+                return Breakpoint.Md;
+            else if (_width >= ResizeListenerService.BreakpointDefinitions[Breakpoint.Sm])
+                return Breakpoint.Sm;
+            else
+                return Breakpoint.Xs;
+        }
     }
-   #pragma warning restore CS1998
+#pragma warning restore CS1998
 }

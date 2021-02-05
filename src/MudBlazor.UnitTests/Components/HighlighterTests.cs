@@ -1,4 +1,5 @@
-﻿#pragma warning disable 1998
+﻿#pragma warning disable CS1998 // async without await
+#pragma warning disable IDE1006 // leading underscore
 
 using System.Collections.Generic;
 using Bunit;
@@ -10,12 +11,10 @@ using static MudBlazor.Components.Highlighter.Splitter;
 namespace MudBlazor.UnitTests
 {
     [TestFixture]
-    public class HighlighterTests
+    public class HighlighterSplitterTests
     {
         private const string TEXT = "This is the first item";
 
-        #region Splitter
-        
         [Test]
         public void ShouldSplitTest()
         {
@@ -52,11 +51,26 @@ namespace MudBlazor.UnitTests
             result.Should().HaveCount(1);
             result.Should().BeEquivalentTo(new List<string> { TEXT });
         }
-        
-        #endregion
+    }
 
 
-        #region Markup
+    [TestFixture]
+    public class HighlighterTests
+    {
+        private Bunit.TestContext ctx;
+
+        [SetUp]
+        public void Setup()
+        {
+            ctx = new Bunit.TestContext();
+            ctx.AddTestServices();
+        }
+
+        [TearDown]
+        public void TearDown() => ctx.Dispose();
+
+        private const string TEXT = "This is the first item";
+
 
         /// <summary>
         /// Check markup whith regular text, no regex
@@ -64,11 +78,9 @@ namespace MudBlazor.UnitTests
         [Test]
         public void MudHighlighterMarkupTest()
         {
-            using var ctx = new Bunit.TestContext();
             var text = Parameter(nameof(MudHighlighter.Text), TEXT);
             var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "item");
-            
-           var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
+            var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
             comp.MarkupMatches("This is the first <mark>item</mark>");
         }
 
@@ -78,10 +90,8 @@ namespace MudBlazor.UnitTests
         [Test]
         public void MudHighlighterMarkupWithRegexTextTest()
         {
-            using var ctx = new Bunit.TestContext();
             var text = Parameter(nameof(MudHighlighter.Text), TEXT);
             var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "[");
-
             var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
             comp.MarkupMatches("This is the first item");
         }
@@ -93,14 +103,11 @@ namespace MudBlazor.UnitTests
         [Test]
         public void MudHighlighterMarkupUntilNextBoundaryTest()
         {
-            using var ctx = new Bunit.TestContext();
             var text = Parameter(nameof(MudHighlighter.Text), TEXT);
             var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "it");
-            var untilNextBoundary= Parameter(nameof(MudHighlighter.UntilNextBoundary), true);
-
+            var untilNextBoundary = Parameter(nameof(MudHighlighter.UntilNextBoundary), true);
             var comp = ctx
                 .RenderComponent<MudHighlighter>(text, highlightedText, untilNextBoundary);
-            
             comp.MarkupMatches("This is the first <mark>item</mark>");
         }
 
@@ -110,23 +117,17 @@ namespace MudBlazor.UnitTests
         [Test]
         public void MudHighlighterMarkupCaseSensitiveTest()
         {
-            using var ctx = new Bunit.TestContext();
             var text = Parameter(nameof(MudHighlighter.Text), "This is this");
             var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), "this");
             var caseSensitive = Parameter(nameof(MudHighlighter.CaseSensitive), true);
             var caseInSensitive = Parameter(nameof(MudHighlighter.CaseSensitive), false);
-
             var comp = ctx
                 .RenderComponent<MudHighlighter>(text, highlightedText, caseSensitive);
-
             //Case sensitive
             comp.MarkupMatches("This is <mark>this</mark>");
-
             //Case insensitive
             comp.SetParametersAndRender(text, highlightedText, caseInSensitive);
             comp.MarkupMatches("<mark>This</mark> is <mark>this</mark>");
-
         }
-        #endregion
     }
 }

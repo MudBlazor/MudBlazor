@@ -1,39 +1,44 @@
-﻿@layout IframeLayout
-@namespace MudBlazor.Docs.Examples
-@page "/iframe/docs/examples/drawer/anchor"
+﻿@namespace MudBlazor.Docs.Examples
 
-
-<MudLayout>
-    <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
-        <MudAppBarSpacer />
-        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
-    </MudAppBar>
-    <MudDrawer @bind-Open="@open" Clipped="@clipped" Anchor="Anchor.Right" Elevation="1">
+<MudPaper Class="demo-drawer">
+    <MudDrawer @bind-Open="@openLeft" Fixed="false" Anchor="Anchor.Left" Elevation="1" Variant="@DrawerVariant.Persistent">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">My App</MudText>
-        </MudDrawerHeader>
+        </MudDrawerHeader>  
         <MudNavMenu>
             <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
             <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
-    <MudMainContent Class="pt-16 px-16">
-        <MudContainer Class="mt-6">
-            <MudSwitch @bind-Checked="clipped" Color="@Color.Secondary">Drawer clipped</MudSwitch>
-            <LoremIpsum />
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
+    <MudDrawer @bind-Open="@openRight" Fixed="false" Anchor="Anchor.Right" Elevation="1" Variant="@DrawerVariant.Persistent">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">Settings</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match="NavLinkMatch.All">Profile</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Orders</MudNavLink>
+            <MudNavLink Match="NavLinkMatch.All">Order History</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <div class="mud-paper-content">
+        <MudButton OnClick="@ToggleLeftDrawer">Toggle left</MudButton>
+        <MudButton OnClick="@ToggleRightDrawer">Toggle right</MudButton>
+    </div>
+</MudPaper>
 
+@code
+{
+    bool openLeft = false;            
+    bool openRight = false;
 
-@code{
-    bool open = true;
-    bool clipped = false;
-
-    void ToggleDrawer()
+    void ToggleLeftDrawer()
     {
-        open = !open;
+        openLeft = !openLeft;
+    }
+
+    void ToggleRightDrawer()
+    {
+        openRight = !openRight;
     }
 }

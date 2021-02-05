@@ -7,7 +7,7 @@
         <MudBadge Content="@BadgeContent" Color="Color.Primary" Overlap="@Overlap" Bottom="@Bottom" Left="@Left" Dot="@Dot" Bordered="@Bordered" Icon="@BadgeIcon">
             @if (SelectedTestComponent == "MudIcon")
             {
-                <MudIcon Icon="@Icons.Custom.MudBlazor" Color="Color.Default" Size="Size.Large" />
+                <MudIcon Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Default" Size="Size.Large" />
             }
             else if (SelectedTestComponent == "MudButton")
             {
@@ -15,7 +15,7 @@
             }
             else if (SelectedTestComponent == "MudIconButton")
             {
-                <MudIconButton Icon="@Icons.Material.Email" Color="Color.Default" />
+                <MudIconButton Icon="@Icons.Material.Filled.Email" Color="Color.Default" />
             }
             else if (SelectedTestComponent == "MudText")
             {
@@ -71,7 +71,7 @@
     {
         if (String.IsNullOrEmpty(BadgeIcon))
         {
-            BadgeIcon = Icons.Custom.Radioactive;
+            BadgeIcon = Icons.Custom.Uncategorized.Radioactive;
         }
         else
         {
@@ -96,6 +96,5 @@
     {
         AddNumber = "1";
         BadgeContent = null;
-        StateHasChanged();
     }
 }

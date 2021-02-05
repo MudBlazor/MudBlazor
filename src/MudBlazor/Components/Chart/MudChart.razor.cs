@@ -44,7 +44,7 @@ namespace MudBlazor
         /// <summary>
         /// The placment direction of the legend if used.
         /// </summary>
-        [Parameter] public LegendPosition LegendPosition { get; set; } = LegendPosition.Bottom;
+        [Parameter] public Position LegendPosition { get; set; } = Position.Bottom;
 
         /// <summary>
         /// Scales the input data to the range between 0 and 1
@@ -57,7 +57,7 @@ namespace MudBlazor
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
         }
 
-        protected new string ToS(double d)
+        protected string ToS(double d)
         {
             return d.ToString(CultureInfo.InvariantCulture);
         }

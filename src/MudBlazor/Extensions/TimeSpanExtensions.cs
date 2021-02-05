@@ -5,7 +5,7 @@ using System;
 // ReSharper disable once CheckNamespace
 internal static class TimeSpanExtensions
 {
-    public static string ToIsoString(this TimeSpan self, bool seconds=false, bool ms=false)
+    public static string ToIsoString(this TimeSpan self, bool seconds = false, bool ms = false)
     {
         if (!seconds)
             return $"{self.Hours:D2}:{self.Minutes:D2}";
@@ -16,7 +16,7 @@ internal static class TimeSpanExtensions
 
     public static string ToIsoString(this TimeSpan? self, bool seconds = false, bool ms = false)
     {
-        if(self==null)
+        if (self == null)
             return null;
         return self.Value.ToIsoString(seconds, ms);
     }
@@ -41,7 +41,6 @@ internal static class TimeSpanExtensions
 
     public static int ToAmPmHour(this TimeSpan time)
     {
-        var pm = time.Hours >= 12;
         var h = time.Hours % 12;
         if (h == 0)
             h = 12;

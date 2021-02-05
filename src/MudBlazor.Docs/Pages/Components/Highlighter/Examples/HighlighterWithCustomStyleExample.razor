@@ -3,13 +3,13 @@
 <MudPaper Elevation="0">
     <MudList>
         <MudListSubheader>
-            <MudTextField @bind-Value="@searchTerm" AdornmentIcon="@Filled.Brush"
+            <MudTextField @bind-Value="@searchTerm" AdornmentIcon="@Icons.Filled.Brush"
                           Adornment="Adornment.End" Immediate="true" Variant="Variant.Outlined" />
         </MudListSubheader>
 
         @foreach (var sentence in sentences)
         {
-            <MudListItem @key="sentence" Icon="@Filled.Folder">
+            <MudListItem @key="sentence" Icon="@Icons.Filled.Folder">
                 <MudHighlighter Class="mud-primary-text"
                              Style="background-color:transparent;font-weight:bold"
                              Text="@sentence"

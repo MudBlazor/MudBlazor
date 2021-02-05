@@ -1,6 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
+    <ResolveStaticWebAssetsInputsDependsOn>
+      IncludeGeneratedStaticFiles;
+      $(ResolveStaticWebAssetsInputsDependsOn)
+    </ResolveStaticWebAssetsInputsDependsOn>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
   </PropertyGroup>
@@ -8,10 +15,10 @@
   <PropertyGroup>
     <Title>MudBlazor</Title>
     <PackageId>MudBlazor</PackageId>
-    <Version>1.2.4</Version>
+    <Version>2.0.0.1-dev</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>Nuget.png</PackageIcon>
-    <Company>Gardnet</Company>
+    <Company>MudBlazor</Company>
     <Authors>Garderoben, Henon and Contributors</Authors>
     <Copyright>Copyright 2020-2021 Jonny Larsson</Copyright>
     <PackageTags>Blazor, MudBlazor, Material, Material Design, Components, Blazor Components, Blazor Library</PackageTags>
@@ -31,42 +38,63 @@
     <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Remove="bundleconfig.json" />
-    <Content Remove="compilerconfig.build.json" />
-    <Content Remove="compilerconfig.json" />
-    <Content Remove="compilerconfig.build.conf" />
-    <Content Remove="compilerconfig.build.files.conf" />
-  </ItemGroup>
+  <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
+  <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
+    <PropertyGroup>
+      <CleanGeneratedFiles>false</CleanGeneratedFiles>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
+    <ItemGroup>
+      <FilesToClean Include="./TScripts/combined/MudBlazor.js" />
+      <FilesToClean Include="./wwwroot/MudBlazor.min.js" />
+      <FilesToClean Include="./wwwroot/MudBlazor.min.css" />
+    </ItemGroup>
+    <Delete Files="@(FilesToClean)" />
+  </Target>
 
   <ItemGroup>
-    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
   </ItemGroup>
 
-  <Target Name="ToolRestore" BeforeTargets="PreBuildEvent">
-      <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
+  <Target Name="ToolRestore">
+    <Exec Command="dotnet tool restore" StandardOutputImportance="high" />
   </Target>
 
-  <Target Name="PreBuild" AfterTargets="ToolRestore">
-      <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -o ./wwwroot -z disable" StandardOutputImportance="high" />
+  <!--combine js files-->
+  <Target Name="CombineJS">
+    <CreateItem Include="./TScripts/*.js">
+      <Output TaskParameter="Include" ItemName="jsFilesToCombine" />
+    </CreateItem>
+    <ReadLinesFromFile File="%(jsFilesToCombine.FullPath)">
+      <Output TaskParameter="Lines" ItemName="jsLines" />
+    </ReadLinesFromFile>
+    <WriteLinesToFile File="./TScripts/combined/MudBlazor.js" Lines="@(jsLines)" Overwrite="true" />
   </Target>
 
-  <Target Name="FileWatch" BeforeTargets="_CoreCollectWatchItems">
+  <Target Name="WebCompiler" DependsOnTargets="ToolRestore;CombineJS">
+    <!--compile and minify scss-->
+    <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json" StandardOutputImportance="high" />
+    <!--minify js-->
+    <Exec Command="dotnet webcompiler ./TScripts/combined/MudBlazor.js -c excubowebcompiler.json" StandardOutputImportance="high" />
+  </Target>
+
+  <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler">
+    <Error Condition="!Exists('wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
+    <Error Condition="!Exists('wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
     <ItemGroup>
-      <FileWatch Include="**\*.razor;" Exclude="node_modules\**\*;obj\**\*;bin\**\*" />
-      <Watch Include="%(FileWatch.FullPath)" />
+      <Content Include="wwwroot/MudBlazor.min.css" Condition="!Exists('wwwroot/MudBlazor.min.css')" />
+      <Content Include="wwwroot/MudBlazor.min.js" Condition="!Exists('wwwroot/MudBlazor.min.js')" />
     </ItemGroup>
   </Target>
-  
+
+  <!--Dont Include in build output-->
   <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="bundleconfig.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Include="compilerconfig.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
+    <Content Remove="compilerconfig.json" />
+    <Content Remove="excubowebcompiler.json" />
+    <Content Remove="**/*/DoNotRemove.txt" />
   </ItemGroup>
+
 </Project>

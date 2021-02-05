@@ -6,7 +6,7 @@ namespace MudBlazor.Components.Highlighter
 {
     public static class Splitter
     {
-        private const string nextBoundary = ".*?\\b";
+        private const string NextBoundary = ".*?\\b";
 
         /// <summary>
         /// Splits the text into fragments, according to the
@@ -32,7 +32,7 @@ namespace MudBlazor.Components.Highlighter
                 highlightedText = Regex.Escape(highlightedText);
                 if (untilNextBoundary)
                 {
-                    highlightedText += nextBoundary;
+                    highlightedText += NextBoundary;
                 }
 
                 //using braces in the pattern keeps the pattern when splitting

@@ -7,7 +7,7 @@
         {
             if (self == null || !(self is T))
                 return default(T);
-            return (T) self;
+            return (T)self;
         }
     }
 }

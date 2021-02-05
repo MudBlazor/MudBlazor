@@ -10,7 +10,7 @@ namespace MudBlazor
             .AddClass($"mud-timeline-rounded", Rounded)
             .AddClass($"mud-border-right", Border)
             .AddClass($"mud-paper-outlined", Outlined)
-            .AddClass($"mud-elevation-{Elevation.ToString()}", Elevation != 0)
+            .AddClass($"mud-elevation-{Elevation}", Elevation != 0)
             .AddClass(Class)
             .Build();
 

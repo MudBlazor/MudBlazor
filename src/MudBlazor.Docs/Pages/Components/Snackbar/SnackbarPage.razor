@@ -25,6 +25,20 @@
 
         <DocsPageSection>
             <SectionHeader>
+                <Title>Html in messages</Title>
+                <Description>
+                    Snackbar messages are rendered as HTML using <CodeInline>MarkupString</CodeInline>.<br />
+                    Howerver, make sure not to use user-provided input, as that's not very secure.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <SnackbarHtmlInMessageExample />
+            </SectionContent>
+            <SectionSource Code="SnackbarHtmlInMessageExample" GitHubFolderName="Snackbar" ShowCode="false" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
                 <Title>Alerts and Severity</Title>
                 <Description>
                     By default no <CodeInline>Severity</CodeInline> property has to be passed and the snackbar uses the normal level.<br />

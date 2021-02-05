@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudBreadcrumbs Items="_items">
+    <SeparatorTemplate>
+        <MudIcon Icon="@Icons.Material.Filled.ArrowForward" Size="Size.Small" />
+    </SeparatorTemplate>
+</MudBreadcrumbs>
+
+@code {
+    private List<BreadcrumbItem> _items = new List<BreadcrumbItem>
+    {
+        new BreadcrumbItem("Home", href: "#"),
+        new BreadcrumbItem("Link 1", href: "#"),
+        new BreadcrumbItem("Link 2", href: null, disabled: true)
+    };
+} 

@@ -1,34 +1,11 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Utilities;
+@inherits MudComponentBase
+@using System.Globalization; 
 
-<div class="@Classname">
-    <div class="mud-collapse-wrapper">
+<div @ref="_container"  class="@Classname" style="@Stylename">    
+    <div @ref="_wrapper" class="mud-collapse-wrapper">
         <div class="mud-collapse-wrapper-inner">
             @ChildContent
         </div>
     </div>
 </div>
-
-@code {
-
-    /// <summary>
-    /// If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.
-    /// </summary>
-    [Parameter] public bool Expanded { get; set; }
-
-    /// <summary>
-    /// User class names, separated by space
-    /// </summary>
-    [Parameter] public string Class { get; set; }
-
-    /// <summary>
-    /// Child content of component.
-    /// </summary>
-    [Parameter] public RenderFragment ChildContent { get; set; }
-
-    protected string Classname =>
-        new CssBuilder("mud-collapse-container")
-          .AddClass($"mud-collapse-expanded", Expanded)
-          .AddClass(Class)
-        .Build();
-}

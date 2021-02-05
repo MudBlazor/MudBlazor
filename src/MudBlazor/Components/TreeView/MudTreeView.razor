@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<ul @attributes="UserAttributes" class="@Classname" style="@Style">
+    <CascadingValue Value="@MudTreeRoot" IsFixed="true">
+        @if (ItemTemplate != null && Items != null)
+        {
+            @foreach (var item in Items)
+            {
+                @ItemTemplate(item)
+            }
+        }
+        else if (ChildContent != null)
+        {
+            @ChildContent
+        }
+    </CascadingValue>
+</ul>

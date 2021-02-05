@@ -1,10 +1,10 @@
 ﻿@using MudBlazor;
 @namespace MudBlazor.UnitTests
 
-<MudRadioGroup>
-    <MudRadio Option="1" Label="L1"/>
-    <MudRadio Option="2" Label="L2" />
-    <MudRadio Option="3" Label="L3" />
+<MudRadioGroup T="string">
+    <MudRadio Option="@("1")" />
+    <MudRadio Option="@("2")" />
+    <MudRadio Option="@("3")" />
 </MudRadioGroup>
 
 @code {

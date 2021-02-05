@@ -46,8 +46,8 @@ namespace MudBlazor.Utilities
 
         public static string ToRgbaFromHex(string hex, double alpha)
         {
-            MudColor Color = FromHex(hex);
-            return $"rgba({Color.R},{Color.G},{Color.B}, {alpha.ToString(CultureInfo.InvariantCulture)})";
+            var color = FromHex(hex);
+            return $"rgba({color.R},{color.G},{color.B}, {alpha.ToString(CultureInfo.InvariantCulture)})";
         }
 
 
@@ -70,10 +70,10 @@ namespace MudBlazor.Utilities
                 return null;
             }
 
-            string red = char.ToString(hex[0]);
-            string green = char.ToString(hex[1]);
-            string blue = char.ToString(hex[2]);
-            string alpha = hex.Length == 3 ? "F" : char.ToString(hex[3]);
+            var red = char.ToString(hex[0]);
+            var green = char.ToString(hex[1]);
+            var blue = char.ToString(hex[2]);
+            var alpha = hex.Length == 3 ? "F" : char.ToString(hex[3]);
 
             return string.Concat(red, red, green, green, blue, blue, alpha, alpha);
         }

@@ -1,4 +1,5 @@
-﻿
+﻿@import '../abstracts/variables';
+
 .mud-container {
     width: 100%;
     display: block;
@@ -9,7 +10,7 @@
     padding-right: 16px;
 }
 
-@media (min-width:600px) {
+@media (min-width:$breakpoint-sm) {
     .mud-container {
         padding-left: 24px;
         padding-right: 24px;
@@ -21,56 +22,56 @@
     padding-right: 0;
 }
 
-@media (min-width:600px) {
+@media (min-width:$breakpoint-sm) {
     .mud-container-fixed {
-        max-width: 600px;
+        max-width: $breakpoint-sm;
     }
 }
 
-@media (min-width:960px) {
+@media (min-width:$breakpoint-md) {
     .mud-container-fixed {
-        max-width: 960px;
+        max-width: $breakpoint-md;
     }
 }
 
-@media (min-width:1280px) {
+@media (min-width:$breakpoint-lg) {
     .mud-container-fixed {
-        max-width: 1280px;
+        max-width: $breakpoint-lg;
     }
 }
 
-@media (min-width:1920px) {
+@media (min-width:$breakpoint-xl) {
     .mud-container-fixed {
-        max-width: 1920px;
+        max-width: $breakpoint-xl;
     }
 }
 
-@media (min-width:0px) {
+@media (min-width:$breakpoint-xs) {
     .mud-container-maxwidth-xs {
         max-width: 444px;
     }
 }
 
-@media (min-width:600px) {
+@media (min-width:$breakpoint-sm) {
     .mud-container-maxwidth-sm {
-        max-width: 600px;
+        max-width: $breakpoint-sm;
     }
 }
 
-@media (min-width:960px) {
+@media (min-width:$breakpoint-md) {
     .mud-container-maxwidth-md {
-        max-width: 960px;
+        max-width: $breakpoint-md;
     }
 }
 
-@media (min-width:1280px) {
+@media (min-width:$breakpoint-lg) {
     .mud-container-maxwidth-lg {
-        max-width: 1280px;
+        max-width: $breakpoint-lg;
     }
 }
 
-@media (min-width:1920px) {
+@media (min-width:$breakpoint-xl) {
     .mud-container-maxwidth-xl {
-        max-width: 1920px;
+        max-width: $breakpoint-xl;
     }
 }

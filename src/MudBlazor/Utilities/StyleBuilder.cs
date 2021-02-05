@@ -130,7 +130,7 @@ namespace MudBlazor.Utilities
         /// <param name="when"></param>
         public StyleBuilder AddStyle(string prop, Action<ValueBuilder> builder, bool when = true)
         {
-            ValueBuilder values = new ValueBuilder();
+            var values = new ValueBuilder();
             builder(values);
             return AddStyle(prop, values.ToString(), when && values.HasValue);
         }

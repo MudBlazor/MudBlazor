@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MudBlazor.Extensions;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
@@ -10,6 +11,7 @@ namespace MudBlazor
         public MudTableBase Table { get; set; }
         public Action TableStateHasChanged { get; set; }
         public Action PagerStateHasChanged { get; set; }
+        public bool HasPager { get; set; }
         public abstract void Add(MudTr row, object item);
         public abstract void Remove(MudTr row, object item);
         public abstract void UpdateRowCheckBoxes();
@@ -19,16 +21,17 @@ namespace MudBlazor
 
         public abstract string SortFieldLabel { get; internal set; }
 
-        public abstract SortDirection SortDirection { get; protected set; }        
+        public abstract SortDirection SortDirection { get; protected set; }
+
     }
 
     public class TableContext<T> : TableContext
     {
-        public HashSet<T> Selection = new HashSet<T>();
+        public HashSet<T> Selection { get; set; } = new HashSet<T>();
 
-        public Dictionary<T, MudTr> Rows = new Dictionary<T, MudTr>();
+        public Dictionary<T, MudTr> Rows { get; set; } = new Dictionary<T, MudTr>();
 
-        public List<MudTableSortLabel<T>> SortLabels = new List<MudTableSortLabel<T>>();
+        public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
 
         public override void UpdateRowCheckBoxes()
         {
@@ -39,17 +42,17 @@ namespace MudBlazor
             {
                 var row = pair.Value;
                 var item = pair.Key;
-                row.IsChecked = Selection.Contains(item);
+                row.SetChecked(Selection.Contains(item), notify: true);
             }
             // update header checkbox
-            if (HeaderRow!=null)
-                HeaderRow.SetChecked(Selection.Count == Table.GetFilteredItemsCount(), notify:false);
+            if (HeaderRow != null)
+                HeaderRow.SetChecked(Selection.Count == Table.GetFilteredItemsCount(), notify: false);
         }
 
         public override void Add(MudTr row, object item)
         {
             var t = item.As<T>();
-            if (ReferenceEquals(t, null))
+            if (t is null)
                 return;
             Rows[t] = row;
         }
@@ -57,14 +60,15 @@ namespace MudBlazor
         public override void Remove(MudTr row, object item)
         {
             var t = item.As<T>();
-            if (ReferenceEquals(t, null))
+            if (t is null)
                 return;
             Rows.Remove(t);
         }
 
         #region --> Sorting
 
-        public override SortDirection SortDirection {
+        public override SortDirection SortDirection
+        {
             get;
             protected set;
         }
@@ -72,13 +76,13 @@ namespace MudBlazor
         public Func<T, object> SortBy { get; protected set; }
         public MudTableSortLabel<T> CurrentSortLabel { get; protected set; }
 
-        public void SetSortFunc(MudTableSortLabel<T> label, bool override_direction_none=false)
+        public void SetSortFunc(MudTableSortLabel<T> label, bool override_direction_none = false)
         {
             CurrentSortLabel = label;
             if (label.SortDirection == SortDirection.None && override_direction_none)
-                label.SortDirection = SortDirection.Ascending;
+                label.SetSortDirection(SortDirection.Ascending);
             SortDirection = label.SortDirection;
-            SortBy = label.SortBy; 
+            SortBy = label.SortBy;
             UpdateSortLabels(label);
             TableStateHasChanged();
         }
@@ -89,7 +93,7 @@ namespace MudBlazor
                 return items;
             if (SortBy == null || SortDirection == SortDirection.None)
                 return items;
-            if (SortDirection==SortDirection.Ascending)
+            if (SortDirection == SortDirection.Ascending)
                 return items.OrderBy(item => SortBy(item));
             else
                 return items.OrderByDescending(item => SortBy(item));
@@ -102,9 +106,9 @@ namespace MudBlazor
                 return;
             UpdateSortLabels(initial_sortlabel);
             // this will trigger initial sorting of the table
-            initial_sortlabel.SortDirection = initial_sortlabel.InitialDirection;
+            initial_sortlabel.SetSortDirection(initial_sortlabel.InitialDirection);
+            SortDirection = initial_sortlabel.SortDirection;
         }
-
 
         private void UpdateSortLabels(MudTableSortLabel<T> label)
         {

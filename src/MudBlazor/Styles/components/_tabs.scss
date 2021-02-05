@@ -1,9 +1,31 @@
 ﻿@import '../abstracts/variables';
 
 .mud-tabs {
+    display: flex;
+    flex-direction: column;
+
+    &.mud-tabs-reverse {
+        flex-direction: column-reverse;
+    }
 
     &.mud-tabs-vertical {
-        display:flex;
+        flex-direction: row;
+    }
+
+    &.mud-tabs-vertical-reverse {
+        flex-direction: row-reverse;
+    }
+
+    &.mud-tabs-rounded {
+        border-radius: var(--mud-default-borderradius);
+
+        .mud-tabs-toolbar {
+            border-radius: var(--mud-default-borderradius);
+        }
+
+        .mud-tabs-panels {
+            border-radius: var(--mud-default-borderradius);
+        }
     }
 }
 
@@ -12,13 +34,36 @@
     position: relative;
     background-color: var(--mud-palette-surface);
 
+    &.mud-tabs-border-left {
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        border-right: 1px solid var(--mud-palette-lines-default);
+    }
+
+    &.mud-tabs-border-right {
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        border-left: 1px solid var(--mud-palette-lines-default);
+    }
+
+    &.mud-tabs-border-top {
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        border-bottom: 1px solid var(--mud-palette-lines-default);
+    }
+
+    &.mud-tabs-border-bottom {
+        border-top-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+        border-top: 1px solid var(--mud-palette-lines-default);
+    }
+
     &.mud-tabs-rounded {
         border-radius: var(--mud-default-borderradius);
     }
 
     & .mud-tabs-toolbar-inner {
         display: flex;
-        overflow: hidden;
         min-height: 48px;
     }
 }
@@ -29,11 +74,13 @@
     display: inline-block;
     position: relative;
     white-space: nowrap;
+    overflow: hidden;
 
     & .mud-tabs-toolbar-wrapper {
         width: max-content;
         position: inherit;
         display: flex;
+        transition: .3s cubic-bezier(.25,.8,.5,1);
 
         &.mud-tabs-centered {
             margin: auto;
@@ -47,6 +94,7 @@
 
 .mud-tabs-panels {
     position: relative;
+    transition: .3s cubic-bezier(.25,.8,.5,1);
 
     &.mud-tabs-vertical {
         display: flex;
@@ -55,6 +103,7 @@
 }
 
 .mud-tab {
+    width:100%;
     min-width: 160px;
     max-width: 360px;
     display: inline-flex;
@@ -81,7 +130,7 @@
         color: var(--mud-palette-primary);
 
         &:hover {
-            background-color: var(--mud-theme-primary-hover);
+            background-color: var(--mud-palette-primary-hover);
         }
     }
 
@@ -103,9 +152,13 @@
     &.mud-tab-slider-horizontal {
         height: 2px;
         left: 0;
-        top: 46px;
+        bottom: 0;
         transition: left .3s cubic-bezier(.64,.09,.08,1);
         will-change: left;
+
+        &.mud-tab-slider-horizontal-reverse {
+            top: 0px;
+        }
     }
 
     &.mud-tab-slider-vertical {
@@ -113,11 +166,11 @@
         right: 0;
         transition: top .3s cubic-bezier(.64,.09,.08,1);
         will-change: top;
-    }
-}
 
-.mud-border-right {
-    border-right: 1px solid var(--mud-palette-lines-default);
+        &.mud-tab-slider-vertical-reverse {
+            left: 0;
+        }
+    }
 }
 
 .mud-tab-badge{
@@ -127,13 +180,49 @@
 @each $color in $mud-palette-colors {
     .mud-tabs-toolbar-#{$color} {
         background-color: var(--mud-palette-#{$color});
-
-        .mud-tab {
-            color: var(--mud-palette-#{$color}-text);
-        }
+        color: var(--mud-palette-#{$color}-text);
 
         .mud-tab-slider {
             background: var(--mud-palette-#{$color}-text);
         }
+
+        .mud-tab {
+            &.mud-tab-active {
+                color: var(--mud-palette-#{$color}-text);
+
+                &:hover {
+                    background-color: var(--mud-palette-#{$color}-lighten);
+                }
+            }
+        }
+    }
+}
+
+
+.tab-transition {
+    &-enter {
+        transform: translate(100%, 0);
+    }
+
+    &-leave, &-leave-active {
+        position: absolute;
+        top: 0;
+    }
+
+    &-leave-to {
+        position: absolute;
+        transform: translate(-100%, 0);
+    }
+}
+
+.tab-reverse-transition {
+    &-enter {
+        transform: translate(-100%, 0);
+    }
+
+    &-leave, &-leave-to {
+        top: 0;
+        position: absolute;
+        transform: translate(100%, 0);
     }
 }

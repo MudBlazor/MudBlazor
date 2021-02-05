@@ -2,13 +2,12 @@
 @typeparam T
 @inherits MudDebouncedInput<T>
 
-<CascadingValue Name="Standalone" Value="false" IsFixed="true">
-    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
+<CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
+    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Class="@Classname" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
         <InputContent>
-            <MudInput @attributes="UserAttributes" InputType="@InputType" Lines="@Lines" Class="@Classname" Style="@Style" Variant="@Variant" @bind-Value="@Text" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly"
-                      Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
+            <MudInput T="string" @ref="_elementReference" @attributes="UserAttributes" InputType="@InputType" Lines="@Lines" Style="@Style" Variant="@Variant" Value="@Text" ValueChanged="(s) => SetTextAsync(s)" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly"
+                      Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
                       OnBlur="@OnBlurred" OnKeyDown="@onKeyDown" OnKeyPress="@onKeyPress" OnKeyUp="@onKeyUp" />
         </InputContent>
     </MudInputControl>
 </CascadingValue>
-

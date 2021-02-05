@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTr:MudComponentBase
+    public partial class MudTr : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-table-row")
             .AddClass(Class).Build();
@@ -82,9 +82,10 @@ namespace MudBlazor
         private bool _lockeditingentry = false;
         private void FinishEdit(MouseEventArgs ev)
         {
+            if (!Context?.Table.Validator.IsValid ?? true) return;
             Context?.Table.SetEditingItem(null);
             _lockeditingentry = true;
             Context?.Table.OnCommitEditHandler(ev, Item);
         }
     }
-    }
+}

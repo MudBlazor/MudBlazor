@@ -1,13 +1,13 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-@if (!string.IsNullOrEmpty(Icon))
+@if (!string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith(("<")))
 {
-    <svg @attributes="UserAttributes" class="@Classname" style="@Style" focusable="false" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="@Icon" />
+    <svg @attributes="UserAttributes" class="@Classname" style="@Style" focusable="false" viewBox="@ViewBox" aria-hidden="true">
+        @((MarkupString)@Icon)
     </svg>
 }
 else
 {
-    <span class="@Classname">@FontIcon</span>
+    <span class="@($"{Classname} {Icon}")" style="@Style" />
 }

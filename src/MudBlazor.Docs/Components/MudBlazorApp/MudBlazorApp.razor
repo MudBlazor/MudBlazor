@@ -8,8 +8,8 @@
             <MudSkeleton SkeletonType="SkeletonType.Circle" Width="8px" Height="8px" Animation="Animation.False" Class="d-inline-flex" Style="background-color: #28ca42;" />
         </CardHeaderAvatar>
         <CardHeaderContent>
-            <MudIconButton Icon="@Icons.Material.NavigateBefore" Size="Size.Small" OnClick="@NavigateToHome" Disabled="@BackButtonDisabled" />
-            <MudIconButton Icon="@Icons.Material.NavigateNext" Size="Size.Small" Disabled="true" />
+            <MudIconButton Icon="@Icons.Material.Filled.NavigateBefore" Size="Size.Small" OnClick="@NavigateToHome" Disabled="@BackButtonDisabled" />
+            <MudIconButton Icon="@Icons.Material.Filled.NavigateNext" Size="Size.Small" Disabled="true" />
             <div class="mudblazor-app-title">
                 @ApplicationTitle
             </div>
@@ -21,13 +21,13 @@
             <div class="mudblazor-apps-list">
                 <MudButton Variant="Variant.Filled" OnClick="@ComposeNewEmail" DisableElevation="true" Color="Color.Primary" Size="Size.Small" Class="mx-3 mt-2 mb-1" Style="height: 24px; width:85%">Compose</MudButton>
                 <MudList Clickable="true" Dense="true" DisablePadding="true">
-                    <MudListItem Icon="@Icons.Material.Inbox" OnClick="@((e) => ChangeMailbox(Inbox))">Inbox</MudListItem>
-                    <MudListItem Icon="@Icons.Material.Send" OnClick="@((e) => ChangeMailbox(Sent))">Sent mail</MudListItem>
-                    <MudListItem Icon="@Icons.Material.Drafts" OnClick="@((e) => ChangeMailbox(Drafts))">Drafts</MudListItem>
-                    <MudListItem Icon="@Icons.Material.Folder" Text="More">
+                    <MudListItem Icon="@Icons.Material.Filled.Inbox" OnClick="@((e) => ChangeMailbox(Inbox))">Inbox</MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.Send" OnClick="@((e) => ChangeMailbox(Sent))">Sent mail</MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.Drafts" OnClick="@((e) => ChangeMailbox(Drafts))">Drafts</MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.Folder" Text="More">
                         <NestedList>
-                            <MudListItem Icon="@Outlined.ReportProblemOutlined" Dense="true" OnClick="@((e) => ChangeMailbox(Spam))">Spam</MudListItem>
-                            <MudListItem Icon="@Outlined.DeleteOutlined" Dense="true" OnClick="@((e) => ChangeMailbox(Bin))">Bin</MudListItem>
+                            <MudListItem Icon="@Icons.Material.Outlined.ReportProblem" Dense="true" OnClick="@((e) => ChangeMailbox(Spam))">Spam</MudListItem>
+                            <MudListItem Icon="@Icons.Material.Outlined.Delete" Dense="true" OnClick="@((e) => ChangeMailbox(Bin))">Bin</MudListItem>
                         </NestedList>
                     </MudListItem>
                 </MudList>
@@ -60,7 +60,7 @@
                             New Message
                         </CardHeaderContent>
                         <CardHeaderActions>
-                            <MudIconButton Icon="@Icons.Material.Close" Size="Size.Small" OnClick="@ComposeNewEmail" Color="Color.Inherit" Class="mt-2" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" OnClick="@ComposeNewEmail" Color="Color.Inherit" Class="mt-2" />
                         </CardHeaderActions>
                     </MudCardHeader>
                     <MudCardContent Class="pa-0 px-1">
@@ -85,11 +85,11 @@
                     <MudText Align="Align.Center" Typo="Typo.body2">Click one of the apps to open them.</MudText>
                 </div>
                 <div class="d-flex align-self-center mt-3">
-                    <MudIconButton Icon="@Icons.Material.Email" OnClick="@NavigateToMailbox" Color="Color.Secondary"/>
-                    <MudIconButton Icon="@Icons.Material.ShoppingCart" Disabled="true" />
-                    <MudIconButton Icon="@Icons.Material.Calculate" OnClick="@ToggleCalculator" Color="Color.Primary" />
-                    <MudIconButton Icon="@Icons.Material.SportsEsports" Disabled="true" />
-                    <MudIconButton Icon="@Icons.Material.Settings" Disabled="true" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Email" OnClick="@NavigateToMailbox" Color="Color.Secondary"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Disabled="true" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Calculate" OnClick="@ToggleCalculator" Color="Color.Primary" />
+                    <MudIconButton Icon="@Icons.Material.Filled.SportsEsports" Disabled="true" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Settings" Disabled="true" />
                 </div>
             </div>
         }
@@ -101,8 +101,8 @@
                         
                     </CardHeaderContent>
                     <CardHeaderActions>
-                        <MudIconButton Icon="@Icons.Material.Remove" Size="Size.Small" OnClick="@ToggleCalculator" Color="Color.Inherit" Class="rounded-0 grey-text" />
-                        <MudIconButton Icon="@Icons.Material.Close" Size="Size.Small" OnClick="@ToggleCalculator" Color="Color.Inherit" Class="rounded-0 rounded-tr-lg grey-text" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Remove" Size="Size.Small" OnClick="@ToggleCalculator" Color="Color.Inherit" Class="rounded-0 grey-text" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" OnClick="@ToggleCalculator" Color="Color.Inherit" Class="rounded-0 rounded-tr-lg grey-text" />
                     </CardHeaderActions>
                 </MudCardHeader>
                 <MudCardContent Class="pa-0">

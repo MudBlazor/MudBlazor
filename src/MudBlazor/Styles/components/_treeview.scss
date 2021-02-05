@@ -1,0 +1,85 @@
+﻿.mud-treeview {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+
+    &.mud-treeview-canactivate .mud-treeview-item-content {
+        cursor: pointer;
+    }
+
+    &.mud-treeview-expand-on-click .mud-treeview-item-content {
+        cursor: pointer;
+    }
+}
+
+.mud-treeview-group {
+    margin: 0px;
+    padding: 0px;
+    margin-left: 17px;
+    list-style: none;
+}
+
+.mud-treeview-item {
+    margin: 0;
+    outline: 0;
+    padding: 0;
+    cursor: default;
+    list-style: none;
+    min-height: 2rem;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+
+    .mud-icon-button {
+        padding: 4px;
+    }
+}
+
+.mud-treeview-item-content {
+    width: 100%;
+    display: flex;
+    padding: 4px;
+    align-items: center;
+
+    &.mud-treeview-item-activated {
+        background-color: rgba(25, 118, 210, 0.08);
+    }
+}
+
+.mud-treeview-item-arrow {
+    width: 2rem;
+    display: flex;
+    flex-shrink: 0;
+    margin: 0 4px;
+    justify-content: center;
+
+    .mud-treeview-item-arrow-expand {
+        color: var(--mud-palette-drawer-icon);
+        transition: .3s cubic-bezier(.25,.8,.5,1),visibility 0s;
+
+        &.mud-transform {
+            transform: rotate(90deg);
+            fill: var(--mud-palette-primary);
+        }
+    }
+}
+
+.mud-treeview-item-icon {
+    width: 32px;
+    display: flex;
+    flex-shrink: 0;
+    margin-right: 4px;
+    justify-content: center;
+}
+
+.mud-treeview-item-label {
+    flex-grow: 1;
+    padding-left: 4px;
+}
+
+.mud-treeview-canhover .mud-treeview-item-activated .mud-treeview-item-content:hover {
+    background-color: rgba(25, 118, 210, 0.12);
+}
+
+.mud-treeview-canhover .mud-treeview-item-content:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}

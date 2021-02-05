@@ -1,86 +1,107 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public partial class MudRadioGroup : MudComponentBase
+    public partial class MudRadioGroup<T> : MudFormComponent<T, T>
     {
+        public MudRadioGroup() : base(new Converter<T, T>()) { }
+
+        private MudRadio<T> _selectedRadio;
+
+        private HashSet<MudRadio<T>> _radios = new HashSet<MudRadio<T>>();
+
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         [Parameter] public string Name { get; set; } = Guid.NewGuid().ToString();
 
         [Parameter]
-        public EventCallback<string> SelectedLabelChanged { get; set; }
-
-        [Parameter]
-        public string SelectedLabel
+        public T SelectedOption
         {
-            get => _selectedLabel;
-            set
+            get => _value;
+            set => SetSelectedOptionAsync(value, true).AndForget();
+        }
+
+        protected async Task SetSelectedOptionAsync(T option, bool updateRadio)
+        {
+            if (!OptionEquals(_value, option))
             {
-                if (_selectedLabel == value)
-                    return;
-                _selectedLabel = value;
-                SetSelectedRadio(_radios.FirstOrDefault(r=>r.Label==value));
-                SelectedLabelChanged.InvokeAsync(value);
+                _value = option;
+
+                if (updateRadio)
+                    await SetSelectedRadioAsync(_radios.FirstOrDefault(r => OptionEquals(r.Option, _value)), false);
+
+                await SelectedOptionChanged.InvokeAsync(_value);
+
+                BeginValidate();
             }
         }
-        private string _selectedLabel;
 
         [Parameter]
-        public string SelectedOption
+        public EventCallback<T> SelectedOptionChanged { get; set; }
+
+        internal Task SetSelectedRadioAsync(MudRadio<T> radio)
         {
-            get => _selectedOption;
-            set
+            Touched = true;
+            return SetSelectedRadioAsync(radio, true);
+        }
+
+        protected async Task SetSelectedRadioAsync(MudRadio<T> radio, bool updateOption)
+        {
+            if (_selectedRadio != radio)
             {
-                if (_selectedOption == value)
-                    return;
-                _selectedOption = value;
-                SetSelectedRadio(_radios.FirstOrDefault(r => r.Option == value));
-                SelectedOptionChanged.InvokeAsync(value);
+                _selectedRadio = radio;
+
+                foreach (var item in _radios.ToArray())
+                    item.SetChecked(item == _selectedRadio);
+
+                if (updateOption)
+                    await SetSelectedOptionAsync(GetOptionOrDefault(_selectedRadio), false);
             }
         }
-        private string _selectedOption;
 
-        [Parameter]
-        public EventCallback<string> SelectedOptionChanged { get; set; }
-
-        HashSet<MudRadio> _radios=new HashSet<MudRadio>();
-
-
-
-        internal void SetSelectedRadio(MudRadio radio)
+        internal Task RegisterRadioAsync(MudRadio<T> radio)
         {
-            if (radio==null || radio.Checked)
-                return;
-            foreach (var registered_radio in _radios.ToArray())
-                registered_radio.Checked = (registered_radio == radio);
-            SelectedLabel = radio.Label;
-            SelectedOption = radio.Option;
-        }
-
-        internal void RegisterRadio(MudRadio radio)
-        {
-            if (radio == null)
-                return;
             _radios.Add(radio);
-            if (!string.IsNullOrWhiteSpace(radio.Label) && radio.Label == SelectedLabel 
-                || !string.IsNullOrWhiteSpace(radio.Option) && radio.Option == SelectedOption)
+
+            if (_selectedRadio == null)
             {
-                radio.Checked = true;
-                SelectedLabel = radio.Label;
-                SelectedOption = radio.Option;
+                if (OptionEquals(radio.Option, _value))
+                    return SetSelectedRadioAsync(radio, false);
             }
+            return Task.CompletedTask;
         }
 
-        internal void UnregisterRadio(MudRadio radio)
+        internal void UnregisterRadio(MudRadio<T> radio)
         {
-            if (radio == null)
-                return;
             _radios.Remove(radio);
+
+            if (_selectedRadio == radio)
+                _selectedRadio = null;
         }
 
+        protected override void ResetValue()
+        {
+            if (_selectedRadio != null)
+            {
+                _selectedRadio.SetChecked(false);
+                _selectedRadio = null;
+            }
+
+            base.ResetValue();
+        }
+
+        private static T GetOptionOrDefault(MudRadio<T> radio)
+        {
+            return radio != null ? radio.Option : default;
+        }
+
+        private static bool OptionEquals(T option1, T option2)
+        {
+            return EqualityComparer<T>.Default.Equals(option1, option2);
+        }
     }
 }

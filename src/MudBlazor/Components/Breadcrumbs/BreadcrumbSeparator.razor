@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor
+
+<li class="mud-breadcrumb-separator">
+    @if (Parent?.SeparatorTemplate == null)
+    {
+        <span>@Parent?.Separator</span>
+    }
+    else
+    {
+        @Parent?.SeparatorTemplate
+    }
+</li>
+
+@code {
+    [CascadingParameter] public MudBreadcrumbs Parent { get; set; }
+}

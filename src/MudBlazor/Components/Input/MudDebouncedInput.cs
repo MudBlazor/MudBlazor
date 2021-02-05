@@ -5,15 +5,32 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public partial class MudDebouncedInput<T> : MudBaseInput<T>, IDisposable
+    public abstract class MudDebouncedInput<T> : MudBaseInput<T>, IDisposable
     {
-
         private Timer _timer;
+        private double _debounceInterval;
 
         /// <summary>
         /// Interval to be awaited in milliseconds before changing the Text value
         /// </summary>
-        [Parameter] public double DebounceInterval { get; set; }
+        [Parameter]
+        public double DebounceInterval
+        {
+            get => _debounceInterval;
+            set
+            {
+                if (NumericConverter<double>.AreEqual(_debounceInterval, value))
+                    return;
+                _debounceInterval = value;
+                if (_debounceInterval == 0)
+                {
+                    // not debounced, dispose timer if any
+                    ClearTimer(suppressTick:false);
+                    return;
+                }
+                SetTimer();
+            }
+        }
 
         /// <summary>
         /// callback to be called when the debounce interval has elapsed
@@ -21,69 +38,73 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
 
-        protected override void StringValueChanged(string text)
+        protected override Task UpdateValuePropertyAsync(bool updateText)
         {
-            //setting the Text property
-
-            if (DebounceInterval == 0)
+            // This method is called when Value property needs to be refreshed from the current Text property, so typically because Text property has changed.
+            // We want to debounce only text-input, not a value being set, so the debouncing is only done when updateText==false (because that indicates the
+            // change came from a Text setter)
+            if (updateText)
             {
-                base.StringValueChanged(text);
-                return;
+                // we have a change coming not from the Text setter, no debouncing is needed
+                return base.UpdateValuePropertyAsync(updateText);
             }
-            //stops previous timer
+            // if debounce interval is 0 we update immediately
+            if (DebounceInterval <= 0 || _timer==null)
+                return base.UpdateValuePropertyAsync(updateText);
+            // If a debounce interval is defined, we want to delay the update of Value property.
             _timer.Stop();
-
-            //starts the timer while user is typing
+            // restart the timer while user is typing
             _timer.Start();
+            return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// It triggers when the interval has elapsed
-        /// </summary>
-        /// <param name="_">discard, not used</param>
-        /// <param name="__">discard, not used</param>
-        private void OnTimerComplete(object _, ElapsedEventArgs __) => InvokeAsync(OnTimerCompleteGuiThread);
-        
-        private void OnTimerCompleteGuiThread()
+        protected override void OnParametersSet()
         {
-            base.StringValueChanged(Text);
-            OnDebounceIntervalElapsed.InvokeAsync(Text);
-        }
-
-        protected override Task OnParametersSetAsync()
-        {
-            if (DebounceInterval != 0)
-            {
-                //if input is to be debounced, makes sense to bind the change of the text to oninput
-                //so we set Immediate to true
+            base.OnParametersSet();
+            // if input is to be debounced, makes sense to bind the change of the text to oninput
+            // so we set Immediate to true
+            if (DebounceInterval > 0)
                 Immediate = true;
-                SetTimer();
-            }
-            return base.OnParametersSetAsync();
         }
 
-        /// <summary>
-        /// creates the timer 
-        /// </summary>
         private void SetTimer()
         {
-            _timer = new Timer(DebounceInterval);
-            _timer.Elapsed += OnTimerComplete;
-            _timer.AutoReset = false;
+            if (_timer == null)
+            {
+                _timer = new Timer();
+                _timer.Elapsed += OnTimerTick;
+                _timer.AutoReset = false;
+            }
+            _timer.Interval = DebounceInterval;
         }
 
-        /// <summary>
-        /// cleaning
-        /// </summary>
+        private void OnTimerTick(object sender, ElapsedEventArgs e)
+        {
+            InvokeAsync(OnTimerTickGuiThread).AndForget();
+        }
+
+        private async Task OnTimerTickGuiThread()
+        {
+            await base.UpdateValuePropertyAsync(false);
+            await OnDebounceIntervalElapsed.InvokeAsync(Text);
+        }
+
+        private void ClearTimer(bool suppressTick=false)
+        {
+            if (_timer == null)
+                return;
+            var wasEnabled = _timer.Enabled;
+            _timer.Stop();
+            _timer.Elapsed -= OnTimerTick;
+            _timer.Dispose();
+            _timer = null;
+            if (wasEnabled && !suppressTick)
+                OnTimerTickGuiThread().AndForget();
+        }
+
         public void Dispose()
         {
-            if (_timer == null) return;
-            _timer.Elapsed -= OnTimerComplete;
-            _timer.Dispose();
+            ClearTimer(suppressTick:true);
         }
-
-
     }
-
-
 }

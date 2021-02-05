@@ -1,0 +1,32 @@
+﻿<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+    </MudAppBar>
+    <MudDrawer @ref="@Drawer" @bind-Open="@open" Elevation="1" Breakpoint="@Breakpoint" ClipMode="@ClipMode" PreserveOpenState="@PreserveOpenState">
+    </MudDrawer>
+    <MudMainContent Class="pt-16 px-16">
+        <MudContainer Class="mt-6">
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+
+@code{ 
+    bool open = false;
+
+    public MudDrawer Drawer { get; set; }
+
+    [Parameter]
+    public bool PreserveOpenState { get; set; }
+
+    [Parameter]
+    public Breakpoint Breakpoint { get; set; } = Breakpoint.Md;
+
+    [Parameter]
+    public DrawerClipMode ClipMode { get; set; }
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+}

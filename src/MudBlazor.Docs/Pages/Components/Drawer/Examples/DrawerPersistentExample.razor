@@ -1,15 +1,7 @@
-﻿@layout IframeLayout
-@namespace MudBlazor.Docs.Examples
-@page "/iframe/docs/examples/drawer/persistent"
+﻿@namespace MudBlazor.Docs.Examples
 
-
-<MudLayout>
-    <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
-        <MudAppBarSpacer />
-        <MudIconButton Icon="@Icons.Custom.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
-    </MudAppBar>
-    <MudDrawer @bind-Open="@open" Elevation="1">
+<MudPaper Class="demo-drawer">
+    <MudDrawer @bind-Open="@open" Fixed="false" Elevation="1" Variant="@DrawerVariant.Persistent">
         <MudDrawerHeader>
             <MudText Typo="Typo.h6">My App</MudText>
         </MudDrawerHeader>
@@ -19,18 +11,16 @@
             <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
         </MudNavMenu>
     </MudDrawer>
-    <MudMainContent Class="pt-16 px-16">
-        <MudContainer Class="mt-6">
-            <LoremIpsum />
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
+    <div class="mud-paper-content">
+        <MudButton OnClick="@TogglDrawer">Toggle</MudButton>
+    </div>
+</MudPaper>
 
+@code
+{
+    bool open = false;
 
-@code{
-    bool open = true;
-
-    void ToggleDrawer()
+    void TogglDrawer()
     {
         open = !open;
     }

@@ -9,7 +9,7 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-button-root mud-fab")
-          .AddClass($"mud-fab-extended", !String.IsNullOrEmpty(Label))
+          .AddClass($"mud-fab-extended", !string.IsNullOrEmpty(Label))
           .AddClass($"mud-fab-{Color.ToDescriptionString()}")
           .AddClass($"mud-fab-size-{Size.ToDescriptionString()}")
           .AddClass($"mud-ripple", !DisableRipple && !Disabled)
@@ -36,6 +36,11 @@ namespace MudBlazor
         /// The color of the icon. It supports the theme colors.
         /// </summary>
         [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+
+        /// <summary>
+        /// The size of the icon.
+        /// </summary>
+        [Parameter] public Size IconSize { get; set; } = Size.Medium;
 
         /// <summary>
         /// If applied the text will be added to the component.

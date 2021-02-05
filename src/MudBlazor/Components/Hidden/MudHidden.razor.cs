@@ -52,15 +52,16 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                ResizeListener.OnResized += OnResized;
-                _ = Update();
+                ResizeListener.OnBreakpointChanged += OnBreakpointChanged;
+                var breakpoint = await ResizeListener.GetBreakpoint();
+                Update(breakpoint);
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected async Task Update()
+        protected void Update(Breakpoint breakpoint)
         {
-            var hidden = await ResizeListener.IsMediaSize(Breakpoint);
+            var hidden = ResizeListener.IsMediaSize(Breakpoint, breakpoint);
             if (Invert)
                 hidden = !hidden;
             if (hidden == _is_hidden)
@@ -70,9 +71,9 @@ namespace MudBlazor
             _ = IsHiddenChanged.InvokeAsync(_is_hidden);
         }
 
-        private void OnResized(object sender, BrowserWindowSize size)
+        private void OnBreakpointChanged(object sender, Breakpoint breakpoint)
         {
-            _ = Update();
+            Update(breakpoint);
         }
     }
 }

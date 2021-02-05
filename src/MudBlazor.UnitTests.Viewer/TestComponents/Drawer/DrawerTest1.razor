@@ -1,0 +1,22 @@
+﻿<MudDrawer @ref="@Drawer" @bind-Open="@isOpen" Variant="@Variant" DisableOverlay="@DisableOverlay" ClipMode="@ClipMode"></MudDrawer>
+<button @onclick="@HandleButtonClick" />
+
+@code {
+    bool isOpen = false;
+
+    public MudDrawer Drawer { get; set; }
+
+    [Parameter]
+    public DrawerVariant Variant { get; set; }
+
+    [Parameter]
+    public bool DisableOverlay { get; set; }
+
+    [Parameter]
+    public DrawerClipMode ClipMode { get; set; }
+
+    public void HandleButtonClick()
+    {
+        isOpen = !isOpen;
+    }
+}

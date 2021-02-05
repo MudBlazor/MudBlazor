@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace MudBlazor
@@ -6,10 +7,14 @@ namespace MudBlazor
 
     /// <summary>
     /// A universal T to double binding converter
+    ///
+    /// Note: currently not in use. Should we ever use it, remove
+    /// the  [ExcludeFromCodeCoverage] attribute
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class NumericConverter<T> : Converter<T, double>
     {
-       
+
         public NumericConverter()
         {
             SetFunc = OnSet;
@@ -22,7 +27,7 @@ namespace MudBlazor
             {
                 // double
                 if (typeof(T) == typeof(double) || typeof(T) == typeof(double?))
-                        return (T)(object)value;
+                    return (T)(object)value;
                 // string
                 else if (typeof(T) == typeof(string))
                     return (T)(object)value.ToString(Culture);
@@ -63,7 +68,7 @@ namespace MudBlazor
             }
             catch (Exception e)
             {
-                UpdateGetError("Conversion error: "+e.Message);
+                UpdateGetError("Conversion error: " + e.Message);
                 return default(T);
             }
             return default(T);
@@ -76,7 +81,7 @@ namespace MudBlazor
             try
             {
                 // double
-                 if (typeof(T) == typeof(double))
+                if (typeof(T) == typeof(double))
                     return (double)(object)arg;
                 else if (typeof(T) == typeof(double?))
                     return ((double?)(object)arg).Value;
@@ -104,7 +109,7 @@ namespace MudBlazor
                 if (typeof(T) == typeof(ushort?))
                     return Convert.ToDouble(((ushort?)(object)arg).Value);
                 // int
-                else if (typeof(T) == typeof(int) )
+                else if (typeof(T) == typeof(int))
                     return Convert.ToDouble((int)(object)arg);
                 else if (typeof(T) == typeof(int?))
                     return Convert.ToDouble(((int?)(object)arg).Value);
@@ -141,7 +146,7 @@ namespace MudBlazor
             }
             catch (FormatException e)
             {
-                UpdateSetError("Conversion error: "+e.Message);
+                UpdateSetError("Conversion error: " + e.Message);
                 return double.NaN;
             }
         }
@@ -154,9 +159,9 @@ namespace MudBlazor
         public static bool AreEqual(double a, double b, double epsilon = MinNormal)
         {
             // Copyright (c) Michael Borgwardt
-            double absA = Math.Abs(a);
-            double absB = Math.Abs(b);
-            double diff = Math.Abs(a - b);
+            var absA = Math.Abs(a);
+            var absB = Math.Abs(b);
+            var diff = Math.Abs(a - b);
 
             if (a.Equals(b))
             { // shortcut, handles infinities

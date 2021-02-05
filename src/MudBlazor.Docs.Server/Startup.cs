@@ -1,10 +1,10 @@
+﻿using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MudBlazor.Docs.Extensions;
-using System.Net.Http;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace MudBlazor.Docs.Server

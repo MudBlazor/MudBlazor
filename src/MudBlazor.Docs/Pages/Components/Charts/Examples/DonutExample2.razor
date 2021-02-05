@@ -5,34 +5,34 @@
 </MudChart>
 
 
-<MudSelect Label="Legend Position" Variant="Variant.Outlined" OffsetY="true" Dense="true" T="@LegendPosition" ValueChanged="OnSelectedValue" Class="mt-4">
-    <MudSelectItem  T="LegendPosition" Value="LegendPosition.Top">Top</MudSelectItem>
-    <MudSelectItem  T="LegendPosition" Value="LegendPosition.Left">Left</MudSelectItem>
-    <MudSelectItem  T="LegendPosition" Value="LegendPosition.Right">Right</MudSelectItem>
-    <MudSelectItem  T="LegendPosition" Value="LegendPosition.Bottom">Bottom</MudSelectItem>
+<MudSelect Label="Legend Position" Variant="Variant.Outlined" OffsetY="true" Dense="true" T="@Position" ValueChanged="OnSelectedValue" Class="mt-4">
+    <MudSelectItem T="Position" Value="Position.Top">Top</MudSelectItem>
+    <MudSelectItem T="Position" Value="Position.Left">Left</MudSelectItem>
+    <MudSelectItem T="Position" Value="Position.Right">Right</MudSelectItem>
+    <MudSelectItem T="Position" Value="Position.Bottom">Bottom</MudSelectItem>
 </MudSelect>
 
 @code {
     public double[] data = { 25, 77, 28, 5 };
     public string[] labels = { "Oil", "Coal", "Gas", "Biomass" };
 
-    public LegendPosition LegendPosition { get; set; } = LegendPosition.Bottom;
+    public Position LegendPosition { get; set; } = Position.Bottom;
 
-    private void OnSelectedValue(LegendPosition value)
+    private void OnSelectedValue(Position value)
     {
         switch(value)
         {
-            case LegendPosition.Top:
-                LegendPosition = LegendPosition.Top;
+            case Position.Top:
+                LegendPosition = Position.Top;
                 break;
-            case LegendPosition.Left:
-                LegendPosition = LegendPosition.Left;
+            case Position.Left:
+                LegendPosition = Position.Left;
                 break;
-            case LegendPosition.Right:
-                LegendPosition = LegendPosition.Right;
+            case Position.Right:
+                LegendPosition = Position.Right;
                 break;
-            case LegendPosition.Bottom:
-                LegendPosition = LegendPosition.Bottom;
+            case Position.Bottom:
+                LegendPosition = Position.Bottom;
                 break;
         }
     }

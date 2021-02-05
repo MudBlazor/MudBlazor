@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -10,10 +10,10 @@ namespace MudBlazor.Docs.Compiler
         public bool Execute()
         {
             var paths = new Paths();
-            bool success = true;
+            var success = true;
             try
             {
-                string currentCode = string.Empty;
+                var currentCode = string.Empty;
                 if (File.Exists(paths.DocStringsFilePath))
                 {
                     currentCode = File.ReadAllText(paths.DocStringsFilePath);
@@ -58,7 +58,7 @@ namespace MudBlazor.Docs.Compiler
             return success;
         }
 
-        private static string GetSaveTypename(Type t) => Regex.Replace(t.ConvertToCSharpSource(), @"[\.<>]", "_");
+        private static string GetSaveTypename(Type t) => Regex.Replace(t.ConvertToCSharpSource(), @"[\.,<>]", "_");
 
         private static string EscapeDescription(string doc)
         {

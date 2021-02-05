@@ -2,6 +2,10 @@
     display: flex;
     flex-grow: 1;
     position: relative;
+
+    &.mud-autocomplete {
+        display: block;
+    }
 }
 
 .mud-select-input {

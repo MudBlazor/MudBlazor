@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -6,8 +6,6 @@ namespace MudBlazor
 {
     public partial class MudToggleIconButton
     {
-        private bool _toggled;
-
         /// <summary>
         /// The toggled value.
         /// </summary>
@@ -63,16 +61,18 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
-        protected override void OnInitialized()
+        public Task Toggle()
         {
-            _toggled = Toggled;
+            return SetToggledAsync(!Toggled);
         }
 
-        public async Task Toggle()
+        protected async Task SetToggledAsync(bool toggled)
         {
-            _toggled = !_toggled;
-            await ToggledChanged.InvokeAsync(_toggled);
+            if (Toggled != toggled)
+            {
+                Toggled = toggled;
+                await ToggledChanged.InvokeAsync(Toggled);
+            }
         }
-
     }
 }

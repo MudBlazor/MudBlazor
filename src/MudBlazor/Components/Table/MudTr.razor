@@ -28,18 +28,11 @@
         else
         {
         <MudTd>
-            @if (object.ReferenceEquals(Context?.Table._editingItem, Item))
+            @if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false))
             {
-                if (!string.IsNullOrEmpty(Context?.Table.CommitEditTooltip))
-                {
                 <MudTooltip Text="@Context.Table.CommitEditTooltip">
-                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Done" OnClick="FinishEdit" Size="@Size.Small" />
+                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Done" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!Context?.Table.Validator?.IsValid ?? false)" />
                 </MudTooltip>
-                }
-                else
-                {
-                    <MudIconButton Class="pa-0" Icon="@Icons.Material.Done" OnClick="FinishEdit" Size="@Size.Small" />
-                }
             }
         </MudTd>
         }

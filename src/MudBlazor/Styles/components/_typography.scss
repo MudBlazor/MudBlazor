@@ -4,109 +4,107 @@
 }
 
 .mud-typography-body2 {
-    font-size: 0.875rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    line-height: 1.43;
-    letter-spacing: 0.01071em;
+    font-size: var(--mud-typography-body2-size);
+    font-family: var(--mud-typography-body2-family);
+    font-weight: var(--mud-typography-body2-weight);
+    line-height: var(--mud-typography-body2-lineheight);
+    letter-spacing: var(--mud-typography-body2-letterspacing);
 }
 
 .mud-typography-body1 {
-    font-size: 1rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    line-height: 1.5;
-    letter-spacing: 0.00938em;
+    font-size: var(--mud-typography-body1-size);
+    font-family: var(--mud-typography-body1-family);
+    font-weight: var(--mud-typography-body1-weight);
+    line-height: var(--mud-typography-body1-lineheight);
+    letter-spacing: var(--mud-typography-body1-letterspacing);
 }
 
 .mud-typography-caption {
-    font-size: 0.75rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    line-height: 1.66;
-    letter-spacing: 0.03333em;
+    font-size: var(--mud-typography-caption-size);
+    font-family: var(--mud-typography-caption-family);
+    font-weight: var(--mud-typography-caption-weight);
+    line-height: var(--mud-typography-caption-lineheight);
+    letter-spacing: var(--mud-typography-caption-letterspacing);
 }
 
 .mud-typography-button {
-    font-size: 0.875rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 500;
-    line-height: 1.75;
-    letter-spacing: 0.02857em;
-    text-transform: uppercase;
+    font-size: var(--mud-typography-button-size);
+    font-family: var(--mud-typography-button-family);
+    font-weight: var(--mud-typography-button-weight);
+    line-height: var(--mud-typography-button-lineheight);
+    letter-spacing: var(--mud-typography-button-letterspacing);
 }
 
 .mud-typography-h1 {
-    font-size: 6rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 300;
-    line-height: 1.167;
-    letter-spacing: -0.01562em;
+    font-size: var(--mud-typography-h1-size);
+    font-family: var(--mud-typography-h1-family);
+    font-weight: var(--mud-typography-h1-weight);
+    line-height: var(--mud-typography-h1-lineheight);
+    letter-spacing: var(--mud-typography-h1-letterspacing);
 }
 
 .mud-typography-h2 {
-    font-size: 3.75rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 300;
-    line-height: 1.2;
-    letter-spacing: -0.00833em;
+    font-size: var(--mud-typography-h2-size);
+    font-family: var(--mud-typography-h2-family);
+    font-weight: var(--mud-typography-h2-weight);
+    line-height: var(--mud-typography-h2-lineheight);
+    letter-spacing: var(--mud-typography-h2-letterspacing);
 }
 
 .mud-typography-h3 {
-    font-size: 3rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    line-height: 1.167;
-    letter-spacing: 0em;
+    font-size: var(--mud-typography-h3-size);
+    font-family: var(--mud-typography-h3-family);
+    font-weight: var(--mud-typography-h3-weight);
+    line-height: var(--mud-typography-h3-lineheight);
+    letter-spacing: var(--mud-typography-h3-letterspacing);
 }
 
 .mud-typography-h4 {
-    font-size: 2.125rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    line-height: 1.235;
-    letter-spacing: 0.00735em;
+    font-size: var(--mud-typography-h4-size);
+    font-family: var(--mud-typography-h4-family);
+    font-weight: var(--mud-typography-h4-weight);
+    line-height: var(--mud-typography-h4-lineheight);
+    letter-spacing: var(--mud-typography-h4-letterspacing);
 }
 
 .mud-typography-h5 {
-    font-size: 1.5rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    line-height: 1.334;
-    letter-spacing: 0em;
+    font-size: var(--mud-typography-h5-size);
+    font-family: var(--mud-typography-h5-family);
+    font-weight: var(--mud-typography-h5-weight);
+    line-height: var(--mud-typography-h5-lineheight);
+    letter-spacing: var(--mud-typography-h5-letterspacing);
 }
 
 .mud-typography-h6 {
-    font-size: 1.25rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 500;
-    line-height: 1.6;
-    letter-spacing: 0.0075em;
+    font-size: var(--mud-typography-h6-size);
+    font-family: var(--mud-typography-h6-family);
+    font-weight: var(--mud-typography-h6-weight);
+    line-height: var(--mud-typography-h6-lineheight);
+    letter-spacing: var(--mud-typography-h6-letterspacing);
 }
 
 .mud-typography-subtitle1 {
-    font-size: 1rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    line-height: 1.75;
-    letter-spacing: 0.00938em;
+    font-size: var(--mud-typography-subtitle1-size);
+    font-family: var(--mud-typography-subtitle1-family);
+    font-weight: var(--mud-typography-subtitle1-weight);
+    line-height: var(--mud-typography-subtitle1-lineheight);
+    letter-spacing: var(--mud-typography-subtitle1-letterspacing);
 }
 
 .mud-typography-subtitle2 {
-    font-size: 0.875rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 500;
-    line-height: 1.57;
-    letter-spacing: 0.00714em;
+    font-size: var(--mud-typography-subtitle2-size);
+    font-family: var(--mud-typography-subtitle2-family);
+    font-weight: var(--mud-typography-subtitle2-weight);
+    line-height: var(--mud-typography-subtitle2-lineheight);
+    letter-spacing: var(--mud-typography-subtitle2-letterspacing);
 }
 
 .mud-typography-overline {
-    font-size: 0.75rem;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    line-height: 2.66;
-    letter-spacing: 0.08333em;
-    text-transform: uppercase;
+    font-size: var(--mud-typography-overline-size);
+    font-family: var(--mud-typography-overline-family);
+    font-weight: var(--mud-typography-overline-weight);
+    line-height: var(--mud-typography-overline-lineheight);
+    letter-spacing: var(--mud-typography-overline-letterspacing);
 }
 
 .mud-typography-srOnly {
