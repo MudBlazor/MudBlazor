@@ -6,6 +6,7 @@
 <MudButton OnClick="@((e) => OpenDialog(closeButton))" Color="Color.Primary">Close Button Dialog</MudButton>
 <MudButton OnClick="@((e) => OpenDialog(noHeader))" Color="Color.Secondary">No header Dialog</MudButton>
 <MudButton OnClick="@((e) => OpenDialog(disableBackdropClick))" Color="Color.Tertiary">Disable backdrop dialog</MudButton>
+<MudButton OnClick="@((e) => OpenDialog(fullScreen))" Color="Color.Info">Full Screen Dialog</MudButton>
 
 
 @code {
@@ -13,6 +14,7 @@
     DialogOptions closeButton = new DialogOptions() { CloseButton = true };
     DialogOptions noHeader = new DialogOptions() {  NoHeader = true };
     DialogOptions disableBackdropClick = new DialogOptions() { DisableBackdropClick = true };
+    DialogOptions fullScreen = new DialogOptions() { FullScreen = true, CloseButton = true };
 
     private void OpenDialog(DialogOptions options)
     {
