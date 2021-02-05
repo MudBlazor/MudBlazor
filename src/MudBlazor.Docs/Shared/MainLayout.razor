@@ -10,7 +10,9 @@
 <MudLayout RightToLeft="@_rightToLeft">
     <MudAppBar Elevation="25">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text">Mudblazor</MudText>
+        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert="true">
+            <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text">Mudblazor</MudText>
+        </MudHidden>
         <MudAppBarSpacer />
         <MudAutocomplete T="ApiLinkServiceEntry" Placeholder="Search" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar">
             <ItemTemplate Context="result">
@@ -18,24 +20,41 @@
             </ItemTemplate>
         </MudAutocomplete>
         <MudAppBarSpacer />
-        <MudMenu EndIcon="@Icons.Filled.KeyboardArrowDown" Label="Support" Color="Color.Inherit" Dense="true" Direction="Direction.Right" OffsetY="true">
-            <MudText Typo="Typo.body2" Class="px-4 py-2"><b>Community Support</b></MudText>
-            <MudMenuItem Link="https://discord.gg/mudblazor" Target="_blank">Discord</MudMenuItem>
-            <MudMenuItem Link="https://gitter.im/MudBlazor/community" Target="_blank">Gitter</MudMenuItem>
-            <MudText Typo="Typo.body2" Class="px-4 py-2"><b>Tools and resources</b></MudText>
-            <MudMenuItem Link="https://try.mudblazor.com/snippet" Target="_blank">TryMudBlazor</MudMenuItem>
-            <MudMenuItem Link="https://github.com/Garderoben/MudBlazor.Templates" Target="_blank">Templates</MudMenuItem>
-        </MudMenu>
-        <MudDivider Vertical="true" FlexItem="true" DividerType="DividerType.Middle" Class="mx-4 my-5" />
-        <MudTooltip Text="Toggle light/dark theme">
-            <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
-        </MudTooltip>
-        <MudTooltip Text="GitHub repository">
-            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
-        </MudTooltip>
-        <MudTooltip Text="Toggle right-to-left/left-to-right">
-            <MudIconButton Icon="@Icons.Material.Filled.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
-        </MudTooltip>
+        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+            <MudMenu EndIcon="@Icons.Filled.KeyboardArrowDown" Label="Support" Color="Color.Inherit" Dense="true" Direction="Direction.Right" OffsetY="true">
+                <MudText Typo="Typo.body2" Class="px-4 py-2"><b>Community Support</b></MudText>
+                <MudMenuItem Link="https://discord.gg/mudblazor" Target="_blank">Discord</MudMenuItem>
+                <MudMenuItem Link="https://gitter.im/MudBlazor/community" Target="_blank">Gitter</MudMenuItem>
+                <MudText Typo="Typo.body2" Class="px-4 py-2"><b>Tools and resources</b></MudText>
+                <MudMenuItem Link="https://try.mudblazor.com/snippet" Target="_blank">TryMudBlazor</MudMenuItem>
+                <MudMenuItem Link="https://github.com/Garderoben/MudBlazor.Templates" Target="_blank">Templates</MudMenuItem>
+            </MudMenu>
+            <MudDivider Vertical="true" FlexItem="true" DividerType="DividerType.Middle" Class="mx-4 my-5" />
+            <MudTooltip Text="Toggle light/dark theme">
+                <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
+            </MudTooltip>
+            <MudTooltip Text="GitHub repository">
+                <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
+            </MudTooltip>
+            <MudTooltip Text="Toggle right-to-left/left-to-right">
+                <MudIconButton Icon="@Icons.Material.Filled.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
+            </MudTooltip>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+            <MudMenu Icon="@Icons.Filled.Settings" Color="Color.Inherit" Dense="true" Direction="Direction.Right" OffsetY="true">
+                <div class="px-2">
+                    <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
+                    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
+                    <MudIconButton Icon="@Icons.Material.Filled.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
+                </div>
+                <MudText Typo="Typo.body2" Class="px-4 py-2"><b>Community Support</b></MudText>
+                <MudMenuItem Link="https://discord.gg/mudblazor" Target="_blank">Discord</MudMenuItem>
+                <MudMenuItem Link="https://gitter.im/MudBlazor/community" Target="_blank">Gitter</MudMenuItem>
+                <MudText Typo="Typo.body2" Class="px-4 py-2"><b>Tools and resources</b></MudText>
+                <MudMenuItem Link="https://try.mudblazor.com/snippet" Target="_blank">TryMudBlazor</MudMenuItem>
+                <MudMenuItem Link="https://github.com/Garderoben/MudBlazor.Templates" Target="_blank">Templates</MudMenuItem>
+            </MudMenu>
+        </MudHidden>
     </MudAppBar>
     
         <MudDrawer @bind-Open=_drawerOpen Elevation="25" Class="mudblazor-appbar-band">
