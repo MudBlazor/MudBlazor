@@ -321,7 +321,7 @@ namespace MudBlazor
         private void OnMouseUp(MouseEventArgs e)
         {
             MouseDown = false;
-            if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour)
+            if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.Normal)
             {
                 _currentView = OpenTo.Minutes;
             }
