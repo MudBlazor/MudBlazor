@@ -27,6 +27,9 @@ namespace MudBlazor
 
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
+            .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded)
+            .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined)
+            .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
             .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
             .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
             .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right)
@@ -35,12 +38,12 @@ namespace MudBlazor
 
         protected string ToolbarClassnames =>
             new CssBuilder("mud-tabs-toolbar")
-            .AddClass($"mud-tabs-rounded", Rounded)
+            .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
             .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
             .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default)
-            .AddClass($"mud-border-right", Border)
-            .AddClass($"mud-paper-outlined", Outlined)
-            .AddClass($"mud-elevation-{Elevation}", Elevation != 0)
+            .AddClass($"mud-tabs-border-{Position.ToDescriptionString()}", Border)
+            .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
+            .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
             .Build();
 
         protected string WrapperClassnames =>
@@ -90,7 +93,7 @@ namespace MudBlazor
         [Parameter] public bool Rounded { get; set; }
 
         /// <summary>
-        /// If true, sets a border.
+        /// If true, sets a border betwen the content and the toolbar depending on the position.
         /// </summary>
         [Parameter] public bool Border { get; set; }
 
@@ -145,9 +148,15 @@ namespace MudBlazor
         [Parameter] public Color ScrollIconColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// The higher the number, the heavier the drop-shadow.
+        /// The higher the number, the heavier the drop-shadow, applies around the whole component.
         /// </summary>
         [Parameter] public int Elevation { set; get; } = 0;
+
+        /// <summary>
+        /// If true, will apply elevation, rounded, outlined effects to the whole tab component instead of just toolbar.
+        /// </summary>
+        [Parameter] public bool ApplyEffectsToContainer { get; set; }
+
 
         /// <summary>
         /// If true, disables ripple effect.
