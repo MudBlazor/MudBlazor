@@ -57,6 +57,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool AmPm { get; set; }
 
+        [Parameter] public bool OnlyMinutes { get; set; }
+
         /// <summary>
         /// The currently selected time (two-way bindable). If null, then nothing was selected.
         /// </summary>
@@ -95,7 +97,7 @@ namespace MudBlazor
         protected override void OnPickerOpened()
         {
             base.OnPickerOpened();
-            _currentView = OpenTo;
+            _currentView = OnlyMinutes ? OpenTo.Minutes : OpenTo;
         }
 
         private string GetHourString()
