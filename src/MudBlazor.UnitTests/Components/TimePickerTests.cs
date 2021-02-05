@@ -221,7 +221,9 @@ namespace MudBlazor.UnitTests
         [Test]
         public void TimeEditModeNormal_CheckMinutesHidden()
         {
-
+            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.Normal));
+            // Are Hours hidden
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
 
         [Test]
@@ -233,7 +235,6 @@ namespace MudBlazor.UnitTests
             // Are minutes displayed
             comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
         }
-
 
         [Test]
         public void DragMouse_SelectHour_CheckMinutesAppear()
