@@ -1,13 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudSelect Label="Tabs Position" OffsetY="true" Dense="true" T="@Position" @bind-Value="Position" Class="mb-4">
+<MudSelect Variant="Variant.Outlined" Label="Tabs Position" Dense="true" Margin="Margin.Dense" T="@Position" @bind-Value="Position">
     <MudSelectItem T="Position" Value="@Position.Top">Top</MudSelectItem>
     <MudSelectItem T="Position" Value="@Position.Left">Left</MudSelectItem>
     <MudSelectItem T="Position" Value="@Position.Right">Right</MudSelectItem>
     <MudSelectItem T="Position" Value="@Position.Bottom">Bottom</MudSelectItem>
 </MudSelect>
 
-<MudTabs Elevation="1" Position="@Position">
+<MudTabs Outlined="true" Position="@Position" Rounded="true" Border="true" ApplyEffectsToContainer="true" Class="mt-8">
     <MudTabPanel Text="Item One">
         <MudText>Content One</MudText>
     </MudTabPanel>
