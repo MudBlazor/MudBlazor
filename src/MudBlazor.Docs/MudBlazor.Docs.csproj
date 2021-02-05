@@ -132,8 +132,4 @@
     <Content Remove="compilerconfig.json" />
     <Content Remove="excubowebcompiler.json" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="Pages\Components\TimePicker\Code\TimePickerEditOnlyMinutesExampleCode.html" />
-  </ItemGroup>
-
 </Project>
