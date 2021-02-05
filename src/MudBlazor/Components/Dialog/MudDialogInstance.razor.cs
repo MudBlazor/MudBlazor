@@ -83,6 +83,7 @@ namespace MudBlazor
             NoHeader = SetHideHeader();
             CloseButton = SetCloseButton();
             FullWidth = SetFullWidth();
+            FullScreen = SetFulScreen();
             DisableBackdropClick = SetDisableBackdropClick();
         }
 
@@ -135,10 +136,22 @@ namespace MudBlazor
             return false;
         }
 
+        private bool SetFulScreen()
+        {
+            if (Options.FullScreen.HasValue)
+                return Options.FullScreen.Value;
+
+            if (GlobalDialogOptions.FullScreen.HasValue)
+                return GlobalDialogOptions.FullScreen.Value;
+
+            return false;
+        }
+
         protected string Classname =>
         new CssBuilder("mud-dialog")
-            .AddClass(DialogMaxWidth)
-            .AddClass("mud-dialog-width-full", FullWidth == true)
+            .AddClass(DialogMaxWidth, !FullScreen)
+            .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
+            .AddClass("mud-dialog-fullscreen", FullScreen)
         .Build();
 
         private bool SetHideHeader()
