@@ -1,5 +1,4 @@
 ﻿@namespace MudBlazor.Docs.Examples
-@using BlazorInputFile
 
 <label  style="
         box-shadow: 0 2px 7px #4caf50;
@@ -33,11 +32,13 @@
 
 @code
 {
-    IEnumerable<IFileListEntry> files;
-    private void UploadFiles(IFileListEntry[] entries)
+    IList<IBrowserFile> files = new List<IBrowserFile>();
+    private void UploadFiles(InputFileChangeEventArgs e)
     {
-        files = entries;
+        foreach (var file in e.GetMultipleFiles())
+        {
+            files.Add(file);
+        }
         //TODO upload the files to the server
     }
-
 }
