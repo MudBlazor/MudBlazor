@@ -42,6 +42,8 @@ namespace MudBlazor
                 return t;
             }
         }
+
+        protected MudTable<T> mudTable;
         //protected ItemType Def => new ItemType();
         /// <summary>
         /// Text to show when there are no items to show
@@ -85,6 +87,13 @@ namespace MudBlazor
         /// Used only with ServerData
         /// </summary>
         [Parameter] public Func<TableState, Task<TableData<T>>> ServerData { get; set; }
+        /// <summary>
+        /// Call this to reload the server-filtered, -sorted and -paginated items
+        /// </summary>
+        public Task ReloadServerData()
+        {
+            return mudTable.ReloadServerData();
+        }
         #endregion
         #region Templates
         [Parameter] public RenderFragment<T> Columns { get; set; }
