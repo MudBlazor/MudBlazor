@@ -14,9 +14,6 @@ namespace MudBlazor.Docs.Services
         IEnumerable<DocsLink> Features { get; }
         IEnumerable<DocsLink> Customization { get; }
         IEnumerable<DocsLink> About { get; }
-
-
-
     }
 
     /// <summary>
