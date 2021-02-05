@@ -8,7 +8,7 @@
                          Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu">
             <InputContent>
                 <MudInput T="string" @ref="_elementReference" InputType="InputType.Text" Variant="@Variant" @attributes="UserAttributes" Value="@Text" ValueChanged="(s) => SetTextAsync(s)" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                          Immediate="true" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" OnKeyDown="@this.OnInputKeyDown"
+                          Immediate="true" Margin="@Margin" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" OnKeyDown="@this.OnInputKeyDown"
                           OnBlur="@OnInputBlurred" OnKeyUp="@base.onKeyUp" OnKeyPress="@base.onKeyPress" />
             </InputContent>
         </MudInputControl>
