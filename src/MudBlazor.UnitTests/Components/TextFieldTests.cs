@@ -301,6 +301,15 @@ namespace MudBlazor.UnitTests
             textfield.ErrorText.Should().BeNullOrEmpty();
             textfield.HasErrors.Should().Be(false);
         }
+
+        /// <summary>
+        /// This is based on a bug reported by a user
+        /// </summary>
+        [Test]
+        public async Task DebouncedTextField_ShouldNot_ThrowException()
+        {
+            ctx.RenderComponent<DebouncedTextFieldTest>();
+        }
     }
 
 }
