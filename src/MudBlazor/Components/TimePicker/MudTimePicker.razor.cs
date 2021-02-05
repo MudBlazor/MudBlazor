@@ -57,7 +57,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool AmPm { get; set; }
 
-        [Parameter] public bool OnlyMinutes { get; set; }
+        [Parameter] public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
 
         /// <summary>
         /// The currently selected time (two-way bindable). If null, then nothing was selected.
@@ -97,7 +97,14 @@ namespace MudBlazor
         protected override void OnPickerOpened()
         {
             base.OnPickerOpened();
-            _currentView = OnlyMinutes ? OpenTo.Minutes : OpenTo;
+
+            _currentView = TimeEditMode switch
+            {
+                TimeEditMode.Normal => OpenTo,
+                TimeEditMode.OnlyHours => OpenTo.Hours,
+                TimeEditMode.OnlyMinutes => OpenTo.Minutes,
+                _ => _currentView
+            };
         }
 
         private string GetHourString()
@@ -312,7 +319,7 @@ namespace MudBlazor
         private void OnMouseUp(MouseEventArgs e)
         {
             MouseDown = false;
-            if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour)
+            if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.Normal)
             {
                 _currentView = OpenTo.Minutes;
             }
@@ -331,7 +338,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// On click for the hour "sticks", sets the houre.
+        /// On click for the hour "sticks", sets the hour.
         /// </summary>
         private void OnMouseClickHour(int value)
         {
@@ -345,7 +352,10 @@ namespace MudBlazor
             }
             _timeSet.Hour = h;
             UpdateTime();
-            _currentView = OpenTo.Minutes;
+            if (TimeEditMode == TimeEditMode.Normal)
+            {
+                _currentView = OpenTo.Minutes;
+            }
         }
 
         /// <summary>

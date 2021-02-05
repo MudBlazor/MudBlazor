@@ -1,13 +1,10 @@
 ﻿
 namespace MudBlazor
 {
-    public enum OpenTo
+    public enum TimeEditMode
     {
-        None,
-        Date,
-        Year,
-        Month,
-        Hours,
-        Minutes
+       Normal,
+       OnlyMinutes,
+       OnlyHours
     }
 }
