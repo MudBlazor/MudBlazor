@@ -53,7 +53,7 @@ namespace MudBlazor
         [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Hours;
 
         /// <summary>
-        /// Choose the edition mode. By default is normal.
+        /// Choose the edition mode. By default you can edit hours and minutes.
         /// </summary>
         [Parameter] public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
 
