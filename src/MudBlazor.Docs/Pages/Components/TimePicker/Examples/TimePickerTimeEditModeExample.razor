@@ -1,4 +1,10 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTimePicker Label="Hours" Text="13:37" TimeEditMode="TimeEditMode.OnlyHours" />
-<MudTimePicker Label="Minutes" Text="13:37" TimeEditMode="TimeEditMode.OnlyMinutes"/>
+<MudTimePicker Label="Normal" @bind-Time="time" TimeEditMode="TimeEditMode.Normal" />
+<MudTimePicker Label="OnlyHours" @bind-Time="time" TimeEditMode="TimeEditMode.OnlyHours" />
+<MudTimePicker Label="OnlyMinutes" @bind-Time="time" TimeEditMode="TimeEditMode.OnlyMinutes" />
+
+@code{
+
+    TimeSpan? time = new TimeSpan(13, 37, 00);
+}
