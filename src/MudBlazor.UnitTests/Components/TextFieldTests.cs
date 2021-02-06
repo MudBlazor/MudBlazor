@@ -310,6 +310,22 @@ namespace MudBlazor.UnitTests
         {
             ctx.RenderComponent<DebouncedTextFieldTest>();
         }
+
+        [Test]
+        public async Task TextFieldMultiline_CheckRenderedText()
+        {
+            var text = "Hello world!";
+            var comp = ctx.RenderComponent<MudTextField<string>>(new[]
+            {
+                Parameter(nameof(MudTextField<string>.Text), text),
+                Parameter(nameof(MudTextField<string>.Lines), 2)
+            });
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var textfield = comp.Instance;
+            comp.Find("textarea").InnerHtml.Should().Be(text);
+        }
     }
 
 }

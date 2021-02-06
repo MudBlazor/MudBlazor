@@ -12,9 +12,7 @@
     @if (Lines > 1)
     {
         <textarea @ref="_elementReference" rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly"
-                  @oninput="OnInput" @onchange="OnChange" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp">
-            @Text
-        </textarea>
+                  @oninput="OnInput" @onchange="OnChange" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp">@Text</textarea>
     }
     else
     {
