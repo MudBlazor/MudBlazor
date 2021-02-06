@@ -65,8 +65,10 @@ window.scrollHelpers = {
     },
 
     //unlocks the scroll. Default is body
-    unlockScroll: (selector, lockclass) => {
-        let element = document.querySelector(selector) || document.body;
-        element.classList.remove(lockclass);
+    unlockScroll: function (selector, lockclass) {
+        setTimeout(() => {
+            let element = document.querySelector(selector) || document.body;
+            element.classList.remove(lockclass);
+        }, 100);
     },
 };

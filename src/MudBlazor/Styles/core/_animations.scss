@@ -50,8 +50,8 @@
 
 @-webkit-keyframes mud-scale-up-center {
     0% {
-        -webkit-transform: scale(0.5);
-        transform: scale(0.5);
+        -webkit-transform: scale(0.0);
+        transform: scale(0.0);
     }
 
     100% {
@@ -62,8 +62,8 @@
 
 @keyframes mud-scale-up-center {
     0% {
-        -webkit-transform: scale(0.5);
-        transform: scale(0.5);
+        -webkit-transform: scale(0.0);
+        transform: scale(0.0);
     }
 
     100% {

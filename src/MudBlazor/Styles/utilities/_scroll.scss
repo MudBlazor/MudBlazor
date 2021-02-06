@@ -6,8 +6,14 @@
 
 .scroll-locked-dialog {
     height: 100%;
-    overflow-y: hidden;
+    overflow: hidden;
     padding-right: 8px; //the width of scroll-bar
+}
+
+@-moz-document url-prefix() {
+    .scroll-locked-dialog {
+        padding-right: 17px; //the width of scroll-bar
+    }
 }
 
 .mud-scroll-to-top {
