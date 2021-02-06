@@ -4,7 +4,7 @@
     display: flex;
     position: relative;
     align-items: center;
-    min-height: 56px;
+    height: 56px;
 }
 
 .mud-toolbar-gutters {
@@ -14,20 +14,20 @@
 
 @media (min-width:$breakpoint-xs) and (orientation: landscape) {
     .mud-toolbar {
-        min-height: 48px;
+        height: 48px;
 
         &.mud-toolbar-appbar {
-            min-height: calc(var(--mud-appbar-min-height) - 16px);
+            height: calc(var(--mud-appbar-min-height) - 16px);
         }
     }
 }
 
 @media (min-width:$breakpoint-sm) {
     .mud-toolbar {
-        min-height: 64px;
+        height: 64px;
 
         &.mud-toolbar-appbar {
-            min-height: var(--mud-appbar-min-height);
+            height: var(--mud-appbar-min-height);
         }
     }
 
@@ -38,9 +38,9 @@
 }
 
 .mud-toolbar-dense {
-    min-height: 48px;
+    height: 48px;
 
     &.mud-toolbar-appbar {
-        min-height: calc(var(--mud-appbar-min-height) - 16px);
+        height: calc(var(--mud-appbar-min-height) - 16px);
     }
 }
