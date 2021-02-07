@@ -36,6 +36,7 @@
 .mud-scroll-to-top {
     position: fixed;
     cursor: pointer;
+    z-index: 100;
 
     &.visible {
         bottom: 16px;
