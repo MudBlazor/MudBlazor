@@ -59,6 +59,7 @@ namespace MudBlazor.Docs.Models
                 [typeof(MudSlider<T>)] = "slider",
                 [typeof(MudCheckBox<T>)] = "checkbox",
                 [typeof(MudSwitch<T>)] = "switch",
+                [typeof(MudTreeView<T>)] = "treeview",
                 [typeof(MudFab)] = "buttonfab",
                 [typeof(MudIcon)] = "icons",
                 [typeof(MudProgressCircular)] = "progress",
