@@ -1,9 +1,4 @@
-﻿@using System.IO
-@using MudBlazor.Utilities
-
-@inject IJSRuntime JSRuntime
-
-<div class="docs-section-source @Class">
+﻿<div class="docs-section-source @Class">
     @if (!NoToolbar)
     {
     <div class="docs-content-toolbar">
@@ -17,12 +12,11 @@
             <MudTooltip Text="@TooltipSourceCodeText" Placement="Placement.Top">
                 <MudIconButton Icon="@Icons.Material.Filled.Code" OnClick="OnShowCode" />
             </MudTooltip>
-            @if (!String.IsNullOrEmpty(SnippetId))
-            {
-                <MudTooltip Text="Edit on TryMudBlazor" Placement="Placement.Top">
-                    <MudIconButton Icon="@Icons.Material.Filled.Create" Link="@TryMudBlazorSnippetLink" Target="_blank" />
-                </MudTooltip>
-            }
+
+            <MudTooltip Text="Edit on TryMudBlazor" Placement="Placement.Top">
+                <MudIconButton Icon="@Icons.Material.Filled.Create" OnClick="EditOnTryMudBlazor" />
+            </MudTooltip>
+
             @if (!String.IsNullOrEmpty(Code))
             {
                 <MudTooltip Text="Copy Code" Placement="Placement.Top">
@@ -43,95 +37,3 @@
         @CodeComponent()
     </div>
 </div>
-
-@code {
-
-    [Parameter] public string Title { get; set; }
-
-    [Parameter] public string Code { get; set; }
-
-    [Parameter] public string Class { get; set; }
-
-    [Parameter] public string GitHubFolderName { get; set; }
-
-    [Parameter] public string SnippetId { get; set; }
-
-    [Parameter] public bool ShowCode { get; set; } = true;
-
-    [Parameter] public bool HideButtons { get; set; }
-
-    [Parameter] public bool NoToolbar { get; set; }
-
-    private string GitHubSourceCode { get; set; }
-
-    private string TryMudBlazorSnippetLink { get; set; }
-
-    public string TooltipSourceCodeText { get; set; }
-
-    private string showCodeExampleString { get; set; } = "Show code example";
-    private string hideCodeExampleString { get; set; } = "Hide code example";
-    private string showComponentCodeExampleString { get; set; } = "Show component code example";
-    private string hideComponentCodeExampleString { get; set; } = "Hide component code example";
-
-    private async Task CopyTextToClipboard()
-    {
-        await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", @Snippets.GetCode(Code));
-    }
-
-    public void OnShowCode()
-    {
-        if (!String.IsNullOrEmpty(Code))
-        {
-            ShowCode = !ShowCode;
-            if (ShowCode)
-            {
-                TooltipSourceCodeText = hideCodeExampleString;
-            }
-            else
-            {
-                TooltipSourceCodeText = showCodeExampleString;
-            }
-        }
-    }
-
-    private Type CodeType => Type.GetType("MudBlazor.Docs.Examples.Markup." + Code + "Code");
-
-    RenderFragment CodeComponent() => builder =>
-    {
-        try
-        {
-            var key = typeof(SectionSource).Assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains($"{Code}Code.html"));
-            using (var stream = typeof(SectionSource).Assembly.GetManifestResourceStream(key))
-            using (var reader = new StreamReader(stream))
-            {
-                builder.AddMarkupContent(0, reader.ReadToEnd());
-            }
-        }
-        catch (Exception)
-        {
-            // todo: log this
-        }
-    };
-
-    protected override void OnInitialized()
-    {
-        if (!String.IsNullOrEmpty(SnippetId))
-        {
-            string TryMudBlazorLink = "https://try.mudblazor.com/";
-            TryMudBlazorSnippetLink = $"{TryMudBlazorLink}snippet/{SnippetId}";
-        }
-        if (!String.IsNullOrEmpty(GitHubFolderName))
-        {
-            string GitHubLink = "https://github.com/";
-            GitHubSourceCode = $"{GitHubLink}Garderoben/MudBlazor/blob/master/src/MudBlazor.Docs/Pages/Components/{GitHubFolderName}/Examples/{Code}.razor";
-        }
-        if (ShowCode)
-        {
-            TooltipSourceCodeText = hideCodeExampleString;
-        }
-        else
-        {
-            TooltipSourceCodeText = showCodeExampleString;
-        }
-    }
-}
