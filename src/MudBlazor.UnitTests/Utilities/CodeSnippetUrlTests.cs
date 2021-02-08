@@ -17,17 +17,17 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void CompressedUrlRoundtripTest()
         {
-            var snippet = Snippets.TableServerSidePaginateExample;
+            var snippet = Snippets.GetCode("TableServerSidePaginateExample");
             string urlEncodedBase64compressedCode, base64compressedCode, snippet1;
             byte[] bytes;
             // compressiong
             using (var uncompressed = new MemoryStream(Encoding.UTF8.GetBytes(snippet)))
             using (var compressed = new MemoryStream())
-            using (DeflateStream compressor = new DeflateStream(compressed, CompressionMode.Compress))
+            using (var compressor = new DeflateStream(compressed, CompressionMode.Compress))
             {
                 uncompressed.CopyTo(compressor);
                 compressor.Close();
-                bytes=compressed.ToArray();
+                bytes = compressed.ToArray();
                 base64compressedCode = Convert.ToBase64String(bytes);
                 //Console.WriteLine(base64compressedCode);
                 urlEncodedBase64compressedCode = Uri.EscapeDataString(base64compressedCode);
@@ -45,7 +45,7 @@ namespace MudBlazor.UnitTests.Utilities
                 uncompressor.CopyTo(uncompressed);
                 uncompressor.Close();
                 //uncompressed.Position = 0;
-                snippet1=Encoding.UTF8.GetString( uncompressed.ToArray());
+                snippet1 = Encoding.UTF8.GetString( uncompressed.ToArray());
             }
             // compare
             snippet1.Should().Be(snippet);
