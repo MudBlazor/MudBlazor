@@ -354,7 +354,11 @@ namespace MudBlazor
             }
             _timeSet.Hour = h;
             UpdateTime();
-            _currentView = OpenTo.Minutes;
+
+            if (TimeEditMode == TimeEditMode.Normal)
+            {
+                _currentView = OpenTo.Minutes;
+            }
         }
 
         /// <summary>
