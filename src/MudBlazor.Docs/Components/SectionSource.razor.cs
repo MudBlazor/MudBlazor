@@ -67,7 +67,7 @@ namespace MudBlazor.Docs.Components
         {
             try
             {
-                var key = typeof(SectionSource).Assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains($"{Code}Code.html"));
+                var key = typeof(SectionSource).Assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains($".{Code}Code.html"));
                 using (var stream = typeof(SectionSource).Assembly.GetManifestResourceStream(key))
                 using (var reader = new StreamReader(stream))
                 {
