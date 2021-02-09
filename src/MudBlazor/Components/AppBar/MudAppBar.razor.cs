@@ -10,8 +10,6 @@ namespace MudBlazor
             new CssBuilder("mud-appbar")
                 .AddClass($"mud-appbar-dense", Dense)
                 .AddClass($"mud-appbar-fixed", Fixed)
-                .AddClass(GetDrawerClass(Anchor.Left))
-                .AddClass(GetDrawerClass(Anchor.Right))
                 .AddClass($"mud-elevation-{Elevation}")
                 .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
                 .AddClass(Class)
@@ -41,24 +39,5 @@ namespace MudBlazor
         /// Child content of the component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
-
-        [CascadingParameter] MudLayout Layout { get; set; }
-
-        private string GetDrawerClass(Anchor anchor)
-        {
-            var drawer = Layout?.DrawerContainer.GetDrawerOrDefault(anchor);
-            if (drawer == null)
-                return string.Empty;
-
-
-            var className = $"mud-appbar-drawer-{(drawer.Open && drawer.ClipMode == DrawerClipMode.Never ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}";
-            if (drawer.Variant == DrawerVariant.Responsive)
-            {
-                className += $"-{drawer.Breakpoint.ToDescriptionString()}";
-            }
-            className += $"-{anchor.ToDescriptionString()}";
-
-            return className;
-        }
     }
 }
