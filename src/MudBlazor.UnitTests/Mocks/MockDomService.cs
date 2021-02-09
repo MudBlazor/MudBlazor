@@ -25,5 +25,8 @@ namespace MudBlazor.UnitTests.Mocks
 
         public ValueTask AddEventListener<T>(ElementReference element, DotNetObjectReference<T> dotnet, string @event, string callback) where T : class =>
             new ValueTask();
+        
+        public ValueTask OpenInNewTab(string url) =>
+            new ValueTask();
     }
 }

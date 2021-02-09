@@ -1,21 +1,22 @@
+using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-
+using Microsoft.JSInterop;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Extensions;
-
-using System;
-using Microsoft.JSInterop;
-using System.Linq;
-
+using MudBlazor.Services;
 namespace MudBlazor.Docs.Components
 {
     public partial class SectionSource
     {
         [Inject]
-        protected IJSRuntime _jsRuntime { get; set; }
+        protected IJSRuntime  JSRuntime { get; set; }
 
+        [Inject]
+        protected IDomService DomService { get; set; }
+        
         [Parameter] public string Title { get; set; }
 
         [Parameter] public string Code { get; set; }
@@ -41,7 +42,7 @@ namespace MudBlazor.Docs.Components
 
         private async Task CopyTextToClipboard()
         {
-            await _jsRuntime.InvokeVoidAsync("clipboardCopy.copyText", Snippets.GetCode(Code));
+            await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", Snippets.GetCode(Code));
         }
 
         public void OnShowCode()
@@ -87,7 +88,7 @@ namespace MudBlazor.Docs.Components
             // var tryMudBlazorLocation = "https://localhost:5001/";
             var tryMudBlazorLocation = "https://try.mudblazor.com/";
             var url = $"{tryMudBlazorLocation}snippet/{codeFileEncoded}";
-            await _jsRuntime.InvokeAsync<string>("open", url, "_blank");
+            await DomService.OpenInNewTab(url);
         }
 
         protected override void OnInitialized()
