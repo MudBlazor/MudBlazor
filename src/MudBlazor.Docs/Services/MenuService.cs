@@ -146,7 +146,7 @@ namespace MudBlazor.Docs.Services
         public IEnumerable<DocsLink> GettingStarted => _gettingStarted ??= new List<DocsLink>
             {
                 new DocsLink {Title = "Installation", Href = "getting-started/installation"},
-                new DocsLink {Title = "Usage", Href = "getting-started/usage"},
+                new DocsLink {Title = "Usage", Href = "getting-started/usagepage"},
                 new DocsLink {Title = "Wireframes", Href = "getting-started/wireframes"},
             }.OrderBy(x => x.Title);
 
