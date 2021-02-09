@@ -191,7 +191,7 @@ namespace MudBlazor.Docs.Services
             new DocsLink{ Title="Credits" , Href="project/credit" },
             new DocsLink{Href="project/about", Title="How it started" },
             new DocsLink{Href="project/team", Title="Team & Contributors" },
-            new DocsLink{Href="versions", Title="Versions" },
+            new DocsLink{Href="project/versions", Title="Versions" },
         }.OrderBy(x => x.Title);
     }
 }
