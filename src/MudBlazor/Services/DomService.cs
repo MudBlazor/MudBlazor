@@ -41,5 +41,8 @@ namespace MudBlazor.Services
 
         public ValueTask AddEventListener<T>(ElementReference element, DotNetObjectReference<T> dotnet, string @event, string callback) where T : class =>
             _jsRuntime.InvokeVoidAsync("addMudEventListener", element, dotnet, @event, callback);
+
+        public ValueTask OpenInNewTab(string url) =>
+            _jsRuntime.InvokeVoidAsync("mudOpen", new object[2] { url, "_blank" }); 
     }
 }

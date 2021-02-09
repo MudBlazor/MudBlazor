@@ -26,3 +26,8 @@ window.addMudEventListener = (element, dotnet, event, callback) => {
         dotnet.invokeMethodAsync(callback);
     });
 };
+
+// Needed as per https://stackoverflow.com/questions/62769031/how-can-i-open-a-new-window-without-using-js
+window.mudOpen = (args) => {
+    window.open(args);
+};
