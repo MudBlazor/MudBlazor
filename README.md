@@ -23,7 +23,7 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 - [MudBlazor.com](https://mudblazor.com)
 - [Try.MudBlazor.com](https://try.mudblazor.com/)
 ## Prerequisites
-- [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+- [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) or [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) (legacy)
 ## Getting Started 
 - Full installation instructions can be found at [mudblazor.com](https://mudblazor.com/getting-started/installation)  
 - Alternatively use one of our templates from the [MudBlazor.Templates](https://github.com/Garderoben/MudBlazor.Templates) repo. 
