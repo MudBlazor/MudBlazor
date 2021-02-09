@@ -13,6 +13,8 @@ namespace MudBlazor.Services
         ValueTask ChangeGlobalCssVariable(string variableName, int value);
         ValueTask ChangeCssVariable(ElementReference element, string variableName, int value);
         ValueTask AddEventListener<T>(ElementReference element, DotNetObjectReference<T> dotnet, string @event, string callback) where T : class;
+
+        ValueTask OpenInNewTab(string url);
     }
 
     public class DomService : IDomService
