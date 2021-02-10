@@ -1,6 +1,7 @@
 ﻿.mud-input-control.mud-field {
     .mud-input-slot {
         height: auto;
+        min-height: 19px;
 
         &.mud-input-slot-nopadding {
             padding-top: 0px;

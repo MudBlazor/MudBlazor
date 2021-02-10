@@ -150,6 +150,15 @@ namespace MudBlazor
             }
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender && _isActivated)
+            {
+                await MudTreeRoot.UpdateActivatedItem(this, _isActivated);
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
         protected async Task OnItemClicked(MouseEventArgs ev)
         {
             if (MudTreeRoot?.CanActivate ?? false)

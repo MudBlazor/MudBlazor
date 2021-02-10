@@ -55,6 +55,15 @@ namespace MudBlazor
             MudTreeRoot = this;
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender && MudTreeRoot == this)
+            {
+                await UpdateSelectedItems();
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
         internal async Task UpdateActivatedItem(MudTreeViewItem<T> item, bool requestedValue)
         {
             if ((_activatedValue == item && requestedValue) ||
@@ -65,7 +74,7 @@ namespace MudBlazor
             {
                 _activatedValue = default;
                 await item.Activate(requestedValue);
-                await ActivatedValueChanged.InvokeAsync(_activatedValue.Value);
+                await ActivatedValueChanged.InvokeAsync(default);
                 return;
             }
 
