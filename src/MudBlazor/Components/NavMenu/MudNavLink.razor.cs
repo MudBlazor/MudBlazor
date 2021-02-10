@@ -13,7 +13,7 @@ namespace MudBlazor
         new CssBuilder("mud-nav-item")
           .AddClass($"mud-ripple", !DisableRipple)
           .AddClass(Class)
-        .Build();
+          .Build();
 
         /// <summary>
         /// Icon to use if set.
