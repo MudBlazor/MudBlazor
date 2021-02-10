@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace MudBlazor.Docs.Data
 {
@@ -54,18 +52,8 @@ namespace MudBlazor.Docs.Data
             s_loadTime = DateTime.Now;
             s_elements = new List<Element>();
             var key = GetResourceKey(typeof(PeriodicTable).Assembly, "Elements.json");
-            using (var stream = typeof(PeriodicTable).Assembly.GetManifestResourceStream(key))
-            using (var reader = new JsonTextReader(new StreamReader(stream)))
-            {
-                var periodicTable = await JObject.LoadAsync(reader);
-                foreach (var row in periodicTable["table"].Values<JObject>())
-                {
-                    foreach (var el in row["elements"].Values<JObject>())
-                        s_elements.Add(el.ToObject<Element>());
-                }
-            }
-
-            return s_elements;
+            using var stream = typeof(PeriodicTable).Assembly.GetManifestResourceStream(key);
+            return await JsonSerializer.DeserializeAsync<IList<Element>>(stream);
         }
 
         public static string GetResourceKey(Assembly assembly, string embeddedFile)
