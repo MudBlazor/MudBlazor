@@ -1,25 +1,26 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace MudBlazor.Docs.Data
 {
     public class Element
     {
-        [JsonProperty("group")]
+        [JsonPropertyName("group")]
         public string Group { get; set; }
 
-        [JsonProperty("position")]
+        [JsonPropertyName("position")]
         public int Position { get; set; }
 
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [JsonProperty("number")]
+        [JsonPropertyName("number")]
         public int Number { get; set; }
 
-        [JsonProperty("small")]
+        [JsonPropertyName("small")]
         public string Sign { get; set; }
 
-        [JsonProperty("molar")]
+        [JsonPropertyName("molar")]
         public double Molar { get; set; }
 
         public override string ToString()
