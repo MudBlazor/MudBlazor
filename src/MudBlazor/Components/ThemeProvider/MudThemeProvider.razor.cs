@@ -37,6 +37,7 @@ namespace MudBlazor
         private const string Typography = "mud-typography";
         private const string LayoutProperties = "mud";
         private const string Zindex = "mud-zindex";
+        private const string Color = "mud-color";
 
         public static string ColorRgbDarken(string hex)
         {
@@ -276,6 +277,284 @@ namespace MudBlazor
             theme.AppendLine($"--{Zindex}-popover: {Theme.ZIndex.Popover};");
             theme.AppendLine($"--{Zindex}-snackbar: {Theme.ZIndex.Snackbar};");
             theme.AppendLine($"--{Zindex}-tooltip: {Theme.ZIndex.Tooltip};");
+            
+            //Color
+            theme.AppendLine($"--{Color}-red-default: {Colors.Red.Default};");
+            theme.AppendLine($"--{Color}-red-lighten5: {Colors.Red.Lighten5};");
+            theme.AppendLine($"--{Color}-red-lighten4: {Colors.Red.Lighten4};");
+            theme.AppendLine($"--{Color}-red-lighten3: {Colors.Red.Lighten3};");
+            theme.AppendLine($"--{Color}-red-lighten2: {Colors.Red.Lighten2};");
+            theme.AppendLine($"--{Color}-red-lighten1: {Colors.Red.Lighten1};");
+            theme.AppendLine($"--{Color}-red-darken1: {Colors.Red.Darken1};");
+            theme.AppendLine($"--{Color}-red-darken2: {Colors.Red.Darken2};");
+            theme.AppendLine($"--{Color}-red-darken3: {Colors.Red.Darken3};");
+            theme.AppendLine($"--{Color}-red-darken4: {Colors.Red.Darken4};");
+            theme.AppendLine($"--{Color}-red-accent1: {Colors.Red.Accent1};");
+            theme.AppendLine($"--{Color}-red-accent2: {Colors.Red.Accent2};");
+            theme.AppendLine($"--{Color}-red-accent3: {Colors.Red.Accent3};");
+            theme.AppendLine($"--{Color}-red-accent4: {Colors.Red.Accent4};");
+            
+            theme.AppendLine($"--{Color}-pink-default: {Colors.Pink.Default};");
+            theme.AppendLine($"--{Color}-pink-lighten5: {Colors.Pink.Lighten5};");
+            theme.AppendLine($"--{Color}-pink-lighten4: {Colors.Pink.Lighten4};");
+            theme.AppendLine($"--{Color}-pink-lighten3: {Colors.Pink.Lighten3};");
+            theme.AppendLine($"--{Color}-pink-lighten2: {Colors.Pink.Lighten2};");
+            theme.AppendLine($"--{Color}-pink-lighten1: {Colors.Pink.Lighten1};");
+            theme.AppendLine($"--{Color}-pink-darken1: {Colors.Pink.Darken1};");
+            theme.AppendLine($"--{Color}-pink-darken2: {Colors.Pink.Darken2};");
+            theme.AppendLine($"--{Color}-pink-darken3: {Colors.Pink.Darken3};");
+            theme.AppendLine($"--{Color}-pink-darken4: {Colors.Pink.Darken4};");
+            theme.AppendLine($"--{Color}-pink-accent1: {Colors.Pink.Accent1};");
+            theme.AppendLine($"--{Color}-pink-accent2: {Colors.Pink.Accent2};");
+            theme.AppendLine($"--{Color}-pink-accent3: {Colors.Pink.Accent3};");
+            theme.AppendLine($"--{Color}-pink-accent4: {Colors.Pink.Accent4};");
+
+            theme.AppendLine($"--{Color}-purple-default: {Colors.Purple.Default};");
+            theme.AppendLine($"--{Color}-purple-lighten5: {Colors.Purple.Lighten5};");
+            theme.AppendLine($"--{Color}-purple-lighten4: {Colors.Purple.Lighten4};");
+            theme.AppendLine($"--{Color}-purple-lighten3: {Colors.Purple.Lighten3};");
+            theme.AppendLine($"--{Color}-purple-lighten2: {Colors.Purple.Lighten2};");
+            theme.AppendLine($"--{Color}-purple-lighten1: {Colors.Purple.Lighten1};");
+            theme.AppendLine($"--{Color}-purple-darken1: {Colors.Purple.Darken1};");
+            theme.AppendLine($"--{Color}-purple-darken2: {Colors.Purple.Darken2};");
+            theme.AppendLine($"--{Color}-purple-darken3: {Colors.Purple.Darken3};");
+            theme.AppendLine($"--{Color}-purple-darken4: {Colors.Purple.Darken4};");
+            theme.AppendLine($"--{Color}-purple-accent1: {Colors.Purple.Accent1};");
+            theme.AppendLine($"--{Color}-purple-accent2: {Colors.Purple.Accent2};");
+            theme.AppendLine($"--{Color}-purple-accent3: {Colors.Purple.Accent3};");
+            theme.AppendLine($"--{Color}-purple-accent4: {Colors.Purple.Accent4};");
+            
+            theme.AppendLine($"--{Color}-deep-purple-default: {Colors.DeepPurple.Default};");
+            theme.AppendLine($"--{Color}-deep-purple-lighten5: {Colors.DeepPurple.Lighten5};");
+            theme.AppendLine($"--{Color}-deep-purple-lighten4: {Colors.DeepPurple.Lighten4};");
+            theme.AppendLine($"--{Color}-deep-purple-lighten3: {Colors.DeepPurple.Lighten3};");
+            theme.AppendLine($"--{Color}-deep-purple-lighten2: {Colors.DeepPurple.Lighten2};");
+            theme.AppendLine($"--{Color}-deep-purple-lighten1: {Colors.DeepPurple.Lighten1};");
+            theme.AppendLine($"--{Color}-deep-purple-darken1: {Colors.DeepPurple.Darken1};");
+            theme.AppendLine($"--{Color}-deep-purple-darken2: {Colors.DeepPurple.Darken2};");
+            theme.AppendLine($"--{Color}-deep-purple-darken3: {Colors.DeepPurple.Darken3};");
+            theme.AppendLine($"--{Color}-deep-purple-darken4: {Colors.DeepPurple.Darken4};");
+            theme.AppendLine($"--{Color}-deep-purple-accent1: {Colors.DeepPurple.Accent1};");
+            theme.AppendLine($"--{Color}-deep-purple-accent2: {Colors.DeepPurple.Accent2};");
+            theme.AppendLine($"--{Color}-deep-purple-accent3: {Colors.DeepPurple.Accent3};");
+            theme.AppendLine($"--{Color}-deep-purple-accent4: {Colors.DeepPurple.Accent4};");
+                    
+            theme.AppendLine($"--{Color}-indigo-default: {Colors.Indigo.Default};");
+            theme.AppendLine($"--{Color}-indigo-lighten5: {Colors.Indigo.Lighten5};");
+            theme.AppendLine($"--{Color}-indigo-lighten4: {Colors.Indigo.Lighten4};");
+            theme.AppendLine($"--{Color}-indigo-lighten3: {Colors.Indigo.Lighten3};");
+            theme.AppendLine($"--{Color}-indigo-lighten2: {Colors.Indigo.Lighten2};");
+            theme.AppendLine($"--{Color}-indigo-lighten1: {Colors.Indigo.Lighten1};");
+            theme.AppendLine($"--{Color}-indigo-darken1: {Colors.Indigo.Darken1};");
+            theme.AppendLine($"--{Color}-indigo-darken2: {Colors.Indigo.Darken2};");
+            theme.AppendLine($"--{Color}-indigo-darken3: {Colors.Indigo.Darken3};");
+            theme.AppendLine($"--{Color}-indigo-darken4: {Colors.Indigo.Darken4};");
+            theme.AppendLine($"--{Color}-indigo-accent1: {Colors.Indigo.Accent1};");
+            theme.AppendLine($"--{Color}-indigo-accent2: {Colors.Indigo.Accent2};");
+            theme.AppendLine($"--{Color}-indigo-accent3: {Colors.Indigo.Accent3};");
+            theme.AppendLine($"--{Color}-indigo-accent4: {Colors.Indigo.Accent4};");
+                             
+            theme.AppendLine($"--{Color}-blue-default: {Colors.Blue.Default};");
+            theme.AppendLine($"--{Color}-blue-lighten5: {Colors.Blue.Lighten5};");
+            theme.AppendLine($"--{Color}-blue-lighten4: {Colors.Blue.Lighten4};");
+            theme.AppendLine($"--{Color}-blue-lighten3: {Colors.Blue.Lighten3};");
+            theme.AppendLine($"--{Color}-blue-lighten2: {Colors.Blue.Lighten2};");
+            theme.AppendLine($"--{Color}-blue-lighten1: {Colors.Blue.Lighten1};");
+            theme.AppendLine($"--{Color}-blue-darken1: {Colors.Blue.Darken1};");
+            theme.AppendLine($"--{Color}-blue-darken2: {Colors.Blue.Darken2};");
+            theme.AppendLine($"--{Color}-blue-darken3: {Colors.Blue.Darken3};");
+            theme.AppendLine($"--{Color}-blue-darken4: {Colors.Blue.Darken4};");
+            theme.AppendLine($"--{Color}-blue-accent1: {Colors.Blue.Accent1};");
+            theme.AppendLine($"--{Color}-blue-accent2: {Colors.Blue.Accent2};");
+            theme.AppendLine($"--{Color}-blue-accent3: {Colors.Blue.Accent3};");
+            theme.AppendLine($"--{Color}-blue-accent4: {Colors.Blue.Accent4};");
+            
+            theme.AppendLine($"--{Color}-light-blue-default: {Colors.LightBlue.Default};");
+            theme.AppendLine($"--{Color}-light-blue-lighten5: {Colors.LightBlue.Lighten5};");
+            theme.AppendLine($"--{Color}-light-blue-lighten4: {Colors.LightBlue.Lighten4};");
+            theme.AppendLine($"--{Color}-light-blue-lighten3: {Colors.LightBlue.Lighten3};");
+            theme.AppendLine($"--{Color}-light-blue-lighten2: {Colors.LightBlue.Lighten2};");
+            theme.AppendLine($"--{Color}-light-blue-lighten1: {Colors.LightBlue.Lighten1};");
+            theme.AppendLine($"--{Color}-light-blue-darken1: {Colors.LightBlue.Darken1};");
+            theme.AppendLine($"--{Color}-light-blue-darken2: {Colors.LightBlue.Darken2};");
+            theme.AppendLine($"--{Color}-light-blue-darken3: {Colors.LightBlue.Darken3};");
+            theme.AppendLine($"--{Color}-light-blue-darken4: {Colors.LightBlue.Darken4};");
+            theme.AppendLine($"--{Color}-light-blue-accent1: {Colors.LightBlue.Accent1};");
+            theme.AppendLine($"--{Color}-light-blue-accent2: {Colors.LightBlue.Accent2};");
+            theme.AppendLine($"--{Color}-light-blue-accent3: {Colors.LightBlue.Accent3};");
+            theme.AppendLine($"--{Color}-light-blue-accent4: {Colors.LightBlue.Accent4};");
+            
+            theme.AppendLine($"--{Color}-cyan-default: {Colors.Cyan.Default};");
+            theme.AppendLine($"--{Color}-cyan-lighten5: {Colors.Cyan.Lighten5};");
+            theme.AppendLine($"--{Color}-cyan-lighten4: {Colors.Cyan.Lighten4};");
+            theme.AppendLine($"--{Color}-cyan-lighten3: {Colors.Cyan.Lighten3};");
+            theme.AppendLine($"--{Color}-cyan-lighten2: {Colors.Cyan.Lighten2};");
+            theme.AppendLine($"--{Color}-cyan-lighten1: {Colors.Cyan.Lighten1};");
+            theme.AppendLine($"--{Color}-cyan-darken1: {Colors.Cyan.Darken1};");
+            theme.AppendLine($"--{Color}-cyan-darken2: {Colors.Cyan.Darken2};");
+            theme.AppendLine($"--{Color}-cyan-darken3: {Colors.Cyan.Darken3};");
+            theme.AppendLine($"--{Color}-cyan-darken4: {Colors.Cyan.Darken4};");
+            theme.AppendLine($"--{Color}-cyan-accent1: {Colors.Cyan.Accent1};");
+            theme.AppendLine($"--{Color}-cyan-accent2: {Colors.Cyan.Accent2};");
+            theme.AppendLine($"--{Color}-cyan-accent3: {Colors.Cyan.Accent3};");
+            theme.AppendLine($"--{Color}-cyan-accent4: {Colors.Cyan.Accent4};");
+            
+            theme.AppendLine($"--{Color}-teal-default: {Colors.Teal.Default};");
+            theme.AppendLine($"--{Color}-teal-lighten5: {Colors.Teal.Lighten5};");
+            theme.AppendLine($"--{Color}-teal-lighten4: {Colors.Teal.Lighten4};");
+            theme.AppendLine($"--{Color}-teal-lighten3: {Colors.Teal.Lighten3};");
+            theme.AppendLine($"--{Color}-teal-lighten2: {Colors.Teal.Lighten2};");
+            theme.AppendLine($"--{Color}-teal-lighten1: {Colors.Teal.Lighten1};");
+            theme.AppendLine($"--{Color}-teal-darken1: {Colors.Teal.Darken1};");
+            theme.AppendLine($"--{Color}-teal-darken2: {Colors.Teal.Darken2};");
+            theme.AppendLine($"--{Color}-teal-darken3: {Colors.Teal.Darken3};");
+            theme.AppendLine($"--{Color}-teal-darken4: {Colors.Teal.Darken4};");
+            theme.AppendLine($"--{Color}-teal-accent1: {Colors.Teal.Accent1};");
+            theme.AppendLine($"--{Color}-teal-accent2: {Colors.Teal.Accent2};");
+            theme.AppendLine($"--{Color}-teal-accent3: {Colors.Teal.Accent3};");
+            theme.AppendLine($"--{Color}-teal-accent4: {Colors.Teal.Accent4};");
+            
+            theme.AppendLine($"--{Color}-green-default: {Colors.Green.Default};");
+            theme.AppendLine($"--{Color}-green-lighten5: {Colors.Green.Lighten5};");
+            theme.AppendLine($"--{Color}-green-lighten4: {Colors.Green.Lighten4};");
+            theme.AppendLine($"--{Color}-green-lighten3: {Colors.Green.Lighten3};");
+            theme.AppendLine($"--{Color}-green-lighten2: {Colors.Green.Lighten2};");
+            theme.AppendLine($"--{Color}-green-lighten1: {Colors.Green.Lighten1};");
+            theme.AppendLine($"--{Color}-green-darken1: {Colors.Green.Darken1};");
+            theme.AppendLine($"--{Color}-green-darken2: {Colors.Green.Darken2};");
+            theme.AppendLine($"--{Color}-green-darken3: {Colors.Green.Darken3};");
+            theme.AppendLine($"--{Color}-green-darken4: {Colors.Green.Darken4};");
+            theme.AppendLine($"--{Color}-green-accent1: {Colors.Green.Accent1};");
+            theme.AppendLine($"--{Color}-green-accent2: {Colors.Green.Accent2};");
+            theme.AppendLine($"--{Color}-green-accent3: {Colors.Green.Accent3};");
+            theme.AppendLine($"--{Color}-green-accent4: {Colors.Green.Accent4};");
+            
+            theme.AppendLine($"--{Color}-light-green-default: {Colors.LightGreen.Default};");
+            theme.AppendLine($"--{Color}-light-green-lighten5: {Colors.LightGreen.Lighten5};");
+            theme.AppendLine($"--{Color}-light-green-lighten4: {Colors.LightGreen.Lighten4};");
+            theme.AppendLine($"--{Color}-light-green-lighten3: {Colors.LightGreen.Lighten3};");
+            theme.AppendLine($"--{Color}-light-green-lighten2: {Colors.LightGreen.Lighten2};");
+            theme.AppendLine($"--{Color}-light-green-lighten1: {Colors.LightGreen.Lighten1};");
+            theme.AppendLine($"--{Color}-light-green-darken1: {Colors.LightGreen.Darken1};");
+            theme.AppendLine($"--{Color}-light-green-darken2: {Colors.LightGreen.Darken2};");
+            theme.AppendLine($"--{Color}-light-green-darken3: {Colors.LightGreen.Darken3};");
+            theme.AppendLine($"--{Color}-light-green-darken4: {Colors.LightGreen.Darken4};");
+            theme.AppendLine($"--{Color}-light-green-accent1: {Colors.LightGreen.Accent1};");
+            theme.AppendLine($"--{Color}-light-green-accent2: {Colors.LightGreen.Accent2};");
+            theme.AppendLine($"--{Color}-light-green-accent3: {Colors.LightGreen.Accent3};");
+            theme.AppendLine($"--{Color}-light-green-accent4: {Colors.LightGreen.Accent4};");
+
+            theme.AppendLine($"--{Color}-lime-default: {Colors.Lime.Default};");
+            theme.AppendLine($"--{Color}-lime-lighten5: {Colors.Lime.Lighten5};");
+            theme.AppendLine($"--{Color}-lime-lighten4: {Colors.Lime.Lighten4};");
+            theme.AppendLine($"--{Color}-lime-lighten3: {Colors.Lime.Lighten3};");
+            theme.AppendLine($"--{Color}-lime-lighten2: {Colors.Lime.Lighten2};");
+            theme.AppendLine($"--{Color}-lime-lighten1: {Colors.Lime.Lighten1};");
+            theme.AppendLine($"--{Color}-lime-darken1: {Colors.Lime.Darken1};");
+            theme.AppendLine($"--{Color}-lime-darken2: {Colors.Lime.Darken2};");
+            theme.AppendLine($"--{Color}-lime-darken3: {Colors.Lime.Darken3};");
+            theme.AppendLine($"--{Color}-lime-darken4: {Colors.Lime.Darken4};");
+            theme.AppendLine($"--{Color}-lime-accent1: {Colors.Lime.Accent1};");
+            theme.AppendLine($"--{Color}-lime-accent2: {Colors.Lime.Accent2};");
+            theme.AppendLine($"--{Color}-lime-accent3: {Colors.Lime.Accent3};");
+            theme.AppendLine($"--{Color}-lime-accent4: {Colors.Lime.Accent4};");
+            
+            theme.AppendLine($"--{Color}-yellow-default: {Colors.Yellow.Default};");
+            theme.AppendLine($"--{Color}-yellow-lighten5: {Colors.Yellow.Lighten5};");
+            theme.AppendLine($"--{Color}-yellow-lighten4: {Colors.Yellow.Lighten4};");
+            theme.AppendLine($"--{Color}-yellow-lighten3: {Colors.Yellow.Lighten3};");
+            theme.AppendLine($"--{Color}-yellow-lighten2: {Colors.Yellow.Lighten2};");
+            theme.AppendLine($"--{Color}-yellow-lighten1: {Colors.Yellow.Lighten1};");
+            theme.AppendLine($"--{Color}-yellow-darken1: {Colors.Yellow.Darken1};");
+            theme.AppendLine($"--{Color}-yellow-darken2: {Colors.Yellow.Darken2};");
+            theme.AppendLine($"--{Color}-yellow-darken3: {Colors.Yellow.Darken3};");
+            theme.AppendLine($"--{Color}-yellow-darken4: {Colors.Yellow.Darken4};");
+            theme.AppendLine($"--{Color}-yellow-accent1: {Colors.Yellow.Accent1};");
+            theme.AppendLine($"--{Color}-yellow-accent2: {Colors.Yellow.Accent2};");
+            theme.AppendLine($"--{Color}-yellow-accent3: {Colors.Yellow.Accent3};");
+            theme.AppendLine($"--{Color}-yellow-accent4: {Colors.Yellow.Accent4};");
+            
+            theme.AppendLine($"--{Color}-amber-default: {Colors.Amber.Default};");
+            theme.AppendLine($"--{Color}-amber-lighten5: {Colors.Amber.Lighten5};");
+            theme.AppendLine($"--{Color}-amber-lighten4: {Colors.Amber.Lighten4};");
+            theme.AppendLine($"--{Color}-amber-lighten3: {Colors.Amber.Lighten3};");
+            theme.AppendLine($"--{Color}-amber-lighten2: {Colors.Amber.Lighten2};");
+            theme.AppendLine($"--{Color}-amber-lighten1: {Colors.Amber.Lighten1};");
+            theme.AppendLine($"--{Color}-amber-darken1: {Colors.Amber.Darken1};");
+            theme.AppendLine($"--{Color}-amber-darken2: {Colors.Amber.Darken2};");
+            theme.AppendLine($"--{Color}-amber-darken3: {Colors.Amber.Darken3};");
+            theme.AppendLine($"--{Color}-amber-darken4: {Colors.Amber.Darken4};");
+            theme.AppendLine($"--{Color}-amber-accent1: {Colors.Amber.Accent1};");
+            theme.AppendLine($"--{Color}-amber-accent2: {Colors.Amber.Accent2};");
+            theme.AppendLine($"--{Color}-amber-accent3: {Colors.Amber.Accent3};");
+            theme.AppendLine($"--{Color}-amber-accent4: {Colors.Amber.Accent4};");
+            
+            theme.AppendLine($"--{Color}-orange-default: {Colors.Orange.Default};");
+            theme.AppendLine($"--{Color}-orange-lighten5: {Colors.Orange.Lighten5};");
+            theme.AppendLine($"--{Color}-orange-lighten4: {Colors.Orange.Lighten4};");
+            theme.AppendLine($"--{Color}-orange-lighten3: {Colors.Orange.Lighten3};");
+            theme.AppendLine($"--{Color}-orange-lighten2: {Colors.Orange.Lighten2};");
+            theme.AppendLine($"--{Color}-orange-lighten1: {Colors.Orange.Lighten1};");
+            theme.AppendLine($"--{Color}-orange-darken1: {Colors.Orange.Darken1};");
+            theme.AppendLine($"--{Color}-orange-darken2: {Colors.Orange.Darken2};");
+            theme.AppendLine($"--{Color}-orange-darken3: {Colors.Orange.Darken3};");
+            theme.AppendLine($"--{Color}-orange-darken4: {Colors.Orange.Darken4};");
+            theme.AppendLine($"--{Color}-orange-accent1: {Colors.Orange.Accent1};");
+            theme.AppendLine($"--{Color}-orange-accent2: {Colors.Orange.Accent2};");
+            theme.AppendLine($"--{Color}-orange-accent3: {Colors.Orange.Accent3};");
+            theme.AppendLine($"--{Color}-orange-accent4: {Colors.Orange.Accent4};");
+            
+            theme.AppendLine($"--{Color}-deep-orange-default: {Colors.DeepOrange.Default};");
+            theme.AppendLine($"--{Color}-deep-orange-lighten5: {Colors.DeepOrange.Lighten5};");
+            theme.AppendLine($"--{Color}-deep-orange-lighten4: {Colors.DeepOrange.Lighten4};");
+            theme.AppendLine($"--{Color}-deep-orange-lighten3: {Colors.DeepOrange.Lighten3};");
+            theme.AppendLine($"--{Color}-deep-orange-lighten2: {Colors.DeepOrange.Lighten2};");
+            theme.AppendLine($"--{Color}-deep-orange-lighten1: {Colors.DeepOrange.Lighten1};");
+            theme.AppendLine($"--{Color}-deep-orange-darken1: {Colors.DeepOrange.Darken1};");
+            theme.AppendLine($"--{Color}-deep-orange-darken2: {Colors.DeepOrange.Darken2};");
+            theme.AppendLine($"--{Color}-deep-orange-darken3: {Colors.DeepOrange.Darken3};");
+            theme.AppendLine($"--{Color}-deep-orange-darken4: {Colors.DeepOrange.Darken4};");
+            theme.AppendLine($"--{Color}-deep-orange-accent1: {Colors.DeepOrange.Accent1};");
+            theme.AppendLine($"--{Color}-deep-orange-accent2: {Colors.DeepOrange.Accent2};");
+            theme.AppendLine($"--{Color}-deep-orange-accent3: {Colors.DeepOrange.Accent3};");
+            theme.AppendLine($"--{Color}-deep-orange-accent4: {Colors.DeepOrange.Accent4};");
+            
+            theme.AppendLine($"--{Color}-brown-default: {Colors.Brown.Default};");
+            theme.AppendLine($"--{Color}-brown-lighten5: {Colors.Brown.Lighten5};");
+            theme.AppendLine($"--{Color}-brown-lighten4: {Colors.Brown.Lighten4};");
+            theme.AppendLine($"--{Color}-brown-lighten3: {Colors.Brown.Lighten3};");
+            theme.AppendLine($"--{Color}-brown-lighten2: {Colors.Brown.Lighten2};");
+            theme.AppendLine($"--{Color}-brown-lighten1: {Colors.Brown.Lighten1};");
+            theme.AppendLine($"--{Color}-brown-darken1: {Colors.Brown.Darken1};");
+            theme.AppendLine($"--{Color}-brown-darken2: {Colors.Brown.Darken2};");
+            theme.AppendLine($"--{Color}-brown-darken3: {Colors.Brown.Darken3};");
+            theme.AppendLine($"--{Color}-brown-darken4: {Colors.Brown.Darken4};");
+
+            theme.AppendLine($"--{Color}-blue-grey-default: {Colors.BlueGrey.Default};");
+            theme.AppendLine($"--{Color}-blue-grey-lighten5: {Colors.BlueGrey.Lighten5};");
+            theme.AppendLine($"--{Color}-blue-grey-lighten4: {Colors.BlueGrey.Lighten4};");
+            theme.AppendLine($"--{Color}-blue-grey-lighten3: {Colors.BlueGrey.Lighten3};");
+            theme.AppendLine($"--{Color}-blue-grey-lighten2: {Colors.BlueGrey.Lighten2};");
+            theme.AppendLine($"--{Color}-blue-grey-lighten1: {Colors.BlueGrey.Lighten1};");
+            theme.AppendLine($"--{Color}-blue-grey-darken1: {Colors.BlueGrey.Darken1};");
+            theme.AppendLine($"--{Color}-blue-grey-darken2: {Colors.BlueGrey.Darken2};");
+            theme.AppendLine($"--{Color}-blue-grey-darken3: {Colors.BlueGrey.Darken3};");
+            theme.AppendLine($"--{Color}-blue-grey-darken4: {Colors.BlueGrey.Darken4};");
+
+            theme.AppendLine($"--{Color}-grey-default: {Colors.Grey.Default};");
+            theme.AppendLine($"--{Color}-grey-lighten5: {Colors.Grey.Lighten5};");
+            theme.AppendLine($"--{Color}-grey-lighten4: {Colors.Grey.Lighten4};");
+            theme.AppendLine($"--{Color}-grey-lighten3: {Colors.Grey.Lighten3};");
+            theme.AppendLine($"--{Color}-grey-lighten2: {Colors.Grey.Lighten2};");
+            theme.AppendLine($"--{Color}-grey-lighten1: {Colors.Grey.Lighten1};");
+            theme.AppendLine($"--{Color}-grey-darken1: {Colors.Grey.Darken1};");
+            theme.AppendLine($"--{Color}-grey-darken2: {Colors.Grey.Darken2};");
+            theme.AppendLine($"--{Color}-grey-darken3: {Colors.Grey.Darken3};");
+            theme.AppendLine($"--{Color}-grey-darken4: {Colors.Grey.Darken4};");
+
+            theme.AppendLine($"--{Color}-shades-black: {Colors.Shades.Black};");
+            theme.AppendLine($"--{Color}-shades-white: {Colors.Shades.White};");
+            theme.AppendLine($"--{Color}-shades-transparent: {Colors.Shades.Transparent};");
         }
     }
 }
