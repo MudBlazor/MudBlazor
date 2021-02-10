@@ -27,6 +27,8 @@ namespace MudBlazor
 
         [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 
+        [Parameter] public string Target { get; set; }
+
         [CascadingParameter] INavigationEventReceiver NavigationEventReceiver { get; set; }
 
         private Task HandleNavigation() => NavigationEventReceiver?.OnNavigation() ?? Task.CompletedTask;
