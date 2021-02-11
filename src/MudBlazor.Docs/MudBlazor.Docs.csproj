@@ -68,11 +68,6 @@
     <EmbeddedResource Include="Pages\**\*.html" />
   </ItemGroup>
 
-  <!--Used for the periodic table examples-->
-  <ItemGroup>
-    <EmbeddedResource Include="Data/Elements.json" />
-  </ItemGroup>
-
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
   <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
     <PropertyGroup>
@@ -103,6 +98,7 @@
   <!--Project dependencies-->
   <ItemGroup>
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
+      <ProjectReference Include="../MudBlazor.ExampleData/MudBlazor.ExampleData.csproj" />
   </ItemGroup>
 
   <!--Excubo  webcompiler -  used for scss and js compilation-->

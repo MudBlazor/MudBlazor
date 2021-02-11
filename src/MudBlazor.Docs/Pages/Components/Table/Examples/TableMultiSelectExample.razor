@@ -1,7 +1,9 @@
-﻿@using MudBlazor.Docs.Data
+﻿@using System.Net.Http.Json
+@using MudBlazor.ExampleData.Models
 @namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
 
-<MudTable Items="@PeriodicTable.GetElements()" MultiSelection="true" @bind-SelectedItems="selectedItems" Hover="@hover">
+<MudTable Items="@Elements" MultiSelection="true" @bind-SelectedItems="selectedItems" Hover="@hover">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -25,4 +27,11 @@
 @code {
     private bool hover = true;
     private HashSet<Element> selectedItems = new HashSet<Element>();
+
+    private IEnumerable<Element> Elements = new List<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable");
+    } 
 }
