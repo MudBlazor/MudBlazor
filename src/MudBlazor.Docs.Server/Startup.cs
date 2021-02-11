@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,9 +23,7 @@ namespace MudBlazor.Docs.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHttpClient("Default");
-            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("Default"));
-
+            services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri("https://localhost:5001/") });
             services.AddHeadElementHelper();
             services.AddRazorPages();
             services.AddServerSideBlazor();
@@ -37,6 +36,7 @@ namespace MudBlazor.Docs.Server
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseWebAssemblyDebugging();
             }
             else
             {
@@ -45,14 +45,30 @@ namespace MudBlazor.Docs.Server
                 app.UseHsts();
             }
 
-            app.UseHeadElementServerPrerendering();
             app.UseHttpsRedirection();
+
+            // serve the wasm site and finish the pipeline
+            app.MapWhen(ctx => ctx.Request.Path.StartsWithSegments("/wasm"), wasm =>
+            {
+                wasm.UseBlazorFrameworkFiles("/wasm");
+                wasm.UseStaticFiles("/wasm");
+                wasm.UseRouting();
+                wasm.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                    endpoints.MapFallbackToFile("wasm/{*path:nonfile}", "wasm/index.html");
+                });
+            });
+
+            app.UseHeadElementServerPrerendering();
+
+            // only reach here if pasth does not start /wasm
             app.UseStaticFiles();
 
             app.UseRouting();
-
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });

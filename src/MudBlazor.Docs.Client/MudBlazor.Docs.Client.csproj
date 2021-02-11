@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <StaticWebAssetBasePath>wasm</StaticWebAssetBasePath>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

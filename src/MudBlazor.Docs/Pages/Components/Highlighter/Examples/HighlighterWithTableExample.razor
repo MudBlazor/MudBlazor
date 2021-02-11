@@ -1,7 +1,9 @@
-﻿@namespace MudBlazor.Docs.Examples
-@using MudBlazor.Docs.Data
+﻿@using System.Net.Http.Json
+@using MudBlazor.ExampleData.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
 
-<MudTable Items="GetElements()">
+<MudTable Items="@Elements">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudToolBarSpacer />
@@ -22,9 +24,10 @@
 
 @code {
     private string searchTerm = "ch";
+    private IEnumerable<Element> Elements = new List<Element>();
 
-    private IEnumerable<Element> GetElements()
+    protected override async Task OnInitializedAsync()
     {
-        return  PeriodicTable.GetElements(searchTerm);
-    }
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable");
+    } 
 }

@@ -4,8 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Text.Json;
+using MudBlazor.ExampleData.Models;
 
-namespace MudBlazor.Docs.Data
+namespace MudBlazor.ExampleData
 {
     public static class PeriodicTable
     {
@@ -53,7 +54,13 @@ namespace MudBlazor.Docs.Data
             s_elements = new List<Element>();
             var key = GetResourceKey(typeof(PeriodicTable).Assembly, "Elements.json");
             using var stream = typeof(PeriodicTable).Assembly.GetManifestResourceStream(key);
-            return await JsonSerializer.DeserializeAsync<IList<Element>>(stream);
+            var table = await JsonSerializer.DeserializeAsync<Table>(stream, new JsonSerializerOptions(){ PropertyNameCaseInsensitive = true });
+            foreach (var elementGroup in table.ElementGroups)
+            {
+                s_elements = s_elements.Concat(elementGroup.Elements).ToList();
+            }
+
+            return s_elements;
         }
 
         public static string GetResourceKey(Assembly assembly, string embeddedFile)
