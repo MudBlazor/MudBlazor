@@ -11,7 +11,7 @@ using static Bunit.ComponentParameterFactory;
 namespace MudBlazor.UnitTests
 {
     [TestFixture]
-    public class LinkTests
+    public class NavLinkTests
     {
         private Bunit.TestContext ctx;
 
@@ -32,7 +32,7 @@ namespace MudBlazor.UnitTests
         [TestCase("_parent", "noopener noreferrer")]
         [TestCase("_top", "noopener noreferrer")]
         [TestCase("myFrameName", "noopener noreferrer")]
-        public async Task TextFieldMultiline_CheckRenderedText(string target, string expectedRel)
+        public async Task NavLink_CheckRelAttribute(string target, string expectedRel)
         {
             var comp = ctx.RenderComponent<MudNavLink>(new[]
             {
