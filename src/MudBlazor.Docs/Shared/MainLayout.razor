@@ -30,6 +30,18 @@
                     <MudMenuItem Link="https://github.com/Garderoben/MudBlazor.Templates" Target="_blank">Templates</MudMenuItem>
                 </MudMenu>
                 <MudDivider Vertical="true" FlexItem="true" DividerType="DividerType.Middle" Class="mx-4 my-5" />
+                @if (Wasm)
+                {
+                    <MudTooltip Text="Switch to Blazor server-side">
+                        <MudIconButton Icon="@Icons.Material.Filled.Computer" Color="Color.Inherit" OnClick="@((e) => SwitchToServer())" />
+                    </MudTooltip>
+                }
+                else
+                {
+                    <MudTooltip Text="Switch to Blazor wasm">
+                        <MudIconButton Icon="@Icons.Material.Filled.Dns" Color="Color.Inherit" OnClick="@((e) => SwitchToWasm())" />
+                    </MudTooltip>
+                }
                 <MudTooltip Text="Toggle light/dark theme">
                     <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
                 </MudTooltip>
