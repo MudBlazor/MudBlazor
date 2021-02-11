@@ -78,6 +78,7 @@
   <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
     <ItemGroup>
       <FilesToClean Include="./Pages/**/*ExampleCode.*" />
+      <FilesToClean Include="./Pages/**/*Example_DialogCode.*" />
       <FilesToClean Include="./NewFilesToBuild.txt" />
       <FilesToClean Include="./Models/Snippets.generated.cs" />
       <FilesToClean Include="./Models/DocStrings.generated.cs" />
