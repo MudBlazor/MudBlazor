@@ -17,4 +17,8 @@
     <ProjectReference Include="..\MudBlazor.Docs\MudBlazor.Docs.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
 </Project>
