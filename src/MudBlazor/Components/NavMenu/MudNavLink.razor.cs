@@ -13,7 +13,7 @@ namespace MudBlazor
         new CssBuilder("mud-nav-item")
           .AddClass($"mud-ripple", !DisableRipple)
           .AddClass(Class)
-        .Build();
+          .Build();
 
         /// <summary>
         /// Icon to use if set.
@@ -26,6 +26,8 @@ namespace MudBlazor
         [Parameter] public Color IconColor { get; set; } = Color.Inherit;
 
         [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+
+        [Parameter] public string Target { get; set; }
 
         [CascadingParameter] INavigationEventReceiver NavigationEventReceiver { get; set; }
 
