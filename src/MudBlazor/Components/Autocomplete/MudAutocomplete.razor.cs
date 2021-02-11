@@ -210,8 +210,15 @@ namespace MudBlazor
                 return;
             }
             _selectedListItemIndex = 0;
-
-            var searched_items = await SearchFunc(Text);
+            IEnumerable<T> searched_items = new T[0];
+            try
+            {
+                searched_items = (await SearchFunc(Text)) ?? new T[0];
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The search function failed to return results: " + e.Message);
+            }
             if (MaxItems.HasValue)
                 searched_items = searched_items.Take(MaxItems.Value);
             _items = searched_items.ToArray();

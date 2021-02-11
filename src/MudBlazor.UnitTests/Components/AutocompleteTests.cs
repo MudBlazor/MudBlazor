@@ -3,6 +3,7 @@
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
@@ -160,8 +161,8 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
-            await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
-            await comp.InvokeAsync(() => autocomplete.CoerceText = false);
+            autocompletecomp.SetParam(x => x.DebounceInterval, 0);
+            autocompletecomp.SetParam(x => x.CoerceText, false);
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
@@ -174,5 +175,18 @@ namespace MudBlazor.UnitTests
             autocomplete.Text.Should().Be("Austria");
         }
 
+        [Test]
+        public async Task Autocomplete_Should_TolerateNullFromSearchFunc()
+        {
+            var comp = ctx.RenderComponent<MudAutocomplete<string>>((a) =>
+            {
+                a.Add(x => x.DebounceInterval, 0);
+                a.Add(x => x.SearchFunc, new Func<string, Task<IEnumerable<string>>>(async s => null)); // <--- searchfunc returns null instead of sequence
+            });
+            // enter a text so the search func will return null, and it shouldn't throw an exception
+            comp.SetParam(a => a.Text, "Do not throw");
+            comp.SetParam(x=>x.SearchFunc, new Func<string, Task<IEnumerable<string>>>(s=>null)); // <-- search func returns null instead of task!
+            comp.SetParam(a => a.Text, "Don't throw here neither");
+        }
     }
 }
