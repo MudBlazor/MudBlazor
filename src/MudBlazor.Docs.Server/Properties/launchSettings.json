@@ -13,7 +13,8 @@
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "APIBASE": "https://localhost:44399/"
       }
     },
     "MudBlazor.Docs.Server(Hosted wasm)": {
@@ -22,7 +23,8 @@
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "launchUrl": "components/dialog",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "APIBASE": "https://localhost:5001/"
       },
       "applicationUrl": "https://localhost:5001/;http://localhost:5000"
     }
