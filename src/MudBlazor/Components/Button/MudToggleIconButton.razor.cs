@@ -68,6 +68,8 @@ namespace MudBlazor
 
         protected async Task SetToggledAsync(bool toggled)
         {
+            if (Disabled)
+                return;
             if (Toggled != toggled)
             {
                 Toggled = toggled;

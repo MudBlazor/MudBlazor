@@ -47,20 +47,5 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Label { get; set; }
 
-        /// <summary>
-        /// If true, the button will be disabled.
-        /// </summary>
-        [Parameter] public bool Disabled { get; set; }
-
-        /// <summary>
-        /// If true, no drop-shadow will be used.
-        /// </summary>
-        [Parameter] public bool DisableElevation { get; set; }
-
-        /// <summary>
-        /// If true, disables ripple effect.
-        /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
-
     }
 }

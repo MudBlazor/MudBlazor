@@ -44,6 +44,8 @@ namespace MudBlazor
 
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
+            if (Disabled)
+                return;
             if (Href != null)
             {
                 UriHelper.NavigateTo(Href);

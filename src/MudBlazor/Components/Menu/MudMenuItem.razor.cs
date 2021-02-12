@@ -22,6 +22,8 @@ namespace MudBlazor
 
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
+            if (Disabled)
+                return;
             MudMenu.CloseMenu();
 
             if (Link != null)

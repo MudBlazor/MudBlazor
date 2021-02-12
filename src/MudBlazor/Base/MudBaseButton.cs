@@ -37,6 +37,21 @@ namespace MudBlazor
         [Parameter] public string Target { get; set; }
 
         /// <summary>
+        /// If true, the button will be disabled.
+        /// </summary>
+        [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
+        /// If true, no drop-shadow will be used.
+        /// </summary>
+        [Parameter] public bool DisableElevation { get; set; }
+
+        /// <summary>
+        /// If true, disables ripple effect.
+        /// </summary>
+        [Parameter] public bool DisableRipple { get; set; }
+
+        /// <summary>
         /// Command executed when the user clicks on an element.
         /// </summary>
         [Parameter] public ICommand Command { get; set; }
@@ -55,6 +70,8 @@ namespace MudBlazor
 
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
+            if (Disabled)
+                return;
             await OnClick.InvokeAsync(ev);
             if (Command?.CanExecute(CommandParameter) ?? false)
             {

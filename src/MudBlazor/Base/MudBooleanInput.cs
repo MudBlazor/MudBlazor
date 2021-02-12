@@ -9,6 +9,11 @@ namespace MudBlazor
         public MudBooleanInput() : base(new BoolConverter<T>()) { }
 
         /// <summary>
+        /// If true, the input will be disabled.
+        /// </summary>
+        [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
         /// If true, the input will be read only.
         /// </summary>
         [Parameter] public bool ReadOnly { get; set; }
@@ -43,6 +48,8 @@ namespace MudBlazor
 
         protected async Task SetCheckedAsync(T value)
         {
+            if (Disabled)
+                return;
             if (!EqualityComparer<T>.Default.Equals(Checked, value))
             {
                 Checked = value;

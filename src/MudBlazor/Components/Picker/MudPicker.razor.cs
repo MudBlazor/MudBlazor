@@ -260,6 +260,8 @@ namespace MudBlazor
 
         protected void ToggleState()
         {
+            if (Disabled)
+                return;
             if (IsOpen)
             {
                 IsOpen = false;
