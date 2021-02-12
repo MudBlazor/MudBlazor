@@ -7,7 +7,7 @@ namespace MudBlazor.Utilities
     /// This structure allow a generic to be nullable, for example when used inside a generic class that doesn't restrict the type to structures, bypassing an invalid declaration of <see cref="Nullable{T}"/>.
     /// It also includes methods to easily convert to and from numeric values.
     /// </summary>
-    public struct GenericNumber<T> where T : struct
+    public struct GenericNumber<T>
     {
         public T Value { get; set; }
         public bool HasValue { get; init; }
@@ -89,37 +89,37 @@ namespace MudBlazor.Utilities
 
         #region cast
         public static implicit operator GenericNumber<T>(sbyte i) => new((T)(object)i);
-        //public static explicit operator sbyte(GenericNumber<T> i) => i.HasValue ? (sbyte)(object)i.Value : throw new NullReferenceException();
+        public static explicit operator sbyte(GenericNumber<T> i) => i.HasValue ? (sbyte)(object)i.Value : throw new NullReferenceException();
 
         public static implicit operator GenericNumber<T>(byte i) => new((T)(object)i);
-        //public static explicit operator byte(GenericNumber<T> i) => i.HasValue ? (byte)(object)i.Value : throw new NullReferenceException();
+        public static explicit operator byte(GenericNumber<T> i) => i.HasValue ? (byte)(object)i.Value : throw new NullReferenceException();
 
         public static implicit operator GenericNumber<T>(short i) => new((T)(object)i);
-        //public static explicit operator short(GenericNumber<T> i) => i.HasValue ? (short)(object)i.Value : throw new NullReferenceException();
+        public static explicit operator short(GenericNumber<T> i) => i.HasValue ? (short)(object)i.Value : throw new NullReferenceException();
 
         public static implicit operator GenericNumber<T>(ushort i) => new((T)(object)i);
-        //public static explicit operator ushort(GenericNumber<T> i) => i.HasValue ? (ushort)(object)i.Value : throw new NullReferenceException();
+        public static explicit operator ushort(GenericNumber<T> i) => i.HasValue ? (ushort)(object)i.Value : throw new NullReferenceException();
 
         public static implicit operator GenericNumber<T>(int i) => new((T)(object)i);
-        //public static explicit operator int(GenericNumber<T> i) => i.HasValue ? (int)(object)i.Value : throw new NullReferenceException();
+        public static explicit operator int(GenericNumber<T> i) => i.HasValue ? (int)(object)i.Value : throw new NullReferenceException();
 
         public static implicit operator GenericNumber<T>(uint i) => new((T)(object)i);
-        //public static explicit operator uint(GenericNumber<T> i) => i.HasValue ? (uint)(object)i.Value : throw new NullReferenceException();
+        public static explicit operator uint(GenericNumber<T> i) => i.HasValue ? (uint)(object)i.Value : throw new NullReferenceException();
 
         public static implicit operator GenericNumber<T>(long i) => new((T)(object)i);
-        //public static explicit operator long(GenericNumber<T> i) => i.HasValue ? (long)(object)i.Value : throw new NullReferenceException();
+        public static explicit operator long(GenericNumber<T> i) => i.HasValue ? (long)(object)i.Value : throw new NullReferenceException();
 
         public static implicit operator GenericNumber<T>(ulong i) => new((T)(object)i);
-        //public static explicit operator ulong(GenericNumber<T> i) => i.HasValue ? (ulong)(object)i.Value : throw new NullReferenceException();
+        public static explicit operator ulong(GenericNumber<T> i) => i.HasValue ? (ulong)(object)i.Value : throw new NullReferenceException();
 
         public static implicit operator GenericNumber<T>(float i) => new((T)(object)i);
-        //public static explicit operator float(GenericNumber<T> i) => i.HasValue ? (float)(object)i.Value : throw new NullReferenceException();
+        public static explicit operator float(GenericNumber<T> i) => i.HasValue ? (float)(object)i.Value : throw new NullReferenceException();
 
         public static implicit operator GenericNumber<T>(double i) => new((T)(object)i);
-        //public static explicit operator double(GenericNumber<T> i) => i.HasValue ? (double)(object)i.Value : throw new NullReferenceException();
+        public static explicit operator double(GenericNumber<T> i) => i.HasValue ? (double)(object)i.Value : throw new NullReferenceException();
 
         public static implicit operator GenericNumber<T>(decimal i) => new((T)(object)i);
-        //public static explicit operator decimal(GenericNumber<T> i) => i.HasValue ? (decimal)(object)i.Value : throw new NullReferenceException();
+        public static explicit operator decimal(GenericNumber<T> i) => i.HasValue ? (decimal)(object)i.Value : throw new NullReferenceException();
         #endregion
         #endregion
     }
