@@ -3,12 +3,13 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <IsPackable>false</IsPackable>
+    <UserSecretsId>8b1bb13d-4e11-4924-b174-cf040d6576ea</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.4.1" />
     <PackageReference Include="Toolbelt.Blazor.HeadElement.ServerPrerendering" Version="1.5.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.3" />
   </ItemGroup>
 
   <ItemGroup>
