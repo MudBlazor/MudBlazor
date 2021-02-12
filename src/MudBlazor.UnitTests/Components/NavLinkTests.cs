@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.UnitTests.TestComponents.NavLink;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -42,6 +43,30 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             comp.Find("a").GetAttribute("rel").Should().Be(expectedRel);
+        }
+
+        [Test]
+        public async Task NavLink_Enabled_CheckNavigation()
+        {
+            var comp = ctx.RenderComponent<NavLinkDisabledTest>(new[]
+            {
+                Parameter(nameof(NavLinkDisabledTest.Disabled), false)
+            });
+            Console.WriteLine(comp.Markup);
+            comp.Find("a").Click();
+            comp.Instance.IsNavigated.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task NavLink_Disabled_CheckNoNavigation()
+        {
+            var comp = ctx.RenderComponent<NavLinkDisabledTest>(new[]
+            {
+                Parameter(nameof(NavLinkDisabledTest.Disabled), true)
+            });
+            Console.WriteLine(comp.Markup);
+            comp.Find("a").Click();
+            comp.Instance.IsNavigated.Should().BeFalse();
         }
     }
 }
