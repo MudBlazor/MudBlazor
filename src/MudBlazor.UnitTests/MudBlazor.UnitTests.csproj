@@ -36,7 +36,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="FluentValidation" Version="9.5.0" />
+    <PackageReference Include="FluentValidation" Version="9.5.1" />
     <PackageReference Include="Moq" Version="4.16.0" />
     <PackageReference Include="nunit" Version="3.13.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
