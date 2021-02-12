@@ -23,7 +23,7 @@ namespace MudBlazor.Docs.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri("https://localhost:5001/") });
+            services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(Configuration["ApiBase"]) });
             services.AddHeadElementHelper();
             services.AddRazorPages();
             services.AddServerSideBlazor();
