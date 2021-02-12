@@ -55,6 +55,14 @@
             <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
                 <MudMenu Icon="@Icons.Filled.Settings" Color="Color.Inherit" Dense="true" Direction="Direction.Right" OffsetY="true">
                     <div class="px-2">
+                        @if (Wasm)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Computer" Color="Color.Inherit" OnClick="@((e) => SwitchToServer())" />
+                        }
+                        else
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Dns" Color="Color.Inherit" OnClick="@((e) => SwitchToWasm())" />
+                        }
                         <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => DarkMode())" />
                         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
                         <MudIconButton Icon="@Icons.Material.Filled.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
