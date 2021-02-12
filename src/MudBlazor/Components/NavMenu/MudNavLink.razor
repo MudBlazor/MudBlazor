@@ -4,11 +4,9 @@
 
 <div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
     <NavLink @onclick="@HandleNavigation" 
-             class="mud-nav-link" 
+             class="@LinkClassname" 
              style="@Style" 
-             href="@Href" 
-             target="@Target" 
-             rel="@(!string.IsNullOrWhiteSpace(Target) ? "noopener noreferrer" : string.Empty)"
+             @attributes="@Attributes"
              Match="@Match" 
              ActiveClass="active">
         @if (!String.IsNullOrEmpty(Icon))
