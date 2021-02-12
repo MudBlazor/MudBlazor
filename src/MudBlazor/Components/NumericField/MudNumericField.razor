@@ -2,14 +2,27 @@
 @typeparam T
 @inherits MudDebouncedInput<T>
 
+@using System.Globalization;
+
 <CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
-    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Class="@Classname" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
-        <InputContent>
-            <MudInput T="string" @ref="_elementReference" @attributes="UserAttributes" InputType="@InputType" Lines="@Lines" Style="@Style" Variant="@Variant" Value="@Text" ValueChanged="(s) => SetTextAsync(s)" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly"
-                      Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
-                      OnBlur="@OnBlurred" OnKeyDown="@onKeyDown" OnKeyPress="@onKeyPress" OnKeyUp="@onKeyUp" />
-            @*<button @onclick="Increment">up</button>
-            <button @onclick="Decrement">dw</button>*@
-        </InputContent>
-    </MudInputControl>
+	<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Class="@Classname" Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
+		<InputContent>
+			<MudInput T="string" @ref="_elementReference" @attributes="UserAttributes" InputType="InputType.Number" Style="@Style" Variant="@Variant" Value="@Text" ValueChanged="(s) => SetTextAsync(s)" Placeholder="@Placeholder" Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly"
+					  Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize" OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
+					  OnBlur="@OnBlurred" OnKeyDown="@onKeyDown" OnKeyPress="@onKeyPress" OnKeyUp="@onKeyUp"
+					  min="@InputNumericParameter(Min)" max="@InputNumericParameter(Max)" step="@InputNumericParameter(Step)" />
+
+		</InputContent>
+	</MudInputControl>
 </CascadingValue>
+
+@code{
+	private string InputNumericParameter(T value)
+	{
+		var culture = CultureInfo.CurrentCulture;
+		CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+		string ret = value.ToString();
+		CultureInfo.CurrentCulture = culture;
+		return ret;
+	}
+}

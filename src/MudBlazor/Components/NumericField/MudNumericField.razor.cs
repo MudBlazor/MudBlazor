@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -6,8 +8,93 @@ namespace MudBlazor
 {
     public partial class MudNumericField<T> : MudDebouncedInput<T>
     {
+        public MudNumericField() : base()
+        {
+            //With input[type=number] the browser reads and sets the value using dot as decimal separator, while showing and parsing the text in the user Locale setting.
+            //Since this is completely transparent to us, we need to use a Converter using an InvariantCulture.
+            SetConverter(new DefaultConverter<T> { Culture = CultureInfo.InvariantCulture });
+
+            //sbyte
+            if (typeof(T) == typeof(sbyte) || typeof(T) == typeof(sbyte?))
+            {
+                Min = (T)(object)sbyte.MinValue;
+                Max = (T)(object)sbyte.MaxValue;
+                Step = (T)(object)1;
+            }
+            // byte
+            else if (typeof(T) == typeof(byte) || typeof(T) == typeof(byte?))
+            {
+                Min = (T)(object)byte.MinValue;
+                Max = (T)(object)byte.MaxValue;
+                Step = (T)(object)1;
+            }
+            // short
+            else if (typeof(T) == typeof(short) || typeof(T) == typeof(short?))
+            {
+                Min = (T)(object)short.MinValue;
+                Max = (T)(object)short.MaxValue;
+                Step = (T)(object)1;
+            }
+            // ushort
+            else if (typeof(T) == typeof(ushort) || typeof(T) == typeof(ushort?))
+            {
+                Min = (T)(object)ushort.MinValue;
+                Max = (T)(object)ushort.MaxValue;
+                Step = (T)(object)1;
+            }
+            // int
+            else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
+            {
+                Min = (T)(object)int.MinValue;
+                Max = (T)(object)int.MaxValue;
+                Step = (T)(object)1;
+            }
+            // uint
+            else if (typeof(T) == typeof(uint) || typeof(T) == typeof(uint?))
+            {
+                Min = (T)(object)uint.MinValue;
+                Max = (T)(object)uint.MaxValue;
+                Step = (T)(object)1;
+            }
+            // long
+            else if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
+            {
+                Min = (T)(object)long.MinValue;
+                Max = (T)(object)long.MaxValue;
+                Step = (T)(object)1;
+            }
+            // ulong
+            else if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
+            {
+                Min = (T)(object)ulong.MinValue;
+                Max = (T)(object)ulong.MaxValue;
+                Step = (T)(object)1;
+            }
+            // float
+            else if (typeof(T) == typeof(float) || typeof(T) == typeof(float?))
+            {
+                Min = (T)(object)float.MinValue;
+                Max = (T)(object)float.MaxValue;
+                Step = (T)(object)1.0f;
+            }
+            // double
+            else if (typeof(T) == typeof(double) || typeof(T) == typeof(double?))
+            {
+                Min = (T)(object)double.MinValue;
+                Max = (T)(object)double.MaxValue;
+                Step = (T)(object)1.0;
+            }
+            // decimal
+            else if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
+            {
+                Min = (T)(object)decimal.MinValue;
+                Max = (T)(object)decimal.MaxValue;
+                Step = (T)(object)1M;
+            }
+        }
+
         protected string Classname =>
-           new CssBuilder("mud-input-input-control")
+           new CssBuilder("mud-input-input-control mud-input-number-control")
            .AddClass(Class)
            .Build();
 
@@ -40,17 +127,17 @@ namespace MudBlazor
         {
             dynamic val = Value switch
             {
-                sbyte b => b + Step.ToSByte(1),
-                byte b => b + Step.ToByte(1),
-                short i => i + Step.ToInt16(1),
-                ushort i => i + Step.ToUInt16(1),
-                int i => i + Step.ToInt32(1),
-                uint i => i + Step.ToUInt32(1),
-                long i => i + Step.ToInt64(1),
-                ulong i => i + Step.ToUInt64(1),
-                float f => f + Step.ToSingle(1),
-                double d => d + Step.ToDouble(1),
-                decimal d => d + Step.ToDecimal(1),
+                sbyte b => b + (sbyte)(object)Step,
+                byte b => b + (byte)(object)Step,
+                short i => i + (short)(object)Step,
+                ushort i => i + (ushort)(object)Step,
+                int i => i + (int)(object)Step,
+                uint i => i + (uint)(object)Step,
+                long i => i + (long)(object)Step,
+                ulong i => i + (ulong)(object)Step,
+                float f => f + (float)(object)Step,
+                double d => d + (double)(object)Step,
+                decimal d => d + (decimal)(object)Step,
                 _ => Value,
             };
             await SetValueAsync(val);
@@ -60,17 +147,17 @@ namespace MudBlazor
         {
             dynamic val = Value switch
             {
-                sbyte b => b - Step.ToSByte(1),
-                byte b => b - Step.ToByte(1),
-                short i => i - Step.ToInt16(1),
-                ushort i => i - Step.ToUInt16(1),
-                int i => i - Step.ToInt32(1),
-                uint i => i - Step.ToUInt32(1),
-                long i => i - Step.ToInt64(1),
-                ulong i => i - Step.ToUInt64(1),
-                float f => f - Step.ToSingle(1),
-                double d => d - Step.ToDouble(1),
-                decimal d => d - Step.ToDecimal(1),
+                sbyte b => b - (sbyte)(object)Step,
+                byte b => b - (byte)(object)Step,
+                short i => i - (short)(object)Step,
+                ushort i => i - (ushort)(object)Step,
+                int i => i - (int)(object)Step,
+                uint i => i - (uint)(object)Step,
+                long i => i - (long)(object)Step,
+                ulong i => i - (ulong)(object)Step,
+                float f => f - (float)(object)Step,
+                double d => d - (double)(object)Step,
+                decimal d => d - (decimal)(object)Step,
                 _ => Value,
             };
             await SetValueAsync(val);
@@ -87,80 +174,80 @@ namespace MudBlazor
             switch (value)
             {
                 case sbyte b:
-                    if (b > Max.ToSByte(sbyte.MaxValue))
-                        return (Max.Value, true);
-                    else if (b < Min.ToSByte(sbyte.MinValue))
-                        return (Min.Value, true);
+                    if (b > (sbyte)(object)Max)
+                        return (Max, true);
+                    else if (b < (sbyte)(object)Min)
+                        return (Min, true);
                     break;
 
                 case byte b:
-                    if (b > Max.ToByte(byte.MaxValue))
-                        return (Max.Value, true);
-                    else if (b < Min.ToByte(byte.MinValue))
-                        return (Min.Value, true);
+                    if (b > (byte)(object)Max)
+                        return (Max, true);
+                    else if (b < (byte)(object)Min)
+                        return (Min, true);
                     break;
 
                 case short i:
-                    if (i > Max.ToInt16(short.MaxValue))
-                        return (Max.Value, true);
-                    else if (i < Min.ToInt16(short.MinValue))
-                        return (Min.Value, true);
+                    if (i > (short)(object)Max)
+                        return (Max, true);
+                    else if (i < (short)(object)Min)
+                        return (Min, true);
                     break;
 
                 case ushort i:
-                    if (i > Max.ToUInt16(ushort.MaxValue))
-                        return (Max.Value, true);
-                    else if (i < Min.ToUInt16(ushort.MinValue))
-                        return (Min.Value, true);
+                    if (i > (ushort)(object)Max)
+                        return (Max, true);
+                    else if (i < (ushort)(object)Min)
+                        return (Min, true);
                     break;
 
                 case int i:
-                    if (i > Max.ToInt32(int.MaxValue))
-                        return (Max.Value, true);
-                    else if (i < Min.ToInt32(int.MinValue))
-                        return (Min.Value, true);
+                    if (i > (int)(object)Max)
+                        return (Max, true);
+                    else if (i < (int)(object)Min)
+                        return (Min, true);
                     break;
 
                 case uint i:
-                    if (i > Max.ToUInt32(uint.MaxValue))
-                        return (Max.Value, true);
-                    else if (i < Min.ToUInt32(uint.MinValue))
-                        return (Min.Value, true);
+                    if (i > (uint)(object)Max)
+                        return (Max, true);
+                    else if (i < (uint)(object)Min)
+                        return (Min, true);
                     break;
 
                 case long i:
-                    if (i > Max.ToInt64(long.MaxValue))
-                        return (Max.Value, true);
-                    else if (i < Min.ToInt64(long.MinValue))
-                        return (Min.Value, true);
+                    if (i > (long)(object)Max)
+                        return (Max, true);
+                    else if (i < (long)(object)Min)
+                        return (Min, true);
                     break;
 
                 case ulong i:
-                    if (i > Max.ToUInt64(ulong.MaxValue))
-                        return (Max.Value, true);
-                    else if (i < Min.ToUInt64(ulong.MinValue))
-                        return (Min.Value, true);
+                    if (i > (ulong)(object)Max)
+                        return (Max, true);
+                    else if (i < (ulong)(object)Min)
+                        return (Min, true);
                     break;
 
                 case float f:
-                    if (f > Max.ToSingle(float.MaxValue))
-                        return (Max.Value, true);
-                    else if (f < Min.ToSingle(float.MinValue))
-                        return (Min.Value, true);
+                    if (f > (float)(object)Max)
+                        return (Max, true);
+                    else if (f < (float)(object)Min)
+                        return (Min, true);
                     break;
 
                 case double d:
-                    if (d > Max.ToDouble(double.MaxValue))
-                        return (Max.Value, true);
-                    else if (d < Min.ToDouble(double.MinValue))
-                        return (Min.Value, true);
+                    if (d > (double)(object)Max)
+                        return (Max, true);
+                    else if (d < (double)(object)Min)
+                        return (Min, true);
                     break;
 
                 case decimal d:
-                    if (d > Max.ToDecimal(decimal.MaxValue))
-                        return (Max.Value, true);
-                    else if (d < Min.ToDecimal(decimal.MinValue))
-                        return (Min.Value, true);
+                    if (d > (decimal)(object)Max)
+                        return (Max, true);
+                    else if (d < (decimal)(object)Min)
+                        return (Min, true);
                     break;
             };
 
@@ -182,16 +269,16 @@ namespace MudBlazor
         /// <summary>
         /// The minimum value for the input.
         /// </summary>
-        [Parameter] public GenericNumber<T> Min { get; set; }
+        [Parameter] public T Min { get; set; }
 
         /// <summary>
         /// The maximum value for the input.
         /// </summary>
-        [Parameter] public GenericNumber<T> Max { get; set; }
+        [Parameter] public T Max { get; set; }
 
         /// <summary>
         /// The increment added/subtracted by the spin buttons.
         /// </summary>
-        [Parameter] public GenericNumber<T> Step { get; set; }
+        [Parameter] public T Step { get; set; }
     }
 }
