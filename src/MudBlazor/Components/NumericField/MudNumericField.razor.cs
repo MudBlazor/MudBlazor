@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudNumericField<T> : MudDebouncedInput<T> where T : struct
+    public partial class MudNumericField<T> : MudDebouncedInput<T>
     {
         protected string Classname =>
            new CssBuilder("mud-input-input-control")
@@ -98,9 +94,9 @@ namespace MudBlazor
                     break;
 
                 case byte b:
-                    if (b > Max.ToSByte(sbyte.MaxValue))
+                    if (b > Max.ToByte(byte.MaxValue))
                         return (Max.Value, true);
-                    else if (b < Min.ToSByte(sbyte.MinValue))
+                    else if (b < Min.ToByte(byte.MinValue))
                         return (Min.Value, true);
                     break;
 
