@@ -2,8 +2,8 @@
 
   <Target Name="IncludeGeneratedFiles" BeforeTargets="BeforeBuild;BeforeRebuild">
     <ItemGroup>
-      <Compile Include="Generated\_AllApiPages.cs" Condition="!Exists('Generated\_AllApiPages.cs')" />
-      <Compile Include="Generated\_AllComponents.cs" Condition="!Exists('Generated\_AllComponents.cs')" />
+      <Compile Include="Generated\ApiDocsTests.generated.cs" Condition="!Exists('Generated\ApiDocsTests.generated.cs')" />
+      <Compile Include="Generated\ExampleDocsTests.generated.cs" Condition="!Exists('Generated\ExampleDocsTests.generated.cs')" />
     </ItemGroup>
   </Target>
 
@@ -22,7 +22,9 @@
   <!--Cleanup old ExampleCode files-->
   <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
     <ItemGroup>
-      <FilesToClean Include="./Generated/*.cs" />
+      <FilesToClean Include="./Generated/*.generated.cs" />
+      <FilesToClean Include="./Generated/_AllApiPages.cs" />
+      <FilesToClean Include="./Generated/_AllComponents.cs" /> 
     </ItemGroup>
     <Delete Files="@(FilesToClean)" />
   </Target>
