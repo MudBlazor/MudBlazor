@@ -16,3 +16,13 @@
 	</MudInputControl>
 </CascadingValue>
 
+@code{
+	private string InputNumericParameter(T value)
+	{
+		var culture = CultureInfo.CurrentCulture;
+		CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+		string ret = value.ToString();
+		CultureInfo.CurrentCulture = culture;
+		return ret;
+	}
+}
