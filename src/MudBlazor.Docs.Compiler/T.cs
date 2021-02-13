@@ -1,5 +1,5 @@
 ﻿namespace MudBlazor.UnitTests
 {
-    public class T { }
-    public class U { }
+    public struct T { }
+    public struct U { }
 }
