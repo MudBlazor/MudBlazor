@@ -104,6 +104,12 @@
     width:100%;
 }
 
+.docs-content-api-description {
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+}
+
 .docs-content-outlined {
     border: 1px solid var(--mud-palette-lines-default);
 }

@@ -39,15 +39,15 @@ namespace MudBlazor
         public bool CanHover { get; set; }
 
         /// <summary>
-        /// Setting a height will allow to scroll the treeview. If not set, it will try to grow in height. You can set this to any CSS value that the
-        /// attribute 'height' accepts, i.e. 500px. 
+        /// Setting a height will allow to scroll the treeview. If not set, it will try to grow in height. 
+        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
         /// </summary>
         [Parameter] 
         public string Height { get; set; }
 
         /// <summary>
-        /// Setting a maximum height will allow to scroll the treeview. If not set, it will try to grow in height. You can set this to any CSS value that the
-        /// attribute 'height' accepts, i.e. 500px. 
+        /// Setting a maximum height will allow to scroll the treeview. If not set, it will try to grow in height. 
+        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
         /// </summary>
         [Parameter]
         public string MaxHeight { get; set; }
