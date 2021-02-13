@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
+using RichardSzalay.MockHttp;
 using Toolbelt.Blazor.HeadElement;
 
 namespace MudBlazor.UnitTests.Components
@@ -30,10 +31,11 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             ctx.Services.AddSingleton<IDomService>(new MockDomService());
             ctx.Services.AddOptions();
-            ctx.Services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri("https://try.mudblazor.com/webapi/") });
+            ctx.Services.AddScoped(sp => MockHttpHelper.GetMockHttpClient());
         }
 
         [TearDown]
         public void TearDown() => ctx.Dispose();
     }
 }
+
