@@ -1,54 +1,18 @@
 ﻿@namespace MudBlazor
-@using MudBlazor.Utilities
-@using MudBlazor.Extensions
-@using System.Globalization
 
 <div class="mud-tooltip-root">
     @ChildContent
-    @if (!String.IsNullOrEmpty(Text))
+    @if (!String.IsNullOrEmpty(Text) || TooltipContent != null)
     {
-<span class="@Classname" style="@GetTimeDelay()">
-    @Text
-</span>
-}
-</div>
-
-@code {
-
-    protected string Classname =>
-   new CssBuilder("mud-tooltip")
-     .AddClass($"mud-tooltip-placement-{Placement.ToDescriptionString()}")
-     .AddClass(Class)
-   .Build();
-
-    /// <summary>
-    /// Sets the text to be displayed inside the tooltip.
-    /// </summary>
-    [Parameter] public string Text { get; set; }
-
-
-    /// <summary>
-    /// User class names, separated by space
-    /// </summary>
-    [Parameter] public string Class { get; set; }
-
-    /// <summary>
-    /// Changes the default transition delay in seconds.
-    /// </summary>
-    [Parameter] public double Delayed { get; set; } = 0.2;
-
-    /// <summary>
-    /// Tooltip placement.
-    /// </summary>
-    [Parameter] public Placement Placement { get; set; } = Placement.Bottom;
-
-    /// <summary>
-    /// Child content of component.
-    /// </summary>
-    [Parameter] public RenderFragment ChildContent { get; set; }
-
-    protected string GetTimeDelay()
-    {
-        return $"transition-delay: {Delayed.ToString(CultureInfo.InvariantCulture)}s;";
+        <div class="@Classname" style="@GetTimeDelay()">
+            @if (TooltipContent != null)
+            {
+                @TooltipContent
+            }
+            else
+            {
+                @Text
+            }
+        </div>
     }
-}
+</div>
