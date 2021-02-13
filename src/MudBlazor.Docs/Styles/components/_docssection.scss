@@ -104,8 +104,20 @@
     width:100%;
 }
 
+@media(min-width: 600px) {
+    .docs-content-api-cell:before {
+        width: 30% !important;
+        min-width: 30% !important;
+    }
+}
+
+@media(max-width: 599px) {
+    .docs-content-api-description {
+        flex-wrap: wrap;
+    }
+}
+
 .docs-content-api-description {
-    flex-wrap: wrap;
     overflow-wrap: anywhere;
     white-space: pre-line;
 }

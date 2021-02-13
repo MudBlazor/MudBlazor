@@ -18,7 +18,7 @@
                 <Title>Properties</Title>
             </SectionHeader>
             <SectionContent Class="docs-content-api" FullWidth="true">
-                <MudTable Items="@Properties" Elevation="0" Class="mx-0">
+                <MudTable Items="@Properties" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm">
                     <HeaderContent>
                         <MudTh>Name</MudTh>
                         <MudTh>Type</MudTh>
@@ -26,10 +26,10 @@
                         <MudTh>Description</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
-                        <MudTd DataLabel="Type">@context.Type</MudTd>
-                        <MudTd DataLabel="Default">@PresentDefaultValue(context.Default)</MudTd>
-                        <MudTd DataLabel="Description" Class="docs-content-api-description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
+                        <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
+                        <MudTd Class="docs-content-api-cell" DataLabel="Type">@context.Type</MudTd>
+                        <MudTd Class="docs-content-api-cell" DataLabel="Default">@PresentDefaultValue(context.Default)</MudTd>
+                        <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                     </RowTemplate>
                 </MudTable>
             </SectionContent>
