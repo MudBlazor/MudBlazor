@@ -1,21 +1,12 @@
 using System;
 using System.Net.Http;
 using Bunit;
-using Bunit.Rendering;
-using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.Charts;
-using MudBlazor.Docs.Examples;
-using MudBlazor.Docs.Components;
-using MudBlazor.Docs.Wireframes;
-using MudBlazor.Internal;
 using MudBlazor.Services;
-using MudBlazor.UnitTests;
 using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
 using Toolbelt.Blazor.HeadElement;
-using ComponentParameter = Bunit.ComponentParameter;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -39,7 +30,7 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             ctx.Services.AddSingleton<IDomService>(new MockDomService());
             ctx.Services.AddOptions();
-            ctx.Services.AddScoped(sp => new HttpClient());
+            ctx.Services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri("https://try.mudblazor.com/webapi/") });
         }
 
         [TearDown]
