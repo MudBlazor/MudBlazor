@@ -6,7 +6,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudNumericField<T> : MudDebouncedInput<T> where T:struct
+    public partial class MudNumericField<T> : MudDebouncedInput<T>
     {
         public MudNumericField() : base()
         {
@@ -280,14 +280,5 @@ namespace MudBlazor
         /// The increment added/subtracted by the spin buttons.
         /// </summary>
         [Parameter] public T Step { get; set; }
-
-        private string InputNumericParameter(T value)
-        {
-            var culture = CultureInfo.CurrentCulture;
-            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-            string ret = value.ToString();
-            CultureInfo.CurrentCulture = culture;
-            return ret;
-        }
     }
 }
