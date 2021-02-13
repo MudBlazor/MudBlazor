@@ -36,16 +36,6 @@ namespace MudBlazor
         [Parameter] public Edge Edge { get; set; }
 
         /// <summary>
-        /// If true, disables ripple effect.
-        /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
-
-        /// <summary>
-        /// If true, the button will be disabled.
-        /// </summary>
-        [Parameter] public bool Disabled { get; set; }
-
-        /// <summary>
         /// Child content of component, only shows if Icon is null or Empty.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }

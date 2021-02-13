@@ -28,7 +28,7 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Activate TreeItem on click (select and highlight a single item)</Title>
-                <Description></Description>
+                <Description>Use <CodeInline>@@bind-Activated</CodeInline> on TreeViewItem to bind a single item.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
                 <TreeViewActivateExample />
@@ -38,7 +38,7 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Selectable items</Title>
-                <Description></Description>
+                <Description>Use <CodeInline>@@bind-Selected</CodeInline> on TreeViewItem to bind a single item.</Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
                 <TreeViewSelectExample />
@@ -78,7 +78,10 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Custom Tree</Title>
-                <Description>When Content property is used, it will completely replace the default rendering of the MudTreeViewItem to use your own</Description>
+                <Description>
+                    When Content property is used, it will completely replace the default rendering of the MudTreeViewItem to use your own. 
+                    Use <CodeInline>Height</CodeInline> or <CodeInline>MaxHeight</CodeInline> parameter to scroll the treeview.
+                </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
                 <TreeViewCustomExample />

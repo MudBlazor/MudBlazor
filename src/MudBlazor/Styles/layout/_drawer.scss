@@ -206,6 +206,11 @@
     &.mud-drawer-temporary.mud-drawer-clipped-always {
         top: var(--mud-appbar-min-height);
         height: calc(100% - var(--mud-appbar-min-height));
+
+        @media (max-width:$breakpoint-sm - 1px) and (orientation: landscape) {
+            top: calc(var(--mud-appbar-min-height) - 16px);
+            height: calc(100% - var(--mud-appbar-min-height) + 16px);
+        }
     }
 
     @each $breakpoint in map-keys($breakpoints) {
@@ -213,7 +218,28 @@
             @media (min-width: map-get($breakpoints, $breakpoint)) {
                 top: var(--mud-appbar-min-height);
                 height: calc(100% - var(--mud-appbar-min-height));
+
+                @media (max-width:$breakpoint-sm - 1px) and (orientation: landscape) {
+                    top: calc(var(--mud-appbar-min-height) - 16px);
+                    height: calc(100% - var(--mud-appbar-min-height) + 16px);
+                }
             }
+        }
+    }
+}
+
+.mud-appbar-dense + .mud-drawer-fixed {
+    &.mud-drawer-persistent:not(.mud-drawer-clipped-never),
+    &.mud-drawer-responsive.mud-drawer-clipped-always,
+    &.mud-drawer-temporary.mud-drawer-clipped-always {
+        top: calc(var(--mud-appbar-min-height) - 16px);
+        height: calc(100% - var(--mud-appbar-min-height) + 16px);
+    }
+
+    @each $breakpoint in map-keys($breakpoints) {
+        &.mud-drawer-responsive.mud-drawer-clipped-docked.mud-drawer-#{$breakpoint} {
+            top: calc(var(--mud-appbar-min-height) - 16px);
+            height: calc(100% - var(--mud-appbar-min-height) + 16px);
         }
     }
 }

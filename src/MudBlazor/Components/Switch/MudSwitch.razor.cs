@@ -35,11 +35,5 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
 
-        /// <summary>
-        /// If true, the switch will be disabled.
-        /// </summary>
-        [Parameter] public bool Disabled { get; set; }
-
-
     }
 }

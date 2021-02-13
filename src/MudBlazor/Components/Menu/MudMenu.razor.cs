@@ -64,21 +64,6 @@ namespace MudBlazor
         [Parameter] public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, no drop-shadow will be used.
-        /// </summary>
-        [Parameter] public bool DisableElevation { get; set; }
-
-        /// <summary>
-        /// If true, the button will be disabled.
-        /// </summary>
-        [Parameter] public bool Disabled { get; set; }
-
-        /// <summary>
-        /// If true, disables ripple effect.
-        /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
-
-        /// <summary>
         /// If true, the list menu will be same width as the parent.
         /// </summary>
         [Parameter] public bool FullWidth { get; set; }

@@ -16,22 +16,26 @@ namespace MudBlazor.Docs.Extensions
         /// </summary>
         public static string GetSection(this NavigationManager navMan)
         {
-            var currentUri = new Uri(navMan.Uri);
-            return currentUri.AbsolutePath
+            // get the absolute path with out the base path
+            var currentUri = navMan.Uri.Remove(0, navMan.BaseUri.Length - 1);
+            var firstElement = currentUri
                 .Split("/", StringSplitOptions.RemoveEmptyEntries)
                 .FirstOrDefault();
+            return firstElement;
         }
+
         /// <summary>
         /// Gets the link of the component on the documentation page
         /// Ex: /api/button; "button" is the component link, and "api" is the section
         /// </summary>
         public static string GetComponentLink(this NavigationManager navMan)
         {
-            var currentUri = new Uri(navMan.Uri);
-            return currentUri.AbsolutePath
+            // get the absolute path with out the base path
+            var currentUri = navMan.Uri.Remove(0, navMan.BaseUri.Length - 1);
+            var secondElement = currentUri
                 .Split("/", StringSplitOptions.RemoveEmptyEntries)
-                //the second element
                 .ElementAtOrDefault(1);
+            return secondElement;
         }
 
         /// <summary>

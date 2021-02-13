@@ -53,6 +53,11 @@ namespace MudBlazor
         [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Hours;
 
         /// <summary>
+        /// Choose the edition mode. By default you can edit hours and minutes.
+        /// </summary>
+        [Parameter] public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
+
+        /// <summary>
         /// If true, sets 12 hour selection clock.
         /// </summary>
         [Parameter] public bool AmPm { get; set; }
@@ -95,7 +100,13 @@ namespace MudBlazor
         protected override void OnPickerOpened()
         {
             base.OnPickerOpened();
-            _currentView = OpenTo;
+            _currentView = TimeEditMode switch
+            {
+                TimeEditMode.Normal => OpenTo,
+                TimeEditMode.OnlyHours => OpenTo.Hours,
+                TimeEditMode.OnlyMinutes => OpenTo.Minutes,
+                _ => _currentView
+            };
         }
 
         private string GetHourString()
@@ -310,7 +321,7 @@ namespace MudBlazor
         private void OnMouseUp(MouseEventArgs e)
         {
             MouseDown = false;
-            if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour)
+            if (_currentView == OpenTo.Hours && _timeSet.Hour != _initialHour && TimeEditMode == TimeEditMode.Normal)
             {
                 _currentView = OpenTo.Minutes;
             }
@@ -343,7 +354,11 @@ namespace MudBlazor
             }
             _timeSet.Hour = h;
             UpdateTime();
-            _currentView = OpenTo.Minutes;
+
+            if (TimeEditMode == TimeEditMode.Normal)
+            {
+                _currentView = OpenTo.Minutes;
+            }
         }
 
         /// <summary>

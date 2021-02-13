@@ -36,11 +36,6 @@ namespace MudBlazor
         [Parameter] public bool DisableRipple { get; set; }
 
         /// <summary>
-        /// If true, the checkbox will be disabled.
-        /// </summary>
-        [Parameter] public bool Disabled { get; set; }
-
-        /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }

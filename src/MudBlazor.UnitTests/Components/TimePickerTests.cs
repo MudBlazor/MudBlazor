@@ -203,6 +203,30 @@ namespace MudBlazor.UnitTests
         }
 
         [Test]
+        public void TimeEditModeMinutes_CheckHoursHidden()
+        {
+            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.OnlyMinutes));
+            // Are Hours hidden
+            comp.FindAll("div.mud-time-picker-hour.mud-time-picker-dial-hidden").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void TimeEditModeHours_CheckMinutesHidden()
+        {
+            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.OnlyHours));
+            // Are Minutes hidden
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
+        }
+
+        [Test]
+        public void TimeEditModeNormal_CheckMinutesHidden()
+        {
+            var comp = OpenPicker(Parameter("TimeEditMode", TimeEditMode.Normal));
+            // Are Minutes hidden
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
+        }
+
+        [Test]
         public void ChangeToMinutes_FromHours_CheckHoursHidden()
         {
             var comp = OpenPicker();

@@ -3,7 +3,7 @@
 @page "/iframe/docs/examples/drawer/clipped"
 
 <MudLayout>
-    <MudAppBar Elevation="1">
+    <MudAppBar Elevation="1" Dense="@dense">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
         <MudAppBarSpacer />
         <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/Garderoben/MudBlazor" Target="_blank" />
@@ -25,6 +25,7 @@
                 <MudSelectItem Value="@DrawerClipMode.Docked">Drawer is docked (DrawerClipMode.Docked)</MudSelectItem>
                 <MudSelectItem Value="@DrawerClipMode.Always">Always (DrawerClipMode.Always)</MudSelectItem>
             </MudSelect>
+            <MudSwitch @bind-Checked="@dense" Label="Dense appbar" Color="Color.Primary" Style="width:100%;" />
         </MudContainer>
     </MudMainContent>
 </MudLayout>
@@ -32,6 +33,7 @@
 
 @code{
     bool open = false;
+    bool dense = false;
     DrawerClipMode clipMode = DrawerClipMode.Never;
 
     void ToggleDrawer()
