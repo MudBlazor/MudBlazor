@@ -23,43 +23,18 @@ namespace MudBlazor.Docs.Compiler
                 var cb = new CodeBuilder();
 
                 cb.AddHeader();
-                cb.AddUsings();
+                cb.AddLine("using MudBlazor.Docs.Examples;");
+                cb.AddLine("using MudBlazor.Docs.Wireframes;");
+                cb.AddLine("using NUnit.Framework;");
+                cb.AddLine();
 
                 cb.AddLine("namespace MudBlazor.UnitTests.Components");
                 cb.AddLine("{");
                 cb.IndentLevel++;
-                cb.AddLine("// These tests just check if all the examples from the doc page render without errors");
-                cb.AddLine("[TestFixture]");
-                cb.AddLine("public class _AllComponents");
+                cb.AddLine("// These tests just check if all the examples from the doc page render without errors"); 
+                cb.AddLine("public partial class ExampleDocsTests");
                 cb.AddLine("{");
                 cb.IndentLevel++;
-                cb.AddLine("private Bunit.TestContext ctx;");
-                cb.AddLine();
-                cb.AddLine("[SetUp]");
-                cb.AddLine("public void Setup()");
-                cb.AddLine("{");
-                cb.IndentLevel++;
-                cb.AddLine("ctx = new Bunit.TestContext();");
-                cb.AddLine("ctx.JSInterop.Mode = JSRuntimeMode.Loose;");
-                cb.AddLine("ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());");
-                cb.AddLine("ctx.Services.AddSingleton<IDialogService>(new DialogService());");
-                cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new SnackbarService());");
-                cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
-
-                cb.AddLine("ctx.Services.AddTransient<IScrollManager, MockScrollManager>();");
-                cb.AddLine("ctx.Services.AddTransient<IScrollListener, MockScrollListener>();");
-                cb.AddLine("ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());");
-                cb.AddLine("ctx.Services.AddSingleton<IDomService>(new MockDomService());");
-
-                cb.AddLine("ctx.Services.AddScoped(sp => new HttpClient());");
-                // options required for file upload
-                cb.AddLine("ctx.Services.AddOptions();");
-                cb.IndentLevel--;
-                cb.AddLine("}");
-                cb.AddLine();
-                cb.AddLine("[TearDown]");
-                cb.AddLine("public void TearDown() => ctx.Dispose();");
-                cb.AddLine();
 
                 foreach (var entry in Directory.EnumerateFiles(paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
                     .OrderBy(e => e.Replace("\\", "/"), StringComparer.Ordinal))
