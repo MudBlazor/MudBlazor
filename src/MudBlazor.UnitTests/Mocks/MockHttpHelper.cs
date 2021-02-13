@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Text;
 using RichardSzalay.MockHttp;
@@ -21,7 +21,7 @@ namespace MudBlazor.UnitTests.Mocks
                 Encoding.UTF8.GetString(Encoding.Default.GetBytes(SampleElementsJson)));
             // DialogScrollableExample
             mockHttpMessageHandler.When("https://raw.githubusercontent.com/Garderoben/MudBlazor/master/LICENSE")
-                .Respond("text/plain; charset=utf-8", "Dummy Licence");
+                .Respond("text/plain; charset=utf-8", "Dummy License");
             return mockHttpMessageHandler;
         }
 
