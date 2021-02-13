@@ -236,7 +236,6 @@ namespace MudBlazor
 
         internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
 
-        internal Interfaces.IForm Validator { get; } = new TableRowValidator();
-
+        public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
     }
 }
