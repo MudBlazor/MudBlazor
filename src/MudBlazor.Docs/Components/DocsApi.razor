@@ -29,7 +29,7 @@
                         <MudTd DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
                         <MudTd DataLabel="Type">@context.Type</MudTd>
                         <MudTd DataLabel="Default">@PresentDefaultValue(context.Default)</MudTd>
-                        <MudTd DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
+                        <MudTd DataLabel="Description" Class="docs-content-api-description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                     </RowTemplate>
                 </MudTable>
             </SectionContent>
