@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MudBlazor.ExampleData
+namespace MudBlazor.Examples.Data
 {
     public static class AmericanStates
     {

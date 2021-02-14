@@ -4,9 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Text.Json;
-using MudBlazor.ExampleData.Models;
+using MudBlazor.Examples.Data.Models;
 
-namespace MudBlazor.ExampleData
+namespace MudBlazor.Examples.Data
 {
     public static class PeriodicTable
     {

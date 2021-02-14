@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using MudBlazor.ExampleData;
+using MudBlazor.Examples.Data;
 
 namespace Server.Controllers
 {

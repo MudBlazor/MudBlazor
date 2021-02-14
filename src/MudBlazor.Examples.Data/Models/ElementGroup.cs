@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace MudBlazor.ExampleData.Models
+namespace MudBlazor.Examples.Data.Models
 {
     public class ElementGroup
     {
