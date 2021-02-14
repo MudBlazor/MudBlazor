@@ -1,6 +1,7 @@
-@using MudBlazor.Docs.Data
-@using MudBlazor.Docs.Extensions; 
+@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
 
 <MudTable ServerData="@(new Func<TableState, Task<TableData<Element>>>(ServerReload))"  
                         Dense="true" Hover="true" @ref="table">
@@ -41,7 +42,7 @@
     /// </summary>
     private async Task<TableData<Element>> ServerReload(TableState state)
     {
-        IEnumerable<Element> data = await PeriodicTable.GetElementsAsync();
+        IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable");
         data = data.Where(element =>
         {
             if (string.IsNullOrWhiteSpace(searchString))

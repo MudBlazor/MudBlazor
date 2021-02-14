@@ -2,7 +2,7 @@
 @using MudBlazor.Extensions
 @inherits MudComponentBase
 
-<div class="@DivClassname" role="progressbar" aria-valuenow="@Value" aria-valuemin="0" aria-valuemax="100">
+<div class="@DivClassname" style="@Style" role="progressbar" aria-valuenow="@_value" aria-valuemin="@_min" aria-valuemax="@_max" @attributes="UserAttributes">
     @if (Indeterminate)
     {
         <div class="@LinearClassname mud-progress-linear-1-indeterminate"></div>
@@ -11,11 +11,11 @@
     else if (Buffer)
     {
         <div class="@BufferClassname"></div>
-        <div class="mud-progress-linear-bar mud-@Color.ToDescriptionString() mud-progress-linear-bar-1-buffer" style="transform: translateX(-@Value%);"></div>
-        <div class="mud-progress-linear-bar mud-progress-linear-color-@Color.ToDescriptionString() mud-progress-linear-bar-2-buffer" style="transform: translateX(-@BufferValue%);"></div>
+        <div class="mud-progress-linear-bar mud-@Color.ToDescriptionString() mud-progress-linear-bar-1-buffer" style="transform: translateX(-@((int)Math.Round(100-ValuePercent))%);"></div>
+        <div class="mud-progress-linear-bar mud-progress-linear-color-@Color.ToDescriptionString() mud-progress-linear-bar-2-buffer" style="transform: translateX(-@((int)Math.Round(100-BufferPercent))%);"></div>
     }
     else
     {
-        <div class="@LinearClassname" style="transform: translateX(-@Value%);"></div>
+        <div class="@LinearClassname" style="transform: translateX(-@((int)Math.Round(100-ValuePercent))%);"></div>
     }
 </div>

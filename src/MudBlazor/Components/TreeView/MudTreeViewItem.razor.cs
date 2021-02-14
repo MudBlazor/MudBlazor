@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
@@ -60,7 +61,12 @@ namespace MudBlazor
 
         [Parameter] public RenderFragment Content { get; set; }
 
-        [Parameter] public HashSet<T> Items { get; set; }
+        [Parameter] public HashSet<T> Items { get; set; }        
+        
+        /// <summary>
+        /// Command executed when the user clicks on the CommitEdit Button.
+        /// </summary>
+        [Parameter] public ICommand Command { get; set; }
 
         [Parameter]
         public bool Expanded { get; set; }
@@ -150,6 +156,15 @@ namespace MudBlazor
             }
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender && _isActivated)
+            {
+                await MudTreeRoot.UpdateActivatedItem(this, _isActivated);
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
         protected async Task OnItemClicked(MouseEventArgs ev)
         {
             if (MudTreeRoot?.CanActivate ?? false)
@@ -164,6 +179,10 @@ namespace MudBlazor
             }
 
             await OnClick.InvokeAsync(ev);
+            if (Command?.CanExecute(Value) ?? false)
+            {
+                Command.Execute(Value);
+            }
         }
 
         protected Task OnItemExpanded(bool expanded)

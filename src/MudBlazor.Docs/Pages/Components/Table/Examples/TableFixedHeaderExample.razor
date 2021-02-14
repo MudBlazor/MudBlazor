@@ -1,7 +1,9 @@
-﻿@using MudBlazor.Docs.Data
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
 
-<MudTable Items="@PeriodicTable.GetElements()" FixedHeader="@fixed_header" Height="@(fixed_header?"400px":"")">
+<MudTable Items="@Elements" FixedHeader="@fixed_header" Height="@(fixed_header?"400px":"")">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -24,4 +26,11 @@
 
 @code {
     bool fixed_header = true;
+
+    private IEnumerable<Element> Elements = new List<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable");
+    } 
 }

@@ -1,5 +1,7 @@
-﻿@using MudBlazor.Docs.Data
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
 
 <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem">
     <ToolBarContent>
@@ -34,13 +36,14 @@
     private bool hover = true;
     private string searchString = "";
     private Element selectedItem = null;
-    private IEnumerable<Element> Elements = null;
     private HashSet<Element> selectedItems = new HashSet<Element>();
+
+    private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await PeriodicTable.GetElementsAsync();
-    }
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable");
+    } 
 
     private bool FilterFunc(Element element)
     {

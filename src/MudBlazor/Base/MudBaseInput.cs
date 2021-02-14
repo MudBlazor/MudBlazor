@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -10,13 +11,6 @@ namespace MudBlazor
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
     {
         protected MudBaseInput() : base(new DefaultConverter<T>()) { }
-
-        /// <summary>
-        /// If true, this is a top-level form component. If false, this input is a sub-component of another input (i.e. TextField, Select, etc).
-        /// If it is sub-component, it will NOT do form validation!!
-        /// </summary>
-        [CascadingParameter(Name = "Standalone")]
-        internal bool Standalone { get; set; } = true;
 
         /// <summary>
         /// If true, the input element will be disabled.

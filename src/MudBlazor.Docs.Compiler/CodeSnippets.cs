@@ -34,7 +34,7 @@ namespace MudBlazor.Docs.Compiler
                 {
                     var filename = Path.GetFileName(entry);
                     var componentName = Path.GetFileNameWithoutExtension(filename);
-                    if (!componentName.EndsWith(Paths.ExampleDiscriminator))
+                    if (!componentName.Contains(Paths.ExampleDiscriminator))
                         continue;
                     cb.AddLine($"public const string {componentName} = @\"{EscapeComponentSource(entry)}\";\n");
                 }

@@ -78,6 +78,18 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Returns the class that will get joined with RowClass. Takes the current item and row index.
+        /// </summary>
+        [Parameter]
+        public Func<T, int, string> RowClassFunc {get;set;}
+
+        /// <summary>
+        /// Returns the style that will get joined with RowStyle. Takes the current item and row index.
+        /// </summary>
+        [Parameter]
+        public Func<T, int, string> RowStyleFunc {get;set;}
+
+        /// <summary>
         /// Returns the item which was last clicked on in single selection mode (that is, if MultiSelection is false)
         /// </summary>
         [Parameter]

@@ -3,8 +3,7 @@
 <MudProgressLinear Color="Color.Primary" Value="@Value" />
 <MudProgressLinear Color="Color.Secondary" Value="@Value" />
 
-@code {
-    public int Value { get; set; }
+@code { public int Value { get; set; }
 
     public async void StartTimerAsync()
     {
@@ -29,6 +28,4 @@
     public void Dispose()
     {
         disposed = true;
-    }
-
-}
+    } }

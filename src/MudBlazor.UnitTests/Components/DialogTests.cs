@@ -97,5 +97,34 @@ namespace MudBlazor.UnitTests
             comp.Find("button").Click();
             comp.Markup.Trim().Should().BeEmpty();
         }
+
+        /// <summary>
+        /// Click outside the dialog (or any other method) must update the IsVisible parameter two-way binding on close
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task InlineDialog_Should_UpdateIsVisibleOnClose()
+        {
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            // displaying the component with the inline dialog only renders the open button
+            var comp1 = ctx.RenderComponent<InlineDialogIsVisibleStateTest>();
+            // open the dialog
+            comp1.Find("button").Click();
+            Console.WriteLine("\nOpened dialog: " + comp.Markup);
+            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            // close by click outside
+            comp.Find("div.mud-overlay").Click();
+            comp.Markup.Trim().Should().BeEmpty();
+            // open again
+            comp1.Find("button").Click();
+            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            // close again by click outside
+            comp.Find("div.mud-overlay").Click();
+            comp.Markup.Trim().Should().BeEmpty();
+        }
+
     }
 }

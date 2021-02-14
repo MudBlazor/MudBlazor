@@ -291,6 +291,13 @@
             display: flex;
             border: none;
             padding: 14px 16px;
+            text-align: left !important;
+        }
+
+        &.mud-table-dense {
+            & .mud-table-cell {
+                padding: 6px 16px;
+            }
         }
 
         .mud-table-cell:before {
@@ -354,10 +361,9 @@
     }
 }
 
-/* Don't want a default table-display-smalldevices
 @media (max-width:$breakpoint-sm) {
-    @include table-display-smalldevices("");
-}*/
+    @include table-display-smalldevices("xs-");
+}
 
 @media (max-width:$breakpoint-md) {
     @include table-display-smalldevices("sm-");

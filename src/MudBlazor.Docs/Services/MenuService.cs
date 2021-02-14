@@ -14,9 +14,6 @@ namespace MudBlazor.Docs.Services
         IEnumerable<DocsLink> Features { get; }
         IEnumerable<DocsLink> Customization { get; }
         IEnumerable<DocsLink> About { get; }
-
-
-
     }
 
     /// <summary>
@@ -69,6 +66,8 @@ namespace MudBlazor.Docs.Services
             .AddItem("TreeView", typeof(MudTreeView<T>))
             .AddItem("Breadcrumbs", typeof(MudBreadcrumbs))
             .AddItem("ScrollToTop", typeof(MudScrollToTop))
+            .AddItem("Popover", typeof(MudPopover))
+            .AddItem("SwipeArea", typeof(MudSwipeArea))
 
             //GROUPS
 
@@ -104,7 +103,6 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Donut chart", typeof(MudChart))
                 .AddItem("Line chart", typeof(MudChart))
                 .AddItem("Pie chart", typeof(MudChart))
-                .AddItem("Bar chart", typeof(MudChart))
             );
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;
 
@@ -194,7 +192,7 @@ namespace MudBlazor.Docs.Services
             new DocsLink{ Title="Credits" , Href="project/credit" },
             new DocsLink{Href="project/about", Title="How it started" },
             new DocsLink{Href="project/team", Title="Team & Contributors" },
-            new DocsLink{Href="versions", Title="Versions" },
+            new DocsLink{Href="project/versions", Title="Versions" },
         }.OrderBy(x => x.Title);
     }
 }

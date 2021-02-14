@@ -1,8 +1,10 @@
 # ![MudBlazor](content/MudBlazor-GitHub.png)
 # Material Design components for Blazor
-![Azure DevOps builds (branch)](https://img.shields.io/azure-devops/build/gardnet-nu/4cba3d30-858f-4653-a80d-736a8adc5daf/1/master?label=azure%20pipelines&style=flat-square)
+![Azure DevOps builds (master)](https://img.shields.io/azure-devops/build/gardnet-nu/4cba3d30-858f-4653-a80d-736a8adc5daf/1/master?label=azure%20pipelines&style=flat-square)
+![Azure DevOps coverage (develop)](https://img.shields.io/azure-devops/coverage/gardnet-nu/MudBlazor/1/develop)
 [![GitHub](https://img.shields.io/github/license/garderoben/mudblazor?color=%23594ae2&style=flat-square)](https://github.com/Garderoben/MudBlazor/blob/master/LICENSE)
 [![Gitter](https://img.shields.io/gitter/room/MudBlazor/community?style=flat-square)](https://gitter.im/MudBlazor/community)
+[![Discord](https://img.shields.io/discord/786656789310865418?color=%237289da&label=Discord&logo=discord&logoColor=%237289da&style=flat-square)](https://discord.gg/mudblazor)
 [![GitHub Repo stars](https://img.shields.io/github/stars/garderoben/mudblazor?style=flat-square)](https://github.com/Garderoben/MudBlazor/stargazers)
 [![GitHub last commit](https://img.shields.io/github/last-commit/garderoben/mudblazor?style=flat-square)](https://github.com/Garderoben/MudBlazor)
 [![Nuget](https://img.shields.io/nuget/v/MudBlazor?style=flat-square)](https://www.nuget.org/packages/MudBlazor/)
@@ -21,7 +23,7 @@ MudBlazor is an ambitious Material Design component framework for Blazor with an
 - [MudBlazor.com](https://mudblazor.com)
 - [Try.MudBlazor.com](https://try.mudblazor.com/)
 ## Prerequisites
-- [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1)
+- [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) or [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) (legacy)
 ## Getting Started 
 - Full installation instructions can be found at [mudblazor.com](https://mudblazor.com/getting-started/installation)  
 - Alternatively use one of our templates from the [MudBlazor.Templates](https://github.com/Garderoben/MudBlazor.Templates) repo. 

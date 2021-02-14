@@ -13,8 +13,9 @@ namespace MudBlazor
           .AddClass("mud-list-item-dense", Dense || MudList?.Dense == true)
           .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters == true))
           .AddClass("mud-list-item-clickable", MudList?.Clickable)
-          .AddClass($"mud-ripple", MudList?.Clickable == true && !DisableRipple)
-          .AddClass("mud-selected-item", _selected)
+          .AddClass("mud-ripple", MudList?.Clickable == true && !DisableRipple && !Disabled)
+          .AddClass("mud-selected-item", _selected && !Disabled)
+          .AddClass("mud-list-item-disabled", Disabled)
           .AddClass(Class)
         .Build();
 
@@ -41,6 +42,11 @@ namespace MudBlazor
         /// Avatar CSS Class to applie if Avtar is set.
         /// </summary>
         [Parameter] public string AvatarClass { get; set; }
+
+        /// <summary>
+        /// If true, will disable the list item if it has onclick.
+        /// </summary>
+        [Parameter] public bool Disabled { get; set; }
 
         /// <summary>
         /// If true, disables ripple effect.
@@ -127,6 +133,8 @@ namespace MudBlazor
 
         protected void OnClickHandler(MouseEventArgs ev)
         {
+            if (Disabled)
+                return;
             if (NestedList != null)
             {
                 Expanded = !Expanded;
@@ -177,6 +185,8 @@ namespace MudBlazor
 
         internal void SetSelected(bool selected)
         {
+            if (Disabled)
+                return;
             if (_selected == selected)
                 return;
             _selected = selected;

@@ -1,0 +1,33 @@
+﻿@page "/components/popover"
+
+<DocsPage>
+    <DocsPageHeader Title="Popover" SubTitle="A Popover can be used to display some content on top of another." />
+    <DocsPageContent>
+        <DocsPageSection>
+            <MudAlert Severity="Severity.Warning"><b>Note:</b> When using this component it can be good to have some CSS knowledge it might not serve all types of content out of the box.</MudAlert>
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Simple Popover</Title>
+                <Description>The popover's open state is completely up to you as well as the content of it.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <PopoverSimpleExample />
+            </SectionContent>
+            <SectionSource Code="PopoverSimpleExample" GitHubFolderName="Popover" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Direction and Location</Title>
+                <Description>
+                    <CodeInline><b>Note:</b> The location can be set with custom css or using the style tag.</CodeInline>
+                    Control where the popover should start from relative to the parent. Offset the popover to be located outside of the parent.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <PopoverLocationExample />
+            </SectionContent>
+            <SectionSource Code="PopoverLocationExample" GitHubFolderName="Popover" />
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

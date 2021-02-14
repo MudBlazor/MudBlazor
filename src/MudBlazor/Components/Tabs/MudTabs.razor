@@ -6,23 +6,29 @@
     <CascadingValue Value="this" IsFixed="true">
         <div class="@ToolbarClassnames">
             <div class="mud-tabs-toolbar-inner">
-                <div class="mud-tabs-toolbar-content">
-                    <div class="@WrapperClassnames">
+                @if(_showScrollButtons)
+                {
+                    <div class="mud-tabs-scroll-button mud-tabs-scroll-prev">
+                        <MudIconButton Icon="@PrevIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollPrev())" Disabled="@_prevButtonDisabled" />
+                    </div>
+                }  
+                <div @ref="@TabsContentSize" class="mud-tabs-toolbar-content">
+                    <div class="@WrapperClassnames" style="@WrapperScrollStyle">
                         @foreach (MudTabPanel panel in Panels)
                         {
                             <MudTooltip Placement="@GetTooltipPlacement()" Text="@panel.ToolTip">
-                                <div class="@GetTabClass(panel)" @onclick=@( e => ActivatePanel(panel, e) )>
+                                <div @ref="panel.PanelRef" class="@GetTabClass(panel)" @onclick=@( e => ActivatePanel(panel, e) )>
                                     @if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
                                     {
                                         @panel.Text
                                     }
                                     else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
                                     {
-                                        <MudIcon Icon="@panel.Icon" />
+                                        <MudIcon Icon="@panel.Icon" Color="@IconColor" />
                                     }
                                     else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
                                     {
-                                        <MudIcon Icon="@panel.Icon" Class="mud-tab-icon-text" />
+                                        <MudIcon Icon="@panel.Icon" Color="@IconColor" Class="mud-tab-icon-text" />
                                         @panel.Text
                                     }
                                     @if (panel.BadgeData != null)
@@ -32,16 +38,18 @@
                                 </div>
                             </MudTooltip>
                         }
-                        @if (!Vertical)
+                        @if (!HideSlider)
                         {
-                            <div class="mud-tab-slider mud-tab-slider-horizontal @(TabsPlacement == Placement.Bottom ? "mud-tab-slider-horizontal-reverse" : "")" style="width: calc(100% / @Panels.Count()); left: calc((100% / @Panels.Count()) * @ActivePanelIndex);"></div>
-                        }
-                        else
-                        {
-                            <div class="mud-tab-slider mud-tab-slider-vertical @(TabsPlacement == Placement.End ? "mud-tab-slider-vertical-reverse" : "")" style="height: calc(100% / @Panels.Count()); top: calc((100% / @Panels.Count()) * @ActivePanelIndex);"></div>
+                            <div class="@SliderClass" style="@SliderStyle"></div>
                         }
                     </div>
                 </div>
+                @if(_showScrollButtons)
+                {
+                    <div class="mud-tabs-scroll-button mud-tabs-scroll-next">
+                        <MudIconButton Icon="@NextIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollNext())" Disabled="@_nextButtonDisabled" />
+                    </div>
+                }  
             </div>
         </div>
         <div class="@PanelsClassnames">

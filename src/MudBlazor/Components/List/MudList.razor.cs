@@ -42,6 +42,11 @@ namespace MudBlazor
         [Parameter] public bool DisableGutters { get; set; }
 
         /// <summary>
+        /// If true, will disable the list item if it has onclick.
+        /// </summary>
+        [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
         /// The current selected list item. Bind this with a two-way binding to activate the lists exclusive selection behavior.
         /// Note: make the list Clickable for item selection to work.
         /// </summary>

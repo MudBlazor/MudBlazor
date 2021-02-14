@@ -64,21 +64,6 @@ namespace MudBlazor
         [Parameter] public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, no drop-shadow will be used.
-        /// </summary>
-        [Parameter] public bool DisableElevation { get; set; }
-
-        /// <summary>
-        /// If true, the button will be disabled.
-        /// </summary>
-        [Parameter] public bool Disabled { get; set; }
-
-        /// <summary>
-        /// If true, disables ripple effect.
-        /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
-
-        /// <summary>
         /// If true, the list menu will be same width as the parent.
         /// </summary>
         [Parameter] public bool FullWidth { get; set; }
@@ -101,15 +86,18 @@ namespace MudBlazor
         [Parameter] public RenderFragment ActivatorContent { get; set; }
 
         /// <summary>
-        /// Sets the direction the select menu should be.
+        /// Sets the direction the select menu will start from relative to its parent.
         /// </summary>
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
-        /// If true, the select menu will open either before or after the input.
+        /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
         [Parameter] public bool OffsetY { get; set; }
 
+        /// <summary>
+        /// If true, the select menu will open either above or bellow the input depending on the direction.
+        /// </summary>
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>

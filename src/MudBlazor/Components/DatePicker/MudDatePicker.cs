@@ -9,7 +9,6 @@ namespace MudBlazor
 {
     public class MudDatePicker : MudBaseDatePicker
     {
-        private DateTime? _date;
 
         /// <summary>
         /// Fired when the DateFormat changes.
@@ -22,27 +21,27 @@ namespace MudBlazor
         [Parameter]
         public DateTime? Date
         {
-            get => _date;
+            get => _value;
             set => SetDateAsync(value, true).AndForget();
         }
 
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
-            if (_date != date)
+            if (_value != date)
             {
-                _date = date;
-
+                _value = date;
                 if (updateValue)
                 {
-                    await SetTextAsync(Converter.Set(_date), false);
+                    await SetTextAsync(Converter.Set(_value), false);
                 }
-
-                await DateChanged.InvokeAsync(_date);
+                await DateChanged.InvokeAsync(_value);
+                BeginValidate();
             }
         }
 
         protected override Task StringValueChanged(string value)
         {
+            Touched = true;
             // Update the date property (without updating back the Value property)
             return SetDateAsync(Converter.Get(value), false);
         }
