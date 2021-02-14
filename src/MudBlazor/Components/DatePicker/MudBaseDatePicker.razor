@@ -30,7 +30,7 @@
                             {
                                 var year = i;
                                 <div class="mud-picker-year" id="@(_componentId + year)" @onclick="(() => OnYearClicked(year))"  @onclick:stopPropagation="true">
-                                    <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@year</MudText>
+                                    <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@GetCalendarYear(year)</MudText>
                                 </div>
                             }
                         </div>
@@ -41,7 +41,7 @@
                             <div class="mud-picker-calendar-header-switch">
                                 <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" OnClick="OnPreviousYearClick"/>
                                 <div class="mud-picker-slide-transition mud-picker-calendar-header-transition" @onclick="OnYearClick"  @onclick:stopPropagation="true">
-                                    <MudText Typo="Typo.body1" Align="Align.Center">@PickerMonth?.Year</MudText>
+                                    <MudText Typo="Typo.body1" Align="Align.Center">@GetCalendarYear(PickerMonth?.Year ?? DateTime.Today.Year)</MudText>
                                 </div>
                                 <MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="OnNextYearClick"/>
                             </div>
@@ -98,7 +98,7 @@
                                                 @onclick="(() => { var d = day; OnDayClicked(d); })" 
                                                 onmouseover="this.closest('.mud-picker-calendar-content').style.setProperty('--selected-day', @tempId);"
                                                 disabled="@((day < MinDate) || (day > MaxDate))">
-                                            <p class="mud-typography mud-typography-body2 mud-inherit-text">@day.Day</p>
+                                            <p class="mud-typography mud-typography-body2 mud-inherit-text">@GetCalendarDayOfMonth(day)</p>
                                         </button>
                                     }
                                 }

@@ -123,13 +123,21 @@ namespace MudBlazor
         /// Get the first of the month to display
         /// </summary>
         /// <returns></returns>
-        protected DateTime GetMonthStart(int month) => _picker_month == null ? DateTime.Today.AddMonths(month).StartOfMonth() : _picker_month.Value.AddMonths(month);
+        protected DateTime GetMonthStart(int month)
+        {
+            var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(Culture);
+            return Culture.Calendar.AddMonths(monthStartDate, month);
+        }
 
         /// <summary>
         /// Get the last of the month to display
         /// </summary>
         /// <returns></returns>
-        protected DateTime GetMonthEnd(int month) => _picker_month == null ? DateTime.Today.AddMonths(month).EndOfMonth() : _picker_month.Value.AddMonths(month).EndOfMonth();
+        protected DateTime GetMonthEnd(int month)
+        {
+            var monthStartDate = _picker_month ?? DateTime.Today.StartOfMonth(Culture);
+            return Culture.Calendar.AddMonths(monthStartDate, month).EndOfMonth(Culture);
+        }
 
         protected DayOfWeek GetFirstDayOfWeek()
         {
@@ -216,7 +224,7 @@ namespace MudBlazor
 
         private void OnPreviousMonthClick()
         {
-            PickerMonth = GetMonthStart(0).AddDays(-1).StartOfMonth();
+            PickerMonth = GetMonthStart(0).AddDays(-1).StartOfMonth(Culture);
         }
 
         private void OnNextMonthClick()
@@ -310,8 +318,10 @@ namespace MudBlazor
         private IEnumerable<DateTime> GetAllMonths()
         {
             var current = GetMonthStart(0);
-            for (var i = 1; i <= 12; i++)
-                yield return new DateTime(current.Year, i, 1);
+            var calendarYear = Culture.Calendar.GetYear(current);
+            var firstOfCalendarYear = Culture.Calendar.ToDateTime(calendarYear, 1, 1,0,0,0,0);
+            for (var i = 0; i < Culture.Calendar.GetMonthsInYear(calendarYear); i++)
+                yield return Culture.Calendar.AddMonths(firstOfCalendarYear,i);
         }
 
         private string GetAbbreviatedMontName(in DateTime month)
@@ -357,7 +367,7 @@ namespace MudBlazor
             if (firstRender)
             {
                 if (_picker_month == null)
-                    _picker_month = StartMonth?.StartOfMonth() ?? GetMonthStart(0);
+                    _picker_month = GetCalendarStartOfMonth();
             }
 
             if (firstRender && _currentView == OpenTo.Year)
@@ -371,5 +381,18 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        protected abstract DateTime GetCalendarStartOfMonth();
+
+        private int GetCalendarDayOfMonth(DateTime date)
+        {
+            return Culture.Calendar.GetDayOfMonth(date);
+        }
+
+        /// <summary>
+        /// Converts gregorian year into whatever year it is in the provided culture
+        /// </summary>
+        /// <param name="year">Gregorian year</param>
+        /// <returns>Year according to culture</returns>
+        protected abstract int GetCalendarYear(int year);
     }
 }
