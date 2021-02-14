@@ -25,7 +25,7 @@ namespace MudBlazor
                 if (_debounceInterval == 0)
                 {
                     // not debounced, dispose timer if any
-                    ClearTimer(suppressTick:false);
+                    ClearTimer(suppressTick: false);
                     return;
                 }
                 SetTimer();
@@ -49,7 +49,7 @@ namespace MudBlazor
                 return base.UpdateValuePropertyAsync(updateText);
             }
             // if debounce interval is 0 we update immediately
-            if (DebounceInterval <= 0 || _timer==null)
+            if (DebounceInterval <= 0 || _timer == null)
                 return base.UpdateValuePropertyAsync(updateText);
             // If a debounce interval is defined, we want to delay the update of Value property.
             _timer.Stop();
@@ -89,7 +89,7 @@ namespace MudBlazor
             await OnDebounceIntervalElapsed.InvokeAsync(Text);
         }
 
-        private void ClearTimer(bool suppressTick=false)
+        private void ClearTimer(bool suppressTick = false)
         {
             if (_timer == null)
                 return;
@@ -104,7 +104,7 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            ClearTimer(suppressTick:true);
+            ClearTimer(suppressTick: true);
         }
     }
 }

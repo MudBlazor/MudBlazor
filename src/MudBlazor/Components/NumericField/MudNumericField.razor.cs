@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -14,6 +15,9 @@ namespace MudBlazor
             //Since this is completely transparent to us, we need to use a Converter using an InvariantCulture.
             SetConverter(new DefaultConverter<T> { Culture = CultureInfo.InvariantCulture });
 
+            _validateInstance = new Func<T, Task<bool>>(ValidateInput);
+
+            #region parameters initialization depending on T
             //sbyte
             if (typeof(T) == typeof(sbyte) || typeof(T) == typeof(sbyte?))
             {
@@ -91,6 +95,7 @@ namespace MudBlazor
                 Max = (T)(object)decimal.MaxValue;
                 Step = (T)(object)1M;
             }
+            #endregion
         }
 
         protected string Classname =>
@@ -98,7 +103,9 @@ namespace MudBlazor
            .AddClass(Class)
            .Build();
 
-        private MudInput<string> _elementReference;
+        private Func<T, Task<bool>> _validateInstance;
+
+        private MudInput<T> _elementReference;
 
         public override ValueTask FocusAsync()
         {
@@ -115,12 +122,15 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        protected override async Task SetValueAsync(T value, bool updateText = true)
+        protected async Task<bool> ValidateInput(T value)
         {
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
-            await base.SetValueAsync(value, updateText || valueChanged);
+            if (valueChanged)
+                await SetValueAsync(value, true);
+            return true;//Don't show errors
         }
+
 
         #region Numeric range
         public async Task Increment()
