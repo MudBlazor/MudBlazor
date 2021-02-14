@@ -59,7 +59,7 @@ namespace MudBlazor.Docs.Shared
         private Task<IEnumerable<ApiLinkServiceEntry>> Search(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
-                return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(new ApiLinkServiceEntry[0]);
+                return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(System.Array.Empty<ApiLinkServiceEntry>());
             return ApiLinkService.Search(text);
         }
 
