@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MudBlazor.ExampleData;
-using MudBlazor.ExampleData.Models;
+using MudBlazor.Examples.Data;
+using MudBlazor.Examples.Data.Models;
 
 namespace Server.Controllers
 {
