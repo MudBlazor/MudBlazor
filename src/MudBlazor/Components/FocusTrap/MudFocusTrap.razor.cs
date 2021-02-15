@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
@@ -16,8 +17,6 @@ namespace MudBlazor
         private bool _shiftDown;
         private bool _disabled;
         private bool _initialized;
-
-        [Inject] protected IJSRuntime JsRuntime { get; set; }
 
         /// <summary>
         /// Child content of the component.
@@ -106,17 +105,17 @@ namespace MudBlazor
 
         private Task FocusFallbackAsync()
         {
-            return JsRuntime.InvokeVoidAsync("elementReference.focus", _fallback).AsTask();
+            return _fallback.FocusAsync().AsTask();
         }
 
         private Task FocusFirstAsync()
         {
-            return JsRuntime.InvokeVoidAsync("elementReference.focusFirst", _root, 2, 4).AsTask();
+            return _root.MudFocusFirstAsync(2, 4).AsTask();
         }
 
         private Task FocusLastAsync()
         {
-            return JsRuntime.InvokeVoidAsync("elementReference.focusLast", _root, 2, 4).AsTask();
+            return _root.MudFocusLastAsync(2, 4).AsTask();
         }
 
         private void HandleKeyEvent(KeyboardEventArgs args)
@@ -127,12 +126,12 @@ namespace MudBlazor
 
         private Task RestoreFocusAsync()
         {
-            return JsRuntime.InvokeVoidAsync("elementReference.restoreFocus", _root).AsTask();
+            return _root.MudRestoreFocusAsync().AsTask();
         }
 
         private Task SaveFocusAsync()
         {
-            return JsRuntime.InvokeVoidAsync("elementReference.saveFocus", _root).AsTask();
+            return _root.MudSaveFocusAsync().AsTask();
         }
 
         public void Dispose()
