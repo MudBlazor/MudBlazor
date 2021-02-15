@@ -22,6 +22,9 @@
 @code{
     private string InputNumericParameter(T value)
     {
+		if(value == null)
+		return null;
+
         var culture = CultureInfo.CurrentCulture;
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
         string ret = value.ToString();
