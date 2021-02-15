@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -8,15 +8,14 @@ using Microsoft.JSInterop;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Services;
+using MudBlazor.Extensions;
+
 namespace MudBlazor.Docs.Components
 {
     public partial class SectionSource
     {
         [Inject]
-        protected IJSRuntime  JSRuntime { get; set; }
-
-        [Inject]
-        protected IDomService DomService { get; set; }
+        protected IJsApiService JsApiService { get; set; }
         
         [Parameter] public string Title { get; set; }
 
@@ -43,7 +42,7 @@ namespace MudBlazor.Docs.Components
 
         private async Task CopyTextToClipboard()
         {
-            await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", Snippets.GetCode(Code));
+            await JsApiService.CopyToClipboardAsync(Snippets.GetCode(Code));
         }
 
         public void OnShowCode()
@@ -109,7 +108,7 @@ namespace MudBlazor.Docs.Components
             // var tryMudBlazorLocation = "https://localhost:5001/";
             var tryMudBlazorLocation = "https://try.mudblazor.com/";
             var url = $"{tryMudBlazorLocation}snippet/{codeFileEncoded}";
-            await DomService.OpenInNewTab(url);
+            await JsApiService.OpenInNewTabAsync(url);
         }
 
         protected override void OnInitialized()

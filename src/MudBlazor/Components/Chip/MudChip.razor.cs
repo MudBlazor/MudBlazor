@@ -14,7 +14,7 @@ namespace MudBlazor
         private bool _isSelected;
         [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
 
-        [Inject] public IJSRuntime JsRuntime { get; set; }
+        [Inject] public IJsApiService JsApiService { get; set; }
 
         protected string Classname =>
         new CssBuilder("mud-chip")
@@ -171,7 +171,7 @@ namespace MudBlazor
                 if (string.IsNullOrWhiteSpace(Target))
                     UriHelper.NavigateTo(Link, ForceLoad);
                 else
-                    await JsRuntime.InvokeAsync<object>("open", Link, Target);
+                    await JsApiService.Open(Link, Target);
             }
             else
             {

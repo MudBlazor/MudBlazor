@@ -62,7 +62,6 @@ namespace MudBlazor
                 var selector = !string.IsNullOrWhiteSpace(Selector)
                     ? Selector
                     : null;// null is defaulted to document element in JS function
-                ScrollManager.Selector = selector;
                 ScrollListener.Selector = selector;
 
                 //suscribe to event
@@ -103,7 +102,7 @@ namespace MudBlazor
         /// </summary>
         private void OnClick()
         {
-            ScrollManager.ScrollToTop(ScrollBehavior);
+            ScrollManager.ScrollToTopAsync(ScrollListener.Selector, ScrollBehavior);
         }
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public bool Disabled { get; set; }
         [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
-        [Inject] public IJSRuntime JsRuntime { get; set; }
+        [Inject] public IJsApiService JsApiService { get; set; }
         [Parameter] public string Link { get; set; }
         [Parameter] public string Target { get; set; }
         [Parameter] public bool ForceLoad { get; set; }
@@ -31,7 +31,7 @@ namespace MudBlazor
                 if (string.IsNullOrWhiteSpace(Target))
                     UriHelper.NavigateTo(Link, ForceLoad);
                 else
-                    await JsRuntime.InvokeAsync<object>("open", Link, Target);
+                    await JsApiService.Open(Link, Target);
             }
             else
             {
