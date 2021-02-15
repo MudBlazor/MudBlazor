@@ -25,7 +25,7 @@
     }
     else if (Mode == Rendermode.Footer)
     {
-        @if (FooterValue != null)
+        @if (_footerValueAvailable)
         {
             <MudTd>
                 @GetFormattedString(FooterValue)

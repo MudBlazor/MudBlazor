@@ -127,5 +127,8 @@
     <Content Remove="compilerconfig.json" />
     <Content Remove="excubowebcompiler.json" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\Components\DataTable\Code\" />
+  </ItemGroup>
 
 </Project>

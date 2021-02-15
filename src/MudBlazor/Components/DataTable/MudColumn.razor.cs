@@ -15,13 +15,19 @@ namespace MudBlazor
         public T Value { get; set; }
 
         [Parameter]
-        public T FooterValue { get; set; }
+        public T FooterValue
+        {
+            get { return _footerValue; }
+            set { _footerValue = value; _footerValueAvailable = true; }
+        }
+        private T _footerValue;
+        private bool _footerValueAvailable = false;
 
         /// <summary>
         /// Used if no FooterValue is available
         /// </summary>
         [Parameter]
-        public T FooterText { get; set; }
+        public string FooterText { get; set; }
         /// <summary>
         /// Specifies which string format should be used.
         /// </summary>

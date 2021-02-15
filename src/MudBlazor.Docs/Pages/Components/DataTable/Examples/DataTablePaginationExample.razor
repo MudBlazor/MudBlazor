@@ -1,0 +1,31 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudDataTable Items="@Elements" UsePageing="true" Dense="@dense" Hover="@hover">
+    <Columns>
+        <MudColumn Value="context.Number" HeaderText="Nr" />
+        <MudColumn Value="context.Sign" HeaderText="Sign" />
+        <MudColumn Value="context.Name" HeaderText="Name" Visible="@showName"/>
+        <MudColumn Value="context.Position" HeaderText="Position" />
+        <MudColumn Value="context.Molar" HeaderText="Molar mass" />
+    </Columns>
+</MudDataTable>
+
+<MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
+<MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
+<MudSwitch @bind-Checked="@showName" Color="Color.Secondary">Show Name</MudSwitch>
+
+@code { 
+    private bool dense = false;
+    private bool hover = true;
+    private bool showName = true;
+
+    private IEnumerable<Element> Elements = new List<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = (await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable")).Take(4);
+    }
+    }

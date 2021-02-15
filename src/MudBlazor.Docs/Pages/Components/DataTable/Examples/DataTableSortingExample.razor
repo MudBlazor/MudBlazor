@@ -1,0 +1,26 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudDataTable Items="@Elements" UsePageing="true" Hover="true" Breakpoint="Breakpoint.Sm">
+    <Columns>
+        <MudSortedColumn Value="context.Number" HeaderText="Nr" SortBy="(Element x)=>x.Number" />
+        <MudSortedColumn Value="context.Sign" HeaderText="Sign" SortBy="(Element x)=>x.Sign" />
+        <MudSortedColumn Value="context.Name" HeaderText="Name" SortBy="(Element x)=>x.Name" />
+        <MudSortedColumn Value="context.Position" HeaderText="Position" SortBy="(Element x)=>x.Position" />
+        <MudSortedColumn Value="context.Molar" HeaderText="Molar mass" SortBy="(Element x)=>x.Molar" />
+    </Columns>
+</MudDataTable>
+
+
+@code {
+    private IEnumerable<Element> Elements = new List<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable");
+    }
+}
+
+

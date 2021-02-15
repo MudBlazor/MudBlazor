@@ -1,0 +1,91 @@
+﻿@page "/components/datatable"
+
+<DocsPage MaxWidth="MaxWidth.Large">
+    <DocsPageHeader Title="DataTable" SubTitle="A sortable, filterable table with multiselection and pagination" />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Default Table</Title>
+                <Description>
+                    The default table displays your data in simple rows and is responsive, it breaks into mobile layout on <CodeInline>xs</CodeInline> unless changed.<br />
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <DataTableBasicExample />
+            </SectionContent>
+            <SectionSource Code="DataTableBasicExample" ShowCode="false" GitHubFolderName="DataTable" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Table with pagination</Title>
+                <Description>
+                    The <CodeInline>&lt;MudDataTable></CodeInline> component supports pagination.<br />
+                    The <CodeInline>Visible</CodeInline> parameter let you turn of a specific column.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <DataTablePaginationExample />
+            </SectionContent>
+            <SectionSource Code="DataTablePaginationExample" ShowCode="false" GitHubFolderName="DataTable" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Sorting</Title>
+                <Description>
+                    To enable sorting, use <CodeInline>&lt;MudSortedColumn></CodeInline> and set SortBy parameter to a function that simply returns the value which should be sorted by when sorting by the specific column.
+                    Click on a header to sort the table by that column then click to cycle through sorting directions.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <DataTableSortingExample />
+            </SectionContent>
+            <SectionSource Code="DataTableSortingExample" ShowCode="true" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Footer values</Title>
+                <Description>
+                    To enable Footer row, set <CodeInline>ShowFooter</CodeInline> to true and set <CodeInline>FooterValue</CodeInline> parameter to a function that simply returns the value which should be showed in the footer by the specific column.<br />
+                    <CodeInline>DataFormatString</CodeInline> parameter let you format the value displayed by a specific column.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <DataTableFooterExample />
+            </SectionContent>
+            <SectionSource Code="DataTableFooterExample" ShowCode="true" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Templated column</Title>
+                <Description>
+                    The <CodeInline>MudTemplateColumn</CodeInline> allows you to customize the layout of the column
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <DataTableTemplateExample />
+            </SectionContent>
+            <SectionSource Code="DataTableTemplateExample" ShowCode="true" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Custom column</Title>
+                <Description>
+                    Inheriting from <CodeInline>MudColumn</CodeInline> allows you to build your own custom column with your own design of header, row and footer.<br />
+                    <CodeInline>MudAvatarColumn</CodeInline> is an example of this.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <DataTableCustomExample />
+            </SectionContent>
+            <SectionSource Code="DataTableCustomExample" ShowCode="true" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
+
+

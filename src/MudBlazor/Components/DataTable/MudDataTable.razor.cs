@@ -54,22 +54,26 @@ namespace MudBlazor
         /// Gets or sets the data source that the DataTable is displaying data for.
         /// </summary>
         [Parameter]
-        public List<T> DataSource
+        public IEnumerable<T> Items
         {
-            get { return Items; }
+            get { return _items; }
             set
             {
-                Items = value;
+                _items = value;
                 StateHasChanged();
             }
         }
-
-        protected List<T> Items { set; get; }
+        protected IEnumerable<T> _items { set; get; }
         /// <summary>
         /// Gets or sets a value indicating whether table footer is displayed.
         /// </summary>
         [Parameter]
-        public bool ShowFooter{ set; get; }
+        public bool ShowFooter { set; get; }
+        /// <summary>
+        /// Gets or sets a value indicating whether the pagination feature is enabled.
+        /// </summary>
+        [Parameter]
+        public bool UsePageing { set; get; } = false;
         /// <summary>
         /// Gets or sets a value indicating whether editing feature is enabled.
         /// </summary>
@@ -81,6 +85,15 @@ namespace MudBlazor
         /// Set true for rows with a narrow height
         /// </summary>
         [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
+        /// Set true to see rows hover on mouse-over.
+        /// </summary>
+        [Parameter] public bool Hover { get; set; }
+        /// <summary>
+        /// At what breakpoint the table should switch to mobile layout. Takes Xs, Sm, Md, Lg and Xl the default behavior is breaking on Xs.
+        /// </summary>
+        [Parameter] public Breakpoint Breakpoint { get; set; } = Breakpoint.Xs;
         /// <summary>
         /// Supply an async function which (re)loads filtered, paginated and sorted data from server.
         /// Table will await this func and update based on the returned TableData.

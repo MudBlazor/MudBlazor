@@ -2,9 +2,10 @@
 @typeparam T 
 @inherits MudComponentBase
 
-@if (ServerData != null || (Items != null && Items.Any()))
+@if (ServerData != null || (_items != null && _items.Any()))
 {
-<MudTable @ref="mudTable" Items="@Items" Class="@Classname" Style="@Style" ShowFooter="@ShowFooter" ReadOnly="@ReadOnly" ServerData="@ServerData">
+<MudTable @ref="mudTable" Items="@_items" Class="@Classname" Style="@Style" ShowFooter="@ShowFooter" 
+          Hover="@Hover" Breakpoint="@Breakpoint" ReadOnly="@ReadOnly" ServerData="@ServerData">
     <HeaderContent>
         <CascadingValue Value="MudBaseColumn.Rendermode.Header" Name="Mode">
             @Columns(Def)
@@ -31,7 +32,7 @@
         }
     </FooterContent>
     <PagerContent>
-    @if (ServerData != null)
+    @if (UsePageing)
     {
     <MudTablePager  Style="float:left"></MudTablePager>
     }

@@ -8,6 +8,7 @@ namespace MudBlazor
     /// </summary>
     public partial class MudSortedColumn<T,ModelType> : MudBaseColumn
     {
+
         /// <summary>
         /// Specifies the name of the object's property bound to the column
         /// </summary>
@@ -18,7 +19,13 @@ namespace MudBlazor
         /// Specifies the name of the object's property bound to the footer
         /// </summary>
         [Parameter]
-        public T FooterValue { get; set; }
+        public T FooterValue
+        {
+            get { return _footerValue; }
+            set { _footerValue = value; _footerValueAvailable = true; }
+        }
+        private T _footerValue;
+        private bool _footerValueAvailable = false;
 
         /// <summary>
         /// Used if no FooterValue is available

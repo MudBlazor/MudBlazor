@@ -1,0 +1,24 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudDataTable Items="@Elements" ShowFooter="true" Hover="true" Breakpoint="Breakpoint.Sm">
+    <Columns>
+        <MudColumn Value="context.Number" HeaderText="Nr"/>
+        <MudColumn Value="context.Sign" HeaderText="Sign" />
+        <MudColumn Value="context.Name" HeaderText="Name" />
+        <MudColumn Value="context.Position" HeaderText="Position" FooterText="Sum:" />
+        <MudColumn Value="context.Molar" HeaderText="Molar mass"  FooterValue="Elements.Sum(s =>s.Molar)" DataFormatString="{0:f2}"/>
+    </Columns>
+</MudDataTable>
+
+@code {
+    private IEnumerable<Element> Elements = new List<Element>();
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = (await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable")).Take(6);
+    }    
+}
