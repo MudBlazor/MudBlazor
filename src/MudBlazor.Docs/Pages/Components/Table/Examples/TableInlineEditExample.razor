@@ -68,7 +68,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable");
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
         await base.OnInitializedAsync();
         samplecmd = new Utilities.SampleCommand(SampleCommand_Executed); 
     } 
