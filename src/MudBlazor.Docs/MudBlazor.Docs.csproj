@@ -108,7 +108,7 @@
   </Target>
 
   <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
-      <Exec Command="dotnet webcompiler ./Styles/MudBlazorDocs.scss -c excubowebcompiler.json" StandardOutputImportance="high" />
+      <Exec Command="dotnet webcompiler ./Styles/MudBlazorDocs.scss -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
   </Target>
 
   <!--Output of Excubo webcompiler-->
