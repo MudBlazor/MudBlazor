@@ -33,18 +33,18 @@
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <RowEditingTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>
-            <MudTextField @bind-Value="@context.Sign" Required/>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">
+            <MudTextField @bind-Value="@context.Sign" Required />
         </MudTd>
-        <MudTd>
-            <MudTextField @bind-Value="@context.Name" Required/>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="@context.Name" Required />
         </MudTd>
-        <MudTd>
-            <MudTextField @bind-Value="@context.Position" Required/>
+        <MudTd DataLabel="Position">
+            <MudTextField @bind-Value="@context.Position" Required />
         </MudTd>
-        <MudTd>
-            <MudTextField @bind-Value="@context.Molar" Required/>
+        <MudTd DataLabel="Molar mass">
+            <MudTextField @bind-Value="@context.Molar" Required />
         </MudTd>
     </RowEditingTemplate>
     <PagerContent>
