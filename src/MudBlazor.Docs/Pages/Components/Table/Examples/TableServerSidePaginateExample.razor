@@ -42,7 +42,7 @@
     /// </summary>
     private async Task<TableData<Element>> ServerReload(TableState state)
     {
-        IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable");
+        IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
         data = data.Where(element =>
         {
             if (string.IsNullOrWhiteSpace(searchString))
