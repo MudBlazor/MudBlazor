@@ -2,7 +2,7 @@
     margin: 0px;
     padding: 0px;
     list-style: none;
-    overflow: scroll;
+    overflow: auto;
 
     &.mud-treeview-canactivate .mud-treeview-item-content {
         cursor: pointer;
