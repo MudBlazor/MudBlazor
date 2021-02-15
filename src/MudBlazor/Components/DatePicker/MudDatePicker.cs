@@ -69,9 +69,9 @@ namespace MudBlazor
             }
         }
 
-        protected override string GetFormattedDateString()
+        protected override string GetTitleDateString()
         {
-            return Date?.ToString("ddd, dd MMM", Culture) ?? "";
+            return Date?.ToString(TitleDateFormat ?? "ddd, dd MMM", Culture) ?? "";
         }
 
         protected override DateTime GetCalendarStartOfMonth()

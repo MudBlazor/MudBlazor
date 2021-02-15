@@ -154,7 +154,7 @@ namespace MudBlazor
             }
         }
 
-        protected override string GetFormattedDateString()
+        protected override string GetTitleDateString()
         {
             if (DateRange == null || DateRange.Start == null)
                 return "";
