@@ -84,3 +84,21 @@
 .mud-treeview-canhover .mud-treeview-item-content:hover {
     background-color: rgba(0, 0, 0, 0.04);
 }
+
+.mud-treeview-dense {
+    .mud-treeview-item {
+        min-height: unset;
+    }
+
+    .mud-treeview-item-content {
+        padding: 1px;
+    }
+
+    .mud-treeview-item-arrow button {
+        padding: 0;
+    }
+
+    .mud-icon-button {
+        padding: 0;
+    }
+}
