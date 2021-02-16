@@ -53,6 +53,7 @@ namespace MudBlazor.Docs.Models
             {
                 [typeof(MudTable<T>)] = "table",
                 [typeof(MudTextField<T>)] = "textfield",
+                [typeof(MudNumericField<T>)] = "numericfield",
                 [typeof(MudSelect<T>)] = "select",
                 [typeof(MudInput<T>)] = "input",
                 [typeof(MudAutocomplete<T>)] = "autocomplete",
