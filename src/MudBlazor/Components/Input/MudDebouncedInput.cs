@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public abstract class MudDebouncedInput<T> : MudBaseInput<T>, IDisposable
+    public abstract class MudDebouncedInput<T> : MudBaseInput<T>
     {
         private Timer _timer;
         private double _debounceInterval;
@@ -102,8 +102,9 @@ namespace MudBlazor
                 OnTimerTickGuiThread().AndForget();
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
+            base.Dispose(disposing);
             ClearTimer(suppressTick: true);
         }
     }

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MudBlazor.ExampleData;
-using MudBlazor.ExampleData.Models;
+using MudBlazor.Examples.Data;
+using MudBlazor.Examples.Data.Models;
 
 namespace Server.Controllers
 {
@@ -11,16 +11,23 @@ namespace Server.Controllers
     [ApiController]
     public class PeriodicTableController : ControllerBase
     {
+        private IPeriodicTableService _periodicTableService;
+
+        public PeriodicTableController(IPeriodicTableService periodicTableService)
+        {
+            _periodicTableService = periodicTableService;
+        }
+
         [HttpGet("{search}")]
         public async Task<IEnumerable<Element>> Get(string search)
         {
-            return await PeriodicTable.GetElementsAsync(search);
+            return await _periodicTableService.GetElements(search);
         }
 
         [HttpGet]
         public async Task<IEnumerable<Element>> Get()
         {
-            return await PeriodicTable.GetElementsAsync();
+            return await _periodicTableService.GetElements();
         }
     }
 }

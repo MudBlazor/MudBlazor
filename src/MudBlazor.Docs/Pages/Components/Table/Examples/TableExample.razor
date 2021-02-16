@@ -1,5 +1,5 @@
 ﻿@using System.Net.Http.Json
-@using MudBlazor.ExampleData.Models
+@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
@@ -42,7 +42,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable");
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     } 
 
     private bool FilterFunc(Element element)

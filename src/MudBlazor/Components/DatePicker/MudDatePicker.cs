@@ -69,9 +69,23 @@ namespace MudBlazor
             }
         }
 
-        protected override string GetFormattedDateString()
+        protected override string GetTitleDateString()
         {
-            return Date?.ToString("ddd, dd MMM", Culture) ?? "";
+            return Date?.ToString(TitleDateFormat ?? "ddd, dd MMM", Culture) ?? "";
+        }
+
+        protected override DateTime GetCalendarStartOfMonth()
+        {
+            var date=StartMonth ?? Date ?? DateTime.Today;
+            return date.StartOfMonth(Culture);
+        }
+
+        protected override int GetCalendarYear(int year)
+        {
+            var date = Date ?? DateTime.Today;
+            var diff = date.Year - year;
+            var calenderYear = Culture.Calendar.GetYear(date);
+            return calenderYear - diff;
         }
     }
 }

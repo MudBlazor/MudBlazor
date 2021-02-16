@@ -488,5 +488,32 @@ namespace MudBlazor.UnitTests
             trs[3].GetAttribute("class").Contains("even");
             trs[4].GetAttribute("class").Contains("odd");
         }
+
+        public class TableRowValidatorTest : TableRowValidator
+        {
+            public int ControlCount => _formControls.Count;
+        }
+
+        [Test]
+        public async Task TableInlineEdit_CheckMemoryUsage()
+        {
+            var comp = ctx.RenderComponent<TableInlineEditTest>();
+            var validator = new TableRowValidatorTest();
+            comp.Instance.Table.Validator = validator;
+
+            Console.WriteLine(comp.Markup);
+            
+            var trs = comp.FindAll("tr");
+            trs.Count.Should().Be(4); // three rows + header row
+
+            trs[1].Click();
+            //every item will be add twice - see MudTextField.razor
+            validator.ControlCount.Should().Be(2);
+            for (int i = 0; i < 10; ++i)
+            {
+                trs[i % 3 + 1].Click();
+            }
+            validator.ControlCount.Should().Be(2);
+        }
     }
 }

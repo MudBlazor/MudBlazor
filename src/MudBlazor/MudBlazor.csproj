@@ -14,7 +14,7 @@
   <PropertyGroup>
     <Title>MudBlazor</Title>
     <PackageId>MudBlazor</PackageId>
-    <Version>5.0.1-dev.1</Version>
+    <Version>5.0.1-dev.2</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>Nuget.png</PackageIcon>
     <Company>MudBlazor</Company>
@@ -75,9 +75,9 @@
 
   <Target Name="WebCompiler" DependsOnTargets="ToolRestore;CombineJS">
     <!--compile and minify scss-->
-    <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json" StandardOutputImportance="high" />
+    <Exec Command="dotnet webcompiler ./Styles/MudBlazor.scss -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
     <!--minify js-->
-    <Exec Command="dotnet webcompiler ./TScripts/combined/MudBlazor.js -c excubowebcompiler.json" StandardOutputImportance="high" />
+    <Exec Command="dotnet webcompiler ./TScripts/combined/MudBlazor.js -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
   </Target>
 
   <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler">

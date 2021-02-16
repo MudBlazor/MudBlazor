@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MudBlazor.Docs.Extensions;
+using MudBlazor.Examples.Data;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace MudBlazor.Docs.Server
@@ -23,6 +24,7 @@ namespace MudBlazor.Docs.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IPeriodicTableService, PeriodicTableService>();
             services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(Configuration["ApiBase"]) });
             services.AddHeadElementHelper();
             services.AddRazorPages();

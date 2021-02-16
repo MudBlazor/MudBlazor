@@ -1,5 +1,5 @@
 ﻿@using System.Net.Http.Json
-@using MudBlazor.ExampleData.Models
+@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 @inject ISnackbar Snackbar
@@ -33,18 +33,18 @@
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <RowEditingTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>
-            <MudTextField @bind-Value="@context.Sign" Required/>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">
+            <MudTextField @bind-Value="@context.Sign" Required />
         </MudTd>
-        <MudTd>
-            <MudTextField @bind-Value="@context.Name" Required/>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="@context.Name" Required />
         </MudTd>
-        <MudTd>
-            <MudTextField @bind-Value="@context.Position" Required/>
+        <MudTd DataLabel="Position">
+            <MudTextField @bind-Value="@context.Position" Required />
         </MudTd>
-        <MudTd>
-            <MudTextField @bind-Value="@context.Molar" Required/>
+        <MudTd DataLabel="Molar mass">
+            <MudTextField @bind-Value="@context.Molar" Required />
         </MudTd>
     </RowEditingTemplate>
     <PagerContent>
@@ -68,7 +68,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable");
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
         await base.OnInitializedAsync();
         samplecmd = new Utilities.SampleCommand(SampleCommand_Executed); 
     } 

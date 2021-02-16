@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace MudBlazor.ExampleData.Models
+namespace MudBlazor.Examples.Data.Models
 {
     public class Element
     {

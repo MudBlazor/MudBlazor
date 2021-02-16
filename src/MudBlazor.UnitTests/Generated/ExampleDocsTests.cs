@@ -31,7 +31,8 @@ namespace MudBlazor.UnitTests.Components
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
             ctx.Services.AddSingleton<IDomService>(new MockDomService());
             ctx.Services.AddOptions();
-            ctx.Services.AddScoped(sp => MockHttpHelper.GetMockHttpClient());
+            ctx.Services.AddScoped(sp => 
+                new HttpClient(new MockDocsMessageHandler()) { BaseAddress = new Uri("https://localhost/") });
         }
 
         [TearDown]
