@@ -17,83 +17,83 @@ namespace MudBlazor
 
             _validateInstance = new Func<T, Task<bool>>(ValidateInput);
 
-            #region parameters initialization depending on T
+            #region parameters default depending on T
             //sbyte
             if (typeof(T) == typeof(sbyte) || typeof(T) == typeof(sbyte?))
             {
-                Min = (T)(object)sbyte.MinValue;
-                Max = (T)(object)sbyte.MaxValue;
-                Step = (T)(object)1;
+                minDefault = (T)(object)sbyte.MinValue;
+                maxDefault = (T)(object)sbyte.MaxValue;
+                stepDefault = (T)(object)1;
             }
             // byte
             else if (typeof(T) == typeof(byte) || typeof(T) == typeof(byte?))
             {
-                Min = (T)(object)byte.MinValue;
-                Max = (T)(object)byte.MaxValue;
-                Step = (T)(object)1;
+                minDefault = (T)(object)byte.MinValue;
+                maxDefault = (T)(object)byte.MaxValue;
+                stepDefault = (T)(object)1;
             }
             // short
             else if (typeof(T) == typeof(short) || typeof(T) == typeof(short?))
             {
-                Min = (T)(object)short.MinValue;
-                Max = (T)(object)short.MaxValue;
-                Step = (T)(object)1;
+                minDefault = (T)(object)short.MinValue;
+                maxDefault = (T)(object)short.MaxValue;
+                stepDefault = (T)(object)1;
             }
             // ushort
             else if (typeof(T) == typeof(ushort) || typeof(T) == typeof(ushort?))
             {
-                Min = (T)(object)ushort.MinValue;
-                Max = (T)(object)ushort.MaxValue;
-                Step = (T)(object)1;
+                minDefault = (T)(object)ushort.MinValue;
+                maxDefault = (T)(object)ushort.MaxValue;
+                stepDefault = (T)(object)1;
             }
             // int
             else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
             {
-                Min = (T)(object)int.MinValue;
-                Max = (T)(object)int.MaxValue;
-                Step = (T)(object)1;
+                minDefault = (T)(object)int.MinValue;
+                maxDefault = (T)(object)int.MaxValue;
+                stepDefault = (T)(object)1;
             }
             // uint
             else if (typeof(T) == typeof(uint) || typeof(T) == typeof(uint?))
             {
-                Min = (T)(object)uint.MinValue;
-                Max = (T)(object)uint.MaxValue;
-                Step = (T)(object)1;
+                minDefault = (T)(object)uint.MinValue;
+                maxDefault = (T)(object)uint.MaxValue;
+                stepDefault = (T)(object)1;
             }
             // long
             else if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
             {
-                Min = (T)(object)long.MinValue;
-                Max = (T)(object)long.MaxValue;
-                Step = (T)(object)1;
+                minDefault = (T)(object)long.MinValue;
+                maxDefault = (T)(object)long.MaxValue;
+                stepDefault = (T)(object)1;
             }
             // ulong
             else if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
             {
-                Min = (T)(object)ulong.MinValue;
-                Max = (T)(object)ulong.MaxValue;
-                Step = (T)(object)1;
+                minDefault = (T)(object)ulong.MinValue;
+                maxDefault = (T)(object)ulong.MaxValue;
+                stepDefault = (T)(object)1;
             }
             // float
             else if (typeof(T) == typeof(float) || typeof(T) == typeof(float?))
             {
-                Min = (T)(object)float.MinValue;
-                Max = (T)(object)float.MaxValue;
-                Step = (T)(object)1.0f;
+                minDefault = (T)(object)float.MinValue;
+                maxDefault = (T)(object)float.MaxValue;
+                stepDefault = (T)(object)1.0f;
             }
             // double
             else if (typeof(T) == typeof(double) || typeof(T) == typeof(double?))
             {
-                Min = (T)(object)double.MinValue;
-                Max = (T)(object)double.MaxValue;
-                Step = (T)(object)1.0;
+                minDefault = (T)(object)double.MinValue;
+                maxDefault = (T)(object)double.MaxValue;
+                stepDefault = (T)(object)1.0;
             }
             // decimal
             else if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
             {
-                Min = (T)(object)decimal.MinValue;
-                Max = (T)(object)decimal.MaxValue;
-                Step = (T)(object)1M;
+                minDefault = (T)(object)decimal.MinValue;
+                maxDefault = (T)(object)decimal.MaxValue;
+                stepDefault = (T)(object)1M;
             }
             #endregion
         }
@@ -150,7 +150,8 @@ namespace MudBlazor
                 decimal d => d + (decimal)(object)Step,
                 _ => Value,
             };
-            await SetValueAsync(val);
+
+            await SetValueAsync(ConstrainBoundaries((T)val).value);
         }
 
         public async Task Decrement()
@@ -170,7 +171,8 @@ namespace MudBlazor
                 decimal d => d - (decimal)(object)Step,
                 _ => Value,
             };
-            await SetValueAsync(val);
+
+            await SetValueAsync(ConstrainBoundaries((T)val).value);
         }
 
         /// <summary>
@@ -276,19 +278,63 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Label { get; set; }
 
+
+        //Tracks if Min has a value.
+        private bool minHasValue = false;
+        //default value for the type
+        private T minDefault;
+        private T _min;
         /// <summary>
         /// The minimum value for the input.
         /// </summary>
-        [Parameter] public T Min { get; set; }
+        [Parameter]
+        public T Min
+        {
+            get => minHasValue ? _min : minDefault;
+            set
+            {
+                minHasValue = value != null;
+                _min = value;
+            }
+        }
 
+        //Tracks if Max has a value.
+        private bool maxHasValue = false;
+        //default value for the type
+        private T maxDefault;
+        private T _max;
         /// <summary>
         /// The maximum value for the input.
         /// </summary>
-        [Parameter] public T Max { get; set; }
+        [Parameter]
+        public T Max
+        {
+            get => maxHasValue ? _max : maxDefault;
+            set
+            {
+                maxHasValue = value != null;
+                _max = value;
+            }
+        }
+
+        //Tracks if Max has a value.
+        private bool stepHasValue = false;
+        //default value for the type, it's useful for decimal type to avoid constant evaluation
+        private T stepDefault;
+        private T _step;
 
         /// <summary>
         /// The increment added/subtracted by the spin buttons.
         /// </summary>
-        [Parameter] public T Step { get; set; }
+        [Parameter]
+        public T Step
+        {
+            get => stepHasValue ? _step : stepDefault;
+            set
+            {
+                stepHasValue = value != null;
+                _step = value;
+            }
+        }
     }
 }

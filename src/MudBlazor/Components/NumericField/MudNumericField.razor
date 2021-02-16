@@ -5,30 +5,34 @@
 @using System.Globalization;
 
 <CascadingValue Name="Standalone" Value="@Standalone" IsFixed="true">
-    <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Class="@Classname"
-                     Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
-        <InputContent>
-            <MudInput T="T" @ref="_elementReference" @attributes="UserAttributes" InputType="InputType.Number" Style="@Style" Variant="@Variant"
-                      Value="@Value" ValueChanged="(v) => SetValueAsync(v)" Converter="Converter" Placeholder="@Placeholder"
-                      Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly"
-					  Adornment="@Adornment" AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
-                      OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
-                      OnBlur="@OnBlurred" OnKeyDown="@InvokeKeyDown" OnKeyPress="@InvokeKeyPress" OnKeyUp="@InvokeKeyUp" Validation="_validateInstance"
-                      min="@InputNumericParameter(Min)" max="@InputNumericParameter(Max)" step="@InputNumericParameter(Step)" />
-        </InputContent>
-    </MudInputControl>
+	<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Class="@Classname"
+					 Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
+		<InputContent>
+			<MudInput T="T" @ref="_elementReference" @attributes="UserAttributes" InputType="InputType.Number" Style="@Style" Variant="@Variant"
+					  Value="@Value" ValueChanged="(v) => SetValueAsync(v)" Converter="Converter" Placeholder="@Placeholder"
+					  Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" Adornment="@Adornment"
+					  AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
+					  OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
+					  OnBlur="@OnBlurred" OnKeyDown="@InvokeKeyDown" OnKeyPress="@InvokeKeyPress" OnKeyUp="@InvokeKeyUp" Validation="_validateInstance"
+					  min="@(minHasValue ? FormatParam(_min) : null)"
+					  max="@(maxHasValue ? FormatParam(_max): null)"
+					  step="@(stepHasValue ? FormatParam(_step) : null)" />
+		</InputContent>
+	</MudInputControl>
 </CascadingValue>
 
 @code{
-    private string InputNumericParameter(T value)
-    {
-		if(value == null)
-		return null;
+	//avoids the format to use scientific notation for large or small number in floating points types, while covering all options
+	//https://stackoverflow.com/questions/1546113/double-to-string-conversion-without-scientific-notation
+	private const string TagFormat = "0.###################################################################################################################################################################################################################################################################################################################################################";
 
-        var culture = CultureInfo.CurrentCulture;
-        CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-        string ret = value.ToString();
-        CultureInfo.CurrentCulture = culture;
-        return ret;
-    }
+	private string FormatParam(T value)
+	{
+		if (value is IFormattable f)
+			return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);
+		else
+			return null;
+	}
+
+	private Size GetButtonSize() =>  Margin == Margin.Dense ? Size.Small : Size.Medium;
 }
