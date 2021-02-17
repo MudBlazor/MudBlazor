@@ -4,37 +4,49 @@
 @using MudBlazor.Internal
 
 <div class="@Classname" style="@Style">
-    @if (Adornment == Adornment.Start)
-    {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" />
-    }
+	@if (Adornment == Adornment.Start)
+	{
+	 <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" />
+	}
 
-    @if (Lines > 1)
-    {
-        @*note: the value="@Text" is absolutely essential here. the inner html @Text is kept only for compatibility*@
-        <textarea @ref="_elementReference" rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly"
-                  @oninput="OnInput" @onchange="OnChange" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp"  value="@Text">@Text</textarea>
-    }
-    else
-    {
-        @if (InputType == InputType.Hidden && ChildContent != null)
-        {
-            <div class="@InputClassname">
-                @ChildContent
-            </div>
-        }
+	@if (Lines > 1)
+	{
+		@*note: the value="@Text" is absolutely essential here. the inner html @Text is kept only for compatibility*@
+	 <textarea @ref="_elementReference" rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly"
+			  @oninput="OnInput" @onchange="OnChange" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" value="@Text">@Text</textarea>
+	}
+	else
+	{
+		@if (InputType == InputType.Hidden && ChildContent != null)
+		{
+		 <div class="@InputClassname">
+				@ChildContent
+		 </div>
+		}
 
-        <input @ref="_elementReference" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" value="@Text" @oninput="OnInput" @onchange="OnChange"
-               placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" />
-    }
+	 <input @ref="_elementReference" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" value="@Text" @oninput="OnInput" @onchange="OnChange"
+		   placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" />
+	}
 
-    @if (Adornment == Adornment.End)
-    {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
-    }
+	@if (Adornment == Adornment.End)
+	{
+	 <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
+	}
 
-    @if (Variant == Variant.Outlined)
-    {
-        <div class="mud-input-outlined-border"></div>
-    }
+	@if (Variant == Variant.Outlined)
+	{
+	 <div class="mud-input-outlined-border"></div>
+	}
+
+	@if (InputType == InputType.Number)
+	{
+	 <div class="mud-input-numeric-control">
+	  <MudButton Variant="Variant.Text" @onclick="OnIncrement"><MudIcon Icon="@Icons.Material.Filled.KeyboardArrowUp" Size="@GetButtonSize()" /></MudButton>
+	  <MudButton Variant="Variant.Text" @onclick="OnDecrement"><MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown" Size="@GetButtonSize()" /></MudButton>
+	 </div>
+	}
 </div>
+
+@code {
+	private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
+}
