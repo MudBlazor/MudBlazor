@@ -2,7 +2,7 @@
 
 <MudGrid>
     <MudItem xs="12">
-        <MudTextField @ref="doubleReference" Label="Select" Variant="Variant.Filled" @bind-Value="@value" />
+        <MudNumericField @ref="doubleReference" Label="Select" Variant="Variant.Filled" @bind-Value="@value" />
     </MudItem>
     <MudItem xs="12" Class="d-flex justify-end">
         <MudButton @onclick="() => doubleReference.SelectAsync()">
@@ -13,7 +13,7 @@
 
 @code
 {
-    private MudTextField<double> doubleReference;
+    private MudNumericField<double> doubleReference;
 
     double value = Math.PI;
 }

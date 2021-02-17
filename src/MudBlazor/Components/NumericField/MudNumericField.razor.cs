@@ -148,7 +148,7 @@ namespace MudBlazor
                 float f => f + (float)(object)Step,
                 double d => d + (double)(object)Step,
                 decimal d => d + (decimal)(object)Step,
-                _ => Value,
+                _ => Value
             };
 
             await SetValueAsync(ConstrainBoundaries((T)val).value);

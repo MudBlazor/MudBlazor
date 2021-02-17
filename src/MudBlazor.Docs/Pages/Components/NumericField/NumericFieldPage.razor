@@ -68,6 +68,7 @@
                 <Title>Binding Properties of a POCO</Title>
                 <Description>
                     The following text fields are bound against the properties of a POCO (Plain old C-Sharp Object). Edit them to see the model change. Reset the model and see the NumericFields change.
+					<MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: always use two-way bindings (<CodeInline>@("@bind-Value")</CodeInline>) with number fields.</MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -94,12 +95,9 @@
 
         <DocsPageSection>
             <SectionHeader>
-                <Title>Immediate vs Debounced</Title>
+                <Title>Normal vs Immediate</Title>
                 <Description>
-                    Per default, <CodeInline>MudNumericField</CodeInline> updates the bound value on Enter or when it looses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br />
-                    You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the amount of milliseconds you want to await before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback.
-                    Notice how in this example the debounced text only updates 500 ms after you stop typing.
-                </Description>
+                    Per default, <CodeInline>MudNumericField</CodeInline> updates the bound value on Enter or when it looses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.                </Description>
             </SectionHeader>
             <SectionContent Outlined="true" FullWidth="true">
                 <DebouncedNumericFieldExample />
