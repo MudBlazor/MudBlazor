@@ -42,11 +42,12 @@ namespace MudBlazor
 
         public void OnRowClicked(MouseEventArgs args)
         {
-            if (IsHeader)
+            if (IsHeader || !(Context?.Table.Validator.IsValid ?? true))
                 return;
+
             Context?.Table.SetSelectedItem(Item);
-            if (_lockeditingentry == false) Context?.Table.SetEditingItem(Item);
-            _lockeditingentry = false;
+            Context?.Table.SetEditingItem(Item);
+
             if (Context?.Table.MultiSelection == true && !IsHeader)
             {
                 IsChecked = !IsChecked;
@@ -76,15 +77,10 @@ namespace MudBlazor
             }
         }
 
-        /// <summary>
-        /// FinishEdit() is called befor OwRowClick, so we are going to block the OnRowClicked()'s EditingItem sett when user clicks on finish edit button
-        /// </summary>
-        private bool _lockeditingentry = false;
         private void FinishEdit(MouseEventArgs ev)
         {
             if (!Context?.Table.Validator.IsValid ?? true) return;
             Context?.Table.SetEditingItem(null);
-            _lockeditingentry = true;
             Context?.Table.OnCommitEditHandler(ev, Item);
         }
     }

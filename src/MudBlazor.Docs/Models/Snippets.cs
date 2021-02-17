@@ -19,7 +19,7 @@ namespace MudBlazor.Docs.Models
         public const string Element = @"using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace MudBlazor.ExampleData.Models
+namespace MudBlazor.Examples.Data.Models
 {
     public class Element
     {
