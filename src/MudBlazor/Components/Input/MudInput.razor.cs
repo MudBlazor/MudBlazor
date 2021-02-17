@@ -67,7 +67,6 @@ namespace MudBlazor
         /// Note: use the optimized control <see cref="MudNumericField{T}"/> if you need to deal with numbers.
         /// </summary>
         [Parameter] public EventCallback OnDecrement { get; set; }
-
     }
 
     public class MudInputString : MudInput<string> { }
