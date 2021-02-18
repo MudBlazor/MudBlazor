@@ -67,6 +67,11 @@ namespace MudBlazor
         /// Note: use the optimized control <see cref="MudNumericField{T}"/> if you need to deal with numbers.
         /// </summary>
         [Parameter] public EventCallback OnDecrement { get; set; }
+
+        /// <summary>
+        /// Hides the spin buttons for <see cref="MudNumericField{T}"/>
+        /// </summary>
+        [Parameter] public bool HideSpinButtons { get; set; }
     }
 
     public class MudInputString : MudInput<string> { }

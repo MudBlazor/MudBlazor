@@ -38,9 +38,9 @@
 	 <div class="mud-input-outlined-border"></div>
 	}
 
-	@if (InputType == InputType.Number)
+	@if (InputType == InputType.Number && !HideSpinButtons)
 	{
-	 <div class="mud-input-numeric-control">
+	 <div class="mud-input-numeric-spin">
 	  <MudButton Variant="Variant.Text" @onclick="OnIncrement"><MudIcon Icon="@Icons.Material.Filled.KeyboardArrowUp" Size="@GetButtonSize()" /></MudButton>
 	  <MudButton Variant="Variant.Text" @onclick="OnDecrement"><MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown" Size="@GetButtonSize()" /></MudButton>
 	 </div>

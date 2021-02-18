@@ -76,7 +76,7 @@
             -moz-appearance: textfield;
         }
 
-        & .mud-input-numeric-control {
+        & .mud-input-numeric-spin {
             display: inline-flex;
             flex-direction: column;
             justify-content: space-between;
@@ -85,7 +85,6 @@
             top: 0;
             bottom: 0;
 
-
             & button {
                 padding: 2px;
                 min-width: unset;
@@ -93,7 +92,7 @@
             }
         }
 
-        & .mud-input-underline .mud-input-numeric-control button {
+        & .mud-input-underline .mud-input-numeric-spin button {
             padding: 2px 0;
         }
     }
