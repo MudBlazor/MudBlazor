@@ -32,7 +32,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            Parent.Items.Add(this);
+            Parent?.Items.Add(this);
         }
 
     }
