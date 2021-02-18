@@ -99,7 +99,7 @@ namespace MudBlazor
         }
 
         protected string Classname =>
-           new CssBuilder("mud-input-input-control mud-input-number-control")
+           new CssBuilder("mud-input-input-control mud-input-number-control" + (HideSpinButtons ? " mud-input-number-nobutton" : ""))
            .AddClass(Class)
            .Build();
 
@@ -336,5 +336,11 @@ namespace MudBlazor
                 _step = value;
             }
         }
+
+        /// <summary>
+        /// Hides the spin buttons, the user can still change value with keyboard arrows and manual update.
+        /// </summary>
+        [Parameter]
+        public bool HideSpinButtons { get; set; }
     }
 }

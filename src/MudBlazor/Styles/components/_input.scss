@@ -437,11 +437,11 @@
     margin-left: 8px;
 }
 
-.mud-input-number-control .mud-input-adornment-end {
+.mud-input-number-control:not(.mud-input-number-nobutton) .mud-input-adornment-end {
     margin-right: 12px;
 }
 
-.mud-input-number-control .mud-input-underline:not(.mud-input-filled) .mud-input-adornment-end {
+.mud-input-number-control:not(.mud-input-number-nobutton) .mud-input-underline:not(.mud-input-filled) .mud-input-adornment-end {
     margin-right: 24px;
 }
 
