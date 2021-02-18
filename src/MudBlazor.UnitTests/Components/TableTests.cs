@@ -144,8 +144,40 @@ namespace MudBlazor.UnitTests
         }
 
         /// <summary>
-        /// page size select tests
+        /// simple navigation using the paging buttons - RTL
         /// </summary>
+        [Test]
+        public void TablePagingNavigationButtonsRtl()
+        {
+            var comp = ctx.RenderComponent<TablePagingTest1Rtl>();
+            // print the generated html      
+            Console.WriteLine(comp.Markup);
+            // after initial load
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+            var pagingButtons = comp.FindAll("button");
+            // click next page
+            pagingButtons[1].Click();
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("11-20 of 59");
+            // last page
+            pagingButtons[0].Click();
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(9);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("51-59 of 59");
+            // previous page
+            pagingButtons[2].Click();
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("41-50 of 59");
+            // first page
+            pagingButtons[3].Click();
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+        }
+
+
+        /// <summary>
+         /// page size select tests
+         /// </summary>
         [Test]
         public async Task TablePagingChangePageSize()
         {
