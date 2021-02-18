@@ -176,8 +176,8 @@ namespace MudBlazor.UnitTests
 
 
         /// <summary>
-         /// page size select tests
-         /// </summary>
+        /// page size select tests
+        /// </summary>
         [Test]
         public async Task TablePagingChangePageSize()
         {
