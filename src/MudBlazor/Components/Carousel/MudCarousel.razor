@@ -32,7 +32,7 @@
                 }
                 else
                 {
-                    <div @onclick="Previous" class="align-self-center" style="z-index:2;opacity:0.75">
+                    <div @onclick="Previous" class="align-self-center" style="z-index:2">
                         @LeftArrowTemplate
                     </div>
                 }
@@ -52,9 +52,7 @@
                             }
                             else
                             {
-                                <div @onclick="() => MoveTo(current)" class="align-self-center" style="z-index:2;opacity:0.75">
-                                    @DelimiterTemplate
-                                </div>
+                                @DelimiterTemplate
                             }
                         }
                     </div>
@@ -70,7 +68,7 @@
                 }
                 else
                 {
-                    <div @onclick="Next" class="align-self-center" style="z-index:2;opacity:0.75">
+                    <div @onclick="Next" class="align-self-center" style="z-index:2">
                         @RightArrowTemplate
                     </div>
                 }
