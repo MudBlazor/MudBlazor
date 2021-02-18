@@ -1,0 +1,32 @@
+﻿.mud-carousel {
+    display: flex !important;
+    position: relative;
+    margin: 0px !important;
+}
+
+.mud-carousel-item {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    margin: inherit;
+    padding: inherit;
+}
+
+/* ### Transitions ### */
+
+/*Fade
+*/ @keyframes mud-carousel-transition-fade-keyframe {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.mud-carousel-transition-fade {
+    animation: 0.5s mud-carousel-transition-fade-keyframe
+}
