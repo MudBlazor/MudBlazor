@@ -27,7 +27,12 @@ namespace MudBlazor
 
         public bool IsVisible
         {
-            get { return Parent.SelectedIndex == Parent.Items.IndexOf(this); }
+            get
+            {
+                if (Parent == null)
+                    return false;
+                return Parent.SelectedIndex == Parent.Items.IndexOf(this);
+            }
         }
 
         protected override void OnInitialized()
