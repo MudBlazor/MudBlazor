@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
+using MudBlazor.UnitTests.TestComponents.DatePicker;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using static Bunit.ComponentParameterFactory;
@@ -329,6 +330,25 @@ namespace MudBlazor.UnitTests
             // closing programmatically
             await comp.InvokeAsync(() => comp.Instance.Close());
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task PersianCalendar()
+        {
+            var cal = new PersianCalendar();
+            var date = new DateTime(2021, 02, 14);
+            cal.GetYear(date).Should().Be(1399);
+            cal.GetMonth(date).Should().Be(11);
+            cal.GetDayOfMonth(date).Should().Be(26);
+            // ---------------------------------------------------------------
+            var comp = ctx.RenderComponent<PersianDatePickerTest>();
+            var datePicker = comp.FindComponent<MudDatePicker>();
+            await comp.InvokeAsync(() => datePicker.Instance.Open());
+            Console.WriteLine(comp.Markup);
+            
+            // didn't have time to finish this test case
+            // TODO: check that the days are like here https://mrmashal.github.io/angular-material-persian-datepicker/demo/demoBasicUsage/index.html
+            // for 1399-11-26
         }
     }
 }

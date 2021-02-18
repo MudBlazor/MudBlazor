@@ -58,6 +58,7 @@ namespace MudBlazor.Docs.Models
                 [typeof(MudAutocomplete<T>)] = "autocomplete",
                 [typeof(MudSlider<T>)] = "slider",
                 [typeof(MudCheckBox<T>)] = "checkbox",
+                [typeof(MudRadio<T>)] = "radio",
                 [typeof(MudSwitch<T>)] = "switch",
                 [typeof(MudTreeView<T>)] = "treeview",
                 [typeof(MudFab)] = "buttonfab",

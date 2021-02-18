@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
-    class TableRowValidator : Interfaces.IForm
+    public class TableRowValidator : IForm
     {
         public bool IsValid
         {
@@ -25,7 +24,7 @@ namespace MudBlazor
 
         void IForm.Add(IFormComponent formControl)
         {
-            _formControls[formControl] = false;
+            _formControls.Add(formControl);
         }
 
         void IForm.Remove(IFormComponent formControl)
@@ -38,21 +37,19 @@ namespace MudBlazor
             //Validate(formControl);
         }
 
-        protected Dictionary<IFormComponent, bool> _formControls = new Dictionary<IFormComponent, bool>();
+        protected HashSet<IFormComponent> _formControls = new HashSet<IFormComponent>();
 
         public void Validate()
         {
             _errors.Clear();
-            foreach (var control in _formControls.Keys.ToArray())
+            foreach (var formControl in _formControls.ToArray())
             {
-                control.Validate();
-                foreach (var err in control.ValidationErrors)
+                formControl.Validate();
+                foreach (var err in formControl.ValidationErrors)
                 {
                     _errors.Add(err);
                 }
             }
         }
-
-
     }
 }

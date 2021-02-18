@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -83,8 +84,28 @@ namespace MudBlazor.Docs.Components
         protected virtual async void EditOnTryMudBlazor()
         {
             // We use a seperator that wont be in code so we can send 2 files later
-            var codeFile = "__Main.razor" + (char)31 + Snippets.GetCode(Code);
-            var codeFileEncoded = codeFile.ToCompressedEncodedUrl();
+            var codeFiles = "__Main.razor" + (char)31 + Snippets.GetCode(Code);
+
+            // Add dialogs for dialog examples
+            if (Code.StartsWith("Dialog"))
+            {
+                var regex = new Regex(@"\Show<(Dialog.*?_Dialog)\>");
+                var dialogCodeName = regex.Match(codeFiles).Groups[1].Value;
+                if (dialogCodeName != string.Empty)
+                {
+                    var dialogCodeFile = dialogCodeName + ".razor" + (char)31 + Snippets.GetCode(dialogCodeName);
+                    codeFiles = codeFiles + (char)31 + dialogCodeFile;
+                }
+            }
+
+            // Add Element.cs model for webapi periodic table
+            if (codeFiles.Contains("webapi/periodictable", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var elementCodeFile = "Element.cs" + (char)31 + Snippets.GetCode("Element");
+                codeFiles = codeFiles + (char)31 + elementCodeFile;
+            }
+
+            var codeFileEncoded = codeFiles.ToCompressedEncodedUrl();
             // var tryMudBlazorLocation = "https://localhost:5001/";
             var tryMudBlazorLocation = "https://try.mudblazor.com/";
             var url = $"{tryMudBlazorLocation}snippet/{codeFileEncoded}";

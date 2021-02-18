@@ -491,7 +491,11 @@ namespace MudBlazor
 
         void IDisposable.Dispose()
         {
-            //ParentForm?.Remove(this);
+            try
+            {
+                Form?.Remove(this);
+            }
+            catch { /* ignore */ }
             DetachValidationStateChangedListener();
             Dispose(disposing: true);
         }

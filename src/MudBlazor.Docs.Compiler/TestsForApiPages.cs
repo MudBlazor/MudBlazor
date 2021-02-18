@@ -25,40 +25,20 @@ namespace MudBlazor.Docs.Compiler
                 var cb = new CodeBuilder();
 
                 cb.AddHeader();
-                cb.AddUsings();
+                cb.AddLine("using MudBlazor.Charts;");
+                cb.AddLine("using MudBlazor.Docs.Components;");
+                cb.AddLine("using MudBlazor.Internal;");
+                cb.AddLine("using NUnit.Framework;");
+                cb.AddLine("using ComponentParameter = Bunit.ComponentParameter;");
+                cb.AddLine();
 
                 cb.AddLine("namespace MudBlazor.UnitTests.Components");
                 cb.AddLine("{");
                 cb.IndentLevel++;
                 cb.AddLine("// These tests just check all the API pages to see if they throw any exceptions");
-                cb.AddLine("[TestFixture]");
-                cb.AddLine("public class _AllApiPages");
+                cb.AddLine("public partial class ApiDocsTests");
                 cb.AddLine("{");
                 cb.IndentLevel++;
-                cb.AddLine("private Bunit.TestContext ctx;");
-                cb.AddLine();
-                cb.AddLine("[SetUp]");
-                cb.AddLine("public void Setup()");
-                cb.AddLine("{");
-                cb.IndentLevel++;
-                cb.AddLine("ctx = new Bunit.TestContext();");
-                cb.AddLine("ctx.JSInterop.Mode = JSRuntimeMode.Loose;");
-                cb.AddLine("ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());");
-                cb.AddLine("ctx.Services.AddSingleton<IDialogService>(new DialogService());");
-                cb.AddLine("ctx.Services.AddSingleton<ISnackbar>(new SnackbarService());");
-                cb.AddLine("ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());");
-                cb.AddLine("ctx.Services.AddTransient<IScrollManager, MockScrollManager>();");
-                cb.AddLine("ctx.Services.AddTransient<IScrollListener, MockScrollListener>();");
-                cb.AddLine("ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());");
-                cb.AddLine("ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());");
-                cb.AddLine("ctx.Services.AddSingleton<IDomService>(new MockDomService());");
-                cb.AddLine("ctx.Services.AddScoped(sp => new HttpClient());");
-                cb.IndentLevel--;
-                cb.AddLine("}");
-                cb.AddLine();
-                cb.AddLine("[TearDown]");
-                cb.AddLine("public void TearDown() => ctx.Dispose();");
-                cb.AddLine();
                 var mudBlazorComponents = typeof(MudAlert).Assembly.GetTypes().OrderBy(t => t.FullName).Where(t => t.IsSubclassOf(typeof(ComponentBase)));
                 foreach (var type in mudBlazorComponents)
                 {

@@ -67,8 +67,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Breadcrumbs", typeof(MudBreadcrumbs))
             .AddItem("ScrollToTop", typeof(MudScrollToTop))
             .AddItem("Popover", typeof(MudPopover))
-            .AddItem("Carousel", typeof(MudCarousel<object>))
-
+            .AddItem("SwipeArea", typeof(MudSwipeArea))
 
             //GROUPS
 

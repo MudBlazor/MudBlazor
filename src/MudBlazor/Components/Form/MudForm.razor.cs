@@ -46,8 +46,7 @@ namespace MudBlazor
 
         /// <summary>
         /// When true, the form will not re-render its child contents on validation updates (i.e. when IsValid changes).
-        /// This is an optimization which can be necessary
-        /// especially for larger forms on older devices.
+        /// This is an optimization which can be necessary especially for larger forms on older devices.
         /// </summary>
         [Parameter] public bool SuppressRenderingOnValidation { get; set; } = false;
 
@@ -91,7 +90,7 @@ namespace MudBlazor
 
         void IForm.Remove(IFormComponent formControl)
         {
-            _formControls.Remove(formControl);
+            //_formControls.Remove(formControl);
         }
 
         private Timer _timer;

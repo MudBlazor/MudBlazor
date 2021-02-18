@@ -1,26 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
-namespace MudBlazor.Docs.Data
+namespace MudBlazor.Examples.Data.Models
 {
     public class Element
     {
-        [JsonProperty("group")]
         public string Group { get; set; }
-
-        [JsonProperty("position")]
         public int Position { get; set; }
-
-        [JsonProperty("name")]
         public string Name { get; set; }
-
-        [JsonProperty("number")]
         public int Number { get; set; }
 
-        [JsonProperty("small")]
+        [JsonPropertyName("small")]
         public string Sign { get; set; }
-
-        [JsonProperty("molar")]
         public double Molar { get; set; }
+        public IList<int> Electrons { get; set; }
 
         public override string ToString()
         {

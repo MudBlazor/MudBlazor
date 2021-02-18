@@ -11,8 +11,9 @@
 
     @if (Lines > 1)
     {
+        @*note: the value="@Text" is absolutely essential here. the inner html @Text is kept only for compatibility*@
         <textarea @ref="_elementReference" rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly"
-                  @oninput="OnInput" @onchange="OnChange" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp">@Text</textarea>
+                  @oninput="OnInput" @onchange="OnChange" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp"  value="@Text">@Text</textarea>
     }
     else
     {
