@@ -7,6 +7,8 @@ namespace MudBlazor
     {
         [CascadingParameter] public TableContext Context { get; set; }
 
+        [CascadingParameter] public bool RightToLeft { get; set; }
+
         /// <summary>
         /// Set true to hide the part of the pager which allows to change the page size.
         /// </summary>
