@@ -54,6 +54,12 @@ namespace MudBlazor
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
+
+        [Parameter] public bool HasClearButton { get; set; } = false;
+
+        [Parameter] public EventCallback ClearClicked { get; set; }
+
+        [Parameter] public Color ClearColor { get; set; } = Color.Default;
     }
 
     public class MudInputString : MudInput<string> { }

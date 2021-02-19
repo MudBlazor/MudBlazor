@@ -377,5 +377,14 @@ namespace MudBlazor
            _= SetTextAsync( text, true);
 
         }
+
+        public async Task Clear()
+        {
+            await SetValueAsync(default);
+            await SetTextAsync(string.Empty, false);
+            ResetValidation();
+            StateHasChanged();
+        }
+
     }
 }
