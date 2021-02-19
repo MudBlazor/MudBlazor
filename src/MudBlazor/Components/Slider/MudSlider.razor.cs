@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -78,6 +79,13 @@ namespace MudBlazor
                 ValueChanged.InvokeAsync(value);
             }
         }
+
+        /// <summary>
+        /// The color of the component. It supports the Primary, Secondary and Tertiary theme colors.
+        /// </summary>
+        [Parameter] public Color Color { get; set; } = Color.Primary;
+
+        protected string InputClassName => $"mud-slider-{Color.ToDescriptionString()}";
 
         protected string Text
         {
