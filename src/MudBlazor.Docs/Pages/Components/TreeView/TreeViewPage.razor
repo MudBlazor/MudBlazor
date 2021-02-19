@@ -10,7 +10,7 @@
                 <Title>Simple Tree View</Title>
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <TreeViewSimpleExample />
             </SectionContent>
             <SectionSource Code="TreeViewSimpleExample" GitHubFolderName="Tree" />
@@ -20,7 +20,7 @@
                 <Title>Highlight TreeItem on mouse over</Title>
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <TreeViewHoverExample />
             </SectionContent>
             <SectionSource Code="TreeViewHoverExample" GitHubFolderName="Tree" />
@@ -28,9 +28,9 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Activate TreeItem on click (select and highlight a single item)</Title>
-                <Description></Description>
+                <Description>Use <CodeInline>@@bind-Activated</CodeInline> on TreeViewItem to bind a single item.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <TreeViewActivateExample />
             </SectionContent>
             <SectionSource Code="TreeViewActivateExample" GitHubFolderName="Tree" />
@@ -38,9 +38,9 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Selectable items</Title>
-                <Description></Description>
+                <Description>Use <CodeInline>@@bind-Selected</CodeInline> on TreeViewItem to bind a single item.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <TreeViewSelectExample />
             </SectionContent>
             <SectionSource Code="TreeViewSelectExample" GitHubFolderName="Tree" />
@@ -50,7 +50,7 @@
                 <Title>Expand-on-click</Title>
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <TreeViewExpandOnClickExample />
             </SectionContent>
             <SectionSource Code="TreeViewExpandOnClickExample" GitHubFolderName="Tree" />
@@ -60,17 +60,27 @@
                 <Title>TreeItem with icons</Title>
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <TreeViewIconExample />
             </SectionContent>
             <SectionSource Code="TreeViewIconExample" GitHubFolderName="Tree" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
+                <Title>Dense TreeView</Title>
+                <Description></Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <TreeViewDenseExample />
+            </SectionContent>
+            <SectionSource Code="TreeViewDenseExample" GitHubFolderName="Tree" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
                 <Title>TreeViewItemTemplate Example</Title>
                 <Description>This example shows how to use ItemTemplate to automatically build the tree items according to a hierarchical data structure.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <TreeViewItemTemplateExample />
             </SectionContent>
             <SectionSource Code="TreeViewItemTemplateExample" GitHubFolderName="Tree" />
@@ -78,9 +88,12 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Custom Tree</Title>
-                <Description>When Content property is used, it will completely replace the default rendering of the MudTreeViewItem to use your own</Description>
+                <Description>
+                    When Content property is used, it will completely replace the default rendering of the MudTreeViewItem to use your own.
+                    Use <CodeInline>Height</CodeInline> or <CodeInline>MaxHeight</CodeInline> parameter to scroll the treeview.
+                </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-list">
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <TreeViewCustomExample />
             </SectionContent>
             <SectionSource Code="TreeViewCustomExample" GitHubFolderName="Tree" />

@@ -14,10 +14,17 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-treeview")
+          .AddClass("mud-treeview-dense", Dense)
           .AddClass("mud-treeview-canhover", CanHover)
           .AddClass("mud-treeview-canactivate", CanActivate)
           .AddClass("mud-treeview-expand-on-click", ExpandOnClick)
           .AddClass(Class)
+        .Build();
+        protected string Stylename => 
+        new StyleBuilder()
+            .AddStyle($"width", Width, !string.IsNullOrWhiteSpace(Width))
+            .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
+            .AddStyle($"max-height", MaxHeight, !string.IsNullOrWhiteSpace(MaxHeight))
         .Build();
 
         [Parameter]
@@ -31,6 +38,29 @@ namespace MudBlazor
 
         [Parameter]
         public bool CanHover { get; set; }
+
+        [Parameter]
+        public bool Dense { get; set; }
+
+        /// <summary>
+        /// Setting a height will allow to scroll the treeview. If not set, it will try to grow in height. 
+        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
+        /// </summary>
+        [Parameter] 
+        public string Height { get; set; }
+
+        /// <summary>
+        /// Setting a maximum height will allow to scroll the treeview. If not set, it will try to grow in height. 
+        /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
+        /// </summary>
+        [Parameter]
+        public string MaxHeight { get; set; }
+
+        /// <summary>
+        /// Setting a width the treeview. You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
+        /// </summary>
+        [Parameter]
+        public string Width { get; set; }
 
         [Parameter] public HashSet<T> Items { get; set; }
 
@@ -55,6 +85,15 @@ namespace MudBlazor
             MudTreeRoot = this;
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender && MudTreeRoot == this)
+            {
+                await UpdateSelectedItems();
+            }
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
         internal async Task UpdateActivatedItem(MudTreeViewItem<T> item, bool requestedValue)
         {
             if ((_activatedValue == item && requestedValue) ||
@@ -65,7 +104,7 @@ namespace MudBlazor
             {
                 _activatedValue = default;
                 await item.Activate(requestedValue);
-                await ActivatedValueChanged.InvokeAsync(_activatedValue.Value);
+                await ActivatedValueChanged.InvokeAsync(default);
                 return;
             }
 

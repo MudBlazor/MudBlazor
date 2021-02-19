@@ -283,6 +283,7 @@ namespace MudBlazor.UnitTests
             var textfield = comp.Instance;
             comp.Find("input").Change("A");
             comp.Find("input").Blur();
+            textfield.Text.Should().Be("A");
             textfield.HasErrors.Should().Be(true);
             textfield.ErrorText.Should().Be("Not a valid number");
         }
@@ -310,6 +311,67 @@ namespace MudBlazor.UnitTests
         {
             ctx.RenderComponent<DebouncedTextFieldTest>();
         }
+
+        [Test]
+        public async Task TextFieldMultiline_CheckRenderedText()
+        {
+            var text = "Hello world!";
+            var comp = ctx.RenderComponent<MudTextField<string>>(new[]
+            {
+                Parameter(nameof(MudTextField<string>.Text), text),
+                Parameter(nameof(MudTextField<string>.Lines), 2)
+            });
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var textfield = comp.Instance;
+            comp.Find("textarea").InnerHtml.Should().Be(text);
+        }
+
+        [Test]
+        public async Task MultilineTextField_Should_UpdateTextOnInput()
+        {
+            var comp = ctx.RenderComponent<MudTextField<string>>();
+            var textfield = comp.Instance;
+            comp.Find("input").Change("A");
+            comp.Find("input").Blur();
+            textfield.Text.Should().Be("A");
+            textfield.Value.Should().Be("A");
+            comp.SetParam(x=>x.Lines, 2);
+            comp.Find("textarea").Change("B\nC");
+            comp.Find("textarea").Blur();
+            textfield.Text.Should().Be("B\nC");
+            textfield.Value.Should().Be("B\nC");
+        }
+
+        /// <summary>
+        /// This is based on a bug reported by a user
+        ///
+        /// After editing the second (multi-line) tf it would not accept any updates from the first tf.
+        /// </summary>
+        [Test]
+        public async Task MultiLineTextField_ShouldBe_TwoWayBindable()
+        {
+            var comp=ctx.RenderComponent<MultilineTextfieldBindingTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            var tf1 = comp.FindComponents<MudTextField<string>>()[0].Instance;
+            var tf2 = comp.FindComponents<MudTextField<string>>()[1].Instance;
+            comp.Find("input").Input("Bossmang");
+            tf1.Text.Should().Be("Bossmang");
+            tf2.Text.Should().Be("Bossmang");
+            comp.Find("textarea").TrimmedText().Should().Be("Bossmang");
+            comp.Find("textarea").Input("Beltalowda");
+            tf1.Text.Should().Be("Beltalowda");
+            tf2.Text.Should().Be("Beltalowda");
+            comp.Find("textarea").TrimmedText().Should().Be("Beltalowda");
+            comp.Find("input").Input("Beratna");
+            tf1.Text.Should().Be("Beratna");
+            tf2.Text.Should().Be("Beratna");
+            comp.Find("textarea").TrimmedText().Should().Be("Beratna");
+            Console.WriteLine(comp.Markup);
+        }
+
     }
 
 }

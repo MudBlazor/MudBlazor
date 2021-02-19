@@ -26,6 +26,16 @@
         padding-top: 4px;
         padding-bottom: 4px;
     }
+
+    &.mud-list-item-disabled {
+        color: var(--mud-palette-action-disabled) !important;
+        cursor: default !important;
+        pointer-events: none !important;
+
+        .mud-list-item-icon {
+            color: var(--mud-palette-action-disabled) !important;
+        }
+    }
 }
 
 .mud-list-item-clickable {

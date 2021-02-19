@@ -1,5 +1,7 @@
-﻿@namespace MudBlazor.Docs.Examples
-@using MudBlazor.Docs.Data;
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
 
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
@@ -27,6 +29,6 @@
 
     private async Task<IEnumerable<Element>> Search(string value)
     {
-        return  await PeriodicTable.GetElementsAsync(value);
+        return  await httpClient.GetFromJsonAsync<List<Element>>($"webapi/periodictable/{value}");
     }
 }

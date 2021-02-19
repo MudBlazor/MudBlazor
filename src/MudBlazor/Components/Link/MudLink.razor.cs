@@ -34,7 +34,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Href { get; set; }
 
-
+        /// <summary>
+        /// The target attribute specifies where to open the link, if Link is specified. Possible values: _blank | _self | _parent | _top | <i>framename</i>
+        /// </summary>
         [Parameter] public string Target { get; set; }
 
         /// <summary>

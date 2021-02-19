@@ -154,7 +154,7 @@ namespace MudBlazor
             }
         }
 
-        protected override string GetFormattedDateString()
+        protected override string GetTitleDateString()
         {
             if (DateRange == null || DateRange.Start == null)
                 return "";
@@ -162,6 +162,20 @@ namespace MudBlazor
                 return DateRange.Start.Value.ToString("dd MMM", Culture);
 
             return $"{DateRange.Start.Value.ToString("dd MMM", Culture)} - {DateRange.End.Value.ToString("dd MMM", Culture)}";
+        }
+
+        protected override DateTime GetCalendarStartOfMonth()
+        {
+            var date = StartMonth ?? DateRange?.Start ?? DateTime.Today;
+            return date.StartOfMonth(Culture);
+        }
+
+        protected override int GetCalendarYear(int year)
+        {
+            var date = DateRange?.Start ?? DateTime.Today;
+            var diff = date.Year - year;
+            var calenderYear = Culture.Calendar.GetYear(date);
+            return calenderYear - diff;
         }
     }
 }

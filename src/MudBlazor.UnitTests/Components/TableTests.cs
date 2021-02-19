@@ -144,6 +144,38 @@ namespace MudBlazor.UnitTests
         }
 
         /// <summary>
+        /// simple navigation using the paging buttons - RTL
+        /// </summary>
+        [Test]
+        public void TablePagingNavigationButtonsRtl()
+        {
+            var comp = ctx.RenderComponent<TablePagingTest1Rtl>();
+            // print the generated html      
+            Console.WriteLine(comp.Markup);
+            // after initial load
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+            var pagingButtons = comp.FindAll("button");
+            // click next page
+            pagingButtons[1].Click();
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("11-20 of 59");
+            // last page
+            pagingButtons[0].Click();
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(9);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("51-59 of 59");
+            // previous page
+            pagingButtons[2].Click();
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("41-50 of 59");
+            // first page
+            pagingButtons[3].Click();
+            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+        }
+
+
+        /// <summary>
         /// page size select tests
         /// </summary>
         [Test]
@@ -487,6 +519,33 @@ namespace MudBlazor.UnitTests
             trs[2].GetAttribute("class").Contains("odd");
             trs[3].GetAttribute("class").Contains("even");
             trs[4].GetAttribute("class").Contains("odd");
+        }
+
+        public class TableRowValidatorTest : TableRowValidator
+        {
+            public int ControlCount => _formControls.Count;
+        }
+
+        [Test]
+        public async Task TableInlineEdit_CheckMemoryUsage()
+        {
+            var comp = ctx.RenderComponent<TableInlineEditTest>();
+            var validator = new TableRowValidatorTest();
+            comp.Instance.Table.Validator = validator;
+
+            Console.WriteLine(comp.Markup);
+            
+            var trs = comp.FindAll("tr");
+            trs.Count.Should().Be(4); // three rows + header row
+
+            trs[1].Click();
+            //every item will be add twice - see MudTextField.razor
+            validator.ControlCount.Should().Be(2);
+            for (int i = 0; i < 10; ++i)
+            {
+                trs[i % 3 + 1].Click();
+            }
+            validator.ControlCount.Should().Be(2);
         }
     }
 }

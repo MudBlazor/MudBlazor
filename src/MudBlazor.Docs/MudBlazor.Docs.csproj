@@ -69,11 +69,6 @@
     <EmbeddedResource Include="Pages\**\*.html" />
   </ItemGroup>
 
-  <!--Used for the periodic table examples-->
-  <ItemGroup>
-    <EmbeddedResource Include="Data/Elements.json" />
-  </ItemGroup>
-
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
   <Target Name="ShouldCleanGeneratedFiles" BeforeTargets="BeforeRebuild">
     <PropertyGroup>
@@ -84,6 +79,7 @@
   <Target Name="CleanGeneratedFiles" BeforeTargets="Clean" Condition="'$(CleanGeneratedFiles)' != 'false'">
     <ItemGroup>
       <FilesToClean Include="./Pages/**/*ExampleCode.*" />
+      <FilesToClean Include="./Pages/**/*Example_DialogCode.*" />
       <FilesToClean Include="./NewFilesToBuild.txt" />
       <FilesToClean Include="./Models/Snippets.generated.cs" />
       <FilesToClean Include="./Models/DocStrings.generated.cs" />
@@ -94,17 +90,17 @@
 
   <!--Packages-->
   <ItemGroup>
-    <PackageReference Include="BlazorInputFile" Version="0.2.0" />
-    <PackageReference Include="FluentValidation" Version="9.4.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.10" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.0.0" />
+    <PackageReference Include="FluentValidation" Version="9.5.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.8" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.4.1" />
   </ItemGroup>
 
   <!--Project dependencies-->
   <ItemGroup>
     <ProjectReference Include="../MudBlazor/MudBlazor.csproj" />
+      <ProjectReference Include="../MudBlazor.Examples.Data/MudBlazor.Examples.Data.csproj" />
   </ItemGroup>
 
   <!--Excubo  webcompiler -  used for scss and js compilation-->
@@ -113,7 +109,7 @@
   </Target>
 
   <Target Name="WebCompiler" DependsOnTargets="ToolRestore">
-      <Exec Command="dotnet webcompiler ./Styles/MudBlazorDocs.scss -c excubowebcompiler.json" StandardOutputImportance="high" />
+      <Exec Command="dotnet webcompiler ./Styles/MudBlazorDocs.scss -c excubowebcompiler.json" StandardOutputImportance="high" StandardErrorImportance="high" />
   </Target>
 
   <!--Output of Excubo webcompiler-->

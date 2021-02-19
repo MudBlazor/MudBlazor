@@ -76,6 +76,14 @@
         & > .mud-tooltip-root .mud-icon-button .mud-svg-icon {
             font-size: 1.25rem;
         }
+        
+        @media(max-width: 1280px) {
+            .mud-tooltip-root:last-child .mud-tooltip {
+                left: unset;
+                right: 0;
+                transform: translate(0%,calc(-100% - 10px));
+            }
+        }
     }
 
     & .docs-source-code {
@@ -94,6 +102,24 @@
 .docs-content-api {
     padding: 0px;
     width:100%;
+}
+
+@media(min-width: 600px) {
+    .docs-content-api-cell:before {
+        width: 30% !important;
+        min-width: 30% !important;
+    }
+}
+
+@media(max-width: 599px) {
+    .docs-content-api-description {
+        flex-wrap: wrap;
+    }
+}
+
+.docs-content-api-description {
+    overflow-wrap: anywhere;
+    white-space: pre-line;
 }
 
 .docs-content-outlined {

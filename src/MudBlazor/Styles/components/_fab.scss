@@ -40,6 +40,26 @@
     }
 }
 
+.mud-fab-disable-elevation {
+    box-shadow: none;
+
+    &:hover {
+        box-shadow: none;
+    }
+
+    &:active {
+        box-shadow: none;
+    }
+
+    &.mud-focus-visible {
+        box-shadow: none;
+    }
+
+    &:disabled {
+        box-shadow: none;
+    }
+}
+
 .mud-fab-label {
     width: 100%;
     display: inherit;
@@ -69,7 +89,7 @@
         min-height: auto;
         border-radius: 24px;
 
-        .mud-svg-icon-root {
+        .mud-icon-root {
             margin-right: 8px;
         }
     }
@@ -81,7 +101,7 @@
         min-width: 34px;
         border-radius: 17px;
 
-        .mud-svg-icon-root {
+        .mud-icon-root {
             margin-right: 4px;
         }
     }
@@ -93,7 +113,7 @@
         min-width: 40px;
         border-radius: 20px;
 
-        .mud-svg-icon-root {
+        .mud-icon-root {
             margin-right: 8px;
         }
     }
