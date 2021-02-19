@@ -90,12 +90,20 @@
     position: relative;
 }
 
-.mud-progress-linear-color-primary {
-    background-color: rgba(89,74,226, 0.2);
-}
-
-.mud-progress-linear-color-secondary {
-    background-color: rgba(255,69,138, 0.2);
+@each $color in $mud-palette-colors {
+    .mud-progress-linear-color-#{$color} {
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            display: block;
+            background-color: var(--mud-palette-#{$color});
+            opacity: 0.2;
+        }
+    }
 }
 
 .mud-progress-linear-buffer {
