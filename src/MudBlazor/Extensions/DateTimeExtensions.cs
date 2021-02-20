@@ -1,36 +1,44 @@
 ﻿// Copyright (c) MudBlazor
 
 using System;
+using System.Globalization;
 
-// ReSharper disable once CheckNamespace
-internal static class DateTimeExtensions
+namespace MudBlazor.Extensions
 {
-    public static string ToIsoDateString(this DateTime self)
-    {
-        return $"{self.Year:D4}-{self.Month:D2}-{self.Day:D2}";
-    }
 
-    public static string ToIsoDateString(this DateTime? self)
+    public static class DateTimeExtensions
     {
-        if (self == null)
-            return null;
-        return $"{self.Value.Year:D4}-{self.Value.Month:D2}-{self.Value.Day:D2}";
-    }
+        public static string ToIsoDateString(this DateTime self)
+        {
+            return $"{self.Year:D4}-{self.Month:D2}-{self.Day:D2}";
+        }
 
-    public static DateTime StartOfMonth(this DateTime self)
-    {
-        return new DateTime(self.Year, self.Month, 1);
-    }
+        public static string ToIsoDateString(this DateTime? self)
+        {
+            if (self == null)
+                return null;
+            return $"{self.Value.Year:D4}-{self.Value.Month:D2}-{self.Value.Day:D2}";
+        }
 
-    public static DateTime EndOfMonth(this DateTime self)
-    {
-        return new DateTime(self.Year, self.Month, DateTime.DaysInMonth(self.Year, self.Month));
-    }
+        public static DateTime StartOfMonth(this DateTime self, CultureInfo culture)
+        {
+            var month = culture.Calendar.GetMonth(self);
+            var year = culture.Calendar.GetYear(self);
+            return culture.Calendar.ToDateTime(year, month, 1, 0, 0, 0, 0);
+        }
 
-    public static DateTime StartOfWeek(this DateTime self, DayOfWeek firstDayOfWeek)
-    {
-        var diff = (7 + (self.DayOfWeek - firstDayOfWeek)) % 7;
-        return self.AddDays(-1 * diff).Date;
-    }
+        public static DateTime EndOfMonth(this DateTime self, CultureInfo culture)
+        {
+            var month = culture.Calendar.GetMonth(self);
+            var year = culture.Calendar.GetYear(self);
+            var days = culture.Calendar.GetDaysInMonth(year, month);
+            return culture.Calendar.ToDateTime(year, month, days, 0, 0, 0, 0);
+        }
 
+        public static DateTime StartOfWeek(this DateTime self, DayOfWeek firstDayOfWeek)
+        {
+            var diff = (7 + (self.DayOfWeek - firstDayOfWeek)) % 7;
+            return self.AddDays(-1 * diff).Date;
+        }
+    }
 }

@@ -14,7 +14,7 @@
         background-color: var(--mud-palette-grey-darker);
         border-radius: var(--mud-default-borderradius);
         position: absolute;
-        z-index: 1;
+        z-index: var(--mud-zindex-tooltip);
         visibility: hidden;
         opacity: 0;
         transition: opacity .2s;

@@ -127,11 +127,11 @@ namespace MudBlazor
 
         public async Task SelectOption(T value)
         {
-            _timer?.Dispose();
             await SetValueAsync(value);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
-            Text = GetItemString(value);
+            await SetTextAsync( GetItemString(value), false);
+            _timer?.Dispose();
             IsOpen = false;
             UpdateIcon();
             BeginValidate();
@@ -172,6 +172,9 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             UpdateIcon();
+            var text = GetItemString(Value);
+            if (!string.IsNullOrWhiteSpace(text))
+                Text = text;
         }
 
         private Timer _timer;
@@ -180,8 +183,9 @@ namespace MudBlazor
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            _timer?.Dispose();
-            return base.UpdateTextPropertyAsync(updateValue);
+            //_timer?.Dispose();
+            //return base.UpdateTextPropertyAsync(updateValue);
+            return Task.CompletedTask;
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
@@ -189,7 +193,10 @@ namespace MudBlazor
             _timer?.Dispose();
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
-            _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
+            if (DebounceInterval<=0)
+                OnSearch();
+            else
+                _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
         }
 
         private void OnTimerComplete(object stateInfo) => InvokeAsync(OnSearch);
@@ -203,8 +210,15 @@ namespace MudBlazor
                 return;
             }
             _selectedListItemIndex = 0;
-
-            var searched_items = await SearchFunc(Text);
+            IEnumerable<T> searched_items = new T[0];
+            try
+            {
+                searched_items = (await SearchFunc(Text)) ?? new T[0];
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("The search function failed to return results: " + e.Message);
+            }
             if (MaxItems.HasValue)
                 searched_items = searched_items.Take(MaxItems.Value);
             _items = searched_items.ToArray();
@@ -310,7 +324,8 @@ namespace MudBlazor
 
         private Task OnInputBlurred(FocusEventArgs args)
         {
-            return !IsOpen ? CoerceTextToValue() : Task.CompletedTask;
+            //return !IsOpen ? CoerceTextToValue() : Task.CompletedTask;
+            return Task.CompletedTask;
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value, 
             // resulting in a premature validation. thus, don't call base
             //base.OnBlurred(args);
@@ -355,5 +370,12 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
+        private void OnTextChanged(string text)
+        {
+            if (text == null)
+                return;
+           _= SetTextAsync( text, true);
+
+        }
     }
 }

@@ -25,20 +25,17 @@ namespace MudBlazor
         [Parameter] public string Selector { get; set; }
 
         /// <summary>
-        /// If set to true, it starts Visible. If sets to false, it will become visible when
-        /// the TopOffset amount of scrolled pixels is reached
+        /// If set to true, it starts Visible. If sets to false, it will become visible when the TopOffset amount of scrolled pixels is reached
         /// </summary>
         [Parameter] public bool Visible { get; set; }
 
         /// <summary>
-        /// CSS class for the Visible state. Here, apply some transitions and animations
-        /// that will happen when the component becomes visible
+        /// CSS class for the Visible state. Here, apply some transitions and animations that will happen when the component becomes visible
         /// </summary>
         [Parameter] public string VisibleCssClass { get; set; }
 
         /// <summary>
-        /// CSS class for the Hidden state. Here, apply some transitions and animations
-        /// that will happen when the component becomes invisible
+        /// CSS class for the Hidden state. Here, apply some transitions and animations that will happen when the component becomes invisible
         /// </summary>
         [Parameter] public string HiddenCssClass { get; set; }
 

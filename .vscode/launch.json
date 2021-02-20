@@ -6,36 +6,23 @@
     "configurations": [
        
         {
-            "cwd": "${workspaceFolder}/src/MudBlazor.UnitTests.Viewer",
-            "type": "blazorwasm",
             "name": "unit test viewer",
-            "request": "launch"
-        },
-        {
-            "cwd": "${workspaceFolder}/src/MudBlazor.Docs.Client",
             "type": "blazorwasm",
-            "name": "docs client",
-            "request": "launch"
+            "request": "launch",
+            "cwd": "${workspaceFolder}/src/MudBlazor.UnitTests.Viewer"
         },
         {
-            "name": "docs server",
-            "type": "coreclr",
+            "name": "docs server and wasm",
+            "type": "blazorwasm",
             "request": "launch",
-            "preLaunchTask": "build",
+            "hosted": true,
             "program": "${workspaceFolder}/src/MudBlazor.Docs.Server/bin/Debug/netcoreapp3.1/MudBlazor.Docs.Server.dll",
-            "args": [],
             "cwd": "${workspaceFolder}/src/MudBlazor.Docs.Server",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
+            "browser": "chrome",
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
-            }
+
         }
     ]
 }

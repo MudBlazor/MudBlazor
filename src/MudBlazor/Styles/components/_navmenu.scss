@@ -51,24 +51,34 @@
     background-color: transparent;
     transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
-    &:hover {
+    &.mud-nav-link-disabled {
+        color: var(--mud-palette-text-disabled) !important;
+        cursor: default;
+        pointer-events: none;
+    }
+
+    &:hover:not(.mud-nav-link-disabled) {
         cursor: pointer;
         text-decoration: none;
         background-color: var(--mud-palette-action-default-hover);
     }
 
-    &:focus {
-        background-color: var(--mud-palette-action-default-hover);      
+    &:focus:not(.mud-nav-link-disabled) {
+        background-color: var(--mud-palette-action-default-hover);
     }
 
-    &.active {
+    &.active:not(.mud-nav-link-disabled) {
         font-weight: 500 !important;
         color: var(--mud-palette-primary);
         background-color: var(--mud-palette-action-default-hover);
     }
 
-    & .mud-nav-link-icon {
+    &:not(.mud-nav-link-disabled) .mud-nav-link-icon {
         color: var(--mud-palette-drawer-icon);
+    }
+
+    &.mud-nav-link-disabled .mud-nav-link-icon {
+        color: var(--mud-palette-text-disabled);
     }
 
     & .mud-nav-link-expand-icon {

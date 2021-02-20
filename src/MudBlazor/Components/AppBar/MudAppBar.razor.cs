@@ -8,6 +8,7 @@ namespace MudBlazor
     {
         protected string Classname =>
             new CssBuilder("mud-appbar")
+                .AddClass($"mud-appbar-dense", Dense)
                 .AddClass($"mud-appbar-fixed", Fixed)
                 .AddClass(GetDrawerClass(Anchor.Left))
                 .AddClass(GetDrawerClass(Anchor.Right))

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <!--Used for the periodic table examples-->
+  <ItemGroup>
+    <EmbeddedResource Include="Elements.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
+   </ItemGroup>
+
+</Project>

@@ -1,0 +1,11 @@
+﻿@using MudBlazor.Utilities.I18N
+@using System.Globalization
+@namespace MudBlazor.Docs.Examples
+
+<MudDatePicker Label="Current UI Culture" @bind-Date="date" />
+<MudDatePicker Label="Persian" @bind-Date="date" Culture="@MudCultures.GetPersianCulture()" UseShortNames="false" TitleDateFormat="dddd, dd MMMM"/>
+<MudDatePicker Label="Chinese" @bind-Date="date" Culture="@CultureInfo.GetCultureInfo("zh-Hans")" TitleDateFormat="dddd, dd MMMM"/>
+
+@code {
+    DateTime? date = new DateTime(2021, 02, 14); // 1399-11-26 in Persian calendar
+}

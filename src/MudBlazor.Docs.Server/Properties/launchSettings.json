@@ -12,17 +12,21 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "MudBlazor.Demo.ServerApp": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "components/dialog",
-      "environmentVariables": {
+        "APIBASE": "https://localhost:44399/",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:5001/;http://localhost:5000"
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
+    },
+    "MudBlazor.Docs.Server(Hosted wasm)": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "components/datepicker",
+      "environmentVariables": {
+        "APIBASE": "https://localhost:5001/",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:5001/;http://localhost:5000",
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
     }
   }
 }

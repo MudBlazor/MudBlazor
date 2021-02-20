@@ -1,8 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
+    <!--Please see https://github.com/dotnet/aspnetcore/issues/27776 -->
+    <StaticWebAssetBasePath Condition="'$(BuildType)' != 'publish'">wasm</StaticWebAssetBasePath>
+    <!--Note trailing slash -->
+    <StaticWebAssetBasePath Condition="'$(BuildType)' == 'publish'">wasm/</StaticWebAssetBasePath>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -11,11 +15,15 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.1" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.1" PrivateAssets="all" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
-    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.0.0" />
+    <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.4.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor.Docs\MudBlazor.Docs.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>
