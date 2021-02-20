@@ -119,6 +119,23 @@
 
         <DocsPageSection>
             <SectionHeader>
+                <Title>Local Side Filtering, Sorting and Pagination</Title>
+                <Description>
+                    Set <CodeInline>LocalData</CodeInline> to load data from the local data that is filtered, sorted and paginated. Table will call this async function whenever the user navigates
+                    the pager or changes sorting by clicking on the sort header icons. In this example we also show how to force the table to update when the search textfield blurs, so that the table reloads clientside-filtered data.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        Note: with a <CodeInline>LocalData</CodeInline> func you don't need <CodeInline>Items</CodeInline> and <CodeInline>Filter</CodeInline>.
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TableLocalSidePaginateExample />
+            </SectionContent>
+            <SectionSource Code="TableLocalSidePaginateExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
                 <Title>Table With related data</Title>
                 <Description>
                     Making use of the <CodeInline>&lt;ChildRowContent&gt;</CodeInline> allows more control over the layout for scenarios such as showing the related address data for each person below.

@@ -42,7 +42,7 @@ namespace MudBlazor
                     return;
                 _direction = value;
                 SortDirectionChanged.InvokeAsync(_direction);
-                if (SortBy != null || Table.HasServerData)
+                if (SortBy != null || Table.HasCallbackData)
                     Context?.SetSortFunc(this);
                 Table.InvokeServerLoadFunc();
             }

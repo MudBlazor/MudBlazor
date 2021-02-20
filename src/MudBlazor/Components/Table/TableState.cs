@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MudBlazor
 {
@@ -9,6 +10,17 @@ namespace MudBlazor
         public int PageSize { get; set; }
 
         public string SortLabel { get; set; }
+
+        public SortDirection SortDirection { get; set; }
+    }
+
+    public class TableState<T>
+    {
+        public int Page { get; set; }
+
+        public int PageSize { get; set; }
+
+        public Func<T, object> SortBy { get; set; } = null;
 
         public SortDirection SortDirection { get; set; }
     }

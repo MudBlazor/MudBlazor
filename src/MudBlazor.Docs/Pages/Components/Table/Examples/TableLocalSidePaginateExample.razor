@@ -1,0 +1,74 @@
+@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudTable LocalData="@(new Func<TableState<Element>, Task<TableData<Element>>>(LocalReload))"  
+                        Dense="true" Hover="true" @ref="table">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudToolBarSpacer />
+        <MudTextField T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start" 
+                        AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="(Element T) => T.Number">Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="(Element T) => T.Sign">Sign</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="(Element T) => T.Sign">Name</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="(Element T) => T.Position">Position</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="(Element T) => T.Molar">Molar mass</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private IEnumerable<Element> pagedData;
+    private MudTable<Element> table;
+
+    private int totalItems;
+    private string searchString = null;
+
+    /// <summary>
+    /// Here we simulate getting the paged, filtered and ordered data from the server
+    /// </summary>
+    private async Task<TableData<Element>> LocalReload(TableState<Element> state)
+    {
+        IEnumerable<Element> data = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable");
+        data = data.Where(element =>
+        {
+            if (string.IsNullOrWhiteSpace(searchString))
+                return true;
+            if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                return true;
+            if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
+                return true;
+            return false;
+        }).ToArray();
+        totalItems = data.Count();
+
+        if (state.SortBy != null)
+          data = data.OrderByDirection(state.SortDirection, state.SortBy);
+
+        pagedData = data.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new TableData<Element>() {TotalItems = totalItems, Items = pagedData};
+    }
+
+    private void OnSearch(string text)
+    {
+        searchString = text;
+        table.ReloadServerData();
+    }
+}
+
+

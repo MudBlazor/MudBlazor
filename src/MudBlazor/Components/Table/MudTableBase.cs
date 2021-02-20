@@ -230,7 +230,7 @@ namespace MudBlazor
                 .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
                 .Build();
 
-        internal abstract bool HasServerData { get; }
+        internal abstract bool HasCallbackData { get; }
 
         internal abstract Task InvokeServerLoadFunc();
 
