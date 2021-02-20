@@ -24,10 +24,6 @@ namespace MudBlazor
             return (IJSRuntime)jsRuntimeProperty.GetValue(context);
         }
 
-#if NETCOREAPP3_1
-        public static ValueTask FocusAsync(this ElementReference elementReference) =>
-            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.focus", elementReference) ?? ValueTask.CompletedTask;
-#endif
         public static ValueTask MudFocusFirstAsync(this ElementReference elementReference, int skip = 0, int min = 0) =>
             elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.focusFirst", elementReference, skip, min) ?? ValueTask.CompletedTask;
 
