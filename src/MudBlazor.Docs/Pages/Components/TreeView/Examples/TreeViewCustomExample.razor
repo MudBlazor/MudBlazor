@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTreeView Style="width: 500px;" Items="@TreeItems" MaxHeight="500px" Width="350px">
+<MudTreeView Items="@TreeItems" MaxHeight="500px" Width="350px">
     <ItemTemplate>
         <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems">
             <Content>
