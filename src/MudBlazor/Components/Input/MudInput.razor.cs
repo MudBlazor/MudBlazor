@@ -37,17 +37,17 @@ namespace MudBlazor
 
         public override ValueTask FocusAsync()
         {
-            return JSRuntime.InvokeVoidAsync("elementReference.focus", _elementReference);
+            return _elementReference.FocusAsync();
         }
 
         public override ValueTask SelectAsync()
         {
-            return JSRuntime.InvokeVoidAsync("mbSelectHelper.select", _elementReference);
+            return _elementReference.MudSelectAsync();
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            return JSRuntime.InvokeVoidAsync("mbSelectHelper.selectRange", _elementReference, pos1, pos2);
+            return _elementReference.MudSelectRangeAsync(pos1, pos2);
         }
 
         /// <summary>

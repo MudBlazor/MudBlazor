@@ -46,10 +46,11 @@ namespace MudBlazor.UnitTests
         /// MudButton renders an anchor element when Link is set
         /// </summary>
         [Test]
-        public void MudButtonShouldRenderAnAnchorIfLinkIsSet()
+        public void MudButtonShouldRenderAnAnchorIfLinkIsSetAndIsNotDisabled()
         {
             var link = Parameter(nameof(MudButton.Link), "https://www.google.com");
             var target = Parameter(nameof(MudButton.Target), "_blank");
+            var disabled = Parameter(nameof(MudButton.Disabled), true);
             var comp = ctx.RenderComponent<MudButton>(link, target);
             //Link property is set, so it has to render an anchor element
             comp.Instance
@@ -67,6 +68,10 @@ namespace MudBlazor.UnitTests
                 .StartWith("<a")
                 .And
                 .NotContain("__internal_stopPropagation_onclick");
+
+            comp = ctx.RenderComponent<MudButton>(link, target, disabled);
+            comp.Instance.HtmlTag.Should().Be("button");
+
         }
 
         /// <summary>

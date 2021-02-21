@@ -57,6 +57,12 @@ namespace MudBlazor
             return $"rgb({color.R},{color.G},{color.B})";
         }
 
+        public static string ColorRgbElements(string hex)
+        {
+            var color = ColorManager.FromHex(hex);
+            return $"{color.R},{color.G},{color.B}";
+        }
+
         public static string ColorRgba(string hex, double alpha)
         {
             var color = ColorManager.FromHex(hex);
@@ -70,16 +76,19 @@ namespace MudBlazor
             theme.AppendLine($"--{Palette}-white: {Theme.Palette.White};");
 
             theme.AppendLine($"--{Palette}-primary: {Theme.Palette.Primary};");
+            theme.AppendLine($"--{Palette}-primary-rgb: {ColorRgbElements(Theme.Palette.Primary)};");
             theme.AppendLine($"--{Palette}-primary-text: {Theme.Palette.PrimaryContrastText};");
             theme.AppendLine($"--{Palette}-primary-darken: {ColorRgbDarken(Theme.Palette.Primary)};");
             theme.AppendLine($"--{Palette}-primary-lighten: {ColorRgbLighten(Theme.Palette.Primary)};");
             theme.AppendLine($"--{Palette}-primary-hover: {ColorRgba(Theme.Palette.Primary, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-secondary: {Theme.Palette.Secondary};");
+            theme.AppendLine($"--{Palette}-secondary-rgb: {ColorRgbElements(Theme.Palette.Secondary)};");
             theme.AppendLine($"--{Palette}-secondary-text: {Theme.Palette.SecondaryContrastText};");
             theme.AppendLine($"--{Palette}-secondary-darken: {ColorRgbDarken(Theme.Palette.Secondary)};");
             theme.AppendLine($"--{Palette}-secondary-lighten: {ColorRgbLighten(Theme.Palette.Secondary)};");
             theme.AppendLine($"--{Palette}-secondary-hover: {ColorRgba(Theme.Palette.Secondary, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-tertiary: {Theme.Palette.Tertiary};");
+            theme.AppendLine($"--{Palette}-tertiary-rgb: {ColorRgbElements(Theme.Palette.Tertiary)};");
             theme.AppendLine($"--{Palette}-tertiary-text: {Theme.Palette.TertiaryContrastText};");
             theme.AppendLine($"--{Palette}-tertiary-darken: {ColorRgbDarken(Theme.Palette.Tertiary)};");
             theme.AppendLine($"--{Palette}-tertiary-lighten: {ColorRgbLighten(Theme.Palette.Tertiary)};");

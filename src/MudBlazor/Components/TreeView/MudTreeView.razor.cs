@@ -14,6 +14,7 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-treeview")
+          .AddClass("mud-treeview-dense", Dense)
           .AddClass("mud-treeview-canhover", CanHover)
           .AddClass("mud-treeview-canactivate", CanActivate)
           .AddClass("mud-treeview-expand-on-click", ExpandOnClick)
@@ -37,6 +38,9 @@ namespace MudBlazor
 
         [Parameter]
         public bool CanHover { get; set; }
+
+        [Parameter]
+        public bool Dense { get; set; }
 
         /// <summary>
         /// Setting a height will allow to scroll the treeview. If not set, it will try to grow in height. 

@@ -4,7 +4,7 @@ using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -32,7 +32,7 @@ namespace MudBlazor
             .AddStyle(Style)
             .Build();
 
-        [Inject] public IJSRuntime JS { get; set; }
+        [Inject] public IScrollManager ScrollManager { get; set; }
 
         /// <summary>
         /// Child content of the component.
@@ -139,13 +139,13 @@ namespace MudBlazor
         //locks the scroll attaching a CSS class to the specified element, in this case the body
         void BlockScroll()
         {
-            JS.InvokeVoidAsync("scrollHelpers.lockScroll", "body", LockScrollClass);
+            ScrollManager.LockScrollAsync("body", LockScrollClass);
         }
 
         //removes the CSS class that prevented scrolling
         void UnblockScroll()
         {
-            JS.InvokeVoidAsync("scrollHelpers.unlockScroll", "body", LockScrollClass);
+            ScrollManager.UnlockScrollAsync("body", LockScrollClass);
         }
 
         //When disposing the overlay, remove the class that prevented scrolling
