@@ -10,8 +10,10 @@ namespace MudBlazor
 {
     public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
     {
-        protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?> { Format = "yyyy-MM-dd", Culture = CultureInfo.CurrentCulture })
-        { }
+        protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>{
+            Format = "yyyy-MM-dd",
+            Culture = CultureInfo.CurrentCulture
+        }) { }
 
         [Inject] protected IScrollManager ScrollManager { get; set; }
 
@@ -42,8 +44,9 @@ namespace MudBlazor
             }
             set
             {
-                if (Converter is DefaultConverter<DateTime?> converter)
-                    converter.Format = value;
+                var defaultConverter = Converter as DefaultConverter<DateTime?>;
+                if (defaultConverter!=null)
+                    defaultConverter.Format = value;
             }
         }
 
