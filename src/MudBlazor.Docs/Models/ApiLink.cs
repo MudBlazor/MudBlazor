@@ -61,17 +61,6 @@ namespace MudBlazor.Docs.Models
         private static Dictionary<Type, string> s_specialCaseComponents =
             new Dictionary<Type, string>()
             {
-                [typeof(MudTable<T>)] = "table",
-                [typeof(MudTextField<T>)] = "textfield",
-                [typeof(MudNumericField<T>)] = "numericfield",
-                [typeof(MudSelect<T>)] = "select",
-                [typeof(MudInput<T>)] = "input",
-                [typeof(MudAutocomplete<T>)] = "autocomplete",
-                [typeof(MudSlider<T>)] = "slider",
-                [typeof(MudCheckBox<T>)] = "checkbox",
-                [typeof(MudRadio<T>)] = "radio",
-                [typeof(MudSwitch<T>)] = "switch",
-                [typeof(MudTreeView<T>)] = "treeview",
                 [typeof(MudFab)] = "buttonfab",
                 [typeof(MudIcon)] = "icons",
                 [typeof(MudProgressCircular)] = "progress",
