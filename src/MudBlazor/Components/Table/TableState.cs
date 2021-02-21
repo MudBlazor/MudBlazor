@@ -19,6 +19,7 @@ namespace MudBlazor
         public int Page { get; set; }
 
         public int PageSize { get; set; }
+        public string SortLabel { get; set; }
 
         public Func<T, object> SortBy { get; set; } = null;
 

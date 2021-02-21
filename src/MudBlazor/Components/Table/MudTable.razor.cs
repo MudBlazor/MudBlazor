@@ -309,6 +309,7 @@ namespace MudBlazor
                 {
                     Page = CurrentPage,
                     PageSize = RowsPerPage,
+                    SortLabel = label?.SortLabel,
                     SortDirection = Context.SortDirection,
                     SortBy = label?.SortBy
                 };
