@@ -184,7 +184,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the maxheight the select can have when open.
         /// </summary>
-        [Parameter] public int? MaxHeight { get; set; }
+        [Parameter] public int MaxHeight { get; set; } = 300;
 
         /// <summary>
         /// Sets the direction the select menu should be.
@@ -277,10 +277,6 @@ namespace MudBlazor
         {
             base.OnInitialized();
             UpdateIcon();
-            if (MultiSelection && MaxHeight == null)
-            {
-                MaxHeight = 300;
-            }
         }
 
         public void CheckGenericTypeMatch(object select_item)

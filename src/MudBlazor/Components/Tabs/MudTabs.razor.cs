@@ -80,8 +80,6 @@ namespace MudBlazor
             .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
         .Build();
 
-        [Inject] public IDomService DomService { get; set; }
-
         /// <summary>
         /// If true, render all tabs and hide (display:none) every non-active.
         /// </summary>
@@ -313,9 +311,9 @@ namespace MudBlazor
             if(ActivePanel != null)
             {
                 if (Position == Position.Top || Position == Position.Bottom)
-                    _size = (await DomService.GetBoundingClientRect(ActivePanel.PanelRef))?.Width ?? 0;
+                    _size = (await ActivePanel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
                 else
-                    _size = (await DomService.GetBoundingClientRect(ActivePanel.PanelRef))?.Height ?? 0;
+                    _size = (await ActivePanel.PanelRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
 
                 _position = 0;
 
@@ -326,9 +324,9 @@ namespace MudBlazor
                     foreach (var panel in Panels) if (counter < ActivePanelIndex)
                     {
                         if (Position == Position.Top || Position == Position.Bottom)
-                            position += (await DomService.GetBoundingClientRect(panel.PanelRef))?.Width ?? 0;
+                            position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
                         else
-                            position += (await DomService.GetBoundingClientRect(panel.PanelRef))?.Height ?? 0;
+                            position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
                         counter++;
                     }
                     _position = position;
@@ -340,9 +338,9 @@ namespace MudBlazor
         private async Task GetToolbarContentSize()
         {
             if (Position == Position.Top || Position == Position.Bottom)
-                _toolbarContentSize = (await DomService.GetBoundingClientRect(TabsContentSize))?.Width ?? 0;
+                _toolbarContentSize = (await TabsContentSize.MudGetBoundingClientRectAsync())?.Width ?? 0;
             else
-                _toolbarContentSize = (await DomService.GetBoundingClientRect(TabsContentSize))?.Height ?? 0;
+                _toolbarContentSize = (await TabsContentSize.MudGetBoundingClientRectAsync())?.Height ?? 0;
         }
 
         private async Task GetAllTabsSize()
@@ -352,9 +350,9 @@ namespace MudBlazor
             foreach (var panel in Panels)
             {
                 if (Position == Position.Top || Position == Position.Bottom)
-                    totalTabsSize += (await DomService.GetBoundingClientRect(panel.PanelRef))?.Width ?? 0;
+                    totalTabsSize += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
                 else
-                    totalTabsSize += (await DomService.GetBoundingClientRect(panel.PanelRef))?.Height ?? 0;
+                    totalTabsSize += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
             }
 
             _allTabsSize = totalTabsSize;

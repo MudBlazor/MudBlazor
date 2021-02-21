@@ -68,7 +68,36 @@ namespace MudBlazor.Docs.Shared
             NavigationManager.NavigateTo(entry.Link);
         }
 
+        private void OnSwipe(SwipeDirection direction)
+        {
+            if (direction == SwipeDirection.LeftToRight && !_drawerOpen)
+            {
+                _drawerOpen = true;
+                StateHasChanged();
+            }
+            else if (direction == SwipeDirection.RightToLeft && _drawerOpen)
+            {
+                _drawerOpen = false;
+                StateHasChanged();
+            }
+        }
+
         #region Theme        
+
+        private void SwitchToServer()
+        {
+            NavigationManager.NavigateTo(NavigationManager.Uri.Replace("wasm/", string.Empty), forceLoad: true);
+        }
+
+        private void SwitchToWasm()
+        {
+            NavigationManager.NavigateTo(NavigationManager.Uri.Replace(
+                NavigationManager.BaseUri,
+                NavigationManager.BaseUri + "wasm/" + NavigationManager.ToBaseRelativePath(NavigationManager.BaseUri))
+                , forceLoad: true);
+        }
+
+        private bool Wasm => NavigationManager.Uri.Contains("wasm");
 
         private void DarkMode()
         {

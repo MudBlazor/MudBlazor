@@ -100,13 +100,12 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds Dom manipulation service as a Scoped instance.
+        /// Adds JsApi as a transient instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
-        /// <returns>Continues the IServiceCollection chain.</returns>
-        public static IServiceCollection AddMudBlazorDom(this IServiceCollection services)
+        public static IServiceCollection AddMudBlazorJsApi(this IServiceCollection services)
         {
-            services.TryAddScoped<IDomService, DomService>();
+            services.TryAddTransient<IJsApiService, JsApiService>();
             return services;
         }
 
@@ -126,7 +125,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeListener(configuration.ResizeOptions)
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
-                .AddMudBlazorDom();
+                .AddMudBlazorJsApi();
         }
 
         /// <summary>
@@ -147,7 +146,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeListener(options.ResizeOptions)
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
-                .AddMudBlazorDom();
+                .AddMudBlazorJsApi();
         }
     }
 }

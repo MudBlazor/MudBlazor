@@ -31,6 +31,10 @@
         &.mud-drawer-responsive.mud-drawer-#{$breakpoint} {
             @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
                 z-index: calc(var(--mud-zindex-dialog) + 1);
+
+                &.mud-drawer--initial {
+                    display: none !important;
+                }
             }
         }
     }
@@ -237,9 +241,11 @@
     }
 
     @each $breakpoint in map-keys($breakpoints) {
-        &.mud-drawer-responsive.mud-drawer-clipped-docked.mud-drawer-#{$breakpoint} {
-            top: calc(var(--mud-appbar-min-height) - 16px);
-            height: calc(100% - var(--mud-appbar-min-height) + 16px);
+        @media (min-width: map-get($breakpoints, $breakpoint)) {
+            &.mud-drawer-responsive.mud-drawer-clipped-docked.mud-drawer-#{$breakpoint} {
+                top: calc(var(--mud-appbar-min-height) - 16px);
+                height: calc(100% - var(--mud-appbar-min-height) + 16px);
+            }
         }
     }
 }

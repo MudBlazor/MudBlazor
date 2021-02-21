@@ -11,6 +11,7 @@ namespace MudBlazor
           .AddClass($"mud-button-{Variant.ToDescriptionString()}")
           .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
           .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}")
+          .AddClass($"mud-width-full", FullWidth)
           .AddClass($"mud-ripple", !DisableRipple)
           .AddClass($"mud-button-disable-elevation", DisableElevation)
           .AddClass(Class)
@@ -64,19 +65,9 @@ namespace MudBlazor
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        /// If true, the button will be disabled.
+        /// If true, the button will take up 100% of available width.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
-
-        /// <summary>
-        /// If true, no drop-shadow will be used.
-        /// </summary>
-        [Parameter] public bool DisableElevation { get; set; }
-
-        /// <summary>
-        /// If true, disables ripple effect.
-        /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
+        [Parameter] public bool FullWidth { get; set; }
 
         /// <summary>
         /// Child content of component.

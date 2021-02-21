@@ -1,0 +1,41 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudMenu FullWidth="true" ActivationEvent="@MouseEvent.LeftClick">
+    <ActivatorContent>
+        <MudChip Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Left click</MudChip>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem>Profile</MudMenuItem>
+        <MudMenuItem>Theme</MudMenuItem>
+        <MudMenuItem>Usage</MudMenuItem>
+        <MudMenuItem>Sign Out</MudMenuItem>
+    </ChildContent>
+</MudMenu>
+
+<MudMenu ActivationEvent="@MouseEvent.RightClick">
+    <ActivatorContent>
+        <MudChip Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Right click</MudChip>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem>Profile</MudMenuItem>
+        <MudMenuItem>Theme</MudMenuItem>
+        <MudMenuItem>Usage</MudMenuItem>
+        <MudMenuItem>Sign Out</MudMenuItem>
+    </ChildContent>
+</MudMenu>
+
+<MudMenu FullWidth="true" ActivationEvent="@MouseEvent.MouseOver">
+    <ActivatorContent>
+        <MudChip Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Mouse over</MudChip>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem>Profile</MudMenuItem>
+        <MudMenuItem>Theme</MudMenuItem>
+        <MudMenuItem>Usage</MudMenuItem>
+        <MudMenuItem>Sign Out</MudMenuItem>
+    </ChildContent>
+</MudMenu>
+
+
+

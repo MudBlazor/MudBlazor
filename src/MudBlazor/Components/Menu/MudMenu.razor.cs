@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
@@ -64,21 +64,6 @@ namespace MudBlazor
         [Parameter] public bool Dense { get; set; }
 
         /// <summary>
-        /// If true, no drop-shadow will be used.
-        /// </summary>
-        [Parameter] public bool DisableElevation { get; set; }
-
-        /// <summary>
-        /// If true, the button will be disabled.
-        /// </summary>
-        [Parameter] public bool Disabled { get; set; }
-
-        /// <summary>
-        /// If true, disables ripple effect.
-        /// </summary>
-        [Parameter] public bool DisableRipple { get; set; }
-
-        /// <summary>
         /// If true, the list menu will be same width as the parent.
         /// </summary>
         [Parameter] public bool FullWidth { get; set; }
@@ -99,6 +84,11 @@ namespace MudBlazor
         /// override the standard button and all parameters which concern it.
         /// </summary>
         [Parameter] public RenderFragment ActivatorContent { get; set; }
+
+        /// <summary>
+        /// Specify the activation event when ActivatorContent is set
+        /// </summary>
+        [Parameter] public MouseEvent ActivationEvent { get; set; } = MouseEvent.LeftClick;
 
         /// <summary>
         /// Sets the direction the select menu will start from relative to its parent.
@@ -133,7 +123,7 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            PopoverStyle = PositionAtCurser ? $"position:fixed; left:{args.ClientX}px; top:{args.ClientY}px;" : null;
+            PopoverStyle = PositionAtCurser ? $"position:fixed; left:{args?.ClientX}px; top:{args?.ClientY}px;" : null;
             _isOpen = true;
             StateHasChanged();
         }
@@ -142,6 +132,16 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
+
+            if (ActivationEvent == MouseEvent.MouseOver && !_isOpen)
+                return;
+
+            if (ActivationEvent == MouseEvent.LeftClick && args.Button != 0 && !_isOpen)
+                return;
+
+            if (ActivationEvent == MouseEvent.RightClick && args.Button != 2 && !_isOpen)
+                return;
+
             if (_isOpen)
                 CloseMenu();
             else
@@ -156,6 +156,22 @@ namespace MudBlazor
         public void Activate(object activator, MouseEventArgs args)
         {
             ToggleMenu(args);
+        }
+
+        public void OnMouseOver(MouseEventArgs args)
+        {
+            if (ActivationEvent == MouseEvent.MouseOver && ActivatorContent != null && !_isOpen)
+            {
+                OpenMenu(args);
+            }
+        }
+
+        public void OnMouseOut(EventArgs args)
+        {
+            if (ActivationEvent == MouseEvent.MouseOver && ActivatorContent != null && _isOpen)
+            {
+                CloseMenu();
+            }
         }
     }
 }

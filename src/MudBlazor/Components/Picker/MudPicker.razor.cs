@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -26,8 +27,6 @@ namespace MudBlazor
 
         public MudPicker() : base(new Converter<T, string>()) { }
         protected MudPicker(Converter<T, string> converter) : base(converter) {}
-
-        [Inject] private IDomService DomService { get; set; }
 
         [Inject] private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
 
@@ -260,6 +259,8 @@ namespace MudBlazor
 
         protected void ToggleState()
         {
+            if (Disabled)
+                return;
             if (IsOpen)
             {
                 IsOpen = false;
@@ -279,7 +280,7 @@ namespace MudBlazor
             if (PickerVariant == PickerVariant.Inline)
             {
                 await DeterminePosition();
-                await DomService.ChangeCss(_pickerInlineRef, PickerInlineClass);
+                await _pickerInlineRef.MudChangeCssAsync(PickerInlineClass);
             }
         }
 
@@ -301,13 +302,13 @@ namespace MudBlazor
 
         private async Task DeterminePosition()
         {
-            if (WindowSizeListener == null || DomService == null)
+            if (WindowSizeListener == null)
             {
                 _pickerVerticalPosition = PickerVerticalPosition.Below;
                 return;
             }
             var size = await WindowSizeListener.GetBrowserWindowSize();
-            var clientRect = await DomService.GetBoundingClientRect(_pickerInlineRef);
+            var clientRect = await _pickerInlineRef.MudGetBoundingClientRectAsync();
             if (size == null || clientRect == null)
             {
                 _pickerVerticalPosition = PickerVerticalPosition.Below;
