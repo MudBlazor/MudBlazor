@@ -10,10 +10,12 @@ namespace MudBlazor
 {
     public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
     {
-        protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>{
+        protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
+        {
             Format = "yyyy-MM-dd",
             Culture = CultureInfo.CurrentCulture
-        }) { }
+        })
+        { }
 
         [Inject] protected IScrollManager ScrollManager { get; set; }
 
@@ -323,9 +325,9 @@ namespace MudBlazor
         {
             var current = GetMonthStart(0);
             var calendarYear = Culture.Calendar.GetYear(current);
-            var firstOfCalendarYear = Culture.Calendar.ToDateTime(calendarYear, 1, 1,0,0,0,0);
+            var firstOfCalendarYear = Culture.Calendar.ToDateTime(calendarYear, 1, 1, 0, 0, 0, 0);
             for (var i = 0; i < Culture.Calendar.GetMonthsInYear(calendarYear); i++)
-                yield return Culture.Calendar.AddMonths(firstOfCalendarYear,i);
+                yield return Culture.Calendar.AddMonths(firstOfCalendarYear, i);
         }
 
         private string GetAbbreviatedMontName(in DateTime month)

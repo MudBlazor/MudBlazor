@@ -28,11 +28,6 @@ namespace MudBlazor
             SnackBarList = new List<Snackbar>();
         }
 
-        public void Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null)
-        {
-            AddNew(severity, message, configure);
-        }
-
         public IEnumerable<Snackbar> ShownSnackbars
         {
             get
@@ -49,9 +44,15 @@ namespace MudBlazor
             }
         }
 
-        public void AddNew(Severity severity, string message, Action<SnackbarOptions> configure)
+        [Obsolete]
+        public Snackbar AddNew(Severity severity, string message, Action<SnackbarOptions> configure)
         {
-            if (message.IsEmpty()) return;
+            return Add(message, severity, configure);
+        }
+
+        public Snackbar Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null)
+        {
+            if (message.IsEmpty()) return null;
 
             message = message.Trimmed();
 
@@ -63,7 +64,7 @@ namespace MudBlazor
             SnackBarLock.EnterWriteLock();
             try
             {
-                if (Configuration.PreventDuplicates && SnackbarAlreadyPresent(snackbar)) return;
+                if (Configuration.PreventDuplicates && SnackbarAlreadyPresent(snackbar)) return null;
                 snackbar.OnClose += Remove;
                 SnackBarList.Add(snackbar);
             }
@@ -73,6 +74,8 @@ namespace MudBlazor
             }
 
             OnSnackbarsUpdated?.Invoke();
+
+            return snackbar;
         }
 
         public void Clear()

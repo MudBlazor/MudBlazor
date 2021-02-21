@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using MudBlazor.Utilities;
 using MudBlazor.Services;
-using System.Globalization;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -249,7 +249,7 @@ namespace MudBlazor
             {
                 ActivePanel = panel;
                 ActivePanelIndex = Panels.IndexOf(panel);
-                if(!HideSlider)
+                if (!HideSlider)
                     _ = UpdateSlider();
                 if (ev != null)
                     ActivePanel.OnClick.InvokeAsync(ev);
@@ -294,10 +294,10 @@ namespace MudBlazor
                 await GetToolbarContentSize();
                 await GetAllTabsSize();
 
-                if(_allTabsSize > _toolbarContentSize)
+                if (_allTabsSize > _toolbarContentSize)
                 {
                     _showScrollButtons = true;
-                    if(_scrollPosition == 0)
+                    if (_scrollPosition == 0)
                     {
                         _prevButtonDisabled = true;
                     }
@@ -308,7 +308,7 @@ namespace MudBlazor
 
         private async Task UpdateSlider()
         {
-            if(ActivePanel != null)
+            if (ActivePanel != null)
             {
                 if (Position == Position.Top || Position == Position.Bottom)
                     _size = (await ActivePanel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
@@ -322,13 +322,13 @@ namespace MudBlazor
                     double position = 0;
                     var counter = 0;
                     foreach (var panel in Panels) if (counter < ActivePanelIndex)
-                    {
-                        if (Position == Position.Top || Position == Position.Bottom)
-                            position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
-                        else
-                            position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
-                        counter++;
-                    }
+                        {
+                            if (Position == Position.Top || Position == Position.Bottom)
+                                position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
+                            else
+                                position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
+                            counter++;
+                        }
                     _position = position;
                 }
                 StateHasChanged();
@@ -362,7 +362,7 @@ namespace MudBlazor
         {
             _nextButtonDisabled = false;
             _scrollValue += _toolbarContentSize;
-            if(_scrollValue >= 0)
+            if (_scrollValue >= 0)
             {
                 _scrollPosition = 0;
                 _prevButtonDisabled = true;

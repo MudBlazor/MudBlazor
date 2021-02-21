@@ -187,7 +187,7 @@ namespace MudBlazor.UnitTests
             {
                 var result = Validate(arg);
                 if (result.IsValid)
-                    return new string[0];
+                    return Array.Empty<string>();
                 return result.Errors.Select(e => e.ErrorMessage);
             }
 
@@ -337,7 +337,7 @@ namespace MudBlazor.UnitTests
             comp.Find("input").Blur();
             textfield.Text.Should().Be("A");
             textfield.Value.Should().Be("A");
-            comp.SetParam(x=>x.Lines, 2);
+            comp.SetParam(x => x.Lines, 2);
             comp.Find("textarea").Change("B\nC");
             comp.Find("textarea").Blur();
             textfield.Text.Should().Be("B\nC");
@@ -352,7 +352,7 @@ namespace MudBlazor.UnitTests
         [Test]
         public async Task MultiLineTextField_ShouldBe_TwoWayBindable()
         {
-            var comp=ctx.RenderComponent<MultilineTextfieldBindingTest>();
+            var comp = ctx.RenderComponent<MultilineTextfieldBindingTest>();
             // print the generated html
             Console.WriteLine(comp.Markup);
             var tf1 = comp.FindComponents<MudTextField<string>>()[0].Instance;
