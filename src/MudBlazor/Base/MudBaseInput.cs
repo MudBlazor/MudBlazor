@@ -146,15 +146,15 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
-        protected virtual void InvokeKeyDown(KeyboardEventArgs obj) => OnKeyDown.InvokeAsync(obj).AndForget();
+        protected virtual void onKeyDown(KeyboardEventArgs obj) => OnKeyDown.InvokeAsync(obj).AndForget();
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
-        protected virtual void InvokeKeyPress(KeyboardEventArgs obj) => OnKeyPress.InvokeAsync(obj).AndForget();
+        protected virtual void onKeyPress(KeyboardEventArgs obj) => OnKeyPress.InvokeAsync(obj).AndForget();
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
-        protected virtual void InvokeKeyUp(KeyboardEventArgs obj) => OnKeyUp.InvokeAsync(obj).AndForget();
+        protected virtual void onKeyUp(KeyboardEventArgs obj) => OnKeyUp.InvokeAsync(obj).AndForget();
 
         /// <summary>
         /// Fired when the Value property changes. 

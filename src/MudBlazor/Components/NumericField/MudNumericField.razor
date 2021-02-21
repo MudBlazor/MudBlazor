@@ -13,11 +13,11 @@
 			Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" Adornment="@Adornment"
 			AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
 			OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
-			OnBlur="@OnBlurred" OnKeyDown="@InvokeKeyDown" OnKeyPress="@InvokeKeyPress" OnKeyUp="@InvokeKeyUp" Validation="_validateInstance"
+			OnBlur="@OnBlurred" OnKeyDown="@onKeyDown" OnKeyPress="@onKeyPress" OnKeyUp="@onKeyUp"
+			OnIncrement="Increment" OnDecrement="Decrement" HideSpinButtons="@HideSpinButtons" Validation="_validateInstance"
 			min="@(minHasValue ? FormatParam(_min) : null)"
 			max="@(maxHasValue ? FormatParam(_max): null)"
-			step="@(stepHasValue ? FormatParam(_step) : null)"
-			OnIncrement="Increment" OnDecrement="Decrement" HideSpinButtons="@HideSpinButtons"/>
+			step="@(stepHasValue ? FormatParam(_step) : null)" />
 		</InputContent>
 	</MudInputControl>
 </CascadingValue>

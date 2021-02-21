@@ -130,7 +130,7 @@ namespace MudBlazor
             await SetValueAsync(value);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
-            await SetTextAsync(GetItemString(value), false);
+            await SetTextAsync( GetItemString(value), false);
             _timer?.Dispose();
             IsOpen = false;
             UpdateIcon();
@@ -193,7 +193,7 @@ namespace MudBlazor
             _timer?.Dispose();
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
-            if (DebounceInterval <= 0)
+            if (DebounceInterval<=0)
                 OnSearch();
             else
                 _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
@@ -210,10 +210,10 @@ namespace MudBlazor
                 return;
             }
             _selectedListItemIndex = 0;
-            IEnumerable<T> searched_items = Array.Empty<T>();
+            IEnumerable<T> searched_items = new T[0];
             try
             {
-                searched_items = (await SearchFunc(Text)) ?? Array.Empty<T>();
+                searched_items = (await SearchFunc(Text)) ?? new T[0];
             }
             catch (Exception e)
             {
@@ -223,7 +223,7 @@ namespace MudBlazor
                 searched_items = searched_items.Take(MaxItems.Value);
             _items = searched_items.ToArray();
 
-            if (_items?.Length == 0)
+            if (_items?.Count() == 0)
             {
                 IsOpen = false;
                 UpdateIcon();
@@ -262,7 +262,7 @@ namespace MudBlazor
                     await SelectNextItem(-1);
                     break;
             }
-            base.InvokeKeyDown(args);
+            base.onKeyDown(args);
         }
 
         private async Task SelectNextItem(int increment)
@@ -374,7 +374,7 @@ namespace MudBlazor
         {
             if (text == null)
                 return;
-            _ = SetTextAsync(text, true);
+           _= SetTextAsync( text, true);
 
         }
     }

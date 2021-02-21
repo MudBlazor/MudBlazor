@@ -77,13 +77,13 @@ namespace MudBlazor
         /// Returns the class that will get joined with RowClass. Takes the current item and row index.
         /// </summary>
         [Parameter]
-        public Func<T, int, string> RowClassFunc { get; set; }
+        public Func<T, int, string> RowClassFunc {get;set;}
 
         /// <summary>
         /// Returns the style that will get joined with RowStyle. Takes the current item and row index.
         /// </summary>
         [Parameter]
-        public Func<T, int, string> RowStyleFunc { get; set; }
+        public Func<T, int, string> RowStyleFunc {get;set;}
 
         /// <summary>
         /// Returns the item which was last clicked on in single selection mode (that is, if MultiSelection is false)
@@ -117,7 +117,7 @@ namespace MudBlazor
             {
                 if (!MultiSelection)
                     if (_selectedItem is null)
-                        return new HashSet<T>(Array.Empty<T>());
+                        return new HashSet<T>(new T[] { });
                     else
                         return new HashSet<T>(new T[] { _selectedItem });
                 else
@@ -182,7 +182,7 @@ namespace MudBlazor
         protected IEnumerable<T> GetItemsOfPage(int n, int pageSize)
         {
             if (n < 0 || pageSize <= 0)
-                return Array.Empty<T>();
+                return new T[0];
 
             if (ServerData != null)
                 return _server_data.Items;
@@ -274,7 +274,7 @@ namespace MudBlazor
         internal override bool HasServerData => ServerData != null;
 
 
-        TableData<T> _server_data = new TableData<T>() { TotalItems = 0, Items = Array.Empty<T>() };
+        TableData<T> _server_data = new TableData<T>() { TotalItems = 0, Items = new T[0] };
         private IEnumerable<T> _items;
 
         internal override async Task InvokeServerLoadFunc()
