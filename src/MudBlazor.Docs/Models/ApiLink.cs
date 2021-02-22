@@ -65,6 +65,7 @@ namespace MudBlazor.Docs.Models
                 [typeof(MudIcon)] = "icons",
                 [typeof(MudProgressCircular)] = "progress",
                 [typeof(MudText)] = "typography",
+                [typeof(MudSnackbarProvider)] = "snackbar",
             };
 
         // this is the inversion of above lookup
