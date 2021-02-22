@@ -28,14 +28,14 @@
             <SectionContent Outlined="true">
                 <DialogUsageExample />
             </SectionContent>
-            <MudGrid>
-                <MudItem xs="12" sm="6">
-                    <SectionSource Title="Page.razor" HideButtons="true" Code="DialogUsageExample" GitHubFolderName="Dialog" />
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <SectionSource Title="DialogUsageExample_Dialog.razor" HideButtons="true" Code="DialogUsageExample_Dialog" GitHubFolderName="Dialog" />
-                </MudItem>
-            </MudGrid>
+            <MudTabs Rounded="true" Outlined="true" Class="mt-4">
+                <MudTabPanel Text="Page.razor" >
+                    <SectionSource Code="DialogUsageExample" GitHubFolderName="Dialog" Class="mt-n11" />
+                </MudTabPanel>
+                <MudTabPanel Text="Dialog.razor" >
+                    <SectionSource Code="DialogUsageExample_Dialog" GitHubFolderName="Dialog" Class="mt-n11" />
+                </MudTabPanel>
+            </MudTabs>
         </DocsPageSection>
         <DocsPageSection>
             <MudDivider Class="my-16" Style="opacity: 0;" />
@@ -62,7 +62,14 @@
             <SectionContent Outlined="true">
                 <DialogOptionsExample />
             </SectionContent>
-            <SectionSource Code="DialogOptionsExample" GitHubFolderName="Dialog" ShowCode="false" />
+            <MudTabs Rounded="true" Outlined="true" Class="mt-4">
+                <MudTabPanel Text="Page.razor" >
+                    <SectionSource Code="DialogOptionsExample" GitHubFolderName="Dialog" Class="mt-n11" />
+                </MudTabPanel>
+                <MudTabPanel Text="Dialog.razor" >
+                    <SectionSource Code="DialogUsageExample_Dialog" GitHubFolderName="Dialog" Class="mt-n11" />
+                </MudTabPanel>
+            </MudTabs>
             <SectionHeader>
                 <SubTitle>3. Per Dialog (from dialog)</SubTitle>
                 <Description>
@@ -73,12 +80,11 @@
                 <DialogSetOptionsExample />
             </SectionContent>
             <MudTabs Rounded="true" Outlined="true" Class="mt-4">
-                <MudTabPanel Text="Hide Source" />
-                <MudTabPanel Text="Page.razor">
-                    <SectionSource Code="DialogSetOptionsExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                <MudTabPanel Text="Page.razor" >
+                    <SectionSource Code="DialogSetOptionsExample" GitHubFolderName="Dialog" Class="mt-n11" />
                 </MudTabPanel>
-                <MudTabPanel Text="Dialog.razor">
-                    <SectionSource Code="DialogSetOptionsExample_Dialog" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                <MudTabPanel Text="Dialog.razor" >
+                    <SectionSource Code="DialogSetOptionsExample_Dialog" GitHubFolderName="Dialog" Class="mt-n11" />
                 </MudTabPanel>
             </MudTabs>
         </DocsPageSection>
@@ -92,12 +98,11 @@
                 <DialogTemplateExample />
             </SectionContent>
             <MudTabs Rounded="true" Outlined="true" Class="mt-4">
-                <MudTabPanel Text="Hide Source" />
-                <MudTabPanel Text="Page.razor">
-                    <SectionSource Code="DialogTemplateExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                <MudTabPanel Text="Page.razor" >
+                    <SectionSource Code="DialogTemplateExample" GitHubFolderName="Dialog" Class="mt-n11" />
                 </MudTabPanel>
-                <MudTabPanel Text="Dialog.razor">
-                    <SectionSource Code="DialogTemplateExample_Dialog" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                <MudTabPanel Text="Dialog.razor" >
+                    <SectionSource Code="DialogTemplateExample_Dialog" GitHubFolderName="Dialog" Class="mt-n11" />
                 </MudTabPanel>
             </MudTabs>
         </DocsPageSection>
@@ -111,12 +116,11 @@
                 <DialogPassingDataExample />
             </SectionContent>
             <MudTabs Rounded="true" Outlined="true" Class="mt-4">
-                <MudTabPanel Text="Hide Source" />
-                <MudTabPanel Text="Page.razor">
-                    <SectionSource Code="DialogPassingDataExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                <MudTabPanel Text="Page.razor" >
+                    <SectionSource Code="DialogPassingDataExample" GitHubFolderName="Dialog" Class="mt-n11" />
                 </MudTabPanel>
-                <MudTabPanel Text="Dialog.razor">
-                    <SectionSource Code="DialogPassingDataExample_Dialog" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                <MudTabPanel Text="Dialog.razor" >
+                    <SectionSource Code="DialogPassingDataExample_Dialog" GitHubFolderName="Dialog" Class="mt-n11" />
                 </MudTabPanel>
             </MudTabs>
         </DocsPageSection>
@@ -130,12 +134,11 @@
                 <DialogScrollableExample />
             </SectionContent>
             <MudTabs Rounded="true" Outlined="true" Class="mt-4">
-                <MudTabPanel Text="Hide Source" />
-                <MudTabPanel Text="Page.razor">
-                    <SectionSource Code="DialogScrollableExample" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                <MudTabPanel Text="Page.razor" >
+                    <SectionSource Code="DialogScrollableExample" GitHubFolderName="Dialog" Class="mt-n11" />
                 </MudTabPanel>
-                <MudTabPanel Text="Dialog.razor">
-                    <SectionSource Code="DialogScrollableExample_Dialog" GitHubFolderName="Dialog" NoToolbar="true" Class="mt-8" />
+                <MudTabPanel Text="Dialog.razor" >
+                    <SectionSource Code="DialogScrollableExample_Dialog" GitHubFolderName="Dialog" Class="mt-n11" />
                 </MudTabPanel>
             </MudTabs>
         </DocsPageSection>
@@ -153,7 +156,7 @@
             <SectionContent Outlined="true">
                 <DialogInlineExample />
             </SectionContent>
-            <SectionSource Code="DialogInlineExample" GitHubFolderName="Dialog" />
+            <SectionSource Code="DialogInlineExample" GitHubFolderName="Dialog" Class="mt-8" />
         </DocsPageSection>
 
     </DocsPageContent>

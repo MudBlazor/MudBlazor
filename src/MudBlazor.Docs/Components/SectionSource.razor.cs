@@ -4,11 +4,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Extensions;
-using MudBlazor.Services;
-using MudBlazor.Extensions;
 
 namespace MudBlazor.Docs.Components
 {
@@ -16,7 +13,7 @@ namespace MudBlazor.Docs.Components
     {
         [Inject]
         protected IJsApiService JsApiService { get; set; }
-        
+
         [Parameter] public string Title { get; set; }
 
         [Parameter] public string Code { get; set; }
@@ -27,18 +24,16 @@ namespace MudBlazor.Docs.Components
 
         [Parameter] public bool ShowCode { get; set; } = true;
 
-        [Parameter] public bool HideButtons { get; set; }
-
         [Parameter] public bool NoToolbar { get; set; }
+
+        private bool HideEditOnTryMudBlazor => Code.EndsWith("_Dialog");
 
         private string GitHubSourceCode { get; set; }
 
         public string TooltipSourceCodeText { get; set; }
 
-        private string showCodeExampleString { get; set; } = "Show code example";
-        private string hideCodeExampleString { get; set; } = "Hide code example";
-        private string showComponentCodeExampleString { get; set; } = "Show component code example";
-        private string hideComponentCodeExampleString { get; set; } = "Hide component code example";
+        private string ShowCodeExampleString { get; set; } = "Show code example";
+        private string HideCodeExampleString { get; set; } = "Hide code example";
 
         private async Task CopyTextToClipboard()
         {
@@ -52,16 +47,14 @@ namespace MudBlazor.Docs.Components
                 ShowCode = !ShowCode;
                 if (ShowCode)
                 {
-                    TooltipSourceCodeText = hideCodeExampleString;
+                    TooltipSourceCodeText = HideCodeExampleString;
                 }
                 else
                 {
-                    TooltipSourceCodeText = showCodeExampleString;
+                    TooltipSourceCodeText = ShowCodeExampleString;
                 }
             }
         }
-
-        private Type CodeType => Type.GetType("MudBlazor.Docs.Examples.Markup." + Code + "Code");
 
         RenderFragment CodeComponent() => builder =>
         {
@@ -97,11 +90,20 @@ namespace MudBlazor.Docs.Components
                 }
             }
 
-            // Add Element.cs model for webapi periodic table
-            if (codeFiles.Contains("webapi/periodictable", StringComparison.InvariantCultureIgnoreCase))
+            // Data models
+            if (codeFiles.Contains("MudBlazor.Examples.Data.Models"))
             {
-                var elementCodeFile = "Element.cs" + (char)31 + Snippets.GetCode("Element");
-                codeFiles = codeFiles + (char)31 + elementCodeFile;
+                if (Regex.Match(codeFiles, @"\bElement\b").Success)
+                {
+                    var elementCodeFile = "Element.cs" + (char)31 + Snippets.GetCode("Element");
+                    codeFiles = codeFiles + (char)31 + elementCodeFile;
+                }
+
+                if (Regex.Match(codeFiles, @"\bServer\b").Success)
+                {
+                    var serverCodeFile = "Server.cs" + (char)31 + Snippets.GetCode("Server");
+                    codeFiles = codeFiles + (char)31 + serverCodeFile;
+                }
             }
 
             var codeFileEncoded = codeFiles.ToCompressedEncodedUrl();
@@ -120,11 +122,11 @@ namespace MudBlazor.Docs.Components
             }
             if (ShowCode)
             {
-                TooltipSourceCodeText = hideCodeExampleString;
+                TooltipSourceCodeText = HideCodeExampleString;
             }
             else
             {
-                TooltipSourceCodeText = showCodeExampleString;
+                TooltipSourceCodeText = ShowCodeExampleString;
             }
         }
     }

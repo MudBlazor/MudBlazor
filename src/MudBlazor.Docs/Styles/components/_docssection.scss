@@ -70,8 +70,8 @@
     height: 100%;
 
     .docs-content-toolbar {
-        width: 100%;
         display: flex;
+        z-index: 25;
 
         & > .mud-tooltip-root .mud-icon-button .mud-svg-icon {
             font-size: 1.25rem;
