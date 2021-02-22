@@ -14,9 +14,10 @@ namespace MudBlazor
 
         event Action OnSnackbarsUpdated;
 
-        void Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null);
+        Snackbar Add(string message, Severity severity = Severity.Normal, Action<SnackbarOptions> configure = null);
 
-        void AddNew(Severity severity, string message, Action<SnackbarOptions> configure);
+        [Obsolete]
+        Snackbar AddNew(Severity severity, string message, Action<SnackbarOptions> configure);
 
         void Clear();
 
