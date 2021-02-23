@@ -359,5 +359,16 @@ namespace MudBlazor.UnitTests
             });
             eventCounter.Should().Be(1);
         }
+
+        [Test]
+        public void Disabled_SelectItem_Should_Be_Respected()
+        {
+            var comp = ctx.RenderComponent<SelectTest1>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("div.mud-list-item-disabled").Count.Should().Be(1);
+            comp.FindAll("div.mud-list-item-disabled").First().Click();
+            select.Instance.Value.Should().BeNull();
+        }
     }
 }
