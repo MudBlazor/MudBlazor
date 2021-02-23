@@ -49,9 +49,7 @@ namespace MudBlazor
             {
                 var selectionCount = Selection.Count;
                 var itemsCount = Table.GetFilteredItemsCount();
-                if (itemsCount == 0) { return; }
-                
-                HeaderRow.SetChecked(selectionCount == itemsCount, notify: false);
+                HeaderRow.SetChecked(selectionCount == itemsCount && itemsCount != 0, notify: false);
             }
         }
 
