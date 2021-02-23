@@ -126,9 +126,9 @@ namespace MudBlazor
 
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
 
-        [Obsolete] [Parameter] public double Minimum { get => Min; set => Min = value; }
+        [Obsolete("This property is obsolete. Use Min instead.")] [Parameter] public double Minimum { get => Min; set => Min = value; }
 
-        [Obsolete] [Parameter] public double Maximum { get => Max; set => Max = value; }
+        [Obsolete("This property is obsolete. Use Max instead.")] [Parameter] public double Maximum { get => Max; set => Max = value; }
 
         #endregion
     }

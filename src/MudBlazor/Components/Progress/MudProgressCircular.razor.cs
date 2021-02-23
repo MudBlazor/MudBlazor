@@ -35,9 +35,9 @@ namespace MudBlazor
         [Parameter] public Size Size { get; set; } = Size.Medium;
         [Parameter] public bool Indeterminate { get; set; }
 
-        [Parameter] public double Minimum { get; set; } = 0.0;
+        [Parameter] public double Min { get; set; } = 0.0;
 
-        [Parameter] public double Maximum { get; set; } = 100.0;
+        [Parameter] public double Max { get; set; } = 100.0;
 
         private int _svg_value;
         private double _value;
@@ -58,9 +58,9 @@ namespace MudBlazor
 
         private int ToSvgValue(double in_value)
         {
-            var value = Math.Min(Math.Max(Minimum, in_value), Maximum);
+            var value = Math.Min(Math.Max(Min, in_value), Max);
             // calculate fraction, which is a value between 0 and 1
-            var fraction = (value - Minimum) / (Maximum - Minimum);
+            var fraction = (value - Min) / (Max - Min);
             // now project into the range of the SVG value (126 .. 0)
             return (int)Math.Round(MagicNumber - MagicNumber * fraction);
         }
@@ -72,6 +72,14 @@ namespace MudBlazor
             base.OnInitialized();
             _svg_value = ToSvgValue(_value);
         }
+
+        #region --> Obsolete Forwarders for Backwards-Compatiblilty
+
+        [Obsolete("This property is obsolete. Use Min instead.")] [Parameter] public double Minimum { get => Min; set => Min = value; }
+
+        [Obsolete("This property is obsolete. Use Max instead.")] [Parameter] public double Maximum { get => Max; set => Max = value; }
+
+        #endregion
 
     }
 }
