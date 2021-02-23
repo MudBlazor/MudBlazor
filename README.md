@@ -1,7 +1,7 @@
 # ![MudBlazor](content/MudBlazor-GitHub.png)
 # Material Design components for Blazor
 ![Azure DevOps builds (master)](https://img.shields.io/azure-devops/build/gardnet-nu/4cba3d30-858f-4653-a80d-736a8adc5daf/1/master?label=azure%20pipelines&style=flat-square)
-![Azure DevOps coverage (develop)](https://img.shields.io/azure-devops/coverage/gardnet-nu/MudBlazor/1/develop)
+![Azure DevOps coverage (develop)](https://img.shields.io/azure-devops/coverage/gardnet-nu/MudBlazor/1/dev)
 [![GitHub](https://img.shields.io/github/license/garderoben/mudblazor?color=%23594ae2&style=flat-square)](https://github.com/Garderoben/MudBlazor/blob/master/LICENSE)
 [![Gitter](https://img.shields.io/gitter/room/MudBlazor/community?style=flat-square)](https://gitter.im/MudBlazor/community)
 [![Discord](https://img.shields.io/discord/786656789310865418?color=%237289da&label=Discord&logo=discord&logoColor=%237289da&style=flat-square)](https://discord.gg/mudblazor)

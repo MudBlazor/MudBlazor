@@ -3,11 +3,12 @@
 @inherits MudBaseButton
 
 
-<div class="@Classname">
+<div class="@Classname" onmouseleave="@(EventCallback.Factory.Create<EventArgs>(this, OnMouseOut))">
     @if (ActivatorContent != null)
     {
         <CascadingValue Value="@((IActivatable) this)" IsFixed="true">
-            <div style="cursor: pointer;" @onclick="ToggleMenu">
+            <div style="cursor: pointer;" @onmouseup="ToggleMenu" @onmouseover="OnMouseOver"
+                 oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? "return false;" : "")">
                 @ActivatorContent
             </div>
         </CascadingValue>
@@ -40,5 +41,5 @@
     </CascadingValue>
 </div>
 
-<MudOverlay Visible="_isOpen" OnClick="@ToggleMenu" LockScroll="false" />
+<MudOverlay Visible="@(_isOpen && ActivationEvent != MouseEvent.MouseOver)" OnClick="@ToggleMenu" LockScroll="false" />
 

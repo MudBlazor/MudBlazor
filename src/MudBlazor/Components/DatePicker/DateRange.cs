@@ -1,4 +1,5 @@
 ﻿using System;
+using MudBlazor.Extensions;
 
 namespace MudBlazor
 {

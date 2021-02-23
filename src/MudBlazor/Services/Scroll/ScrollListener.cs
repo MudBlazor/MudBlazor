@@ -81,7 +81,7 @@ namespace MudBlazor
         {
             _dotnetRef = DotNetObjectReference.Create(this);
             await _js.InvokeVoidAsync
-                ("scrollListener.listenForScroll",
+                ("mudScrollListener.listenForScroll",
                            _dotnetRef,
                            Selector);
         }
@@ -94,7 +94,7 @@ namespace MudBlazor
             try
             {
                 await _js.InvokeVoidAsync(
-                    "scrollListener.cancelListener",
+                    "mudScrollListener.cancelListener",
                                Selector);
             }
             catch { /* ignore */ }

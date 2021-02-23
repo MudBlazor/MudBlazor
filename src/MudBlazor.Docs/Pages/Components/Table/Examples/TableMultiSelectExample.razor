@@ -32,6 +32,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable");
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     } 
 }

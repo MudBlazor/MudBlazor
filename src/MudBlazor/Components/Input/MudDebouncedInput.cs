@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
 {
-    public abstract class MudDebouncedInput<T> : MudBaseInput<T>, IDisposable
+    public abstract class MudDebouncedInput<T> : MudBaseInput<T>
     {
         private Timer _timer;
         private double _debounceInterval;
@@ -25,7 +25,7 @@ namespace MudBlazor
                 if (_debounceInterval == 0)
                 {
                     // not debounced, dispose timer if any
-                    ClearTimer(suppressTick:false);
+                    ClearTimer(suppressTick: false);
                     return;
                 }
                 SetTimer();
@@ -49,7 +49,7 @@ namespace MudBlazor
                 return base.UpdateValuePropertyAsync(updateText);
             }
             // if debounce interval is 0 we update immediately
-            if (DebounceInterval <= 0 || _timer==null)
+            if (DebounceInterval <= 0 || _timer == null)
                 return base.UpdateValuePropertyAsync(updateText);
             // If a debounce interval is defined, we want to delay the update of Value property.
             _timer.Stop();
@@ -89,7 +89,7 @@ namespace MudBlazor
             await OnDebounceIntervalElapsed.InvokeAsync(Text);
         }
 
-        private void ClearTimer(bool suppressTick=false)
+        private void ClearTimer(bool suppressTick = false)
         {
             if (_timer == null)
                 return;
@@ -102,9 +102,10 @@ namespace MudBlazor
                 OnTimerTickGuiThread().AndForget();
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            ClearTimer(suppressTick:true);
+            base.Dispose(disposing);
+            ClearTimer(suppressTick: true);
         }
     }
 }

@@ -45,8 +45,11 @@ namespace MudBlazor
                 row.SetChecked(Selection.Contains(item), notify: true);
             }
             // update header checkbox
-            if (HeaderRow != null)
-                HeaderRow.SetChecked(Selection.Count == Table.GetFilteredItemsCount(), notify: false);
+            if (HeaderRow != null) 
+            {
+                var itemsCount = Table.GetFilteredItemsCount();
+                HeaderRow.SetChecked(Selection.Count == itemsCount && itemsCount != 0, notify: false);
+            }
         }
 
         public override void Add(MudTr row, object item)
@@ -107,7 +110,9 @@ namespace MudBlazor
             UpdateSortLabels(initial_sortlabel);
             // this will trigger initial sorting of the table
             initial_sortlabel.SetSortDirection(initial_sortlabel.InitialDirection);
-            SortDirection = initial_sortlabel.SortDirection;
+            SortDirection = initial_sortlabel.SortDirection; 
+            SortBy = initial_sortlabel.SortBy;
+            TableStateHasChanged();
         }
 
         private void UpdateSortLabels(MudTableSortLabel<T> label)

@@ -29,6 +29,6 @@
 
     private async Task<IEnumerable<Element>> Search(string value)
     {
-        return  await httpClient.GetFromJsonAsync<List<Element>>($"webapi/periodicTable/{value}");
+        return  await httpClient.GetFromJsonAsync<List<Element>>($"webapi/periodictable/{value}");
     }
 }

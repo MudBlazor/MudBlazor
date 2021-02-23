@@ -14,7 +14,7 @@ namespace MudBlazor
         private ElementReference _contentRef;
         private DrawerClipMode _clipMode;
         private bool? _isOpenWhenLarge = null;
-        private bool _open, _rtl, _isRendered, _initial = true;
+        private bool _open, _rtl, _isRendered, _initial = true, _keepInitialState;
         private Breakpoint _breakpoint = Breakpoint.Md, _screenBreakpoint = Breakpoint.None;
 
         private bool OverlayVisible => _open && !DisableOverlay &&
@@ -50,8 +50,6 @@ namespace MudBlazor
             .AddStyle("--mud-drawer-content-height", $"{_height}px", Anchor == Anchor.Bottom || Anchor == Anchor.Top)
             .AddStyle(Style)
         .Build();
-
-        [Inject] public IDomService DomService { get; set; }
 
         [Inject] public IResizeListenerService ResizeListener { get; set; }
 
@@ -148,9 +146,13 @@ namespace MudBlazor
                     return;
                 }
                 _open = value;
-                if (_isRendered && _initial)
+                if (_isRendered && _initial && !_keepInitialState)
                 {
                     _initial = false;
+                }
+                if (_keepInitialState)
+                {
+                    _keepInitialState = false;
                 }
                 if (_isRendered && value && (Anchor == Anchor.Top || Anchor == Anchor.Bottom))
                 {
@@ -198,15 +200,17 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                _isRendered = true;
                 await UpdateHeight();
                 ResizeListener.OnBreakpointChanged += ResizeListener_OnBreakpointChanged;
 
                 _screenBreakpoint = await ResizeListener.GetBreakpoint();
-                if (_screenBreakpoint < Breakpoint)
+                if (_screenBreakpoint < Breakpoint && _open)
                 {
+                    _keepInitialState = true;
                     await OpenChanged.InvokeAsync(false);
                 }
+
+                _isRendered = true;
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -237,20 +241,23 @@ namespace MudBlazor
 
         private void ResizeListener_OnBreakpointChanged(object sender, Breakpoint breakpoint)
         {
+            if (!_isRendered)
+                return;
+
             _screenBreakpoint = breakpoint;
             InvokeAsync(() => UpdateBreakpointState());
         }
 
         private async Task UpdateHeight()
         {
-            _height = (await DomService.GetBoundingClientRect(_contentRef))?.Height ?? 0;
+            _height = (await _contentRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
         }
 
         private async void UpdateBreakpointState()
         {
             if (_screenBreakpoint == Breakpoint.None)
             {
-                await ResizeListener.GetBreakpoint();
+                _screenBreakpoint = await ResizeListener.GetBreakpoint();
             }
 
             if (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Responsive)
