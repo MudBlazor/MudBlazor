@@ -5,7 +5,8 @@
 @if (ServerData != null || (_items != null && _items.Any()))
 {
 <MudTable @ref="mudTable" Items="@_items" Class="@Classname" Style="@Style" ShowFooter="@ShowFooter" 
-          Hover="@Hover" Breakpoint="@Breakpoint" ReadOnly="@ReadOnly" ServerData="@ServerData">
+          Hover="@Hover" Breakpoint="@Breakpoint" ReadOnly="@ReadOnly" FixedHeader="@FixedHeader" Height="@Height" 
+          @bind-RowsPerPage ="RowsPerPage" @bind-CurrentPage="CurrentPage"  ServerData="@ServerData">
     <HeaderContent>
         <CascadingValue Value="MudBaseColumn.Rendermode.Header" Name="Mode">
             @Columns(Def)
@@ -32,7 +33,7 @@
         }
     </FooterContent>
     <PagerContent>
-    @if (UsePageing)
+    @if (Pageing)
     {
     <MudTablePager  Style="float:left"></MudTablePager>
     }

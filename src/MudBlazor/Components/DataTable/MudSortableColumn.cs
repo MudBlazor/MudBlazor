@@ -6,7 +6,7 @@ namespace MudBlazor
     /// <summary>
     /// Binds an object's property to a column by its property name 
     /// </summary>
-    public partial class MudSortedColumn<T,ModelType> : MudBaseColumn
+    public partial class MudSortableColumn<T,ModelType> : MudBaseColumn
     {
 
         /// <summary>

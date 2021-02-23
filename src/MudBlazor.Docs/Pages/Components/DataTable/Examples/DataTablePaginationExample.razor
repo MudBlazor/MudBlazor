@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudDataTable Items="@Elements" UsePageing="true" Dense="@dense" Hover="@hover">
+<MudDataTable Items="@Elements" Pageing="true" Dense="@dense" Hover="@hover">
     <Columns>
         <MudColumn Value="context.Number" HeaderText="Nr" />
         <MudColumn Value="context.Sign" HeaderText="Sign" />
@@ -26,6 +26,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = (await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable")).Take(4);
+        Elements = (await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodicTable")).Take(20);
     }
     }

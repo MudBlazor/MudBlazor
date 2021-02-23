@@ -73,7 +73,7 @@ namespace MudBlazor
         /// Gets or sets a value indicating whether the pagination feature is enabled.
         /// </summary>
         [Parameter]
-        public bool UsePageing { set; get; } = false;
+        public bool Pageing { set; get; } = false;
         /// <summary>
         /// Gets or sets a value indicating whether editing feature is enabled.
         /// </summary>
@@ -94,6 +94,28 @@ namespace MudBlazor
         /// At what breakpoint the table should switch to mobile layout. Takes Xs, Sm, Md, Lg and Xl the default behavior is breaking on Xs.
         /// </summary>
         [Parameter] public Breakpoint Breakpoint { get; set; } = Breakpoint.Xs;
+        /// <summary>
+        /// When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.
+        /// </summary>
+        [Parameter] public bool FixedHeader { get; set; }
+
+        /// <summary>
+        /// Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
+        /// attribute 'height' accepts, i.e. 500px. 
+        /// </summary>
+        [Parameter] public string Height { get; set; }
+        /// <summary>
+        /// If the table has more items than this number, it will break the rows into pages of said size.
+        /// Note: requires a MudTablePager in PagerContent.
+        /// </summary>
+        [Parameter] public int RowsPerPage { get; set; } = 10;
+
+        /// <summary>
+        /// The page index of the currently displayed page (Zero based). Usually called by MudTablePager.
+        /// Note: requires a MudTablePager in PagerContent.
+        /// </summary>
+        [Parameter] public int CurrentPage { get; set; }
+
         /// <summary>
         /// Supply an async function which (re)loads filtered, paginated and sorted data from server.
         /// Table will await this func and update based on the returned TableData.
