@@ -47,9 +47,8 @@ namespace MudBlazor
             // update header checkbox
             if (HeaderRow != null) 
             {
-                var selectionCount = Selection.Count;
                 var itemsCount = Table.GetFilteredItemsCount();
-                HeaderRow.SetChecked(selectionCount == itemsCount && itemsCount != 0, notify: false);
+                HeaderRow.SetChecked(Selection.Count == itemsCount && itemsCount != 0, notify: false);
             }
         }
 
