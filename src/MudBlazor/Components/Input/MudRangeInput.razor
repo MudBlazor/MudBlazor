@@ -17,10 +17,10 @@
     }
 
     <input @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@TextStart" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
-           placeholder="@PlaceholderStart" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp" />
+           placeholder="@PlaceholderStart" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" />
     <MudIcon Class="mud-range-input-separator" Icon="@Icons.Material.Filled.ArrowRightAlt" Color="@Color.Default" />
     <input @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" @bind-value="@TextEnd" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"
-           placeholder="@PlaceholderEnd" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp" />
+           placeholder="@PlaceholderEnd" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" />
 
     @if (Adornment == Adornment.End)
     {
