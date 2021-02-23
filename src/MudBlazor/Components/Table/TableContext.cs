@@ -45,8 +45,14 @@ namespace MudBlazor
                 row.SetChecked(Selection.Contains(item), notify: true);
             }
             // update header checkbox
-            if (HeaderRow != null)
-                HeaderRow.SetChecked(Selection.Count == Table.GetFilteredItemsCount(), notify: false);
+            if (HeaderRow != null) 
+            {
+                var selectionCount = Selection.Count;
+                var itemsCount = Table.GetFilteredItemsCount();
+                if (itemsCount == 0) { return; }
+                
+                HeaderRow.SetChecked(selectionCount == itemsCount, notify: false);
+            }
         }
 
         public override void Add(MudTr row, object item)
