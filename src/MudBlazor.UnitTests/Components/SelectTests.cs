@@ -367,7 +367,7 @@ namespace MudBlazor.UnitTests
             var select = comp.FindComponent<MudSelect<string>>();
             Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-list-item-disabled").Count.Should().Be(1);
-            comp.FindAll("div.mud-list-item-disabled").First().Click();
+            comp.FindAll("div.mud-list-item-disabled")[0].Click();
             select.Instance.Value.Should().BeNull();
         }
     }

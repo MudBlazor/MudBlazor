@@ -143,11 +143,11 @@ namespace MudBlazor.UnitTests
         {
             var comp = ctx.RenderComponent<CheckBoxesBindAgainstArrayTest>();
             Console.WriteLine(comp.Markup);
-            comp.FindAll("p").Last().TrimmedText().Should().Be("A=True, B=False, C=True, D=False, E=True");
+            comp.FindAll("p")[^1].TrimmedText().Should().Be("A=True, B=False, C=True, D=False, E=True");
             comp.FindAll("input")[0].Change(false);
-            comp.FindAll("p").Last().TrimmedText().Should().Be("A=False, B=False, C=True, D=False, E=True");
+            comp.FindAll("p")[^1].TrimmedText().Should().Be("A=False, B=False, C=True, D=False, E=True");
             comp.FindAll("input")[1].Change(true);
-            comp.FindAll("p").Last().TrimmedText().Should().Be("A=False, B=True, C=True, D=False, E=True");
+            comp.FindAll("p")[^1].TrimmedText().Should().Be("A=False, B=True, C=True, D=False, E=True");
         }
     }
 }
