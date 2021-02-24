@@ -80,7 +80,7 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<TabsKeepAliveTest>();
             Console.WriteLine(comp.Markup);
             // all panels should be evident in the markup:
-            comp.FindAll("button").Count().Should().Be(3);
+            comp.FindAll("button").Count.Should().Be(3);
             // every panel should be rendered first exactly once throughout the test:
             comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
             // only the first panel should be active:
@@ -138,7 +138,7 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<TabsKeepAliveTest>(ComponentParameter.CreateParameter("KeepPanelsAlive", false));
             Console.WriteLine(comp.Markup);
             // only one panel should be evident in the markup:
-            comp.FindAll("button").Count().Should().Be(1);
+            comp.FindAll("button").Count.Should().Be(1);
             // only the first panel should be rendered first
             comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br></p>");
             // no child divs in div.mud-tabs-panels
@@ -152,7 +152,7 @@ namespace MudBlazor.UnitTests
             // first and second panel were rendered once with firstRender==true:
             comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br></p>");
             // only one panel should be evident in the markup:
-            comp.FindAll("button").Count().Should().Be(1);
+            comp.FindAll("button").Count.Should().Be(1);
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 2=0");
             // click the button twice
             comp.FindAll("button")[0].Click();
