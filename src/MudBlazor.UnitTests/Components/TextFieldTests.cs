@@ -187,7 +187,7 @@ namespace MudBlazor.UnitTests
             {
                 var result = Validate(arg);
                 if (result.IsValid)
-                    return new string[0];
+                    return Array.Empty<string>();
                 return result.Errors.Select(e => e.ErrorMessage);
             }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Toolbelt.Blazor.HeadElement;
 
@@ -9,12 +10,12 @@ namespace MudBlazor.UnitTests.Mocks
     {
         public async ValueTask<IEnumerable<LinkElement>> GetDefaultLinkElementsAsync()
         {
-            return new LinkElement[0];
+            return Array.Empty<LinkElement>();
         }
 
         public async ValueTask<IEnumerable<MetaElement>> GetDefaultMetaElementsAsync()
         {
-            return new MetaElement[0];
+            return Array.Empty<MetaElement>();
         }
 
         public async ValueTask<string> GetDefaultTitleAsync()
