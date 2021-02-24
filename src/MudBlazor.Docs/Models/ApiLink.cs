@@ -11,7 +11,7 @@ namespace MudBlazor.Docs.Models
         {
             if (!s_specialCaseComponents.TryGetValue(type, out var component))
                 component = new string(type.ToString().Replace("MudBlazor.Mud", "").TakeWhile(c => c != '`').ToArray()).ToLowerInvariant();
-            var href = $"/api/{component}";
+            var href = $"api/{component}";
             return href;
         }
 
@@ -21,7 +21,7 @@ namespace MudBlazor.Docs.Models
                 component = new string(type.ToString().Replace("MudBlazor.Mud", "").TakeWhile(c => c != '`').ToArray()).ToLowerInvariant();
             if (s_componentLinkTranslation.ContainsKey(component))
                 component = s_componentLinkTranslation[component];
-            var href = $"/components/{component}";
+            var href = $"components/{component}";
             return href;
         }
 
