@@ -20,7 +20,7 @@ namespace MudBlazor
           .AddClass("mud-treeview-expand-on-click", ExpandOnClick)
           .AddClass(Class)
         .Build();
-        protected string Stylename => 
+        protected string Stylename =>
         new StyleBuilder()
             .AddStyle($"width", Width, !string.IsNullOrWhiteSpace(Width))
             .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
@@ -46,7 +46,7 @@ namespace MudBlazor
         /// Setting a height will allow to scroll the treeview. If not set, it will try to grow in height. 
         /// You can set this to any CSS value that the attribute 'height' accepts, i.e. 500px. 
         /// </summary>
-        [Parameter] 
+        [Parameter]
         public string Height { get; set; }
 
         /// <summary>

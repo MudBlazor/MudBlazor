@@ -461,7 +461,7 @@ namespace MudBlazor.UnitTests
             datepicker.Error.Should().BeFalse();
             datepicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x=>x.Date, null);
+            comp.SetParam(x => x.Date, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
@@ -480,14 +480,14 @@ namespace MudBlazor.UnitTests
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
             var datepicker = comp.FindComponent<MudDatePicker>().Instance;
-            dateComp.SetParam(x=>x.Validation, new Func<DateTime?, string>( date=> date != null && date.Value.Year >= 2000 ? null : "Year must be >= 2000"));
+            dateComp.SetParam(x => x.Validation, new Func<DateTime?, string>(date => date != null && date.Value.Year >= 2000 ? null : "Year must be >= 2000"));
             dateComp.Find("input").Change("2001-01-31");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
             datepicker.Error.Should().BeFalse();
             datepicker.ErrorText.Should().BeNullOrEmpty();
             // set invalid date:
-            comp.SetParam(x => x.Date, (DateTime?)new DateTime(1999,1,1));
+            comp.SetParam(x => x.Date, (DateTime?)new DateTime(1999, 1, 1));
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Year must be >= 2000");
@@ -543,7 +543,7 @@ namespace MudBlazor.UnitTests
             datepicker.Error.Should().BeFalse();
             datepicker.ErrorText.Should().BeNullOrEmpty();
             // set invalid date:
-            comp.SetParam(x => x.Time, (TimeSpan?)new TimeSpan(0,17,05,00)); // "17:05"
+            comp.SetParam(x => x.Time, (TimeSpan?)new TimeSpan(0, 17, 05, 00)); // "17:05"
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Only full hours allowed");

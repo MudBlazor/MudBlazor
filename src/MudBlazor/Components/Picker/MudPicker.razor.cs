@@ -7,7 +7,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudPicker<T> : MudFormComponent<T,string>
+    public partial class MudPicker<T> : MudFormComponent<T, string>
     {
         enum PickerVerticalPosition
         {
@@ -26,7 +26,7 @@ namespace MudBlazor
         }
 
         public MudPicker() : base(new Converter<T, string>()) { }
-        protected MudPicker(Converter<T, string> converter) : base(converter) {}
+        protected MudPicker(Converter<T, string> converter) : base(converter) { }
 
         [Inject] private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
 

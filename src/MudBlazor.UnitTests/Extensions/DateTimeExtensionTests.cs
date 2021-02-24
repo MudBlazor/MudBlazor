@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NUnit.Framework;
 using MudBlazor.Extensions;
+using NUnit.Framework;
 
 
 
@@ -21,7 +21,7 @@ namespace MudBlazor.UnitTests.Extensions
         public void StartOfMonth_EndOfMonth_Test()
         {
             var date = new DateTime(2021, 02, 14);
-            var gregorian_start= date.StartOfMonth(CultureInfo.InvariantCulture);
+            var gregorian_start = date.StartOfMonth(CultureInfo.InvariantCulture);
             gregorian_start.ToIsoDateString().Should().Be("2021-02-01");
             var gregorian_end = date.EndOfMonth(CultureInfo.InvariantCulture);
             gregorian_end.ToIsoDateString().Should().Be("2021-02-28");

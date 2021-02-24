@@ -41,19 +41,19 @@ namespace MudBlazor.UnitTests
             comp.Instance.GetValuePercent().Should().Be(10);
             comp.Instance.GetBufferPercent().Should().Be(90);
             // checking cut-off at min and max
-            comp.SetParam(x=>x.Min, 0.0);
+            comp.SetParam(x => x.Min, 0.0);
             comp.Instance.GetValuePercent().Should().Be(0);
             comp.SetParam(x => x.Min, -500.0);
             comp.SetParam(x => x.Max, 0.0);
             comp.Instance.GetBufferPercent().Should().Be(100);
             comp.SetParam(x => x.Min, 0.0);
             comp.SetParam(x => x.Max, 100.0);
-            comp.SetParam(x=>x.Value, 100.0);
+            comp.SetParam(x => x.Value, 100.0);
             comp.Instance.GetValuePercent().Should().Be(100);
             comp.SetParam(x => x.Value, -2.0);
             comp.SetParam(x => x.Min, -7.0);
             comp.SetParam(x => x.Max, 7.0);
-            comp.SetParam(x=>x.Buffer, false);
+            comp.SetParam(x => x.Buffer, false);
             var percent = (-2 - (-7)) / 14.0 * 100;
             comp.Instance.GetValuePercent().Should().Be(percent);
             comp.Find("div.mud-progress-linear-bar").MarkupMatches(

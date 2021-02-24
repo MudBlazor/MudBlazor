@@ -45,7 +45,7 @@ namespace MudBlazor.UnitTests.Utilities
                 uncompressor.CopyTo(uncompressed);
                 uncompressor.Close();
                 //uncompressed.Position = 0;
-                snippet1 = Encoding.UTF8.GetString( uncompressed.ToArray());
+                snippet1 = Encoding.UTF8.GetString(uncompressed.ToArray());
             }
             // compare
             snippet1.Should().Be(snippet);
