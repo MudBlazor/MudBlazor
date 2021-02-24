@@ -25,7 +25,7 @@
         }
 
         <input @ref="_elementReference" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" value="@Text" @oninput="OnInput" @onchange="OnChange"
-               placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@onKeyDown" @onkeypress="@onKeyPress" @onkeyup="@onKeyUp" />
+               placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" />
     }
 
     @if (Adornment == Adornment.End)
