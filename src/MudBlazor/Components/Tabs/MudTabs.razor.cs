@@ -229,11 +229,7 @@ namespace MudBlazor
                     ActivePanel = null;
             }
             Panels.Remove(tabPanel);
-            try
-            {
-                StateHasChanged();
-            }
-            catch (ObjectDisposedException) { }
+            StateHasChanged();
         }
 
         string GetTabClass(MudTabPanel panel)
