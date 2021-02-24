@@ -76,7 +76,7 @@ namespace MudBlazor
 
         protected override DateTime GetCalendarStartOfMonth()
         {
-            var date=StartMonth ?? Date ?? DateTime.Today;
+            var date = StartMonth ?? Date ?? DateTime.Today;
             return date.StartOfMonth(Culture);
         }
 

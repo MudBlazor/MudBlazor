@@ -61,8 +61,8 @@ namespace MudBlazor
 
         [Parameter] public RenderFragment Content { get; set; }
 
-        [Parameter] public HashSet<T> Items { get; set; }        
-        
+        [Parameter] public HashSet<T> Items { get; set; }
+
         /// <summary>
         /// Command executed when the user clicks on the CommitEdit Button.
         /// </summary>

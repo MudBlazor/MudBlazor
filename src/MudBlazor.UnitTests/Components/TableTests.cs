@@ -503,7 +503,7 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             var trs = comp.FindAll("tr");
             trs.Count.Should().Be(5); // four rows + header row
-            
+
             var tds = comp.FindAll("td");
             tds[0].TextContent.Trim().Should().Be("0");
             tds[1].TextContent.Trim().Should().Be("1");
@@ -534,7 +534,7 @@ namespace MudBlazor.UnitTests
             comp.Instance.Table.Validator = validator;
 
             Console.WriteLine(comp.Markup);
-            
+
             var trs = comp.FindAll("tr");
             trs.Count.Should().Be(4); // three rows + header row
 

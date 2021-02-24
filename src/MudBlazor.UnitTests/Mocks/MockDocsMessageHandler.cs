@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using RichardSzalay.MockHttp;
 
 namespace MudBlazor.UnitTests.Mocks

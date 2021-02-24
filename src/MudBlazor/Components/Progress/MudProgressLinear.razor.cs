@@ -65,7 +65,8 @@ namespace MudBlazor
         public double Max
         {
             get => _max;
-            set {
+            set
+            {
                 _max = value;
                 UpdatePercentages();
             }

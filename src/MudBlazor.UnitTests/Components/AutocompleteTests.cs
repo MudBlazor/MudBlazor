@@ -185,7 +185,7 @@ namespace MudBlazor.UnitTests
             });
             // enter a text so the search func will return null, and it shouldn't throw an exception
             comp.SetParam(a => a.Text, "Do not throw");
-            comp.SetParam(x=>x.SearchFunc, new Func<string, Task<IEnumerable<string>>>(s=>null)); // <-- search func returns null instead of task!
+            comp.SetParam(x => x.SearchFunc, new Func<string, Task<IEnumerable<string>>>(s => null)); // <-- search func returns null instead of task!
             comp.SetParam(a => a.Text, "Don't throw here neither");
         }
     }
