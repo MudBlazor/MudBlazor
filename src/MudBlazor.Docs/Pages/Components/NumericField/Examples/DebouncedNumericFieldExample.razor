@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudNumericField @bind-Value="@_normalText"
+                         Label="Normal"
+                         Variant="Variant.Outlined" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudNumericField @bind-Value="@_immediateText"
+                         Label="Immediate"
+                         Variant="Variant.Outlined"
+                         Adornment="Adornment.End"
+                         Immediate="true" />
+    </MudItem>
+</MudGrid>
+<div class="mt-3">
+    <MudText>Normal: @_normalText</MudText>
+    <MudText>Immediate: @_immediateText</MudText>
+</div>
+
+@code {
+	int _normalText;
+	int _immediateText;
+}

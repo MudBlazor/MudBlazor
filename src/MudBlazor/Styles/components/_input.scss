@@ -297,152 +297,161 @@
 }
 
 .mud-input > textarea {
-  &.mud-input-root {
-    font: inherit;
-    color: currentColor;
-    width: 100%;
-    border: 0;
-    height: auto;
-    margin: 6px 0 7px;
-    padding: 0;
-    display: block;
-    min-width: 0;
-    background: none;
-    position: relative;
-    box-sizing: content-box;
-    letter-spacing: inherit;
-    -webkit-tap-highlight-color: transparent;
-    height: auto;
-    resize: none;
-    cursor: auto;
+    &.mud-input-root {
+        font: inherit;
+        color: currentColor;
+        width: 100%;
+        border: 0;
+        height: auto;
+        margin: 6px 0 7px;
+        padding: 0;
+        display: block;
+        min-width: 0;
+        background: none;
+        position: relative;
+        box-sizing: content-box;
+        letter-spacing: inherit;
+        -webkit-tap-highlight-color: transparent;
+        height: auto;
+        resize: none;
+        cursor: auto;
 
-    @include inputplaceholder {
-      color: currentColor;
-      opacity: 0.42;
-      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-    }
-
-    &.mud-input-root-margin-dense {
-      margin-top: 3px;
-    }
-
-    &.mud-input-root-type-search {
-      -moz-appearance: textfield;
-      -webkit-appearance: textfield;
-    }
-
-    &:focus {
-      outline: 0;
-    }
-
-    &:invalid {
-      box-shadow: none;
-    }
-
-    &:disabled {
-      opacity: 1;
-    }
-
-    &.mud-input-root-filled {
-      margin: 27px 12px 10px;
-
-      &.mud-input-root-margin-dense {
-        margin-top: 23px;
-        margin-bottom: 6px;
-      }
-
-      &:-webkit-autofill {
-        border-top-left-radius: inherit;
-        border-top-right-radius: inherit;
-      }
-
-      &.mud-input-root-hidden-label {
-        margin-top: 18px;
-        margin-bottom: 19px;
+        @include inputplaceholder {
+            color: currentColor;
+            opacity: 0.42;
+            transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        }
 
         &.mud-input-root-margin-dense {
-          margin-top: 10px;
-          margin-bottom: 11px;
+            margin-top: 3px;
         }
-      }
 
-      &.mud-input-root-adorned-start {
-        margin-left: 0;
-      }
+        &.mud-input-root-type-search {
+            -moz-appearance: textfield;
+            -webkit-appearance: textfield;
+        }
 
-      &.mud-input-root-adorned-end {
-        margin-right: 0;
-      }
+        &:focus {
+            outline: 0;
+        }
+
+        &:invalid {
+            box-shadow: none;
+        }
+
+        &:disabled {
+            opacity: 1;
+        }
+
+        &.mud-input-root-filled {
+            margin: 27px 12px 10px;
+
+            &.mud-input-root-margin-dense {
+                margin-top: 23px;
+                margin-bottom: 6px;
+            }
+
+            &:-webkit-autofill {
+                border-top-left-radius: inherit;
+                border-top-right-radius: inherit;
+            }
+
+            &.mud-input-root-hidden-label {
+                margin-top: 18px;
+                margin-bottom: 19px;
+
+                &.mud-input-root-margin-dense {
+                    margin-top: 10px;
+                    margin-bottom: 11px;
+                }
+            }
+
+            &.mud-input-root-adorned-start {
+                margin-left: 0;
+            }
+
+            &.mud-input-root-adorned-end {
+                margin-right: 0;
+            }
+        }
+
+        &::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+            z-index: 1;
+            cursor: crosshair;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: var(--mud-palette-lines-inputs);
+            border-radius: 1px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
     }
 
-    &::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-      z-index: 1;
-      cursor: crosshair;
+    &.mud-input-root-outlined {
+        margin: 18.5px 14px;
+
+
+        &.mud-input-root:-webkit-autofill {
+            border-radius: inherit;
+        }
+
+        &.mud-input-root-margin-dense {
+            margin-top: 10.5px;
+            margin-bottom: 10.5px;
+        }
+
+        &.mud-input-root-adorned-start {
+            margin-left: 0;
+        }
+
+        &.mud-input-root-adorned-end {
+            margin-right: 0;
+        }
     }
-
-    &::-webkit-scrollbar-thumb {
-      background: var(--mud-palette-lines-inputs);
-      border-radius: 1px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-  }
-
-  &.mud-input-root-outlined {
-    margin: 18.5px 14px;
-
-
-    &.mud-input-root:-webkit-autofill {
-      border-radius: inherit;
-    }
-
-    &.mud-input-root-margin-dense {
-      margin-top: 10.5px;
-      margin-bottom: 10.5px;
-    }
-
-    &.mud-input-root-adorned-start {
-      margin-left: 0;
-    }
-
-    &.mud-input-root-adorned-end {
-      margin-right: 0;
-    }
-  }
 }
 
 .mud-input-adornment {
-  height: 0.01em;
-  display: flex;
-  max-height: 2em;
-  align-items: center;
-  white-space: nowrap;
+    height: 0.01em;
+    display: flex;
+    max-height: 2em;
+    align-items: center;
+    white-space: nowrap;
 }
 
 .mud-input-adornment-start {
-  &.mud-input-root-filled-shrink {
-    margin-top: 16px;
-  }
+    &.mud-input-root-filled-shrink {
+        margin-top: 16px;
+    }
 }
 
 .mud-input-adornment-start {
-  &.mud-text {
-    margin-right: 8px;
-  }
-  &.mud-icon {
-  }
+    &.mud-text {
+        margin-right: 8px;
+    }
+
+    &.mud-icon {
+    }
 }
 
 .mud-input-adornment-end {
-  margin-left: 8px;
+    margin-left: 8px;
+}
+
+.mud-input-number-control:not(.mud-input-number-nobutton) .mud-input-adornment-end {
+    margin-right: 12px;
+}
+
+.mud-input-number-control:not(.mud-input-number-nobutton) .mud-input-underline:not(.mud-input-filled) .mud-input-adornment-end {
+    margin-right: 24px;
 }
 
 .mud-input-adornment-disable-pointerevents {
-  pointer-events: none;
+    pointer-events: none;
 }
 
 .mud-range-input-separator {
