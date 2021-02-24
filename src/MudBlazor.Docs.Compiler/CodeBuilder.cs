@@ -29,7 +29,7 @@ namespace MudBlazor.Docs.Compiler
 
         public void AddLine()
         {
-            _code.Append("\n");
+            _code.Append('\n');
         }
 
         public void AddLine(string codeLine)
