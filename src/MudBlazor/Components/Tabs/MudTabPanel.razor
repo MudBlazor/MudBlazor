@@ -80,6 +80,10 @@ else
 
     public void Dispose()
     {
-        Parent?.RemovePanel(this);
+        try
+        {
+            Parent?.RemovePanel(this);
+        }
+        catch { }
     }
 }
