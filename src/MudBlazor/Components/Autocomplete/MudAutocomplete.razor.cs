@@ -139,11 +139,9 @@ namespace MudBlazor
 
         public async Task ToggleMenu()
         {
-            if (Disabled || MinCharacters > 0 && (string.IsNullOrEmpty(Text) || Text.Length < MinCharacters))
+            if (Disabled || ReadOnly || Text?.Length < MinCharacters || string.IsNullOrWhiteSpace(Text))
                 return;
             IsOpen = !IsOpen;
-            //if (IsOpen && string.IsNullOrEmpty(Text))
-            //    IsOpen = false;
             if (IsOpen)
             {
                 OnSearch();
