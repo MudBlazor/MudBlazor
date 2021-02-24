@@ -123,7 +123,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        bool HasChild => ChildContent != null || (MudTreeRoot != null && Items != null && Items.Count() != 0);
+        bool HasChild => ChildContent != null || (MudTreeRoot != null && Items != null && Items.Count != 0);
 
         protected bool IsChecked
         {

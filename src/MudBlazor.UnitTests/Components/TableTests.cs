@@ -65,18 +65,18 @@ namespace MudBlazor.UnitTests
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int?>>().Instance;
             table.SelectedItem.Should().BeNull();
-            table.SelectedItems.Count().Should().Be(0);
+            table.SelectedItems.Count.Should().Be(0);
             var trs = comp.FindAll("tr");
             // Click on row 1 (index 0)
             trs[0].Click();
             // Check SelectedItem and SelectedItems count
             table.SelectedItem.Should().Be(0);
-            table.SelectedItems.Count().Should().Be(1);
+            table.SelectedItems.Count.Should().Be(1);
             table.SelectedItems.First().Should().Be(0);
             // Repeat
             trs[2].Click();
             table.SelectedItem.Should().Be(2);
-            table.SelectedItems.Count().Should().Be(1);
+            table.SelectedItems.Count.Should().Be(1);
             table.SelectedItems.First().Should().Be(2);
         }
 
@@ -95,21 +95,21 @@ namespace MudBlazor.UnitTests
             searchString.Change("Ala");
             table.GetFilteredItemsCount().Should().Be(3);
             string.Join(",", table.FilteredItems).Should().Be("Alabama,Alaska,Palau");
-            comp.FindAll("tr").Count().Should().Be(3);
+            comp.FindAll("tr").Count.Should().Be(3);
             // no matches
             searchString.Change("ZZZ");
             table.GetFilteredItemsCount().Should().Be(0);
             table.FilteredItems.Count().Should().Be(0);
-            comp.FindAll("tr").Count().Should().Be(0);
+            comp.FindAll("tr").Count.Should().Be(0);
             // should return 1 item
             searchString.Change("Alaska");
             table.GetFilteredItemsCount().Should().Be(1);
             table.FilteredItems.First().Should().Be("Alaska");
-            comp.FindAll("tr").Count().Should().Be(1);
+            comp.FindAll("tr").Count.Should().Be(1);
             // clear search
             searchString.Change(string.Empty);
             table.GetFilteredItemsCount().Should().Be(59);
-            comp.FindAll("tr").Count().Should().Be(59);
+            comp.FindAll("tr").Count.Should().Be(59);
         }
 
         /// <summary>
@@ -214,11 +214,11 @@ namespace MudBlazor.UnitTests
             var searchString = comp.Find("#searchString");
             // search returns 3 items
             searchString.Change("Ala");
-            comp.FindAll("tr").Count().Should().Be(3);
+            comp.FindAll("tr").Count.Should().Be(3);
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-3 of 3");
             // clear search
             searchString.Change(string.Empty);
-            comp.FindAll("tr").Count().Should().Be(10);
+            comp.FindAll("tr").Count.Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
         }
 
