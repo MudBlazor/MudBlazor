@@ -135,42 +135,64 @@ namespace MudBlazor
         #region Numeric range
         public async Task Increment()
         {
-            dynamic val = Value switch
+            dynamic val;
+            try
             {
-                sbyte b => b + (sbyte)(object)Step,
-                byte b => b + (byte)(object)Step,
-                short i => i + (short)(object)Step,
-                ushort i => i + (ushort)(object)Step,
-                int i => i + (int)(object)Step,
-                uint i => i + (uint)(object)Step,
-                long i => i + (long)(object)Step,
-                ulong i => i + (ulong)(object)Step,
-                float f => f + (float)(object)Step,
-                double d => d + (double)(object)Step,
-                decimal d => d + (decimal)(object)Step,
-                _ => Value
-            };
+                checked
+                {
+                    val = Value switch
+                    {
+                        sbyte b => b + (sbyte)(object)Step,
+                        byte b => b + (byte)(object)Step,
+                        short i => i + (short)(object)Step,
+                        ushort i => i + (ushort)(object)Step,
+                        int i => i + (int)(object)Step,
+                        uint i => i + (uint)(object)Step,
+                        long i => i + (long)(object)Step,
+                        ulong i => i + (ulong)(object)Step,
+                        float f => f + (float)(object)Step,
+                        double d => d + (double)(object)Step,
+                        decimal d => d + (decimal)(object)Step,
+                        _ => Value
+                    };
+                }
+            }
+            catch (OverflowException)
+            {
+                val = Max;
+            }
 
             await SetValueAsync(ConstrainBoundaries((T)val).value);
         }
 
         public async Task Decrement()
         {
-            dynamic val = Value switch
+            dynamic val;
+            try
             {
-                sbyte b => b - (sbyte)(object)Step,
-                byte b => b - (byte)(object)Step,
-                short i => i - (short)(object)Step,
-                ushort i => i - (ushort)(object)Step,
-                int i => i - (int)(object)Step,
-                uint i => i - (uint)(object)Step,
-                long i => i - (long)(object)Step,
-                ulong i => i - (ulong)(object)Step,
-                float f => f - (float)(object)Step,
-                double d => d - (double)(object)Step,
-                decimal d => d - (decimal)(object)Step,
-                _ => Value,
-            };
+                checked
+                {
+                    val = Value switch
+                    {
+                        sbyte b => b - (sbyte)(object)Step,
+                        byte b => b - (byte)(object)Step,
+                        short i => i - (short)(object)Step,
+                        ushort i => i - (ushort)(object)Step,
+                        int i => i - (int)(object)Step,
+                        uint i => i - (uint)(object)Step,
+                        long i => i - (long)(object)Step,
+                        ulong i => i - (ulong)(object)Step,
+                        float f => f - (float)(object)Step,
+                        double d => d - (double)(object)Step,
+                        decimal d => d - (decimal)(object)Step,
+                        _ => Value,
+                    };
+                }
+            }
+            catch (OverflowException)
+            {
+                val = Min;
+            }
 
             await SetValueAsync(ConstrainBoundaries((T)val).value);
         }
