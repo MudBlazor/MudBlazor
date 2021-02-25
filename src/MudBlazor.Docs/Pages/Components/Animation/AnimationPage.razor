@@ -1,0 +1,28 @@
+﻿@page "/components/animation"
+
+<DocsPage>
+    <DocsPageHeader Title="Animation" SubTitle="This component is used to provide animations to child elements." />
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Usage</Title>
+                <Description>You can set some parameters to customize your animation, and also write your own keyframes!</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert">
+                <AnimationSimpleExample />
+            </SectionContent>
+            <SectionSource Code="AnimationSimpleExample" GitHubFolderName="Animation" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Nested</Title>
+                <Description>Animations can be nested to match the desired visual effect. Run the animation from the inner MudAnimation, and it will call its parent to start in cascade.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert">
+                <AnimationNestedExample />
+            </SectionContent>
+            <SectionSource Code="AnimationNestedExample" GitHubFolderName="Animation" />
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>
