@@ -303,7 +303,19 @@
         .mud-table-cell:before {
             content: attr(data-label);
             font-weight: 500;
-            width: 100%;
+            width: 50%;
+            min-width: 50%;
+        }
+
+        &.mud-table-small-alignright .mud-table-cell:before {
+            margin-right: auto;
+        }
+
+        .mud-table-cell-hide {
+            visibility: collapse;
+            height: 0;
+            padding: 0;
+            margin: 0;
         }
 
         .mud-table-pagination {
