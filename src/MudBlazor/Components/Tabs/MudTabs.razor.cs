@@ -24,7 +24,6 @@ namespace MudBlazor
         private double _allTabsSize;
         private double _scrollValue;
         private double _scrollPosition;
-        private double _screenSize;
 
         [Inject] public IResizeListenerService ResizeListener { get; set; }
 
