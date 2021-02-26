@@ -12,6 +12,7 @@ namespace MudBlazor
         private bool _preventDuplicates;
         private int _maxDisplayedSnackbars;
         private string _positionClass;
+        private bool _clearAfterNavigation;
 
         internal event Action OnUpdate;
 
@@ -51,6 +52,16 @@ namespace MudBlazor
             set
             {
                 _positionClass = value;
+                OnUpdate?.Invoke();
+            }
+        }
+
+        public bool ClearAfterNavigation
+        {
+            get => _clearAfterNavigation;
+            set
+            {
+                _clearAfterNavigation = value;
                 OnUpdate?.Invoke();
             }
         }
