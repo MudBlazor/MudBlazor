@@ -57,7 +57,8 @@ namespace MudBlazor
 
         protected string WrapperScrollStyle =>
         new StyleBuilder()
-            .AddStyle("transform", $"translateX({_scrollPosition.ToString(CultureInfo.InvariantCulture)}px)")
+            .AddStyle("transform", $"translateX({_scrollPosition.ToString(CultureInfo.InvariantCulture)}px)", Position == Position.Top || Position == Position.Bottom)
+            .AddStyle("transform", $"translateY({_scrollPosition.ToString(CultureInfo.InvariantCulture)}px)", Position == Position.Left || Position == Position.Right)
         .Build();
 
         protected string PanelsClassnames =>
@@ -73,6 +74,11 @@ namespace MudBlazor
             .AddClass($"mud-tab-slider-vertical", Position == Position.Left || Position == Position.Right)
             .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
             .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right)
+            .Build();
+
+        protected string MaxHeightStyles =>
+            new StyleBuilder()
+            .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
             .Build();
 
         protected string SliderStyle =>
@@ -127,6 +133,11 @@ namespace MudBlazor
         /// If true, always display the scroll buttons even if the tabs are smaller than the required with, buttons will be disabled if there is nothing to scroll.
         /// </summary>
         [Parameter] public bool AlwaysShowScrollButtons { get; set; }
+
+        /// <summary>
+        /// Sets the maxheight the component can have.
+        /// </summary>
+        [Parameter] public int? MaxHeight { get; set; } = null;
 
         /// <summary>
         /// Sets the position of the tabs itself.
@@ -214,7 +225,11 @@ namespace MudBlazor
 
         public List<MudTabPanel> Panels = new List<MudTabPanel>();
 
-        public void Dispose() => _isDisposed = true;
+        public void Dispose()
+        {
+            _isDisposed = true;
+            ResizeListener.OnResized -= OnResized;
+        }
 
         internal void AddPanel(MudTabPanel tabPanel)
         {

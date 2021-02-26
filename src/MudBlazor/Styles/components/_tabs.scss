@@ -62,11 +62,32 @@
         border-radius: var(--mud-default-borderradius);
     }
 
+    &.mud-tabs-vertical {
+        .mud-tabs-toolbar-inner {
+            flex-direction: column;
+
+            .mud-tabs-scroll-button {
+                .mud-button-root {
+                    width: 100%;
+                    border-radius: 0px;
+                    height: 32px;
+
+                    .mud-icon-button-label {
+                        .mud-icon-root{
+                            transform:rotate(90deg);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     & .mud-tabs-toolbar-inner {
         display: flex;
         min-height: 48px;
     }
 }
+
 
 .mud-tabs-toolbar-content {
     width: 100%;
