@@ -346,6 +346,10 @@ namespace MudBlazor
                 else
                     _nextButtonDisabled = false;
             }
+            else
+            {
+                _showScrollButtons = false;
+            }
             StateHasChanged();
         }
 
