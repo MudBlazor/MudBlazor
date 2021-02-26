@@ -5,24 +5,31 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.Extensions.Options;
 
 namespace MudBlazor
 {
     /// <inheritdoc />
-    public class SnackbarService : ISnackbar
+    public class SnackbarService : ISnackbar, IDisposable
     {
         public SnackbarConfiguration Configuration { get; }
         public event Action OnSnackbarsUpdated;
 
+        private NavigationManager _navigationManager;
         private ReaderWriterLockSlim SnackBarLock { get; }
         private IList<Snackbar> SnackBarList { get; }
 
-        public SnackbarService() : this(new SnackbarConfiguration()) { }
-
-        public SnackbarService(SnackbarConfiguration configuration)
+        public SnackbarService(NavigationManager navigationManager, SnackbarConfiguration configuration = null)
         {
+            _navigationManager = navigationManager;
+            if (configuration == null)
+                configuration = new SnackbarConfiguration();
+
             Configuration = configuration;
             Configuration.OnUpdate += ConfigurationUpdated;
+            navigationManager.LocationChanged += NavigationManager_LocationChanged;
 
             SnackBarLock = new ReaderWriterLockSlim();
             SnackBarList = new List<Snackbar>();
@@ -126,9 +133,22 @@ namespace MudBlazor
             OnSnackbarsUpdated?.Invoke();
         }
 
+        private void NavigationManager_LocationChanged(object sender, LocationChangedEventArgs e)
+        {
+            if (Configuration.ClearAfterNavigation)
+            {
+                Clear();
+            }
+            else
+            {
+                ShownSnackbars.Where(s => s.State.Options.CloseAfterNavigation).ToList().ForEach(s => Remove(s));
+            }
+        }
+
         public void Dispose()
         {
             Configuration.OnUpdate -= ConfigurationUpdated;
+            _navigationManager.LocationChanged -= NavigationManager_LocationChanged;
             RemoveAllSnackbars(SnackBarList);
         }
 
