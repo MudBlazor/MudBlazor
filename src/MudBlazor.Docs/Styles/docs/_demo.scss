@@ -1,13 +1,4 @@
 ﻿
-
-.demo-paper {
-    & .mud-paper {
-        width: 128px;
-        height: 128px;
-        margin: 8px;
-    }
-}
-
 .demo-drawer {
     height: 300px;
     position: relative;
@@ -127,22 +118,6 @@
     }
 }
 
-.demo-alert {
-    .mud-alert + .mud-alert {
-        margin-top: 16px !important;
-    }
-}
-
-.demo-alert-dense, .demo-alert-noicon {
-    .mud-alert + .mud-alert {
-        margin-top: 16px;
-    }
-
-    .mud-alert + .mud-alert-outlined-info, .mud-alert-outlined-success, .mud-alert-outlined-warning, .mud-alert-outlined-error {
-        margin-top: 14px !important;
-    }
-}
-
 .demo-skeleton-cards {
     & .docs-section-content-inner {
         & .mud-card:last-child {
@@ -160,36 +135,6 @@
             & .mud-picker:last-child {
                 margin-left: 25px;
             }
-        }
-    }
-}
-
-.demo-form-manual {
-    width: 400px;
-    padding-bottom: 20px;
-}
-
-.demo-form{
-    max-width:400px;
-    & .demo-form-button{
-        margin-left: auto;
-    }
-}
-
-.demo-form-paper {
-    max-width: 400px;
-    padding: 16px;
-    justify-content: center;
-    margin-top: 16px;
-    margin-bottom: 16px;
-    text-align: center;
-}
-
-.demo-badge {
-    .docs-section-content-inner {
-        & > * {
-            margin: 20px !important;
-            align-self: center;
         }
     }
 }
