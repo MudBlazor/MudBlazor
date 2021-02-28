@@ -99,7 +99,7 @@ namespace MudBlazor
         }
 
         protected string Classname =>
-           new CssBuilder("mud-input-input-control mud-input-number-control" + (HideSpinButtons ? " mud-input-number-nobutton" : ""))
+           new CssBuilder("mud-input-input-control mud-input-number-control " + (HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin"))
            .AddClass(Class)
            .Build();
 
