@@ -148,6 +148,7 @@ namespace MudBlazor
             }
             else
             {
+                RestoreScrollPosition();
                 await CoerceTextToValue();
             }
             UpdateIcon();
@@ -285,13 +286,6 @@ namespace MudBlazor
             //If false, scrolls always
             await ScrollManager.ScrollToListItemAsync(id, increment, true);
             StateHasChanged();
-        }
-
-
-        protected override void OnAfterRender(bool firstRender)
-        {
-            if (firstRender) return;
-            RestoreScrollPosition();
         }
 
         //This restores the scroll position after closing the menu and element being 0
