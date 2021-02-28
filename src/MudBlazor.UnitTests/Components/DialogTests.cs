@@ -115,7 +115,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(()=> comp.Find("div.mud-dialog-container").Should().NotBe(null));
             // close again by click outside
             comp.Find("div.mud-overlay").Click();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty());
         }
 
     }
