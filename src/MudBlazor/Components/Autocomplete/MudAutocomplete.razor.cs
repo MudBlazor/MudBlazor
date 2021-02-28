@@ -144,6 +144,7 @@ namespace MudBlazor
             IsOpen = !IsOpen;
             if (IsOpen)
             {
+                await _elementReference.SelectAsync();
                 OnSearch();
             }
             else
