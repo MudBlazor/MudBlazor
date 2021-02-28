@@ -16,14 +16,14 @@ namespace MudBlazor
             .AddClass("mud-panel-next-expanded", NextPanelExpanded)
             .AddClass("mud-disabled", Disabled)
             .AddClass($"mud-elevation-{Parent?.Elevation.ToString()}")
-            .AddClass($"mud-expand-panel-border", !Parent.DisableBorders)
+            .AddClass($"mud-expand-panel-border", Parent?.DisableBorders != true)
             .AddClass(Class)
         .Build();
 
         protected string PanelContentClassname =>
         new CssBuilder("mud-expand-panel-content")
-            .AddClass("mud-expand-panel-gutters", DisableGutters || Parent.DisableGutters)
-            .AddClass("mud-expand-panel-dense", Dense || Parent.Dense)
+            .AddClass("mud-expand-panel-gutters", DisableGutters || Parent?.DisableGutters == true)
+            .AddClass("mud-expand-panel-dense", Dense || Parent?.Dense == true)
         .Build();
 
         /// <summary>
