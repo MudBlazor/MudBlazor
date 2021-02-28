@@ -8,12 +8,12 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
+using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents.Drawer;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
-namespace MudBlazor.UnitTests.Components
+namespace MudBlazor.UnitTests.Components.Components
 {
     [TestFixture]
     public class DrawerTest

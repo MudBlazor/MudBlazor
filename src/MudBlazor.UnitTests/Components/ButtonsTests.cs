@@ -4,7 +4,8 @@
 using FluentAssertions;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
-namespace MudBlazor.UnitTests
+
+namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
     public class ButtonsTests

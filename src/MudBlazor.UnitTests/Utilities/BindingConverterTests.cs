@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using FluentAssertions;
-using MudBlazor.Docs.Examples;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities

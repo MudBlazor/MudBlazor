@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
 using FluentAssertions;
-using MudBlazor.Docs.Compiler;
-using MudBlazor.Docs.Examples;
 using MudBlazor.Docs.Models;
 using NUnit.Framework;
 

@@ -2,20 +2,12 @@
 #pragma warning disable IDE1006 // leading underscore
 
 using System;
-using System.Linq;
-using System.Net.Http;
 using Bunit;
-using Bunit.Rendering;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents.CheckBox;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
-
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
 
     [TestFixture]
