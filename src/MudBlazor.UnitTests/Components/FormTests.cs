@@ -4,19 +4,13 @@
 using System;
 using System.Threading.Tasks;
 using Bunit;
-using Bunit.Rendering;
-using Bunit.TestDoubles;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Examples;
-using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents.Form;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
 
     [TestFixture]

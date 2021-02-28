@@ -8,14 +8,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.UnitTests.Mocks;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.SelectWithEnumTest;
+using static MudBlazor.UnitTests.TestComponents.SelectWithEnumTest;
 
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
 
     [TestFixture]
