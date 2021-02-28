@@ -5,6 +5,14 @@
 
     &.mud-autocomplete {
         display: block;
+
+        & .mud-select-input {
+            cursor: text;
+        }
+
+        & .mud-input-adornment {
+            cursor: pointer;
+        }
     }
 }
 
