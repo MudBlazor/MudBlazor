@@ -8,19 +8,6 @@
     }
 }
 
-.demo-container {
-    & .mud-container {
-        height: 100%;
-        background-color: rgba(89,74,226, 0.25);
-    }
-
-    & .mud-paper {
-        height: 400px;
-        width: 100%;
-        background-color: var(--mud-palette-surface);
-    }
-}
-
 .demo-drawer {
     height: 300px;
     position: relative;
