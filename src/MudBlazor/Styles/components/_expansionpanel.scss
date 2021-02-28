@@ -9,6 +9,12 @@
     &.mud-expansion-panels-square {
         border-radius: 0px;
     }
+
+    &.mud-expansion-panels-borders {
+        & .mud-expand-panel {
+            border-bottom: 1px solid var(--mud-palette-lines-default);
+        }
+    }
 }
 
 .mud-expand-panel {
@@ -17,9 +23,12 @@
     position: relative;
     transition: margin .3s cubic-bezier(.25,.8,.5,1);
     transition-delay: 100ms;
-    border-bottom: 1px solid var(--mud-palette-lines-default);
     color: var(--mud-palette-text-primary);
     background-color: var(--mud-palette-surface);
+
+    &.mud-expand-panel-border {
+        border-bottom: 1px solid var(--mud-palette-lines-default);
+    }
 
     &:first-child {
         border-top-left-radius: inherit;
@@ -58,7 +67,6 @@
         border-bottom-right-radius: inherit;
     }
 
-
     & .mud-expand-panel-header {
         width: 100%;
         align-items: center;
@@ -93,6 +101,16 @@
         padding: 0 24px 16px;
         flex: 1 1 auto;
         max-width: 100%;
+
+        &.mud-expand-panel-gutters {
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+
+        &.mud-expand-panel-dense {
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
     }
 }
 
