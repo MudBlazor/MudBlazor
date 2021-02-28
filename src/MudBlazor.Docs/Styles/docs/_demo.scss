@@ -1,13 +1,4 @@
 ﻿
-
-.demo-list, .demo-divider {
-    & .mud-list {
-        width: 100%;
-        max-width: 360px;
-        background-color: var(--mud-palette-surface);
-    }
-}
-
 .demo-divider-vertical {
     & .mud-paper {
         display: flex;
