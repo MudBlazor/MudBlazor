@@ -324,7 +324,7 @@ namespace MudBlazor.UnitTests.Components
             var items = comp.FindAll("div.mud-list-item").ToArray();
             // click list item
             items[1].Click();
-            select.Instance.Value.Should().Be(null);
+            select.Instance.Value.Should().Be("2");
             select.Instance.Text.Should().Be("2");
             text.Should().Be("2");
             selectedValuesChangedCount.Should().Be(1);
@@ -333,7 +333,7 @@ namespace MudBlazor.UnitTests.Components
             // click another list item
             items = comp.FindAll("div.mud-list-item").ToArray();
             items[0].Click();
-            select.Instance.Value.Should().Be(null);
+            select.Instance.Value.Should().Be("2, 1");
             select.Instance.Text.Should().Be("2, 1");
             text.Should().Be("2, 1");
             string.Join(",", selectedValues).Should().Be("2,1");
@@ -366,6 +366,81 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item-disabled").Count.Should().Be(1);
             comp.FindAll("div.mud-list-item-disabled")[0].Click();
             select.Instance.Value.Should().BeNull();
+        }
+
+        [Test]
+        public async Task MultiSelect_ShouldCallValidationFunc()
+        {
+            var comp = ctx.RenderComponent<MultiSelectTest1>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var select = comp.FindComponent<MudSelect<string>>();
+            string validatedValue = null;
+            select.SetParam(x=>x.Validation, (object)new Func<string, bool>(value=>
+            {
+                validatedValue = value; // NOTE: select does only update the value for T string
+                return true;
+            }));
+            var menu = comp.Find("div.mud-popover");
+            var input = comp.Find("div.mud-input-control");
+            // check initial state
+            select.Instance.Value.Should().BeNullOrEmpty();
+            menu.ClassList.Should().NotContain("mud-popover-open");
+            // click and check if it has toggled the menu
+            input.Click();
+            menu.ClassList.Should().Contain("mud-popover-open");
+            // now click an item and see the value change
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+            // menu should still be open now!!
+            menu.ClassList.Should().Contain("mud-popover-open");
+            select.Instance.Text.Should().Be("2");
+            validatedValue.Should().Be("2");
+            items[0].Click();
+            select.Instance.Text.Should().Be("2, 1");
+            validatedValue.Should().Be("2, 1");
+            items[2].Click();
+            select.Instance.Text.Should().Be("2, 1, 3");
+            validatedValue.Should().Be("2, 1, 3");
+            items[0].Click();
+            select.Instance.Text.Should().Be("2, 3");
+            validatedValue.Should().Be("2, 3");
+        }
+
+        [Test]
+        public void SingleSelect_Should_CallValidatonFunc()
+        {
+            var comp = ctx.RenderComponent<SelectTest1>();
+            Console.WriteLine(comp.Markup);
+            var select = comp.FindComponent<MudSelect<string>>();
+            string validatedValue = null;
+            select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
+            {
+                validatedValue = value; // NOTE: select does only update the value for T string
+                return true;
+            }));
+            var menu = comp.Find("div.mud-popover");
+            var input = comp.Find("div.mud-input-control");
+            // check initial state
+            select.Instance.Value.Should().BeNullOrEmpty();
+            menu.ClassList.Should().NotContain("mud-popover-open");
+            // click and check if it has toggled the menu
+            input.Click();
+            menu.ClassList.Should().Contain("mud-popover-open");
+            // now click an item and see the value change
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+            // menu should be closed now
+            menu.ClassList.Should().NotContain("mud-popover-open");
+            select.Instance.Value.Should().Be("2");
+            select.Instance.Text.Should().Be("2");
+            validatedValue.Should().Be("2");
+            // now we cheat and click the list without opening the menu ;)
+            items[0].Click();
+            select.Instance.Value.Should().Be("1");
+            select.Instance.Text.Should().Be("1");
+            validatedValue.Should().Be("1");
         }
     }
 }
