@@ -69,7 +69,6 @@ namespace MudBlazor
             }
             var dialogInstanceId = Guid.NewGuid();
             DialogReference dialogReference = null;
-            parameters._parameters["Reference"] = dialogReference;
             dialogReference = new DialogReference(dialogInstanceId, this);
             var dialogContent = new RenderFragment(builder =>
             {
