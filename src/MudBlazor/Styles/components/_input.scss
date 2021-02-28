@@ -20,8 +20,8 @@
     }
 
     &.mud-disabled > .mud-input-adornment {
-      color: var(--mud-palette-text-disabled);
-      pointer-events: none;
+        color: var(--mud-palette-text-disabled);
+        pointer-events: none;
     }
 
     &.mud-input-underline {
