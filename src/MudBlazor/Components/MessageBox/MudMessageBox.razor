@@ -2,6 +2,15 @@
 @inherits MudComponentBase
 
 <MudDialog>
+    <TitleContent>
+        @if (TitleContent == null)
+        {
+            <MudText Typo="Typo.h6">@Title</MudText> }
+        else
+        {
+            @TitleContent
+        }
+    </TitleContent>
     <DialogContent>
         @if(MessageContent!=null)
         {
