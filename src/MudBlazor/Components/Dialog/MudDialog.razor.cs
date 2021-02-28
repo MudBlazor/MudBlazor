@@ -111,9 +111,24 @@ namespace MudBlazor
             _reference.Result.ContinueWith(t =>
             {
                 _isVisible = false;
-                IsVisibleChanged.InvokeAsync(false);
+                InvokeAsync(() => IsVisibleChanged.InvokeAsync(false));
             });
             return _reference;
+        }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (IsInline && _reference!=null)
+                _reference.Dialog?.ForceUpdate(); // forward render update to instance
+            base.OnAfterRender(firstRender);
+        }
+
+        /// <summary>
+        /// Used for forwarding state changes from inlined dialog to its instance
+        /// </summary>
+        internal void ForceUpdate()
+        {
+            StateHasChanged();
         }
 
         /// <summary>
