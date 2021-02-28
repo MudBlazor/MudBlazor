@@ -63,7 +63,6 @@ namespace MudBlazor
         private Task OnBumperFocusAsync(FocusEventArgs args)
         {
             return _shiftDown ? FocusLastAsync() : FocusFirstAsync();
-            return FocusFirstAsync();
         }
 
         private Task OnRootFocusAsync(FocusEventArgs args)
