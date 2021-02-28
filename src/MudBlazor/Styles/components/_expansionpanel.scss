@@ -6,7 +6,7 @@
     transition: .3s cubic-bezier(.25,.8,.5,1);
     border-radius: var(--mud-default-borderradius);
 
-    .mud-expansion-panels-square {
+    &.mud-expansion-panels-square {
         border-radius: 0px;
     }
 }
