@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Extensions;
@@ -59,7 +60,7 @@ namespace MudBlazor.Docs.Shared
         private Task<IEnumerable<ApiLinkServiceEntry>> Search(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
-                return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(new ApiLinkServiceEntry[0]);
+                return Task.FromResult<IEnumerable<ApiLinkServiceEntry>>(Array.Empty<ApiLinkServiceEntry>());
             return ApiLinkService.Search(text);
         }
 

@@ -147,7 +147,9 @@ namespace MudBlazor
 
         protected override Task UpdateValuePropertyAsync(bool updateText)
         {
-            // Select does not support updating the value through the Text property at all!
+            // For MultiSelection of non-string T's we don't update the Value!!!
+            if (typeof(T) == typeof(string) || !MultiSelection)
+                base.UpdateValuePropertyAsync(updateText);
             return Task.CompletedTask;
         }
 
@@ -230,6 +232,7 @@ namespace MudBlazor
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
             }
+            BeginValidate();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }

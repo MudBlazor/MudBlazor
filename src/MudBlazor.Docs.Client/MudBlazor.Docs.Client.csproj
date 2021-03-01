@@ -8,6 +8,7 @@
     <!--Note trailing slash -->
     <StaticWebAssetBasePath Condition="'$(BuildType)' == 'publish'">wasm/</StaticWebAssetBasePath>
     <IsPackable>false</IsPackable>
+    <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
   </PropertyGroup>
 
   <ItemGroup>

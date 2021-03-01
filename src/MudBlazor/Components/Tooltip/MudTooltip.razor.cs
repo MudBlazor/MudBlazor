@@ -1,12 +1,12 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-
-    public partial class MudTooltip : ComponentBase
+    public partial class MudTooltip : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-tooltip")
             .AddClass($"mud-tooltip-placement-{Placement.ToDescriptionString()}")
@@ -18,16 +18,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Text { get; set; }
 
-
         /// <summary>
-        /// User class names, separated by space
+        /// Changes the default transition delay in milliseconds.
         /// </summary>
-        [Parameter] public string Class { get; set; }
+        [Parameter] public double Delay { get; set; } = 200;
 
         /// <summary>
         /// Changes the default transition delay in seconds.
         /// </summary>
-        [Parameter] public double Delayed { get; set; } = 0.2;
+        [Obsolete]
+        [Parameter]
+        public double Delayed
+        {
+            get { return Delay / 1000; }
+            set { Delay = value * 1000; }
+        }
 
         /// <summary>
         /// Tooltip placement.
@@ -46,7 +51,7 @@ namespace MudBlazor
 
         protected string GetTimeDelay()
         {
-            return $"transition-delay: {Delayed.ToString(CultureInfo.InvariantCulture)}s;";
+            return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style}";
         }
     }
 }

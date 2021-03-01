@@ -1,4 +1,6 @@
-﻿<MudTreeView T="string" CanSelect="true" CanActivate="true">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView T="string" CanSelect="true" CanActivate="true">
     <MudTreeViewItem Value='"content"' @bind-Activated="Item1Activated" @bind-Selected="ParentItemSelected">
         <MudTreeViewItem Value='"logo.png"' />
         <MudTreeViewItem Value='"MudBlazor.svg"' @bind-Selected="SubItemSelected" />

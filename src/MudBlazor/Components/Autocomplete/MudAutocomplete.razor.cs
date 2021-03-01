@@ -5,14 +5,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudAutocomplete<T> : MudBaseInput<T>, IDisposable
     {
-        [Inject] IJSRuntime JsRuntime { get; set; }
+        [Inject] IScrollManager ScrollManager { get; set; }
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -130,7 +129,7 @@ namespace MudBlazor
             await SetValueAsync(value);
             if (_items != null)
                 _selectedListItemIndex = Array.IndexOf(_items, value);
-            await SetTextAsync( GetItemString(value), false);
+            await SetTextAsync(GetItemString(value), false);
             _timer?.Dispose();
             IsOpen = false;
             UpdateIcon();
@@ -140,17 +139,17 @@ namespace MudBlazor
 
         public async Task ToggleMenu()
         {
-            if (Disabled || MinCharacters > 0 && (string.IsNullOrEmpty(Text) || Text.Length < MinCharacters))
+            if ((Disabled || ReadOnly) && !IsOpen)
                 return;
             IsOpen = !IsOpen;
-            //if (IsOpen && string.IsNullOrEmpty(Text))
-            //    IsOpen = false;
             if (IsOpen)
             {
+                await _elementReference.SelectAsync();
                 OnSearch();
             }
             else
             {
+                RestoreScrollPosition();
                 await CoerceTextToValue();
             }
             UpdateIcon();
@@ -193,7 +192,7 @@ namespace MudBlazor
             _timer?.Dispose();
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(Text))
                 await SetValueAsync(default(T), updateText);
-            if (DebounceInterval<=0)
+            if (DebounceInterval <= 0)
                 OnSearch();
             else
                 _timer = new Timer(OnTimerComplete, null, DebounceInterval, Timeout.Infinite);
@@ -210,10 +209,10 @@ namespace MudBlazor
                 return;
             }
             _selectedListItemIndex = 0;
-            IEnumerable<T> searched_items = new T[0];
+            IEnumerable<T> searched_items = Array.Empty<T>();
             try
             {
-                searched_items = (await SearchFunc(Text)) ?? new T[0];
+                searched_items = (await SearchFunc(Text)) ?? Array.Empty<T>();
             }
             catch (Exception e)
             {
@@ -223,7 +222,7 @@ namespace MudBlazor
                 searched_items = searched_items.Take(MaxItems.Value);
             _items = searched_items.ToArray();
 
-            if (_items?.Count() == 0)
+            if (_items?.Length == 0)
             {
                 IsOpen = false;
                 UpdateIcon();
@@ -262,7 +261,7 @@ namespace MudBlazor
                     await SelectNextItem(-1);
                     break;
             }
-            base.onKeyDown(args);
+            base.InvokeKeyDown(args);
         }
 
         private async Task SelectNextItem(int increment)
@@ -286,24 +285,15 @@ namespace MudBlazor
             //increment 1 down; -1 up
             //onEdges, last param, boolean. If true, only scrolls when elements reaches top or bottom of container.
             //If false, scrolls always
-            await JsRuntime
-                .InvokeVoidAsync("scrollHelpers.scrollToListItem", id, increment, true);
+            await ScrollManager.ScrollToListItemAsync(id, increment, true);
             StateHasChanged();
-        }
-
-
-        protected override void OnAfterRender(bool firstRender)
-        {
-            if (firstRender) return;
-            RestoreScrollPosition();
         }
 
         //This restores the scroll position after closing the menu and element being 0
         private void RestoreScrollPosition()
         {
             if (_selectedListItemIndex != 0) return;
-            JsRuntime
-             .InvokeVoidAsync("scrollHelpers.scrollToListItem", GetListItemId(0), 0);
+            ScrollManager.ScrollToListItemAsync(GetListItemId(0), 0, false);
         }
 
         private string GetListItemId(in int index)
@@ -374,7 +364,7 @@ namespace MudBlazor
         {
             if (text == null)
                 return;
-           _= SetTextAsync( text, true);
+            _ = SetTextAsync(text, true);
 
         }
     }

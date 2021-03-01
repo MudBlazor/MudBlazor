@@ -1,4 +1,6 @@
-﻿<MudDrawer @ref="@Drawer" @bind-Open="@isOpen" Variant="@Variant" DisableOverlay="@DisableOverlay" ClipMode="@ClipMode"></MudDrawer>
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudDrawer @ref="@Drawer" @bind-Open="@isOpen" Variant="@Variant" DisableOverlay="@DisableOverlay" ClipMode="@ClipMode"></MudDrawer>
 <button @onclick="@HandleButtonClick" />
 
 @code {

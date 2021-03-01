@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using MudBlazor.Utilities;
 using MudBlazor.Services;
-using System.Globalization;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -24,6 +24,8 @@ namespace MudBlazor
         private double _allTabsSize;
         private double _scrollValue;
         private double _scrollPosition;
+
+        [Inject] public IResizeListenerService ResizeListener { get; set; }
 
         protected string TabsClassnames =>
             new CssBuilder("mud-tabs")
@@ -54,7 +56,8 @@ namespace MudBlazor
 
         protected string WrapperScrollStyle =>
         new StyleBuilder()
-            .AddStyle("transform", $"translateX({_scrollPosition.ToString(CultureInfo.InvariantCulture)}px)")
+            .AddStyle("transform", $"translateX({_scrollPosition.ToString(CultureInfo.InvariantCulture)}px)", Position == Position.Top || Position == Position.Bottom)
+            .AddStyle("transform", $"translateY({_scrollPosition.ToString(CultureInfo.InvariantCulture)}px)", Position == Position.Left || Position == Position.Right)
         .Build();
 
         protected string PanelsClassnames =>
@@ -72,6 +75,11 @@ namespace MudBlazor
             .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right)
             .Build();
 
+        protected string MaxHeightStyles =>
+            new StyleBuilder()
+            .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
+            .Build();
+
         protected string SliderStyle =>
         new StyleBuilder()
             .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
@@ -79,8 +87,6 @@ namespace MudBlazor
             .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
             .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
         .Build();
-
-        [Inject] public IDomService DomService { get; set; }
 
         /// <summary>
         /// If true, render all tabs and hide (display:none) every non-active.
@@ -121,6 +127,16 @@ namespace MudBlazor
         /// Icon to use for right pagination.
         /// </summary>
         [Parameter] public string NextIcon { get; set; } = Icons.Filled.ChevronRight;
+
+        /// <summary>
+        /// If true, always display the scroll buttons even if the tabs are smaller than the required with, buttons will be disabled if there is nothing to scroll.
+        /// </summary>
+        [Parameter] public bool AlwaysShowScrollButtons { get; set; }
+
+        /// <summary>
+        /// Sets the maxheight the component can have.
+        /// </summary>
+        [Parameter] public int? MaxHeight { get; set; } = null;
 
         /// <summary>
         /// Sets the position of the tabs itself.
@@ -208,7 +224,11 @@ namespace MudBlazor
 
         public List<MudTabPanel> Panels = new List<MudTabPanel>();
 
-        public void Dispose() => _isDisposed = true;
+        public void Dispose()
+        {
+            _isDisposed = true;
+            ResizeListener.OnResized -= OnResized;
+        }
 
         internal void AddPanel(MudTabPanel tabPanel)
         {
@@ -251,7 +271,7 @@ namespace MudBlazor
             {
                 ActivePanel = panel;
                 ActivePanelIndex = Panels.IndexOf(panel);
-                if(!HideSlider)
+                if (!HideSlider)
                     _ = UpdateSlider();
                 if (ev != null)
                     ActivePanel.OnClick.InvokeAsync(ev);
@@ -290,32 +310,56 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender && !HideSlider)
+            if (firstRender)
+            {
+                await CalculateTabsSize();
+                ResizeListener.OnResized += OnResized;
+            }
+        }
+
+        private async void OnResized(object sender, BrowserWindowSize size)
+        {
+            await CalculateTabsSize();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        private async Task CalculateTabsSize()
+        {
+            if(!HideSlider)
             {
                 await UpdateSlider();
-                await GetToolbarContentSize();
-                await GetAllTabsSize();
-
-                if(_allTabsSize > _toolbarContentSize)
-                {
-                    _showScrollButtons = true;
-                    if(_scrollPosition == 0)
-                    {
-                        _prevButtonDisabled = true;
-                    }
-                    StateHasChanged();
-                }
             }
+
+            await GetToolbarContentSize();
+            await GetAllTabsSize();
+
+            if (AlwaysShowScrollButtons || _allTabsSize > _toolbarContentSize)
+            {
+                _showScrollButtons = true;
+                if (_scrollValue >= 0)
+                    _prevButtonDisabled = true;
+                else
+                    _prevButtonDisabled = false;
+                if (Math.Abs(_scrollValue) + _toolbarContentSize >= _allTabsSize)
+                    _nextButtonDisabled = true;
+                else
+                    _nextButtonDisabled = false;
+            }
+            else
+            {
+                _showScrollButtons = false;
+            }
+            StateHasChanged();
         }
 
         private async Task UpdateSlider()
         {
-            if(ActivePanel != null)
+            if (ActivePanel != null)
             {
                 if (Position == Position.Top || Position == Position.Bottom)
-                    _size = (await DomService.GetBoundingClientRect(ActivePanel.PanelRef))?.Width ?? 0;
+                    _size = (await ActivePanel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
                 else
-                    _size = (await DomService.GetBoundingClientRect(ActivePanel.PanelRef))?.Height ?? 0;
+                    _size = (await ActivePanel.PanelRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
 
                 _position = 0;
 
@@ -324,13 +368,13 @@ namespace MudBlazor
                     double position = 0;
                     var counter = 0;
                     foreach (var panel in Panels) if (counter < ActivePanelIndex)
-                    {
-                        if (Position == Position.Top || Position == Position.Bottom)
-                            position += (await DomService.GetBoundingClientRect(panel.PanelRef))?.Width ?? 0;
-                        else
-                            position += (await DomService.GetBoundingClientRect(panel.PanelRef))?.Height ?? 0;
-                        counter++;
-                    }
+                        {
+                            if (Position == Position.Top || Position == Position.Bottom)
+                                position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
+                            else
+                                position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
+                            counter++;
+                        }
                     _position = position;
                 }
                 StateHasChanged();
@@ -340,9 +384,9 @@ namespace MudBlazor
         private async Task GetToolbarContentSize()
         {
             if (Position == Position.Top || Position == Position.Bottom)
-                _toolbarContentSize = (await DomService.GetBoundingClientRect(TabsContentSize))?.Width ?? 0;
+                _toolbarContentSize = (await TabsContentSize.MudGetBoundingClientRectAsync())?.Width ?? 0;
             else
-                _toolbarContentSize = (await DomService.GetBoundingClientRect(TabsContentSize))?.Height ?? 0;
+                _toolbarContentSize = (await TabsContentSize.MudGetBoundingClientRectAsync())?.Height ?? 0;
         }
 
         private async Task GetAllTabsSize()
@@ -352,9 +396,9 @@ namespace MudBlazor
             foreach (var panel in Panels)
             {
                 if (Position == Position.Top || Position == Position.Bottom)
-                    totalTabsSize += (await DomService.GetBoundingClientRect(panel.PanelRef))?.Width ?? 0;
+                    totalTabsSize += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
                 else
-                    totalTabsSize += (await DomService.GetBoundingClientRect(panel.PanelRef))?.Height ?? 0;
+                    totalTabsSize += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
             }
 
             _allTabsSize = totalTabsSize;
@@ -364,7 +408,7 @@ namespace MudBlazor
         {
             _nextButtonDisabled = false;
             _scrollValue += _toolbarContentSize;
-            if(_scrollValue >= 0)
+            if (_scrollValue >= 0)
             {
                 _scrollPosition = 0;
                 _prevButtonDisabled = true;

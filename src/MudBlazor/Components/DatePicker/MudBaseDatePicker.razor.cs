@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using MudBlazor.Extensions;
-using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
     {
-        protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>{
+        protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
+        {
             Format = "yyyy-MM-dd",
             Culture = CultureInfo.CurrentCulture
-        }) { }
+        })
+        { }
 
-        [Inject] protected IJSRuntime JsRuntime { get; set; }
+        [Inject] protected IScrollManager ScrollManager { get; set; }
 
         /// <summary>
         /// Max selectable date.
@@ -46,8 +46,7 @@ namespace MudBlazor
             }
             set
             {
-                var defaultConverter = Converter as DefaultConverter<DateTime?>;
-                if (defaultConverter!=null)
+                if (Converter is DefaultConverter<DateTime?> defaultConverter)
                     defaultConverter.Format = value;
             }
         }
@@ -269,7 +268,7 @@ namespace MudBlazor
         {
             _scrollToYearAfterRender = false;
             var id = $"{_componentId}{GetMonthStart(0).Year}";
-            await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToYear", id);
+            await ScrollManager.ScrollToYearAsync(id);
             StateHasChanged();
         }
 
@@ -325,9 +324,9 @@ namespace MudBlazor
         {
             var current = GetMonthStart(0);
             var calendarYear = Culture.Calendar.GetYear(current);
-            var firstOfCalendarYear = Culture.Calendar.ToDateTime(calendarYear, 1, 1,0,0,0,0);
+            var firstOfCalendarYear = Culture.Calendar.ToDateTime(calendarYear, 1, 1, 0, 0, 0, 0);
             for (var i = 0; i < Culture.Calendar.GetMonthsInYear(calendarYear); i++)
-                yield return Culture.Calendar.AddMonths(firstOfCalendarYear,i);
+                yield return Culture.Calendar.AddMonths(firstOfCalendarYear, i);
         }
 
         private string GetAbbreviatedMontName(in DateTime month)

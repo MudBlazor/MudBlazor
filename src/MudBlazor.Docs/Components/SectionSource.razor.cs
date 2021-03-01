@@ -1,23 +1,19 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Extensions;
-using MudBlazor.Services;
+using MudBlazor.Docs.Models;
+
 namespace MudBlazor.Docs.Components
 {
     public partial class SectionSource
     {
         [Inject]
-        protected IJSRuntime  JSRuntime { get; set; }
+        protected IJsApiService JsApiService { get; set; }
 
-        [Inject]
-        protected IDomService DomService { get; set; }
-        
         [Parameter] public string Title { get; set; }
 
         [Parameter] public string Code { get; set; }
@@ -28,22 +24,20 @@ namespace MudBlazor.Docs.Components
 
         [Parameter] public bool ShowCode { get; set; } = true;
 
-        [Parameter] public bool HideButtons { get; set; }
-
         [Parameter] public bool NoToolbar { get; set; }
+
+        private bool HideEditOnTryMudBlazor => Code.EndsWith("_Dialog");
 
         private string GitHubSourceCode { get; set; }
 
         public string TooltipSourceCodeText { get; set; }
 
-        private string showCodeExampleString { get; set; } = "Show code example";
-        private string hideCodeExampleString { get; set; } = "Hide code example";
-        private string showComponentCodeExampleString { get; set; } = "Show component code example";
-        private string hideComponentCodeExampleString { get; set; } = "Hide component code example";
+        private string ShowCodeExampleString { get; set; } = "Show code example";
+        private string HideCodeExampleString { get; set; } = "Hide code example";
 
         private async Task CopyTextToClipboard()
         {
-            await JSRuntime.InvokeVoidAsync("clipboardCopy.copyText", Snippets.GetCode(Code));
+            await JsApiService.CopyToClipboardAsync(Snippets.GetCode(Code));
         }
 
         public void OnShowCode()
@@ -53,16 +47,14 @@ namespace MudBlazor.Docs.Components
                 ShowCode = !ShowCode;
                 if (ShowCode)
                 {
-                    TooltipSourceCodeText = hideCodeExampleString;
+                    TooltipSourceCodeText = HideCodeExampleString;
                 }
                 else
                 {
-                    TooltipSourceCodeText = showCodeExampleString;
+                    TooltipSourceCodeText = ShowCodeExampleString;
                 }
             }
         }
-
-        private Type CodeType => Type.GetType("MudBlazor.Docs.Examples.Markup." + Code + "Code");
 
         RenderFragment CodeComponent() => builder =>
         {
@@ -98,18 +90,27 @@ namespace MudBlazor.Docs.Components
                 }
             }
 
-            // Add Element.cs model for webapi periodic table
-            if (codeFiles.Contains("webapi/periodictable", StringComparison.InvariantCultureIgnoreCase))
+            // Data models
+            if (codeFiles.Contains("MudBlazor.Examples.Data.Models"))
             {
-                var elementCodeFile = "Element.cs" + (char)31 + Snippets.GetCode("Element");
-                codeFiles = codeFiles + (char)31 + elementCodeFile;
+                if (Regex.Match(codeFiles, @"\bElement\b").Success)
+                {
+                    var elementCodeFile = "Element.cs" + (char)31 + Snippets.GetCode("Element");
+                    codeFiles = codeFiles + (char)31 + elementCodeFile;
+                }
+
+                if (Regex.Match(codeFiles, @"\bServer\b").Success)
+                {
+                    var serverCodeFile = "Server.cs" + (char)31 + Snippets.GetCode("Server");
+                    codeFiles = codeFiles + (char)31 + serverCodeFile;
+                }
             }
 
             var codeFileEncoded = codeFiles.ToCompressedEncodedUrl();
             // var tryMudBlazorLocation = "https://localhost:5001/";
             var tryMudBlazorLocation = "https://try.mudblazor.com/";
             var url = $"{tryMudBlazorLocation}snippet/{codeFileEncoded}";
-            await DomService.OpenInNewTab(url);
+            await JsApiService.OpenInNewTabAsync(url);
         }
 
         protected override void OnInitialized()
@@ -121,11 +122,11 @@ namespace MudBlazor.Docs.Components
             }
             if (ShowCode)
             {
-                TooltipSourceCodeText = hideCodeExampleString;
+                TooltipSourceCodeText = HideCodeExampleString;
             }
             else
             {
-                TooltipSourceCodeText = showCodeExampleString;
+                TooltipSourceCodeText = ShowCodeExampleString;
             }
         }
     }

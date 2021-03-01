@@ -1,4 +1,4 @@
-using System.Net.Http;
+﻿using System.Net.Http;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,13 +21,13 @@ namespace MudBlazor.UnitTests.Components
             ctx.JSInterop.Mode = JSRuntimeMode.Loose;
             ctx.Services.AddSingleton<NavigationManager>(new MockNavigationManager());
             ctx.Services.AddSingleton<IDialogService>(new DialogService());
-            ctx.Services.AddSingleton<ISnackbar>(new SnackbarService());
+            ctx.Services.AddSingleton<ISnackbar, SnackbarService>();
             ctx.Services.AddSingleton<IResizeListenerService>(new MockResizeListenerService());
             ctx.Services.AddTransient<IScrollManager, MockScrollManager>();
             ctx.Services.AddTransient<IScrollListener, MockScrollListener>();
+            ctx.Services.AddTransient<IJsApiService, MockJsApiServices>();
             ctx.Services.AddSingleton<IHeadElementHelper>(new MockHeadElementHelper());
             ctx.Services.AddSingleton<IBrowserWindowSizeProvider>(new MockBrowserWindowSizeProvider());
-            ctx.Services.AddSingleton<IDomService>(new MockDomService());
             ctx.Services.AddScoped(sp => new HttpClient());
         }
 
