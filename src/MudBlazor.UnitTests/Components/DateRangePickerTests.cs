@@ -11,7 +11,7 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 using static Bunit.ComponentParameterFactory;
 
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
     public class DateRangePickerTests
@@ -190,7 +190,7 @@ namespace MudBlazor.UnitTests
             comp.Instance.DateRange.Should().BeNull();
             // should show years
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-year").First().Click();
+            comp.FindAll("div.mud-picker-year")[0].Click();
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
         }
 
@@ -201,7 +201,7 @@ namespace MudBlazor.UnitTests
             comp.Instance.DateRange.Should().BeNull();
             // should show years
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-year").First().Click();
+            comp.FindAll("div.mud-picker-year")[0].Click();
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             // clicking outside to close
             comp.Find("div.mud-overlay").Click();
@@ -226,7 +226,7 @@ namespace MudBlazor.UnitTests
         {
             var comp = OpenPicker();
             // should show months
-            comp.FindAll("div.mud-picker-calendar-header-transition").First().Click();
+            comp.FindAll("div.mud-picker-calendar-header-transition")[0].Click();
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
         }
 
@@ -235,7 +235,7 @@ namespace MudBlazor.UnitTests
         {
             var comp = OpenPicker(Parameter("OpenTo", OpenTo.Month));
             // should show years
-            comp.FindAll("div.mud-picker-calendar-header-transition").First().Click();
+            comp.FindAll("div.mud-picker-calendar-header-transition")[0].Click();
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
         }
 
@@ -246,8 +246,7 @@ namespace MudBlazor.UnitTests
             comp.Instance.DateRange.Should().BeNull();
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")
-                .Skip(2).First().Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")[2].Click();
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("2")).First().Click();
             comp.FindAll("button.mud-picker-calendar-day")
@@ -271,7 +270,7 @@ namespace MudBlazor.UnitTests
             // should show months
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")
-                .Skip(3).First().Click();
+                [3].Click();
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("10")).First().Click();
             comp.FindAll("button.mud-picker-calendar-day")
@@ -308,7 +307,7 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-year-container > div.mud-picker-year")
                 .Where(x => x.TrimmedText().Contains("2022")).First().Click();
             comp.FindAll("div.mud-picker-month-container").Count.Should().Be(1);
-            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month").Skip(1).First().Click();
+            comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-month-container > div.mud-picker-month")[1].Click();
             comp.FindAll("div.mud-picker-calendar-container > div.mud-picker-calendar-header").Count.Should().Be(2);
             comp.FindAll("button.mud-picker-calendar-day")
                 .Where(x => x.TrimmedText().Equals("1")).First().Click();

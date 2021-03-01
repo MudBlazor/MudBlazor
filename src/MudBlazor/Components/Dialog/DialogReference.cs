@@ -1,10 +1,8 @@
-﻿// Copyright (c) 2020 Jonny Larsson
-// License: MIT
-// See https://github.com/Garderoben/MudBlazor
-// Modified version of Blazored Modal
-// Copyright (c) 2019 Blazored
-// License: MIT
+﻿// Copyright (c) 2019 Blazored (https://github.com/Blazored)
+// Copyright (c) 2020 Jonny Larsson (https://github.com/Garderoben/MudBlazor)
+// Copyright (c) 2021 improvements by Meinrad Recheis
 // See https://github.com/Blazored
+// License: MIT
 
 using System;
 using System.Threading.Tasks;
@@ -18,10 +16,9 @@ namespace MudBlazor
 
         private readonly DialogService _dialogService;
 
-        public DialogReference(Guid dialogInstanceId, RenderFragment dialogInstance, DialogService dialogService)
+        public DialogReference(Guid dialogInstanceId, DialogService dialogService)
         {
             Id = dialogInstanceId;
-            DialogInstance = dialogInstance;
             _dialogService = dialogService;
         }
 
@@ -42,8 +39,19 @@ namespace MudBlazor
 
         internal Guid Id { get; }
 
-        internal RenderFragment DialogInstance { get; }
+        public MudDialog Dialog { get; private set; }
+        internal RenderFragment RenderFragment { get; private set; }
 
         public Task<DialogResult> Result => _resultCompletion.Task;
+
+        internal void InjectDialog(object inst)
+        {
+            Dialog=inst as MudDialog;
+        }
+
+        internal void InjectRenderFragment(RenderFragment rf)
+        {
+            RenderFragment = rf;
+        }
     }
 }

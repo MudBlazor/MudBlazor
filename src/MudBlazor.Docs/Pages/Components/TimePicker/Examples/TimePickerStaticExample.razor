@@ -2,7 +2,9 @@
 
 
 <MudTimePicker PickerVariant="PickerVariant.Static" @bind-Time="time" AmPm="true" />
-<MudTimePicker PickerVariant="PickerVariant.Static" Orientation="Orientation.Landscape" @bind-Time="time"/>
+<MudHidden Breakpoint="@Breakpoint.Xs">
+    <MudTimePicker PickerVariant="PickerVariant.Static" Orientation="Orientation.Landscape" @bind-Time="time" />
+</MudHidden>
 
 @code{
     TimeSpan? time = new TimeSpan(13, 37, 00);

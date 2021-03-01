@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm">
+<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" RightAlignSmall="_rightAligned">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -15,16 +15,20 @@
         <MudTd DataLabel="Nr">@context.Number</MudTd>
         <MudTd DataLabel="Sign">@context.Sign</MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
-        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Position" HideSmall="_hidePosition">@context.Position</MudTd>
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
 </MudTable>
 
+<MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
+<MudSwitch @bind-Checked="_rightAligned">Right align cell when Breakpoint=Xs</MudSwitch>
+
 @code {
+    private bool _hidePosition, _rightAligned = true;
     private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-    }    
+    }
 }

@@ -60,18 +60,12 @@
     }
 }
 
-.docs-section-content-row {
-    & > * {
-        margin: 8px;
-    }
-}
-
 .docs-section-source {
     height: 100%;
 
     .docs-content-toolbar {
-        width: 100%;
         display: flex;
+        z-index: 25;
 
         & > .mud-tooltip-root .mud-icon-button .mud-svg-icon {
             font-size: 1.25rem;
@@ -132,4 +126,10 @@
 
 .docs-section-black {
     background-color: var(--mud-palette-black);
+}
+
+.docs-iframe {
+    height: 400px;
+    width: 100%;
+    margin: 0px !important;
 }

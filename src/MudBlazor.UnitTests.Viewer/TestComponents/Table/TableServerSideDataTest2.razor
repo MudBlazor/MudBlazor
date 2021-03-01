@@ -1,4 +1,6 @@
-﻿<MudTable ServerData="@(new Func<TableState, Task<TableData<int>>>(ServerReload))">
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable ServerData="@(new Func<TableState, Task<TableData<int>>>(ServerReload))">
     <HeaderContent>
         <MudTh><MudTableSortLabel SortLabel="No." T="int">Nr</MudTableSortLabel></MudTh>
     </HeaderContent>

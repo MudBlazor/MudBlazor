@@ -31,7 +31,7 @@ namespace MudBlazor.Docs.Compiler
                 cb.AddLine("namespace MudBlazor.UnitTests.Components");
                 cb.AddLine("{");
                 cb.IndentLevel++;
-                cb.AddLine("// These tests just check if all the examples from the doc page render without errors"); 
+                cb.AddLine("// These tests just check if all the examples from the doc page render without errors");
                 cb.AddLine("public partial class ExampleDocsTests");
                 cb.AddLine("{");
                 cb.IndentLevel++;

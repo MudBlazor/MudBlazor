@@ -2,9 +2,9 @@
 
 <CascadingValue Value="this" IsFixed="true">
     <CascadingValue Value="_globalDialogOptions">
-        @foreach (var dialog in _dialogs)
+        @foreach (var dialogReference in _dialogs)
         {
-            @dialog.DialogInstance
+            @dialogReference.RenderFragment
         }
     </CascadingValue>
 </CascadingValue>

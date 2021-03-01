@@ -1,15 +1,9 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudGrid Class="mt-6">
-    <MudItem md="12">
-        <MudAlert Severity="Severity.Normal" Variant="Variant.Filled" Elevation="@elevation">
-            Elevated Alert, or is it?
-        </MudAlert>
-    </MudItem>
-    <MudItem md="12">
-        <MudSlider @bind-Value="elevation" Min="0" Max="24" Class="my-4">Elevation</MudSlider>
-    </MudItem>
-</MudGrid>
+<MudAlert Severity="Severity.Normal" Variant="Variant.Filled" Elevation="@elevation" Class="mt-16" Style="width:364px;">
+    Elevated Alert, or is it?
+</MudAlert>
+<MudSlider @bind-Value="elevation" Min="0" Max="24" Class="my-4">Elevation</MudSlider>
 
 @code {
     public int elevation = 1;

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
 using FluentAssertions;
-using MudBlazor.Docs.Compiler;
-using MudBlazor.Docs.Examples;
 using MudBlazor.Docs.Models;
 using NUnit.Framework;
 
@@ -45,7 +42,7 @@ namespace MudBlazor.UnitTests.Utilities
                 uncompressor.CopyTo(uncompressed);
                 uncompressor.Close();
                 //uncompressed.Position = 0;
-                snippet1 = Encoding.UTF8.GetString( uncompressed.ToArray());
+                snippet1 = Encoding.UTF8.GetString(uncompressed.ToArray());
             }
             // compare
             snippet1.Should().Be(snippet);

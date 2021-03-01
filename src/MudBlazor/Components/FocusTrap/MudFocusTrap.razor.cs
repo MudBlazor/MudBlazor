@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
-using MudBlazor.Extensions;
 
 namespace MudBlazor
 {
@@ -120,6 +118,7 @@ namespace MudBlazor
 
         private void HandleKeyEvent(KeyboardEventArgs args)
         {
+            _shouldRender = false;
             if (args.Key == "Tab")
                 _shiftDown = args.ShiftKey;
         }
@@ -132,6 +131,16 @@ namespace MudBlazor
         private Task SaveFocusAsync()
         {
             return _root.MudSaveFocusAsync().AsTask();
+        }
+
+        bool _shouldRender=true;
+
+        protected override bool ShouldRender()
+        {
+            if (_shouldRender)
+                return true;
+            _shouldRender = true; // auto-reset _shouldRender to true
+            return false;
         }
 
         public void Dispose()

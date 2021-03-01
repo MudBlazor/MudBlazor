@@ -15,7 +15,7 @@ namespace MudBlazor
                 .AddClass("mud-input-underline", when: () => DisableUnderLine == false && Variant != Variant.Outlined)
                 .AddClass("mud-shrink", when: () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()))
                 .AddClass("mud-disabled", Disabled)
-                .AddClass("mud-input-error", Error || !string.IsNullOrEmpty(ErrorText))
+                .AddClass("mud-input-error", Error && !string.IsNullOrEmpty(ErrorText))
                 .AddClass(Class)
                 .Build();
 

@@ -30,7 +30,7 @@ namespace MudBlazor
           .AddClass($"mud-drawer--initial", _initial)
           .AddClass($"mud-drawer-{Breakpoint.ToDescriptionString()}")
           .AddClass($"mud-drawer-clipped-{_clipMode.ToDescriptionString()}")
-          .AddClass($"mud-drawer-color-{Color.ToDescriptionString()}", Color != Color.Default)
+          .AddClass($"mud-theme-{Color.ToDescriptionString()}", Color != Color.Default)
           .AddClass($"mud-elevation-{Elevation}")
           .AddClass($"mud-drawer-{Variant.ToDescriptionString()}")
           .AddClass(Class)

@@ -30,6 +30,7 @@ namespace MudBlazor
            .AddClass($"mud-table-square", Square)
            .AddClass($"mud-table-sticky-header", FixedHeader)
            .AddClass($"mud-elevation-{Elevation}", !Outlined)
+           .AddClass($"mud-table-small-alignright", RightAlignSmall)
           .AddClass(Class)
         .Build();
 
@@ -176,6 +177,11 @@ namespace MudBlazor
         /// CSS styles for the table rows. Note, many CSS settings are overridden by MudTd though
         /// </summary>
         [Parameter] public string RowStyle { get; set; }
+
+        /// <summary>
+        /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
+        /// </summary>
+        [Parameter] public bool RightAlignSmall { get; set; } = true;
 
         public abstract TableContext TableContext { get; }
 
