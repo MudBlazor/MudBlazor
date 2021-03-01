@@ -51,6 +51,8 @@ namespace MudBlazor
             .AddStyle(Style)
         .Build();
 
+        [Inject] public IDomService DomService { get; set; }
+
         [Inject] public IResizeListenerService ResizeListener { get; set; }
 
         [CascadingParameter] MudLayout Layout { get; set; }
@@ -250,7 +252,7 @@ namespace MudBlazor
 
         private async Task UpdateHeight()
         {
-            _height = (await _contentRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
+            _height = (await DomService.GetBoundingClientRect(_contentRef))?.Height ?? 0;
         }
 
         private async void UpdateBreakpointState()

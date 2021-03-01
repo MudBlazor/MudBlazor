@@ -5,13 +5,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudAutocomplete<T> : MudBaseInput<T>, IDisposable
     {
-        [Inject] IScrollManager ScrollManager { get; set; }
+        [Inject] IJSRuntime JsRuntime { get; set; }
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -285,7 +286,8 @@ namespace MudBlazor
             //increment 1 down; -1 up
             //onEdges, last param, boolean. If true, only scrolls when elements reaches top or bottom of container.
             //If false, scrolls always
-            await ScrollManager.ScrollToListItemAsync(id, increment, true);
+            await JsRuntime
+                .InvokeVoidAsync("scrollHelpers.scrollToListItem", id, increment, true);
             StateHasChanged();
         }
 
@@ -293,7 +295,8 @@ namespace MudBlazor
         private void RestoreScrollPosition()
         {
             if (_selectedListItemIndex != 0) return;
-            ScrollManager.ScrollToListItemAsync(GetListItemId(0), 0, false);
+            JsRuntime
+             .InvokeVoidAsync("scrollHelpers.scrollToListItem", GetListItemId(0), 0);
         }
 
         private string GetListItemId(in int index)

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Extensions;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -17,7 +19,7 @@ namespace MudBlazor
         })
         { }
 
-        [Inject] protected IScrollManager ScrollManager { get; set; }
+        [Inject] protected IJSRuntime JsRuntime { get; set; }
 
         /// <summary>
         /// Max selectable date.
@@ -268,7 +270,7 @@ namespace MudBlazor
         {
             _scrollToYearAfterRender = false;
             var id = $"{_componentId}{GetMonthStart(0).Year}";
-            await ScrollManager.ScrollToYearAsync(id);
+            await JsRuntime.InvokeVoidAsync("scrollHelpers.scrollToYear", id);
             StateHasChanged();
         }
 

@@ -30,6 +30,6 @@ namespace MudBlazor
         /// </summary>
         /// <returns></returns>
         public async ValueTask<BrowserWindowSize> GetBrowserWindowSize() =>
-            await _jsRuntime.InvokeAsync<BrowserWindowSize>($"mudResizeListener.getBrowserWindowSize");
+            await _jsRuntime.InvokeAsync<BrowserWindowSize>($"resizeListener.getBrowserWindowSize");
     }
 }

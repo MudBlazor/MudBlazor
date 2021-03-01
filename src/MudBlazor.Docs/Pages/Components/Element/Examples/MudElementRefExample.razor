@@ -30,6 +30,6 @@
     async Task Focus()
     {
         //this js snippet does `document.querySelector(myRef).focus();`
-       await myRef.FocusAsync();
+       await Js.InvokeVoidAsync("mudBlazorExamples.focusElement", myRef);
     }
 }

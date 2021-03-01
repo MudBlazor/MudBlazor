@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
 using static System.String;
 
@@ -66,6 +67,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        [Inject] public IJSRuntime JSRuntime { get; set; }
+
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)
@@ -109,6 +112,9 @@ namespace MudBlazor
 
         protected ElementReference _elementReference;
 
-        public ValueTask FocusAsync() => _elementReference.FocusAsync();
+        public ValueTask FocusAsync()
+        {
+            return JSRuntime.InvokeVoidAsync("elementReference.focus", _elementReference);
+        }
     }
 }

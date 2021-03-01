@@ -76,7 +76,7 @@ namespace MudBlazor.Services
         {
             if (_onResized == null || _onBreakpointChanged == null)
             {
-                _ = Task.Run(async () => await _jsRuntime.InvokeVoidAsync($"mudResizeListener.listenForResize", _dotNetRef, _options));
+                _ = Task.Run(async () => await _jsRuntime.InvokeVoidAsync($"resizeListener.listenForResize", _dotNetRef, _options));
             }
         }
 
@@ -86,7 +86,7 @@ namespace MudBlazor.Services
             {
                 if (_onResized == null && _onBreakpointChanged == null)
                 {
-                    await _jsRuntime.InvokeVoidAsync($"mudResizeListener.cancelListener");
+                    await _jsRuntime.InvokeVoidAsync($"resizeListener.cancelListener");
                 }
                 else if (_onResized == null && _onBreakpointChanged != null && !_options.NotifyOnBreakpointOnly)
                 {
@@ -106,7 +106,7 @@ namespace MudBlazor.Services
         /// <param name="mediaQuery"></param>
         /// <returns>Returns true if matched.</returns>
         public async ValueTask<bool> MatchMedia(string mediaQuery) =>
-            await _jsRuntime.InvokeAsync<bool>($"mudResizeListener.matchMedia", mediaQuery);
+            await _jsRuntime.InvokeAsync<bool>($"resizeListener.matchMedia", mediaQuery);
 
         /// <summary>
         /// Get the current BrowserWindowSize, this includes the Height and Width of the document.

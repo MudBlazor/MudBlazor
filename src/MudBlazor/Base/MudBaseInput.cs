@@ -98,6 +98,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public int Lines { get; set; } = 1;
 
+        [Inject] public IJSRuntime JSRuntime { get; set; }
+
         [Parameter]
         public string Text { get; set; }
 

@@ -3,12 +3,12 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using MudBlazor.Extensions;
+using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudCollapse : MudComponentBase, IDisposable
+    public partial class MudCollapse : MudComponentBase
     {
         private enum CollapseState
         {
@@ -16,7 +16,6 @@ namespace MudBlazor
         }
 
         private double _height;
-        private int _listenerId;
         private bool _expanded, _isRendered;
         private ElementReference _container, _wrapper;
         private CollapseState _state = CollapseState.Exited;
@@ -36,6 +35,8 @@ namespace MudBlazor
             .AddClass($"mud-collapse-exiting", _state == CollapseState.Exiting)
             .AddClass(Class)
             .Build();
+
+        [Inject] public IDomService DomService { get; set; }
 
         /// <summary>
         /// If true, expands the panel, otherwise collapse it. Setting this prop enables control over the panel.
@@ -95,7 +96,7 @@ namespace MudBlazor
 
         private async Task UpdateHeight()
         {
-            _height = (await _wrapper.MudGetBoundingClientRectAsync())?.Height ?? 0;
+            _height = (await DomService.GetBoundingClientRect(_wrapper))?.Height ?? 0;
             if (MaxHeight != null && _height > MaxHeight)
             {
                 _height = MaxHeight.Value;
@@ -113,14 +114,9 @@ namespace MudBlazor
                 }
                 _isRendered = true;
                 await UpdateHeight();
-                _listenerId = await _container.MudAddEventListenerAsync(DotNetObjectReference.Create(this), "animationend", nameof(AnimationEnd));
+                await DomService.AddEventListener(_container, DotNetObjectReference.Create(this), "animationend", nameof(AnimationEnd));
             }
             await base.OnAfterRenderAsync(firstRender);
-        }
-
-        public void Dispose()
-        {
-            _ = _container.MudRemoveEventListenerAsync("animationend", _listenerId);
         }
 
         [JSInvokable]
