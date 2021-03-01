@@ -96,30 +96,6 @@
 }
 
 
-.demo-progress {
-    & .mud-progress-linear {
-        margin-top: 15px !important;
-        margin-bottom: 15px !important;
-    }
-
-    & .mud-progress-linear + .mud-progress-linear {
-        margin-top: 30px !important;
-    }
-}
-
-.demo-menu {
-    & .docs-section-content-inner {
-        margin: 15px 0px;
-    }
-}
-
-.demo-skeleton-cards {
-    & .docs-section-content-inner {
-        & .mud-card:last-child {
-            margin-top: 36px;
-        }
-    }
-}
 @media (min-width: 960px) {
     .demo-datetime-margin {
         & .docs-section-content-inner {
