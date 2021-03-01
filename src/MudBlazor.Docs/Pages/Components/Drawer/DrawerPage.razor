@@ -1,6 +1,6 @@
 ﻿@page "/components/drawer"
 
-<DocsPage MaxWidth="MaxWidth.ExtraLarge">
+<DocsPage MaxWidth="MaxWidth.Large">
     <DocsPageHeader Title="Drawer">
         <Description>
             If you use two-way binding <CodeInline>@("@bind-Open=\"...\"")</CodeInline> you can toggle the drawer and it will close itself on navigation. If you set its <CodeInline>Open</CodeInline> parameter without two-way binding
@@ -42,7 +42,7 @@
                     Persistent drawer will be opened until the <CodeInline>Open</CodeInline> parameter is not changed.
                 </Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true">
+            <SectionContent DarkenBackground="true" FullWidth="true">
                 <DrawerPersistentExample />
             </SectionContent>
             <SectionSource Code="DrawerPersistentExample" ShowCode="false" GitHubFolderName="Drawer" />
