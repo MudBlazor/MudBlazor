@@ -3,13 +3,11 @@
 <MudGrid>
     <MudItem>
         <MudSlider Value="@value">Volume</MudSlider>
-        <MudSlider Disabled="true" Value="@(20)">Disabled Slider</MudSlider>
+        <MudSlider Value="@value" Color="Color.Tertiary" Class="mt-6" />
     </MudItem>
     <MudItem>
-        <div class="demo-slider-filler"></div>
-        <MudSlider Value="@value" Color="Color.Tertiary" />
-        <div class="demo-slider-filler"></div>
-        <MudSlider Value="@value" Disabled="true" />
+        <MudSlider Disabled="true" Value="@(20)">Disabled Slider</MudSlider>
+        <MudSlider Value="@value" Disabled="true" Class="mt-6" />
     </MudItem>
 </MudGrid>
 
