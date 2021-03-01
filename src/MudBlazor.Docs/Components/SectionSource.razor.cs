@@ -4,8 +4,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Docs.Extensions;
+using MudBlazor.Docs.Models;
 using MudBlazor.Services;
+
 namespace MudBlazor.Docs.Components
 {
     public partial class SectionSource
