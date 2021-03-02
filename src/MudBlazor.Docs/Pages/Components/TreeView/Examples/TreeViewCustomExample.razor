@@ -14,7 +14,9 @@
 
 @code {
 
-    class TreeItemData
+    private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+
+    public class TreeItemData
     {
         public string Text { get; set; }
 
@@ -33,9 +35,7 @@
         }
     }
 
-    HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
-
-    public TreeViewCustomExample()
+    protected override void OnInitialized()
     {
         TreeItems.Add(new TreeItemData(".azure", Icons.Custom.Brands.MicrosoftAzure));
         TreeItems.Add(new TreeItemData(".github", Icons.Custom.Brands.GitHub));
