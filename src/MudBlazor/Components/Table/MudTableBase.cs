@@ -26,6 +26,8 @@ namespace MudBlazor
            .AddClass($"mud-xl-table", Breakpoint == Breakpoint.Xl || Breakpoint == Breakpoint.Always)
            .AddClass($"mud-table-dense", Dense)
            .AddClass($"mud-table-hover", Hover)
+           .AddClass($"mud-table-bordered", Bordered)
+           .AddClass($"mud-table-striped", Striped)
            .AddClass($"mud-table-outlined", Outlined)
            .AddClass($"mud-table-square", Square)
            .AddClass($"mud-table-sticky-header", FixedHeader)
@@ -44,7 +46,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Square { get; set; }
 
+        /// <summary>
+        /// If true, table will be outlined.
+        /// </summary>
         [Parameter] public bool Outlined { get; set; }
+
+        /// <summary>
+        /// If true, table's cells will have left/right borders.
+        /// </summary>
+        [Parameter] public bool Bordered { get; set; }
 
         /// <summary>
         /// Set true for rows with a narrow height
@@ -55,6 +65,11 @@ namespace MudBlazor
         /// Set true to see rows hover on mouse-over.
         /// </summary>
         [Parameter] public bool Hover { get; set; }
+
+        /// <summary>
+        /// If true, striped table rows will be used.
+        /// </summary>
+        [Parameter] public bool Striped { get; set; }
 
         /// <summary>
         /// At what breakpoint the table should switch to mobile layout. Takes Xs, Sm, Md, Lg and Xl the default behavior is breaking on Xs.
