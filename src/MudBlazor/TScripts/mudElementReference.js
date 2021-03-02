@@ -56,7 +56,7 @@
     }
 
     getBoundingClientRect (element) {
-        return element.getBoundingClientRect();
+        return element?.getBoundingClientRect();
     }
 
     changeCss (element, css) {
