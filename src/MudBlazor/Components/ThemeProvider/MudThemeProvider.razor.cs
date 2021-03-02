@@ -140,6 +140,10 @@ namespace MudBlazor
             theme.AppendLine($"--{Palette}-lines-default: {Theme.Palette.LinesDefault};");
             theme.AppendLine($"--{Palette}-lines-inputs: {Theme.Palette.LinesInputs};");
 
+            theme.AppendLine($"--{Palette}-table-lines: {Theme.Palette.TableLines};");
+            theme.AppendLine($"--{Palette}-table-striped: {Theme.Palette.TableStriped};");
+            theme.AppendLine($"--{Palette}-table-hover: {Theme.Palette.TableHover};");
+
             theme.AppendLine($"--{Palette}-divider: {Theme.Palette.Divider};");
             theme.AppendLine($"--{Palette}-divider-light: {Theme.Palette.DividerLight};");
 
