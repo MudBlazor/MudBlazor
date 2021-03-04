@@ -200,6 +200,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// page size select after paging tests
+        /// </summary>
+        [Test]
+        public async Task TablePagingChangePageSizeAfterPaging()
+        {
+            var comp = ctx.RenderComponent<TableServerSideDataTest2>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<int>>();
+            var pager = comp.FindComponent<MudSelect<string>>().Instance;
+            // after initial load
+            comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("3");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 99");
+            // last page
+            comp.FindAll("div.mud-table-pagination-actions button")[3].Click(); // last >
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("28");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("29");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("30");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("91-99 of 99");
+            // change page size
+            table.SetParametersAndRender(ComponentParameter.CreateParameter("RowsPerPage", 100));
+            pager.Value.Should().Be("100");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-99 of 99");
+        }
+
+        /// <summary>
         /// simple filter with pager
         /// </summary>
         [Test]
