@@ -73,7 +73,7 @@ namespace MudBlazor
         [Parameter] public bool Striped { get; set; }
 
         /// <summary>
-        /// At what breakpoint the table should switch to mobile layout. Takes Xs, Sm, Md, Lg and Xl the default behavior is breaking on Xs.
+        /// At what breakpoint the table should switch to mobile layout. Takes None, Xs, Sm, Md, Lg and Xl the default behavior is breaking on Xs.
         /// </summary>
         [Parameter] public Breakpoint Breakpoint { get; set; } = Breakpoint.Xs;
 
