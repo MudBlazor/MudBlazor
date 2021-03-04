@@ -16,6 +16,7 @@ namespace MudBlazor
         internal object _editingItem = null;
 
         private int _currentPage = 0;
+        private int _rowsPerPage = 10;
 
         protected string Classname =>
         new CssBuilder("mud-table")
@@ -81,7 +82,15 @@ namespace MudBlazor
         /// If the table has more items than this number, it will break the rows into pages of said size.
         /// Note: requires a MudTablePager in PagerContent.
         /// </summary>
-        [Parameter] public int RowsPerPage { get; set; } = 10;
+        [Parameter]
+        public int RowsPerPage
+        {
+            get => _rowsPerPage;
+            set
+            {
+                SetRowsPerPage(value);
+            }
+        }
 
         /// <summary>
         /// The page index of the currently displayed page (Zero based). Usually called by MudTablePager.
@@ -206,7 +215,10 @@ namespace MudBlazor
 
         public void SetRowsPerPage(int size)
         {
-            RowsPerPage = size;
+            if (_rowsPerPage == size)
+                return;
+            _rowsPerPage = size;
+            CurrentPage = 0;
             StateHasChanged();
             InvokeServerLoadFunc();
         }
