@@ -21,79 +21,79 @@ namespace MudBlazor
             //sbyte
             if (typeof(T) == typeof(sbyte) || typeof(T) == typeof(sbyte?))
             {
-                minDefault = (T)(object)sbyte.MinValue;
-                maxDefault = (T)(object)sbyte.MaxValue;
-                stepDefault = (T)(object)1;
+                _minDefault = (T)(object)sbyte.MinValue;
+                _maxDefault = (T)(object)sbyte.MaxValue;
+                _stepDefault = (T)(object)1;
             }
             // byte
             else if (typeof(T) == typeof(byte) || typeof(T) == typeof(byte?))
             {
-                minDefault = (T)(object)byte.MinValue;
-                maxDefault = (T)(object)byte.MaxValue;
-                stepDefault = (T)(object)1;
+                _minDefault = (T)(object)byte.MinValue;
+                _maxDefault = (T)(object)byte.MaxValue;
+                _stepDefault = (T)(object)1;
             }
             // short
             else if (typeof(T) == typeof(short) || typeof(T) == typeof(short?))
             {
-                minDefault = (T)(object)short.MinValue;
-                maxDefault = (T)(object)short.MaxValue;
-                stepDefault = (T)(object)1;
+                _minDefault = (T)(object)short.MinValue;
+                _maxDefault = (T)(object)short.MaxValue;
+                _stepDefault = (T)(object)1;
             }
             // ushort
             else if (typeof(T) == typeof(ushort) || typeof(T) == typeof(ushort?))
             {
-                minDefault = (T)(object)ushort.MinValue;
-                maxDefault = (T)(object)ushort.MaxValue;
-                stepDefault = (T)(object)1;
+                _minDefault = (T)(object)ushort.MinValue;
+                _maxDefault = (T)(object)ushort.MaxValue;
+                _stepDefault = (T)(object)1;
             }
             // int
             else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
             {
-                minDefault = (T)(object)int.MinValue;
-                maxDefault = (T)(object)int.MaxValue;
-                stepDefault = (T)(object)1;
+                _minDefault = (T)(object)int.MinValue;
+                _maxDefault = (T)(object)int.MaxValue;
+                _stepDefault = (T)(object)1;
             }
             // uint
             else if (typeof(T) == typeof(uint) || typeof(T) == typeof(uint?))
             {
-                minDefault = (T)(object)uint.MinValue;
-                maxDefault = (T)(object)uint.MaxValue;
-                stepDefault = (T)(object)1;
+                _minDefault = (T)(object)uint.MinValue;
+                _maxDefault = (T)(object)uint.MaxValue;
+                _stepDefault = (T)(object)1;
             }
             // long
             else if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
             {
-                minDefault = (T)(object)long.MinValue;
-                maxDefault = (T)(object)long.MaxValue;
-                stepDefault = (T)(object)1;
+                _minDefault = (T)(object)long.MinValue;
+                _maxDefault = (T)(object)long.MaxValue;
+                _stepDefault = (T)(object)1;
             }
             // ulong
             else if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
             {
-                minDefault = (T)(object)ulong.MinValue;
-                maxDefault = (T)(object)ulong.MaxValue;
-                stepDefault = (T)(object)1;
+                _minDefault = (T)(object)ulong.MinValue;
+                _maxDefault = (T)(object)ulong.MaxValue;
+                _stepDefault = (T)(object)1;
             }
             // float
             else if (typeof(T) == typeof(float) || typeof(T) == typeof(float?))
             {
-                minDefault = (T)(object)float.MinValue;
-                maxDefault = (T)(object)float.MaxValue;
-                stepDefault = (T)(object)1.0f;
+                _minDefault = (T)(object)float.MinValue;
+                _maxDefault = (T)(object)float.MaxValue;
+                _stepDefault = (T)(object)1.0f;
             }
             // double
             else if (typeof(T) == typeof(double) || typeof(T) == typeof(double?))
             {
-                minDefault = (T)(object)double.MinValue;
-                maxDefault = (T)(object)double.MaxValue;
-                stepDefault = (T)(object)1.0;
+                _minDefault = (T)(object)double.MinValue;
+                _maxDefault = (T)(object)double.MaxValue;
+                _stepDefault = (T)(object)1.0;
             }
             // decimal
             else if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
             {
-                minDefault = (T)(object)decimal.MinValue;
-                maxDefault = (T)(object)decimal.MaxValue;
-                stepDefault = (T)(object)1M;
+                _minDefault = (T)(object)decimal.MinValue;
+                _maxDefault = (T)(object)decimal.MaxValue;
+                _stepDefault = (T)(object)1M;
             }
             #endregion
         }
@@ -302,9 +302,9 @@ namespace MudBlazor
 
 
         //Tracks if Min has a value.
-        private bool minHasValue = false;
+        private bool _minHasValue = false;
         //default value for the type
-        private T minDefault;
+        private T _minDefault;
         private T _min;
         /// <summary>
         /// The minimum value for the input.
@@ -312,18 +312,18 @@ namespace MudBlazor
         [Parameter]
         public T Min
         {
-            get => minHasValue ? _min : minDefault;
+            get => _minHasValue ? _min : _minDefault;
             set
             {
-                minHasValue = value != null;
+                _minHasValue = value != null;
                 _min = value;
             }
         }
 
         //Tracks if Max has a value.
-        private bool maxHasValue = false;
+        private bool _maxHasValue = false;
         //default value for the type
-        private T maxDefault;
+        private T _maxDefault;
         private T _max;
         /// <summary>
         /// The maximum value for the input.
@@ -331,18 +331,18 @@ namespace MudBlazor
         [Parameter]
         public T Max
         {
-            get => maxHasValue ? _max : maxDefault;
+            get => _maxHasValue ? _max : _maxDefault;
             set
             {
-                maxHasValue = value != null;
+                _maxHasValue = value != null;
                 _max = value;
             }
         }
 
         //Tracks if Max has a value.
-        private bool stepHasValue = false;
+        private bool _stepHasValue = false;
         //default value for the type, it's useful for decimal type to avoid constant evaluation
-        private T stepDefault;
+        private T _stepDefault;
         private T _step;
 
         /// <summary>
@@ -351,10 +351,10 @@ namespace MudBlazor
         [Parameter]
         public T Step
         {
-            get => stepHasValue ? _step : stepDefault;
+            get => _stepHasValue ? _step : _stepDefault;
             set
             {
-                stepHasValue = value != null;
+                _stepHasValue = value != null;
                 _step = value;
             }
         }
@@ -362,7 +362,6 @@ namespace MudBlazor
         /// <summary>
         /// Hides the spin buttons, the user can still change value with keyboard arrows and manual update.
         /// </summary>
-        [Parameter]
-        public bool HideSpinButtons { get; set; }
+        [Parameter] public bool HideSpinButtons { get; set; }
     }
 }
