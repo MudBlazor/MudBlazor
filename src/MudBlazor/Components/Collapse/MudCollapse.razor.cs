@@ -50,10 +50,14 @@ namespace MudBlazor
                     return;
 
                 _expanded = value;
-                _state = _expanded ? CollapseState.Entering : CollapseState.Exiting;
                 if (_isRendered)
                 {
+                    _state = _expanded ? CollapseState.Entering : CollapseState.Exiting;
                     _ = UpdateHeight();
+                }
+                else if (_expanded)
+                {
+                    _state = CollapseState.Entered;
                 }
                 _ = ExpandedChanged.InvokeAsync(_expanded);
             }
@@ -106,11 +110,6 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                if (_expanded)
-                {
-                    _state = CollapseState.Entered;
-                    StateHasChanged();
-                }
                 _isRendered = true;
                 await UpdateHeight();
                 _listenerId = await _container.MudAddEventListenerAsync(DotNetObjectReference.Create(this), "animationend", nameof(AnimationEnd));
