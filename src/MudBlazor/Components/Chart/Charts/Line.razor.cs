@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts.SVG.Models;
+using MudBlazor.Components.Chart;
+using MudBlazor.Components.Chart.Interpolation;
 
 namespace MudBlazor.Charts
 {
@@ -19,6 +22,7 @@ namespace MudBlazor.Charts
 
         private List<SvgPath> _chartLines = new List<SvgPath>();
 
+        
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -92,7 +96,7 @@ namespace MudBlazor.Charts
             double startGridX = 0;
             for (var counter = 0; counter <= numVerticalLines; counter++)
             {
-
+                
                 var line = new SvgPath()
                 {
                     Index = counter,
@@ -122,16 +126,29 @@ namespace MudBlazor.Charts
                 double gridValueX = 0;
                 double gridValueY = 0;
                 var firstTime = true;
+                double[] XValues = new double[item.Data.Length];
+                double[] YValues = new double[item.Data.Length];
 
-                foreach (var dataLine in item.Data)
+                for (var i = 0; i <= item.Data.Length - 1 ; i++)
                 {
+                    
+                    XValues[i] += horizontalSpace;
+                    var gridValue = item.Data[i] * verticalSpace / gridYUnits;
+                    YValues[i] = boundHeight - (gridValueY + gridValue);
+                
+                }
+                var interpolation = new NaturalSpline(XValues, YValues);
+                foreach(var polatevaluesY in interpolation.interpolatedXs)
+                {
+                 
                     if (firstTime)
                     {
+
                         chartLine += "M ";
                         firstTime = false;
                         gridValueX = horizontalStartSpace;
                         gridValueY = verticalStartSpace;
-                        var gridValue = ((double)dataLine) * verticalSpace / gridYUnits;
+                        var gridValue = polatevaluesY * verticalSpace / gridYUnits;
                         gridValueY = boundHeight - (gridValueY + gridValue);
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
@@ -141,7 +158,7 @@ namespace MudBlazor.Charts
                         gridValueX += horizontalSpace;
                         gridValueY = verticalStartSpace;
 
-                        var gridValue = ((double)dataLine) * verticalSpace / gridYUnits;
+                        var gridValue = polatevaluesY * verticalSpace / gridYUnits;
                         gridValueY = boundHeight - (gridValueY + gridValue);
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
@@ -160,6 +177,7 @@ namespace MudBlazor.Charts
                 _chartLines.Add(line);
                 _legends.Add(legend);
             }
-        }
+            
+        }     
     }
 }
