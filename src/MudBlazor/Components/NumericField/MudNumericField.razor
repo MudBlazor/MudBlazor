@@ -9,15 +9,15 @@
 					 Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
 		<InputContent>
 			<MudInput T="T" @ref="_elementReference" @attributes="UserAttributes" InputType="InputType.Number" Style="@Style" Variant="@Variant"
-			Value="@Value" ValueChanged="(v) => SetValueAsync(v)" Converter="Converter" Placeholder="@Placeholder"
-			Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" Adornment="@Adornment"
-			AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
-			OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
-			OnBlur="@OnBlurred" OnKeyDown="@InvokeKeyDown" OnKeyPress="@InvokeKeyPress" OnKeyUp="@InvokeKeyUp"
-			OnIncrement="Increment" OnDecrement="Decrement" HideSpinButtons="@HideSpinButtons" Validation="_validateInstance"
-			min="@(minHasValue ? FormatParam(_min) : null)"
-			max="@(maxHasValue ? FormatParam(_max): null)"
-			step="@(stepHasValue ? FormatParam(_step) : null)" />
+					  Value="@Value" ValueChanged="(v) => SetValueAsync(v)" Converter="Converter" Placeholder="@Placeholder"
+					  Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" Adornment="@Adornment"
+					  AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
+					  OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
+					  OnBlur="@OnBlurred" OnKeyDown="@InvokeKeyDown" OnKeyPress="@InvokeKeyPress" OnKeyUp="@InvokeKeyUp"
+					  OnIncrement="Increment" OnDecrement="Decrement" HideSpinButtons="@HideSpinButtons" Validation="_validateInstance"
+					  min="@(_minHasValue ? FormatParam(_min) : null)"
+					  max="@(_maxHasValue ? FormatParam(_max): null)"
+					  step="@(_stepHasValue ? FormatParam(_step) : null)" />
 		</InputContent>
 	</MudInputControl>
 </CascadingValue>

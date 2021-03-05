@@ -41,8 +41,8 @@
 	@if (InputType == InputType.Number && !HideSpinButtons)
 	{
 	 <div class="mud-input-numeric-spin">
-	  <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)"><MudIcon Icon="@Icons.Material.Filled.KeyboardArrowUp" Size="@GetButtonSize()" /></MudButton>
-	  <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(Disabled || ReadOnly)"><MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown" Size="@GetButtonSize()" /></MudButton>
+	  <MudButton Variant="Variant.Text" @onclick="OnIncrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1"><MudIcon Icon="@Icons.Material.Filled.KeyboardArrowUp" Size="@GetButtonSize()" /></MudButton>
+	  <MudButton Variant="Variant.Text" @onclick="OnDecrement" Disabled="@(Disabled || ReadOnly)" tabindex="-1"><MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown" Size="@GetButtonSize()" /></MudButton>
 	 </div>
 	}
 </div>
