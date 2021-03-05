@@ -16,5 +16,9 @@
         {
             <Line ChartSeries="@ChartSeries" XAxisLabels="@XAxisLabels"></Line>
         }
+        @if (ChartType == ChartType.Bar)
+        {
+            <Bar ChartSeries="@ChartSeries" XAxisLabels="@XAxisLabels"></Bar>
+        }
     </div>
 </CascadingValue>

@@ -67,6 +67,7 @@ namespace MudBlazor
     {
         Donut,
         Line,
-        Pie
+        Pie,
+        Bar
     }
 }
