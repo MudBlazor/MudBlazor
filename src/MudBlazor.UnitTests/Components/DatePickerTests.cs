@@ -96,6 +96,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DatePicker_Should_ApplyDateFormatAfterDate()
+        {
+            var comp = ctx.RenderComponent<MudDatePicker>();
+            // select elements needed for the test
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.Date.Should().Be(null);
+            comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
+            comp.SetParam(p => p.DateFormat, "dd/MM/yyyy");
+            comp.SetParam(p => p.Culture, CultureInfo.InvariantCulture); // <-- this makes a huge difference!
+            picker.Date.Should().Be(new DateTime(2020, 10, 26));
+            picker.Text.Should().Be("26/10/2020");
+        }
+
+        [Test]
         public void Check_Intial_Date_Format()
         {
             DateTime? date = new DateTime(2021, 1, 13);
