@@ -250,7 +250,7 @@ namespace MudBlazor
                 foreach (var item in FilteredItems)
                     Context.Selection.Add(item);
             }
-            Context.UpdateRowCheckBoxes();
+            Context.UpdateRowCheckBoxes(false);
             SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 

@@ -14,7 +14,7 @@ namespace MudBlazor
         public bool HasPager { get; set; }
         public abstract void Add(MudTr row, object item);
         public abstract void Remove(MudTr row, object item);
-        public abstract void UpdateRowCheckBoxes();
+        public abstract void UpdateRowCheckBoxes(bool notify = true);
         public MudTr HeaderRow { get; set; }
 
         public abstract void InitializeSorting();
@@ -33,7 +33,7 @@ namespace MudBlazor
 
         public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
 
-        public override void UpdateRowCheckBoxes()
+        public override void UpdateRowCheckBoxes(bool notify = true)
         {
             if (!Table.MultiSelection)
                 return;
@@ -42,7 +42,7 @@ namespace MudBlazor
             {
                 var row = pair.Value;
                 var item = pair.Key;
-                row.SetChecked(Selection.Contains(item), notify: true);
+                row.SetChecked(Selection.Contains(item), notify: notify);
             }
             // update header checkbox
             if (HeaderRow != null)
