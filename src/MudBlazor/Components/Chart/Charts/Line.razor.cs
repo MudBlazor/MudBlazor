@@ -131,14 +131,18 @@ namespace MudBlazor.Charts
 
                 for (var i = 0; i <= item.Data.Length - 1 ; i++)
                 {
-                    
-                    XValues[i] += horizontalSpace;
-                    var gridValue = item.Data[i] * verticalSpace / gridYUnits;
+                    if (i == 0)
+                        XValues[1] = 30;
+                    else
+                        XValues[i] = XValues[i - 1] + 5;
+                    var gridValue = (item.Data[i]) * verticalSpace / gridYUnits;
                     YValues[i] = boundHeight - (gridValueY + gridValue);
                 
                 }
                 var interpolation = new NaturalSpline(XValues, YValues);
-                foreach(var polatevaluesY in interpolation.interpolatedXs)
+                horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / (interpolation.interpolatedXs.Length);
+
+                foreach (var polatevaluesY in interpolation.interpolatedYs)
                 {
                  
                     if (firstTime)
@@ -148,17 +152,17 @@ namespace MudBlazor.Charts
                         firstTime = false;
                         gridValueX = horizontalStartSpace;
                         gridValueY = verticalStartSpace;
-                        var gridValue = polatevaluesY * verticalSpace / gridYUnits;
+                        var gridValue = (polatevaluesY) * verticalSpace / gridYUnits;
                         gridValueY = boundHeight - (gridValueY + gridValue);
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
                     else
                     {
                         chartLine += " L ";
-                        gridValueX += horizontalSpace;
+                        gridValueX += 5;
                         gridValueY = verticalStartSpace;
 
-                        var gridValue = polatevaluesY * verticalSpace / gridYUnits;
+                        var gridValue = (polatevaluesY) * verticalSpace / gridYUnits;
                         gridValueY = boundHeight - (gridValueY + gridValue);
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
