@@ -4,6 +4,11 @@
     }
 }
 
+/* respect the grid width*/
+.mud-grid-item .mud-picker-inline{
+    width:100%;
+}
+
 .mud-picker-inline {
     display: inline-flex;
     position: relative;
