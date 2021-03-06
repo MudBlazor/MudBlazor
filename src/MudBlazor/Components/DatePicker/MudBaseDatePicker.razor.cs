@@ -47,10 +47,8 @@ namespace MudBlazor
             set
             {
                 if (Converter is DefaultConverter<DateTime?> defaultConverter)
-                {
                     defaultConverter.Format = value;
-                    DateFormatChanged(defaultConverter.Format);
-                }
+                DateFormatChanged(value);
             }
         }
 
