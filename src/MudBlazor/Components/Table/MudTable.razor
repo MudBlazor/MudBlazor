@@ -3,7 +3,8 @@
 @using MudBlazor.Extensions
 @using MudBlazor.Utilities
 @typeparam T
-
+@if (Items != null || ServerData != null)
+{
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
     <CascadingValue Value="TableContext" IsFixed="true">
         @if (ToolBarContent != null)
@@ -15,7 +16,7 @@
         @if (Context.SortLabels.Any())
         {
             <div Class="mud-table-smalldevices-sortselect">
-                <MudSelect Value="@Context.CurrentSortLabel" Label="@SortLabel" ValueChanged="@(v => Context.SetSortFunc(v, override_direction_none:true))" T="MudTableSortLabel<T>">
+                <MudSelect Value="@Context.CurrentSortLabel" Label="@SortLabel" ValueChanged="@(v => Context.SetSortFunc(v, override_direction_none: true))" T="MudTableSortLabel<T>">
                     @foreach (var label in Context.SortLabels)
                     {
                         <MudSelectItem Value="@label">@label.ChildContent</MudSelectItem>
@@ -32,13 +33,22 @@
                         @ColGroup
                     </colgroup>
                 }
-                @if (HeaderContent != null)
+                @if (HeaderContent != null || Columns != null)
                 {
-                    <thead class="mud-table-head">
-                        <MudTr IsHeader="true" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@OnHeaderCheckboxClicked" @ref="TableContext.HeaderRow">
-                            @HeaderContent
-                        </MudTr>
-                    </thead>
+            <thead class="mud-table-head">
+                <MudTr IsHeader="true" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@OnHeaderCheckboxClicked" @ref="TableContext.HeaderRow">
+                    @if (HeaderContent != null)
+                    {
+                        @HeaderContent
+                    }
+                    @if (Columns != null)
+                    {
+                        <CascadingValue Value="MudBaseColumn.Rendermode.Header" Name="Mode">
+                            @Columns(Def)
+                        </CascadingValue>
+                    }
+                </MudTr>
+            </thead>
                 }
                 <tbody class="mud-table-body">
                     @if (CurrentPageItems != null)
@@ -50,15 +60,32 @@
                             var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
                             <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" 
                                    IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
-                                @if ((!ReadOnly) && RowEditingTemplate != null && object.Equals(_editingItem, item))
-                                { 
-                                    <CascadingValue Value="@Validator" IsFixed="true">
+                                @if ((!ReadOnly) && (RowEditingTemplate != null || Columns != null) && object.Equals(_editingItem, item))
+                                {
+                                <CascadingValue Value="@Validator" IsFixed="true">
+                                    if(RowEditingTemplate != null)
+                                    {
                                         @RowEditingTemplate(item)
-                                    </CascadingValue>
+                                    }
+                                    @if (Columns != null)
+                                    {
+                                    <CascadingValue Value="MudBaseColumn.Rendermode.Edit" Name="Mode">
+                                        @Columns(item)
+                                    </CascadingValue>}
+                                </CascadingValue>
                                 }
                                 else
                                 {
-                                    @RowTemplate(item)
+                                    if (RowTemplate != null)
+                                    {
+                                     @RowTemplate(item)
+                                    }
+                                    @if (Columns != null)
+                                    {
+                                        <CascadingValue Value="MudBaseColumn.Rendermode.Item" Name="Mode">
+                                            @Columns(item)
+                                        </CascadingValue>
+                                    }
                                 }
                             </MudTr>
                             @if (ChildRowContent != null)
@@ -69,6 +96,23 @@
                         }
                     }
                 </tbody>
+                @if (ShowFooter && (FooterContent != null || Columns!=null))
+                {
+                <tfoot class="mud-table-head">
+                    <MudTr IsHeader="false" IsEditable="false" @ref="TableContext.FooterRow">
+                        @if (@FooterContent != null)
+                        {
+                            @FooterContent
+                        }
+                        @if (Columns != null)
+                        {
+                            <CascadingValue Value="MudBaseColumn.Rendermode.Footer" Name="Mode">
+                                @Columns(Def)
+                            </CascadingValue>
+                         }
+                    </MudTr>
+                </tfoot>                
+                }
             </table>
         </div>
         @if (PagerContent != null)
@@ -79,5 +123,6 @@
         }
     </CascadingValue>
 </div>
+}
 
 

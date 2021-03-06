@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -30,9 +32,94 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment<T> RowEditingTemplate { get; set; }
 
+        #region Code for column based approach
+        /// <summary>
+        /// Defines how a table column looks like. Columns components should inherit from MudBaseColumn
+        /// </summary>
+        [Parameter] public RenderFragment<T> Columns { get; set; }
+        /// <summary>
+        /// Comma separated list of columns to show if there is no templates defined
+        /// </summary>
+        [Parameter] public string QuickColumns { get; set; }
+        /// <summary>
+        /// Definition of the footer section
+        /// </summary>
+        [Parameter] public RenderFragment FooterContent { get; set; }
+        /// <summary>
+        /// Gets or sets a value indicating whether table footer is displayed.
+        /// </summary>
+        [Parameter] public bool ShowFooter { get; set; }
+        // Workaround because "where T : new()" didn't work with Blazor components
+        // T must have a default constructor, otherwise we caanot show headers when Items collection
+        // is empty
+        protected T Def
+        {
+            get
+            {
+                T t1 = default;
+                if (t1 == null)
+                {
+                    return Activator.CreateInstance<T>();
+                }
+                else
+                {
+                    return default;
+                }
+            }
+        }
+        /// <summary>
+        /// Creates a default Column renderfragment if there is no templates defined
+        /// </summary>
+        protected override async Task OnInitializedAsync()
+        {
+            if (Columns == null && RowTemplate == null && RowEditingTemplate == null)
+            {
+                string[] quickcolumnslist = null;
+                if (!QuickColumns.IsEmpty())
+                {
+                    quickcolumnslist = QuickColumns.Split(",");
+                }
+                // Create template from T
+                Columns = context => builder =>
+                {
+                    Type myType = context.GetType();
+                    IList<PropertyInfo> propertylist = new List<PropertyInfo>(myType.GetProperties());
+
+                    if (quickcolumnslist == null)
+                    {
+                        foreach (PropertyInfo propinfo in propertylist)
+                        {
+                            BuildMudColumnTemplateItem(context, builder, propinfo);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var colname in quickcolumnslist)
+                        {
+                            var propinfo = propertylist.SingleOrDefault(pl => pl.Name == colname);
+                            if (propinfo != null)
+                            {
+                                BuildMudColumnTemplateItem(context, builder, propinfo);
+                            }
+                        }
+                    }
+
+                };
+            }
+        }
+
+        private static void BuildMudColumnTemplateItem(T context, RenderTreeBuilder builder, PropertyInfo propinfo)
+        {
+            builder.OpenComponent<MudColumn<string>>(0);
+            builder.AddAttribute(1, "Value", propinfo.GetValue(context)?.ToString());
+            builder.AddAttribute(2, "HeaderText", propinfo.Name);
+            builder.CloseComponent();
+        }
+        #endregion
         /// <summary>
         /// The data to display in the table. MudTable will render one row per item
         /// </summary>
+        /// 
         [Parameter]
         public IEnumerable<T> Items
         {

@@ -16,6 +16,7 @@ namespace MudBlazor
         public abstract void Remove(MudTr row, object item);
         public abstract void UpdateRowCheckBoxes();
         public MudTr HeaderRow { get; set; }
+        public MudTr FooterRow { get; set; }
 
         public abstract void InitializeSorting();
 

@@ -20,11 +20,26 @@
     </RowTemplate>
 </MudTable>
 
-@code {
-    private IEnumerable<Element> Elements = new List<Element>();
+<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm">
+    <Columns>
+        <MudColumn Value="@context.Number" HeaderText="Nr"></MudColumn>
+        <MudColumn Value="@context.Sign" HeaderText="Sign"></MudColumn>
+        <MudColumn Value="@context.Name" HeaderText="Name"></MudColumn>
+        <MudColumn Value="@context.Position" HeaderText="Position"></MudColumn>
+        <MudColumn Value="@context.Molar" HeaderText="Molar mass"></MudColumn>
+    </Columns>
+</MudTable>
+
+<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm">
+</MudTable>
+
+
+<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" QuickColumns="Number,Sign,Name,Position,Molar">
+</MudTable>
+
+@code { private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-    }    
-}
+    } }
