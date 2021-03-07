@@ -136,7 +136,7 @@ namespace MudBlazor
             return JsRuntime.InvokeVoidAsync("elementReference.saveFocus", _root).AsTask();
         }
 
-        bool _shouldRender=true;
+        bool _shouldRender = true;
 
         protected override bool ShouldRender()
         {

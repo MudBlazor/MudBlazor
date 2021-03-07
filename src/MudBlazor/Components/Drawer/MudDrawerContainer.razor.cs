@@ -30,7 +30,7 @@ namespace MudBlazor
 
         internal void FireDrawersChanged() => StateHasChanged();
 
-        internal void Add(MudDrawer drawer) 
+        internal void Add(MudDrawer drawer)
         {
             if (Fixed && !drawer.Fixed)
                 return;

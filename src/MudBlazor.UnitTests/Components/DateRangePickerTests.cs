@@ -5,8 +5,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Bunit;
 using AngleSharp.Html.Dom;
+using Bunit;
 using FluentAssertions;
 using MudBlazor.Extensions;
 using NUnit.Framework;
@@ -342,7 +342,7 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
 
             var textStart = DateTime.Now.ToIsoDateString();
-            var textEnd= DateTime.Now.AddDays(5).ToIsoDateString();
+            var textEnd = DateTime.Now.AddDays(5).ToIsoDateString();
 
             picker.Text.Should().Be(RangeConverter<DateTime>.Join(textStart, textEnd));
             var inputs = comp.FindAll("input");
