@@ -70,7 +70,7 @@ namespace MudBlazor
         /// <summary>
         /// Creates a default Column renderfragment if there is no templates defined
         /// </summary>
-        protected override async Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
             if (Columns == null && RowTemplate == null && RowEditingTemplate == null)
             {
