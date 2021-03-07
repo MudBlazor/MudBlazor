@@ -74,4 +74,3 @@ class MudScrollListener {
         element.removeEventListener('scroll', this.throttleScrollHandler);
     }
 };
-window.mudScrollListener = new MudScrollListener();

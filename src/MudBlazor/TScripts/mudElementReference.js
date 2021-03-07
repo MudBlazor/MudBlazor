@@ -85,4 +85,3 @@
         delete this.eventListeners[eventId];
     }
 };
-window.mudElementRef = new MudElementReference();

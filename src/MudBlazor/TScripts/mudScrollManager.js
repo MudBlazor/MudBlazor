@@ -70,4 +70,3 @@
         element.classList.remove(lockclass);
     }
 };
-window.mudScrollManager = new MudScrollManager();

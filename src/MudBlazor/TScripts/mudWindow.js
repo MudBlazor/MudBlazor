@@ -90,4 +90,13 @@
         element.classList.remove(lockclass);
     }
 };
-window.mudWindow = new MudWindow();
+
+function mudInitialize() {
+    window.mudWindow = new MudWindow();
+    window.mudElementRef = new MudElementReference();
+    window.mudResizeListener = new MudResizeListener();
+    window.mudScrollListener = new MudScrollListener();
+    window.mudScrollManager = new MudScrollManager();
+
+    Blazor.start();
+};

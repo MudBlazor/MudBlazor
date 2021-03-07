@@ -52,6 +52,12 @@
 
     <script src="_content/MudBlazor/MudBlazor.min.js?v=5.0.3.1"></script>
     <script src="_content/MudBlazor.Docs/JS/docs.js?v=5.0.3.1"></script>
-    <script src="_framework/blazor.server.js"></script>\
+    <script src="_framework/blazor.server.js" autostart="false"></script>
+    <script>
+        window.onload = () => {
+            if (window["mudInitialize"])
+                mudInitialize();
+        }
+    </script>
 </body>
 </html>

@@ -42,7 +42,7 @@
                 <path fill="#7467EF" d="M1322.13,0.38l-165.25,95.4l330.29,190.83l165.25-95.38L1322.13,0.38z"></path>
                 <path fill="#594AE2" d="M1652.43,191.21l-165.25,95.41v762.99l165.25-95.4L1652.43,191.21z"></path>
             </svg>
-        </div>      
+        </div>
     </app>
 
     <div id="blazor-error-ui">
@@ -52,7 +52,13 @@
     </div>
     <script src="_content/MudBlazor/MudBlazor.min.js?v=5.0.3.1"></script>
     <script src="_content/MudBlazor.Docs/JS/docs.js?v=5.0.3.1"></script>
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script>
+        window.onload = () => {
+            if (window["mudInitialize"])
+                mudInitialize();
+        }
+    </script>
 </body>
 
 </html>

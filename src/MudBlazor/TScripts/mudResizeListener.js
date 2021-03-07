@@ -86,4 +86,3 @@
             return 0;
     }
 };
-window.mudResizeListener = new MudResizeListener();
