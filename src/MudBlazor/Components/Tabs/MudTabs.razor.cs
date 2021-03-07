@@ -370,14 +370,14 @@ namespace MudBlazor
                     double position = 0;
                     var counter = 0;
                     foreach (var panel in Panels) if (counter < ActivePanelIndex)
-                    {
-                        if (Position == Position.Top || Position == Position.Bottom)
-                            position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
-                        else
-                            position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
-                        counter++;
-                    }
-                    _position = position; 
+                        {
+                            if (Position == Position.Top || Position == Position.Bottom)
+                                position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
+                            else
+                                position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
+                            counter++;
+                        }
+                    _position = position;
                     if (scrollToActivePanel)
                     {
                         _scrollPosition = -position;
