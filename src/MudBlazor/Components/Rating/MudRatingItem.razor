@@ -10,7 +10,7 @@
 else
 {
     <span class="@ClassName" style="@Style" @onmouseover="HandleMouseOver" @onclick="HandleClick" @onmouseout="HandleMouseOut ">
-        <MudIcon Icon="@ItemIcon" Size="@Size"></MudIcon>
         <input class="mud-rating-input" type="radio" value="@ItemValue" name="@Rating?.Name" disabled="@Disabled" checked="@(IsChecked)" @attributes="UserAttributes" />
+        <MudIcon Icon="@ItemIcon" Size="@Size"></MudIcon>
     </span>
 }

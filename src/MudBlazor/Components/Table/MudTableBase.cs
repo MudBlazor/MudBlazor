@@ -16,6 +16,7 @@ namespace MudBlazor
         internal object _editingItem = null;
 
         private int _currentPage = 0;
+        private int _rowsPerPage = 10;
 
         protected string Classname =>
         new CssBuilder("mud-table")
@@ -26,6 +27,8 @@ namespace MudBlazor
            .AddClass($"mud-xl-table", Breakpoint == Breakpoint.Xl || Breakpoint == Breakpoint.Always)
            .AddClass($"mud-table-dense", Dense)
            .AddClass($"mud-table-hover", Hover)
+           .AddClass($"mud-table-bordered", Bordered)
+           .AddClass($"mud-table-striped", Striped)
            .AddClass($"mud-table-outlined", Outlined)
            .AddClass($"mud-table-square", Square)
            .AddClass($"mud-table-sticky-header", FixedHeader)
@@ -44,7 +47,15 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Square { get; set; }
 
+        /// <summary>
+        /// If true, table will be outlined.
+        /// </summary>
         [Parameter] public bool Outlined { get; set; }
+
+        /// <summary>
+        /// If true, table's cells will have left/right borders.
+        /// </summary>
+        [Parameter] public bool Bordered { get; set; }
 
         /// <summary>
         /// Set true for rows with a narrow height
@@ -57,7 +68,12 @@ namespace MudBlazor
         [Parameter] public bool Hover { get; set; }
 
         /// <summary>
-        /// At what breakpoint the table should switch to mobile layout. Takes Xs, Sm, Md, Lg and Xl the default behavior is breaking on Xs.
+        /// If true, striped table rows will be used.
+        /// </summary>
+        [Parameter] public bool Striped { get; set; }
+
+        /// <summary>
+        /// At what breakpoint the table should switch to mobile layout. Takes None, Xs, Sm, Md, Lg and Xl the default behavior is breaking on Xs.
         /// </summary>
         [Parameter] public Breakpoint Breakpoint { get; set; } = Breakpoint.Xs;
 
@@ -81,7 +97,15 @@ namespace MudBlazor
         /// If the table has more items than this number, it will break the rows into pages of said size.
         /// Note: requires a MudTablePager in PagerContent.
         /// </summary>
-        [Parameter] public int RowsPerPage { get; set; } = 10;
+        [Parameter]
+        public int RowsPerPage
+        {
+            get => _rowsPerPage;
+            set
+            {
+                SetRowsPerPage(value);
+            }
+        }
 
         /// <summary>
         /// The page index of the currently displayed page (Zero based). Usually called by MudTablePager.
@@ -206,7 +230,10 @@ namespace MudBlazor
 
         public void SetRowsPerPage(int size)
         {
-            RowsPerPage = size;
+            if (_rowsPerPage == size)
+                return;
+            _rowsPerPage = size;
+            CurrentPage = 0;
             StateHasChanged();
             InvokeServerLoadFunc();
         }

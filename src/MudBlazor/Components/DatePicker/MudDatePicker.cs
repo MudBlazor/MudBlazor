@@ -39,6 +39,12 @@ namespace MudBlazor
             }
         }
 
+        protected override Task DateFormatChanged(string newFormat)
+        {
+            Touched = true;
+            return SetTextAsync(Converter.Set(_value), false);
+        }
+
         protected override Task StringValueChanged(string value)
         {
             Touched = true;

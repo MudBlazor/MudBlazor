@@ -50,7 +50,16 @@ namespace MudBlazor
             {
                 if (Converter is DefaultConverter<DateTime?> defaultConverter)
                     defaultConverter.Format = value;
+                DateFormatChanged(value);
             }
+        }
+
+        /// <summary>
+        /// Date format value change hook for descendants.
+        /// </summary>
+        protected virtual Task DateFormatChanged(string newFormat)
+        {
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -331,7 +340,7 @@ namespace MudBlazor
                 yield return Culture.Calendar.AddMonths(firstOfCalendarYear, i);
         }
 
-        private string GetAbbreviatedMontName(in DateTime month)
+        private string GetAbbreviatedMonthName(in DateTime month)
         {
             return Culture.DateTimeFormat.AbbreviatedMonthNames[month.Month - 1];
         }

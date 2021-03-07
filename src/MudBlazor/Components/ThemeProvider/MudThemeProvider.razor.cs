@@ -140,6 +140,10 @@ namespace MudBlazor
             theme.AppendLine($"--{Palette}-lines-default: {Theme.Palette.LinesDefault};");
             theme.AppendLine($"--{Palette}-lines-inputs: {Theme.Palette.LinesInputs};");
 
+            theme.AppendLine($"--{Palette}-table-lines: {Theme.Palette.TableLines};");
+            theme.AppendLine($"--{Palette}-table-striped: {Theme.Palette.TableStriped};");
+            theme.AppendLine($"--{Palette}-table-hover: {Theme.Palette.TableHover};");
+
             theme.AppendLine($"--{Palette}-divider: {Theme.Palette.Divider};");
             theme.AppendLine($"--{Palette}-divider-light: {Theme.Palette.DividerLight};");
 
@@ -182,7 +186,18 @@ namespace MudBlazor
 
             //Layout Properties
             theme.AppendLine($"--{LayoutProperties}-default-borderradius: {Theme.LayoutProperties.DefaultBorderRadius};");
-            theme.AppendLine($"--{LayoutProperties}-drawer-width: {Theme.LayoutProperties.DrawerWidth};");
+#pragma warning disable CS0612 // Type or member is obsolete
+            if (!string.IsNullOrEmpty(Theme.LayoutProperties.DrawerWidth))
+            {
+                theme.AppendLine($"--{LayoutProperties}-drawer-width-left: {Theme.LayoutProperties.DrawerWidth};");
+                theme.AppendLine($"--{LayoutProperties}-drawer-width-right: {Theme.LayoutProperties.DrawerWidth};");
+            }
+#pragma warning restore CS0612 // Type or member is obsolete
+            else
+            {
+                theme.AppendLine($"--{LayoutProperties}-drawer-width-left: {Theme.LayoutProperties.DrawerWidthLeft};");
+                theme.AppendLine($"--{LayoutProperties}-drawer-width-right: {Theme.LayoutProperties.DrawerWidthRight};");
+            }
             theme.AppendLine($"--{LayoutProperties}-appbar-min-height: {Theme.LayoutProperties.AppbarMinHeight};");
 
             //Breakpoint

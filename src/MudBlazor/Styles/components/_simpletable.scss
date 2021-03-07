@@ -28,7 +28,7 @@
                 text-align: left;
                 font-weight: 400;
                 line-height: 1.43;
-                border-bottom: 1px solid var(--mud-palette-lines-default);
+                border-bottom: 1px solid var(--mud-palette-table-lines);
                 letter-spacing: 0.01071em;
                 vertical-align: inherit;
             }
@@ -36,6 +36,12 @@
             > th {
                 font-weight: 500;
                 line-height: 1.5rem;
+            }
+        }
+
+        tbody {
+            tr:last-child {
+                border-bottom: none;
             }
         }
     }
@@ -54,8 +60,40 @@
 }
 
 .mud-simple-table.mud-table-hover {
-    & * tr:hover {
-        background-color: var(--mud-palette-action-default-hover);
+    & .mud-table-container table tbody {
+        & tr:hover {
+            background-color: var(--mud-palette-table-hover);
+        }
+    }
+}
+
+.mud-simple-table.mud-table-bordered {
+    & .mud-table-container table tbody {
+        & tr {
+            td {
+                border-right: 1px solid var(--mud-palette-table-lines);
+            }
+
+            td:last-child {
+                border-right: none;
+            }
+        }
+    }
+}
+
+.mud-simple-table.mud-table-striped {
+    & .mud-table-container table tbody {
+        & tr:nth-of-type(odd) {
+            background-color: var(--mud-palette-table-striped);
+        } 
+    }
+}
+
+.mud-table-hover.mud-table-striped {
+    & .mud-table-container table tbody {
+        & tr:nth-of-type(odd):nth-of-type(odd):hover {
+            background-color: var(--mud-palette-table-hover);
+        }
     }
 }
 

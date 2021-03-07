@@ -267,14 +267,15 @@ namespace MudBlazor
 
             return tabClass;
         }
-        void ActivatePanel(MudTabPanel panel, MouseEventArgs ev)
+        void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool scrollToActivePanel)
         {
             if (!panel.Disabled)
             {
                 ActivePanel = panel;
-                ActivePanelIndex = Panels.IndexOf(panel);
-                if (!HideSlider)
-                    _ = UpdateSlider();
+                _activePanelIndex = Panels.IndexOf(panel);
+                ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
+
+                _ = UpdateSlider(scrollToActivePanel);
                 if (ev != null)
                     ActivePanel.OnClick.InvokeAsync(ev);
             }
@@ -282,20 +283,20 @@ namespace MudBlazor
 
         public void ActivatePanel(MudTabPanel panel)
         {
-            ActivatePanel(panel, null);
+            ActivatePanel(panel, null, _showScrollButtons);
         }
 
         public void ActivatePanel(int index)
         {
             var panel = Panels[index];
-            ActivatePanel(panel, null);
+            ActivatePanel(panel, null, _showScrollButtons);
         }
 
         public void ActivatePanel(object id)
         {
             var panel = Panels.Where((p) => p.ID == id).FirstOrDefault();
             if (panel != null)
-                ActivatePanel(panel, null);
+                ActivatePanel(panel, null, _showScrollButtons);
         }
 
         private Placement GetTooltipPlacement()
@@ -327,10 +328,7 @@ namespace MudBlazor
 
         private async Task CalculateTabsSize()
         {
-            if(!HideSlider)
-            {
-                await UpdateSlider();
-            }
+            await UpdateSlider(true);
 
             await GetToolbarContentSize();
             await GetAllTabsSize();
@@ -349,13 +347,17 @@ namespace MudBlazor
             }
             else
             {
+                _scrollPosition = 0;
                 _showScrollButtons = false;
             }
             StateHasChanged();
         }
 
-        private async Task UpdateSlider()
+        private async Task UpdateSlider(bool scrollToActivePanel)
         {
+            if (HideSlider && !scrollToActivePanel)
+                return;
+
             if (ActivePanel != null)
             {
                 if (Position == Position.Top || Position == Position.Bottom)
@@ -377,7 +379,15 @@ namespace MudBlazor
                             position += (await DomService.GetBoundingClientRect(panel.PanelRef))?.Height ?? 0;
                         counter++;
                     }
-                    _position = position;
+                    _position = position; 
+                    if (scrollToActivePanel)
+                    {
+                        _scrollPosition = -position;
+                    }
+                }
+                else if (scrollToActivePanel)
+                {
+                    _scrollPosition = 0;
                 }
                 StateHasChanged();
             }

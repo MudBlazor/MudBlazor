@@ -39,6 +39,9 @@ namespace MudBlazor
         public string AppbarText { get; set; } = Colors.Shades.White;
         public string LinesDefault { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.12);
         public string LinesInputs { get; set; } = Colors.Grey.Lighten1;
+        public string TableLines { get; set; } = ColorManager.ToRgbaFromHex(Colors.Grey.Lighten2, 1);
+        public string TableStriped { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.02);
+        public string TableHover { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.04);
         public string Divider { get; set; } = Colors.Grey.Lighten2;
         public string DividerLight { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.8);
 

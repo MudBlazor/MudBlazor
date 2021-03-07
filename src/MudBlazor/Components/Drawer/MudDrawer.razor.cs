@@ -14,7 +14,7 @@ namespace MudBlazor
         private ElementReference _contentRef;
         private DrawerClipMode _clipMode;
         private bool? _isOpenWhenLarge = null;
-        private bool _open, _rtl, _isRendered, _initial = true, _keepInitialState;
+        private bool _open, _rtl, _isRendered, _initial = true, _keepInitialState, _fixed = true;
         private Breakpoint _breakpoint = Breakpoint.Md, _screenBreakpoint = Breakpoint.None;
 
         private bool OverlayVisible => _open && !DisableOverlay &&
@@ -23,7 +23,7 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-drawer")
-          .AddClass($"mud-drawer-fixed", Fixed)
+          .AddClass($"mud-drawer-fixed", Fixed || Variant == DrawerVariant.Temporary)
           .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
           .AddClass($"mud-drawer--open", Open)
           .AddClass($"mud-drawer--closed", !Open)
@@ -47,7 +47,12 @@ namespace MudBlazor
 
         protected string Stylename =>
         new StyleBuilder()
-            .AddStyle("--mud-drawer-content-height", $"{_height}px", Anchor == Anchor.Bottom || Anchor == Anchor.Top)
+            //.AddStyle("width", Width, !string.IsNullOrWhiteSpace(Width) && !Fixed)
+            .AddStyle("--mud-drawer-width", Width, !string.IsNullOrWhiteSpace(Width) && (!Fixed || Variant == DrawerVariant.Temporary))
+            .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
+            .AddStyle("--mud-drawer-content-height",
+                string.IsNullOrWhiteSpace(Height) ? $"{_height}px" : Height,
+                Anchor == Anchor.Bottom || Anchor == Anchor.Top)
             .AddStyle(Style)
         .Build();
 
@@ -55,7 +60,7 @@ namespace MudBlazor
 
         [Inject] public IResizeListenerService ResizeListener { get; set; }
 
-        [CascadingParameter] MudLayout Layout { get; set; }
+        [CascadingParameter] MudDrawerContainer DrawerContainer { get; set; }
 
         [CascadingParameter]
         bool RightToLeft
@@ -69,15 +74,25 @@ namespace MudBlazor
                 if (_rtl != value)
                 {
                     _rtl = value;
-                    this.Anchor = this.Anchor == Anchor.Left ? Anchor.Right : Anchor.Left;
+                    Anchor = Anchor == Anchor.Left ? Anchor.Right : Anchor.Left;
                 }
             }
         }
 
         /// <summary>
-        /// If true, drawer will be fixed.
+        /// If true, drawer position will be fixed. (CSS position: fixed;)
         /// </summary>
-        [Parameter] public bool Fixed { get; set; } = true;
+        [Parameter]
+        public bool Fixed
+        {
+            get => _fixed && DrawerContainer is MudLayout;
+            set
+            {
+                if (_fixed == value)
+                    return;
+                _fixed = value;
+            }
+        }
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
@@ -95,7 +110,7 @@ namespace MudBlazor
         [Parameter] public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// Variant of the drawer. It affects how the component behaves on different screen sizes.
+        /// Variant of the drawer. It specifies how the drawer will be displayed.
         /// </summary>
         [Parameter] public DrawerVariant Variant { get; set; } = DrawerVariant.Responsive;
 
@@ -160,9 +175,9 @@ namespace MudBlazor
                 {
                     _ = UpdateHeight();
                 }
-                if (Layout != null && Fixed)
+                if (DrawerContainer != null)
                 {
-                    Layout.FireDrawersChanged();
+                    DrawerContainer.FireDrawersChanged();
                 }
                 OpenChanged.InvokeAsync(_open);
             }
@@ -170,6 +185,19 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<bool> OpenChanged { get; set; }
 
+        /// <summary>
+        /// Width of left/right drawer. Only for non-fixed drawers.
+        /// </summary>
+        [Parameter] public string Width { get; set; }
+
+        /// <summary>
+        /// Height of top/bottom temporary drawer
+        /// </summary>
+        [Parameter] public string Height { get; set; }
+
+        /// <summary>
+        /// Specify how the drawer should behave inside a MudLayout. It affects the position relative to <b>MudAppbar</b>
+        /// </summary>
         [Parameter]
         public DrawerClipMode ClipMode
         {
@@ -183,7 +211,7 @@ namespace MudBlazor
                 _clipMode = value;
                 if (Fixed)
                 {
-                    Layout?.FireDrawersChanged();
+                    DrawerContainer?.FireDrawersChanged();
                 }
                 StateHasChanged();
             }
@@ -191,9 +219,9 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            if (Fixed)
+            if (Variant != DrawerVariant.Temporary)
             {
-                Layout?.DrawerContainer?.Add(this);
+                DrawerContainer?.Add(this);
             }
             base.OnInitialized();
         }
@@ -220,7 +248,7 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            Layout?.DrawerContainer?.Remove(this);
+            DrawerContainer?.Remove(this);
             ResizeListener.OnBreakpointChanged -= ResizeListener_OnBreakpointChanged;
         }
 
@@ -273,7 +301,7 @@ namespace MudBlazor
             {
                 if (Open && PreserveOpenState)
                 {
-                    Layout?.FireDrawersChanged();
+                    DrawerContainer?.FireDrawersChanged();
                     StateHasChanged();
                 }
                 else if (_isOpenWhenLarge != null)

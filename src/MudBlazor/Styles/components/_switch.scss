@@ -1,4 +1,5 @@
-﻿
+﻿@import '../abstracts/variables';
+
 .mud-switch {
     cursor: pointer;
     display: inline-flex;
@@ -99,44 +100,19 @@
     }
 }
 
-.mud-switch-primary {
-    &.mud-checked {
-        color: var(--mud-palette-primary);
 
-        &:hover {
-            background-color: var(--mud-palette-primary-hover);
-        }
+@each $color in $mud-palette-colors {
+    .mud-switch-#{$color} {
+        &.mud-checked {
+            color: var(--mud-palette-#{$color});
 
-        & + .mud-switch-track {
-            background-color: var(--mud-palette-primary);
-        }
-    }
-}
+            &:hover {
+                background-color: var(--mud-palette-#{$color}-hover);
+            }
 
-.mud-switch-secondary {
-    &.mud-checked {
-        color: var(--mud-palette-secondary);
-
-        &:hover {
-            background-color: var(--mud-palette-secondary-hover);
-        }
-
-        & + .mud-switch-track {
-            background-color: var(--mud-palette-secondary);
-        }
-    }
-}
-
-.mud-switch-tertiary {
-    &.mud-checked {
-        color: var(--mud-palette-tertiary);
-
-        &:hover {
-            background-color: var(--mud-palette-tertiary-hover);
-        }
-
-        & + .mud-switch-track {
-            background-color: var(--mud-palette-tertiary);
+            & + .mud-switch-track {
+                background-color: var(--mud-palette-#{$color});
+            }
         }
     }
 }
