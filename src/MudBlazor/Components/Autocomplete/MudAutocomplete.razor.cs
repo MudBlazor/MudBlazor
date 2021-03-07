@@ -139,17 +139,17 @@ namespace MudBlazor
 
         public async Task ToggleMenu()
         {
-            if (Disabled || MinCharacters > 0 && (string.IsNullOrEmpty(Text) || Text.Length < MinCharacters))
+            if ((Disabled || ReadOnly) && !IsOpen)
                 return;
             IsOpen = !IsOpen;
-            //if (IsOpen && string.IsNullOrEmpty(Text))
-            //    IsOpen = false;
             if (IsOpen)
             {
+                await _elementReference.SelectAsync();
                 OnSearch();
             }
             else
             {
+                RestoreScrollPosition();
                 await CoerceTextToValue();
             }
             UpdateIcon();
@@ -287,13 +287,6 @@ namespace MudBlazor
             //If false, scrolls always
             await ScrollManager.ScrollToListItemAsync(id, increment, true);
             StateHasChanged();
-        }
-
-
-        protected override void OnAfterRender(bool firstRender)
-        {
-            if (firstRender) return;
-            RestoreScrollPosition();
         }
 
         //This restores the scroll position after closing the menu and element being 0

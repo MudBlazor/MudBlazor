@@ -3,11 +3,11 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements" Dense="@dense" Hover="@hover" Filter="new Func<Element,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+<MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudToolBarSpacer />
-        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Nr</MudTh>
@@ -27,37 +27,24 @@
         <MudTablePager />
     </PagerContent>
 </MudTable>
-<MudText Inline="true">Selected: @selectedItem1?.Name</MudText>
+<MudToolBar>
+    <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
+    <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
+    <MudSwitch @bind-Checked="@striped" Color="Color.Tertiary">Striped</MudSwitch>
+    <MudSwitch @bind-Checked="@bordered" Color="Color.Warning">Bordered</MudSwitch>
+    <MudToolBarSpacer />
+    <div style="min-width:200px;">
+        <MudText Inline="true">Selected: @selectedItem?.Name</MudText>
+    </div>
+</MudToolBar>
 
-
-<MudTable Items="@Elements" Dense="@dense" Hover="@hover" Filter="new Func<Element,bool>(FilterFunc2)" @bind-SelectedItem="selectedItem2" ShowFooter="true">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Periodic Elements</MudText>
-        <MudToolBarSpacer />
-        <MudTextField @bind-Value="searchString2" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-    </ToolBarContent>
-    <Columns>
-        <MudColumn Value="@context.Number" HeaderText="Nr"></MudColumn>
-        <MudColumn Value="@context.Sign" HeaderText="Sign"></MudColumn>
-        <MudColumn Value="@context.Name" HeaderText="Name"></MudColumn>
-        <MudColumn Value="@context.Position" HeaderText="Position" FooterText="Sum:"></MudColumn>
-        <MudColumn Value="@context.Molar" HeaderText="Molar mass" FooterValue="@Elements.Sum(e => e.Molar)"></MudColumn>
-    </Columns>
-    <PagerContent>
-        <MudTablePager />
-    </PagerContent>
-</MudTable>
-<MudText Inline="true">Selected: @selectedItem2?.Name</MudText>
-<MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
-<MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
-<MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
-
-@code { private bool dense = false;
+@code {
+    private bool dense = false;
     private bool hover = true;
-    private string searchString1 = "";
-    private string searchString2 = "";
-    private Element selectedItem1 = null;
-    private Element selectedItem2 = null;
+    private bool striped = false;
+    private bool bordered = false;
+    private string searchString = "";
+    private Element selectedItem = null;
     private HashSet<Element> selectedItems = new HashSet<Element>();
 
     private IEnumerable<Element> Elements = new List<Element>();
@@ -67,11 +54,7 @@
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
 
-
-    private bool FilterFunc1(Element element) => FilterFunc(element, searchString1);
-    private bool FilterFunc2(Element element) => FilterFunc(element, searchString2);
-
-    private bool FilterFunc(Element element, string searchString)
+    private bool FilterFunc(Element element)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
@@ -83,4 +66,4 @@
             return true;
         return false;
     }
-    }
+}

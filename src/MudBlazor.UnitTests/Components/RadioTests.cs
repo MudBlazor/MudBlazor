@@ -5,10 +5,10 @@ using System;
 using System.Linq;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
-
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
 
     [TestFixture]

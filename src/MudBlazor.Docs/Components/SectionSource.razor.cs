@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Extensions;
+using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Components
 {

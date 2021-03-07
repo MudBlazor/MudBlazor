@@ -26,7 +26,7 @@ namespace MudBlazor.Docs.Extensions
 
         /// <summary>
         /// Gets the link of the component on the documentation page
-        /// Ex: /api/button; "button" is the component link, and "api" is the section
+        /// Ex: api/button; "button" is the component link, and "api" is the section
         /// </summary>
         public static string GetComponentLink(this NavigationManager navMan)
         {

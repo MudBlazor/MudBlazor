@@ -2,20 +2,12 @@
 #pragma warning disable IDE1006 // leading underscore
 
 using System;
-using System.Linq;
-using System.Net.Http;
 using Bunit;
-using Bunit.Rendering;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents.CheckBox;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
-
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
 
     [TestFixture]
@@ -143,11 +135,11 @@ namespace MudBlazor.UnitTests
         {
             var comp = ctx.RenderComponent<CheckBoxesBindAgainstArrayTest>();
             Console.WriteLine(comp.Markup);
-            comp.FindAll("p").Last().TrimmedText().Should().Be("A=True, B=False, C=True, D=False, E=True");
+            comp.FindAll("p")[^1].TrimmedText().Should().Be("A=True, B=False, C=True, D=False, E=True");
             comp.FindAll("input")[0].Change(false);
-            comp.FindAll("p").Last().TrimmedText().Should().Be("A=False, B=False, C=True, D=False, E=True");
+            comp.FindAll("p")[^1].TrimmedText().Should().Be("A=False, B=False, C=True, D=False, E=True");
             comp.FindAll("input")[1].Change(true);
-            comp.FindAll("p").Last().TrimmedText().Should().Be("A=False, B=True, C=True, D=False, E=True");
+            comp.FindAll("p")[^1].TrimmedText().Should().Be("A=False, B=True, C=True, D=False, E=True");
         }
     }
 }

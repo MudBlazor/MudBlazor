@@ -2,22 +2,13 @@
 #pragma warning disable IDE1006 // leading underscore
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using FluentValidation;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents.Tabs;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
 
     [TestFixture]
@@ -80,9 +71,9 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<TabsKeepAliveTest>();
             Console.WriteLine(comp.Markup);
             // all panels should be evident in the markup:
-            comp.FindAll("button").Count().Should().Be(3);
+            comp.FindAll("button").Count.Should().Be(3);
             // every panel should be rendered first exactly once throughout the test:
-            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
             // only the first panel should be active:
             comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:contents");
             comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:none");
@@ -95,7 +86,7 @@ namespace MudBlazor.UnitTests
             // switch to the second tab:
             comp.FindAll("div.mud-tab")[1].Click();
             // none of the panels should have had a render pass with firstRender==true, so this must be as before:
-            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
             // second panel should be displayed
             comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:none");
             comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:contents");
@@ -115,13 +106,13 @@ namespace MudBlazor.UnitTests
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
             comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=2");
             comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
-            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
             // switch back to the first tab:
             comp.FindAll("div.mud-tab")[0].Click();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
             comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=2");
             comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
-            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
             // only the first panel should be active:
             comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:contents");
             comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:none");
@@ -138,9 +129,9 @@ namespace MudBlazor.UnitTests
             var comp = ctx.RenderComponent<TabsKeepAliveTest>(ComponentParameter.CreateParameter("KeepPanelsAlive", false));
             Console.WriteLine(comp.Markup);
             // only one panel should be evident in the markup:
-            comp.FindAll("button").Count().Should().Be(1);
+            comp.FindAll("button").Count.Should().Be(1);
             // only the first panel should be rendered first
-            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br></p>");
+            comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br></p>");
             // no child divs in div.mud-tabs-panels
             comp.FindAll("div.mud-tabs-panels > div").Count.Should().Be(0);
             // click first button and show button click counters
@@ -150,9 +141,9 @@ namespace MudBlazor.UnitTests
             // switch to the second tab:
             comp.FindAll("div.mud-tab")[1].Click();
             // first and second panel were rendered once with firstRender==true:
-            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br></p>");
+            comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br></p>");
             // only one panel should be evident in the markup:
-            comp.FindAll("button").Count().Should().Be(1);
+            comp.FindAll("button").Count.Should().Be(1);
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 2=0");
             // click the button twice
             comp.FindAll("button")[0].Click();
@@ -162,13 +153,13 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-tab")[2].Click();
             // second panel should be displayed
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 3=0");
-            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
+            comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
             // switch back to the first tab:
             comp.FindAll("div.mud-tab")[0].Click();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=0");
             comp.FindAll("button")[0].Click();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
-            comp.FindAll("p").Last().MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br>Panel 1<br></p>");
+            comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br>Panel 1<br></p>");
         }
     }
 

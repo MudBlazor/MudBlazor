@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="@AddSnackbar">
+    Open Snackbar
+</MudButton>
+
+@code{
+    public void AddSnackbar()
+    {
+        Snackbar.Add("Snackbar will close after navigation.", Severity.Normal, (options)=>
+        {
+            options.CloseAfterNavigation = true;
+        });
+    }
+}

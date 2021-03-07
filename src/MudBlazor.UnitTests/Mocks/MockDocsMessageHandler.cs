@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using RichardSzalay.MockHttp;
 
 namespace MudBlazor.UnitTests.Mocks
@@ -13,7 +13,7 @@ namespace MudBlazor.UnitTests.Mocks
                 Encoding.UTF8.GetString(Encoding.Default.GetBytes(SampleElementsJson)));
             // DialogScrollableExample
             this.When("https://raw.githubusercontent.com/Garderoben/MudBlazor/master/LICENSE")
-                .Respond("text/plain; charset=utf-8", "Dummy License");
+                .Respond("text/plain", "Dummy License");
         }
 
         private const string SampleElementsJson = @"

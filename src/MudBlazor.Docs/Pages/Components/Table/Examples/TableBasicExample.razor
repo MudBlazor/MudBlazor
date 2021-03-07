@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm">
+<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" RightAlignSmall="_rightAligned">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -15,45 +15,20 @@
         <MudTd DataLabel="Nr">@context.Number</MudTd>
         <MudTd DataLabel="Sign">@context.Sign</MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
-        <MudTd DataLabel="Position">@context.Position</MudTd>
+        <MudTd DataLabel="Position" HideSmall="_hidePosition">@context.Position</MudTd>
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
 </MudTable>
 
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm">
-    <Columns>
-        <MudColumn Value="@context.Number" HeaderText="Nr"></MudColumn>
-        <MudColumn Value="@context.Sign" HeaderText="Sign"></MudColumn>
-        <MudColumn Value="@context.Name" HeaderText="Name"></MudColumn>
-        <MudColumn Value="@context.Position" HeaderText="Position"></MudColumn>
-        <MudColumn Value="@context.Molar" HeaderText="Molar mass"></MudColumn>
-    </Columns>
-</MudTable>
+<MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
+<MudSwitch @bind-Checked="_rightAligned">Right align cell when Breakpoint=Xs</MudSwitch>
 
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm">
-</MudTable>
-
-
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" QuickColumns="Number,Sign,Name,Position,Molar">
-</MudTable>
-
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm">
-    <Columns>
-        <MudAvatarColumn Value="context.Number" HeaderText="Nr"></MudAvatarColumn>
-        <MudColumn Value="context.Sign" HeaderText="Sign"></MudColumn>
-        <MudColumn Value="context.Name" HeaderText="Name"></MudColumn>
-        <MudColumn Value="context.Position" HeaderText="Position"></MudColumn>
-        <MudColumn Value="context.Molar" HeaderText="Molar mass" DataFormatString="{0:f2}"></MudColumn>
-        <MudTemplateColumn DataContext="context" Context="dc">
-            <Header><MudTh>Nr</MudTh></Header>
-            <Row><MudTd DataLabel="Date">@($"Element number: {dc.Number}")</MudTd></Row>
-        </MudTemplateColumn>
-    </Columns>
-</MudTable>
-
-@code { private IEnumerable<Element> Elements = new List<Element>();
+@code {
+    private bool _hidePosition, _rightAligned = true;
+    private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-    } }
+    }
+}

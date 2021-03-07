@@ -8,7 +8,7 @@ using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 using static MudBlazor.Components.Highlighter.Splitter;
 
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
     public class HighlighterSplitterTests

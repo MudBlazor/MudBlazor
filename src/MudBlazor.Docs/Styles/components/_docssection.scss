@@ -60,12 +60,6 @@
     }
 }
 
-.docs-section-content-row {
-    & > * {
-        margin: 8px;
-    }
-}
-
 .docs-section-source {
     height: 100%;
 
@@ -132,4 +126,10 @@
 
 .docs-section-black {
     background-color: var(--mud-palette-black);
+}
+
+.docs-iframe {
+    height: 400px;
+    width: 100%;
+    margin: 0px !important;
 }

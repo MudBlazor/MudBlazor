@@ -5,7 +5,7 @@
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
         <MudSelect Label="Select fast-food" @bind-Value="stringValue" HelperText="String">
-            <MudSelectItem Value="@("Pizza")">Pizza</MudSelectItem>
+            <MudSelectItem Value="@("Pizza")" Disabled="true">Pizza (Disabled)</MudSelectItem>
             <MudSelectItem Value="@("Burger")">Burger</MudSelectItem>
             <MudSelectItem Value="@("Hotdog")">Hot Dog</MudSelectItem>
         </MudSelect>

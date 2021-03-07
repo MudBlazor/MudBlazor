@@ -2,15 +2,13 @@
 #pragma warning disable IDE1006 // leading underscore
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents.List;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
     public class ListTests

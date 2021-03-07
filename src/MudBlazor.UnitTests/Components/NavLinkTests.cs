@@ -5,11 +5,11 @@ using System;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents.NavLink;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
     public class NavLinkTests

@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
