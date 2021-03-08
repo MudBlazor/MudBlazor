@@ -17,7 +17,7 @@
                         @foreach (MudTabPanel panel in Panels)
                         {
                             <MudTooltip Placement="@GetTooltipPlacement()" Text="@panel.ToolTip">
-                                <div @ref="panel.PanelRef" class="@GetTabClass(panel)" @onclick=@( e => ActivatePanel(panel, e, false) )>
+                                <div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick=@( e => ActivatePanel(panel, e, false) )>
                                     @if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
                                     {
                                         @panel.Text
