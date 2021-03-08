@@ -316,6 +316,8 @@
 
         .mud-table-cell {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
             border: none;
             padding: 14px 16px;
             text-align: left !important;
@@ -330,8 +332,7 @@
         .mud-table-cell:before {
             content: attr(data-label);
             font-weight: 500;
-            width: 50%;
-            min-width: 50%;
+            padding-right: 16px;
         }
 
         &.mud-table-small-alignright .mud-table-cell:before {

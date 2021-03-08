@@ -33,7 +33,6 @@ namespace MudBlazor
            .AddClass($"mud-table-square", Square)
            .AddClass($"mud-table-sticky-header", FixedHeader)
            .AddClass($"mud-elevation-{Elevation}", !Outlined)
-           .AddClass($"mud-table-small-alignright", RightAlignSmall)
           .AddClass(Class)
         .Build();
 
@@ -202,10 +201,13 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string RowStyle { get; set; }
 
+
+        #region --> Obsolete Forwarders for Backwards-Compatiblilty
         /// <summary>
         /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
         /// </summary>
-        [Parameter] public bool RightAlignSmall { get; set; } = true;
+        [Obsolete("This property is obsolete. And not needed anymore, the cells width/alignment is done automaticly.")] [Parameter] public bool RightAlignSmall { get; set; } = true;
+        #endregion
 
         public abstract TableContext TableContext { get; }
 
