@@ -23,7 +23,7 @@
 <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
 
 @code {
-    private bool _hidePosition, _rightAligned = true;
+    private bool _hidePosition;
     private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()
