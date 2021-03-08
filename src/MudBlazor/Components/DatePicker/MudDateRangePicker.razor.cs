@@ -215,6 +215,23 @@ namespace MudBlazor
             base.Clear();
         }
 
+        protected override void OnOpened()
+        {
+            _secondDate = null;
+            base.OnOpened();
+        }
+
+        protected override async void Submit()
+        {
+            if (_firstDate == null || _secondDate == null)
+                return;
+
+            await SetDateRangeAsync(new DateRange(_firstDate, _secondDate), true);
+
+            _firstDate = null;
+            _secondDate = null;
+        }
+
         protected override string GetTitleDateString()
         {
             if (_firstDate != null && _secondDate != null)
