@@ -9,7 +9,7 @@ namespace MudBlazor
 {
     public partial class MudDateRangePicker : MudBaseDatePicker
     {
-        private DateTime? _firstDate = null;
+        private DateTime? _firstDate = null, _secondDate;
         private DateRange _dateRange;
         private Range<string> _rangeText;
 
@@ -114,7 +114,8 @@ namespace MudBlazor
                 return b.AddClass("mud-hidden").Build();
             }
 
-            if (_firstDate == null && _dateRange != null && _dateRange.Start < day && _dateRange.End > day)
+            if ((_firstDate != null && _secondDate != null && _firstDate < day && _secondDate > day) ||
+                (_firstDate == null && _dateRange != null && _dateRange.Start < day && _dateRange.End > day))
             {
                 return b
                     .AddClass("mud-range")
@@ -133,7 +134,8 @@ namespace MudBlazor
                     .Build();
             }
 
-            if (_firstDate == null && _dateRange != null && _dateRange.Start != day && _dateRange.End == day)
+            if ((_firstDate != null && _secondDate != null && day == _secondDate) ||
+                (_firstDate == null && _dateRange != null && _dateRange.Start != day && _dateRange.End == day))
             {
                 return b.AddClass("mud-selected")
                     .AddClass("mud-range")
@@ -159,7 +161,7 @@ namespace MudBlazor
             else if (_firstDate != null && day > _firstDate)
             {
                 return b.AddClass("mud-range")
-                    .AddClass("mud-range-selection")
+                    .AddClass("mud-range-selection", _secondDate == null)
                     .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate != null)
                     .Build();
             }
@@ -169,25 +171,50 @@ namespace MudBlazor
 
         protected override async void OnDayClicked(DateTime dateTime)
         {
-            if (_firstDate == null || _firstDate > dateTime)
+            if (_firstDate == null || _firstDate > dateTime || _secondDate != null)
             {
+                _secondDate = null;
                 _firstDate = dateTime;
                 return;
             }
 
-            await SetDateRangeAsync(new DateRange(_firstDate, dateTime), true);
+            _secondDate = dateTime;
+            if (PickerActions == null)
+            {
+                Submit();
+
+                if (PickerVariant != PickerVariant.Static)
+                {
+                    await Task.Delay(ClosingDelay);
+                    Close(false);
+                }
+            }
+        }
+
+        protected override void OnOpened()
+        {
+            _secondDate = null;
+            base.OnOpened();
+        }
+
+        protected override async void Submit()
+        {
+            if (_firstDate == null || _secondDate == null)
+                return;
+
+            await SetDateRangeAsync(new DateRange(_firstDate, _secondDate), true);
 
             _firstDate = null;
-
-            if (PickerVariant != PickerVariant.Static)
-            {
-                await Task.Delay(ClosingDelay);
-                Close();
-            }
+            _secondDate = null;
         }
 
         protected override string GetTitleDateString()
         {
+            if (_firstDate != null && _secondDate != null)
+                return $"{_firstDate.Value.ToString("dd MMM", Culture)} - {_secondDate.Value.ToString("dd MMM", Culture)}";
+            else if (_firstDate != null)
+                return _firstDate.Value.ToString("dd MMM", Culture) + " - ";
+
             if (DateRange == null || DateRange.Start == null)
                 return "";
             if (DateRange.End == null)

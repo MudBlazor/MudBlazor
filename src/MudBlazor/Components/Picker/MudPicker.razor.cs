@@ -71,6 +71,10 @@ namespace MudBlazor
             new CssBuilder("mud-input-input-control").AddClass(Class)
             .Build();
 
+        protected string ActionClass => new CssBuilder("mud-picker-actions")
+          .AddClass(ClassActions)
+        .Build();
+
         /// <summary>
         /// Sets the icon of the input text field
         /// </summary>
@@ -182,6 +186,16 @@ namespace MudBlazor
         }
         private string _text;
 
+        /// <summary>
+        /// CSS class that will be applied to the action buttons container
+        /// </summary>
+        [Parameter] public string ClassActions { get; set; }
+
+        /// <summary>
+        /// Define the action buttons here
+        /// </summary>
+        [Parameter] public RenderFragment PickerActions { get; set; }
+
         protected async Task SetTextAsync(string value, bool callback)
         {
             if (_text != value)
@@ -211,10 +225,15 @@ namespace MudBlazor
                 Open();
         }
 
-        public void Close()
+        public void Close(bool submit = true)
         {
             IsOpen = false;
+
+            if (submit)
+                Submit();
+
             StateHasChanged();
+
             OnClosed();
         }
 
@@ -224,6 +243,10 @@ namespace MudBlazor
             StateHasChanged();
             OnOpened();
         }
+
+        private void CloseOverlay() => Close(PickerActions == null);
+
+        protected virtual void Submit() { }
 
         private bool _pickerSquare;
         private int _pickerElevation;
