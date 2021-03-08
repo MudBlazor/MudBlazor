@@ -132,9 +132,10 @@ namespace MudBlazor.Charts
                 for (var i = 0; i <= item.Data.Length - 1 ; i++)
                 {
                     if (i == 0)
-                        XValues[1] = 30;
+                        XValues[i] = 30;
                     else
-                        XValues[i] = XValues[i - 1] + 5;
+                        XValues[i] = XValues[i - 1] + horizontalSpace;
+
                     var gridValue = (item.Data[i]) * verticalSpace / gridYUnits;
                     YValues[i] = boundHeight - (gridValueY + gridValue);
                 
@@ -142,7 +143,7 @@ namespace MudBlazor.Charts
                 var interpolation = new NaturalSpline(XValues, YValues);
                 horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / (interpolation.interpolatedXs.Length);
 
-                foreach (var polatevaluesY in interpolation.interpolatedYs)
+                for(var i = 0; i <= interpolation.interpolatedYs.Length - 1 ; i++)
                 {
                  
                     if (firstTime)
@@ -152,20 +153,15 @@ namespace MudBlazor.Charts
                         firstTime = false;
                         gridValueX = horizontalStartSpace;
                         gridValueY = verticalStartSpace;
-                        var gridValue = (polatevaluesY) * verticalSpace / gridYUnits;
-                        gridValueY = boundHeight - (gridValueY + gridValue);
-                        chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
                     else
                     {
                         chartLine += " L ";
-                        gridValueX += 5;
+                        gridValueX += horizontalSpace;
                         gridValueY = verticalStartSpace;
-
-                        var gridValue = (polatevaluesY) * verticalSpace / gridYUnits;
-                        gridValueY = boundHeight - (gridValueY + gridValue);
-                        chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
+                    gridValueY = interpolation.interpolatedYs[i];
+                    chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                 }
                 var line = new SvgPath()
                 {
