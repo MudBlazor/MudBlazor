@@ -1,4 +1,4 @@
-﻿.mud-picker {
+.mud-picker {
     &.mud-rounded {
         border-radius: var(--mud-default-borderradius);
     }
@@ -7,6 +7,7 @@
 .mud-picker-inline {
     display: inline-flex;
     position: relative;
+    width:100%;
 
     &.mud-picker-input-button {
         & .mud-input, .mud-input .mud-input-root {
