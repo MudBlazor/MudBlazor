@@ -261,9 +261,19 @@ namespace MudBlazor
               .AddClass($"mud-disabled", panel.Disabled)
               .AddClass($"mud-ripple", !DisableRipple)
               .AddClass(TabPanelClass)
+              .AddClass(panel.Class)
             .Build();
 
             return tabClass;
+        }
+
+        string GetTabStyle(MudTabPanel panel)
+        {
+            var tabStyle = new StyleBuilder()
+            .AddStyle(panel.Style)
+            .Build();
+
+            return tabStyle;
         }
         void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool scrollToActivePanel)
         {
