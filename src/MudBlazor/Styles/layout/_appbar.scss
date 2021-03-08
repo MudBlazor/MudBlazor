@@ -13,25 +13,29 @@
     transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,width 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
 }
 
-.mud-appbar-drawer-open {
+.mud-drawer-clipped-never.mud-drawer-open {
     &-responsive {
         @each $breakpoint in map-keys($breakpoints) {
             &-#{$breakpoint} {
                 @media (min-width: map-get($breakpoints, $breakpoint)) {
-                    &-left {
-                        margin-left: var(--mud-drawer-width);
+                    &-left .mud-appbar {
+                        margin-left: var(--mud-drawer-width-left);
                     }
 
-                    &-right {
-                        margin-right: var(--mud-drawer-width);
+                    &-right .mud-appbar {
+                        margin-right: var(--mud-drawer-width-right);
                     }
 
-                    &-left#{&}-right {
-                        width: calc(100% - 2 * var(--mud-drawer-width));
+                    &-left#{&}-right .mud-appbar {
+                        width: calc(100% - var(--mud-drawer-width-left) + var(--mud-drawer-width-right));
                     }
 
-                    &-left:not(#{&}-right), &-right:not(#{&}-left) {
-                        width: calc(100% - var(--mud-drawer-width));
+                    &-left:not(#{&}-right) .mud-appbar {
+                        width: calc(100% - var(--mud-drawer-width-left));
+                    }
+
+                    &-right:not(#{&}-left) .mud-appbar {
+                        width: calc(100% - var(--mud-drawer-width-right));
                     }
                 }
             }
@@ -39,20 +43,24 @@
     }
 
     &-persistent {
-        &-left {
-            margin-left: var(--mud-drawer-width);
+        &-left .mud-appbar {
+            margin-left: var(--mud-drawer-width-left);
         }
 
-        &-right {
-            margin-right: var(--mud-drawer-width);
+        &-right .mud-appbar {
+            margin-right: var(--mud-drawer-width-right);
         }
 
-        &-left#{&}-right {
-            width: calc(100% - 2 * var(--mud-drawer-width));
+        &-left#{&}-right .mud-appbar {
+            width: calc(100% - var(--mud-drawer-width-left) + var(--mud-drawer-width-right));
         }
 
-        &-left:not(&-right), &-right:not(&-left) {
-            width: calc(100% - var(--mud-drawer-width));
+        &-left:not(#{&}-right) .mud-appbar {
+            width: calc(100% - var(--mud-drawer-width-left));
+        }
+
+        &-right:not(#{&}-left) .mud-appbar {
+            width: calc(100% - var(--mud-drawer-width-right));
         }
     }
 }

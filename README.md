@@ -70,8 +70,8 @@ services.AddMudServices();
 ```
 ### Usage
 ```html
-<Typography Typo="Typo.h6">MudBlazor is @Text</Typography>
-<Button Variant="Variant.Contained" Color="Color.Primary" OnClick="ButtonOnClick">@ButtonText</Button>
+<MudText Typo="Typo.h6">MudBlazor is @Text</MudText>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ButtonOnClick">@ButtonText</MudButton>
 
 @code {
   public string Text { get; set; } = "????";

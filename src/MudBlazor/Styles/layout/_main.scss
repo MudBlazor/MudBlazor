@@ -7,22 +7,22 @@
     transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
 }
 
-.mud-main-drawer-open {
+.mud-drawer-open {
     &-responsive {
         @each $breakpoint in map-keys($breakpoints) {
             &-#{$breakpoint} {
                 @media (min-width: map-get($breakpoints, $breakpoint)) {
-                    &-left:not(#{&}-right) {
-                        margin-left: var(--mud-drawer-width);
+                    &-left:not(#{&}-right) .mud-main-content {
+                        margin-left: var(--mud-drawer-width-left);
                     }
 
-                    &-right:not(#{&}-left) {
-                        margin-right: var(--mud-drawer-width);
+                    &-right:not(#{&}-left) .mud-main-content {
+                        margin-right: var(--mud-drawer-width-right);
                     }
 
-                    &-left#{&}-right {
-                        margin-right: var(--mud-drawer-width);
-                        margin-left: var(--mud-drawer-width);
+                    &-left#{&}-right .mud-main-content {
+                        margin-right: var(--mud-drawer-width-right);
+                        margin-left: var(--mud-drawer-width-left);
                     }
                 }
             }
@@ -30,17 +30,17 @@
     }
 
     &-persistent {
-        &-left:not(&-right) {
-            margin-left: var(--mud-drawer-width);
+        &-left:not(&-right) .mud-main-content {
+            margin-left: var(--mud-drawer-width-left);
         }
 
-        &-right:not(&-left) {
-            margin-right: var(--mud-drawer-width);
+        &-right:not(&-left) .mud-main-content {
+            margin-right: var(--mud-drawer-width-right);
         }
 
-        &-left#{&}-right {
-            margin-right: var(--mud-drawer-width);
-            margin-left: var(--mud-drawer-width);
+        &-left#{&}-right .mud-main-content {
+            margin-right: var(--mud-drawer-width-right);
+            margin-left: var(--mud-drawer-width-left);
         }
     }
 }

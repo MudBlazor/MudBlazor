@@ -32,7 +32,7 @@ namespace MudBlazor.Services
             if (configuration == null)
                 configuration = new SnackbarConfiguration();
 
-            services.TryAddScoped<ISnackbar>(builder => 
+            services.TryAddScoped<ISnackbar>(builder =>
                 new SnackbarService(builder.GetService<NavigationManager>(), configuration));
             return services;
         }

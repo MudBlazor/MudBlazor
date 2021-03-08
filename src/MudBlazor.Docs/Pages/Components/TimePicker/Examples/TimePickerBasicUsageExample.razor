@@ -1,7 +1,15 @@
 ﻿@namespace MudBlazor.Docs.Examples
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTimePicker Label="12 hours" AmPm="true" @bind-Time="time" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTimePicker Label="24 hours" @bind-Time="time" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTimePicker Label="24 hours (editable)" Editable="true" />
+    </MudItem>
+</MudGrid>
 
-<MudTimePicker Label="12 hours" AmPm="true" @bind-Time="time" />
-<MudTimePicker Label="24 hours" @bind-Time="time" />
-<MudTimePicker Label="24 hours (editable)" Editable="true" />
-
-@code{ TimeSpan? time = new TimeSpan(00, 45, 00); }
+@code{
+    TimeSpan? time = new TimeSpan(00, 45, 00); }

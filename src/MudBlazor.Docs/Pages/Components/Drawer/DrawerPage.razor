@@ -37,7 +37,6 @@
             <SectionHeader>
                 <Title>Persistent drawer</Title>
                 <Description>
-                    Set <CodeInline>Fixed="false"</CodeInline> to use drawer inside a custom container.
                     Persistent drawer is outside of its container, when opens it forces other contents to change their size.
                     Persistent drawer will be opened until the <CodeInline>Open</CodeInline> parameter is not changed.
                 </Description>
@@ -104,6 +103,41 @@
                 </iframe>
             </SectionContent>
             <SectionSource Code="DrawerBreakpointExample" ShowCode="false" GitHubFolderName="Drawer" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Sizing drawers</Title>
+                <Description>
+                    It is possible to apply custom width/height values for drawers. The following examples demonstrate how to do it for different types of drawers.
+                </Description>
+            </SectionHeader>
+
+            <SectionHeader>
+                <SubTitle>1. Change drawers inside <CodeInline>MudLayout</CodeInline></SubTitle>
+                <Description>
+                    Changing the default width (240px) of a left and/or right drawer is possible through setting 
+                    <CodeInline>DrawerWidthLeft</CodeInline> and/or <CodeInline>DrawerWidthRight</CodeInline> layout properties.
+                    For more information see <MudLink Href="/customization/default-theme">customization page</MudLink>.
+                </Description>
+            </SectionHeader>
+
+            <SectionHeader>
+                <SubTitle>2. Change size for temporary drawers</SubTitle>
+                <Description>Changing the default size is possible by setting the <CodeInline>Width</CodeInline> or <CodeInline>Height</CodeInline> parameters.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true">
+                <DrawerSizeTemporaryExample />
+            </SectionContent>
+            <SectionSource Code="DrawerSizeTemporaryExample" ShowCode="false" GitHubFolderName="Drawer" />
+
+            <SectionHeader>
+                <SubTitle>3. Change size for persistent drawers inside <CodeInline>MudDrawerContainer</CodeInline></SubTitle>
+                <Description>Changing the default size is possible by setting the <CodeInline>Width</CodeInline> parameter.</Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <DrawerSizeContainerExample />
+            </SectionContent>
+            <SectionSource Code="DrawerSizeContainerExample" ShowCode="false" GitHubFolderName="Drawer" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

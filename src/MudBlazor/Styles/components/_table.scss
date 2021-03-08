@@ -99,7 +99,7 @@
     text-align: left;
     font-weight: 400;
     line-height: 1.43;
-    border-bottom: 1px solid rgba(224, 224, 224, 1);
+    border-bottom: 1px solid var(--mud-palette-table-lines);
     letter-spacing: 0.01071em;
     vertical-align: inherit;
 
@@ -121,6 +121,16 @@
         }
         & .mud-table-cell:last-child{
             padding-right: 16px;
+        }
+    }
+}
+
+.mud-table-bordered {
+    & .mud-table-container .mud-table-root .mud-table-body {
+        & .mud-table-row {
+            .mud-table-cell {
+                border-right: 1px solid var(--mud-palette-table-lines);
+            }
         }
     }
 }
@@ -158,12 +168,29 @@
 }
 
 .mud-table-hover {
-    & * .mud-table-body {
+    & .mud-table-container .mud-table-root .mud-table-body {
         & .mud-table-row:hover {
-            background-color: rgba(0, 0, 0, 0.04);
+            background-color: var(--mud-palette-table-hover);
         }
     }
 }
+
+.mud-table-striped {
+    & .mud-table-container .mud-table-root .mud-table-body {
+        & .mud-table-row:nth-of-type(odd) {
+            background-color: var(--mud-palette-table-striped);
+        }
+    }
+}
+
+.mud-table-hover.mud-table-striped {
+    & .mud-table-container .mud-table-root .mud-table-body {
+        & .mud-table-row:nth-of-type(odd):hover {
+            background-color: var(--mud-palette-table-hover);
+        }
+    }
+}
+
 
 .mud-table-cell {
     & > .mud-input-control {
@@ -218,7 +245,7 @@
 }
 
 .mud-table-pagination-toolbar {
-    border-top: 1px solid rgba(224, 224, 224, 1);
+    border-top: 1px solid var(--mud-palette-table-lines);
     height: 52px;
     padding-right: 2px;
 }
@@ -276,19 +303,21 @@
         }
 
         .mud-table-body {
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid var(--mud-palette-table-lines);
         }
 
         .mud-table-row {
             display: initial;
 
             .mud-table-cell:last-child {
-                border-bottom: 1px solid #e0e0e0;
+                border-bottom: 1px solid var(--mud-palette-table-lines);
             }
         }
 
         .mud-table-cell {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
             border: none;
             padding: 14px 16px;
             text-align: left !important;
@@ -303,8 +332,7 @@
         .mud-table-cell:before {
             content: attr(data-label);
             font-weight: 500;
-            width: 50%;
-            min-width: 50%;
+            padding-right: 16px;
         }
 
         &.mud-table-small-alignright .mud-table-cell:before {

@@ -8,8 +8,8 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.Mocks;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 

@@ -10,13 +10,16 @@
 
 .docs-icon-panel {
     height: 120px;
-    width: 19%;
+    width: 20;
     padding: 20px 10px;
     display: inline-block;
     text-align: center;
 
     & .mud-typography {
         margin-top: 10px;
+        width: 100%;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 }
 

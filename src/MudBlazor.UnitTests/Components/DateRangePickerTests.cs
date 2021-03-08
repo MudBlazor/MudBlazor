@@ -5,8 +5,10 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using MudBlazor.Extensions;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using static Bunit.ComponentParameterFactory;
@@ -329,6 +331,23 @@ namespace MudBlazor.UnitTests.Components
             // closing programmatically
             await comp.InvokeAsync(() => comp.Instance.Close());
             comp.FindAll("div.mud-picker-content").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void SetPickerValue_CheckText()
+        {
+            var comp = ctx.RenderComponent<MudDateRangePicker>(
+                Parameter(nameof(MudDateRangePicker.DateRange), new DateRange(DateTime.Now, DateTime.Now.AddDays(5))));
+            // select elements needed for the test
+            var picker = comp.Instance;
+
+            var textStart = DateTime.Now.ToIsoDateString();
+            var textEnd = DateTime.Now.AddDays(5).ToIsoDateString();
+
+            picker.Text.Should().Be(RangeConverter<DateTime>.Join(textStart, textEnd));
+            var inputs = comp.FindAll("input");
+            (inputs[0] as IHtmlInputElement).Value.Should().Be(textStart);
+            (inputs[1] as IHtmlInputElement).Value.Should().Be(textEnd);
         }
     }
 }

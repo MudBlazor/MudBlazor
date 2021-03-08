@@ -131,26 +131,25 @@ namespace MudBlazor.Charts
                         firstTime = false;
                         gridValueX = horizontalStartSpace;
                         gridValueY = verticalStartSpace;
-                        var gridValue = ((double)dataLine) * verticalSpace / gridYUnits;
-                        gridValueY = boundHeight - (gridValueY + gridValue);
-                        chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
                     else
                     {
                         chartLine += " L ";
                         gridValueX += horizontalSpace;
                         gridValueY = verticalStartSpace;
-
-                        var gridValue = ((double)dataLine) * verticalSpace / gridYUnits;
-                        gridValueY = boundHeight - (gridValueY + gridValue);
-                        chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
+
+                    var gridValue = ((double)dataLine) * verticalSpace / gridYUnits;
+                    gridValueY = boundHeight - (gridValueY + gridValue);
+                    chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                 }
+
                 var line = new SvgPath()
                 {
                     Index = colorcounter,
                     Data = chartLine
                 };
+
                 var legend = new SvgLegend()
                 {
                     Index = colorcounter,

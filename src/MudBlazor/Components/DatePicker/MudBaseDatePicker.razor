@@ -50,7 +50,7 @@
                             @foreach (var month in GetAllMonths())
                             {
                                 <div class="mud-picker-month" @onclick="(() => OnMonthSelected(month))" @onclick:stopPropagation="true">
-                                    <MudText Typo="@GetMonthTypo(month)" Class="@GetMonthClasses(month)">@GetAbbreviatedMontName(month)</MudText>
+                                    <MudText Typo="@GetMonthTypo(month)" Class="@GetMonthClasses(month)">@GetAbbreviatedMonthName(month)</MudText>
                                 </div>
                             }
                         </div>

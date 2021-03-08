@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm" RightAlignSmall="_rightAligned">
+<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -21,10 +21,9 @@
 </MudTable>
 
 <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
-<MudSwitch @bind-Checked="_rightAligned">Right align cell when Breakpoint=Xs</MudSwitch>
 
 @code {
-    private bool _hidePosition, _rightAligned = true;
+    private bool _hidePosition;
     private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()
