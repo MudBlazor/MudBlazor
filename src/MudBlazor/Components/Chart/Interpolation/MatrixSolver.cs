@@ -2,16 +2,11 @@
  *  Work in this file is derived from code originally written by Hans-Peter Moser:
  *  http://www.mosismath.com/Basics/Basics.html
  *  http://www.mosismath.com/Matrix_Gauss/MatrixGauss.html
- *  It is included in ScottPlot under a MIT license with permission from the original author.
  */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MudBlazor.Components.Chart.Interpolation
+namespace MudBlazor.Components.Chart
 {
     // Matrix equation solver using the Gaussian elimination algorithm
     public class MatrixSolver

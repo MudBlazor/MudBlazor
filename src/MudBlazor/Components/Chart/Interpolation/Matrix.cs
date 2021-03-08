@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MudBlazor.Components.Chart.Interpolation
+namespace MudBlazor.Components.Chart
 {
     public class Matrix
     {
