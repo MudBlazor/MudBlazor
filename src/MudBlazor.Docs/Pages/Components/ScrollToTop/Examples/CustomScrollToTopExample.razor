@@ -1,5 +1,20 @@
 ﻿@namespace MudBlazor.Docs.Examples
-<style>    
+<style>
+    .example-scroll-section{
+        height:300px;
+        overflow:auto;
+        padding:20px;
+    }
+    .example-inner-section{
+        height:3500px;        
+        display:flex;
+        flex-direction:column;
+        justify-content:space-between;
+        padding:3em;
+    }
+    .example-inner-section>h1, .example-inner-section>h2{
+        text-align:center;        
+    }
     .example-scroll-to-top-visible {
         font-size: 20px;
         transition: all 1s;       
