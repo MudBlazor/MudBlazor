@@ -3,16 +3,19 @@ using MudBlazor.Components.Chart.Interpolation;
 
 namespace MudBlazor.Components.Chart
 {
-    public abstract class SplineInterpolator
+    public abstract class SplineInterpolator : ILineInterpolator
     {
-        public double[] givenYs, givenXs;
-        public double[] interpolatedXs, interpolatedYs;
-
         protected Matrix m;
         protected MatrixSolver gauss;
 
         protected readonly int n;
         protected double[] a, b, c, d, h;
+
+        public double[] givenYs { get; set; }
+        public double[] givenXs { get; set; }
+        public double[] interpolatedXs { get; set ; }
+        public double[] interpolatedYs { get; set; }
+        public bool InterpolationRequired { get; set; } = true;
 
         public SplineInterpolator(double[] xs, double[] ys, int resolution = 10)
         {

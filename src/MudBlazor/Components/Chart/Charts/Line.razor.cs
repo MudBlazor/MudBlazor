@@ -132,7 +132,7 @@ namespace MudBlazor.Charts
                 var firstTime = true;
                 double[] XValues = new double[item.Data.Length];
                 double[] YValues = new double[item.Data.Length];
-
+                ILineInterpolator interpolator;
                 for (var i = 0; i <= item.Data.Length - 1; i++)
                 {
                     if (i == 0)
@@ -147,85 +147,47 @@ namespace MudBlazor.Charts
                 switch (curveEnum)
                 {
                     case CurveEnum.NaturalSpline:            
-                        var naturalSplineValues = new NaturalSpline(XValues, YValues);
-                        horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / naturalSplineValues.interpolatedXs.Length;
-                        foreach (var yValue in naturalSplineValues.interpolatedYs)
-                        {
-
-                            if (firstTime)
-                            {
-
-                                chartLine += "M ";
-                                firstTime = false;
-                                gridValueX = horizontalStartSpace;
-                                gridValueY = verticalStartSpace;
-                            }
-                            else
-                            {
-                                chartLine += " L ";
-                                gridValueX += horizontalSpace;
-                                gridValueY = verticalStartSpace;
-                            }
-                            gridValueY = yValue;
-                            chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
-                        }
+                        interpolator = new NaturalSpline(XValues, YValues);
                         break;
                     case CurveEnum.EndSlope:
-                        var endSlopeSplineValues = new EndSlopeSpline(XValues, YValues);
-                        horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / endSlopeSplineValues.interpolatedXs.Length;
-                        foreach (var yValue in endSlopeSplineValues.interpolatedYs)
-                        {
-                            if (firstTime)
-                            {
-
-                                chartLine += "M ";
-                                firstTime = false;
-                                gridValueX = horizontalStartSpace;
-                                gridValueY = verticalStartSpace;
-                            }
-                            else
-                            {
-                                chartLine += " L ";
-                                gridValueX += horizontalSpace;
-                                gridValueY = verticalStartSpace;
-                            }
-                            gridValueY = yValue;
-                            chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
-                        }
+                        interpolator = new EndSlopeSpline(XValues, YValues);                     
                         break;
                     case CurveEnum.Periodic:
-                        var periodSplineValues = new PeriodicSpline(XValues, YValues);
-                        horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / periodSplineValues.interpolatedXs.Length;
-                        foreach (var yValue in periodSplineValues.interpolatedYs)
-                        {
-
-                            if (firstTime)
-                            {
-
-                                chartLine += "M ";
-                                firstTime = false;
-                                gridValueX = horizontalStartSpace;
-                                gridValueY = verticalStartSpace;
-                            }
-                            else
-                            {
-                                chartLine += " L ";
-                                gridValueX += horizontalSpace;
-                                gridValueY = verticalStartSpace;
-                            }
-                            gridValueY = yValue;
-                            chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
-                        }
+                        interpolator = new PeriodicSpline(XValues, YValues);                      
                         break;
                     case CurveEnum.Straight:
-                        IsChartSplined = false;
+                        interpolator = new NoInterpolation(XValues, YValues);
                         break;
                     default:
-                        IsChartSplined = false;
+                        interpolator = new NoInterpolation(XValues, YValues);
                         break;
                 }
 
-                if (!IsChartSplined)
+                if (interpolator.InterpolationRequired == true)
+                {
+                    horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / interpolator.interpolatedXs.Length;
+                    foreach (var yValue in interpolator.interpolatedYs)
+                    {
+
+                        if (firstTime)
+                        {
+
+                            chartLine += "M ";
+                            firstTime = false;
+                            gridValueX = horizontalStartSpace;
+                            gridValueY = verticalStartSpace;
+                        }
+                        else
+                        {
+                            chartLine += " L ";
+                            gridValueX += horizontalSpace;
+                            gridValueY = verticalStartSpace;
+                        }
+                        gridValueY = yValue;
+                        chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
+                    }
+                }
+                else
                 {
                     foreach (var dataLine in item.Data)
                     {
@@ -248,7 +210,7 @@ namespace MudBlazor.Charts
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
                 }
-
+             
                 var line = new SvgPath()
                 {
                     Index = colorcounter,
