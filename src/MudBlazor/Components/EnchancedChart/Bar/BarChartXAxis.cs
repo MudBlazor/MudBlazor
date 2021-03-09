@@ -19,6 +19,7 @@ namespace MudBlazor
 
     public record BarChartXAxisSnapshot(Boolean ShowGridLines, XAxisPlacement Placement, String LabelCssClass, Double Height, Double Margin);
 
+    [DoNotGenerateAutomaticTest]
     public class BarChartXAxis : ComponentBase, ISnapshot<BarChartXAxisSnapshot>
     {
         [CascadingParameter] public MudEnchancedBarChart Chart { get; set; }

@@ -20,6 +20,7 @@ namespace MudBlazor
 
     record NumericLinearAxisSnapshot(Double Min, Double Max, Boolean ShowMinorTick, Boolean ShowMajorTick, ScalingType ScalingType);
 
+    [DoNotGenerateAutomaticTest]
     public partial class NumericLinearAxis : ComponentBase, IYAxis, IDisposable, ISnapshot<NumericLinearAxisSnapshot>
     {
         private Guid _id = new Guid();

@@ -17,6 +17,7 @@ namespace MudBlazor
 
     record TickSnapShot(String Color, Double Thickness, Double Value, TickMode Mode);
 
+    [DoNotGenerateAutomaticTest]
     public class Tick : ComponentBase, ISnapshot<TickSnapShot>
     {
         [CascadingParameter] public IYAxis Axe { get; set; }

@@ -12,6 +12,7 @@ namespace MudBlazor
 {
     public record BarDataSetSnapShot(String name, Boolean IsStacked, Guid? axisId);
 
+    [DoNotGenerateAutomaticTest]
     public partial class BarDataSet : ComponentBase, ICollection<BarChartSeries>, IDisposable, ISnapshot<BarDataSetSnapShot>
     {
         public BarDataSet()

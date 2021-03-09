@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -290,9 +291,12 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             called.Should().Be(2);
         }
 
-        [Test]
-        public void DrawSimpleDataSet_OnlyPostiveValues_NoVisibileAxes()
+        [TestCase("en-us")]
+        [TestCase("de-de")]
+        public void DrawSimpleDataSet_OnlyPostiveValues_NoVisibileAxes(String culture)
         {
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+
             List<Rectangle> untransformedExpectedRects;
             IRenderedComponent<MudEnchancedBarChart> comp;
             GenerateSampleBarChart((p) => {
@@ -316,9 +320,12 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             root.Should().BeEquivalentTo(expectedRoot);
         }
 
-        [Test]
-        public void DrawSimpleDataSet_OnlyPostiveValues_XAxesLabel_Bottom()
+        [TestCase("en-us")]
+        [TestCase("de-de")]
+        public void DrawSimpleDataSet_OnlyPostiveValues_XAxesLabel_Bottom(String culture)
         {
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+
             String classLabel = "dummy-label-class";
 
             List<Rectangle> untransformedExpectedRects;
@@ -378,9 +385,12 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             root.Should().BeEquivalentTo(expectedRoot);
         }
 
-        [Test]
-        public void DrawSimpleDataSet_OnlyPostiveValues_XAxesLabel_Top()
+        [TestCase("en-us")]
+        [TestCase("de-de")]
+        public void DrawSimpleDataSet_OnlyPostiveValues_XAxesLabel_Top(String culture)
         {
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+
             String classLabel = "dummy-label-class";
 
             List<Rectangle> untransformedExpectedRects;
@@ -521,7 +531,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
         private IEnumerable<XElement> TransformRectToSvgElements(IEnumerable<Rectangle> input)
             => input.Select((Func<Rectangle, XElement>)(e => new XElement("polygon",
                 new XAttribute("fill", (object)e.FillColor),
-                new XAttribute("points", _staticRegex.Replace($"{e.P1.X},{e.P1.Y} {e.P2.X},{e.P2.Y} {e.P3.X},{e.P3.Y} {e.P4.X},{e.P4.Y}", "0"))
+                new XAttribute("points", _staticRegex.Replace($"{e.P1.X.ToString(CultureInfo.InvariantCulture)},{e.P1.Y.ToString(CultureInfo.InvariantCulture)} {e.P2.X.ToString(CultureInfo.InvariantCulture)},{e.P2.Y.ToString(CultureInfo.InvariantCulture)} {e.P3.X.ToString(CultureInfo.InvariantCulture)},{e.P3.Y.ToString(CultureInfo.InvariantCulture)} {e.P4.X.ToString(CultureInfo.InvariantCulture)},{e.P4.Y.ToString(CultureInfo.InvariantCulture)}", "0"))
                 )));
 
         private static Regex _staticRegex = new Regex(@"(\-0)");
