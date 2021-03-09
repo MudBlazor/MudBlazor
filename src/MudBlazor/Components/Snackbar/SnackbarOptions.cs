@@ -21,6 +21,8 @@ namespace MudBlazor
 
         public string SnackbarTypeClass { get; set; }
 
+        public bool CloseAfterNavigation { get; set; }
+
         public SnackbarOptions(Severity severity, CommonSnackbarOptions options) : base(options)
         {
             Severity = severity;

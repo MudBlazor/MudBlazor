@@ -10,11 +10,11 @@ namespace MudBlazor
 {
     public class MudChartBase : MudComponentBase
     {
-        [Parameter] public double[] InputData { get; set; } = new double[0];
+        [Parameter] public double[] InputData { get; set; } = Array.Empty<double>();
 
-        [Parameter] public string[] InputLabels { get; set; } = new string[0];
+        [Parameter] public string[] InputLabels { get; set; } = Array.Empty<string>();
 
-        [Parameter] public string[] XAxisLabels { get; set; } = new string[0];
+        [Parameter] public string[] XAxisLabels { get; set; } = Array.Empty<string>();
 
         [Parameter] public List<ChartSeries> ChartSeries { get; set; } = new List<ChartSeries>();
 
@@ -52,7 +52,7 @@ namespace MudBlazor
         protected double[] GetNormalizedData()
         {
             if (InputData == null)
-                return new double[0];
+                return Array.Empty<double>();
             var total = InputData.Sum();
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
         }
@@ -67,6 +67,7 @@ namespace MudBlazor
     {
         Donut,
         Line,
-        Pie
+        Pie,
+        Bar
     }
 }

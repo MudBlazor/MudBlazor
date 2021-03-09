@@ -11,7 +11,7 @@
              ActiveClass="active">
         @if (!String.IsNullOrEmpty(Icon))
         {
-            <MudIcon Icon="@Icon" Color="@IconColor" Class="mud-nav-link-icon"></MudIcon>
+            <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname"/>
         }
         <div Class="mud-nav-link-text">
             @ChildContent

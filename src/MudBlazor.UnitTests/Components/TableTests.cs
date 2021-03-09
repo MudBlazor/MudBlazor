@@ -7,15 +7,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents.Table;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
-
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
 
     [TestFixture]
@@ -65,18 +60,18 @@ namespace MudBlazor.UnitTests
             // select elements needed for the test
             var table = comp.FindComponent<MudTable<int?>>().Instance;
             table.SelectedItem.Should().BeNull();
-            table.SelectedItems.Count().Should().Be(0);
+            table.SelectedItems.Count.Should().Be(0);
             var trs = comp.FindAll("tr");
             // Click on row 1 (index 0)
             trs[0].Click();
             // Check SelectedItem and SelectedItems count
             table.SelectedItem.Should().Be(0);
-            table.SelectedItems.Count().Should().Be(1);
+            table.SelectedItems.Count.Should().Be(1);
             table.SelectedItems.First().Should().Be(0);
             // Repeat
             trs[2].Click();
             table.SelectedItem.Should().Be(2);
-            table.SelectedItems.Count().Should().Be(1);
+            table.SelectedItems.Count.Should().Be(1);
             table.SelectedItems.First().Should().Be(2);
         }
 
@@ -95,21 +90,21 @@ namespace MudBlazor.UnitTests
             searchString.Change("Ala");
             table.GetFilteredItemsCount().Should().Be(3);
             string.Join(",", table.FilteredItems).Should().Be("Alabama,Alaska,Palau");
-            comp.FindAll("tr").Count().Should().Be(3);
+            comp.FindAll("tr").Count.Should().Be(3);
             // no matches
             searchString.Change("ZZZ");
             table.GetFilteredItemsCount().Should().Be(0);
             table.FilteredItems.Count().Should().Be(0);
-            comp.FindAll("tr").Count().Should().Be(0);
+            comp.FindAll("tr").Count.Should().Be(0);
             // should return 1 item
             searchString.Change("Alaska");
             table.GetFilteredItemsCount().Should().Be(1);
             table.FilteredItems.First().Should().Be("Alaska");
-            comp.FindAll("tr").Count().Should().Be(1);
+            comp.FindAll("tr").Count.Should().Be(1);
             // clear search
             searchString.Change(string.Empty);
             table.GetFilteredItemsCount().Should().Be(59);
-            comp.FindAll("tr").Count().Should().Be(59);
+            comp.FindAll("tr").Count.Should().Be(59);
         }
 
         /// <summary>
@@ -123,24 +118,24 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             // after initial load
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
             var pagingButtons = comp.FindAll("button");
             // click next page
             pagingButtons[2].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("11-20 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("11-20 of 59");
             // last page
             pagingButtons[3].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(9);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("51-59 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("51-59 of 59");
             // previous page
             pagingButtons[1].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("41-50 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("41-50 of 59");
             // first page
             pagingButtons[0].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
         }
 
         /// <summary>
@@ -154,24 +149,24 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             // after initial load
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
             var pagingButtons = comp.FindAll("button");
             // click next page
             pagingButtons[1].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("11-20 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("11-20 of 59");
             // last page
             pagingButtons[0].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(9);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("51-59 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("51-59 of 59");
             // previous page
             pagingButtons[2].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("41-50 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("41-50 of 59");
             // first page
             pagingButtons[3].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
         }
 
 
@@ -191,17 +186,47 @@ namespace MudBlazor.UnitTests
             table.SetParametersAndRender(ComponentParameter.CreateParameter("RowsPerPage", 20));
             pager.Value.Should().Be("20");
             comp.FindAll("tr.mud-table-row").Count.Should().Be(20);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-20 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-20 of 59");
             // change page size
             table.SetParametersAndRender(ComponentParameter.CreateParameter("RowsPerPage", 60));
             pager.Value.Should().Be("60");
             comp.FindAll("tr.mud-table-row").Count.Should().Be(59);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-59 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-59 of 59");
             // change page size
             table.SetParametersAndRender(ComponentParameter.CreateParameter("RowsPerPage", 10));
             pager.Value.Should().Be("10");
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
+        }
+
+        /// <summary>
+        /// page size select after paging tests
+        /// </summary>
+        [Test]
+        public async Task TablePagingChangePageSizeAfterPaging()
+        {
+            var comp = ctx.RenderComponent<TableServerSideDataTest2>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<int>>();
+            var pager = comp.FindComponent<MudSelect<string>>().Instance;
+            // after initial load
+            comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("3");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 99");
+            // last page
+            comp.FindAll("div.mud-table-pagination-actions button")[3].Click(); // last >
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("28");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("29");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("30");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("91-99 of 99");
+            // change page size
+            table.SetParametersAndRender(ComponentParameter.CreateParameter("RowsPerPage", 100));
+            pager.Value.Should().Be("100");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-99 of 99");
         }
 
         /// <summary>
@@ -214,12 +239,12 @@ namespace MudBlazor.UnitTests
             var searchString = comp.Find("#searchString");
             // search returns 3 items
             searchString.Change("Ala");
-            comp.FindAll("tr").Count().Should().Be(3);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-3 of 3");
+            comp.FindAll("tr").Count.Should().Be(3);
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-3 of 3");
             // clear search
             searchString.Change(string.Empty);
-            comp.FindAll("tr").Count().Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+            comp.FindAll("tr").Count.Should().Be(10);
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
         }
 
         /// <summary>
@@ -233,24 +258,24 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             // after initial load
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
             var pagingButtons = comp.FindAll("button");
             // goto page 3
             pagingButtons[2].Click();
             pagingButtons[2].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("21-30 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("21-30 of 59");
             // should return 3 items and 
             var table = comp.FindComponent<MudTable<string>>().Instance;
             var searchString = comp.Find("#searchString");
             searchString.Change("Ala");
             table.GetFilteredItemsCount().Should().Be(3);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(3);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-3 of 3");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-3 of 3");
             searchString.Change(string.Empty);
             table.GetFilteredItemsCount().Should().Be(59);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 59");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
         }
 
         /// <summary>
@@ -427,7 +452,7 @@ namespace MudBlazor.UnitTests
             await Task.Delay(200);
             Console.WriteLine(comp.Markup);
             comp.FindAll("tr.mud-table-row").Count.Should().Be(11); // ten rows + header row
-            comp.FindAll("p.mud-table-pagination-caption").Last().TextContent.Trim().Should().Be("1-10 of 20");
+            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
         }
 
         /// <summary>
@@ -503,7 +528,7 @@ namespace MudBlazor.UnitTests
             Console.WriteLine(comp.Markup);
             var trs = comp.FindAll("tr");
             trs.Count.Should().Be(5); // four rows + header row
-            
+
             var tds = comp.FindAll("td");
             tds[0].TextContent.Trim().Should().Be("0");
             tds[1].TextContent.Trim().Should().Be("1");
@@ -534,7 +559,7 @@ namespace MudBlazor.UnitTests
             comp.Instance.Table.Validator = validator;
 
             Console.WriteLine(comp.Markup);
-            
+
             var trs = comp.FindAll("tr");
             trs.Count.Should().Be(4); // three rows + header row
 

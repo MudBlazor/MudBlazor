@@ -19,6 +19,11 @@
         cursor: default;
     }
 
+    &.mud-disabled > .mud-input-adornment {
+      color: var(--mud-palette-text-disabled);
+      pointer-events: none;
+    }
+
     &.mud-input-underline {
         &:before {
             left: 0;

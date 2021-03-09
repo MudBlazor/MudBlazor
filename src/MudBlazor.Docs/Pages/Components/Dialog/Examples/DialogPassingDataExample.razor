@@ -1,12 +1,12 @@
 ﻿@namespace MudBlazor.Docs.Examples
-@using MudBlazor.Docs.Pages.Components.Dialog.Models
+@using MudBlazor.Examples.Data.Models
 
 @inject IDialogService DialogService
 
-<div class="d-flex">
+<div class="d-flex flex-wrap">
     @foreach (var item in Servers)
     {
-        <MudPaper Class="d-flex align-center pa-2 mx-2">
+        <MudPaper Class="d-flex align-center pa-2 mx-2 my-2">
             <MudText>@item.Name</MudText>
             <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="@((e) => DeleteServer(item))">Delete</MudButton>
         </MudPaper>

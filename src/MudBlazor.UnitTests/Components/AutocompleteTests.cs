@@ -7,15 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
-using Bunit.TestDoubles;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
 
     [TestFixture]
@@ -185,8 +181,18 @@ namespace MudBlazor.UnitTests
             });
             // enter a text so the search func will return null, and it shouldn't throw an exception
             comp.SetParam(a => a.Text, "Do not throw");
-            comp.SetParam(x=>x.SearchFunc, new Func<string, Task<IEnumerable<string>>>(s=>null)); // <-- search func returns null instead of task!
+            comp.SetParam(x => x.SearchFunc, new Func<string, Task<IEnumerable<string>>>(s => null)); // <-- search func returns null instead of task!
             comp.SetParam(a => a.Text, "Don't throw here neither");
+        }
+
+        [Test]
+        public async Task Autocomplete_ReadOnly_Should_Not_Open()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTest5>();
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("div.mud-input-adornment")[0].Click();
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
     }
 }

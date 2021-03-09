@@ -255,6 +255,7 @@ namespace MudBlazor.Charts
                     Index = colorcounter,
                     Data = chartLine
                 };
+
                 var legend = new SvgLegend()
                 {
                     Index = colorcounter,

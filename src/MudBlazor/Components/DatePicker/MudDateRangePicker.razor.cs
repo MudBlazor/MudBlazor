@@ -11,6 +11,7 @@ namespace MudBlazor
     {
         private DateTime? _firstDate = null;
         private DateRange _dateRange;
+        private Range<string> _rangeText;
 
         protected override bool IsRange => true;
 
@@ -43,17 +44,43 @@ namespace MudBlazor
                 if (updateValue)
                 {
                     if (_dateRange == null)
+                    {
+                        _rangeText = null;
                         await SetTextAsync(null, false);
+                    }
                     else
                     {
                         if (!IsNullOrEmpty(DateFormat))
+                        {
+                            _rangeText = new Range<string>(
+                                _dateRange.Start?.ToString(DateFormat) ?? Empty,
+                                _dateRange.End?.ToString(DateFormat) ?? Empty);
                             await SetTextAsync(_dateRange.ToString(DateFormat), false);
+                        }
                         else
+                        {
+                            _rangeText = new Range<string>(
+                                _dateRange.Start?.ToIsoDateString() ?? Empty,
+                                _dateRange.End?.ToIsoDateString() ?? Empty);
                             await SetTextAsync(_dateRange.ToIsoDateString(), false);
+                        }
                     }
                 }
 
                 await DateRangeChanged.InvokeAsync(_dateRange);
+            }
+        }
+
+        private Range<string> RangeText
+        {
+            get => _rangeText;
+            set
+            {
+                if (_rangeText.Equals(value))
+                    return;
+
+                _rangeText = value;
+                SetDateRangeAsync(ParseDateRangeValue(value.Start, value.End), false).AndForget();
             }
         }
 
@@ -66,6 +93,11 @@ namespace MudBlazor
         private DateRange ParseDateRangeValue(string value)
         {
             return DateRange.TryParse(value, out var dateRange) ? dateRange : null;
+        }
+
+        private DateRange ParseDateRangeValue(string start, string end)
+        {
+            return DateRange.TryParse(start, end, out var dateRange) ? dateRange : null;
         }
 
         protected override void OnPickerClosed()

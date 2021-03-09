@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTreeView Style="width: 500px;" CanActivate="true" Items="TreeItems" CanSelect="true" @bind-ActivatedValue="ActivatedValue" @bind-SelectedValues="SelectedValues">
+<MudTreeView CanActivate="true" Items="TreeItems" CanSelect="true" @bind-ActivatedValue="ActivatedValue" @bind-SelectedValues="SelectedValues">
     <ItemTemplate>
         <MudTreeViewItem @bind-Expanded="@context.IsExpanded" Items="@context.TreeItems" Value="@context"
                          Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
@@ -13,7 +13,13 @@
 </div>
 
 @code {
-    class TreeItemData
+    private TreeItemData ActivatedValue { get; set; }
+
+    private HashSet<TreeItemData> SelectedValues { get; set; }
+
+    private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+
+    public class TreeItemData
     {
         public string Title { get; set; }
 
@@ -33,13 +39,7 @@
         }
     }
 
-    TreeItemData ActivatedValue { get; set; }
-
-    HashSet<TreeItemData> SelectedValues { get; set; }
-
-    HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
-
-    public TreeViewItemTemplateExample()
+    protected override void OnInitialized()
     {
         TreeItems.Add(new TreeItemData("All Mail", Icons.Filled.Email));
         TreeItems.Add(new TreeItemData("Trash", Icons.Filled.Delete));

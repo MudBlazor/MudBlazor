@@ -30,6 +30,13 @@ namespace MudBlazor
             if (!RangeConverter<DateTime>.Split(value, out string start, out string end))
                 return false;
 
+            return TryParse(start, end, out date);
+        }
+
+        public static bool TryParse(string start, string end, out DateRange date)
+        {
+            date = null;
+
             if (!DateTime.TryParse(start, out DateTime startDate))
                 return false;
 

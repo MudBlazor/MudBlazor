@@ -61,8 +61,8 @@ namespace MudBlazor
 
         [Parameter] public RenderFragment Content { get; set; }
 
-        [Parameter] public HashSet<T> Items { get; set; }        
-        
+        [Parameter] public HashSet<T> Items { get; set; }
+
         /// <summary>
         /// Command executed when the user clicks on the CommitEdit Button.
         /// </summary>
@@ -123,7 +123,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        bool HasChild => ChildContent != null || (MudTreeRoot != null && Items != null && Items.Count() != 0);
+        bool HasChild => ChildContent != null || (MudTreeRoot != null && Items != null && Items.Count != 0);
 
         protected bool IsChecked
         {

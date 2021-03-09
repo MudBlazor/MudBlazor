@@ -14,7 +14,7 @@
   <PropertyGroup>
     <Title>MudBlazor</Title>
     <PackageId>MudBlazor</PackageId>
-    <Version>5.0.2</Version>
+    <Version>5.0.5</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>Nuget.png</PackageIcon>
     <Company>MudBlazor</Company>
@@ -83,7 +83,7 @@
 
   <Target Name="IncludeGeneratedStaticFiles" DependsOnTargets="WebCompiler">
     <Error Condition="!Exists('wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
-    <Error Condition="!Exists('wwwroot/MudBlazor.min.css')" Text="Missing MudBlazor.min.css in wwwroot" />
+    <Error Condition="!Exists('wwwroot/MudBlazor.min.js')" Text="Missing MudBlazor.min.js in wwwroot" />
     <ItemGroup>
       <Content Include="wwwroot/MudBlazor.min.css" Condition="!Exists('wwwroot/MudBlazor.min.css')" />
       <Content Include="wwwroot/MudBlazor.min.js" Condition="!Exists('wwwroot/MudBlazor.min.js')" />

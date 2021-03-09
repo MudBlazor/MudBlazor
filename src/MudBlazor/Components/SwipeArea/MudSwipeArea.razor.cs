@@ -13,7 +13,7 @@ namespace MudBlazor
         public RenderFragment ChildContent { get; set; }
 
         [Parameter]
-        public EventCallback<SwipeDirection> OnSwipe { get; set; }
+        public Action<SwipeDirection> OnSwipe { get; set; }
 
         public void OnTouchStart(TouchEventArgs arg)
         {
@@ -39,22 +39,22 @@ namespace MudBlazor
             {
                 if (xDiff > 0)
                 {
-                    OnSwipe.InvokeAsync(SwipeDirection.RightToLeft);
+                    InvokeAsync(() => OnSwipe(SwipeDirection.RightToLeft));
                 }
                 else
                 {
-                    OnSwipe.InvokeAsync(SwipeDirection.LeftToRight);
+                    InvokeAsync(() => OnSwipe(SwipeDirection.LeftToRight));
                 }
             }
             else
             {
                 if (yDiff > 0)
                 {
-                    OnSwipe.InvokeAsync(SwipeDirection.BottomToTop);
+                    InvokeAsync(() => OnSwipe(SwipeDirection.BottomToTop));
                 }
                 else
                 {
-                    OnSwipe.InvokeAsync(SwipeDirection.TopToBottom);
+                    InvokeAsync(() => OnSwipe(SwipeDirection.TopToBottom));
                 }
             }
 
