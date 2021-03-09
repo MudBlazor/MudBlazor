@@ -1,8 +1,13 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <div>
-    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350" ChartOptions="options" ></MudChart>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350" ChartOptions="options"></MudChart>
     <MudButton @onclick="RandomizeData">Randomize Data</MudButton>
+    <MudMenu Label="Interpolation Algorithm" FullWidth="true">
+        <MudMenuItem OnClick="() => OnClickMenu(CurveEnum.NaturalSpline)">Natural Spline</MudMenuItem>
+        <MudMenuItem OnClick="() => OnClickMenu(CurveEnum.EndSlope)">End Slope</MudMenuItem>
+         <MudMenuItem OnClick="() => OnClickMenu(CurveEnum.Periodic)">Periodic</MudMenuItem>
+    </MudMenu>
 </div>
 
 @code {
@@ -19,6 +24,7 @@
     {
         options.CurveEnum = CurveEnum.NaturalSpline;
     }
+
     public void RandomizeData()
     {
         var new_series = new List<ChartSeries>()
@@ -32,6 +38,12 @@
             new_series[1].Data[i] = random.NextDouble() * 100;
         }
         Series = new_series;
+        StateHasChanged();
+    }
+
+    void OnClickMenu(CurveEnum curveEnum)
+    {
+        options.CurveEnum = curveEnum;
         StateHasChanged();
     }
 }
