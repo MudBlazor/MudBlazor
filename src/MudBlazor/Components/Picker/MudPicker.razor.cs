@@ -248,6 +248,14 @@ namespace MudBlazor
 
         protected virtual void Submit() { }
 
+        public virtual void Clear(bool close = true)
+        {
+            if (close && PickerVariant != PickerVariant.Static)
+            {
+                Close(false);
+            }
+        }
+
         private bool _pickerSquare;
         private int _pickerElevation;
         private ElementReference _pickerInlineRef;

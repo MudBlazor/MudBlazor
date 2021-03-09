@@ -208,6 +208,13 @@ namespace MudBlazor
             _secondDate = null;
         }
 
+        public override void Clear(bool close = true)
+        {
+            DateRange = null;
+            _firstDate = _secondDate = null;
+            base.Clear();
+        }
+
         protected override string GetTitleDateString()
         {
             if (_firstDate != null && _secondDate != null)
