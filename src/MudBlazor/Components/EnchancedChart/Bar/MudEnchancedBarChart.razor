@@ -7,7 +7,9 @@
 
 @foreach (var item in _labels)
 {
-    @((MarkupString)$"<text x=\"{item.X}\" y=\"{item.Y}\" class=\"{item.Class}\" font-size=\"{item.Height}\" dominant-baseline=\"middle\" text-anchor=\"middle\" >{item.Value}</text>")
+    String formattedResult = FormattableString.Invariant($"<text x=\"{item.X}\" y=\"{item.Y}\" class=\"{item.Class}\" font-size=\"{item.Height}\"");
+
+    @((MarkupString)$"{formattedResult} dominant-baseline=\"middle\" text-anchor=\"middle\">{item.Value}</text>")
 }
 
 <CascadingValue IsFixed="true" Value="this">

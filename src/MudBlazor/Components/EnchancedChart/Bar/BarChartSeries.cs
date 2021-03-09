@@ -12,6 +12,7 @@ namespace MudBlazor
 {
     record BarChartSeriesSnapshot(String Name, String color);
 
+    [DoNotGenerateAutomaticTest]
     public class BarChartSeries : ComponentBase, ISnapshot<BarChartSeriesSnapshot>, IDisposable
     {
         [CascadingParameter] BarDataSet Dataset { get; set; }

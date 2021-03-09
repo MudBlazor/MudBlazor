@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor.Docs.Compiler
 {
@@ -47,6 +48,8 @@ namespace MudBlazor.Docs.Compiler
                     if (type.Name.Contains("Base"))
                         continue;
                     if (type.Namespace.Contains("InternalComponents"))
+                        continue;
+                    if (type.GetCustomAttributes(typeof(DoNotGenerateAutomaticTestAttribute),true).Any() == true)
                         continue;
                     cb.AddLine("[Test]");
                     cb.AddLine($"public void {SafeTypeName(type, removeT: true)}_API_Test()");

@@ -17,6 +17,6 @@ namespace MudBlazor.Components.EnchancedChart.Svg
         public Point2D P4 { get; set; }
         public CssColor Fill { get; set; }
 
-        public String GetPathValue() => $"{P1.X},{P1.Y} {P2.X},{P2.Y} {P3.X},{P3.Y} {P4.X},{P4.Y}";
+        public String GetPathValue() => $"{FormattableString.Invariant($"{P1.X},{P1.Y} {P2.X},{P2.Y} {P3.X},{P3.Y} {P4.X},{P4.Y}")}";
     }
 }
