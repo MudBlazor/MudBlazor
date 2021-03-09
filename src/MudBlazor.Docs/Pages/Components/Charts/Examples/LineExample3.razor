@@ -4,9 +4,9 @@
     <MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350" ChartOptions="options"></MudChart>
     <MudButton @onclick="RandomizeData">Randomize Data</MudButton>
     <MudMenu Label="Interpolation Algorithm" FullWidth="true">
-        <MudMenuItem OnClick="() => OnClickMenu(CurveEnum.NaturalSpline)">Natural Spline</MudMenuItem>
-        <MudMenuItem OnClick="() => OnClickMenu(CurveEnum.EndSlope)">End Slope</MudMenuItem>
-        <MudMenuItem OnClick="() => OnClickMenu(CurveEnum.Periodic)">Periodic</MudMenuItem>
+        <MudMenuItem OnClick="() => OnClickMenu(InterpolationOption.NaturalSpline)">Natural Spline</MudMenuItem>
+        <MudMenuItem OnClick="() => OnClickMenu(InterpolationOption.EndSlope)">End Slope</MudMenuItem>
+        <MudMenuItem OnClick="() => OnClickMenu(InterpolationOption.Periodic)">Periodic</MudMenuItem>
     </MudMenu>
 </div>
 
@@ -22,7 +22,7 @@
     Random random = new Random();
     protected override void OnInitialized()
     {
-        options.CurveEnum = CurveEnum.NaturalSpline;
+        options.CurveEnum = InterpolationOption.NaturalSpline;
     }
 
     public void RandomizeData()
@@ -41,7 +41,7 @@
         StateHasChanged();
     }
 
-    void OnClickMenu(CurveEnum curveEnum)
+    void OnClickMenu(InterpolationOption curveEnum)
     {
         options.CurveEnum = curveEnum;
         StateHasChanged();

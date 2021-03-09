@@ -72,7 +72,7 @@ namespace MudBlazor.Charts
             
             var verticalSpace = (boundHeight - verticalStartSpace - verticalEndSpace) / (numHorizontalLines);
             var horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / (numVerticalLines);
-            var curveEnum = MudChartParent?.ChartOptions.CurveEnum ?? CurveEnum.Straight;
+            var curveEnum = MudChartParent?.ChartOptions.CurveEnum ?? InterpolationOption.Straight;
 
             //Horizontal Grid Lines
             var y = verticalStartSpace;
@@ -144,16 +144,16 @@ namespace MudBlazor.Charts
                 }
                 switch (curveEnum)
                 {
-                    case CurveEnum.NaturalSpline:            
+                    case InterpolationOption.NaturalSpline:            
                         interpolator = new NaturalSpline(XValues, YValues);
                         break;
-                    case CurveEnum.EndSlope:
+                    case InterpolationOption.EndSlope:
                         interpolator = new EndSlopeSpline(XValues, YValues);                     
                         break;
-                    case CurveEnum.Periodic:
+                    case InterpolationOption.Periodic:
                         interpolator = new PeriodicSpline(XValues, YValues);                      
                         break;
-                    case CurveEnum.Straight:
+                    case InterpolationOption.Straight:
                     default:
                         interpolator = new NoInterpolation();
                         break;
