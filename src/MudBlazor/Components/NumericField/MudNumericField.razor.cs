@@ -105,7 +105,9 @@ namespace MudBlazor
 
         private Func<T, Task<bool>> _validateInstance;
 
-        private MudInput<T> _elementReference;
+        private MudInput<string> _elementReference;
+
+        private static Converter<string> s_inputConverter = new DefaultConverter<string> { Culture = CultureInfo.InvariantCulture };
 
         public override ValueTask FocusAsync()
         {
@@ -120,6 +122,13 @@ namespace MudBlazor
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
             return _elementReference.SelectRangeAsync(pos1, pos2);
+        }
+
+        protected override async Task SetValueAsync(T value, bool updateText = true)
+        {
+            bool valueChanged;
+            (value, valueChanged) = ConstrainBoundaries(value);
+            await base.SetValueAsync(ConstrainBoundaries(value).value, valueChanged || updateText);
         }
 
         protected async Task<bool> ValidateInput(T value)

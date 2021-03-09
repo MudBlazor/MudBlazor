@@ -191,7 +191,7 @@ namespace MudBlazor
             set => _value = value;
         }
 
-        protected async Task SetValueAsync(T value, bool updateText = true)
+        protected virtual async Task SetValueAsync(T value, bool updateText = true)
         {
             if (!EqualityComparer<T>.Default.Equals(Value, value))
             {

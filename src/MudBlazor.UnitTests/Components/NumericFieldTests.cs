@@ -125,31 +125,30 @@ namespace MudBlazor.UnitTests
         }
 
 
-        //Debounce doesn't work for Value.
-        ///// <summary>
-        ///// Value should not change immediately. Should respect the Debounce Interval
-        ///// </summary>
-        //[Test]
-        //public async Task ShouldRespectDebounceIntervalPropertyInNumericFieldTest()
-        //{
-        //    var interval = Parameter(nameof(MudNumericField<int?>.DebounceInterval), 200d);
-        //    var comp = ctx.RenderComponent<MudNumericField<int?>>(interval);
-        //    var numericField = comp.Instance;
-        //    var input = comp.Find("input");
-        //    //Act
-        //    input.Input(new ChangeEventArgs() { Value = "100" });
-        //    //Assert
-        //    //if DebounceInterval is set, Immediate should be true by default
-        //    numericField.Immediate.Should().BeTrue();
-        //    //input value has changed, but elapsed time is 0, so Value should not change in NumericField
-        //    numericField.Value.Should().BeNull();
-        //    //DebounceInterval is 200 ms, so at 100 ms Value should not change in NumericField
-        //    await Task.Delay(100);
-        //    numericField.Value.Should().BeNull();
-        //    //More than 200 ms had elapsed, so Value should be updated
-        //    await Task.Delay(150);
-        //    numericField.Value.Should().Be(100);
-        //}
+        /// <summary>
+        /// Value should not change immediately. Should respect the Debounce Interval
+        /// </summary>
+        [Test]
+        public async Task ShouldRespectDebounceIntervalPropertyInNumericFieldTest()
+        {
+            var interval = Parameter(nameof(MudNumericField<int?>.DebounceInterval), 200d);
+            var comp = ctx.RenderComponent<MudNumericField<int?>>(interval);
+            var numericField = comp.Instance;
+            var input = comp.Find("input");
+            //Act
+            input.Input(new ChangeEventArgs() { Value = "100" });
+            //Assert
+            //if DebounceInterval is set, Immediate should be true by default
+            numericField.Immediate.Should().BeTrue();
+            //input value has changed, but elapsed time is 0, so Value should not change in NumericField
+            numericField.Value.Should().BeNull();
+            //DebounceInterval is 200 ms, so at 100 ms Value should not change in NumericField
+            await Task.Delay(100);
+            numericField.Value.Should().BeNull();
+            //More than 200 ms had elapsed, so Value should be updated
+            await Task.Delay(150);
+            numericField.Value.Should().Be(100);
+        }
 
         /// <summary>
         /// Label and placeholder should not overlap.
@@ -281,7 +280,7 @@ namespace MudBlazor.UnitTests
             var numericField = comp.Instance;
             comp.Find("input").Change("A");
             comp.Find("input").Blur();
-            numericField.Text.Should().BeNull();
+            numericField.Value.Should().BeNull();
             numericField.HasErrors.Should().Be(true);
             numericField.ErrorText.Should().Be("Not a valid number");
         }

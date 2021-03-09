@@ -8,8 +8,8 @@
 	<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Class="@Classname"
 					 Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
 		<InputContent>
-			<MudInput T="T" @ref="_elementReference" @attributes="UserAttributes" InputType="InputType.Number" Style="@Style" Variant="@Variant"
-					  Value="@Value" ValueChanged="(v) => SetValueAsync(v)" Converter="Converter" Placeholder="@Placeholder"
+			<MudInput T="string" @ref="_elementReference" @attributes="UserAttributes" InputType="InputType.Number" Style="@Style" Variant="@Variant"
+					  Value="@Text" ValueChanged="(v) => SetTextAsync(v)" Converter="s_inputConverter" Placeholder="@Placeholder"
 					  Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" Adornment="@Adornment"
 					  AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
 					  OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
