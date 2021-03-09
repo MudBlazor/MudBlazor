@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor
+
+@foreach (var item in _bars)
+{
+    <polygon fill="#@item.Fill" points="@item.GetPathValue()" />
+}
+
+@foreach (var item in _labels)
+{
+    @((MarkupString)$"<text x=\"{item.X}\" y=\"{item.Y}\" class=\"{item.Class}\" font-size=\"{item.Height}\" dominant-baseline=\"middle\" text-anchor=\"middle\" >{item.Value}</text>")
+}
+
+<CascadingValue IsFixed="true" Value="this">
+    @DataSets
+    @YAxes
+    @XAxis
+</CascadingValue>
+
+
+
+
+@code { }

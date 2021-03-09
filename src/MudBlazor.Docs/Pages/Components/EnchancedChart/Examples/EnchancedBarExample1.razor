@@ -1,0 +1,389 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudEnchancedChart TitlePosition="@config.TitlePosition" TitleAlignment="@config.TitleAlignment" ShowTitle="@config.ShowTitle" Title="@config.TitleCaption"
+                   LegendPosition="@config.LegendPosition" LegendAlignment="@config.LegendAlignment" ShowLegend="config.ShowLegend"
+                   >
+    <Chart>
+        <MudEnchancedBarChart Margin="@config.Margin" Padding="@config.Padding" @ref="_barChart">
+            <DataSets>
+                @foreach (var item in config.DataSets)
+                {
+                    <BarDataSet @key="item.Id" Name="@item.Name" IsStacked="@item.IsStacked">
+                        @foreach (var series in item.Series)
+                        {
+                            <BarChartSeries @key="series.Id" Name="@series.Name" Points="@series.Values" Color="@series.Color" />
+                        }
+                    </BarDataSet>
+                }
+                
+            </DataSets>
+            <YAxes>
+              <NumericLinearAxis ScalingType="ScalingType.Auto" Min="0" Max="100" ShowMinorTicks="true" ShowMajorTicks="true" >
+                  <MajorTick>
+                      <Tick Value="10" Color="Color" Thickness="2"  />
+                  </MajorTick>
+                  <MinorTick>
+                      <Tick Value="5" Color="Color" Thickness="1"  />
+                  </MinorTick>
+              </NumericLinearAxis> 
+            </YAxes>
+            <XAxis>
+                <BarChartXAxis ShowGridLines="true" Placement="@config.XAxis.Placement" Margin="@config.XAxis.Margin" Height="@config.XAxis.Size" LabelCssClass="" Labels="_usedLabels"  />
+            </XAxis>
+        </MudEnchancedBarChart>
+    </Chart>
+    <TitleDrawer>
+        @if(config.UseCustomerTitleContainer == true)
+        {
+            <MudIcon Icon="@config.TitleIcon" /><MudText Typo="Typo.h3">@context</MudText>
+        }
+        else
+        {     
+            <MudText Typo="Typo.h6">@context</MudText>
+        }
+    </TitleDrawer>
+</MudEnchancedChart>
+
+<MudText Typo="Typo.h6">Configuration</MudText>
+
+<MudExpansionPanels MultiExpansion="true">
+    <MudExpansionPanel Text="Legend">
+        <MudGrid>
+            <MudItem xs="12">
+                <MudCheckBox @bind-Checked="@config.ShowLegend" Label="Show Legend"></MudCheckBox>
+            </MudItem>
+            @if(config.ShowLegend == true)
+            { 
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="Position" Label="Position" @bind-Value="config.LegendPosition">
+                        <MudSelectItem Value="@(Position.Top)" />
+                        <MudSelectItem Value="@(Position.Left)" />
+                        <MudSelectItem Value="@(Position.Right)" />
+                        <MudSelectItem Value="@(Position.Bottom)" />
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="Align" Label="Position" @bind-Value="config.LegendAlignment">
+                        <MudSelectItem Value="@(Align.Center)" />
+                        <MudSelectItem Value="@(Align.Left)" />
+                        <MudSelectItem Value="@(Align.Right)" />
+                    </MudSelect>
+                </MudItem>
+            }
+        </MudGrid>
+    </MudExpansionPanel>
+    <MudExpansionPanel Text="Title">
+        <MudGrid>
+            <MudItem xs="12">
+                <MudCheckBox @bind-Checked="@config.ShowTitle" Label="Show Title"></MudCheckBox>
+            </MudItem>
+            @if(config.ShowTitle == true)
+            { 
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="Position" Label="Position" @bind-Value="config.TitlePosition">
+                        <MudSelectItem Value="@(Position.Top)" />
+                        <MudSelectItem Value="@(Position.Left)" />
+                        <MudSelectItem Value="@(Position.Right)" />
+                        <MudSelectItem Value="@(Position.Bottom)" />
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="Align" Label="Position" @bind-Value="config.TitleAlignment">
+                        <MudSelectItem Value="@(Align.Center)" />
+                        <MudSelectItem Value="@(Align.Left)" />
+                        <MudSelectItem Value="@(Align.Right)" />
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudCheckBox @bind-Checked="@config.UseCustomerTitleContainer" Label="Use Custom Container" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudTextField Immediate="true" @bind-Value="@config.TitleCaption" Label="Chart Title" Variant="Variant.Text" Placeholder="enter a name here" />
+                </MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="String" Label="Icon" @bind-Value="config.TitleIcon">
+                        <MudSelectItem Value="@Icons.Custom.Uncategorized.Radioactive">Radioactive</MudSelectItem>
+                        <MudSelectItem Value="@Icons.Custom.Brands.MudBlazor">MudBlazor</MudSelectItem>
+                        <MudSelectItem Value="@Icons.Material.Filled.Alarm" >Alarm</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+            }
+        </MudGrid>
+    </MudExpansionPanel>
+     <MudExpansionPanel Text="Bar Chart Properties">
+         <MudGrid>
+             <MudItem xs="12" sm="6">
+                 <MudSlider @bind-Value="@config.Margin" Min="0" Max="100">Margin</MudSlider>
+             </MudItem>
+             <MudItem xs="12" sm="6">
+                 <MudSlider @bind-Value="@config.Padding" Min="0" Max="100">Padding</MudSlider>
+             </MudItem>
+         </MudGrid>
+    </MudExpansionPanel>
+         <MudExpansionPanel Text="X Axis Properties">
+             <MudGrid>
+                 <MudItem xs="12">
+                     <MudSelect T="XAxisPlacement" Label="Placement" @bind-Value="config.XAxis.Placement">
+                         <MudSelectItem Value="@(XAxisPlacement.Bottom)" />
+                         <MudSelectItem Value="@(XAxisPlacement.Top)" />
+                         <MudSelectItem Value="@(XAxisPlacement.None)" />
+                     </MudSelect>
+                 </MudItem>
+                 @if(config.XAxis.Placement != XAxisPlacement.None)
+                 { 
+                 <MudItem xs="12" sm="6">
+                     <MudSlider @bind-Value="@config.XAxis.Margin" Min="0" Max="100">Margin</MudSlider>
+                 </MudItem>
+                 <MudItem xs="12" sm="6">
+                     <MudSlider @bind-Value="@config.XAxis.Size" Min="0" Max="100">Size</MudSlider>
+                 </MudItem>
+                 }
+             </MudGrid>
+    </MudExpansionPanel>
+     <MudExpansionPanel Text="Dataseries">
+         <MudGrid>
+            <MudItem xs="12">
+                <div class="d-flex flex-row justify-end">
+                    <MudTooltip Text="Randomize all data">
+                        <MudIconButton Icon="@Icons.Material.Filled.Shuffle" OnClick="Randomize" />
+                    </MudTooltip>
+                    <MudTooltip Text="Add Point to all series">
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="AddPoint" />
+                    </MudTooltip>
+                    <MudTooltip Text="Remove Point from all series">
+                        <MudIconButton Icon="@Icons.Material.Filled.Remove" OnClick="RemovePoint" />
+                    </MudTooltip>
+                    <MudTooltip Text="Add Dataset">
+                        <MudFab Color="Color.Primary" Icon="@Icons.Material.Filled.Add" OnClick="AddDataSet" />
+                    </MudTooltip>
+                </div>
+            </MudItem>
+             @for (int i = 0; i < config.DataSets.Count; i++)
+             {
+                 Int32 temp = i;
+                 <MudItem xs="12">
+                     <MudCard>
+                         <MudCardHeader>
+                             <CardHeaderContent>
+                                 <MudTextField Immediate="true" Label="@($"Name of dataset number {i+1}")" @bind-Value="config.DataSets[temp].Name" T="string" />
+                             </CardHeaderContent>
+                             <CardHeaderActions>
+                                 <MudTooltip Text="Randomize Data">
+                                     <MudIconButton Icon="@Icons.Material.Filled.Shuffle" Color="Color.Default" OnClick="@( () => Randomize(config.DataSets[temp]) )" />
+                                 </MudTooltip>
+                                 <MudTooltip Text="Add Series">
+                                     <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Default" OnClick="@( () => AddSeries(config.DataSets[temp]) )"/>
+                                 </MudTooltip>
+                                 <MudTooltip Text="Remove Dataset">
+                                     <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default" OnClick="@( () => DeleteSet(config.DataSets[temp]) )" />
+                                 </MudTooltip>
+                             </CardHeaderActions>
+                         </MudCardHeader>
+                         <MudCardContent>
+                             <MudText Typo="Typo.h6">Series</MudText>
+                             @for (int j = 0; j < config.DataSets[temp].Series.Count; j++)
+                             {
+                                 Int32 temp2 = j;
+                                 <div class="d-flex flex-row">
+                                     <MudTextField Immediate="true" Label="@($"Name of series number {j+1}")" T="string" @bind-Value="config.DataSets[temp].Series[temp2].Name" />
+                                     <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="config.DataSets[temp].Series[temp2].Color" />
+                                     <MudTooltip Text="Remove Series">
+                                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default" OnClick="@( () => RemoveSeries(config.DataSets[temp],config.DataSets[temp].Series[temp2]))" />
+                                     </MudTooltip>
+                                </div>
+                             }
+
+                         </MudCardContent>
+                     </MudCard>
+             </MudItem>
+             }
+         </MudGrid>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+
+@code { 
+
+    public class BarChartSeriesConig
+    {
+        public Guid Id { get; set; }
+        public String Name { get; set; } = "My new Series";
+        public String Color { get; set; } = MudBlazor.Utilities.RandomColorSelector.GetRandomColor();
+        public List<Double> Values { get; set; } = new();
+
+        public BarChartSeriesConig(IEnumerable<String> existingLabels)
+        {
+            Random random = new Random();
+            Id = Guid.NewGuid();
+            Values = existingLabels.Select(x => (Double)random.Next(0, 200)).ToList();
+        }
+    }
+
+    public class BarChartDataSeriesConfig
+    {
+        public Guid Id { get; set; }
+        public String Name { get; set; } = "Yor new dataset";
+        public Boolean IsStacked { get; set; } = false;
+        public List<BarChartSeriesConig> Series { get; set; } = new List<BarChartSeriesConig>();
+
+        public BarChartDataSeriesConfig(IEnumerable<String> existingLabels)
+        {
+            Series.Add(new BarChartSeriesConig(existingLabels));
+            Id = Guid.NewGuid();
+        }
+    }
+
+    public class XAxisConfiguration
+    {
+        public Double Margin { get; set; } = 1.5;
+        public Double Size { get; set; } = 5;
+        public XAxisPlacement Placement { get; set; } = XAxisPlacement.Bottom;
+    }
+
+    public class BarChartConfiguration
+    {
+        public Position LegendPosition { get; set; } = Position.Right;
+        public Align LegendAlignment { get; set; } = Align.Center;
+        public Boolean ShowLegend { get; set; } = true;
+
+        public Position TitlePosition { get; set; } = Position.Top;
+        public Align TitleAlignment { get; set; } = Align.Center;
+        public Boolean ShowTitle { get; set; } = true;
+        public String TitleCaption { get; set; } = "Fancy MudBlazor Bar Chart";
+        public Boolean UseCustomerTitleContainer { get; set; } = false;
+        public String TitleIcon { get; set; } = Icons.Custom.Uncategorized.Radioactive;
+
+        public Double Margin { get; set; } = 1.0;
+        public Double Padding { get; set; } = 5.0;
+
+        public List<BarChartDataSeriesConfig> DataSets { get; set; } = new();
+        public XAxisConfiguration XAxis { get; set; } = new();
+    }
+
+    private BarChartConfiguration config = new();
+    private MudEnchancedBarChart _barChart;
+
+    private List<String> _usedLabels = new() { "Mo", "Tu", "We" };
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        AddDataSet();
+        for (int i = 0; i < 2; i++)
+        {
+            AddSeries(config.DataSets[0]);
+        }
+    }
+
+    private void AddDataSet()
+    {
+        config.DataSets.Add(new BarChartDataSeriesConfig(_usedLabels));
+    }
+
+    private void Randomize()
+    {
+        Random random = new Random();
+
+        foreach (var set in config.DataSets)
+        {
+            foreach (var series in set.Series)
+            {
+                for (int i = 0; i < series.Values.Count; i++)
+                {
+                    series.Values[i] = random.Next(10, 200);
+                }
+            }
+        }
+
+        _barChart.ForceRedraw();
+    }
+
+    private void Randomize(BarChartDataSeriesConfig set)
+    {
+        Random random = new Random();
+
+        foreach (var series in set.Series)
+        {
+            for (int i = 0; i < series.Values.Count; i++)
+            {
+                series.Values[i] = random.Next(10, 200);
+            }
+        }
+
+        _barChart.ForceRedraw();
+    }
+
+    private void AddSeries(BarChartDataSeriesConfig set)
+    {
+        set.Series.Add(new BarChartSeriesConig(_usedLabels));
+    }
+
+    private void DeleteSet(BarChartDataSeriesConfig set)
+    {
+        config.DataSets.Remove(set);
+    }
+
+    private void RemoveSeries(BarChartDataSeriesConfig set, BarChartSeriesConig series)
+    {
+        set.Series.Remove(series);
+    }
+
+    private void AddPoint()
+    {
+        Random random = new Random();
+        String nextValue;
+
+        switch (_usedLabels.Last())
+        {
+            case "Mo":
+                nextValue = "Tu";
+                break;
+            case "Tu":
+                nextValue = "We";
+                break;
+            case "We":
+                nextValue = "Th";
+                break;
+            case "Th":
+                nextValue = "Fr";
+                break;
+            case "Fr":
+                nextValue = "Mo";
+                break;
+            default:
+                nextValue = "ups";
+                break;
+        }
+
+        foreach (var set in config.DataSets)
+        {
+            foreach (var series in set.Series)
+            {
+                series.Values.Add(random.Next(10, 200));
+            }
+        }
+
+        _usedLabels.Add(nextValue);
+        _barChart.ForceRedraw();
+    }
+
+    private void RemovePoint()
+    {
+        Random random = new Random();
+        Int32 index = _usedLabels.Count - 1;
+
+        foreach (var set in config.DataSets)
+        {
+            foreach (var series in set.Series)
+            {
+                series.Values.RemoveAt(index);
+            }
+        }
+
+        _usedLabels.RemoveAt(index);
+        _barChart.ForceRedraw();
+    }
+
+}
+
+
