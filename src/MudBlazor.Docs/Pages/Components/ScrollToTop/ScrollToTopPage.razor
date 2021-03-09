@@ -1,5 +1,4 @@
-﻿
-@page "/components/scrolltotop"
+﻿@page "/components/scrolltotop"
 
 <DocsPage>
     <DocsPageHeader Title="Scroll To Top" SubTitle="A ScrollToTop component is a component that allows the user to return to the top of the page without making too much effort" />
@@ -21,10 +20,8 @@
             </SectionHeader>
             <SectionContentBlock>
             </SectionContentBlock>
-            <SectionContent DisplayFlex="true" DarkenBackground="true">
-                <MudContainer Style="padding:20px;">
+            <SectionContent FullWidth="true" Outlined="true" Class="pa-0">
                     <ScrollToTopExample />
-                </MudContainer>
             </SectionContent>
             <SectionSource ShowCode="false" Code="ScrollToTopExample" GitHubFolderName="ScrollToTop" />
         </DocsPageSection>
@@ -34,12 +31,10 @@
                 <Title>Custom content</Title>
                 <Description>In the example above, we have used a MudButton as a trigger for the back to top action, but we could have used pretty much anything. The root element of the component is just a transparent span element that allows you to use anything inside. In the next example we show you how to use a custom button, with custom transitions to show and hide.</Description>
             </SectionHeader>
-            <SectionContent DisplayFlex="true" DarkenBackground="true">
-                <MudContainer Style="padding:20px;">
+            <SectionContent FullWidth="true" Outlined="true" Class="pa-0">
                     <CustomScrollToTopExample />
-                </MudContainer>
             </SectionContent>
-            <SectionSource ShowCode="false" Code="CustomScrollToTopExample" GitHubFolderName="ScrollToTop" />
+            <SectionSource Code="CustomScrollToTopExample" GitHubFolderName="ScrollToTop" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

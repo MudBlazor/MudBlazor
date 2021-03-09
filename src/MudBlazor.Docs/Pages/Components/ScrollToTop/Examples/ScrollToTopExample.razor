@@ -1,52 +1,17 @@
-﻿@namespace MudBlazor.Docs.Examples 
-<style>
-    .example-scroll-section{
-        height:300px;
-        overflow:auto;
-        padding:20px;
-    }
-    .example-inner-section{
-        height:3500px;        
-        display:flex;
-        flex-direction:column;
-        justify-content:space-between;
-        padding:3em;
-    }
-    .example-inner-section>h1, .example-inner-section>h2{
-        text-align:center;        
-    }
-    .visible-custom-position{
-        right:80px;
-        bottom:40px;
-        position:absolute;
-        transition:all .2s;
-    }
-    .hidden-custom-position{
-        right:-100px;
-        visibility:hidden;
-    }
-    
-</style>
+﻿@namespace MudBlazor.Docs.Examples
 
-<div class="example-scroll-section" id="unique_id_scroll_section">
-    <MudPaper  Elevation="2" Class="example-inner-section" >
-        <h1>Scroll inside this container</h1>
-        <h2>Some initial long text</h2>
-        <h2>Middle text</h2>
-        <h2>Bottom text</h2>
+<div id="unique_id_scroll_section" class="ma-0" style="height:300px;overflow: auto;">
+    <MudPaper Elevation="0" Height="3500px" Class="d-flex flex-column justify-space-between py-6">
+        <MudText Typo="Typo.h3" Align="Align.Center">Scroll inside this container</MudText>
+        <MudText Typo="Typo.h3" Align="Align.Center">Some initial long text</MudText>
+        <MudText Typo="Typo.h3" Align="Align.Center">Middle text</MudText>
+        <MudText Typo="Typo.h3" Align="Align.Center">Bottom text</MudText>
         <MudScrollToTop TopOffset="100"
-                     Style="z-index:2000"
-                     VisibleCssClass="visible-custom-position"
-                     HiddenCssClass="hidden-custom-position"
-                     Selector="#unique_id_scroll_section"
-                     OnScroll="OnScroll">
-         
-                <MudButton Variant="Variant.Filled"
-                           StartIcon="@Icons.Filled.ArrowUpward"
-                           Color="Color">
-                    Go to top
-                </MudButton>
-
+                        OnScroll="OnScroll"
+                        Selector="#unique_id_scroll_section"
+                        VisibleCssClass="visible absolute"
+                        HiddenCssClass="invisible">
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Filled.ArrowUpward" Color="Color">Go to top</MudButton>
         </MudScrollToTop>
     </MudPaper>
 </div>
