@@ -15,6 +15,7 @@
     <MudItem xs="12" sm="6">
         <MudDateRangePicker @ref="_picker" Label="With action buttons" @bind-DateRange="_dateRange">
             <PickerActions>
+                <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.Clear())">Clear</MudButton>
                 <MudButton OnClick="@(() => _picker.Close(false))">Cancel</MudButton>
                 <MudButton Color="Color.Primary" OnClick="@(() => _picker.Close())">Ok</MudButton>
             </PickerActions>

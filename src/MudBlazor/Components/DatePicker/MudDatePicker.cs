@@ -96,6 +96,13 @@ namespace MudBlazor
             _selectedDate = null;
         }
 
+        public override void Clear(bool close = true)
+        {
+            Date = null;
+            _selectedDate = null;
+            base.Clear();
+        }
+
         protected override string GetTitleDateString()
         {
             if (_selectedDate != null)

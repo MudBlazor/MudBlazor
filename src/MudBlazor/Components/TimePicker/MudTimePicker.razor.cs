@@ -117,6 +117,13 @@ namespace MudBlazor
             Time = TimeIntermediate;
         }
 
+        public override void Clear(bool close = true)
+        {
+            Time = null;
+            TimeIntermediate = null;
+            base.Clear();
+        }
+
         private string GetHourString()
         {
             if (TimeIntermediate == null)
