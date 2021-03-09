@@ -24,8 +24,6 @@ namespace MudBlazor.Charts
 
         private List<SvgPath> _chartLines = new List<SvgPath>();
 
-        
-        private bool IsChartSplined = true;
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -156,14 +154,12 @@ namespace MudBlazor.Charts
                         interpolator = new PeriodicSpline(XValues, YValues);                      
                         break;
                     case CurveEnum.Straight:
-                        interpolator = new NoInterpolation();
-                        break;
                     default:
                         interpolator = new NoInterpolation();
                         break;
                 }
 
-                if (interpolator.InterpolationRequired == true)
+                if (interpolator?.InterpolationRequired == true)
                 {
                     horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / interpolator.interpolatedXs.Length;
                     foreach (var yValue in interpolator.interpolatedYs)
