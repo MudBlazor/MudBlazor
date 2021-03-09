@@ -8,13 +8,9 @@ namespace MudBlazor.Components.Chart.Interpolation
 {
     public class NoInterpolation : ILineInterpolator
     {    
-        private double[] _xValues;
-        private double[] _yValues;
-
-        public NoInterpolation(double[] xValues, double[] yValues)
+        public NoInterpolation()
         {
-            _xValues = xValues;
-            _yValues = yValues;
+
         }
         public double[] givenYs { get; set; }
         public double[] givenXs { get; set; }

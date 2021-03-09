@@ -156,10 +156,10 @@ namespace MudBlazor.Charts
                         interpolator = new PeriodicSpline(XValues, YValues);                      
                         break;
                     case CurveEnum.Straight:
-                        interpolator = new NoInterpolation(XValues, YValues);
+                        interpolator = new NoInterpolation();
                         break;
                     default:
-                        interpolator = new NoInterpolation(XValues, YValues);
+                        interpolator = new NoInterpolation();
                         break;
                 }
 
