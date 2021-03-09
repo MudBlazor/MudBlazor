@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudCard Class="my-2" Style="position:relative; width:377px;">
+<MudCard Class="my-2" Style="position:relative;">
     @if (!dataLoaded)
     {
         <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="200px" />
@@ -34,6 +34,11 @@
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenOverlay" EndIcon="@Icons.Material.Filled.Refresh">Refresh Data</MudButton>
 <MudButton Variant="Variant.Filled" OnClick="ResetExample">Reset Example</MudButton>
+
+
+
+
+
 
 @code { 
     private bool isVisible;

@@ -8,7 +8,7 @@
                 <Title>Simple alerts</Title>
                 <Description>There is five severity levels that sets an icon and a color.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert">
+            <SectionContent Outlined="true" FullWidth="true">
                 <AlertSimpleExample />
             </SectionContent>
             <SectionSource Code="AlertSimpleExample" GitHubFolderName="Alert"  />
@@ -21,14 +21,14 @@
             <SectionHeader>
                 <SubTitle>Outlined</SubTitle>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert">
+            <SectionContent Outlined="true" FullWidth="true">
                 <AlertOutlinedExample />
             </SectionContent>
             <SectionSource Code="AlertOutlinedExample" GitHubFolderName="Alert"  />
             <SectionHeader>
                 <SubTitle>Filled</SubTitle>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert">
+            <SectionContent Outlined="true" FullWidth="true">
                 <AlertFilledExample />
             </SectionContent>
             <SectionSource Code="AlertFilledExample" GitHubFolderName="Alert"  />
@@ -38,18 +38,8 @@
                 <Title>Dense</Title>
                 <Description>Taking up to much space? set the <CodeInline>Dense</CodeInline> property to true. It removes the vertical padding and lowers the horizontal.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert-dense">
-                <MudGrid>
-                    <MudItem md="4" xs="12">
-                        <AlertDenseTextExample />
-                    </MudItem>
-                    <MudItem md="4" xs="12">
-                        <AlertDenseOutlinedExample />
-                    </MudItem>
-                    <MudItem md="4" xs="12">
-                        <AlertDenseFilledExample />
-                    </MudItem>
-                </MudGrid>
+            <SectionContent Outlined="true" FullWidth="true">
+                <AlertDenseExample />
             </SectionContent>
             <SectionSource Code="AlertDenseExample" ShowCode="false" GitHubFolderName="Alert"  />
         </DocsPageSection>
@@ -58,18 +48,8 @@
                 <Title>No Icons</Title>
                 <Description>You can disable the alert icons with the bool <CodeInline>NoIcon</CodeInline> set to true.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert-noicon">
-                <MudGrid>
-                    <MudItem md="4" xs="12">
-                        <AlertNoIconTextExample />
-                    </MudItem>
-                    <MudItem md="4" xs="12">
-                        <AlertNoIconOutlinedExample />
-                    </MudItem>
-                    <MudItem md="4" xs="12">
-                        <AlertNoIconFilledExample />
-                    </MudItem>
-                </MudGrid>
+            <SectionContent Outlined="true" FullWidth="true">
+                <AlertNoIconExample/>
             </SectionContent>
             <SectionSource Code="AlertNoIconExample" ShowCode="false" GitHubFolderName="Alert"  />
         </DocsPageSection>
@@ -78,18 +58,8 @@
                 <Title>Rounded and Square</Title>
                 <Description>By default the alert is set to rounded corners by your themes default value. If you need a square Alert but not change the theme you can the <CodeInline>Square</CodeInline> property to true.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" FullWidth="true" Class="demo-alert-noicon">
-                <MudGrid>
-                    <MudItem md="4" xs="12">
-                        <AlertSquareTextExample />
-                    </MudItem>
-                    <MudItem md="4" xs="12">
-                        <AlertSquareOutlineExample />
-                    </MudItem>
-                    <MudItem md="4" xs="12">
-                        <AlertSquareFilledExample />
-                    </MudItem>
-                </MudGrid>
+            <SectionContent Outlined="true" FullWidth="true">
+                <AlertSquareExample/>
             </SectionContent>
             <SectionSource Code="AlertSquareExample" ShowCode="false" GitHubFolderName="Alert" />
         </DocsPageSection>
@@ -98,7 +68,7 @@
                 <Title>Elevation</Title>
                 <Description>The component also accept the <CodeInline>Elevation</CodeInline> property with a scale from 0 to 24.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true">
+            <SectionContent Outlined="true" FullWidth="true">
                 <AlertElevationExample />
             </SectionContent>
             <SectionSource Code="AlertElevationExample" ShowCode="true" GitHubFolderName="Alert"  />

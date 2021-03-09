@@ -2,22 +2,14 @@
 #pragma warning disable IDE1006 // leading underscore
 
 using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
-using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents.Dialog;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
-
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
 
     [TestFixture]
@@ -120,10 +112,10 @@ namespace MudBlazor.UnitTests
             comp.Markup.Trim().Should().BeEmpty();
             // open again
             comp1.Find("button").Click();
-            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.WaitForAssertion(() => comp.Find("div.mud-dialog-container").Should().NotBe(null));
             // close again by click outside
             comp.Find("div.mud-overlay").Click();
-            comp.Markup.Trim().Should().BeEmpty();
+            comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty());
         }
 
     }

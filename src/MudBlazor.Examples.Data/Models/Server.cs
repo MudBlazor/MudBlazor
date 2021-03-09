@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MudBlazor.Docs.Pages.Components.Dialog.Models
+namespace MudBlazor.Examples.Data.Models
 {
     public class Server
     {

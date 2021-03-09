@@ -3,7 +3,7 @@
 using System;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.UnitTests.TestComponents.TreeView;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 

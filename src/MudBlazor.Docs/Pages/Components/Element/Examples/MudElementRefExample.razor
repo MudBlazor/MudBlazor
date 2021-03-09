@@ -1,28 +1,12 @@
 ﻿@namespace MudBlazor.Docs.Examples
-@inject Microsoft.JSInterop.IJSRuntime Js
 
-
-<MudElement HtmlTag="button"
-            @onclick="Focus"
-            Style="padding: 16px 32px;
-                   background-color: var(--mud-palette-tertiary-darken);
-                   color: white;
-                   font-size: 18px;
-                   font-weight: bold;
-                   border-radius: 8px;
-                   box-shadow: 0 2px 7px var(--mud-palette-tertiary-darken);">
+<MudElement HtmlTag="button" @onclick="Focus" Style="padding: 4px 12px 4px 12px; background-color: #0067b8; color: #fff;">
     Click to focus
 </MudElement>
 
 @*this element is going to be focused through JS and its reference*@
 
-<MudElement @bind-Ref="myRef"
-            HtmlTag="input"
-            Style="border: 1px solid lightgray;
-                   border-radius:8px;
-                   padding: 16px 32px;
-                   outline-color: var(--mud-palette-tertiary-darken);
-                   outline-width:5px;"/>
+<MudElement @bind-Ref="myRef" HtmlTag="input" Style="border: solid 1px #869E9E; padding: 0px 8px; height:28px;"/>
 
 @code{
     ElementReference myRef = new ElementReference();

@@ -8,7 +8,7 @@ namespace MudBlazor
 {
     public class Snackbar : IDisposable
     {
-        private Timer Timer { get; }
+        private Timer Timer { get; set; }
         internal SnackBarMessageState State { get; }
         public string Message { get; }
         public event Action<Snackbar> OnClose;
@@ -102,7 +102,11 @@ namespace MudBlazor
         {
             if (!disposing) return;
             StopTimer();
-            Timer?.Dispose();
+
+            var timer = Timer;
+            Timer = null;
+
+            timer?.Dispose();
         }
     }
 }

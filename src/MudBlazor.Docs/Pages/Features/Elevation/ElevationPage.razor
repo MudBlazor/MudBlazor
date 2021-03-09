@@ -9,13 +9,26 @@
             <SectionHeader>
                 <Title>Usage</Title>
                 <Description>
-                    <MudText>Displayed below are the different elevation variants.</MudText>
+                    Displayed below we are using different levels of elevation in two different ways. All our components that have elevation also have the <CodeInline>Elevation Property</CodeInline> where the elevation level, or shadow can be set.<br />
+                    The same elevation types can be used with our predefined CSS classes.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Class="demo-elevation">
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <ElevationUsageExample />
             </SectionContent>
             <SectionSource Code="ElevationUsageExample" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Elevation Levels</Title>
+                <Description>
+                    Every component that has <CodeInline>Elevation Property</CodeInline> takes the range betwen 0 - 25  or you can access them with the CSS classes displayed below.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <ElevationAllExample />
+            </SectionContent>
+            <SectionSource Code="ElevationAllExample" ShowCode="false" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

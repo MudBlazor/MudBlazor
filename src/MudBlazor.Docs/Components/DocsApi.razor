@@ -45,18 +45,22 @@
 
     [Parameter] public Type Type { get; set; }
 
-
-    IEnumerable<ApiProperty> Properties {
-        get {
+    private IEnumerable<ApiProperty> Properties
+    {
+        get
+        {
             foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>())
             {
-                yield return new ApiProperty()
+                if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0)
                 {
-                    Name=info.Name,
-                    Type = info.PropertyType.ConvertToCSharpSource(),
-                    Description = GetDescription(Type, info),
-                    Default = GetDefaultValue(info),
-                };
+                    yield return new ApiProperty()
+                    {
+                        Name=info.Name,
+                        Type = info.PropertyType.ConvertToCSharpSource(),
+                        Description = GetDescription(Type, info),
+                        Default = GetDefaultValue(info),
+                    };
+                }
             }
         }
     }

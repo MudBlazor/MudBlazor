@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -29,7 +31,9 @@ namespace MudBlazor.Services
         {
             if (configuration == null)
                 configuration = new SnackbarConfiguration();
-            services.TryAddScoped<ISnackbar>(builder => new SnackbarService(configuration));
+
+            services.TryAddScoped<ISnackbar>(builder =>
+                new SnackbarService(builder.GetService<NavigationManager>(), configuration));
             return services;
         }
 

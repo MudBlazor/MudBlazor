@@ -73,7 +73,7 @@
         background-color: var(--mud-palette-action-default-hover);
     }
 
-    &:not(.mud-nav-link-disabled) .mud-nav-link-icon {
+    &:not(.mud-nav-link-disabled) .mud-nav-link-icon.mud-nav-link-icon-default {
         color: var(--mud-palette-drawer-icon);
     }
 

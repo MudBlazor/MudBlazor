@@ -41,44 +41,45 @@
 
     &.mud-drawer-responsive, &.mud-drawer-persistent {
         height: 100%;
-        width: var(--mud-drawer-width);
 
         &.mud-drawer-anchor-left {
             right: auto;
+            width: var(--mud-drawer-width, var(--mud-drawer-width-left));
 
             &.mud-drawer--open {
                 left: 0;
 
                 &:not(.mud-drawer--initial) {
-                    animation: mud-drawer-slide-in-left 225ms cubic-bezier(0, 0, 0.2, 1) 0ms 1;
+                    animation: mud-drawer-slide-in-left 225ms cubic-bezier(0, 0, 0.2, 1);
                 }
             }
 
             &.mud-drawer--closed {
-                left: calc(-1 * var(--mud-drawer-width));
+                left: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-left)));
 
                 &:not(.mud-drawer--initial) {
-                    animation: mud-drawer-slide-out-left 225ms cubic-bezier(0, 0, 0.2, 1) 0ms 1;
+                    animation: mud-drawer-slide-out-left 225ms cubic-bezier(0, 0, 0.2, 1);
                 }
             }
         }
 
         &.mud-drawer-anchor-right {
             left: auto;
+            width: var(--mud-drawer-width, var(--mud-drawer-width-right));
 
             &.mud-drawer--open {
                 right: 0;
 
                 &:not(.mud-drawer--initial) {
-                    animation: mud-drawer-slide-in-right 225ms cubic-bezier(0, 0, 0.2, 1) 0ms 1;
+                    animation: mud-drawer-slide-in-right 225ms cubic-bezier(0, 0, 0.2, 1);
                 }
             }
 
             &.mud-drawer--closed {
-                right: calc(-1 * var(--mud-drawer-width));
+                right: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-right)));
 
                 &:not(.mud-drawer--initial) {
-                    animation: mud-drawer-slide-out-right 225ms cubic-bezier(0, 0, 0.2, 1) 0ms 1;
+                    animation: mud-drawer-slide-out-right 225ms cubic-bezier(0, 0, 0.2, 1);
                 }
             }
         }
@@ -93,21 +94,21 @@
             right: auto;
             top: 0;
             height: 100%;
-            width: var(--mud-drawer-width);
+            width: var(--mud-drawer-width, var(--mud-drawer-width-left));
 
             &.mud-drawer--open {
                 left: 0;
 
                 &:not(.mud-drawer--initial) {
-                    animation: mud-drawer-slide-in-left 225ms cubic-bezier(0, 0, 0.2, 1) 0ms 1;
+                    animation: mud-drawer-slide-in-left 225ms cubic-bezier(0, 0, 0.2, 1)forwards;
                 }
             }
 
             &.mud-drawer--closed {
-                left: calc(-1 * var(--mud-drawer-width));
+                left: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-left)));
 
                 &:not(.mud-drawer--initial) {
-                    animation: mud-drawer-slide-out-left 225ms cubic-bezier(0, 0, 0.2, 1) 0ms 1;
+                    animation: mud-drawer-slide-out-left 225ms cubic-bezier(0, 0, 0.2, 1)forwards;
                 }
             }
         }
@@ -116,21 +117,21 @@
             left: auto;
             top: 0;
             height: 100%;
-            width: var(--mud-drawer-width);
+            width: var(--mud-drawer-width, var(--mud-drawer-width-right));
 
             &.mud-drawer--open {
                 right: 0;
 
                 &:not(.mud-drawer--initial) {
-                    animation: mud-drawer-slide-in-right 225ms cubic-bezier(0, 0, 0.2, 1) 0ms 1;
+                    animation: mud-drawer-slide-in-right 225ms cubic-bezier(0, 0, 0.2, 1)forwards;
                 }
             }
 
             &.mud-drawer--closed {
-                right: calc(-1 * var(--mud-drawer-width));
+                right: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-right)));
 
                 &:not(.mud-drawer--initial) {
-                    animation: mud-drawer-slide-out-right 225ms cubic-bezier(0, 0, 0.2, 1) 0ms 1;
+                    animation: mud-drawer-slide-out-right 225ms cubic-bezier(0, 0, 0.2, 1)forwards;
                 }
             }
         }
@@ -185,11 +186,11 @@
     }
 
     &.mud-drawer-persistent.mud-drawer-anchor-left.mud-drawer--open ~ div:not(.mud-main-content) {
-        margin-left: var(--mud-drawer-width);
+        margin-left: var(--mud-drawer-width, var(--mud-drawer-width-left));
     }
 
     &.mud-drawer-persistent.mud-drawer-anchor-right.mud-drawer--open ~ div:not(.mud-main-content) {
-        margin-right: var(--mud-drawer-width);
+        margin-right: var(--mud-drawer-width, var(--mud-drawer-width-right));
     }
 }
 
@@ -215,6 +216,11 @@
             top: calc(var(--mud-appbar-min-height) - 16px);
             height: calc(100% - var(--mud-appbar-min-height) + 16px);
         }
+
+        @media (max-width:$breakpoint-sm - 1px) and (orientation: portrait) {
+            top: 56px;
+            height: calc(100% - 56px);
+        }
     }
 
     @each $breakpoint in map-keys($breakpoints) {
@@ -226,6 +232,11 @@
                 @media (max-width:$breakpoint-sm - 1px) and (orientation: landscape) {
                     top: calc(var(--mud-appbar-min-height) - 16px);
                     height: calc(100% - var(--mud-appbar-min-height) + 16px);
+                }
+
+                @media (max-width:$breakpoint-sm - 1px) and (orientation: portrait) {
+                    top: 56px;
+                    height: calc(100% - 56px);
                 }
             }
         }
@@ -275,7 +286,7 @@
 /*#region keyframes*/
 @keyframes mud-drawer-slide-in-left {
     from {
-        left: calc(-1 * var(--mud-drawer-width));
+        left: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-left)));
     }
 }
 
@@ -287,7 +298,7 @@
 
 @keyframes mud-drawer-slide-in-right {
     from {
-        right: calc(-1 * var(--mud-drawer-width));
+        right: calc(-1 * var(--mud-drawer-width, var(--mud-drawer-width-right)));
     }
 }
 

@@ -8,8 +8,8 @@
     protected override RenderFragment InputContent=> 
         @<MudInputControl Label="@Label" HelperText="@HelperText" Variant="@InputVariant" Disabled="@Disabled" @onclick="() => { if (!Editable) ToggleState(); }">
                <InputContent>
-                   <MudRangeInput @attributes="UserAttributes" InputType="@InputType.Text" Class="@PickerInputClass" Style="@Style" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string"
-                                   @bind-Text="@(Text)" Disabled=@Disabled Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" OnAdornmentClick="ToggleState"
+                   <MudRangeInput @attributes="UserAttributes" InputType="@InputType.Text" Class="@PickerInputClass" Style="@Style" Variant="@InputVariant" ReadOnly="@(!Editable)"
+                                   @bind-Value="@RangeText" Disabled=@Disabled Adornment="@Adornment" AdornmentIcon="@InputIcon" IconSize="@IconSize" OnAdornmentClick="ToggleState"
                                    Required="@Required" RequiredError="@RequiredError" Error="@Error" ErrorText="@ErrorText"/>
                </InputContent>
            </MudInputControl>;
