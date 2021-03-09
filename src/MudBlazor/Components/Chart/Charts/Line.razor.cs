@@ -141,7 +141,7 @@ namespace MudBlazor.Charts
                         XValues[i] = XValues[i - 1] + horizontalSpace;
 
                     var gridValue = (item.Data[i]) * verticalSpace / gridYUnits;
-                    YValues[i] = boundHeight - (gridValueY + gridValue);
+                    YValues[i] = boundHeight - (verticalStartSpace + gridValue);
 
                 }
                 switch (curveEnum)
@@ -175,7 +175,6 @@ namespace MudBlazor.Charts
                         horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / endSlopeSplineValues.interpolatedXs.Length;
                         foreach (var yValue in endSlopeSplineValues.interpolatedYs)
                         {
-
                             if (firstTime)
                             {
 
