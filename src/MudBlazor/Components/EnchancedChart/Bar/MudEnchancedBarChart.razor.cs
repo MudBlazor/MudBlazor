@@ -109,8 +109,6 @@ namespace MudBlazor
 
         private void CreateDrawingInstruction()
         {
-            if (_changeIsSelfTrigged == true) { return; }
-
             BeforeCreatingInstructionCallBack?.Invoke(this);
 
             if (_dataSets.Count == 0 || _dataSets.Sum(x => x.Count) == 0 || _yaxes.Count == 0)
@@ -237,9 +235,6 @@ namespace MudBlazor
 
             StateHasChanged();
         }
-
-        private Boolean _changeIsSelfTrigged = false;
-        private Boolean _isRendered = false;
 
         protected override void OnAfterRender(bool firstRender)
         {
