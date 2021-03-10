@@ -16,7 +16,7 @@ namespace MudBlazor
         internal object _editingItem = null;
 
         private int _currentPage = 0;
-        private int _rowsPerPage = 10;
+        private int? _rowsPerPage;
 
         protected string Classname =>
         new CssBuilder("mud-table")
@@ -99,10 +99,11 @@ namespace MudBlazor
         [Parameter]
         public int RowsPerPage
         {
-            get => _rowsPerPage;
+            get => _rowsPerPage ?? 10;
             set
             {
-                SetRowsPerPage(value);
+                if (_rowsPerPage == null)
+                    SetRowsPerPage(value);
             }
         }
 
