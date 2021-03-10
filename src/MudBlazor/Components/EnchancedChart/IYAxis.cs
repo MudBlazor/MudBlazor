@@ -14,6 +14,14 @@ namespace MudBlazor.Components.EnchancedChart
         Double Max { get; }
         Boolean ScalesAutomatically { get; }
 
+        Double LabelSize { get; }
+        Double Margin { get;  }
+        String LabelCssClass { get; }
+
+        YAxisPlacement Placement { get; }
+
+        Double MajorTickValue { get; }
+
         Guid Id { get; }
     }
 }

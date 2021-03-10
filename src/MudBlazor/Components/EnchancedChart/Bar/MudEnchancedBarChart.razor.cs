@@ -111,7 +111,7 @@ namespace MudBlazor
         {
             BeforeCreatingInstructionCallBack?.Invoke(this);
 
-            if (_dataSets.Count == 0 || _dataSets.Sum(x => x.Count) == 0 || _yaxes.Count == 0)
+            if (_dataSets.Count == 0 || _dataSets.Sum(x => x.Count) == 0 || _dataSets.Sum(x => x.Sum(y => y.Points.Count)) == 0 || _yaxes.Count == 0)
             {
                 return;
             }
@@ -151,20 +151,39 @@ namespace MudBlazor
 
             Double currentX = 0.0;
 
-            TransformMatrix2D matrix = null;
+            TransformMatrix2D matrix = TransformMatrix2D.Identity;
             switch (_xAxis.Placement)
             {
                 case XAxisPlacement.Bottom:
-                    matrix = TransformMatrix2D.Translate(0, _xAxis.Margin + _xAxis.Height) * TransformMatrix2D.Scaling(1, (100 - _xAxis.Margin - _xAxis.Height) / 100);
+                    matrix = TransformMatrix2D.TranslateY(_xAxis.Margin + _xAxis.Height) * TransformMatrix2D.ScalingY((100 - _xAxis.Margin - _xAxis.Height) / 100);
                     break;
                 case XAxisPlacement.Top:
-                    matrix = TransformMatrix2D.Scaling(1, (100 - _xAxis.Margin - _xAxis.Height) / 100);
+                    matrix = TransformMatrix2D.ScalingY((100 - _xAxis.Margin - _xAxis.Height) / 100);
                     break;
                 case XAxisPlacement.None:
                     matrix = TransformMatrix2D.Identity;
                     break;
                 default:
                     break;
+            }
+
+            foreach (var item in axisMapper.Values)
+            {
+                item.CalculateTicks();
+
+                switch (item.Axis.Placement)
+                {
+                    case YAxisPlacement.Left:
+                        matrix = TransformMatrix2D.TranslateX(item.Axis.Margin + item.Axis.LabelSize) * TransformMatrix2D.ScalingX((100 - item.Axis.Margin - item.Axis.LabelSize) / 100) * matrix;
+                        break;
+                    case YAxisPlacement.Rigth:
+                        matrix = TransformMatrix2D.ScalingX((100 - item.Axis.Margin - item.Axis.LabelSize) / 100) * matrix;
+                        break;
+                    case YAxisPlacement.None:
+                    default:
+                        //matrix = TransformMatrix2D.Identity * matrix;
+                        continue;
+                }
             }
 
             matrix = TransformMatrix2D.MirrorYAxis * TransformMatrix2D.Translate(0, -100) * matrix;
@@ -210,9 +229,17 @@ namespace MudBlazor
 
             if (_xAxis.Placement != XAxisPlacement.None)
             {
-                Double spacePerXAxisLabel = 100.00 / _xAxis.Labels.Count;
+                Double marginLeftFromXAxis = axisMapper.Where(x => x.Value.Axis.Placement == YAxisPlacement.Left)
+                     .Select(x => x.Value.Axis.Margin + x.Value.Axis.LabelSize)
+                     .Sum();
 
-                Double x = spacePerXAxisLabel / 2;
+                Double marginRigthFromXAxis = axisMapper.Where(x => x.Value.Axis.Placement == YAxisPlacement.Rigth)
+                     .Select(x => x.Value.Axis.Margin + x.Value.Axis.LabelSize)
+                     .Sum();
+
+                Double spacePerXAxisLabel = (100.00 - marginRigthFromXAxis - marginLeftFromXAxis) / _xAxis.Labels.Count;
+
+                Double x = marginLeftFromXAxis + (spacePerXAxisLabel / 2);
 
                 foreach (var item in _xAxis.Labels)
                 {
@@ -230,21 +257,52 @@ namespace MudBlazor
 
                     x += spacePerXAxisLabel;
                 }
+            }
 
+            foreach (var axisHelper in axisMapper.Values)
+            {
+                if (axisHelper.Axis.Placement == YAxisPlacement.None)
+                {
+                    continue;
+                }
+
+                Double marginFromXAxis = _xAxis.Placement == XAxisPlacement.None ? 0.0 : _xAxis.Margin + _xAxis.Height;
+
+                Double x = axisHelper.Axis.Placement == YAxisPlacement.Left ? axisHelper.Axis.LabelSize : 100 - axisHelper.Axis.LabelSize;
+
+                Double y = 100.0;
+                if (_xAxis.Placement == XAxisPlacement.Bottom)
+                {
+                    y -= marginFromXAxis;
+                }
+
+                Double deltaYPerTick = (100.0 - marginFromXAxis) / (axisHelper.TickAmount - 1);
+                Double tickValue = axisHelper.StartTickValue;
+                Int32 startIndex = _labels.Count;
+
+                for (int i = 0; i < axisHelper.TickAmount; i++)
+                {
+                    Point2D labelLeftCorner = new Point2D(x, y);
+
+                    _labels.Add(new SvgText
+                    {
+                        Class = axisHelper.Axis.LabelCssClass,
+                        Value = Math.Round(tickValue, 6).ToString(),
+                        Height = 3,
+                        X = labelLeftCorner.X,
+                        Y = labelLeftCorner.Y,
+                        TextPlacement = axisHelper.Axis.Placement == YAxisPlacement.Left ? "end" : "start",
+                    });
+
+                    y -= deltaYPerTick;
+                    tickValue += axisHelper.TickNumericValue;
+                }
+
+                _labels[startIndex].Baseline = "text-after-edge";
+                _labels[_labels.Count - 1].Baseline = "text-before-edge";
             }
 
             StateHasChanged();
-        }
-
-        protected override void OnAfterRender(bool firstRender)
-        {
-            base.OnAfterRender(firstRender);
-
-            //if (_isRendered == false)
-            //{
-            //    StateHasChanged();
-            //    _isRendered = true;
-            //}
         }
 
         #endregion
@@ -367,7 +425,7 @@ namespace MudBlazor
         {
             public AxisHelper(IYAxis axis)
             {
-                AXis = axis;
+                Axis = axis;
 
                 if (axis.ScalesAutomatically == false)
                 {
@@ -376,13 +434,19 @@ namespace MudBlazor
                 }
             }
 
-            public IYAxis AXis { get; private set; }
+            public IYAxis Axis { get; private set; }
             public Double Min { get; private set; } = 0.0;
             public Double Max { get; private set; } = Double.MinValue;
+            public Double StartTickValue { get; private set; } = 0.0;
+            public Double TickNumericValue { get; private set; } = 0.0;
+            public Int32 TickAmount { get; private set; } = 1;
+            private Boolean _hasValues = false;
 
             internal void ProcessDataSet(BarDataSet set)
             {
-                if (AXis.ScalesAutomatically == false) { return; }
+                if (Axis.ScalesAutomatically == false) { return; }
+
+                _hasValues = true;
 
                 foreach (var series in set)
                 {
@@ -399,6 +463,67 @@ namespace MudBlazor
                         }
                     }
                 }
+            }
+
+            internal void CalculateTicks()
+            {
+                if (Axis.MajorTickValue == 0) { return; }
+                if (Axis.ScalesAutomatically == false) { return; }
+                if (_hasValues == false) { return; }
+
+                Double initialDelta = Max - Min;
+                Int32 scalingFactor = 0;
+                Double valuePerTick = initialDelta / ((Int32)Axis.MajorTickValue - 1);
+
+                if (initialDelta > 1)
+                {
+                    while (valuePerTick > 1)
+                    {
+                        valuePerTick /= 10;
+                        scalingFactor++;
+                    }
+                }
+                else
+                {
+                    while (valuePerTick < 0.1)
+                    {
+                        valuePerTick *= 10;
+                        scalingFactor++;
+                    }
+                }
+
+                if (valuePerTick < 0.15)
+                {
+                    valuePerTick = 0.1;
+                }
+                else if (valuePerTick < 0.35)
+                {
+                    valuePerTick = 0.2;
+                }
+                else
+                {
+                    valuePerTick = 0.5;
+                }
+
+                if (initialDelta > 1)
+                {
+                    for (int i = 0; i < scalingFactor; i++)
+                    {
+                        valuePerTick *= 10;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < scalingFactor; i++)
+                    {
+                        valuePerTick /= 10;
+                    }
+                }
+
+                TickNumericValue = valuePerTick;
+                Int32 steps = (Int32)Math.Ceiling((Max - Min) / TickNumericValue);
+                TickAmount = 1 + steps;
+                Max = steps * TickNumericValue;
             }
         }
     }
