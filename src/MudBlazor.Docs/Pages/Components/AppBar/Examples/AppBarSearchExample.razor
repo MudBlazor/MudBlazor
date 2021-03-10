@@ -1,0 +1,49 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<style>
+    .search-bar .mud-input {
+        height: 42px;
+    }
+
+    .search-bar.mud-input-control {
+        background-color: rgba(255, 255, 255, 0.15);
+        margin-bottom: 5px;
+        height: 42px;
+        border-radius: var(--mud-default-borderradius);
+    }
+
+        .search-bar.mud-input-control .mud-input-root, .search-bar.mud-input-control .mud-icon-default {
+            color: #fafafa;
+        }
+
+    .search-bar .mud-input.mud-input-outlined .mud-input-outlined-border {
+        border: none;
+        border-radius: var(--mud-default-borderradius);
+    }
+</style>
+
+<MudAppBar Color="Color.Primary" Fixed="false">
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" />
+    <MudAppBarSpacer />
+    <div style="flex-grow: 1;">
+        <EditForm Model="searchModel" OnSubmit="Search">
+            <MudTextField Class="search-bar" @bind-Value="searchModel.Text" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Filled.Search" Placeholder="Search"  />
+        </EditForm>
+    </div>
+    <MudAppBarSpacer />
+    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" />
+</MudAppBar>
+
+@code{
+    private readonly SearchModel searchModel = new();
+
+    public class SearchModel
+    {
+        public string? Text { get; set; }
+    }
+
+    private void Search()
+    {
+        // Do search logic here
+    }
+}
