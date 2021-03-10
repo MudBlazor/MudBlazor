@@ -183,17 +183,17 @@ namespace MudBlazor.UnitTests.Components
             var table = comp.FindComponent<MudTable<string>>();
             var pager = comp.FindComponent<MudSelect<string>>().Instance;
             // change page size
-            table.SetParametersAndRender(ComponentParameter.CreateParameter("RowsPerPage", 20));
+            await table.InvokeAsync(() => table.Instance.SetRowsPerPage(20));
             pager.Value.Should().Be("20");
             comp.FindAll("tr.mud-table-row").Count.Should().Be(20);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-20 of 59");
             // change page size
-            table.SetParametersAndRender(ComponentParameter.CreateParameter("RowsPerPage", 60));
+            await table.InvokeAsync(() => table.Instance.SetRowsPerPage(60));
             pager.Value.Should().Be("60");
             comp.FindAll("tr.mud-table-row").Count.Should().Be(59);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-59 of 59");
             // change page size
-            table.SetParametersAndRender(ComponentParameter.CreateParameter("RowsPerPage", 10));
+            await table.InvokeAsync(() => table.Instance.SetRowsPerPage(10));
             pager.Value.Should().Be("10");
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
@@ -224,7 +224,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("30");
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("91-99 of 99");
             // change page size
-            table.SetParametersAndRender(ComponentParameter.CreateParameter("RowsPerPage", 100));
+            await table.InvokeAsync(() => table.Instance.SetRowsPerPage(100));
             pager.Value.Should().Be("100");
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-99 of 99");
         }
