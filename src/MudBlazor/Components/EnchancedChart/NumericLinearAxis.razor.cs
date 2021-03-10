@@ -12,13 +12,20 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    public enum YAxisPlacement
+    {
+        Left = 1,
+        Rigth = 2,
+        None = 3,
+    }
+
     public enum ScalingType
     {
         Auto,
         Manuel,
     }
 
-    record NumericLinearAxisSnapshot(Double Min, Double Max, Boolean ShowMinorTick, Boolean ShowMajorTick, ScalingType ScalingType);
+    record NumericLinearAxisSnapshot(Double Min, Double Max, Boolean ShowMinorTick, Boolean ShowMajorTick, Double LabelSize, Double Margin, String LabelCssClass, YAxisPlacement Placement, ScalingType ScalingType);
 
     [DoNotGenerateAutomaticTest]
     public partial class NumericLinearAxis : ComponentBase, IYAxis, IDisposable, ISnapshot<NumericLinearAxisSnapshot>
@@ -41,10 +48,18 @@ namespace MudBlazor
         [Parameter] public Boolean ShowMinorTicks { get; set; } = false;
         [Parameter] public Boolean ShowMajorTicks { get; set; } = true;
 
+        [Parameter] public Double Margin { get; set; } = 2.0;
+        [Parameter] public Double LabelSize { get; set; } = 5.0;
+
+        [Parameter] public String LabelCssClass { get; set; } = String.Empty;
+
+        [Parameter] public YAxisPlacement Placement { get; set; } = YAxisPlacement.Left;
+
         [Parameter] public ScalingType ScalingType { get; set; } = ScalingType.Auto;
 
         public Boolean ScalesAutomatically => ScalingType == ScalingType.Auto;
 
+        public Double MajorTickValue => _majorTick?.Value ?? 0.0;
 
         private static void DefaultMinorTickFragment(RenderTreeBuilder builder)
         {
@@ -102,7 +117,7 @@ namespace MudBlazor
             else
             {
                 ISnapshot<NumericLinearAxisSnapshot> _this = this;
-                if(_this.SnapshotHasChanged(true) == true)
+                if (_this.SnapshotHasChanged(true) == true)
                 {
                     Chart.AxesUpdated(this);
                 }
@@ -115,6 +130,6 @@ namespace MudBlazor
         }
 
         NumericLinearAxisSnapshot ISnapshot<NumericLinearAxisSnapshot>.OldSnapshotValue { get; set; }
-        NumericLinearAxisSnapshot ISnapshot<NumericLinearAxisSnapshot>.CreateSnapShot() => new NumericLinearAxisSnapshot(Min, Max, ShowMinorTicks, ShowMajorTicks, ScalingType);
+        NumericLinearAxisSnapshot ISnapshot<NumericLinearAxisSnapshot>.CreateSnapShot() => new NumericLinearAxisSnapshot(Min, Max, ShowMinorTicks, ShowMajorTicks, LabelSize, Margin, LabelCssClass, Placement, ScalingType);
     }
 }

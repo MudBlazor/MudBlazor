@@ -9,7 +9,7 @@
 {
     String formattedResult = FormattableString.Invariant($"<text x=\"{item.X}\" y=\"{item.Y}\" class=\"{item.Class}\" font-size=\"{item.Height}\"");
 
-    @((MarkupString)$"{formattedResult} dominant-baseline=\"middle\" text-anchor=\"middle\">{item.Value}</text>")
+    @((MarkupString)$"{formattedResult} dominant-baseline=\"{item.Baseline}\" text-anchor=\"{item.TextPlacement}\">{item.Value}</text>")
 }
 
 <CascadingValue IsFixed="true" Value="this">

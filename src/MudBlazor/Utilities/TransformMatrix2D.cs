@@ -35,6 +35,9 @@ namespace MudBlazor.Utilities
             Values = values;
         }
 
+        public static TransformMatrix2D TranslateX(Double translateX) => Translate(translateX, 0);
+        public static TransformMatrix2D TranslateY(Double translateY) => Translate(0, translateY);
+
         public static TransformMatrix2D Translate(Double translateX, Double translateY) =>
           new TransformMatrix2D
           {
@@ -44,6 +47,9 @@ namespace MudBlazor.Utilities
                     new[] { 0.0, 0.0, 1.0 }
               },
           };
+
+        public static TransformMatrix2D ScalingX(Double scaleX) => Scaling(scaleX, 1);
+        public static TransformMatrix2D ScalingY(Double scaleY) => Scaling(1, scaleY);
 
         public static TransformMatrix2D Scaling(Double scaleX, Double scaleY) =>
             new TransformMatrix2D

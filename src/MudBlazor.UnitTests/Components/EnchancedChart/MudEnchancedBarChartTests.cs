@@ -198,6 +198,27 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Max, 20.3));
 
             called.Should().Be(10);
+
+            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelSize, 10.5));
+            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelSize, 20.3));
+
+            called.Should().Be(12);
+
+            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Margin, 12.5));
+            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Margin, 13.44));
+
+            called.Should().Be(14);
+
+            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelCssClass, "my-awesome-label"));
+            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelCssClass, "my-awesomer-label"));
+
+            called.Should().Be(16);
+
+            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Placement, YAxisPlacement.Rigth));
+            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Placement, YAxisPlacement.Left));
+            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Placement, YAxisPlacement.None));
+
+            called.Should().Be(19);
         }
 
         [Test]
@@ -299,11 +320,16 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             List<Rectangle> untransformedExpectedRects;
             IRenderedComponent<MudEnchancedBarChart> comp;
-            GenerateSampleBarChart((p) => {
+            GenerateSampleBarChart((p) =>
+            {
                 p.Add<BarChartXAxis>(x => x.XAxis, (setP) =>
                 {
                     setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
                     setP.Add(y => y.Placement, XAxisPlacement.None);
+                });
+                p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, YAxisPlacement.None);
                 });
             }, out untransformedExpectedRects, out comp);
 
@@ -330,7 +356,8 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             List<Rectangle> untransformedExpectedRects;
             IRenderedComponent<MudEnchancedBarChart> comp;
-            GenerateSampleBarChart((p) => {
+            GenerateSampleBarChart((p) =>
+            {
                 p.Add<BarChartXAxis>(x => x.XAxis, (setP) =>
                 {
                     setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
@@ -339,7 +366,11 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                     setP.Add(y => y.Height, 15.0);
                     setP.Add(y => y.Margin, 5.0);
                 });
-                }, out untransformedExpectedRects, out comp);
+                p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, YAxisPlacement.None);
+                });
+            }, out untransformedExpectedRects, out comp);
 
             XElement expectedRoot = new XElement("svg",
                 TransformRectToSvgElements(TransformToSvgCoordinates(untransformedExpectedRects.Select(x => new Rectangle
@@ -395,7 +426,8 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             List<Rectangle> untransformedExpectedRects;
             IRenderedComponent<MudEnchancedBarChart> comp;
-            GenerateSampleBarChart((p) => {
+            GenerateSampleBarChart((p) =>
+            {
                 p.Add<BarChartXAxis>(x => x.XAxis, (setP) =>
                 {
                     setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
@@ -403,6 +435,10 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                     setP.Add(y => y.Placement, XAxisPlacement.Top);
                     setP.Add(y => y.Height, 15.0);
                     setP.Add(y => y.Margin, 5.0);
+                });
+                p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, YAxisPlacement.None);
                 });
             }, out untransformedExpectedRects, out comp);
 
@@ -450,20 +486,441 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             root.Should().BeEquivalentTo(expectedRoot);
         }
 
+        [TestCase("en-us")]
+        [TestCase("de-de")]
+        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisIsLeft(String culture)
+        {
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+
+            String classLabel = "special-class-label";
+
+            List<Rectangle> untransformedExpectedRects;
+            IRenderedComponent<MudEnchancedBarChart> comp;
+            GenerateSampleBarChart((p) =>
+            {
+                p.Add<BarChartXAxis>(x => x.XAxis, (setP) =>
+                {
+                    setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
+                    setP.Add(y => y.Placement, XAxisPlacement.None);
+                });
+                p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, YAxisPlacement.Left);
+                    setP.Add(y => y.LabelSize, 15.0);
+                    setP.Add(y => y.Margin, 5.0);
+                    setP.Add(y => y.LabelCssClass, classLabel);
+                    setP.Add<Tick>(y => y.MajorTick, (setT) =>
+                    {
+                        setT.Add(z => z.Value, 5.0);
+                    });
+                });
+            }, out untransformedExpectedRects, out comp);
+
+            XElement expectedRoot = new XElement("svg",
+                 TransformRectToSvgElements(TransformToSvgCoordinates(untransformedExpectedRects.Select(x => new Rectangle
+                 (
+                     x.P1.ScaleX(0.8).MoveAlongXAxis(20),
+                     x.P2.ScaleX(0.8).MoveAlongXAxis(20),
+                     x.P3.ScaleX(0.8).MoveAlongXAxis(20),
+                     x.P4.ScaleX(0.8).MoveAlongXAxis(20),
+                     x.FillColor
+                 )))
+                 ));
+
+            Dictionary<Double, String> expectedLabels = new()
+            {
+                { 100, "0" },
+                { 75, "50" },
+                { 50, "100" },
+                { 25, "150" },
+                { 0, "200" },
+            };
+
+            foreach (var item in expectedLabels)
+            {
+                String dominantBaseline = "middle";
+                if (item.Key == expectedLabels.First().Key)
+                {
+                    dominantBaseline = "text-after-edge";
+                }
+                else if (item.Key == expectedLabels.Last().Key)
+                {
+                    dominantBaseline = "text-before-edge";
+                }
+
+                expectedRoot.Add(new XElement("text",
+                    new XAttribute("x", "15"),
+                    new XAttribute("y", item.Key.ToString(CultureInfo.InvariantCulture)),
+                    new XAttribute("class", classLabel),
+                    new XAttribute("font-size", 3),
+                    new XAttribute("dominant-baseline", dominantBaseline),
+                    new XAttribute("text-anchor", "end"),
+                    item.Value
+                    ));
+            }
+
+            XElement root = new XElement("svg");
+
+            foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
+            {
+                var element = XElement.Parse(item.OuterHtml);
+                RoundElementValues(item, element);
+                root.Add(element);
+            }
+
+            root.Should().BeEquivalentTo(expectedRoot);
+        }
+
+        [TestCase("en-us")]
+        [TestCase("de-de")]
+        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisIsRight(String culture)
+        {
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+
+            String classLabel = "special-class-label";
+
+            List<Rectangle> untransformedExpectedRects;
+            IRenderedComponent<MudEnchancedBarChart> comp;
+            GenerateSampleBarChart((p) =>
+            {
+                p.Add<BarChartXAxis>(x => x.XAxis, (setP) =>
+                {
+                    setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
+                    setP.Add(y => y.Placement, XAxisPlacement.None);
+                });
+                p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, YAxisPlacement.Rigth);
+                    setP.Add(y => y.LabelSize, 15.0);
+                    setP.Add(y => y.Margin, 5.0);
+                    setP.Add(y => y.LabelCssClass, classLabel);
+                    setP.Add<Tick>(y => y.MajorTick, (setT) =>
+                    {
+                        setT.Add(z => z.Value, 5.0);
+                    });
+                });
+            }, out untransformedExpectedRects, out comp);
+
+            XElement expectedRoot = new XElement("svg",
+                 TransformRectToSvgElements(TransformToSvgCoordinates(untransformedExpectedRects.Select(x => new Rectangle
+                 (
+                     x.P1.ScaleX(0.8),
+                     x.P2.ScaleX(0.8),
+                     x.P3.ScaleX(0.8),
+                     x.P4.ScaleX(0.8),
+                     x.FillColor
+                 )))
+                 ));
+
+            Dictionary<Double, String> expectedLabels = new()
+            {
+                { 100, "0" },
+                { 75, "50" },
+                { 50, "100" },
+                { 25, "150" },
+                { 0, "200" },
+            };
+
+            foreach (var item in expectedLabels)
+            {
+                String dominantBaseline = "middle";
+                if (item.Key == expectedLabels.First().Key)
+                {
+                    dominantBaseline = "text-after-edge";
+                }
+                else if (item.Key == expectedLabels.Last().Key)
+                {
+                    dominantBaseline = "text-before-edge";
+                }
+
+                expectedRoot.Add(new XElement("text",
+                    new XAttribute("x", "85"),
+                    new XAttribute("y", item.Key.ToString(CultureInfo.InvariantCulture)),
+                    new XAttribute("class", classLabel),
+                    new XAttribute("font-size", 3),
+                    new XAttribute("dominant-baseline", dominantBaseline),
+                    new XAttribute("text-anchor", "start"),
+                    item.Value
+                    ));
+            }
+
+            XElement root = new XElement("svg");
+
+            foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
+            {
+                var element = XElement.Parse(item.OuterHtml);
+                RoundElementValues(item, element);
+                root.Add(element);
+            }
+
+            root.Should().BeEquivalentTo(expectedRoot);
+        }
+
+        [TestCase(10)]
+        [TestCase(100)]
+        [TestCase(1000)]
+        [TestCase(0.1)]
+        [TestCase(0.01)]
+        [TestCase(0.001)]
+        [TestCase(0.0001)]
+        public void DrawSimpleDataSet_OnlyPostiveValues_ValuesSmallerThanOne(Double scaling)
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("en-us");
+
+            String classLabel = "special-class-label";
+
+            List<Rectangle> untransformedExpectedRects;
+            IRenderedComponent<MudEnchancedBarChart> comp;
+            GenerateSampleBarChart((p) =>
+            {
+                p.Add<BarChartXAxis>(x => x.XAxis, (setP) =>
+                {
+                    setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
+                    setP.Add(y => y.Placement, XAxisPlacement.None);
+                });
+                p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, YAxisPlacement.Rigth);
+                    setP.Add(y => y.LabelSize, 15.0);
+                    setP.Add(y => y.Margin, 5.0);
+                    setP.Add(y => y.LabelCssClass, classLabel);
+                    setP.Add<Tick>(y => y.MajorTick, (setT) =>
+                    {
+                        setT.Add(z => z.Value, 5.0);
+                    });
+                });
+            }, scaling, out untransformedExpectedRects, out comp);
+
+            XElement expectedRoot = new XElement("svg",
+                 TransformRectToSvgElements(TransformToSvgCoordinates(untransformedExpectedRects.Select(x => new Rectangle
+                 (
+                     x.P1.ScaleX(0.8),
+                     x.P2.ScaleX(0.8),
+                     x.P3.ScaleX(0.8),
+                     x.P4.ScaleX(0.8),
+                     x.FillColor
+                 )))
+                 ));
+
+            Dictionary<Double, String> expectedLabels = new()
+            {
+                { 100, "0" },
+                { 75, Math.Round(50.0 * scaling, 4).ToString(CultureInfo.InvariantCulture) },
+                { 50, Math.Round(100.0 * scaling, 4).ToString(CultureInfo.InvariantCulture) },
+                { 25, Math.Round(150.0 * scaling, 4).ToString(CultureInfo.InvariantCulture) },
+                { 0, Math.Round(200.0 * scaling, 4).ToString(CultureInfo.InvariantCulture) },
+            };
+
+            foreach (var item in expectedLabels)
+            {
+                String dominantBaseline = "middle";
+                if (item.Key == expectedLabels.First().Key)
+                {
+                    dominantBaseline = "text-after-edge";
+                }
+                else if (item.Key == expectedLabels.Last().Key)
+                {
+                    dominantBaseline = "text-before-edge";
+                }
+
+                expectedRoot.Add(new XElement("text",
+                    new XAttribute("x", "85"),
+                    new XAttribute("y", item.Key.ToString(CultureInfo.InvariantCulture)),
+                    new XAttribute("class", classLabel),
+                    new XAttribute("font-size", 3),
+                    new XAttribute("dominant-baseline", dominantBaseline),
+                    new XAttribute("text-anchor", "start"),
+                    item.Value
+                    ));
+            }
+
+            XElement root = new XElement("svg");
+
+            foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
+            {
+                var element = XElement.Parse(item.OuterHtml);
+                RoundElementValues(item, element);
+                root.Add(element);
+            }
+
+            root.Should().BeEquivalentTo(expectedRoot);
+        }
+
+        [TestCase(183, 5, 200, 50, 5)]
+        [TestCase(183, 6, 200, 50, 5)]
+        [TestCase(183, 7, 200, 20, 11)]
+        [TestCase(183, 13, 200, 20, 11)]
+        [TestCase(183, 14, 190, 10, 20)]
+        [TestCase(183, 15, 190, 10, 20)]
+
+        [TestCase(18.3, 5, 20, 5, 5)]
+        [TestCase(18.3, 6, 20, 5, 5)]
+        [TestCase(18.3, 7, 20, 2, 11)]
+        [TestCase(18.3, 13, 20, 2, 11)]
+        [TestCase(18.3, 14, 19, 1, 20)]
+        [TestCase(18.3, 15, 19, 1, 20)]
+
+        [TestCase(0.183, 5, 0.2, 0.05, 5)]
+        [TestCase(0.183, 6, 0.2, 0.05, 5)]
+        [TestCase(0.183, 7, 0.2, 0.02, 11)]
+        [TestCase(0.183, 13, 0.2, 0.02, 11)]
+        [TestCase(0.183, 14, 0.19, 0.01, 20)]
+        [TestCase(0.183, 15, 0.19, 0.01, 20)]
+        public void DrawSimpleDataSet_OnlyPostiveValues_AutoScaleValues(Double maxDataSeries, Double majorTickCount, Double expectedMaxLabel, Double expectedStep, Int32 stepAmount)
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("en-us");
+
+            Random random = new Random();
+
+            var firstData = new List<Double> { maxDataSeries, maxDataSeries / 10.0 };
+
+            var comp = ctx.RenderComponent<MudEnchancedBarChart>(p =>
+            {
+                p.Add(x => x.Margin, 1.0);
+                p.Add(x => x.Padding, 10.0);
+                p.Add<BarChartXAxis>(x => x.XAxis, (setP) =>
+                {
+                    setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
+                });
+                p.Add<BarDataSet>(x => x.DataSets, (setP) =>
+                {
+                    setP.Add<BarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my first series");
+                        seriesP.Add(z => z.Points, firstData);
+                    });
+                });
+                p.Add<BarChartXAxis>(x => x.XAxis, (setP) =>
+                {
+                    setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
+                    setP.Add(y => y.Placement, XAxisPlacement.None);
+                });
+                p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, YAxisPlacement.Rigth);
+                    setP.Add(y => y.LabelSize, 15.0);
+                    setP.Add(y => y.Margin, 5.0);
+                    setP.Add<Tick>(y => y.MajorTick, (setT) =>
+                    {
+                        setT.Add(z => z.Value, majorTickCount);
+                    });
+                });
+            });
+
+            XElement expectedRoot = new XElement("svg");
+
+            Dictionary<Double, String> expectedLabels = new();
+
+            Double delta = 100.0 / (stepAmount - 1);
+            for (int i = 0; i < stepAmount; i++)
+            {
+                expectedLabels.Add(100 - (delta * i), Math.Round(i * expectedStep, 4).ToString(CultureInfo.InvariantCulture));
+            }
+
+            foreach (var item in expectedLabels)
+            {
+                String dominantBaseline = "middle";
+                if (item.Key == expectedLabels.First().Key)
+                {
+                    dominantBaseline = "text-after-edge";
+                }
+                else if (item.Key == expectedLabels.Last().Key)
+                {
+                    dominantBaseline = "text-before-edge";
+                }
+
+                expectedRoot.Add(new XElement("text",
+                    new XAttribute("x", "85"),
+                    new XAttribute("y", Math.Round(item.Key, 6).ToString(CultureInfo.InvariantCulture)),
+                    new XAttribute("class", String.Empty),
+                    new XAttribute("font-size", 3),
+                    new XAttribute("dominant-baseline", dominantBaseline),
+                    new XAttribute("text-anchor", "start"),
+                    item.Value
+                    ));
+            }
+
+            XElement root = new XElement("svg");
+
+            foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
+            {
+                if (item.NodeName != "POLYGON")
+                {
+                    var element = XElement.Parse(item.OuterHtml);
+                    RoundElementValues(item, element);
+                    root.Add(element);
+                }
+            }
+
+            root.Should().BeEquivalentTo(expectedRoot);
+        }
+
+        private static void RoundElementValues(IHtmlUnknownElement item, XElement element)
+        {
+            if (item.NodeName == "POLYGON")
+            {
+                String pointRaw = element.Attribute("points").Value;
+                String[] points = pointRaw.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                List<Point> roundedPoints = new();
+                foreach (var point in points)
+                {
+                    String[] parts = point.Split(",");
+                    Double x = Math.Round(Double.Parse(parts[0], CultureInfo.InvariantCulture), 4);
+                    Double y = Math.Round(Double.Parse(parts[1], CultureInfo.InvariantCulture), 4);
+
+                    roundedPoints.Add(new Point(x, y));
+                }
+
+                String roundendPointsAttribute = String.Empty;
+                foreach (var roundedPoint in roundedPoints)
+                {
+                    roundendPointsAttribute += $"{roundedPoint.X.ToString(CultureInfo.InvariantCulture)},{roundedPoint.Y.ToString(CultureInfo.InvariantCulture)} ";
+                }
+
+                roundendPointsAttribute = roundendPointsAttribute.Trim();
+                element.SetAttributeValue("points", roundendPointsAttribute);
+            }
+            else if (item.NodeName == "TEXT")
+            {
+                RoundValue(element, "x");
+                RoundValue(element, "y");
+            }
+        }
+
+        private static void RoundValue(XElement element, String attributeName, Int32 precission = 6)
+        {
+            Double unroundedValue = Double.Parse(element.Attribute(attributeName).Value, CultureInfo.InvariantCulture);
+            Double roundedValue = Math.Round(unroundedValue, precission);
+            String result = roundedValue.ToString(CultureInfo.InvariantCulture);
+            if (result == "-0")
+            {
+                result = "0";
+            }
+
+            element.SetAttributeValue(attributeName, result);
+        }
+
         private void GenerateSampleBarChart(
-            Action<ComponentParameterCollectionBuilder<MudEnchancedBarChart>> additionalConfiguration,
-            out List<Rectangle> untransformedExpectedRects, 
-            out IRenderedComponent<MudEnchancedBarChart> comp)
+          Action<ComponentParameterCollectionBuilder<MudEnchancedBarChart>> additionalConfiguration,
+          out List<Rectangle> untransformedExpectedRects,
+          out IRenderedComponent<MudEnchancedBarChart> comp)
+            => GenerateSampleBarChart(additionalConfiguration, 1.0, out untransformedExpectedRects, out comp);
+
+        private void GenerateSampleBarChart(
+        Action<ComponentParameterCollectionBuilder<MudEnchancedBarChart>> additionalConfiguration,
+        Double pointScalingFactor,
+        out List<Rectangle> untransformedExpectedRects,
+        out IRenderedComponent<MudEnchancedBarChart> comp)
         {
             String firtSeriesColor = (Colors.Brown.Default + "FF").ToLower();
             String secondSeriesColor = (Colors.BlueGrey.Default + "FF").ToLower();
             String thirdSeriesColor = (Colors.Red.Default + "FF").ToLower();
             String fourthSeriesColor = (Colors.Orange.Default + "FF").ToLower();
 
-            var firstData = new List<Double> { 125.0, 150.0 };
-            var secondData = new List<Double> { 100.0, 200.0 };
-            var thirdData = new List<Double> { 0.0, 150.0 };
-            var fourthData = new List<Double> { 150.0 };
+            var firstData = new List<Double> { pointScalingFactor * 125.0, pointScalingFactor * 150.0 };
+            var secondData = new List<Double> { pointScalingFactor * 100.0, pointScalingFactor * 200.0 };
+            var thirdData = new List<Double> { pointScalingFactor * 0.0, pointScalingFactor * 150.0 };
+            var fourthData = new List<Double> { pointScalingFactor * 150.0 };
 
             untransformedExpectedRects = new List<Rectangle>
             {
@@ -519,6 +976,274 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             });
         }
 
+        private void CheckChartBasedOnXAxisAndYAxisAlignment(
+            XAxisPlacement xAxisPlacement, YAxisPlacement yAxisPlacement,
+            Func<Point, Point> pointTransformation,
+            Point firstExpectedXLabelPoint, Point secondExpectedXLabelPoint,
+            Dictionary<Double, String> expectedYAxisLabels, Double yLabelXCoordinate, String yAxisLabelTextAnchor
+            )
+        {
+            String classLabelX = "special-x-class-label";
+            String classLabelY = "special-y-class-label";
+
+            List<Rectangle> untransformedExpectedRects;
+            IRenderedComponent<MudEnchancedBarChart> comp;
+            GenerateSampleBarChart((p) =>
+            {
+                p.Add<BarChartXAxis>(x => x.XAxis, (setP) =>
+                {
+                    setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
+                    setP.Add(y => y.Placement, xAxisPlacement);
+                    setP.Add(y => y.Margin, 10.0);
+                    setP.Add(y => y.Height, 5.0);
+                    setP.Add(y => y.LabelCssClass, classLabelX);
+                });
+                p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, yAxisPlacement);
+                    setP.Add(y => y.LabelSize, 15.0);
+                    setP.Add(y => y.Margin, 5.0);
+                    setP.Add(y => y.LabelCssClass, classLabelY);
+                    setP.Add<Tick>(y => y.MajorTick, (setT) =>
+                    {
+                        setT.Add(z => z.Value, 5.0);
+                    });
+                });
+            }, out untransformedExpectedRects, out comp);
+
+            XElement expectedRoot = new XElement("svg",
+                TransformRectToSvgElements(TransformToSvgCoordinates(untransformedExpectedRects.Select(x => new Rectangle
+                (
+                    pointTransformation(x.P1),
+                    pointTransformation(x.P2),
+                    pointTransformation(x.P3),
+                    pointTransformation(x.P4),
+                    x.FillColor
+                )))
+                ));
+
+            expectedRoot.Add(new XElement("text",
+              new XAttribute("x", firstExpectedXLabelPoint.X.ToString(CultureInfo.InvariantCulture)),
+              new XAttribute("y", firstExpectedXLabelPoint.Y.ToString(CultureInfo.InvariantCulture)),
+              new XAttribute("font-size", 5.ToString(CultureInfo.InvariantCulture)),
+              new XAttribute("class", classLabelX),
+              new XAttribute("dominant-baseline", "middle"),
+              new XAttribute("text-anchor", "middle"),
+              "Mo"
+              ),
+              new XElement("text",
+              new XAttribute("x", secondExpectedXLabelPoint.X.ToString(CultureInfo.InvariantCulture)),
+              new XAttribute("y", secondExpectedXLabelPoint.Y.ToString(CultureInfo.InvariantCulture)),
+              new XAttribute("font-size", 5.ToString(CultureInfo.InvariantCulture)),
+              new XAttribute("class", classLabelX),
+              new XAttribute("dominant-baseline", "middle"),
+              new XAttribute("text-anchor", "middle"),
+              "Tu"
+              )
+           );
+
+            foreach (var item in expectedYAxisLabels)
+            {
+                String dominantBaseline = "middle";
+                if (item.Key == expectedYAxisLabels.First().Key)
+                {
+                    dominantBaseline = "text-after-edge";
+                }
+                else if (item.Key == expectedYAxisLabels.Last().Key)
+                {
+                    dominantBaseline = "text-before-edge";
+                }
+
+                expectedRoot.Add(new XElement("text",
+                    new XAttribute("x", yLabelXCoordinate),
+                    new XAttribute("y", item.Key.ToString(CultureInfo.InvariantCulture)),
+                    new XAttribute("class", classLabelY),
+                    new XAttribute("font-size", 3),
+                    new XAttribute("dominant-baseline", dominantBaseline),
+                    new XAttribute("text-anchor", yAxisLabelTextAnchor),
+                    item.Value
+                    ));
+            }
+
+            XElement root = new XElement("svg");
+
+            foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
+            {
+                var element = XElement.Parse(item.OuterHtml);
+                RoundElementValues(item, element);
+                root.Add(element);
+            }
+
+            root.Should().BeEquivalentTo(expectedRoot);
+        }
+
+        [TestCase("en-us")]
+        [TestCase("de-de")]
+        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisLeftAndXAxisBottom(String culture)
+        {
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+
+            Dictionary<Double, String> expectedYAxisLabels = new()
+            {
+                { 4 * 21.25, "0" },
+                { 3 * 21.25, "50" },
+                { 2 * 21.25, "100" },
+                { 1 * 21.25, "150" },
+                { 0, "200" },
+            };
+
+            CheckChartBasedOnXAxisAndYAxisAlignment(XAxisPlacement.Bottom, YAxisPlacement.Left, (p) =>
+             p.ScaleY(0.85).MoveAlongYAxis(15).ScaleX(0.8).MoveAlongXAxis(20),
+            new Point(40, 97.5), new Point(80, 97.5),
+            expectedYAxisLabels, 15, "end");
+        }
+
+        [TestCase("en-us")]
+        [TestCase("de-de")]
+        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisRightAndXAxisBottom(String culture)
+        {
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+
+            Dictionary<Double, String> expectedYAxisLabels = new()
+            {
+                { 4 * 21.25, "0" },
+                { 3 * 21.25, "50" },
+                { 2 * 21.25, "100" },
+                { 1 * 21.25, "150" },
+                { 0, "200" },
+            };
+
+            CheckChartBasedOnXAxisAndYAxisAlignment(XAxisPlacement.Bottom, YAxisPlacement.Rigth, (p) =>
+             p.ScaleY(0.85).MoveAlongYAxis(15).ScaleX(0.8),
+            new Point(20, 97.5), new Point(60, 97.5),
+            expectedYAxisLabels, 100 - 15, "start"
+            );
+        }
+
+        [TestCase("en-us")]
+        [TestCase("de-de")]
+        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisLeftAndXAxisTop(String culture)
+        {
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+
+            Dictionary<Double, String> expectedYAxisLabels = new()
+            {
+                { 100, "0" },
+                { 100 - 1 * 21.25, "50" },
+                { 100 - 2 * 21.25, "100" },
+                { 100 - 3 * 21.25, "150" },
+                { 15, "200" },
+            };
+
+            CheckChartBasedOnXAxisAndYAxisAlignment(XAxisPlacement.Top, YAxisPlacement.Left, (p) =>
+             p.ScaleY(0.85).ScaleX(0.8).MoveAlongXAxis(20),
+            new Point(40, 2.5), new Point(80, 2.5),
+            expectedYAxisLabels, 15, "end");
+        }
+
+        [TestCase("en-us")]
+        [TestCase("de-de")]
+        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisRightAndXAxisTop(String culture)
+        {
+            CultureInfo.CurrentCulture = new CultureInfo(culture);
+
+            Dictionary<Double, String> expectedYAxisLabels = new()
+            {
+                { 100, "0" },
+                { 100 - 1 * 21.25, "50" },
+                { 100 - 2 * 21.25, "100" },
+                { 100 - 3 * 21.25, "150" },
+                { 15, "200" },
+            };
+
+            CheckChartBasedOnXAxisAndYAxisAlignment(XAxisPlacement.Top, YAxisPlacement.Rigth, (p) =>
+             p.ScaleY(0.85).ScaleX(0.8),
+            new Point(20, 2.5), new Point(60, 2.5),
+            expectedYAxisLabels, 100 - 15, "start"
+            );
+        }
+
+        [TestCase(183, 5, 200)]
+        [TestCase(183, 6, 200)]
+        [TestCase(183, 7, 200)]
+        [TestCase(183, 13, 200)]
+        [TestCase(183, 14, 190)]
+        [TestCase(183, 15, 190)]
+
+        [TestCase(18.3, 5, 20)]
+        [TestCase(18.3, 6, 20)]
+        [TestCase(18.3, 7, 20)]
+        [TestCase(18.3, 13, 20)]
+        [TestCase(18.3, 14, 19)]
+        [TestCase(18.3, 15, 19)]
+
+        [TestCase(0.183, 5, 0.2)]
+        [TestCase(0.183, 6, 0.2)]
+        [TestCase(0.183, 7, 0.2)]
+        [TestCase(0.183, 13, 0.2)]
+        [TestCase(0.183, 14, 0.19)]
+        [TestCase(0.183, 15, 0.19)]
+        public void DrawSimpleDataSet_OnlyPostiveValues_AutoScaleValues_BarHeigth(Double maxDataSeries, Double majorTickCount, Double expectedMax)
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("en-us");
+
+            Random random = new Random();
+            String color = (Colors.Red.Darken1 + "ff").ToLower();
+
+            var firstData = new List<Double> { maxDataSeries };
+
+            var comp = ctx.RenderComponent<MudEnchancedBarChart>(p =>
+            {
+                p.Add(x => x.Margin, 0.0);
+                p.Add(x => x.Padding, 0.0);
+                p.Add<BarDataSet>(x => x.DataSets, (setP) =>
+                {
+                    setP.Add<BarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my first series");
+                        seriesP.Add(z => z.Points, firstData);
+                        seriesP.Add(z => z.Color, color);
+                    });
+                });
+                p.Add<BarChartXAxis>(x => x.XAxis, (setP) =>
+                {
+                    setP.Add(y => y.Labels, new List<String> { "Mo" });
+                    setP.Add(y => y.Placement, XAxisPlacement.None);
+                });
+                p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
+                {
+                    setP.Add(y => y.Placement, YAxisPlacement.None);
+                    setP.Add<Tick>(y => y.MajorTick, (setT) =>
+                    {
+                        setT.Add(z => z.Value, majorTickCount);
+                    });
+                });
+            });
+
+            Double height = (maxDataSeries / expectedMax) * 100;
+            height = Math.Round( (100 - height),4);
+
+            XElement expectedRoot = new XElement("svg", new XElement(
+               new XElement("polygon",
+                new XAttribute("fill", color),
+                new XAttribute("points", $"0,100 0,{height.ToString(CultureInfo.InvariantCulture)} 100,{height.ToString(CultureInfo.InvariantCulture)} 100,100")
+                )));
+
+            XElement root = new XElement("svg");
+
+            foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
+            {
+                if (item.NodeName == "POLYGON")
+                {
+                    var element = XElement.Parse(item.OuterHtml);
+                    RoundElementValues(item, element);
+                    root.Add(element);
+                }
+            }
+
+            root.Should().BeEquivalentTo(expectedRoot);
+        }
+
         private IEnumerable<Rectangle> TransformToSvgCoordinates(IEnumerable<Rectangle> input)
             => input.Select((Func<Rectangle, Rectangle>)(x => new Rectangle(
                 x.P1.TransformPointToSvgCoordinateSystem(),
@@ -544,7 +1269,10 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
     static class PointTransforamtion
     {
         public static Point ScaleY(this Point p, Double value) => new Point(p.X, p.Y * value);
+        public static Point ScaleX(this Point p, Double value) => new Point(p.X * value, p.Y);
         public static Point MoveAlongYAxis(this Point p, Double value) => new Point(p.X, p.Y + value);
+        public static Point MoveAlongXAxis(this Point p, Double value) => new Point(p.X + value, p.Y);
+
         public static Point TransformPointToSvgCoordinateSystem(this Point point) => new Point(Math.Round(point.X, 10), Math.Round((point.Y - 100) * (-1), 10));
 
     }

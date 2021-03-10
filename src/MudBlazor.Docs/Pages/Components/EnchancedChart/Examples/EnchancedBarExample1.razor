@@ -18,9 +18,9 @@
                 
             </DataSets>
             <YAxes>
-              <NumericLinearAxis ScalingType="ScalingType.Auto" Min="0" Max="100" ShowMinorTicks="true" ShowMajorTicks="true" >
+              <NumericLinearAxis ScalingType="ScalingType.Auto" Margin="@config.YAxis.Margin" LabelSize="@config.YAxis.LabelSize" Placement="@config.YAxis.Placement" LabelCssClass="my-custom-class" Min="0" Max="100" ShowMinorTicks="true" ShowMajorTicks="true" >
                   <MajorTick>
-                      <Tick Value="10" Color="Color" Thickness="2"  />
+                      <Tick Value="@config.YAxis.MajorTickAmount" Color="Color" Thickness="2"  />
                   </MajorTick>
                   <MinorTick>
                       <Tick Value="5" Color="Color" Thickness="1"  />
@@ -140,6 +140,29 @@
                  }
              </MudGrid>
     </MudExpansionPanel>
+      <MudExpansionPanel Text="Y Axis Properties">
+             <MudGrid>
+                 <MudItem xs="12">
+                     <MudSelect T="YAxisPlacement" Label="Placement" @bind-Value="config.YAxis.Placement">
+                         <MudSelectItem Value="@(YAxisPlacement.Left)" />
+                         <MudSelectItem Value="@(YAxisPlacement.Rigth)" />
+                         <MudSelectItem Value="@(YAxisPlacement.None)" />
+                     </MudSelect>
+                 </MudItem>
+                 @if(config.YAxis.Placement != YAxisPlacement.None)
+                 { 
+                 <MudItem xs="12" sm="4">
+                     <MudSlider @bind-Value="@config.YAxis.Margin" Min="0" Max="100">Margin</MudSlider>
+                 </MudItem>
+                 <MudItem xs="12" sm="6">
+                     <MudSlider @bind-Value="@config.YAxis.LabelSize" Min="0" Max="100">LabelSize</MudSlider>
+                 </MudItem>
+                 <MudItem xs="12" sm="6">
+                     <MudSlider @bind-Value="@config.YAxis.MajorTickAmount" Step="1" Min="2" Max="100">Major Tick Amount</MudSlider>
+                 </MudItem>
+                 }
+             </MudGrid>
+    </MudExpansionPanel>
      <MudExpansionPanel Text="Dataseries">
          <MudGrid>
             <MudItem xs="12">
@@ -240,6 +263,14 @@
         public XAxisPlacement Placement { get; set; } = XAxisPlacement.Bottom;
     }
 
+    public class YAxisConfiguration
+    {
+        public Double Margin { get; set; } = 1.5;
+        public Double LabelSize { get; set; } = 5;
+        public Double MajorTickAmount { get; set; } = 5.0;
+        public YAxisPlacement Placement { get; set; } = YAxisPlacement.Left;
+    }
+
     public class BarChartConfiguration
     {
         public Position LegendPosition { get; set; } = Position.Right;
@@ -258,6 +289,7 @@
 
         public List<BarChartDataSeriesConfig> DataSets { get; set; } = new();
         public XAxisConfiguration XAxis { get; set; } = new();
+        public YAxisConfiguration YAxis { get; set; } = new();
     }
 
     private BarChartConfiguration config = new();

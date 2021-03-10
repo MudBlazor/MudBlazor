@@ -16,5 +16,8 @@ namespace MudBlazor.Components.EnchancedChart.Svg
         public Double Length { get; set; }
         public String Class { get; set; }
         public Double Height { get; set; }
+        public String TextPlacement { get; set; } = "middle";
+        public String Baseline { get; set; } = "middle";
+        
     }
 }
