@@ -144,16 +144,6 @@ namespace MudBlazor
                     .Build();
             }
 
-            if (day == DateTime.Today)
-            {
-                return b.AddClass("mud-current")
-                    .AddClass("mud-range", _firstDate != null && day > _firstDate)
-                    .AddClass("mud-range-selection", _firstDate != null && day > _firstDate)
-                    .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate != null && day > _firstDate)
-                    .AddClass($"mud-{Color.ToDescriptionString()}-text")
-                    .Build();
-            }
-
             if (_firstDate == null && _dateRange != null && _dateRange.Start == _dateRange.End && _dateRange.Start == day)
             {
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
@@ -163,6 +153,16 @@ namespace MudBlazor
                 return b.AddClass("mud-range")
                     .AddClass("mud-range-selection", _secondDate == null)
                     .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate != null)
+                    .Build();
+            }
+
+            if (day == DateTime.Today)
+            {
+                return b.AddClass("mud-current")
+                    .AddClass("mud-range", _firstDate != null && day > _firstDate)
+                    .AddClass("mud-range-selection", _firstDate != null && day > _firstDate)
+                    .AddClass($"mud-range-selection-{Color.ToDescriptionString()}", _firstDate != null && day > _firstDate)
+                    .AddClass($"mud-{Color.ToDescriptionString()}-text")
                     .Build();
             }
 
