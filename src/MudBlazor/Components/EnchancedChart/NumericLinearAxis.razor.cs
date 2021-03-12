@@ -60,6 +60,7 @@ namespace MudBlazor
         public Boolean ScalesAutomatically => ScalingType == ScalingType.Auto;
 
         public Double MajorTickValue => _majorTick?.Value ?? 0.0;
+        public Double MinorTickValue => _minorTick?.Value ?? 0.0;
 
         private static void DefaultMinorTickFragment(RenderTreeBuilder builder)
         {
@@ -130,6 +131,24 @@ namespace MudBlazor
         }
 
         NumericLinearAxisSnapshot ISnapshot<NumericLinearAxisSnapshot>.OldSnapshotValue { get; set; }
+
+        public ITick MajorTickInfo => _majorTick?.GetTickInfo(ShowMajorTicks);
+        public ITick MinorTickInfo => _minorTick?.GetTickInfo(ShowMinorTicks);
+
         NumericLinearAxisSnapshot ISnapshot<NumericLinearAxisSnapshot>.CreateSnapShot() => new NumericLinearAxisSnapshot(Min, Max, ShowMinorTicks, ShowMajorTicks, LabelSize, Margin, LabelCssClass, Placement, ScalingType);
+
+        public void RemoveTick(bool isMajorTick)
+        {
+            if(isMajorTick == true)
+            {
+                _majorTick = null;
+                Chart.MajorTickChanged(this, null);
+            }
+            else
+            {
+                _minorTick = null;
+                Chart.MinorTickChanged(this, null);
+            }    
+        }
     }
 }

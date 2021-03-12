@@ -50,6 +50,13 @@ namespace MudBlazor.Utilities
         public CssBuilder AddClass(string value) => AddValue(" " + value);
 
         /// <summary>
+        /// Adds a CSS Class to the builder with space separator when the value is not null or empty.
+        /// </summary>
+        /// <param name="value">CSS Class to add</param>
+        /// <returns>CssBuilder</returns>
+        public CssBuilder AddOnlyWhenNotEmptyClass(string value) => AddClass(value, String.IsNullOrEmpty(value) == false);
+
+        /// <summary>
         /// Adds a conditional CSS Class to the builder with space separator.
         /// </summary>
         /// <param name="value">CSS Class to conditionally add.</param>

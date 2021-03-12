@@ -11,22 +11,25 @@ namespace MudBlazor
 {
     public enum TickMode
     {
-        Absolut,
+        Absolute,
         Relative,
     }
 
-    record TickSnapShot(String Color, Double Thickness, Double Value, TickMode Mode);
+    record TickSnapShot(String Color, Double Thickness, Double Value, String LineCssClass, TickMode Mode);
+
+    public record TickInfo(Boolean ShowGridLines, Double GridLineThickness, String GridLineColor, String GridLineCssClass) : ITick;
 
     [DoNotGenerateAutomaticTest]
-    public class Tick : ComponentBase, ISnapshot<TickSnapShot>
+    public class Tick : ComponentBase, ISnapshot<TickSnapShot>, IDisposable
     {
         [CascadingParameter] public IYAxis Axe { get; set; }
         [CascadingParameter(Name = "IsMajorTick")] public Boolean IsMajorTick { get; set; }
 
-        [Parameter] public String Color { get; set; }
-        [Parameter] public Double Thickness { get; set; } = 1.0;
+        [Parameter] public CssColor Color { get; set; } = "#808080";
+        [Parameter] public Double Thickness { get; set; } = 0.5;
+        [Parameter] public String LineCssClass { get; set; } = String.Empty;
         [Parameter] public Double Value { get; set; }
-        [Parameter] public TickMode Mode { get; set; } = TickMode.Absolut;
+        [Parameter] public TickMode Mode { get; set; } = TickMode.Absolute;
 
 
         protected override void OnParametersSet()
@@ -47,6 +50,13 @@ namespace MudBlazor
         }
 
         TickSnapShot ISnapshot<TickSnapShot>.OldSnapshotValue { get; set; }
-        TickSnapShot ISnapshot<TickSnapShot>.CreateSnapShot() => new TickSnapShot(Color, Thickness, Value, Mode);
+        TickSnapShot ISnapshot<TickSnapShot>.CreateSnapShot() => new TickSnapShot((String)Color, Thickness, Value, LineCssClass, Mode);
+
+        internal ITick GetTickInfo(bool showMajorTicks) => new TickInfo(showMajorTicks, Thickness, (String)Color, LineCssClass);
+
+        public void Dispose()
+        {
+            Axe?.RemoveTick(IsMajorTick);
+        }
     }
 }
