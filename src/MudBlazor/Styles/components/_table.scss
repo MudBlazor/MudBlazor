@@ -17,11 +17,13 @@
 
 .mud-table-container {
     width: 100%;
+    display: block;
+    overflow-x: auto;
 }
 
 .mud-table-root {
     width: 100%;
-    display: table;
+    //display: table;
     border-spacing: 0;
     border-collapse: collapse;
 
