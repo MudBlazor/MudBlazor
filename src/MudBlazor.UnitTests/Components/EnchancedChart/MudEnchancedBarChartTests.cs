@@ -108,14 +108,32 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             xAxesComponent.SetParametersAndRender(p => p.Add(x => x.ShowGridLines, false));
             xAxesComponent.SetParametersAndRender(p => p.Add(x => x.ShowGridLines, true));
 
+            called.Should().Be(2);
+
             xAxesComponent.SetParametersAndRender(p => p.Add(x => x.Placement, XAxisPlacement.Top));
             xAxesComponent.SetParametersAndRender(p => p.Add(x => x.Placement, XAxisPlacement.Bottom));
+
+            called.Should().Be(4);
 
             xAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelCssClass, "my new class"));
             xAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelCssClass, "another new class"));
 
             called.Should().Be(6);
 
+            xAxesComponent.SetParametersAndRender(p => p.Add(x => x.GridLineCssClass, "my new class"));
+            xAxesComponent.SetParametersAndRender(p => p.Add(x => x.GridLineCssClass, "another new class"));
+
+            called.Should().Be(8);
+
+            xAxesComponent.SetParametersAndRender(p => p.Add(x => x.GridLineThickness, 2.0));
+            xAxesComponent.SetParametersAndRender(p => p.Add(x => x.GridLineThickness, 0.5));
+
+            called.Should().Be(10);
+
+            xAxesComponent.SetParametersAndRender(p => p.Add(x => x.GridLineColor, "#808081"));
+            xAxesComponent.SetParametersAndRender(p => p.Add(x => x.GridLineColor, "#808084"));
+
+            called.Should().Be(12);
         }
 
         [Test]
@@ -141,7 +159,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             foreach (var tickComponent in tickComponents)
             {
-                tickComponent.SetParametersAndRender(p => p.Add(x => x.Mode, TickMode.Absolut));
+                tickComponent.SetParametersAndRender(p => p.Add(x => x.Mode, TickMode.Absolute));
                 tickComponent.SetParametersAndRender(p => p.Add(x => x.Mode, TickMode.Relative));
 
                 tickComponent.SetParametersAndRender(p => p.Add(x => x.Value, 10.5));
@@ -153,7 +171,14 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                 tickComponent.SetParametersAndRender(p => p.Add(x => x.Color, "#121234"));
                 tickComponent.SetParametersAndRender(p => p.Add(x => x.Color, "#A2F3D4"));
 
-                expectedCalledCounter += 8;
+                tickComponent.SetParametersAndRender(p => p.Add(x => x.LineCssClass, "some-class"));
+                tickComponent.SetParametersAndRender(p => p.Add(x => x.LineCssClass, "another-class"));
+
+                expectedCalledCounter += 10;
+                called.Should().Be(expectedCalledCounter);
+
+                tickComponent.Instance.Dispose();
+                expectedCalledCounter += 1;
                 called.Should().Be(expectedCalledCounter);
             }
         }
@@ -326,10 +351,12 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                 {
                     setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
                     setP.Add(y => y.Placement, XAxisPlacement.None);
+                    setP.Add(y => y.ShowGridLines, false);
                 });
                 p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.None);
+                    setP.Add(y => y.ShowMajorTicks, false);
                 });
             }, out untransformedExpectedRects, out comp);
 
@@ -365,10 +392,12 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                     setP.Add(y => y.Placement, XAxisPlacement.Bottom);
                     setP.Add(y => y.Height, 15.0);
                     setP.Add(y => y.Margin, 5.0);
+                    setP.Add(y => y.ShowGridLines, false);
                 });
                 p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.None);
+                    setP.Add(y => y.ShowMajorTicks, false);
                 });
             }, out untransformedExpectedRects, out comp);
 
@@ -435,10 +464,13 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                     setP.Add(y => y.Placement, XAxisPlacement.Top);
                     setP.Add(y => y.Height, 15.0);
                     setP.Add(y => y.Margin, 5.0);
+                    setP.Add(y => y.ShowGridLines, false);
                 });
                 p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.None);
+                    setP.Add(y => y.ShowMajorTicks, false);
+
                 });
             }, out untransformedExpectedRects, out comp);
 
@@ -502,6 +534,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                 {
                     setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
                     setP.Add(y => y.Placement, XAxisPlacement.None);
+                    setP.Add(y => y.ShowGridLines, false);
                 });
                 p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
                 {
@@ -509,6 +542,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                     setP.Add(y => y.LabelSize, 15.0);
                     setP.Add(y => y.Margin, 5.0);
                     setP.Add(y => y.LabelCssClass, classLabel);
+                    setP.Add(y => y.ShowMajorTicks, false);
                     setP.Add<Tick>(y => y.MajorTick, (setT) =>
                     {
                         setT.Add(z => z.Value, 5.0);
@@ -587,6 +621,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                 {
                     setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
                     setP.Add(y => y.Placement, XAxisPlacement.None);
+                    setP.Add(y => y.ShowGridLines, false);
                 });
                 p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
                 {
@@ -594,6 +629,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                     setP.Add(y => y.LabelSize, 15.0);
                     setP.Add(y => y.Margin, 5.0);
                     setP.Add(y => y.LabelCssClass, classLabel);
+                    setP.Add(y => y.ShowMajorTicks, false);
                     setP.Add<Tick>(y => y.MajorTick, (setT) =>
                     {
                         setT.Add(z => z.Value, 5.0);
@@ -677,6 +713,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                 {
                     setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
                     setP.Add(y => y.Placement, XAxisPlacement.None);
+                    setP.Add(y => y.ShowGridLines, false);
                 });
                 p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
                 {
@@ -684,6 +721,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                     setP.Add(y => y.LabelSize, 15.0);
                     setP.Add(y => y.Margin, 5.0);
                     setP.Add(y => y.LabelCssClass, classLabel);
+                    setP.Add(y => y.ShowMajorTicks, false);
                     setP.Add<Tick>(y => y.MajorTick, (setT) =>
                     {
                         setT.Add(z => z.Value, 5.0);
@@ -794,12 +832,15 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                 {
                     setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
                     setP.Add(y => y.Placement, XAxisPlacement.None);
+                    setP.Add(y => y.ShowGridLines, false);
+
                 });
                 p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.Rigth);
                     setP.Add(y => y.LabelSize, 15.0);
                     setP.Add(y => y.Margin, 5.0);
+                    setP.Add(y => y.ShowMajorTicks, false);
                     setP.Add<Tick>(y => y.MajorTick, (setT) =>
                     {
                         setT.Add(z => z.Value, majorTickCount);
@@ -884,6 +925,13 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             {
                 RoundValue(element, "x");
                 RoundValue(element, "y");
+            }
+            else if (item.NodeName == "LINE")
+            {
+                RoundValue(element, "x1");
+                RoundValue(element, "y1");
+                RoundValue(element, "x2");
+                RoundValue(element, "y2");
             }
         }
 
@@ -980,11 +1028,27 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             XAxisPlacement xAxisPlacement, YAxisPlacement yAxisPlacement,
             Func<Point, Point> pointTransformation,
             Point firstExpectedXLabelPoint, Point secondExpectedXLabelPoint,
-            Dictionary<Double, String> expectedYAxisLabels, Double yLabelXCoordinate, String yAxisLabelTextAnchor
+            Dictionary<Double, String> expectedYAxisLabels, Double yLabelXCoordinate, String yAxisLabelTextAnchor,
+            Boolean withXAxisGrid, Boolean withYAxisGrid
             )
         {
             String classLabelX = "special-x-class-label";
             String classLabelY = "special-y-class-label";
+
+            Double majorTickValue = 25.0;
+            Double minorTickValue = 5.0;
+
+            String xGridLabelClass = "x-grid";
+            Double xGridLineThickness = 1.2;
+            String xGridLineColor = (Colors.Orange.Accent4 + "FF").ToLower();
+
+            String yGridLineMajorClass = "y-axis-major";
+            String yGridLineMajorColor = (Colors.Red.Accent4 + "FF").ToLower();
+            Double yGridLineMajorThickness = 1.4;
+
+            String yGridLineMinorClass = "y-axis-minor";
+            String yGridLineMinorColor = (Colors.DeepPurple.Accent4 + "FF").ToLower();
+            Double yGridLineMinorThickness = 1.3;
 
             List<Rectangle> untransformedExpectedRects;
             IRenderedComponent<MudEnchancedBarChart> comp;
@@ -997,6 +1061,10 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                     setP.Add(y => y.Margin, 10.0);
                     setP.Add(y => y.Height, 5.0);
                     setP.Add(y => y.LabelCssClass, classLabelX);
+                    setP.Add(y => y.ShowGridLines, withXAxisGrid);
+                    setP.Add(y => y.GridLineCssClass, xGridLabelClass);
+                    setP.Add(y => y.GridLineThickness, xGridLineThickness);
+                    setP.Add(y => y.GridLineColor, xGridLineColor);
                 });
                 p.Add<NumericLinearAxis>(x => x.YAxes, (setP) =>
                 {
@@ -1004,9 +1072,22 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                     setP.Add(y => y.LabelSize, 15.0);
                     setP.Add(y => y.Margin, 5.0);
                     setP.Add(y => y.LabelCssClass, classLabelY);
+                    setP.Add(y => y.ShowMajorTicks, withYAxisGrid);
+                    setP.Add(y => y.ShowMinorTicks, withYAxisGrid);
+
                     setP.Add<Tick>(y => y.MajorTick, (setT) =>
                     {
                         setT.Add(z => z.Value, 5.0);
+                        setT.Add(z => z.LineCssClass, yGridLineMajorClass);
+                        setT.Add(z => z.Color, yGridLineMajorColor);
+                        setT.Add(z => z.Thickness, yGridLineMajorThickness);
+                    });
+                    setP.Add<Tick>(y => y.MinorTick, (setT) =>
+                    {
+                        setT.Add(z => z.Value, 5.0);
+                        setT.Add(z => z.LineCssClass, yGridLineMinorClass);
+                        setT.Add(z => z.Color, yGridLineMinorColor);
+                        setT.Add(z => z.Thickness, yGridLineMinorThickness);
                     });
                 });
             }, out untransformedExpectedRects, out comp);
@@ -1065,6 +1146,73 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                     ));
             }
 
+            Func<Point, Point> AxisCorrector = (p) => p.MirrowY().MoveAlongYAxis(100);
+
+            if (withXAxisGrid)
+            {
+                Double[] xValues = new[] { 0.0, 50.0, 100.0 };
+
+                for (int i = 0; i < xValues.Length; i++)
+                {
+                    Point p1 = AxisCorrector(pointTransformation(new Point(xValues[i], 0)));
+                    Point p2 = AxisCorrector(pointTransformation(new Point(xValues[i], 100)));
+
+                    expectedRoot.Add(new XElement("line",
+                    new XAttribute("stroke", xGridLineColor),
+                    new XAttribute("class", $"mud-chart-x-axis-grid-line {xGridLabelClass}"),
+                    new XAttribute("stroke-width", xGridLineThickness),
+                    new XAttribute("x1", Math.Round(p1.X, 6).ToString(CultureInfo.InvariantCulture)),
+                    new XAttribute("y1", Math.Round(p1.Y, 6).ToString(CultureInfo.InvariantCulture)),
+                    new XAttribute("x2", Math.Round(p2.X, 6).ToString(CultureInfo.InvariantCulture)),
+                    new XAttribute("y2", Math.Round(p2.Y, 6).ToString(CultureInfo.InvariantCulture))
+                    ));
+                }
+            }
+            if (withYAxisGrid == true)
+            {
+                Double currentMajorTick = 0;
+                Double nextMajorTick = currentMajorTick + majorTickValue;
+                while (currentMajorTick <= 100.00)
+                {
+                    Point p1 = AxisCorrector(pointTransformation(new Point(0, currentMajorTick)));
+                    Point p2 = AxisCorrector(pointTransformation(new Point(100, currentMajorTick)));
+
+                    expectedRoot.Add(new XElement("line",
+                  new XAttribute("stroke", yGridLineMajorColor),
+                  new XAttribute("class", $"mud-chart-y-axis-major-grid-line {yGridLineMajorClass}"),
+                  new XAttribute("stroke-width", yGridLineMajorThickness),
+                  new XAttribute("x1", Math.Round(p1.X, 6).ToString(CultureInfo.InvariantCulture)),
+                  new XAttribute("y1", Math.Round(p1.Y, 6).ToString(CultureInfo.InvariantCulture)),
+                  new XAttribute("x2", Math.Round(p2.X, 6).ToString(CultureInfo.InvariantCulture)),
+                  new XAttribute("y2", Math.Round(p2.Y, 6).ToString(CultureInfo.InvariantCulture))
+                  ));
+
+                    if (currentMajorTick < 100.0)
+                    {
+                        Double currentMinorTick = minorTickValue;
+                        while (currentMinorTick < nextMajorTick)
+                        {
+                            Point p_minor_1 = AxisCorrector(pointTransformation(new Point(0, currentMajorTick + currentMinorTick)));
+                            Point p_minor_2 = AxisCorrector(pointTransformation(new Point(100, currentMajorTick + currentMinorTick)));
+
+                            expectedRoot.Add(new XElement("line",
+                            new XAttribute("stroke", yGridLineMinorColor),
+                            new XAttribute("class", $"mud-chart-y-axis-minor-grid-line {yGridLineMinorClass}"),
+                            new XAttribute("stroke-width", yGridLineMinorThickness),
+                            new XAttribute("x1", Math.Round(p_minor_1.X, 6).ToString(CultureInfo.InvariantCulture)),
+                            new XAttribute("y1", Math.Round(p_minor_1.Y, 6).ToString(CultureInfo.InvariantCulture)),
+                            new XAttribute("x2", Math.Round(p_minor_2.X, 6).ToString(CultureInfo.InvariantCulture)),
+                            new XAttribute("y2", Math.Round(p_minor_2.Y, 6).ToString(CultureInfo.InvariantCulture))
+                            ));
+
+                            currentMinorTick += minorTickValue;
+                        }
+                    }
+
+                    currentMajorTick += majorTickValue;
+                }
+            }
+
             XElement root = new XElement("svg");
 
             foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
@@ -1077,9 +1225,12 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             root.Should().BeEquivalentTo(expectedRoot);
         }
 
-        [TestCase("en-us")]
-        [TestCase("de-de")]
-        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisLeftAndXAxisBottom(String culture)
+        [TestCase("de-de", false, false)]
+        [TestCase("de-de", false, true)]
+        [TestCase("de-de", true, false)]
+        [TestCase("de-de", true, true)]
+        [TestCase("en-us", true, true)]
+        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisLeftAndXAxisBottom(String culture, Boolean withXAxisGrid, Boolean withYAxisGrid)
         {
             CultureInfo.CurrentCulture = new CultureInfo(culture);
 
@@ -1095,12 +1246,15 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             CheckChartBasedOnXAxisAndYAxisAlignment(XAxisPlacement.Bottom, YAxisPlacement.Left, (p) =>
              p.ScaleY(0.85).MoveAlongYAxis(15).ScaleX(0.8).MoveAlongXAxis(20),
             new Point(40, 97.5), new Point(80, 97.5),
-            expectedYAxisLabels, 15, "end");
+            expectedYAxisLabels, 15, "end", withXAxisGrid, withYAxisGrid);
         }
 
-        [TestCase("en-us")]
-        [TestCase("de-de")]
-        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisRightAndXAxisBottom(String culture)
+        [TestCase("de-de", false, false)]
+        [TestCase("de-de", false, true)]
+        [TestCase("de-de", true, false)]
+        [TestCase("de-de", true, true)]
+        [TestCase("en-us", true, true)]
+        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisRightAndXAxisBottom(String culture, Boolean withXAxisGrid, Boolean withYAxisGrid)
         {
             CultureInfo.CurrentCulture = new CultureInfo(culture);
 
@@ -1116,13 +1270,16 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             CheckChartBasedOnXAxisAndYAxisAlignment(XAxisPlacement.Bottom, YAxisPlacement.Rigth, (p) =>
              p.ScaleY(0.85).MoveAlongYAxis(15).ScaleX(0.8),
             new Point(20, 97.5), new Point(60, 97.5),
-            expectedYAxisLabels, 100 - 15, "start"
+            expectedYAxisLabels, 100 - 15, "start", withXAxisGrid, withYAxisGrid
             );
         }
 
-        [TestCase("en-us")]
-        [TestCase("de-de")]
-        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisLeftAndXAxisTop(String culture)
+        [TestCase("de-de", false, false)]
+        [TestCase("de-de", false, true)]
+        [TestCase("de-de", true, false)]
+        [TestCase("de-de", true, true)]
+        [TestCase("en-us", true, true)]
+        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisLeftAndXAxisTop(String culture, Boolean withXAxisGrid, Boolean withYAxisGrid)
         {
             CultureInfo.CurrentCulture = new CultureInfo(culture);
 
@@ -1138,12 +1295,15 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             CheckChartBasedOnXAxisAndYAxisAlignment(XAxisPlacement.Top, YAxisPlacement.Left, (p) =>
              p.ScaleY(0.85).ScaleX(0.8).MoveAlongXAxis(20),
             new Point(40, 2.5), new Point(80, 2.5),
-            expectedYAxisLabels, 15, "end");
+            expectedYAxisLabels, 15, "end", withXAxisGrid, withYAxisGrid);
         }
 
-        [TestCase("en-us")]
-        [TestCase("de-de")]
-        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisRightAndXAxisTop(String culture)
+        [TestCase("de-de", false, false)]
+        [TestCase("de-de", false, true)]
+        [TestCase("de-de", true, false)]
+        [TestCase("de-de", true, true)]
+        [TestCase("en-us", true, true)]
+        public void DrawSimpleDataSet_OnlyPostiveValues_YAxisRightAndXAxisTop(String culture, Boolean withXAxisGrid, Boolean withYAxisGrid)
         {
             CultureInfo.CurrentCulture = new CultureInfo(culture);
 
@@ -1159,7 +1319,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             CheckChartBasedOnXAxisAndYAxisAlignment(XAxisPlacement.Top, YAxisPlacement.Rigth, (p) =>
              p.ScaleY(0.85).ScaleX(0.8),
             new Point(20, 2.5), new Point(60, 2.5),
-            expectedYAxisLabels, 100 - 15, "start"
+            expectedYAxisLabels, 100 - 15, "start", withXAxisGrid, withYAxisGrid
             );
         }
 
@@ -1221,7 +1381,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             });
 
             Double height = (maxDataSeries / expectedMax) * 100;
-            height = Math.Round( (100 - height),4);
+            height = Math.Round((100 - height), 4);
 
             XElement expectedRoot = new XElement("svg", new XElement(
                new XElement("polygon",
@@ -1272,6 +1432,9 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
         public static Point ScaleX(this Point p, Double value) => new Point(p.X * value, p.Y);
         public static Point MoveAlongYAxis(this Point p, Double value) => new Point(p.X, p.Y + value);
         public static Point MoveAlongXAxis(this Point p, Double value) => new Point(p.X + value, p.Y);
+
+        public static Point MirrowY(this Point p) => new Point(p.X, -p.Y);
+
 
         public static Point TransformPointToSvgCoordinateSystem(this Point point) => new Point(Math.Round(point.X, 10), Math.Round((point.Y - 100) * (-1), 10));
 

@@ -118,6 +118,7 @@ namespace MudBlazor
 
             _bars.Clear();
             _labels.Clear();
+            _lines.Clear();
 
             Dictionary<BarDataSet, AxisHelper> dataSetAxisMapper = new();
             Dictionary<IYAxis, AxisHelper> axisMapper = new();
@@ -188,6 +189,8 @@ namespace MudBlazor
 
             matrix = TransformMatrix2D.MirrorYAxis * TransformMatrix2D.Translate(0, -100) * matrix;
 
+            Double xForLine = 0.0;
+            Double deltaForXGridline = 100.0 / _xAxis.Labels.Count;
             for (int labelIndex = 0; labelIndex < _xAxis.Labels.Count; labelIndex++)
             {
                 Double subX = currentX + Padding / 2.0;
@@ -225,6 +228,30 @@ namespace MudBlazor
                 }
 
                 currentX += xPerLabel;
+                if (_xAxis.ShowGridLines == true)
+                {
+                    SvgLine line = new SvgLine(
+                        matrix * new Point2D(xForLine, 0),
+                        matrix * new Point2D(xForLine, 100),
+                        _xAxis.GridLineThickness,
+                        (String)_xAxis.GridLineColor,
+                        new CssBuilder("mud-chart-x-axis-grid-line").AddOnlyWhenNotEmptyClass(_xAxis.GridLineCssClass).Build()
+                        );
+                    _lines.Add(line);
+                }
+
+                xForLine += deltaForXGridline;
+            }
+
+            if (_xAxis.ShowGridLines == true)
+            {
+                _lines.Add(new SvgLine(
+                        matrix * new Point2D(100, 0),
+                        matrix * new Point2D(100, 100),
+                        _xAxis.GridLineThickness,
+                        (String)_xAxis.GridLineColor,
+                        new CssBuilder("mud-chart-x-axis-grid-line").AddOnlyWhenNotEmptyClass(_xAxis.GridLineCssClass).Build()
+                        ));
             }
 
             if (_xAxis.Placement != XAxisPlacement.None)
@@ -256,6 +283,7 @@ namespace MudBlazor
                     });
 
                     x += spacePerXAxisLabel;
+
                 }
             }
 
@@ -276,11 +304,16 @@ namespace MudBlazor
                     y -= marginFromXAxis;
                 }
 
-                Double deltaYPerTick = (100.0 - marginFromXAxis) / (axisHelper.TickAmount - 1);
+                Double deltaYPerTick = (100.0 - marginFromXAxis) / (axisHelper.MajorTickAmount - 1);
                 Double tickValue = axisHelper.StartTickValue;
                 Int32 startIndex = _labels.Count;
 
-                for (int i = 0; i < axisHelper.TickAmount; i++)
+                Double deltaPerMajorGridLine = 100.0 / (axisHelper.MajorTickAmount - 1);
+                Double deltaPerMinorGridLine = deltaPerMajorGridLine / (axisHelper.MinorTickAmount + 1);
+
+                Double lineY = 0.0;
+
+                for (int i = 0; i < axisHelper.MajorTickAmount; i++)
                 {
                     Point2D labelLeftCorner = new Point2D(x, y);
 
@@ -295,7 +328,42 @@ namespace MudBlazor
                     });
 
                     y -= deltaYPerTick;
-                    tickValue += axisHelper.TickNumericValue;
+                    tickValue += axisHelper.MajorTickNumericValue;
+
+                    if (axisHelper.Axis.MajorTickInfo?.ShowGridLines == true)
+                    {
+                        SvgLine line = new SvgLine(
+                          matrix * new Point2D(0, lineY),
+                          matrix * new Point2D(100, lineY),
+                          axisHelper.Axis.MajorTickInfo.GridLineThickness,
+                          axisHelper.Axis.MajorTickInfo.GridLineColor,
+                          new CssBuilder("mud-chart-y-axis-major-grid-line").AddOnlyWhenNotEmptyClass(axisHelper.Axis.MajorTickInfo.GridLineCssClass).Build()
+                          );
+                        _lines.Add(line);
+                    }
+
+                    if (axisHelper.Axis.MinorTickInfo?.ShowGridLines == true)
+                    {
+                        if (lineY < 100.0)
+                        {
+                            Double minorLineY = deltaPerMinorGridLine;
+                            while (minorLineY < deltaPerMajorGridLine)
+                            {
+                                SvgLine line = new SvgLine(
+                                 matrix * new Point2D(0, minorLineY + lineY),
+                                 matrix * new Point2D(100, minorLineY + lineY),
+                                 axisHelper.Axis.MinorTickInfo.GridLineThickness,
+                                 axisHelper.Axis.MinorTickInfo.GridLineColor,
+                                 new CssBuilder("mud-chart-y-axis-minor-grid-line").AddOnlyWhenNotEmptyClass(axisHelper.Axis.MinorTickInfo.GridLineCssClass).Build()
+                                 );
+                                _lines.Add(line);
+
+                                minorLineY += deltaPerMinorGridLine;
+                            }
+                        }
+                    }
+
+                    lineY += deltaPerMajorGridLine;
                 }
 
                 _labels[startIndex].Baseline = "text-after-edge";
@@ -438,8 +506,12 @@ namespace MudBlazor
             public Double Min { get; private set; } = 0.0;
             public Double Max { get; private set; } = Double.MinValue;
             public Double StartTickValue { get; private set; } = 0.0;
-            public Double TickNumericValue { get; private set; } = 0.0;
-            public Int32 TickAmount { get; private set; } = 1;
+            public Double MajorTickNumericValue { get; private set; } = 0.0;
+            public Double MinorTickNumericValue { get; private set; } = 0.0;
+
+            public Int32 MajorTickAmount { get; private set; } = 2;
+            public Int32 MinorTickAmount { get; private set; } = 0;
+
             private Boolean _hasValues = false;
 
             internal void ProcessDataSet(BarDataSet set)
@@ -467,13 +539,37 @@ namespace MudBlazor
 
             internal void CalculateTicks()
             {
-                if (Axis.MajorTickValue == 0) { return; }
                 if (Axis.ScalesAutomatically == false) { return; }
                 if (_hasValues == false) { return; }
 
                 Double initialDelta = Max - Min;
+
+                if (Axis.MajorTickInfo != null)
+                {
+                    Double firstStep = initialDelta / ((Int32)Axis.MajorTickValue - 1);
+
+                    MajorTickNumericValue = GetNearestTickValue(initialDelta, firstStep);
+                    Int32 steps = (Int32)Math.Ceiling((Max - Min) / MajorTickNumericValue);
+                    MajorTickAmount = 1 + steps;
+                    Max = steps * MajorTickNumericValue;
+                }
+                else
+                {
+                    MajorTickNumericValue = initialDelta;
+                    MajorTickAmount = 2;
+                    Max = initialDelta;
+                }
+                if (Axis.MinorTickInfo != null)
+                {
+                    MinorTickNumericValue = GetNearestTickValue(MajorTickNumericValue, MajorTickNumericValue / ((Int32)Axis.MinorTickValue - 1));
+                    MinorTickAmount = (Int32)((MajorTickNumericValue / MinorTickNumericValue) - 1.0);
+                }
+            }
+
+            private static Double GetNearestTickValue(double initialDelta, Double firstStep)
+            {
                 Int32 scalingFactor = 0;
-                Double valuePerTick = initialDelta / ((Int32)Axis.MajorTickValue - 1);
+                Double valuePerTick = firstStep;
 
                 if (initialDelta > 1)
                 {
@@ -520,10 +616,7 @@ namespace MudBlazor
                     }
                 }
 
-                TickNumericValue = valuePerTick;
-                Int32 steps = (Int32)Math.Ceiling((Max - Min) / TickNumericValue);
-                TickAmount = 1 + steps;
-                Max = steps * TickNumericValue;
+                return valuePerTick;
             }
         }
     }

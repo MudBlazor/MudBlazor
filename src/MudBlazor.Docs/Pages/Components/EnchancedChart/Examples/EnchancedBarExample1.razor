@@ -20,15 +20,21 @@
             <YAxes>
               <NumericLinearAxis ScalingType="ScalingType.Auto" Margin="@config.YAxis.Margin" LabelSize="@config.YAxis.LabelSize" Placement="@config.YAxis.Placement" LabelCssClass="my-custom-class" Min="0" Max="100" ShowMinorTicks="true" ShowMajorTicks="true" >
                   <MajorTick>
-                      <Tick Value="@config.YAxis.MajorTickAmount" Color="Color" Thickness="2"  />
+                      @if(config.YAxis.ShowMajorTicks)
+                      { 
+                        <Tick Value="@config.YAxis.MajorTickAmount" Color="@config.YAxis.MajorTickColor" Thickness="@config.YAxis.MajorTickThickness"  />
+                      }
                   </MajorTick>
                   <MinorTick>
-                      <Tick Value="5" Color="Color" Thickness="1"  />
+                      @if(config.YAxis.ShowMinorTicks)
+                      { 
+                            <Tick Value="@config.YAxis.MinorTickAmount" Color="@config.YAxis.MinorTickColor" Thickness="@config.YAxis.MinorTickThickness"  />
+                      }
                   </MinorTick>
               </NumericLinearAxis> 
             </YAxes>
             <XAxis>
-                <BarChartXAxis ShowGridLines="true" Placement="@config.XAxis.Placement" Margin="@config.XAxis.Margin" Height="@config.XAxis.Size" LabelCssClass="" Labels="_usedLabels"  />
+                <BarChartXAxis ShowGridLines="@config.XAxis.ShowGridlines" GridLineColor="@config.XAxis.GridlineColor" GridLineThickness="@config.XAxis.GridlineWidth" Placement="@config.XAxis.Placement" Margin="@config.XAxis.Margin" Height="@config.XAxis.Size" LabelCssClass="" Labels="_usedLabels"  />
             </XAxis>
         </MudEnchancedBarChart>
     </Chart>
@@ -131,13 +137,25 @@
                  </MudItem>
                  @if(config.XAxis.Placement != XAxisPlacement.None)
                  { 
-                 <MudItem xs="12" sm="6">
-                     <MudSlider @bind-Value="@config.XAxis.Margin" Min="0" Max="100">Margin</MudSlider>
-                 </MudItem>
-                 <MudItem xs="12" sm="6">
-                     <MudSlider @bind-Value="@config.XAxis.Size" Min="0" Max="100">Size</MudSlider>
-                 </MudItem>
+                     <MudItem xs="12" sm="6">
+                         <MudSlider @bind-Value="@config.XAxis.Margin" Min="0" Max="100">Margin</MudSlider>
+                     </MudItem>
+                     <MudItem xs="12" sm="6">
+                         <MudSlider @bind-Value="@config.XAxis.Size" Min="0" Max="100">Size</MudSlider>
+                     </MudItem>
                  }
+                 <MudItem xs="12">
+                    <MudCheckBox @bind-Checked="@config.XAxis.ShowGridlines" Label="Show Gridlines" />
+                </MudItem>
+                    @if(config.XAxis.ShowGridlines == true)
+                    { 
+                         <MudItem xs="12" sm="4">
+                             <MudSlider @bind-Value="@config.XAxis.GridlineWidth" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
+                         </MudItem>
+                         <MudItem xs="12" sm="4">
+                             <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="@config.XAxis.GridlineColor" />
+                         </MudItem>
+                    }
              </MudGrid>
     </MudExpansionPanel>
       <MudExpansionPanel Text="Y Axis Properties">
@@ -157,9 +175,36 @@
                  <MudItem xs="12" sm="6">
                      <MudSlider @bind-Value="@config.YAxis.LabelSize" Min="0" Max="100">LabelSize</MudSlider>
                  </MudItem>
-                 <MudItem xs="12" sm="6">
-                     <MudSlider @bind-Value="@config.YAxis.MajorTickAmount" Step="1" Min="2" Max="100">Major Tick Amount</MudSlider>
-                 </MudItem>
+                 <MudItem xs="12">
+                    <MudCheckBox @bind-Checked="@config.YAxis.ShowMajorTicks" Label="Show Major Ticks" />
+                </MudItem>
+                @if(config.YAxis.ShowMajorTicks == true)
+                { 
+                     <MudItem xs="12" sm="6">
+                         <MudSlider @bind-Value="@config.YAxis.MajorTickAmount" Step="1" Min="2" Max="100">Major Tick Amount</MudSlider>
+                     </MudItem>
+                     <MudItem xs="12" sm="6">
+                         <MudSlider @bind-Value="@config.YAxis.MajorTickThickness" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
+                     </MudItem>
+                     <MudItem xs="12" sm="6">
+                         <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="@config.YAxis.MajorTickColor" />
+                     </MudItem>
+                     <MudItem xs="12">
+                        <MudCheckBox @bind-Checked="@config.YAxis.ShowMinorTicks" Label="Show Minor Ticks" />
+                    </MudItem>
+                    @if(config.YAxis.ShowMinorTicks == true)
+                    { 
+                         <MudItem xs="12" sm="4">
+                             <MudSlider @bind-Value="@config.YAxis.MinorTickAmount" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
+                         </MudItem>
+                         <MudItem xs="12" sm="4">
+                             <MudSlider @bind-Value="@config.YAxis.MinorTickThickness" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
+                         </MudItem>
+                         <MudItem xs="12" sm="4">
+                             <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="@config.YAxis.MinorTickColor" />
+                         </MudItem>
+                    }
+                }
                  }
              </MudGrid>
     </MudExpansionPanel>
@@ -261,13 +306,26 @@
         public Double Margin { get; set; } = 1.5;
         public Double Size { get; set; } = 5;
         public XAxisPlacement Placement { get; set; } = XAxisPlacement.Bottom;
+        public Boolean ShowGridlines { get; set; } = false;
+        public Double GridlineWidth { get; set; } = 0.2;
+        public String GridlineColor { get; set; } = Colors.Grey.Default;
     }
 
     public class YAxisConfiguration
     {
         public Double Margin { get; set; } = 1.5;
         public Double LabelSize { get; set; } = 5;
+
+        public Boolean ShowMajorTicks { get; set; } = true;
         public Double MajorTickAmount { get; set; } = 5.0;
+        public String MajorTickColor { get; set; } = Colors.Grey.Default;
+        public Double MajorTickThickness { get; set; } = 0.5;
+
+        public Boolean ShowMinorTicks { get; set; } = false;
+        public Double MinorTickAmount { get; set; } = 5.0;
+        public String MinorTickColor { get; set; } = Colors.Grey.Lighten1;
+        public Double MinorTickThickness { get; set; } = 0.2;
+
         public YAxisPlacement Placement { get; set; } = YAxisPlacement.Left;
     }
 

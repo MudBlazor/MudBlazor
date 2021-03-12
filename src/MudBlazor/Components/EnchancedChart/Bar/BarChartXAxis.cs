@@ -17,7 +17,7 @@ namespace MudBlazor
         None = 3,
     }
 
-    public record BarChartXAxisSnapshot(Boolean ShowGridLines, XAxisPlacement Placement, String LabelCssClass, Double Height, Double Margin);
+    public record BarChartXAxisSnapshot(Boolean ShowGridLines, XAxisPlacement Placement, String LabelCssClass, Double Height, Double Margin, String GridLineCssClass, Double GridLineThickness, String GridLineColor);
 
     [DoNotGenerateAutomaticTest]
     public class BarChartXAxis : ComponentBase, ISnapshot<BarChartXAxisSnapshot>
@@ -30,6 +30,10 @@ namespace MudBlazor
         [Parameter] public IList<String> Labels { get; set; } = new List<String>();
         [Parameter] public Double Height { get; set; } = 5.0;
         [Parameter] public Double Margin { get; set; } = 3.0;
+
+        [Parameter] public String GridLineCssClass { get; set; } = String.Empty;
+        [Parameter] public Double GridLineThickness { get; set; } = 0.5;
+        [Parameter] public CssColor GridLineColor { get; set; } = "#808080";
 
 
         protected override void OnParametersSet()
@@ -50,6 +54,6 @@ namespace MudBlazor
         }
 
         BarChartXAxisSnapshot ISnapshot<BarChartXAxisSnapshot>.OldSnapshotValue { get; set; }
-        BarChartXAxisSnapshot ISnapshot<BarChartXAxisSnapshot>.CreateSnapShot() => new BarChartXAxisSnapshot(ShowGridLines, Placement, LabelCssClass, Height, Margin);
+        BarChartXAxisSnapshot ISnapshot<BarChartXAxisSnapshot>.CreateSnapShot() => new BarChartXAxisSnapshot(ShowGridLines, Placement, LabelCssClass, Height, Margin, GridLineCssClass, GridLineThickness, (String)GridLineColor);
     }
 }
