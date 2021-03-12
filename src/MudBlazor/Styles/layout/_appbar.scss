@@ -13,29 +13,25 @@
     transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,width 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
 }
 
-.mud-drawer-clipped-never.mud-drawer-open {
+.mud-drawer-open {
     &-responsive {
         @each $breakpoint in map-keys($breakpoints) {
             &-#{$breakpoint} {
                 @media (min-width: map-get($breakpoints, $breakpoint)) {
-                    &-left .mud-appbar {
+                    &-left.mud-drawer-left-clipped-never .mud-appbar {
                         margin-left: var(--mud-drawer-width-left);
-                    }
-
-                    &-right .mud-appbar {
-                        margin-right: var(--mud-drawer-width-right);
-                    }
-
-                    &-left#{&}-right .mud-appbar {
-                        width: calc(100% - var(--mud-drawer-width-left) + var(--mud-drawer-width-right));
-                    }
-
-                    &-left:not(#{&}-right) .mud-appbar {
                         width: calc(100% - var(--mud-drawer-width-left));
                     }
 
-                    &-right:not(#{&}-left) .mud-appbar {
+                    &-right.mud-drawer-right-clipped-never .mud-appbar {
+                        margin-right: var(--mud-drawer-width-right);
                         width: calc(100% - var(--mud-drawer-width-right));
+                    }
+
+                    &-left.mud-drawer-left-clipped-never#{&}-right.mud-drawer-right-clipped-never .mud-appbar {
+                        margin-left: var(--mud-drawer-width-left);
+                        margin-right: var(--mud-drawer-width-right);
+                        width: calc(100% - var(--mud-drawer-width-left) - var(--mud-drawer-width-right));
                     }
                 }
             }
@@ -43,24 +39,20 @@
     }
 
     &-persistent {
-        &-left .mud-appbar {
+        &-left.mud-drawer-left-clipped-never .mud-appbar {
             margin-left: var(--mud-drawer-width-left);
-        }
-
-        &-right .mud-appbar {
-            margin-right: var(--mud-drawer-width-right);
-        }
-
-        &-left#{&}-right .mud-appbar {
-            width: calc(100% - var(--mud-drawer-width-left) + var(--mud-drawer-width-right));
-        }
-
-        &-left:not(#{&}-right) .mud-appbar {
             width: calc(100% - var(--mud-drawer-width-left));
         }
 
-        &-right:not(#{&}-left) .mud-appbar {
+        &-right.mud-drawer-right-clipped-never .mud-appbar {
+            margin-right: var(--mud-drawer-width-right);
             width: calc(100% - var(--mud-drawer-width-right));
+        }
+
+        &-left.mud-drawer-left-clipped-never#{&}-right.mud-drawer-right-clipped-never .mud-appbar {
+            margin-left: var(--mud-drawer-width-left);
+            margin-right: var(--mud-drawer-width-right);
+            width: calc(100% - var(--mud-drawer-width-left) - var(--mud-drawer-width-right));
         }
     }
 }
