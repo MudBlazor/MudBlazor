@@ -43,7 +43,7 @@ namespace MudBlazor
             if (_series.Contains(item) == false)
             {
                 _series.Add(item);
-                Chart.SeriesAdded(item);
+                Chart?.SeriesAdded(item);
             }
         }
 

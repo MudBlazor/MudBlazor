@@ -60,7 +60,6 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             comp.Instance.Margin.Should().Be(2);
             comp.Instance.Padding.Should().Be(3);
-
         }
 
         [Test]

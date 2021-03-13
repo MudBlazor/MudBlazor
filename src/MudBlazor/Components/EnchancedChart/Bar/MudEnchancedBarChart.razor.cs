@@ -24,6 +24,8 @@ namespace MudBlazor
         private List<IYAxis> _yaxes = new();
         private BarChartXAxis _xAxis;
 
+        [CascadingParameter] MudEnchancedChart Chart { get; set; }
+
         [Parameter] public RenderFragment DataSets { get; set; }
         [Parameter] public RenderFragment YAxes { get; set; } = DefaultYAxesFragment;
         [Parameter] public RenderFragment XAxis { get; set; } = DefaultXAxisFragment;
@@ -33,7 +35,20 @@ namespace MudBlazor
         [Parameter] public Double Margin { get; set; } = 2.0;
         [Parameter] public Double Padding { get; set; } = 3.0;
 
+        public ChartLegendInfo LegendInfo => new ChartLegendInfo(_dataSets.Select(x => new ChartLegendInfoGroup(x.Name,
+            x.Select(y => new ChartLegendInfoSeries(y.Name, "#" + (String)y.Color)),
+            true)));
+
+        [Parameter] public EventCallback<ChartLegendInfo> LegendInfoChanged { get; set; }
+
         #region Updates from children
+
+        private async void InvokeLegendChanged()
+        {
+            var info = LegendInfo;
+            await LegendInfoChanged.InvokeAsync(info);
+            Chart?.UpdateLegend(info);
+        }
 
         public void DataSetUpdated(BarDataSet barChartSeries)
         {
@@ -42,26 +57,31 @@ namespace MudBlazor
                 _dataSets.Add(barChartSeries);
             }
 
+            InvokeLegendChanged();
             CreateDrawingInstruction();
         }
 
         protected internal void SeriesAdded(BarChartSeries _)
         {
             CreateDrawingInstruction();
+            InvokeLegendChanged();
         }
 
         protected internal void DataSetCleared(BarDataSet _)
         {
             CreateDrawingInstruction();
+            InvokeLegendChanged();
         }
 
         protected internal void DataSeriesRemoved(BarChartSeries _)
         {
             CreateDrawingInstruction();
+            InvokeLegendChanged();
         }
 
         protected internal void SeriesUpdated(BarDataSet _, BarChartSeries __)
         {
+            InvokeLegendChanged();
             CreateDrawingInstruction();
         }
 
@@ -382,6 +402,7 @@ namespace MudBlazor
             if (_dataSets.Contains(item) == false)
             {
                 _dataSets.Add(item);
+                InvokeLegendChanged();
                 CreateDrawingInstruction();
             }
         }
@@ -391,6 +412,8 @@ namespace MudBlazor
             if (_dataSets.Contains(item) == true)
             {
                 _dataSets.Remove(item);
+                InvokeLegendChanged();
+
                 CreateDrawingInstruction();
                 return true;
             }
@@ -487,6 +510,8 @@ namespace MudBlazor
         }
 
         MudEnchancedBarChartSnapShot ISnapshot<MudEnchancedBarChartSnapShot>.OldSnapshotValue { get; set; }
+
+
         MudEnchancedBarChartSnapShot ISnapshot<MudEnchancedBarChartSnapShot>.CreateSnapShot() => new MudEnchancedBarChartSnapShot(Margin, Padding);
 
         class AxisHelper
