@@ -1,0 +1,21 @@
+﻿@namespace MudBlazor 
+@inherits MudChartLegendBase
+
+
+<MudPaper Width="200px">
+    <MudList Clickable="true">
+        @foreach (var item in LegendInfo.Groups)
+        {
+            <MudListItem Icon="@Icons.Material.Filled.BarChart" Text="@item.name" InitiallyExpanded="true">
+                <NestedList>
+                    @foreach (var series in item.series)
+                    {
+                        <MudListItem Icon="@Icons.Material.Filled.ShowChart" Style="@($"color:{series.Color}")" Text="@series.Name"></MudListItem>
+                    }
+                </NestedList>
+             </MudListItem>
+             <MudDivider />
+        }
+    </MudList>
+</MudPaper>
+    @code { }

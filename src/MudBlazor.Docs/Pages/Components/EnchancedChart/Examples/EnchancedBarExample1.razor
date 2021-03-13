@@ -3,6 +3,9 @@
 <MudEnchancedChart TitlePosition="@config.TitlePosition" TitleAlignment="@config.TitleAlignment" ShowTitle="@config.ShowTitle" Title="@config.TitleCaption"
                    LegendPosition="@config.LegendPosition" LegendAlignment="@config.LegendAlignment" ShowLegend="config.ShowLegend"
                    >
+    <Legend>
+        <MudEnchancedBarChartLegend LegendInfo="context" />
+    </Legend>
     <Chart>
         <MudEnchancedBarChart Margin="@config.Margin" Padding="@config.Padding" @ref="_barChart">
             <DataSets>

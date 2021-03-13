@@ -1,23 +1,25 @@
 ﻿@inherits MudComponentBase
 @namespace MudBlazor
 
-<div class="@Classname" @attributes="UserAttributes" Style="@Style">
-    @if (ShowTitle == true)
-    {
-        <div class="mud-chart-title-container d-flex @GetFlexOrderForTitleContainer() @GetAlignClassForTitleContainer()">
-            @TitleDrawer(Title)
-        </div>
-    }
-    <div class="mud-chart-drawer-container d-flex  @GetFlexDirectionForDrawerContainer()" style="flex: 1 1 100%;height:100%">
-        <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
-            @Chart
-        </svg>
-        @if (ShowLegend == true)
+<CascadingValue IsFixed="true" Value="this">
+    <div class="@Classname" @attributes="UserAttributes" Style="@Style">
+        @if (ShowTitle == true)
         {
-            <div class="mud-chart-legend-container d-flex @GetFlexOrderForLegendContainer() @GetAlignClassForLegendContainer()">
-                <span>Legend</span>
+            <div class="mud-chart-title-container d-flex @GetFlexOrderForTitleContainer() @GetAlignClassForTitleContainer()">
+                @TitleDrawer(Title)
             </div>
         }
+        <div class="mud-chart-drawer-container d-flex  @GetFlexDirectionForDrawerContainer()" style="flex: 1 1 100%;height:100%">
+            <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
+                @Chart
+            </svg>
+            @if (ShowLegend == true)
+            {
+                <div class="mud-chart-legend-container d-flex @GetFlexOrderForLegendContainer() @GetAlignClassForLegendContainer()">
+                    @Legend(_legendInfo)
+                </div>
+            }
+        </div>
     </div>
-</div>
+</CascadingValue>
 

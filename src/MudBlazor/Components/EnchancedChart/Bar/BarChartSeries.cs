@@ -15,7 +15,7 @@ namespace MudBlazor
     [DoNotGenerateAutomaticTest]
     public class BarChartSeries : ComponentBase, ISnapshot<BarChartSeriesSnapshot>, IDisposable
     {
-        [CascadingParameter] BarDataSet Dataset { get; set; }
+        [CascadingParameter] public BarDataSet Dataset { get; set; }
 
         [Parameter] public String Name { get; set; } = String.Empty;
         [Parameter] public IList<Double> Points { get; set; } = new List<Double>();

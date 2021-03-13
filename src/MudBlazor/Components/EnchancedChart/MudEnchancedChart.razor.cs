@@ -11,6 +11,8 @@ namespace MudBlazor
 {
     public partial class MudEnchancedChart : MudComponentBase
     {
+        private MudChartLegendBase _legend;
+
         [Parameter] public RenderFragment Chart { get; set; }
 
         #region Legend
@@ -28,6 +30,18 @@ namespace MudBlazor
         [Parameter] public Boolean ShowTitle { get; set; } = true;
         [Parameter] public String Title { get; set; } = String.Empty;
         [Parameter] public RenderFragment<String> TitleDrawer { get; set; } = DefaultTitleDrawerFragment;
+
+        private ChartLegendInfo _legendInfo;
+
+        [Parameter] public RenderFragment<ChartLegendInfo> Legend { get; set; }
+
+        public void UpdateLegend(ChartLegendInfo info)
+        {
+            _legendInfo = info;
+            _legend.Update(info);
+        }
+
+        protected internal void SetLegend(MudChartLegendBase legend) => _legend = legend;
 
         private static RenderFragment DefaultTitleDrawerFragment(String context)
         {
