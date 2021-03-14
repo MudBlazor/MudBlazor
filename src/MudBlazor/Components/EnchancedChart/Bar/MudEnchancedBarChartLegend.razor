@@ -4,17 +4,25 @@
 
 <MudPaper Width="200px">
     <MudList Clickable="true">
-        @foreach (var item in LegendInfo.Groups)
-        {
-            <MudListItem Icon="@Icons.Material.Filled.BarChart" Text="@item.name" InitiallyExpanded="true">
-                <NestedList>
-                    @foreach (var series in item.series)
-                    {
-                        <MudListItem Icon="@Icons.Material.Filled.ShowChart" Style="@($"color:{series.Color}")" Text="@series.Name"></MudListItem>
-                    }
-                </NestedList>
-             </MudListItem>
-             <MudDivider />
+        @if(LegendInfo != null && LegendInfo.Groups != null && LegendInfo.Groups.Any())
+        { 
+            @foreach (var group in LegendInfo.Groups)
+            {
+                <MudListItem Icon="@Icons.Material.Filled.BarChart" Text="@group.name" InitiallyExpanded="true">
+                    <NestedList>
+                        @foreach (var series in group.series)
+                        {
+                            <MudListItem @key="series.Series.GetHashCode()"
+                                         OnClick="@(() => ToggleEnabledStateOfSeries(series))" 
+                                         @onmouseover="@(() => DeactiveAllOtherSeries(series))" 
+                                         @onmouseout="@(() => ActivedAllSeries(series))" 
+                                         Icon="@Icons.Material.Filled.ShowChart" Style="@($"color:{series.Color};text-decoration: {(series.IsEnabled == false ? "line-through" : "inherit")}  ")" 
+                                         Text="@series.Name" Tag="@series"></MudListItem>
+                        }
+                        </NestedList>
+                 </MudListItem>
+                 <MudDivider />
+            }
         }
     </MudList>
 </MudPaper>

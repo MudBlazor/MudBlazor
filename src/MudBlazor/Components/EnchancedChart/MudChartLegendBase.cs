@@ -32,7 +32,29 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            Chart.SetLegend(this);
+            Chart?.SetLegend(this);
         }
+
+        protected void ToggleEnabledStateOfSeries(ChartLegendInfoSeries series)
+        {
+            series.Series?.ToggleEnabledState();
+        }
+
+        protected void DeactiveAllOtherSeries(ChartLegendInfoSeries active)
+        {
+            active.Series.SentRequestToBecomeActiveAlone();
+        }
+
+        protected void ActivedAllSeries(ChartLegendInfoSeries active)
+        {
+            active.Series.RevokeExclusiveActiveState();
+        }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+        }
+
+
     }
 }

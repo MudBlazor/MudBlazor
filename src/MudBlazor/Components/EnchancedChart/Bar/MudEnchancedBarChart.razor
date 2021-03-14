@@ -3,7 +3,7 @@
 
 @foreach (var item in _bars)
 {
-    <polygon fill="#@item.Fill" points="@item.GetPathValue()" />
+    <polygon @onmouseover="@item.Actived" @onmouseout="@item.Deactived" class="mud-chart-series @item.GetActiveClass()" fill="#@item.Fill" points="@item.GetPathValue()" />
 }
 
 @foreach (var item in _labels)

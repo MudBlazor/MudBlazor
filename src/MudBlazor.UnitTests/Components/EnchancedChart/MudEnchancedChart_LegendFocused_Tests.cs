@@ -6,10 +6,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Svg.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Components.EnchancedChart;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.Utilities;
@@ -38,24 +40,6 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
         [Test]
         public void GetLegendFromSereries()
         {
-            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
-            {
-                new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor()),
-                new ChartLegendInfoSeries("my 2 series", Colors.Red.Accent1.ToCssColor()),
-            };
-
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
-
-            List<ChartLegendInfoSeries> secondDataSetseriesInfo = new()
-            {
-                new ChartLegendInfoSeries("my 3 series", Colors.Orange.Accent1.ToCssColor()),
-                new ChartLegendInfoSeries("my 4 series", Colors.Purple.Accent1.ToCssColor()),
-            };
-
-            var group2 = new ChartLegendInfoGroup("my 2 dataset", secondDataSetseriesInfo, true);
-
-            var expectedLegendInfo = new ChartLegendInfo(new[] { group1, group2 });
-
             var comp = ctx.RenderComponent<MudEnchancedBarChart>(p =>
             {
                 p.Add<BarDataSet>(x => x.DataSets, (setP) =>
@@ -88,6 +72,25 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                 });
             });
 
+            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
+            {
+                new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(0).Instance),
+                new ChartLegendInfoSeries("my 2 series", Colors.Red.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(1).Instance),
+            };
+
+            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+
+            List<ChartLegendInfoSeries> secondDataSetseriesInfo = new()
+            {
+                new ChartLegendInfoSeries("my 3 series", Colors.Orange.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(2).Instance),
+                new ChartLegendInfoSeries("my 4 series", Colors.Purple.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(3).Instance),
+            };
+
+            var group2 = new ChartLegendInfoGroup("my 2 dataset", secondDataSetseriesInfo, true);
+
+            var expectedLegendInfo = new ChartLegendInfo(new[] { group1, group2 });
+
+
             var acutalLegendInfo = comp.Instance.LegendInfo;
 
             CheckIfLegendsAreMatching(expectedLegendInfo, acutalLegendInfo);
@@ -96,25 +99,10 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
         [Test]
         public void LegendGetUpdated_DataSetAdded()
         {
-            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
-            {
-                new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor()),
-                new ChartLegendInfoSeries("my 2 series", Colors.Red.Accent1.ToCssColor()),
-            };
-
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
-
-            List<ChartLegendInfoSeries> secondDataSetseriesInfo = new()
-            {
-                new ChartLegendInfoSeries("my 3 series", Colors.Orange.Accent1.ToCssColor()),
-                new ChartLegendInfoSeries("my 4 series", Colors.Purple.Accent1.ToCssColor()),
-            };
-
-            var group2 = new ChartLegendInfoGroup("my 2 dataset", secondDataSetseriesInfo, true);
-
-            var expectedLegendInfo = new ChartLegendInfo(new[] { group1, group2 });
             Boolean isUnderTest = false;
             Boolean legendPassed = false;
+
+            ChartLegendInfo expectedLegendInfo = null;
 
             Action<ChartLegendInfo> legendChanged = (info) =>
             {
@@ -153,8 +141,28 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             isUnderTest = true;
 
             BarDataSet dataSet = new BarDataSet { Name = "my 2 dataset" };
-            dataSet.Add(new BarChartSeries { Name = "my 3 series", Color = Colors.Orange.Accent1.ToCssColor() });
-            dataSet.Add(new BarChartSeries { Name = "my 4 series", Color = Colors.Purple.Accent1.ToCssColor() });
+            var series1 = new BarChartSeries { Name = "my 3 series", Color = Colors.Orange.Accent1.ToCssColor() };
+            var series2 = new BarChartSeries { Name = "my 4 series", Color = Colors.Purple.Accent1.ToCssColor() };
+            dataSet.Add(series1);
+            dataSet.Add(series2);
+
+            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
+            {
+                new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(0).Instance),
+                new ChartLegendInfoSeries("my 2 series", Colors.Red.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(1).Instance),
+            };
+
+            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+
+            List<ChartLegendInfoSeries> secondDataSetseriesInfo = new()
+            {
+                new ChartLegendInfoSeries("my 3 series", Colors.Orange.Accent1.ToCssColor(), true, series1),
+                new ChartLegendInfoSeries("my 4 series", Colors.Purple.Accent1.ToCssColor(), true, series2),
+            };
+
+            var group2 = new ChartLegendInfoGroup("my 2 dataset", secondDataSetseriesInfo, true);
+
+            expectedLegendInfo = new ChartLegendInfo(new[] { group1, group2 });
 
             comp.Instance.Add(dataSet);
 
@@ -167,18 +175,10 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
         [Test]
         public void LegendGetUpdated_DataSetRemoved()
         {
-            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
-            {
-                new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor()),
-                new ChartLegendInfoSeries("my 2 series", Colors.Red.Accent1.ToCssColor()),
-            };
-
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
-
-            var expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
-
             Boolean legendPassed = false;
             Boolean isUnderTest = false;
+
+            ChartLegendInfo expectedLegendInfo = null;
 
             Action<ChartLegendInfo> legendChanged = (info) =>
             {
@@ -228,6 +228,16 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                 });
             });
 
+            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
+            {
+                new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(0).Instance),
+                new ChartLegendInfoSeries("my 2 series", Colors.Red.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(1).Instance),
+            };
+
+            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+
+            expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
+
             isUnderTest = true;
 
             var secondDataSet = comp.FindComponents<BarDataSet>().Last();
@@ -242,15 +252,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
         [Test]
         public void LegendGetUpdated_DataSeriesAdded()
         {
-            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
-            {
-                new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor()),
-                new ChartLegendInfoSeries("my 2 series", Colors.Red.Accent1.ToCssColor()),
-            };
-
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
-
-            var expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
+            ChartLegendInfo expectedLegendInfo = null;
 
             Boolean legendPassed = false;
             Boolean isUnderTest = false;
@@ -292,7 +294,18 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             isUnderTest = true;
 
             var dataset = comp.FindComponent<BarDataSet>().Instance;
-            dataset.Add(new BarChartSeries { Name = "my 2 series", Color = Colors.Red.Accent1.ToCssColor(), Dataset = dataset });
+            var series = new BarChartSeries { Name = "my 2 series", Color = Colors.Red.Accent1.ToCssColor(), Dataset = dataset };
+
+            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
+            {
+                new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(0).Instance),
+                new ChartLegendInfoSeries("my 2 series", Colors.Red.Accent1.ToCssColor(), true, series),
+            };
+
+            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+            expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
+
+            dataset.Add(series);
 
             var acutalLegendInfo = comp.Instance.LegendInfo;
             CheckIfLegendsAreMatching(expectedLegendInfo, acutalLegendInfo);
@@ -303,14 +316,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
         [Test]
         public void LegendGetUpdated_DataSeriesRemoved()
         {
-            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
-            {
-                new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor()),
-            };
-
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
-
-            var expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
+            ChartLegendInfo expectedLegendInfo = null;
 
             Boolean legendPassed = false;
             Boolean isUnderTest = false;
@@ -351,6 +357,15 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             isUnderTest = true;
 
+            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
+            {
+                new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(0).Instance),
+            };
+
+            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+
+            expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
+
             var secondSeries = comp.FindComponents<BarChartSeries>().Last();
             secondSeries.Instance.Dispose();
 
@@ -363,14 +378,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
         [Test]
         public void LegendGetUpdated_DataSetNameChanged()
         {
-            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
-            {
-                new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor()),
-            };
-
-            var group1 = new ChartLegendInfoGroup("my 1 dataset changed", firstDataSetseriesInfo, true);
-
-            var expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
+            ChartLegendInfo expectedLegendInfo = null;
 
             Boolean legendPassed = false;
             Boolean isUnderTest = false;
@@ -405,6 +413,15 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             });
 
             isUnderTest = true;
+
+            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
+            {
+                new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(0).Instance),
+            };
+
+            var group1 = new ChartLegendInfoGroup("my 1 dataset changed", firstDataSetseriesInfo, true);
+
+            expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
 
             comp.FindComponent<BarDataSet>().SetParametersAndRender(p =>
             {
@@ -420,14 +437,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
         [Test]
         public void LegendGetUpdated_DataSeriesNameChanged()
         {
-            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
-            {
-                new ChartLegendInfoSeries("my 1 series changed", Colors.Blue.Accent1.ToCssColor()),
-            };
-
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
-
-            var expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
+            ChartLegendInfo expectedLegendInfo = null;
 
             Boolean legendPassed = false;
             Boolean isUnderTest = false;
@@ -462,6 +472,15 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             });
 
             isUnderTest = true;
+
+            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
+            {
+                new ChartLegendInfoSeries("my 1 series changed", Colors.Blue.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(0).Instance),
+            };
+
+            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+
+            expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
 
             comp.FindComponent<BarChartSeries>().SetParametersAndRender(p =>
             {
@@ -477,14 +496,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
         [Test]
         public void LegendGetUpdated_DataSeriesColorChanged()
         {
-            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
-            {
-                new ChartLegendInfoSeries("my 1 series", Colors.Cyan.Accent1.ToCssColor()),
-            };
-
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
-
-            var expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
+            ChartLegendInfo expectedLegendInfo = null;
 
             Boolean legendPassed = false;
             Boolean isUnderTest = false;
@@ -520,6 +532,15 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             isUnderTest = true;
 
+            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
+            {
+                new ChartLegendInfoSeries("my 1 series", Colors.Cyan.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(0).Instance),
+            };
+
+            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+
+            expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
+
             comp.FindComponent<BarChartSeries>().SetParametersAndRender(p =>
             {
                 p.Add(x => x.Color, Colors.Cyan.Accent1.ToCssColor());
@@ -534,15 +555,6 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
         [Test]
         public void Legend_FullExample_WithChanges()
         {
-            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
-            {
-                new ChartLegendInfoSeries("my 1 series", Colors.Cyan.Accent1.ToCssColor()),
-            };
-
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
-
-            var expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
-
             var comp = ctx.RenderComponent<MudEnchancedChart>(pChart =>
             {
                 pChart.Add<MudEnchancedBarChartLegend, ChartLegendInfo>(a => a.Legend, value => itemParams => itemParams.Add(o => o.LegendInfo, value));
@@ -560,6 +572,14 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                 });
             });
 
+            List<ChartLegendInfoSeries> firstDataSetseriesInfo = new()
+            {
+                new ChartLegendInfoSeries("my 1 series", Colors.Cyan.Accent1.ToCssColor(), true, comp.FindComponents<BarChartSeries>().ElementAt(0).Instance),
+            };
+
+            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+
+            var expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
 
             comp.FindComponent<BarChartSeries>().SetParametersAndRender(p =>
             {
@@ -587,6 +607,290 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             var changedItem = comp.FindComponents<MudListItem>().Last().Instance;
 
             changedItem.Text.Should().Be("new name");
+        }
+
+        [Test]
+        public void Legend_FullExample_ClickFoToggleIsEnabledOfASeries()
+        {
+            var comp = ctx.RenderComponent<MudEnchancedChart>(pChart =>
+            {
+                pChart.Add<MudEnchancedBarChartLegend, ChartLegendInfo>(a => a.Legend, value => itemParams => itemParams.Add(o => o.LegendInfo, value));
+                pChart.Add<MudEnchancedBarChart>(a => a.Chart, p =>
+                {
+                    p.Add<BarDataSet>(x => x.DataSets, (setP) =>
+                    {
+                        setP.Add(y => y.Name, "my 1 dataset");
+                        setP.Add<BarChartSeries>(y => y.ChildContent, (seriesP) =>
+                        {
+                            seriesP.Add(z => z.Name, "my 1 series");
+                            seriesP.Add(z => z.Color, Colors.Blue.Accent1.ToCssColor());
+                        });
+                    });
+                });
+            });
+
+            var listItems = comp.FindComponents<MudListItem>();
+
+            listItems.Should().NotBeNull().And.HaveCount(2);
+
+            var secondItem = listItems.ElementAt(1);
+            var matItem = secondItem.Nodes.First() as IHtmlDivElement;
+
+            matItem.Click(new MouseEventArgs());
+
+            var series = comp.FindComponent<BarChartSeries>().Instance;
+
+            series.IsEnabled.Should().Be(false);
+
+            matItem.Click(new MouseEventArgs());
+
+            series.IsEnabled.Should().Be(true);
+
+        }
+
+
+        [Test]
+        public void Legend_FullExample_ActiveAndInActiveBasedOnMouseOver()
+        {
+            var series = new List<Double> { 100.0, 80.0, 20.0 };
+
+            var comp = ctx.RenderComponent<MudEnchancedChart>(pChart =>
+            {
+                pChart.Add<MudEnchancedBarChartLegend, ChartLegendInfo>(a => a.Legend, value => itemParams => itemParams.Add(o => o.LegendInfo, value));
+                pChart.Add<MudEnchancedBarChart>(a => a.Chart, p =>
+                {
+                    p.Add<BarChartXAxis>(x => x.XAxis, (pAxis) =>
+                    {
+                        pAxis.Add(y => y.Labels, new List<String> { "1", "2", "3" });
+                    });
+                    p.Add<BarDataSet>(x => x.DataSets, (setP) =>
+                    {
+                        setP.Add(y => y.Name, "my 1 dataset");
+                        setP.Add<BarChartSeries>(y => y.ChildContent, (seriesP) =>
+                        {
+                            seriesP.Add(z => z.Name, "my 1 series");
+                            seriesP.Add(z => z.Points, series);
+                        });
+                        setP.Add<BarChartSeries>(y => y.ChildContent, (seriesP) =>
+                        {
+                            seriesP.Add(z => z.Name, "my 2 series");
+                            seriesP.Add(z => z.Points, series);
+                        });
+                        setP.Add<BarChartSeries>(y => y.ChildContent, (seriesP) =>
+                        {
+                            seriesP.Add(z => z.Name, "my 3 series");
+                            seriesP.Add(z => z.Points, series);
+                        });
+                    });
+                });
+            });
+
+
+            var rects = comp.FindAll("polygon");
+
+            rects.Should().HaveCount(9);
+
+            foreach (var item in rects)
+            {
+                item.ClassList.Contains("active").Should().Be(true);
+            }
+
+            var seriesItems = GetListItemsAsWorkaround(comp);
+
+            for (int j = 0; j < 3; j++)
+            {
+                // for some reasons only the first is working, all other events are not invoked
+                // switch to gettting the series element from tag and invoke method there
+                //seriesItems[j].MouseOver(new MouseEventArgs());
+                seriesItems[j].Series.SentRequestToBecomeActiveAlone();
+
+                rects = comp.FindAll("polygon");
+                rects.Should().HaveCount(9);
+
+                for (int i = 0; i < rects.Count; i++)
+                {
+                    if ((i % 3) == j)
+                    {
+                        rects[i].ClassList.Contains("active").Should().Be(true);
+                    }
+                    else
+                    {
+                        rects[i].ClassList.Contains("inactive").Should().Be(true);
+                    }
+                }
+
+                seriesItems = GetListItemsAsWorkaround(comp);
+                //seriesItems[j].MouseOut(new MouseEventArgs());
+                seriesItems[j].Series.RevokeExclusiveActiveState();
+
+                rects = comp.FindAll("polygon");
+                rects.Should().HaveCount(9);
+
+                foreach (var item in rects)
+                {
+                    item.ClassList.Contains("active").Should().Be(true);
+                }
+            }
+        }
+
+        [Test]
+        public void Legend_FullExample_NotEnaledAndNotAbleToSetExclusivlyActive()
+        {
+            var series = new List<Double> { 100.0, 80.0, 20.0 };
+
+            var comp = ctx.RenderComponent<MudEnchancedChart>(pChart =>
+            {
+                pChart.Add<MudEnchancedBarChartLegend, ChartLegendInfo>(a => a.Legend, value => itemParams => itemParams.Add(o => o.LegendInfo, value));
+                pChart.Add<MudEnchancedBarChart>(a => a.Chart, p =>
+                {
+                    p.Add<BarChartXAxis>(x => x.XAxis, (pAxis) =>
+                    {
+                        pAxis.Add(y => y.Labels, new List<String> { "1", "2", "3" });
+                    });
+                    p.Add<BarDataSet>(x => x.DataSets, (setP) =>
+                    {
+                        setP.Add(y => y.Name, "my 1 dataset");
+                        setP.Add<BarChartSeries>(y => y.ChildContent, (seriesP) =>
+                        {
+                            seriesP.Add(z => z.Name, "my 1 series");
+                            seriesP.Add(z => z.Points, series);
+                            seriesP.Add(z => z.IsEnabled, false);
+                        });
+                        setP.Add<BarChartSeries>(y => y.ChildContent, (seriesP) =>
+                        {
+                            seriesP.Add(z => z.Name, "my 2 series");
+                            seriesP.Add(z => z.Points, series);
+                        });
+                        setP.Add<BarChartSeries>(y => y.ChildContent, (seriesP) =>
+                        {
+                            seriesP.Add(z => z.Name, "my 3 series");
+                            seriesP.Add(z => z.Points, series);
+                        });
+                    });
+                });
+            });
+
+            var rects = comp.FindAll("polygon");
+
+            rects.Should().HaveCount(6);
+
+            foreach (var item in rects)
+            {
+                item.ClassList.Contains("active").Should().Be(true);
+            }
+
+            var seriesItems = GetListItems(comp);
+
+            seriesItems[0].MouseOver(new MouseEventArgs());
+
+            rects = comp.FindAll("polygon");
+
+            rects.Should().HaveCount(6);
+
+            foreach (var item in rects)
+            {
+                item.ClassList.Contains("active").Should().Be(true);
+            }
+        }
+
+        [Test]
+        public void ChartInteraction_ActivatingSeries()
+        {
+            var series = new List<Double> { 100.0, 80.0, 20.0 };
+
+            var comp = ctx.RenderComponent<MudEnchancedChart>(pChart =>
+            {
+                pChart.Add<MudEnchancedBarChartLegend, ChartLegendInfo>(a => a.Legend, value => itemParams => itemParams.Add(o => o.LegendInfo, value));
+                pChart.Add<MudEnchancedBarChart>(a => a.Chart, p =>
+                {
+                    p.Add<BarChartXAxis>(x => x.XAxis, (pAxis) =>
+                    {
+                        pAxis.Add(y => y.Labels, new List<String> { "1", "2", "3" });
+                    });
+                    p.Add<BarDataSet>(x => x.DataSets, (setP) =>
+                    {
+                        setP.Add(y => y.Name, "my 1 dataset");
+                        setP.Add<BarChartSeries>(y => y.ChildContent, (seriesP) =>
+                        {
+                            seriesP.Add(z => z.Name, "my 1 series");
+                            seriesP.Add(z => z.Points, series);
+                            seriesP.Add(z => z.IsEnabled, false);
+                        });
+                        setP.Add<BarChartSeries>(y => y.ChildContent, (seriesP) =>
+                        {
+                            seriesP.Add(z => z.Name, "my 2 series");
+                            seriesP.Add(z => z.Points, series);
+                        });
+                        setP.Add<BarChartSeries>(y => y.ChildContent, (seriesP) =>
+                        {
+                            seriesP.Add(z => z.Name, "my 3 series");
+                            seriesP.Add(z => z.Points, series);
+                        });
+                    });
+                });
+            });
+
+            var rects = comp.FindAll("polygon");
+
+            rects.Should().HaveCount(6);
+
+            foreach (var item in rects)
+            {
+                item.ClassList.Contains("active").Should().Be(true);
+            }
+
+            for (int i = 0; i < rects.Count; i++)
+            {
+                rects[i].MouseOver(new MouseEventArgs());
+
+                rects = comp.FindAll("polygon");
+                rects.Should().HaveCount(6);
+
+                Int32 moduloFactor = 6 / 3;
+
+                for (int j = 0; j < rects.Count; j++)
+                {
+                    if( (j % moduloFactor) == i % moduloFactor)
+                    {
+                        rects[j].ClassList.Contains("active").Should().Be(true);
+                    }
+                    else
+                    {
+                        rects[j].ClassList.Contains("inactive").Should().Be(true);
+                    }
+                }
+
+                rects[i].MouseOut(new MouseEventArgs());
+                rects = comp.FindAll("polygon");
+                rects.Should().HaveCount(6);
+
+                foreach (var item in rects)
+                {
+                    item.ClassList.Contains("active").Should().Be(true);
+                }
+            }
+        }
+
+        private static List<IElement> GetListItems(IRenderedComponent<MudEnchancedChart> comp)
+        {
+            var listItems = comp.FindComponents<MudListItem>();
+
+            listItems.Should().NotBeNull().And.HaveCount(4);
+
+            List<IElement> seriesItems = new List<IElement>
+            {
+                listItems.ElementAt(1).Nodes.First() as IElement,
+                listItems.ElementAt(2).Nodes.First() as IElement,
+                listItems.ElementAt(3).Nodes.First() as IElement,
+            };
+
+            return seriesItems;
+        }
+
+        private static List<ChartLegendInfoSeries> GetListItemsAsWorkaround(IRenderedComponent<MudEnchancedChart> comp)
+        {
+            var listItems = comp.FindComponents<MudListItem>().Skip(1).Select(x => x.Instance.Tag as ChartLegendInfoSeries).ToList();
+            return listItems;
         }
 
         private static void CheckIfLegendsAreMatching(ChartLegendInfo expectedLegendInfo, ChartLegendInfo acutalLegendInfo)

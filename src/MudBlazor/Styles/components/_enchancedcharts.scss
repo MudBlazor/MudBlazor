@@ -1,0 +1,31 @@
+﻿.mud-chart-series {
+    &.active {
+        opacity: 1.0;
+        animation: fadeIn 0.5s;
+    }
+
+    &.inactive {
+        opacity: 0.2;
+        animation: fadeOut 0.5s;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0.2;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 0.2;
+        }
+    }
+}
