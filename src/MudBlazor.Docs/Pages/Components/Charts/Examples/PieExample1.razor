@@ -13,9 +13,12 @@
 @code {
     int dataSize = 4;
     double[] data = { 77, 25, 20, 5 };
-    string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium", "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium", "Neptunium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium", "Mudblaznium" };
+    string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",
+                        "Polonium", "Astatine", "Radon", "Francium", "Radium", "Actinium", "Protactinium",
+                        "Neptunium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium", "Mudblaznium" };
 
     Random random = new Random();
+    
     void RandomizeData()
     {
         var new_data = new double[dataSize];
@@ -27,12 +30,18 @@
 
     void AddDataSize()
     {
-        dataSize = dataSize + 1;
-        RandomizeData();
+        if (dataSize < 20)
+        {
+            dataSize = dataSize + 1;
+            RandomizeData();
+        }
     }
     void RemoveDataSize()
     {
-        dataSize = dataSize - 1;
-        RandomizeData();
+        if (dataSize > 0)
+        {
+            dataSize = dataSize - 1;
+            RandomizeData();
+        }
     }
 }

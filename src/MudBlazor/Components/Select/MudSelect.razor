@@ -5,7 +5,7 @@
 <CascadingValue Name="Standalone" Value="false" IsFixed="true">
     <div class="mud-select">
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
-                         Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu">
+                         Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required">
             <InputContent>
                 <MudInput @ref="_elementReference" Variant="@Variant" Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine" Disabled=@Disabled ReadOnly="true"
                           Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" Margin="@Margin"
