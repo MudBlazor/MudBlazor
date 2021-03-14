@@ -36,7 +36,7 @@ namespace MudBlazor
         [Parameter] public Double Padding { get; set; } = 3.0;
 
         public ChartLegendInfo LegendInfo => new ChartLegendInfo(_dataSets.Select(x => new ChartLegendInfoGroup(x.Name,
-            x.Select(y => new ChartLegendInfoSeries(y.Name, "#" + (String)y.Color)),
+            x.Select(y => new ChartLegendInfoSeries(y.Name, "#" + (String)y.Color, y.IsEnabled, y)),
             true)));
 
         [Parameter] public EventCallback<ChartLegendInfo> LegendInfoChanged { get; set; }
@@ -65,6 +65,44 @@ namespace MudBlazor
         {
             CreateDrawingInstruction();
             InvokeLegendChanged();
+        }
+
+        protected internal async void SoftRedraw()
+        {
+            await InvokeAsync(StateHasChanged);
+        }
+
+        public void SetSeriesAsExclusivelyActive(IDataSeries something)
+        {
+            foreach (var set in _dataSets)
+            {
+                foreach (var series in set)
+                {
+                    if(series == something)
+                    {
+                        series.SetAsActive();
+                    }
+                    else
+                    {
+                        series.SetAsInactive();
+                    }
+                }
+            }
+
+            SoftRedraw();
+        }
+
+        public void SetAllSeriesAsActive()
+        {
+            foreach (var set in _dataSets)
+            {
+                foreach (var series in set)
+                {
+                    series.SetAsActive();
+                }
+            }
+
+            SoftRedraw();
         }
 
         protected internal void DataSetCleared(BarDataSet _)
@@ -163,7 +201,7 @@ namespace MudBlazor
                 helper.ProcessDataSet(set);
             }
 
-            Int32 amountOfSeries = _dataSets.Sum(x => x.Count);
+            Int32 amountOfSeries = _dataSets.Sum(x => x.Count(y => y.IsEnabled == true));
 
             Double xPerLabel = 100.0 / _xAxis.Labels.Count;
             Double labelThickness = xPerLabel - Padding;
@@ -220,6 +258,8 @@ namespace MudBlazor
 
                     foreach (var series in set)
                     {
+                        if (series.IsEnabled == false) { continue; }
+
                         Double value = 0.0;
                         if (labelIndex < series.Points.Count)
                         {
@@ -239,6 +279,7 @@ namespace MudBlazor
                             P3 = matrix * new Point2D(subX + barThickness, height),
                             P4 = matrix * new Point2D(subX + barThickness, 0),
                             Fill = series.Color,
+                            Series = series,
                         };
 
                         _bars.Add(bar);
@@ -547,6 +588,8 @@ namespace MudBlazor
 
                 foreach (var series in set)
                 {
+                    if (series.IsEnabled == false) { continue; }
+
                     foreach (var yValue in series.Points)
                     {
                         if (yValue > Max)

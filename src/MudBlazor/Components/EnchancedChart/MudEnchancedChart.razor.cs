@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using MudBlazor.Components.EnchancedChart;
 using MudBlazor.Utilities;
 
 namespace MudBlazor

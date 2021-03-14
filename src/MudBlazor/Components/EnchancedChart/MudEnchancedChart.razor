@@ -16,7 +16,9 @@
             @if (ShowLegend == true)
             {
                 <div class="mud-chart-legend-container d-flex @GetFlexOrderForLegendContainer() @GetAlignClassForLegendContainer()">
-                    @Legend(_legendInfo)
+                   @if(Legend != null) { 
+                     @Legend(_legendInfo)
+                   }
                 </div>
             }
         </div>

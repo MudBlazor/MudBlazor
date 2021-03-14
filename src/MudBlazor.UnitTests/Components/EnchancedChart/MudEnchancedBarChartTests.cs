@@ -21,6 +21,8 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
     [TestFixture]
     public class MudEnchancedBarChartTests
     {
+        private static Regex _removeBlazorColonRegex = new Regex(@"(blazor:)([^>]*?)("".*?"")",RegexOptions.Multiline);
+
         private Bunit.TestContext ctx;
 
         [SetUp]
@@ -276,21 +278,27 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             called.Should().Be(2);
 
+            series.SetParametersAndRender(p => p.Add(x => x.IsEnabled, false));
+            series.SetParametersAndRender(p => p.Add(x => x.IsEnabled, true));
+
+            called.Should().Be(4);
+
             set.SetParametersAndRender(p => p.Add(x => x.IsStacked, true));
             set.SetParametersAndRender(p => p.Add(x => x.IsStacked, false));
 
-            called.Should().Be(4);
+            called.Should().Be(6);
 
             set.SetParametersAndRender(p => p.Add(x => x.Name, "Something"));
             set.SetParametersAndRender(p => p.Add(x => x.Name, "Something new"));
 
-            called.Should().Be(6);
+            called.Should().Be(8);
+
 
             series.Instance.Dispose();
-            called.Should().Be(7);
+            called.Should().Be(9);
 
             set.Instance.Dispose();
-            called.Should().Be(8);
+            called.Should().Be(10);
         }
 
         [Test]
@@ -366,7 +374,8 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
             {
-                root.Add(XElement.Parse(item.OuterHtml));
+                var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                root.Add(XElement.Parse(preParsedHtml));
             }
 
             root.Should().BeEquivalentTo(expectedRoot);
@@ -438,7 +447,8 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
             {
-                root.Add(XElement.Parse(item.OuterHtml));
+                var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                root.Add(XElement.Parse(preParsedHtml));
             }
 
             root.Should().BeEquivalentTo(expectedRoot);
@@ -511,7 +521,8 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
             {
-                root.Add(XElement.Parse(item.OuterHtml));
+                var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                root.Add(XElement.Parse(preParsedHtml));
             }
 
             root.Should().BeEquivalentTo(expectedRoot);
@@ -596,7 +607,8 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
             {
-                var element = XElement.Parse(item.OuterHtml);
+                var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                var element = XElement.Parse(preParsedHtml);
                 RoundElementValues(item, element);
                 root.Add(element);
             }
@@ -683,7 +695,8 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
             {
-                var element = XElement.Parse(item.OuterHtml);
+                var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                var element = XElement.Parse(preParsedHtml);
                 RoundElementValues(item, element);
                 root.Add(element);
             }
@@ -775,7 +788,8 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
             {
-                var element = XElement.Parse(item.OuterHtml);
+                var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                var element = XElement.Parse(preParsedHtml);
                 RoundElementValues(item, element);
                 root.Add(element);
             }
@@ -886,7 +900,8 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             {
                 if (item.NodeName != "POLYGON")
                 {
-                    var element = XElement.Parse(item.OuterHtml);
+                    var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                    var element = XElement.Parse(preParsedHtml);
                     RoundElementValues(item, element);
                     root.Add(element);
                 }
@@ -963,11 +978,13 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             String secondSeriesColor = (Colors.BlueGrey.Default + "FF").ToLower();
             String thirdSeriesColor = (Colors.Red.Default + "FF").ToLower();
             String fourthSeriesColor = (Colors.Orange.Default + "FF").ToLower();
+            String fifthSeriesColor = (Colors.Amber.Default + "FF").ToLower();
 
             var firstData = new List<Double> { pointScalingFactor * 125.0, pointScalingFactor * 150.0 };
             var secondData = new List<Double> { pointScalingFactor * 100.0, pointScalingFactor * 200.0 };
             var thirdData = new List<Double> { pointScalingFactor * 0.0, pointScalingFactor * 150.0 };
             var fourthData = new List<Double> { pointScalingFactor * 150.0 };
+            var fithData = new List<Double> { pointScalingFactor * 250.0, pointScalingFactor * 200.0 };
 
             untransformedExpectedRects = new List<Rectangle>
             {
@@ -1017,6 +1034,14 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                         seriesP.Add(z => z.Name, "my fourth series");
                         seriesP.Add(z => z.Points, fourthData);
                         seriesP.Add(z => z.Color, fourthSeriesColor);
+                    });
+                    setP.Add<BarChartSeries>(y => y.ChildContent, (seriesP) =>
+                    {
+                        seriesP.Add(z => z.Name, "my fifth series");
+                        seriesP.Add(z => z.Points, fithData);
+                        seriesP.Add(z => z.Color, fifthSeriesColor);
+                        seriesP.Add(z => z.IsEnabled, false);
+
                     });
                 });
                 additionalConfiguration(p);
@@ -1214,9 +1239,11 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             XElement root = new XElement("svg");
 
+
             foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
             {
-                var element = XElement.Parse(item.OuterHtml);
+                var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                var element = XElement.Parse(preParsedHtml);
                 RoundElementValues(item, element);
                 root.Add(element);
             }
@@ -1385,6 +1412,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             XElement expectedRoot = new XElement("svg", new XElement(
                new XElement("polygon",
                 new XAttribute("fill", color),
+                new XAttribute("class", "mud-chart-series active"),
                 new XAttribute("points", $"0,100 0,{height.ToString(CultureInfo.InvariantCulture)} 100,{height.ToString(CultureInfo.InvariantCulture)} 100,100")
                 )));
 
@@ -1394,7 +1422,8 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             {
                 if (item.NodeName == "POLYGON")
                 {
-                    var element = XElement.Parse(item.OuterHtml);
+                    var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
+                    var element = XElement.Parse(preParsedHtml);
                     RoundElementValues(item, element);
                     root.Add(element);
                 }
@@ -1415,6 +1444,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
         private IEnumerable<XElement> TransformRectToSvgElements(IEnumerable<Rectangle> input)
             => input.Select((Func<Rectangle, XElement>)(e => new XElement("polygon",
                 new XAttribute("fill", (object)e.FillColor),
+                new XAttribute("class", "mud-chart-series active"),
                 new XAttribute("points", _staticRegex.Replace($"{e.P1.X.ToString(CultureInfo.InvariantCulture)},{e.P1.Y.ToString(CultureInfo.InvariantCulture)} {e.P2.X.ToString(CultureInfo.InvariantCulture)},{e.P2.Y.ToString(CultureInfo.InvariantCulture)} {e.P3.X.ToString(CultureInfo.InvariantCulture)},{e.P3.Y.ToString(CultureInfo.InvariantCulture)} {e.P4.X.ToString(CultureInfo.InvariantCulture)},{e.P4.Y.ToString(CultureInfo.InvariantCulture)}", "0"))
                 )));
 
