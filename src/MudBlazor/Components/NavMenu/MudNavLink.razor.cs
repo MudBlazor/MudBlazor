@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -56,6 +57,16 @@ namespace MudBlazor
             if (!Disabled && NavigationEventReceiver != null)
             {
                 return NavigationEventReceiver.OnNavigation();
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private Task HandleClick(MouseEventArgs args)
+        {
+            if (!Disabled)
+            {
+                return OnClick.InvokeAsync(args);
             }
 
             return Task.CompletedTask;

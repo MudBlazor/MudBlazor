@@ -15,6 +15,7 @@
     --mud-drawer-content-height: 0;
 
     .mud-drawer-content {
+        height: 100%;
         max-height: 100%;
         display: flex;
         flex-shrink: 0;

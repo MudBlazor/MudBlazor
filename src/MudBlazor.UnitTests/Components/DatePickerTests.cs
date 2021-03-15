@@ -105,9 +105,9 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
             picker.Date.Should().Be(null);
-            comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
             comp.SetParam(p => p.DateFormat, "dd/MM/yyyy");
             comp.SetParam(p => p.Culture, CultureInfo.InvariantCulture); // <-- this makes a huge difference!
+            comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
             picker.Date.Should().Be(new DateTime(2020, 10, 26));
             picker.Text.Should().Be("26/10/2020");
         }

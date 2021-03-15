@@ -47,6 +47,8 @@ namespace MudBlazor
 
         private OpenTo _currentView;
 
+        internal TimeSpan? TimeIntermediate { get; private set; }
+
         /// <summary>
         /// First view to show in the MudDatePicker.
         /// </summary>
@@ -76,6 +78,7 @@ namespace MudBlazor
         {
             if (_value != time)
             {
+                TimeIntermediate = time;
                 _value = time;
                 if (updateValue)
                     await SetTextAsync(Converter.Set(_value), false);
@@ -109,24 +112,36 @@ namespace MudBlazor
             };
         }
 
+        protected override void Submit()
+        {
+            Time = TimeIntermediate;
+        }
+
+        public override void Clear(bool close = true)
+        {
+            Time = null;
+            TimeIntermediate = null;
+            base.Clear();
+        }
+
         private string GetHourString()
         {
-            if (_value == null)
+            if (TimeIntermediate == null)
                 return "--";
-            var h = AmPm ? _value.Value.ToAmPmHour() : _value.Value.Hours;
+            var h = AmPm ? TimeIntermediate.Value.ToAmPmHour() : TimeIntermediate.Value.Hours;
             return Math.Min(23, Math.Max(0, h)).ToString(CultureInfo.InvariantCulture);
         }
 
         private string GetMinuteString()
         {
-            if (_value == null)
+            if (TimeIntermediate == null)
                 return "--";
-            return $"{Math.Min(59, Math.Max(0, _value.Value.Minutes)):D2}";
+            return $"{Math.Min(59, Math.Max(0, TimeIntermediate.Value.Minutes)):D2}";
         }
 
         private void UpdateTime()
         {
-            Time = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
+            TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
         }
 
         private void OnHourClick()
@@ -295,14 +310,14 @@ namespace MudBlazor
 
         private void UpdateTimeSetFromTime()
         {
-            if (_value == null)
+            if (TimeIntermediate == null)
             {
                 _timeSet.Hour = 0;
                 _timeSet.Minute = 0;
                 return;
             }
-            _timeSet.Hour = _value.Value.Hours;
-            _timeSet.Minute = _value.Value.Minutes;
+            _timeSet.Hour = TimeIntermediate.Value.Hours;
+            _timeSet.Minute = TimeIntermediate.Value.Minutes;
         }
 
         public bool MouseDown { get; set; }

@@ -349,5 +349,13 @@ namespace MudBlazor.UnitTests.Components
             (inputs[0] as IHtmlInputElement).Value.Should().Be(textStart);
             (inputs[1] as IHtmlInputElement).Value.Should().Be(textEnd);
         }
+
+        [Test]
+        public void SetPickerToday_CheckSelected()
+        {
+            var today = DateTime.Now.Date;
+            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.DateRange), new DateRange(today, today)));
+            comp.FindAll("button.mud-selected").Count.Should().Be(1);
+        }
     }
 }

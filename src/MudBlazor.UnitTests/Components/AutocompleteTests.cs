@@ -87,18 +87,15 @@ namespace MudBlazor.UnitTests.Components
 
             // click and check if it has toggled the menu
             inputControl.Click();
-            await Task.Delay(100);
-            menu.ClassList.Should().NotContain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().NotContain("mud-popover-open"));
 
             // type 3 characters and check if it has toggled the menu
             select.Find("input").Input("ala");
-            await Task.Delay(100);
-            menu.ClassList.Should().Contain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
 
             // type 2 characters and check if it has toggled the menu
             select.Find("input").Input("al");
-            await Task.Delay(100);
-            menu.ClassList.Should().NotContain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().NotContain("mud-popover-open"));
         }
 
         /// <summary>

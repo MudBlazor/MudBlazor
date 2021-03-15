@@ -54,7 +54,7 @@ namespace MudBlazor
             }
             className += $"-{anchor.ToDescriptionString()}";
 
-            className += $" mud-drawer-clipped-{drawer.ClipMode.ToDescriptionString()}";
+            className += $" mud-drawer-{anchor.ToDescriptionString()}-clipped-{drawer.ClipMode.ToDescriptionString()}";
 
             return className;
         }
