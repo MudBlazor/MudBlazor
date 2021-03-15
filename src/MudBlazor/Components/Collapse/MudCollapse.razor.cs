@@ -20,6 +20,7 @@ namespace MudBlazor
         private bool _expanded, _isRendered;
         private ElementReference _container, _wrapper;
         private CollapseState _state = CollapseState.Exited;
+        private DotNetObjectReference<MudCollapse> _dotNetRef;
 
         protected string Stylename =>
             new StyleBuilder()
@@ -106,20 +107,41 @@ namespace MudBlazor
             }
         }
 
+        protected override void OnInitialized()
+        {
+            _dotNetRef = DotNetObjectReference.Create(this);
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
                 _isRendered = true;
                 await UpdateHeight();
-                _listenerId = await _container.MudAddEventListenerAsync(DotNetObjectReference.Create(this), "animationend", nameof(AnimationEnd));
+                _listenerId = await _container.MudAddEventListenerAsync(_dotNetRef, "animationend", nameof(AnimationEnd));
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
+        bool _disposed;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _ = _container.MudRemoveEventListenerAsync("animationend", _listenerId);
+                    _dotNetRef?.Dispose();
+                }
+                _disposed = true;
+            }
+        }
+
         public void Dispose()
         {
-            _ = _container.MudRemoveEventListenerAsync("animationend", _listenerId);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         [JSInvokable]
