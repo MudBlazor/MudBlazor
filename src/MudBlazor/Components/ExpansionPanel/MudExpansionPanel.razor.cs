@@ -125,7 +125,7 @@ namespace MudBlazor
             else
             {
                 _isExpanded = true;
-                StateHasChanged();
+                IsExpandedChanged.InvokeAsync(_isExpanded);
             }
         }
 
@@ -136,7 +136,7 @@ namespace MudBlazor
             else
             {
                 _isExpanded = false;
-                StateHasChanged();
+                IsExpandedChanged.InvokeAsync(_isExpanded);
             }
         }
 

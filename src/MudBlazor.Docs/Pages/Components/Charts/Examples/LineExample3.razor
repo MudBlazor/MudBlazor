@@ -1,0 +1,49 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350" ChartOptions="options"></MudChart>
+    <MudButton @onclick="RandomizeData">Randomize Data</MudButton>
+    <MudMenu Label="Interpolation Algorithm" FullWidth="true">
+        <MudMenuItem OnClick="() => OnClickMenu(InterpolationOption.NaturalSpline)">Natural Spline</MudMenuItem>
+        <MudMenuItem OnClick="() => OnClickMenu(InterpolationOption.EndSlope)">End Slope</MudMenuItem>
+        <MudMenuItem OnClick="() => OnClickMenu(InterpolationOption.Periodic)">Periodic</MudMenuItem>
+    </MudMenu>
+</div>
+
+@code {
+    private ChartOptions options = new ChartOptions();
+    public List<ChartSeries> Series = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name = "Serie 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+        new ChartSeries() { Name = "Serie 2", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
+    };
+    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+
+    Random random = new Random();
+    protected override void OnInitialized()
+    {
+        options.CurveEnum = InterpolationOption.NaturalSpline;
+    }
+
+    public void RandomizeData()
+    {
+        var new_series = new List<ChartSeries>()
+        {
+            new ChartSeries() { Name = "Serie 1", Data = new double[9] },
+            new ChartSeries() { Name = "Serie 2", Data = new double[9] },
+        };
+        for (int i = 0; i < 9; i++)
+        {
+            new_series[0].Data[i] = random.NextDouble() * 100;
+            new_series[1].Data[i] = random.NextDouble() * 100;
+        }
+        Series = new_series;
+        StateHasChanged();
+    }
+
+    void OnClickMenu(InterpolationOption curveEnum)
+    {
+        options.CurveEnum = curveEnum;
+        StateHasChanged();
+    }
+}

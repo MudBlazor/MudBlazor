@@ -1,6 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts.SVG.Models;
+using MudBlazor.Components.Chart;
+using MudBlazor.Components.Chart.Interpolation;
+using MudBlazor;
+using static MudBlazor.ChartOptions;
 
 namespace MudBlazor.Charts
 {
@@ -64,9 +69,10 @@ namespace MudBlazor.Charts
             var horizontalStartSpace = 30.0;
             var verticalEndSpace = 25.0;
             var horizontalEndSpace = 30.0;
-
+            
             var verticalSpace = (boundHeight - verticalStartSpace - verticalEndSpace) / (numHorizontalLines);
             var horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / (numVerticalLines);
+            var curveEnum = MudChartParent?.ChartOptions.CurveEnum ?? InterpolationOption.Straight;
 
             //Horizontal Grid Lines
             var y = verticalStartSpace;
@@ -92,7 +98,7 @@ namespace MudBlazor.Charts
             double startGridX = 0;
             for (var counter = 0; counter <= numVerticalLines; counter++)
             {
-
+                
                 var line = new SvgPath()
                 {
                     Index = counter,
@@ -122,28 +128,85 @@ namespace MudBlazor.Charts
                 double gridValueX = 0;
                 double gridValueY = 0;
                 var firstTime = true;
-
-                foreach (var dataLine in item.Data)
+                double[] XValues = new double[item.Data.Length];
+                double[] YValues = new double[item.Data.Length];
+                ILineInterpolator interpolator;
+                for (var i = 0; i <= item.Data.Length - 1; i++)
                 {
-                    if (firstTime)
-                    {
-                        chartLine += "M ";
-                        firstTime = false;
-                        gridValueX = horizontalStartSpace;
-                        gridValueY = verticalStartSpace;
-                    }
+                    if (i == 0)
+                        XValues[i] = 30;
                     else
-                    {
-                        chartLine += " L ";
-                        gridValueX += horizontalSpace;
-                        gridValueY = verticalStartSpace;
-                    }
+                        XValues[i] = XValues[i - 1] + horizontalSpace;
 
-                    var gridValue = ((double)dataLine) * verticalSpace / gridYUnits;
-                    gridValueY = boundHeight - (gridValueY + gridValue);
-                    chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
+                    var gridValue = (item.Data[i]) * verticalSpace / gridYUnits;
+                    YValues[i] = boundHeight - (verticalStartSpace + gridValue);
+
+                }
+                switch (curveEnum)
+                {
+                    case InterpolationOption.NaturalSpline:            
+                        interpolator = new NaturalSpline(XValues, YValues);
+                        break;
+                    case InterpolationOption.EndSlope:
+                        interpolator = new EndSlopeSpline(XValues, YValues);                     
+                        break;
+                    case InterpolationOption.Periodic:
+                        interpolator = new PeriodicSpline(XValues, YValues);                      
+                        break;
+                    case InterpolationOption.Straight:
+                    default:
+                        interpolator = new NoInterpolation();
+                        break;
                 }
 
+                if (interpolator?.InterpolationRequired == true)
+                {
+                    horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / interpolator.interpolatedXs.Length;
+                    foreach (var yValue in interpolator.interpolatedYs)
+                    {
+
+                        if (firstTime)
+                        {
+
+                            chartLine += "M ";
+                            firstTime = false;
+                            gridValueX = horizontalStartSpace;
+                            gridValueY = verticalStartSpace;
+                        }
+                        else
+                        {
+                            chartLine += " L ";
+                            gridValueX += horizontalSpace;
+                            gridValueY = verticalStartSpace;
+                        }
+                        gridValueY = yValue;
+                        chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
+                    }
+                }
+                else
+                {
+                    foreach (var dataLine in item.Data)
+                    {
+                        if (firstTime)
+                        {
+                            chartLine += "M ";
+                            firstTime = false;
+                            gridValueX = horizontalStartSpace;
+                            gridValueY = verticalStartSpace;
+                        }
+                        else
+                        {
+                            chartLine += " L ";
+                            gridValueX += horizontalSpace;
+                            gridValueY = verticalStartSpace;
+                        }
+
+                        var gridValue = ((double)dataLine) * verticalSpace / gridYUnits;
+                        gridValueY = boundHeight - (gridValueY + gridValue);
+                        chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
+                    }
+                }
+             
                 var line = new SvgPath()
                 {
                     Index = colorcounter,
@@ -159,6 +222,6 @@ namespace MudBlazor.Charts
                 _chartLines.Add(line);
                 _legends.Add(legend);
             }
-        }
+        }     
     }
 }

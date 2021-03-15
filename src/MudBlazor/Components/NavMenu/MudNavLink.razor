@@ -3,18 +3,36 @@
 @using Microsoft.AspNetCore.Components.Routing
 
 <div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
-    <NavLink @onclick="@HandleNavigation" 
-             class="@LinkClassname" 
-             style="@Style" 
-             @attributes="@Attributes"
-             Match="@Match" 
+    @if (!OnClick.HasDelegate) 
+    { 
+        <NavLink @onclick="@HandleNavigation" 
+                 class="@LinkClassname" 
+                 style="@Style" 
+                 @attributes="@Attributes"
+                 Match="@Match" 
+                 ActiveClass="active">
+            @if (!String.IsNullOrEmpty(Icon))
+            {
+                <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname"/>
+            }
+            <div Class="mud-nav-link-text">
+                @ChildContent
+            </div>
+        </NavLink>
+    }
+    else
+    {
+        <div @onclick="HandleClick"
+             class="@LinkClassname"
+             style="@Style"
              ActiveClass="active">
-        @if (!String.IsNullOrEmpty(Icon))
-        {
-            <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname"/>
-        }
-        <div Class="mud-nav-link-text">
-            @ChildContent
+            @if (!String.IsNullOrEmpty(Icon))
+            {
+                <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname" />
+            }
+            <div Class="mud-nav-link-text">
+                @ChildContent
+            </div>
         </div>
-    </NavLink>
+    }
 </div>
