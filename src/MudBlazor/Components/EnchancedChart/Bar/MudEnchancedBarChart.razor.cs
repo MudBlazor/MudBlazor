@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Components.EnchancedChart;
+using MudBlazor.Components.EnchancedChart.Bar;
 using MudBlazor.Components.EnchancedChart.Svg;
 using MudBlazor.Utilities;
 
@@ -18,7 +19,7 @@ namespace MudBlazor
     {
         private List<SvgLine> _lines = new();
         private List<SvgText> _labels = new();
-        private List<SvgPolygonBasedRectangle> _bars = new();
+        private List<SvgBarRepresentation> _bars = new();
 
         private List<BarDataSet> _dataSets = new();
         private List<IYAxis> _yaxes = new();
@@ -29,6 +30,20 @@ namespace MudBlazor
         [Parameter] public RenderFragment DataSets { get; set; }
         [Parameter] public RenderFragment YAxes { get; set; } = DefaultYAxesFragment;
         [Parameter] public RenderFragment XAxis { get; set; } = DefaultXAxisFragment;
+
+        private Dictionary<IDataSeries, BarChartToolTipInfo> currentToolTips = new();
+
+        internal void AddTooltip(BarChartToolTipInfo barChartToolTipInfo, IDataSeries series)
+        {
+            currentToolTips.Add(series, barChartToolTipInfo);
+            Chart.UpdateTooltip(currentToolTips.Values);
+        }
+
+        internal void RemoveTooltip(IDataSeries series)
+        {
+            currentToolTips.Remove(series);
+            Chart.UpdateTooltip(currentToolTips.Values);
+        }
 
         [Parameter] public Action<MudEnchancedBarChart> BeforeCreatingInstructionCallBack { get; set; }
 
@@ -78,7 +93,7 @@ namespace MudBlazor
             {
                 foreach (var series in set)
                 {
-                    if(series == something)
+                    if (series == something)
                     {
                         series.SetAsActive();
                     }
@@ -272,7 +287,7 @@ namespace MudBlazor
                             height = 100.0;
                         }
 
-                        SvgPolygonBasedRectangle bar = new SvgPolygonBasedRectangle
+                        SvgBarRepresentation bar = new SvgBarRepresentation
                         {
                             P1 = matrix * new Point2D(subX, 0),
                             P2 = matrix * new Point2D(subX, height),
@@ -280,6 +295,8 @@ namespace MudBlazor
                             P4 = matrix * new Point2D(subX + barThickness, 0),
                             Fill = series.Color,
                             Series = series,
+                            XLabel = _xAxis.Labels[labelIndex],
+                            YValue = value,
                         };
 
                         _bars.Add(bar);

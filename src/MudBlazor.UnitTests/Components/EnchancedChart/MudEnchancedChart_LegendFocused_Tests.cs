@@ -23,7 +23,6 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
     [TestFixture]
     public class MudEnchancedChart_LegendFocused_Tests
     {
-
         private Bunit.TestContext ctx;
 
         [SetUp]
@@ -35,7 +34,6 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
         [TearDown]
         public void TearDown() => ctx.Dispose();
-
 
         [Test]
         public void GetLegendFromSereries()

@@ -10,9 +10,16 @@
             </div>
         }
         <div class="mud-chart-drawer-container d-flex  @GetFlexDirectionForDrawerContainer()" style="flex: 1 1 100%;height:100%">
-            <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
-                @Chart
-            </svg>
+            <div class="chart-and-tooltip-container">
+                <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    @Chart
+                </svg>
+                @if(ToolTip != null && _toolTipInfo.Any() == true)
+                {
+                    @ToolTip(_toolTipInfo)
+                }
+            </div>
+ 
             @if (ShowLegend == true)
             {
                 <div class="mud-chart-legend-container d-flex @GetFlexOrderForLegendContainer() @GetAlignClassForLegendContainer()">

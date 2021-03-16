@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Components.EnchancedChart;
+using MudBlazor.Components.EnchancedChart.Bar;
+using MudBlazor.Components.EnchancedChart.Svg;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -22,6 +24,20 @@ namespace MudBlazor
         [Parameter] public String Name { get; set; } = String.Empty;
         [Parameter] public IList<Double> Points { get; set; } = new List<Double>();
         [Parameter] public CssColor Color { get; set; } = RandomColorSelector.GetRandomColor();
+
+        protected internal void SentRequestForTooltip(SvgBarRepresentation svgBarRepresentation)
+        {
+            if (Chart == null) { return; }
+
+            Chart.AddTooltip(new BarChartToolTipInfo(svgBarRepresentation.XLabel, svgBarRepresentation.YValue,  Name, "#" + Color, Dataset.Name,
+                svgBarRepresentation.P1, svgBarRepresentation.P2, svgBarRepresentation.P3, svgBarRepresentation.P4), this);
+        }
+
+        protected internal void SentRevokationForTooltip(SvgBarRepresentation svgBarRepresentation)
+        {
+            Chart?.RemoveTooltip(this);
+        }
+
         [Parameter] public Boolean IsEnabled { get; set; } = true;
 
         protected override void OnParametersSet()
