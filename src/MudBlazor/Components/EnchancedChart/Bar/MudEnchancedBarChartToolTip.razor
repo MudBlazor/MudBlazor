@@ -3,9 +3,12 @@
 
 <MudCard  Style="@GetStyle()">
     <MudList Clickable="true">
-        @foreach (var item in ToolTips)
-        {
-            <MudListItem> <div style="color:@item.Color"><span>@item.SeriesName</span> <strong>@item.Value</strong></div>  </MudListItem>
+        @if(ToolTips != null)
+        { 
+            @foreach (var item in ToolTips)
+            {
+                <MudListItem> <div style="color:@item.Color"><span>@item.SeriesName</span> <strong>@item.Value</strong></div>  </MudListItem>
+            }
         }
     </MudList>
 </MudCard>
@@ -17,7 +20,7 @@
     private String GetLeft()
     {
         Double left = 0.0;
-        if (ToolTips.Any() == true)
+        if (ToolTips != null && ToolTips.Any() == true)
         {
             BarChartToolTipInfo first = ToolTips.ElementAt(0);
             left = first.P2.X + ((first.P3.X - first.P2.X) * 0.9);
@@ -28,7 +31,7 @@
     private String GetTop()
     {
         Double top = 0.0;
-        if (ToolTips.Any() == true)
+        if (ToolTips != null && ToolTips.Any() == true)
         {
             BarChartToolTipInfo first = ToolTips.ElementAt(0);
             top = first.P3.Y - ((first.P4.Y - first.P3.Y) * 0.1);
