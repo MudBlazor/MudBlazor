@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -19,6 +20,7 @@ namespace MudBlazor
         private bool _expanded, _isRendered;
         private ElementReference _container, _wrapper;
         private CollapseState _state = CollapseState.Exited;
+        private DotNetObjectReference<MudCollapse> _dotNetRef;
 
         protected string Stylename =>
             new StyleBuilder()
@@ -105,6 +107,11 @@ namespace MudBlazor
             {
                 _height = MaxHeight.Value;
             }
+        }
+
+        protected override void OnInitialized()
+        {
+            _dotNetRef = DotNetObjectReference.Create(this);
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)

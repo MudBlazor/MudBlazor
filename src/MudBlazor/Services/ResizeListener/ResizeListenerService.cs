@@ -10,7 +10,7 @@ namespace MudBlazor.Services
     /// <summary>
     /// This service listens to browser resize events and allows you to react to a changing window size in Blazor
     /// </summary>
-    public class ResizeListenerService : IResizeListenerService
+    public class ResizeListenerService : IResizeListenerService, IDisposable
     {
         /// <summary>
         /// 
@@ -200,6 +200,7 @@ namespace MudBlazor.Services
                 {
                     _onResized = null;
                     _onBreakpointChanged = null;
+                    _dotNetRef?.Dispose();
                 }
                 _disposed = true;
             }
