@@ -29,10 +29,10 @@ namespace MudBlazor.Components.Chart.Interpolation
         public void CalcParameters()
         {
             for (int i = 0; i < n; i++)
-                a[i] = givenYs[i];
+                a[i] = GivenYs[i];
 
             for (int i = 0; i < n - 1; i++)
-                h[i] = givenXs[i + 1] - givenXs[i];
+                h[i] = GivenXs[i + 1] - GivenXs[i];
 
             for (int i = 0; i < n - 2; i++)
             {
