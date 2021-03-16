@@ -69,7 +69,7 @@ namespace MudBlazor.Charts
             var horizontalStartSpace = 30.0;
             var verticalEndSpace = 25.0;
             var horizontalEndSpace = 30.0;
-            
+
             var verticalSpace = (boundHeight - verticalStartSpace - verticalEndSpace) / (numHorizontalLines);
             var horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / (numVerticalLines);
             var interpolationOption = MudChartParent?.ChartOptions.InterpolationOption ?? InterpolationOption.Straight;
@@ -98,7 +98,7 @@ namespace MudBlazor.Charts
             double startGridX = 0;
             for (var counter = 0; counter <= numVerticalLines; counter++)
             {
-                
+
                 var line = new SvgPath()
                 {
                     Index = counter,
@@ -206,7 +206,7 @@ namespace MudBlazor.Charts
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
                 }
-             
+
                 var line = new SvgPath()
                 {
                     Index = colorcounter,
@@ -222,6 +222,6 @@ namespace MudBlazor.Charts
                 _chartLines.Add(line);
                 _legends.Add(legend);
             }
-        }     
+        }
     }
 }
