@@ -369,6 +369,46 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
         }
 
+
+        #region DataAttribute validation
+        [Test]
+        public async Task TextField_Should_Validate_Data_Attribute_Fail()
+        {
+            var comp = ctx.RenderComponent<TextFieldValidationDataAttrTest>();
+            Console.WriteLine(comp.Markup);
+            var textfieldcomp = comp.FindComponent<MudTextField<string>>();
+            var textfield = textfieldcomp.Instance;
+            await comp.InvokeAsync(() => textfield.DebounceInterval = 0);
+            // Set invalid text
+            comp.Find("input").Change("Quux");
+            // check initial state
+            textfield.Value.Should().Be("Quux");
+            textfield.Text.Should().Be("Quux");
+            // check validity
+            await comp.InvokeAsync(() => textfield.Validate());
+            textfield.ValidationErrors.Should().NotBeEmpty();
+            textfield.ValidationErrors.Should().HaveCount(1);
+            textfield.ValidationErrors[0].Should().Equals("Should not be longer than 3");
+        }
+
+        [Test]
+        public async Task TextField_Should_Validate_Data_Attribute_Success()
+        {
+            var comp = ctx.RenderComponent<TextFieldValidationDataAttrTest>();
+            Console.WriteLine(comp.Markup);
+            var textfieldcomp = comp.FindComponent<MudTextField<string>>();
+            var textfield = textfieldcomp.Instance;
+            await comp.InvokeAsync(() => textfield.DebounceInterval = 0);
+            // Set valid text
+            comp.Find("input").Change("Qux");
+            // check initial state
+            textfield.Value.Should().Be("Qux");
+            textfield.Text.Should().Be("Qux");
+            // check validity
+            await comp.InvokeAsync(() => textfield.Validate());
+            textfield.ValidationErrors.Should().BeEmpty();
+        }
+        #endregion
     }
 
 }

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -239,6 +240,16 @@ namespace MudBlazor
 
                     changed = !EqualityComparer<T>.Default.Equals(value, _value);
                 }
+
+                // Run each validation attributes of the property targetted with `For`
+                if (_validationAttrsFor is IEnumerable<ValidationAttribute> validationAttrs)
+                {
+                    foreach (var attr in validationAttrs)
+                    {
+                        ValidateWithAttribute(attr, _value, errors);
+                    }
+                }
+
                 // required error (must be last, because it is least important!)
                 var hasValue = HasValue(_value);
                 if (Required)
@@ -255,7 +266,7 @@ namespace MudBlazor
                 if (!changed)
                 {
                     // this must be called in any case, because even if Validation is null the user might have set Error and ErrorText manually
-                    // if Error and ErrorText are set by the user, setting them here will have no effect. 
+                    // if Error and ErrorText are set by the user, setting them here will have no effect.
                     ValidationErrors = errors;
                     Error = errors.Count > 0;
                     ErrorText = errors.FirstOrDefault();
@@ -412,6 +423,13 @@ namespace MudBlazor
         public Expression<Func<T>>? For { get; set; }
 #nullable disable
 
+        /// <summary>
+        /// Stores the list of validation attributes attached to the property targeted by <seealso cref="For"/>. If <seealso cref="For"/> is null, this property is null too.
+        /// </summary>
+#nullable enable
+        private IEnumerable<ValidationAttribute>? _validationAttrsFor;
+#nullable disable
+
         private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
         {
             if (EditContext != null)
@@ -448,6 +466,12 @@ namespace MudBlazor
             {
                 if (For != _currentFor)
                 {
+                    // Extract validation attributes
+                    // Sourced from https://stackoverflow.com/a/43076222/4839162
+                    var expression = (MemberExpression)For.Body;
+                    var propertyInfo = (PropertyInfo)expression.Member;
+                    _validationAttrsFor = propertyInfo.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
+
                     _fieldIdentifier = FieldIdentifier.Create(For);
                     _currentFor = For;
                 }
