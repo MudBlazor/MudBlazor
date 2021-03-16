@@ -1,0 +1,38 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <EditForm Model="Model">
+            <DataAnnotationsValidator />
+            <MudAutocomplete For="@(() => Model.Value)" Label="Metasyntactic variable" @bind-Value="Model.Value" SearchFunc="@Search" />
+        </EditForm>
+    </MudItem>
+</MudGrid>
+@code {
+    #pragma warning disable CS1998 // async without await
+    public static string __description__ = "Test use of data attributes accessible using `For` bound expression.";
+
+    class TestModel
+    {
+        [StringLength(3, ErrorMessage = "Should not be longer than 3")]
+        public string Value { get; set; }
+    }
+
+    private TestModel Model { get; set; } = new TestModel();
+
+    // What does this awkward var name means ? => https://en.wikipedia.org/wiki/Metasyntactic_variable
+    private string[] metasyntacticVariable =
+    {
+    "Foo", "Bar", "Qux", "Quux"
+    };
+
+    private async Task<IEnumerable<string>> Search(string value)
+    {
+        // if text is null or empty, show complete list
+        if (string.IsNullOrEmpty(value))
+            return metasyntacticVariable;
+        return metasyntacticVariable.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+}

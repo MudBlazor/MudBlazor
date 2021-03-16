@@ -442,5 +442,44 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Text.Should().Be("1");
             validatedValue.Should().Be("1");
         }
+
+
+        #region DataAttribute validation
+        [Test]
+        public async Task TextField_Should_Validate_Data_Attribute_Fail()
+        {
+            var comp = ctx.RenderComponent<SelectValidationDataAttrTest>();
+            Console.WriteLine(comp.Markup);
+            var selectcomp = comp.FindComponent<MudSelect<string>>();
+            var select = selectcomp.Instance;
+            // Select invalid option
+            await comp.InvokeAsync(() => select.SelectOption("Quux"));
+            // check initial state
+            select.Value.Should().Be("Quux");
+            select.Text.Should().Be("Quux");
+            // check validity
+            await comp.InvokeAsync(() => select.Validate());
+            select.ValidationErrors.Should().NotBeEmpty();
+            select.ValidationErrors.Should().HaveCount(1);
+            select.ValidationErrors[0].Should().Equals("Should not be longer than 3");
+        }
+
+        [Test]
+        public async Task TextField_Should_Validate_Data_Attribute_Success()
+        {
+            var comp = ctx.RenderComponent<SelectValidationDataAttrTest>();
+            Console.WriteLine(comp.Markup);
+            var selectcomp = comp.FindComponent<MudSelect<string>>();
+            var select = selectcomp.Instance;
+            // Select valid option
+            await comp.InvokeAsync(() => select.SelectOption("Qux"));
+            // check initial state
+            select.Value.Should().Be("Qux");
+            select.Text.Should().Be("Qux");
+            // check validity
+            await comp.InvokeAsync(() => select.Validate());
+            select.ValidationErrors.Should().BeEmpty();
+        }
+        #endregion
     }
 }
