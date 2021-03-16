@@ -84,7 +84,7 @@ namespace MudBlazor
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        ///  Will adjust vertical spacing. 
+        ///  Will adjust vertical spacing.
         /// </summary>
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
@@ -115,7 +115,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.   
+        /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.
         /// </summary>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
@@ -155,7 +155,7 @@ namespace MudBlazor
         protected virtual void InvokeKeyUp(KeyboardEventArgs obj) => OnKeyUp.InvokeAsync(obj).AndForget();
 
         /// <summary>
-        /// Fired when the Value property changes. 
+        /// Fired when the Value property changes.
         /// </summary>
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
@@ -183,7 +183,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Value change hook for descendants. Called when Value needs to be refreshed from current Text property.  
+        /// Value change hook for descendants. Called when Value needs to be refreshed from current Text property.
         /// </summary>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
