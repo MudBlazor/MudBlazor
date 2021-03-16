@@ -66,9 +66,11 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             drawerElement.ClassList.Should().NotBeEmpty().And.HaveCount(3).And.Contain(new[] { "mud-chart-drawer-container", "d-flex", "flex-row" });
 
             drawerElement.ChildNodes.Should().NotBeEmpty().And.HaveCount(2);
-            drawerElement.ChildNodes.First().Should().BeAssignableTo<ISvgElement>();
+            drawerElement.ChildNodes.First().Should().BeAssignableTo<IHtmlDivElement>();
 
-            var chartContent = (ISvgElement)drawerElement.ChildNodes[0];
+            drawerElement.ChildNodes[0].ChildNodes.First().Should().BeAssignableTo<ISvgElement>();
+
+            var chartContent = (ISvgElement)drawerElement.ChildNodes[0].ChildNodes[0];
 
             var svgNode = XElement.Parse(chartContent.OuterHtml);
             svgNode.Should().BeEquivalentTo(XElement.Parse("<svg width=\"100%\" height=\"100%\" preserveAspectRatio=\"none\" viewBox=\"0 0 100 100\"></svg>"));
@@ -113,7 +115,9 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             else
             {
                 var drawerContainer = comp.Find(".mud-chart-drawer-container");
-                drawerContainer.ChildNodes.Should().ContainSingle().And.AllBeAssignableTo<ISvgElement>();
+                drawerContainer.ChildNodes.Should().ContainSingle().And.AllBeAssignableTo<IHtmlDivElement>();
+
+                drawerContainer.ChildNodes[0].ChildNodes.Should().ContainSingle().And.AllBeAssignableTo<ISvgElement>();
             }
         }
 

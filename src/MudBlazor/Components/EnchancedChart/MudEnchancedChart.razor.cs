@@ -33,13 +33,21 @@ namespace MudBlazor
         [Parameter] public RenderFragment<String> TitleDrawer { get; set; } = DefaultTitleDrawerFragment;
 
         private ChartLegendInfo _legendInfo;
-
         [Parameter] public RenderFragment<ChartLegendInfo> Legend { get; set; }
+
+        private List<ChartToolTipInfo> _toolTipInfo = new();
+        [Parameter] public RenderFragment<IEnumerable<ChartToolTipInfo>> ToolTip { get; set; }
 
         public void UpdateLegend(ChartLegendInfo info)
         {
             _legendInfo = info;
-            _legend.Update(info);
+            _legend?.Update(info);
+        }
+
+        public async void UpdateTooltip(IEnumerable<ChartToolTipInfo> info)
+        {
+            _toolTipInfo = new (info);
+            await InvokeAsync(StateHasChanged);
         }
 
         protected internal void SetLegend(MudChartLegendBase legend) => _legend = legend;
