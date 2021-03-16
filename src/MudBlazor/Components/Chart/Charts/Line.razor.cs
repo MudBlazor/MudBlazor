@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using MudBlazor.Charts.SVG.Models;
 using MudBlazor.Components.Chart;
 using MudBlazor.Components.Chart.Interpolation;
-using MudBlazor;
 using static MudBlazor.ChartOptions;
 
 namespace MudBlazor.Charts
@@ -69,10 +69,10 @@ namespace MudBlazor.Charts
             var horizontalStartSpace = 30.0;
             var verticalEndSpace = 25.0;
             var horizontalEndSpace = 30.0;
-            
+
             var verticalSpace = (boundHeight - verticalStartSpace - verticalEndSpace) / (numHorizontalLines);
             var horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / (numVerticalLines);
-            var curveEnum = MudChartParent?.ChartOptions.CurveEnum ?? InterpolationOption.Straight;
+            var interpolationOption = MudChartParent?.ChartOptions.InterpolationOption ?? InterpolationOption.Straight;
 
             //Horizontal Grid Lines
             var y = verticalStartSpace;
@@ -98,7 +98,7 @@ namespace MudBlazor.Charts
             double startGridX = 0;
             for (var counter = 0; counter <= numVerticalLines; counter++)
             {
-                
+
                 var line = new SvgPath()
                 {
                     Index = counter,
@@ -142,16 +142,16 @@ namespace MudBlazor.Charts
                     YValues[i] = boundHeight - (verticalStartSpace + gridValue);
 
                 }
-                switch (curveEnum)
+                switch (interpolationOption)
                 {
-                    case InterpolationOption.NaturalSpline:            
+                    case InterpolationOption.NaturalSpline:
                         interpolator = new NaturalSpline(XValues, YValues);
                         break;
                     case InterpolationOption.EndSlope:
-                        interpolator = new EndSlopeSpline(XValues, YValues);                     
+                        interpolator = new EndSlopeSpline(XValues, YValues);
                         break;
                     case InterpolationOption.Periodic:
-                        interpolator = new PeriodicSpline(XValues, YValues);                      
+                        interpolator = new PeriodicSpline(XValues, YValues);
                         break;
                     case InterpolationOption.Straight:
                     default:
@@ -161,8 +161,8 @@ namespace MudBlazor.Charts
 
                 if (interpolator?.InterpolationRequired == true)
                 {
-                    horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / interpolator.interpolatedXs.Length;
-                    foreach (var yValue in interpolator.interpolatedYs)
+                    horizontalSpace = (boundWidth - horizontalStartSpace - horizontalEndSpace) / interpolator.InterpolatedXs.Length;
+                    foreach (var yValue in interpolator.InterpolatedYs)
                     {
 
                         if (firstTime)
@@ -206,7 +206,7 @@ namespace MudBlazor.Charts
                         chartLine = chartLine + ToS(gridValueX) + " " + ToS(gridValueY);
                     }
                 }
-             
+
                 var line = new SvgPath()
                 {
                     Index = colorcounter,
@@ -222,6 +222,6 @@ namespace MudBlazor.Charts
                 _chartLines.Add(line);
                 _legends.Add(legend);
             }
-        }     
+        }
     }
 }

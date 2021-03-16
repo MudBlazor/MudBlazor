@@ -8,10 +8,10 @@ namespace MudBlazor.Components.Chart.Interpolation
 {
     public interface ILineInterpolator
     {
-        public double[] givenYs { get; set; }
-        public double[] givenXs { get; set; }
-        public double[] interpolatedXs { get; set; }
-        public double[] interpolatedYs { get; set; }
+        public double[] GivenYs { get; set; }
+        public double[] GivenXs { get; set; }
+        public double[] InterpolatedXs { get; set; }
+        public double[] InterpolatedYs { get; set; }
         public bool InterpolationRequired { get; set; }
 
     }

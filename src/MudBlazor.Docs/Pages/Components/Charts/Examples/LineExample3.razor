@@ -22,7 +22,7 @@
     Random random = new Random();
     protected override void OnInitialized()
     {
-        options.CurveEnum = InterpolationOption.NaturalSpline;
+        options.InterpolationOption = InterpolationOption.NaturalSpline;
     }
 
     public void RandomizeData()
@@ -41,9 +41,9 @@
         StateHasChanged();
     }
 
-    void OnClickMenu(InterpolationOption curveEnum)
+    void OnClickMenu(InterpolationOption interpolationOption)
     {
-        options.CurveEnum = curveEnum;
+        options.InterpolationOption = interpolationOption;
         StateHasChanged();
     }
 }
