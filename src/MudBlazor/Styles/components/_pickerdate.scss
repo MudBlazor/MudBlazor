@@ -247,7 +247,7 @@
 :not(.mud-picker-hidden) {
     .mud-picker-calendar-header-last {
         .mud-picker-nav-button-next {
-            visibility: visible !important;
+            visibility: inherit !important;
         }
     }
 }

@@ -84,6 +84,7 @@ namespace MudBlazor
             var dialogInstance = new RenderFragment(builder =>
             {
                 builder.OpenComponent<MudDialogInstance>(0);
+                builder.SetKey(dialogInstanceId);
                 builder.AddAttribute(1, "Options", options);
                 builder.AddAttribute(2, "Title", title);
                 builder.AddAttribute(3, "Content", dialogContent);

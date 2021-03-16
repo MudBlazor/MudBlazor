@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -100,7 +101,15 @@ namespace MudBlazor
 
         private async Task UpdateHeight()
         {
-            _height = (await _wrapper.MudGetBoundingClientRectAsync())?.Height ?? 0;
+            if (_disposeCount > 0)
+            {
+                _height = 0;
+            }
+            else
+            {
+                _height = (await _wrapper.MudGetBoundingClientRectAsync())?.Height ?? 0;
+            }
+
             if (MaxHeight != null && _height > MaxHeight)
             {
                 _height = MaxHeight.Value;
@@ -118,23 +127,26 @@ namespace MudBlazor
             {
                 _isRendered = true;
                 await UpdateHeight();
-                _listenerId = await _container.MudAddEventListenerAsync(_dotNetRef, "animationend", nameof(AnimationEnd));
+                if (_dotNetRef != null)
+                    _listenerId = await _container.MudAddEventListenerAsync(_dotNetRef, "animationend", nameof(AnimationEnd));
             }
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        bool _disposed;
+        int _disposeCount;
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (Interlocked.Increment(ref _disposeCount) == 1)
             {
                 if (disposing)
                 {
-                    _ = _container.MudRemoveEventListenerAsync("animationend", _listenerId);
-                    _dotNetRef?.Dispose();
+                    if (_listenerId != 0)
+                        _ = _container.MudRemoveEventListenerAsync("animationend", _listenerId);
+                    var toDispose = _dotNetRef;
+                    _dotNetRef = null;
+                    toDispose?.Dispose();
                 }
-                _disposed = true;
             }
         }
 

@@ -5,66 +5,100 @@
     }
 
     focus (element) {
-        element.focus();
+        if (element)
+        {
+            element.focus();
+        }
     }
 
     focusFirst (element, skip = 0, min = 0) {
-        let tabbables = getTabbableElements(element);
-        if (tabbables.length <= min)
-            element.focus();
-        else
-            tabbables[skip].focus();
+        if (element)
+        {
+            let tabbables = getTabbableElements(element);
+            if (tabbables.length <= min)
+                element.focus();
+            else
+                tabbables[skip].focus();
+        }
     }
 
     focusLast (element, skip = 0, min = 0) {
-        let tabbables = getTabbableElements(element);
-        if (tabbables.length <= min)
-            element.focus();
-        else
-            tabbables[tabbables.length - skip - 1].focus();
+        if (element)
+        {
+            let tabbables = getTabbableElements(element);
+            if (tabbables.length <= min)
+                element.focus();
+            else
+                tabbables[tabbables.length - skip - 1].focus();
+        }
     }
 
     saveFocus (element) {
-        element['mudblazor_savedFocus'] = document.activeElement;
+        if (element)
+        {
+            element['mudblazor_savedFocus'] = document.activeElement;
+        }
     }
 
     restoreFocus (element) {
-        let previous = element['mudblazor_savedFocus'];
-        delete element['mudblazor_savedFocus']
-        if (previous)
-            previous.focus();
+        if (element)
+        {
+            let previous = element['mudblazor_savedFocus'];
+            delete element['mudblazor_savedFocus']
+            if (previous)
+                previous.focus();
+        }
     }
 
     selectRange(element, pos1, pos2) {
-        if (element.createTextRange) {
-            let selRange = element.createTextRange();
-            selRange.collapse(true);
-            selRange.moveStart('character', pos1);
-            selRange.moveEnd('character', pos2);
-            selRange.select();
-        } else if (element.setSelectionRange) {
-            element.setSelectionRange(pos1, pos2);
-        } else if (element.selectionStart) {
-            element.selectionStart = pos1;
-            element.selectionEnd = pos2;
+        if (element)
+        {
+            if (element.createTextRange) {
+                let selRange = element.createTextRange();
+                selRange.collapse(true);
+                selRange.moveStart('character', pos1);
+                selRange.moveEnd('character', pos2);
+                selRange.select();
+            } else if (element.setSelectionRange) {
+                element.setSelectionRange(pos1, pos2);
+            } else if (element.selectionStart) {
+                element.selectionStart = pos1;
+                element.selectionEnd = pos2;
+            }
+            element.focus();
         }
-        element.focus();
     }
 
     select(element) {
-        element.select();
+        if (element)
+        {
+            element.select();
+        }
     }
 
     getBoundingClientRect (element) {
-        return element?.getBoundingClientRect();
+        if (element)
+        {
+            return element.getBoundingClientRect();
+        }
+        else
+        {
+            return null;
+        }
     }
 
     changeCss (element, css) {
-        element.className = css;
+        if (element)
+        {
+            element.className = css;
+        }
     }
 
     changeCssVariable (element, name, newValue) {
-        element.style.setProperty(name, newValue);
+        if (element)
+        {
+            element.style.setProperty(name, newValue);
+        }
     }
 
     addEventListener (element, dotnet, event, callback, spec, stopPropagation) {

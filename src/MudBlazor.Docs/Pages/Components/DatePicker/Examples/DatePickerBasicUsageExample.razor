@@ -21,7 +21,19 @@
         <MudDatePicker Label="Display two months" DisplayMonths="2" TitleDateFormat="dddd, dd MMMM" @bind-Date="date" />
     </MudItem>
 </MudGrid>
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudDatePicker @ref="_picker" Label="With action buttons" @bind-Date="date">
+            <PickerActions>
+                <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.Clear())">Clear</MudButton>
+                <MudButton OnClick="@(() => _picker.Close(false))">Cancel</MudButton>
+                <MudButton Color="Color.Primary" OnClick="@(() => _picker.Close())">Ok</MudButton>
+            </PickerActions>
+        </MudDatePicker>
+    </MudItem>
+</MudGrid>
 
 @code {
+    MudDatePicker _picker;
     DateTime? date = DateTime.Today;
 }
