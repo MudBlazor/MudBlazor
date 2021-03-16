@@ -242,11 +242,11 @@ namespace MudBlazor
                 }
 
                 // Run each validation attributes of the property targetted with `For`
-                if (_validationAttrsFor is IEnumerable<ValidationAttribute> va)
+                if (_validationAttrsFor is IEnumerable<ValidationAttribute> validationAttrs)
                 {
-                    foreach (var v in va)
+                    foreach (var attr in validationAttrs)
                     {
-                        ValidateWithAttribute(v, _value, errors);
+                        ValidateWithAttribute(attr, _value, errors);
                     }
                 }
 
