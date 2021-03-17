@@ -241,10 +241,10 @@ namespace MudBlazor
                     changed = !EqualityComparer<T>.Default.Equals(value, _value);
                 }
 
-                // Run each validation attributes of the property targetted with `For`
-                if (_validationAttrsFor is IEnumerable<ValidationAttribute> validationAttrs)
+                // Run each validation attributes of the property targeted with `For`
+                if (_validationAttrsFor!=null)
                 {
-                    foreach (var attr in validationAttrs)
+                    foreach (var attr in _validationAttrsFor)
                     {
                         ValidateWithAttribute(attr, _value, errors);
                     }
@@ -286,8 +286,16 @@ namespace MudBlazor
 
         protected virtual void ValidateWithAttribute(ValidationAttribute attr, T value, List<string> errors)
         {
-            if (!attr.IsValid(value))
-                errors.Add(attr.ErrorMessage);
+            try
+            {
+                var isValid = attr.IsValid(value);
+                if (!isValid)
+                    errors.Add(attr.ErrorMessage);
+            }
+            catch (Exception e)
+            {
+                /* silently ignore exceptions thrown by the validation attribute */
+            }
         }
 
         protected virtual void ValidateWithFunc(Func<T, bool> func, T value, List<string> errors)
