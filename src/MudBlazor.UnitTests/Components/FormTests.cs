@@ -544,6 +544,56 @@ namespace MudBlazor.UnitTests.Components
             datepicker.Error.Should().BeTrue();
             datepicker.ErrorText.Should().Be("Only full hours allowed");
         }
+
+        /// <summary>
+        /// Testing the functionality of the EditForm example from the docs.
+        /// </summary>
+        [Test]
+        public async Task EditFormExample_EmptyValidation()
+        {
+            var comp = ctx.RenderComponent<EditFormExample>();
+            Console.WriteLine(comp.Markup);
+            // same effect as clicking the validate button
+            comp.Find("form").Submit();
+            var textfields = comp.FindComponents<MudTextField<string>>();
+            textfields[0].Instance.HasErrors.Should().BeTrue();
+            textfields[0].Instance.ErrorText.Should().Be("The Username field is required.");
+            textfields[1].Instance.HasErrors.Should().BeTrue();
+            textfields[1].Instance.ErrorText.Should().Be("The Email field is required.");
+            textfields[2].Instance.HasErrors.Should().BeTrue();
+            textfields[2].Instance.ErrorText.Should().Be("The Password field is required.");
+            textfields[3].Instance.HasErrors.Should().BeTrue();
+            textfields[3].Instance.ErrorText.Should().Be("The Password2 field is required.");
+        }
+
+        /// <summary>
+        /// Testing the functionality of the EditForm example from the docs.
+        /// </summary>
+        [Test]
+        public async Task EditFormExample_FillInValues()
+        {
+            var comp = ctx.RenderComponent<EditFormExample>();
+            //Console.WriteLine(comp.Markup);
+            comp.FindAll("input")[0].Change("Rick Sanchez");
+            comp.FindAll("input")[0].Blur();
+            comp.FindAll("input")[1].Change("rick.sanchez@citadel-of-ricks.com");
+            comp.FindAll("input")[1].Blur();
+            comp.FindAll("input")[2].Change("Wabalabadubdub1234!");
+            comp.FindAll("input")[2].Blur();
+            comp.FindAll("input")[3].Change("Wabalabadubdub1234!");
+            comp.FindAll("input")[3].Blur();
+            // same effect as clicking the validate button
+            comp.Find("form").Submit();
+            var textfields = comp.FindComponents<MudTextField<string>>();
+            textfields[0].Instance.ErrorText.Should().Be("Name length can't be more than 8.");
+            textfields[0].Instance.HasErrors.Should().BeTrue();
+            textfields[1].Instance.HasErrors.Should().BeFalse();
+            textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[2].Instance.HasErrors.Should().BeFalse();
+            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[3].Instance.HasErrors.Should().BeFalse();
+            textfields[3].Instance.ErrorText.Should().BeNullOrEmpty();
+        }
     }
 }
 
