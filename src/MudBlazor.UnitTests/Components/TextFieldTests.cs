@@ -414,7 +414,7 @@ namespace MudBlazor.UnitTests.Components
 
         public class CustomFailingValidationAttribute : ValidationAttribute
         {
-            protected override ValidationResult? IsValid(object value,
+            protected override ValidationResult IsValid(object value,
                 ValidationContext validationContext)
             {
                 return new ValidationResult("TEST ERROR");
