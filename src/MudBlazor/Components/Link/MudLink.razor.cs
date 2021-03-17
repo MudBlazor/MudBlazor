@@ -15,6 +15,15 @@ namespace MudBlazor
           .AddClass($"mud-link-disabled", Disabled)
           .AddClass(Class)
         .Build();
+        
+        private Dictionary<string, object> Attributes
+        {
+            get => Disabled ? UserAttributes : new Dictionary<string, object>(UserAttributes)
+            {
+                { "href", Href },
+                { "target", Target }
+            };
+        }
 
         private Dictionary<string, object> Attributes
         {
