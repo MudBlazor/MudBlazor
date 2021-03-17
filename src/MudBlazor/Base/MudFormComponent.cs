@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -296,7 +296,7 @@ namespace MudBlazor
                 if (validationResult != ValidationResult.Success)
                     errors.Add(validationResult.ErrorMessage);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 // Maybe conditionally add full error message if `IWebAssemblyHostEnvironment.IsDevelopment()`
                 // Or log using proper logger.
