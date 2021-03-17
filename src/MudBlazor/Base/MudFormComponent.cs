@@ -296,9 +296,11 @@ namespace MudBlazor
                 if (validationResult != ValidationResult.Success)
                     errors.Add(validationResult.ErrorMessage);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                /* silently ignore exceptions thrown by the validation attribute */
+                // Maybe conditionally add full error message if `IWebAssemblyHostEnvironment.IsDevelopment()`
+                // Or log using proper logger.
+                errors.Add($"An unhandled exception occured: {e.Message}");
             }
         }
 

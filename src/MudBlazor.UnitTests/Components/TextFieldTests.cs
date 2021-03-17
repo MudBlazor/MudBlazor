@@ -373,7 +373,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
 
-        #region DataAttribute validation
+        #region ValidationAttribute support
         [Test]
         public async Task TextField_Should_Validate_Data_Attribute_Fail()
         {
@@ -412,6 +412,7 @@ namespace MudBlazor.UnitTests.Components
             textfield.ValidationErrors.Should().BeEmpty();
         }
 
+        #region Custom ValidationAttribute
         public class CustomFailingValidationAttribute : ValidationAttribute
         {
             protected override ValidationResult IsValid(object value,
@@ -420,15 +421,15 @@ namespace MudBlazor.UnitTests.Components
                 return new ValidationResult("TEST ERROR");
             }
         }
-        class TestModel
+        class TestFailingModel
         {
             [CustomFailingValidation]
             public string Foo { get; set; }
         }
         [Test]
-        public async Task TextField_Should_HaveCorrectMessageWithCustomAttr()
+        public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Failing()
         {
-            var model = new TestModel();
+            var model = new TestFailingModel();
             var comp = ctx.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
             await comp.InvokeAsync(() => comp.Instance.Validate());
             comp.Instance.Error.Should().BeTrue();
@@ -436,6 +437,33 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ValidationErrors[0].Should().Be("TEST ERROR");
             comp.Instance.GetErrorText().Should().Be("TEST ERROR");
         }
+
+
+        public class CustomThrowingValidationAttribute : ValidationAttribute
+        {
+            protected override ValidationResult IsValid(object value,
+                ValidationContext validationContext)
+            {
+                throw new Exception("This is a test exception");
+            }
+        }
+        class TestThrowingModel
+        {
+            [CustomThrowingValidation]
+            public string Foo { get; set; }
+        }
+        [Test]
+        public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Throwing()
+        {
+            var model = new TestThrowingModel();
+            var comp = ctx.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be("An unhandled exception occured: This is a test exception");
+            comp.Instance.GetErrorText().Should().Be("An unhandled exception occured: This is a test exception");
+        }
+        #endregion
         #endregion
     }
 
