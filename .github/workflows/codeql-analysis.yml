@@ -20,8 +20,6 @@ jobs:
       - name: Initialize CodeQL
         id: init_codeql
         uses: github/codeql-action/init@v1
-        with:
-          queries: security-and-quality
 
       - name: Build application
         id: build_app
