@@ -288,7 +288,10 @@ namespace MudBlazor
         {
             try
             {
-                var validationContext = new ValidationContext(this);
+                // The validation context is applied either on the `EditContext.Model`, or `this` as a stub subject.
+                // Complex validation with fields references (like `CompareAttribute`) should use an EditContext.
+                var validationContextSubject = EditContext?.Model ?? this;
+                var validationContext = new ValidationContext(validationContextSubject);
                 var validationResult = attr.GetValidationResult(value, validationContext);
                 if (validationResult != ValidationResult.Success)
                     errors.Add(validationResult.ErrorMessage);
