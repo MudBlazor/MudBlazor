@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -242,7 +242,7 @@ namespace MudBlazor
                 }
 
                 // Run each validation attributes of the property targeted with `For`
-                if (_validationAttrsFor!=null)
+                if (_validationAttrsFor != null)
                 {
                     foreach (var attr in _validationAttrsFor)
                     {
@@ -288,13 +288,19 @@ namespace MudBlazor
         {
             try
             {
-                var isValid = attr.IsValid(value);
-                if (!isValid)
-                    errors.Add(attr.ErrorMessage);
+                // The validation context is applied either on the `EditContext.Model`, or `this` as a stub subject.
+                // Complex validation with fields references (like `CompareAttribute`) should use an EditContext.
+                var validationContextSubject = EditContext?.Model ?? this;
+                var validationContext = new ValidationContext(validationContextSubject);
+                var validationResult = attr.GetValidationResult(value, validationContext);
+                if (validationResult != ValidationResult.Success)
+                    errors.Add(validationResult.ErrorMessage);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                /* silently ignore exceptions thrown by the validation attribute */
+                // Maybe conditionally add full error message if `IWebAssemblyHostEnvironment.IsDevelopment()`
+                // Or log using proper logger.
+                errors.Add($"An unhandled exception occured: {e.Message}");
             }
         }
 
@@ -440,7 +446,7 @@ namespace MudBlazor
 
         private void OnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
         {
-            if (EditContext != null)
+            if (EditContext != null && !_fieldIdentifier.Equals(default(FieldIdentifier)))
             {
                 var error_msgs = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
                 Error = error_msgs.Length > 0;
@@ -470,26 +476,23 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
-            if (EditContext != null && For != null)
+            if (For != null && For != _currentFor)
             {
-                if (For != _currentFor)
-                {
-                    // Extract validation attributes
-                    // Sourced from https://stackoverflow.com/a/43076222/4839162
-                    var expression = (MemberExpression)For.Body;
-                    var propertyInfo = (PropertyInfo)expression.Member;
-                    _validationAttrsFor = propertyInfo.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
+                // Extract validation attributes
+                // Sourced from https://stackoverflow.com/a/43076222/4839162
+                var expression = (MemberExpression)For.Body;
+                var propertyInfo = (PropertyInfo)expression.Member;
+                _validationAttrsFor = propertyInfo.GetCustomAttributes(typeof(ValidationAttribute), true).Cast<ValidationAttribute>();
 
-                    _fieldIdentifier = FieldIdentifier.Create(For);
-                    _currentFor = For;
-                }
+                _fieldIdentifier = FieldIdentifier.Create(For);
+                _currentFor = For;
+            }
 
-                if (EditContext != _currentEditContext)
-                {
-                    DetachValidationStateChangedListener();
-                    EditContext.OnValidationStateChanged += OnValidationStateChanged;
-                    _currentEditContext = EditContext;
-                }
+            if (EditContext != null && EditContext != _currentEditContext)
+            {
+                DetachValidationStateChangedListener();
+                EditContext.OnValidationStateChanged += OnValidationStateChanged;
+                _currentEditContext = EditContext;
             }
         }
 
