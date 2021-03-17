@@ -292,7 +292,7 @@ namespace MudBlazor
                 if (!isValid)
                     errors.Add(attr.ErrorMessage);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 /* silently ignore exceptions thrown by the validation attribute */
             }
