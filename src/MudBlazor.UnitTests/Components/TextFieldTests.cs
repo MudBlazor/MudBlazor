@@ -4,13 +4,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -407,6 +410,31 @@ namespace MudBlazor.UnitTests.Components
             // check validity
             await comp.InvokeAsync(() => textfield.Validate());
             textfield.ValidationErrors.Should().BeEmpty();
+        }
+
+        public class CustomFailingValidationAttribute : ValidationAttribute
+        {
+            protected override ValidationResult? IsValid(object value,
+                ValidationContext validationContext)
+            {
+                return new ValidationResult("TEST ERROR");
+            }
+        }
+        class TestModel
+        {
+            [CustomFailingValidation]
+            public string Foo { get; set; }
+        }
+        [Test]
+        public async Task TextField_Should_HaveCorrectMessageWithCustomAttr()
+        {
+            var model = new TestModel();
+            var comp = ctx.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be("TEST ERROR");
+            comp.Instance.GetErrorText().Should().Be("TEST ERROR");
         }
         #endregion
     }
