@@ -296,7 +296,7 @@ namespace MudBlazor
                 if (validationResult != ValidationResult.Success)
                     errors.Add(validationResult.ErrorMessage);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Maybe conditionally add full error message if `IWebAssemblyHostEnvironment.IsDevelopment()`
                 // Or log using proper logger.
