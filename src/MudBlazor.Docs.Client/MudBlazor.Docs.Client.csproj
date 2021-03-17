@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <!--Please see https://github.com/dotnet/aspnetcore/issues/27776 -->
     <StaticWebAssetBasePath Condition="'$(BuildType)' != 'publish'">wasm</StaticWebAssetBasePath>
     <!--Note trailing slash -->
