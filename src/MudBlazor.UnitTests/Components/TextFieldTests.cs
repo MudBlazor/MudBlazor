@@ -150,7 +150,7 @@ namespace MudBlazor.UnitTests.Components
             textField.Value.Should().BeNull();
             //More than 200 ms had elapsed, so Value should be updated
             await Task.Delay(150);
-            textField.Value.Should().Be("Some Value");
+            comp.WaitForAssertion(() => textField.Value.Should().Be("Some Value"));
         }
 
         /// <summary>
