@@ -136,23 +136,38 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
+        protected bool _isFocused = false;
+
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
+            _isFocused = false;
             Touched = true;
             BeginValidateAfter(OnBlur.InvokeAsync(obj));
         }
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
-        protected virtual void InvokeKeyDown(KeyboardEventArgs obj) => OnKeyDown.InvokeAsync(obj).AndForget();
+        protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
+        {
+            _isFocused = true;
+            OnKeyDown.InvokeAsync(obj).AndForget();
+        }
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
-        protected virtual void InvokeKeyPress(KeyboardEventArgs obj) => OnKeyPress.InvokeAsync(obj).AndForget();
+        protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
+        {
+            _isFocused = true;
+            OnKeyPress.InvokeAsync(obj).AndForget();
+        }
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
-        protected virtual void InvokeKeyUp(KeyboardEventArgs obj) => OnKeyUp.InvokeAsync(obj).AndForget();
+        protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
+        {
+            _isFocused = true;
+            OnKeyUp.InvokeAsync(obj).AndForget();
+        }
 
         /// <summary>
         /// Fired when the Value property changes.
