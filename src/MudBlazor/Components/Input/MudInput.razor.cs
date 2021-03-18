@@ -18,12 +18,8 @@ namespace MudBlazor
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
-        //private DateTime _lastTyped; // timestamp to prohibit rendering while typing to prevent swallowed chars
-        //private readonly TimeSpan _renderProtectionInterval = TimeSpan.FromMilliseconds(500);
-
         protected override bool ShouldRender()
         {
-            //if (Immediate && _lastTyped.Add(_renderProtectionInterval) > DateTime.Now)
             if (Immediate && _isFocused)
                 return false;
             return true;
@@ -31,7 +27,6 @@ namespace MudBlazor
 
         protected Task OnInput(ChangeEventArgs args)
         {
-            //_lastTyped = DateTime.Now;
             _isFocused = true;
             return Immediate ? SetTextAsync(args?.Value as string) : Task.CompletedTask;
         }
