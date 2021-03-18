@@ -2,12 +2,14 @@
 #pragma warning disable IDE1006 // leading underscore
 
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Form;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -118,7 +120,7 @@ namespace MudBlazor.UnitTests.Components
             textField.ErrorText.Should().Be("Invalid");
 
             // note: this logic is invalid, so it was removed. Validaton funcs are always called
-            // the validation func must validate non-required empty fields as valid. 
+            // the validation func must validate non-required empty fields as valid.
             //
             //// value is not required, so don't call the validation func on empty text
             //await comp.InvokeAsync(() => textField.Value = "");
@@ -159,7 +161,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().Be(true);
 
             // note: this logic is invalid, so it was removed. Validaton funcs are always called
-            // the validation func must validate non-required empty fields as valid. 
+            // the validation func must validate non-required empty fields as valid.
             //
             //// value is not required, so don't call the validation func on empty text
             //await comp.InvokeAsync(() => textField.Value = "");
@@ -383,7 +385,7 @@ namespace MudBlazor.UnitTests.Components
             checkbox.Find("input").Change(true);
             comp.WaitForAssertion(() => form.IsValid.Should().BeTrue());
             comp.WaitForState(() => form.Errors.Length == 0);
-            // click reset 
+            // click reset
             var resetButton = buttons[2];
             resetButton.Find("button").Click();
             comp.WaitForState(() => form.Errors.Length == 0);
@@ -593,6 +595,28 @@ namespace MudBlazor.UnitTests.Components
             textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
             textfields[3].Instance.HasErrors.Should().BeFalse();
             textfields[3].Instance.ErrorText.Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Ensure validation attributes aren't incorrectly called with `null` context.
+        /// </summary>
+        /// <see cref="https://github.com/Garderoben/MudBlazor/issues/1229"/>
+        [Test]
+        public async Task EditForm_Validation_NullContext()
+        {
+            var comp = ctx.RenderComponent<EditFormIssue1229>();
+            // Check first run attribute
+            EditFormIssue1229.TestAttribute.ValidationContextOnCall.Should().BeEmpty();
+            // Trigger change
+            var input= comp.Find("input");
+            input.Change("Test");
+            input.Blur();
+            // Verify context was set
+            EditFormIssue1229.TestAttribute.ValidationContextOnCall.Should().NotBeEmpty();
+            foreach (var vc in EditFormIssue1229.TestAttribute.ValidationContextOnCall)
+            {
+                vc.Should().NotBeNull();
+            }
         }
     }
 }
