@@ -358,17 +358,17 @@ namespace MudBlazor.UnitTests.Components
             var tf1 = comp.FindComponents<MudTextField<string>>()[0].Instance;
             var tf2 = comp.FindComponents<MudTextField<string>>()[1].Instance;
             comp.Find("input").Input("Bossmang");
-            comp.Find("input").Blur(); // <-- note: blurring is important here because input does only allow render updates while not being focused!
+            comp.Find("input").Blur(); // <-- note: Blur is important here because input does not allow render updates while focused!
             tf1.Text.Should().Be("Bossmang");
             tf2.Text.Should().Be("Bossmang");
             comp.Find("textarea").TrimmedText().Should().Be("Bossmang");
             comp.Find("textarea").Input("Beltalowda");
-            comp.Find("textarea").Blur(); // <-- note: blurring is important here because input does only allow render updates while not being focused!
+            comp.Find("textarea").Blur(); // Blur is important
             tf1.Text.Should().Be("Beltalowda");
             tf2.Text.Should().Be("Beltalowda");
             comp.Find("textarea").TrimmedText().Should().Be("Beltalowda");
             comp.Find("input").Input("Beratna");
-            comp.Find("input").Blur(); // <-- note: blurring is important here because input does only allow render updates while not being focused!
+            comp.Find("input").Blur(); // Blur is important
             tf1.Text.Should().Be("Beratna");
             tf2.Text.Should().Be("Beratna");
             comp.Find("textarea").TrimmedText().Should().Be("Beratna");
