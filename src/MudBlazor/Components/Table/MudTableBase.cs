@@ -135,6 +135,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ToolBarContent { get; set; }
 
+
+        /// <summary>
+        /// Additional MudTh cells for adding multiple levels of headers and gruping/stacking them
+        /// https://www.w3.org/WAI/tutorials/tables/irregular/
+        /// </summary>
+        [Parameter] public RenderFragment HeaderTopContent { get; set; }
         /// <summary>
         /// Add MudTh cells here to define the table header.
         /// </summary>

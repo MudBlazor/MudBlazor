@@ -35,6 +35,10 @@
                 @if (HeaderContent != null)
                 {
                     <thead class="mud-table-head">
+                        @if (@HeaderTopContent is not null)
+                        {                            
+                            @HeaderTopContent                            
+                        }
                         <MudTr IsHeader="true" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@OnHeaderCheckboxClicked" @ref="TableContext.HeaderRow">
                             @HeaderContent
                         </MudTr>

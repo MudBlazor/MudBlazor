@@ -1,0 +1,42 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+
+<MudTable Items="@Elements.Take(4)" Hover="true" Breakpoint="Breakpoint.Sm">
+<HeaderTopContent>
+    <MudTr IsHeader="true">
+        <MudTh UserAttributes="@(new Dictionary<string,object>(){["colspan"]="5"})" style="text-align:center">Periodic Elements Info</MudTh>            
+    </MudTr>
+    <MudTr IsHeader="true">
+        <MudTh UserAttributes="@(new Dictionary<string,object>(){["colspan"]="2"})" style="text-align:center">Basic</MudTh>
+        <MudTh UserAttributes="@(new Dictionary<string,object>(){["colspan"]="3"})" style="text-align:center">Extended</MudTh>            
+    </MudTr>
+</HeaderTopContent>     
+<HeaderContent>
+        <MudTh>Nr</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Name</MudTh>
+        <MudTh>Position</MudTh>
+        <MudTh>Molar mass</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Position" HideSmall="_hidePosition">@context.Position</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch>
+
+@code {
+    private bool _hidePosition;
+    private IEnumerable<Element> Elements = new List<Element>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+}
