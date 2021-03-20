@@ -122,6 +122,7 @@ namespace MudBlazor.UnitTests
             //Assert
             //input value has changed, DebounceInterval is 0, so Value should change in NumericField immediately
             numericField.Value.Should().Be(100);
+            numericField.Text.Should().Be("100");
         }
 
 
@@ -142,12 +143,15 @@ namespace MudBlazor.UnitTests
             numericField.Immediate.Should().BeTrue();
             //input value has changed, but elapsed time is 0, so Value should not change in NumericField
             numericField.Value.Should().BeNull();
+            numericField.Text.Should().Be("100");
             //DebounceInterval is 200 ms, so at 100 ms Value should not change in NumericField
             await Task.Delay(100);
             numericField.Value.Should().BeNull();
+            numericField.Text.Should().Be("100");
             //More than 200 ms had elapsed, so Value should be updated
             await Task.Delay(150);
             numericField.Value.Should().Be(100);
+            numericField.Text.Should().Be("100");
         }
 
         /// <summary>
@@ -299,15 +303,6 @@ namespace MudBlazor.UnitTests
             numericField.ErrorText.Should().BeNullOrEmpty();
             numericField.HasErrors.Should().Be(false);
         }
-
-        ///// <summary>
-        ///// This is based on a bug reported by a user
-        ///// </summary>
-        //[Test]
-        //public async Task DebouncedNumericField_ShouldNot_ThrowException()
-        //{
-        //    ctx.RenderComponent<DebouncedNumericFieldTest>();
-        //}
 
     }
 

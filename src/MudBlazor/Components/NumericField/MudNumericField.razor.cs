@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -298,6 +299,32 @@ namespace MudBlazor
         }
 
         #endregion
+
+        private bool _keyDownPreventDefault;
+        /// <summary>
+        /// Overrides KeyDown event, intercepts Arrow Up/Down and uses them to add/substract the value manually by the step value.
+        /// Relying on the browser mean the steps are each integer multiple from <see cref="Min"/> up until <see cref="Max"/>.
+        /// This align the behaviour with the spinner buttons.
+        /// </summary>
+        /// <remarks>https://try.mudblazor.com/snippet/QamlkdvmBtrsuEtb</remarks>
+        protected async Task InterceptArrowKey(KeyboardEventArgs obj)
+        {
+            if (obj.Type == "keydown")//KeyDown or repeat, blazor never fire InvokeKeyPress
+            {
+                if (obj.Key == "ArrowUp")
+                {
+                    await Increment();
+                    return;
+                }
+                else if (obj.Key == "ArrowDown")
+                {
+                    await Decrement();
+                    return;
+                }
+            }
+            _keyDownPreventDefault = KeyDownPreventDefault;
+            OnKeyPress.InvokeAsync(obj).AndForget();
+        }
 
         /// <summary>
         /// The short hint displayed in the input before the user enters a value.

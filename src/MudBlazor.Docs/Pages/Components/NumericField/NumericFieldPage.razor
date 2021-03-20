@@ -109,9 +109,12 @@
 
 		<DocsPageSection>
 			<SectionHeader>
-				<Title>Normal vs Immediate</Title>
+				<Title>Normal vs Immediate vs Debounced</Title>
 				<Description>
-					Per default, <CodeInline>MudNumericField</CodeInline> updates the bound value on Enter or when it looses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.
+					Per default, <CodeInline>MudNumericField</CodeInline> updates the bound value on Enter or when it looses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br />
+                    You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the amount of milliseconds you want to await before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback.
+                    Notice how in this example the debounced text only updates 500 ms after you stop typing.
+					<MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">Warning: when <CodeInline>Immediate="false"</CodeInline> (default), if the user types a value and then presses the arrow up/down on the keyboard, the step is calculated on the last accepted value.</MudAlert>
 				</Description>
 			</SectionHeader>
 			<SectionContent Outlined="true" FullWidth="true">
