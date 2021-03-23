@@ -44,10 +44,10 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p").TextContent.Trim().Should().Be("0,0");
             trs[2].Click();
             comp.Find("p").TextContent.Trim().Should().Be("0,0,1");
-            //trs[0].Click(); // clicking the header should add -1
-            //comp.Find("p").TextContent.Trim().Should().Be("0,0,1,-1");
-            //trs[4].Click(); // clicking the header should add 100
-            //comp.Find("p").TextContent.Trim().Should().Be("0,0,1,-1,100");
+            trs[0].Click(); // clicking the header should add -1
+            comp.Find("p").TextContent.Trim().Should().Be("0,0,1,-1");
+            trs[4].Click(); // clicking the header should add 100
+            comp.Find("p").TextContent.Trim().Should().Be("0,0,1,-1,100");
         }
 
         /// <summary>
