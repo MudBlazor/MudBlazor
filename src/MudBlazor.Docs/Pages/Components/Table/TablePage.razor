@@ -122,11 +122,11 @@
             <SectionHeader>
                 <Title>Header and Footer</Title>
                 <Description>
-                    By default you can put a list of <CodeInline>MudTh</CodeInline> inside <CodeInline>HeaderContent</CodeInline> and <CodeInline>MudTd</CodeInline> inside <CodeInline>FooterContent</CodeInline>, in that case MudTable will automatically manage the row for you, including the select all column and editing column placeholder.<br />
-                    If you prefer to customize the behavior, as well as drawing multiple header or footer rows, you can set the <CodeInline>MultiRowHeader</CodeInline> and <CodeInline>MultiRowFooter</CodeInline> to true.<br />
-                    Then you will need to specify a list of <CodeInline>MudTHeadRow</CodeInline> or <CodeInline>MudTFootRow</CodeInline> with their respective cells.
+                    By default you can put a list of <CodeInline>&lt;MudTh></CodeInline> inside <CodeInline>&lt;HeaderContent></CodeInline> and <CodeInline>&lt;MudTd></CodeInline> inside <CodeInline>&lt;FooterContent></CodeInline>, MudTable will automatically manage the table row for you, including the select-all column and adding an empty column for editable tables.<br />
+                    If you need to customize the behavior, as well as rendering multiple header or footer rows, you can set the <CodeInline>MultiRowHeader</CodeInline> and <CodeInline>MultiRowFooter</CodeInline> attributes to true.<br />
+                    Then setting a list of <CodeInline>&lt;MudTHeadRow></CodeInline> or <CodeInline>&lt;MudTFootRow></CodeInline> with their respective cells will render exactly what required inside the table header and footer.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-                        Note: Unless you specify the attribute <CodeInline>IsCheckeable</CodeInline> for a specific row, the MudTable won't render a checkbox in case of a multi-selection table.
+                        Note: Unless you specify the attribute <CodeInline>IsCheckeable</CodeInline> for a specific row, MudTable won't render a checkbox in case of a multi-selection table.
                         Attributes <CodeInline>IgnoreCheckbox</CodeInline> and <CodeInline>IgnoreEditable</CodeInline> won't render an empty cell either, requiring you to do it manually (for example for a colspan on the entire row).
                     </MudAlert>
                 </Description>
