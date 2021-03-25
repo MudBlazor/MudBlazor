@@ -284,6 +284,7 @@ namespace MudBlazor
 
         protected override void OnParametersSet()
         {
+            base.OnParametersSet();
             UpdateIcon();
         }
 
