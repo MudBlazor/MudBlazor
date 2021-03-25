@@ -282,6 +282,11 @@ namespace MudBlazor
             UpdateIcon();
         }
 
+        protected override void OnParametersSet()
+        {
+            UpdateIcon();
+        }
+
         public void CheckGenericTypeMatch(object select_item)
         {
             var itemT = select_item.GetType().GenericTypeArguments[0];
