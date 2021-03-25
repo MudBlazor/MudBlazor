@@ -23,7 +23,6 @@ namespace MudBlazor
             new CssBuilder("mud-overlay-scrim")
                 .AddClass("mud-overlay-dark", DarkBackground)
                 .AddClass("mud-overlay-light", LightBackground)
-                .AddClass(Class)
                 .Build();
 
         protected string Styles =>
