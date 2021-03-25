@@ -3,9 +3,9 @@
 @implements IDisposable
 
 
-@if (Parent?.KeepPanelsAlive==true)
+@if (Parent?.KeepPanelsAlive == true)
 {
-    <div style="display:@(Parent?.ActivePanel == this ? "contents" : "none")">
+    <div class="@Class" style="display:@(Parent?.ActivePanel == this ? "contents" : "none");@Style">
         @ChildContent
     </div>
 }

@@ -171,6 +171,7 @@ namespace MudBlazor
         protected string ToolbarClass =>
         new CssBuilder("mud-picker-timepicker-toolbar")
           .AddClass($"mud-picker-timepicker-toolbar-landscape", Orientation == Orientation.Landscape && PickerVariant == PickerVariant.Static)
+          .AddClass(Class)
         .Build();
 
         protected string HoursButtonClass =>
