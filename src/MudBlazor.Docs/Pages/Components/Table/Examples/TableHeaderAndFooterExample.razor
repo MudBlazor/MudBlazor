@@ -15,7 +15,7 @@
 </style>
 
 <MudTable Items="@Elements.Take(10)" MultiSelection="true" @bind-SelectedItems="selectedItems" Hover="true" Breakpoint="Breakpoint.Sm" Striped="true" Bordered="true"
-          MultiRowHeader="true" MultiRowFooter="true" HeaderClass="table-head-bordered" FooterClass="table-foot-bordered">
+          CustomHeader="true" CustomFooter="true" HeaderClass="table-head-bordered" FooterClass="table-foot-bordered">
     <HeaderContent>
         <MudTHeadRow IgnoreCheckbox="true" Class="header-centered">
             <MudTh colspan="6">Periodic Elements Info</MudTh>
@@ -25,7 +25,7 @@
             <MudTh colspan="3">Extended</MudTh>
         </MudTHeadRow>
         <MudTHeadRow IsCheckable="true">
-            <MudTh>Nr</MudTh>Changed
+            <MudTh>Nr</MudTh> 
             <MudTh>Sign</MudTh>
             <MudTh>Name</MudTh>
             <MudTh>Position</MudTh>

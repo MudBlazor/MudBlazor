@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTable T="int" Items="items" OnRowClick="@(args => OnRowClicked(args))" MultiRowHeader="true" MultiRowFooter="true">
+<MudTable T="int" Items="items" OnRowClick="@(args => OnRowClicked(args))" CustomHeader="true" CustomFooter="true">
     <HeaderContent>
         <MudTHeadRow OnRowClick="OnHeaderClicked">
             <MudTh>#</MudTh>

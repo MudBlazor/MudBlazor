@@ -35,7 +35,7 @@
                 @if (HeaderContent != null)
                 {
                     <thead class="@HeadClassname">
-                        @if (MultiRowHeader)
+                        @if (CustomHeader)
                         {
                             @HeaderContent
                         }
@@ -79,7 +79,7 @@
                 @if (FooterContent != null)
                 {
                     <tfoot class="@FootClassname">
-                        @if (MultiRowFooter)
+                        @if (CustomFooter)
                         {
                             @FooterContent
                         }
