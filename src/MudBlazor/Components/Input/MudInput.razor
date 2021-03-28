@@ -9,29 +9,32 @@
         <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.Start" AdornmentClick="@OnAdornmentClick" />
     }
 
-    @if (Lines > 1)
-    {
-        @*note: the value="@Text" is absolutely essential here. the inner html @Text is kept only for compatibility*@
-        <textarea @ref="_elementReference" rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly"
-                  @oninput="OnInput" @onchange="OnChange" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" value="@Text">@Text</textarea>
-    }
-    else
-    {
-        @if (InputType == InputType.Hidden && ChildContent != null)
-        {
-            <div class="@InputClassname">
-                @ChildContent
-            </div>
-        }
+	@if (Lines > 1)
+	{
+		@*note: the value="@Text" is absolutely essential here. the inner html @Text is kept only for compatibility*@
+	 <textarea @ref="_elementReference" rows="@Lines" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly"
+			  @oninput="OnInput" @onchange="OnChange" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" value="@Text"
+			  @onkeydown:preventDefault="@KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault">@Text</textarea>
+	}
+	else
+	{
+		@if (InputType == InputType.Hidden && ChildContent != null)
+		{
+		 <div class="@InputClassname">
+				@ChildContent
+		 </div>
+		}
 
-        <input @ref="_elementReference" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" value="@Text" @oninput="OnInput" @onchange="OnChange"
-               placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred" @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp" />
-    }
+	 <input @ref="_elementReference" @attributes="UserAttributes" type="@InputTypeString" class="@InputClassname" value="@Text" @oninput="OnInput" @onchange="OnChange"
+		   placeholder="@Placeholder" disabled=@Disabled readonly="@ReadOnly" @onblur="@OnBlurred"
+		   @onkeydown="@InvokeKeyDown" @onkeypress="@InvokeKeyPress" @onkeyup="@InvokeKeyUp"
+		   @onkeydown:preventDefault="KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault" />
+	}
 
-    @if (Adornment == Adornment.End)
-    {
-        <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
-    }
+	@if (Adornment == Adornment.End)
+	{
+	 <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
+	}
 
     @if (Variant == Variant.Outlined)
     {

@@ -18,8 +18,16 @@ namespace MudBlazor
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
+        protected override bool ShouldRender()
+        {
+            if (Immediate && _isFocused)
+                return false;
+            return true;
+        }
+
         protected Task OnInput(ChangeEventArgs args)
         {
+            _isFocused = true;
             return Immediate ? SetTextAsync(args?.Value as string) : Task.CompletedTask;
         }
 
