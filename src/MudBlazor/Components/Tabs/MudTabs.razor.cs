@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Interop;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTabs : MudComponentBase, IDisposable
+    public partial class MudTabs : MudComponentBase, IDisposable, IAsyncDisposable
     {
         private bool _isDisposed;
+        private int _activePanelIndex = 0;
+        private Boolean _isRendered = false;
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
         private bool _showScrollButtons;
@@ -25,68 +28,7 @@ namespace MudBlazor
         private double _scrollValue;
         private double _scrollPosition;
 
-        [Inject] public IResizeListenerService ResizeListener { get; set; }
-
-        protected string TabsClassnames =>
-            new CssBuilder("mud-tabs")
-            .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded)
-            .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined)
-            .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
-            .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
-            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
-            .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right)
-            .AddClass(Class)
-            .Build();
-
-        protected string ToolbarClassnames =>
-            new CssBuilder("mud-tabs-toolbar")
-            .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
-            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
-            .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default)
-            .AddClass($"mud-tabs-border-{Position.ToDescriptionString()}", Border)
-            .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
-            .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
-            .Build();
-
-        protected string WrapperClassnames =>
-            new CssBuilder("mud-tabs-toolbar-wrapper")
-            .AddClass($"mud-tabs-centered", Centered)
-            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
-            .Build();
-
-        protected string WrapperScrollStyle =>
-        new StyleBuilder()
-            .AddStyle("transform", $"translateX({_scrollPosition.ToString(CultureInfo.InvariantCulture)}px)", Position == Position.Top || Position == Position.Bottom)
-            .AddStyle("transform", $"translateY({_scrollPosition.ToString(CultureInfo.InvariantCulture)}px)", Position == Position.Left || Position == Position.Right)
-        .Build();
-
-        protected string PanelsClassnames =>
-            new CssBuilder("mud-tabs-panels")
-            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
-            .AddClass(PanelClass)
-            .Build();
-
-        protected string SliderClass =>
-            new CssBuilder("mud-tab-slider")
-            .AddClass($"mud-{Color.ToDescriptionString()}", SliderColor != Color.Inherit)
-            .AddClass($"mud-tab-slider-horizontal", Position == Position.Top || Position == Position.Bottom)
-            .AddClass($"mud-tab-slider-vertical", Position == Position.Left || Position == Position.Right)
-            .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
-            .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right)
-            .Build();
-
-        protected string MaxHeightStyles =>
-            new StyleBuilder()
-            .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
-            .Build();
-
-        protected string SliderStyle =>
-        new StyleBuilder()
-            .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
-            .AddStyle("left", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
-            .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
-            .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
-        .Build();
+        [Inject] public IResizeObserver ResizeObserver { get; set; }
 
         /// <summary>
         /// If true, render all tabs and hide (display:none) every non-active.
@@ -173,7 +115,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool ApplyEffectsToContainer { get; set; }
 
-
         /// <summary>
         /// If true, disables ripple effect.
         /// </summary>
@@ -196,8 +137,6 @@ namespace MudBlazor
 
         public MudTabPanel ActivePanel { get; set; }
 
-        private int _activePanelIndex = 0;
-
         /// <summary>
         /// The current active panel index. Also with Bidirectional Binding
         /// </summary>
@@ -210,7 +149,7 @@ namespace MudBlazor
                 if (_activePanelIndex != value)
                 {
                     _activePanelIndex = value;
-                    ActivatePanel(_activePanelIndex);
+                    ActivePanel = Panels[_activePanelIndex];
                     ActivePanelIndexChanged.InvokeAsync(value);
                 }
             }
@@ -224,35 +163,221 @@ namespace MudBlazor
 
         public List<MudTabPanel> Panels = new List<MudTabPanel>();
 
-        public void Dispose()
+        #region Life cycle management
+
+        protected override void OnParametersSet()
         {
-            _isDisposed = true;
-            ResizeListener.OnResized -= OnResized;
+            Rerender();
         }
 
-        internal void AddPanel(MudTabPanel tabPanel)
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                var items = Panels.Select(x => x.PanelRef).ToList();
+                items.Add(TabsContentSize);
+
+                await ResizeObserver.Observe(items);
+
+                ResizeObserver.OnResized += OnResized;
+
+                Rerender();
+                await InvokeAsync(StateHasChanged);
+
+                _isRendered = true;
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            _isDisposed = true;
+            ResizeObserver.OnResized -= OnResized;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual async ValueTask DisposeAsyncCore()
+        {
+            _isDisposed = true;
+            await ResizeObserver.DisposeAsync();
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await DisposeAsyncCore();
+
+            Dispose(false);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion
+
+        #region Children
+
+        internal async Task AddPanel(MudTabPanel tabPanel)
         {
             Panels.Add(tabPanel);
             if (Panels.Count == 1)
                 ActivePanel = tabPanel;
-            StateHasChanged();
+
+            await InvokeAsync(StateHasChanged);
         }
 
-        internal void RemovePanel(MudTabPanel tabPanel)
+        internal async Task SetPanelRef(ElementReference reference)
+        {
+            if (_isRendered == true && ResizeObserver.IsElementObserved(reference) == false)
+            {
+                await ResizeObserver.Observe(reference);
+                Rerender();
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+
+        internal async Task RemovePanel(MudTabPanel tabPanel)
         {
             if (_isDisposed)
                 return;
 
             var index = Panels.IndexOf(tabPanel);
+            var newIndex = index;
             if (ActivePanelIndex == index && index == Panels.Count - 1)
             {
-                ActivePanelIndex = index > 0 ? index - 1 : 0;
+                newIndex = index > 0 ? index - 1 : 0;
                 if (Panels.Count == 1)
+                {
                     ActivePanel = null;
+                }
             }
+            else if (_activePanelIndex > index)
+            {
+                _activePanelIndex--;
+                await ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
+            }
+
+            if(index != newIndex)
+            {
+                _activePanelIndex = newIndex;
+                ActivePanel = Panels[newIndex];
+               await ActivePanelIndexChanged.InvokeAsync(newIndex);
+            }
+
+            //Double size = GetRelevantSize(tabPanel.PanelRef);
+            //Double positon = GetLengthOfPanelItems(tabPanel);
+            //if(_scrollPosition > positon)
+            //{
+            //    _scrollPosition -= size;
+            //}
+
             Panels.Remove(tabPanel);
-            StateHasChanged();
+            await ResizeObserver.Unobserve(tabPanel.PanelRef);
+            Rerender();
+            await InvokeAsync(StateHasChanged);
         }
+
+        public async Task ActivatePanel(MudTabPanel panel)
+        {
+            await ActivatePanel(panel, null, _showScrollButtons);
+        }
+
+        public async Task ActivatePanel(int index)
+        {
+            var panel = Panels[index];
+            await ActivatePanel(panel, null, _showScrollButtons);
+        }
+
+        public async Task ActivatePanel(object id)
+        {
+            var panel = Panels.Where((p) => p.ID == id).FirstOrDefault();
+            if (panel != null)
+                await ActivatePanel(panel, null, _showScrollButtons);
+        }
+
+        private async Task ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool scrollToActivePanel)
+        {
+            if (!panel.Disabled)
+            {
+                ActivePanel = panel;
+                _activePanelIndex = Panels.IndexOf(panel);
+                await ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
+
+                if (ev != null)
+                    await ActivePanel.OnClick.InvokeAsync(ev);
+
+                CenterScrollPositionAroundSelectedItem();
+                SetSliderState();
+                SetScrollabilityStates();
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+
+        #endregion
+
+        #region Style and classes
+
+        protected string TabsClassnames =>
+            new CssBuilder("mud-tabs")
+            .AddClass($"mud-tabs-rounded", ApplyEffectsToContainer && Rounded)
+            .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined)
+            .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
+            .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
+            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
+            .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right)
+            .AddClass(Class)
+            .Build();
+
+        protected string ToolbarClassnames =>
+            new CssBuilder("mud-tabs-toolbar")
+            .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
+            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
+            .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default)
+            .AddClass($"mud-tabs-border-{Position.ToDescriptionString()}", Border)
+            .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
+            .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
+            .Build();
+
+        protected string WrapperClassnames =>
+            new CssBuilder("mud-tabs-toolbar-wrapper")
+            .AddClass($"mud-tabs-centered", Centered)
+            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
+            .Build();
+
+        protected string WrapperScrollStyle =>
+        new StyleBuilder()
+            .AddStyle("transform", $"translateX({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position == Position.Top || Position == Position.Bottom)
+            .AddStyle("transform", $"translateY({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position == Position.Left || Position == Position.Right)
+            .Build();
+
+        protected string PanelsClassnames =>
+            new CssBuilder("mud-tabs-panels")
+            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
+            .AddClass(PanelClass)
+            .Build();
+
+        protected string SliderClass =>
+            new CssBuilder("mud-tab-slider")
+            .AddClass($"mud-{Color.ToDescriptionString()}", SliderColor != Color.Inherit)
+            .AddClass($"mud-tab-slider-horizontal", Position == Position.Top || Position == Position.Bottom)
+            .AddClass($"mud-tab-slider-vertical", Position == Position.Left || Position == Position.Right)
+            .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
+            .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right)
+            .Build();
+
+        protected string MaxHeightStyles =>
+            new StyleBuilder()
+            .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
+            .Build();
+
+        protected string SliderStyle =>
+        new StyleBuilder()
+            .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
+            .AddStyle("left", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
+            .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
+            .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
+            .Build();
 
         string GetTabClass(MudTabPanel panel)
         {
@@ -262,7 +387,7 @@ namespace MudBlazor
               .AddClass($"mud-ripple", !DisableRipple)
               .AddClass(TabPanelClass)
               .AddClass(panel.Class)
-            .Build();
+              .Build();
 
             return tabClass;
         }
@@ -274,37 +399,6 @@ namespace MudBlazor
             .Build();
 
             return tabStyle;
-        }
-        void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool scrollToActivePanel)
-        {
-            if (!panel.Disabled)
-            {
-                ActivePanel = panel;
-                _activePanelIndex = Panels.IndexOf(panel);
-                ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
-
-                _ = UpdateSlider(scrollToActivePanel);
-                if (ev != null)
-                    ActivePanel.OnClick.InvokeAsync(ev);
-            }
-        }
-
-        public void ActivatePanel(MudTabPanel panel)
-        {
-            ActivatePanel(panel, null, _showScrollButtons);
-        }
-
-        public void ActivatePanel(int index)
-        {
-            var panel = Panels[index];
-            ActivatePanel(panel, null, _showScrollButtons);
-        }
-
-        public void ActivatePanel(object id)
-        {
-            var panel = Panels.Where((p) => p.ID == id).FirstOrDefault();
-            if (panel != null)
-                ActivatePanel(panel, null, _showScrollButtons);
         }
 
         private Placement GetTooltipPlacement()
@@ -319,137 +413,189 @@ namespace MudBlazor
                 return Placement.Bottom;
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+        #endregion
+
+        #region Rendering and placement
+
+        private void Rerender()
         {
-            if (firstRender)
-            {
-                await CalculateTabsSize();
-                ResizeListener.OnResized += OnResized;
-            }
+            GetToolbarContentSize();
+            GetAllTabsSize();
+            SetScrollButtonVisibility();
+            CenterScrollPositionAroundSelectedItem();
+            SetSliderState();
+            SetScrollabilityStates();
         }
 
-        private async void OnResized(object sender, BrowserWindowSize size)
+        private async void OnResized(IDictionary<ElementReference, BoundingClientRect> changes)
         {
-            await CalculateTabsSize();
+            Rerender();
             await InvokeAsync(StateHasChanged);
         }
 
-        private async Task CalculateTabsSize()
+        private void SetSliderState()
         {
-            await UpdateSlider(true);
+            if (ActivePanel == null) { return; }
 
-            await GetToolbarContentSize();
-            await GetAllTabsSize();
-
-            if (AlwaysShowScrollButtons || _allTabsSize > _toolbarContentSize)
-            {
-                _showScrollButtons = true;
-                if (_scrollValue >= 0)
-                    _prevButtonDisabled = true;
-                else
-                    _prevButtonDisabled = false;
-                if (Math.Abs(_scrollValue) + _toolbarContentSize >= _allTabsSize)
-                    _nextButtonDisabled = true;
-                else
-                    _nextButtonDisabled = false;
-            }
-            else
-            {
-                _scrollPosition = 0;
-                _showScrollButtons = false;
-            }
-            StateHasChanged();
+            _position = GetLengthOfPanelItems(ActivePanel);
+            _size = GetRelevantSize(ActivePanel.PanelRef);
         }
 
-        private async Task UpdateSlider(bool scrollToActivePanel)
-        {
-            if (HideSlider && !scrollToActivePanel)
-                return;
+        private void GetToolbarContentSize() => _toolbarContentSize = GetRelevantSize(TabsContentSize);
 
-            if (ActivePanel != null)
-            {
-                if (Position == Position.Top || Position == Position.Bottom)
-                    _size = (await ActivePanel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
-                else
-                    _size = (await ActivePanel.PanelRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
-
-                _position = 0;
-
-                if (ActivePanelIndex != 0)
-                {
-                    double position = 0;
-                    var counter = 0;
-                    foreach (var panel in Panels) if (counter < ActivePanelIndex)
-                        {
-                            if (Position == Position.Top || Position == Position.Bottom)
-                                position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
-                            else
-                                position += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
-                            counter++;
-                        }
-                    _position = position;
-                    if (scrollToActivePanel)
-                    {
-                        _scrollPosition = -position;
-                    }
-                }
-                else if (scrollToActivePanel)
-                {
-                    _scrollPosition = 0;
-                }
-                StateHasChanged();
-            }
-        }
-
-        private async Task GetToolbarContentSize()
-        {
-            if (Position == Position.Top || Position == Position.Bottom)
-                _toolbarContentSize = (await TabsContentSize.MudGetBoundingClientRectAsync())?.Width ?? 0;
-            else
-                _toolbarContentSize = (await TabsContentSize.MudGetBoundingClientRectAsync())?.Height ?? 0;
-        }
-
-        private async Task GetAllTabsSize()
+        private void GetAllTabsSize()
         {
             double totalTabsSize = 0;
 
             foreach (var panel in Panels)
             {
-                if (Position == Position.Top || Position == Position.Bottom)
-                    totalTabsSize += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Width ?? 0;
-                else
-                    totalTabsSize += (await panel.PanelRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
+                totalTabsSize += GetRelevantSize(panel.PanelRef);
             }
 
             _allTabsSize = totalTabsSize;
         }
 
+
+        private Double GetRelevantSize(ElementReference reference) => Position switch
+        {
+            Position.Top or Position.Bottom => ResizeObserver.GetWidth(reference),
+            _ => ResizeObserver.GetHeight(reference)
+        };
+
+        private Double GetLengthOfPanelItems(MudTabPanel panel)
+        {
+            Double value = 0.0;
+            foreach (var item in Panels)
+            {
+                if (item == panel)
+                {
+                    break;
+                }
+
+                value += GetRelevantSize(item.PanelRef);
+            }
+
+            return value;
+        }
+
+        private Double GetPanelLength(MudTabPanel panel) => panel == null ? 0.0 : GetRelevantSize(panel.PanelRef);
+
+        #endregion
+
+
+        #region scrolling 
+
+        private void SetScrollButtonVisibility()
+        {
+            _showScrollButtons = AlwaysShowScrollButtons || _allTabsSize > _toolbarContentSize;
+        }
+
         private void ScrollPrev()
         {
-            _nextButtonDisabled = false;
-            _scrollValue += _toolbarContentSize;
-            if (_scrollValue >= 0)
+            Double scrollValue = _scrollPosition - _toolbarContentSize;
+            if (scrollValue < 0)
             {
-                _scrollPosition = 0;
-                _prevButtonDisabled = true;
+                scrollValue = 0;
             }
-            else
-            {
-                _scrollPosition = _scrollValue;
-            }
+
+            _scrollPosition = scrollValue;
+
+            SetScrollabilityStates();
         }
 
         private void ScrollNext()
         {
-            _prevButtonDisabled = false;
-            _scrollValue -= _toolbarContentSize;
-            if (Math.Abs(_scrollValue) + _toolbarContentSize >= _allTabsSize)
+            Double scrollValue = _scrollPosition + _toolbarContentSize;
+
+            if (scrollValue > _allTabsSize)
+            {
+                scrollValue = _allTabsSize - _toolbarContentSize - 96;
+            }
+
+            _scrollPosition = scrollValue;
+
+            SetScrollabilityStates();
+        }
+
+        private void ScrollToItem(MudTabPanel panel)
+        {
+            Double position = GetLengthOfPanelItems(panel);
+            _scrollPosition = position;
+        }
+
+        private Boolean IsAfterLastPanelIndex(Int32 index) => index >= Panels.Count;
+        private Boolean IsBeforeFirstPanelIndex(Int32 index) => index < 0;
+
+        private void CenterScrollPositionAroundSelectedItem()
+        {
+            MudTabPanel panelToStart = ActivePanel;
+            Double length = GetPanelLength(panelToStart);
+            if (length >= _toolbarContentSize)
+            {
+                ScrollToItem(panelToStart);
+                return;
+            }
+
+            Int32 indexCorrection = 1;
+            while (true)
+            {
+                Int32 panelAfterIndex = _activePanelIndex + indexCorrection;
+                if (IsAfterLastPanelIndex(panelAfterIndex) == false)
+                {
+                    length += GetPanelLength(Panels[panelAfterIndex]);
+                }
+
+                if (length >= _toolbarContentSize)
+                {
+                    ScrollToItem(panelToStart);
+                    break;
+                }
+
+                length = _toolbarContentSize - length;
+
+                Int32 panelBeforeindex = _activePanelIndex - indexCorrection;
+                if (IsBeforeFirstPanelIndex(panelBeforeindex) == false)
+                {
+                    length -= GetPanelLength(Panels[panelBeforeindex]);
+                }
+                else
+                {
+                    break;
+                }
+
+                if (length < 0)
+                {
+                    ScrollToItem(panelToStart);
+                    break;
+                }
+
+                length = _toolbarContentSize - length;
+                panelToStart = Panels[_activePanelIndex - indexCorrection];
+
+                indexCorrection++;
+            }
+
+            ScrollToItem(panelToStart);
+
+            SetScrollabilityStates();
+        }
+
+        private void SetScrollabilityStates()
+        {
+            Boolean isEnoughSpace = _allTabsSize <= _toolbarContentSize;
+
+            if (isEnoughSpace == true)
             {
                 _nextButtonDisabled = true;
-                _scrollPosition = _toolbarContentSize - _allTabsSize - 96;
+                _prevButtonDisabled = true;
             }
             else
-                _scrollPosition = _scrollValue;
+            {
+                _nextButtonDisabled = (_scrollPosition + _toolbarContentSize) >= _allTabsSize;
+                _prevButtonDisabled = _scrollPosition <= 0;
+            }
         }
+
+        #endregion
     }
 }
