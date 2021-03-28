@@ -4,13 +4,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
@@ -147,7 +150,7 @@ namespace MudBlazor.UnitTests.Components
             textField.Value.Should().BeNull();
             //More than 200 ms had elapsed, so Value should be updated
             await Task.Delay(150);
-            textField.Value.Should().Be("Some Value");
+            comp.WaitForAssertion(() => textField.Value.Should().Be("Some Value"));
         }
 
         /// <summary>
@@ -355,14 +358,17 @@ namespace MudBlazor.UnitTests.Components
             var tf1 = comp.FindComponents<MudTextField<string>>()[0].Instance;
             var tf2 = comp.FindComponents<MudTextField<string>>()[1].Instance;
             comp.Find("input").Input("Bossmang");
+            comp.Find("input").Blur(); // <-- note: Blur is important here because input does not allow render updates while focused!
             tf1.Text.Should().Be("Bossmang");
             tf2.Text.Should().Be("Bossmang");
             comp.Find("textarea").TrimmedText().Should().Be("Bossmang");
             comp.Find("textarea").Input("Beltalowda");
+            comp.Find("textarea").Blur(); // Blur is important
             tf1.Text.Should().Be("Beltalowda");
             tf2.Text.Should().Be("Beltalowda");
             comp.Find("textarea").TrimmedText().Should().Be("Beltalowda");
             comp.Find("input").Input("Beratna");
+            comp.Find("input").Blur(); // Blur is important
             tf1.Text.Should().Be("Beratna");
             tf2.Text.Should().Be("Beratna");
             comp.Find("textarea").TrimmedText().Should().Be("Beratna");
@@ -370,7 +376,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
 
-        #region DataAttribute validation
+        #region ValidationAttribute support
         [Test]
         public async Task TextField_Should_Validate_Data_Attribute_Fail()
         {
@@ -408,6 +414,59 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => textfield.Validate());
             textfield.ValidationErrors.Should().BeEmpty();
         }
+
+        #region Custom ValidationAttribute
+        public class CustomFailingValidationAttribute : ValidationAttribute
+        {
+            protected override ValidationResult IsValid(object value,
+                ValidationContext validationContext)
+            {
+                return new ValidationResult("TEST ERROR");
+            }
+        }
+        class TestFailingModel
+        {
+            [CustomFailingValidation]
+            public string Foo { get; set; }
+        }
+        [Test]
+        public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Failing()
+        {
+            var model = new TestFailingModel();
+            var comp = ctx.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be("TEST ERROR");
+            comp.Instance.GetErrorText().Should().Be("TEST ERROR");
+        }
+
+
+        public class CustomThrowingValidationAttribute : ValidationAttribute
+        {
+            protected override ValidationResult IsValid(object value,
+                ValidationContext validationContext)
+            {
+                throw new Exception("This is a test exception");
+            }
+        }
+        class TestThrowingModel
+        {
+            [CustomThrowingValidation]
+            public string Foo { get; set; }
+        }
+        [Test]
+        public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Throwing()
+        {
+            var model = new TestThrowingModel();
+            var comp = ctx.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be("An unhandled exception occured: This is a test exception");
+            comp.Instance.GetErrorText().Should().Be("An unhandled exception occured: This is a test exception");
+        }
+        #endregion
         #endregion
     }
 

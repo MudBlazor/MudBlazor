@@ -13,7 +13,8 @@
 }
 
 .mud-breadcrumb-separator > span {
-    color: rgba(0, 0, 0, 0.38);
+    color: var(--mud-palette-text-primary);
+    opacity: 0.38
 }
 
 .mud-breadcrumb-item > a {

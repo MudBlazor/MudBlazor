@@ -1,0 +1,34 @@
+﻿@using System.ComponentModel.DataAnnotations
+<h3>FormIssue1229</h3>
+
+@* https://try.mudblazor.com/snippet/GawPEdvszHioVvlw *@
+@* https://github.com/Garderoben/MudBlazor/issues/1229 *@
+
+<EditForm Model="Model">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <MudTextField @bind-Value="Model.SomeString" For="@(() => Model.SomeString)" Label="1"></MudTextField>
+    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled">Submit</MudButton>
+</EditForm>
+
+@code {
+    public Test Model = new Test();
+
+    public class Test
+    {
+        [Test]
+        public string SomeString { get; set; }
+    }
+
+    public class TestAttribute : ValidationAttribute
+    {
+        public static IList<ValidationContext> ValidationContextOnCall { get; private set; } = new List<ValidationContext>();
+
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            ValidationContextOnCall.Add(validationContext);
+            var propertyTestedInfo = validationContext.ObjectType.GetProperty(""); //error will show up here. The validationContext is null after the control loses focus
+
+            return ValidationResult.Success;
+        }
+    }
+}

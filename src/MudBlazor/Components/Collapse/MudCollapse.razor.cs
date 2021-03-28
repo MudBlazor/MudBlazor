@@ -19,6 +19,8 @@ namespace MudBlazor
         private double _height;
         private bool _expanded, _isRendered;
         private ElementReference _container, _wrapper;
+
+        private int _listenerId;
         private CollapseState _state = CollapseState.Exited;
         private DotNetObjectReference<MudCollapse> _dotNetRef;
 
@@ -102,7 +104,15 @@ namespace MudBlazor
 
         private async Task UpdateHeight()
         {
-            _height = (await DomService.GetBoundingClientRect(_wrapper))?.Height ?? 0;
+            if (_disposeCount > 0)
+            {
+                _height = 0;
+            }
+            else
+            {
+                _height = (await DomService.GetBoundingClientRect(_wrapper))?.Height ?? 0;
+            }
+
             if (MaxHeight != null && _height > MaxHeight)
             {
                 _height = MaxHeight.Value;
@@ -120,9 +130,33 @@ namespace MudBlazor
             {
                 _isRendered = true;
                 await UpdateHeight();
-                await DomService.AddEventListener(_container, DotNetObjectReference.Create(this), "animationend", nameof(AnimationEnd));
+                if (_dotNetRef != null)
+                    _listenerId = await DomService.AddEventListener(_container, _dotNetRef, "animationend", nameof(AnimationEnd));
             }
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        int _disposeCount;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (Interlocked.Increment(ref _disposeCount) == 1)
+            {
+                if (disposing)
+                {
+                    if (_listenerId != 0)
+                        _ = DomService.RemoveEventListener(_container, "animationend", _listenerId);
+                    var toDispose = _dotNetRef;
+                    _dotNetRef = null;
+                    toDispose?.Dispose();
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         [JSInvokable]
