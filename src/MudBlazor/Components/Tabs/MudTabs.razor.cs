@@ -25,7 +25,6 @@ namespace MudBlazor
         private double _position;
         private double _toolbarContentSize;
         private double _allTabsSize;
-        private double _scrollValue;
         private double _scrollPosition;
 
         [Inject] public IResizeObserver ResizeObserver { get; set; }
