@@ -82,7 +82,7 @@ else
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        if(firstRender == true)
+        if(firstRender == true && Parent != null)
         {
             await Parent.SetPanelRef(PanelRef);
         }

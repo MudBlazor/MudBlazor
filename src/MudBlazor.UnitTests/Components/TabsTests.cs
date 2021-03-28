@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Interop;
 using MudBlazor.Services;
+using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -36,7 +37,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task AddingAndRemovingTabPanels()
         {
-            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockedIResizeObserver()));
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var comp = ctx.RenderComponent<TabsAddingRemovingTabsTest>();
             Console.WriteLine(comp.Markup);
@@ -77,7 +78,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task KeepTabsAliveTest()
         {
-            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockedIResizeObserver()));
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var comp = ctx.RenderComponent<TabsKeepAliveTest>();
             Console.WriteLine(comp.Markup);
@@ -137,7 +138,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task KeepTabs_Not_AliveTest()
         {
-            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockedIResizeObserver()));
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var comp = ctx.RenderComponent<TabsKeepAliveTest>(ComponentParameter.CreateParameter("KeepPanelsAlive", false));
             Console.WriteLine(comp.Markup);
@@ -178,7 +179,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ScrollToItem_NoScrollingNeedded()
         {
-            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockedIResizeObserver()));
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
@@ -207,7 +208,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(100.0, 200)]
         public async Task ScrollToItem_CentralizeViewAroundActiveItem(Double totalSize, Double expectedTranslation)
         {
-            var observer = new MockedIResizeObserver
+            var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
                 PanelTotalSize = totalSize + 10,
@@ -238,7 +239,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(100.0, 200)]
         public async Task ScrollToItem_CentralizeViewAroundActiveItem_ScrollVertically(Double totalSize, Double expectedTranslation)
         {
-            var observer = new MockedIResizeObserver
+            var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
                 PanelTotalSize = totalSize + 10,
@@ -268,7 +269,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ScrollToItem_CentralizeView_ActivateAllItems()
         {
-            var observer = new MockedIResizeObserver
+            var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
                 PanelTotalSize = 200 + 10,
@@ -308,7 +309,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Scroll_NotEnabled_EnoughSpace()
         {
-            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockedIResizeObserver()));
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
@@ -326,7 +327,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ScrollNext_EnabledStates()
         {
-            var observer = new MockedIResizeObserver
+            var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
                 PanelTotalSize = 200,
@@ -352,7 +353,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ScrollPrev_EnabledStates()
         {
-            var observer = new MockedIResizeObserver
+            var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
                 PanelTotalSize = 200,
@@ -377,7 +378,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ScrollNext()
         {
-            var observer = new MockedIResizeObserver
+            var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
                 PanelTotalSize = 200,
@@ -424,7 +425,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ScrollPrev()
         {
-            var observer = new MockedIResizeObserver
+            var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
                 PanelTotalSize = 200,
@@ -473,7 +474,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Handle_ResizeOfPanel()
         {
-            var observer = new MockedIResizeObserver
+            var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
                 PanelTotalSize = 300,
@@ -500,7 +501,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Handle_ResizeOfElement()
         {
-            var observer = new MockedIResizeObserver
+            var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
                 PanelTotalSize = 300,
@@ -526,7 +527,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Handle_Add()
         {
-            var observer = new MockedIResizeObserver
+            var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
                 PanelTotalSize = 300,
@@ -564,7 +565,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Handle_Remove_BeforeSelection()
         {
-            var observer = new MockedIResizeObserver
+            var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
                 PanelTotalSize = 300,
@@ -600,7 +601,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Handle_Remove_AfterSelection()
         {
-            var observer = new MockedIResizeObserver
+            var observer = new MockResizeObserver
             {
                 PanelSize = 100.0,
                 PanelTotalSize = 300,
@@ -654,101 +655,7 @@ namespace MudBlazor.UnitTests.Components
             return value;
         }
 
-        private class MockedIResizeObserver : IResizeObserver
-        {
-            private Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
-
-            public Boolean IsVertical { get; set; } = false;
-
-            public event SizeChanged OnResized;
-
-            public void UpdateTotalPanelSize(Double newSize)
-            {
-                var entry = _cachedValues.Last();
-
-                if (IsVertical == false)
-                {
-                    entry.Value.Width = newSize;
-                }
-                else
-                {
-                    entry.Value.Height = newSize;
-                }
-
-                OnResized?.Invoke(new Dictionary<ElementReference, BoundingClientRect> {
-                    { entry.Key, entry.Value  },
-                });
-            }
-
-            public void UpdatePanelSize(Int32 index, Double newSize)
-            {
-                var entry = _cachedValues.ElementAt(index);
-
-                if (IsVertical == false)
-                {
-                    entry.Value.Width = newSize;
-                }
-                else
-                {
-                    entry.Value.Height = newSize;
-                }
-
-                OnResized?.Invoke(new Dictionary<ElementReference, BoundingClientRect> {
-                    { entry.Key, entry.Value  },
-                });
-            }
-
-            public Double PanelSize { get; set; } = 250;
-            public Double PanelTotalSize { get; set; } = 3000;
-
-            public async Task<BoundingClientRect> Observe(ElementReference element) => (await Observe(new[] { element })).FirstOrDefault();
-
-            public Task<IEnumerable<BoundingClientRect>> Observe(IEnumerable<ElementReference> elements)
-            {
-                List<BoundingClientRect> result = new List<BoundingClientRect>();
-                foreach (var item in elements)
-                {
-                    Double size = PanelSize;
-                    // last element is alaways TabsContentSize
-                    if (item.Id == elements.Last().Id && elements.Count() > 1)
-                    {
-                        size = PanelTotalSize;
-                    }
-                    var rect = new BoundingClientRect { Width = size };
-                    if (IsVertical == true)
-                    {
-                        rect = new BoundingClientRect { Height = size };
-                    }
-                    _cachedValues.Add(item, rect);
-                }
-
-                return Task.FromResult<IEnumerable<BoundingClientRect>>(result);
-            }
-
-            public Task Unobserve(ElementReference element)
-            {
-                _cachedValues.Remove(element);
-                return Task.CompletedTask;
-            }
-
-            public ValueTask DisposeAsync()
-            {
-                return ValueTask.CompletedTask;
-            }
-
-            public BoundingClientRect GetSizeInfo(ElementReference reference)
-            {
-                if (_cachedValues.ContainsKey(reference) == false)
-                {
-                    return null;
-                }
-
-                return _cachedValues[reference];
-            }
-            public double GetHeight(ElementReference reference) => GetSizeInfo(reference)?.Height ?? 0.0;
-            public double GetWidth(ElementReference reference) => GetSizeInfo(reference)?.Width ?? 0.0;
-            public Boolean IsElementObserved(ElementReference reference) => _cachedValues.ContainsKey(reference);
-        }
+       
 
 
         #endregion
