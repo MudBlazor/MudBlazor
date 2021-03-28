@@ -249,6 +249,11 @@ namespace MudBlazor.UnitTests.Services
                 }
             }
 
+            foreach (var item in expectedRects)
+            {
+                resolvedElements[item.Key] = item.Value;
+            }
+
             Boolean sizeChangesChecked = false;
 
             _service.OnResized += (sizeChanges) =>
@@ -264,6 +269,14 @@ namespace MudBlazor.UnitTests.Services
 
             //Assertion
             sizeChangesChecked.Should().BeTrue();
+
+            foreach (var item in resolvedElements)
+            {
+               var sizeInfo = _service.GetSizeInfo(item.Key);
+
+                sizeInfo.Should().BeEquivalentTo(item.Value);
+            }
+
             _runtimeMock.Verify();
         }
 
