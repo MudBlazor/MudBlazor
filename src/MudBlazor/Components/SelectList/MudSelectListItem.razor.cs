@@ -109,7 +109,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
-#endregion
+        #endregion
 
         protected void OnClickHandler(MouseEventArgs ev)
         {
@@ -184,6 +184,11 @@ namespace MudBlazor
                 return;
             _selected = selected;
             StateHasChanged();
+        }
+
+        internal void VerifySelection(HashSet<T> selected)
+        {
+            _selected = selected.Contains(Item);
         }
 
         public void Dispose()

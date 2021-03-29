@@ -106,7 +106,7 @@ namespace MudBlazor.UnitTests.Components
 
 
         /// <summary>
-        /// Clicking the drinks selects them, clicking it again deselects it. The child lists are updated accordingly, meaning, only ever 1 list item can have the active class.
+        /// Test multi selection
         /// </summary>
         [Test]
         public async Task SelectListMultiSelectionTest()
@@ -162,6 +162,33 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item")[4].Click();
             list.SelectedItems.Count.Should().Be(0);
             comp.FindAll("div.mud-selected-item").Count.Should().Be(0);
+        }
+
+
+        /// <summary>
+        /// Programmatically change the list should reflect on the component
+        /// </summary>
+        [Test]
+        public async Task SelectListChangeSelectionTest()
+        {
+            var comp = ctx.RenderComponent<SelectListChangeSelectionTest>();
+            Console.WriteLine(comp.Markup);
+            var list = comp.FindComponent<MudSelectList<string>>().Instance;
+            list.SelectedItems.Count.Should().Be(2);
+            list.SelectedItems.Contains("Sparkling Water").Should().BeTrue();
+            list.SelectedItems.Contains("Matcha").Should().BeTrue();
+            comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 choices, 2 groups
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(2);
+            comp.FindComponents<MudSelectListItem<string>>()[0].Markup.Should().Contain("mud-selected-item");
+            comp.FindComponents<MudSelectListItem<string>>()[2].Markup.Should().Contain("mud-selected-item");
+            // click button and change
+            comp.Find(".mud-button").Click();
+            list.SelectedItems.Count.Should().Be(2);
+            list.SelectedItems.Contains("Irish Coffee").Should().BeTrue();
+            list.SelectedItems.Contains("Pu'er").Should().BeTrue();
+            comp.FindAll("div.mud-selected-item").Count.Should().Be(2);
+            comp.FindComponents<MudSelectListItem<string>>()[3].Markup.Should().Contain("mud-selected-item");
+            comp.FindComponents<MudSelectListItem<string>>()[4].Markup.Should().Contain("mud-selected-item");
         }
     }
 }

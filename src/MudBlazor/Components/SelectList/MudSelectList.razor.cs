@@ -87,8 +87,10 @@ namespace MudBlazor
                 else
                     _selection = value;
 
-                foreach (var item in _selection)
-                    PropagateSelection(item, true);
+                foreach (var item in _items)
+                    item.VerifySelection(_selection);
+                foreach (var child in _childLists)
+                    child.SelectedItems = _selection;
 
                 SelectedItemsChanged.InvokeAsync(_selection);
 
@@ -135,24 +137,33 @@ namespace MudBlazor
             ParametersChanged?.Invoke();
         }
 
-        internal void Register(MudSelectListItem<T> item)
+        internal void Register(MudSelectListItem<T> listItem)
         {
-            _items.Add(item);
+            _items.Add(listItem);
+            foreach (var item in _selection)
+                if(_equalityComparer.Equals(listItem.Item, item))
+                    listItem.SetSelected(true);
         }
 
-        internal void Unregister(MudSelectListItem<T> item)
+        internal void Unregister(MudSelectListItem<T> listItem)
         {
-            _items.Remove(item);
+            _items.Remove(listItem);
+            if (_selection.Remove(listItem.Item))
+                ParentList?.SetSelection(listItem.Item, false, true);
         }
 
         internal void Register(MudSelectList<T> child)
         {
             _childLists.Add(child);
+            foreach (var item in _selection)
+                child.SetSelection(item, true, true);
         }
 
         internal void Unregister(MudSelectList<T> child)
         {
             _childLists.Remove(child);
+            foreach (var item in child.SelectedItems)
+                SetSelection(item, false, true);
         }
 
         /// <summary>
@@ -198,11 +209,6 @@ namespace MudBlazor
                 SelectedItemsChanged.InvokeAsync(_selection);
             }
 
-            PropagateSelection(item, true);
-        }
-
-        private void PropagateSelection(T item, bool selected)
-        {
             foreach (var listItem in _items.ToArray())
             {
                 if (_equalityComparer.Equals(item, listItem.Item))
