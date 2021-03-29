@@ -27,6 +27,7 @@ namespace MudBlazor.Docs.Compiler
 
                 cb.AddHeader();
                 cb.AddLine("using MudBlazor.Charts;");
+                cb.AddLine("using MudBlazor.EnhanceChart;");
                 cb.AddLine("using MudBlazor.Docs.Components;");
                 cb.AddLine("using MudBlazor.Internal;");
                 cb.AddLine("using NUnit.Framework;");
