@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MudBlazor.Docs.Models;
+using MudBlazor.EnhanceChart;
 
 namespace MudBlazor.Docs.Services
 {
@@ -109,7 +110,7 @@ namespace MudBlazor.Docs.Services
 
             // Enchanced Chart
             .AddNavGroup("Enchanced Charts", false, new DocsComponents()
-                .AddItem("Enchanced Bar Chart", typeof(MudEnchancedChart))
+                .AddItem("Enchanced Bar Chart", typeof(MudEnhancedChart))
             );
 
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;

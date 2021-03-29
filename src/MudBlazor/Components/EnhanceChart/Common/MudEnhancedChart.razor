@@ -1,0 +1,34 @@
+﻿@inherits MudComponentBase
+@namespace MudBlazor.EnhanceChart
+
+<CascadingValue IsFixed="true" Value="this">
+    <div class="@Classname" @attributes="UserAttributes" Style="@Style">
+        @if (ShowTitle == true)
+        {
+            <div class="mud-enhanced-chart-title-container d-flex @GetFlexOrderForTitleContainer() @GetAlignClassForTitleContainer()">
+                @TitleDrawer(Title)
+            </div>
+        }
+        <div class="mud-enhanced-chart-drawer-container d-flex  @GetFlexDirectionForDrawerContainer()" style="flex: 1 1 100%;height:100%">
+            <div class="mud-enhanched-chart-and-tooltip-container">
+                <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    @Chart
+                </svg>
+                @if(ToolTip != null && _toolTipInfo.Any() == true)
+                {
+                    @ToolTip(_toolTipInfo)
+                }
+            </div>
+ 
+            @if (ShowLegend == true)
+            {
+                <div class="mud-enhanced-chart-legend-container d-flex @GetFlexOrderForLegendContainer() @GetAlignClassForLegendContainer()">
+                   @if(Legend != null) { 
+                     @Legend(_legendInfo)
+                   }
+                </div>
+            }
+        </div>
+    </div>
+</CascadingValue>
+
