@@ -91,7 +91,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorResizeObserver(this IServiceCollection services, Action<ResizeObserverOptions> options)
         {
-            services.TryAddTransient<IResizeObserver, JavascriptBasedResizeObserver>();
+            services.TryAddTransient<IResizeObserver, ResizeObserver>();
             services.Configure(options);
             return services;
         }
@@ -120,7 +120,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorResizeObserverFactory(this IServiceCollection services)
         {
-            services.TryAddSingleton<IResizeObserverFactory, JavascriptBasedResizeObserverFactory>();
+            services.TryAddSingleton<IResizeObserverFactory, ResizeObserverFactory>();
             return services;
         }
 

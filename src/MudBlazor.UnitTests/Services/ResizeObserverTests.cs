@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Services
 {
     [TestFixture]
-    public class JavascriptBasedResizeObserverTests
+    public class ResizeObserverTests
     {
         private class PseudoElementReferenceContext : ElementReferenceContext
         {
@@ -21,13 +21,13 @@ namespace MudBlazor.UnitTests.Services
         }
 
         private Mock<IJSRuntime> _runtimeMock;
-        private JavascriptBasedResizeObserver _service;
+        private ResizeObserver _service;
 
         [SetUp]
         public void SetUp()
         {
             _runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
-            _service = new JavascriptBasedResizeObserver(_runtimeMock.Object);
+            _service = new ResizeObserver(_runtimeMock.Object);
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace MudBlazor.UnitTests.Services
                 "mudResizeObserver.connect",
                 It.Is<object[]>(z =>
                     (Guid)z[0] != default &&
-                    (z[1] is DotNetObjectReference<JavascriptBasedResizeObserver>) == true &&
+                    (z[1] is DotNetObjectReference<ResizeObserver>) == true &&
                     (z[2] is IEnumerable<ElementReference>) == true &&
                     (z[3] is IEnumerable<Guid>) == true &&
                     (z[4] is ResizeObserverOptions) == true && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
@@ -161,7 +161,7 @@ namespace MudBlazor.UnitTests.Services
                 "mudResizeObserver.connect",
                 It.Is<object[]>(z =>
                     (Guid)z[0] != default &&
-                    (z[1] is DotNetObjectReference<JavascriptBasedResizeObserver>) == true &&
+                    (z[1] is DotNetObjectReference<ResizeObserver>) == true &&
                     (z[2] is IEnumerable<ElementReference>) == true &&
                     (z[3] is IEnumerable<Guid>) == true &&
                     (z[4] is ResizeObserverOptions) == true && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
@@ -219,7 +219,7 @@ namespace MudBlazor.UnitTests.Services
                 "mudResizeObserver.connect",
                 It.Is<object[]>(z =>
                     (Guid)z[0] != default &&
-                    (z[1] is DotNetObjectReference<JavascriptBasedResizeObserver>) == true &&
+                    (z[1] is DotNetObjectReference<ResizeObserver>) == true &&
                     (z[2] is IEnumerable<ElementReference>) == true &&
                     (z[3] is IEnumerable<Guid>) == true &&
                     (z[4] is ResizeObserverOptions) == true && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
@@ -228,7 +228,7 @@ namespace MudBlazor.UnitTests.Services
 
             await _service.Observe(resolvedElements.Keys);
 
-            var changes = new List<JavascriptBasedResizeObserver.SizeChangeUpdateInfo>();
+            var changes = new List<ResizeObserver.SizeChangeUpdateInfo>();
 
             Dictionary<ElementReference, BoundingClientRect> expectedRects = new();
 
@@ -239,13 +239,13 @@ namespace MudBlazor.UnitTests.Services
 
                 if (random.NextDouble() > 0.5)
                 {
-                    changes.Add(new JavascriptBasedResizeObserver.SizeChangeUpdateInfo(Guid.NewGuid(), GetRandomRect(random)));
+                    changes.Add(new ResizeObserver.SizeChangeUpdateInfo(Guid.NewGuid(), GetRandomRect(random)));
                 }
                 else
                 {
                     var rect = GetRandomRect(random);
                     expectedRects.Add(item.Key, rect);
-                    changes.Add(new JavascriptBasedResizeObserver.SizeChangeUpdateInfo(correspondingId, rect));
+                    changes.Add(new ResizeObserver.SizeChangeUpdateInfo(correspondingId, rect));
                 }
             }
 
