@@ -1,0 +1,38 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<div @attributes="UserAttributes" class="@Classname" @onclick="OnClickHandler" @onclick:stopPropagation="true" style="@Style">
+    @if (!String.IsNullOrEmpty(Avatar))
+    {
+<div class="mud-list-item-avatar">
+    <MudAvatar Class="@AvatarClass">
+        <MudIcon Icon="@Avatar" Color="@IconColor"></MudIcon>
+    </MudAvatar>
+</div> }
+else if (!String.IsNullOrEmpty(Icon))
+{
+<div class="mud-list-item-icon">
+    <MudIcon Icon="@Icon" Color="@IconColor"></MudIcon>
+</div>}
+    <div class="mud-list-item-text @(Inset? "mud-list-item-text-inset" : "")">
+        <MudText Typo="@_textTypo">
+            @if (ChildContent != null)
+            {
+                @ChildContent
+            }
+            else if (Text != null)
+            {
+                @Text
+            }
+            else if (ToStringFunc != null)
+            {
+                @ToStringFunc(Item)
+            }
+            else
+            {
+                @Item
+            }
+        </MudText>
+    </div>
+</div>

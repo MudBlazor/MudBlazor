@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -6,14 +7,14 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudListItem : MudComponentBase, IDisposable
+    public partial class MudSelectListItem<T> : MudComponentBase, IDisposable
     {
+        #region properties
         protected string Classname =>
-        new CssBuilder("mud-list-item")
-          .AddClass("mud-list-item-dense", Dense || MudList?.Dense == true)
-          .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters == true))
-          .AddClass("mud-list-item-clickable", MudList?.Clickable)
-          .AddClass("mud-ripple", MudList?.Clickable == true && !DisableRipple && !Disabled)
+        new CssBuilder("mud-list-item mud-list-item-clickable")
+          .AddClass("mud-list-item-dense", Dense || ParentList?.Dense == true)
+          .AddClass("mud-list-item-gutters", !DisableGutters && !(ParentList?.DisableGutters == true))
+          .AddClass("mud-ripple", !DisableRipple && !Disabled)
           .AddClass("mud-selected-item", _selected && !Disabled)
           .AddClass("mud-list-item-disabled", Disabled)
           .AddClass(Class)
@@ -21,12 +22,22 @@ namespace MudBlazor
 
         [Inject] protected NavigationManager UriHelper { get; set; }
 
-        [CascadingParameter] protected MudList MudList { get; set; }
+        [CascadingParameter] protected MudSelectList<T> ParentList { get; set; }
+
+        /// <summary>
+        /// A user-defined option that can be selected
+        /// </summary>
+        [Parameter] public T Item { get; set; }
 
         /// <summary>
         /// The text to display
         /// </summary>
         [Parameter] public string Text { get; set; }
+
+        /// <summary>
+        /// Defines how values are displayed in the list
+        /// </summary>
+        [CascadingParameter] public Func<T, string> ToStringFunc { get; set; }
 
         /// <summary>
         /// Avatar to use if set.
@@ -79,33 +90,6 @@ namespace MudBlazor
         [Parameter] public bool DisableGutters { get; set; }
 
         /// <summary>
-        /// Expand or collapse nested list. Two-way bindable. Note: if you directly set this to
-        /// true or false (instead of using two-way binding) it will force the nested list's expansion state.
-        /// </summary>
-        [Parameter]
-        public bool Expanded
-        {
-            get => _expanded;
-            set
-            {
-                if (_expanded == value)
-                    return;
-                _expanded = value;
-                _ = ExpandedChanged.InvokeAsync(value);
-            }
-        }
-
-        private bool _expanded;
-
-        [Parameter]
-        public EventCallback<bool> ExpandedChanged { get; set; }
-
-        /// <summary>
-        /// If true, expands the nested list on first display
-        /// </summary>
-        [Parameter] public bool InitiallyExpanded { get; set; }
-
-        /// <summary>
         /// Command parameter.
         /// </summary>
         [Parameter] public object CommandParameter { get; set; }
@@ -121,33 +105,25 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// Add child list items here to create a nested list.
-        /// </summary>
-        [Parameter] public RenderFragment NestedList { get; set; }
-
-        /// <summary>
         /// List click event.
         /// </summary>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
+#endregion
 
         protected void OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)
                 return;
-            if (NestedList != null)
-            {
-                Expanded = !Expanded;
-            }
             else if (Href != null)
             {
-                MudList?.SetSelectedItem(this);
+                ChangeParentSelection();
                 OnClick.InvokeAsync(ev);
                 UriHelper.NavigateTo(Href);
             }
             else
             {
-                MudList?.SetSelectedItem(this);
+                ChangeParentSelection();
                 OnClick.InvokeAsync(ev);
                 if (Command?.CanExecute(CommandParameter) ?? false)
                 {
@@ -156,25 +132,29 @@ namespace MudBlazor
             }
         }
 
+        private void ChangeParentSelection()
+        {
+            ParentList?.SetSelection(Item, !_selected);
+        }
+
         protected override void OnInitialized()
         {
-            _expanded = InitiallyExpanded;
-            if (MudList != null)
+            if (ParentList != null)
             {
-                MudList.Register(this);
+                ParentList.Register(this);
                 OnListParametersChanged();
-                MudList.ParametersChanged += OnListParametersChanged;
+                ParentList.ParametersChanged += OnListParametersChanged;
             }
         }
 
         private Typo _textTypo;
         private void OnListParametersChanged()
         {
-            if (Dense || MudList?.Dense == true)
+            if (Dense || ParentList?.Dense == true)
             {
                 _textTypo = Typo.body2;
             }
-            else if (!Dense || !MudList?.Dense == true)
+            else if (!Dense || !ParentList?.Dense == true)
             {
                 _textTypo = Typo.body1;
             }
@@ -183,10 +163,23 @@ namespace MudBlazor
 
         private bool _selected;
 
+        internal void SetSelected()
+        {
+            if (Disabled)
+                return;
+
+            var selected = ParentList?.SelectedItems.Contains(Item) ?? false;
+            if (_selected == selected)
+                return;
+            _selected = selected;
+            StateHasChanged();
+        }
+
         internal void SetSelected(bool selected)
         {
             if (Disabled)
                 return;
+
             if (_selected == selected)
                 return;
             _selected = selected;
@@ -201,12 +194,12 @@ namespace MudBlazor
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing && MudList != null)
+            if (disposing && ParentList != null)
             {
                 try
                 {
-                    MudList.ParametersChanged -= OnListParametersChanged;
-                    MudList.Unregister(this);
+                    ParentList.ParametersChanged -= OnListParametersChanged;
+                    ParentList.Unregister(this);
                 }
                 catch (Exception) { /*ignore*/ }
             }

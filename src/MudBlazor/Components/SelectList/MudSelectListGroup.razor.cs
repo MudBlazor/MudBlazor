@@ -6,22 +6,20 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudListItem : MudComponentBase, IDisposable
+    public partial class MudSelectListGroup<T> : MudComponentBase, IDisposable
     {
         protected string Classname =>
-        new CssBuilder("mud-list-item")
-          .AddClass("mud-list-item-dense", Dense || MudList?.Dense == true)
-          .AddClass("mud-list-item-gutters", !DisableGutters && !(MudList?.DisableGutters == true))
-          .AddClass("mud-list-item-clickable", MudList?.Clickable)
-          .AddClass("mud-ripple", MudList?.Clickable == true && !DisableRipple && !Disabled)
-          .AddClass("mud-selected-item", _selected && !Disabled)
+        new CssBuilder("mud-list-item mud-list-item-clickable")
+          .AddClass("mud-list-item-dense", Dense || ParentList?.Dense == true)
+          .AddClass("mud-list-item-gutters", !DisableGutters && !(ParentList?.DisableGutters == true))
+          .AddClass("mud-ripple", !DisableRipple && !Disabled)
           .AddClass("mud-list-item-disabled", Disabled)
           .AddClass(Class)
         .Build();
 
         [Inject] protected NavigationManager UriHelper { get; set; }
 
-        [CascadingParameter] protected MudList MudList { get; set; }
+        [CascadingParameter] protected MudSelectList<T> ParentList { get; set; }
 
         /// <summary>
         /// The text to display
@@ -106,16 +104,6 @@ namespace MudBlazor
         [Parameter] public bool InitiallyExpanded { get; set; }
 
         /// <summary>
-        /// Command parameter.
-        /// </summary>
-        [Parameter] public object CommandParameter { get; set; }
-
-        /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-        [Parameter] public ICommand Command { get; set; }
-
-        /// <summary>
         /// Display content of this list item. If set, this overrides Text
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
@@ -135,61 +123,31 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            if (NestedList != null)
-            {
-                Expanded = !Expanded;
-            }
-            else if (Href != null)
-            {
-                MudList?.SetSelectedItem(this);
-                OnClick.InvokeAsync(ev);
-                UriHelper.NavigateTo(Href);
-            }
-            else
-            {
-                MudList?.SetSelectedItem(this);
-                OnClick.InvokeAsync(ev);
-                if (Command?.CanExecute(CommandParameter) ?? false)
-                {
-                    Command.Execute(CommandParameter);
-                }
-            }
+
+            Expanded = !Expanded;
         }
 
         protected override void OnInitialized()
         {
             _expanded = InitiallyExpanded;
-            if (MudList != null)
+            if (ParentList != null)
             {
-                MudList.Register(this);
                 OnListParametersChanged();
-                MudList.ParametersChanged += OnListParametersChanged;
+                ParentList.ParametersChanged += OnListParametersChanged;
             }
         }
 
         private Typo _textTypo;
         private void OnListParametersChanged()
         {
-            if (Dense || MudList?.Dense == true)
+            if (Dense || ParentList?.Dense == true)
             {
                 _textTypo = Typo.body2;
             }
-            else if (!Dense || !MudList?.Dense == true)
+            else if (!Dense || !ParentList?.Dense == true)
             {
                 _textTypo = Typo.body1;
             }
-            StateHasChanged();
-        }
-
-        private bool _selected;
-
-        internal void SetSelected(bool selected)
-        {
-            if (Disabled)
-                return;
-            if (_selected == selected)
-                return;
-            _selected = selected;
             StateHasChanged();
         }
 
@@ -201,12 +159,11 @@ namespace MudBlazor
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing && MudList != null)
+            if (disposing && ParentList != null)
             {
                 try
                 {
-                    MudList.ParametersChanged -= OnListParametersChanged;
-                    MudList.Unregister(this);
+                    ParentList.ParametersChanged -= OnListParametersChanged;
                 }
                 catch (Exception) { /*ignore*/ }
             }

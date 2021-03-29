@@ -1,0 +1,69 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px">
+    <MudSelectList T="Drink" @bind-SelectedItems="selectedItems" SelectionChanged="SelectionChanged" MultiSelection="true">
+        <MudListSubheader>
+            Your drinks:
+            @foreach (var item in selectedItems)
+            {
+                <MudChip Color="@(item == lastSelection ? Color.Primary : Color.Secondary)">
+                    @item.Name
+                </MudChip>
+            }
+        </MudListSubheader>
+        @foreach (var category in menu)
+        {
+            @if (category.Drinks.Count == 0)
+            {
+                <MudSelectListItem Item="category" Text="@category.Name" />
+            }
+            else
+            {
+                <MudSelectListGroup T="Drink" Text="@category.Name" InitiallyExpanded="true">
+                    <NestedList>
+                        @foreach (var drink in category.Drinks)
+                        {
+                            <MudSelectListItem Item="drink" Text="@drink.Name" />
+                        }
+                    </NestedList>
+                </MudSelectListGroup>
+            }
+        }
+    </MudSelectList>
+</MudPaper>
+
+
+@code
+{
+    HashSet<Drink> selectedItems = new();
+    Drink lastSelection;
+
+    public List<Drink> menu = new List<Drink> {
+        new Drink { Name = "Sparkling Water" },
+        new Drink{ Name = "Teas",
+        Drinks = new List<Drink>{
+            new Drink { Name = "Earl Grey" },
+            new Drink { Name = "Matcha" },
+            new Drink { Name = "Pu'er" }
+            }
+        },
+        new Drink{ Name = "Coffes",
+            Drinks = new List<Drink>{
+                new Drink { Name = "Irish Coffee" },
+                new Drink { Name = "Double Expresso" },
+                new Drink { Name = "Cafe Latte" }
+            }
+        }
+    };
+
+    private void SelectionChanged(Drink drink)
+    {
+        lastSelection = drink;
+    }
+
+    public class Drink
+    {
+        public string Name { get; set; }
+        public List<Drink> Drinks { get; init; } = new();
+    }
+}

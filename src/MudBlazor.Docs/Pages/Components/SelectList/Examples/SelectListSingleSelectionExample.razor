@@ -1,0 +1,47 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px">
+    <MudSelectList @bind-SelectedItems="selectedItems">
+        <MudListSubheader>
+            Your drink:
+            <MudChip Color="Color.Secondary">
+                @(selectedItems?.FirstOrDefault() ?? "You are dry")
+            </MudChip>
+        </MudListSubheader>
+        @foreach (var category in menu)
+        {
+            @if (category.Items.Count == 0)
+            {
+                <MudSelectListItem Item="category.Category" Text="@category.Category" />
+            }
+            else
+            {
+                <MudSelectListGroup T="string" Text="@category.Category">
+                    <NestedList>
+                        @foreach (var drink in category.Items)
+                        {
+                            <MudSelectListItem Item="drink" Text="@drink" />
+                        }
+                    </NestedList>
+                </MudSelectListGroup>
+            }
+        }
+    </MudSelectList>
+</MudPaper>
+
+@code
+{
+    HashSet<string> selectedItems = new();
+
+    public List<DrinkCategory> menu = new List<DrinkCategory> {
+        new DrinkCategory { Category = "Sparkling Water" },
+    new DrinkCategory{ Category = "Teas", Items = new List<string>{ "Earl Grey", "Matcha", "Pu'er" } },
+    new DrinkCategory{ Category = "Coffes", Items = new List<string>{ "Irish Coffee", "Double Expresso", "Cafe Latte" } }
+    };
+
+    public class DrinkCategory
+    {
+        public string Category { get; set; }
+        public List<string> Items { get; init; } = new();
+    }
+}

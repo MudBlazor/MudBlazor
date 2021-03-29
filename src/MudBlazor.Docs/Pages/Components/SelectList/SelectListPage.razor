@@ -1,0 +1,83 @@
+﻿@page "/components/selectlist"
+
+<DocsPage>
+    <DocsPageHeader Title="Selectable Lists" SubTitle="Select List fields allows users to provide information from a rich list of options, leaving them always visible.">
+        <Description>
+            <CodeInline>MudSelectList</CodeInline> looks and behaves the same as <MudLink Href="/components/list">MudList</MudLink>. Refer to it for the layout option, with added benefits of the custom converter.<br />
+            MudSelectList supports your objects instead of relying on its own list items, and  The main difference is the multi-selection feature, and better binding for complex items.
+        </Description>
+    </DocsPageHeader>
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Custom converter</Title>
+                <Description>
+                    SelectList has a built-in <CodeInline>DefaultConverter</CodeInline> which converts the values from any primitive type to string for presentation of the selected value.
+                    You can customize that converter as described under <MudLink Href="/features/converters">Converters</MudLink>. Here we use <CodeInline>ToStringFunc</CodeInline> to
+                    convert objects of type Pizza to their string representation. Note how the <CodeInline Tag="true">MudSelectListItem</CodeInline> uses that string representation if you don't
+                    specify a render fragement.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: priority order for the item content is the following:
+                    <ol>
+                        <li>Child content</li>
+                        <li>Text attribute</li>
+                        <li>ToStringFunc</li>
+                        <li>Default object string conversion</li>
+                    </ol>
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer Class="py-6">
+                    <SelectListCustomConverterExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="true" Code="SelectListCustomConverterExample" GitHubFolderName="Select" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Single Selection</Title>
+                <Description>
+                    MudSelectList will manage an exclusive single-selection across all its nested lists for you.
+                    <CodeInline>SelectedItems</CodeInline> contains the list of selected items, it can be empty and can be bound. <CodeInline>SelectedItemsChanges</CodeInline> callback fires every time the list changes.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <SelectListSingleSelectionExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="SelectListSingleSelectionExample" GitHubFolderName="List" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Multi Selection</Title>
+                <Description>
+                    Setting <CodeInline>MultiSelection="true"</CodeInline> MudSelectList will manage a multiple selection across all its nested lists for you.<br />
+                    Note that <CodeInline>SelectionChanged</CodeInline> callback returns the last selected item when it's selected, but it won't be called on deselection.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
+                <SelectListMultiSelectionExample />
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="SelectListMultiSelectionExample " GitHubFolderName="List" />
+        </DocsPageSection>
+    </DocsPageContent>
+
+    <DocsPageSection>
+        <SectionHeader>
+            <Title>Radio-like behaviour</Title>
+            <Description>
+                Setting <CodeInline>RadioBehaviour</CodeInline> to true, you may prevent the user to remove the last selected item, acting like a radio button in case of single selection, working across all the nested lists.<br />
+                Please note that it can be used in conjunction with <CodeInline>MultiSelection</CodeInline>, items can be removed but it cannot be cleared.
+            </Description>
+        </SectionHeader>
+        <SectionContent Outlined="true" DisplayFlex="true">
+            <MudContainer Class="py-6">
+                <SelectListRadioModeExample />
+            </MudContainer>
+        </SectionContent>
+        <SectionSource ShowCode="false" Code="SelectListRadioModeExample" GitHubFolderName="Select" />
+    </DocsPageSection>
+
+</DocsPage>

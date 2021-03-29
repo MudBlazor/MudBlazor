@@ -1,0 +1,45 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudSelectList T="string" @bind-SelectedItems="selectedItems" SelectionChanged="SelectionChanged" MultiSelection="true">
+    <MudListSubheader>
+        Your drink:
+        @if (selectedItems != null && selectedItems.Count > 0)
+        {
+            @foreach (var item in selectedItems)
+            {
+                <MudChip Color="@(item == lastSelection ? Color.Primary : Color.Secondary)">
+                    @item
+                </MudChip>
+            }
+        }
+        else
+        {
+            <MudText>You are dry</MudText>
+        }
+    </MudListSubheader>
+    <MudSelectListItem Item="@("Sparkling Water")" />
+    <MudSelectListGroup T="string" Text="Teas">
+        <NestedList>
+            <MudSelectListItem Item="@("Earl Grey")" />
+            <MudSelectListItem Item="@("Matcha")" />
+            <MudSelectListItem Item="@("Pu'er")" />
+        </NestedList>
+    </MudSelectListGroup>
+    <MudSelectListGroup T="string" Text="Coffees">
+        <NestedList>
+            <MudSelectListItem Item="@("Irish Coffee")" />
+            <MudSelectListItem Item="@("Double Espresso")" />
+            <MudSelectListItem Item="@("Cafe Latte")" />
+        </NestedList>
+    </MudSelectListGroup>
+</MudSelectList>
+
+@code
+{ public static string __description__ = "Clicking the drinks selects them. The child lists are updated accordingly.";
+    HashSet<string> selectedItems;
+    string lastSelection;
+
+    private void SelectionChanged(string drink)
+    {
+        lastSelection = drink;
+    }}

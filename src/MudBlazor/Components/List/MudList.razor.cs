@@ -135,8 +135,17 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            ParametersChanged = null;
-            ParentList?.Unregister(this);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                ParametersChanged = null;
+                ParentList?.Unregister(this);
+            }
         }
 
     }

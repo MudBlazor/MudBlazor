@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudSelectList @bind-SelectedItems="selectedItem">
+    <MudListSubheader>
+        Your drink:
+        <MudChip Color="Color.Secondary">
+            @(selectedItem?.FirstOrDefault() ?? "You are dry")
+        </MudChip>
+    </MudListSubheader>
+    <MudSelectListItem Item="@("Sparkling Water")" />
+    <MudSelectListGroup T="string" Text="Teas">
+        <NestedList>
+            <MudSelectListItem Item="@("Earl Grey")" />
+            <MudSelectListItem Item="@("Matcha")" />
+            <MudSelectListItem Item="@("Pu'er")" />
+        </NestedList>
+    </MudSelectListGroup>
+    <MudSelectListGroup T="string" Text="Coffees">
+        <NestedList>
+            <MudSelectListItem Item="@("Irish Coffee")" />
+            <MudSelectListItem Item="@("Double Espresso")" />
+            <MudSelectListItem Item="@("Cafe Latte")" />
+        </NestedList>
+    </MudSelectListGroup>
+</MudSelectList>
+
+@code
+{ public static string __description__ = "Clicking the drinks selects them. The child lists are updated accordingly.";
+            HashSet<string> selectedItem; }

@@ -77,6 +77,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Radio", typeof(MudRadio<T>))
                 .AddItem("Checkbox", typeof(MudCheckBox<T>))
                 .AddItem("Select", typeof(MudSelect<T>))
+                .AddItem("Select List", typeof(MudSelectList<T>))
                 .AddItem("Slider", typeof(MudSlider<T>))
                 .AddItem("Switch", typeof(MudSwitch<T>))
                 .AddItem("Text Field", typeof(MudTextField<T>))

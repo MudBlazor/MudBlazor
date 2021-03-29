@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px">
+    <MudSelectList T="Pizza" RadioBehaviour="true">
+        @foreach (var pizza in menu)
+        {
+            <MudSelectListItem Item="pizza" Text="@pizza.Name" />
+        }
+    </MudSelectList>
+</MudPaper>
+
+@code
+{
+    List<Pizza> menu = new List<Pizza>
+                {
+        new Pizza() { Name="Cardinale" },
+        new Pizza() { Name="Diavola" },
+        new Pizza() { Name="Margherita" },
+        new Pizza() { Name="Spinaci" }
+    };
+
+    public class Pizza
+    {
+        public string Name { get; set; }
+    }
+}

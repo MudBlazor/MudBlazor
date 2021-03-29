@@ -1,0 +1,43 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudPaper>
+            <MudSelectList T="Pizza" SelectionChanged="@((item) => pizza = item)" ToStringFunc="@converter">
+                @foreach (var pizza in menu)
+                {
+                    <MudSelectListItem Item="pizza" />
+                }
+            </MudSelectList>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        @if(pizza == null)
+        {
+            <MudText Class="mt-5">Nothing selected yet.</MudText>
+        }        
+        else
+        {
+            <MudText Class="mt-5">Pizza: @pizza.Name</MudText>
+        }
+    </MudItem>    
+</MudGrid>
+
+@code {
+    Pizza pizza;
+
+    List<Pizza> menu = new List<Pizza>
+    {
+        new Pizza() { Name="Cardinale" },
+        new Pizza() { Name="Diavola" },
+        new Pizza() { Name="Margherita" },
+        new Pizza() { Name="Spinaci" }
+    };
+
+    public class Pizza
+    {
+        public string Name { get; set; }
+    }
+
+    Func<Pizza,string> converter = p => p?.Name.ToUpper();
+}
