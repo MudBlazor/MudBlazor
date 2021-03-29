@@ -86,6 +86,10 @@ namespace MudBlazor
                 }
                 else
                     _selection = value;
+
+                foreach (var item in _selection)
+                    PropagateSelection(item, true);
+
                 SelectedItemsChanged.InvokeAsync(_selection);
 
                 InvokeAsync(StateHasChanged);
@@ -194,6 +198,11 @@ namespace MudBlazor
                 SelectedItemsChanged.InvokeAsync(_selection);
             }
 
+            PropagateSelection(item, true);
+        }
+
+        private void PropagateSelection(T item, bool selected)
+        {
             foreach (var listItem in _items.ToArray())
             {
                 if (_equalityComparer.Equals(item, listItem.Item))
