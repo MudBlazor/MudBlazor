@@ -10,9 +10,9 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-    public class JavascriptBasedResizeObserver : IResizeObserver
+    public class ResizeObserver : IResizeObserver
     {
-        private readonly DotNetObjectReference<JavascriptBasedResizeObserver> _dotNetRef;
+        private readonly DotNetObjectReference<ResizeObserver> _dotNetRef;
         private readonly IJSRuntime _jsRuntime;
 
         private readonly Dictionary<Guid, ElementReference> _cachedValueIds = new();
@@ -21,14 +21,14 @@ namespace MudBlazor.Services
         private Guid _id = Guid.NewGuid();
         private ResizeObserverOptions _options;
 
-        public JavascriptBasedResizeObserver(IJSRuntime jsRuntime, ResizeObserverOptions options)
+        public ResizeObserver(IJSRuntime jsRuntime, ResizeObserverOptions options)
         {
             _dotNetRef = DotNetObjectReference.Create(this);
             _jsRuntime = jsRuntime;
             _options = options;
         }
 
-        public JavascriptBasedResizeObserver(IJSRuntime jsRuntime, IOptions<ResizeObserverOptions> options = null) : this(jsRuntime, options?.Value ?? new ResizeObserverOptions())
+        public ResizeObserver(IJSRuntime jsRuntime, IOptions<ResizeObserverOptions> options = null) : this(jsRuntime, options?.Value ?? new ResizeObserverOptions())
         {
         }
 

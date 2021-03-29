@@ -10,16 +10,16 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Services
 {
-    public class JavascriptBasedResizeObserverFactory : IResizeObserverFactory
+    public class ResizeObserverFactory : IResizeObserverFactory
     {
         private readonly IServiceProvider _provider;
 
-        public JavascriptBasedResizeObserverFactory(IServiceProvider provider)
+        public ResizeObserverFactory(IServiceProvider provider)
         {
             _provider = provider;
         }
 
         public IResizeObserver Create(ResizeObserverOptions options) =>
-            new JavascriptBasedResizeObserver(_provider.GetRequiredService<IJSRuntime>() , options);
+            new ResizeObserver(_provider.GetRequiredService<IJSRuntime>() , options);
     }
 }
