@@ -62,6 +62,24 @@ namespace MudBlazor
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
+
+
+        /// <summary>
+        /// Invokes the callback when the Up arrow button is clicked when the input is set to <see cref="InputType.Number"/>.
+        /// Note: use the optimized control <see cref="MudNumericField{T}"/> if you need to deal with numbers.
+        /// </summary>
+        [Parameter] public EventCallback OnIncrement { get; set; }
+
+        /// <summary>
+        /// Invokes the callback when the Down arrow button is clicked when the input is set to <see cref="InputType.Number"/>.
+        /// Note: use the optimized control <see cref="MudNumericField{T}"/> if you need to deal with numbers.
+        /// </summary>
+        [Parameter] public EventCallback OnDecrement { get; set; }
+
+        /// <summary>
+        /// Hides the spin buttons for <see cref="MudNumericField{T}"/>
+        /// </summary>
+        [Parameter] public bool HideSpinButtons { get; set; }
     }
 
     public class MudInputString : MudInput<string> { }
