@@ -70,15 +70,6 @@ else
     /// </summary>
     [Parameter] public string ToolTip { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        if(Parent != null)
-        {
-            await Parent.AddPanel(this);
-        }
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
@@ -94,6 +85,11 @@ else
         //if (Parent == null)
         //    throw new ArgumentNullException(nameof(Parent), "TabPanel must exist within a Tabs component");
         base.OnInitialized();
+
+        if (Parent != null)
+        {
+            Parent.AddPanel(this);
+        }
     }
 
     protected virtual void Dispose(bool disposing)

@@ -16,18 +16,18 @@ namespace MudBlazor
     {
         private bool _isDisposed;
         private int _activePanelIndex = 0;
-        private Boolean _isRendered = false;
+        private bool _isRendered = false;
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
         private bool _showScrollButtons;
-        public ElementReference TabsContentSize;
+        private ElementReference _tabsContentSize;
         private double _size;
         private double _position;
         private double _toolbarContentSize;
         private double _allTabsSize;
         private double _scrollPosition;
 
-        [Inject] public IResizeObserver ResizeObserver { get; set; }
+        [Inject] private IResizeObserver _resizeObserver { get; set; }
 
         /// <summary>
         /// If true, render all tabs and hide (display:none) every non-active.
@@ -134,7 +134,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string PanelClass { get; set; }
 
-        public MudTabPanel ActivePanel { get; set; }
+        public MudTabPanel ActivePanel { get; private set; }
 
         /// <summary>
         /// The current active panel index. Also with Bidirectional Binding
@@ -148,7 +148,7 @@ namespace MudBlazor
                 if (_activePanelIndex != value)
                 {
                     _activePanelIndex = value;
-                    ActivePanel = Panels[_activePanelIndex];
+                    ActivePanel = _panels[_activePanelIndex];
                     ActivePanelIndexChanged.InvokeAsync(value);
                 }
             }
@@ -160,7 +160,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<int> ActivePanelIndexChanged { get; set; }
 
-        public List<MudTabPanel> Panels = new List<MudTabPanel>();
+        private List<MudTabPanel> _panels = new List<MudTabPanel>();
 
         #region Life cycle management
 
@@ -173,15 +173,15 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var items = Panels.Select(x => x.PanelRef).ToList();
-                items.Add(TabsContentSize);
+                var items = _panels.Select(x => x.PanelRef).ToList();
+                items.Add(_tabsContentSize);
 
-                await ResizeObserver.Observe(items);
+                await _resizeObserver.Observe(items);
 
-                ResizeObserver.OnResized += OnResized;
+                _resizeObserver.OnResized += OnResized;
 
                 Rerender();
-                await InvokeAsync(StateHasChanged);
+                StateHasChanged();
 
                 _isRendered = true;
             }
@@ -190,7 +190,7 @@ namespace MudBlazor
         protected virtual void Dispose(bool disposing)
         {
             _isDisposed = true;
-            ResizeObserver.OnResized -= OnResized;
+            _resizeObserver.OnResized -= OnResized;
         }
 
         public void Dispose()
@@ -202,7 +202,7 @@ namespace MudBlazor
         protected virtual async ValueTask DisposeAsyncCore()
         {
             _isDisposed = true;
-            await ResizeObserver.DisposeAsync();
+            await _resizeObserver.DisposeAsync();
         }
 
         public async ValueTask DisposeAsync()
@@ -217,22 +217,22 @@ namespace MudBlazor
 
         #region Children
 
-        internal async Task AddPanel(MudTabPanel tabPanel)
+        internal void AddPanel(MudTabPanel tabPanel)
         {
-            Panels.Add(tabPanel);
-            if (Panels.Count == 1)
+            _panels.Add(tabPanel);
+            if (_panels.Count == 1)
                 ActivePanel = tabPanel;
 
-            await InvokeAsync(StateHasChanged);
+            StateHasChanged();
         }
 
         internal async Task SetPanelRef(ElementReference reference)
         {
-            if (_isRendered == true && ResizeObserver.IsElementObserved(reference) == false)
+            if (_isRendered == true && _resizeObserver.IsElementObserved(reference) == false)
             {
-                await ResizeObserver.Observe(reference);
+                await _resizeObserver.Observe(reference);
                 Rerender();
-                await InvokeAsync(StateHasChanged);
+                StateHasChanged();
             }
         }
 
@@ -241,12 +241,12 @@ namespace MudBlazor
             if (_isDisposed)
                 return;
 
-            var index = Panels.IndexOf(tabPanel);
+            var index = _panels.IndexOf(tabPanel);
             var newIndex = index;
-            if (ActivePanelIndex == index && index == Panels.Count - 1)
+            if (ActivePanelIndex == index && index == _panels.Count - 1)
             {
                 newIndex = index > 0 ? index - 1 : 0;
-                if (Panels.Count == 1)
+                if (_panels.Count == 1)
                 {
                     ActivePanel = null;
                 }
@@ -257,59 +257,48 @@ namespace MudBlazor
                 await ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
             }
 
-            if(index != newIndex)
+            if (index != newIndex)
             {
-                _activePanelIndex = newIndex;
-                ActivePanel = Panels[newIndex];
-               await ActivePanelIndexChanged.InvokeAsync(newIndex);
+                ActivePanelIndex = newIndex;
             }
 
-            //Double size = GetRelevantSize(tabPanel.PanelRef);
-            //Double positon = GetLengthOfPanelItems(tabPanel);
-            //if(_scrollPosition > positon)
-            //{
-            //    _scrollPosition -= size;
-            //}
-
-            Panels.Remove(tabPanel);
-            await ResizeObserver.Unobserve(tabPanel.PanelRef);
+            _panels.Remove(tabPanel);
+            await _resizeObserver.Unobserve(tabPanel.PanelRef);
             Rerender();
-            await InvokeAsync(StateHasChanged);
+            StateHasChanged();
         }
 
-        public async Task ActivatePanel(MudTabPanel panel)
+        public void ActivatePanel(MudTabPanel panel)
         {
-            await ActivatePanel(panel, null, _showScrollButtons);
+            ActivatePanel(panel, null, _showScrollButtons);
         }
 
-        public async Task ActivatePanel(int index)
+        public void ActivatePanel(int index)
         {
-            var panel = Panels[index];
-            await ActivatePanel(panel, null, _showScrollButtons);
+            var panel = _panels[index];
+            ActivatePanel(panel, null, _showScrollButtons);
         }
 
-        public async Task ActivatePanel(object id)
+        public void ActivatePanel(object id)
         {
-            var panel = Panels.Where((p) => p.ID == id).FirstOrDefault();
+            var panel = _panels.Where((p) => p.ID == id).FirstOrDefault();
             if (panel != null)
-                await ActivatePanel(panel, null, _showScrollButtons);
+                ActivatePanel(panel, null, _showScrollButtons);
         }
 
-        private async Task ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool scrollToActivePanel)
+        private void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool scrollToActivePanel)
         {
             if (!panel.Disabled)
             {
-                ActivePanel = panel;
-                _activePanelIndex = Panels.IndexOf(panel);
-                await ActivePanelIndexChanged.InvokeAsync(_activePanelIndex);
+                ActivePanelIndex = _panels.IndexOf(panel);
 
                 if (ev != null)
-                    await ActivePanel.OnClick.InvokeAsync(ev);
+                    ActivePanel.OnClick.InvokeAsync(ev);
 
                 CenterScrollPositionAroundSelectedItem();
                 SetSliderState();
                 SetScrollabilityStates();
-                await InvokeAsync(StateHasChanged);
+                StateHasChanged();
             }
         }
 
@@ -440,13 +429,13 @@ namespace MudBlazor
             _size = GetRelevantSize(ActivePanel.PanelRef);
         }
 
-        private void GetToolbarContentSize() => _toolbarContentSize = GetRelevantSize(TabsContentSize);
+        private void GetToolbarContentSize() => _toolbarContentSize = GetRelevantSize(_tabsContentSize);
 
         private void GetAllTabsSize()
         {
             double totalTabsSize = 0;
 
-            foreach (var panel in Panels)
+            foreach (var panel in _panels)
             {
                 totalTabsSize += GetRelevantSize(panel.PanelRef);
             }
@@ -455,16 +444,16 @@ namespace MudBlazor
         }
 
 
-        private Double GetRelevantSize(ElementReference reference) => Position switch
+        private double GetRelevantSize(ElementReference reference) => Position switch
         {
-            Position.Top or Position.Bottom => ResizeObserver.GetWidth(reference),
-            _ => ResizeObserver.GetHeight(reference)
+            Position.Top or Position.Bottom => _resizeObserver.GetWidth(reference),
+            _ => _resizeObserver.GetHeight(reference)
         };
 
-        private Double GetLengthOfPanelItems(MudTabPanel panel)
+        private double GetLengthOfPanelItems(MudTabPanel panel)
         {
-            Double value = 0.0;
-            foreach (var item in Panels)
+            var value = 0.0;
+            foreach (var item in _panels)
             {
                 if (item == panel)
                 {
@@ -477,7 +466,7 @@ namespace MudBlazor
             return value;
         }
 
-        private Double GetPanelLength(MudTabPanel panel) => panel == null ? 0.0 : GetRelevantSize(panel.PanelRef);
+        private double GetPanelLength(MudTabPanel panel) => panel == null ? 0.0 : GetRelevantSize(panel.PanelRef);
 
         #endregion
 
@@ -491,7 +480,7 @@ namespace MudBlazor
 
         private void ScrollPrev()
         {
-            Double scrollValue = _scrollPosition - _toolbarContentSize;
+            var scrollValue = _scrollPosition - _toolbarContentSize;
             if (scrollValue < 0)
             {
                 scrollValue = 0;
@@ -504,7 +493,7 @@ namespace MudBlazor
 
         private void ScrollNext()
         {
-            Double scrollValue = _scrollPosition + _toolbarContentSize;
+            var scrollValue = _scrollPosition + _toolbarContentSize;
 
             if (scrollValue > _allTabsSize)
             {
@@ -518,30 +507,30 @@ namespace MudBlazor
 
         private void ScrollToItem(MudTabPanel panel)
         {
-            Double position = GetLengthOfPanelItems(panel);
+            var position = GetLengthOfPanelItems(panel);
             _scrollPosition = position;
         }
 
-        private Boolean IsAfterLastPanelIndex(Int32 index) => index >= Panels.Count;
-        private Boolean IsBeforeFirstPanelIndex(Int32 index) => index < 0;
+        private bool IsAfterLastPanelIndex(int index) => index >= _panels.Count;
+        private bool IsBeforeFirstPanelIndex(int index) => index < 0;
 
         private void CenterScrollPositionAroundSelectedItem()
         {
             MudTabPanel panelToStart = ActivePanel;
-            Double length = GetPanelLength(panelToStart);
+            var length = GetPanelLength(panelToStart);
             if (length >= _toolbarContentSize)
             {
                 ScrollToItem(panelToStart);
                 return;
             }
 
-            Int32 indexCorrection = 1;
+            int indexCorrection = 1;
             while (true)
             {
-                Int32 panelAfterIndex = _activePanelIndex + indexCorrection;
+                int panelAfterIndex = _activePanelIndex + indexCorrection;
                 if (IsAfterLastPanelIndex(panelAfterIndex) == false)
                 {
-                    length += GetPanelLength(Panels[panelAfterIndex]);
+                    length += GetPanelLength(_panels[panelAfterIndex]);
                 }
 
                 if (length >= _toolbarContentSize)
@@ -552,10 +541,10 @@ namespace MudBlazor
 
                 length = _toolbarContentSize - length;
 
-                Int32 panelBeforeindex = _activePanelIndex - indexCorrection;
+                var panelBeforeindex = _activePanelIndex - indexCorrection;
                 if (IsBeforeFirstPanelIndex(panelBeforeindex) == false)
                 {
-                    length -= GetPanelLength(Panels[panelBeforeindex]);
+                    length -= GetPanelLength(_panels[panelBeforeindex]);
                 }
                 else
                 {
@@ -569,7 +558,7 @@ namespace MudBlazor
                 }
 
                 length = _toolbarContentSize - length;
-                panelToStart = Panels[_activePanelIndex - indexCorrection];
+                panelToStart = _panels[_activePanelIndex - indexCorrection];
 
                 indexCorrection++;
             }
@@ -581,7 +570,7 @@ namespace MudBlazor
 
         private void SetScrollabilityStates()
         {
-            Boolean isEnoughSpace = _allTabsSize <= _toolbarContentSize;
+            var isEnoughSpace = _allTabsSize <= _toolbarContentSize;
 
             if (isEnoughSpace == true)
             {

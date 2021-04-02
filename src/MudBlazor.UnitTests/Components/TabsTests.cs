@@ -177,7 +177,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ScrollToItem_NoScrollingNeedded()
+        public void ScrollToItem_NoScrollingNeedded()
         {
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
@@ -186,7 +186,7 @@ namespace MudBlazor.UnitTests.Components
 
             for (int i = 0; i < 6; i++)
             {
-                await comp.Instance.SetPanelActive(i);
+                comp.Instance.SetPanelActive(i);
 
                 var toolbarWrappter = comp.Find(".mud-tabs-toolbar-wrapper");
 
@@ -206,7 +206,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(300.0, 100)]
         [TestCase(200.0, 200)]
         [TestCase(100.0, 200)]
-        public async Task ScrollToItem_CentralizeViewAroundActiveItem(Double totalSize, Double expectedTranslation)
+        public void ScrollToItem_CentralizeViewAroundActiveItem(double totalSize, double expectedTranslation)
         {
             var observer = new MockResizeObserver
             {
@@ -219,7 +219,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
-            await comp.Instance.SetPanelActive(2);
+            comp.Instance.SetPanelActive(2);
 
             var toolbarWrappter = comp.Find(".mud-tabs-toolbar-wrapper");
 
@@ -237,7 +237,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(300.0, 100)]
         [TestCase(200.0, 200)]
         [TestCase(100.0, 200)]
-        public async Task ScrollToItem_CentralizeViewAroundActiveItem_ScrollVertically(Double totalSize, Double expectedTranslation)
+        public void ScrollToItem_CentralizeViewAroundActiveItem_ScrollVertically(double totalSize, double expectedTranslation)
         {
             var observer = new MockResizeObserver
             {
@@ -252,8 +252,7 @@ namespace MudBlazor.UnitTests.Components
             comp.SetParametersAndRender(p => p.Add(x => x.Position, Position.Left));
             Console.WriteLine(comp.Markup);
 
-            await comp.Instance.SetPanelActive(2);
-            
+            comp.Instance.SetPanelActive(2);
 
             var toolbarWrappter = comp.Find(".mud-tabs-toolbar-wrapper");
 
@@ -263,11 +262,11 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrappter.GetAttribute("style");
 
             styleAttr.Should().Be($"transform:translateY(-{expectedTranslation.ToString(CultureInfo.InvariantCulture)}px);");
-            GetSliderValue(comp,"top").Should().Be(2 * 100.0);
+            GetSliderValue(comp, "top").Should().Be(2 * 100.0);
         }
 
         [Test]
-        public async Task ScrollToItem_CentralizeView_ActivateAllItems()
+        public void ScrollToItem_CentralizeView_ActivateAllItems()
         {
             var observer = new MockResizeObserver
             {
@@ -280,7 +279,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
-            Dictionary<Int32, Double> expectedTranslations = new Dictionary<int, double>
+            Dictionary<int, double> expectedTranslations = new Dictionary<int, double>
             {
                 { 0, 0 },
                 { 1, 100 },
@@ -292,7 +291,7 @@ namespace MudBlazor.UnitTests.Components
 
             for (int i = 0; i < 6; i++)
             {
-                await comp.Instance.SetPanelActive(i);
+                comp.Instance.SetPanelActive(i);
 
                 var toolbarWrappter = comp.Find(".mud-tabs-toolbar-wrapper");
 
@@ -325,7 +324,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ScrollNext_EnabledStates()
+        public void ScrollNext_EnabledStates()
         {
             var observer = new MockResizeObserver
             {
@@ -342,16 +341,16 @@ namespace MudBlazor.UnitTests.Components
 
             for (int i = 0; i < 6; i++)
             {
-                await comp.Instance.SetPanelActive(i);
+                comp.Instance.SetPanelActive(i);
 
-                Boolean shouldBeDisabled = i >= 4;
+                var shouldBeDisabled = i >= 4;
 
                 scrollButtons.Last().Instance.Disabled.Should().Be(shouldBeDisabled);
             }
         }
 
         [Test]
-        public async Task ScrollPrev_EnabledStates()
+        public void ScrollPrev_EnabledStates()
         {
             var observer = new MockResizeObserver
             {
@@ -368,9 +367,9 @@ namespace MudBlazor.UnitTests.Components
 
             for (int i = 5; i <= 0; i--)
             {
-                await comp.Instance.SetPanelActive(i);
+                comp.Instance.SetPanelActive(i);
 
-                Boolean shouldBeDisabled = i == 0;
+                var shouldBeDisabled = i == 0;
                 scrollButtons.First().Instance.Disabled.Should().Be(shouldBeDisabled);
             }
         }
@@ -391,7 +390,7 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
 
-            Double expectedTranslation = 0.0;
+            double expectedTranslation = 0.0;
 
             for (int i = 0; i < 2; i++)
             {
@@ -423,7 +422,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task ScrollPrev()
+        public void ScrollPrev()
         {
             var observer = new MockResizeObserver
             {
@@ -438,9 +437,9 @@ namespace MudBlazor.UnitTests.Components
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.Should().HaveCount(2);
 
-            await comp.Instance.SetPanelActive(5);
+            comp.Instance.SetPanelActive(5);
 
-            Double expectedTranslation = 400.0;
+            double expectedTranslation = 400.0;
 
             for (int i = 0; i < 2; i++)
             {
@@ -472,7 +471,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Handle_ResizeOfPanel()
+        public void Handle_ResizeOfPanel()
         {
             var observer = new MockResizeObserver
             {
@@ -485,7 +484,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
-            await comp.Instance.SetPanelActive(1);
+            comp.Instance.SetPanelActive(1);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
@@ -499,7 +498,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Handle_ResizeOfElement()
+        public void Handle_ResizeOfElement()
         {
             var observer = new MockResizeObserver
             {
@@ -512,7 +511,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
-            await comp.Instance.SetPanelActive(1);
+            comp.Instance.SetPanelActive(1);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
@@ -538,7 +537,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
-            await comp.Instance.SetPanelActive(4);
+            comp.Instance.SetPanelActive(4);
 
             GetSliderValue(comp).Should().Be(4 * 100.0);
 
@@ -550,9 +549,9 @@ namespace MudBlazor.UnitTests.Components
             scrollButtons.Should().HaveCount(2);
 
             scrollButtons.Last().Instance.Disabled.Should().BeFalse();
-            await comp.Instance.SetPanelActive(5);
+            comp.Instance.SetPanelActive(5);
             scrollButtons.Last().Instance.Disabled.Should().BeTrue();
-            await comp.Instance.SetPanelActive(6);
+            comp.Instance.SetPanelActive(6);
 
             var toolbarWrappter = comp.Find(".mud-tabs-toolbar-wrapper");
             toolbarWrappter.Should().NotBeNull();
@@ -576,7 +575,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
-            await comp.Instance.SetPanelActive(2);
+            comp.Instance.SetPanelActive(2);
 
             GetSliderValue(comp).Should().Be(2 * 100.0);
 
@@ -594,7 +593,7 @@ namespace MudBlazor.UnitTests.Components
             var styleAttr = toolbarWrappter.GetAttribute("style");
             styleAttr.Should().Be($"transform:translateX(-0px);");
 
-            Double sliderValue = GetSliderValue(comp);
+            double sliderValue = GetSliderValue(comp);
             GetSliderValue(comp).Should().Be(1 * 100.0);
         }
 
@@ -612,7 +611,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<ScrollableTabsTest>();
             Console.WriteLine(comp.Markup);
 
-            await comp.Instance.SetPanelActive(2);
+            comp.Instance.SetPanelActive(2);
 
             var scrollButtons = comp.FindComponents<MudIconButton>();
 
@@ -642,20 +641,20 @@ namespace MudBlazor.UnitTests.Components
 
         #region Helper
 
-        private static Double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, String attribute = "left")
+        private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")
         {
             var slider = comp.Find(".mud-tab-slider");
             slider.HasAttribute("style").Should().Be(true);
 
-            String styleAttribute = slider.GetAttribute("style");
-            Int32 indexToSplit = styleAttribute.IndexOf($"{attribute}:");
-            String substring = styleAttribute.Substring(indexToSplit + attribute.Length + 1);
+            var styleAttribute = slider.GetAttribute("style");
+            var indexToSplit = styleAttribute.IndexOf($"{attribute}:");
+            var substring = styleAttribute.Substring(indexToSplit + attribute.Length + 1);
             substring = substring.Remove(substring.Length - 3);
-            Double value = Double.Parse(substring, CultureInfo.InvariantCulture);
+            var value = double.Parse(substring, CultureInfo.InvariantCulture);
             return value;
         }
 
-       
+
 
 
         #endregion
