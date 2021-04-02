@@ -380,7 +380,7 @@ namespace MudBlazor.UnitTests.Components
             select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
               {
                   validatedValue = value; // NOTE: select does only update the value for T string
-                return true;
+                  return true;
               }));
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");

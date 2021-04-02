@@ -608,7 +608,7 @@ namespace MudBlazor.UnitTests.Components
             // Check first run attribute
             EditFormIssue1229.TestAttribute.ValidationContextOnCall.Should().BeEmpty();
             // Trigger change
-            var input= comp.Find("input");
+            var input = comp.Find("input");
             input.Change("Test");
             input.Blur();
             // Verify context was set
