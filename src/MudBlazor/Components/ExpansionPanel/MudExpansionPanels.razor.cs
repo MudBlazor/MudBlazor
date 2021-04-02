@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Not Used
+
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
@@ -75,6 +77,7 @@ namespace MudBlazor
                     last.NextPanelExpanded = panel.IsExpanded;
                 last = panel;
             }
+            StateHasChanged();
         }
 
         public void CloseAllExcept(MudExpansionPanel panel)
