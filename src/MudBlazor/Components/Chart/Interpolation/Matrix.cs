@@ -1,12 +1,4 @@
-﻿// Not Used
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MudBlazor.Components.Chart
+﻿namespace MudBlazor.Components.Chart
 {
     public class Matrix
     {
