@@ -193,37 +193,6 @@ namespace MudBlazor
             _resizeObserver.OnResized -= OnResized;
         }
 
-        #region Life cycle management
-
-        protected override void OnParametersSet()
-        {
-            Rerender();
-        }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                var items = Panels.Select(x => x.PanelRef).ToList();
-                items.Add(TabsContentSize);
-
-                await ResizeObserver.Observe(items);
-
-                ResizeObserver.OnResized += OnResized;
-
-                Rerender();
-                await InvokeAsync(StateHasChanged);
-
-                _isRendered = true;
-            }
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            _isDisposed = true;
-            ResizeObserver.OnResized -= OnResized;
-        }
-
         public void Dispose()
         {
             Dispose(true);
@@ -391,7 +360,7 @@ namespace MudBlazor
             .Build();
 
         protected string SliderStyle =>
-        new StyleBuilder()
+            new StyleBuilder()
             .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
             .AddStyle("left", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
             .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
@@ -408,20 +377,7 @@ namespace MudBlazor
               .AddClass(panel.Class)
               .Build();
 
-        public async Task ActivatePanel(int index)
-        {
-            var panel = Panels[index];
-            await ActivatePanel(panel, null, _showScrollButtons);
-        }
-
-        public async Task ActivatePanel(object id)
-        {
-            var panel = Panels.Where((p) => p.ID == id).FirstOrDefault();
-            if (panel != null)
-                await ActivatePanel(panel, null, _showScrollButtons);
-        }
-
-            return tabStyle;
+            return tabClass;
         }
 
         private Placement GetTooltipPlacement()
@@ -434,6 +390,15 @@ namespace MudBlazor
                 return Placement.Top;
             else
                 return Placement.Bottom;
+        }
+
+        string GetTabStyle(MudTabPanel panel)
+        {
+            var tabStyle = new StyleBuilder()
+            .AddStyle(panel.Style)
+            .Build();
+
+            return tabStyle;
         }
 
         #endregion
@@ -504,7 +469,6 @@ namespace MudBlazor
         private double GetPanelLength(MudTabPanel panel) => panel == null ? 0.0 : GetRelevantSize(panel.PanelRef);
 
         #endregion
-
 
         #region scrolling 
 
