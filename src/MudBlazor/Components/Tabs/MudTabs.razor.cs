@@ -193,6 +193,37 @@ namespace MudBlazor
             _resizeObserver.OnResized -= OnResized;
         }
 
+        #region Life cycle management
+
+        protected override void OnParametersSet()
+        {
+            Rerender();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                var items = Panels.Select(x => x.PanelRef).ToList();
+                items.Add(TabsContentSize);
+
+                await ResizeObserver.Observe(items);
+
+                ResizeObserver.OnResized += OnResized;
+
+                Rerender();
+                await InvokeAsync(StateHasChanged);
+
+                _isRendered = true;
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            _isDisposed = true;
+            ResizeObserver.OnResized -= OnResized;
+        }
+
         public void Dispose()
         {
             Dispose(true);
@@ -377,14 +408,18 @@ namespace MudBlazor
               .AddClass(panel.Class)
               .Build();
 
-            return tabClass;
+        public async Task ActivatePanel(int index)
+        {
+            var panel = Panels[index];
+            await ActivatePanel(panel, null, _showScrollButtons);
         }
 
-        string GetTabStyle(MudTabPanel panel)
+        public async Task ActivatePanel(object id)
         {
-            var tabStyle = new StyleBuilder()
-            .AddStyle(panel.Style)
-            .Build();
+            var panel = Panels.Where((p) => p.ID == id).FirstOrDefault();
+            if (panel != null)
+                await ActivatePanel(panel, null, _showScrollButtons);
+        }
 
             return tabStyle;
         }
