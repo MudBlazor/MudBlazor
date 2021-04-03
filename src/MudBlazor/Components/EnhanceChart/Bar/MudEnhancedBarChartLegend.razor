@@ -7,9 +7,9 @@
         { 
             @foreach (var group in LegendInfo.Groups)
             {
-                <MudListItem Icon="@Icons.Material.Filled.BarChart" Text="@group.name" InitiallyExpanded="true">
+                <MudListItem Icon="@Icons.Material.Filled.BarChart" Text="@group.Name" InitiallyExpanded="true">
                     <NestedList>
-                        @foreach (var series in group.series)
+                        @foreach (var series in group.Series)
                         {
                             <MudListItem @key="series.Series.GetHashCode()"
                                          OnClick="@(() => ToggleEnabledStateOfSeries(series))" 
@@ -25,4 +25,7 @@
         }
     </MudList>
 </MudPaper>
-    @code { }
+    @code { 
+
+
+    }

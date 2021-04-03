@@ -11,12 +11,42 @@ namespace MudBlazor.EnhanceChart
     [DoNotGenerateAutomaticTest]
     public class MudEnhancedBarChartSeries : ComponentBase, ISnapshot<BarChartSeriesSnapshot>, IDisposable, IDataSeries
     {
+        /// <summary>
+        /// The parent bar dataset
+        /// </summary>
         [CascadingParameter] public MudEnhancedBarDataSet Dataset { get; set; }
+
+        /// <summary>
+        /// The parent chart
+        /// </summary>
         [CascadingParameter] public MudEnhancedBarChart Chart { get; set; }
 
+        /// <summary>
+        /// Name of the series. Used in tooltips and the legend
+        /// </summary>
         [Parameter] public String Name { get; set; } = String.Empty;
+
+        /// <summary>
+        /// Points for this series
+        /// </summary>
         [Parameter] public IList<Double> Points { get; set; } = new List<Double>();
+
+        /// <summary>
+        /// Color used for displaying. If not set, a random color is choosen
+        /// </summary>
         [Parameter] public CssColor Color { get; set; } = RandomColorSelector.GetRandomColor();
+
+        /// <summary>
+        /// Setting a value indidacting that this series is active (highlighted) in the chart. Default is true
+        /// </summary>
+        [Parameter] public Boolean IsActive { get; set; } = true;
+
+        /// <summary>
+        /// If IsEnabled is false, the series is not rendered and not considered for features like autoscaling. Default is true
+        /// </summary>
+        [Parameter] public Boolean IsEnabled { get; set; } = true;
+
+        #region legend related 
 
         protected internal void SentRequestForTooltip(SvgBarRepresentation svgBarRepresentation)
         {
@@ -31,7 +61,34 @@ namespace MudBlazor.EnhanceChart
             Chart?.RemoveTooltip(this);
         }
 
-        [Parameter] public Boolean IsEnabled { get; set; } = true;
+        public void ToggleEnabledState()
+        {
+            IsEnabled = !IsEnabled;
+            ISnapshot<BarChartSeriesSnapshot> _this = this;
+            _this.CreateSnapshot();
+            Dataset.SeriesUpdated(this);
+        }
+
+        #endregion
+
+        #region active state related
+
+        public void SentRequestToBecomeActiveAlone()
+        {
+            if (IsEnabled == false) { return; }
+
+            Chart.SetSeriesAsExclusivelyActive(this);
+        }
+
+        public void RevokeExclusiveActiveState()
+        {
+            Chart.SetAllSeriesAsActive();
+        }
+
+        public void SetAsActive() => IsActive = true;
+        public void SetAsInactive() => IsActive = false;
+
+        #endregion
 
         protected override void OnParametersSet()
         {
@@ -58,39 +115,13 @@ namespace MudBlazor.EnhanceChart
             }
         }
 
-        BarChartSeriesSnapshot ISnapshot<BarChartSeriesSnapshot>.OldSnapshotValue { get; set; }
-
-
-        BarChartSeriesSnapshot ISnapshot<BarChartSeriesSnapshot>.CreateSnapShot() => new(Name, (String)Color, IsEnabled);
-
         public void Dispose()
         {
             Dataset?.Remove(this);
         }
 
-        public void ToggleEnabledState()
-        {
-            IsEnabled = !IsEnabled;
-            ISnapshot<BarChartSeriesSnapshot> _this = this;
-            _this.CreateSnapshot();
-            Dataset.SeriesUpdated(this);
-        }
+        BarChartSeriesSnapshot ISnapshot<BarChartSeriesSnapshot>.OldSnapshotValue { get; set; }
+        BarChartSeriesSnapshot ISnapshot<BarChartSeriesSnapshot>.CreateSnapShot() => new(Name, (String)Color, IsEnabled);
 
-        public Boolean IsActive { get; private set; } = true;
-
-        public void SentRequestToBecomeActiveAlone()
-        {
-            if (IsEnabled == false) { return; }
-
-            Chart.SetSeriesAsExclusivelyActive(this);
-        }
-
-        public void RevokeExclusiveActiveState()
-        {
-            Chart.SetAllSeriesAsActive();
-        }
-
-        public void SetAsActive() => IsActive = true;
-        public void SetAsInactive() => IsActive = false;
     }
 }

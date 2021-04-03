@@ -8,12 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor.EnhanceChart
 {
-    public enum TickMode
-    {
-        Absolute,
-        Relative,
-    }
-
     record TickSnapShot(String Color, Double Thickness, Double Value, String LineCssClass, TickMode Mode);
 
     public record TickInfo(Boolean ShowGridLines, Double GridLineThickness, String GridLineColor, String GridLineCssClass) : ITick;
@@ -21,7 +15,7 @@ namespace MudBlazor.EnhanceChart
     [DoNotGenerateAutomaticTest]
     public class MudEnhancedTick : ComponentBase, ISnapshot<TickSnapShot>, IDisposable
     {
-        [CascadingParameter] public IYAxis Axe { get; set; }
+        [CascadingParameter] public IYAxis Axis { get; set; }
         [CascadingParameter(Name = "IsMajorTick")] public Boolean IsMajorTick { get; set; }
 
         [Parameter] public CssColor Color { get; set; } = "#808080";
@@ -30,12 +24,11 @@ namespace MudBlazor.EnhanceChart
         [Parameter] public Double Value { get; set; }
         [Parameter] public TickMode Mode { get; set; } = TickMode.Absolute;
 
-
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
 
-            if (Axe == null)
+            if (Axis == null)
             {
                 throw new ArgumentException("a tick needs to be placed inside an axe");
             }
@@ -44,7 +37,7 @@ namespace MudBlazor.EnhanceChart
 
             if (_this.SnapshotHasChanged(true))
             {
-                Axe.TickUpdated(this);
+                Axis.TickUpdated(this);
             }
         }
 
@@ -55,7 +48,7 @@ namespace MudBlazor.EnhanceChart
 
         public void Dispose()
         {
-            Axe?.RemoveTick(IsMajorTick);
+            Axis?.RemoveTick(IsMajorTick);
         }
     }
 }

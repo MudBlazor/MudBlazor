@@ -3,5 +3,5 @@ using System.Collections.Generic;
 
 namespace MudBlazor.EnhanceChart
 {
-    public record ChartLegendInfoGroup(String name, IEnumerable<ChartLegendInfoSeries> series, Boolean displayGrouped);
+    public record ChartLegendInfoGroup(String Name, IEnumerable<ChartLegendInfoSeries> Series, Boolean DisplayGrouped);
 }

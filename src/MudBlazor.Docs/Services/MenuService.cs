@@ -107,9 +107,9 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Bar chart", typeof(MudChart))
             )
 
-            // Enchanced Chart
-            .AddNavGroup("Enchanced Charts", false, new DocsComponents()
-                .AddItem("Enchanced Bar Chart", typeof(MudEnhancedChart))
+            // Enhanced Chart
+            .AddNavGroup("Enhanced Charts", false, new DocsComponents()
+                .AddItem("Enhanced Bar Chart", typeof(MudEnhancedChart))
             );
 
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;

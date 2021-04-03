@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Svg.Dom;
@@ -17,7 +18,6 @@ using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
-
 namespace MudBlazor.UnitTests.Components.EnchancedChart
 {
     [TestFixture]
@@ -643,12 +643,10 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             matItem.Click(new MouseEventArgs());
 
             series.IsEnabled.Should().Be(true);
-
         }
 
-
         [Test]
-        public void Legend_FullExample_ActiveAndInActiveBasedOnMouseOver()
+        public async Task Legend_FullExample_ActiveAndInActiveBasedOnMouseOver()
         {
             var series = new List<Double> { 100.0, 80.0, 20.0 };
 
@@ -699,8 +697,8 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             {
                 // for some reasons only the first is working, all other events are not invoked
                 // switch to gettting the series element from tag and invoke method there
-                //seriesItems[j].MouseOver(new MouseEventArgs());
-                seriesItems[j].Series.SentRequestToBecomeActiveAlone();
+                //seriesItems[j].(new MouseEventArgs());
+                await comp.InvokeAsync( () =>  seriesItems[j].Series.SentRequestToBecomeActiveAlone());
 
                 rects = comp.FindAll("polygon");
                 rects.Should().HaveCount(9);
@@ -719,7 +717,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
                 seriesItems = GetListItemsAsWorkaround(comp);
                 //seriesItems[j].MouseOut(new MouseEventArgs());
-                seriesItems[j].Series.RevokeExclusiveActiveState();
+                await comp.InvokeAsync(() => seriesItems[j].Series.RevokeExclusiveActiveState());
 
                 rects = comp.FindAll("polygon");
                 rects.Should().HaveCount(9);
@@ -900,14 +898,14 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             {
                 var actualGroup = acutalLegendInfo.Groups.ElementAt(i);
                 var expectedGroup = expectedLegendInfo.Groups.ElementAt(i);
-                actualGroup.Should().NotBeNull().And.BeEquivalentTo(actualGroup, opt => opt.Excluding(x => x.series));
+                actualGroup.Should().NotBeNull().And.BeEquivalentTo(actualGroup, opt => opt.Excluding(x => x.Series));
 
-                actualGroup.series.Should().NotBeNull().And.HaveCount(expectedGroup.series.Count());
+                actualGroup.Series.Should().NotBeNull().And.HaveCount(expectedGroup.Series.Count());
 
-                for (int j = 0; j < expectedGroup.series.Count(); j++)
+                for (int j = 0; j < expectedGroup.Series.Count(); j++)
                 {
-                    var actualSeries = actualGroup.series.ElementAt(j);
-                    var expectedSeries = expectedGroup.series.ElementAt(j);
+                    var actualSeries = actualGroup.Series.ElementAt(j);
+                    var expectedSeries = expectedGroup.Series.ElementAt(j);
 
                     actualSeries.Should().NotBeNull().And.Be(expectedSeries);
                 }

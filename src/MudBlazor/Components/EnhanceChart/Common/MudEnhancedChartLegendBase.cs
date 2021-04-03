@@ -9,13 +9,13 @@ namespace MudBlazor.EnhanceChart
 
         [Parameter] public ChartLegendInfo LegendInfo { get; set; }
 
-        public async void Update(ChartLegendInfo info)
+        public void Update(ChartLegendInfo info)
         {
             LegendInfo = info;
             try
             {
                 //sometimes fires a render error, not sure why
-                await InvokeAsync(StateHasChanged);
+                StateHasChanged();
             }
             catch (Exception)
             {
@@ -43,12 +43,5 @@ namespace MudBlazor.EnhanceChart
         {
             active.Series.RevokeExclusiveActiveState();
         }
-
-        protected override void OnAfterRender(bool firstRender)
-        {
-            base.OnAfterRender(firstRender);
-        }
-
-
     }
 }
