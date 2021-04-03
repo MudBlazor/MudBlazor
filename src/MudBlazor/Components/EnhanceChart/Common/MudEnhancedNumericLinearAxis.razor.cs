@@ -1,31 +1,21 @@
 ﻿// Not Used
 
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Utilities;
 
 namespace MudBlazor.EnhanceChart
 {
-    public enum YAxisPlacement
-    {
-        Left = 1,
-        Rigth = 2,
-        None = 3,
-    }
-
-    public enum ScalingType
-    {
-        Auto,
-        Manuel,
-    }
-
     record NumericLinearAxisSnapshot(Double Min, Double Max, Boolean ShowMinorTick, Boolean ShowMajorTick, Double LabelSize, Double Margin, String LabelCssClass, YAxisPlacement Placement, ScalingType ScalingType);
 
     [DoNotGenerateAutomaticTest]
     public partial class MudEnhancedNumericLinearAxis : ComponentBase, IYAxis, IDisposable, ISnapshot<NumericLinearAxisSnapshot>
     {
         private Guid _id = new Guid();
+        private TickOverview _tickInfo = new();
+
         public Guid Id => _id;
 
         private MudEnhancedTick _minorTick;
@@ -134,7 +124,7 @@ namespace MudBlazor.EnhanceChart
 
         public void RemoveTick(bool isMajorTick)
         {
-            if(isMajorTick == true)
+            if (isMajorTick == true)
             {
                 _majorTick = null;
                 Chart.MajorTickChanged(this, null);
@@ -143,7 +133,117 @@ namespace MudBlazor.EnhanceChart
             {
                 _minorTick = null;
                 Chart.MinorTickChanged(this, null);
-            }    
+            }
         }
+
+        public void ProcessDataSet(IEnumerable<IDataSeries> set)
+        {
+            if (ScalesAutomatically == false) { return; }
+
+            _tickInfo.HasValues = true;
+
+            foreach (var series in set)
+            {
+                if (series.IsEnabled == false) { continue; }
+
+                foreach (var yValue in series.Points)
+                {
+                    if (yValue > _tickInfo.Max)
+                    {
+                        _tickInfo.Max = yValue;
+                    }
+
+                    if (yValue < _tickInfo.Min)
+                    {
+                        _tickInfo.Min = yValue;
+                    }
+                }
+            }
+        }
+
+        public void CalculateTicks()
+        {
+            if (ScalesAutomatically == false) { return; }
+
+            if (_tickInfo.HasValues == false) { return; }
+
+            Double initialDelta = _tickInfo.Max - _tickInfo.Min;
+
+            if (MajorTickInfo != null)
+            {
+                Double firstStep = initialDelta / ((Int32)MajorTickValue - 1);
+
+                _tickInfo.MajorTickNumericValue = GetNearestTickValue(initialDelta, firstStep);
+                Int32 steps = (Int32)Math.Ceiling((_tickInfo.Max - _tickInfo.Min) / _tickInfo.MajorTickNumericValue);
+                _tickInfo.MajorTickAmount = 1 + steps;
+                _tickInfo.Max = steps * _tickInfo.MajorTickNumericValue;
+            }
+            else
+            {
+                _tickInfo.MajorTickNumericValue = initialDelta;
+                _tickInfo.MajorTickAmount = 2;
+                _tickInfo.Max = initialDelta;
+            }
+            if (MinorTickInfo != null)
+            {
+                _tickInfo.MinorTickNumericValue = GetNearestTickValue(_tickInfo.MajorTickNumericValue, _tickInfo.MajorTickNumericValue / ((Int32)MinorTickValue - 1));
+                _tickInfo.MinorTickAmount = (Int32)((_tickInfo.MajorTickNumericValue / _tickInfo.MinorTickNumericValue) - 1.0);
+            }
+        }
+
+        private static Double GetNearestTickValue(double initialDelta, Double firstStep)
+        {
+            Int32 scalingFactor = 0;
+            Double valuePerTick = firstStep;
+
+            if (initialDelta > 1)
+            {
+                while (valuePerTick > 1)
+                {
+                    valuePerTick /= 10;
+                    scalingFactor++;
+                }
+            }
+            else
+            {
+                while (valuePerTick < 0.1)
+                {
+                    valuePerTick *= 10;
+                    scalingFactor++;
+                }
+            }
+
+            if (valuePerTick < 0.15)
+            {
+                valuePerTick = 0.1;
+            }
+            else if (valuePerTick < 0.35)
+            {
+                valuePerTick = 0.2;
+            }
+            else
+            {
+                valuePerTick = 0.5;
+            }
+
+            if (initialDelta > 1)
+            {
+                for (int i = 0; i < scalingFactor; i++)
+                {
+                    valuePerTick *= 10;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < scalingFactor; i++)
+                {
+                    valuePerTick /= 10;
+                }
+            }
+
+            return valuePerTick;
+        }
+
+        public TickOverview GetTickInfo() => _tickInfo;
     }
 }

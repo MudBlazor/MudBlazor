@@ -11,8 +11,13 @@ namespace MudBlazor.EnhanceChart
 {
     record MudEnchancedBarChartSnapShot(Double Margin, Double Padding);
 
+    /// <summary>
+    /// The bar chart offering rich interactions
+    /// </summary>
     public partial class MudEnhancedBarChart : ICollection<MudEnhancedBarDataSet>, ICollection<IYAxis>, ISnapshot<MudEnchancedBarChartSnapShot>
     {
+        #region Fields
+
         private List<SvgLine> _lines = new();
         private List<SvgText> _labels = new();
         private List<SvgBarRepresentation> _bars = new();
@@ -20,14 +25,60 @@ namespace MudBlazor.EnhanceChart
         private List<MudEnhancedBarDataSet> _dataSets = new();
         private List<IYAxis> _yaxes = new();
         private MudEnhancedBarChartXAxis _xAxis;
+        private Dictionary<IDataSeries, BarChartToolTipInfo> currentToolTips = new();
 
+        #endregion
+
+        /// <summary>
+        /// The "parent" Chart of this BarChart
+        /// </summary>
         [CascadingParameter] MudEnhancedChart Chart { get; set; }
 
+        /// <summary>
+        /// The Datasets that should be rendered
+        /// </summary>
         [Parameter] public RenderFragment DataSets { get; set; }
+
+        /// <summary>
+        /// The y axes (possible multiple) that should be rendered   
+        /// </summary>
         [Parameter] public RenderFragment YAxes { get; set; } = DefaultYAxesFragment;
+
+        /// <summary>
+        /// The x axis (only a single one) that should be rendered 
+        /// </summary>
         [Parameter] public RenderFragment XAxis { get; set; } = DefaultXAxisFragment;
 
-        private Dictionary<IDataSeries, BarChartToolTipInfo> currentToolTips = new();
+        /// <summary>
+        /// A action that is called before drawing instruction are created. Can be used to manipulte data before drawing
+        /// </summary>
+        [Parameter] public Action<MudEnhancedBarChart> BeforeCreatingInstructionCallBack { get; set; }
+
+        /// <summary>
+        /// the margin between the bars and axis. The value is the relativ value. For instance 2.0 means two percent of the avaible space
+        /// </summary>
+        [Parameter] public Double Margin { get; set; } = 2.0;
+
+
+        /// <summary>
+        /// The padding between two series. For instance 2.0 means two percent of the avaible space
+        /// </summary>
+        [Parameter] public Double Padding { get; set; } = 3.0;
+
+        /// <summary>
+        /// Callback for changes about the legend. This is invoked for instance if a new series is added
+        /// </summary>
+        [Parameter] public EventCallback<ChartLegendInfo> LegendInfoChanged { get; set; }
+
+        /// <summary>
+        /// The data for the legend
+        /// </summary>
+        public ChartLegendInfo LegendInfo => new ChartLegendInfo(_dataSets.Select(x => new ChartLegendInfoGroup(x.Name,
+            x.Select(y => new ChartLegendInfoSeries(y.Name, "#" + (String)y.Color, y.IsEnabled, y)),
+            true)));
+
+
+        #region Tooltips and legend
 
         internal void AddTooltip(BarChartToolTipInfo barChartToolTipInfo, IDataSeries series)
         {
@@ -41,27 +92,18 @@ namespace MudBlazor.EnhanceChart
             Chart.UpdateTooltip(currentToolTips.Values);
         }
 
-        [Parameter] public Action<MudEnhancedBarChart> BeforeCreatingInstructionCallBack { get; set; }
-
-        [Parameter] public Double Margin { get; set; } = 2.0;
-        [Parameter] public Double Padding { get; set; } = 3.0;
-
-        public ChartLegendInfo LegendInfo => new ChartLegendInfo(_dataSets.Select(x => new ChartLegendInfoGroup(x.Name,
-            x.Select(y => new ChartLegendInfoSeries(y.Name, "#" + (String)y.Color, y.IsEnabled, y)),
-            true)));
-
-        [Parameter] public EventCallback<ChartLegendInfo> LegendInfoChanged { get; set; }
-
-        #region Updates from children
-
-        private async void InvokeLegendChanged()
+        private void InvokeLegendChanged()
         {
             var info = LegendInfo;
-            await LegendInfoChanged.InvokeAsync(info);
+            LegendInfoChanged.InvokeAsync(info);
             Chart?.UpdateLegend(info);
         }
 
-        public void DataSetUpdated(MudEnhancedBarDataSet barChartSeries)
+        #endregion
+
+        #region Updates from children
+
+        protected internal void DataSetUpdated(MudEnhancedBarDataSet barChartSeries)
         {
             if (_dataSets.Contains(barChartSeries) == false)
             {
@@ -78,18 +120,13 @@ namespace MudBlazor.EnhanceChart
             InvokeLegendChanged();
         }
 
-        protected internal async void SoftRedraw()
-        {
-            await InvokeAsync(StateHasChanged);
-        }
-
-        public void SetSeriesAsExclusivelyActive(IDataSeries something)
+        protected internal void SetSeriesAsExclusivelyActive(IDataSeries inputSeries)
         {
             foreach (var set in _dataSets)
             {
                 foreach (var series in set)
                 {
-                    if (series == something)
+                    if (inputSeries == series)
                     {
                         series.SetAsActive();
                     }
@@ -103,7 +140,7 @@ namespace MudBlazor.EnhanceChart
             SoftRedraw();
         }
 
-        public void SetAllSeriesAsActive()
+        protected internal void SetAllSeriesAsActive()
         {
             foreach (var set in _dataSets)
             {
@@ -136,7 +173,7 @@ namespace MudBlazor.EnhanceChart
 
         #region From Axes
 
-        internal void AxesUpdated(MudEnhancedNumericLinearAxis _)
+        protected internal void AxesUpdated(MudEnhancedNumericLinearAxis _)
         {
             CreateDrawingInstruction();
         }
@@ -171,6 +208,11 @@ namespace MudBlazor.EnhanceChart
 
         #region Drawing
 
+        protected internal void SoftRedraw()
+        {
+            StateHasChanged();
+        }
+
         public void ForceRedraw()
         {
             CreateDrawingInstruction();
@@ -189,8 +231,7 @@ namespace MudBlazor.EnhanceChart
             _labels.Clear();
             _lines.Clear();
 
-            Dictionary<MudEnhancedBarDataSet, AxisHelper> dataSetAxisMapper = new();
-            Dictionary<IYAxis, AxisHelper> axisMapper = new();
+            Dictionary<MudEnhancedBarDataSet, IYAxis> dataSetAxisMapper = new();
 
             foreach (var set in _dataSets)
             {
@@ -200,16 +241,8 @@ namespace MudBlazor.EnhanceChart
                     axis = _yaxes[0];
                 }
 
-                if (axisMapper.ContainsKey(axis) == false)
-                {
-                    axisMapper[axis] = new AxisHelper(axis);
-                }
-
-                AxisHelper helper = axisMapper[axis];
-
-                dataSetAxisMapper[set] = helper;
-
-                helper.ProcessDataSet(set);
+                axis.ProcessDataSet(set);
+                dataSetAxisMapper.Add(set, axis);
             }
 
             Int32 amountOfSeries = _dataSets.Sum(x => x.Count(y => y.IsEnabled == true));
@@ -237,17 +270,17 @@ namespace MudBlazor.EnhanceChart
                     break;
             }
 
-            foreach (var item in axisMapper.Values)
+            foreach (var item in dataSetAxisMapper.Values)
             {
                 item.CalculateTicks();
 
-                switch (item.Axis.Placement)
+                switch (item.Placement)
                 {
                     case YAxisPlacement.Left:
-                        matrix = TransformMatrix2D.TranslateX(item.Axis.Margin + item.Axis.LabelSize) * TransformMatrix2D.ScalingX((100 - item.Axis.Margin - item.Axis.LabelSize) / 100) * matrix;
+                        matrix = TransformMatrix2D.TranslateX(item.Margin + item.LabelSize) * TransformMatrix2D.ScalingX((100 - item.Margin - item.LabelSize) / 100) * matrix;
                         break;
                     case YAxisPlacement.Rigth:
-                        matrix = TransformMatrix2D.ScalingX((100 - item.Axis.Margin - item.Axis.LabelSize) / 100) * matrix;
+                        matrix = TransformMatrix2D.ScalingX((100 - item.Margin - item.LabelSize) / 100) * matrix;
                         break;
                     case YAxisPlacement.None:
                     default:
@@ -265,7 +298,7 @@ namespace MudBlazor.EnhanceChart
                 Double subX = currentX + Padding / 2.0;
                 foreach (var set in _dataSets)
                 {
-                    var axisHelper = dataSetAxisMapper[set];
+                    var axisHelper = dataSetAxisMapper[set].GetTickInfo();
 
                     foreach (var series in set)
                     {
@@ -330,12 +363,12 @@ namespace MudBlazor.EnhanceChart
 
             if (_xAxis.Placement != XAxisPlacement.None)
             {
-                Double marginLeftFromXAxis = axisMapper.Where(x => x.Value.Axis.Placement == YAxisPlacement.Left)
-                     .Select(x => x.Value.Axis.Margin + x.Value.Axis.LabelSize)
+                Double marginLeftFromXAxis = dataSetAxisMapper.Values.Where(x => x.Placement == YAxisPlacement.Left)
+                     .Select(x => x.Margin + x.LabelSize)
                      .Sum();
 
-                Double marginRigthFromXAxis = axisMapper.Where(x => x.Value.Axis.Placement == YAxisPlacement.Rigth)
-                     .Select(x => x.Value.Axis.Margin + x.Value.Axis.LabelSize)
+                Double marginRigthFromXAxis = dataSetAxisMapper.Values.Where(x => x.Placement == YAxisPlacement.Rigth)
+                     .Select(x => x.Margin + x.LabelSize)
                      .Sum();
 
                 Double spacePerXAxisLabel = (100.00 - marginRigthFromXAxis - marginLeftFromXAxis) / _xAxis.Labels.Count;
@@ -361,16 +394,18 @@ namespace MudBlazor.EnhanceChart
                 }
             }
 
-            foreach (var axisHelper in axisMapper.Values)
+            foreach (var axisHelper in dataSetAxisMapper.Values)
             {
-                if (axisHelper.Axis.Placement == YAxisPlacement.None)
+                if (axisHelper.Placement == YAxisPlacement.None)
                 {
                     continue;
                 }
 
+                var tickInfo = axisHelper.GetTickInfo();
+
                 Double marginFromXAxis = _xAxis.Placement == XAxisPlacement.None ? 0.0 : _xAxis.Margin + _xAxis.Height;
 
-                Double x = axisHelper.Axis.Placement == YAxisPlacement.Left ? axisHelper.Axis.LabelSize : 100 - axisHelper.Axis.LabelSize;
+                Double x = axisHelper.Placement == YAxisPlacement.Left ? axisHelper.LabelSize : 100 - axisHelper.LabelSize;
 
                 Double y = 100.0;
                 if (_xAxis.Placement == XAxisPlacement.Bottom)
@@ -378,45 +413,45 @@ namespace MudBlazor.EnhanceChart
                     y -= marginFromXAxis;
                 }
 
-                Double deltaYPerTick = (100.0 - marginFromXAxis) / (axisHelper.MajorTickAmount - 1);
-                Double tickValue = axisHelper.StartTickValue;
+                Double deltaYPerTick = (100.0 - marginFromXAxis) / (tickInfo.MajorTickAmount - 1);
+                Double tickValue = tickInfo.StartTickValue;
                 Int32 startIndex = _labels.Count;
 
-                Double deltaPerMajorGridLine = 100.0 / (axisHelper.MajorTickAmount - 1);
-                Double deltaPerMinorGridLine = deltaPerMajorGridLine / (axisHelper.MinorTickAmount + 1);
+                Double deltaPerMajorGridLine = 100.0 / (tickInfo.MajorTickAmount - 1);
+                Double deltaPerMinorGridLine = deltaPerMajorGridLine / (tickInfo.MinorTickAmount + 1);
 
                 Double lineY = 0.0;
 
-                for (int i = 0; i < axisHelper.MajorTickAmount; i++)
+                for (int i = 0; i < tickInfo.MajorTickAmount; i++)
                 {
                     Point2D labelLeftCorner = new Point2D(x, y);
 
                     _labels.Add(new SvgText
                     {
-                        Class =  new CssBuilder("mud-enhanced-chart-y-axis-major-label").AddOnlyWhenNotEmptyClass(axisHelper.Axis.LabelCssClass).Build(),
+                        Class =  new CssBuilder("mud-enhanced-chart-y-axis-major-label").AddOnlyWhenNotEmptyClass(axisHelper.LabelCssClass).Build(),
                         Value = Math.Round(tickValue, 6).ToString(),
                         Height = 3,
                         X = labelLeftCorner.X,
                         Y = labelLeftCorner.Y,
-                        TextPlacement = axisHelper.Axis.Placement == YAxisPlacement.Left ? "end" : "start",
+                        TextPlacement = axisHelper.Placement == YAxisPlacement.Left ? "end" : "start",
                     });
 
                     y -= deltaYPerTick;
-                    tickValue += axisHelper.MajorTickNumericValue;
+                    tickValue += tickInfo.MajorTickNumericValue;
 
-                    if (axisHelper.Axis.MajorTickInfo?.ShowGridLines == true)
+                    if (axisHelper.MajorTickInfo?.ShowGridLines == true)
                     {
                         SvgLine line = new SvgLine(
                           matrix * new Point2D(0, lineY),
                           matrix * new Point2D(100, lineY),
-                          axisHelper.Axis.MajorTickInfo.GridLineThickness,
-                          axisHelper.Axis.MajorTickInfo.GridLineColor,
-                          new CssBuilder("mud-enhanced-chart-y-axis-major-grid-line").AddOnlyWhenNotEmptyClass(axisHelper.Axis.MajorTickInfo.GridLineCssClass).Build()
+                          axisHelper.MajorTickInfo.GridLineThickness,
+                          axisHelper.MajorTickInfo.GridLineColor,
+                          new CssBuilder("mud-enhanced-chart-y-axis-major-grid-line").AddOnlyWhenNotEmptyClass(axisHelper.MajorTickInfo.GridLineCssClass).Build()
                           );
                         _lines.Add(line);
                     }
 
-                    if (axisHelper.Axis.MinorTickInfo?.ShowGridLines == true)
+                    if (axisHelper.MinorTickInfo?.ShowGridLines == true)
                     {
                         if (lineY < 100.0)
                         {
@@ -426,9 +461,9 @@ namespace MudBlazor.EnhanceChart
                                 SvgLine line = new SvgLine(
                                  matrix * new Point2D(0, minorLineY + lineY),
                                  matrix * new Point2D(100, minorLineY + lineY),
-                                 axisHelper.Axis.MinorTickInfo.GridLineThickness,
-                                 axisHelper.Axis.MinorTickInfo.GridLineColor,
-                                 new CssBuilder("mud-enhanced-chart-y-axis-minor-grid-line").AddOnlyWhenNotEmptyClass(axisHelper.Axis.MinorTickInfo.GridLineCssClass).Build()
+                                 axisHelper.MinorTickInfo.GridLineThickness,
+                                 axisHelper.MinorTickInfo.GridLineColor,
+                                 new CssBuilder("mud-enhanced-chart-y-axis-minor-grid-line").AddOnlyWhenNotEmptyClass(axisHelper.MinorTickInfo.GridLineCssClass).Build()
                                  );
                                 _lines.Add(line);
 
@@ -564,141 +599,8 @@ namespace MudBlazor.EnhanceChart
         }
 
         MudEnchancedBarChartSnapShot ISnapshot<MudEnchancedBarChartSnapShot>.OldSnapshotValue { get; set; }
-
-
         MudEnchancedBarChartSnapShot ISnapshot<MudEnchancedBarChartSnapShot>.CreateSnapShot() => new MudEnchancedBarChartSnapShot(Margin, Padding);
 
-        class AxisHelper
-        {
-            public AxisHelper(IYAxis axis)
-            {
-                Axis = axis;
-
-                if (axis.ScalesAutomatically == false)
-                {
-                    Min = axis.Min;
-                    Max = axis.Max;
-                }
-            }
-
-            public IYAxis Axis { get; private set; }
-            public Double Min { get; private set; } = 0.0;
-            public Double Max { get; private set; } = Double.MinValue;
-            public Double StartTickValue { get; private set; } = 0.0;
-            public Double MajorTickNumericValue { get; private set; } = 0.0;
-            public Double MinorTickNumericValue { get; private set; } = 0.0;
-
-            public Int32 MajorTickAmount { get; private set; } = 2;
-            public Int32 MinorTickAmount { get; private set; } = 0;
-
-            private Boolean _hasValues = false;
-
-            internal void ProcessDataSet(MudEnhancedBarDataSet set)
-            {
-                if (Axis.ScalesAutomatically == false) { return; }
-
-                _hasValues = true;
-
-                foreach (var series in set)
-                {
-                    if (series.IsEnabled == false) { continue; }
-
-                    foreach (var yValue in series.Points)
-                    {
-                        if (yValue > Max)
-                        {
-                            Max = yValue;
-                        }
-
-                        if (yValue < Min)
-                        {
-                            Min = yValue;
-                        }
-                    }
-                }
-            }
-
-            internal void CalculateTicks()
-            {
-                if (Axis.ScalesAutomatically == false) { return; }
-                if (_hasValues == false) { return; }
-
-                Double initialDelta = Max - Min;
-
-                if (Axis.MajorTickInfo != null)
-                {
-                    Double firstStep = initialDelta / ((Int32)Axis.MajorTickValue - 1);
-
-                    MajorTickNumericValue = GetNearestTickValue(initialDelta, firstStep);
-                    Int32 steps = (Int32)Math.Ceiling((Max - Min) / MajorTickNumericValue);
-                    MajorTickAmount = 1 + steps;
-                    Max = steps * MajorTickNumericValue;
-                }
-                else
-                {
-                    MajorTickNumericValue = initialDelta;
-                    MajorTickAmount = 2;
-                    Max = initialDelta;
-                }
-                if (Axis.MinorTickInfo != null)
-                {
-                    MinorTickNumericValue = GetNearestTickValue(MajorTickNumericValue, MajorTickNumericValue / ((Int32)Axis.MinorTickValue - 1));
-                    MinorTickAmount = (Int32)((MajorTickNumericValue / MinorTickNumericValue) - 1.0);
-                }
-            }
-
-            private static Double GetNearestTickValue(double initialDelta, Double firstStep)
-            {
-                Int32 scalingFactor = 0;
-                Double valuePerTick = firstStep;
-
-                if (initialDelta > 1)
-                {
-                    while (valuePerTick > 1)
-                    {
-                        valuePerTick /= 10;
-                        scalingFactor++;
-                    }
-                }
-                else
-                {
-                    while (valuePerTick < 0.1)
-                    {
-                        valuePerTick *= 10;
-                        scalingFactor++;
-                    }
-                }
-
-                if (valuePerTick < 0.15)
-                {
-                    valuePerTick = 0.1;
-                }
-                else if (valuePerTick < 0.35)
-                {
-                    valuePerTick = 0.2;
-                }
-                else
-                {
-                    valuePerTick = 0.5;
-                }
-
-                if (initialDelta > 1)
-                {
-                    for (int i = 0; i < scalingFactor; i++)
-                    {
-                        valuePerTick *= 10;
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < scalingFactor; i++)
-                    {
-                        valuePerTick /= 10;
-                    }
-                }
-
-                return valuePerTick;
-            }
-        }
+      
     }
 }

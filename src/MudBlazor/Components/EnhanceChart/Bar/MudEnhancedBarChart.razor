@@ -15,7 +15,7 @@
 
 @foreach (var item in _lines)
 {
-    <line stroke="#@item.color" class="@item.cssClass" stroke-width="@item.thickness.ToString(CultureInfo.InvariantCulture)" x1="@item.P1.X.ToString(CultureInfo.InvariantCulture)" y1="@item.P1.Y.ToString(CultureInfo.InvariantCulture)" x2="@item.P2.X.ToString(CultureInfo.InvariantCulture)" y2="@item.P2.Y.ToString(CultureInfo.InvariantCulture)" />
+    <line stroke="#@item.Color" class="@item.CssClass" stroke-width="@item.Thickness.ToString(CultureInfo.InvariantCulture)" x1="@item.P1.X.ToString(CultureInfo.InvariantCulture)" y1="@item.P1.Y.ToString(CultureInfo.InvariantCulture)" x2="@item.P2.X.ToString(CultureInfo.InvariantCulture)" y2="@item.P2.Y.ToString(CultureInfo.InvariantCulture)" />
 }
 
 <CascadingValue IsFixed="true" Value="this">

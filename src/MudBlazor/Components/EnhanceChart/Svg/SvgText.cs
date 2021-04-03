@@ -12,6 +12,5 @@ namespace MudBlazor.EnhanceChart.Internal
         public Double Height { get; set; }
         public String TextPlacement { get; set; } = "middle";
         public String Baseline { get; set; } = "middle";
-        
     }
 }

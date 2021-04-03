@@ -11,28 +11,38 @@ namespace MudBlazor.EnhanceChart
     [DoNotGenerateAutomaticTest]
     public partial class MudEnhancedBarDataSet : ComponentBase, ICollection<MudEnhancedBarChartSeries>, IDisposable, ISnapshot<BarDataSetSnapShot>
     {
-        public MudEnhancedBarDataSet()
-        {
-
-        }
-
         private List<MudEnhancedBarChartSeries> _series = new();
 
+        /// <summary>
+        /// The parent bar chart of this dataseries
+        /// </summary>
         [CascadingParameter] public MudEnhancedBarChart Chart { get; set; }
 
+        /// <summary>
+        /// Name of the dataset. This value is displayed in the legend. Can be empty 
+        /// </summary>
         [Parameter] public String Name { get; set; }
-        [Parameter] public Boolean IsStacked { get; set; }
 
+        /// <summary>
+        /// If this value is set to true, the bars of this dataset are stacked horizontaly. If this value is set to false, the bars are displayed vertically, side by side. Not implemented yet
+        /// </summary>
+        [Parameter] public Boolean IsStacked { get; set; } = false;
+
+        /// <summary>
+        /// The dataseries that should belongs to this series
+        /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        public int Count => _series.Count;
-
-        public bool IsReadOnly => throw new NotImplementedException();
-
+        /// <summary>
+        /// The y axis that should be used for this dataset
+        /// </summary>
         [Parameter] public IYAxis Axis { get; set; }
 
-        BarDataSetSnapShot ISnapshot<BarDataSetSnapShot>.OldSnapshotValue { get; set; }
-        BarDataSetSnapShot ISnapshot<BarDataSetSnapShot>.CreateSnapShot() => new BarDataSetSnapShot(Name, IsStacked, Axis != null ?  Axis.Id : null);
+        #region ICollection member
+
+        public int Count => _series.Count;
+        public bool IsReadOnly => throw new NotImplementedException();
+       
 
         public void Add(MudEnhancedBarChartSeries item)
         {
@@ -66,6 +76,10 @@ namespace MudBlazor.EnhanceChart
         public IEnumerator<MudEnhancedBarChartSeries> GetEnumerator() => _series.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => _series.GetEnumerator();
 
+        #endregion
+
+        protected internal void SeriesUpdated(MudEnhancedBarChartSeries barChartSeries) => Chart.SeriesUpdated(this, barChartSeries);
+
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
@@ -97,7 +111,8 @@ namespace MudBlazor.EnhanceChart
             Chart?.Remove(this);
         }
 
-        protected internal void SeriesUpdated(MudEnhancedBarChartSeries barChartSeries) => Chart.SeriesUpdated(this, barChartSeries);
+        BarDataSetSnapShot ISnapshot<BarDataSetSnapShot>.OldSnapshotValue { get; set; }
+        BarDataSetSnapShot ISnapshot<BarDataSetSnapShot>.CreateSnapShot() => new BarDataSetSnapShot(Name, IsStacked, Axis != null ? Axis.Id : null);
 
     }
 }

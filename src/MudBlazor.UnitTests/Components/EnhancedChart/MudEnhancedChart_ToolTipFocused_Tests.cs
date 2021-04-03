@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Svg.Dom;
@@ -104,8 +105,8 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                 firstTip.Value.Should().Be(series[labelIndex]);
                 firstTip.XLabel.Should().Be((labelIndex + 1).ToString());
 
-                rects[i].MouseOut(new MouseEventArgs());
-
+                comp.InvokeAsync( () =>  rects[i].MouseOut(new MouseEventArgs()));
+                
                 Assert.Throws<Bunit.Rendering.ComponentNotFoundException>(() => comp.FindComponent<MudEnhancedBarChartToolTip>());
             }
         }
