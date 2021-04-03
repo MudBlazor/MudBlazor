@@ -42,7 +42,7 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// If true, Sets display inine
+        /// If true, Sets display inline
         /// </summary>
         [Parameter] public bool Inline { get; set; }
     }
