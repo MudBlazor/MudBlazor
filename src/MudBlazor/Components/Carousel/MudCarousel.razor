@@ -1,0 +1,83 @@
+﻿@namespace MudBlazor
+@inherits Base.MudBaseBindableItemsControl<MudCarouselItem, TData>
+@implements IDisposable
+@typeparam TData
+
+<div @attributes="UserAttributes" class="@Classname" style="@Style">
+    <CascadingValue Value="this">
+
+        <MudSwipeArea OnSwipe="OnSwipe">
+            @*Selected Content*@
+            @if (ItemsSource == null)
+            {
+                @ChildContent
+            }
+            else
+            {
+                foreach (TData item in ItemsSource)
+                {
+                    <MudCarouselItem>
+                        @ItemTemplate(item)
+                    </MudCarouselItem>
+                }
+            }
+        </MudSwipeArea>
+
+        @*Controls*@
+        <div class="d-flex flex-grow-1 align-self-auto">
+            @*Left Arrow*@
+            @if (ShowArrows)
+            {
+                if (LeftArrowTemplate == null)
+                {
+                    <MudIconButton Class="align-self-center" Style="z-index:2;opacity:0.75" Icon="@Icons.Material.Filled.NavigateBefore" OnClick="Previous" Color="Color.Inherit" />
+                }
+                else
+                {
+                    <div @onclick="Previous" class="align-self-center" style="z-index:2;opacity:0.75">
+                        @LeftArrowTemplate
+                    </div>
+                }
+            }
+
+            @*Delimiters*@
+            <div class="flex-grow-1 align-self-end" style="z-index:0">
+                @if (ShowDelimiters)
+                {
+                    <div class="d-flex justify-center">
+                        @for (int i = 0; i < Items.Count; i++)
+                        {
+                            int current = i;
+                            if (DelimiterTemplate == null)
+                            {
+                                <MudIconButton Class="align-self-center" Style="z-index:2;opacity:0.75" Icon="@(current == SelectedIndex ? Icons.Material.Filled.RadioButtonChecked : Icons.Material.Filled.RadioButtonUnchecked)" OnClick="(() => MoveTo(current))" Color="Color.Inherit" />
+                            }
+                            else
+                            {
+                                <div @onclick="() => MoveTo(current)" class="align-self-center" style="z-index:2;opacity:0.75">
+                                    @DelimiterTemplate
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+
+            @*Right Arrow*@
+            @if (ShowArrows)
+            {
+                if (RightArrowTemplate == null)
+                {
+                    <MudIconButton Class="align-self-center" Style="z-index:2;opacity:0.75" Icon="@Icons.Material.Filled.NavigateNext" OnClick="Next" Color="Color.Inherit" />
+                }
+                else
+                {
+                    <div @onclick="Next" class="align-self-center" style="z-index:2;opacity:0.75">
+                        @RightArrowTemplate
+                    </div>
+                }
+            }
+        </div>
+
+    </CascadingValue>
+</div>

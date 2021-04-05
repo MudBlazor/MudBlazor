@@ -36,6 +36,8 @@
   <ItemGroup>
     <None Include="..\..\LICENSE" Pack="true" Visible="false" PackagePath="" />
     <None Include="..\..\content\Nuget.png" Pack="true" Visible="false" PackagePath="" />
+    <None Include="Components\Carousel\MudCarousel.razor" />
+    <None Include="Components\Carousel\MudCarouselItem.razor" />
   </ItemGroup>
 
   <!--Is this a rebuild - Dont clean generated files as this breaks rebuild behaviour-->
