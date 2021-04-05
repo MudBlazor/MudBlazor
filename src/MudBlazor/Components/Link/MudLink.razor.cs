@@ -24,6 +24,7 @@ namespace MudBlazor
                 { "target", Target }
             };
         }
+<<<<<<< HEAD
 
         private Dictionary<string, object> Attributes
         {
@@ -33,6 +34,8 @@ namespace MudBlazor
                 { "target", Target }
             };
         }
+=======
+>>>>>>> 6c544740bb1b4bb80c6d73a948e77058e8cae573
 
         /// <summary>
         /// The color of the component. It supports the theme colors.

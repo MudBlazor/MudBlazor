@@ -152,8 +152,11 @@ namespace MudBlazor
             _isFocused = true;
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
+<<<<<<< HEAD
 
         [Parameter] public bool KeyDownPreventDefault { get; set; }
+=======
+>>>>>>> 6c544740bb1b4bb80c6d73a948e77058e8cae573
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
@@ -162,8 +165,11 @@ namespace MudBlazor
             _isFocused = true;
             OnKeyPress.InvokeAsync(obj).AndForget();
         }
+<<<<<<< HEAD
 
         [Parameter] public bool KeyPressPreventDefault { get; set; }
+=======
+>>>>>>> 6c544740bb1b4bb80c6d73a948e77058e8cae573
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
@@ -172,8 +178,11 @@ namespace MudBlazor
             _isFocused = true;
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
+<<<<<<< HEAD
 
         [Parameter] public bool KeyUpPreventDefault { get; set; }
+=======
+>>>>>>> 6c544740bb1b4bb80c6d73a948e77058e8cae573
 
         /// <summary>
         /// Fired when the Value property changes.

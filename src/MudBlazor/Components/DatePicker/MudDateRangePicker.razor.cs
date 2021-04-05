@@ -213,6 +213,7 @@ namespace MudBlazor
             DateRange = null;
             _firstDate = _secondDate = null;
             base.Clear();
+<<<<<<< HEAD
         }
 
         protected override void OnOpened()
@@ -230,6 +231,8 @@ namespace MudBlazor
 
             _firstDate = null;
             _secondDate = null;
+=======
+>>>>>>> 6c544740bb1b4bb80c6d73a948e77058e8cae573
         }
 
         protected override string GetTitleDateString()

@@ -238,12 +238,37 @@ namespace MudBlazor
 
         internal async Task RemovePanel(MudTabPanel tabPanel)
         {
+<<<<<<< HEAD
             if (_isDisposed)
                 return;
 
             var index = _panels.IndexOf(tabPanel);
             var newIndex = index;
             if (ActivePanelIndex == index && index == _panels.Count - 1)
+=======
+            var tabClass = new CssBuilder("mud-tab")
+              .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
+              .AddClass($"mud-disabled", panel.Disabled)
+              .AddClass($"mud-ripple", !DisableRipple)
+              .AddClass(TabPanelClass)
+              .AddClass(panel.Class)
+            .Build();
+
+            return tabClass;
+        }
+
+        string GetTabStyle(MudTabPanel panel)
+        {
+            var tabStyle = new StyleBuilder()
+            .AddStyle(panel.Style)
+            .Build();
+
+            return tabStyle;
+        }
+        void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool scrollToActivePanel)
+        {
+            if (!panel.Disabled)
+>>>>>>> 6c544740bb1b4bb80c6d73a948e77058e8cae573
             {
                 newIndex = index > 0 ? index - 1 : 0;
                 if (_panels.Count == 1)
