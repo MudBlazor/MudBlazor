@@ -15,11 +15,7 @@
   <PropertyGroup>
     <Title>MudBlazor</Title>
     <PackageId>MudBlazor</PackageId>
-<<<<<<< HEAD
     <Version>5.0.7</Version>
-=======
-    <Version>5.0.6</Version>
->>>>>>> 6c544740bb1b4bb80c6d73a948e77058e8cae573
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>Nuget.png</PackageIcon>
     <Company>MudBlazor</Company>
