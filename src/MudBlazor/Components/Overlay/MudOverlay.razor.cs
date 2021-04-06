@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
-using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -125,15 +122,14 @@ namespace MudBlazor
         //if not visible or CSS `position:absolute`, don't lock scroll
         protected override void OnAfterRender(bool firstTime)
         {
-            if (!Visible || Absolute)
-            {
-                UnblockScroll();
+            if (!LockScroll || Absolute)
                 return;
-            }
-            if (LockScroll)
-            {
+
+            if (Visible)
                 BlockScroll();
-            }
+            else
+                UnblockScroll();
+
         }
 
         //locks the scroll attaching a CSS class to the specified element, in this case the body
