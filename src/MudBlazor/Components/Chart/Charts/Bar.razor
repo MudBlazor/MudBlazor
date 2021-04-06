@@ -35,7 +35,7 @@
     <g class="mud-charts-bar-series">
         @foreach (var bar in _bars)
         {
-            <path fill="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Count()))" stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Count()))" stroke-width="8" d="@bar.Data"></path>
+            <path @onclick="() => UpdateSelectedIndex(bar.Index)" fill="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Count()))" stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(bar.Index % ChartOptions.ChartPalette.Count()))" stroke-width="8" d="@bar.Data"></path>
         }
     </g>
 </svg>

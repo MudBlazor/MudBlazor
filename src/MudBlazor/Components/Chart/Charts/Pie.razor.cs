@@ -11,7 +11,6 @@ namespace MudBlazor.Charts
 
         private List<SvgPath> _paths = new List<SvgPath>();
         private List<SvgLegend> _legends = new List<SvgLegend>();
-
         protected override void OnParametersSet()
         {
             _paths.Clear();
@@ -55,5 +54,5 @@ namespace MudBlazor.Charts
                 counter += 1;
             }
         }
-    }
+    } 
 }

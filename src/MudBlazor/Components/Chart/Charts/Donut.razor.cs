@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Charts.SVG.Models;
 
 namespace MudBlazor.Charts
@@ -10,10 +12,19 @@ namespace MudBlazor.Charts
 
         private List<SvgCircle> _circles = new List<SvgCircle>();
         private List<SvgLegend> _legends = new List<SvgLegend>();
-
         protected string ParentWidth => MudChartParent?.Width;
         protected string ParentHeight => MudChartParent?.Height;
 
+        //public async void OnClick(int index)
+        //{
+
+        //}
+
+        public void OnMouseDown(MouseEventArgs e)
+        {
+            Debug.WriteLine(e.ClientX + " " + e.ClientY);
+            StateHasChanged();
+        }
         protected override void OnParametersSet()
         {
             _circles.Clear();
@@ -58,6 +69,5 @@ namespace MudBlazor.Charts
                 counter += 1;
             }
         }
-
     }
 }
