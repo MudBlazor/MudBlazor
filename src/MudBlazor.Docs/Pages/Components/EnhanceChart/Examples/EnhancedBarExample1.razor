@@ -16,9 +16,10 @@
                     <MudEnhancedBarDataSet @key="item.Id" Name="@item.Name" IsStacked="@item.IsStacked">
                         @foreach (var series in item.Series)
                         {
-                            <MudEnhancedBarChartSeries @key="series.Id" Name="@series.Name" Points="@series.Values" Color="@series.Color" />}
-                    </MudEnhancedBarDataSet>}
-
+                            <MudEnhancedBarChartSeries @key="@series.Id" Id="@series.Id" Name="@series.Name" Points="@series.Values" Color="@series.Color" />
+                        }
+                    </MudEnhancedBarDataSet>
+                }
             </DataSets>
             <YAxes>
                 <MudEnhancedNumericLinearAxis ScalingType="ScalingType.Auto" Margin="@config.YAxis.Margin" LabelSize="@config.YAxis.LabelSize" Placement="@config.YAxis.Placement" LabelCssClass="my-custom-class" Min="0" Max="100" ShowMinorTicks="true" ShowMajorTicks="true">
@@ -262,7 +263,7 @@
 
 @code { public class BarChartSeriesConig
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } 
         public String Name { get; set; } = "My new Series";
         public String Color { get; set; } = MudBlazor.Utilities.RandomColorSelector.GetRandomColor();
         public List<Double> Values { get; set; } = new();
@@ -277,7 +278,7 @@
 
     public class BarChartDataSeriesConfig
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public String Name { get; set; } = "Yor new dataset";
         public Boolean IsStacked { get; set; } = false;
         public List<BarChartSeriesConig> Series { get; set; } = new List<BarChartSeriesConig>();

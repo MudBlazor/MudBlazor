@@ -14,7 +14,7 @@ using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
-namespace MudBlazor.UnitTests.Components.EnchancedChart
+namespace MudBlazor.UnitTests.Components.EnhancedChart
 {
     [TestFixture]
     public class MudEnhancedChartTests

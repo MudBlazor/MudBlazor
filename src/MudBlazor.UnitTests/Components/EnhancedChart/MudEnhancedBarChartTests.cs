@@ -15,13 +15,14 @@ using MudBlazor.EnhanceChart;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
+using static MudBlazor.UnitTests.Components.EnhancedChart.MudEnhancedChartTesterHelper;
 
-namespace MudBlazor.UnitTests.Components.EnchancedChart
+namespace MudBlazor.UnitTests.Components.EnhancedChart
 {
     [TestFixture]
     public class MudEnhancedBarChartTests
     {
-        private static Regex _removeBlazorColonRegex = new Regex(@"(blazor:)([^>]*?)("".*?"")",RegexOptions.Multiline);
+        private Guid _defaultChartId = Guid.Parse("ed8a9a45-f109-41b9-9ff6-074ad168b932");
 
         private Bunit.TestContext ctx;
 
@@ -62,6 +63,10 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             comp.Instance.Margin.Should().Be(2);
             comp.Instance.Padding.Should().Be(3);
+
+            comp.Instance.AnimationIsEnabled.Should().BeTrue();
+
+            comp.Instance.Id.Should().NotBe(Guid.Empty);
         }
 
         [Test]
@@ -401,6 +406,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
                     setP.Add(y => y.Height, 15.0);
                     setP.Add(y => y.Margin, 5.0);
                     setP.Add(y => y.ShowGridLines, false);
+
                 });
                 p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
                 {
@@ -910,58 +916,6 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             root.Should().BeEquivalentTo(expectedRoot);
         }
 
-        private static void RoundElementValues(IHtmlUnknownElement item, XElement element)
-        {
-            if (item.NodeName == "POLYGON")
-            {
-                String pointRaw = element.Attribute("points").Value;
-                String[] points = pointRaw.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-                List<Point> roundedPoints = new();
-                foreach (var point in points)
-                {
-                    String[] parts = point.Split(",");
-                    Double x = Math.Round(Double.Parse(parts[0], CultureInfo.InvariantCulture), 4);
-                    Double y = Math.Round(Double.Parse(parts[1], CultureInfo.InvariantCulture), 4);
-
-                    roundedPoints.Add(new Point(x, y));
-                }
-
-                String roundendPointsAttribute = String.Empty;
-                foreach (var roundedPoint in roundedPoints)
-                {
-                    roundendPointsAttribute += $"{roundedPoint.X.ToString(CultureInfo.InvariantCulture)},{roundedPoint.Y.ToString(CultureInfo.InvariantCulture)} ";
-                }
-
-                roundendPointsAttribute = roundendPointsAttribute.Trim();
-                element.SetAttributeValue("points", roundendPointsAttribute);
-            }
-            else if (item.NodeName == "TEXT")
-            {
-                RoundValue(element, "x");
-                RoundValue(element, "y");
-            }
-            else if (item.NodeName == "LINE")
-            {
-                RoundValue(element, "x1");
-                RoundValue(element, "y1");
-                RoundValue(element, "x2");
-                RoundValue(element, "y2");
-            }
-        }
-
-        private static void RoundValue(XElement element, String attributeName, Int32 precission = 6)
-        {
-            Double unroundedValue = Double.Parse(element.Attribute(attributeName).Value, CultureInfo.InvariantCulture);
-            Double roundedValue = Math.Round(unroundedValue, precission);
-            String result = roundedValue.ToString(CultureInfo.InvariantCulture);
-            if (result == "-0")
-            {
-                result = "0";
-            }
-
-            element.SetAttributeValue(attributeName, result);
-        }
-
         private void GenerateSampleBarChart(
           Action<ComponentParameterCollectionBuilder<MudEnhancedBarChart>> additionalConfiguration,
           out List<Rectangle> untransformedExpectedRects,
@@ -1002,6 +956,9 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             {
                 p.Add(x => x.Margin, 1.0);
                 p.Add(x => x.Padding, 10.0);
+                p.Add(x => x.AnimationIsEnabled, false);
+                p.Add(x => x.Id, _defaultChartId);
+
                 p.Add<MudEnhancedBarChartXAxis>(x => x.XAxis, (setP) =>
                 {
                     setP.Add(y => y.Labels, new List<String> { "Mo", "Tu" });
@@ -1378,10 +1335,15 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
 
             var firstData = new List<Double> { maxDataSeries };
 
+            Guid chartId = Guid.Parse("ed8a9a45-f109-41b9-9ff6-074ad168b932");
+
             var comp = ctx.RenderComponent<MudEnhancedBarChart>(p =>
             {
                 p.Add(x => x.Margin, 0.0);
                 p.Add(x => x.Padding, 0.0);
+                p.Add(x => x.AnimationIsEnabled, false);
+                p.Add(x => x.Id, chartId);
+
                 p.Add<MudEnhancedBarDataSet>(x => x.DataSets, (setP) =>
                 {
                     setP.Add<MudEnhancedBarChartSeries>(y => y.ChildContent, (seriesP) =>
@@ -1412,25 +1374,17 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
             XElement expectedRoot = new XElement("svg", new XElement(
                new XElement("polygon",
                 new XAttribute("fill", color),
+                new XAttribute("data-chartid", chartId.ToString()),
                 new XAttribute("class", "mud-enhanced-chart-series bar active"),
                 new XAttribute("points", $"0,100 0,{height.ToString(CultureInfo.InvariantCulture)} 100,{height.ToString(CultureInfo.InvariantCulture)} 100,100")
                 )));
 
-            XElement root = new XElement("svg");
-
-            foreach (var item in comp.Nodes.OfType<IHtmlUnknownElement>())
-            {
-                if (item.NodeName == "POLYGON")
-                {
-                    var preParsedHtml = _removeBlazorColonRegex.Replace(item.OuterHtml, String.Empty);
-                    var element = XElement.Parse(preParsedHtml);
-                    RoundElementValues(item, element);
-                    root.Add(element);
-                }
-            }
+            var root = GetElementAsXmlDocument(comp);
 
             root.Should().BeEquivalentTo(expectedRoot);
         }
+
+        
 
         private IEnumerable<Rectangle> TransformToSvgCoordinates(IEnumerable<Rectangle> input)
             => input.Select((Func<Rectangle, Rectangle>)(x => new Rectangle(
@@ -1444,6 +1398,7 @@ namespace MudBlazor.UnitTests.Components.EnchancedChart
         private IEnumerable<XElement> TransformRectToSvgElements(IEnumerable<Rectangle> input)
             => input.Select((Func<Rectangle, XElement>)(e => new XElement("polygon",
                 new XAttribute("fill", (object)e.FillColor),
+                new XAttribute("data-chartid", _defaultChartId.ToString()),
                 new XAttribute("class", "mud-enhanced-chart-series bar active"),
                 new XAttribute("points", _staticRegex.Replace($"{e.P1.X.ToString(CultureInfo.InvariantCulture)},{e.P1.Y.ToString(CultureInfo.InvariantCulture)} {e.P2.X.ToString(CultureInfo.InvariantCulture)},{e.P2.Y.ToString(CultureInfo.InvariantCulture)} {e.P3.X.ToString(CultureInfo.InvariantCulture)},{e.P3.Y.ToString(CultureInfo.InvariantCulture)} {e.P4.X.ToString(CultureInfo.InvariantCulture)},{e.P4.Y.ToString(CultureInfo.InvariantCulture)}", "0"))
                 )));
