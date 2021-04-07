@@ -47,5 +47,10 @@ namespace MudBlazor.EnhanceChart
         /// The values of this series
         /// </summary>
         public IList<Double> Points { get; }
+
+        /// <summary>
+        /// The uniquq id of the series
+        /// </summary>
+        public Guid Id { get; }
     }
 }

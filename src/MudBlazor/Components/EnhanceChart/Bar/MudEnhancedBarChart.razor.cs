@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
+using Microsoft.JSInterop;
 using MudBlazor.EnhanceChart.Internal;
 using MudBlazor.Utilities;
 
@@ -27,7 +29,14 @@ namespace MudBlazor.EnhanceChart
         private MudEnhancedBarChartXAxis _xAxis;
         private Dictionary<IDataSeries, BarChartToolTipInfo> currentToolTips = new();
 
+        private Dictionary<String, String> _oldBarPaths = new();
+
+
+        private Boolean _triggerAnimation = false;
+        private Boolean _isRendered = false;
+
         #endregion
+
 
         /// <summary>
         /// The "parent" Chart of this BarChart
@@ -77,6 +86,15 @@ namespace MudBlazor.EnhanceChart
             x.Select(y => new ChartLegendInfoSeries(y.Name, "#" + (String)y.Color, y.IsEnabled, y)),
             true)));
 
+        /// <summary>
+        /// If this value is true, the bars will have a transition animation when the value changes
+        /// </summary>
+        [Parameter] public Boolean AnimationIsEnabled { get; set; } = true;
+
+        /// <summary>
+        /// The id of the chart
+        /// </summary>
+        [Parameter] public Guid Id { get; set; } = Guid.NewGuid();
 
         #region Tooltips and legend
 
@@ -110,12 +128,16 @@ namespace MudBlazor.EnhanceChart
                 _dataSets.Add(barChartSeries);
             }
 
+            _triggerAnimation = true;
+
             InvokeLegendChanged();
             CreateDrawingInstruction();
         }
 
         protected internal void SeriesAdded(MudEnhancedBarChartSeries _)
         {
+            _triggerAnimation = true;
+
             CreateDrawingInstruction();
             InvokeLegendChanged();
         }
@@ -155,18 +177,24 @@ namespace MudBlazor.EnhanceChart
 
         protected internal void DataSetCleared(MudEnhancedBarDataSet _)
         {
+            _triggerAnimation = true;
+
             CreateDrawingInstruction();
             InvokeLegendChanged();
         }
 
         protected internal void DataSeriesRemoved(MudEnhancedBarChartSeries _)
         {
+            _triggerAnimation = true;
+
             CreateDrawingInstruction();
             InvokeLegendChanged();
         }
 
         protected internal void SeriesUpdated(MudEnhancedBarDataSet _, MudEnhancedBarChartSeries __)
         {
+            _triggerAnimation = true;
+
             InvokeLegendChanged();
             CreateDrawingInstruction();
         }
@@ -175,16 +203,22 @@ namespace MudBlazor.EnhanceChart
 
         protected internal void AxesUpdated(MudEnhancedNumericLinearAxis _)
         {
+            _triggerAnimation = true;
+
             CreateDrawingInstruction();
         }
 
         protected internal void MajorTickChanged(IYAxis axe, MudEnhancedTick _)
         {
+            _triggerAnimation = true;
+
             CreateDrawingInstruction();
         }
 
         protected internal void MinorTickChanged(IYAxis axe, MudEnhancedTick _)
         {
+            _triggerAnimation = true;
+
             CreateDrawingInstruction();
         }
 
@@ -199,6 +233,7 @@ namespace MudBlazor.EnhanceChart
                 _xAxis = barChartXAxes;
             }
 
+            _triggerAnimation = true;
             CreateDrawingInstruction();
         }
 
@@ -215,6 +250,8 @@ namespace MudBlazor.EnhanceChart
 
         public void ForceRedraw()
         {
+            _triggerAnimation = true;
+
             CreateDrawingInstruction();
         }
 
@@ -222,14 +259,16 @@ namespace MudBlazor.EnhanceChart
         {
             BeforeCreatingInstructionCallBack?.Invoke(this);
 
+            _bars.Clear();
+            _labels.Clear();
+            _lines.Clear();
+
             if (_dataSets.Count == 0 || _dataSets.Sum(x => x.Count) == 0 || _dataSets.Sum(x => x.Sum(y => y.Points.Count)) == 0 || _yaxes.Count == 0)
             {
                 return;
             }
 
-            _bars.Clear();
-            _labels.Clear();
-            _lines.Clear();
+
 
             Dictionary<MudEnhancedBarDataSet, IYAxis> dataSetAxisMapper = new();
 
@@ -316,6 +355,23 @@ namespace MudBlazor.EnhanceChart
                             height = 100.0;
                         }
 
+                        String id = $"{series.Id}-{labelIndex}";
+                        if (AnimationIsEnabled == true)
+                        {
+                            if (_oldBarPaths.ContainsKey(id) == false)
+                            {
+                                var tempbar = new SvgBarRepresentation
+                                {
+                                    P1 = matrix * new Point2D(subX, 0),
+                                    P2 = matrix * new Point2D(subX, 0),
+                                    P3 = matrix * new Point2D(subX + barThickness, 0),
+                                    P4 = matrix * new Point2D(subX + barThickness, 0),
+                                };
+
+                                _oldBarPaths.Add(id, tempbar.GetPathValue());
+                            }
+                        }
+
                         SvgBarRepresentation bar = new SvgBarRepresentation
                         {
                             P1 = matrix * new Point2D(subX, 0),
@@ -326,6 +382,8 @@ namespace MudBlazor.EnhanceChart
                             Series = series,
                             XLabel = _xAxis.Labels[labelIndex],
                             YValue = value,
+                            OldPath = AnimationIsEnabled == true ?  _oldBarPaths[id] : String.Empty,
+                            Id = id,
                         };
 
                         _bars.Add(bar);
@@ -428,7 +486,7 @@ namespace MudBlazor.EnhanceChart
 
                     _labels.Add(new SvgText
                     {
-                        Class =  new CssBuilder("mud-enhanced-chart-y-axis-major-label").AddOnlyWhenNotEmptyClass(axisHelper.LabelCssClass).Build(),
+                        Class = new CssBuilder("mud-enhanced-chart-y-axis-major-label").AddOnlyWhenNotEmptyClass(axisHelper.LabelCssClass).Build(),
                         Value = Math.Round(tickValue, 6).ToString(),
                         Height = 3,
                         X = labelLeftCorner.X,
@@ -477,9 +535,30 @@ namespace MudBlazor.EnhanceChart
 
                 _labels[startIndex].Baseline = "text-after-edge";
                 _labels[_labels.Count - 1].Baseline = "text-before-edge";
+
+                if (_isRendered == true)
+                {
+                    //PreserveCurrentBarStates();
+                }
+                else
+                {
+                    _oldBarPaths.Clear();
+                }
             }
 
             StateHasChanged();
+        }
+
+        private void PreserveCurrentBarStates()
+        {
+            if (AnimationIsEnabled == false) { return; }
+
+            _oldBarPaths.Clear();
+
+            foreach (var item in _bars)
+            {
+                _oldBarPaths.Add(item.Id, item.GetPathValue());
+            }
         }
 
         #endregion
@@ -598,9 +677,42 @@ namespace MudBlazor.EnhanceChart
             }
         }
 
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+
+            if (firstRender == true)
+            {
+                _isRendered = true;
+                PreserveCurrentBarStates();
+            }
+            else
+            {
+                if(_triggerAnimation == true)
+                {
+                    PreserveCurrentBarStates();
+                }
+            }
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (AnimationIsEnabled == false) { return; }
+            if (_triggerAnimation == false) { return; }
+
+            try
+            {
+                _triggerAnimation = false;
+                await _jsruntime.InvokeVoidAsync("mudEnhancedChartHelper.triggerAnimation", Id);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
         MudEnchancedBarChartSnapShot ISnapshot<MudEnchancedBarChartSnapShot>.OldSnapshotValue { get; set; }
         MudEnchancedBarChartSnapShot ISnapshot<MudEnchancedBarChartSnapShot>.CreateSnapShot() => new MudEnchancedBarChartSnapShot(Margin, Padding);
 
-      
+
     }
 }

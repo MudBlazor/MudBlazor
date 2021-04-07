@@ -46,6 +46,11 @@ namespace MudBlazor.EnhanceChart
         /// </summary>
         [Parameter] public Boolean IsEnabled { get; set; } = true;
 
+        /// <summary>
+        /// The unique Id of this series
+        /// </summary>
+        [Parameter] public Guid Id { get; set; } = Guid.NewGuid();
+
         #region legend related 
 
         protected internal void SentRequestForTooltip(SvgBarRepresentation svgBarRepresentation)
@@ -121,6 +126,7 @@ namespace MudBlazor.EnhanceChart
         }
 
         BarChartSeriesSnapshot ISnapshot<BarChartSeriesSnapshot>.OldSnapshotValue { get; set; }
+
         BarChartSeriesSnapshot ISnapshot<BarChartSeriesSnapshot>.CreateSnapShot() => new(Name, (String)Color, IsEnabled);
 
     }

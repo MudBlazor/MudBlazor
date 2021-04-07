@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MudBlazor.Utilities;
 
-namespace MudBlazor.UnitTests.Components.EnchancedChart
+namespace MudBlazor.UnitTests.Components.EnhancedChart
 {
     public static class MudEnhancedChartTestHelper
     {

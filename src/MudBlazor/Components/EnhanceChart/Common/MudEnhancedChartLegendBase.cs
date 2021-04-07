@@ -34,12 +34,21 @@ namespace MudBlazor.EnhanceChart
             series.Series?.ToggleEnabledState();
         }
 
+        public void ToggleEnabledStateOfSeries(ChartLegendInfoSeries series, Boolean callStateHasChanged)
+        {
+            series.Series?.ToggleEnabledState();
+            if(callStateHasChanged == true)
+            {
+                StateHasChanged();
+            }
+        }
+
         protected void DeactiveAllOtherSeries(ChartLegendInfoSeries active)
         {
             active.Series.SentRequestToBecomeActiveAlone();
         }
 
-        protected void ActivedAllSeries(ChartLegendInfoSeries active)
+        public void ActivedAllSeries(ChartLegendInfoSeries active)
         {
             active.Series.RevokeExclusiveActiveState();
         }

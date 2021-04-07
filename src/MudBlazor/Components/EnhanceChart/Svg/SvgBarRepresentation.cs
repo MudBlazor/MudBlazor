@@ -13,6 +13,8 @@ namespace MudBlazor.EnhanceChart.Internal
         public CssColor Fill { get; set; }
         public String XLabel { get; set; }
         public Double YValue { get; set; }
+        public String OldPath { get;  set; }
+        public String Id { get;  set; }
 
         public String GetPathValue() => $"{FormattableString.Invariant($"{P1.X},{P1.Y} {P2.X},{P2.Y} {P3.X},{P3.Y} {P4.X},{P4.Y}")}";
         public String GetActiveClass() => Series?.IsActive == true ? "active" : "inactive";

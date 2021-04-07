@@ -1,9 +1,16 @@
 ﻿@namespace MudBlazor.EnhanceChart
 @using System.Globalization
 
+@inject Microsoft.JSInterop.IJSRuntime _jsruntime
+
 @foreach (var item in _bars)
 {
-    <polygon @onmouseover="@item.Actived" @onmouseout="@item.Deactived" class="mud-enhanced-chart-series bar @item.GetActiveClass()" fill="#@item.Fill" points="@item.GetPathValue()" />
+<polygon data-chartid="@Id" @key="item.Id" @onmouseover="@item.Actived" @onmouseout="@item.Deactived" class="mud-enhanced-chart-series bar @item.GetActiveClass()" fill="#@item.Fill" points="@item.GetPathValue()">
+    @if (String.IsNullOrEmpty(item.OldPath) == false)
+    {
+        <animate attributeName="points" dur="500ms" from="@item.OldPath" to="@item.GetPathValue()"></animate>
+    }
+</polygon>
 }
 
 @foreach (var item in _labels)
