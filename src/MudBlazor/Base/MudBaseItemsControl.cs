@@ -10,7 +10,7 @@ namespace MudBlazor.Base
 
     {
         /// <summary>
-        /// Colletion of T
+        /// Collection of T
         /// </summary>
         [Parameter]
         public RenderFragment ChildContent { get; set; }
