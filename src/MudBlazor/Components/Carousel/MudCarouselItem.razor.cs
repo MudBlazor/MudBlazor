@@ -7,9 +7,20 @@ namespace MudBlazor
     {
         protected string Classname =>
                     new CssBuilder("mud-carousel-item")
-                         .AddClass("mud-carousel-transition-fade", Transition == Transition.Fade)
-                         .AddClass("mud-carousel-transition-slide-next", Transition == Transition.Slide && Parent.move_next)
-                         .AddClass("mud-carousel-transition-slide-prev", Transition == Transition.Slide && !Parent.move_next)
+                         .AddClass("mud-carousel-item-exit", Parent.LastContainer == this)
+
+                         .AddClass("mud-carousel-transition-fade-in", Transition == Transition.Fade && Parent.SelectedContainer == this)
+                         .AddClass("mud-carousel-transition-fade-out", Transition == Transition.Fade && Parent.LastContainer == this)
+
+                         .AddClass("mud-carousel-transition-slide-next-enter", Transition == Transition.Slide && Parent.SelectedContainer == this && Parent._movenext)
+                         .AddClass("mud-carousel-transition-slide-next-exit", Transition == Transition.Slide && Parent.LastContainer == this && Parent._movenext)
+
+                         .AddClass("mud-carousel-transition-slide-prev-enter", Transition == Transition.Slide && Parent.SelectedContainer == this && !Parent._movenext)
+                         .AddClass("mud-carousel-transition-slide-prev-exit", Transition == Transition.Slide && Parent.LastContainer == this && !Parent._movenext)
+
+                         .AddClass(CustomTransitionEnter, Transition == Transition.Custom && Parent.SelectedContainer == this && Parent.SelectedContainer == this)
+                         .AddClass(CustomTransitionExit, Transition == Transition.Custom && Parent.LastContainer == this && Parent.LastContainer == this)
+
                          .AddClass(Class)
                          .Build();
 
@@ -22,13 +33,19 @@ namespace MudBlazor
         [Parameter]
         public Transition Transition { get; set; } = Transition.Slide;
 
+        [Parameter]
+        public string CustomTransitionEnter { get; set; }
+
+        [Parameter]
+        public string CustomTransitionExit { get; set; }
+
         public bool IsVisible
         {
             get
             {
                 if (Parent == null)
                     return false;
-                return Parent.SelectedIndex == Parent.Items.IndexOf(this);
+                return Parent.SelectedIndex == Parent.Items.IndexOf(this) || Parent.LastContainer == this;
             }
         }
 
@@ -36,7 +53,5 @@ namespace MudBlazor
         {
             Parent?.Items.Add(this);
         }
-
-
     }
 }

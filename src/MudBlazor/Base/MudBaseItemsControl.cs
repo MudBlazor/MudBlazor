@@ -20,6 +20,7 @@ namespace MudBlazor.Base
         /// </summary>
         public List<TChildComponent> Items { get; } = new List<TChildComponent>();
 
+        private TChildComponent _lastContainer = null;
         private int _selectedIndexField = -1;
         /// <summary>
         /// Selected MudCarouselItem's index
@@ -33,6 +34,7 @@ namespace MudBlazor.Base
                 if (SelectedIndex == value)
                     return;
 
+                _lastContainer = _selectedIndexField >= 0 ? SelectedContainer : null;
                 _selectedIndexField = value;
                 StateHasChanged();
                 SelectedIndexChanged.InvokeAsync(value);
@@ -41,6 +43,14 @@ namespace MudBlazor.Base
 
         [Parameter]
         public EventCallback<int> SelectedIndexChanged { get; set; }
+
+        /// <summary>
+        /// Gets the Selected TChildComponent
+        /// </summary>
+        public TChildComponent LastContainer
+        {
+            get => _lastContainer;
+        }
 
         /// <summary>
         /// Gets the Selected TChildComponent
@@ -61,14 +71,14 @@ namespace MudBlazor.Base
             return base.OnAfterRenderAsync(firstRender);
         }
 
-        internal bool move_next = true;
+        internal bool _movenext = true;
 
         /// <summary>
         /// Move to Previous Item
         /// </summary>
         public void Previous()
         {
-            move_next = false;
+            _movenext = false;
 
             if (SelectedIndex > 0)
                 SelectedIndex -= 1;
@@ -81,7 +91,7 @@ namespace MudBlazor.Base
         /// </summary>
         public void Next()
         {
-            move_next = true;
+            _movenext = true;
 
             if (SelectedIndex < (Items.Count - 1))
                 SelectedIndex += 1;
@@ -94,7 +104,7 @@ namespace MudBlazor.Base
         /// </summary>
         public void MoveTo(int index)
         {
-            move_next = (index >= SelectedIndex);
+            _movenext = (index >= SelectedIndex);
             SelectedIndex = index;
         }
 

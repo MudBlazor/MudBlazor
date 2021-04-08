@@ -9,6 +9,8 @@ namespace MudBlazor
         [Description("Fade")]
         Fade = 1,
         [Description("Fade")]
-        Slide = 2
+        Slide = 2,
+        [Description("Custom")]
+        Custom = 99
     }
 }

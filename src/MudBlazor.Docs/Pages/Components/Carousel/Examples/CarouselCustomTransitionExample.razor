@@ -1,0 +1,104 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<styles>
+
+    @*KeyFrames are commented because they can't be declared into Blazor Components.
+    Please paste then into your CSS file.*@
+
+    @*@keyframes carousel-bounceOut {
+        20% {
+        transform: scale3d(0.9, 0.9, 0.9);
+        }
+
+        50%,
+        55% {
+        opacity: 1;
+        transform: scale3d(1.1, 1.1, 1.1);
+        }
+
+        to {
+        opacity: 0;
+        transform: scale3d(0.3, 0.3, 0.3);
+        }
+    }
+
+    @keyframes carousel-bounceIn {
+      from,
+      20%,
+      40%,
+      60%,
+      80%,
+      to {
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+      }
+
+      0% {
+        opacity: 0;
+        transform: scale3d(0.3, 0.3, 0.3);
+      }
+
+      20% {
+        transform: scale3d(1.1, 1.1, 1.1);
+      }
+
+      40% {
+        transform: scale3d(0.9, 0.9, 0.9);
+      }
+
+      60% {
+        opacity: 1;
+        transform: scale3d(1.03, 1.03, 1.03);
+      }
+
+      80% {
+        transform: scale3d(0.97, 0.97, 0.97);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale3d(1, 1, 1);
+      }
+    }
+
+    .carousel-bounceOut {
+        animation-duration: 0.5s;
+        animation-name: carousel-bounceOut;
+        animation-fill-mode: forwards;
+    }
+
+    .carousel-bounceIn {
+        animation-duration: 0.5s;
+        animation-name: carousel-bounceIn;
+        animation-delay: 0.5s
+    }*@
+
+
+
+</styles>
+
+<MudCarousel Style="height:200px;" TData="object">
+    <MudCarouselItem Transition="Transition.Custom" CustomTransitionEnter="@AnimationEntrance" CustomTransitionExit="@AnimationExit">
+        <div class="d-flex" style="background-color:#594AE2; height:100%">
+            <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+        </div>
+    </MudCarouselItem>
+    <MudCarouselItem Transition="Transition.Custom" CustomTransitionEnter="@AnimationEntrance" CustomTransitionExit="@AnimationExit">
+        <div class="d-flex" style="background-color:#FF4081; height:100%">
+            <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Size="@Size.Large" />
+        </div>
+    </MudCarouselItem>
+    <MudCarouselItem Transition="Transition.Custom" CustomTransitionEnter="@AnimationEntrance" CustomTransitionExit="@AnimationExit">
+        <div class="d-flex" style="background-color:lightgray; height:100%">
+            <MudIcon Class="mx-auto my-auto" Icon="@Icons.Custom.Brands.MudBlazor" Color="@Color.Primary" Size="@Size.Large" />
+        </div>
+    </MudCarouselItem>
+</MudCarousel>
+
+<MudTextField @bind-Value="AnimationEntrance" Label="Entrance Class" Class="ma-2" ReadOnly />
+<MudTextField @bind-Value="AnimationExit" Label="Exit Class" Class="ma-2" ReadOnly/>
+
+@code{ 
+    private string AnimationEntrance = "carousel-bounceIn";
+    private string AnimationExit = "carousel-bounceOut"; 
+}
+
