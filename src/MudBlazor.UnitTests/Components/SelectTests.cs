@@ -443,6 +443,24 @@ namespace MudBlazor.UnitTests.Components
             validatedValue.Should().Be("1");
         }
 
+        /// <summary>
+        /// We filled the multiselect with initial selected values, that must
+        /// show in the value of the input as a comma separated list of strings
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task MultiSelect_Initial_Values()
+        {
+            var comp = ctx.RenderComponent<MultiSelectWithInitialValues>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+
+            // select the input of the select
+            var input = comp.Find("input");
+            //the value of the input
+            var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
+            value.Should().Be("FirstA, SecondA");     
+        }
 
         #region DataAttribute validation
         [Test]
