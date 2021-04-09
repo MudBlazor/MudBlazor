@@ -1,4 +1,8 @@
-﻿#pragma warning disable CS1998 // async without await
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+#pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
 #pragma warning disable BL0005 // Set parameter outside component
 
@@ -40,20 +44,20 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
-            var menu = comp.Find("div.mud-popover");
+
+            //No popover, due it's closed
+            comp.Markup.Should().NotContain("mud-popover");
 
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
-            menu.ClassList.Should().NotContain("mud-popover-open");
             await Task.Delay(100);
-            menu = comp.Find("div.mud-popover");
-            menu.ClassList.Should().NotContain("mud-popover-open");
+
 
             // now let's type a different state to see the popup open
             autocompletecomp.Find("input").Input("Calif");
             await Task.Delay(100);
-            menu = comp.Find("div.mud-popover");
+            var menu = comp.Find("div.mud-popover");
             menu.ClassList.Should().Contain("mud-popover-open");
             Console.WriteLine(comp.Markup);
             var items = comp.FindComponents<MudListItem>().ToArray();
@@ -79,18 +83,20 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudAutocomplete<string>>();
-            var menu = comp.Find("div.mud-popover");
+
             var inputControl = comp.Find("div.mud-input-control");
 
             // check initial state
-            menu.ClassList.Should().NotContain("mud-popover-open");
+            comp.Markup.Should().NotContain("mud-popover");
 
             // click and check if it has toggled the menu
             inputControl.Click();
-            comp.WaitForAssertion(() => menu.ClassList.Should().NotContain("mud-popover-open"));
+            comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover"));
 
             // type 3 characters and check if it has toggled the menu
             select.Find("input").Input("ala");
+            await Task.Delay(200);
+            var menu = comp.Find("div.mud-popover");
             comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
 
             // type 2 characters and check if it has toggled the menu
