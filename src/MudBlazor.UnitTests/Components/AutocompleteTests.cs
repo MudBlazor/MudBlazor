@@ -10,8 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -197,6 +199,43 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
+
+        /// <summary>
+        /// After press Enter key down, the selected value should be shown in the input value
+        /// </summary>
+
+        [Test]
+        public async Task Autocomplete_after_Enter_Should_show_Selected_Value()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTest1>();
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            var input = autocompletecomp.Find("input");
+
+            //insert "Calif"
+            input.Input("Calif");
+            await Task.Delay(100);
+            var args = new KeyboardEventArgs();
+            args.Key = "Enter";
+
+            //press Enter key
+            input.KeyDown(args);
+            input = autocompletecomp.Find("input");
+            var wrappedElement = ((dynamic)input).WrappedElement;
+            var value = ((IHtmlInputElement)wrappedElement).Value;
+
+            //The value of the input should be California
+            value.Should().Be("California");
+
+            //and the autocomplete it's closed
+            autocomplete.IsOpen.Should().BeFalse();
+        }
+
+
+
 
         #region DataAttribute validation
         [Test]

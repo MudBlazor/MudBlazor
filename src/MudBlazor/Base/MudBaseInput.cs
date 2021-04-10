@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
@@ -136,7 +134,8 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
-        protected bool _isFocused = false;
+        protected bool _isFocused;
+        private static bool IsFocused(string key) => key != "Enter" && key != "ArrowDown" && key != "ArrowUp";
 
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
@@ -149,7 +148,7 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
         {
-            _isFocused = true;
+            _isFocused = IsFocused(obj.Key);
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
@@ -159,7 +158,7 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
         {
-            _isFocused = true;
+            _isFocused = IsFocused(obj.Key);
             OnKeyPress.InvokeAsync(obj).AndForget();
         }
 
@@ -169,7 +168,7 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
         {
-            _isFocused = true;
+            _isFocused = IsFocused(obj.Key);
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
