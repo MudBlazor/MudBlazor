@@ -260,6 +260,9 @@ namespace MudBlazor
                 case "ArrowUp":
                     await SelectNextItem(-1);
                     break;
+                case "Escape":
+                    IsOpen = false;
+                    break;
             }
             base.InvokeKeyDown(args);
         }
