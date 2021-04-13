@@ -87,9 +87,9 @@ namespace MudBlazor.UnitTests.Components
             // every panel should be rendered first exactly once throughout the test:
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
             // only the first panel should be active:
-            comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:contents");
-            comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:none");
-            comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none");
+            comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:contents;");
+            comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:none;");
+            comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none;");
             // click first button and show button click counters
             comp.FindAll("button")[0].Click();
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
@@ -100,9 +100,9 @@ namespace MudBlazor.UnitTests.Components
             // none of the panels should have had a render pass with firstRender==true, so this must be as before:
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
             // second panel should be displayed
-            comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:none");
-            comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:contents");
-            comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none");
+            comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:none;");
+            comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:contents;");
+            comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none;");
             // click second button twice and show button click counters. the click of the first button should still be evident 
             comp.FindAll("button")[1].Click();
             comp.FindAll("button")[1].Click();
@@ -112,9 +112,9 @@ namespace MudBlazor.UnitTests.Components
             // switch to the third tab:
             comp.FindAll("div.mud-tab")[2].Click();
             // second panel should be displayed
-            comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:none");
-            comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:none");
-            comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:contents");
+            comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:none;");
+            comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:none;");
+            comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:contents;");
             comp.FindAll("button")[0].TrimmedText().Should().Be("Panel 1=1");
             comp.FindAll("button")[1].TrimmedText().Should().Be("Panel 2=2");
             comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
@@ -126,9 +126,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[2].TrimmedText().Should().Be("Panel 3=0");
             comp.FindAll("p")[^1].MarkupMatches("<p>Panel 1<br>Panel 2<br>Panel 3<br></p>");
             // only the first panel should be active:
-            comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:contents");
-            comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:none");
-            comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none");
+            comp.FindAll("div.mud-tabs-panels > div")[0].GetAttribute("style").Should().Be("display:contents;");
+            comp.FindAll("div.mud-tabs-panels > div")[1].GetAttribute("style").Should().Be("display:none;");
+            comp.FindAll("div.mud-tabs-panels > div")[2].GetAttribute("style").Should().Be("display:none;");
         }
 
         /// <summary>
