@@ -67,7 +67,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Menu_HasClass_To_Activate_OnHover()
         {
-            var comp = ctx.RenderComponent<MenuTest1>();
+            var comp = ctx.RenderComponent<MenuTestMouseOver>();
             var button = comp.Find(".mud-menu");
 
             //This menu is activatable on mouse over, so it should have the class 
