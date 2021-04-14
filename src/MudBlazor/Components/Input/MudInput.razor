@@ -31,6 +31,11 @@
 		   @onkeydown:preventDefault="KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault" />
 	}
 
+	@if (Clearable)
+	{
+	 <MudIconButton Color="@ClearButtonColor" Icon="@ClearButtonIcon" Size="@ClearButtonSize" OnClick="@ClearButtonClickHandlerAsync" Class="my-n3 mr-n1" />
+	}
+
 	@if (Adornment == Adornment.End)
 	{
 	 <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />

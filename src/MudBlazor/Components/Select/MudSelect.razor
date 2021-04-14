@@ -9,7 +9,9 @@
             <InputContent>
                 <MudInput @ref="_elementReference" Variant="@Variant" Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine" Disabled=@Disabled ReadOnly="true"
                           Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium" Margin="@Margin"
-                          InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)">
+                          InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
+                          Clearable="@Clearable" ClearButtonColor="@ClearButtonColor" ClearButtonIcon="@ClearButtonIcon" ClearButtonSize="@ClearButtonSize" OnClearButtonClick="@SelectClearButtonClickHandlerAsync"
+                          >
                     @if (CanRenderValue)
                     {
                         @GetSelectedValuePresenter()
