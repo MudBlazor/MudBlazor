@@ -303,6 +303,14 @@ namespace MudBlazor
         {
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
-    }
 
+        /// <summary>
+        /// Extra handler for clearing selection.
+        /// </summary>
+        protected async Task SelectClearButtonClickHandlerAsync(MouseEventArgs e)
+        {
+            await SelectOption(default(T));
+            await OnClearButtonClick.InvokeAsync();
+        }
+    }
 }

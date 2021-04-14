@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -20,8 +21,9 @@ namespace MudBlazor
 
         protected override bool ShouldRender()
         {
-            if (Immediate && _isFocused)
+            if (Immediate && _isFocused && !_showClearableRenderUpdate)
                 return false;
+            _showClearableRenderUpdate = false;
             return true;
         }
 
@@ -62,6 +64,38 @@ namespace MudBlazor
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
+
+        private bool _showClearable;
+
+        private bool _showClearableRenderUpdate;
+
+        private void UpdateClearable(object value)
+        {
+            var showClearable = Clearable && ((value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (value is not string && value is not null));
+            if (_showClearable != showClearable)
+            {
+                _showClearable = showClearable;
+                _showClearableRenderUpdate = true;
+            }
+        }
+
+        protected override async Task UpdateTextPropertyAsync(bool updateValue)
+        {
+            await base.UpdateTextPropertyAsync(updateValue);
+            UpdateClearable(Text);
+        }
+
+        protected override async Task UpdateValuePropertyAsync(bool updateText)
+        {
+            await base.UpdateValuePropertyAsync(updateText);
+            UpdateClearable(Value);
+        }
+
+        protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
+        {
+            await SetTextAsync(string.Empty, true);
+            await OnClearButtonClick.InvokeAsync(e);
+        }
     }
 
     public class MudInputString : MudInput<string> { }

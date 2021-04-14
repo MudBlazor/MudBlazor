@@ -11,6 +11,7 @@
                           Immediate="true" Margin="@Margin" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium"
                           OnBlur="@OnInputBlurred" OnKeyDown="@this.OnInputKeyDown" OnKeyPress="@base.InvokeKeyPress" OnKeyUp="@base.InvokeKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid())
                           KeyDownPreventDefault="KeyDownPreventDefault" KeyPressPreventDefault="KeyPressPreventDefault" KeyUpPreventDefault="KeyUpPreventDefault"
+                          Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick"
                           />
             </InputContent>
         </MudInputControl>

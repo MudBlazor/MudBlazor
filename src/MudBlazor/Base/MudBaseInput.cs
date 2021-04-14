@@ -74,6 +74,16 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
 
         /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+
+        /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
         /// </summary>
         [Parameter] public InputType InputType { get; set; } = InputType.Text;
