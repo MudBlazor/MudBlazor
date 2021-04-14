@@ -4,6 +4,8 @@ namespace MudBlazor
 {
     public enum Typo
     {
+        [Description("default")]
+        default,
         [Description("h1")]
         h1,
         [Description("h2")]
