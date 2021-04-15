@@ -6,10 +6,14 @@ namespace MudBlazor
     public partial class MudNavGroup : MudComponentBase
     {
         protected string Classname =>
+        new CssBuilder("mud-nav-group")
+          .AddClass(Class)
+        .Build();
+
+        protected string ButtonClassname =>
         new CssBuilder("mud-nav-link")
           .AddClass($"mud-ripple", !DisableRipple)
           .AddClass("mud-expanded", Expanded)
-          .AddClass(Class)
         .Build();
 
         protected string IconClassname =>
@@ -39,10 +43,26 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
 
+        private bool _expanded;
         /// <summary>
-        /// If true, expands the nav group, otherwise collapse it. Setting this prop enables control over the panel.
+        /// If true, expands the nav group, otherwise collapse it. 
+        /// Two-way bindable
         /// </summary>
-        [Parameter] public bool Expanded { get; set; }
+        [Parameter]
+        public bool Expanded
+        {
+            get => _expanded;
+            set
+            {
+                if (_expanded == value)
+                    return;
+
+                _expanded = value;
+                ExpandedChanged.InvokeAsync(_expanded);
+            }
+        }
+
+        [Parameter] public EventCallback<bool> ExpandedChanged { get; set; }
 
         /// <summary>
         /// If true, hides expand-icon at the end of the NavGroup.
@@ -62,7 +82,8 @@ namespace MudBlazor
 
         protected void ExpandedToggle()
         {
-            Expanded = !Expanded;
+            _expanded = !Expanded;
+            ExpandedChanged.InvokeAsync(_expanded);
         }
     }
 }

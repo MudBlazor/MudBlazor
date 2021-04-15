@@ -3,7 +3,8 @@
 @inherits MudBaseButton
 
 
-<div class="@Classname">
+
+<div class="@Classname" style="@Style">
     @if (ActivatorContent != null)
     {
         <CascadingValue Value="@((IActivatable) this)" IsFixed="true">

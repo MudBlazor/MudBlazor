@@ -15,7 +15,7 @@ namespace MudBlazor
 
         protected RenderFragment Css;
 
-        protected string AnimationStyle => Snackbar?.State.AnimationStyle;
+        protected string AnimationStyle => Snackbar?.State.AnimationStyle + Style;
         protected string SnackbarClass => Snackbar?.State.SnackbarClass;
 
         protected string Message => Snackbar?.Message;
