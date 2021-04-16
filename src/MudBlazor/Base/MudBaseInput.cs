@@ -135,7 +135,13 @@ namespace MudBlazor
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
         protected bool _isFocused;
-        private static bool IsFocused(string key) => key != "Enter" && key != "ArrowDown" && key != "ArrowUp";
+
+        protected bool _shouldRenderBeForced;
+        //if you press Enter or Arrows, the input should re-render, because
+        //the user is accepting a value
+        private static bool ShouldRenderBeForced(string key) => key == "Enter"
+                                                             || key == "ArrowDown"
+                                                             || key == "ArrowUp";
 
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
@@ -148,7 +154,8 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
         {
-            _isFocused = IsFocused(obj.Key);
+            _isFocused = true;
+            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
@@ -158,7 +165,6 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
         {
-            _isFocused = IsFocused(obj.Key);
             OnKeyPress.InvokeAsync(obj).AndForget();
         }
 
@@ -168,7 +174,8 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
         {
-            _isFocused = IsFocused(obj.Key);
+            _isFocused = true;
+            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
