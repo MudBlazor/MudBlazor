@@ -16,6 +16,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -234,7 +235,29 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.IsOpen.Should().BeFalse();
         }
 
+        /// <summary>
+        /// Based on this try https://try.mudblazor.com/snippet/GacPunvDUyjdUJAh
+        /// and this issue https://github.com/Garderoben/MudBlazor/issues/1235
+        /// </summary>
 
+        [Test]
+        public async Task Autocomplete_Initialize_Value_on_SetParametersAsync()
+        {
+            var comp = ctx.RenderComponent<AutocompleteSetParametersInitialization>();
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            await Task.Delay(100);
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<ExternalList>>();
+            var input = autocompletecomp.Find("input");
+
+            var wrappedElement = ((dynamic)input).WrappedElement;
+            var value = ((IHtmlInputElement)wrappedElement).Value;
+
+            //The value of the input should be California
+            value.Should().Be("One");
+
+
+        }
 
 
         #region DataAttribute validation

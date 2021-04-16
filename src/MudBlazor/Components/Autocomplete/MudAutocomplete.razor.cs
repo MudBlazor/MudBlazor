@@ -182,9 +182,8 @@ namespace MudBlazor
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            //_timer?.Dispose();
-            //return base.UpdateTextPropertyAsync(updateValue);
-            return Task.CompletedTask;
+            _timer?.Dispose();
+            return base.UpdateTextPropertyAsync(updateValue);
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
