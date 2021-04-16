@@ -17,7 +17,6 @@ namespace MudBlazor
             .AddClass($"mud-checkbox-{Color.ToDescriptionString()}")
             .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple)
             .AddClass($"mud-disabled", Disabled)
-          .AddClass(Class)
         .Build();
 
         /// <summary>
