@@ -443,6 +443,25 @@ namespace MudBlazor.UnitTests.Components
             validatedValue.Should().Be("1");
         }
 
+        [Test]
+        public async Task SelectClearableTest()
+        {
+            var comp = ctx.RenderComponent<SelectClearableTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            // No button when initialized
+            comp.FindAll("button").Should().BeEmpty();
+            // Button shows after selecting item
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+            select.Instance.Value.Should().Be("2");
+            comp.Find("button").Should().NotBeNull();
+            // Selection cleared and button removed after clicking clear button
+            comp.Find("button").Click();
+            select.Instance.Value.Should().BeNullOrEmpty();
+            comp.FindAll("button").Should().BeEmpty();
+            // Clear button click handler should have been invoked
+            comp.Instance.ClearButtonClicked.Should().BeTrue();
+        }
 
         #region DataAttribute validation
         [Test]

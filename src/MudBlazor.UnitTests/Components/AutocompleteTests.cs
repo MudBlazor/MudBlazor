@@ -192,6 +192,28 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
 
+        [Test]
+        public async Task AutoCompleteClearableTest()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTestClearable>();
+            // No button when initialized empty
+            comp.FindAll("button").Should().BeEmpty();
+
+            // Button shows after entering text
+            comp.Find("input").Input("text");
+            comp.Find("button").Should().NotBeNull();
+            // Text cleared and button removed after clicking clear button
+            comp.Find("button").Click();
+            comp.FindAll("button").Should().BeEmpty();
+
+            // Button shows again after entering text
+            comp.Find("input").Input("text");
+            comp.Find("button").Should().NotBeNull();
+            // Button removed after clearing text
+            comp.Find("input").Input(string.Empty);
+            comp.FindAll("button").Should().BeEmpty();
+        }
+
         #region DataAttribute validation
         [Test]
         public async Task Autocomplete_Should_Validate_Data_Attribute_Fail()

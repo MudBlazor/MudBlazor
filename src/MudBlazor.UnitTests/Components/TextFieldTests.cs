@@ -375,6 +375,33 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
         }
 
+        [Test]
+        public async Task TextFieldClearableTest()
+        {
+            var comp = ctx.RenderComponent<TextFieldClearableTest>();
+            var textField = comp.FindComponent<MudTextField<string>>();
+            // No button when initialized
+            comp.FindAll("button").Should().BeEmpty();
+            
+            // Button shows after entering text
+            comp.Find("input").Change("text");
+            textField.Instance.Value.Should().Be("text");
+            comp.Find("button").Should().NotBeNull();
+            // Text cleared and button removed after clicking clear button
+            comp.Find("button").Click();
+            textField.Instance.Value.Should().BeNullOrEmpty();
+            comp.FindAll("button").Should().BeEmpty();
+            // Clear button click handler should have been invoked
+            comp.Instance.ClearButtonClicked.Should().BeTrue();
+
+            // Button shows again after entering text
+            comp.Find("input").Change("text");
+            textField.Instance.Value.Should().Be("text");
+            comp.Find("button").Should().NotBeNull();
+            // Button removed after clearing text by typing
+            comp.Find("input").Change(string.Empty);
+            comp.FindAll("button").Should().BeEmpty();
+        }
 
         #region ValidationAttribute support
         [Test]
