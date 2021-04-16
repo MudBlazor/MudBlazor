@@ -222,7 +222,7 @@ namespace MudBlazor.UnitTests.Components
             args.Key = "Enter";
 
             //press Enter key
-            input.KeyDown(args);
+            input.KeyUp(args);
             input = autocompletecomp.Find("input");
             var wrappedElement = ((dynamic)input).WrappedElement;
             var value = ((IHtmlInputElement)wrappedElement).Value;

@@ -9,9 +9,7 @@
             <InputContent>
                 <MudInput T="string" @ref="_elementReference" InputType="InputType.Text" Variant="@Variant" @attributes="UserAttributes" Value="@Text" TextChanged="OnTextChanged" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
                           Immediate="true" Margin="@Margin" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium"
-                          OnBlur="@OnInputBlurred" OnKeyDown="@this.OnInputKeyDown" OnKeyPress="@base.InvokeKeyPress" OnKeyUp="@base.InvokeKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid())
-                          KeyDownPreventDefault="KeyDownPreventDefault" KeyPressPreventDefault="KeyPressPreventDefault" KeyUpPreventDefault="KeyUpPreventDefault"
-                          />
+                          OnBlur="@OnInputBlurred" OnKeyUp="@this.OnInputKeyUp"  autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"/>
             </InputContent>
         </MudInputControl>
 

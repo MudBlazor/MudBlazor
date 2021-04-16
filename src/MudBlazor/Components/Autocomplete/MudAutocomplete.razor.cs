@@ -247,7 +247,10 @@ namespace MudBlazor
             return "null";
         }
 
-        protected virtual async Task OnInputKeyDown(KeyboardEventArgs args)
+        //[Obsolete("Use OnInputKeyUp instead")]
+        protected virtual async Task OnInputKeyDown(KeyboardEventArgs args) => await OnInputKeyUp(args);
+
+        protected virtual async Task OnInputKeyUp(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
@@ -264,7 +267,7 @@ namespace MudBlazor
                     IsOpen = false;
                     break;
             }
-            base.InvokeKeyDown(args);
+            base.InvokeKeyUp(args);
         }
 
         private async Task SelectNextItem(int increment)
