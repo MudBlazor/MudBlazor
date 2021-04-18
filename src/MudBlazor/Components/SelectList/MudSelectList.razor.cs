@@ -45,7 +45,7 @@ namespace MudBlazor
         [Parameter] public bool DisableGutters { get; set; }
 
         /// <summary>
-        /// If true, will disable the list item if it has onclick.
+        /// If true, will disable the list
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
