@@ -1,10 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using MudBlazor.Extensions;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -21,8 +17,10 @@ namespace MudBlazor
 
         protected override bool ShouldRender()
         {
-            if (Immediate && _isFocused && !_showClearableRenderUpdate)
-                return false;
+            //when it keeps the focus, it doesn't render to avoid unnecessary trips to the server
+            //except the user presses key enter, so the result must be displayed
+            if (_shouldRenderBeForced) { return true; }
+            if (Immediate && _isFocused && !_showClearableRenderUpdate) { return false; }
             _showClearableRenderUpdate = false;
             return true;
         }

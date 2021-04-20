@@ -182,9 +182,8 @@ namespace MudBlazor
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            //_timer?.Dispose();
-            //return base.UpdateTextPropertyAsync(updateValue);
-            return Task.CompletedTask;
+            _timer?.Dispose();
+            return base.UpdateTextPropertyAsync(updateValue);
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
@@ -247,7 +246,10 @@ namespace MudBlazor
             return "null";
         }
 
-        protected virtual async Task OnInputKeyDown(KeyboardEventArgs args)
+        //[Obsolete("Use OnInputKeyUp instead")]
+        protected virtual async Task OnInputKeyDown(KeyboardEventArgs args) => await OnInputKeyUp(args);
+
+        protected virtual async Task OnInputKeyUp(KeyboardEventArgs args)
         {
             switch (args.Key)
             {
@@ -260,8 +262,11 @@ namespace MudBlazor
                 case "ArrowUp":
                     await SelectNextItem(-1);
                     break;
+                case "Escape":
+                    IsOpen = false;
+                    break;
             }
-            base.InvokeKeyDown(args);
+            base.InvokeKeyUp(args);
         }
 
         private async Task SelectNextItem(int increment)
