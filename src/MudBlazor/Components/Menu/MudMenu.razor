@@ -3,7 +3,7 @@
 @inherits MudBaseButton
 
 
-<div class="@Classname" onmouseleave="@(EventCallback.Factory.Create<EventArgs>(this, OnMouseOut))">
+<div class="@Classname" style="@Style" onmouseleave="@(EventCallback.Factory.Create<EventArgs>(this, OnMouseOut))">
     @if (ActivatorContent != null)
     {
         <CascadingValue Value="@((IActivatable) this)" IsFixed="true">

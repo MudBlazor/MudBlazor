@@ -20,8 +20,8 @@
     }
 
     &.mud-disabled > .mud-input-adornment {
-      color: var(--mud-palette-text-disabled);
-      pointer-events: none;
+        color: var(--mud-palette-text-disabled);
+        pointer-events: none;
     }
 
     &.mud-input-underline {
@@ -433,12 +433,21 @@
   &.mud-text {
     margin-right: 8px;
   }
+
   &.mud-icon {
   }
 }
 
 .mud-input-adornment-end {
   margin-left: 8px;
+}
+
+.mud-input-number-control.mud-input-showspin .mud-input-adornment-end {
+    margin-right: 12px;
+}
+
+.mud-input-number-control.mud-input-showspin .mud-input-underline:not(.mud-input-filled) .mud-input-adornment-end {
+    margin-right: 24px;
 }
 
 .mud-input-adornment-disable-pointerevents {

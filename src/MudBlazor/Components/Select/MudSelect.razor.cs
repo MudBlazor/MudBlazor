@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
@@ -71,6 +70,7 @@ namespace MudBlazor
                 if (!MultiSelection)
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
                 else
+                    //Warning. Here the Converter was not set yet
                     SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x)))).AndForget();
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
             }
@@ -155,9 +155,11 @@ namespace MudBlazor
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            // when multiselection is true, we don't update the text when the value changes. 
-            // instead the Text will be set with a comma separated list of selected values
-            return MultiSelection ? Task.CompletedTask : base.UpdateTextPropertyAsync(updateValue);
+            // when multiselection is true, we return
+            // a comma separated list of selected values
+            return MultiSelection
+                ? SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))))
+                : base.UpdateTextPropertyAsync(updateValue);
         }
 
         internal event Action<HashSet<T>> SelectionChangedFromOutside;
@@ -279,6 +281,12 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            UpdateIcon();
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
             UpdateIcon();
         }
 

@@ -41,7 +41,7 @@
             <MudTextField @bind-Value="@context.Name" Required />
         </MudTd>
         <MudTd DataLabel="Position">
-            <MudTextField @bind-Value="@context.Position" Required />
+            <MudNumericField @bind-Value="@context.Position" Required Min="1" />
         </MudTd>
         <MudTd DataLabel="Molar mass">
             <MudTextField @bind-Value="@context.Molar" Required />
