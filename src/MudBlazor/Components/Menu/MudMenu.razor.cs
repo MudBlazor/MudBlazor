@@ -10,6 +10,7 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-menu")
+            .AddClass("mud-menu-openonhover", ActivationEvent == MouseEvent.MouseOver)
         .AddClass(Class)
        .Build();
 
@@ -132,16 +133,10 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-
-            if (ActivationEvent == MouseEvent.MouseOver && !_isOpen)
-                return;
-
             if (ActivationEvent == MouseEvent.LeftClick && args.Button != 0 && !_isOpen)
                 return;
-
             if (ActivationEvent == MouseEvent.RightClick && args.Button != 2 && !_isOpen)
                 return;
-
             if (_isOpen)
                 CloseMenu();
             else
@@ -158,20 +153,7 @@ namespace MudBlazor
             ToggleMenu(args);
         }
 
-        public void OnMouseOver(MouseEventArgs args)
-        {
-            if (ActivationEvent == MouseEvent.MouseOver && ActivatorContent != null && !_isOpen)
-            {
-                OpenMenu(args);
-            }
-        }
-
-        public void OnMouseOut(EventArgs args)
-        {
-            if (ActivationEvent == MouseEvent.MouseOver && ActivatorContent != null && _isOpen)
-            {
-                CloseMenu();
-            }
-        }
+       
+ 
     }
 }
