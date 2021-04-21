@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MudBlazor.Charts;
 using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Services
@@ -102,10 +103,10 @@ namespace MudBlazor.Docs.Services
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                .AddItem("Donut chart", typeof(MudChart))
-                .AddItem("Line chart", typeof(MudChart))
-                .AddItem("Pie chart", typeof(MudChart))
-                .AddItem("Bar chart", typeof(MudChart))
+                .AddItem("Donut chart", typeof(Donut))
+                .AddItem("Line chart", typeof(Line))
+                .AddItem("Pie chart", typeof(Pie))
+                .AddItem("Bar chart", typeof(Bar))
             );
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;
 
