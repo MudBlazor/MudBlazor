@@ -25,21 +25,21 @@
         this.breakpoint = this.getBreakpoint(window.innerWidth);
     }
 
-    throttleResizeHandler () {
-        if (!this.options.notifyOnBreakpointOnly) {
-            clearTimeout(this.throttleResizeHandlerId);
-            //console.log("[MudBlazor] throttleResizeHandler ", {options:this.options});
-            this.throttleResizeHandlerId = window.setTimeout(this.resizeHandler.bind(this), ((this.options || {}).reportRate || 100));
-        } else {
-            let bp = this.getBreakpoint(window.innerWidth);
-            if (bp != this.breakpoint) {
-                this.resizeHandler();
-                this.breakpoint = bp;
-            }
-        }
+    throttleResizeHandler() {
+        clearTimeout(this.throttleResizeHandlerId);
+        //console.log("[MudBlazor] throttleResizeHandler ", {options:this.options});
+        this.throttleResizeHandlerId = window.setTimeout(this.resizeHandler.bind(this), ((this.options || {}).reportRate || 100));
     }
 
-    resizeHandler () {
+    resizeHandler() {
+        if (this.options.notifyOnBreakpointOnly) {
+            let bp = this.getBreakpoint(window.innerWidth);
+            if (bp == this.breakpoint) {
+                return;
+            }
+            this.breakpoint = bp;
+        }
+
         try {
             //console.log("[MudBlazor] RaiseOnResized invoked");
             this.dotnet.invokeMethodAsync('RaiseOnResized',
