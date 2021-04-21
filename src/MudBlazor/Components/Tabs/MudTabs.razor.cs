@@ -347,7 +347,7 @@ namespace MudBlazor
 
         protected string SliderClass =>
             new CssBuilder("mud-tab-slider")
-            .AddClass($"mud-{Color.ToDescriptionString()}", SliderColor != Color.Inherit)
+            .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
             .AddClass($"mud-tab-slider-horizontal", Position == Position.Top || Position == Position.Bottom)
             .AddClass($"mud-tab-slider-vertical", Position == Position.Left || Position == Position.Right)
             .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
