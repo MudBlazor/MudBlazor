@@ -100,6 +100,11 @@ namespace MudBlazor
             }
         }
 
+        public MudSelect()
+        {
+            IconSize = Size.Medium;
+        }
+
         protected override void OnAfterRender(bool firstRender)
         {
             base.OnAfterRender(firstRender);
