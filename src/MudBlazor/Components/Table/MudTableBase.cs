@@ -17,6 +17,7 @@ namespace MudBlazor
 
         private int _currentPage = 0;
         private int? _rowsPerPage;
+        private bool _isFirstRendered = false;
 
         protected string Classname =>
         new CssBuilder("mud-table")
@@ -121,7 +122,8 @@ namespace MudBlazor
                     return;
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
-                InvokeServerLoadFunc();
+                if (_isFirstRendered)
+                    InvokeServerLoadFunc();
             }
         }
 
@@ -212,6 +214,14 @@ namespace MudBlazor
 
         public abstract TableContext TableContext { get; }
 
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+                _isFirstRendered = true;
+
+            return base.OnAfterRenderAsync(firstRender);
+        }
+
         public void NavigateTo(Page page)
         {
             switch (page)
@@ -238,7 +248,8 @@ namespace MudBlazor
             _rowsPerPage = size;
             CurrentPage = 0;
             StateHasChanged();
-            InvokeServerLoadFunc();
+            if (_isFirstRendered)
+                InvokeServerLoadFunc();
         }
 
         protected abstract int NumPages { get; }
