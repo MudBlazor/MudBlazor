@@ -31,6 +31,8 @@ namespace MudBlazor
         [Parameter] public RenderFragment TitleContent { get; set; }
         [Parameter] public RenderFragment Content { get; set; }
         [Parameter] public Guid Id { get; set; }
+        
+        public Func<bool> BeforeClose { get; set; }
 
         private string Position { get; set; }
         private string DialogMaxWidth { get; set; }
@@ -67,6 +69,9 @@ namespace MudBlazor
 
         public void Close(DialogResult dialogResult)
         {
+            if (!BeforeClose?.Invoke() == true)
+                return;
+            
             Parent.DismissInstance(Id, dialogResult);
         }
 
