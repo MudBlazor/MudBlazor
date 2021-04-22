@@ -203,5 +203,10 @@ namespace MudBlazor
             TitleContent = dialog.TitleContent;
             StateHasChanged();
         }
+
+        public void ForceRender()
+        {
+            StateHasChanged();
+        }
     }
 }
