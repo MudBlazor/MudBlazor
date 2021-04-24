@@ -241,7 +241,7 @@ namespace MudBlazor
             SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
-        private void OnHeaderCheckboxClicked(bool value)
+        internal override void OnHeaderCheckboxClicked(bool value)
         {
             if (!value)
                 Context.Selection.Clear();
@@ -311,5 +311,7 @@ namespace MudBlazor
         {
             return InvokeServerLoadFunc();
         }
+
+        internal override bool IsEditable { get => RowEditingTemplate != null; }
     }
 }

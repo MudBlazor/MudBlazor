@@ -44,8 +44,10 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p").TextContent.Trim().Should().Be("0,0");
             trs[2].Click();
             comp.Find("p").TextContent.Trim().Should().Be("0,0,1");
-            trs[0].Click(); // clicking the header row shouldn't to anything
-            comp.Find("p").TextContent.Trim().Should().Be("0,0,1");
+            trs[0].Click(); // clicking the header should add -1
+            comp.Find("p").TextContent.Trim().Should().Be("0,0,1,-1");
+            trs[4].Click(); // clicking the header should add 100
+            comp.Find("p").TextContent.Trim().Should().Be("0,0,1,-1,100");
         }
 
         /// <summary>
@@ -364,6 +366,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// checking the header checkbox should select all items (all checkboxes on, all items in SelectedItems) with multiheader
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionTest2B()
+        {
+            var comp = ctx.RenderComponent<TableMultiSelectionTest2B>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+            var text = comp.FindComponent<MudText>();
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(4); // <-- one header, three rows
+            var th = comp.FindAll("th").ToArray();
+            th.Length.Should().Be(2); //  one for the checkbox, one for the header
+            var td = comp.FindAll("td").ToArray();
+            td.Length.Should().Be(6); // two td per row for multi selection
+            var inputs = comp.FindAll("input").ToArray();
+            inputs.Length.Should().Be(4); // one checkbox per row + one for the header
+            table.SelectedItems.Count.Should().Be(0); // selected items should be empty
+            // click header checkbox and verify selection text
+            inputs[0].Change(true);
+            table.SelectedItems.Count.Should().Be(3);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(4);
+            inputs = comp.FindAll("input").ToArray();
+            inputs[0].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+            comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
+        }
+
+        /// <summary>
         /// Initially the values bound to SelectedItems should be selected
         /// </summary>
         [Test]
@@ -440,6 +476,74 @@ namespace MudBlazor.UnitTests.Components
             // now two checkboxes should be checked on page 2
             checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
             checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(2);
+        }
+
+        /// <summary>
+        /// checking the footer checkbox should select all items (all checkboxes on, all items in SelectedItems) with multiheader
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionTest6()
+        {
+            var comp = ctx.RenderComponent<TableMultiSelectionTest6>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+            var text = comp.FindComponent<MudText>();
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(5); // <-- one header, three rows, one footer
+            var th = comp.FindAll("th").ToArray();
+            th.Length.Should().Be(2); //  one for the checkbox, one for the header
+            var td = comp.FindAll("td").ToArray();
+            td.Length.Should().Be(8); // two td per row for multi selection + two for footer
+            var inputs = comp.FindAll("input").ToArray();
+            inputs.Length.Should().Be(5); // one checkbox per row + one for the header + 1 for the footer
+            table.SelectedItems.Count.Should().Be(0); // selected items should be empty
+            // click footer checkbox and verify selection text
+            inputs[4].Change(true);
+            table.SelectedItems.Count.Should().Be(3);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(5);
+            inputs = comp.FindAll("input").ToArray();
+            inputs[4].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+            comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
+        }
+
+        /// <summary>
+        /// checking the footer checkbox should select all items (all checkboxes on, all items in SelectedItems) with multiheader
+        /// </summary>
+        [Test]
+        public void TableMultiSelectionTest6B()
+        {
+            var comp = ctx.RenderComponent<TableMultiSelectionTest6B>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var table = comp.FindComponent<MudTable<int>>().Instance;
+            var text = comp.FindComponent<MudText>();
+            var checkboxes = comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).ToArray();
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(5); // <-- one header, three rows
+            var th = comp.FindAll("th").ToArray();
+            th.Length.Should().Be(2); //  one for the checkbox, one for the header
+            var td = comp.FindAll("td").ToArray();
+            td.Length.Should().Be(8); // two td per row for multi selection + 2 footer
+            var inputs = comp.FindAll("input").ToArray();
+            inputs.Length.Should().Be(5); // one checkbox per row + one for the header + 1 for the footer
+            table.SelectedItems.Count.Should().Be(0); // selected items should be empty
+            // click footer checkbox and verify selection text
+            inputs[4].Change(true);
+            table.SelectedItems.Count.Should().Be(3);
+            comp.Find("p").TextContent.Should().Be("SelectedItems { 0, 1, 2 }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(5);
+            inputs = comp.FindAll("input").ToArray();
+            inputs[4].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+            comp.Find("p").TextContent.Should().Be("SelectedItems {  }");
+            checkboxes.Sum(x => x.Checked ? 1 : 0).Should().Be(0);
         }
 
         /// <summary>

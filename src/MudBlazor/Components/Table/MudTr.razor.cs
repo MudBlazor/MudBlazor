@@ -21,6 +21,7 @@ namespace MudBlazor
         [Parameter] public bool IsEditable { get; set; }
 
         [Parameter] public bool IsHeader { get; set; }
+        [Parameter] public bool IsFooter { get; set; }
 
         [Parameter]
         public EventCallback<bool> IsCheckedChanged { get; set; }
