@@ -268,27 +268,27 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void ActivatePanel(MudTabPanel panel)
+        public void ActivatePanel(MudTabPanel panel, bool ignoreDisabledState = false)
         {
-            ActivatePanel(panel, null, _showScrollButtons);
+            ActivatePanel(panel, null, ignoreDisabledState);
         }
 
-        public void ActivatePanel(int index)
+        public void ActivatePanel(int index, bool ignoreDisabledState = false)
         {
             var panel = _panels[index];
-            ActivatePanel(panel, null, _showScrollButtons);
+            ActivatePanel(panel, null, ignoreDisabledState);
         }
 
-        public void ActivatePanel(object id)
+        public void ActivatePanel(object id, bool ignoreDisabledState = false)
         {
             var panel = _panels.Where((p) => p.ID == id).FirstOrDefault();
             if (panel != null)
-                ActivatePanel(panel, null, _showScrollButtons);
+                ActivatePanel(panel, null, ignoreDisabledState);
         }
 
-        private void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool scrollToActivePanel)
+        private void ActivatePanel(MudTabPanel panel, MouseEventArgs ev, bool ignoreDisabledState = false)
         {
-            if (!panel.Disabled)
+            if (!panel.Disabled || ignoreDisabledState)
             {
                 ActivePanelIndex = _panels.IndexOf(panel);
 
