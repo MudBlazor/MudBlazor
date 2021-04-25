@@ -15,7 +15,8 @@ namespace MudBlazor
         public abstract void Add(MudTr row, object item);
         public abstract void Remove(MudTr row, object item);
         public abstract void UpdateRowCheckBoxes(bool notify = true);
-        public MudTr HeaderRow { get; set; }
+        public List<MudTHeadRow> HeaderRows { get; set; } = new List<MudTHeadRow>();
+        public List<MudTFootRow> FooterRows { get; set; } = new List<MudTFootRow>();
 
         public abstract void InitializeSorting();
 
@@ -44,11 +45,17 @@ namespace MudBlazor
                 var item = pair.Key;
                 row.SetChecked(Selection.Contains(item), notify: notify);
             }
-            // update header checkbox
-            if (HeaderRow != null)
+            if (HeaderRows.Count > 0 || FooterRows.Count > 0)
             {
                 var itemsCount = Table.GetFilteredItemsCount();
-                HeaderRow.SetChecked(Selection.Count == itemsCount && itemsCount != 0, notify: false);
+                var b = Selection.Count == itemsCount && itemsCount != 0;
+                // update header checkbox
+                foreach (var header in HeaderRows)
+                    header.SetChecked(b, notify: false);
+
+                // update footer checkbox
+                foreach (var footer in FooterRows)
+                    footer.SetChecked(b, notify: false);
             }
         }
 

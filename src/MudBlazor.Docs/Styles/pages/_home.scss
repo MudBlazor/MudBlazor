@@ -95,6 +95,10 @@
         background: transparent linear-gradient(90deg, #594AE2 0%, rgb(119,107,231) 100%) 0% 0% no-repeat padding-box;
     }
 
+    &.sponsor {
+        background: transparent linear-gradient(18deg, #ff4081 0%, #ff669a 100%) 0% 0% no-repeat padding-box;
+    }
+
     &.github {
         background: transparent linear-gradient(90deg, rgb(72,72,72) 0%, rgb(52,52,52) 100%) 0% 0% no-repeat padding-box;
     }

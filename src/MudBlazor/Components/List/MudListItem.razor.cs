@@ -43,10 +43,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string AvatarClass { get; set; }
 
+        private bool _disabled;
         /// <summary>
         /// If true, will disable the list item if it has onclick.
+        /// The value can be overridden by the parent list.
         /// </summary>
-        [Parameter] public bool Disabled { get; set; }
+        [Parameter]
+        public bool Disabled
+        {
+            get => _disabled || (MudList?.Disabled ?? false);
+            set => _disabled = value;
+        }
 
         /// <summary>
         /// If true, disables ripple effect.

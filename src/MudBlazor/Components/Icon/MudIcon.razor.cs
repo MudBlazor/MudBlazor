@@ -22,6 +22,11 @@ namespace MudBlazor
         [Parameter] public string Icon { get; set; }
 
         /// <summary>
+        /// Title of the icon used for accessibility.
+        /// </summary>
+        [Parameter] public string Title { get; set; }
+
+        /// <summary>
         /// The Size of the icon.
         /// </summary>
         [Parameter] public Size Size { get; set; } = Size.Medium;

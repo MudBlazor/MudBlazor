@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Dialog;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
@@ -118,5 +119,54 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Markup.Trim().Should().BeEmpty(), TimeSpan.FromSeconds(2));
         }
 
+        /// <summary>
+        /// Based on bug report by Porkopek:
+        /// Updating values that are referenced in TitleContent render fragment won't result in an update of the dialog title
+        /// when they change. This is solved by allowing the user to call ForceRender() on DialogInstance
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task DialogShouldUpdateTitleContent()
+        {
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogThatUpdatesItsTitle>());
+            dialogReference.Should().NotBe(null);
+            Console.WriteLine(comp.Markup);
+            //comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.Find("div.mud-dialog-content").TrimmedText().Should().Be("Body:");
+            comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title:");
+            // click on ok button should set title and content
+            comp.FindAll("button")[1].Click();
+            comp.Find("div.mud-dialog-content").TrimmedText().Should().Be("Body: Test123");
+            comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title: Test123");
+        }
+
+        /// <summary>
+        /// Based on bug report #1385
+        /// Dialog Class and Style parameters should be honored
+        /// </summary>
+        [Test]
+        public async Task DialogShouldHonorClassAndStyle()
+        {
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
+            dialogReference.Should().NotBe(null);
+            Console.WriteLine(comp.Markup);
+            comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class");
+            comp.Find("div.mud-dialog").Attributes["style"].Value.Should().Be("color: red;");
+            comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
+            comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
+            comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
+        }
     }
 }

@@ -16,7 +16,6 @@ namespace MudBlazor
                 .AddClass("mud-shrink", when: () => !string.IsNullOrWhiteSpace(ChildContent?.ToString()))
                 .AddClass("mud-disabled", Disabled)
                 .AddClass("mud-input-error", Error && !string.IsNullOrEmpty(ErrorText))
-                .AddClass(Class)
                 .Build();
 
         protected string InnerClassname =>
@@ -25,7 +24,6 @@ namespace MudBlazor
                 .AddClass("mud-input-slot-nopadding", when: () => InnerPadding == false)
                 .AddClass($"mud-input-root-{Variant.ToDescriptionString()}")
                 .AddClass($"mud-input-root-margin-{Margin.ToDescriptionString()}", when: () => Margin != Margin.None)
-                .AddClass(Class)
                 .Build();
 
         protected string AdornmentClassname =>
@@ -33,7 +31,6 @@ namespace MudBlazor
                 .AddClass($"mud-input-adornment-{Adornment.ToDescriptionString()}", Adornment != Adornment.None)
                 .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
                 .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
-                .AddClass(Class)
                 .Build();
 
         protected string InputControlClassname =>

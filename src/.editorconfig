@@ -288,7 +288,6 @@ dotnet_diagnostic.CA1822.severity = suggestion
 dotnet_diagnostic.CS1591.severity = none
 # IDE0071 Require file header 
 dotnet_diagnostic.IDE0073.severity = none
-file_header_template = Not Used
 # IDE0055: Fix formatting
 dotnet_diagnostic.IDE0055.severity = suggestion
 # IDE0044: Make field readonly

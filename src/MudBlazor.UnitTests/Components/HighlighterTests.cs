@@ -84,6 +84,20 @@ namespace MudBlazor.UnitTests.Components
             comp.MarkupMatches("This is the first <mark>item</mark>");
         }
 
+
+        /// <summary>
+        /// Check nulls
+        /// </summary>
+        [Test]
+        public void MudHighlighter_Nulls_Test()
+        {
+            var text = Parameter(nameof(MudHighlighter.Text), null);
+            var highlightedText = Parameter(nameof(MudHighlighter.HighlightedText), null);
+            var comp = ctx.RenderComponent<MudHighlighter>(text, highlightedText);
+            comp.MarkupMatches(string.Empty);
+        }
+
+
         /// <summary>
         /// Check markup whith regex text, no regex
         /// </summary>

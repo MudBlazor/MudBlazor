@@ -56,6 +56,6 @@
     }
 
     &.mud-overlay-drawer {
-        z-index: var(--mud-zindex-dialog); //<-- Yes this is correct we want to display it on top of the Appbar
+        z-index: calc(var(--mud-zindex-appbar) + 1); //<-- Yes this is correct we want to display it on top of the Appbar
     }
 }

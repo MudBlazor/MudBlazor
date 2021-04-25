@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MudBlazor.Charts;
 using MudBlazor.Docs.Models;
 
 namespace MudBlazor.Docs.Services
@@ -80,6 +81,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Slider", typeof(MudSlider<T>))
                 .AddItem("Switch", typeof(MudSwitch<T>))
                 .AddItem("Text Field", typeof(MudTextField<T>))
+                .AddItem("Numeric Field", typeof(MudNumericField<T>))
                 .AddItem("Form", typeof(MudForm))
                 .AddItem("Autocomplete", typeof(MudAutocomplete<T>))
                 .AddItem("Field", typeof(MudField))
@@ -101,10 +103,10 @@ namespace MudBlazor.Docs.Services
 
             //Charts
             .AddNavGroup("Charts", false, new DocsComponents()
-                .AddItem("Donut chart", typeof(MudChart))
-                .AddItem("Line chart", typeof(MudChart))
-                .AddItem("Pie chart", typeof(MudChart))
-                .AddItem("Bar chart", typeof(MudChart))
+                .AddItem("Donut chart", typeof(Donut))
+                .AddItem("Line chart", typeof(Line))
+                .AddItem("Pie chart", typeof(Pie))
+                .AddItem("Bar chart", typeof(Bar))
             );
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;
 

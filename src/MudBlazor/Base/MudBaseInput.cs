@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
@@ -136,7 +134,14 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
-        protected bool _isFocused = false;
+        protected bool _isFocused;
+
+        protected bool _shouldRenderBeForced;
+        //if you press Enter or Arrows, the input should re-render, because
+        //the user is accepting a value
+        private static bool ShouldRenderBeForced(string key) => key == "Enter"
+                                                             || key == "ArrowDown"
+                                                             || key == "ArrowUp";
 
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
@@ -150,6 +155,7 @@ namespace MudBlazor
         protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
         {
             _isFocused = true;
+            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
@@ -159,7 +165,6 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
         {
-            _isFocused = true;
             OnKeyPress.InvokeAsync(obj).AndForget();
         }
 
@@ -170,6 +175,7 @@ namespace MudBlazor
         protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
         {
             _isFocused = true;
+            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
@@ -191,7 +197,7 @@ namespace MudBlazor
             set => _value = value;
         }
 
-        protected async Task SetValueAsync(T value, bool updateText = true)
+        protected virtual async Task SetValueAsync(T value, bool updateText = true)
         {
             if (!EqualityComparer<T>.Default.Equals(Value, value))
             {

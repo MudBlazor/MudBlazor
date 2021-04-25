@@ -34,10 +34,17 @@
                 }
                 @if (HeaderContent != null)
                 {
-                    <thead class="mud-table-head">
-                        <MudTr IsHeader="true" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@OnHeaderCheckboxClicked" @ref="TableContext.HeaderRow">
+                    <thead class="@HeadClassname">
+                        @if (CustomHeader)
+                        {
                             @HeaderContent
-                        </MudTr>
+                        }
+                        else
+                        {
+                            <MudTHeadRow IsCheckable="MultiSelection">
+                                @HeaderContent
+                            </MudTHeadRow>
+                        }
                     </thead>
                 }
                 <tbody class="mud-table-body">
@@ -69,6 +76,21 @@
                         }
                     }
                 </tbody>
+                @if (FooterContent != null)
+                {
+                    <tfoot class="@FootClassname">
+                        @if (CustomFooter)
+                        {
+                            @FooterContent
+                        }
+                        else
+                        {
+                            <MudTFootRow IsCheckable="MultiSelection">
+                                @FooterContent
+                            </MudTFootRow>
+                        }
+                    </tfoot>
+                }
             </table>
         </div>
         @if (PagerContent != null)

@@ -4,6 +4,8 @@ namespace MudBlazor
 {
     public enum Typo
     {
+        [Description("inherit")]
+        inherit,
         [Description("h1")]
         h1,
         [Description("h2")]

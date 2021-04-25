@@ -1,0 +1,157 @@
+﻿@page "/components/NumericField"
+
+
+<DocsPage>
+	<DocsPageHeader Title="Numeric Field" SubTitle="Numeric field components are used for receiving user provided numbers." />
+	<DocsPageContent>
+		<DocsPageSection>
+			<SectionHeader>
+				<Title>Basic Numeric Field's</Title>
+				<Description>
+					Numeric fields are just like text fields, but they work well with numeric value of any type. The input is automatically restricted to numeric values, and it works regardless of the browser locale settings for decimal types.<br />
+					<CodeInline>Min</CodeInline> and <CodeInline>Max</CodeInline> attributes allow to restrict the value within the limits, if they are not specified they assume the default value for the type (i.e <CodeInline>@int.MinValue</CodeInline> and <CodeInline>@int.MaxValue</CodeInline> for <CodeInline>int</CodeInline>).
+					The <CodeInline>Step</CodeInline> attribute define how much the value changes when using the up/down buttons on the right, or with keyboards up/down arrows. If not specified, default value is 1.
+					<br />
+					<MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: for floating point or decimal values, passing a literal string value for <CodeInline>Min</CodeInline>, <CodeInline>Max</CodeInline> or <CodeInline>Step</CodeInline> might trigger a compile error on generated razor code. You can either force decimal points (i.e. <CodeInline>0.0</CodeInline>) or suffix (i.e. <CodeInline>0.5M</CodeInline> for decimal).</MudAlert>
+				</Description>
+			</SectionHeader>
+			<SectionContent Outlined="true">
+				<NumericFieldBasicExample />
+			</SectionContent>
+			<SectionSource Code="NumericFieldBasicExample" ShowCode="false" GitHubFolderName="NumericField" />
+		</DocsPageSection>
+		<DocsPageSection>
+			<SectionHeader>
+				<Title>Dense</Title>
+				<Description>With the <CodeInline>margin</CodeInline> prop you can reduce the field height.</Description>
+			</SectionHeader>
+			<SectionContent Outlined="true">
+				<NumericFieldDenseExample />
+			</SectionContent>
+			<SectionSource Code="NumericFieldDenseExample" ShowCode="false" GitHubFolderName="NumericField" />
+		</DocsPageSection>
+		<DocsPageSection>
+			<SectionHeader>
+				<Title>Form Props</Title>
+				<Description>Required, Disabled, Type, HelperText</Description>
+			</SectionHeader>
+			<SectionContent Outlined="true">
+				<NumericFieldFormPropsExample />
+			</SectionContent>
+			<SectionSource Code="NumericFieldFormPropsExample" ShowCode="false" GitHubFolderName="NumericField" />
+		</DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader>
+				<Title>Adornments</Title>
+				<Description>This can be used to add a prefix or a suffix. Text, Icon or Icon Button.</Description>
+			</SectionHeader>
+			<SectionContent Outlined="true" Class="demo-numericfield">
+				<NumericFieldAdornmentsExample />
+			</SectionContent>
+			<SectionSource Code="NumericFieldAdornmentsExample" ShowCode="false" GitHubFolderName="NumericField" />
+		</DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader>
+				<Title>Hide Spin Buttons</Title>
+				<Description>
+					This property could be set to hide the spinner buttons, preventing the user to increase and decrease the value with mouse or touch input.<br>
+					It could still be changed with keyboard up/down keys, or manually.
+				</Description>
+			</SectionHeader>
+			<SectionContent Outlined="true" Class="demo-numericfield">
+				<NumericFieldHideButtonsExample />
+			</SectionContent>
+			<SectionSource Code="NumericFieldHideButtonsExample" ShowCode="false" GitHubFolderName="NumericField" />
+		</DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader>
+				<Title>Adornment Color</Title>
+				<Description>The color of the adornment can be changed separately from the NumericField.</Description>
+			</SectionHeader>
+			<SectionContent Outlined="true" Class="demo-numericfield">
+				<NumericFieldAdornmentColorExample />
+			</SectionContent>
+			<SectionSource Code="NumericFieldAdornmentColorExample" ShowCode="false" GitHubFolderName="NumericField" />
+		</DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader>
+				<Title>Binding Properties of a POCO</Title>
+				<Description>
+					The following text fields are bound against the properties of a POCO (Plain old C-Sharp Object). Edit them to see the model change. Reset the model and see the NumericFields change.
+					<MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: always use two-way bindings (<CodeInline>@("@bind-Value")</CodeInline>) with number fields.</MudAlert>
+				</Description>
+			</SectionHeader>
+			<SectionContent Outlined="true">
+				<NumericFieldBindingExample />
+			</SectionContent>
+			<SectionSource Code="NumericFieldBindingExample" ShowCode="false" GitHubFolderName="NumericField" />
+		</DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader>
+				<Title>Binding Value Types vs Nullables</Title>
+				<Description>
+					When you bind value types, the numeric field will not be empty even if the user hasn't entered a value yet because a value type always has a value, even when unassigned.
+					The two-way-bindable <CodeInline>Value</CodeInline> property will automatically assume the default value of that type  (i.e. <CodeInline>0</CodeInline> for <CodeInline>int</CodeInline>).<br />
+					So if you want your numeric fields to be empty as long as nothing has been entered yet or it has been deleted, use the nullable version of that type (i.e. <CodeInline>int?</CodeInline>).<br />
+					Do not assign null values to <CodeInline>Min</CodeInline>, <CodeInline>Max</CodeInline> and <CodeInline>Step</CodeInline>.
+				</Description>
+			</SectionHeader>
+			<SectionContent Outlined="true">
+				<NumericFieldBindingValueTypesExample />
+			</SectionContent>
+			<SectionSource Code="NumericFieldBindingValueTypesExample" ShowCode="false" GitHubFolderName="NumericField" />
+		</DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader>
+				<Title>Normal vs Immediate vs Debounced</Title>
+				<Description>
+					Per default, <CodeInline>MudNumericField</CodeInline> updates the bound value on Enter or when it looses focus. Set <CodeInline>Immediate="true"</CodeInline> to update the value whenever the user types.<br />
+                    You can also set the <CodeInline>DebounceInterval</CodeInline> parameter to the amount of milliseconds you want to await before updating the bound value. If you need to know when the interval elapses, you can pass an <CodeInline>OnDebounceIntervalElapsed</CodeInline> EventCallback.
+                    Notice how in this example the debounced text only updates 500 ms after you stop typing.
+					<MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">Warning: when <CodeInline>Immediate="false"</CodeInline> (default), if the user types a value and then presses the arrow up/down on the keyboard, the step is calculated on the last accepted value.</MudAlert>
+				</Description>
+			</SectionHeader>
+			<SectionContent Outlined="true" FullWidth="true">
+				<DebouncedNumericFieldExample />
+			</SectionContent>
+			<SectionSource Code="DebouncedNumericFieldExample" ShowCode="false" GitHubFolderName="NumericField" />
+		</DocsPageSection>
+		<DocsPageSection>
+			<SectionHeader>
+				<Title>Focus</Title>
+				<Description></Description>
+			</SectionHeader>
+			<SectionContent Outlined="true">
+				<NumericFieldFocusExample />
+			</SectionContent>
+			<SectionSource Code="NumericFieldFocusExample" ShowCode="false" GitHubFolderName="NumericField" />
+		</DocsPageSection>
+		<DocsPageSection>
+			<SectionHeader>
+				<Title>Select</Title>
+				<Description></Description>
+			</SectionHeader>
+			<SectionContent Outlined="true">
+				<NumericFieldSelectExample />
+			</SectionContent>
+			<SectionSource Code="NumericFieldSelectExample" ShowCode="false" GitHubFolderName="NumericField" />
+		</DocsPageSection>
+
+		<DocsPageSection>
+			<SectionHeader>
+				<Title>Inputs</Title>
+				<Description></Description>
+			</SectionHeader>
+			<SectionContent Outlined="true">
+				<NumericFieldInputsExample />
+			</SectionContent>
+			<SectionSource Code="NumericFieldInputsExample" ShowCode="false" GitHubFolderName="NumericField" />
+		</DocsPageSection>
+	</DocsPageContent>
+</DocsPage>

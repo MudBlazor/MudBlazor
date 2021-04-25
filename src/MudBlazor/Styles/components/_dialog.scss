@@ -50,7 +50,13 @@
     & .mud-dialog-title {
         flex: 0 0 auto;
         margin: 0;
-        padding: 16px 24px;
+        padding: 16px 24px;        
+        border-top-left-radius: var(--mud-default-borderradius);
+        border-top-right-radius: var(--mud-default-borderradius);
+
+        + * > .mud-dialog-content {
+            border-radius: 0
+        }
 
         & .mud-button-root {
             top: 8px;
@@ -64,7 +70,8 @@
         flex: 1 1 auto;
         padding: 8px 24px;
         -webkit-overflow-scrolling: touch;
-
+        border-top-left-radius: var(--mud-default-borderradius);
+        border-top-right-radius: var(--mud-default-borderradius);
 
         &.mud-dialog-no-side-padding {
             padding: 12px 0px;
@@ -77,6 +84,8 @@
         padding: 8px;
         align-items: center;
         justify-content: flex-end;
+        border-bottom-left-radius: var(--mud-default-borderradius);
+        border-bottom-right-radius: var(--mud-default-borderradius);
 
         & > :not(:first-child) {
             margin-left: 8px;

@@ -61,7 +61,12 @@
     //locks the scroll of the selected element. Default is body
     lockScroll (selector, lockclass) {
         let element = document.querySelector(selector) || document.body;
-        element.classList.add(lockclass);
+
+        //if the body doesn't have a scroll bar, don't add the lock class
+        let hasScrollBar = window.innerWidth > document.body.clientWidth;
+        if (hasScrollBar) {
+            element.classList.add(lockclass);
+        }
     }
 
     //unlocks the scroll. Default is body
