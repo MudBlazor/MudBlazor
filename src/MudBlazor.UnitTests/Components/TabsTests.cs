@@ -687,7 +687,7 @@ namespace MudBlazor.UnitTests.Components
 
             ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
 
-            var comp = ctx.RenderComponent<SimplifiedScrollableTabsTest>(p => p.Add(x => x.StartAmount,5));
+            var comp = ctx.RenderComponent<SimplifiedScrollableTabsTest>(p => p.Add(x => x.StartAmount, 5));
 
             Console.WriteLine(comp.Markup);
 
@@ -711,6 +711,108 @@ namespace MudBlazor.UnitTests.Components
 
             buttonContainer.Refresh();
             buttonContainer.Should().HaveCount(0);
+        }
+
+        [Test]
+        public async Task ActivatePanels()
+        {
+            var activator = new Action<IRenderedComponent<ActivateDisabledTabsTest>, ActivateDisabledTabsTest.TabBindingHelper>[] {
+               (x,y) => x.Instance.ActivateTab(y.Index),
+               (x,y) => x.Instance.ActivateTab(y.Panel),
+               (x,y) => x.Instance.ActivateTab(y.Tag),
+
+               (x,y) => x.Instance.ActivateTab(y.Index, false),
+               (x,y) => x.Instance.ActivateTab(y.Panel, false),
+               (x,y) => x.Instance.ActivateTab(y.Tag, false),
+            };
+
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            foreach (var invoker in activator)
+            {
+                for (int k = 0; k < 2; k++)
+                {
+                    var comp = ctx.RenderComponent<ActivateDisabledTabsTest>();
+
+                    if (k == 0)
+                    {
+                        comp.Instance.ActivateAll();
+                    }
+                    else
+                    {
+                        comp.Instance.EnableTab(0);
+                    }
+
+                    Console.WriteLine(comp.Markup);
+
+                    var panels = comp.FindAll(".test-panel-selector");
+                    var activePanels = comp.FindAll(".mud-tab-active");
+
+                    //checking expected default values
+                    panels.Should().HaveCount(5);
+                    activePanels.Should().HaveCount(1);
+                    panels[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
+
+                    for (int i = 1; i < comp.Instance.Tabs.Count; i++)
+                    {
+                        invoker(comp, comp.Instance.Tabs[i]);
+
+                        panels.Refresh();
+                        activePanels.Refresh();
+
+                        if (k == 0)
+                        {
+                            panels[i - 1].ClassList.Contains("mud-tab-active").Should().BeFalse();
+                            panels[i].ClassList.Contains("mud-tab-active").Should().BeTrue();
+                        }
+                        else
+                        {
+                            panels[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
+                            panels[i].ClassList.Contains("mud-disabled").Should().BeTrue();
+                        }
+                    }
+                }
+            }
+        }
+
+        [Test]
+        public async Task ActivatePanels_EvenWhenDisabled()
+        {
+            var activator = new Action<IRenderedComponent<ActivateDisabledTabsTest>, ActivateDisabledTabsTest.TabBindingHelper>[] {
+               (x,y) => x.Instance.ActivateTab(y.Index, true),
+               (x,y) => x.Instance.ActivateTab(y.Panel, true),
+               (x,y) => x.Instance.ActivateTab(y.Tag, true),
+            };
+
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            foreach (var invoker in activator)
+            {
+                var comp = ctx.RenderComponent<ActivateDisabledTabsTest>();
+
+                Console.WriteLine(comp.Markup);
+
+                var panels = comp.FindAll(".test-panel-selector");
+
+                //checking expected default values
+                panels.Should().HaveCount(5);
+                panels[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
+
+                for (int i = 1; i < comp.Instance.Tabs.Count; i++)
+                {
+                    invoker(comp, comp.Instance.Tabs[i]);
+
+                    panels.Refresh();
+
+                    panels[i - 1].ClassList.Contains("mud-tab-active").Should().BeFalse();
+                    panels[i].ClassList.Contains("mud-tab-active").Should().BeTrue();
+                    panels[i].ClassList.Contains("mud-disabled").Should().BeTrue();
+
+                    var contentElement = comp.Find(".test-active-panel");
+
+                    contentElement.TextContent.Should().Be(comp.Instance.Tabs[i].Content);
+                }
+            }
         }
 
         #region Helper
