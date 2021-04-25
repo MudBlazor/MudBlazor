@@ -639,6 +639,80 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        [Test]
+        public async Task PanelAdd_ScrollButtonsBecomeVisible()
+        {
+            var observer = new MockResizeObserver
+            {
+                PanelSize = 100.0,
+                PanelTotalSize = 250.0,
+            };
+
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
+
+            var comp = ctx.RenderComponent<SimplifiedScrollableTabsTest>();
+
+            Console.WriteLine(comp.Markup);
+
+            var buttonContainer = comp.FindAll(".mud-tabs-scroll-button");
+            buttonContainer.Should().HaveCount(0);
+
+            //add the first panel, buttons shouldn't be visible
+            await comp.Instance.AddPanel();
+
+            buttonContainer.Refresh();
+            buttonContainer.Should().HaveCount(0);
+
+            //add second panel, buttons shouldn't be visible
+            await comp.Instance.AddPanel();
+
+            buttonContainer.Refresh();
+            buttonContainer.Should().HaveCount(0);
+
+            //add third panel, buttons should be visible
+            await comp.Instance.AddPanel();
+
+            buttonContainer.Refresh();
+            buttonContainer.Should().HaveCount(2);
+        }
+
+        [Test]
+        public async Task PanelRemove_ScrollButtonsBecomeInvisible()
+        {
+            var observer = new MockResizeObserver
+            {
+                PanelSize = 100.0,
+                PanelTotalSize = 250.0,
+            };
+
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), observer));
+
+            var comp = ctx.RenderComponent<SimplifiedScrollableTabsTest>(p => p.Add(x => x.StartAmount,5));
+
+            Console.WriteLine(comp.Markup);
+
+            var buttonContainer = comp.FindAll(".mud-tabs-scroll-button");
+            buttonContainer.Should().HaveCount(2);
+
+            //remove 5th panel, buttons should be visible
+            await comp.Instance.RemoveLastPanel();
+
+            buttonContainer.Refresh();
+            buttonContainer.Should().HaveCount(2);
+
+            //remove 4th panel, buttons should be visible
+            await comp.Instance.RemoveLastPanel();
+
+            buttonContainer.Refresh();
+            buttonContainer.Should().HaveCount(2);
+
+            //remove 3rd panel, buttons shouldn't be visible
+            await comp.Instance.RemoveLastPanel();
+
+            buttonContainer.Refresh();
+            buttonContainer.Should().HaveCount(0);
+        }
+
         #region Helper
 
         private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")
