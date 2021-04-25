@@ -59,6 +59,8 @@ namespace MudBlazor.UnitTests.Mocks
 
         public async Task<BoundingClientRect> Observe(ElementReference element) => (await Observe(new[] { element })).FirstOrDefault();
 
+        private Boolean _firstBatchProcessed = false;
+
         public Task<IEnumerable<BoundingClientRect>> Observe(IEnumerable<ElementReference> elements)
         {
             List<BoundingClientRect> result = new List<BoundingClientRect>();
@@ -66,7 +68,7 @@ namespace MudBlazor.UnitTests.Mocks
             {
                 var size = PanelSize;
                 // last element is alaways TabsContentSize
-                if (item.Id == elements.Last().Id && elements.Count() > 1)
+                if (item.Id == elements.Last().Id && _firstBatchProcessed == false)
                 {
                     size = PanelTotalSize;
                 }
@@ -77,6 +79,8 @@ namespace MudBlazor.UnitTests.Mocks
                 }
                 _cachedValues.Add(item, rect);
             }
+
+            _firstBatchProcessed = true;
 
             return Task.FromResult<IEnumerable<BoundingClientRect>>(result);
         }
