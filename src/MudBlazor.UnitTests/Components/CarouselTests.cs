@@ -194,25 +194,25 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
             comp.Render();
             //// playing with autoCycle
-            await Task.Delay(interval + 15); // 15ms just to ensure that transition runs before of Task.Delay() ends
+            await Task.Delay(interval + 50); // 15ms just to ensure that transition runs before of Task.Delay() ends
             comp.Instance.SelectedIndex.Should().Be(1);
             comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
-            await Task.Delay(interval + 15);
+            await Task.Delay(interval + 50);
             comp.Instance.SelectedIndex.Should().Be(2);
             comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
-            await Task.Delay(interval + 15);
+            await Task.Delay(interval + 50);
             comp.Instance.SelectedIndex.Should().Be(0);
             comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
             ///changing internal
             interval = 150;
             comp.SetParam(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval));
-            await Task.Delay(interval + 15);
+            await Task.Delay(interval + 50);
             comp.Instance.SelectedIndex.Should().Be(1);
             comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
-            await Task.Delay(interval + 15);
+            await Task.Delay(interval + 40);
             comp.Instance.SelectedIndex.Should().Be(2);
             comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
-            await Task.Delay(interval + 15);
+            await Task.Delay(interval + 40);
             comp.Instance.SelectedIndex.Should().Be(0);
             comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
         }
