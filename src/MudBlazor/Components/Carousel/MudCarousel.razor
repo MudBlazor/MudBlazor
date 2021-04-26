@@ -1,12 +1,12 @@
 ﻿@namespace MudBlazor
-@inherits Base.MudBaseBindableItemsControl<MudCarouselItem, TData>
+@inherits MudBaseBindableItemsControl<MudCarouselItem, TData>
 @implements IDisposable
 @typeparam TData
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
     <CascadingValue Value="this">
 
-        <MudSwipeArea OnSwipe="OnSwipe">
+        <MudSwipeArea OnSwipe="OnSwipe" Class="mud-carousel-swipe">
             @*Selected Content*@
             @if (ItemsSource == null)
             {
@@ -55,7 +55,7 @@
                             else
                             {
                                 <div @onclick="() => MoveTo(current)" class="align-self-center" style="z-index:3;opacity:0.75">
-                                    @DelimiterTemplate
+                                    @DelimiterTemplate(current == SelectedIndex)
                                 </div>
                             }
                         }

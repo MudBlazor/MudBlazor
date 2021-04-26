@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -7,6 +8,7 @@ namespace MudBlazor
     {
         protected string Classname =>
                     new CssBuilder("mud-carousel-item")
+                         .AddClass($"mud-carousel-item-{Color.ToDescriptionString()}")
                          .AddClass("mud-carousel-item-exit", Parent.LastContainer == this)
 
                          .AddClass("mud-carousel-transition-fade-in", Transition == Transition.Fade && Parent.SelectedContainer == this)
@@ -28,16 +30,27 @@ namespace MudBlazor
         public RenderFragment ChildContent { get; set; }
 
         [CascadingParameter]
-        protected internal Base.MudBaseItemsControl<MudCarouselItem> Parent { get; set; }
+        protected internal MudBaseItemsControl<MudCarouselItem> Parent { get; set; }
 
-        [Parameter]
-        public Transition Transition { get; set; } = Transition.Slide;
+        /// <summary>
+        /// The color of the component. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color Color { get; set; } = Color.Default;
 
-        [Parameter]
-        public string CustomTransitionEnter { get; set; }
+        /// <summary>
+        /// The transition effect of the component.
+        /// </summary>
+        [Parameter] public Transition Transition { get; set; } = Transition.Slide;
 
-        [Parameter]
-        public string CustomTransitionExit { get; set; }
+        /// <summary>
+        /// The name of custom transition on entrance time
+        /// </summary>
+        [Parameter] public string CustomTransitionEnter { get; set; }
+
+        /// <summary>
+        /// The name of custom transition on exiting time
+        /// </summary>
+        [Parameter] public string CustomTransitionExit { get; set; }
 
         public bool IsVisible
         {

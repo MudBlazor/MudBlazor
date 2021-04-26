@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
-namespace MudBlazor.Base
+namespace MudBlazor
 {
     public abstract class MudBaseItemsControl<TChildComponent> : MudComponentBase
             where TChildComponent : MudComponentBase
@@ -57,7 +57,7 @@ namespace MudBlazor.Base
         /// </summary>
         public TChildComponent SelectedContainer
         {
-            get => Items[SelectedIndex];
+            get => SelectedIndex >= 0 ? Items[SelectedIndex] : null;
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)

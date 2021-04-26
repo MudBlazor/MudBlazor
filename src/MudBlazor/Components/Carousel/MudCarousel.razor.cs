@@ -1,19 +1,22 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudCarousel<TData> : Base.MudBaseBindableItemsControl<MudCarouselItem, TData>, IDisposable
+    public partial class MudCarousel<TData> : MudBaseBindableItemsControl<MudCarouselItem, TData>, IDisposable
     {
 
         protected string Classname =>
-                            new CssBuilder("mud-carousel")
+                    new CssBuilder("mud-carousel")
+                         .AddClass($"mud-carousel-{_currentColor.ToDescriptionString()}")
                                  .AddClass(Class)
                                  .Build();
 
         private System.Timers.Timer _autoCycleTimer;
 
+        internal Color _currentColor = Color.Inherit;
 
         /// <summary>
         /// Gets or Sets if 'Next' and 'Previous' arrows must be visible
@@ -77,8 +80,16 @@ namespace MudBlazor
         /// Gets or Sets the Template for Delimiters
         /// </summary>
         [Parameter]
-        public RenderFragment DelimiterTemplate { get; set; }
+        public RenderFragment<bool> DelimiterTemplate { get; set; }
 
+        /// <summary>
+        /// Fires when selected Index changed on base class
+        /// </summary>
+        private void Selection_Changed()
+        {
+            Timer_Reset();
+            _currentColor = (SelectedContainer != null ? SelectedContainer.Color : Color.Inherit);
+        }
 
         /// <summary>
         /// Provides Selection changes by horizontal swipe gesture
@@ -138,7 +149,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            SelectedIndexChanged = new EventCallback<int>(this, (Action)Timer_Reset);
+            SelectedIndexChanged = new EventCallback<int>(this, (Action)Selection_Changed);
         }
 
         public void Dispose()
