@@ -90,9 +90,9 @@
 
   <!--Packages-->
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="9.5.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.3" />
+    <PackageReference Include="FluentValidation" Version="10.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
     <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.4.1" />
   </ItemGroup>
