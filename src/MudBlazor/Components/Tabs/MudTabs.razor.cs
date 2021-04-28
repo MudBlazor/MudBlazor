@@ -12,7 +12,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTabs : MudComponentBase, IDisposable, IAsyncDisposable
+    public partial class MudTabs : MudComponentBase, IAsyncDisposable
     {
         private bool _isDisposed;
         private int _activePanelIndex = 0;
@@ -187,30 +187,14 @@ namespace MudBlazor
             }
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            _isDisposed = true;
-            _resizeObserver.OnResized -= OnResized;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual async ValueTask DisposeAsyncCore()
-        {
-            _isDisposed = true;
-            await _resizeObserver.DisposeAsync();
-        }
 
         public async ValueTask DisposeAsync()
         {
-            await DisposeAsyncCore();
+            if (_isDisposed == true) { return; }
 
-            Dispose(false);
-            GC.SuppressFinalize(this);
+            _isDisposed = true;
+            await _resizeObserver.DisposeAsync();
+            _resizeObserver.OnResized -= OnResized;
         }
 
         #endregion
