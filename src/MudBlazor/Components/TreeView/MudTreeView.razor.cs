@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -80,6 +81,9 @@ namespace MudBlazor
         [Parameter] public RenderFragment<T> ItemTemplate { get; set; }
 
         [CascadingParameter] MudTreeView<T> MudTreeRoot { get; set; }
+
+        [Parameter]
+        public Func<T, Task<HashSet<T>>> ServerData { get; set; }
 
         public MudTreeView()
         {
