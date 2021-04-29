@@ -54,16 +54,11 @@ namespace MudBlazor
         /// Selected index of a portion of the chart.
         /// </summary>     
         [Parameter] public int SelectedIndex { get; set; }
+
         /// <summary>
         /// Selected index of a portion of the chart.
         /// </summary>    
         [Parameter] public EventCallback<int> SelectedIndexChanged { get; set; }
-
-        /// <summary>
-        /// Command executed when the user clicks on an element.
-        /// </summary>
-
-        public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         /// <summary>
         /// EventCallback selected portion of a chart based on the selected index. 
