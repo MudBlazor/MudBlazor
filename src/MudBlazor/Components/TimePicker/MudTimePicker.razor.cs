@@ -33,11 +33,11 @@ namespace MudBlazor
 
         private TimeSpan? OnGet(string value)
         {
-            try
+            if (DateTime.TryParseExact(value, (Converter as DefaultConverter<TimeSpan?>).Format, Culture, DateTimeStyles.None, out DateTime time))
             {
-                return DateTime.ParseExact(value, (Converter as DefaultConverter<TimeSpan?>).Format, Culture).TimeOfDay;
+                return time.TimeOfDay;
             }
-            catch
+            else
             {
                 var m = Regex.Match(value, "AM|PM", RegexOptions.IgnoreCase);
                 if (m.Success)
