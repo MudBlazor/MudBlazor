@@ -10,7 +10,7 @@
         }
         @if (ChartType == ChartType.Pie)
         {
-            <Pie InputData="@InputData" InputLabels="@InputLabels"></Pie>
+            <Pie InputData="@InputData" @bind-SelectedIndex="@index" InputLabels="@InputLabels"></Pie>
         }
         @if (ChartType == ChartType.Line)
         {
@@ -22,3 +22,10 @@
         }
     </div>
 </CascadingValue>
+<MudText>  @index</MudText>
+
+@code
+{
+    [Parameter]
+    public int index { get; set; }
+}

@@ -57,6 +57,11 @@ namespace MudBlazor
 
         /// <summary>
         /// Selected index of a portion of the chart.
+        /// </summary>     
+        [Parameter] public EventCallback UpdateState { get; set; }
+
+        /// <summary>
+        /// Selected index of a portion of the chart.
         /// </summary>    
         [Parameter] public EventCallback<int> SelectedIndexChanged { get; set; }
 
@@ -70,12 +75,14 @@ namespace MudBlazor
             var total = InputData.Sum();
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
         }
-       
+
         protected async Task UpdateSelectedIndex(int index)
         {
             SelectedIndex = index;
             await SelectedIndexChanged.InvokeAsync(SelectedIndex);
+            await UpdateState.InvokeAsync();
         }
+
         protected string ToS(double d)
         {
             return d.ToString(CultureInfo.InvariantCulture);
