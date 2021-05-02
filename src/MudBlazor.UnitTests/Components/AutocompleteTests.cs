@@ -259,6 +259,25 @@ namespace MudBlazor.UnitTests.Components
 
         }
 
+        /// <summary>
+        /// Test for <seealso cref="https://github.com/Garderoben/MudBlazor/issues/1415"/>
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_OnBlurShouldBeCalled()
+        {
+            var calls = 0;
+            Action<FocusEventArgs> fn = (args) => calls++;
+            var comp = ctx.RenderComponent<MudAutocomplete<string>>((a) =>
+            {
+                a.Add(x => x.OnBlur, fn);
+            });
+            var input = comp.Find("input");
+
+            calls.Should().Be(0);
+            input.Blur();
+            calls.Should().Be(1);
+        }
+
 
         #region DataAttribute validation
         [Test]
