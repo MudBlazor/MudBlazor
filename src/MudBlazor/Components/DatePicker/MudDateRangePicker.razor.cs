@@ -90,6 +90,11 @@ namespace MudBlazor
             return SetDateRangeAsync(ParseDateRangeValue(value), false);
         }
 
+        protected override bool HasValue(DateTime? value)
+        {
+            return _dateRange != null;
+        }
+
         private DateRange ParseDateRangeValue(string value)
         {
             return DateRange.TryParse(value, Converter, out var dateRange) ? dateRange : null;
