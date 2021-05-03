@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Class="pa-4">
-    <MudChart ChartType="ChartType.Pie" @bind-SelectedIndex="@Index" InputData="@data" InputLabels="@labels" Width="300px" Height="300px" />
+    <MudChart ChartType="ChartType.Pie" InputData="@data" SelectedIndex="Index" InputLabels="@labels" Width="300px" Height="300px" />
 </MudPaper>
 <MudPaper Class="pa-4 mt-2 d-flex justify-center">
     <MudButton OnClick="AddDataSize" Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
@@ -44,10 +44,5 @@
             dataSize = dataSize - 1;
             RandomizeData();
         }
-    }
-    void IndexChanged(int i)
-    {
-        Index = i;
-        StateHasChanged();
     }
 }

@@ -57,11 +57,6 @@ namespace MudBlazor
 
         /// <summary>
         /// Selected index of a portion of the chart.
-        /// </summary>     
-        [Parameter] public EventCallback UpdateState { get; set; }
-
-        /// <summary>
-        /// Selected index of a portion of the chart.
         /// </summary>    
         [Parameter] public EventCallback<int> SelectedIndexChanged { get; set; }
 
@@ -80,7 +75,6 @@ namespace MudBlazor
         {
             SelectedIndex = index;
             await SelectedIndexChanged.InvokeAsync(SelectedIndex);
-            await UpdateState.InvokeAsync();
         }
 
         protected string ToS(double d)
