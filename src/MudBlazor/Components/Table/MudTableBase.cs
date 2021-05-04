@@ -17,6 +17,7 @@ namespace MudBlazor
 
         private int _currentPage = 0;
         private int? _rowsPerPage;
+        private bool _isFirstRendered = false;
 
         protected string Classname =>
         new CssBuilder("mud-table")
@@ -35,6 +36,11 @@ namespace MudBlazor
            .AddClass($"mud-elevation-{Elevation}", !Outlined)
           .AddClass(Class)
         .Build();
+
+        protected string HeadClassname => new CssBuilder("mud-table-head")
+            .AddClass(HeaderClass).Build();
+        protected string FootClassname => new CssBuilder("mud-table-foot")
+            .AddClass(FooterClass).Build();
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
@@ -121,7 +127,8 @@ namespace MudBlazor
                     return;
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
-                InvokeServerLoadFunc();
+                if (_isFirstRendered)
+                    InvokeServerLoadFunc();
             }
         }
 
@@ -136,9 +143,34 @@ namespace MudBlazor
         [Parameter] public RenderFragment ToolBarContent { get; set; }
 
         /// <summary>
-        /// Add MudTh cells here to define the table header.
+        /// Add MudTh cells here to define the table header. If <see cref="CustomHeader"/> is set, add one or more MudTHeadRow instead.
         /// </summary>
         [Parameter] public RenderFragment HeaderContent { get; set; }
+
+        /// <summary>
+        /// Specify if the header has multiple rows. In that case, you need to provide the MudTHeadRow tags.
+        /// </summary>
+        [Parameter] public bool CustomHeader { get; set; }
+
+        /// <summary>
+        /// Add a class to the thead tag
+        /// </summary>
+        [Parameter] public string HeaderClass { get; set; }
+
+        /// <summary>
+        /// Add MudTd cells here to define the table footer. If<see cref="CustomFooter"/> is set, add one or more MudTFootRow instead.
+        /// </summary>
+        [Parameter] public RenderFragment FooterContent { get; set; }
+
+        /// <summary>
+        /// Specify if the footer has multiple rows. In that case, you need to provide the MudTFootRow tags.
+        /// </summary>
+        [Parameter] public bool CustomFooter { get; set; }
+
+        /// <summary>
+        /// Add a class to the tfoot tag
+        /// </summary>
+        [Parameter] public string FooterClass { get; set; }
 
         /// <summary>
         /// Specifies a group of one or more columns in a table for formatting.
@@ -212,6 +244,14 @@ namespace MudBlazor
 
         public abstract TableContext TableContext { get; }
 
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+                _isFirstRendered = true;
+
+            return base.OnAfterRenderAsync(firstRender);
+        }
+
         public void NavigateTo(Page page)
         {
             switch (page)
@@ -238,7 +278,8 @@ namespace MudBlazor
             _rowsPerPage = size;
             CurrentPage = 0;
             StateHasChanged();
-            InvokeServerLoadFunc();
+            if (_isFirstRendered)
+                InvokeServerLoadFunc();
         }
 
         protected abstract int NumPages { get; }
@@ -271,6 +312,10 @@ namespace MudBlazor
         internal abstract Task InvokeServerLoadFunc();
 
         internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
+
+        internal abstract void OnHeaderCheckboxClicked(bool value);
+
+        internal abstract bool IsEditable { get; }
 
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
     }

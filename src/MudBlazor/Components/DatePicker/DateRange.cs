@@ -10,12 +10,12 @@ namespace MudBlazor
 
         }
 
-        public string ToString(string dateFormat)
+        public string ToString(Converter<DateTime?, string> converter)
         {
             if (Start == null || End == null)
                 return "";
 
-            return RangeConverter<DateTime>.Join(Start.Value.ToString(dateFormat), End.Value.ToString(dateFormat));
+            return RangeConverter<DateTime>.Join(converter.Set(Start.Value), converter.Set(End.Value));
         }
 
         public string ToIsoDateString()
@@ -23,24 +23,26 @@ namespace MudBlazor
             return RangeConverter<DateTime>.Join(Start.ToIsoDateString(), End.ToIsoDateString());
         }
 
-        public static bool TryParse(string value, out DateRange date)
+        public static bool TryParse(string value, Converter<DateTime?, string> converter, out DateRange date)
         {
             date = null;
 
             if (!RangeConverter<DateTime>.Split(value, out string start, out string end))
                 return false;
 
-            return TryParse(start, end, out date);
+            return TryParse(start, end, converter, out date);
         }
 
-        public static bool TryParse(string start, string end, out DateRange date)
+        public static bool TryParse(string start, string end, Converter<DateTime?, string> converter, out DateRange date)
         {
             date = null;
 
-            if (!DateTime.TryParse(start, out DateTime startDate))
+            var endDate = converter.Get(end);
+            if (converter.GetError)
                 return false;
 
-            if (!DateTime.TryParse(end, out DateTime endDate))
+            var startDate = converter.Get(start);
+            if (converter.GetError)
                 return false;
 
             date = new DateRange(startDate, endDate);

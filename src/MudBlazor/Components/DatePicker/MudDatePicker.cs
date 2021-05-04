@@ -33,6 +33,7 @@ namespace MudBlazor
                 _value = date;
                 if (updateValue)
                 {
+                    Converter.GetError = false;
                     await SetTextAsync(Converter.Set(_value), false);
                 }
                 await DateChanged.InvokeAsync(_value);

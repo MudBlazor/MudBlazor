@@ -29,6 +29,7 @@ namespace MudBlazor
             .AddStyle("height", "auto", _state == CollapseState.Entered)
             .AddStyle("height", $"{_height.ToString("#.##", CultureInfo.InvariantCulture)}px", _state == CollapseState.Entering || _state == CollapseState.Exiting)
             .AddStyle("animation-duration", $"{CalculatedAnimationDuration.ToString("#.##", CultureInfo.InvariantCulture)}s", _state == CollapseState.Entering)
+            .AddStyle(Style)
             .Build();
 
         protected string Classname =>

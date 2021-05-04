@@ -84,10 +84,6 @@
         background-color: var(--mud-palette-action-default-hover);
     }
 
-    &:disabled {
-        border: 1px solid var(--mud-palette-action-disabled-background);
-    }
-
     @each $color in $mud-palette-colors {
         &.mud-button-outlined-#{$color} {
             color: var(--mud-palette-#{$color});
@@ -98,6 +94,10 @@
                 background-color: var(--mud-palette-#{$color}-hover);
             }
         }
+    }
+
+    &:disabled {
+        border: 1px solid var(--mud-palette-action-disabled-background);
     }
 }
 

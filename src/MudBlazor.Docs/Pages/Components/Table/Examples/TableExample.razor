@@ -27,16 +27,14 @@
         <MudTablePager />
     </PagerContent>
 </MudTable>
-<MudToolBar>
+<div class="d-flex flex-wrap mt-4">
     <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
     <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
     <MudSwitch @bind-Checked="@striped" Color="Color.Tertiary">Striped</MudSwitch>
     <MudSwitch @bind-Checked="@bordered" Color="Color.Warning">Bordered</MudSwitch>
     <MudToolBarSpacer />
-    <div style="min-width:200px;">
-        <MudText Inline="true">Selected: @selectedItem?.Name</MudText>
-    </div>
-</MudToolBar>
+    <MudText Inline="true" Class="align-self-center" Style="min-width:200px;">Selected: @selectedItem?.Name</MudText>
+</div>
 
 @code {
     private bool dense = false;

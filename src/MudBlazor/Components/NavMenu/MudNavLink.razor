@@ -7,7 +7,6 @@
     { 
         <NavLink @onclick="@HandleNavigation" 
                  class="@LinkClassname" 
-                 style="@Style" 
                  @attributes="@Attributes"
                  Match="@Match" 
                  ActiveClass="active">
@@ -15,7 +14,7 @@
             {
                 <MudIcon Icon="@Icon" Color="@IconColor" Class="@IconClassname"/>
             }
-            <div Class="mud-nav-link-text">
+            <div class="mud-nav-link-text">
                 @ChildContent
             </div>
         </NavLink>
@@ -24,7 +23,6 @@
     {
         <div @onclick="HandleClick"
              class="@LinkClassname"
-             style="@Style"
              ActiveClass="active">
             @if (!String.IsNullOrEmpty(Icon))
             {

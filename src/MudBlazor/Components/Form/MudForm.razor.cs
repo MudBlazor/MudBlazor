@@ -90,7 +90,7 @@ namespace MudBlazor
 
         void IForm.Remove(IFormComponent formControl)
         {
-            //_formControls.Remove(formControl);
+            _formControls.Remove(formControl);
         }
 
         private Timer _timer;

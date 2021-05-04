@@ -196,6 +196,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment PickerActions { get; set; }
 
+        /// <summary>
+        ///  Will adjust vertical spacing.
+        /// </summary>
+        [Parameter] public Margin Margin { get; set; } = Margin.None;
+
         protected async Task SetTextAsync(string value, bool callback)
         {
             if (_text != value)

@@ -1,10 +1,16 @@
 ﻿using System;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudTablePager : MudComponentBase
     {
+        protected string Classname =>
+            new CssBuilder("mud-table-pagination-toolbar")
+            .AddClass(Class)
+            .Build();
+
         [CascadingParameter] public TableContext Context { get; set; }
 
         [CascadingParameter] public bool RightToLeft { get; set; }
