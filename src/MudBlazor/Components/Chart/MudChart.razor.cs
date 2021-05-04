@@ -50,10 +50,24 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Position LegendPosition { get; set; } = Position.Bottom;
 
+        private int _selectedIndex;
+
         /// <summary>
         /// Selected index of a portion of the chart.
         /// </summary>     
-        [Parameter] public int SelectedIndex { get; set; }
+        [Parameter]
+        public int SelectedIndex 
+        {
+            get => _selectedIndex;
+            set
+            {
+                if (value != _selectedIndex)
+                {
+                    _selectedIndex = value;
+                    SelectedIndexChanged.InvokeAsync(value);
+                }
+            }
+        }
 
         /// <summary>
         /// Selected index of a portion of the chart.
@@ -69,12 +83,6 @@ namespace MudBlazor
                 return Array.Empty<double>();
             var total = InputData.Sum();
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
-        }
-
-        protected async Task UpdateSelectedIndex(int index)
-        {
-            SelectedIndex = index;
-            await SelectedIndexChanged.InvokeAsync(SelectedIndex);
         }
 
         protected string ToS(double d)
