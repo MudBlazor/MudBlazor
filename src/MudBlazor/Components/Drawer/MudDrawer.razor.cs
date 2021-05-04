@@ -53,6 +53,7 @@ namespace MudBlazor
             .AddStyle("--mud-drawer-content-height",
                 string.IsNullOrWhiteSpace(Height) ? $"{_height}px" : Height,
                 Anchor == Anchor.Bottom || Anchor == Anchor.Top)
+            .AddStyle("visibility", "hidden", string.IsNullOrWhiteSpace(Height) && _height == 0 && (Anchor == Anchor.Bottom || Anchor == Anchor.Top))
             .AddStyle(Style)
         .Build();
 
@@ -142,7 +143,7 @@ namespace MudBlazor
                 _breakpoint = value;
                 if (_isRendered)
                 {
-                    UpdateBreakpointState();
+                    UpdateBreakpointState(_screenBreakpoint);
                 }
             }
         }
@@ -239,6 +240,10 @@ namespace MudBlazor
                 }
 
                 _isRendered = true;
+                if (string.IsNullOrWhiteSpace(Height) && (Anchor == Anchor.Bottom || Anchor == Anchor.Top))
+                {
+                    StateHasChanged();
+                }
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -272,8 +277,7 @@ namespace MudBlazor
             if (!_isRendered)
                 return;
 
-            _screenBreakpoint = breakpoint;
-            InvokeAsync(() => UpdateBreakpointState());
+            InvokeAsync(() => UpdateBreakpointState(breakpoint));
         }
 
         private async Task UpdateHeight()
@@ -281,33 +285,40 @@ namespace MudBlazor
             _height = (await _contentRef.MudGetBoundingClientRectAsync())?.Height ?? 0;
         }
 
-        private async void UpdateBreakpointState()
+        private async void UpdateBreakpointState(Breakpoint breakpoint)
         {
-            if (_screenBreakpoint == Breakpoint.None)
+            bool isStateChanged = false;
+            if (breakpoint == Breakpoint.None)
             {
-                _screenBreakpoint = await ResizeListener.GetBreakpoint();
+                breakpoint = await ResizeListener.GetBreakpoint();
             }
 
-            if (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Responsive)
+            if (breakpoint < Breakpoint && _screenBreakpoint >= Breakpoint && Variant == DrawerVariant.Responsive)
             {
                 _isOpenWhenLarge = Open;
 
                 await OpenChanged.InvokeAsync(false);
-                StateHasChanged();
+                isStateChanged = true;
             }
-            else if (_screenBreakpoint >= Breakpoint && Variant == DrawerVariant.Responsive)
+            else if (breakpoint >= Breakpoint && _screenBreakpoint < Breakpoint && Variant == DrawerVariant.Responsive)
             {
                 if (Open && PreserveOpenState)
                 {
                     DrawerContainer?.FireDrawersChanged();
-                    StateHasChanged();
+                    isStateChanged = true;
                 }
                 else if (_isOpenWhenLarge != null)
                 {
                     await OpenChanged.InvokeAsync(_isOpenWhenLarge.Value);
                     _isOpenWhenLarge = null;
-                    StateHasChanged();
+                    isStateChanged = true;
                 }
+            }
+
+            _screenBreakpoint = breakpoint;
+            if (isStateChanged)
+            {
+                StateHasChanged();
             }
         }
     }

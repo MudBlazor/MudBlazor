@@ -47,7 +47,7 @@
     </PagerContent>
 </MudTable>
 
-<MudToolBar>
+<div class="d-flex flex-wrap mt-4">
     <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
     <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
     <MudSwitch @bind-Checked="@striped" Color="Color.Tertiary">Striped</MudSwitch>
@@ -57,7 +57,7 @@
         <MudText Inline="true">Selected1: @selectedItem1?.Name</MudText>
         <MudText Inline="true">Selected2: @selectedItem2?.Name</MudText>
     </div>
-</MudToolBar>
+</div>
 
 @code { private bool dense = false;
     private bool hover = true;

@@ -1,12 +1,26 @@
-﻿.mud-picker {
+.mud-picker {
     &.mud-rounded {
         border-radius: var(--mud-default-borderradius);
+    }
+
+    & .mud-picker-actions {
+        flex: 0 0 auto;
+        display: flex;
+        padding: 8px;
+        align-items: center;
+        justify-content: flex-end;
+
+        & > :not(:first-child) {
+            margin-left: 8px;
+        }
     }
 }
 
 .mud-picker-inline {
-    display: inline-flex;
+    display: flex;
+    flex: 1 1 auto;
     position: relative;
+    max-width: 100%;
 
     &.mud-picker-input-button {
         & .mud-input, .mud-input .mud-input-root {

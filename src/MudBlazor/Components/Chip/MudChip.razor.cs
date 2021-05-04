@@ -145,6 +145,11 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// If false, this chip has not been seen before
+        /// </summary>
+        public bool DefaultProcessed { get; set; }
+
+        /// <summary>
         /// Set by MudChipSet
         /// </summary>
         public bool IsSelected

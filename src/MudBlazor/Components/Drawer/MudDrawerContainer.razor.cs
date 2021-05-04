@@ -30,7 +30,7 @@ namespace MudBlazor
 
         internal void FireDrawersChanged() => StateHasChanged();
 
-        internal void Add(MudDrawer drawer) 
+        internal void Add(MudDrawer drawer)
         {
             if (Fixed && !drawer.Fixed)
                 return;
@@ -54,7 +54,7 @@ namespace MudBlazor
             }
             className += $"-{anchor.ToDescriptionString()}";
 
-            className += $" mud-drawer-clipped-{drawer.ClipMode.ToDescriptionString()}";
+            className += $" mud-drawer-{anchor.ToDescriptionString()}-clipped-{drawer.ClipMode.ToDescriptionString()}";
 
             return className;
         }

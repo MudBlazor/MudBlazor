@@ -16,7 +16,8 @@ namespace MudBlazor
         internal object _editingItem = null;
 
         private int _currentPage = 0;
-        private int _rowsPerPage = 10;
+        private int? _rowsPerPage;
+        private bool _isFirstRendered = false;
 
         protected string Classname =>
         new CssBuilder("mud-table")
@@ -33,9 +34,13 @@ namespace MudBlazor
            .AddClass($"mud-table-square", Square)
            .AddClass($"mud-table-sticky-header", FixedHeader)
            .AddClass($"mud-elevation-{Elevation}", !Outlined)
-           .AddClass($"mud-table-small-alignright", RightAlignSmall)
           .AddClass(Class)
         .Build();
+
+        protected string HeadClassname => new CssBuilder("mud-table-head")
+            .AddClass(HeaderClass).Build();
+        protected string FootClassname => new CssBuilder("mud-table-foot")
+            .AddClass(FooterClass).Build();
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow.
@@ -100,10 +105,11 @@ namespace MudBlazor
         [Parameter]
         public int RowsPerPage
         {
-            get => _rowsPerPage;
+            get => _rowsPerPage ?? 10;
             set
             {
-                SetRowsPerPage(value);
+                if (_rowsPerPage == null)
+                    SetRowsPerPage(value);
             }
         }
 
@@ -121,7 +127,8 @@ namespace MudBlazor
                     return;
                 _currentPage = value;
                 InvokeAsync(StateHasChanged);
-                InvokeServerLoadFunc();
+                if (_isFirstRendered)
+                    InvokeServerLoadFunc();
             }
         }
 
@@ -136,9 +143,34 @@ namespace MudBlazor
         [Parameter] public RenderFragment ToolBarContent { get; set; }
 
         /// <summary>
-        /// Add MudTh cells here to define the table header.
+        /// Add MudTh cells here to define the table header. If <see cref="CustomHeader"/> is set, add one or more MudTHeadRow instead.
         /// </summary>
         [Parameter] public RenderFragment HeaderContent { get; set; }
+
+        /// <summary>
+        /// Specify if the header has multiple rows. In that case, you need to provide the MudTHeadRow tags.
+        /// </summary>
+        [Parameter] public bool CustomHeader { get; set; }
+
+        /// <summary>
+        /// Add a class to the thead tag
+        /// </summary>
+        [Parameter] public string HeaderClass { get; set; }
+
+        /// <summary>
+        /// Add MudTd cells here to define the table footer. If<see cref="CustomFooter"/> is set, add one or more MudTFootRow instead.
+        /// </summary>
+        [Parameter] public RenderFragment FooterContent { get; set; }
+
+        /// <summary>
+        /// Specify if the footer has multiple rows. In that case, you need to provide the MudTFootRow tags.
+        /// </summary>
+        [Parameter] public bool CustomFooter { get; set; }
+
+        /// <summary>
+        /// Add a class to the tfoot tag
+        /// </summary>
+        [Parameter] public string FooterClass { get; set; }
 
         /// <summary>
         /// Specifies a group of one or more columns in a table for formatting.
@@ -202,12 +234,23 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string RowStyle { get; set; }
 
+
+        #region --> Obsolete Forwarders for Backwards-Compatiblilty
         /// <summary>
         /// Alignment of the table cell text when breakpoint is smaller than <see cref="Breakpoint" />
         /// </summary>
-        [Parameter] public bool RightAlignSmall { get; set; } = true;
+        [Obsolete("This property is obsolete. And not needed anymore, the cells width/alignment is done automaticly.")] [Parameter] public bool RightAlignSmall { get; set; } = true;
+        #endregion
 
         public abstract TableContext TableContext { get; }
+
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+                _isFirstRendered = true;
+
+            return base.OnAfterRenderAsync(firstRender);
+        }
 
         public void NavigateTo(Page page)
         {
@@ -235,7 +278,8 @@ namespace MudBlazor
             _rowsPerPage = size;
             CurrentPage = 0;
             StateHasChanged();
-            InvokeServerLoadFunc();
+            if (_isFirstRendered)
+                InvokeServerLoadFunc();
         }
 
         protected abstract int NumPages { get; }
@@ -268,6 +312,10 @@ namespace MudBlazor
         internal abstract Task InvokeServerLoadFunc();
 
         internal abstract void FireRowClickEvent(MouseEventArgs args, MudTr mudTr, object item);
+
+        internal abstract void OnHeaderCheckboxClicked(bool value);
+
+        internal abstract bool IsEditable { get; }
 
         public Interfaces.IForm Validator { get; set; } = new TableRowValidator();
     }

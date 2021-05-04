@@ -116,10 +116,10 @@ namespace MudBlazor.Charts
 
             //Bars
             var colorcounter = 0;
-            double barsPerSerie = 0;
+            double barsPerSeries = 0;
             foreach (var item in _series)
             {
-                double gridValueX = horizontalStartSpace + barsPerSerie;
+                double gridValueX = horizontalStartSpace + barsPerSeries;
                 double gridValueY = boundHeight - verticalStartSpace;
 
                 foreach (var dataLine in item.Data)
@@ -138,7 +138,7 @@ namespace MudBlazor.Charts
                     _bars.Add(line);
                 }
 
-                barsPerSerie += 10;
+                barsPerSeries += 10;
 
                 var legend = new SvgLegend()
                 {

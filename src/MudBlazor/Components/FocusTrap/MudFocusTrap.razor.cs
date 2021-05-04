@@ -133,7 +133,7 @@ namespace MudBlazor
             return _root.MudSaveFocusAsync().AsTask();
         }
 
-        bool _shouldRender=true;
+        bool _shouldRender = true;
 
         protected override bool ShouldRender()
         {

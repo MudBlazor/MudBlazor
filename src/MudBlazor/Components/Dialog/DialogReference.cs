@@ -46,7 +46,7 @@ namespace MudBlazor
 
         internal void InjectDialog(object inst)
         {
-            Dialog=inst as MudDialog;
+            Dialog = inst as MudDialog;
         }
 
         internal void InjectRenderFragment(RenderFragment rf)

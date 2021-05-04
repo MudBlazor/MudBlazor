@@ -377,11 +377,11 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
             string validatedValue = null;
-            select.SetParam(x=>x.Validation, (object)new Func<string, bool>(value=>
-            {
-                validatedValue = value; // NOTE: select does only update the value for T string
-                return true;
-            }));
+            select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
+              {
+                  validatedValue = value; // NOTE: select does only update the value for T string
+                  return true;
+              }));
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
             // check initial state
@@ -442,5 +442,62 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.Text.Should().Be("1");
             validatedValue.Should().Be("1");
         }
+
+        /// <summary>
+        /// We filled the multiselect with initial selected values, that must
+        /// show in the value of the input as a comma separated list of strings
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task MultiSelect_Initial_Values()
+        {
+            var comp = ctx.RenderComponent<MultiSelectWithInitialValues>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+
+            // select the input of the select
+            var input = comp.Find("input");
+            //the value of the input
+            var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
+            value.Should().Be("FirstA, SecondA");     
+        }
+
+        #region DataAttribute validation
+        [Test]
+        public async Task TextField_Should_Validate_Data_Attribute_Fail()
+        {
+            var comp = ctx.RenderComponent<SelectValidationDataAttrTest>();
+            Console.WriteLine(comp.Markup);
+            var selectcomp = comp.FindComponent<MudSelect<string>>();
+            var select = selectcomp.Instance;
+            // Select invalid option
+            await comp.InvokeAsync(() => select.SelectOption("Quux"));
+            // check initial state
+            select.Value.Should().Be("Quux");
+            select.Text.Should().Be("Quux");
+            // check validity
+            await comp.InvokeAsync(() => select.Validate());
+            select.ValidationErrors.Should().NotBeEmpty();
+            select.ValidationErrors.Should().HaveCount(1);
+            select.ValidationErrors[0].Should().Equals("Should not be longer than 3");
+        }
+
+        [Test]
+        public async Task TextField_Should_Validate_Data_Attribute_Success()
+        {
+            var comp = ctx.RenderComponent<SelectValidationDataAttrTest>();
+            Console.WriteLine(comp.Markup);
+            var selectcomp = comp.FindComponent<MudSelect<string>>();
+            var select = selectcomp.Instance;
+            // Select valid option
+            await comp.InvokeAsync(() => select.SelectOption("Qux"));
+            // check initial state
+            select.Value.Should().Be("Qux");
+            select.Text.Should().Be("Qux");
+            // check validity
+            await comp.InvokeAsync(() => select.Validate());
+            select.ValidationErrors.Should().BeEmpty();
+        }
+        #endregion
     }
 }

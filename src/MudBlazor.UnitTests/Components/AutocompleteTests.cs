@@ -1,4 +1,8 @@
-﻿#pragma warning disable CS1998 // async without await
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+#pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
 #pragma warning disable BL0005 // Set parameter outside component
 
@@ -6,10 +10,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+using static MudBlazor.UnitTests.TestComponents.AutocompleteSetParametersInitialization;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -40,20 +47,20 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
-            var menu = comp.Find("div.mud-popover");
+
+            //No popover, due it's closed
+            comp.Markup.Should().NotContain("mud-popover");
 
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
-            menu.ClassList.Should().NotContain("mud-popover-open");
             await Task.Delay(100);
-            menu = comp.Find("div.mud-popover");
-            menu.ClassList.Should().NotContain("mud-popover-open");
+
 
             // now let's type a different state to see the popup open
             autocompletecomp.Find("input").Input("Calif");
             await Task.Delay(100);
-            menu = comp.Find("div.mud-popover");
+            var menu = comp.Find("div.mud-popover");
             menu.ClassList.Should().Contain("mud-popover-open");
             Console.WriteLine(comp.Markup);
             var items = comp.FindComponents<MudListItem>().ToArray();
@@ -79,26 +86,25 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var select = comp.FindComponent<MudAutocomplete<string>>();
-            var menu = comp.Find("div.mud-popover");
+
             var inputControl = comp.Find("div.mud-input-control");
 
             // check initial state
-            menu.ClassList.Should().NotContain("mud-popover-open");
+            comp.Markup.Should().NotContain("mud-popover");
 
             // click and check if it has toggled the menu
             inputControl.Click();
-            await Task.Delay(100);
-            menu.ClassList.Should().NotContain("mud-popover-open");
+            comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover"));
 
             // type 3 characters and check if it has toggled the menu
             select.Find("input").Input("ala");
-            await Task.Delay(100);
-            menu.ClassList.Should().Contain("mud-popover-open");
+            await Task.Delay(200);
+            var menu = comp.Find("div.mud-popover");
+            comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
 
             // type 2 characters and check if it has toggled the menu
             select.Find("input").Input("al");
-            await Task.Delay(100);
-            menu.ClassList.Should().NotContain("mud-popover-open");
+            comp.WaitForAssertion(() => menu.ClassList.Should().NotContain("mud-popover-open"));
         }
 
         /// <summary>
@@ -142,9 +148,9 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
-            autocompletecomp.SetParam(a => a.Text, "Austria"); // not part of the U.S. 
+            autocompletecomp.SetParam(a => a.Text, "Austria"); // not part of the U.S.
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
-            // now trigger the coercion by closing the menu 
+            // now trigger the coercion by closing the menu
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
@@ -165,7 +171,7 @@ namespace MudBlazor.UnitTests.Components
             // set a value the search won't find
             autocompletecomp.SetParam(a => a.Text, "Austria");
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
-            // now trigger the coercion by closing the menu 
+            // now trigger the coercion by closing the menu
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Austria");
@@ -194,5 +200,104 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
+
+        /// <summary>
+        /// After press Enter key down, the selected value should be shown in the input value
+        /// </summary>
+
+        [Test]
+        public async Task Autocomplete_after_Enter_Should_show_Selected_Value()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTest1>();
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            var input = autocompletecomp.Find("input");
+
+            //insert "Calif"
+            input.Input("Calif");
+            await Task.Delay(100);
+            var args = new KeyboardEventArgs();
+            args.Key = "Enter";
+
+            //press Enter key
+            input.KeyUp(args);
+            input = autocompletecomp.Find("input");
+            var wrappedElement = ((dynamic)input).WrappedElement;
+            var value = ((IHtmlInputElement)wrappedElement).Value;
+
+            //The value of the input should be California
+            value.Should().Be("California");
+
+            //and the autocomplete it's closed
+            autocomplete.IsOpen.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Based on this try https://try.mudblazor.com/snippet/GacPunvDUyjdUJAh
+        /// and this issue https://github.com/Garderoben/MudBlazor/issues/1235
+        /// </summary>
+
+        [Test]
+        public async Task Autocomplete_Initialize_Value_on_SetParametersAsync()
+        {
+            var comp = ctx.RenderComponent<AutocompleteSetParametersInitialization>();
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            await Task.Delay(100);
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<ExternalList>>();
+            var input = autocompletecomp.Find("input");
+
+            var wrappedElement = ((dynamic)input).WrappedElement;
+            var value = ((IHtmlInputElement)wrappedElement).Value;
+
+            //The value of the input should be California
+            value.Should().Be("One");
+
+
+        }
+
+
+        #region DataAttribute validation
+        [Test]
+        public async Task Autocomplete_Should_Validate_Data_Attribute_Fail()
+        {
+            var comp = ctx.RenderComponent<AutocompleteValidationDataAttrTest>();
+            Console.WriteLine(comp.Markup);
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+            await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
+            // Set invalid option
+            await comp.InvokeAsync(() => autocomplete.SelectOption("Quux"));
+            // check initial state
+            autocomplete.Value.Should().Be("Quux");
+            autocomplete.Text.Should().Be("Quux");
+            // check validity
+            await comp.InvokeAsync(() => autocomplete.Validate());
+            autocomplete.ValidationErrors.Should().NotBeEmpty();
+            autocomplete.ValidationErrors.Should().HaveCount(1);
+            autocomplete.ValidationErrors[0].Should().Equals("Should not be longer than 3");
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_Validate_Data_Attribute_Success()
+        {
+            var comp = ctx.RenderComponent<AutocompleteValidationDataAttrTest>();
+            Console.WriteLine(comp.Markup);
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+            await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
+            // Set valid option
+            await comp.InvokeAsync(() => autocomplete.SelectOption("Qux"));
+            // check initial state
+            autocomplete.Value.Should().Be("Qux");
+            autocomplete.Text.Should().Be("Qux");
+            // check validity
+            await comp.InvokeAsync(() => autocomplete.Validate());
+            autocomplete.ValidationErrors.Should().BeEmpty();
+        }
+        #endregion
     }
 }

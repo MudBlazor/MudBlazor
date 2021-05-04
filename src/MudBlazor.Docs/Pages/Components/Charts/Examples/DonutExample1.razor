@@ -12,10 +12,13 @@
 @code {
     int dataSize = 4;
     public double[] data = { 50, 25, 20, 5 };
-    public string[] labels = { "Fossile", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass", "Hydro", "Geothermal", "Fossile", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
+    public string[] labels = { "Fossile", "Nuclear", "Solar", "Wind", "Oil", "Coal", "Gas", "Biomass",
+                                "Hydro", "Geothermal", "Fossile", "Nuclear", "Solar", "Wind", "Oil",
+                                "Coal", "Gas", "Biomass", "Hydro", "Geothermal" };
 
     Random random = new Random();
-    public void RandomizeData()
+
+    void RandomizeData()
     {
         var new_data = new double[dataSize];
         for (int i = 0; i < new_data.Length; i++)
@@ -26,12 +29,18 @@
 
     void AddDataSize()
     {
-        dataSize = dataSize + 1;
-        RandomizeData();
+        if (dataSize < 20)
+        {
+            dataSize = dataSize + 1;
+            RandomizeData();
+        }
     }
     void RemoveDataSize()
     {
-        dataSize = dataSize - 1;
-        RandomizeData();
+        if (dataSize > 0)
+        {
+            dataSize = dataSize - 1;
+            RandomizeData();
+        }
     }
 }

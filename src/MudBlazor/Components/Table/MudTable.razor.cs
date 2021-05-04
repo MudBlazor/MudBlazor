@@ -41,14 +41,7 @@ namespace MudBlazor
         /// Comma separated list of columns to show if there is no templates defined
         /// </summary>
         [Parameter] public string QuickColumns { get; set; }
-        /// <summary>
-        /// Definition of the footer section
-        /// </summary>
-        [Parameter] public RenderFragment FooterContent { get; set; }
-        /// <summary>
-        /// Gets or sets a value indicating whether table footer is displayed.
-        /// </summary>
-        [Parameter] public bool ShowFooter { get; set; }
+
         // Workaround because "where T : new()" didn't work with Blazor components
         // T must have a default constructor, otherwise we caanot show headers when Items collection
         // is empty
@@ -83,7 +76,7 @@ namespace MudBlazor
                 Columns = context => builder =>
                 {
                     Type myType = context.GetType();
-                    IList<PropertyInfo> propertylist = new List<PropertyInfo>(myType.GetProperties());
+                    IList<PropertyInfo> propertylist = new List<PropertyInfo>(myType.GetProperties().Where(p => p.PropertyType.IsPublic));
 
                     if (quickcolumnslist == null)
                     {
@@ -110,10 +103,13 @@ namespace MudBlazor
 
         private static void BuildMudColumnTemplateItem(T context, RenderTreeBuilder builder, PropertyInfo propinfo)
         {
-            builder.OpenComponent<MudColumn<string>>(0);
-            builder.AddAttribute(1, "Value", propinfo.GetValue(context)?.ToString());
-            builder.AddAttribute(2, "HeaderText", propinfo.Name);
-            builder.CloseComponent();
+            if (propinfo.PropertyType.IsPrimitive || propinfo.PropertyType == typeof(string))
+            {
+                builder.OpenComponent<MudColumn<string>>(0);
+                builder.AddAttribute(1, "Value", propinfo.GetValue(context)?.ToString());
+                builder.AddAttribute(2, "HeaderText", propinfo.Name);
+                builder.CloseComponent();
+            }
         }
         #endregion
         /// <summary>
@@ -328,7 +324,7 @@ namespace MudBlazor
             SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
-        private void OnHeaderCheckboxClicked(bool value)
+        internal override void OnHeaderCheckboxClicked(bool value)
         {
             if (!value)
                 Context.Selection.Clear();
@@ -398,5 +394,7 @@ namespace MudBlazor
         {
             return InvokeServerLoadFunc();
         }
+
+        internal override bool IsEditable { get => RowEditingTemplate != null; }
     }
 }

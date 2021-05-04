@@ -35,20 +35,28 @@
                 }
                 @if (HeaderContent != null || Columns != null)
                 {
-            <thead class="mud-table-head">
-                <MudTr IsHeader="true" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" IsCheckedChanged="@OnHeaderCheckboxClicked" @ref="TableContext.HeaderRow">
-                    @if (HeaderContent != null)
-                    {
-                        @HeaderContent
-                    }
-                    @if (Columns != null)
-                    {
-                        <CascadingValue Value="MudBaseColumn.Rendermode.Header" Name="Mode">
-                            @Columns(Def)
-                        </CascadingValue>
-                    }
-                </MudTr>
-            </thead>
+                    <thead class="@HeadClassname">
+                        @if (CustomHeader)
+                        {
+                            @HeaderContent
+                        }
+                        else
+                        {
+                            <MudTHeadRow IsCheckable="MultiSelection">
+                                @if (HeaderContent != null)
+                                {
+                                    @HeaderContent
+                                }
+                                
+                                @if (Columns != null)
+                                {
+                                    <CascadingValue Value="MudBaseColumn.Rendermode.Header" Name="Mode">
+                                        @Columns(Def)
+                                    </CascadingValue>
+                                }
+                            </MudTHeadRow>
+                        }
+                    </thead>
                 }
                 <tbody class="mud-table-body">
                     @if (CurrentPageItems != null)
@@ -96,22 +104,29 @@
                         }
                     }
                 </tbody>
-                @if (ShowFooter && (FooterContent != null || Columns!=null))
+                @if (FooterContent != null)
                 {
-                <tfoot class="mud-table-head">
-                    <MudTr IsHeader="false" IsEditable="false" @ref="TableContext.FooterRow">
-                        @if (@FooterContent != null)
+                    <tfoot class="@FootClassname">
+                        @if (CustomFooter)
                         {
                             @FooterContent
                         }
-                        @if (Columns != null)
+                        else
                         {
-                            <CascadingValue Value="MudBaseColumn.Rendermode.Footer" Name="Mode">
-                                @Columns(Def)
-                            </CascadingValue>
-                         }
-                    </MudTr>
-                </tfoot>                
+                            <MudTFootRow IsCheckable="MultiSelection">
+                                @if (@FooterContent != null)
+                                {
+                                    @FooterContent
+                                }
+                                @if (Columns != null)
+                                {
+                                    <CascadingValue Value="MudBaseColumn.Rendermode.Footer" Name="Mode">
+                                        @Columns(Def)
+                                    </CascadingValue>
+                                 }
+                            </MudTFootRow>
+                        }
+                    </tfoot>
                 }
             </table>
         </div>

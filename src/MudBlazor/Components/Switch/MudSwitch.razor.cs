@@ -17,7 +17,6 @@ namespace MudBlazor
             .AddClass($"mud-switch-{Color.ToDescriptionString()}")
             .AddClass($"mud-switch-disabled", Disabled)
             .AddClass($"mud-checked", BoolValue)
-          .AddClass(Class)
         .Build();
 
         /// <summary>

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
@@ -13,6 +12,7 @@ namespace MudBlazor
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect
     {
         private HashSet<T> _selectedValues;
+        private bool _dense;
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -32,7 +32,17 @@ namespace MudBlazor
         /// <summary>
         /// If true, compact vertical padding will be applied to all select items.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter]
+        public bool Dense
+        {
+            get { return _dense; }
+            set
+            {
+                // Ensure that when dense is appplied we set the margin on the input controls
+                _dense = value;
+                Margin = _dense ? Margin.Dense : Margin.None;
+            }
+        }
 
         /// <summary>
         /// The Open Select Icon
@@ -71,6 +81,7 @@ namespace MudBlazor
                 if (!MultiSelection)
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
                 else
+                    //Warning. Here the Converter was not set yet
                     SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x)))).AndForget();
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
             }
@@ -98,6 +109,11 @@ namespace MudBlazor
                     //GetFunc = LookupValue,
                 };
             }
+        }
+
+        public MudSelect()
+        {
+            IconSize = Size.Medium;
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -155,9 +171,11 @@ namespace MudBlazor
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            // when multiselection is true, we don't update the text when the value changes. 
-            // instead the Text will be set with a comma separated list of selected values
-            return MultiSelection ? Task.CompletedTask : base.UpdateTextPropertyAsync(updateValue);
+            // when multiselection is true, we return
+            // a comma separated list of selected values
+            return MultiSelection
+                ? SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))))
+                : base.UpdateTextPropertyAsync(updateValue);
         }
 
         internal event Action<HashSet<T>> SelectionChangedFromOutside;
@@ -279,6 +297,12 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            UpdateIcon();
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
             UpdateIcon();
         }
 

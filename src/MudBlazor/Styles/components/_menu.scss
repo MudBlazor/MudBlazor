@@ -12,3 +12,8 @@
         max-width: none;
     }
 }
+
+.mud-menu-openonhover:hover .mud-popover {
+    display: block;
+    animation: mud-animation-fadein 251ms;
+}

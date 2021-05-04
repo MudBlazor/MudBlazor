@@ -338,9 +338,10 @@ namespace MudBlazor
                 yield return Culture.Calendar.AddMonths(firstOfCalendarYear, i);
         }
 
-        private string GetAbbreviatedMonthName(in DateTime month)
+        private string GetAbbreviatedMonthName(DateTime month)
         {
-            return Culture.DateTimeFormat.AbbreviatedMonthNames[month.Month - 1];
+            var calendarMonth = Culture.Calendar.GetMonth(month);
+            return Culture.DateTimeFormat.AbbreviatedMonthNames[calendarMonth - 1];
         }
 
         private string GetMonthClasses(DateTime month)
@@ -350,7 +351,7 @@ namespace MudBlazor
             return null;
         }
 
-        private Typo GetMonthTypo(in DateTime month)
+        private Typo GetMonthTypo(DateTime month)
         {
             if (GetMonthStart(0) == month)
                 return Typo.h5;
@@ -364,7 +365,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private void OnMonthSelected(in DateTime month)
+        private void OnMonthSelected(DateTime month)
         {
             _currentView = OpenTo.Date;
             PickerMonth = month;

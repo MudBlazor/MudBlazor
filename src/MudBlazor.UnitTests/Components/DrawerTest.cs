@@ -8,8 +8,8 @@ using Bunit;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
-using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.Mocks;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -258,6 +258,48 @@ namespace MudBlazor.UnitTests.Components.Components
 
             comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
             comp.FindAll("aside+.mud-drawer-overlay").Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Resize screen to small in two steps: first to SM, then to XS. After restoring the original screen size, the drawer should reopen automatically.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task Responsive_ResizeToSmall_RestoreToLarge_CheckStates()
+        {
+            var srv = ctx.Services.GetService<IResizeListenerService>() as MockResizeListenerService;
+            srv?.ApplyScreenSize(1280, 768);
+
+            var comp = ctx.RenderComponent<DrawerResponsiveTest>(new[]
+            {
+                Parameter(nameof(DrawerResponsiveTest.PreserveOpenState), true)
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            //open drawer
+            comp.Find("button").Click();
+
+            comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeTrue();
+
+            //resize to small, drawer should close
+            srv?.ApplyScreenSize(800, 768);
+
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
+
+            //resize to extra small, drawer should close
+            srv?.ApplyScreenSize(400, 768);
+
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
+
+            //resize to large, drawer should open automatically
+            srv?.ApplyScreenSize(1024, 768);
+
+            comp.FindAll("aside.mud-drawer--open.mud-drawer-responsive").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeTrue();
         }
     }
 }
