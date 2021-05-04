@@ -165,6 +165,10 @@ namespace MudBlazor
 
         private List<MudTabPanel> _panels = new List<MudTabPanel>();
 
+        private string _prevIcon;
+
+        private string _nextIcon;
+
         #region Life cycle management
 
         protected override void OnParametersSet()
@@ -416,16 +420,9 @@ namespace MudBlazor
 
         private void Rerender()
         {
-            if (RightToLeft)
-            {
-                NextIcon = Icons.Filled.ChevronLeft;
-                PrevIcon = Icons.Filled.ChevronRight;
-            }
-            else
-            {
-                NextIcon = Icons.Filled.ChevronRight;
-                PrevIcon = Icons.Filled.ChevronLeft;
-            }
+            _nextIcon = RightToLeft ? PrevIcon : NextIcon;
+            _prevIcon = RightToLeft ? NextIcon : PrevIcon;
+
             GetToolbarContentSize();
             GetAllTabsSize();
             SetScrollButtonVisibility();
@@ -500,9 +497,9 @@ namespace MudBlazor
         {
             var scrollValue = RightToLeft ? _scrollPosition + _toolbarContentSize : _scrollPosition - _toolbarContentSize;
 
-            if (RightToLeft) if (scrollValue > 0) scrollValue = 0;
-            
-            if(!RightToLeft) if (scrollValue < 0) scrollValue = 0;
+            if (RightToLeft && scrollValue > 0) scrollValue = 0;
+
+            if(!RightToLeft && scrollValue < 0) scrollValue = 0;
 
             _scrollPosition = scrollValue;
 

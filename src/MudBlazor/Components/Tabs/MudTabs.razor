@@ -9,7 +9,7 @@
                 @if(_showScrollButtons)
                 {
                     <div class="mud-tabs-scroll-button">
-                        <MudIconButton Icon="@PrevIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollPrev())" Disabled="@_prevButtonDisabled" />
+                        <MudIconButton Icon="@_prevIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollPrev())" Disabled="@_prevButtonDisabled" />
                     </div>
                 }  
                 <div @ref="@_tabsContentSize" class="mud-tabs-toolbar-content">
@@ -47,7 +47,7 @@
                 @if(_showScrollButtons)
                 {
                     <div class="mud-tabs-scroll-button">
-                        <MudIconButton Icon="@NextIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollNext())" Disabled="@_nextButtonDisabled" />
+                        <MudIconButton Icon="@_nextIcon" Color="@ScrollIconColor" OnClick="@((e) => ScrollNext())" Disabled="@_nextButtonDisabled" />
                     </div>
                 }  
             </div>
