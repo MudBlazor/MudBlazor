@@ -1,6 +1,6 @@
 ﻿@page "/components/container"
 
-<DocsPage>
+<DocsPage MaxWidth="MaxWidth.Large">
     <DocsPageHeader Title="Container">
         <Description>A simple component to center content, choose between fluid or fixed.</Description>
     </DocsPageHeader>
@@ -10,20 +10,20 @@
                 <Title>Fluid</Title>
                 <Description>You can set the max width with the MaxWidth enum.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true" Class="demo-container">
+            <SectionContent DarkenBackground="true" FullWidth="true">
                 <ContainerFluidExample />
             </SectionContent>
-            <SectionSource Code="ContainerFluidExample"GitHubFolderName="Container" />
+            <SectionSource Code="ContainerFluidExample" GitHubFolderName="Container" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
                 <Title>Fixed</Title>
-                <Description></Description>
+                <Description>With the <CodeInline>Fixed</CodeInline> property set to true the container will "snap" to the closest breakpoint.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true" Class="demo-container">
+            <SectionContent DarkenBackground="true" FullWidth="true">
                 <ContainedFixedExample />
             </SectionContent>
-            <SectionSource Code="ContainedFixedExample"GitHubFolderName="Container" />
+            <SectionSource Code="ContainedFixedExample" GitHubFolderName="Container" />
         </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

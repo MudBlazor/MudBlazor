@@ -17,7 +17,6 @@ namespace MudBlazor
             .AddClass($"mud-switch-{Color.ToDescriptionString()}")
             .AddClass($"mud-switch-disabled", Disabled)
             .AddClass($"mud-checked", BoolValue)
-          .AddClass(Class)
         .Build();
 
         /// <summary>
@@ -34,12 +33,6 @@ namespace MudBlazor
         /// If true, disables ripple effect.
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
-
-        /// <summary>
-        /// If true, the switch will be disabled.
-        /// </summary>
-        [Parameter] public bool Disabled { get; set; }
-
 
     }
 }

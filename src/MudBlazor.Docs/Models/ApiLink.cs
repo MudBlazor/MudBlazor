@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MudBlazor.Charts;
 
 namespace MudBlazor.Docs.Models
 {
@@ -10,18 +11,18 @@ namespace MudBlazor.Docs.Models
         public static string GetApiLinkFor(Type type)
         {
             if (!s_specialCaseComponents.TryGetValue(type, out var component))
-                component = type.ToString().Replace("MudBlazor.Mud", "").ToLowerInvariant();
-            var href = $"/api/{component}";
+                component = new string(type.ToString().Replace("MudBlazor.Mud", "").TakeWhile(c => c != '`').ToArray()).ToLowerInvariant();
+            var href = $"api/{component}";
             return href;
         }
 
         public static string GetComponentLinkFor(Type type)
         {
             if (!s_specialCaseComponents.TryGetValue(type, out var component))
-                component = type.ToString().Replace("MudBlazor.Mud", "").ToLowerInvariant();
+                component = new string(type.ToString().Replace("MudBlazor.Mud", "").TakeWhile(c => c != '`').ToArray()).ToLowerInvariant();
             if (s_componentLinkTranslation.ContainsKey(component))
                 component = s_componentLinkTranslation[component];
-            var href = $"/components/{component}";
+            var href = $"components/{component}";
             return href;
         }
 
@@ -38,32 +39,38 @@ namespace MudBlazor.Docs.Models
                 return null;
             if (s_inverseSpecialCase.TryGetValue(component, out var type))
                 return type;
+
             var assembly = typeof(MudComponentBase).Assembly;
-            var lookup = new Dictionary<string, Type>();
             foreach (var x in assembly.GetTypes())
-                lookup[x.Name.ToLowerInvariant()] = x;
-            var type_lower = $"mud{component}".ToLowerInvariant();
-            if (!lookup.TryGetValue(type_lower, out type))
-                return null;
-            return type;
+            {
+                if (new string(x.Name.ToLowerInvariant().TakeWhile(c => c != '`').ToArray()) == $"mud{component}".ToLowerInvariant())
+                {
+                    if (x.Name.Contains('`'))
+                    {
+                        return x.MakeGenericType(typeof(T));
+                    }
+                    else if (x.Name.ToLowerInvariant() == $"mud{component}".ToLowerInvariant())
+                    {
+                        return x;
+                    }
+                }
+            }
+
+            return null;
         }
 
         private static Dictionary<Type, string> s_specialCaseComponents =
             new Dictionary<Type, string>()
             {
-                [typeof(MudTable<T>)] = "table",
-                [typeof(MudTextField<T>)] = "textfield",
-                [typeof(MudSelect<T>)] = "select",
-                [typeof(MudInput<T>)] = "input",
-                [typeof(MudAutocomplete<T>)] = "autocomplete",
-                [typeof(MudSlider<T>)] = "slider",
-                [typeof(MudCheckBox<T>)] = "checkbox",
-                [typeof(MudSwitch<T>)] = "switch",
-                [typeof(MudTreeView<T>)] = "treeview",
                 [typeof(MudFab)] = "buttonfab",
                 [typeof(MudIcon)] = "icons",
                 [typeof(MudProgressCircular)] = "progress",
                 [typeof(MudText)] = "typography",
+                [typeof(MudSnackbarProvider)] = "snackbar",
+                [typeof(Bar)] = "barchart",
+                [typeof(Donut)] = "donutchart",
+                [typeof(Line)] = "linechart",
+                [typeof(Pie)] = "piechart",
             };
 
         // this is the inversion of above lookup

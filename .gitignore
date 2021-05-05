@@ -376,8 +376,8 @@ FodyWeavers.xsd
 **/MudBlazorDocs.min.css
 **/MudBlazorDocs.css
 MudBlazor.xml
-src/MudBlazor.Docs/Models/DocStrings.generated.cs
-src/MudBlazor.Docs/Models/Snippets.generated.cs
+**/*.generated.cs
 src/MudBlazor.UnitTests/Generated/_AllApiPages.cs
 src/MudBlazor.UnitTests/Generated/_AllComponents.cs
 src/MudBlazor.Docs/NewFilesToBuild.txt
+/src/MudBlazor.Docs.Server/Properties/ServiceDependencies/mudblazortest - Web Deploy/profile.arm.json

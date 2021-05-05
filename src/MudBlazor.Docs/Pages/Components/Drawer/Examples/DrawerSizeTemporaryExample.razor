@@ -1,0 +1,49 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Left))">Left</MudButton>
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Right))">Right</MudButton>
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Top))">Top</MudButton>
+<MudButton Variant="Variant.Text" OnClick="@(() => OpenDrawer(Anchor.Bottom))">Bottom</MudButton>
+
+<MudDrawer @bind-Open="@open" Width="@width" Height="@height" Anchor="@anchor" Elevation="1" Variant="@DrawerVariant.Temporary">
+    <MudDrawerHeader>
+        <MudText Typo="Typo.h6">My App</MudText>
+    </MudDrawerHeader>
+    <MudNavMenu>
+        <MudNavLink Match="NavLinkMatch.All">Store</MudNavLink>
+        <MudNavLink Match="NavLinkMatch.All">Library</MudNavLink>
+        <MudNavLink Match="NavLinkMatch.All">Community</MudNavLink>
+    </MudNavMenu>
+</MudDrawer>
+
+@code{ 
+    bool open;
+    Anchor anchor;
+    string width, height;
+
+    void OpenDrawer(Anchor anchor)
+    {
+        open = true;
+        this.anchor = anchor;
+
+        switch (anchor)
+        {
+            case Anchor.Left:
+                width = "300px";
+                height = "100%";
+                break;
+            case Anchor.Right:
+                width = "400px";
+                height = "100%";
+                break;
+            case Anchor.Bottom:
+                width = "100%";
+                height = "200px";
+                break;
+            case Anchor.Top:
+                width = "100%";
+                height = "350px";
+                break;
+        }
+    }
+}

@@ -40,7 +40,7 @@
                 <Title>Adornments</Title>
                 <Description>This can be used to add a prefix or a suffix. Text, Icon or Icon Button.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Class="demo-textfield">
+            <SectionContent Outlined="true">
                 <TextFieldAdornmentsExample />
             </SectionContent>
             <SectionSource Code="TextFieldAdornmentsExample" ShowCode="false" GitHubFolderName="TextField" />
@@ -51,7 +51,7 @@
                 <Title>Adornment Color</Title>
                 <Description>The color of the adornment can be changed separately from the textfield.</Description>
             </SectionHeader>
-            <SectionContent Outlined="true" Class="demo-textfield">
+            <SectionContent Outlined="true">
                 <TextFieldAdornmentColorExample />
             </SectionContent>
             <SectionSource Code="TextFieldAdornmentColorExample" ShowCode="false" GitHubFolderName="TextField" />
@@ -75,7 +75,7 @@
             <SectionHeader>
                 <Title>Binding Value Types vs Nullables</Title>
                 <Description>
-                    When you bind value types, the the text field will not be empty even if the user hasn't entered a value yet because a value type always has a value, even when unassigned.
+                    When you bind value types, the text field will not be empty even if the user hasn't entered a value yet because a value type always has a value, even when unassigned.
                     The two-way-bindable <CodeInline>Value</CodeInline> property will automatically assume the default value of that type  (i.e. <CodeInline>0</CodeInline> for <CodeInline>int</CodeInline>).<br />
                     So if you want your text fields to be empty as long as nothing has been entered yet, use the nullable version of that type (i.e. <CodeInline>int?</CodeInline>).
                 </Description>

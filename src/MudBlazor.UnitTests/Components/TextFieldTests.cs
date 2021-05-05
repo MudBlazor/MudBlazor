@@ -4,21 +4,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
-using System.Net.Http;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
 using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents.TextField;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
 
     [TestFixture]
@@ -150,7 +150,7 @@ namespace MudBlazor.UnitTests
             textField.Value.Should().BeNull();
             //More than 200 ms had elapsed, so Value should be updated
             await Task.Delay(150);
-            textField.Value.Should().Be("Some Value");
+            comp.WaitForAssertion(() => textField.Value.Should().Be("Some Value"));
         }
 
         /// <summary>
@@ -187,7 +187,7 @@ namespace MudBlazor.UnitTests
             {
                 var result = Validate(arg);
                 if (result.IsValid)
-                    return new string[0];
+                    return Array.Empty<string>();
                 return result.Errors.Select(e => e.ErrorMessage);
             }
 
@@ -283,6 +283,7 @@ namespace MudBlazor.UnitTests
             var textfield = comp.Instance;
             comp.Find("input").Change("A");
             comp.Find("input").Blur();
+            textfield.Text.Should().Be("A");
             textfield.HasErrors.Should().Be(true);
             textfield.ErrorText.Should().Be("Not a valid number");
         }
@@ -326,6 +327,147 @@ namespace MudBlazor.UnitTests
             var textfield = comp.Instance;
             comp.Find("textarea").InnerHtml.Should().Be(text);
         }
+
+        [Test]
+        public async Task MultilineTextField_Should_UpdateTextOnInput()
+        {
+            var comp = ctx.RenderComponent<MudTextField<string>>();
+            var textfield = comp.Instance;
+            comp.Find("input").Change("A");
+            comp.Find("input").Blur();
+            textfield.Text.Should().Be("A");
+            textfield.Value.Should().Be("A");
+            comp.SetParam(x => x.Lines, 2);
+            comp.Find("textarea").Change("B\nC");
+            comp.Find("textarea").Blur();
+            textfield.Text.Should().Be("B\nC");
+            textfield.Value.Should().Be("B\nC");
+        }
+
+        /// <summary>
+        /// This is based on a bug reported by a user
+        ///
+        /// After editing the second (multi-line) tf it would not accept any updates from the first tf.
+        /// </summary>
+        [Test]
+        public async Task MultiLineTextField_ShouldBe_TwoWayBindable()
+        {
+            var comp = ctx.RenderComponent<MultilineTextfieldBindingTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            var tf1 = comp.FindComponents<MudTextField<string>>()[0].Instance;
+            var tf2 = comp.FindComponents<MudTextField<string>>()[1].Instance;
+            comp.Find("input").Input("Bossmang");
+            comp.Find("input").Blur(); // <-- note: Blur is important here because input does not allow render updates while focused!
+            tf1.Text.Should().Be("Bossmang");
+            tf2.Text.Should().Be("Bossmang");
+            comp.Find("textarea").TrimmedText().Should().Be("Bossmang");
+            comp.Find("textarea").Input("Beltalowda");
+            comp.Find("textarea").Blur(); // Blur is important
+            tf1.Text.Should().Be("Beltalowda");
+            tf2.Text.Should().Be("Beltalowda");
+            comp.Find("textarea").TrimmedText().Should().Be("Beltalowda");
+            comp.Find("input").Input("Beratna");
+            comp.Find("input").Blur(); // Blur is important
+            tf1.Text.Should().Be("Beratna");
+            tf2.Text.Should().Be("Beratna");
+            comp.Find("textarea").TrimmedText().Should().Be("Beratna");
+            Console.WriteLine(comp.Markup);
+        }
+
+
+        #region ValidationAttribute support
+        [Test]
+        public async Task TextField_Should_Validate_Data_Attribute_Fail()
+        {
+            var comp = ctx.RenderComponent<TextFieldValidationDataAttrTest>();
+            Console.WriteLine(comp.Markup);
+            var textfieldcomp = comp.FindComponent<MudTextField<string>>();
+            var textfield = textfieldcomp.Instance;
+            await comp.InvokeAsync(() => textfield.DebounceInterval = 0);
+            // Set invalid text
+            comp.Find("input").Change("Quux");
+            // check initial state
+            textfield.Value.Should().Be("Quux");
+            textfield.Text.Should().Be("Quux");
+            // check validity
+            await comp.InvokeAsync(() => textfield.Validate());
+            textfield.ValidationErrors.Should().NotBeEmpty();
+            textfield.ValidationErrors.Should().HaveCount(1);
+            textfield.ValidationErrors[0].Should().Equals("Should not be longer than 3");
+        }
+
+        [Test]
+        public async Task TextField_Should_Validate_Data_Attribute_Success()
+        {
+            var comp = ctx.RenderComponent<TextFieldValidationDataAttrTest>();
+            Console.WriteLine(comp.Markup);
+            var textfieldcomp = comp.FindComponent<MudTextField<string>>();
+            var textfield = textfieldcomp.Instance;
+            await comp.InvokeAsync(() => textfield.DebounceInterval = 0);
+            // Set valid text
+            comp.Find("input").Change("Qux");
+            // check initial state
+            textfield.Value.Should().Be("Qux");
+            textfield.Text.Should().Be("Qux");
+            // check validity
+            await comp.InvokeAsync(() => textfield.Validate());
+            textfield.ValidationErrors.Should().BeEmpty();
+        }
+
+        #region Custom ValidationAttribute
+        public class CustomFailingValidationAttribute : ValidationAttribute
+        {
+            protected override ValidationResult IsValid(object value,
+                ValidationContext validationContext)
+            {
+                return new ValidationResult("TEST ERROR");
+            }
+        }
+        class TestFailingModel
+        {
+            [CustomFailingValidation]
+            public string Foo { get; set; }
+        }
+        [Test]
+        public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Failing()
+        {
+            var model = new TestFailingModel();
+            var comp = ctx.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be("TEST ERROR");
+            comp.Instance.GetErrorText().Should().Be("TEST ERROR");
+        }
+
+
+        public class CustomThrowingValidationAttribute : ValidationAttribute
+        {
+            protected override ValidationResult IsValid(object value,
+                ValidationContext validationContext)
+            {
+                throw new Exception("This is a test exception");
+            }
+        }
+        class TestThrowingModel
+        {
+            [CustomThrowingValidation]
+            public string Foo { get; set; }
+        }
+        [Test]
+        public async Task TextField_Should_HaveCorrectMessageWithCustomAttr_Throwing()
+        {
+            var model = new TestThrowingModel();
+            var comp = ctx.RenderComponent<MudTextField<string>>(ComponentParameter.CreateParameter("For", (Expression<Func<string>>)(() => model.Foo)));
+            await comp.InvokeAsync(() => comp.Instance.Validate());
+            comp.Instance.Error.Should().BeTrue();
+            comp.Instance.ValidationErrors.Should().HaveCount(1);
+            comp.Instance.ValidationErrors[0].Should().Be("An unhandled exception occured: This is a test exception");
+            comp.Instance.GetErrorText().Should().Be("An unhandled exception occured: This is a test exception");
+        }
+        #endregion
+        #endregion
     }
 
 }

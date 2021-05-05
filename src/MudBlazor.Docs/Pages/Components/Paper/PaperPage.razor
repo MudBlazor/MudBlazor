@@ -1,14 +1,26 @@
 ﻿@page "/components/paper"
 
 <DocsPage>
-    <DocsPageHeader Title="Paper" />
+    <DocsPageHeader Title="Paper" SubTitle="Paper is a useful flexible to shape other components without needing css or style">
+        <Description>
+            It is generally used for foregrounds however can also be combined with <MudLink Href="/features/flex">Flex</MudLink> for layout.
+        </Description>
+    </DocsPageHeader>
     <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Material Design</Title>
+                <Description>
+                    Paper can represent a surface from the <MudLink Href="https://material.io/design/environment/surfaces.html#material-environment">Material Foundation</MudLink>. Even if you are not designing something "material", the foundations of Material Design are a pillar of MudBlazor and provide useful insight into how many components operate.
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
                 <Title>Component</Title>
                 <Description></Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-paper">
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <PaperComponentExample />
             </SectionContent>
             <SectionSource Code="PaperComponentExample" GitHubFolderName="Paper" />
@@ -18,7 +30,7 @@
                 <Title>Variants</Title>
                 <Description>If you need an outlined surface or a square, use the variant property.</Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" DisplayFlex="true" Class="demo-paper">
+            <SectionContent DarkenBackground="true" DisplayFlex="true">
                 <PaperVariantsExample />
             </SectionContent>
             <SectionSource Code="PaperVariantsExample" GitHubFolderName="Paper" />

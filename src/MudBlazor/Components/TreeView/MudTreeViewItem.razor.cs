@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
@@ -62,6 +63,11 @@ namespace MudBlazor
 
         [Parameter] public HashSet<T> Items { get; set; }
 
+        /// <summary>
+        /// Command executed when the user clicks on the CommitEdit Button.
+        /// </summary>
+        [Parameter] public ICommand Command { get; set; }
+
         [Parameter]
         public bool Expanded { get; set; }
 
@@ -117,7 +123,7 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
-        bool HasChild => ChildContent != null || (MudTreeRoot != null && Items != null && Items.Count() != 0);
+        bool HasChild => ChildContent != null || (MudTreeRoot != null && Items != null && Items.Count != 0);
 
         protected bool IsChecked
         {
@@ -173,6 +179,10 @@ namespace MudBlazor
             }
 
             await OnClick.InvokeAsync(ev);
+            if (Command?.CanExecute(Value) ?? false)
+            {
+                Command.Execute(Value);
+            }
         }
 
         protected Task OnItemExpanded(bool expanded)

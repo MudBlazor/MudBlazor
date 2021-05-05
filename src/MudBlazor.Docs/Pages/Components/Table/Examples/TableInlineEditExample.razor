@@ -1,8 +1,10 @@
-﻿@using MudBlazor.Docs.Data
-@inject ISnackbar Snackbar
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
+@inject ISnackbar Snackbar
 
-<MudTable Items="@PeriodicTable.GetElements()" Dense="@dense" Hover="@hover" ReadOnly="@ronly" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" CommitEditCommand="@samplecmd">
+<MudTable Items="@Elements" Dense="@dense" Hover="@hover" ReadOnly="@ronly" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem" SortLabel="Sort By" CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudToolBarSpacer />
@@ -31,18 +33,18 @@
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <RowEditingTemplate>
-        <MudTd>@context.Number</MudTd>
-        <MudTd>
-            <MudTextField @bind-Value="@context.Sign" Required/>
+        <MudTd DataLabel="Nr">@context.Number</MudTd>
+        <MudTd DataLabel="Sign">
+            <MudTextField @bind-Value="@context.Sign" Required />
         </MudTd>
-        <MudTd>
-            <MudTextField @bind-Value="@context.Name" Required/>
+        <MudTd DataLabel="Name">
+            <MudTextField @bind-Value="@context.Name" Required />
         </MudTd>
-        <MudTd>
-            <MudTextField @bind-Value="@context.Position" Required/>
+        <MudTd DataLabel="Position">
+            <MudNumericField @bind-Value="@context.Position" Required Min="1" />
         </MudTd>
-        <MudTd>
-            <MudTextField @bind-Value="@context.Molar" Required/>
+        <MudTd DataLabel="Molar mass">
+            <MudTextField @bind-Value="@context.Molar" Required />
         </MudTd>
     </RowEditingTemplate>
     <PagerContent>
@@ -54,35 +56,31 @@
 <MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
 <MudText Inline="true">Selected: @selectedItem?.Name</MudText>
 
-@code { private bool dense = false;
-            private bool hover = true;
-            private bool ronly = false;
-            private string searchString = "";
-            private Element selectedItem = null;
-            private HashSet<Element> selectedItems = new HashSet<Element>();
+@code {
+    private bool dense = false;
+    private bool hover = true;
+    private bool ronly = false;
+    private string searchString = "";
+    private Element selectedItem = null;
+    private HashSet<Element> selectedItems = new HashSet<Element>();
 
-            protected override void OnInitialized()
-            {
-                base.OnInitialized();
-                samplecmd = new Utilities.SampleCommand(SampleCommand_Executed);
-            }
+    private IEnumerable<Element> Elements = new List<Element>();
 
-            private bool FilterFunc(Element element)
-            {
-                if (string.IsNullOrWhiteSpace(searchString))
-                    return true;
-                if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                    return true;
-                if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-                    return true;
-                if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
-                    return true;
-                return false;
-            }
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    } 
 
-            private Utilities.SampleCommand samplecmd;
-
-            private void SampleCommand_Executed(object parameter)
-            {
-                Snackbar.Add($"Commit Edit Command Executed for parameter '{parameter.ToString()}'");
-            } }
+    private bool FilterFunc(Element element)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{element.Number} {element.Position} {element.Molar}".Contains(searchString))
+            return true;
+        return false;
+    }
+}

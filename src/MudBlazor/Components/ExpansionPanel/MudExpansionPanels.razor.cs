@@ -29,6 +29,21 @@ namespace MudBlazor
         [Parameter] public int Elevation { set; get; } = 1;
 
         /// <summary>
+        /// If true, removes vertical padding from all panels' childcontent.
+        /// </summary>
+        [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
+        /// If true, the left and right padding is removed from all panels' childcontent.
+        /// </summary>
+        [Parameter] public bool DisableGutters { get; set; }
+
+        /// <summary>
+        /// If true, the borders around eatch panel will be removed.
+        /// </summary>
+        [Parameter] public bool DisableBorders { get; set; }
+
+        /// <summary>
         /// Child content of component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
@@ -60,6 +75,7 @@ namespace MudBlazor
                     last.NextPanelExpanded = panel.IsExpanded;
                 last = panel;
             }
+            StateHasChanged();
         }
 
         public void CloseAllExcept(MudExpansionPanel panel)

@@ -6,11 +6,20 @@ namespace MudBlazor
     public partial class MudNavGroup : MudComponentBase
     {
         protected string Classname =>
+        new CssBuilder("mud-nav-group")
+          .AddClass(Class)
+        .Build();
+
+        protected string ButtonClassname =>
         new CssBuilder("mud-nav-link")
           .AddClass($"mud-ripple", !DisableRipple)
           .AddClass("mud-expanded", Expanded)
-          .AddClass(Class)
         .Build();
+
+        protected string IconClassname =>
+        new CssBuilder("mud-nav-link-icon")
+          .AddClass($"mud-nav-link-icon-default", IconColor == Color.Default)
+          .Build();
 
         [Parameter] public string Title { get; set; }
 
@@ -20,9 +29,9 @@ namespace MudBlazor
         [Parameter] public string Icon { get; set; }
 
         /// <summary>
-        /// The color of the icon. It supports the theme colors.
+        /// The color of the icon. It supports the theme colors, default value uses the themes drawer icon color.
         /// </summary>
-        [Parameter] public Color IconColor { get; set; } = Color.Inherit;
+        [Parameter] public Color IconColor { get; set; } = Color.Default;
 
         /// <summary>
         /// If true, the button will be disabled.
@@ -34,10 +43,26 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
 
+        private bool _expanded;
         /// <summary>
-        /// If true, expands the nav group, otherwise collapse it. Setting this prop enables control over the panel.
+        /// If true, expands the nav group, otherwise collapse it. 
+        /// Two-way bindable
         /// </summary>
-        [Parameter] public bool Expanded { get; set; }
+        [Parameter]
+        public bool Expanded
+        {
+            get => _expanded;
+            set
+            {
+                if (_expanded == value)
+                    return;
+
+                _expanded = value;
+                ExpandedChanged.InvokeAsync(_expanded);
+            }
+        }
+
+        [Parameter] public EventCallback<bool> ExpandedChanged { get; set; }
 
         /// <summary>
         /// If true, hides expand-icon at the end of the NavGroup.
@@ -57,7 +82,8 @@ namespace MudBlazor
 
         protected void ExpandedToggle()
         {
-            Expanded = !Expanded;
+            _expanded = !Expanded;
+            ExpandedChanged.InvokeAsync(_expanded);
         }
     }
 }

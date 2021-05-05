@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
@@ -84,7 +82,7 @@ namespace MudBlazor
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
 
         /// <summary>
-        ///  Will adjust vertical spacing. 
+        ///  Will adjust vertical spacing.
         /// </summary>
         [Parameter] public Margin Margin { get; set; } = Margin.None;
 
@@ -97,8 +95,6 @@ namespace MudBlazor
         ///  A multiline input (textarea) will be shown, if set to more than one line.
         /// </summary>
         [Parameter] public int Lines { get; set; } = 1;
-
-        [Inject] public IJSRuntime JSRuntime { get; set; }
 
         [Parameter]
         public string Text { get; set; }
@@ -117,7 +113,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.   
+        /// Text change hook for descendants. Called when Text needs to be refreshed from current Value property.
         /// </summary>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
@@ -138,26 +134,55 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
+        protected bool _isFocused;
+
+        protected bool _shouldRenderBeForced;
+        //if you press Enter or Arrows, the input should re-render, because
+        //the user is accepting a value
+        private static bool ShouldRenderBeForced(string key) => key == "Enter"
+                                                             || key == "ArrowDown"
+                                                             || key == "ArrowUp";
+
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
+            _isFocused = false;
             Touched = true;
             BeginValidateAfter(OnBlur.InvokeAsync(obj));
         }
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
-        protected virtual void onKeyDown(KeyboardEventArgs obj) => OnKeyDown.InvokeAsync(obj).AndForget();
+        protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
+        {
+            _isFocused = true;
+            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
+            OnKeyDown.InvokeAsync(obj).AndForget();
+        }
+
+        [Parameter] public bool KeyDownPreventDefault { get; set; }
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
-        protected virtual void onKeyPress(KeyboardEventArgs obj) => OnKeyPress.InvokeAsync(obj).AndForget();
+        protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
+        {
+            OnKeyPress.InvokeAsync(obj).AndForget();
+        }
+
+        [Parameter] public bool KeyPressPreventDefault { get; set; }
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
-        protected virtual void onKeyUp(KeyboardEventArgs obj) => OnKeyUp.InvokeAsync(obj).AndForget();
+        protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
+        {
+            _isFocused = true;
+            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
+            OnKeyUp.InvokeAsync(obj).AndForget();
+        }
+
+        [Parameter] public bool KeyUpPreventDefault { get; set; }
 
         /// <summary>
-        /// Fired when the Value property changes. 
+        /// Fired when the Value property changes.
         /// </summary>
         [Parameter]
         public EventCallback<T> ValueChanged { get; set; }
@@ -172,7 +197,7 @@ namespace MudBlazor
             set => _value = value;
         }
 
-        protected async Task SetValueAsync(T value, bool updateText = true)
+        protected virtual async Task SetValueAsync(T value, bool updateText = true)
         {
             if (!EqualityComparer<T>.Default.Equals(Value, value))
             {
@@ -185,7 +210,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Value change hook for descendants. Called when Value needs to be refreshed from current Text property.  
+        /// Value change hook for descendants. Called when Value needs to be refreshed from current Text property.
         /// </summary>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {

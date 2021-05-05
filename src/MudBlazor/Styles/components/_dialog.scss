@@ -43,14 +43,20 @@
     color: var(--mud-palette-text-primary);
     background-color: var(--mud-palette-surface);
     border-radius: var(--mud-default-borderradius);
-    -webkit-animation: mud-scale-up-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
-    animation: mud-scale-up-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+    -webkit-animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+    animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
     box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2), 0px 24px 38px 3px rgba(0,0,0,0.14), 0px 9px 46px 8px rgba(0,0,0,0.12);
 
     & .mud-dialog-title {
         flex: 0 0 auto;
         margin: 0;
-        padding: 16px 24px;
+        padding: 16px 24px;        
+        border-top-left-radius: var(--mud-default-borderradius);
+        border-top-right-radius: var(--mud-default-borderradius);
+
+        + * > .mud-dialog-content {
+            border-radius: 0
+        }
 
         & .mud-button-root {
             top: 8px;
@@ -64,7 +70,8 @@
         flex: 1 1 auto;
         padding: 8px 24px;
         -webkit-overflow-scrolling: touch;
-
+        border-top-left-radius: var(--mud-default-borderradius);
+        border-top-right-radius: var(--mud-default-borderradius);
 
         &.mud-dialog-no-side-padding {
             padding: 12px 0px;
@@ -77,6 +84,8 @@
         padding: 8px;
         align-items: center;
         justify-content: flex-end;
+        border-bottom-left-radius: var(--mud-default-borderradius);
+        border-bottom-right-radius: var(--mud-default-borderradius);
 
         & > :not(:first-child) {
             margin-left: 8px;
@@ -122,3 +131,36 @@
     border-radius: 0;
 }
 
+@-webkit-keyframes mud-open-dialog-center {
+    0% {
+        opacity: 0;
+    }
+
+    1% {
+        -webkit-transform: scale(0.5);
+        transform: scale(0.5);
+        opacity: 1;
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+@keyframes mud-open-dialog-center {
+    0% {
+        opacity: 0;
+    }
+
+    1% {
+        -webkit-transform: scale(0.5);
+        transform: scale(0.5);
+        opacity: 1;
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}

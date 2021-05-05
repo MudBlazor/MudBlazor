@@ -3,23 +3,14 @@
 #pragma warning disable BL0005 // Set parameter outside component
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
-using FluentValidation;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.TestComponents.ChipSet;
-using MudBlazor.UnitTests.TestComponents.TextField;
+using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
 
     [TestFixture]
@@ -187,6 +178,25 @@ namespace MudBlazor.UnitTests
             comp.FindAll("div.mud-chip")[1].Click();
             comp.FindAll("p")[0].TrimmedText().Should().Be("Corn flakes, Salad");
             string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Corn flakes, Salad");
+        }
+
+
+        [Test]
+        public async Task ChipSet_MultiSelection_LateDefaultChipsShouldBeInitiallySelected()
+        {
+            var comp = ctx.RenderComponent<ChipSetLateDefaultTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // check that only one item is present
+            var chipset = comp.FindComponent<MudChipSet>();
+            comp.FindAll("div.mud-chip").Count.Should().Be(1);
+            chipset.Instance.SelectedChips.Length.Should().Be(1);
+            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Primary");
+            // select extra item
+            comp.FindAll("button")[0].Click();
+            // check that extra item is selected
+            comp.FindAll("div.mud-chip").Count.Should().Be(2);
+            string.Join(", ", chipset.Instance.SelectedChips.Select(x => x.Text).OrderBy(x => x)).Should().Be("Extra Chip, Primary");
         }
     }
 

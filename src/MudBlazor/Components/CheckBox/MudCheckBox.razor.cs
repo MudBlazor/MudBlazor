@@ -17,7 +17,6 @@ namespace MudBlazor
             .AddClass($"mud-checkbox-{Color.ToDescriptionString()}")
             .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple)
             .AddClass($"mud-disabled", Disabled)
-          .AddClass(Class)
         .Build();
 
         /// <summary>
@@ -34,11 +33,6 @@ namespace MudBlazor
         /// If true, disables ripple effect.
         /// </summary>
         [Parameter] public bool DisableRipple { get; set; }
-
-        /// <summary>
-        /// If true, the checkbox will be disabled.
-        /// </summary>
-        [Parameter] public bool Disabled { get; set; }
 
         /// <summary>
         /// Child content of component.

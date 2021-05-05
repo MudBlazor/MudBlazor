@@ -24,25 +24,31 @@
         width: 100%;
     }
 
-    & > div {
-        &.mud-input.mud-input-text {
-            margin-top: 16px;
-        }
+    & > .mud-input-control-input-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
 
-        &.mud-input.mud-input-filled {
-        }
+        & > div {
+            &.mud-input.mud-input-text {
+                margin-top: 16px;
+            }
 
-        &.mud-input.mud-input-outlined {
+            &.mud-input.mud-input-filled {
+            }
+
+            &.mud-input.mud-input-outlined {
+            }
         }
     }
 
-    & > .mud-input-label-outlined {
+    & > .mud-input-control-input-container > .mud-input-label-outlined {
         &.mud-input-label-inputcontrol {
             line-height: 18px;
         }
     }
 
-    & > .mud-input-label-inputcontrol {
+    & > .mud-input-control-input-container > .mud-input-label-inputcontrol {
         color: var(--mud-palette-text-secondary);
         padding: 0;
         font-size: 1rem;
@@ -50,7 +56,7 @@
         line-height: 1;
         letter-spacing: 0.00938em;
         z-index: 0;
-        pointer-events:none;
+        pointer-events: none;
 
         &.mud-disabled {
             color: var(--mud-palette-text-disabled);
@@ -61,8 +67,40 @@
         }
     }
 
-    &.mud-input-required > .mud-input-label::after {
+    &.mud-input-required > .mud-input-control-input-container > .mud-input-label::after {
         content: "*";
+    }
+
+    &.mud-input-number-control {
+        & input::-webkit-outer-spin-button,
+        & input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        & input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        & .mud-input-numeric-spin {
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+
+            & button {
+                padding: 2px;
+                min-width: unset;
+                min-height: unset;
+            }
+        }
+
+        & .mud-input-underline .mud-input-numeric-spin button {
+            padding: 2px 0;
+        }
     }
 }
 

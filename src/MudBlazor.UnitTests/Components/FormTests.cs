@@ -2,21 +2,17 @@
 #pragma warning disable IDE1006 // leading underscore
 
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Bunit;
-using Bunit.Rendering;
-using Bunit.TestDoubles;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Examples;
-using MudBlazor.Services;
-using MudBlazor.UnitTests.Mocks;
+using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.Form;
 using NUnit.Framework;
 
-namespace MudBlazor.UnitTests
+namespace MudBlazor.UnitTests.Components
 {
 
     [TestFixture]
@@ -124,7 +120,7 @@ namespace MudBlazor.UnitTests
             textField.ErrorText.Should().Be("Invalid");
 
             // note: this logic is invalid, so it was removed. Validaton funcs are always called
-            // the validation func must validate non-required empty fields as valid. 
+            // the validation func must validate non-required empty fields as valid.
             //
             //// value is not required, so don't call the validation func on empty text
             //await comp.InvokeAsync(() => textField.Value = "");
@@ -165,7 +161,7 @@ namespace MudBlazor.UnitTests
             form.IsValid.Should().Be(true);
 
             // note: this logic is invalid, so it was removed. Validaton funcs are always called
-            // the validation func must validate non-required empty fields as valid. 
+            // the validation func must validate non-required empty fields as valid.
             //
             //// value is not required, so don't call the validation func on empty text
             //await comp.InvokeAsync(() => textField.Value = "");
@@ -389,7 +385,7 @@ namespace MudBlazor.UnitTests
             checkbox.Find("input").Change(true);
             comp.WaitForAssertion(() => form.IsValid.Should().BeTrue());
             comp.WaitForState(() => form.Errors.Length == 0);
-            // click reset 
+            // click reset
             var resetButton = buttons[2];
             resetButton.Find("button").Click();
             comp.WaitForState(() => form.Errors.Length == 0);
@@ -461,7 +457,7 @@ namespace MudBlazor.UnitTests
             datepicker.Error.Should().BeFalse();
             datepicker.ErrorText.Should().BeNullOrEmpty();
             // clear selection
-            comp.SetParam(x=>x.Date, null);
+            comp.SetParam(x => x.Date, null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Required");
@@ -480,14 +476,14 @@ namespace MudBlazor.UnitTests
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
             var datepicker = comp.FindComponent<MudDatePicker>().Instance;
-            dateComp.SetParam(x=>x.Validation, new Func<DateTime?, string>( date=> date != null && date.Value.Year >= 2000 ? null : "Year must be >= 2000"));
+            dateComp.SetParam(x => x.Validation, new Func<DateTime?, string>(date => date != null && date.Value.Year >= 2000 ? null : "Year must be >= 2000"));
             dateComp.Find("input").Change("2001-01-31");
             form.IsValid.Should().Be(true);
             form.Errors.Length.Should().Be(0);
             datepicker.Error.Should().BeFalse();
             datepicker.ErrorText.Should().BeNullOrEmpty();
             // set invalid date:
-            comp.SetParam(x => x.Date, (DateTime?)new DateTime(1999,1,1));
+            comp.SetParam(x => x.Date, (DateTime?)new DateTime(1999, 1, 1));
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Year must be >= 2000");
@@ -543,12 +539,84 @@ namespace MudBlazor.UnitTests
             datepicker.Error.Should().BeFalse();
             datepicker.ErrorText.Should().BeNullOrEmpty();
             // set invalid date:
-            comp.SetParam(x => x.Time, (TimeSpan?)new TimeSpan(0,17,05,00)); // "17:05"
+            comp.SetParam(x => x.Time, (TimeSpan?)new TimeSpan(0, 17, 05, 00)); // "17:05"
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
             form.Errors[0].Should().Be("Only full hours allowed");
             datepicker.Error.Should().BeTrue();
             datepicker.ErrorText.Should().Be("Only full hours allowed");
+        }
+
+        /// <summary>
+        /// Testing the functionality of the EditForm example from the docs.
+        /// </summary>
+        [Test]
+        public async Task EditFormExample_EmptyValidation()
+        {
+            var comp = ctx.RenderComponent<EditFormExample>();
+            Console.WriteLine(comp.Markup);
+            // same effect as clicking the validate button
+            comp.Find("form").Submit();
+            var textfields = comp.FindComponents<MudTextField<string>>();
+            textfields[0].Instance.HasErrors.Should().BeTrue();
+            textfields[0].Instance.ErrorText.Should().Be("The Username field is required.");
+            textfields[1].Instance.HasErrors.Should().BeTrue();
+            textfields[1].Instance.ErrorText.Should().Be("The Email field is required.");
+            textfields[2].Instance.HasErrors.Should().BeTrue();
+            textfields[2].Instance.ErrorText.Should().Be("The Password field is required.");
+            textfields[3].Instance.HasErrors.Should().BeTrue();
+            textfields[3].Instance.ErrorText.Should().Be("The Password2 field is required.");
+        }
+
+        /// <summary>
+        /// Testing the functionality of the EditForm example from the docs.
+        /// </summary>
+        [Test]
+        public async Task EditFormExample_FillInValues()
+        {
+            var comp = ctx.RenderComponent<EditFormExample>();
+            //Console.WriteLine(comp.Markup);
+            comp.FindAll("input")[0].Change("Rick Sanchez");
+            comp.FindAll("input")[0].Blur();
+            comp.FindAll("input")[1].Change("rick.sanchez@citadel-of-ricks.com");
+            comp.FindAll("input")[1].Blur();
+            comp.FindAll("input")[2].Change("Wabalabadubdub1234!");
+            comp.FindAll("input")[2].Blur();
+            comp.FindAll("input")[3].Change("Wabalabadubdub1234!");
+            comp.FindAll("input")[3].Blur();
+            // same effect as clicking the validate button
+            comp.Find("form").Submit();
+            var textfields = comp.FindComponents<MudTextField<string>>();
+            textfields[0].Instance.ErrorText.Should().Be("Name length can't be more than 8.");
+            textfields[0].Instance.HasErrors.Should().BeTrue();
+            textfields[1].Instance.HasErrors.Should().BeFalse();
+            textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[2].Instance.HasErrors.Should().BeFalse();
+            textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
+            textfields[3].Instance.HasErrors.Should().BeFalse();
+            textfields[3].Instance.ErrorText.Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Ensure validation attributes aren't incorrectly called with `null` context.
+        /// </summary>
+        /// <see cref="https://github.com/Garderoben/MudBlazor/issues/1229"/>
+        [Test]
+        public async Task EditForm_Validation_NullContext()
+        {
+            var comp = ctx.RenderComponent<EditFormIssue1229>();
+            // Check first run attribute
+            EditFormIssue1229.TestAttribute.ValidationContextOnCall.Should().BeEmpty();
+            // Trigger change
+            var input = comp.Find("input");
+            input.Change("Test");
+            input.Blur();
+            // Verify context was set
+            EditFormIssue1229.TestAttribute.ValidationContextOnCall.Should().NotBeEmpty();
+            foreach (var vc in EditFormIssue1229.TestAttribute.ValidationContextOnCall)
+            {
+                vc.Should().NotBeNull();
+            }
         }
     }
 }

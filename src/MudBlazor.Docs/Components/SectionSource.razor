@@ -1,21 +1,24 @@
 ﻿<div class="docs-section-source @Class">
     @if (!NoToolbar)
     {
-    <div class="docs-content-toolbar">
-        @if (!String.IsNullOrEmpty(Title))
-        { 
-            <MudText Class="pt-4 pb-1">@Title</MudText>
-        }
-        <div class="flex-grow-1"></div>
-        @if (!HideButtons)
-        {
+    <div style="display: flex; justify-content: flex-end">
+        <div class="docs-content-toolbar">
+            @if (!String.IsNullOrEmpty(Title))
+            { 
+                <MudText Class="pt-4 pb-1">@Title</MudText>
+            }
+            <div class="flex-grow-1"></div>
+
             <MudTooltip Text="@TooltipSourceCodeText" Placement="Placement.Top">
                 <MudIconButton Icon="@Icons.Material.Filled.Code" OnClick="OnShowCode" />
             </MudTooltip>
 
-            <MudTooltip Text="Edit on TryMudBlazor" Placement="Placement.Top">
-                <MudIconButton Icon="@Icons.Material.Filled.Create" OnClick="EditOnTryMudBlazor" />
-            </MudTooltip>
+            @if (!HideEditOnTryMudBlazor)
+            {
+                <MudTooltip Text="Edit on TryMudBlazor" Placement="Placement.Top">
+                    <MudIconButton Icon="@Icons.Material.Filled.Create" OnClick="EditOnTryMudBlazor" />
+                </MudTooltip>
+            }
 
             @if (!String.IsNullOrEmpty(Code))
             {
@@ -29,8 +32,7 @@
                     <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Link="@GitHubSourceCode" Target="_blank" />
                 </MudTooltip>
             }
-        }
-
+        </div>
     </div>
     }
     <div class="docs-source-code @(ShowCode? "docs-show-code" : "docs-hide-code")">

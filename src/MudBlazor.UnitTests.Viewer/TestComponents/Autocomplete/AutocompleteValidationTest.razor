@@ -1,4 +1,6 @@
-﻿<MudGrid>
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudGrid>
     <MudItem xs="12" sm="6" md="4">
         <MudForm @ref="form">
             <MudAutocomplete T="string" Label="US States" @bind-Value="value" SearchFunc="@Search" Required="true" 

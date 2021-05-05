@@ -22,7 +22,7 @@ namespace MudBlazor
     internal class ScrollListener : IScrollListener, IDisposable
     {
         private readonly IJSRuntime _js;
-        private DotNetObjectReference<ScrollListener> _dotnetRef;
+        private DotNetObjectReference<ScrollListener> _dotNetRef;
 
         /// <summary>
         /// The CSS selector to which the scroll event will be attached
@@ -79,10 +79,10 @@ namespace MudBlazor
         /// </summary>        
         private async ValueTask Start()
         {
-            _dotnetRef = DotNetObjectReference.Create(this);
+            _dotNetRef = DotNetObjectReference.Create(this);
             await _js.InvokeVoidAsync
-                ("scrollListener.listenForScroll",
-                           _dotnetRef,
+                ("mudScrollListener.listenForScroll",
+                           _dotNetRef,
                            Selector);
         }
 
@@ -94,7 +94,7 @@ namespace MudBlazor
             try
             {
                 await _js.InvokeVoidAsync(
-                    "scrollListener.cancelListener",
+                    "mudScrollListener.cancelListener",
                                Selector);
             }
             catch { /* ignore */ }
@@ -102,7 +102,7 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            _dotnetRef?.Dispose();
+            _dotNetRef?.Dispose();
         }
     }
 }

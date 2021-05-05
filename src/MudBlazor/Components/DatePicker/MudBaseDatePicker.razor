@@ -11,7 +11,7 @@
     @<CascadingValue Value="@this" IsFixed="true">
         <MudPickerToolbar Class="mud-picker-datepicker-toolbar" DisableToolbar="@DisableToolbar" Orientation="@Orientation" Color="@Color">
             <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-year" OnClick="OnYearClick">@GetFormattedYearString()</MudButton>
-            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="OnFormattedDateClick">@GetFormattedDateString()</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Inherit" Class="mud-button-date" OnClick="OnFormattedDateClick">@GetTitleDateString()</MudButton>
         </MudPickerToolbar>
         <MudPickerContent>
         <div class="mud-picker-calendar-content @($"mud-picker-calendar-content-{MaxMonthColumns ?? DisplayMonths}")">
@@ -30,7 +30,7 @@
                             {
                                 var year = i;
                                 <div class="mud-picker-year" id="@(_componentId + year)" @onclick="(() => OnYearClicked(year))"  @onclick:stopPropagation="true">
-                                    <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@year</MudText>
+                                    <MudText Typo="@GetYearTypo(year)" Class="@GetYearClasses(year)">@GetCalendarYear(year)</MudText>
                                 </div>
                             }
                         </div>
@@ -41,7 +41,7 @@
                             <div class="mud-picker-calendar-header-switch">
                                 <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" OnClick="OnPreviousYearClick"/>
                                 <div class="mud-picker-slide-transition mud-picker-calendar-header-transition" @onclick="OnYearClick"  @onclick:stopPropagation="true">
-                                    <MudText Typo="Typo.body1" Align="Align.Center">@PickerMonth?.Year</MudText>
+                                    <MudText Typo="Typo.body1" Align="Align.Center">@GetCalendarYear(PickerMonth?.Year ?? DateTime.Today.Year)</MudText>
                                 </div>
                                 <MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="OnNextYearClick"/>
                             </div>
@@ -50,7 +50,7 @@
                             @foreach (var month in GetAllMonths())
                             {
                                 <div class="mud-picker-month" @onclick="(() => OnMonthSelected(month))" @onclick:stopPropagation="true">
-                                    <MudText Typo="@GetMonthTypo(month)" Class="@GetMonthClasses(month)">@GetAbbreviatedMontName(month)</MudText>
+                                    <MudText Typo="@GetMonthTypo(month)" Class="@GetMonthClasses(month)">@GetAbbreviatedMonthName(month)</MudText>
                                 </div>
                             }
                         </div>
@@ -96,9 +96,10 @@
                                         <button @key="day" type="button" style="--day-id: @tempId;"
                                                 class="mud-button-root mud-icon-button mud-ripple mud-ripple-icon mud-picker-calendar-day @GetDayClasses(tempMonth, day)"
                                                 @onclick="(() => { var d = day; OnDayClicked(d); })" 
+                                                @onclick:stopPropagation="true"
                                                 onmouseover="this.closest('.mud-picker-calendar-content').style.setProperty('--selected-day', @tempId);"
                                                 disabled="@((day < MinDate) || (day > MaxDate))">
-                                            <p class="mud-typography mud-typography-body2 mud-inherit-text">@day.Day</p>
+                                            <p class="mud-typography mud-typography-body2 mud-inherit-text">@GetCalendarDayOfMonth(day)</p>
                                         </button>
                                     }
                                 }

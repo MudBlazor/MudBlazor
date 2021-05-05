@@ -1,5 +1,7 @@
 ﻿// Copyright (c) 2019 Blazored (https://github.com/Blazored)
 // Copyright (c) 2020 Jonny Larsson (https://github.com/Garderoben/MudBlazor)
+// Copyright (c) 2021 improvements by Meinrad Recheis
+// See https://github.com/Blazored
 // License: MIT
 
 using System;
@@ -67,6 +69,7 @@ namespace MudBlazor
             }
             var dialogInstanceId = Guid.NewGuid();
             DialogReference dialogReference = null;
+            dialogReference = new DialogReference(dialogInstanceId, this);
             var dialogContent = new RenderFragment(builder =>
             {
                 var i = 0;
@@ -75,19 +78,20 @@ namespace MudBlazor
                 {
                     builder.AddAttribute(i++, parameter.Key, parameter.Value);
                 }
+                builder.AddComponentReferenceCapture(1, inst => { dialogReference.InjectDialog(inst); });
                 builder.CloseComponent();
             });
             var dialogInstance = new RenderFragment(builder =>
             {
                 builder.OpenComponent<MudDialogInstance>(0);
+                builder.SetKey(dialogInstanceId);
                 builder.AddAttribute(1, "Options", options);
                 builder.AddAttribute(2, "Title", title);
                 builder.AddAttribute(3, "Content", dialogContent);
                 builder.AddAttribute(4, "Id", dialogInstanceId);
                 builder.CloseComponent();
             });
-            dialogReference = new DialogReference(dialogInstanceId, dialogInstance, this);
-
+            dialogReference.InjectRenderFragment(dialogInstance);
             OnDialogInstanceAdded?.Invoke(dialogReference);
 
             return dialogReference;

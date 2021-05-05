@@ -1,12 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudPicker<T> : MudFormComponent<T,string>
+    public partial class MudPicker<T> : MudFormComponent<T, string>
     {
         enum PickerVerticalPosition
         {
@@ -25,9 +26,7 @@ namespace MudBlazor
         }
 
         public MudPicker() : base(new Converter<T, string>()) { }
-        protected MudPicker(Converter<T, string> converter) : base(converter) {}
-
-        [Inject] private IDomService DomService { get; set; }
+        protected MudPicker(Converter<T, string> converter) : base(converter) { }
 
         [Inject] private IBrowserWindowSizeProvider WindowSizeListener { get; set; }
 
@@ -71,6 +70,10 @@ namespace MudBlazor
         protected string PickerInputClass =>
             new CssBuilder("mud-input-input-control").AddClass(Class)
             .Build();
+
+        protected string ActionClass => new CssBuilder("mud-picker-actions")
+          .AddClass(ClassActions)
+        .Build();
 
         /// <summary>
         /// Sets the icon of the input text field
@@ -183,6 +186,21 @@ namespace MudBlazor
         }
         private string _text;
 
+        /// <summary>
+        /// CSS class that will be applied to the action buttons container
+        /// </summary>
+        [Parameter] public string ClassActions { get; set; }
+
+        /// <summary>
+        /// Define the action buttons here
+        /// </summary>
+        [Parameter] public RenderFragment PickerActions { get; set; }
+
+        /// <summary>
+        ///  Will adjust vertical spacing.
+        /// </summary>
+        [Parameter] public Margin Margin { get; set; } = Margin.None;
+
         protected async Task SetTextAsync(string value, bool callback)
         {
             if (_text != value)
@@ -212,10 +230,15 @@ namespace MudBlazor
                 Open();
         }
 
-        public void Close()
+        public void Close(bool submit = true)
         {
             IsOpen = false;
+
+            if (submit)
+                Submit();
+
             StateHasChanged();
+
             OnClosed();
         }
 
@@ -224,6 +247,18 @@ namespace MudBlazor
             IsOpen = true;
             StateHasChanged();
             OnOpened();
+        }
+
+        private void CloseOverlay() => Close(PickerActions == null);
+
+        protected virtual void Submit() { }
+
+        public virtual void Clear(bool close = true)
+        {
+            if (close && PickerVariant != PickerVariant.Static)
+            {
+                Close(false);
+            }
         }
 
         private bool _pickerSquare;
@@ -260,6 +295,8 @@ namespace MudBlazor
 
         protected void ToggleState()
         {
+            if (Disabled)
+                return;
             if (IsOpen)
             {
                 IsOpen = false;
@@ -279,7 +316,7 @@ namespace MudBlazor
             if (PickerVariant == PickerVariant.Inline)
             {
                 await DeterminePosition();
-                await DomService.ChangeCss(_pickerInlineRef, PickerInlineClass);
+                await _pickerInlineRef.MudChangeCssAsync(PickerInlineClass);
             }
         }
 
@@ -301,13 +338,13 @@ namespace MudBlazor
 
         private async Task DeterminePosition()
         {
-            if (WindowSizeListener == null || DomService == null)
+            if (WindowSizeListener == null)
             {
                 _pickerVerticalPosition = PickerVerticalPosition.Below;
                 return;
             }
             var size = await WindowSizeListener.GetBrowserWindowSize();
-            var clientRect = await DomService.GetBoundingClientRect(_pickerInlineRef);
+            var clientRect = await _pickerInlineRef.MudGetBoundingClientRectAsync();
             if (size == null || clientRect == null)
             {
                 _pickerVerticalPosition = PickerVerticalPosition.Below;

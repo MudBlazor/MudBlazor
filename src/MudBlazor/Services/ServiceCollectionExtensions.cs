@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -29,7 +31,9 @@ namespace MudBlazor.Services
         {
             if (configuration == null)
                 configuration = new SnackbarConfiguration();
-            services.TryAddScoped<ISnackbar>(builder => new SnackbarService(configuration));
+
+            services.TryAddScoped<ISnackbar>(builder =>
+                new SnackbarService(builder.GetService<NavigationManager>(), configuration));
             return services;
         }
 
@@ -80,6 +84,47 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Adds a IResizeObserver as a Transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <param name="options">Defines ResizeObserverOptions for this instance</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddMudBlazorResizeObserver(this IServiceCollection services, Action<ResizeObserverOptions> options)
+        {
+            services.TryAddTransient<IResizeObserver, ResizeObserver>();
+            services.Configure(options);
+            return services;
+        }
+
+        /// <summary>
+        /// Adds a IResizeObserver as a Transient instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <param name="options">Defines ResizeObserverOptions for this instance</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddMudBlazorResizeObserver(this IServiceCollection services, ResizeObserverOptions options = null)
+        {
+            if (options == null)
+                options = new ResizeObserverOptions();
+            services.AddMudBlazorResizeObserver(o =>
+            {
+                o = options;
+            });
+            return services;
+        }
+
+        /// <summary>
+        /// Adds a IResizeObserverFactory as a Singelton instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
+        public static IServiceCollection AddMudBlazorResizeObserverFactory(this IServiceCollection services)
+        {
+            services.TryAddSingleton<IResizeObserverFactory, ResizeObserverFactory>();
+            return services;
+        }
+
+        /// <summary>
         /// Adds ScrollManager as a transient instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -100,13 +145,12 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds Dom manipulation service as a Scoped instance.
+        /// Adds JsApi as a transient instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
-        /// <returns>Continues the IServiceCollection chain.</returns>
-        public static IServiceCollection AddMudBlazorDom(this IServiceCollection services)
+        public static IServiceCollection AddMudBlazorJsApi(this IServiceCollection services)
         {
-            services.TryAddScoped<IDomService, DomService>();
+            services.TryAddTransient<IJsApiService, JsApiService>();
             return services;
         }
 
@@ -124,9 +168,11 @@ namespace MudBlazor.Services
                 .AddMudBlazorDialog()
                 .AddMudBlazorSnackbar(configuration.SnackbarConfiguration)
                 .AddMudBlazorResizeListener(configuration.ResizeOptions)
+                .AddMudBlazorResizeObserver(configuration.ResizeObserverOptions)
+                .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
-                .AddMudBlazorDom();
+                .AddMudBlazorJsApi();
         }
 
         /// <summary>
@@ -145,9 +191,11 @@ namespace MudBlazor.Services
                 .AddMudBlazorDialog()
                 .AddMudBlazorSnackbar(options.SnackbarConfiguration)
                 .AddMudBlazorResizeListener(options.ResizeOptions)
+                .AddMudBlazorResizeObserver(options.ResizeObserverOptions)
+                .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
-                .AddMudBlazorDom();
+                .AddMudBlazorJsApi();
         }
     }
 }

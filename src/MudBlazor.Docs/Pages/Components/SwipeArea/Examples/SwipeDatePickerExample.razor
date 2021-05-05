@@ -1,0 +1,24 @@
+﻿@using System.Globalization
+@namespace MudBlazor.Docs.Examples
+
+<MudSwipeArea OnSwipe="@OnSwipe">
+    <MudDatePicker PickerVariant="PickerVariant.Static" Date="@(DateTime.Today.AddDays(1))" @bind-PickerMonth="@_pickerMonth" />
+</MudSwipeArea>
+
+@code{ 
+    DateTime? _pickerMonth = DateTime.Now.StartOfMonth(CultureInfo.CurrentCulture);
+
+    public void OnSwipe(SwipeDirection direction)
+    {
+        if (direction == SwipeDirection.LeftToRight)
+        {
+            _pickerMonth = _pickerMonth.Value.AddMonths(-1);
+            StateHasChanged();
+        }
+        else if (direction == SwipeDirection.RightToLeft)
+        {
+            _pickerMonth = _pickerMonth.Value.AddMonths(1);
+            StateHasChanged();
+        }
+    }
+}

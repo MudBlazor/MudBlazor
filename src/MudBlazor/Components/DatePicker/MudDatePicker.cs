@@ -9,6 +9,7 @@ namespace MudBlazor
 {
     public class MudDatePicker : MudBaseDatePicker
     {
+        private DateTime? _selectedDate;
 
         /// <summary>
         /// Fired when the DateFormat changes.
@@ -32,11 +33,18 @@ namespace MudBlazor
                 _value = date;
                 if (updateValue)
                 {
+                    Converter.GetError = false;
                     await SetTextAsync(Converter.Set(_value), false);
                 }
                 await DateChanged.InvokeAsync(_value);
                 BeginValidate();
             }
+        }
+
+        protected override Task DateFormatChanged(string newFormat)
+        {
+            Touched = true;
+            return SetTextAsync(Converter.Set(_value), false);
         }
 
         protected override Task StringValueChanged(string value)
@@ -51,7 +59,7 @@ namespace MudBlazor
             var b = new CssBuilder("mud-day");
             if (day < GetMonthStart(month) || day > GetMonthEnd(month))
                 return b.AddClass("mud-hidden").Build();
-            if (Date?.Date == day)
+            if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToDescriptionString()}").Build();
             if (day == DateTime.Today)
                 return b.AddClass("mud-current").AddClass($"mud-{Color.ToDescriptionString()}-text").Build();
@@ -60,18 +68,61 @@ namespace MudBlazor
 
         protected override async void OnDayClicked(DateTime dateTime)
         {
-            await SetDateAsync(dateTime, true);
-
-            if (PickerVariant != PickerVariant.Static)
+            _selectedDate = dateTime;
+            if (PickerActions == null)
             {
-                await Task.Delay(ClosingDelay);
-                Close();
+                Submit();
+
+                if (PickerVariant != PickerVariant.Static)
+                {
+                    await Task.Delay(ClosingDelay);
+                    Close(false);
+                }
             }
         }
 
-        protected override string GetFormattedDateString()
+        protected override void OnOpened()
         {
-            return Date?.ToString("ddd, dd MMM", Culture) ?? "";
+            _selectedDate = null;
+
+            base.OnOpened();
+        }
+
+        protected override async void Submit()
+        {
+            if (_selectedDate == null)
+                return;
+
+            await SetDateAsync(_selectedDate, true);
+            _selectedDate = null;
+        }
+
+        public override void Clear(bool close = true)
+        {
+            Date = null;
+            _selectedDate = null;
+            base.Clear();
+        }
+
+        protected override string GetTitleDateString()
+        {
+            if (_selectedDate != null)
+                return _selectedDate.Value.ToString(TitleDateFormat ?? "ddd, dd MMM", Culture) ?? "";
+            return Date?.ToString(TitleDateFormat ?? "ddd, dd MMM", Culture) ?? "";
+        }
+
+        protected override DateTime GetCalendarStartOfMonth()
+        {
+            var date = StartMonth ?? Date ?? DateTime.Today;
+            return date.StartOfMonth(Culture);
+        }
+
+        protected override int GetCalendarYear(int year)
+        {
+            var date = Date ?? DateTime.Today;
+            var diff = date.Year - year;
+            var calenderYear = Culture.Calendar.GetYear(date);
+            return calenderYear - diff;
         }
     }
 }

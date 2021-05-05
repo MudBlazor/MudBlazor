@@ -1,9 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using MudBlazor.Extensions;
-using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -18,8 +15,18 @@ namespace MudBlazor
 
         protected string InputTypeString => InputType.ToDescriptionString();
 
+        protected override bool ShouldRender()
+        {
+            //when it keeps the focus, it doesn't render to avoid unnecessary trips to the server
+            //except the user presses key enter, so the result must be displayed
+            if (_shouldRenderBeForced) { return true; }
+            if (Immediate && _isFocused) { return false; }
+            return true;
+        }
+
         protected Task OnInput(ChangeEventArgs args)
         {
+            _isFocused = true;
             return Immediate ? SetTextAsync(args?.Value as string) : Task.CompletedTask;
         }
 
@@ -37,23 +44,41 @@ namespace MudBlazor
 
         public override ValueTask FocusAsync()
         {
-            return JSRuntime.InvokeVoidAsync("elementReference.focus", _elementReference);
+            return _elementReference.FocusAsync();
         }
 
         public override ValueTask SelectAsync()
         {
-            return JSRuntime.InvokeVoidAsync("mbSelectHelper.select", _elementReference);
+            return _elementReference.MudSelectAsync();
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
-            return JSRuntime.InvokeVoidAsync("mbSelectHelper.selectRange", _elementReference, pos1, pos2);
+            return _elementReference.MudSelectRangeAsync(pos1, pos2);
         }
 
         /// <summary>
         /// The short hint displayed in the input before the user enters a value.
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
+
+
+        /// <summary>
+        /// Invokes the callback when the Up arrow button is clicked when the input is set to <see cref="InputType.Number"/>.
+        /// Note: use the optimized control <see cref="MudNumericField{T}"/> if you need to deal with numbers.
+        /// </summary>
+        [Parameter] public EventCallback OnIncrement { get; set; }
+
+        /// <summary>
+        /// Invokes the callback when the Down arrow button is clicked when the input is set to <see cref="InputType.Number"/>.
+        /// Note: use the optimized control <see cref="MudNumericField{T}"/> if you need to deal with numbers.
+        /// </summary>
+        [Parameter] public EventCallback OnDecrement { get; set; }
+
+        /// <summary>
+        /// Hides the spin buttons for <see cref="MudNumericField{T}"/>
+        /// </summary>
+        [Parameter] public bool HideSpinButtons { get; set; }
     }
 
     public class MudInputString : MudInput<string> { }

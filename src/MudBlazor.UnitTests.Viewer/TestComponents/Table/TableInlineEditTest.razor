@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTable @ref="_table" T="string" Items="items" @bind-SelectedItem="selectedItem">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd>
+            <MudTextField T="string" @bind-Value="@context"></MudTextField>
+        </MudTd>
+    </RowEditingTemplate>
+</MudTable>
+
+@code {
+    MudTable<string> _table;
+    private string selectedItem = null;
+    string[] items = new string[] { "A", "B", "C" };
+
+    public MudTable<string> Table => _table;
+}

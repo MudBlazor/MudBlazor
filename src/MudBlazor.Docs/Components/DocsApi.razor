@@ -18,7 +18,7 @@
                 <Title>Properties</Title>
             </SectionHeader>
             <SectionContent Class="docs-content-api" FullWidth="true">
-                <MudTable Items="@Properties" Elevation="0" Class="mx-0">
+                <MudTable Items="@Properties" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm">
                     <HeaderContent>
                         <MudTh>Name</MudTh>
                         <MudTh>Type</MudTh>
@@ -26,10 +26,10 @@
                         <MudTh>Description</MudTh>
                     </HeaderContent>
                     <RowTemplate>
-                        <MudTd DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
-                        <MudTd DataLabel="Type">@context.Type</MudTd>
-                        <MudTd DataLabel="Default">@PresentDefaultValue(context.Default)</MudTd>
-                        <MudTd DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
+                        <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
+                        <MudTd Class="docs-content-api-cell" DataLabel="Type">@context.Type</MudTd>
+                        <MudTd Class="docs-content-api-cell" DataLabel="Default">@PresentDefaultValue(context.Default)</MudTd>
+                        <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
                     </RowTemplate>
                 </MudTable>
             </SectionContent>
@@ -45,18 +45,22 @@
 
     [Parameter] public Type Type { get; set; }
 
-
-    IEnumerable<ApiProperty> Properties {
-        get {
+    private IEnumerable<ApiProperty> Properties
+    {
+        get
+        {
             foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>())
             {
-                yield return new ApiProperty()
+                if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0)
                 {
-                    Name=info.Name,
-                    Type = info.PropertyType.ConvertToCSharpSource(),
-                    Description = GetDescription(Type, info),
-                    Default = GetDefaultValue(info),
-                };
+                    yield return new ApiProperty()
+                    {
+                        Name=info.Name,
+                        Type = info.PropertyType.ConvertToCSharpSource(),
+                        Description = GetDescription(Type, info),
+                        Default = GetDefaultValue(info),
+                    };
+                }
             }
         }
     }

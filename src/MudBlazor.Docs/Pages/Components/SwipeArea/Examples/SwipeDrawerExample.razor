@@ -1,0 +1,34 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSwipeArea OnSwipe="@OnSwipe" Style="width: 100%;">
+    <MudPaper Height="200px" Style="overflow:hidden; position:relative;">
+        <MudDrawer @bind-Open="@_drawerOpen" Fixed="false" Elevation="1" Variant="@DrawerVariant.Persistent" Color="Color.Primary">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">My App</MudText>
+            </MudDrawerHeader>
+            <MudNavMenu>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Dashboard" IconColor="Color.Inherit">Store</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Dashboard" IconColor="Color.Inherit">Library</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Dashboard" IconColor="Color.Inherit">Community</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+    </MudPaper>
+</MudSwipeArea>
+
+@code{
+    bool _drawerOpen;
+
+    public void OnSwipe(SwipeDirection direction)
+    {
+        if (direction == SwipeDirection.LeftToRight && !_drawerOpen)
+        {
+            _drawerOpen = true;
+            StateHasChanged();
+        }
+        else if (direction == SwipeDirection.RightToLeft && _drawerOpen)
+        {
+            _drawerOpen = false;
+            StateHasChanged();
+        }
+    }
+}

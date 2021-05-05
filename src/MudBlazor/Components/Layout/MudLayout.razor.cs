@@ -3,20 +3,20 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudLayout : MudComponentBase
+    public partial class MudLayout : MudDrawerContainer
     {
-        protected string Classname =>
+        protected override string Classname =>
         new CssBuilder("mud-layout")
             .AddClass("mud-application-layout-rtl", RightToLeft)
-            .AddClass(Class)
+            .AddClass(base.Classname)
             .Build();
 
-        /// <summary>
-        /// Child content of component.
-        /// </summary>
-        [Parameter] public RenderFragment ChildContent { get; set; }
-
         private bool _rtl;
+
+        public MudLayout()
+        {
+            Fixed = true;
+        }
 
         /// <summary>
         /// If set, changes the layout to RightToLeft.
@@ -33,13 +33,6 @@ namespace MudBlazor
                     StateHasChanged();
                 }
             }
-        }
-
-        public DrawerContainer DrawerContainer { get; private set; } = new DrawerContainer();
-
-        public void FireDrawersChanged()
-        {
-            StateHasChanged();
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 
@@ -71,6 +70,7 @@ namespace MudBlazor
                 if (!MultiSelection)
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
                 else
+                    //Warning. Here the Converter was not set yet
                     SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x)))).AndForget();
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
             }
@@ -98,6 +98,11 @@ namespace MudBlazor
                     //GetFunc = LookupValue,
                 };
             }
+        }
+
+        public MudSelect()
+        {
+            IconSize = Size.Medium;
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -147,15 +152,19 @@ namespace MudBlazor
 
         protected override Task UpdateValuePropertyAsync(bool updateText)
         {
-            // Select does not support updating the value through the Text property at all!
+            // For MultiSelection of non-string T's we don't update the Value!!!
+            if (typeof(T) == typeof(string) || !MultiSelection)
+                base.UpdateValuePropertyAsync(updateText);
             return Task.CompletedTask;
         }
 
         protected override Task UpdateTextPropertyAsync(bool updateValue)
         {
-            // when multiselection is true, we don't update the text when the value changes. 
-            // instead the Text will be set with a comma separated list of selected values
-            return MultiSelection ? Task.CompletedTask : base.UpdateTextPropertyAsync(updateValue);
+            // when multiselection is true, we return
+            // a comma separated list of selected values
+            return MultiSelection
+                ? SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))))
+                : base.UpdateTextPropertyAsync(updateValue);
         }
 
         internal event Action<HashSet<T>> SelectionChangedFromOutside;
@@ -184,7 +193,7 @@ namespace MudBlazor
         /// <summary>
         /// Sets the maxheight the select can have when open.
         /// </summary>
-        [Parameter] public int? MaxHeight { get; set; }
+        [Parameter] public int MaxHeight { get; set; } = 300;
 
         /// <summary>
         /// Sets the direction the select menu should be.
@@ -230,6 +239,7 @@ namespace MudBlazor
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
             }
+            BeginValidate();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
@@ -277,10 +287,12 @@ namespace MudBlazor
         {
             base.OnInitialized();
             UpdateIcon();
-            if (MultiSelection && MaxHeight == null)
-            {
-                MaxHeight = 300;
-            }
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+            UpdateIcon();
         }
 
         public void CheckGenericTypeMatch(object select_item)

@@ -9,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudDialogInstance
+    public partial class MudDialogInstance : MudComponentBase
     {
         private DialogOptions _options = new DialogOptions();
         [CascadingParameter] private MudDialogProvider Parent { get; set; }
@@ -34,7 +34,6 @@ namespace MudBlazor
 
         private string Position { get; set; }
         private string DialogMaxWidth { get; set; }
-        private string Class { get; set; }
         private bool DisableBackdropClick { get; set; }
         private bool NoHeader { get; set; }
         private bool CloseButton { get; set; }
@@ -152,6 +151,7 @@ namespace MudBlazor
             .AddClass(DialogMaxWidth, !FullScreen)
             .AddClass("mud-dialog-width-full", FullWidth && !FullScreen)
             .AddClass("mud-dialog-fullscreen", FullScreen)
+            .AddClass(Class)
         .Build();
 
         private bool SetHideHeader()
@@ -189,8 +189,8 @@ namespace MudBlazor
 
         private void HandleBackgroundClick()
         {
-            if (DisableBackdropClick) return;
-
+            if (DisableBackdropClick) 
+                return;
             Cancel();
         }
 
@@ -200,7 +200,14 @@ namespace MudBlazor
             if (dialog == null)
                 return;
             _dialog = dialog;
+            Class = dialog.Class;
+            Style = dialog.Style;
             TitleContent = dialog.TitleContent;
+            StateHasChanged();
+        }
+
+        public void ForceRender()
+        {
             StateHasChanged();
         }
     }

@@ -1,11 +1,13 @@
-﻿@namespace MudBlazor.Docs.Examples
-@using MudBlazor.Docs.Data
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
 
-<MudTable Items="GetElements()">
+<MudTable Items="@GetElements()">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudToolBarSpacer />
-        <MudTextField @bind-Value="@searchTerm" Placeholder="Search" Adornment="Adornment.End" AdornmentIcon="@Icons.Filled.Search" IconSize="Size.Medium" Class="mt-0" Immediate="true"></MudTextField>
+        <MudTextField @bind-Value="_searchTerm" Placeholder="Search" Adornment="Adornment.End" AdornmentIcon="@Icons.Filled.Search" IconSize="Size.Medium" Class="mt-0" Immediate="true"></MudTextField>
     </ToolBarContent>
 
     <HeaderContent>
@@ -14,17 +16,20 @@
 
     <RowTemplate>
         <MudTd DataLabel="Name">
-            <MudHighlighter Text="@context.Name" HighlightedText="@searchTerm" />
+            <MudHighlighter Text="@context.Name" HighlightedText="@_searchTerm" />
         </MudTd>
     </RowTemplate>
 
 </MudTable>
 
 @code {
-    private string searchTerm = "ch";
+    private string _searchTerm = "H";
+    private IEnumerable<Element> _elements = new List<Element>();
 
-    private IEnumerable<Element> GetElements()
+    protected override async Task OnInitializedAsync()
     {
-        return  PeriodicTable.GetElements(searchTerm);
+        _elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
+
+    private IEnumerable<Element> GetElements() => _elements.Where(e => e.Name.Contains(_searchTerm));
 }

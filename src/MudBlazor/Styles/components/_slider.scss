@@ -23,103 +23,55 @@
             outline: none;
         }
 
-        &:disabled {
+        @include slider-track {
+            margin: 10px 0;
+            border-radius: 1px;
+            width: 100%;
+            height: 2px;
+        }
+
+        @include slider-thumb {
+            appearance: none;
+            -webkit-appearance: none;
+            border: none;
+            border-radius: 50%;
+            height: 2px;
+            width: 2px;
+            transform: scale(6, 6);
+            transition: box-shadow 0.2s;
+        }
+
+        @each $color in $mud-palette-colors {
+            &.mud-slider-#{$color} {
+                @include slider-track {
+                    background-color: rgba(var(--mud-palette-#{$color}-rgb), 0.30);
+                }
+                @include slider-thumb {
+                    background-color: var(--mud-palette-#{$color});
+                }
+
+                &:active{
+                    @include slider-thumb {
+                        box-shadow: 0 0 0 2px rgba(var(--mud-palette-#{$color}-rgb), 0.24) !important;
+                    }
+                }
+            }
+        }
+
+        &:disabled{
             cursor: default;
             opacity: 0.38;
-        }
 
-        &::-webkit-slider-runnable-track {
-            margin: 10px 0;
-            border-radius: 1px;
-            width: 100%;
-            height: 2px;
-            background-color: rgba(89, 74, 226, 0.30);
-        }
+            @include slider-track {
+                background-color: var(--mud-palette-text-disabled);
+            }
 
-        &::-moz-range-track {
-            margin: 10px 0;
-            border-radius: 1px;
-            width: 100%;
-            height: 2px;
-            background-color: rgba(89, 74, 226, 0.30);
-        }
-
-        &::-webkit-slider-thumb {
-            appearance: none;
-            -webkit-appearance: none;
-            border: none;
-            border-radius: 50%;
-            height: 2px;
-            width: 2px;
-            background-color: var(--mud-palette-primary);
-            transform: scale(6, 6);
-            transition: box-shadow 0.2s;
-        }
-
-        &::-moz-range-thumb {
-            appearance: none;
-            -webkit-appearance: none;
-            border: none;
-            border-radius: 50%;
-            height: 2px;
-            width: 2px;
-            background-color: var(--mud-palette-primary);
-            transform: scale(6, 6);
-            transition: box-shadow 0.2s;
-        }
-
-        &:focus::-webkit-slider-thumb {
-            box-shadow: 0 0 0 2px rgba(89,74,226, 0.04);
-        }
-
-        &:focus::-moz-range-thumb {
-            box-shadow: 0 0 0 2px rgba(89,74,226, 0.04);
-        }
-
-        &:focus::-webkit-slider-thumb {
-            box-shadow: 0 0 0 2px rgba(89,74,226, 0.12);
-        }
-
-        &:focus::-moz-range-thumb {
-            box-shadow: 0 0 0 2px rgba(89,74,226, 0.12);
-        }
-
-        &:focus::-webkit-slider-thumb {
-            box-shadow: 0 0 0 2px rgba(89,74,226, 0.16);
-        }
-
-        &:focus::-moz-range-thumb {
-            box-shadow: 0 0 0 2px rgba(89,74,226, 0.16);
-        }
-
-        &:active::-webkit-slider-thumb {
-            box-shadow: 0 0 0 2px rgba(89,74,226, 0.24) !important;
-        }
-
-        &:active::-moz-range-thumb {
-            box-shadow: 0 0 0 2px rgba(89,74,226, 0.24) !important;
-        }
-
-        &:disabled::-webkit-slider-runnable-track {
-            background-color: rgba( 0, 0, 0, 0.38);
-        }
-
-        &:disabled::-moz-range-runnable-track {
-            background-color: rgba( 0, 0, 0, 0.38);
-        }
-
-        &:disabled::-webkit-slider-thumb {
-            background-color: rgb( 0, 0, 0);
-            color: rgb(255, 255, 255);
-            box-shadow: 0 0 0 1px rgb( 255, 255, 255) !important;
-            transform: scale(4, 4);
-        }
-
-        &:disabled::-moz-range-thumb {
-            background-color: rgb( 0, 0, 0);
-            color: rgb(255, 255, 255);
-            box-shadow: 0 0 0 1px rgb( 255, 255, 255) !important;
-            transform: scale(4, 4);
+            @include slider-thumb {
+                background-color: rgb( 0, 0, 0);
+                color: rgb(255, 255, 255);
+                box-shadow: 0 0 0 1px rgb( 255, 255, 255) !important;
+                transform: scale(4, 4);
+            }
         }
     }
 }

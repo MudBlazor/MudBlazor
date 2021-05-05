@@ -1,7 +1,9 @@
-﻿@using MudBlazor.Docs.Data
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
+@inject HttpClient httpClient
 
-<MudTable Items="@Elements" Dense="@dense" Hover="@hover" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem">
+<MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudToolBarSpacer />
@@ -25,21 +27,29 @@
         <MudTablePager />
     </PagerContent>
 </MudTable>
-<MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
-<MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
-<MudText Inline="true">Selected: @selectedItem?.Name</MudText>
+<div class="d-flex flex-wrap mt-4">
+    <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
+    <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
+    <MudSwitch @bind-Checked="@striped" Color="Color.Tertiary">Striped</MudSwitch>
+    <MudSwitch @bind-Checked="@bordered" Color="Color.Warning">Bordered</MudSwitch>
+    <MudToolBarSpacer />
+    <MudText Inline="true" Class="align-self-center" Style="min-width:200px;">Selected: @selectedItem?.Name</MudText>
+</div>
 
 @code {
     private bool dense = false;
     private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
     private string searchString = "";
     private Element selectedItem = null;
-    private IEnumerable<Element> Elements = null;
     private HashSet<Element> selectedItems = new HashSet<Element>();
+
+    private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()
     {
-        Elements = await PeriodicTable.GetElementsAsync();
+        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
 
     private bool FilterFunc(Element element)

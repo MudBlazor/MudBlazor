@@ -16,7 +16,14 @@ namespace MudBlazor
             .AddClass("mud-panel-next-expanded", NextPanelExpanded)
             .AddClass("mud-disabled", Disabled)
             .AddClass($"mud-elevation-{Parent?.Elevation.ToString()}")
+            .AddClass($"mud-expand-panel-border", Parent?.DisableBorders != true)
             .AddClass(Class)
+        .Build();
+
+        protected string PanelContentClassname =>
+        new CssBuilder("mud-expand-panel-content")
+            .AddClass("mud-expand-panel-gutters", DisableGutters || Parent?.DisableGutters == true)
+            .AddClass("mud-expand-panel-dense", Dense || Parent?.Dense == true)
         .Build();
 
         /// <summary>
@@ -38,6 +45,16 @@ namespace MudBlazor
         /// If true, expand icon will not show
         /// </summary>
         [Parameter] public bool HideIcon { get; set; }
+
+        /// <summary>
+        /// If true, removes vertical padding from childcontent.
+        /// </summary>
+        [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
+        /// If true, the left and right padding is removed from childcontent.
+        /// </summary>
+        [Parameter] public bool DisableGutters { get; set; }
 
         /// <summary>
         /// Raised when IsExpanded changes.
@@ -108,7 +125,7 @@ namespace MudBlazor
             else
             {
                 _isExpanded = true;
-                StateHasChanged();
+                IsExpandedChanged.InvokeAsync(_isExpanded);
             }
         }
 
@@ -119,7 +136,7 @@ namespace MudBlazor
             else
             {
                 _isExpanded = false;
-                StateHasChanged();
+                IsExpandedChanged.InvokeAsync(_isExpanded);
             }
         }
 

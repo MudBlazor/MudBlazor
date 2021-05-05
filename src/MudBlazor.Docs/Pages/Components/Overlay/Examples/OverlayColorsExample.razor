@@ -4,7 +4,10 @@
     <MudItem xs="12" sm="6">
         <MudPaper Class="pa-4 my-2" Style="position:relative;">
             <MudOverlay Visible="lightIsVisible" LightBackground="true" Absolute="true" />
-            <LoremIpsum />
+            <MudText>
+                Det var en gång en spindel, som hette laban. Laban tyckte om kebab pizza, men det gjorde inte hans kompis åke.
+                Åke och Laban skulle en dag ut och fiska. På vägen dit skrek Laban till, faaan du åke!!! det luktar kebab!!!
+            </MudText>
             <MudButton Variant="Variant.Filled" Class="mt-2">Action</MudButton>
         </MudPaper>
         <MudSwitch @bind-Checked="@lightIsVisible" Label="Light Overlay" Color="Color.Primary"/>
@@ -12,7 +15,10 @@
     <MudItem xs="12" sm="6">
         <MudPaper Class="pa-4 my-2" Style="position:relative;">
             <MudOverlay Visible="darkIsVisible" DarkBackground="true" Absolute="true" />
-            <LoremIpsum />
+            <MudText>
+                Det var en gång en spindel, som hette laban. Laban tyckte om kebab pizza, men det gjorde inte hans kompis åke.
+                Åke och Laban skulle en dag ut och fiska. På vägen dit skrek Laban till, faaan du åke!!! det luktar kebab!!!
+            </MudText>
             <MudButton Variant="Variant.Filled" Class="mt-2">Action</MudButton>
         </MudPaper>
         <MudSwitch @bind-Checked="@darkIsVisible" Label="Dark Overlay" Color="Color.Secondary" />
