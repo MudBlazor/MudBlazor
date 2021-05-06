@@ -27,6 +27,9 @@ namespace MudBlazor
         private double _allTabsSize;
         private double _scrollPosition;
 
+        
+        [CascadingParameter] public bool RightToLeft { get; set; }
+        
         [Inject] private IResizeObserver _resizeObserver { get; set; }
 
         /// <summary>
@@ -161,6 +164,10 @@ namespace MudBlazor
         public EventCallback<int> ActivePanelIndexChanged { get; set; }
 
         private List<MudTabPanel> _panels = new List<MudTabPanel>();
+
+        private string _prevIcon;
+
+        private string _nextIcon;
 
         #region Life cycle management
 
@@ -359,8 +366,14 @@ namespace MudBlazor
             .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
             .Build();
 
-        protected string SliderStyle =>
+        protected string SliderStyle => RightToLeft ? 
             new StyleBuilder()
+            .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
+            .AddStyle("right", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
+            .AddStyle("transition", "right .3s cubic-bezier(.64,.09,.08,1);", Position == Position.Top || Position == Position.Bottom)
+            .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
+            .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
+            .Build() : new StyleBuilder()
             .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
             .AddStyle("left", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
             .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
@@ -407,6 +420,9 @@ namespace MudBlazor
 
         private void Rerender()
         {
+            _nextIcon = RightToLeft ? PrevIcon : NextIcon;
+            _prevIcon = RightToLeft ? NextIcon : PrevIcon;
+
             GetToolbarContentSize();
             GetAllTabsSize();
             SetScrollButtonVisibility();
@@ -479,11 +495,11 @@ namespace MudBlazor
 
         private void ScrollPrev()
         {
-            var scrollValue = _scrollPosition - _toolbarContentSize;
-            if (scrollValue < 0)
-            {
-                scrollValue = 0;
-            }
+            var scrollValue = RightToLeft ? _scrollPosition + _toolbarContentSize : _scrollPosition - _toolbarContentSize;
+
+            if (RightToLeft && scrollValue > 0) scrollValue = 0;
+
+            if(!RightToLeft && scrollValue < 0) scrollValue = 0;
 
             _scrollPosition = scrollValue;
 
@@ -492,7 +508,7 @@ namespace MudBlazor
 
         private void ScrollNext()
         {
-            var scrollValue = _scrollPosition + _toolbarContentSize;
+            var scrollValue = RightToLeft ? _scrollPosition - _toolbarContentSize : _scrollPosition + _toolbarContentSize;
 
             if (scrollValue > _allTabsSize)
             {
@@ -507,7 +523,7 @@ namespace MudBlazor
         private void ScrollToItem(MudTabPanel panel)
         {
             var position = GetLengthOfPanelItems(panel);
-            _scrollPosition = position;
+            _scrollPosition = RightToLeft ? -position : position;
         }
 
         private bool IsAfterLastPanelIndex(int index) => index >= _panels.Count;
@@ -578,8 +594,8 @@ namespace MudBlazor
             }
             else
             {
-                _nextButtonDisabled = (_scrollPosition + _toolbarContentSize) >= _allTabsSize;
-                _prevButtonDisabled = _scrollPosition <= 0;
+                _nextButtonDisabled = RightToLeft ? (_scrollPosition - _toolbarContentSize) <= -_allTabsSize : (_scrollPosition + _toolbarContentSize) >= _allTabsSize;
+                _prevButtonDisabled = RightToLeft ? _scrollPosition >= 0 : _scrollPosition <= 0;
             }
         }
 
