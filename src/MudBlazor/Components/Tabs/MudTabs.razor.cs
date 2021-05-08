@@ -136,6 +136,8 @@ namespace MudBlazor
 
         public MudTabPanel ActivePanel { get; private set; }
 
+        [CascadingParameter] public bool RightToLeft { get; set; }
+
         /// <summary>
         /// The current active panel index. Also with Bidirectional Binding
         /// </summary>
@@ -427,6 +429,9 @@ namespace MudBlazor
 
             _position = GetLengthOfPanelItems(ActivePanel);
             _size = GetRelevantSize(ActivePanel.PanelRef);
+
+            if (RightToLeft)
+                _position = _allTabsSize - _position - _size;
         }
 
         private void GetToolbarContentSize() => _toolbarContentSize = GetRelevantSize(_tabsContentSize);
