@@ -107,6 +107,7 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Line chart", typeof(Line))
                 .AddItem("Pie chart", typeof(Pie))
                 .AddItem("Bar chart", typeof(Bar))
+                .AddItem("StackedBar chart", typeof(StackedBar))
             );
         public IEnumerable<MudComponent> Components => _docsComponents.Elements;
 

@@ -20,5 +20,9 @@
         {
             <Bar ChartSeries="@ChartSeries" XAxisLabels="@XAxisLabels"></Bar>
         }
+        @if (ChartType == ChartType.StackedBar)
+        {
+            <StackedBar ChartSeries="@ChartSeries" XAxisLabels="@XAxisLabels"></StackedBar>
+        }
     </div>
 </CascadingValue>
