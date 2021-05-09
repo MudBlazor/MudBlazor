@@ -152,13 +152,10 @@ namespace MudBlazor.Charts
         }
         private List<SvgPath> SortBarsDescending()
         {
-            var groups = _bars.GroupBy(x => double.Parse(x.Data.Split(' ')[1])).ToList();
+            var groupedData = _bars.GroupBy(x => double.Parse(x.Data.Split(' ')[1])).ToList();
             _bars.Clear();
-            foreach (var group in groups.ToList()) 
-            {
-                var ordered = group.OrderByDescending(x => x.Data.Split(' ')[5]).Reverse().ToList();
-                _bars.AddRange(ordered);
-            }
+            foreach (var group in groupedData.ToList())
+                _bars.AddRange(group.OrderByDescending(x => double.Parse(x.Data.Split(' ')[5])).Reverse().ToList());
             return _bars;
         }
     }
