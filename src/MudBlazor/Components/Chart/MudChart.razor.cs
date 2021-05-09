@@ -74,6 +74,9 @@ namespace MudBlazor
         /// </summary>    
         [Parameter] public EventCallback<int> SelectedIndexChanged { get; set; }
 
+        /// <summary>
+        /// Scales the input data to the range between 0 and 1
+        /// </summary>
         protected double[] GetNormalizedData()
         {
             if (InputData == null)
