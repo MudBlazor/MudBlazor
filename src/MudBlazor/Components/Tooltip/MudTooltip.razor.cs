@@ -8,6 +8,9 @@ namespace MudBlazor
 {
     public partial class MudTooltip : MudComponentBase
     {
+        protected string ContainerClass => new CssBuilder("mud-tooltip-root")
+            .AddClass("mud-tooltip-inline", Inline)
+            .Build();
         protected string Classname => new CssBuilder("mud-tooltip")
             .AddClass($"mud-tooltip-placement-{Placement.ToDescriptionString()}")
             .AddClass(Class)
@@ -48,6 +51,11 @@ namespace MudBlazor
         /// Tooltip content. May contain any valid html
         /// </summary>
         [Parameter] public RenderFragment TooltipContent { get; set; }
+
+        /// <summary>
+        /// Determines if this component should be inline with it's surrounding (default) or if it should behave like a block element.
+        /// </summary>
+        [Parameter] public Boolean Inline { get; set; } = true;
 
         protected string GetTimeDelay()
         {
