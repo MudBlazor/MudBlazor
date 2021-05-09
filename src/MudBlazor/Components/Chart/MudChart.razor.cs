@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -46,9 +50,30 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Position LegendPosition { get; set; } = Position.Bottom;
 
+        private int _selectedIndex;
+
         /// <summary>
-        /// Scales the input data to the range between 0 and 1
-        /// </summary>
+        /// Selected index of a portion of the chart.
+        /// </summary>     
+        [Parameter]
+        public int SelectedIndex
+        {
+            get => _selectedIndex;
+            set
+            {
+                if (value != _selectedIndex)
+                {
+                    _selectedIndex = value;
+                    SelectedIndexChanged.InvokeAsync(value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Selected index of a portion of the chart.
+        /// </summary>    
+        [Parameter] public EventCallback<int> SelectedIndexChanged { get; set; }
+
         protected double[] GetNormalizedData()
         {
             if (InputData == null)
