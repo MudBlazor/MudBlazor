@@ -96,6 +96,7 @@ namespace MudBlazor
         Donut,
         Line,
         Pie,
-        Bar
+        Bar,
+        StackedBar
     }
 }
