@@ -6,7 +6,6 @@
 
     <MudNavGroup Title="Getting Started"
                  Icon="@Icons.Material.Filled.School"
-                 Expanded="@(_section == "getting-started")"
                  ExpandIcon="@Icons.Material.Filled.ExpandMore" Style="margin-top: 40px;">
         @foreach (var link in MenuService.GettingStarted)
         {
@@ -17,13 +16,12 @@
     @*COMPONENTS*@
     <MudNavGroup Title="Components"
                  Icon="@Icons.Material.Filled.Dashboard"
-                 Expanded="@(_section == "components")"
                  ExpandIcon="@Icons.Material.Filled.ExpandMore">
         @foreach (var item in MenuService.Components)
         {
             if (item.IsNavGroup)
             {
-                <MudNavGroup Title="@item.Name" Expanded="@(IsSubGroupExpanded(item))" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+                <MudNavGroup Title="@item.Name" ExpandIcon="@Icons.Material.Filled.ExpandMore">
                     @foreach (var subItem in item.GroupItems.Elements)
                     {
                         string href = $"components/{subItem.Link}";
@@ -42,7 +40,6 @@
     @*API*@
     <MudNavGroup Title="API"
                  Icon="@Icons.Material.Filled.Api"
-                 Expanded="@(_section == "api")"
                  ExpandIcon="@Icons.Material.Filled.ExpandMore">
         @foreach (var item in MenuService.Api)
         {
@@ -53,7 +50,6 @@
     @*FEATURES*@
     <MudNavGroup Title="Features"
                  Icon="@Icons.Material.Filled.DeveloperBoard"
-                 Expanded="@(_section == "features")"
                  ExpandIcon="@Icons.Material.Filled.ExpandMore">
         @foreach (var link in MenuService.Features)
         {
@@ -64,7 +60,6 @@
     @*CUSTOMIZATION*@
     <MudNavGroup Title="Customization"
                  Icon="@Icons.Material.Filled.Handyman"
-                 Expanded="@(_section == "customization")"
                  ExpandIcon="@Icons.Material.Filled.ExpandMore">
         <MudNavLink Href="customization/default-theme">Default Theme</MudNavLink>
         <MudNavGroup Title="Theming" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore">
@@ -76,7 +71,7 @@
     </MudNavGroup>
 
     @*ABOUT*@
-    <MudNavGroup Title="About" Icon="@Icons.Custom.Brands.MudBlazor" Expanded="@(_section=="project")" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+    <MudNavGroup Title="About" Icon="@Icons.Custom.Brands.MudBlazor" ExpandIcon="@Icons.Material.Filled.ExpandMore">
         @foreach (var link in MenuService.About)
         {
             <MudNavLink Href="@link.Href">@link.Title</MudNavLink>

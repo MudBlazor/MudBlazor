@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -20,6 +21,9 @@ namespace MudBlazor
         new CssBuilder("mud-nav-link-icon")
           .AddClass($"mud-nav-link-icon-default", IconColor == Color.Default)
           .Build();
+
+        [CascadingParameter]
+        private MudNavGroup Parent { get; set; }
 
         [Parameter] public string Title { get; set; }
 
@@ -84,6 +88,19 @@ namespace MudBlazor
         {
             _expanded = !Expanded;
             ExpandedChanged.InvokeAsync(_expanded);
+        }
+
+        public async Task InitExpandedAsync(bool expanded)
+        {
+            if (Expanded != expanded)
+            {
+                Expanded = expanded;
+                if (Parent != null)
+                {
+                    await Parent.InitExpandedAsync(expanded);
+                }
+                await InvokeAsync(StateHasChanged);
+            }
         }
     }
 }

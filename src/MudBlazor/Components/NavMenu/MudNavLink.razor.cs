@@ -36,6 +36,9 @@ namespace MudBlazor
             };
         }
 
+        [CascadingParameter]
+        private MudNavGroup Parent { get; set; }
+
         /// <summary>
         /// Icon to use if set.
         /// </summary>
@@ -70,6 +73,14 @@ namespace MudBlazor
             }
 
             return Task.CompletedTask;
+        }
+
+        private async Task OnActiveChanged()
+        {
+            if (Parent != null)
+            {
+                await Parent.InitExpandedAsync(true);
+            }
         }
     }
 }

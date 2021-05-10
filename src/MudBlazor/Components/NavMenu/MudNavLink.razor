@@ -1,6 +1,5 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseSelectItem
-@using Microsoft.AspNetCore.Components.Routing
 
 <div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
     @if (!OnClick.HasDelegate) 
@@ -8,6 +7,7 @@
         <NavLink @onclick="@HandleNavigation" 
                  class="@LinkClassname" 
                  @attributes="@Attributes"
+                IsActiveChanged="@OnActiveChanged"
                  Match="@Match" 
                  ActiveClass="active">
             @if (!String.IsNullOrEmpty(Icon))

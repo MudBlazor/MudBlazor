@@ -16,8 +16,10 @@
         }
     </button>
     <MudCollapse Expanded="@Expanded" MaxHeight="@MaxHeight" Class="mud-navgroup-collapse">
-        <MudNavMenu>
-            @ChildContent
-        </MudNavMenu>
+        <CascadingValue Value="this" IsFixed>
+            <MudNavMenu>
+                @ChildContent
+            </MudNavMenu>
+        </CascadingValue>
     </MudCollapse>
 </div>
