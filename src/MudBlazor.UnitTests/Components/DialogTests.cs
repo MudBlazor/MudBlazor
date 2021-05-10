@@ -146,5 +146,27 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-dialog-title").TrimmedText().Should().Be("Title: Test123");
         }
 
+        /// <summary>
+        /// Based on bug report #1385
+        /// Dialog Class and Style parameters should be honored
+        /// </summary>
+        [Test]
+        public async Task DialogShouldHonorClassAndStyle()
+        {
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogOkCancel>());
+            dialogReference.Should().NotBe(null);
+            Console.WriteLine(comp.Markup);
+            comp.Find("div.mud-dialog").ClassList.Should().Contain("test-class");
+            comp.Find("div.mud-dialog").Attributes["style"].Value.Should().Be("color: red;");
+            comp.Find("div.mud-dialog-content").Attributes["style"].Value.Should().Be("color: blue;");
+            comp.Find("div.mud-dialog-content").ClassList.Should().NotContain("test-class");
+            comp.Find("div.mud-dialog-content").ClassList.Should().Contain("content-class");
+        }
     }
 }

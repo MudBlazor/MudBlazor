@@ -12,6 +12,7 @@ namespace MudBlazor
     public partial class MudSelect<T> : MudBaseInput<T>, IMudSelect
     {
         private HashSet<T> _selectedValues;
+        private bool _dense;
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -31,7 +32,17 @@ namespace MudBlazor
         /// <summary>
         /// If true, compact vertical padding will be applied to all select items.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter]
+        public bool Dense
+        {
+            get { return _dense; }
+            set
+            {
+                // Ensure that when dense is appplied we set the margin on the input controls
+                _dense = value;
+                Margin = _dense ? Margin.Dense : Margin.None;
+            }
+        }
 
         /// <summary>
         /// The Open Select Icon

@@ -8,7 +8,7 @@
                          Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu">
             <InputContent>
                 <MudInput T="string" @ref="_elementReference" InputType="InputType.Text" Variant="@Variant" @attributes="UserAttributes" Value="@Text" TextChanged="OnTextChanged" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                          Immediate="true" Margin="@Margin" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" IconSize="Size.Medium"
+                          Immediate="true" Margin="@Margin" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
                           OnBlur="@OnInputBlurred" OnKeyUp="@this.OnInputKeyUp"  autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
                           Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick"
                           />

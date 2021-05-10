@@ -43,6 +43,7 @@ namespace MudBlazor
 
                 if (updateValue)
                 {
+                    Converter.GetError = false;
                     if (_dateRange == null)
                     {
                         _rangeText = null;
@@ -50,24 +51,15 @@ namespace MudBlazor
                     }
                     else
                     {
-                        if (!IsNullOrEmpty(DateFormat))
-                        {
-                            _rangeText = new Range<string>(
-                                _dateRange.Start?.ToString(DateFormat) ?? Empty,
-                                _dateRange.End?.ToString(DateFormat) ?? Empty);
-                            await SetTextAsync(_dateRange.ToString(DateFormat), false);
-                        }
-                        else
-                        {
-                            _rangeText = new Range<string>(
-                                _dateRange.Start?.ToIsoDateString() ?? Empty,
-                                _dateRange.End?.ToIsoDateString() ?? Empty);
-                            await SetTextAsync(_dateRange.ToIsoDateString(), false);
-                        }
+                        _rangeText = new Range<string>(
+                            Converter.Set(_dateRange.Start),
+                            Converter.Set(_dateRange.End));
+                        await SetTextAsync(_dateRange.ToString(Converter), false);
                     }
                 }
 
                 await DateRangeChanged.InvokeAsync(_dateRange);
+                BeginValidate();
             }
         }
 
@@ -79,25 +71,38 @@ namespace MudBlazor
                 if (_rangeText.Equals(value))
                     return;
 
+                Touched = true;
                 _rangeText = value;
                 SetDateRangeAsync(ParseDateRangeValue(value.Start, value.End), false).AndForget();
             }
         }
 
+        protected override Task DateFormatChanged(string newFormat)
+        {
+            Touched = true;
+            return SetTextAsync(_dateRange?.ToString(Converter), false);
+        }
+
         protected override Task StringValueChanged(string value)
         {
+            Touched = true;
             // Update the daterange property (without updating back the Value property)
             return SetDateRangeAsync(ParseDateRangeValue(value), false);
         }
 
+        protected override bool HasValue(DateTime? value)
+        {
+            return _dateRange != null;
+        }
+
         private DateRange ParseDateRangeValue(string value)
         {
-            return DateRange.TryParse(value, out var dateRange) ? dateRange : null;
+            return DateRange.TryParse(value, Converter, out var dateRange) ? dateRange : null;
         }
 
         private DateRange ParseDateRangeValue(string start, string end)
         {
-            return DateRange.TryParse(start, end, out var dateRange) ? dateRange : null;
+            return DateRange.TryParse(start, end, Converter, out var dateRange) ? dateRange : null;
         }
 
         protected override void OnPickerClosed()
