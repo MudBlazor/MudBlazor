@@ -31,7 +31,7 @@
 		   @onkeydown:preventDefault="KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault" />
 	}
 
-	@if (_showClearable)
+	@if (_showClearable && !Disabled)
     {
 	 <MudIconButton Color="@Color.Default" Icon="@Icons.Material.Filled.Clear" Size="@Size.Small" OnClick="@ClearButtonClickHandlerAsync" Class="my-n3 mr-n1" />
 	}
