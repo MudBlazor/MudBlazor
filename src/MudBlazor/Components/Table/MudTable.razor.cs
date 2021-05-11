@@ -44,6 +44,13 @@ namespace MudBlazor
                 _items = value;
                 if (Context?.PagerStateHasChanged != null)
                     InvokeAsync(Context.PagerStateHasChanged);
+                if (Items != null)
+                {
+                    if (!Items.Contains(LastCheckedChangedItem))
+                        LastCheckedChangedItem = default;
+                }
+                else
+                    LastCheckedChangedItem = default;
             }
         }
 
@@ -238,6 +245,7 @@ namespace MudBlazor
                 Context.Selection.Add(item);
             else
                 Context.Selection.Remove(item);
+            HandleShiftKeyDown(value, item);
             SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
@@ -313,5 +321,58 @@ namespace MudBlazor
         }
 
         internal override bool IsEditable { get => RowEditingTemplate != null; }
+
+        /// <summary>
+        /// KeyDown event.
+        /// </summary>
+        [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
+
+        /// <summary>
+        /// KeyUp event.
+        /// </summary>
+        [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
+
+        HashSet<string> _keysPressed = new HashSet<string>();
+
+        [Parameter]
+        public T LastCheckedChangedItem { get; set; }
+
+        private void KeyDownHandler(KeyboardEventArgs args)
+        {
+            _keysPressed.Add(args.Key);
+            OnKeyDown.InvokeAsync(args);
+        }
+
+        private void KeyUpHandler(KeyboardEventArgs args)
+        {
+            _keysPressed.Remove(args.Key);
+            OnKeyUp.InvokeAsync(args);
+        }
+
+        private void HandleShiftKeyDown(bool IsChecked, T item)
+        {
+            if (_keysPressed.Contains("Shift") && LastCheckedChangedItem != null)
+            {
+                var listTableItems = FilteredItems.ToList();
+                var lastSelectedItemIndex = listTableItems.IndexOf(LastCheckedChangedItem);
+                var currentSelectedItemIndex = listTableItems.IndexOf(item);
+
+                var from = Math.Min(lastSelectedItemIndex, currentSelectedItemIndex);
+                var to = Math.Max(lastSelectedItemIndex, currentSelectedItemIndex);
+
+                if (from != to)
+                {
+                    for (int i = from; i <= to; i++)
+                    {
+                        if (IsChecked)
+                            Context.Selection.Add(listTableItems[i]);
+                        else
+                            Context.Selection.Remove(listTableItems[i]);
+                    }
+                }
+
+            }
+            LastCheckedChangedItem = item;
+        }
     }
 }
