@@ -309,6 +309,9 @@ namespace MudBlazor
         /// <remarks>https://try.mudblazor.com/snippet/QamlkdvmBtrsuEtb</remarks>
         protected async Task InterceptArrowKey(KeyboardEventArgs obj)
         {
+            if (Disabled || ReadOnly)
+                return;
+
             if (obj.Type == "keydown")//KeyDown or repeat, blazor never fire InvokeKeyPress
             {
                 if (obj.Key == "ArrowUp")
