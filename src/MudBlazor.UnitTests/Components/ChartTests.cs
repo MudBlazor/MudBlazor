@@ -43,6 +43,49 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 3");
         }
 
+        [Test]
+        public void DonutChartSelectionTest()
+        {
+            var comp = ctx.RenderComponent<DonutExample1>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
+            // now click something and see that the selected index changes:
+            comp.FindAll("circle.mud-chart-serie")[0].Click();
+            comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
+            comp.FindAll("circle.mud-chart-serie")[3].Click();
+            comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 3");
+        }
+
+        [Test]
+        public void LineChartSelectionTest()
+        {
+            var comp = ctx.RenderComponent<LineExample1>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
+            // now click something and see that the selected index changes:
+            comp.FindAll("path.mud-chart-line")[0].Click();
+            comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
+            comp.FindAll("path.mud-chart-line")[1].Click();
+            comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 1");
+        }
+
+        [Test]
+        public void BarChartSelectionTest()
+        {
+            var comp = ctx.RenderComponent<BarExample1>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: -1");
+            // now click something and see that the selected index changes:
+            comp.FindAll("path.mud-chart-bar")[0].Click();
+            comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 0");
+            comp.FindAll("path.mud-chart-bar")[10].Click();
+            comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 1");
+        }
+
+
 
     }
 }
