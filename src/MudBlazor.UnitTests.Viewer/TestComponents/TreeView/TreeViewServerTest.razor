@@ -1,0 +1,51 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudTreeView ExpandOnClick="true" ServerData="LoadServerData" Items="TreeItems" Width="350px">
+    <ItemTemplate>
+        <MudTreeViewItem Value="@context" Icon="@context.Icon" Text="@context.Title" EndText="@context.Number?.ToString()" EndTextTypo="@Typo.caption" />
+    </ItemTemplate>
+</MudTreeView>
+
+@code{
+    private HashSet<TreeItemData> TreeItems { get; set; } = new HashSet<TreeItemData>();
+
+    public class TreeItemData
+    {
+        public string Title { get; set; }
+
+        public string Icon { get; set; }
+
+        public int? Number { get; set; }
+
+        public HashSet<TreeItemData> TreeItems { get; set; }
+
+        public TreeItemData(string title, string icon, int? number = null)
+        {
+            Title = title;
+            Icon = icon;
+            Number = number;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        TreeItems.Add(new TreeItemData("All Mail", Icons.Filled.Email));
+        TreeItems.Add(new TreeItemData("Trash", Icons.Filled.Delete));
+        TreeItems.Add(new TreeItemData("Categories", Icons.Filled.Label)
+        {
+            TreeItems = new HashSet<TreeItemData>()
+            {
+                new TreeItemData("Social", Icons.Filled.Group, 90),
+                new TreeItemData("Updates", Icons.Filled.Info, 2294),
+                new TreeItemData("Forums", Icons.Filled.QuestionAnswer, 3566),
+                new TreeItemData("Promotions", Icons.Filled.LocalOffer, 733)
+            }
+        });
+        TreeItems.Add(new TreeItemData("History", Icons.Filled.Label));
+    }
+
+    public Task<HashSet<TreeItemData>> LoadServerData(TreeItemData parentNode)
+    {
+        return Task.FromResult(parentNode.TreeItems);
+    }
+}

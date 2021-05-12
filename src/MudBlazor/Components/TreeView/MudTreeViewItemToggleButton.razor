@@ -1,19 +1,29 @@
-﻿@namespace MudBlazor
+﻿@using MudBlazor.Utilities 
+@namespace MudBlazor
 
 <div class="mud-treeview-item-arrow">
     @if (Visible)
     {
-        <MudIconButton OnClick="@ToggleAsync" Icon="@ExpandedIcon"
-                       Class="@(Expanded? "mud-treeview-item-arrow-expand mud-transform" : "mud-treeview-item-arrow-expand")"></MudIconButton>
+        <MudIconButton OnClick="@ToggleAsync" Icon="@(Loading ? Icons.Material.Filled.Loop : ExpandedIcon)" Class="@Classname"></MudIconButton>
     }
 </div>
  
 @code {
+    protected string Classname =>
+    new CssBuilder()
+        .AddClass("mud-transform", Expanded && !Loading)
+        .AddClass("mud-treeview-item-arrow-expand mud-transform", Expanded && !Loading)
+        .AddClass("mud-treeview-item-arrow-load", Loading)
+    .Build();
+
     [Parameter]
     public bool Visible { get; set; }
 
     [Parameter]
     public bool Expanded { get; set; }
+
+    [Parameter]
+    public bool Loading { get; set; }
 
     [Parameter]
     public EventCallback<bool> ExpandedChanged { get; set; }
