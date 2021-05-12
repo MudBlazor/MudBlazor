@@ -154,8 +154,48 @@ namespace MudBlazor.Charts
         {
             var groupedData = _bars.GroupBy(x => double.Parse(x.Data.Split(' ')[1])).ToList();
             _bars.Clear();
-            foreach (var group in groupedData.ToList())
-                _bars.AddRange(group.OrderByDescending(x => double.Parse(x.Data.Split(' ')[5])).Reverse().ToList());
+            foreach (var group in groupedData.ToList()) 
+            {
+                var test2 = group.OrderByDescending(x => double.Parse(x.Data.Split(' ')[5])).Reverse().ToList();
+                var count = 1;           
+                foreach (var bar in group) 
+                {
+                    var groupCount = group.Count();
+                    SvgPath data = new SvgPath();
+                    if (groupCount != count)
+                    {
+                        data.Index = bar.Index;
+
+                        var test = bar.Data.Split(' ');
+
+                        var originalYValue = test[2];
+
+                        var addValue = test2[count].Data.Split(' ')[5];
+
+                        test[2] = addValue;
+
+                        var minusValue = (int.Parse(originalYValue) - int.Parse(addValue)).ToString();
+
+                        if(count == 1)
+                            test[5] = (int.Parse(test[5]) - int.Parse(minusValue)).ToString();
+
+                        foreach (var t in test)
+                            data.Data = data.Data + " " + t;
+
+                        count++;
+                        _bars.Add(data);
+
+                    }
+                    else 
+                    {
+                        _bars.Add(bar);
+                    }
+                    
+
+                }
+                //_bars.AddRange(group.OrderByDescending(x => double.Parse(x.Data.Split(' ')[5])).Reverse().ToList());
+            }
+               
             return _bars;
         }
     }
