@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -8,7 +9,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTreeViewItem<T> : MudComponentBase
+    public partial class MudTreeViewItem<T> : MudComponentBase, IDisposable
     {
         private string _text;
         private bool _isSelected, _isActivated, _isServerLoaded;
@@ -260,5 +261,19 @@ namespace MudBlazor
                 StateHasChanged();
             }
         }
+
+        public void Dispose()
+        {
+            if (Parent != null)
+            {
+                Parent.RemoveChild(this);
+            }
+            else
+            {
+                MudTreeRoot?.RemoveChild(this);
+            }
+        }
+
+        private void RemoveChild(MudTreeViewItem<T> item) => this._childItems.Remove(item);
     }
 }

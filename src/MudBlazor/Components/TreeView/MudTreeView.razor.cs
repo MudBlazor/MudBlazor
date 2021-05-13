@@ -65,7 +65,7 @@ namespace MudBlazor
         public string Width { get; set; }
 
         [Parameter] public HashSet<T> Items { get; set; }
-
+  
         [Parameter] public EventCallback<T> ActivatedValueChanged { get; set; }
 
         [Parameter] public EventCallback<HashSet<T>> SelectedValuesChanged { get; set; }
@@ -97,8 +97,7 @@ namespace MudBlazor
                 await UpdateSelectedItems();
             }
             await base.OnAfterRenderAsync(firstRender);
-        }
-
+        } 
         internal async Task UpdateActivatedItem(MudTreeViewItem<T> item, bool requestedValue)
         {
             if ((_activatedValue == item && requestedValue) ||
@@ -142,5 +141,7 @@ namespace MudBlazor
         }
 
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
+
+        internal void RemoveChild(MudTreeViewItem<T> item) => _childItems.Remove(item);
     }
 }
