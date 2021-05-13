@@ -7,7 +7,7 @@
     <MudNavGroup Title="Getting Started"
                  Icon="@Icons.Material.Filled.School"
                  Expanded="@(_section == "getting-started")"
-                 ExpandIcon="@Icons.Material.Filled.ExpandMore" Style="margin-top: 40px;">
+                 ExpandIcon="@Icons.Material.Filled.ExpandMore">
         @foreach (var link in MenuService.GettingStarted)
         {
             <MudNavLink Href="@link.Href">@link.Title</MudNavLink>
