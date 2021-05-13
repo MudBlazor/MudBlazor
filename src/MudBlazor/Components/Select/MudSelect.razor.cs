@@ -333,7 +333,12 @@ namespace MudBlazor
         /// </summary>
         protected async Task SelectClearButtonClickHandlerAsync(MouseEventArgs e)
         {
-            await SelectOption(default(T));
+            await SetValueAsync(default, false);
+            await SetTextAsync(default, false);
+            SelectedValues.Clear();
+            BeginValidate();
+            StateHasChanged();
+            await SelectedValuesChanged.InvokeAsync(SelectedValues);
             await OnClearButtonClick.InvokeAsync();
         }
     }
