@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -316,11 +315,13 @@ namespace MudBlazor
             {
                 if (obj.Key == "ArrowUp")
                 {
+                    _keyDownPreventDefault = true;
                     await Increment();
                     return;
                 }
                 else if (obj.Key == "ArrowDown")
                 {
+                    _keyDownPreventDefault = true;
                     await Decrement();
                     return;
                 }
