@@ -230,6 +230,11 @@ namespace MudBlazor
         }
 
         protected abstract string GetTitleDateString();
+        
+        protected string FormatTitleDate(DateTime? date)
+        {
+            return date?.ToString(TitleDateFormat ?? "ddd, dd MMM", Culture) ?? "";
+        }
 
         protected string GetFormattedYearString()
         {
