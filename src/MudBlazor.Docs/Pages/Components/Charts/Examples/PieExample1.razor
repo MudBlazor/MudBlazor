@@ -1,16 +1,17 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-
 <MudPaper Class="pa-4">
-    <MudChart ChartType="ChartType.Pie" InputData="@data" InputLabels="@labels" Width="300px" Height="300px" />
+    <MudChart ChartType="ChartType.Pie" InputData="@data" @bind-SelectedIndex="Index" InputLabels="@labels" Width="300px" Height="300px" />
 </MudPaper>
 <MudPaper Class="pa-4 mt-2 d-flex justify-center">
     <MudButton OnClick="AddDataSize" Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
     <MudButton @onclick="RandomizeData" Variant="Variant.Filled" Class="mx-4">Randomize</MudButton>
-    <MudButton OnClick="RemoveDataSize" Variant="Variant.Filled" Color="Color.Secondary">Remove</MudButton>
+    <MudButton OnClick="RemoveDataSize" Variant="Variant.Filled" Color="Color.Secondary">Remove</MudButton>  
 </MudPaper>
+<MudText Typo="Typo.h6">Selected portion of the chart: @Index</MudText>
 
 @code {
+    private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
     int dataSize = 4;
     double[] data = { 77, 25, 20, 5 };
     string[] labels = { "Uranium", "Plutonium", "Thorium", "Caesium", "Technetium", "Promethium",
@@ -18,7 +19,7 @@
                         "Neptunium", "Americium", "Curium", "Berkelium", "Californium", "Einsteinium", "Mudblaznium" };
 
     Random random = new Random();
-    
+
     void RandomizeData()
     {
         var new_data = new double[dataSize];
