@@ -311,7 +311,7 @@ namespace MudBlazor
             if (Disabled || ReadOnly)
                 return;
 
-            if (obj.Type == "keydown")//KeyDown or repeat, blazor never fire InvokeKeyPress
+            if (obj.Type == "keydown")//KeyDown or repeat, blazor never fires InvokeKeyPress
             {
                 if (obj.Key == "ArrowUp")
                 {
@@ -326,8 +326,8 @@ namespace MudBlazor
                     return;
                 }
             }
-            _keyDownPreventDefault = KeyDownPreventDefault;
-            OnKeyPress.InvokeAsync(obj).AndForget();
+                _keyDownPreventDefault = KeyDownPreventDefault;
+            OnKeyDown.InvokeAsync(obj).AndForget();
         }
 
         /// <summary>

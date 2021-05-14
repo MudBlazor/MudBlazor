@@ -14,7 +14,7 @@
 					  AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
 					  OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"
 					  OnBlur="@OnBlurred" OnKeyDown="@InterceptArrowKey" OnKeyPress="@InvokeKeyPress" OnKeyUp="@InvokeKeyUp"
-					  KeyDownPreventDefault="_keyDownPreventDefault" KeyPressPreventDefault="KeyPressPreventDefault" KeyUpPreventDefault="KeyUpPreventDefault"
+					  KeyDownPreventDefault="@(_keyDownPreventDefault || KeyDownPreventDefault)" KeyPressPreventDefault="KeyPressPreventDefault" KeyUpPreventDefault="KeyUpPreventDefault"
 					  OnIncrement="Increment" OnDecrement="Decrement" HideSpinButtons="@HideSpinButtons" Validation="_validateInstance"
 					  min="@(_minHasValue ? FormatParam(_min) : null)"
 					  max="@(_maxHasValue ? FormatParam(_max): null)"
@@ -35,5 +35,4 @@
 		else
 			return null;
 	}
-
 }
