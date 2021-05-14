@@ -326,8 +326,25 @@ namespace MudBlazor
                     return;
                 }
             }
-                _keyDownPreventDefault = KeyDownPreventDefault;
+
+            _keyDownPreventDefault = KeyDownPreventDefault;
             OnKeyDown.InvokeAsync(obj).AndForget();
+        }
+
+        /// <summary>
+        /// Overrides KeyUp event, if needed reset <see cref="_keyDownPreventDefault"/> set by <see cref="InterceptArrowKey(KeyboardEventArgs)"/>.
+        /// </summary>
+        protected void InterceptKeyUp(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+                return;
+
+            if (_keyDownPreventDefault != KeyDownPreventDefault)
+            {
+                _keyDownPreventDefault = KeyDownPreventDefault;
+                StateHasChanged();
+            }
+            OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
         /// <summary>
