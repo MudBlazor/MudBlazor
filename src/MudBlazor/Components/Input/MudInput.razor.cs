@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 
 namespace MudBlazor
@@ -20,7 +21,8 @@ namespace MudBlazor
             //when it keeps the focus, it doesn't render to avoid unnecessary trips to the server
             //except the user presses key enter, so the result must be displayed
             if (_shouldRenderBeForced) { return true; }
-            if (Immediate && _isFocused) { return false; }
+            if (Immediate && _isFocused && !_showClearableRenderUpdate) { return false; }
+            _showClearableRenderUpdate = false;
             return true;
         }
 
@@ -79,6 +81,38 @@ namespace MudBlazor
         /// Hides the spin buttons for <see cref="MudNumericField{T}"/>
         /// </summary>
         [Parameter] public bool HideSpinButtons { get; set; }
+
+        private bool _showClearable;
+
+        private bool _showClearableRenderUpdate;
+
+        private void UpdateClearable(object value)
+        {
+            var showClearable = Clearable && ((value is string stringValue && !string.IsNullOrWhiteSpace(stringValue)) || (value is not string && value is not null));
+            if (_showClearable != showClearable)
+            {
+                _showClearable = showClearable;
+                _showClearableRenderUpdate = true;
+            }
+        }
+
+        protected override async Task UpdateTextPropertyAsync(bool updateValue)
+        {
+            await base.UpdateTextPropertyAsync(updateValue);
+            UpdateClearable(Text);
+        }
+
+        protected override async Task UpdateValuePropertyAsync(bool updateText)
+        {
+            await base.UpdateValuePropertyAsync(updateText);
+            UpdateClearable(Value);
+        }
+
+        protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
+        {
+            await SetTextAsync(string.Empty, true);
+            await OnClearButtonClick.InvokeAsync(e);
+        }
     }
 
     public class MudInputString : MudInput<string> { }
