@@ -28,15 +28,15 @@
             @*Left Arrow*@
             @if (ShowArrows)
             {
-                if (LeftArrowTemplate == null)
+                @if (PreviousButtonTemplate == null)
                 {
-                    <MudIconButton Class="align-self-center" Style="z-index:3;opacity:0.75" Icon="@Icons.Material.Filled.NavigateBefore" OnClick="Previous" Color="Color.Inherit" />
+                    <MudIconButton Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@Icons.Material.Filled.NavigateBefore" OnClick="Previous" Color="Color.Inherit" />
                 }
                 else
                 {
-                    <div @onclick="Previous" class="align-self-center" style="z-index:3;opacity:0.75">
-                        @LeftArrowTemplate
-                    </div>
+                <div @onclick="Previous" class="@NavigationButtonsClassName" style="z-index:3;opacity:0.75">
+                    @PreviousButtonTemplate
+                </div>
                 }
             }
 
@@ -66,14 +66,14 @@
             @*Right Arrow*@
             @if (ShowArrows)
             {
-                if (RightArrowTemplate == null)
+                @if (NextButtonTemplate == null)
                 {
-                    <MudIconButton Class="align-self-center" Style="z-index:3;opacity:0.75" Icon="@Icons.Material.Filled.NavigateNext" OnClick="Next" Color="Color.Inherit" />
+                    <MudIconButton Class="@NavigationButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@Icons.Material.Filled.NavigateNext" OnClick="Next" Color="Color.Inherit" />
                 }
                 else
                 {
-                    <div @onclick="Next" class="align-self-center" style="z-index:3;opacity:0.75">
-                        @RightArrowTemplate
+                    <div @onclick="Next" class="@NavigationButtonsClassName" style="z-index:3;opacity:0.75">
+                        @NextButtonTemplate
                     </div>
                 }
             }

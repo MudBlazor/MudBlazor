@@ -6,11 +6,16 @@
     margin: 0px !important;
     clip-path: inset(0px 0px 0px 0px);
     overflow: hidden;
+
     @each $color in $mud-palette-colors {
         &.mud-carousel-#{$color} {
             color: var(--mud-palette-#{$color}-text);
         }
     }
+}
+
+.mud-carousel-elements-rtl {
+    transform: rotate(180deg) !important;
 }
 
 .mud-carousel-item {
@@ -69,12 +74,28 @@
     animation-fill-mode: forwards;
 }
 
+.mud-carousel-transition-none {
+    display: none;
+}
+
+
 
 /*Slide
 */
 @keyframes mud-carousel-transition-slide-next-enter-keyframe {
     from {
         transform: translate3d(100%, 0, 0);
+        visibility: visible;
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes mud-carousel-transition-slide-next-rtl-enter-keyframe {
+    from {
+        transform: translate3d(-100%, 0, 0);
         visibility: visible;
     }
 
@@ -94,9 +115,23 @@
     }
 }
 
+@keyframes mud-carousel-transition-slide-next-rtl-exit-keyframe {
+    from {
+        transform: translate3d(0, 0, 0);
+        visibility: visible;
+    }
+
+    to {
+        transform: translate3d(100%, 0, 0);
+    }
+}
 
 .mud-carousel-transition-slide-next-enter {
     animation: 0.5s mud-carousel-transition-slide-next-enter-keyframe
+}
+
+.mud-carousel-transition-slide-next-rtl-enter {
+    animation: 0.5s mud-carousel-transition-slide-next-rtl-enter-keyframe;
 }
 
 .mud-carousel-transition-slide-next-exit {
@@ -105,10 +140,27 @@
 
 }
 
+.mud-carousel-transition-slide-next-rtl-exit {
+    animation: 0.5s mud-carousel-transition-slide-next-rtl-exit-keyframe;
+    animation-fill-mode: forwards;
+}
+
+
 
 @keyframes mud-carousel-transition-slide-prev-enter-keyframe {
     from {
         transform: translate3d(-100%, 0, 0);
+        visibility: visible;
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes mud-carousel-transition-slide-prev-rtl-enter-keyframe {
+    from {
+        transform: translate3d(100%, 0, 0);
         visibility: visible;
     }
 
@@ -128,12 +180,32 @@
     }
 }
 
+@keyframes mud-carousel-transition-slide-prev-rtl-exit-keyframe {
+    from {
+        transform: translate3d(0, 0, 0);
+        visibility: visible;
+    }
+
+    to {
+        transform: translate3d(-100%, 0, 0);
+    }
+}
+
 .mud-carousel-transition-slide-prev-enter {
     animation: 0.5s mud-carousel-transition-slide-prev-enter-keyframe
 }
 
+.mud-carousel-transition-slide-prev-rtl-enter {
+    animation: 0.5s mud-carousel-transition-slide-prev-rtl-enter-keyframe;
+}
+
 .mud-carousel-transition-slide-prev-exit {
     animation: 0.5s mud-carousel-transition-slide-prev-exit-keyframe;
+    animation-fill-mode: forwards;
+}
+
+.mud-carousel-transition-slide-prev-rtl-exit {
+    animation: 0.5s mud-carousel-transition-slide-prev-rtl-exit-keyframe;
     animation-fill-mode: forwards;
 }
 

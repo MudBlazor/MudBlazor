@@ -14,28 +14,33 @@ namespace MudBlazor
                                  .AddClass(Class)
                                  .Build();
 
+        protected string NavigationButtonsClassName =>
+                    new CssBuilder("align-self-center")
+                        .AddClass("mud-carousel-elements-rtl", RightToLeft)
+                        .Build();
+
+
         private System.Timers.Timer _autoCycleTimer;
 
         internal Color _currentColor = Color.Inherit;
 
+        [CascadingParameter] public bool RightToLeft { get; set; }
+
         /// <summary>
         /// Gets or Sets if 'Next' and 'Previous' arrows must be visible
         /// </summary>
-        [Parameter]
-        public bool ShowArrows { get; set; } = true;
+        [Parameter] public bool ShowArrows { get; set; } = true;
 
         /// <summary>
         /// Gets or Sets if bottom bar with Delimiters musb be visible
         /// </summary>
-        [Parameter]
-        public bool ShowDelimiters { get; set; } = true;
+        [Parameter] public bool ShowDelimiters { get; set; } = true;
 
         private bool _autoCycleField = true;
         /// <summary>
         /// Gets or Sets automatic cycle on item collection
         /// </summary>
-        [Parameter]
-        public bool AutoCycle
+        [Parameter] public bool AutoCycle
         {
             get => _autoCycleField;
             set
@@ -52,8 +57,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets or Sets the Auto Cycle time
         /// </summary>
-        [Parameter]
-        public TimeSpan AutoCycleTime
+        [Parameter] public TimeSpan AutoCycleTime
         {
             get => _autoCycleTimeField;
             set
@@ -67,20 +71,17 @@ namespace MudBlazor
         /// <summary>
         /// Gets or Sets the Template for the Left Arrow
         /// </summary>
-        [Parameter]
-        public RenderFragment LeftArrowTemplate { get; set; }
+        [Parameter] public RenderFragment NextButtonTemplate { get; set; }
 
         /// <summary>
         /// Gets or Sets the Template for the Right Arrow
         /// </summary>
-        [Parameter]
-        public RenderFragment RightArrowTemplate { get; set; }
+        [Parameter] public RenderFragment PreviousButtonTemplate { get; set; }
 
         /// <summary>
         /// Gets or Sets the Template for Delimiters
         /// </summary>
-        [Parameter]
-        public RenderFragment<bool> DelimiterTemplate { get; set; }
+        [Parameter]  public RenderFragment<bool> DelimiterTemplate { get; set; }
 
         /// <summary>
         /// Fires when selected Index changed on base class

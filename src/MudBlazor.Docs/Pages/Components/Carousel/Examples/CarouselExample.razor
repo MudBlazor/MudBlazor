@@ -20,6 +20,7 @@
 <MudSelect @bind-Value="transition" Label="Transition" Class="ma-2">
     <MudSelectItem Value="@Transition.Fade">Fade</MudSelectItem>
     <MudSelectItem Value="@Transition.Slide">Slide</MudSelectItem>
+    <MudSelectItem Value="@Transition.None">None</MudSelectItem>
 </MudSelect>
 <MudSwitch @bind-Checked="@arrows" Color="Color.Primary">Show Arrows</MudSwitch>
 <MudSwitch @bind-Checked="@delimiters" Color="Color.Primary">Show Delimiters</MudSwitch>
