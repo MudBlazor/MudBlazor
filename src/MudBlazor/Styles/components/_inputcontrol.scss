@@ -82,6 +82,10 @@
             -moz-appearance: textfield;
         }
 
+        &.mud-input-showspin .mud-input:not(.mud-input-adorned-end) input {
+            padding-right: 24px; //This must be the same width of the spinners
+        }
+        
         & .mud-input-numeric-spin {
             display: inline-flex;
             flex-direction: column;
@@ -97,7 +101,7 @@
                 min-height: unset;
             }
         }
-
+        
         & .mud-input-underline .mud-input-numeric-spin button {
             padding: 2px 0;
         }
