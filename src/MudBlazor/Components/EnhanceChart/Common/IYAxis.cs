@@ -29,8 +29,6 @@ namespace MudBlazor.EnhanceChart
     public interface IYAxis
     {
         void TickUpdated(MudEnhancedTick tick);
-        Double Min { get; }
-        Double Max { get; }
         Boolean ScalesAutomatically { get; }
 
         Double LabelSize { get; }

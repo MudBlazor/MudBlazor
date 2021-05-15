@@ -155,7 +155,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 });
             });
 
-            var yAxesComponent = comp.FindComponent<MudEnhancedNumericLinearAxis>();
+            var yAxesComponent = comp.FindComponent<MudEnhancedNumericLinearAutoScaleAxis>();
             called = 0;
 
             Int32 expectedCalledCounter = 0;
@@ -202,7 +202,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 });
             });
 
-            var yAxesComponent = comp.FindComponent<MudEnhancedNumericLinearAxis>();
+            var yAxesComponent = comp.FindComponent<MudEnhancedNumericLinearAutoScaleAxis>();
             called = 0;
 
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.ShowMajorTicks, false));
@@ -215,41 +215,26 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
 
             called.Should().Be(4);
 
-            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.ScalingType, ScalingType.Manuel));
-            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.ScalingType, ScalingType.Auto));
-
-            called.Should().Be(6);
-
-            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Min, 10.5));
-            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Min, 20.3));
-
-            called.Should().Be(8);
-
-            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Max, 10.5));
-            yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Max, 20.3));
-
-            called.Should().Be(10);
-
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelSize, 10.5));
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelSize, 20.3));
 
-            called.Should().Be(12);
+            called.Should().Be(6);
 
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Margin, 12.5));
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Margin, 13.44));
 
-            called.Should().Be(14);
+            called.Should().Be(8);
 
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelCssClass, "my-awesome-label"));
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.LabelCssClass, "my-awesomer-label"));
 
-            called.Should().Be(16);
+            called.Should().Be(10);
 
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Placement, YAxisPlacement.Rigth));
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Placement, YAxisPlacement.Left));
             yAxesComponent.SetParametersAndRender(p => p.Add(x => x.Placement, YAxisPlacement.None));
 
-            called.Should().Be(19);
+            called.Should().Be(13);
         }
 
         [Test]
@@ -365,7 +350,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Placement, XAxisPlacement.None);
                     setP.Add(y => y.ShowGridLines, false);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.None);
                     setP.Add(y => y.ShowMajorTicks, false);
@@ -408,7 +393,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.ShowGridLines, false);
 
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.None);
                     setP.Add(y => y.ShowMajorTicks, false);
@@ -481,7 +466,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Margin, 5.0);
                     setP.Add(y => y.ShowGridLines, false);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.None);
                     setP.Add(y => y.ShowMajorTicks, false);
@@ -552,7 +537,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Placement, XAxisPlacement.None);
                     setP.Add(y => y.ShowGridLines, false);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.Left);
                     setP.Add(y => y.LabelSize, 15.0);
@@ -640,7 +625,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Placement, XAxisPlacement.None);
                     setP.Add(y => y.ShowGridLines, false);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.Rigth);
                     setP.Add(y => y.LabelSize, 15.0);
@@ -733,7 +718,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Placement, XAxisPlacement.None);
                     setP.Add(y => y.ShowGridLines, false);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.Rigth);
                     setP.Add(y => y.LabelSize, 15.0);
@@ -854,7 +839,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.ShowGridLines, false);
 
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.Rigth);
                     setP.Add(y => y.LabelSize, 15.0);
@@ -1047,7 +1032,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.GridLineThickness, xGridLineThickness);
                     setP.Add(y => y.GridLineColor, xGridLineColor);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, yAxisPlacement);
                     setP.Add(y => y.LabelSize, 15.0);
@@ -1374,7 +1359,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Labels, new List<String> { "Mo" });
                     setP.Add(y => y.Placement, XAxisPlacement.None);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.None);
                     setP.Add<MudEnhancedTick>(y => y.MajorTick, (setT) =>
@@ -1447,7 +1432,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Margin, 0.0);
                     setP.Add(y => y.Height, 10.0);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.Left);
                     setP.Add(y => y.ShowMajorTicks, false);
@@ -1586,7 +1571,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.Margin, 0.0);
                     setP.Add(y => y.Height, 10.0);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.Left);
                     setP.Add(y => y.ShowMajorTicks, false);
@@ -1720,7 +1705,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                     setP.Add(y => y.GridLineColor, xAxisGridColor);
                     setP.Add(y => y.GridLineThickness, 1.2);
                 });
-                p.Add<MudEnhancedNumericLinearAxis>(x => x.YAxes, (setP) =>
+                p.Add<MudEnhancedNumericLinearAutoScaleAxis>(x => x.YAxes, (setP) =>
                 {
                     setP.Add(y => y.Placement, YAxisPlacement.None);
                     setP.Add(y => y.ShowMajorTicks, true);

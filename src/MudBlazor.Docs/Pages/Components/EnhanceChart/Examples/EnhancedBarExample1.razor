@@ -20,18 +20,20 @@
 </MudEnhancedBarDataSet>}
             </DataSets>
             <YAxes>
-                <MudEnhancedNumericLinearAxis ScalingType="ScalingType.Auto" Margin="@config.YAxis.Margin" LabelSize="@config.YAxis.LabelSize" Placement="@config.YAxis.Placement" LabelCssClass="my-custom-class" Min="0" Max="100" ShowMinorTicks="true" ShowMajorTicks="true">
+                <MudEnhancedNumericLinearAutoScaleAxis Margin="@config.YAxis.Margin" LabelSize="@config.YAxis.LabelSize" Placement="config.YAxis.Placement" LabelCssClass="my-custom-class"  ShowMinorTicks="true" ShowMajorTicks="true">
                     <MajorTick>
                         @if (config.YAxis.ShowMajorTicks)
                         {
-<MudEnhancedTick Value="@config.YAxis.MajorTickAmount" Color="@config.YAxis.MajorTickColor" Thickness="@config.YAxis.MajorTickThickness" />}
+                            <MudEnhancedTick Value="@config.YAxis.MajorTickAmount" Color="@config.YAxis.MajorTickColor" Thickness="@config.YAxis.MajorTickThickness" />
+                        }
                     </MajorTick>
                     <MinorTick>
                         @if (config.YAxis.ShowMinorTicks)
                         {
-<MudEnhancedTick Value="@config.YAxis.MinorTickAmount" Color="@config.YAxis.MinorTickColor" Thickness="@config.YAxis.MinorTickThickness" />}
+                            <MudEnhancedTick Value="@config.YAxis.MinorTickAmount" Color="@config.YAxis.MinorTickColor" Thickness="@config.YAxis.MinorTickThickness" />
+                        }
                     </MinorTick>
-                </MudEnhancedNumericLinearAxis>
+                </MudEnhancedNumericLinearAutoScaleAxis>
             </YAxes>
             <XAxis>
                 <MudEnhancedBarChartXAxis ShowGridLines="@config.XAxis.ShowGridlines" GridLineColor="@config.XAxis.GridlineColor" GridLineThickness="@config.XAxis.GridlineWidth" Placement="@config.XAxis.Placement" Margin="@config.XAxis.Margin" Height="@config.XAxis.Size" LabelCssClass="" Labels="_usedLabels" />
@@ -39,12 +41,11 @@
         </MudEnhancedBarChart>
     </Chart>
     <TitleDrawer>
-        @if (config.UseCustomerTitleContainer == true)
-        {
-<MudIcon Icon="@config.TitleIcon" /><MudText Typo="Typo.h3">@context</MudText> }
-else
-{
-<MudText Typo="Typo.h6">@context</MudText>}
+        @if (config.UseCustomerTitleContainer == true) { 
+    <MudIcon Icon="@config.TitleIcon" /><MudText Typo="Typo.h3">@context</MudText>
+    } else {
+        <MudText Typo="Typo.h6">@context</MudText>
+    }
     </TitleDrawer>
 </MudEnhancedChart>
 

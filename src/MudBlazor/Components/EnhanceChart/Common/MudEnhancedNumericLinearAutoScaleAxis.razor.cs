@@ -8,10 +8,10 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor.EnhanceChart
 {
-    record NumericLinearAxisSnapshot(Double Min, Double Max, Boolean ShowMinorTick, Boolean ShowMajorTick, Double LabelSize, Double Margin, String LabelCssClass, YAxisPlacement Placement, ScalingType ScalingType);
+    record NumericLinearAutoScaleAxisSnapshot(Boolean ShowMinorTick, Boolean ShowMajorTick, Double LabelSize, Double Margin, String LabelCssClass, YAxisPlacement Placement);
 
     [DoNotGenerateAutomaticTest]
-    public partial class MudEnhancedNumericLinearAxis : ComponentBase, IYAxis, IDisposable, ISnapshot<NumericLinearAxisSnapshot>
+    public partial class MudEnhancedNumericLinearAutoScaleAxis : ComponentBase, IYAxis, IDisposable, ISnapshot<NumericLinearAutoScaleAxisSnapshot>
     {
         private Guid _id = new Guid();
         private TickOverview _tickInfo = new();
@@ -27,9 +27,6 @@ namespace MudBlazor.EnhanceChart
 
         [Parameter] public RenderFragment MinorTick { get; set; } = DefaultMinorTickFragment;
 
-        [Parameter] public Double Min { get; set; }
-        [Parameter] public Double Max { get; set; }
-
         [Parameter] public Boolean ShowMinorTicks { get; set; } = false;
         [Parameter] public Boolean ShowMajorTicks { get; set; } = true;
 
@@ -40,9 +37,7 @@ namespace MudBlazor.EnhanceChart
 
         [Parameter] public YAxisPlacement Placement { get; set; } = YAxisPlacement.Left;
 
-        [Parameter] public ScalingType ScalingType { get; set; } = ScalingType.Auto;
-
-        public Boolean ScalesAutomatically => ScalingType == ScalingType.Auto;
+        public Boolean ScalesAutomatically => true;
 
         public Double MajorTickValue => _majorTick?.Value ?? 0.0;
         public Double MinorTickValue => _minorTick?.Value ?? 0.0;
@@ -97,12 +92,12 @@ namespace MudBlazor.EnhanceChart
             if (Chart.Contains(this) == false)
             {
                 Chart.Add(this);
-                ISnapshot<NumericLinearAxisSnapshot> _this = this;
+                ISnapshot<NumericLinearAutoScaleAxisSnapshot> _this = this;
                 _this.CreateSnapshot();
             }
             else
             {
-                ISnapshot<NumericLinearAxisSnapshot> _this = this;
+                ISnapshot<NumericLinearAutoScaleAxisSnapshot> _this = this;
                 if (_this.SnapshotHasChanged(true) == true)
                 {
                     Chart.AxesUpdated(this);
@@ -115,12 +110,12 @@ namespace MudBlazor.EnhanceChart
             Chart?.Remove(this);
         }
 
-        NumericLinearAxisSnapshot ISnapshot<NumericLinearAxisSnapshot>.OldSnapshotValue { get; set; }
+        NumericLinearAutoScaleAxisSnapshot ISnapshot<NumericLinearAutoScaleAxisSnapshot>.OldSnapshotValue { get; set; }
 
         public ITick MajorTickInfo => _majorTick?.GetTickInfo(ShowMajorTicks);
         public ITick MinorTickInfo => _minorTick?.GetTickInfo(ShowMinorTicks);
 
-        NumericLinearAxisSnapshot ISnapshot<NumericLinearAxisSnapshot>.CreateSnapShot() => new NumericLinearAxisSnapshot(Min, Max, ShowMinorTicks, ShowMajorTicks, LabelSize, Margin, LabelCssClass, Placement, ScalingType);
+        NumericLinearAutoScaleAxisSnapshot ISnapshot<NumericLinearAutoScaleAxisSnapshot>.CreateSnapShot() => new NumericLinearAutoScaleAxisSnapshot(ShowMinorTicks, ShowMajorTicks, LabelSize, Margin, LabelCssClass, Placement);
 
         public void RemoveTick(bool isMajorTick)
         {

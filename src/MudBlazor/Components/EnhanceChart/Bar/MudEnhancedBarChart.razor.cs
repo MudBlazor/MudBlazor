@@ -201,7 +201,7 @@ namespace MudBlazor.EnhanceChart
 
         #region From Axes
 
-        protected internal void AxesUpdated(MudEnhancedNumericLinearAxis _)
+        protected internal void AxesUpdated(MudEnhancedNumericLinearAutoScaleAxis _)
         {
             _triggerAnimation = true;
 
@@ -696,7 +696,7 @@ namespace MudBlazor.EnhanceChart
 
         public static void DefaultYAxesFragment(RenderTreeBuilder builder)
         {
-            builder.OpenComponent(1, typeof(MudEnhancedNumericLinearAxis));
+            builder.OpenComponent(1, typeof(MudEnhancedNumericLinearAutoScaleAxis));
             builder.CloseComponent();
         }
 
