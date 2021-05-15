@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -312,21 +311,52 @@ namespace MudBlazor
             if (Disabled || ReadOnly)
                 return;
 
-            if (obj.Type == "keydown")//KeyDown or repeat, blazor never fire InvokeKeyPress
+            if (obj.Type == "keydown")//KeyDown or repeat, blazor never fires InvokeKeyPress
             {
                 if (obj.Key == "ArrowUp")
                 {
+                    _keyDownPreventDefault = true;
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        var value = Value;
+                        await Task.Delay(1);
+                        Value = value;
+                    }
                     await Increment();
                     return;
                 }
                 else if (obj.Key == "ArrowDown")
                 {
+                    _keyDownPreventDefault = true;
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        var value = Value;
+                        await Task.Delay(1);
+                        Value = value;
+                    }
                     await Decrement();
                     return;
                 }
             }
+
             _keyDownPreventDefault = KeyDownPreventDefault;
-            OnKeyPress.InvokeAsync(obj).AndForget();
+            OnKeyDown.InvokeAsync(obj).AndForget();
+        }
+
+        /// <summary>
+        /// Overrides KeyUp event, if needed reset <see cref="_keyDownPreventDefault"/> set by <see cref="InterceptArrowKey(KeyboardEventArgs)"/>.
+        /// </summary>
+        protected void InterceptKeyUp(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+                return;
+
+            if (_keyDownPreventDefault != KeyDownPreventDefault)
+            {
+                _keyDownPreventDefault = KeyDownPreventDefault;
+                StateHasChanged();
+            }
+            OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
         /// <summary>
