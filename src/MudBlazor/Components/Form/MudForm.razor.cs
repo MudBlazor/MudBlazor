@@ -39,6 +39,14 @@ namespace MudBlazor
         private bool _valid = true;
 
         /// <summary>
+        /// True if any field of the field was touched. This parameter is readonly.
+        /// </summary>
+        [Parameter]
+        public bool IsTouched { get => _touched; set {/* readonly parameter! */ } }
+
+        private bool _touched = false;
+
+        /// <summary>
         /// Validation debounce delay in milliseconds. This can help improve rendering performance of forms with real-time validation of inputs
         /// i.e. when textfields have Immediate="true"
         /// </summary>
@@ -64,6 +72,11 @@ namespace MudBlazor
         /// Raised when IsValid changes.
         /// </summary>
         [Parameter] public EventCallback<bool> IsValidChanged { get; set; }
+
+        /// <summary>
+        /// Raised when IsTouched changes.
+        /// </summary>
+        [Parameter] public EventCallback<bool> IsTouchedChanged { get; set; }
 
         // keeps track of validation. if the input was validated at least once the value will be true
         protected HashSet<IFormComponent> _formControls = new HashSet<IFormComponent>();
@@ -129,12 +142,17 @@ namespace MudBlazor
             var no_errors = _formControls.All(x => x.HasErrors == false);
             var required_all_touched = _formControls.Where(x => x.Required).All(x => x.Touched);
             _valid = no_errors && required_all_touched;
+
+            var old_touched = _touched;
+            _touched = _formControls.Any(x => x.Touched);
             try
             {
                 _shouldRender = false;
                 if (old_valid != _valid)
                     await IsValidChanged.InvokeAsync(_valid);
                 await ErrorsChanged.InvokeAsync(Errors);
+                if(old_touched != _touched)
+                    await IsTouchedChanged.InvokeAsync(_touched);
             }
             finally
             {
