@@ -83,7 +83,7 @@
         }
 
         &.mud-input-showspin .mud-input:not(.mud-input-adorned-end) input {
-            padding-right: 24px;
+            padding-right: 24px; //This must be the same width of the spinners
         }
         
         & .mud-input-numeric-spin {
@@ -100,7 +100,9 @@
                 min-width: unset;
                 min-height: unset;
             }
-        } & .mud-input-underline .mud-input-numeric-spin button {
+        }
+        
+        & .mud-input-underline .mud-input-numeric-spin button {
             padding: 2px 0;
         }
     }
