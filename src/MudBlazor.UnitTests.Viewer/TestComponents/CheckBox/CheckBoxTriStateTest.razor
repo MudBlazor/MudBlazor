@@ -1,0 +1,9 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents
+
+<MudCheckBox T="bool?" @bind-Checked="is_checked" TriState="true">TriState is set to true</MudCheckBox>
+
+@code {
+    public static string __description__ = "Clicking the checkbox several times will show the undetermined status, then the true status, then the false status, then the undetermined status and so on for the Checkbox whose TriState parameter is set to true.";
+
+    bool? is_checked = default;
+}
