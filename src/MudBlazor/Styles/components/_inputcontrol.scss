@@ -82,6 +82,10 @@
             -moz-appearance: textfield;
         }
 
+        &.mud-input-showspin .mud-input:not(.mud-input-adorned-end) input {
+            padding-right: 24px;
+        }
+        
         & .mud-input-numeric-spin {
             display: inline-flex;
             flex-direction: column;
@@ -96,9 +100,7 @@
                 min-width: unset;
                 min-height: unset;
             }
-        }
-
-        & .mud-input-underline .mud-input-numeric-spin button {
+        } & .mud-input-underline .mud-input-numeric-spin button {
             padding: 2px 0;
         }
     }
