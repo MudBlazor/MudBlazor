@@ -316,12 +316,24 @@ namespace MudBlazor
                 if (obj.Key == "ArrowUp")
                 {
                     _keyDownPreventDefault = true;
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        var value = Value;
+                        await Task.Delay(1);
+                        Value = value;
+                    }
                     await Increment();
                     return;
                 }
                 else if (obj.Key == "ArrowDown")
                 {
                     _keyDownPreventDefault = true;
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        var value = Value;
+                        await Task.Delay(1);
+                        Value = value;
+                    }
                     await Decrement();
                     return;
                 }
