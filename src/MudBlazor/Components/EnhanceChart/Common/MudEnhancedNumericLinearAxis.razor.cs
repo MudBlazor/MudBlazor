@@ -176,7 +176,26 @@ namespace MudBlazor.EnhanceChart
                 _tickInfo.MajorTickNumericValue = GetNearestTickValue(initialDelta, firstStep);
                 Int32 steps = (Int32)Math.Ceiling((_tickInfo.Max - _tickInfo.Min) / _tickInfo.MajorTickNumericValue);
                 _tickInfo.MajorTickAmount = 1 + steps;
-                _tickInfo.Max = steps * _tickInfo.MajorTickNumericValue;
+
+                for (int i = 0; i <= _tickInfo.MajorTickAmount; i++)
+                {
+                    Double value = i * _tickInfo.MajorTickNumericValue;
+                    if (value >= _tickInfo.Max)
+                    {
+                        _tickInfo.Max = value;
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < _tickInfo.MajorTickAmount; i++)
+                {
+                    Double value = -i * _tickInfo.MajorTickNumericValue;
+                    if (value <= _tickInfo.Min)
+                    {
+                        _tickInfo.Min = value;
+                        break;
+                    }
+                }
             }
             else
             {
@@ -189,6 +208,8 @@ namespace MudBlazor.EnhanceChart
                 _tickInfo.MinorTickNumericValue = GetNearestTickValue(_tickInfo.MajorTickNumericValue, _tickInfo.MajorTickNumericValue / ((Int32)MinorTickValue - 1));
                 _tickInfo.MinorTickAmount = (Int32)((_tickInfo.MajorTickNumericValue / _tickInfo.MinorTickNumericValue) - 1.0);
             }
+
+            _tickInfo.StartTickValue = _tickInfo.Min;
         }
 
         private static Double GetNearestTickValue(double initialDelta, Double firstStep)
@@ -198,7 +219,7 @@ namespace MudBlazor.EnhanceChart
 
             if (initialDelta > 1)
             {
-                while (valuePerTick > 1)
+                while (valuePerTick >= 1)
                 {
                     valuePerTick /= 10;
                     scalingFactor++;
@@ -206,7 +227,7 @@ namespace MudBlazor.EnhanceChart
             }
             else
             {
-                while (valuePerTick < 0.1)
+                while (valuePerTick <= 0.1)
                 {
                     valuePerTick *= 10;
                     scalingFactor++;
@@ -245,5 +266,7 @@ namespace MudBlazor.EnhanceChart
         }
 
         public TickOverview GetTickInfo() => _tickInfo;
+
+        public void ClearTickInfo() => _tickInfo = new();
     }
 }

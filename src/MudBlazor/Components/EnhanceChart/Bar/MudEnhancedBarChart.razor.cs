@@ -268,9 +268,12 @@ namespace MudBlazor.EnhanceChart
                 return;
             }
 
-
-
             Dictionary<MudEnhancedBarDataSet, IYAxis> dataSetAxisMapper = new();
+
+            foreach (var item in _yaxes)
+            {
+                item.ClearTickInfo();
+            }
 
             foreach (var set in _dataSets)
             {
@@ -328,7 +331,16 @@ namespace MudBlazor.EnhanceChart
                 }
             }
 
-            matrix = TransformMatrix2D.MirrorYAxis * TransformMatrix2D.Translate(0, -100) * matrix;
+            (Double min, Double max) minMaxAboveAllDataSets = GetMinAndMaxForAllSets();
+            Double innerChartOffset = 100 - 100.0 * (minMaxAboveAllDataSets.max / (minMaxAboveAllDataSets.max - minMaxAboveAllDataSets.min));
+
+            if (minMaxAboveAllDataSets.min < 0 && minMaxAboveAllDataSets.max < 0)
+            {
+                innerChartOffset = 100;
+            }
+
+            matrix = TransformMatrix2D.MirrorYAxis * TransformMatrix2D.Translate(0, -100) * (matrix * TransformMatrix2D.Translate(0, innerChartOffset));
+
 
             Double xForLine = 0.0;
             Double deltaForXGridline = 100.0 / _xAxis.Labels.Count;
@@ -349,7 +361,7 @@ namespace MudBlazor.EnhanceChart
                             value = series.Points[labelIndex];
                         }
 
-                        Double height = (value / axisHelper.Max) * 100.0;
+                        Double height = (value / axisHelper.Distance) * 100.0;
                         if (height > 100.0)
                         {
                             height = 100.0;
@@ -382,7 +394,7 @@ namespace MudBlazor.EnhanceChart
                             Series = series,
                             XLabel = _xAxis.Labels[labelIndex],
                             YValue = value,
-                            OldPath = AnimationIsEnabled == true ?  _oldBarPaths[id] : String.Empty,
+                            OldPath = AnimationIsEnabled == true ? _oldBarPaths[id] : String.Empty,
                             Id = id,
                         };
 
@@ -396,8 +408,8 @@ namespace MudBlazor.EnhanceChart
                 if (_xAxis.ShowGridLines == true)
                 {
                     SvgLine line = new SvgLine(
-                        matrix * new Point2D(xForLine, 0),
-                        matrix * new Point2D(xForLine, 100),
+                        matrix * new Point2D(xForLine, 0 - innerChartOffset),
+                        matrix * new Point2D(xForLine, 100 - innerChartOffset),
                         _xAxis.GridLineThickness,
                         (String)_xAxis.GridLineColor,
                         new CssBuilder("mud-enhanced-chart-x-axis-grid-line").AddOnlyWhenNotEmptyClass(_xAxis.GridLineCssClass).Build()
@@ -411,8 +423,8 @@ namespace MudBlazor.EnhanceChart
             if (_xAxis.ShowGridLines == true)
             {
                 _lines.Add(new SvgLine(
-                        matrix * new Point2D(100, 0),
-                        matrix * new Point2D(100, 100),
+                        matrix * new Point2D(100, 0 - innerChartOffset),
+                        matrix * new Point2D(100, 100 - innerChartOffset),
                         _xAxis.GridLineThickness,
                         (String)_xAxis.GridLineColor,
                         new CssBuilder("mud-enhanced-chart-x-axis-grid-line").AddOnlyWhenNotEmptyClass(_xAxis.GridLineCssClass).Build()
@@ -454,10 +466,7 @@ namespace MudBlazor.EnhanceChart
 
             foreach (var axisHelper in dataSetAxisMapper.Values)
             {
-                if (axisHelper.Placement == YAxisPlacement.None)
-                {
-                    continue;
-                }
+
 
                 var tickInfo = axisHelper.GetTickInfo();
 
@@ -478,21 +487,24 @@ namespace MudBlazor.EnhanceChart
                 Double deltaPerMajorGridLine = 100.0 / (tickInfo.MajorTickAmount - 1);
                 Double deltaPerMinorGridLine = deltaPerMajorGridLine / (tickInfo.MinorTickAmount + 1);
 
-                Double lineY = 0.0;
+                Double lineY = tickInfo.Min / (tickInfo.Distance) * 100;
 
                 for (int i = 0; i < tickInfo.MajorTickAmount; i++)
                 {
                     Point2D labelLeftCorner = new Point2D(x, y);
 
-                    _labels.Add(new SvgText
+                    if (axisHelper.Placement != YAxisPlacement.None)
                     {
-                        Class = new CssBuilder("mud-enhanced-chart-y-axis-major-label").AddOnlyWhenNotEmptyClass(axisHelper.LabelCssClass).Build(),
-                        Value = Math.Round(tickValue, 6).ToString(),
-                        Height = 3,
-                        X = labelLeftCorner.X,
-                        Y = labelLeftCorner.Y,
-                        TextPlacement = axisHelper.Placement == YAxisPlacement.Left ? "end" : "start",
-                    });
+                        _labels.Add(new SvgText
+                        {
+                            Class = new CssBuilder("mud-enhanced-chart-y-axis-major-label").AddOnlyWhenNotEmptyClass(axisHelper.LabelCssClass).Build(),
+                            Value = Math.Round(tickValue, 6).ToString(),
+                            Height = 3,
+                            X = labelLeftCorner.X,
+                            Y = labelLeftCorner.Y,
+                            TextPlacement = axisHelper.Placement == YAxisPlacement.Left ? "end" : "start",
+                        });
+                    }
 
                     y -= deltaYPerTick;
                     tickValue += tickInfo.MajorTickNumericValue;
@@ -533,8 +545,11 @@ namespace MudBlazor.EnhanceChart
                     lineY += deltaPerMajorGridLine;
                 }
 
-                _labels[startIndex].Baseline = "text-after-edge";
-                _labels[_labels.Count - 1].Baseline = "text-before-edge";
+                if (axisHelper.Placement != YAxisPlacement.None)
+                {
+                    _labels[startIndex].Baseline = "text-after-edge";
+                    _labels[_labels.Count - 1].Baseline = "text-before-edge";
+                }
 
                 if (_isRendered == true)
                 {
@@ -547,6 +562,28 @@ namespace MudBlazor.EnhanceChart
             }
 
             StateHasChanged();
+        }
+
+        private (double max, double min) GetMinAndMaxForAllSets()
+        {
+            Double min = Double.PositiveInfinity;
+            Double max = Double.NegativeInfinity;
+
+            foreach (var series in _yaxes)
+            {
+                var tickInfo = series.GetTickInfo();
+                if (tickInfo.Min < min)
+                {
+                    min = tickInfo.Min;
+                }
+
+                if (tickInfo.Max > max)
+                {
+                    max = tickInfo.Max;
+                }
+            }
+
+            return (min, max);
         }
 
         private void PreserveCurrentBarStates()
@@ -688,7 +725,7 @@ namespace MudBlazor.EnhanceChart
             }
             else
             {
-                if(_triggerAnimation == true)
+                if (_triggerAnimation == true)
                 {
                     PreserveCurrentBarStates();
                 }

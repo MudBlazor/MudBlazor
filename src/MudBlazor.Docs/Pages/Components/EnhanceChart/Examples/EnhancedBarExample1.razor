@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudEnhancedChart TitlePosition="@config.TitlePosition" TitleAlignment="@config.TitleAlignment" ShowTitle="@config.ShowTitle" Title="@config.TitleCaption"
-                   LegendPosition="@config.LegendPosition" LegendAlignment="@config.LegendAlignment" ShowLegend="config.ShowLegend">
+                  LegendPosition="@config.LegendPosition" LegendAlignment="@config.LegendAlignment" ShowLegend="config.ShowLegend">
     <Legend>
         <MudEnhancedBarChartLegend LegendInfo="context" />
     </Legend>
@@ -13,25 +13,23 @@
             <DataSets>
                 @foreach (var item in config.DataSets)
                 {
-                    <MudEnhancedBarDataSet @key="item.Id" Name="@item.Name" IsStacked="@item.IsStacked">
-                        @foreach (var series in item.Series)
-                        {
-                            <MudEnhancedBarChartSeries @key="@series.Id" Id="@series.Id" Name="@series.Name" Points="@series.Values" Color="@series.Color" />
-                        }
-                    </MudEnhancedBarDataSet>
-                }
+<MudEnhancedBarDataSet @key="item.Id" Name="@item.Name" IsStacked="@item.IsStacked">
+    @foreach (var series in item.Series)
+    {
+<MudEnhancedBarChartSeries @key="@series.Id" Id="@series.Id" Name="@series.Name" Points="@series.Values" Color="@series.Color" />}
+</MudEnhancedBarDataSet>}
             </DataSets>
             <YAxes>
                 <MudEnhancedNumericLinearAxis ScalingType="ScalingType.Auto" Margin="@config.YAxis.Margin" LabelSize="@config.YAxis.LabelSize" Placement="@config.YAxis.Placement" LabelCssClass="my-custom-class" Min="0" Max="100" ShowMinorTicks="true" ShowMajorTicks="true">
                     <MajorTick>
                         @if (config.YAxis.ShowMajorTicks)
                         {
-                            <MudEnhancedTick Value="@config.YAxis.MajorTickAmount" Color="@config.YAxis.MajorTickColor" Thickness="@config.YAxis.MajorTickThickness" />}
+<MudEnhancedTick Value="@config.YAxis.MajorTickAmount" Color="@config.YAxis.MajorTickColor" Thickness="@config.YAxis.MajorTickThickness" />}
                     </MajorTick>
                     <MinorTick>
                         @if (config.YAxis.ShowMinorTicks)
                         {
-                            <MudEnhancedTick Value="@config.YAxis.MinorTickAmount" Color="@config.YAxis.MinorTickColor" Thickness="@config.YAxis.MinorTickThickness" />}
+<MudEnhancedTick Value="@config.YAxis.MinorTickAmount" Color="@config.YAxis.MinorTickColor" Thickness="@config.YAxis.MinorTickThickness" />}
                     </MinorTick>
                 </MudEnhancedNumericLinearAxis>
             </YAxes>
@@ -43,10 +41,10 @@
     <TitleDrawer>
         @if (config.UseCustomerTitleContainer == true)
         {
-            <MudIcon Icon="@config.TitleIcon" /><MudText Typo="Typo.h3">@context</MudText> }
-        else
-        {
-            <MudText Typo="Typo.h6">@context</MudText>}
+<MudIcon Icon="@config.TitleIcon" /><MudText Typo="Typo.h3">@context</MudText> }
+else
+{
+<MudText Typo="Typo.h6">@context</MudText>}
     </TitleDrawer>
 </MudEnhancedChart>
 
@@ -60,21 +58,21 @@
             </MudItem>
             @if (config.ShowLegend == true)
             {
-                <MudItem xs="12" sm="6" md="4">
-                    <MudSelect T="Position" Label="Position" @bind-Value="config.LegendPosition">
-                        <MudSelectItem Value="@(Position.Top)" />
-                        <MudSelectItem Value="@(Position.Left)" />
-                        <MudSelectItem Value="@(Position.Right)" />
-                        <MudSelectItem Value="@(Position.Bottom)" />
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6" md="4">
-                    <MudSelect T="Align" Label="Position" @bind-Value="config.LegendAlignment">
-                        <MudSelectItem Value="@(Align.Center)" />
-                        <MudSelectItem Value="@(Align.Left)" />
-                        <MudSelectItem Value="@(Align.Right)" />
-                    </MudSelect>
-                </MudItem>}
+<MudItem xs="12" sm="6" md="4">
+    <MudSelect T="Position" Label="Position" @bind-Value="config.LegendPosition">
+        <MudSelectItem Value="@(Position.Top)" />
+        <MudSelectItem Value="@(Position.Left)" />
+        <MudSelectItem Value="@(Position.Right)" />
+        <MudSelectItem Value="@(Position.Bottom)" />
+    </MudSelect>
+</MudItem>
+                            <MudItem xs="12" sm="6" md="4">
+                                <MudSelect T="Align" Label="Position" @bind-Value="config.LegendAlignment">
+                                    <MudSelectItem Value="@(Align.Center)" />
+                                    <MudSelectItem Value="@(Align.Left)" />
+                                    <MudSelectItem Value="@(Align.Right)" />
+                                </MudSelect>
+                            </MudItem>}
         </MudGrid>
     </MudExpansionPanel>
     <MudExpansionPanel Text="Title">
@@ -84,34 +82,34 @@
             </MudItem>
             @if (config.ShowTitle == true)
             {
-                <MudItem xs="12" sm="6" md="4">
-                    <MudSelect T="Position" Label="Position" @bind-Value="config.TitlePosition">
-                        <MudSelectItem Value="@(Position.Top)" />
-                        <MudSelectItem Value="@(Position.Left)" />
-                        <MudSelectItem Value="@(Position.Right)" />
-                        <MudSelectItem Value="@(Position.Bottom)" />
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12" sm="6" md="4">
-                    <MudSelect T="Align" Label="Position" @bind-Value="config.TitleAlignment">
-                        <MudSelectItem Value="@(Align.Center)" />
-                        <MudSelectItem Value="@(Align.Left)" />
-                        <MudSelectItem Value="@(Align.Right)" />
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudCheckBox @bind-Checked="@config.UseCustomerTitleContainer" Label="Use Custom Container" />
-                </MudItem>
-                <MudItem xs="12" sm="6" md="4">
-                    <MudTextField Immediate="true" @bind-Value="@config.TitleCaption" Label="Chart Title" Variant="Variant.Text" Placeholder="enter a name here" />
-                </MudItem>
-                <MudItem xs="12" sm="6" md="4">
-                    <MudSelect T="String" Label="Icon" @bind-Value="config.TitleIcon">
-                        <MudSelectItem Value="@Icons.Custom.Uncategorized.Radioactive">Radioactive</MudSelectItem>
-                        <MudSelectItem Value="@Icons.Custom.Brands.MudBlazor">MudBlazor</MudSelectItem>
-                        <MudSelectItem Value="@Icons.Material.Filled.Alarm">Alarm</MudSelectItem>
-                    </MudSelect>
-                </MudItem>}
+<MudItem xs="12" sm="6" md="4">
+    <MudSelect T="Position" Label="Position" @bind-Value="config.TitlePosition">
+        <MudSelectItem Value="@(Position.Top)" />
+        <MudSelectItem Value="@(Position.Left)" />
+        <MudSelectItem Value="@(Position.Right)" />
+        <MudSelectItem Value="@(Position.Bottom)" />
+    </MudSelect>
+</MudItem>
+                            <MudItem xs="12" sm="6" md="4">
+                                <MudSelect T="Align" Label="Position" @bind-Value="config.TitleAlignment">
+                                    <MudSelectItem Value="@(Align.Center)" />
+                                    <MudSelectItem Value="@(Align.Left)" />
+                                    <MudSelectItem Value="@(Align.Right)" />
+                                </MudSelect>
+                            </MudItem>
+                                                        <MudItem xs="12">
+                                                            <MudCheckBox @bind-Checked="@config.UseCustomerTitleContainer" Label="Use Custom Container" />
+                                                        </MudItem>
+                                                                                    <MudItem xs="12" sm="6" md="4">
+                                                                                        <MudTextField Immediate="true" @bind-Value="@config.TitleCaption" Label="Chart Title" Variant="Variant.Text" Placeholder="enter a name here" />
+                                                                                    </MudItem>
+                                                                                                                <MudItem xs="12" sm="6" md="4">
+                                                                                                                    <MudSelect T="String" Label="Icon" @bind-Value="config.TitleIcon">
+                                                                                                                        <MudSelectItem Value="@Icons.Custom.Uncategorized.Radioactive">Radioactive</MudSelectItem>
+                                                                                                                        <MudSelectItem Value="@Icons.Custom.Brands.MudBlazor">MudBlazor</MudSelectItem>
+                                                                                                                        <MudSelectItem Value="@Icons.Material.Filled.Alarm">Alarm</MudSelectItem>
+                                                                                                                    </MudSelect>
+                                                                                                                </MudItem>}
         </MudGrid>
     </MudExpansionPanel>
     <MudExpansionPanel Text="Bar Chart Properties">
@@ -135,23 +133,23 @@
             </MudItem>
             @if (config.XAxis.Placement != XAxisPlacement.None)
             {
-                <MudItem xs="12" sm="6">
-                    <MudSlider @bind-Value="@config.XAxis.Margin" Min="0" Max="100">Margin</MudSlider>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSlider @bind-Value="@config.XAxis.Size" Min="0" Max="100">Size</MudSlider>
-                </MudItem>}
+<MudItem xs="12" sm="6">
+    <MudSlider @bind-Value="@config.XAxis.Margin" Min="0" Max="100">Margin</MudSlider>
+</MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudSlider @bind-Value="@config.XAxis.Size" Min="0" Max="100">Size</MudSlider>
+                            </MudItem>}
             <MudItem xs="12">
                 <MudCheckBox @bind-Checked="@config.XAxis.ShowGridlines" Label="Show Gridlines" />
             </MudItem>
             @if (config.XAxis.ShowGridlines == true)
             {
-                <MudItem xs="12" sm="4">
-                    <MudSlider @bind-Value="@config.XAxis.GridlineWidth" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
-                </MudItem>
-                <MudItem xs="12" sm="4">
-                    <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="@config.XAxis.GridlineColor" />
-                </MudItem>}
+<MudItem xs="12" sm="4">
+    <MudSlider @bind-Value="@config.XAxis.GridlineWidth" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
+</MudItem>
+                            <MudItem xs="12" sm="4">
+                                <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="@config.XAxis.GridlineColor" />
+                            </MudItem>}
         </MudGrid>
     </MudExpansionPanel>
     <MudExpansionPanel Text="Y Axis Properties">
@@ -165,40 +163,40 @@
             </MudItem>
             @if (config.YAxis.Placement != YAxisPlacement.None)
             {
-                <MudItem xs="12" sm="4">
-                    <MudSlider @bind-Value="@config.YAxis.Margin" Min="0" Max="100">Margin</MudSlider>
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudSlider @bind-Value="@config.YAxis.LabelSize" Min="0" Max="100">LabelSize</MudSlider>
-                </MudItem>
-                <MudItem xs="12">
-                    <MudCheckBox @bind-Checked="@config.YAxis.ShowMajorTicks" Label="Show Major Ticks" />
-                </MudItem>
-                @if (config.YAxis.ShowMajorTicks == true)
-                {
-                    <MudItem xs="12" sm="6">
-                        <MudSlider @bind-Value="@config.YAxis.MajorTickAmount" Step="1" Min="2" Max="100">Major Tick Amount</MudSlider>
-                    </MudItem>
-                    <MudItem xs="12" sm="6">
-                        <MudSlider @bind-Value="@config.YAxis.MajorTickThickness" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
-                    </MudItem>
-                    <MudItem xs="12" sm="6">
-                        <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="@config.YAxis.MajorTickColor" />
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudCheckBox @bind-Checked="@config.YAxis.ShowMinorTicks" Label="Show Minor Ticks" />
-                    </MudItem>
-                    @if (config.YAxis.ShowMinorTicks == true)
-                    {
-                        <MudItem xs="12" sm="4">
-                            <MudSlider @bind-Value="@config.YAxis.MinorTickAmount" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
-                        </MudItem>
-                        <MudItem xs="12" sm="4">
-                            <MudSlider @bind-Value="@config.YAxis.MinorTickThickness" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
-                        </MudItem>
-                        <MudItem xs="12" sm="4">
-                            <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="@config.YAxis.MinorTickColor" />
-                        </MudItem>}}}
+<MudItem xs="12" sm="4">
+    <MudSlider @bind-Value="@config.YAxis.Margin" Min="0" Max="100">Margin</MudSlider>
+</MudItem>
+                            <MudItem xs="12" sm="6">
+                                <MudSlider @bind-Value="@config.YAxis.LabelSize" Min="0" Max="100">LabelSize</MudSlider>
+                            </MudItem>
+                                                        <MudItem xs="12">
+                                                            <MudCheckBox @bind-Checked="@config.YAxis.ShowMajorTicks" Label="Show Major Ticks" />
+                                                        </MudItem>
+                                                                                    @if (config.YAxis.ShowMajorTicks == true)
+                                                                                    {
+                                                        <MudItem xs="12" sm="6">
+                                                            <MudSlider @bind-Value="@config.YAxis.MajorTickAmount" Step="1" Min="2" Max="100">Major Tick Amount</MudSlider>
+                                                        </MudItem>
+                                                                                        <MudItem xs="12" sm="6">
+                                                                                            <MudSlider @bind-Value="@config.YAxis.MajorTickThickness" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
+                                                                                        </MudItem>
+                                                                                                                        <MudItem xs="12" sm="6">
+                                                                                                                            <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="@config.YAxis.MajorTickColor" />
+                                                                                                                        </MudItem>
+                                                                                                                                                        <MudItem xs="12">
+                                                                                                                                                            <MudCheckBox @bind-Checked="@config.YAxis.ShowMinorTicks" Label="Show Minor Ticks" />
+                                                                                                                                                        </MudItem>
+                                                                                                                                                                                        @if (config.YAxis.ShowMinorTicks == true)
+                                                                                                                                                                                        {
+                                                                                                                                                        <MudItem xs="12" sm="4">
+                                                                                                                                                            <MudSlider @bind-Value="@config.YAxis.MinorTickAmount" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
+                                                                                                                                                        </MudItem>
+                                                                                                                                                                                            <MudItem xs="12" sm="4">
+                                                                                                                                                                                                <MudSlider @bind-Value="@config.YAxis.MinorTickThickness" Min="0" Step="0.2" Max="10">Gridline width</MudSlider>
+                                                                                                                                                                                            </MudItem>
+                                                                                                                                                                                                                                <MudItem xs="12" sm="4">
+                                                                                                                                                                                                                                    <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="@config.YAxis.MinorTickColor" />
+                                                                                                                                                                                                                                </MudItem>}}}
         </MudGrid>
     </MudExpansionPanel>
     <MudExpansionPanel Text="Dataseries">
@@ -222,40 +220,40 @@
             @for (int i = 0; i < config.DataSets.Count; i++)
             {
                 Int32 temp = i;
-                <MudItem xs="12">
-                    <MudCard>
-                        <MudCardHeader>
-                            <CardHeaderContent>
-                                <MudTextField Immediate="true" Label="@($"Name of dataset number {i+1}")" @bind-Value="config.DataSets[temp].Name" T="string" />
-                            </CardHeaderContent>
-                            <CardHeaderActions>
-                                <MudTooltip Text="Randomize Data">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Shuffle" Color="Color.Default" OnClick="@( () => Randomize(config.DataSets[temp]) )" />
-                                </MudTooltip>
-                                <MudTooltip Text="Add Series">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Default" OnClick="@( () => AddSeries(config.DataSets[temp]) )" />
-                                </MudTooltip>
-                                <MudTooltip Text="Remove Dataset">
-                                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default" OnClick="@( () => DeleteSet(config.DataSets[temp]) )" />
-                                </MudTooltip>
-                            </CardHeaderActions>
-                        </MudCardHeader>
-                        <MudCardContent>
-                            <MudText Typo="Typo.h6">Series</MudText>
-                            @for (int j = 0; j < config.DataSets[temp].Series.Count; j++)
-                            {
-                                Int32 temp2 = j;
-                                <div class="d-flex flex-row">
-                                    <MudTextField Immediate="true" Label="@($"Name of series number {j+1}")" T="string" @bind-Value="config.DataSets[temp].Series[temp2].Name" />
-                                    <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="config.DataSets[temp].Series[temp2].Color" />
-                                    <MudTooltip Text="Remove Series">
-                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default" OnClick="@( () => RemoveSeries(config.DataSets[temp],config.DataSets[temp].Series[temp2]))" />
-                                    </MudTooltip>
-                                </div>}
+<MudItem xs="12">
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudTextField Immediate="true" Label="@($"Name of dataset number {i+1}")" @bind-Value="config.DataSets[temp].Name" T="string" />
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudTooltip Text="Randomize Data">
+                    <MudIconButton Icon="@Icons.Material.Filled.Shuffle" Color="Color.Default" OnClick="@( () => Randomize(config.DataSets[temp]) )" />
+                </MudTooltip>
+                <MudTooltip Text="Add Series">
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Default" OnClick="@( () => AddSeries(config.DataSets[temp]) )" />
+                </MudTooltip>
+                <MudTooltip Text="Remove Dataset">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default" OnClick="@( () => DeleteSet(config.DataSets[temp]) )" />
+                </MudTooltip>
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudText Typo="Typo.h6">Series</MudText>
+            @for (int j = 0; j < config.DataSets[temp].Series.Count; j++)
+            {
+                Int32 temp2 = j;
+<div class="d-flex flex-row">
+    <MudTextField Immediate="true" Label="@($"Name of series number {j+1}")" T="string" @bind-Value="config.DataSets[temp].Series[temp2].Name" />
+    <MudTextField Immediate="true" InputType="InputType.Color" Label="Color 1" T="string" @bind-Value="config.DataSets[temp].Series[temp2].Color" />
+    <MudTooltip Text="Remove Series">
+        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default" OnClick="@( () => RemoveSeries(config.DataSets[temp],config.DataSets[temp].Series[temp2]))" />
+    </MudTooltip>
+</div>}
 
-                        </MudCardContent>
-                    </MudCard>
-                </MudItem>}
+        </MudCardContent>
+    </MudCard>
+</MudItem>}
         </MudGrid>
     </MudExpansionPanel>
 </MudExpansionPanels>
@@ -263,7 +261,7 @@
 
 @code { public class BarChartSeriesConig
     {
-        public Guid Id { get; set; } 
+        public Guid Id { get; set; }
         public String Name { get; set; } = "My new Series";
         public String Color { get; set; } = MudBlazor.Utilities.RandomColorSelector.GetRandomColor();
         public List<Double> Values { get; set; } = new();
@@ -272,7 +270,7 @@
         {
             Random random = new Random();
             Id = Guid.NewGuid();
-            Values = existingLabels.Select(x => (Double)random.Next(0, 200)).ToList();
+            Values = existingLabels.Select(x => (random.NextDouble() > 0.5 ? 1 : -1) * (Double)random.Next(0, 200)).ToList();
         }
     }
 
@@ -369,7 +367,7 @@
             {
                 for (int i = 0; i < series.Values.Count; i++)
                 {
-                    series.Values[i] = random.Next(10, 200);
+                    series.Values[i] = (random.NextDouble() > 0.5 ? 1 : -1) * random.Next(10, 200);
                 }
             }
         }
@@ -385,7 +383,7 @@
         {
             for (int i = 0; i < series.Values.Count; i++)
             {
-                series.Values[i] = random.Next(10, 200);
+                series.Values[i] = (random.NextDouble() > 0.5 ? 1 : -1) * random.Next(10, 200);
             }
         }
 
