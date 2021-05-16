@@ -24,28 +24,28 @@ namespace MudBlazor
             {
                 _minDefault = (T)(object)sbyte.MinValue;
                 _maxDefault = (T)(object)sbyte.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)(sbyte)1;
             }
             // byte
             else if (typeof(T) == typeof(byte) || typeof(T) == typeof(byte?))
             {
                 _minDefault = (T)(object)byte.MinValue;
                 _maxDefault = (T)(object)byte.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)(byte)1;
             }
             // short
             else if (typeof(T) == typeof(short) || typeof(T) == typeof(short?))
             {
                 _minDefault = (T)(object)short.MinValue;
                 _maxDefault = (T)(object)short.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)(short)1;
             }
             // ushort
             else if (typeof(T) == typeof(ushort) || typeof(T) == typeof(ushort?))
             {
                 _minDefault = (T)(object)ushort.MinValue;
                 _maxDefault = (T)(object)ushort.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)(ushort)1;
             }
             // int
             else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
@@ -59,21 +59,21 @@ namespace MudBlazor
             {
                 _minDefault = (T)(object)uint.MinValue;
                 _maxDefault = (T)(object)uint.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)1u;
             }
             // long
             else if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
             {
                 _minDefault = (T)(object)long.MinValue;
                 _maxDefault = (T)(object)long.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)1L;
             }
             // ulong
             else if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
             {
                 _minDefault = (T)(object)ulong.MinValue;
                 _maxDefault = (T)(object)ulong.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)1ul;
             }
             // float
             else if (typeof(T) == typeof(float) || typeof(T) == typeof(float?))
