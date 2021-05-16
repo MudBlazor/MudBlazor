@@ -304,6 +304,37 @@ namespace MudBlazor.UnitTests
             numericField.HasErrors.Should().Be(false);
         }
 
-    }
+        /// <summary>
+        /// NumericField with any numeric type parameter should render.
+        /// Test for decimal type moved to another method because it cannot be parameter for TastCaseAttribute.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        [Test]
+        [TestCase((byte)5)]
+        [TestCase((sbyte)5)]
+        [TestCase((short)5)]
+        [TestCase((ushort)5)]
+        [TestCase((int)5)]
+        [TestCase((uint)5)]
+        [TestCase((long)5)]
+        [TestCase((ulong)5)]
+        [TestCase((float)1.0f)]
+        [TestCase((double)5.0)]
+        public async Task NumericField_OfAnyType_Should_Render<T>(T value)
+        {
+            Assert.DoesNotThrow(() => ctx.RenderComponent<MudNumericField<T>>(), $"NunericField<{typeof(T)}> render failed.");
+        }
 
+        /// <summary>
+        /// NumericField with decimal type parameter should render.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task NumericField_OfDecimal_Should_Render()
+        {
+            Assert.DoesNotThrow(() => ctx.RenderComponent<MudNumericField<decimal>>(), $"NumericField<{typeof(decimal)}> render failed.");
+        }
+    }
 }
