@@ -259,6 +259,47 @@ namespace MudBlazor.UnitTests.Components
 
         }
 
+        /// <summary>
+        /// Test for <seealso cref="https://github.com/Garderoben/MudBlazor/issues/1415"/>
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_OnBlurShouldBeCalled()
+        {
+            var calls = 0;
+            Action<FocusEventArgs> fn = (args) => calls++;
+            var comp = ctx.RenderComponent<MudAutocomplete<string>>((a) =>
+            {
+                a.Add(x => x.OnBlur, fn);
+            });
+            var input = comp.Find("input");
+
+            calls.Should().Be(0);
+            input.Blur();
+            calls.Should().Be(1);
+        }
+
+
+        [Test]
+        public async Task AutoCompleteClearableTest()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTestClearable>();
+            // No button when initialized empty
+            comp.FindAll("button").Should().BeEmpty();
+
+            // Button shows after entering text
+            comp.Find("input").Input("text");
+            comp.Find("button").Should().NotBeNull();
+            // Text cleared and button removed after clicking clear button
+            comp.Find("button").Click();
+            comp.FindAll("button").Should().BeEmpty();
+
+            // Button shows again after entering text
+            comp.Find("input").Input("text");
+            comp.Find("button").Should().NotBeNull();
+            // Button removed after clearing text
+            comp.Find("input").Input(string.Empty);
+            comp.FindAll("button").Should().BeEmpty();
+        }
 
         #region DataAttribute validation
         [Test]

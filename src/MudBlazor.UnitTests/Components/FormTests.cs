@@ -91,6 +91,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Changing a fields value should set IsTouched to true
+        /// </summary>
+        [Test]
+        public async Task FormIsTouchedTest()
+        {
+            var comp = ctx.RenderComponent<FormIsTouchedTest>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textFieldcomp = comp.FindComponent<MudTextField<string>>();
+            var textField = textFieldcomp.Instance;
+            var dateComp = comp.FindComponent<MudDatePicker>();
+            var dateField = dateComp.Instance;
+            // check initial state: form should not be touched 
+            form.IsTouched.Should().Be(false);
+            // input a date, istouched should be true
+            dateComp.Find("input").Change("2001-01-31");
+            form.IsTouched.Should().Be(true);
+
+            //reset should set touched to false
+            await comp.InvokeAsync(() => form.Reset());
+            form.IsTouched.Should().Be(false);
+
+            // clear value to null
+            textFieldcomp.Find("input").Change("value is changed");
+            form.IsTouched.Should().Be(true);
+
+            //reset validation should not reset touched state
+            await comp.InvokeAsync(() => form.ResetValidation());
+            form.IsTouched.Should().Be(true);
+        }
+
+        /// <summary>
         /// Custom validation func should be called to determine whether or not a form value is good
         /// </summary>
         [Test]
@@ -546,6 +578,8 @@ namespace MudBlazor.UnitTests.Components
             datepicker.Error.Should().BeTrue();
             datepicker.ErrorText.Should().Be("Only full hours allowed");
         }
+
+
 
         /// <summary>
         /// Testing the functionality of the EditForm example from the docs.

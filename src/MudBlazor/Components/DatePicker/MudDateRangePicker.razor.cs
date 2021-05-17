@@ -90,6 +90,11 @@ namespace MudBlazor
             return SetDateRangeAsync(ParseDateRangeValue(value), false);
         }
 
+        protected override bool HasValue(DateTime? value)
+        {
+            return _dateRange != null;
+        }
+
         private DateRange ParseDateRangeValue(string value)
         {
             return DateRange.TryParse(value, Converter, out var dateRange) ? dateRange : null;
@@ -217,19 +222,14 @@ namespace MudBlazor
 
         protected override string GetTitleDateString()
         {
-            if (_firstDate != null && _secondDate != null)
-                return $"{_firstDate.Value.ToString("dd MMM", Culture)} - {_secondDate.Value.ToString("dd MMM", Culture)}";
-            else if (_firstDate != null)
-                return _firstDate.Value.ToString("dd MMM", Culture) + " - ";
-
-            if (DateRange == null || DateRange.Start == null)
-                return "";
-            if (DateRange.End == null)
-                return DateRange.Start.Value.ToString("dd MMM", Culture);
-
-            return $"{DateRange.Start.Value.ToString("dd MMM", Culture)} - {DateRange.End.Value.ToString("dd MMM", Culture)}";
+            if (_firstDate != null)
+                return $"{FormatTitleDate(_firstDate)} - {FormatTitleDate(_secondDate)}";
+            
+            return DateRange?.Start != null
+                ? $"{FormatTitleDate(DateRange.Start)} - {FormatTitleDate(DateRange.End)}"
+                : "";
         }
-
+        
         protected override DateTime GetCalendarStartOfMonth()
         {
             var date = StartMonth ?? DateRange?.Start ?? DateTime.Today;

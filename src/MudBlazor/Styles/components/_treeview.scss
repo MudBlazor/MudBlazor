@@ -62,6 +62,10 @@
             fill: var(--mud-palette-primary);
         }
     }
+
+    .mud-treeview-item-arrow-load {
+        animation: rotation 1s infinite linear;
+    }
 }
 
 .mud-treeview-item-icon {
@@ -100,5 +104,15 @@
 
     .mud-icon-button {
         padding: 0;
+    }
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(359deg);
     }
 }
