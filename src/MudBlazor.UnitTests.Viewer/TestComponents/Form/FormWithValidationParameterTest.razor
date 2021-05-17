@@ -1,0 +1,130 @@
+@namespace MudBlazor.UnitTests.TestComponents
+
+<MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+		<MudTextField Label="Country"
+		    T="string"
+			@bind-Value="test.Country"
+			Immediate="true"
+			ValidationParameter="Country"
+			Validation="@(new Func<string, string, IEnumerable<string>>(ValidateWithParameterReturnMessages))"
+			For="@(() => test.Country)" />
+		<MudTextField Label="City"
+		    T="string"
+			@bind-Value="test.City"
+			Immediate="true"
+			ValidationParameter="City"
+			Validation="@(new Func<string, string, IEnumerable<string>>(ValidateWithParameterReturnMessages))"
+			For="@(() => test.City)" />
+		<MudTextField Label="PostalCode"
+		    T="string"
+			@bind-Value="test.PostalCode"
+			Immediate="true"
+			ValidationParameter="PostalCode"
+			Validation="@(new Func<string, string, string>(ValidateWithParameterReturnMessage))"
+			For="@(() => test.PostalCode)" />
+		<MudTextField Label="Address"
+		    T="string"
+			@bind-Value="test.Address"
+			Immediate="true"
+			ValidationParameter="Address"
+			Validation="@(new Func<string, string, string>(ValidateWithParameterReturnMessage))"
+			For="@(() => test.Address)" />
+		<MudTextField Label="LastName"
+		    T="string"
+			@bind-Value="test.LastName"
+			Immediate="true"
+			Validation="@(new Func<string, string>(ValidateWithNoParameterReturnMessage))"
+			For="@(() => test.LastName)" />
+		<MudTextField Label="FirstName"
+		    T="string"
+			@bind-Value="test.FirstName"
+			Immediate="true"
+			Validation="@(new Func<string, IEnumerable<string>>(ValidateWithNoParameterReturnMessages))"
+			For="@(() => test.FirstName)" />
+		<p></p>
+		<div class="mt-4 mb-4">
+			<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(()=>form.Validate())">Validate</MudButton>
+		</div>
+		<div>
+			@foreach (var error in errors)
+			{
+				<MudText Color="@Color.Error">@error</MudText>
+			}
+		</div>
+</MudForm>
+
+@code {
+	public static string __description__ = "Form to check the validation parameter usage.";
+	bool success;
+    string[] errors = { };
+	Test test = new();
+	MudForm form;
+	
+	private IEnumerable<string> ValidateWithParameterReturnMessages(string value, string validationParameter)
+	{
+		if (string.IsNullOrWhiteSpace(value))
+        {
+            yield return $"{validationParameter} is required!";
+			yield break;
+        }
+		switch (validationParameter)
+		{
+			case "Country":
+				if (value.Length < 8)
+				{
+					yield return $"{validationParameter} be at least of length 8";	
+				}
+				if (value.Length > 20)
+				{
+					yield return $"{validationParameter} be at maximum of length 20";	
+				}
+				break;
+			case "City":
+				if (value.Length < 3)
+				{
+					yield return $"{validationParameter} be at least of length 8";	
+				}
+				if (value.Length > 40)
+				{
+					yield return $"{validationParameter} be at maximum of length 40";	
+				}
+				break;
+		}
+	}
+
+	private string ValidateWithParameterReturnMessage(string value, string validationParameter)
+	{
+		if (string.IsNullOrWhiteSpace(value))
+        {
+            return $"{validationParameter} is required!";
+        }
+		return null;
+	}
+
+	private IEnumerable<string> ValidateWithNoParameterReturnMessages(string value)
+	{
+		if (string.IsNullOrWhiteSpace(value))
+		{
+			yield return $"FirstName is required!";
+		}
+	}
+
+	private string ValidateWithNoParameterReturnMessage(string value)
+	{
+		if (string.IsNullOrWhiteSpace(value))
+        {
+            return "LastName is required!";
+        }
+		return null;
+	}
+
+	public class Test
+	{
+		public string Country { get; set; }
+		public string City { get; set; }
+		public string Address { get; set; }
+		public string PostalCode { get; set; }
+		public string LastName { get; set; }
+		public string FirstName { get; set; }
+	}
+}
