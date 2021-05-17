@@ -40,7 +40,7 @@
             </MudList>
         </MudPopover>
     </CascadingValue>
+    <MudOverlay Visible="@(_isOpen && ActivationEvent != MouseEvent.MouseOver)" OnClick="@ToggleMenu" LockScroll="false" />
 </div>
 
-<MudOverlay Visible="@(_isOpen && ActivationEvent != MouseEvent.MouseOver)" OnClick="@ToggleMenu" LockScroll="false" />
 
