@@ -131,28 +131,22 @@ namespace MudBlazor.EnhanceChart
             }
         }
 
-        public void ProcessDataSet(IEnumerable<IDataSeries> set)
+        public void ProcessDataSet(IDataSet  set)
         {
             if (ScalesAutomatically == false) { return; }
 
             _tickInfo.HasValues = true;
 
-            foreach (var series in set)
+            var maxAndMin = set.GetMinimumAndMaximumValues();
+
+            if (maxAndMin.Max > _tickInfo.Max)
             {
-                if (series.IsEnabled == false) { continue; }
+                _tickInfo.Max = maxAndMin.Max;
+            }
 
-                foreach (var yValue in series.Points)
-                {
-                    if (yValue > _tickInfo.Max)
-                    {
-                        _tickInfo.Max = yValue;
-                    }
-
-                    if (yValue < _tickInfo.Min)
-                    {
-                        _tickInfo.Min = yValue;
-                    }
-                }
+            if (maxAndMin.Min < _tickInfo.Min)
+            {
+                _tickInfo.Min = maxAndMin.Min;
             }
         }
 

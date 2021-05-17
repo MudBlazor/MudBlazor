@@ -226,6 +226,7 @@
         <MudCardHeader>
             <CardHeaderContent>
                 <MudTextField Immediate="true" Label="@($"Name of dataset number {i+1}")" @bind-Value="config.DataSets[temp].Name" T="string" />
+                <MudCheckBox @bind-Checked="config.DataSets[temp].IsStacked" T="Boolean" Label="Is Stacked?" />
             </CardHeaderContent>
             <CardHeaderActions>
                 <MudTooltip Text="Randomize Data">

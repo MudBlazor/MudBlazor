@@ -287,7 +287,8 @@ namespace MudBlazor.EnhanceChart
                 dataSetAxisMapper.Add(set, axis);
             }
 
-            Int32 amountOfSeries = _dataSets.Sum(x => x.Count(y => y.IsEnabled == true));
+            Int32 amountOfSeries = _dataSets.Where(x => x.IsStacked == false).Sum(x => x.Count(y => y.IsEnabled == true)) +
+                _dataSets.Where(x => x.IsStacked == true && x.Count(y => y.IsEnabled) > 0).Count();
 
             Double xPerLabel = 100.0 / _xAxis.Labels.Count;
             Double labelThickness = xPerLabel - Padding;
@@ -312,7 +313,7 @@ namespace MudBlazor.EnhanceChart
                     break;
             }
 
-            foreach (var item in dataSetAxisMapper.Values)
+            foreach (var item in dataSetAxisMapper.Values.Distinct())
             {
                 item.CalculateTicks();
 
@@ -351,56 +352,34 @@ namespace MudBlazor.EnhanceChart
                 {
                     var axisHelper = dataSetAxisMapper[set].GetTickInfo();
 
-                    foreach (var series in set)
+                    if (set.IsStacked == false)
                     {
-                        if (series.IsEnabled == false) { continue; }
-
-                        Double value = 0.0;
-                        if (labelIndex < series.Points.Count)
+                        foreach (var series in set)
                         {
-                            value = series.Points[labelIndex];
+                            if (series.IsEnabled == false) { continue; }
+
+                            AddBar(barThickness, matrix, labelIndex, subX, axisHelper, series,0);
+
+                            subX += subSpacePerSeriesPerLabel;
+                        }
+                    }
+                    else
+                    {
+                        Boolean hasSeries = false;
+                        Double stackY = 0.0;
+                        foreach (var series in set)
+                        {
+                            if (series.IsEnabled == false) { continue; }
+
+                            hasSeries = true;
+
+                            stackY += AddBar(barThickness, matrix, labelIndex, subX, axisHelper, series, stackY);
                         }
 
-                        Double height = (value / axisHelper.Distance) * 100.0;
-                        if (height > 100.0)
+                        if (hasSeries == true)
                         {
-                            height = 100.0;
+                            subX += subSpacePerSeriesPerLabel;
                         }
-
-                        String id = $"{series.Id}-{labelIndex}";
-                        if (AnimationIsEnabled == true)
-                        {
-                            if (_oldBarPaths.ContainsKey(id) == false)
-                            {
-                                var tempbar = new SvgBarRepresentation
-                                {
-                                    P1 = matrix * new Point2D(subX, 0),
-                                    P2 = matrix * new Point2D(subX, 0),
-                                    P3 = matrix * new Point2D(subX + barThickness, 0),
-                                    P4 = matrix * new Point2D(subX + barThickness, 0),
-                                };
-
-                                _oldBarPaths.Add(id, tempbar.GetPathValue());
-                            }
-                        }
-
-                        SvgBarRepresentation bar = new SvgBarRepresentation
-                        {
-                            P1 = matrix * new Point2D(subX, 0),
-                            P2 = matrix * new Point2D(subX, height),
-                            P3 = matrix * new Point2D(subX + barThickness, height),
-                            P4 = matrix * new Point2D(subX + barThickness, 0),
-                            Fill = series.Color,
-                            Series = series,
-                            XLabel = _xAxis.Labels[labelIndex],
-                            YValue = value,
-                            OldPath = AnimationIsEnabled == true ? _oldBarPaths[id] : String.Empty,
-                            Id = id,
-                        };
-
-                        _bars.Add(bar);
-
-                        subX += subSpacePerSeriesPerLabel;
                     }
                 }
 
@@ -433,11 +412,11 @@ namespace MudBlazor.EnhanceChart
 
             if (_xAxis.Placement != XAxisPlacement.None)
             {
-                Double marginLeftFromXAxis = dataSetAxisMapper.Values.Where(x => x.Placement == YAxisPlacement.Left)
+                Double marginLeftFromXAxis = dataSetAxisMapper.Values.Distinct().Where(x => x.Placement == YAxisPlacement.Left)
                      .Select(x => x.Margin + x.LabelSize)
                      .Sum();
 
-                Double marginRigthFromXAxis = dataSetAxisMapper.Values.Where(x => x.Placement == YAxisPlacement.Rigth)
+                Double marginRigthFromXAxis = dataSetAxisMapper.Values.Distinct().Where(x => x.Placement == YAxisPlacement.Rigth)
                      .Select(x => x.Margin + x.LabelSize)
                      .Sum();
 
@@ -464,10 +443,8 @@ namespace MudBlazor.EnhanceChart
                 }
             }
 
-            foreach (var axisHelper in dataSetAxisMapper.Values)
+            foreach (var axisHelper in dataSetAxisMapper.Values.Distinct())
             {
-
-
                 var tickInfo = axisHelper.GetTickInfo();
 
                 Double marginFromXAxis = _xAxis.Placement == XAxisPlacement.None ? 0.0 : _xAxis.Margin + _xAxis.Height;
@@ -562,6 +539,56 @@ namespace MudBlazor.EnhanceChart
             }
 
             StateHasChanged();
+        }
+
+        private Double AddBar(double barThickness, TransformMatrix2D matrix, int labelIndex, double subX, TickOverview axisHelper, MudEnhancedBarChartSeries series, Double yOffset)
+        {
+            Double value = 0.0;
+            if (labelIndex < series.Points.Count)
+            {
+                value = series.Points[labelIndex];
+            }
+
+            Double height = (value / axisHelper.Distance) * 100.0;
+            if (height > 100.0)
+            {
+                height = 100.0;
+            }
+
+            String id = $"{series.Id}-{labelIndex}";
+            if (AnimationIsEnabled == true)
+            {
+                if (_oldBarPaths.ContainsKey(id) == false)
+                {
+                    var tempbar = new SvgBarRepresentation
+                    {
+                        P1 = matrix * new Point2D(subX, 0 + yOffset),
+                        P2 = matrix * new Point2D(subX, 0 + yOffset),
+                        P3 = matrix * new Point2D(subX + barThickness, 0 + yOffset),
+                        P4 = matrix * new Point2D(subX + barThickness, 0 + yOffset),
+                    };
+
+                    _oldBarPaths.Add(id, tempbar.GetPathValue());
+                }
+            }
+
+            SvgBarRepresentation bar = new SvgBarRepresentation
+            {
+                P1 = matrix * new Point2D(subX, 0 + yOffset),
+                P2 = matrix * new Point2D(subX, height + yOffset),
+                P3 = matrix * new Point2D(subX + barThickness, height + yOffset),
+                P4 = matrix * new Point2D(subX + barThickness, 0 + yOffset),
+                Fill = series.Color,
+                Series = series,
+                XLabel = _xAxis.Labels[labelIndex],
+                YValue = value,
+                OldPath = AnimationIsEnabled == true ? _oldBarPaths[id] : String.Empty,
+                Id = id,
+            };
+
+            _bars.Add(bar);
+
+            return height;
         }
 
         private (double max, double min) GetMinAndMaxForAllSets()

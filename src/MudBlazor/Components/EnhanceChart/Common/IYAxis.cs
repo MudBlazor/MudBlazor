@@ -48,7 +48,7 @@ namespace MudBlazor.EnhanceChart
         void RemoveTick(bool isMajorTick);
         void CalculateTicks();
         TickOverview GetTickInfo();
-        void ProcessDataSet(IEnumerable<IDataSeries> set);
+        void ProcessDataSet(IDataSet set);
         void ClearTickInfo();
     }
 }
