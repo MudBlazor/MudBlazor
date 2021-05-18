@@ -5,29 +5,29 @@
 		    T="string"
 			@bind-Value="test.Country"
 			Immediate="true"
-			ValidationParameter="Country"
-			Validation="@(new Func<string, string, IEnumerable<string>>(ValidateWithParameterReturnMessages))"
+			ValidationParameters="@(new List<string>() { "Country" })"
+			Validation="@(new Func<string, IEnumerable<string>, IEnumerable<string>>(ValidateWithParameterReturnMessages))"
 			For="@(() => test.Country)" />
 		<MudTextField Label="City"
 		    T="string"
 			@bind-Value="test.City"
 			Immediate="true"
-			ValidationParameter="City"
-			Validation="@(new Func<string, string, IEnumerable<string>>(ValidateWithParameterReturnMessages))"
+			ValidationParameters="@(new List<string>() { "City" })"
+			Validation="@(new Func<string, IEnumerable<string>, IEnumerable<string>>(ValidateWithParameterReturnMessages))"
 			For="@(() => test.City)" />
 		<MudTextField Label="PostalCode"
 		    T="string"
 			@bind-Value="test.PostalCode"
 			Immediate="true"
-			ValidationParameter="PostalCode"
-			Validation="@(new Func<string, string, string>(ValidateWithParameterReturnMessage))"
+			ValidationParameters="@(new List<string>() { "PostalCode" })"
+			Validation="@(new Func<string, IEnumerable<string>, string>(ValidateWithParameterReturnMessage))"
 			For="@(() => test.PostalCode)" />
 		<MudTextField Label="Address"
 		    T="string"
 			@bind-Value="test.Address"
 			Immediate="true"
-			ValidationParameter="Address"
-			Validation="@(new Func<string, string, string>(ValidateWithParameterReturnMessage))"
+			ValidationParameters="@(new List<string>() { "Address" })"
+			Validation="@(new Func<string, IEnumerable<string>, string>(ValidateWithParameterReturnMessage))"
 			For="@(() => test.Address)" />
 		<MudTextField Label="LastName"
 		    T="string"
@@ -60,43 +60,43 @@
 	Test test = new();
 	MudForm form;
 	
-	private IEnumerable<string> ValidateWithParameterReturnMessages(string value, string validationParameter)
+	private IEnumerable<string> ValidateWithParameterReturnMessages(string value, IEnumerable<string> validationParameters)
 	{
 		if (string.IsNullOrWhiteSpace(value))
         {
-            yield return $"{validationParameter} is required!";
+            yield return $"{validationParameters.First()} is required!";
 			yield break;
         }
-		switch (validationParameter)
+		switch (validationParameters.First())
 		{
 			case "Country":
 				if (value.Length < 8)
 				{
-					yield return $"{validationParameter} be at least of length 8";	
+					yield return $"{validationParameters.First()} be at least of length 8";	
 				}
 				if (value.Length > 20)
 				{
-					yield return $"{validationParameter} be at maximum of length 20";	
+					yield return $"{validationParameters.First()} be at maximum of length 20";	
 				}
 				break;
 			case "City":
 				if (value.Length < 3)
 				{
-					yield return $"{validationParameter} be at least of length 8";	
+					yield return $"{validationParameters.First()} be at least of length 3";	
 				}
 				if (value.Length > 40)
 				{
-					yield return $"{validationParameter} be at maximum of length 40";	
+					yield return $"{validationParameters.First()} be at maximum of length 40";	
 				}
 				break;
 		}
 	}
 
-	private string ValidateWithParameterReturnMessage(string value, string validationParameter)
+	private string ValidateWithParameterReturnMessage(string value, IEnumerable<string> validationParameters)
 	{
 		if (string.IsNullOrWhiteSpace(value))
         {
-            return $"{validationParameter} is required!";
+            return $"{validationParameters.First()} is required!";
         }
 		return null;
 	}

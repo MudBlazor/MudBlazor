@@ -53,9 +53,9 @@ namespace MudBlazor
         [Parameter] public bool Error { get; set; }
 
         /// <summary>
-        /// Parameter to be used for validation.
+        /// Parameters to be used for validation.
         /// </summary>
-        [Parameter] public string ValidationParameter { get; set; }
+        [Parameter] public IEnumerable<string> ValidationParameters { get; set; }
 
         [Parameter]
         public Converter<T, U> Converter
@@ -156,13 +156,13 @@ namespace MudBlazor
         /// <para>Func&lt;T, Task&lt; string &gt;&gt; ... outputs the result as error message, no error if null</para>
         /// <para>Func&lt;T, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; ... outputs all the returned error messages, no error if empty</para>
         /// <para>System.ComponentModel.DataAnnotations.ValidationAttribute instances</para>
-        /// If ValidationParameter is provided, following supported types can also be used:
-        /// <para>Func&lt;T, string validationParameter, bool&gt; ... will output the standard error message "Invalid" if false</para>
-        /// <para>Func&lt;T, string validationParameter, string&gt; ... outputs the result as error message, no error if null </para>
-        /// <para>Func&lt;T, string validationParameter, IEnumerable&lt; string &gt;&gt; ... outputs all the returned error messages, no error if empty</para>
-        /// <para>Func&lt;T, string validationParameter, Task&lt; bool &gt;&gt; ... will output the standard error message "Invalid" if false</para>
-        /// <para>Func&lt;T, string validationParameter, Task&lt; string &gt;&gt; ... outputs the result as error message, no error if null</para>
-        /// <para>Func&lt;T, string validationParameter, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; ... outputs all the returned error messages, no error if empty</para>
+        /// If ValidationParameters is provided, following supported types can also be used:
+        /// <para>Func&lt;T, IEnumerable&lt;string&gt;, bool&gt; ... will output the standard error message "Invalid" if false</para>
+        /// <para>Func&lt;T, IEnumerable&lt;string&gt;, string&gt; ... outputs the result as error message, no error if null </para>
+        /// <para>Func&lt;T, IEnumerable&lt;string&gt;, IEnumerable&lt; string &gt;&gt; ... outputs all the returned error messages, no error if empty</para>
+        /// <para>Func&lt;T, IEnumerable&lt;string&gt;, Task&lt; bool &gt;&gt; ... will output the standard error message "Invalid" if false</para>
+        /// <para>Func&lt;T, IEnumerable&lt;string&gt;, Task&lt; string &gt;&gt; ... outputs the result as error message, no error if null</para>
+        /// <para>Func&lt;T, IEnumerable&lt;string&gt;, Task&lt;IEnumerable&lt; string &gt;&gt;&gt; ... outputs all the returned error messages, no error if empty</para>
         /// </summary>
         [Parameter]
         public object Validation { get; set; }
@@ -235,32 +235,32 @@ namespace MudBlazor
                     ValidateWithAttribute(Validation as ValidationAttribute, _value, errors);
                 else if (Validation is Func<T, bool>)
                     ValidateWithFunc(Validation as Func<T, bool>, _value, errors);
-                else if (Validation is Func<T, string, bool>)
-                    ValidateWithFunc(Validation as Func<T, string, bool>, _value, ValidationParameter, errors);
+                else if (Validation is Func<T, IEnumerable<string>, bool>)
+                    ValidateWithFunc(Validation as Func<T, IEnumerable<string>, bool>, _value, ValidationParameters, errors);
                 else if (Validation is Func<T, string>)
                     ValidateWithFunc(Validation as Func<T, string>, _value, errors);
-                else if (Validation is Func<T, string, string>)
-                    ValidateWithFunc(Validation as Func<T, string, string>, _value, ValidationParameter, errors);
+                else if (Validation is Func<T, IEnumerable<string>, string>)
+                    ValidateWithFunc(Validation as Func<T, IEnumerable<string>, string>, _value, ValidationParameters, errors);
                 else if (Validation is Func<T, IEnumerable<string>>)
                     ValidateWithFunc(Validation as Func<T, IEnumerable<string>>, _value, errors);
-                else if (Validation is Func<T, string, IEnumerable<string>>)
-                    ValidateWithFunc(Validation as Func<T, string, IEnumerable<string>>, _value, ValidationParameter, errors);
+                else if (Validation is Func<T, IEnumerable<string>, IEnumerable<string>>)
+                    ValidateWithFunc(Validation as Func<T, IEnumerable<string>, IEnumerable<string>>, _value, ValidationParameters, errors);
                 else
                 {
                     var value = _value;
 
                     if (Validation is Func<T, Task<bool>>)
                         await ValidateWithFunc(Validation as Func<T, Task<bool>>, _value, errors);
-                    if (Validation is Func<T, string, Task<bool>>)
-                        await ValidateWithFunc(Validation as Func<T, string, Task<bool>>, _value, ValidationParameter, errors);
+                    if (Validation is Func<T, IEnumerable<string>, Task<bool>>)
+                        await ValidateWithFunc(Validation as Func<T, IEnumerable<string>, Task<bool>>, _value, ValidationParameters, errors);
                     else if (Validation is Func<T, Task<string>>)
                         await ValidateWithFunc(Validation as Func<T, Task<string>>, _value, errors);
-                    else if (Validation is Func<T, string, Task<string>>)
-                        await ValidateWithFunc(Validation as Func<T, string, Task<string>>, _value, ValidationParameter, errors);
+                    else if (Validation is Func<T, IEnumerable<string>, Task<string>>)
+                        await ValidateWithFunc(Validation as Func<T, IEnumerable<string>, Task<string>>, _value, ValidationParameters, errors);
                     else if (Validation is Func<T, Task<IEnumerable<string>>>)
                         await ValidateWithFunc(Validation as Func<T, Task<IEnumerable<string>>>, _value, errors);
-                    else if (Validation is Func<T, string, Task<IEnumerable<string>>>)
-                        await ValidateWithFunc(Validation as Func<T, string, Task<IEnumerable<string>>>, _value, ValidationParameter, errors);
+                    else if (Validation is Func<T, IEnumerable<string>, Task<IEnumerable<string>>>)
+                        await ValidateWithFunc(Validation as Func<T, IEnumerable<string>, Task<IEnumerable<string>>>, _value, ValidationParameters, errors);
 
                     changed = !EqualityComparer<T>.Default.Equals(value, _value);
                 }
@@ -341,11 +341,11 @@ namespace MudBlazor
             }
         }
 
-        protected virtual void ValidateWithFunc(Func<T, string, bool> func, T value, string validationParameter, List<string> errors)
+        protected virtual void ValidateWithFunc(Func<T, IEnumerable<string>, bool> func, T value, IEnumerable<string> validationParameters, List<string> errors)
         {
             try
             {
-                if (!func(value, validationParameter))
+                if (!func(value, validationParameters))
                     errors.Add("Invalid");
             }
             catch (Exception e)
@@ -368,11 +368,11 @@ namespace MudBlazor
             }
         }
 
-        protected virtual void ValidateWithFunc(Func<T, string, string> func, T value, string validationParameter, List<string> errors)
+        protected virtual void ValidateWithFunc(Func<T, IEnumerable<string>, string> func, T value, IEnumerable<string> validationParameters, List<string> errors)
         {
             try
             {
-                var error = func(value, validationParameter);
+                var error = func(value, validationParameters);
                 if (error != null)
                     errors.Add(error);
             }
@@ -395,11 +395,11 @@ namespace MudBlazor
             }
         }
 
-        protected virtual void ValidateWithFunc(Func<T, string, IEnumerable<string>> func, T value, string validationParameter, List<string> errors)
+        protected virtual void ValidateWithFunc(Func<T, IEnumerable<string>, IEnumerable<string>> func, T value, IEnumerable<string> validationParameters, List<string> errors)
         {
             try
             {
-                foreach (var error in func(value, validationParameter))
+                foreach (var error in func(value, validationParameters))
                     errors.Add(error);
             }
             catch (Exception e)
@@ -421,11 +421,11 @@ namespace MudBlazor
             }
         }
 
-        protected virtual async Task ValidateWithFunc(Func<T, string, Task<bool>> func, T value, string validationParameter, List<string> errors)
+        protected virtual async Task ValidateWithFunc(Func<T, IEnumerable<string>, Task<bool>> func, T value, IEnumerable<string> validationParameters, List<string> errors)
         {
             try
             {
-                if (!await func(value, validationParameter))
+                if (!await func(value, validationParameters))
                     errors.Add("Invalid");
             }
             catch (Exception e)
@@ -448,11 +448,11 @@ namespace MudBlazor
             }
         }
 
-        protected virtual async Task ValidateWithFunc(Func<T, string, Task<string>> func, T value, string validationParameter, List<string> errors)
+        protected virtual async Task ValidateWithFunc(Func<T, IEnumerable<string>, Task<string>> func, T value, IEnumerable<string> validationParameters, List<string> errors)
         {
             try
             {
-                var error = await func(value, validationParameter);
+                var error = await func(value, validationParameters);
                 if (error != null)
                     errors.Add(error);
             }
@@ -475,11 +475,11 @@ namespace MudBlazor
             }
         }
 
-        protected virtual async Task ValidateWithFunc(Func<T, string, Task<IEnumerable<string>>> func, T value, string validationParameter, List<string> errors)
+        protected virtual async Task ValidateWithFunc(Func<T, IEnumerable<string>, Task<IEnumerable<string>>> func, T value, IEnumerable<string> validationParameters, List<string> errors)
         {
             try
             {
-                foreach (var error in await func(value, validationParameter))
+                foreach (var error in await func(value, validationParameters))
                     errors.Add(error);
             }
             catch (Exception e)
