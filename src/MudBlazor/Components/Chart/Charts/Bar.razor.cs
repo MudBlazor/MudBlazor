@@ -80,7 +80,7 @@ namespace MudBlazor.Charts
                 };
                 _horizontalLines.Add(line);
 
-                var lineValue = new SvgText() { X = (horizontalStartSpace - 10), Y = (boundHeight - y + 5), Value = ToS(startGridY) };
+                var lineValue = new SvgText() { X = (horizontalStartSpace - 10), Y = (boundHeight - y + 5), Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisStringFormat) };
                 _horizontalValues.Add(lineValue);
 
                 startGridY += gridYUnits;

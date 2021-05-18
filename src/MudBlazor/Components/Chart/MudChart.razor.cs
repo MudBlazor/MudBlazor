@@ -85,10 +85,14 @@ namespace MudBlazor
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
         }
 
-        protected string ToS(double d)
+        protected string ToS(double d, string format = null)
         {
-            return d.ToString(CultureInfo.InvariantCulture);
+            if (string.IsNullOrEmpty(format))
+                return d.ToString(CultureInfo.InvariantCulture);
+
+            return d.ToString(format);
         }
+
     }
 
     public enum ChartType
