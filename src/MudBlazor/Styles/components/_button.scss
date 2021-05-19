@@ -231,3 +231,25 @@
 .mud-button-icon-size-large > *:first-child {
     font-size: 22px;
 }
+
+.mud-application-layout-rtl .mud-button-label {
+    .mud-button-icon-start {
+        margin-right: -4px;
+        margin-left: 8px;
+
+        &.mud-button-icon-size-small {
+            margin-right: -2px;
+            margin-left: 0;
+        }
+    }
+
+    .mud-button-icon-end {
+        margin-right: 8px;
+        margin-left: -4px;
+
+        &.mud-button-icon-size-small {
+            margin-left: -2px;
+            margin-right: 0;
+        }
+    }
+}
