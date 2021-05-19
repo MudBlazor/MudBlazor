@@ -4,12 +4,11 @@
 
 
 
-<div class="@Classname" style="@Style">
+<div class="@Classname" style="@Style" oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? "return false;" : "")">
     @if (ActivatorContent != null)
     {
         <CascadingValue Value="@((IActivatable) this)" IsFixed="true">
-            <div style="cursor: pointer;" @onmouseup="ToggleMenu" 
-                 oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? "return false;" : "")">
+            <div @onmouseup="ToggleMenu">
                 @ActivatorContent
             </div>
         </CascadingValue>
