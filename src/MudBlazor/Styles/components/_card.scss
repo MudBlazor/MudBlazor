@@ -44,3 +44,18 @@
     padding: 8px;
     align-items: center;
 }
+
+.mud-application-layout-rtl {
+    .mud-card-header {
+        & .mud-card-header-avatar {
+            margin-left: 16px;
+            margin-right: 0;
+        }
+
+        & .mud-card-header-actions {
+            align-self: flex-end;
+            margin-left: -8px;
+            margin-right: 0;
+        }
+    }
+}
