@@ -16,5 +16,7 @@ namespace MudBlazor
         Number,
         [Description("search")]
         Search,
+        [Description("tel")]
+        Telephone
     }
 }
