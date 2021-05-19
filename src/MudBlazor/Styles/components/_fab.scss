@@ -119,6 +119,23 @@
     }
 }
 
+.mud-application-layout-rtl .mud-fab-extended {
+    &.mud-fab-size-large .mud-icon-root {
+        margin-left: 8px;
+        margin-right: 0;
+    }
+
+    &.mud-fab-size-small .mud-icon-root {
+        margin-left: 4px;
+        margin-right: 0;
+    }
+
+    &.mud-fab-size-medium .mud-icon-root {
+        margin-left: 8px;
+        margin-right: 0;
+    }
+}
+
 .mud-fab-color-inherit {
     color: inherit;
 }
