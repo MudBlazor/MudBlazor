@@ -3,7 +3,7 @@
     public class ChartOptions
     {
         public int YAxisTicks { get; set; } = 20;
-        public string YAxisStringFormat { get; set; }
+        public string YAxisFormat { get; set; }
         public bool YAxisLines { get; set; } = true;
         public bool XAxisLines { get; set; }
 
