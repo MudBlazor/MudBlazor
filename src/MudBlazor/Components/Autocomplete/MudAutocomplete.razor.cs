@@ -126,6 +126,8 @@ namespace MudBlazor
         internal bool IsOpen { get; set; }
         protected bool _isOpen { get; set; }
 
+        public bool IsOpen { get => _isOpen; }
+
         public string CurrentIcon { get; set; }
 
         private MudInput<string> _elementReference;
