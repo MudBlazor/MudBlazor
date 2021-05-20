@@ -116,3 +116,28 @@
         transform: rotate(359deg);
     }
 }
+
+.mud-application-layout-rtl {
+    .mud-treeview-item-icon {
+        margin-left: 4px;
+        margin-right: 0;
+    }
+
+    .mud-treeview-item-label {
+        padding-right: 4px;
+        padding-left: 0;
+    }
+
+    .mud-treeview-group {
+        margin-right: 17px;
+        margin-left: 0;
+    }
+
+    .mud-treeview-item-arrow {
+        transform: rotate(180deg);
+
+        .mud-treeview-item-arrow-expand.mud-transform {
+            transform: rotate(-90deg);
+        }
+    }
+}
