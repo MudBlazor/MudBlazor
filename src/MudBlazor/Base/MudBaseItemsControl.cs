@@ -107,8 +107,8 @@ namespace MudBlazor
             if (SelectedIndex != index)
             {
                 _moveNext = index >= SelectedIndex;
-                SelectedIndex = index;
-            }
+            SelectedIndex = index;
+        }
         }
     }
 

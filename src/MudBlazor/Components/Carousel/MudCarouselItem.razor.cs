@@ -69,7 +69,7 @@ namespace MudBlazor
 
 
         protected override async Task OnInitializedAsync()
-        {
+            {
             await Task.CompletedTask;
             Parent?.Items.Add(this);
         }

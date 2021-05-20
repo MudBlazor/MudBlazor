@@ -9,6 +9,7 @@ namespace MudBlazor
 {
     public partial class MudCarousel<TData> : MudBaseBindableItemsControl<MudCarouselItem, TData>, IAsyncDisposable
     {
+
         protected string Classname =>
                     new CssBuilder("mud-carousel")
                          .AddClass($"mud-carousel-{_currentColor.ToDescriptionString()}")
@@ -152,13 +153,13 @@ namespace MudBlazor
             switch (direction)
             {
                 case SwipeDirection.LeftToRight:
-                    Previous();
+                Previous();
                     break;
 
                 case SwipeDirection.RightToLeft:
-                    Next();
+                Next();
                     break;
-            }
+        }
         }
 
         /// <summary>
@@ -180,6 +181,7 @@ namespace MudBlazor
             await Task.CompletedTask;
 
             _timer?.Change(Timeout.Infinite, Timeout.Infinite);
+            }
         }
 
         /// <summary>
@@ -205,7 +207,7 @@ namespace MudBlazor
             await base.OnAfterRenderAsync(firstRender);
 
             if (firstRender)
-            {
+        {
                 SelectedIndexChanged = new EventCallback<int>(this, (Action)SelectionChanged);
 
                 _timer = new Timer(_timerElapsed, null, AutoCycle ? AutoCycleTime : Timeout.InfiniteTimeSpan, AutoCycleTime);
@@ -233,5 +235,7 @@ namespace MudBlazor
                 }
             }
         }
+
+
     }
 }
