@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
@@ -9,12 +11,13 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTreeViewItem<T> : MudComponentBase, IDisposable
+    public partial class MudTreeViewItem<T> : MudComponentBase, IEnumerable<T>, IEnumerable<MudTreeViewItem<T>>, IDisposable
     {
         private string _text;
         private bool _isSelected, _isActivated, _isServerLoaded;
         private Converter<T> _converter = new DefaultConverter<T>();
         private readonly List<MudTreeViewItem<T>> _childItems = new List<MudTreeViewItem<T>>();
+        private T _value;
 
         protected string Classname =>
         new CssBuilder("mud-treeview-item")
@@ -30,7 +33,7 @@ namespace MudBlazor
         new CssBuilder("mud-treeview-item-label")
             .AddClass(TextClass)
         .Build();
-
+        
         [Parameter]
         public string Text
         {
@@ -39,7 +42,37 @@ namespace MudBlazor
         }
 
         [Parameter]
-        public T Value { get; set; }
+        public T Value
+        {
+            get => _value;
+            set 
+            { 
+                if(MudTreeRoot != null )
+                {
+                    // Only if value changed
+                    if (!MudTreeRoot.GetEqualityComparer().Equals(_value, value))
+                    {
+                        if (_isActivated)
+                        {
+                            // Check if the activated value is still correct
+                            // If not, the correct item must be selected and this must be deactivated
+                            if (!MudTreeRoot.GetEqualityComparer().Equals(MudTreeRoot.ActivatedValue, value))
+                            {
+                                if(MudTreeRoot.TryFindTreeViewItemByValue(MudTreeRoot.ActivatedValue, out var foundItem, MudTreeRoot.GetEqualityComparer()))
+                                    foundItem.Activated = true;
+                                else
+                                    this.Activated = false;
+                            }
+                        }
+                        _value = value;
+                    }
+                }
+                else
+                {
+                    _value = value;
+                }
+            }
+        }
 
         [Parameter] public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
 
@@ -77,7 +110,13 @@ namespace MudBlazor
             get => _isActivated;
             set
             {
-                _ = MudTreeRoot?.UpdateActivatedItem(this, value);
+                if (value != _isActivated)
+                {
+                    if (MudTreeRoot != null)
+                        this.InvokeAsync(async () => await MudTreeRoot.UpdateActivatedItem(value ? this : null));
+                    else
+                        _isActivated = value;
+                }
             }
         }
 
@@ -164,7 +203,7 @@ namespace MudBlazor
         {
             if (firstRender && _isActivated)
             {
-                await MudTreeRoot.UpdateActivatedItem(this, _isActivated);
+                await MudTreeRoot.UpdateActivatedItem(this);
             }
             await base.OnAfterRenderAsync(firstRender);
         }
@@ -173,7 +212,7 @@ namespace MudBlazor
         {
             if (MudTreeRoot?.CanActivate ?? false)
             {
-                await MudTreeRoot.UpdateActivatedItem(this, !_isActivated);
+                this.Activated = !this.Activated;
             }
 
             if (HasChild && (MudTreeRoot?.ExpandOnClick ?? false))
@@ -231,6 +270,7 @@ namespace MudBlazor
         }
 
         private void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
+        private void RemoveChild(MudTreeViewItem<T> item) => this._childItems.Remove(item);
 
         internal IEnumerable<MudTreeViewItem<T>> GetSelectedItems()
         {
@@ -274,6 +314,13 @@ namespace MudBlazor
             }
         }
 
-        private void RemoveChild(MudTreeViewItem<T> item) => this._childItems.Remove(item);
+        IEnumerator<MudTreeViewItem<T>> IEnumerable<MudTreeViewItem<T>>.GetEnumerator() => this._childItems.GetEnumerator();
+
+        public IEnumerator<T> GetEnumerator() => (Items ?? Enumerable.Empty<T>()).GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)Items).GetEnumerator();
+        }
     }
 }

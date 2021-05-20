@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,9 +8,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTreeView<T> : MudComponentBase
+    public partial class MudTreeView<T> : MudComponentBase, IEnumerable<T>, IEnumerable<MudTreeViewItem<T>>
     {
-        private MudTreeViewItem<T> _activatedValue;
+        private MudTreeViewItem<T> _activatedItem;
         private HashSet<MudTreeViewItem<T>> _selectedValues;
         private List<MudTreeViewItem<T>> _childItems = new List<MudTreeViewItem<T>>();
 
@@ -65,8 +66,29 @@ namespace MudBlazor
         public string Width { get; set; }
 
         [Parameter] public HashSet<T> Items { get; set; }
-  
+
+        [Parameter]
+        public T ActivatedValue
+        {
+            get => this._activatedItem != null ? this._activatedItem.Value : default;
+            set
+            {
+                if(!GetEqualityComparer().Equals(this.ActivatedValue, value))
+                {
+                    if (this.TryFindTreeViewItemByValue(value, out var item, GetEqualityComparer()))
+                        ActivatedItem = item;
+                    else
+                        ActivatedItem = default;
+                }
+            }
+        }
         [Parameter] public EventCallback<T> ActivatedValueChanged { get; set; }
+        [Parameter] public MudTreeViewItem<T> ActivatedItem
+        {
+            get => this._activatedItem;
+            set => this.InvokeAsync(async () => await UpdateActivatedItem(value));
+        }
+        [Parameter] public EventCallback<MudTreeViewItem<T>> ActivatedItemChanged { get; set; }
 
         [Parameter] public EventCallback<HashSet<T>> SelectedValuesChanged { get; set; }
 
@@ -82,13 +104,16 @@ namespace MudBlazor
 
         [CascadingParameter] MudTreeView<T> MudTreeRoot { get; set; }
 
-        [Parameter]
-        public Func<T, Task<HashSet<T>>> ServerData { get; set; }
+        [Parameter] public Func<T, Task<HashSet<T>>> ServerData { get; set; }
+
+        [Parameter] public EqualityComparer<T> EqualityComparer { get; set; }
 
         public MudTreeView()
         {
             MudTreeRoot = this;
         }
+
+        public EqualityComparer<T> GetEqualityComparer() => EqualityComparer ?? EqualityComparer<T>.Default;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -97,29 +122,24 @@ namespace MudBlazor
                 await UpdateSelectedItems();
             }
             await base.OnAfterRenderAsync(firstRender);
-        } 
-        internal async Task UpdateActivatedItem(MudTreeViewItem<T> item, bool requestedValue)
+        }
+        
+        internal async Task UpdateActivatedItem(MudTreeViewItem<T> item)
         {
-            if ((_activatedValue == item && requestedValue) ||
-                (_activatedValue != item && !requestedValue))
-                return;
-
-            if (_activatedValue == item && !requestedValue)
+            if (this._activatedItem != item)
             {
-                _activatedValue = default;
-                await item.Activate(requestedValue);
-                await ActivatedValueChanged.InvokeAsync(default);
-                return;
-            }
+                if (this._activatedItem != null)
+                    await this._activatedItem.Activate(false);
 
-            if (_activatedValue != null)
-            {
-                await _activatedValue.Activate(false);
-            }
+                this._activatedItem = item;
 
-            _activatedValue = item;
-            await item?.Activate(requestedValue);
-            await ActivatedValueChanged.InvokeAsync(item.Value);
+                if (this._activatedItem != null)
+                     await this._activatedItem.Activate(true);
+
+                await ActivatedItemChanged.InvokeAsync(this._activatedItem);
+                    // ActivatedValue has changed too
+                await ActivatedValueChanged.InvokeAsync(ActivatedValue);
+            }
         }
 
         internal async Task UpdateSelectedItems()
@@ -143,5 +163,9 @@ namespace MudBlazor
         internal void AddChild(MudTreeViewItem<T> item) => _childItems.Add(item);
 
         internal void RemoveChild(MudTreeViewItem<T> item) => _childItems.Remove(item);
+        public IEnumerator<T> GetEnumerator() => (Items ?? Enumerable.Empty<T>()).GetEnumerator();
+        IEnumerator<MudTreeViewItem<T>> IEnumerable<MudTreeViewItem<T>>.GetEnumerator() => this._childItems.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }
