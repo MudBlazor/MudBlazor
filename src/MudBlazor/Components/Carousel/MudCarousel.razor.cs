@@ -166,7 +166,7 @@ namespace MudBlazor
         /// Immediately starts the AutoCycle timer
         /// </summary>
         private async ValueTask StartTimerAsync()
-        {
+            {
             await Task.CompletedTask;
 
             if (AutoCycle)
@@ -177,7 +177,7 @@ namespace MudBlazor
         /// Immediately stops the AutoCycle timer
         /// </summary>
         private async ValueTask StopTimerAsync()
-        {
+            {
             await Task.CompletedTask;
 
             _timer?.Change(Timeout.Infinite, Timeout.Infinite);
