@@ -22,6 +22,8 @@ namespace MudBlazor
         new StyleBuilder()
             .AddStyle("--mud-drawer-width-left", GetDrawerWidth(Anchor.Left), !string.IsNullOrEmpty(GetDrawerWidth(Anchor.Left)))
             .AddStyle("--mud-drawer-width-right", GetDrawerWidth(Anchor.Right), !string.IsNullOrEmpty(GetDrawerWidth(Anchor.Right)))
+            .AddStyle("--mud-drawer-width-mini-left", GetMiniDrawerWidth(Anchor.Left), !string.IsNullOrEmpty(GetMiniDrawerWidth(Anchor.Left)))
+            .AddStyle("--mud-drawer-width-mini-right", GetMiniDrawerWidth(Anchor.Right), !string.IsNullOrEmpty(GetMiniDrawerWidth(Anchor.Right)))
             .AddStyle(Style)
         .Build();
 
@@ -43,12 +45,12 @@ namespace MudBlazor
 
         private string GetDrawerClass(Anchor anchor)
         {
-            var drawer = _drawers.FirstOrDefault(d => d.Open && d.Anchor == anchor);
+            var drawer = _drawers.FirstOrDefault(d => d.Anchor == anchor);
             if (drawer == null)
                 return string.Empty;
 
-            var className = $"mud-drawer-open-{drawer.Variant.ToDescriptionString()}";
-            if (drawer.Variant == DrawerVariant.Responsive)
+            var className = $"mud-drawer-{(drawer.Open ? "open" : "close")}-{drawer.Variant.ToDescriptionString()}";
+            if (drawer.Variant == DrawerVariant.Responsive || drawer.Variant == DrawerVariant.Mini)
             {
                 className += $"-{drawer.Breakpoint.ToDescriptionString()}";
             }
@@ -66,6 +68,15 @@ namespace MudBlazor
                 return string.Empty;
 
             return drawer.Width;
+        }
+
+        private string GetMiniDrawerWidth(Anchor anchor)
+        {
+            var drawer = _drawers.FirstOrDefault(d => d.Anchor == anchor && d.Variant == DrawerVariant.Mini);
+            if (drawer == null)
+                return string.Empty;
+
+            return drawer.MiniWidth;
         }
     }
 }

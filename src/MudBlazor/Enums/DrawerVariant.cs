@@ -9,8 +9,8 @@ namespace MudBlazor
         [Description("responsive")]
         Responsive,
         [Description("persistent")]
-        Persistent
-        //Mini
-        //Floating
+        Persistent,
+        [Description("mini")]
+        Mini
     }
 }
