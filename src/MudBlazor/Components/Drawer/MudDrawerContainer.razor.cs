@@ -13,19 +13,22 @@ namespace MudBlazor
 
         protected virtual string Classname =>
         new CssBuilder()
-            .AddClass(GetDrawerClass(Anchor.Left))
-            .AddClass(GetDrawerClass(Anchor.Right))
+            .AddClass(GetDrawerClass(FindLeftDrawer()))
+            .AddClass(GetDrawerClass(FindRightDrawer()))
             .AddClass(Class)
         .Build();
 
         protected string Stylename =>
         new StyleBuilder()
-            .AddStyle("--mud-drawer-width-left", GetDrawerWidth(Anchor.Left), !string.IsNullOrEmpty(GetDrawerWidth(Anchor.Left)))
-            .AddStyle("--mud-drawer-width-right", GetDrawerWidth(Anchor.Right), !string.IsNullOrEmpty(GetDrawerWidth(Anchor.Right)))
-            .AddStyle("--mud-drawer-width-mini-left", GetMiniDrawerWidth(Anchor.Left), !string.IsNullOrEmpty(GetMiniDrawerWidth(Anchor.Left)))
-            .AddStyle("--mud-drawer-width-mini-right", GetMiniDrawerWidth(Anchor.Right), !string.IsNullOrEmpty(GetMiniDrawerWidth(Anchor.Right)))
+            .AddStyle("--mud-drawer-width-left", GetDrawerWidth(FindLeftDrawer()), !string.IsNullOrEmpty(GetDrawerWidth(FindLeftDrawer())))
+            .AddStyle("--mud-drawer-width-right", GetDrawerWidth(FindRightDrawer()), !string.IsNullOrEmpty(GetDrawerWidth(FindRightDrawer())))
+            .AddStyle("--mud-drawer-width-mini-left", GetDrawerWidth(FindLeftMiniDrawer()), !string.IsNullOrEmpty(GetDrawerWidth(FindLeftMiniDrawer())))
+            .AddStyle("--mud-drawer-width-mini-right", GetDrawerWidth(FindRightMiniDrawer()), !string.IsNullOrEmpty(GetDrawerWidth(FindRightMiniDrawer())))
             .AddStyle(Style)
         .Build();
+
+        [CascadingParameter]
+        public bool Rtl { get; set; }
 
         [Parameter]
         public RenderFragment ChildContent { get; set; }
@@ -43,9 +46,8 @@ namespace MudBlazor
 
         internal void Remove(MudDrawer drawer) => _drawers.Remove(drawer);
 
-        private string GetDrawerClass(Anchor anchor)
+        private string GetDrawerClass(MudDrawer drawer)
         {
-            var drawer = _drawers.FirstOrDefault(d => d.Anchor == anchor);
             if (drawer == null)
                 return string.Empty;
 
@@ -54,16 +56,15 @@ namespace MudBlazor
             {
                 className += $"-{drawer.Breakpoint.ToDescriptionString()}";
             }
-            className += $"-{anchor.ToDescriptionString()}";
+            className += $"-{drawer.GetPosition()}";
 
-            className += $" mud-drawer-{anchor.ToDescriptionString()}-clipped-{drawer.ClipMode.ToDescriptionString()}";
+            className += $" mud-drawer-{drawer.GetPosition()}-clipped-{drawer.ClipMode.ToDescriptionString()}";
 
             return className;
         }
 
-        private string GetDrawerWidth(Anchor anchor)
+        private string GetDrawerWidth(MudDrawer drawer)
         {
-            var drawer = _drawers.FirstOrDefault(d => d.Open && d.Anchor == anchor);
             if (drawer == null)
                 return string.Empty;
 
@@ -77,6 +78,30 @@ namespace MudBlazor
                 return string.Empty;
 
             return drawer.MiniWidth;
+        }
+
+        private MudDrawer FindLeftDrawer()
+        {
+            Anchor anchor = Rtl ? Anchor.End : Anchor.Start;
+            return _drawers.FirstOrDefault(d => d.Open && (d.Anchor == anchor || d.Anchor == Anchor.Left));
+        }
+
+        private MudDrawer FindRightDrawer()
+        {
+            Anchor anchor = Rtl ? Anchor.Start : Anchor.End;
+            return _drawers.FirstOrDefault(d => d.Open && (d.Anchor == anchor || d.Anchor == Anchor.Left));
+        }
+
+        private MudDrawer FindLeftMiniDrawer()
+        {
+            Anchor anchor = Rtl ? Anchor.End : Anchor.Start;
+            return _drawers.FirstOrDefault(d => d.Open && d.Variant == DrawerVariant.Mini && (d.Anchor == anchor || d.Anchor == Anchor.Left));
+        }
+
+        private MudDrawer FindRightMiniDrawer()
+        {
+            Anchor anchor = Rtl ? Anchor.Start : Anchor.End;
+            return _drawers.FirstOrDefault(d => d.Open && d.Variant == DrawerVariant.Mini && (d.Anchor == anchor || d.Anchor == Anchor.Left));
         }
     }
 }

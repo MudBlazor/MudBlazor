@@ -2,7 +2,7 @@
 
 <MudPaper Height="200px" Class="mud-theme-primary" Style="overflow:hidden; position:relative;">
     <MudDrawerContainer Class="mud-height-full">
-        <MudDrawer @bind-Open="@openStart" Width="150px" Fixed="false" Anchor="Anchor.Start" Elevation="0" Variant="@DrawerVariant.Persistent">
+        <MudDrawer @bind-Open="@openLeft" Anchor="Anchor.Left" Elevation="0" Variant="@DrawerVariant.Persistent">
             <MudDrawerHeader>
                 <MudText Typo="Typo.h6">My App</MudText>
             </MudDrawerHeader>
@@ -12,7 +12,7 @@
                 <MudNavLink Match="NavLinkMatch.All" Icon="@Icons.Filled.Forum">Community</MudNavLink>
             </MudNavMenu>
         </MudDrawer>
-        <MudDrawer @bind-Open="@openEnd" Width="300px" Fixed="false" Anchor="Anchor.End" Elevation="0" Variant="@DrawerVariant.Persistent">
+        <MudDrawer @bind-Open="@openRight" Fixed="false" Anchor="Anchor.Right" Elevation="0" Variant="@DrawerVariant.Persistent">
             <MudDrawerHeader>
                 <MudText Typo="Typo.h6">Settings</MudText>
             </MudDrawerHeader>
@@ -23,27 +23,35 @@
             </MudNavMenu>
         </MudDrawer>
         <div class="d-flex justify-center align-center mud-height-full">
-            <MudButton Color="Color.Inherit" OnClick="@ToggleStartDrawer" StartIcon="@(Rtl ? Icons.Filled.East : Icons.Filled.West)" Class="mx-2">Toggle start</MudButton>
-            <MudButton Color="Color.Inherit" OnClick="@ToggleEndDrawer" EndIcon="@(Rtl ? Icons.Filled.West : Icons.Filled.East)" Class="mx-2">Toggle end</MudButton>
+            @if (Rtl)
+            {
+                <MudButton Color="Color.Inherit" OnClick="@ToggleRightDrawer" StartIcon="@Icons.Filled.East" Class="mx-2">Toggle right</MudButton>
+                <MudButton Color="Color.Inherit" OnClick="@ToggleLeftDrawer" EndIcon="@Icons.Filled.West" Class="mx-2">Toggle left</MudButton>
+            }
+            else
+            {
+                <MudButton Color="Color.Inherit" OnClick="@ToggleLeftDrawer" StartIcon="@Icons.Filled.West" Class="mx-2">Toggle left</MudButton>
+                <MudButton Color="Color.Inherit" OnClick="@ToggleRightDrawer" EndIcon="@Icons.Filled.East" Class="mx-2">Toggle right</MudButton>
+            }
         </div>
     </MudDrawerContainer>
 </MudPaper>
 
 @code
-{ 
+{
     [CascadingParameter]
     public bool Rtl { get; set; }
 
-    bool openStart = false;
-    bool openEnd = false;
+    bool openLeft = false;
+    bool openRight = false;
 
-    void ToggleStartDrawer()
+    void ToggleLeftDrawer()
     {
-        openStart = !openStart;
+        openLeft = !openLeft;
     }
 
-    void ToggleEndDrawer()
+    void ToggleRightDrawer()
     {
-        openEnd = !openEnd;
-    } 
+        openRight = !openRight;
+    }
 }

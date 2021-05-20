@@ -25,7 +25,7 @@ namespace MudBlazor
         protected string Classname =>
         new CssBuilder("mud-drawer")
           .AddClass($"mud-drawer-fixed", Fixed || Variant == DrawerVariant.Temporary)
-          .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
+          .AddClass($"mud-drawer-pos-{GetPosition()}")
           .AddClass($"mud-drawer--open", Open)
           .AddClass($"mud-drawer--closed", !Open)
           .AddClass($"mud-drawer--initial", _initial)
@@ -39,7 +39,7 @@ namespace MudBlazor
 
         protected string OverlayClass =>
         new CssBuilder("mud-drawer-overlay mud-overlay-drawer")
-          .AddClass($"mud-drawer-anchor-{Anchor.ToDescriptionString()}")
+          .AddClass($"mud-drawer-pos-{GetPosition()}")
           .AddClass($"mud-drawer-overlay--open", Open)
           .AddClass($"mud-drawer-overlay-{Variant.ToDescriptionString()}")
           .AddClass($"mud-drawer-overlay-{Breakpoint.ToDescriptionString()}")
@@ -65,16 +65,13 @@ namespace MudBlazor
         [CascadingParameter]
         bool RightToLeft
         {
-            get
-            {
-                return _rtl;
-            }
+            get => _rtl;
             set
             {
                 if (_rtl != value)
                 {
                     _rtl = value;
-                    Anchor = Anchor == Anchor.Left ? Anchor.Right : Anchor.Left;
+                    DrawerContainer?.FireDrawersChanged();
                 }
             }
         }
@@ -102,7 +99,7 @@ namespace MudBlazor
         /// <summary>
         /// Side from which the drawer will appear.
         /// </summary>
-        [Parameter] public Anchor Anchor { get; set; }
+        [Parameter] public Anchor Anchor { get; set; } = Anchor.Start;
 
         /// <summary>
         /// The color of the component. It supports the theme colors.
@@ -331,6 +328,20 @@ namespace MudBlazor
             {
                 StateHasChanged();
             }
+        }
+
+        internal string GetPosition()
+        {
+            switch (Anchor)
+            {
+                case Anchor.Start:
+                    return RightToLeft ? "right" : "left";
+                case Anchor.End:
+                    return RightToLeft ? "left" : "right";
+                default: break;
+            }
+
+            return Anchor.ToDescriptionString();
         }
 
         private bool closeOnMouseLeave = false;
