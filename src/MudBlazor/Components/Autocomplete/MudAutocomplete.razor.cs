@@ -124,6 +124,7 @@ namespace MudBlazor
         [Parameter] public bool CoerceValue { get; set; }
 
         internal bool IsOpen { get; set; }
+        protected bool _isOpen { get; set; }
 
         public string CurrentIcon { get; set; }
 
@@ -141,7 +142,7 @@ namespace MudBlazor
                 _selectedListItemIndex = Array.IndexOf(_items, value);
             await SetTextAsync(GetItemString(value), false);
             _timer?.Dispose();
-            IsOpen = false;
+            _isOpen = false;
             UpdateIcon();
             BeginValidate();
             StateHasChanged();
@@ -149,10 +150,10 @@ namespace MudBlazor
 
         public async Task ToggleMenu()
         {
-            if ((Disabled || ReadOnly) && !IsOpen)
+            if ((Disabled || ReadOnly) && !_isOpen)
                 return;
-            IsOpen = !IsOpen;
-            if (IsOpen)
+            _isOpen = !_isOpen;
+            if (_isOpen)
             {
                 await _elementReference.SelectAsync();
                 OnSearch();
@@ -168,7 +169,7 @@ namespace MudBlazor
 
         public void UpdateIcon()
         {
-            if (IsOpen)
+            if (_isOpen)
             {
                 CurrentIcon = OpenIcon;
             }
@@ -213,7 +214,7 @@ namespace MudBlazor
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
-                IsOpen = false;
+                _isOpen = false;
                 StateHasChanged();
                 return;
             }
@@ -234,13 +235,13 @@ namespace MudBlazor
             if (_items?.Length == 0)
             {
                 await CoerceValueToText();
-                IsOpen = false;
+                _isOpen = false;
                 UpdateIcon();
                 StateHasChanged();
                 return;
             }
 
-            IsOpen = true;
+            _isOpen = true;
             UpdateIcon();
             StateHasChanged();
         }
@@ -274,7 +275,7 @@ namespace MudBlazor
                     await SelectNextItem(-1);
                     break;
                 case "Escape":
-                    IsOpen = false;
+                    _isOpen = false;
                     break;
             }
             base.InvokeKeyUp(args);
@@ -319,7 +320,7 @@ namespace MudBlazor
 
         private Task OnEnterKey()
         {
-            if (IsOpen == false)
+            if (_isOpen == false)
                 return Task.CompletedTask;
             if (_items == null || _items.Length == 0)
                 return Task.CompletedTask;
