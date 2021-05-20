@@ -38,10 +38,6 @@
         &.mud-drawer-responsive.mud-drawer-#{$breakpoint} {
             @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
                 z-index: calc(var(--mud-zindex-appbar) + 2);
-
-                &.mud-drawer--initial {
-                    display: none !important;
-                }
             }
         }
     }
@@ -91,6 +87,23 @@
             }
         }
     }
+
+    &.mud-drawer-mini {
+        height: 100%;
+        transition: width 225ms cubic-bezier(0, 0, 0.2, 1);
+
+        &.mud-drawer-anchor-left {
+            left: 0;
+            right: auto;
+
+            &.mud-drawer--closed {
+                width: var(--mud-drawer-width-mini-left);
+            }
+
+            &.mud-drawer--open {
+                width: var(--mud-drawer-width-left);
+            }
+        }
 
     &.mud-drawer-mini {
         height: 100%;
@@ -320,6 +333,7 @@
 
     &.mud-drawer-overlay--open {
         @each $breakpoint in map-keys($breakpoints) {
+            &.mud-drawer-overlay-mini.mud-drawer-overlay-#{$breakpoint},
             &.mud-drawer-overlay-responsive.mud-drawer-overlay-#{$breakpoint} {
                 @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
                     display: block;
