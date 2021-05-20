@@ -258,7 +258,7 @@ namespace MudBlazor.UnitTests.Components
             value.Should().Be("California");
 
             //and the autocomplete it's closed
-            autocomplete._isOpen.Should().BeFalse();
+            autocomplete.IsOpen.Should().BeFalse();
         }
 
         /// <summary>
