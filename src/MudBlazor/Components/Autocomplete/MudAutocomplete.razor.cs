@@ -144,7 +144,7 @@ namespace MudBlazor
                 _selectedListItemIndex = Array.IndexOf(_items, value);
             await SetTextAsync(GetItemString(value), false);
             _timer?.Dispose();
-            _isOpen = false;
+            IsOpen = false;
             UpdateIcon();
             BeginValidate();
             StateHasChanged();
@@ -152,10 +152,10 @@ namespace MudBlazor
 
         public async Task ToggleMenu()
         {
-            if ((Disabled || ReadOnly) && !_isOpen)
+            if ((Disabled || ReadOnly) && !IsOpen)
                 return;
-            _isOpen = !_isOpen;
-            if (_isOpen)
+            IsOpen = !IsOpen;
+            if (IsOpen)
             {
                 await _elementReference.SelectAsync();
                 OnSearch();
@@ -171,7 +171,7 @@ namespace MudBlazor
 
         public void UpdateIcon()
         {
-            if (_isOpen)
+            if (IsOpen)
             {
                 CurrentIcon = OpenIcon;
             }
@@ -216,7 +216,7 @@ namespace MudBlazor
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
-                _isOpen = false;
+                IsOpen = false;
                 StateHasChanged();
                 return;
             }
@@ -237,13 +237,13 @@ namespace MudBlazor
             if (_items?.Length == 0)
             {
                 await CoerceValueToText();
-                _isOpen = false;
+                IsOpen = false;
                 UpdateIcon();
                 StateHasChanged();
                 return;
             }
 
-            _isOpen = true;
+            IsOpen = true;
             UpdateIcon();
             StateHasChanged();
         }
@@ -277,7 +277,7 @@ namespace MudBlazor
                     await SelectNextItem(-1);
                     break;
                 case "Escape":
-                    _isOpen = false;
+                    IsOpen = false;
                     break;
             }
             base.InvokeKeyUp(args);
@@ -322,7 +322,7 @@ namespace MudBlazor
 
         private Task OnEnterKey()
         {
-            if (_isOpen == false)
+            if (IsOpen == false)
                 return Task.CompletedTask;
             if (_items == null || _items.Length == 0)
                 return Task.CompletedTask;
