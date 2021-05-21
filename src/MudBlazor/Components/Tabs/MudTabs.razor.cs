@@ -184,7 +184,8 @@ namespace MudBlazor
                 var items = _panels.Select(x => x.PanelRef).ToList();
                 items.Add(_tabsContentSize);
 
-                ActivePanel = _panels[_activePanelIndex];
+                if (_panels.Count > 0)
+                    ActivePanel = _panels[_activePanelIndex];
 
                 await _resizeObserver.Observe(items);
 
