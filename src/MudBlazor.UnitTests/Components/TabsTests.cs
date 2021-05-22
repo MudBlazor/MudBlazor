@@ -815,6 +815,40 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        [Test]
+        public async Task SelectedIndex_Binding()
+        {
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+
+            //starting with index 1:
+            var comp = ctx.RenderComponent<SelectedIndexTabsTest>();
+            comp.Instance.Tabs.ActivePanelIndex.Should().Be(1);
+            var panels = comp.FindAll(".mud-tab");
+            var activePanels = comp.FindAll(".mud-tab-active");
+            activePanels.Should().HaveCount(1);
+            panels[1].ClassList.Contains("mud-tab-active").Should().BeTrue();
+
+            //starting with index 2:
+            SelectedIndexTabsTest.SelectedTab = 2;
+            comp = ctx.RenderComponent<SelectedIndexTabsTest>();
+            comp.Instance.Tabs.ActivePanelIndex.Should().Be(2);
+            panels = comp.FindAll(".mud-tab");
+            activePanels = comp.FindAll(".mud-tab-active");
+            activePanels.Should().HaveCount(1);
+            panels[2].ClassList.Contains("mud-tab-active").Should().BeTrue();
+
+            //starting with index 0:
+            SelectedIndexTabsTest.SelectedTab = 0;
+            comp = ctx.RenderComponent<SelectedIndexTabsTest>();
+            comp.Instance.Tabs.ActivePanelIndex.Should().Be(0);
+            panels = comp.FindAll(".mud-tab");
+            activePanels = comp.FindAll(".mud-tab-active");
+            activePanels.Should().HaveCount(1);
+            panels[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
+
+        }
+
         #region Helper
 
         private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")

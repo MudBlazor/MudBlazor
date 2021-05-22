@@ -151,7 +151,8 @@ namespace MudBlazor
                 if (_activePanelIndex != value)
                 {
                     _activePanelIndex = value;
-                    ActivePanel = _panels[_activePanelIndex];
+                    if (_isRendered)
+                        ActivePanel = _panels[_activePanelIndex];
                     ActivePanelIndexChanged.InvokeAsync(value);
                 }
             }
@@ -182,6 +183,9 @@ namespace MudBlazor
             {
                 var items = _panels.Select(x => x.PanelRef).ToList();
                 items.Add(_tabsContentSize);
+
+                if (_panels.Count > 0)
+                    ActivePanel = _panels[_activePanelIndex];
 
                 await _resizeObserver.Observe(items);
 
