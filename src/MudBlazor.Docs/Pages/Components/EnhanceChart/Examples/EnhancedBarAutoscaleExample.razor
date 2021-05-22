@@ -1,0 +1,63 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudEnhancedChart>
+    <Legend>
+        <MudEnhancedBarChartLegend LegendInfo="@context" />
+    </Legend>
+    <ToolTip>
+        <MudEnhancedBarChartToolTip ToolTips="context.OfType<BarChartToolTipInfo>()" />
+    </ToolTip>
+    <Chart>
+        <MudEnhancedBarChart>
+            <DataSets>
+                <MudEnhancedBarDataSet Name="my first dataset" IsStacked="false">
+                    <MudEnhancedBarChartSeries Id="@firstSeriesId" Name="my name" Points="firstSeriesPoints" />
+                    <MudEnhancedBarChartSeries Id="@secondSeriesId" Name="my second series" Points="secondSeriesPoints" />
+                </MudEnhancedBarDataSet>
+            </DataSets>
+            <YAxes>
+                <MudEnhancedNumericLinearAutoScaleAxis>
+                    <MajorTick>
+                        <MudEnhancedTick Value="@_majorTickAmount"   />
+                    </MajorTick>
+                    <MinorTick>
+                        @if(_showMajorTicks == true && _showMinorTicks == true)
+                        {
+                            <MudEnhancedTick Value="@_minorTickAmount" />
+                        }
+                    </MinorTick>
+                </MudEnhancedNumericLinearAutoScaleAxis>
+            </YAxes>
+            <XAxis>
+                <MudEnhancedBarChartXAxis Labels="@labels" />
+            </XAxis>
+        </MudEnhancedBarChart>
+    </Chart>
+</MudEnhancedChart>
+<MudText Typo="Typo.caption">Major Tick</MudText>
+<MudCheckBox @bind-Checked="@_showMajorTicks" Label="Show" />
+<MudSlider @bind-Value="@_majorTickAmount" Step="1" Min="0" Max="20" />
+
+<MudText Typo="Typo.caption">Minor Tick</MudText>
+<MudCheckBox @bind-Checked="@_showMinorTicks" Label="Show" />
+<MudSlider @bind-Value="@_minorTickAmount" Step="1" Min="0" Max="10"  />
+
+@code {
+
+    private Boolean _showMajorTicks = true;
+    private Boolean _showMinorTicks = false;
+
+    private Double _majorTickAmount = 5;
+    private Double _minorTickAmount = 3;
+
+    private Guid firstSeriesId = Guid.NewGuid();
+    private Guid secondSeriesId = Guid.NewGuid();
+
+    private String[] labels = new[] { "A", "B", "C" };
+
+    public Double[] firstSeriesPoints = new [] { 10.0 , 20.0, 30.0 };
+    public Double[] secondSeriesPoints = new[] { -14.0, 50.0, -70.0 };
+
+
+
+}

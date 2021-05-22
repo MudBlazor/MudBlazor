@@ -1,0 +1,77 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@using MudBlazor.Services
+
+@inject IResizeListenerService _resizeListener
+@implements IDisposable 
+
+<MudEnhancedChart>
+    <Legend>
+        <MudEnhancedBarChartLegend LegendInfo="@context" />
+    </Legend>
+    <ToolTip>
+        <MudEnhancedBarChartToolTip ToolTips="context.OfType<BarChartToolTipInfo>()" />
+    </ToolTip>
+    <Chart>
+        <MudEnhancedBarChart Margin="_margin" Padding="_padding">
+            <DataSets>
+                <MudEnhancedBarDataSet Name="my first dataset" IsStacked="false">
+                    <MudEnhancedBarChartSeries Id="@firstSeriesId" Name="my name" Points="firstSeriesPoints" />
+                    <MudEnhancedBarChartSeries Id="@secondSeriesId" Name="my second series" Points="secondSeriesPoints" />
+                </MudEnhancedBarDataSet>
+            </DataSets>
+            <YAxes>
+                <MudEnhancedNumericLinearAutoScaleAxis />
+            </YAxes>
+            <XAxis>
+                <MudEnhancedBarChartXAxis Labels="@labels" />
+            </XAxis>
+        </MudEnhancedBarChart>
+    </Chart>
+</MudEnhancedChart>
+<MudText Typo="Typo.caption">Marging</MudText><MudSlider @bind-Value="@_margin" />
+<MudText Typo="Typo.caption">Padding</MudText><MudSlider @bind-Value="@_padding" />
+
+@code { 
+
+    private Double _margin = 4.0;
+    private Double _padding = 3.0;
+
+    private Guid firstSeriesId = Guid.NewGuid();
+    private Guid secondSeriesId = Guid.NewGuid();
+
+    private String[] labels = new[] { "A", "B", "C" };
+
+    public Double[] firstSeriesPoints = new [] { 10.0 , 20.0, 30.0 };
+    public Double[] secondSeriesPoints = new[] { -14.0, 50.0, -70.0 };
+
+    private void onWindowResized(Object sender,  BrowserWindowSize info)
+    {
+        if(info.Width < 700)
+        {
+            _margin = 0;
+            _padding = 0;
+
+        }
+        else
+        {
+            _margin = 4.0;
+            _padding = 3.0;
+        }
+
+        StateHasChanged();
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        _resizeListener.OnResized += onWindowResized;
+
+        return base.OnInitializedAsync();
+    }
+
+    public void Dispose()
+    {
+        _resizeListener.OnResized -= onWindowResized;
+    }
+
+} 

@@ -1,0 +1,46 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudEnhancedChart>
+    <Legend>
+        <MudEnhancedBarChartLegend LegendInfo="@context" />
+    </Legend>
+    <ToolTip>
+        <MudEnhancedBarChartToolTip ToolTips="context.OfType<BarChartToolTipInfo>()" />
+    </ToolTip>
+    <Chart>
+        <MudEnhancedBarChart>
+            <DataSets>
+                <MudEnhancedBarDataSet Name="my first dataset" IsStacked="false">
+                    <MudEnhancedBarChartSeries Id="@firstSeriesId" Name="my name" Points="firstSeriesPoints" />
+                    <MudEnhancedBarChartSeries Id="@secondSeriesId" Name="my second series" Points="secondSeriesPoints" />
+                </MudEnhancedBarDataSet>
+                <MudEnhancedBarDataSet Name="my second dataset" IsStacked="false">
+                    <MudEnhancedBarChartSeries Id="@thirdSeriesId" Name="my 3rd name" Points="thirdSeriesPoints" />
+                    <MudEnhancedBarChartSeries Id="@fourthSeriesId" Name="my 4th series" Points="fourthSeriesPoints" />
+                </MudEnhancedBarDataSet>
+            </DataSets>
+            <YAxes>
+                <MudEnhancedNumericLinearAutoScaleAxis />
+            </YAxes>
+            <XAxis>
+                <MudEnhancedBarChartXAxis Labels="@labels" />
+            </XAxis>
+        </MudEnhancedBarChart>
+    </Chart>
+</MudEnhancedChart>
+
+@code { 
+
+    private Guid firstSeriesId = Guid.NewGuid();
+    private Guid secondSeriesId = Guid.NewGuid();
+    private Guid thirdSeriesId = Guid.NewGuid();
+    private Guid fourthSeriesId = Guid.NewGuid();
+
+    private String[] labels = new[] { "A", "B", "C" };
+
+    public Double[] firstSeriesPoints = new [] { 10.0 , 20.0, 30.0 };
+    public Double[] secondSeriesPoints = new[] { -14.0, 50.0, -70.0 };
+
+    public Double[] thirdSeriesPoints = new[] { 10.0, 20.0, 30.0 };
+    public Double[] fourthSeriesPoints = new[] { -14.0, 50.0, -70.0 };
+ } 

@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudEnhancedChart>
+    <Legend>
+        <MudEnhancedBarChartLegend LegendInfo="@context" />
+    </Legend>
+    <ToolTip>
+        <MudEnhancedBarChartToolTip ToolTips="context.OfType<BarChartToolTipInfo>()" />
+    </ToolTip>
+    <Chart>
+        <MudEnhancedBarChart>
+            <DataSets>
+                <MudEnhancedBarDataSet Name="my first dataset" IsStacked="false">
+                    <MudEnhancedBarChartSeries Id="@seriesId" Name="my name" Points="points" />
+                </MudEnhancedBarDataSet>
+            </DataSets>
+            <YAxes>
+                <MudEnhancedNumericLinearAutoScaleAxis />
+            </YAxes>
+            <XAxis>
+                <MudEnhancedBarChartXAxis Labels="@labels" />
+            </XAxis>
+        </MudEnhancedBarChart>
+    </Chart>
+</MudEnhancedChart>
+
+@code { 
+
+    private Guid seriesId = Guid.NewGuid();
+
+    private String[] labels = new[] { "A", "B", "C" };
+    public Double[] points = new [] { 10.0 , 20.0, 30.0 };
+ } 
