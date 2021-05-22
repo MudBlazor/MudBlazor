@@ -1,6 +1,5 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
+﻿// Copyright (c) mudblazor 2021
+// License MIT
 
 #pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
@@ -239,7 +238,6 @@ namespace MudBlazor.UnitTests.Components
         /// Based on this try https://try.mudblazor.com/snippet/GacPunvDUyjdUJAh
         /// and this issue https://github.com/Garderoben/MudBlazor/issues/1235
         /// </summary>
-
         [Test]
         public async Task Autocomplete_Initialize_Value_on_SetParametersAsync()
         {
@@ -284,21 +282,21 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = ctx.RenderComponent<AutocompleteTestClearable>();
             // No button when initialized empty
-            comp.FindAll("button").Should().BeEmpty();
+            comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
 
             // Button shows after entering text
             comp.Find("input").Input("text");
-            comp.Find("button").Should().NotBeNull();
+            comp.WaitForAssertion(() => comp.Find("button").Should().NotBeNull());
             // Text cleared and button removed after clicking clear button
             comp.Find("button").Click();
-            comp.FindAll("button").Should().BeEmpty();
+            comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
 
             // Button shows again after entering text
             comp.Find("input").Input("text");
-            comp.Find("button").Should().NotBeNull();
+            comp.WaitForAssertion(()=> comp.Find("button").Should().NotBeNull());
             // Button removed after clearing text
             comp.Find("input").Input(string.Empty);
-            comp.FindAll("button").Should().BeEmpty();
+            comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
         }
 
         #region DataAttribute validation
