@@ -10,9 +10,9 @@
     <Chart>
         <MudEnhancedBarChart>
             <DataSets>
-                <MudEnhancedBarDataSet Name="my first dataset" IsStacked="false">
-                    <MudEnhancedBarChartSeries Id="@firstSeriesId" Name="my name" Points="firstSeriesPoints" />
-                    <MudEnhancedBarChartSeries Id="@secondSeriesId" Name="my second series" Points="secondSeriesPoints" />
+                <MudEnhancedBarDataSet Name="pet in Europe (in mio.)" IsStacked="false">
+                    <MudEnhancedBarChartSeries Id="@firstSeriesId" Name="cats" Points="firstSeriesPoints" />
+                    <MudEnhancedBarChartSeries Id="@secondSeriesId" Name="dogs" Points="secondSeriesPoints" />
                 </MudEnhancedBarDataSet>
             </DataSets>
             <YAxes>
@@ -30,8 +30,8 @@
     private Guid firstSeriesId = Guid.NewGuid();
     private Guid secondSeriesId = Guid.NewGuid();
 
-    private String[] labels = new[] { "A", "B", "C" };
-    public Double[] firstSeriesPoints = new [] { 10.0 , 20.0, 30.0 };
-    public Double[] secondSeriesPoints = new[] { -14.0, 50.0, -70.0 };
+    private String[] labels = new[] { "France", "Germany", "Spain" };
+    public Double[] firstSeriesPoints = new[] { 11.48, 8.2, 3.38 };
+    public Double[] secondSeriesPoints = new[] { 5.3, 7.57, 4.72 };
 
  } 

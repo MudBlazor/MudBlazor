@@ -10,13 +10,13 @@
     <Chart>
         <MudEnhancedBarChart>
             <DataSets>
-                <MudEnhancedBarDataSet Name="my first dataset" IsStacked="true">
-                    <MudEnhancedBarChartSeries Id="@firstSeriesId" Name="my name" Points="firstSeriesPoints" />
-                    <MudEnhancedBarChartSeries Id="@secondSeriesId" Name="my second series" Points="secondSeriesPoints" />
+                <MudEnhancedBarDataSet Name="pets in Europe" IsStacked="true">
+                    <MudEnhancedBarChartSeries Id="@firstSeriesId" Name="France" Points="firstSeriesPoints" />
+                    <MudEnhancedBarChartSeries Id="@secondSeriesId" Name="Spain" Points="secondSeriesPoints" />
+                    <MudEnhancedBarChartSeries Id="@thirdSeriesId" Name="Germany" Points="thirdSeriesPoints" />
                 </MudEnhancedBarDataSet>
-                <MudEnhancedBarDataSet Name="my second dataset" IsStacked="false">
-                    <MudEnhancedBarChartSeries Id="@thirdSeriesId" Name="my 3rd name" Points="thirdSeriesPoints" />
-                    <MudEnhancedBarChartSeries Id="@fourthSeriesId" Name="my 4th series" Points="fourthSeriesPoints" />
+                <MudEnhancedBarDataSet Name="pets in the US" IsStacked="false">
+                    <MudEnhancedBarChartSeries Id="@fourthSeriesId" Name="US" Points="fourthSeriesPoints" />
                 </MudEnhancedBarDataSet>
             </DataSets>
             <YAxes>
@@ -36,11 +36,11 @@
     private Guid thirdSeriesId = Guid.NewGuid();
     private Guid fourthSeriesId = Guid.NewGuid();
 
-    private String[] labels = new[] { "A", "B", "C" };
+    private String[] labels = new[] { "Cats", "Dogs"  };
 
-    public Double[] firstSeriesPoints = new [] { 10.0 , 20.0, 30.0 };
-    public Double[] secondSeriesPoints = new[] { -14.0, 50.0, -70.0 };
+    public Double[] firstSeriesPoints = new [] { 11.48,  7.57  };
+    public Double[] secondSeriesPoints = new[] { 3.38,  4.72 };
+    public Double[] thirdSeriesPoints = new[] { 8.2 , 5.3  };
 
-    public Double[] thirdSeriesPoints = new[] { 10.0, 20.0, 30.0 };
-    public Double[] fourthSeriesPoints = new[] { -14.0, 50.0, -70.0 };
+    public Double[] fourthSeriesPoints = new[] { 74.06, 69,93 };
  } 

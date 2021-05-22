@@ -10,8 +10,8 @@
     <Chart>
         <MudEnhancedBarChart>
             <DataSets>
-                <MudEnhancedBarDataSet Name="my first dataset" IsStacked="false">
-                    <MudEnhancedBarChartSeries Id="@seriesId" Name="my name" Points="points" />
+                <MudEnhancedBarDataSet Name="Cats" IsStacked="false">
+                    <MudEnhancedBarChartSeries Id="@seriesId" Name="millon cats per country" Points="points" />
                 </MudEnhancedBarDataSet>
             </DataSets>
             <YAxes>
@@ -28,6 +28,6 @@
 
     private Guid seriesId = Guid.NewGuid();
 
-    private String[] labels = new[] { "A", "B", "C" };
-    public Double[] points = new [] { 10.0 , 20.0, 30.0 };
+    private String[] labels = new[] { "France", "Germany", "Spain" };
+    public Double[] points = new [] { 11.48 , 8.2, 3.38 };
  } 
