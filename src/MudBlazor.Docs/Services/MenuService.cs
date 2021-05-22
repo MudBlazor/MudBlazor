@@ -97,6 +97,7 @@ namespace MudBlazor.Docs.Services
             //Buttons
             .AddNavGroup("Buttons", false, new DocsComponents()
                 .AddItem("Button", typeof(MudButton))
+                .AddItem("Button Group", typeof(MudButtonGroup))
                 .AddItem("IconButton", typeof(MudIconButton))
                 .AddItem("ToggleIconButton", typeof(MudToggleIconButton))
                 .AddItem("Button FAB", typeof(MudFab))
