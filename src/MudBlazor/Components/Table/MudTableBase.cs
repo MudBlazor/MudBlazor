@@ -21,19 +21,20 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-table")
-           .AddClass($"mud-xs-table", Breakpoint == Breakpoint.Xs)
-           .AddClass($"mud-sm-table", Breakpoint == Breakpoint.Sm)
-           .AddClass($"mud-md-table", Breakpoint == Breakpoint.Md)
-           .AddClass($"mud-lg-table", Breakpoint == Breakpoint.Lg || Breakpoint == Breakpoint.Always)
-           .AddClass($"mud-xl-table", Breakpoint == Breakpoint.Xl || Breakpoint == Breakpoint.Always)
-           .AddClass($"mud-table-dense", Dense)
-           .AddClass($"mud-table-hover", Hover)
-           .AddClass($"mud-table-bordered", Bordered)
-           .AddClass($"mud-table-striped", Striped)
-           .AddClass($"mud-table-outlined", Outlined)
-           .AddClass($"mud-table-square", Square)
-           .AddClass($"mud-table-sticky-header", FixedHeader)
-           .AddClass($"mud-elevation-{Elevation}", !Outlined)
+           .AddClass("mud-xs-table", Breakpoint == Breakpoint.Xs)
+           .AddClass("mud-sm-table", Breakpoint == Breakpoint.Sm)
+           .AddClass("mud-md-table", Breakpoint == Breakpoint.Md)
+           .AddClass("mud-lg-table", Breakpoint == Breakpoint.Lg || Breakpoint == Breakpoint.Always)
+           .AddClass("mud-xl-table", Breakpoint == Breakpoint.Xl || Breakpoint == Breakpoint.Always)
+           .AddClass("mud-table-dense", Dense)
+           .AddClass("mud-table-hover", Hover)
+           .AddClass("mud-table-bordered", Bordered)
+           .AddClass("mud-table-striped", Striped)
+           .AddClass("mud-table-outlined", Outlined)
+           .AddClass("mud-table-square", Square)
+           .AddClass("mud-table-sticky-header", FixedHeader)
+           .AddClass("mud-table-sticky-footer", FixedFooter)
+           .AddClass("mud-elevation-{Elevation}", !Outlined)
           .AddClass(Class)
         .Build();
 
@@ -86,6 +87,11 @@ namespace MudBlazor
         /// When true, the header will stay in place when the table is scrolled. Note: set Height to make the table scrollable.
         /// </summary>
         [Parameter] public bool FixedHeader { get; set; }
+
+        /// <summary>
+        /// When true, the footer will be visible is not scrolled to the bottom. Note: set Height to make the table scrollable.
+        /// </summary>
+        [Parameter] public bool FixedFooter { get; set; }
 
         /// <summary>
         /// Setting a height will allow to scroll the table. If not set, it will try to grow in height. You can set this to any CSS value that the
