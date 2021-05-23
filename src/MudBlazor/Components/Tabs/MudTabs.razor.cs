@@ -164,13 +164,24 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<int> ActivePanelIndexChanged { get; set; }
 
-        private List<MudTabPanel> _panels = new List<MudTabPanel>();
+        /// <summary>
+        /// A readonly list of the current panels. Panels should be added or removed through the RenderTree use this collection to get informations about the current panels
+        /// </summary>
+        public IReadOnlyList<MudTabPanel> Panels { get; private set; }
+
+        private List<MudTabPanel> _panels;
 
         private string _prevIcon;
 
         private string _nextIcon;
 
         #region Life cycle management
+
+        public MudTabs()
+        {
+            _panels = new List<MudTabPanel>();
+            Panels = _panels.AsReadOnly();
+        }
 
         protected override void OnParametersSet()
         {
