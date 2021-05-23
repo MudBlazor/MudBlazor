@@ -31,6 +31,13 @@ namespace MudBlazor
         [Parameter] public RenderFragment<T> RowEditingTemplate { get; set; }
 
         /// <summary>
+        /// Defines if the table has an horizontal scrollbar.
+        /// </summary>
+        [Parameter] public bool HorizontalScrollbar { get; set; } 
+
+        internal string GetHorizontalScrollbarStyle() => HorizontalScrollbar ? "display: block; overflow-x: auto;" : string.Empty;
+
+        /// <summary>
         /// The data to display in the table. MudTable will render one row per item
         /// </summary>
         [Parameter]
