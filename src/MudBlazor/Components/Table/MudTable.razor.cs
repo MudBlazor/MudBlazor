@@ -31,9 +31,9 @@ namespace MudBlazor
         [Parameter] public RenderFragment<T> RowEditingTemplate { get; set; }
 
         /// <summary>
-        /// Defines if the table has an horizontal scrollbar.
+        /// Defines if the table has a horizontal scrollbar.
         /// </summary>
-        [Parameter] public bool HorizontalScrollbar { get; set; } 
+        [Parameter] public bool HorizontalScrollbar { get; set; }
 
         internal string GetHorizontalScrollbarStyle() => HorizontalScrollbar ? "display: block; overflow-x: auto;" : string.Empty;
 
