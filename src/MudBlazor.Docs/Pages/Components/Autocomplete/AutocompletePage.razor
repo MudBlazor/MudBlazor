@@ -16,7 +16,9 @@
                 <Title>Usage</Title>
                 <Description>
                     How you write the search function determines whether or not the Autocomplete shows a full list initially. By setting <CodeInline>ResetValueOnEmptyText="true"</CodeInline>
-                    the value will be reset when the user clears the input text. Otherwise, the value is kept and the text coerced to the current value.
+                    the <CodeInline>Value</CodeInline> will be reset when the user clears the input text. With <CodeInline>CoerceText="true"</CodeInline> upon selection of an entry from the list, 
+                    the <CodeInline>Text</CodeInline> is always updated. When the user types something that is not on the list and <CodeInline>CoerceValue</CodeInline> is true,
+                    the <CodeInline>Value</CodeInline> will be overwritten with the user input which allows it to be passed to the validation function.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">

@@ -142,7 +142,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
-            await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
+            autocompletecomp.SetParam(x => x.DebounceInterval, 0);
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
@@ -154,6 +154,33 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
         }
+
+        /// <summary>
+        /// We search for a value not in list and value coercion will force the invalid value to be applied
+        /// allowing to validate the user input.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task AutocompleteCoerceValueTest()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTest1>();
+            Console.WriteLine(comp.Markup);
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+            autocompletecomp.SetParam(x => x.DebounceInterval, 0);
+            autocompletecomp.SetParam(x => x.CoerceValue, true); // if CoerceValue==true CoerceText will be ignored
+            // check initial state
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama");
+            // set a value the search won't find
+            autocompletecomp.SetParam(p=> p.Text, "Austria"); // not part of the U.S.
+
+            // now trigger the coercion by toggling the the menu (it won't even open for invalid values, but it will coerce)
+            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            comp.WaitForAssertion(() => autocomplete.Value.Should().Be("Austria"));
+            autocomplete.Text.Should().Be("Austria");
+        }
+
 
         [Test]
         public async Task AutocompleteCoercionOffTest()
@@ -168,8 +195,8 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
-            autocompletecomp.SetParam(a => a.Text, "Austria");
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            autocompletecomp.SetParam(a => a.Text, "Austria");
             // now trigger the coercion by closing the menu
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             autocomplete.Value.Should().Be("Alabama");
