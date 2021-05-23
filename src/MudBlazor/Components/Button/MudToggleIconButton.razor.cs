@@ -70,6 +70,16 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
 
+        /// <summary>
+        /// The variant to use.
+        /// </summary>
+        [Parameter] public Variant Variant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// The variant to use.
+        /// </summary>
+        [Parameter] public Variant? ToggledVariant { get; set; }
+
         public Task Toggle()
         {
             return SetToggledAsync(!Toggled);
