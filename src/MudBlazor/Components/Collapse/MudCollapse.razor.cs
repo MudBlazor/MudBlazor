@@ -143,6 +143,12 @@ namespace MudBlazor
                 await UpdateHeight();
                 StateHasChanged();
             }
+            else if (_updateHeight && (_state == CollapseState.Entering || _state == CollapseState.Exiting))
+            {
+                _updateHeight = false;
+                await UpdateHeight();
+                StateHasChanged();
+            }
             await base.OnAfterRenderAsync(firstRender);
         }
 
