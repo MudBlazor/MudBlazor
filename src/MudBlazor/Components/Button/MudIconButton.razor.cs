@@ -8,12 +8,18 @@ namespace MudBlazor
     {
         protected string Classname =>
         new CssBuilder("mud-button-root mud-icon-button")
-          .AddClass($"mud-icon-button-color-{Color.ToDescriptionString()}", Color != Color.Default)
+          .AddClass("mud-button", when: AsButton)
+          .AddClass($"mud-icon-button-color-{Color.ToDescriptionString()}", !AsButton && Color != Color.Default)
+          .AddClass($"mud-button-{Variant.ToDescriptionString()}", AsButton)
+          .AddClass($"mud-button-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}", AsButton)
+          .AddClass($"mud-button-{Variant.ToDescriptionString()}-size-{Size.ToDescriptionString()}", AsButton)
           .AddClass($"mud-ripple mud-ripple-icon", !DisableRipple)
           .AddClass($"mud-icon-button-size-{Size.ToDescriptionString()}", when: () => Size != Size.Medium)
           .AddClass($"mud-icon-button-edge-{Edge.ToDescriptionString()}", when: () => Edge != Edge.False)
           .AddClass(Class)
         .Build();
+
+        protected bool AsButton => Variant != Variant.Text;
 
         /// <summary>
         /// The Icon that will be used in the component.
@@ -44,6 +50,11 @@ namespace MudBlazor
         /// Child content of component, only shows if Icon is null or Empty.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// The variant to use.
+        /// </summary>
+        [Parameter] public Variant Variant { get; set; } = Variant.Text;
 
     }
 }
