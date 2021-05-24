@@ -163,7 +163,6 @@ namespace MudBlazor
             await SetTextAsync(GetItemString(value), false);
             _timer?.Dispose();
             IsOpen = false;
-            await IsOpenChanged.InvokeAsync(IsOpen);
             UpdateIcon();
             BeginValidate();
             StateHasChanged();
@@ -174,7 +173,6 @@ namespace MudBlazor
             if ((Disabled || ReadOnly) && !IsOpen)
                 return;
             IsOpen = !IsOpen;
-            await IsOpenChanged.InvokeAsync(IsOpen);
             if (IsOpen)
             {
                 await _elementReference.SelectAsync();
@@ -237,7 +235,6 @@ namespace MudBlazor
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(Text) || Text.Length < MinCharacters))
             {
                 IsOpen = false;
-                await IsOpenChanged.InvokeAsync(IsOpen);
                 StateHasChanged();
                 return;
             }
@@ -259,14 +256,12 @@ namespace MudBlazor
             {
                 await CoerceValueToText();
                 IsOpen = false;
-                await IsOpenChanged.InvokeAsync(IsOpen);
                 UpdateIcon();
                 StateHasChanged();
                 return;
             }
 
             IsOpen = true;
-            await IsOpenChanged.InvokeAsync(IsOpen);
             UpdateIcon();
             StateHasChanged();
         }
@@ -301,7 +296,6 @@ namespace MudBlazor
                     break;
                 case "Escape":
                     IsOpen = false;
-                    await IsOpenChanged.InvokeAsync(IsOpen);
                     break;
             }
             base.InvokeKeyUp(args);
