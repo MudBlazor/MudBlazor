@@ -230,6 +230,16 @@ namespace MudBlazor
         [Parameter] public string CancelEditTooltip { get; set; }
 
         /// <summary>
+        /// Sets the Icon of the CommitEdit Button.
+        /// </summary>
+        [Parameter] public string CommitEditIcon { get; set; } = Icons.Material.Filled.Done;
+
+        /// <summary>
+        /// Sets the Icon of the CancelEdit Button.
+        /// </summary>
+        [Parameter] public string CancelEditIcon { get; set; } = Icons.Material.Filled.Cancel;
+
+        /// <summary>
         /// Number of items. Used only with ServerData="true"
         /// </summary>
         [Parameter] public int TotalItems { get; set; }

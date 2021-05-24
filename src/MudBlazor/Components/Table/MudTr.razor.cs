@@ -12,16 +12,6 @@ namespace MudBlazor
 
         [CascadingParameter] public TableContext Context { get; set; }
 
-        /// <summary>
-        /// Sets the icon of the commit edit when editing
-        /// </summary>
-        [Parameter] public string CommitEditIcon { get; set; } = Icons.Material.Filled.Done;
-
-        /// <summary>
-        /// Sets the icon of the cancel button when editing
-        /// </summary>
-        [Parameter] public string CancelEditIcon { get; set; } = Icons.Material.Filled.Cancel;
-
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         [Parameter] public object Item { get; set; }
@@ -31,7 +21,6 @@ namespace MudBlazor
         [Parameter] public bool IsEditable { get; set; }
 
         [Parameter] public bool IsHeader { get; set; }
-
         [Parameter] public bool IsFooter { get; set; }
 
         [Parameter]
