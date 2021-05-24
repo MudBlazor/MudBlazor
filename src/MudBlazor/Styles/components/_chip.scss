@@ -82,6 +82,18 @@
     }
 }
 
+.mud-application-layout-rtl .mud-chip {
+    .mud-chip-icon {
+        margin-right: -4px;
+        margin-left: 4px;
+    }
+
+    .mud-chip-close-button {
+        margin-left: -4px;
+        margin-right: 6px;
+    }
+}
+
 
 
 .mud-chip-filled {

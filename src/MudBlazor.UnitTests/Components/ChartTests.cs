@@ -2,6 +2,7 @@
 #pragma warning disable IDE1006 // leading underscore
 
 using System;
+using System.Collections.Generic;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.Docs.Examples;
@@ -85,6 +86,61 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("h6").InnerHtml.Trim().Should().Be("Selected portion of the chart: 1");
         }
 
+        [Test]
+        public void BarChartYAxisFormat()
+        {
+            ChartOptions options = new ChartOptions();
+            List<ChartSeries> series = new List<ChartSeries>()
+            {
+                new ChartSeries() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+                new ChartSeries() { Name = "Series 2", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
+            };
+            string[] xAxis = new string[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+            string width = "100%";
+            string height = "350px";
+
+            var comp = ctx.RenderComponent<MudChart>(parameters => parameters
+              .Add(p => p.ChartType, ChartType.Line)
+              .Add(p => p.ChartSeries, series)
+              .Add(p => p.XAxisLabels, xAxis)
+              .Add(p => p.ChartOptions, options)
+              .Add(p => p.Width, width)
+              .Add(p => p.Height, height)
+            );
+
+            // check the first Y Axis value without any format
+            var yaxis = comp.FindAll("g.mud-charts-yaxis");
+            yaxis.Should().NotBeNull();
+            yaxis[0].Children[0].InnerHtml.Trim().Should().Be("0");
+
+            // now, we will apply currency format
+            options.YAxisFormat = "c2";
+            comp.SetParametersAndRender(parameters => parameters
+              .Add(p => p.ChartType, ChartType.Line)
+              .Add(p => p.ChartSeries, series)
+              .Add(p => p.XAxisLabels, xAxis)
+              .Add(p => p.ChartOptions, options)
+              .Add(p => p.Width, width)
+              .Add(p => p.Height, height)
+            );
+            yaxis = comp.FindAll("g.mud-charts-yaxis");
+            yaxis.Should().NotBeNull();
+            yaxis[0].Children[0].InnerHtml.Trim().Should().Be($"{0:c2}");
+
+            //number format
+            options.YAxisFormat = "n6";
+            comp.SetParametersAndRender(parameters => parameters
+              .Add(p => p.ChartType, ChartType.Line)
+              .Add(p => p.ChartSeries, series)
+              .Add(p => p.XAxisLabels, xAxis)
+              .Add(p => p.ChartOptions, options)
+              .Add(p => p.Width, width)
+              .Add(p => p.Height, height)
+            );
+            yaxis = comp.FindAll("g.mud-charts-yaxis");
+            yaxis.Should().NotBeNull();
+            yaxis[0].Children[0].InnerHtml.Trim().Should().Be($"{0:n6}");
+        }
 
 
     }

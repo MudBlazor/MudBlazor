@@ -179,6 +179,25 @@
     }
 }
 
+.mud-table-sticky-footer {
+    .mud-table-container {
+        overflow-x: auto;
+    }
+
+    & * .mud-table-root {
+        border-collapse: separate;
+
+        .mud-table-foot {
+
+            & * .mud-table-cell {
+                background-color: var(--mud-palette-surface);
+                position: sticky;
+                z-index: 2;
+                bottom: 0;
+            }
+        }
+    }
+}
 
 
 .mud-table-row {

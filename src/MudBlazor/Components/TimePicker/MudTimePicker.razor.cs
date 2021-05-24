@@ -19,6 +19,7 @@ namespace MudBlazor
             Converter.GetFunc = OnGet;
             Converter.SetFunc = OnSet;
             (Converter as DefaultConverter<TimeSpan?>).Format = format24Hours;
+            InputIcon = Icons.Material.Filled.AccessTime;
         }
 
         private string OnSet(TimeSpan? timespan)
@@ -189,6 +190,10 @@ namespace MudBlazor
         private void UpdateTime()
         {
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
+            if (PickerVariant == PickerVariant.Static && PickerActions == null)
+            {
+                Submit();
+            }
         }
 
         private void OnHourClick()

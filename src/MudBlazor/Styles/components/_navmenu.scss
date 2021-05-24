@@ -99,6 +99,10 @@
     }
 }
 
+.mud-drawer--closed.mud-drawer-mini > .mud-drawer-content > .mud-navmenu .mud-nav-link .mud-nav-link-text {
+    visibility: hidden;
+}
+
 .mud-nav-group * .mud-navmenu > .mud-nav-group {
     & .mud-nav-link {
         padding-left: 36px;

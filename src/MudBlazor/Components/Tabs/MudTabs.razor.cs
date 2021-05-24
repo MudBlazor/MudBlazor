@@ -151,7 +151,8 @@ namespace MudBlazor
                 if (_activePanelIndex != value)
                 {
                     _activePanelIndex = value;
-                    ActivePanel = _panels[_activePanelIndex];
+                    if (_isRendered)
+                        ActivePanel = _panels[_activePanelIndex];
                     ActivePanelIndexChanged.InvokeAsync(value);
                 }
             }
@@ -163,13 +164,24 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<int> ActivePanelIndexChanged { get; set; }
 
-        private List<MudTabPanel> _panels = new List<MudTabPanel>();
+        /// <summary>
+        /// A readonly list of the current panels. Panels should be added or removed through the RenderTree use this collection to get informations about the current panels
+        /// </summary>
+        public IReadOnlyList<MudTabPanel> Panels { get; private set; }
+
+        private List<MudTabPanel> _panels;
 
         private string _prevIcon;
 
         private string _nextIcon;
 
         #region Life cycle management
+
+        public MudTabs()
+        {
+            _panels = new List<MudTabPanel>();
+            Panels = _panels.AsReadOnly();
+        }
 
         protected override void OnParametersSet()
         {
@@ -182,6 +194,9 @@ namespace MudBlazor
             {
                 var items = _panels.Select(x => x.PanelRef).ToList();
                 items.Add(_tabsContentSize);
+
+                if (_panels.Count > 0)
+                    ActivePanel = _panels[_activePanelIndex];
 
                 await _resizeObserver.Observe(items);
 

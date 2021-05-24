@@ -19,6 +19,7 @@ namespace MudBlazor
 
         private bool OverlayVisible => _open && !DisableOverlay &&
             (Variant == DrawerVariant.Temporary ||
+             (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Mini) ||
              (_screenBreakpoint < Breakpoint && Variant == DrawerVariant.Responsive));
 
         protected string Classname =>
@@ -122,11 +123,16 @@ namespace MudBlazor
         /// Show overlay for responsive and temporary drawers.
         /// </summary>
         [Parameter] public bool DisableOverlay { get; set; } = false;
-
+        
         /// <summary>
         /// Preserve open state for responsive drawer when window resized above <see cref="Breakpoint" />.
         /// </summary>
         [Parameter] public bool PreserveOpenState { get; set; } = false;
+
+        /// <summary>
+        /// Open drawer automatically on mouse enter when <see cref="Variant" /> parameter is set to <see cref="DrawerVariant.Mini" />.
+        /// </summary>
+        [Parameter] public bool OpenMiniOnHover { get; set; }
 
         /// <summary>
         /// Switching point for responsive drawers
@@ -188,6 +194,11 @@ namespace MudBlazor
         /// Width of left/right drawer. Only for non-fixed drawers.
         /// </summary>
         [Parameter] public string Width { get; set; }
+
+        /// <summary>
+        /// Width of left/right drawer. Only for non-fixed drawers.
+        /// </summary>
+        [Parameter] public string MiniWidth { get; set; }
 
         /// <summary>
         /// Height of top/bottom temporary drawer
@@ -319,6 +330,25 @@ namespace MudBlazor
             if (isStateChanged)
             {
                 StateHasChanged();
+            }
+        }
+
+        private bool closeOnMouseLeave = false;
+        private async void OnMouseEnter(EventArgs args)
+        {
+            if (Variant == DrawerVariant.Mini && !Open && OpenMiniOnHover)
+            {
+                closeOnMouseLeave = true;
+                await OpenChanged.InvokeAsync(true);
+            }
+        }
+
+        private async void OnMouseLeave(EventArgs args)
+        {
+            if (Variant == DrawerVariant.Mini && Open && closeOnMouseLeave)
+            {
+                closeOnMouseLeave = false;
+                await OpenChanged.InvokeAsync(false);
             }
         }
     }

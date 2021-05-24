@@ -70,6 +70,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Popover", typeof(MudPopover))
             .AddItem("SwipeArea", typeof(MudSwipeArea))
             .AddItem("ToolBar", typeof(MudToolBar))
+            .AddItem("Carousel", typeof(MudCarousel<object>))
 
             //GROUPS
 
@@ -96,6 +97,7 @@ namespace MudBlazor.Docs.Services
             //Buttons
             .AddNavGroup("Buttons", false, new DocsComponents()
                 .AddItem("Button", typeof(MudButton))
+                .AddItem("Button Group", typeof(MudButtonGroup))
                 .AddItem("IconButton", typeof(MudIconButton))
                 .AddItem("ToggleIconButton", typeof(MudToggleIconButton))
                 .AddItem("Button FAB", typeof(MudFab))
