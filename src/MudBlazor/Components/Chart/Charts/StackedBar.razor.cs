@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts.SVG.Models;
@@ -156,44 +157,44 @@ namespace MudBlazor.Charts
             _bars.Clear();
             foreach (var group in groupedData.ToList()) 
             {
-                var test2 = group.OrderByDescending(x => double.Parse(x.Data.Split(' ')[5])).Reverse().ToList();
-                var count = 1;           
-                foreach (var bar in group) 
+                var test2 = group.OrderByDescending(x => double.Parse(x.Data.Split(' ')[5])).ToList();
+                var count = 1;
+                var minusValue = 0;
+                foreach (var bar in group.Reverse()) 
                 {
-                    var groupCount = group.Count();
+                    minusValue = 0;
+                    if (bar == group.First())
+                        continue;
                     SvgPath data = new SvgPath();
-                    if (groupCount != count)
-                    {
-                        data.Index = bar.Index;
+                    data.Index = test2[count].Index;
 
-                        var test = bar.Data.Split(' ');
+                    if (count == 1)
+                        _bars.Add(bar);
 
-                        var originalYValue = test[2];
+                    if (count == 1)
+                        minusValue = int.Parse(test2[count].Data.Split(' ')[2]) - int.Parse(test2[count - 1].Data.Split(' ')[5]);
+                    else                    
+                        minusValue = int.Parse(test2[count - 1].Data.Split(' ')[2]) - int.Parse(_bars.Last().Data.Split(' ')[5]);
+                                          
+                    var splittedBar = test2[count].Data.Split(' ');
 
-                        var addValue = test2[count].Data.Split(' ')[5];
+                    splittedBar[5] = (int.Parse(splittedBar[5]) - minusValue).ToString();
 
-                        test[2] = addValue;
+                    var replaceYValue = _bars.Last().Data.Split(' ')[5];
 
-                        var minusValue = (int.Parse(originalYValue) - int.Parse(addValue)).ToString();
+                    splittedBar[2] = replaceYValue;
 
-                        if(count == 1)
-                            test[5] = (int.Parse(test[5]) - int.Parse(minusValue)).ToString();
-
-                        foreach (var t in test)
+                    foreach (var t in splittedBar)
+                        if (t == "M")
+                            data.Data = t;
+                        else
                             data.Data = data.Data + " " + t;
 
-                        count++;
-                        _bars.Add(data);
-
-                    }
-                    else 
-                    {
-                        _bars.Add(bar);
-                    }
+                    _bars.Add(data);
                     
-
+                    count++;
                 }
-                //_bars.AddRange(group.OrderByDescending(x => double.Parse(x.Data.Split(' ')[5])).Reverse().ToList());
+                _bars.Reverse();
             }
                
             return _bars;
