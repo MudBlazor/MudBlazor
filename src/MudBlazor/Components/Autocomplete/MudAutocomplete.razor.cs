@@ -123,7 +123,28 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool CoerceValue { get; set; }
 
-        internal bool IsOpen { get; set; }
+        protected bool _isOpen;
+
+        /// <summary>
+        /// Returns the open state of the drop-down.
+        /// Note, setting IsOpen will not open or close it. Use ToggleMenu() for that
+        /// </summary>
+        public bool IsOpen
+        {
+            get => _isOpen;
+            protected set
+            {
+                if (value == _isOpen)
+                    return;
+                _isOpen = value;
+                IsOpenChanged.InvokeAsync(_isOpen).AndForget();
+            }
+        }
+
+        /// <summary>
+        /// An event triggered when the state of IsOpen has changed
+        /// </summary>
+        [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
 
         public string CurrentIcon { get; set; }
 
