@@ -36,7 +36,10 @@
                 @if (object.ReferenceEquals(Context?.Table._editingItem, Item) && (!Context?.Table.ReadOnly ?? false))
                 {
                     <MudTooltip Text="@Context.Table.CommitEditTooltip">
-                        <MudIconButton Class="pa-0" Icon="@Icons.Material.Filled.Done" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!Context?.Table.Validator?.IsValid ?? false)" />
+                        <MudIconButton Class="pa-0" Icon="@CommitEditIcon" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!Context?.Table.Validator?.IsValid ?? false)" />
+                    </MudTooltip>
+					<MudTooltip Text="@Context.Table.CancelEditTooltip">
+                        <MudIconButton Class="pa-0" Icon="@CancelEditIcon" OnClick="CancelEdit" Size="@Size.Small" />
                     </MudTooltip>
                 }
             </MudTd>
