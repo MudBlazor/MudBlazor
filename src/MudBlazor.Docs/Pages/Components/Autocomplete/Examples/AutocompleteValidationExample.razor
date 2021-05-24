@@ -11,11 +11,21 @@
              For="@(() => choice1.State)"/>
             <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" 
              Class="ml-auto mt-3 mb-3" OnClick="@(()=>success1=editContext1.Validate())">Validate</MudButton>
+            <MudExpansionPanels>
+                <MudExpansionPanel Text="@($"Show Errors or Success")">
                    @if (success1)
                    {
                        <MudText Color="Color.Success">Success</MudText>
                    }
-        </EditForm>
+                   else
+                   {
+                       <MudText Color="@Color.Error">
+                           <ValidationSummary />
+                       </MudText>
+                   }
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+       </EditForm>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <EditForm EditContext="editContext2">
@@ -25,12 +35,22 @@
              OpenIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary"
              Validation="@(new Func<string, IEnumerable<string>>(Validate))" />
             <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" 
-                       Class="ml-auto mt-3 mb-3" OnClick="@(()=>success2=editContext2.Validate())">Validate</MudButton>
+             Class="ml-auto mt-3 mb-3" OnClick="@(()=>success2=editContext2.Validate())">Validate</MudButton>
+            <MudExpansionPanels>
+                <MudExpansionPanel Text="@($"Show Errors or Success")">
                    @if (success2)
                    {
                        <MudText Color="Color.Success">Success</MudText>
                    }
-        </EditForm>
+                   else
+                   {
+                       <MudText Color="@Color.Error">
+                           <ValidationSummary />
+                       </MudText>
+                   }
+                </MudExpansionPanel>
+            </MudExpansionPanels>
+       </EditForm>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudForm @ref="form">
@@ -48,6 +68,8 @@
                     {
                         <MudText>IsTouched: @form.IsTouched, IsValid: @form.IsValid</MudText>
                     }
+                </MudExpansionPanel>
+            </MudExpansionPanels>
         </MudForm>
 	</MudItem>
     <MudItem xs="12" md="12">
@@ -61,6 +83,7 @@
 </MudGrid>
 
 @code {
+    private string[] errors = { };
     private MudForm form;
     private bool coerceValue;
     private bool success1;
