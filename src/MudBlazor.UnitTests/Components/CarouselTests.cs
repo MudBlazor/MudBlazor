@@ -178,6 +178,7 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Testing autoCycle
         /// </summary>
+        [Ignore("This test will not reliably run on the build server")]
         [Test]
         public async Task CarouselTest_AutoCycle()
         {
