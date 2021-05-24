@@ -132,7 +132,7 @@ namespace MudBlazor
         public bool IsOpen
         {
             get => _isOpen;
-            protected set
+            private set
             {
                 if (value == _isOpen)
                     return;
@@ -379,7 +379,7 @@ namespace MudBlazor
 
         private async Task CoerceValueToText()
         {
-            if (CoerceValue==false)
+            if (CoerceValue == false)
                 return;
             _timer?.Dispose();
             var value = Converter.Get(Text);
