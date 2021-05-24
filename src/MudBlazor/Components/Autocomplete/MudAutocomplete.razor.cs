@@ -67,7 +67,6 @@ namespace MudBlazor
                 Converter = new Converter<T>
                 {
                     SetFunc = _toStringFunc ?? (x => x?.ToString()),
-                    //GetFunc = LookupValue,
                 };
             }
         }
@@ -117,6 +116,12 @@ namespace MudBlazor
         /// which list value is currently selected and disallows incomplete values in Text.
         /// </summary>
         [Parameter] public bool CoerceText { get; set; } = true;
+
+        /// <summary>
+        /// If user input is not found by the search func and CoerceValue is set to true the user input
+        /// will be applied to the Value which allows to validate it and display an error message.
+        /// </summary>
+        [Parameter] public bool CoerceValue { get; set; }
 
         internal bool IsOpen { get; set; }
 
@@ -228,6 +233,7 @@ namespace MudBlazor
 
             if (_items?.Length == 0)
             {
+                await CoerceValueToText();
                 IsOpen = false;
                 UpdateIcon();
                 StateHasChanged();
@@ -350,6 +356,15 @@ namespace MudBlazor
             }
         }
 
+        private async Task CoerceValueToText()
+        {
+            if (CoerceValue==false)
+                return;
+            _timer?.Dispose();
+            var value = Converter.Get(Text);
+            await SetValueAsync(value, updateText: false);
+        }
+
         protected override void Dispose(bool disposing)
         {
             _timer?.Dispose();
@@ -376,7 +391,6 @@ namespace MudBlazor
             if (text == null)
                 return;
             _ = SetTextAsync(text, true);
-
         }
     }
 }
