@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Reflection;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
@@ -7,6 +9,10 @@ namespace MudBlazor
 {
     public partial class MudTr : MudComponentBase
     {
+        internal bool _clickRowFirstTime;
+
+        internal object _itemCopy;
+
         protected string Classname => new CssBuilder("mud-table-row")
             .AddClass(Class).Build();
 
@@ -21,6 +27,7 @@ namespace MudBlazor
         [Parameter] public bool IsEditable { get; set; }
 
         [Parameter] public bool IsHeader { get; set; }
+
         [Parameter] public bool IsFooter { get; set; }
 
         [Parameter]
@@ -43,6 +50,12 @@ namespace MudBlazor
 
         public void OnRowClicked(MouseEventArgs args)
         {
+            // Manage the Item Copy the first time the row is clicked
+            if (!_clickRowFirstTime)
+            {
+                ManageItemCopy();
+            }
+
             if (IsHeader || !(Context?.Table.Validator.IsValid ?? true))
                 return;
 
@@ -80,6 +93,7 @@ namespace MudBlazor
 
         private void FinishEdit(MouseEventArgs ev)
         {
+            _clickRowFirstTime = false;
             if (!Context?.Table.Validator.IsValid ?? true) return;
             Context?.Table.SetEditingItem(null);
             Context?.Table.OnCommitEditHandler(ev, Item);
@@ -87,8 +101,84 @@ namespace MudBlazor
 
         private void CancelEdit(MouseEventArgs ev)
         {
+            // The Item object is reset to its initial value from the Item Copy
+            ManageItemCopy();
+
+            // The edit mode is canceled
             Context?.Table.SetEditingItem(null);
             Context?.Table.OnCancelEditHandler(ev);
+        }
+
+        private void ManageItemCopy()
+        {
+            try
+            {
+                if (IsEditable && Item != null)
+                {
+                    if (!_clickRowFirstTime)
+                    {
+                        if (Item.GetType() == typeof(string))
+                        {
+                            _itemCopy = string.Empty;
+                        }
+                        else
+                        {
+                            _itemCopy = Activator.CreateInstance(Item.GetType());
+                        }
+
+                        CopyObjectData(Item, _itemCopy);
+                        _clickRowFirstTime = true;
+                    }
+                    else
+                    {
+                        CopyObjectData(_itemCopy, Item);
+                        _clickRowFirstTime = false;
+                    }
+                }
+            }
+            catch
+            {
+                /* ignore */
+            }
+        }
+
+        private static void CopyObjectData(object source, object target)
+        {
+            var memberInfos = target.GetType().GetMembers();
+
+            foreach (var field in memberInfos)
+            {
+                var memberInfoName = field.Name;
+
+                if (field.MemberType == MemberTypes.Field)
+                {
+                    var sourceField = source.GetType().GetField(memberInfoName);
+
+                    if (sourceField == null)
+                    {
+                        continue;
+                    }
+
+                    var sourceValue = sourceField.GetValue(source);
+                    ((FieldInfo)field).SetValue(target, sourceValue);
+                }
+                else if (field.MemberType == MemberTypes.Property)
+                {
+                    var propertyInfo = field as PropertyInfo;
+                    var sourceField = source.GetType().GetProperty(memberInfoName);
+
+                    if (sourceField == null)
+                    {
+                        continue;
+                    }
+
+                    if (propertyInfo.CanWrite && sourceField.CanRead)
+                    {
+                        var sourceValue = sourceField.GetValue(source, null);
+                        propertyInfo.SetValue(target, sourceValue, null);
+                    }
+                }
+            }
         }
     }
 }
