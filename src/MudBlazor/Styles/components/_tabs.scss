@@ -249,3 +249,20 @@
         transform: translate(100%, 0);
     }
 }
+
+.mud-tabs-header {
+    &.mud-tabs-header-before {
+    }
+
+    &.mud-tabs-header-after {
+    }
+}
+
+.mud-tabs-panel-header {
+    &.mud-tabs-panel-header-before {
+    }
+
+    &.mud-tabs-panel-header-after {
+    }
+}
+

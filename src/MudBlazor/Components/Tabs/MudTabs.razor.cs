@@ -171,6 +171,30 @@ namespace MudBlazor
 
         private List<MudTabPanel> _panels;
 
+        /// <summary>
+        /// A render fragement that is added before or after (based on the value of HeaderPosition) the tabs inside the header panel of the tab control
+        /// </summary>
+        [Parameter]
+        public RenderFragment<MudTabs> Header { get; set; }
+
+        /// <summary>
+        /// Addional content specified by Header is placed either before the tabs, after or not at all
+        /// </summary>
+        [Parameter]
+        public TabHeaderPosition HeaderPosition { get; set; } = TabHeaderPosition.After;
+
+        /// <summary>
+        /// A render fragement that is added before or after (based on the value of HeaderPosition) inside each tab panel
+        /// </summary>
+        [Parameter]
+        public RenderFragment<MudTabPanel> TabPanelHeader { get; set; }
+
+        /// <summary>
+        /// Addional content specified by Header is placed either before the tabs, after or not at all
+        /// </summary>
+        [Parameter]
+        public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
+
         private string _prevIcon;
 
         private string _nextIcon;
