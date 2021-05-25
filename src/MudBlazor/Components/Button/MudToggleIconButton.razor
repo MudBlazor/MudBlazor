@@ -4,6 +4,7 @@
 <MudIconButton Icon="@(Toggled ? ToggledIcon : Icon)"
                Size="@(Toggled ? ToggledSize : Size)"
                Color="@(Toggled ? ToggledColor : Color)"
+               Title="@(Toggled && ToggledTitle != null ? ToggledTitle : Title)"
                Disabled="@Disabled"
                Edge="@Edge"
                DisableRipple="@DisableRipple"
