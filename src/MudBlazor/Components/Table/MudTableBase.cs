@@ -34,7 +34,7 @@ namespace MudBlazor
            .AddClass("mud-table-square", Square)
            .AddClass("mud-table-sticky-header", FixedHeader)
            .AddClass("mud-table-sticky-footer", FixedFooter)
-           .AddClass("mud-elevation-{Elevation}", !Outlined)
+           .AddClass($"mud-elevation-{Elevation}", !Outlined)
           .AddClass(Class)
         .Build();
 
