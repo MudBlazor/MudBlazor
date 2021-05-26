@@ -38,6 +38,10 @@
         &.mud-drawer-responsive.mud-drawer-#{$breakpoint} {
             @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
                 z-index: calc(var(--mud-zindex-appbar) + 2);
+
+                &.mud-drawer--initial {
+                    display: none !important;
+                }
             }
         }
     }
