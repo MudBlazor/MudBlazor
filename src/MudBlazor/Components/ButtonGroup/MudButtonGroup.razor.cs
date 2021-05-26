@@ -16,6 +16,7 @@ namespace MudBlazor
           .AddClass($"mud-button-group-horizontal", !VerticalAlign)
           .AddClass($"mud-button-group-disable-elevation", DisableElevation)
           .AddClass($"mud-button-group-rtl", RightToLeft)
+          .AddClass($"mud-button-group-icon-dense", IconDense)
           .AddClass(Class)
         .Build();
 
@@ -56,5 +57,10 @@ namespace MudBlazor
         /// The variant to use.
         /// </summary>
         [Parameter] public Variant Variant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// Reduces MudIconButton and MudToggleIconButton horizontal padding.
+        /// </summary>
+        [Parameter] public bool IconDense { get; set; }
     }
 }

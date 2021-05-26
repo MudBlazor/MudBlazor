@@ -12,6 +12,7 @@
         .mud-button {
             color: var(--mud-palette-text-primary);
         }
+
         .mud-button-root {
             background-color: inherit;
             box-shadow: none;
@@ -23,6 +24,7 @@
         }
     }
 }
+
 .mud-button-group-horizontal {
     &:not(.mud-button-group-rtl) {
         > .mud-button-root:not(:last-child), :not(:last-child) .mud-button-root {
@@ -53,6 +55,7 @@
 
 .mud-button-group-vertical {
     flex-direction: column;
+
     .mud-icon-button {
         width: 100%;
     }
@@ -172,7 +175,7 @@
             &.mud-button-group-filled-#{$color} {
                 .mud-button-root {
                     background-color: var(--mud-palette-#{$color});
-                    color: var(--mud-palette-#{$color}-text);             
+                    color: var(--mud-palette-#{$color}-text);
 
                     &:hover {
                         background-color: var(--mud-palette-#{$color}-darken);
@@ -299,5 +302,35 @@
                 transition: 0s;
             }
         }
+    }
+}
+
+.mud-button-group-root.mud-button-group-icon-dense {
+    & .mud-icon-button {
+        padding: 5px;
+    }
+
+    &.mud-button-group-text-size-small .mud-icon-button {
+        padding: 4px;
+    }
+
+    &.mud-button-group-filled-size-small .mud-icon-button {
+        padding: 4px;
+    }
+
+    &.mud-button-group-text-size-large .mud-icon-button {
+        padding: 8px;
+    }
+
+    &.mud-button-group-filled-size-large .mud-icon-button {
+        padding: 8px;
+    }
+
+    &.mud-button-group-outlined-size-small .mud-icon-button {
+        padding: 3px;
+    }
+
+    &.mud-button-group-outlined-size-large .mud-icon-button {
+        padding: 7px;
     }
 }
