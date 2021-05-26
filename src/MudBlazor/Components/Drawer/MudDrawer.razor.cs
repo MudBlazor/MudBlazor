@@ -374,6 +374,20 @@ namespace MudBlazor
             return Anchor.ToDescriptionString();
         }
 
+        internal string GetPosition()
+        {
+            switch (Anchor)
+            {
+                case Anchor.Start:
+                    return RightToLeft ? "right" : "left";
+                case Anchor.End:
+                    return RightToLeft ? "left" : "right";
+                default: break;
+            }
+
+            return Anchor.ToDescriptionString();
+        }
+
         private bool closeOnMouseLeave = false;
         [JSInvokable]
         public async void OnMouseEnter()

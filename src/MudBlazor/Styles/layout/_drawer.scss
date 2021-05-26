@@ -38,6 +38,10 @@
         &.mud-drawer-responsive.mud-drawer-#{$breakpoint} {
             @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
                 z-index: calc(var(--mud-zindex-appbar) + 2);
+
+                &.mud-drawer--initial {
+                    display: none !important;
+                }
             }
         }
     }
@@ -92,7 +96,7 @@
         height: 100%;
         transition: width 225ms cubic-bezier(0, 0, 0.2, 1);
 
-        &.mud-drawer-anchor-left {
+        &.mud-drawer-pos-left {
             left: 0;
             right: auto;
 
