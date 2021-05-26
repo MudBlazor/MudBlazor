@@ -123,16 +123,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool CoerceValue { get; set; }
 
-        protected bool _isOpen;
+        private bool _isOpen;
 
         /// <summary>
         /// Returns the open state of the drop-down.
-        /// Note, setting IsOpen will not open or close it. Use ToggleMenu() for that
         /// </summary>
         public bool IsOpen
         {
             get => _isOpen;
-            private set
+            // Note: the setter is protected because it was needed by a user who derived his own autocomplete from this class.
+            // Note: setting IsOpen will not open or close it. Use ToggleMenu() for that. 
+            protected set
             {
                 if (value == _isOpen)
                     return;
