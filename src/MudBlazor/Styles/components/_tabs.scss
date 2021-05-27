@@ -259,10 +259,15 @@
 }
 
 .mud-tabs-panel-header {
+    display: flex;
+    flex: 1 1 auto;
+
     &.mud-tabs-panel-header-before {
+        justify-content: flex-start;
     }
 
     &.mud-tabs-panel-header-after {
+        justify-content: flex-end;
     }
 }
 

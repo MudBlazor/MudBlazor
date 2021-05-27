@@ -91,7 +91,7 @@
             </SectionContent>
             <SectionSource Code="TabsSetActiveExample" ShowCode="false" GitHubFolderName="Tabs" />
         </DocsPageSection>
-                <DocsPageSection>
+        <DocsPageSection>
             <SectionHeader>
                 <Title>Binding Selected Panel</Title>
             </SectionHeader>
@@ -100,6 +100,33 @@
             </SectionContent>
             <SectionSource Code="TabsBindingExample" ShowCode="false" GitHubFolderName="Tabs" />
         </DocsPageSection>
-
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Simple Dynamic Tabs</Title>
+                <Description>A browser like tab experience, where uses can add new tabs and close existing ones. Add and Close needs to be provided as callbacks.</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-tabs">
+                <DynamicTabsSimpleExample />
+            </SectionContent>
+            <SectionSource Code="DynamicTabsSimpleExample" GitHubFolderName="Tabs" ShowCode="false" />
+        </DocsPageSection>
+		 <DocsPageSection>
+            <SectionHeader>
+                <Title>Advanced Dynamic Tabs</Title>
+                <Description>
+					<MudText Typo="Typo.body2">
+						Allthough MudDynamicTabs allows a basic browser like tab experience, the way the style can be influenced is limited 
+					</MudText>
+					<MudText Typo="Typo.body2">
+						 The Property Header and TabPanelHeader allows you to add any RenderFragement to the tab (Header) 
+						 and to each tab panel (TabPanelHeader). The placement can be influenced by setting values to HeaderPosition or TabPanelHeaderPosition
+					</MudText>
+				</Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true" Class="demo-tabs">
+                <CustomDynamicTabsExample />
+            </SectionContent>
+            <SectionSource Code="CustomDynamicTabsExample" GitHubFolderName="Tabs" ShowCode="false" />
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>
