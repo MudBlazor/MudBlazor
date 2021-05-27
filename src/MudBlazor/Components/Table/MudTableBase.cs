@@ -240,6 +240,21 @@ namespace MudBlazor
         [Parameter] public string CancelEditIcon { get; set; } = Icons.Material.Filled.Cancel;
 
         /// <summary>
+        /// Define if Cancel button is present or not for inline editing.
+        /// </summary>
+        [Parameter] public bool CanCancelEdit { get; set; }
+
+        /// <summary>
+        /// The method is called before the item is modified in inline editing.
+        /// </summary>
+        [Parameter] public Action<object> BeforeInlineEdit { get; set; }
+
+        /// <summary>
+        /// The method is called when the edition of the item has been canceled in inline editing.
+        /// </summary>
+        [Parameter] public Action<object> CancelInlineEdit { get; set; }
+
+        /// <summary>
         /// Number of items. Used only with ServerData="true"
         /// </summary>
         [Parameter] public int TotalItems { get; set; }

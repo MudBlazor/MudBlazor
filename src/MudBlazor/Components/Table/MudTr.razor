@@ -39,9 +39,12 @@
                         <MudTooltip Text="@Context.Table.CommitEditTooltip">
                             <MudIconButton Class="pa-0" Icon="@Context.Table.CommitEditIcon" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!Context?.Table.Validator?.IsValid ?? false)" />
                         </MudTooltip>
-                        <MudTooltip Text="@Context.Table.CancelEditTooltip">
-                            <MudIconButton Class="pa-0 ml-4" Icon="@Context.Table.CancelEditIcon" OnClick="CancelEdit" Size="@Size.Small" />
-                        </MudTooltip>
+                        @if (Context.Table.CanCancelEdit)
+                        {
+                            <MudTooltip Text="@Context.Table.CancelEditTooltip">
+                                <MudIconButton Class="pa-0 ml-4" Icon="@Context.Table.CancelEditIcon" OnClick="CancelEdit" Size="@Size.Small" />
+                            </MudTooltip>
+                        }
                     </div>
                 }
             </MudTd>

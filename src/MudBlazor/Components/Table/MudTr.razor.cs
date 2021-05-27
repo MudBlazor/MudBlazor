@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -53,7 +52,7 @@ namespace MudBlazor
             // Manage the Item Copy the first time the row is clicked
             if (!_clickRowFirstTime)
             {
-                ManageItemCopy();
+                CopyOriginalValues();
             }
 
             if (IsHeader || !(Context?.Table.Validator.IsValid ?? true))
@@ -102,81 +101,26 @@ namespace MudBlazor
         private void CancelEdit(MouseEventArgs ev)
         {
             // The Item object is reset to its initial value from the Item Copy
-            ManageItemCopy();
+            CopyOriginalValues();
 
             // The edit mode is canceled
             Context?.Table.SetEditingItem(null);
             Context?.Table.OnCancelEditHandler(ev);
         }
 
-        private void ManageItemCopy()
+        private void CopyOriginalValues()
         {
-            try
+            if (IsEditable && Item != null)
             {
-                if (IsEditable && Item != null)
+                if (!_clickRowFirstTime)
                 {
-                    if (!_clickRowFirstTime)
-                    {
-                        if (Item.GetType() == typeof(string))
-                        {
-                            _itemCopy = string.Empty;
-                        }
-                        else
-                        {
-                            _itemCopy = Activator.CreateInstance(Item.GetType());
-                        }
-
-                        CopyObjectData(Item, _itemCopy);
-                        _clickRowFirstTime = true;
-                    }
-                    else
-                    {
-                        CopyObjectData(_itemCopy, Item);
-                        _clickRowFirstTime = false;
-                    }
+                    Context.Table.BeforeInlineEdit?.Invoke(Item);
+                    _clickRowFirstTime = true;
                 }
-            }
-            catch
-            {
-                /* ignore */
-            }
-        }
-
-        private static void CopyObjectData(object source, object target)
-        {
-            var memberInfos = target.GetType().GetMembers();
-
-            foreach (var field in memberInfos)
-            {
-                var memberInfoName = field.Name;
-
-                if (field.MemberType == MemberTypes.Field)
+                else
                 {
-                    var sourceField = source.GetType().GetField(memberInfoName);
-
-                    if (sourceField == null)
-                    {
-                        continue;
-                    }
-
-                    var sourceValue = sourceField.GetValue(source);
-                    ((FieldInfo)field).SetValue(target, sourceValue);
-                }
-                else if (field.MemberType == MemberTypes.Property)
-                {
-                    var propertyInfo = field as PropertyInfo;
-                    var sourceField = source.GetType().GetProperty(memberInfoName);
-
-                    if (sourceField == null)
-                    {
-                        continue;
-                    }
-
-                    if (propertyInfo.CanWrite && sourceField.CanRead)
-                    {
-                        var sourceValue = sourceField.GetValue(source, null);
-                        propertyInfo.SetValue(target, sourceValue, null);
-                    }
+                    Context.Table.CancelInlineEdit?.Invoke(Item);
+                    _clickRowFirstTime = false;
                 }
             }
         }
