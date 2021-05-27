@@ -23,7 +23,7 @@
         {
             if (item.IsNavGroup)
             {
-                <MudNavGroup Title="@item.Name" Expanded="@(IsSubGroupExpanded(item))" ExpandIcon="@Icons.Material.Filled.ExpandMore">
+                <MudNavGroup Title="@item.Name" Expanded="true" ExpandIcon="@Icons.Material.Filled.ExpandMore">
                     @foreach (var subItem in item.GroupItems.Elements)
                     {
                         string href = $"components/{subItem.Link}";
