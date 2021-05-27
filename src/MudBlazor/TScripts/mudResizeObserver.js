@@ -19,7 +19,7 @@
         //however, a check is not harmful either		
         var existingEntry = this._maps[id];
         if (existingEntry != null) {
-            this._maps[id].disconnect(element);
+            existingEntry.disconnect(element);
         }
     }
 
@@ -29,7 +29,7 @@
         //and no entry exists. Therefore, a little check to prevent an error in this case		
         var existingEntry = this._maps[id];
         if (existingEntry != null) {
-            this._maps[id].cancelListener();
+            existingEntry.cancelListener();
             delete this._maps[id];
         }
     }
