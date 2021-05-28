@@ -684,7 +684,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TableInlineEditCancelTest()
         {
             var comp = ctx.RenderComponent<TableInlineEditCancelTest>();
-            
+
             // Check that the value in the second row is equal to 'B'
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("B");
 
