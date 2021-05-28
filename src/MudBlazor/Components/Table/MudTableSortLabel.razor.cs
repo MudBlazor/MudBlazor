@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -41,11 +42,19 @@ namespace MudBlazor
                 if (_direction == value)
                     return;
                 _direction = value;
+
                 SortDirectionChanged.InvokeAsync(_direction);
-                if (SortBy != null || Table.HasServerData)
-                    Context?.SetSortFunc(this);
-                Table.InvokeServerLoadFunc();
             }
+        }
+
+        private Task UpdateSortDirectionAsync(SortDirection sortDirection)
+        {
+            SortDirection = sortDirection;
+
+            if (SortBy != null || Table.HasServerData)
+                Context?.SetSortFunc(this);
+
+            return Table.InvokeServerLoadFunc();
         }
 
         [Parameter]
@@ -56,14 +65,14 @@ namespace MudBlazor
 
         [Parameter] public string SortLabel { get; set; }
 
-        public void ToggleSortDirection()
+        public Task ToggleSortDirection()
         {
             if (SortDirection == SortDirection.None)
-                SortDirection = SortDirection.Ascending;
+                return UpdateSortDirectionAsync(SortDirection.Ascending);
             else if (SortDirection == SortDirection.Ascending)
-                SortDirection = SortDirection.Descending;
+                return UpdateSortDirectionAsync(SortDirection.Descending);
             else
-                SortDirection = SortDirection.None;
+                return UpdateSortDirectionAsync(SortDirection.None);
         }
 
         protected override void OnInitialized()
