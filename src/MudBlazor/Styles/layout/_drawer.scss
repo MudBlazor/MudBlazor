@@ -230,6 +230,14 @@
     &.mud-drawer-persistent.mud-drawer-pos-right.mud-drawer--open ~ div:not(.mud-main-content) {
         margin-right: var(--mud-drawer-width, var(--mud-drawer-width-right));
     }
+
+    &.mud-drawer-mini.mud-drawer-pos-left.mud-drawer--closed ~ div:not(.mud-main-content) {
+        margin-left: var(--mud-drawer-width, var(--mud-drawer-width-mini-left));
+    }
+
+    &.mud-drawer-mini.mud-drawer-pos-right.mud-drawer--closed ~ div:not(.mud-main-content) {
+        margin-right: var(--mud-drawer-width, var(--mud-drawer-width-mini-right));
+    }
 }
 
 .mud-drawer-header {
