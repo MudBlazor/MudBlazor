@@ -32,8 +32,8 @@
 	}
 
 	@if (_showClearable && !Disabled)
-    {
-	 <MudIconButton Color="@Color.Default" Icon="@Icons.Material.Filled.Clear" Size="@Size.Small" OnClick="@ClearButtonClickHandlerAsync" Class="my-n3 mr-2" />
+	{
+	 <MudIconButton Color="@Color.Default" Icon="@Icons.Material.Filled.Clear" Size="@Size.Small" OnClick="@ClearButtonClickHandlerAsync" Class="@GetClearButtonCssClass()" />
 	}
 
 	@if (Adornment == Adornment.End)
@@ -57,4 +57,6 @@
 
 @code {
 	private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
+
+	private string GetClearButtonCssClass() => Variant == Variant.Text ? "my-n3 mr-n1" : "my-n3 mr-2";
 }
