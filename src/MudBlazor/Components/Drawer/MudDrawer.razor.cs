@@ -28,7 +28,7 @@ namespace MudBlazor
 
         protected string Classname =>
         new CssBuilder("mud-drawer")
-          .AddClass($"mud-drawer-fixed", Fixed || Variant == DrawerVariant.Temporary)
+          .AddClass($"mud-drawer-fixed", Fixed)
           .AddClass($"mud-drawer-pos-{GetPosition()}")
           .AddClass($"mud-drawer--open", Open)
           .AddClass($"mud-drawer--closed", !Open)
