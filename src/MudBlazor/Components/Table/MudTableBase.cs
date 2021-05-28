@@ -247,12 +247,17 @@ namespace MudBlazor
         /// <summary>
         /// The method is called before the item is modified in inline editing.
         /// </summary>
-        [Parameter] public Action<object> BeforeInlineEdit { get; set; }
+        [Parameter] public Action<object> RowEditPreview { get; set; }
+
+        /// <summary>
+        /// The method is called when the edition of the item has been commited in inline editing.
+        /// </summary>
+        [Parameter] public Action<object> RowEditCommit { get; set; }
 
         /// <summary>
         /// The method is called when the edition of the item has been canceled in inline editing.
         /// </summary>
-        [Parameter] public Action<object> CancelInlineEdit { get; set; }
+        [Parameter] public Action<object> RowEditCancel { get; set; }
 
         /// <summary>
         /// Number of items. Used only with ServerData="true"

@@ -93,7 +93,7 @@
                 <Title>Inline Edit Mode</Title>
                 <Description>
                     Provides input elements for Selected Row. A click on a row makes the row editable.
-                    A Cancel button appears and can be used if <CodeInline>CanCancelEdit="true"</CodeInline>. In this case, the <CodeInline>BeforeInlineEdit</CodeInline> and <CodeInline>CancelInlineEdit</CodeInline> methods must be defined to save and retrieve the initial values of the edited item.
+                    A Cancel button appears and can be used if <CodeInline>CanCancelEdit="true"</CodeInline>. In this case, the <CodeInline>RowEditPreview</CodeInline> and <CodeInline>RowEditCancel</CodeInline> methods must be defined to save and retrieve the initial values of the edited item. <CodeInline>RowEditCommit</CodeInline> method can be used to handle the commit of the item.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">

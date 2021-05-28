@@ -676,5 +676,44 @@ namespace MudBlazor.UnitTests.Components
             }
             validator.ControlCount.Should().Be(2);
         }
+
+        /// <summary>
+        /// This test validates the processing of the Commit and Cancel buttons for an inline editing table.
+        /// </summary>
+        [Test]
+        public async Task TableInlineEditCancelTest()
+        {
+            var comp = ctx.RenderComponent<TableInlineEditCancelTest>();
+            
+            // Check that the value in the second row is equal to 'B'
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("B");
+
+            // Click on the second row
+            var trs = comp.FindAll("tr");
+            trs[2].Click();
+
+            // Find the textfield and change the value to 'C'
+            comp.Find("#Id2").Change("C");
+
+            // Click the commit button
+            var commitButton = comp.Find("button");
+            commitButton.Click();
+
+            // Value in the second row should be now equal to 'C'
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+
+            // Click on the second row
+            trs[2].Click();
+
+            // Find the textfield and change the value to 'D'
+            comp.Find("#Id2").Change("D");
+
+            // Click the cancel button
+            var cancelButton = comp.FindAll("button")[1];
+            cancelButton.Click();
+
+            // Value in the second row should still be equal to 'C'
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+        }
     }
 }

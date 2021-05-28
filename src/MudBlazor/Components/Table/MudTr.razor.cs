@@ -92,20 +92,23 @@ namespace MudBlazor
 
         private void FinishEdit(MouseEventArgs ev)
         {
-            _clickRowFirstTime = false;
             if (!Context?.Table.Validator.IsValid ?? true) return;
             Context?.Table.SetEditingItem(null);
             Context?.Table.OnCommitEditHandler(ev, Item);
+
+            // The item object has been edited
+            Context.Table.RowEditCommit?.Invoke(Item);
+            _clickRowFirstTime = false;
         }
 
         private void CancelEdit(MouseEventArgs ev)
         {
-            // The Item object is reset to its initial value from the Item Copy
-            CopyOriginalValues();
-
             // The edit mode is canceled
             Context?.Table.SetEditingItem(null);
             Context?.Table.OnCancelEditHandler(ev);
+
+            // The Item object is reset to its initial value from the Item Copy
+            CopyOriginalValues();
         }
 
         private void CopyOriginalValues()
@@ -114,12 +117,12 @@ namespace MudBlazor
             {
                 if (!_clickRowFirstTime)
                 {
-                    Context.Table.BeforeInlineEdit?.Invoke(Item);
+                    Context.Table.RowEditPreview?.Invoke(Item);
                     _clickRowFirstTime = true;
                 }
                 else
                 {
-                    Context.Table.CancelInlineEdit?.Invoke(Item);
+                    Context.Table.RowEditCancel?.Invoke(Item);
                     _clickRowFirstTime = false;
                 }
             }
