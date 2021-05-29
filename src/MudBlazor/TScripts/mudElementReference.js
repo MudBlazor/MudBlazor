@@ -87,6 +87,37 @@
         }
     }
 
+
+    /**
+     * returns the client rect relative to the window, not to the viewport
+     * @param {HTMLElement} element
+     */
+    getRelativeClientRect(element) {
+        if (!element) {
+            return null;
+        }
+
+        var absoluteRect = element.getBoundingClientRect();
+        let relativeRect = {};
+
+        var offsetY = window.scrollY || document.documentElement.scrollTop;
+        var offsetX = window.scrollX || document.documentElement.scrollLeft;
+
+        relativeRect.top = absoluteRect.top + offsetY;
+        relativeRect.left = absoluteRect.left + offsetX;
+        relativeRect.bottom = absoluteRect.bottom + offsetY;
+        relativeRect.right = absoluteRect.right + offsetX;
+
+        relativeRect.x = absoluteRect.left;
+        relativeRect.y = absoluteRect.top;
+        relativeRect.height = absoluteRect.height;
+        relativeRect.width = absoluteRect.width;
+
+        return relativeRect;
+
+    }
+
+
     changeCss (element, css) {
         if (element)
         {

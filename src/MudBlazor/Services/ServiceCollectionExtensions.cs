@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -145,6 +144,16 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        ///     Adds a portal
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        public static IServiceCollection AddMudBlazorPortal(this IServiceCollection services)
+        {
+            services.TryAddSingleton<IPortal, Portal>();
+            return services;
+        }
+
+        /// <summary>
         /// Adds JsApi as a transient instance.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -172,7 +181,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
-                .AddMudBlazorJsApi();
+                .AddMudBlazorJsApi()
+                .AddMudBlazorPortal();
         }
 
         /// <summary>
@@ -195,7 +205,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
-                .AddMudBlazorJsApi();
+                .AddMudBlazorJsApi()
+                .AddMudBlazorPortal();
         }
     }
 }
