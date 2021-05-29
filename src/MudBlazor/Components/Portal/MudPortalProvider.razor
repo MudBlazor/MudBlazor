@@ -1,0 +1,18 @@
+﻿ 
+@namespace MudBlazor  
+@using MudBlazor.Services
+ @using System.Globalization
+
+<div id="mudblazor-portal">
+
+@foreach (var item in Portal.Items)
+{
+    <div @ref=@_menuRef data-blazor="@item.Value.Id"
+                        style=@(item.Value.Autopositioned 
+                            ? GetItemStyle(item.Value)
+                            :null)>
+        @item.Value.Fragment
+    </div>
+}
+</div>
+
