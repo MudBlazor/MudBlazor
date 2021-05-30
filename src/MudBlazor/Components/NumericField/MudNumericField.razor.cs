@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Components.NumericField;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -16,6 +17,7 @@ namespace MudBlazor
             SetConverter(new DefaultConverter<T> { Culture = CultureInfo.InvariantCulture });
 
             _validateInstance = new Func<T, Task<bool>>(ValidateInput);
+            _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value) { Culture = CultureInfo.InvariantCulture };
 
             #region parameters default depending on T
             //sbyte
@@ -107,7 +109,7 @@ namespace MudBlazor
 
         private MudInput<string> _elementReference;
 
-        private static Converter<string> s_inputConverter = new DefaultConverter<string> { Culture = CultureInfo.InvariantCulture };
+        private Converter<string> _inputConverter;
 
         public override ValueTask FocusAsync()
         {
@@ -128,7 +130,7 @@ namespace MudBlazor
         {
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
-            await base.SetValueAsync(ConstrainBoundaries(value).value, valueChanged || updateText);
+            await base.SetValueAsync(value, valueChanged || updateText);
         }
 
         protected async Task<bool> ValidateInput(T value)
