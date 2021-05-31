@@ -65,6 +65,9 @@ namespace MudBlazor
         public static ValueTask MudRemoveEventListenerAsync(this ElementReference elementReference, string @event, int eventId) =>
             elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.removeEventListener", elementReference, eventId) ?? ValueTask.CompletedTask;
 
+        public static ValueTask MudSetPositionRelativeToAsync(this ElementReference elementReference, ElementReference relativeTo, MudPositionOptions options) =>
+            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.mudSetPositionRelativeTo", elementReference, relativeTo, options) ?? ValueTask.CompletedTask;
+
         private static object GetSerializationSpec(Type type)
         {
             var props = type.GetProperties();

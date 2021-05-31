@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MudBlazor.Interop;
 
 namespace MudBlazor.UnitTests.Mocks
 {
@@ -45,5 +46,7 @@ namespace MudBlazor.UnitTests.Mocks
         public ValueTask ScrollToYearAsync(string elementId) => ValueTask.CompletedTask;
 
         public ValueTask UnlockScrollAsync(string elementId, string cssClass) => ValueTask.CompletedTask;
+
+        public ValueTask<ScrollPosition> GetScrollPosition() => ValueTask.FromResult(new ScrollPosition());
     }
 }

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using MudBlazor.Extensions;
+using MudBlazor.Interop;
 
 namespace MudBlazor
 {
@@ -26,6 +27,7 @@ namespace MudBlazor
         ValueTask ScrollToListItemAsync(string elementId, int increment, bool onEdges);
         ValueTask LockScrollAsync(string elementId, string cssClass);
         ValueTask UnlockScrollAsync(string elementId, string cssClass);
+        ValueTask<ScrollPosition> GetScrollPosition();
     }
 
     public class ScrollManager : IScrollManager
@@ -95,6 +97,9 @@ namespace MudBlazor
 
         public ValueTask UnlockScrollAsync(string elementId, string cssClass) =>
             _jSRuntime.InvokeVoidAsync("mudScrollManager.unlockScroll", elementId, cssClass);
+
+        public ValueTask<ScrollPosition> GetScrollPosition() =>
+            _jSRuntime.InvokeAsync<ScrollPosition>("mudScrollManager.getScrollPosition");
     }
 
     /// <summary>

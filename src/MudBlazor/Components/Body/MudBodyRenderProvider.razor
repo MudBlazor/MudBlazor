@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor 
+@inherits ComponentBase 
+@implements IDisposable
+
+<div>
+    @foreach (var component in components)
+    {
+        if (component.IsRendered)
+        {
+            @component.ChildContent
+        }
+    }
+</div>

@@ -155,6 +155,16 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
+        /// Adds body rendered as a scope instance.
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        public static IServiceCollection AddMudBodyRendered(this IServiceCollection services)
+        {
+            services.TryAddScoped<IBodyRenderService, BodyRenderService>();
+            return services;
+        }
+
+        /// <summary>
         /// Adds common services required by MudBlazor components
         /// </summary>
         /// <param name="services">IServiceCollection</param>
@@ -172,7 +182,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
-                .AddMudBlazorJsApi();
+                .AddMudBlazorJsApi()
+                .AddMudBodyRendered();
         }
 
         /// <summary>
@@ -195,7 +206,8 @@ namespace MudBlazor.Services
                 .AddMudBlazorResizeObserverFactory()
                 .AddMudBlazorScrollManager()
                 .AddMudBlazorScrollListener()
-                .AddMudBlazorJsApi();
+                .AddMudBlazorJsApi()
+                .AddMudBodyRendered();
         }
     }
 }

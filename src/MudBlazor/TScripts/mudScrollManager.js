@@ -74,5 +74,14 @@
         let element = document.querySelector(selector) || document.body;
         element.classList.remove(lockclass);
     }
+
+    getScrollPosition() {
+        return {
+            top: document.documentElement.scrollTop,
+            left: document.documentElement.scrollLeft,
+            width: document.documentElement.scrollWidth,
+            height: document.documentElement.scrollHeight,
+        }
+    }
 };
 window.mudScrollManager = new MudScrollManager();

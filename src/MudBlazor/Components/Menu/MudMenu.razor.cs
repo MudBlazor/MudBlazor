@@ -20,6 +20,7 @@ namespace MudBlazor
        .Build();
 
         private bool _isOpen;
+        private ElementReference _container;
 
         [Parameter] public string Label { get; set; }
 
@@ -111,6 +112,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
+        [Inject] private IScrollManager ScrollManager { get; set; }
+
         public string PopoverStyle { get; set; }
 
         public void CloseMenu()
@@ -120,11 +123,13 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void OpenMenu(MouseEventArgs args)
+        public async void OpenMenu(MouseEventArgs args)
         {
             if (Disabled)
                 return;
-            PopoverStyle = PositionAtCurser ? $"position:fixed; left:{args?.ClientX}px; top:{args?.ClientY}px;" : null;
+
+            var scrollPosition = await ScrollManager.GetScrollPosition();
+            PopoverStyle = PositionAtCurser ? $"transform: translate({args?.ClientX + scrollPosition.Left}px, {args?.ClientY + scrollPosition.Top}px);" : null;
             _isOpen = true;
             StateHasChanged();
         }

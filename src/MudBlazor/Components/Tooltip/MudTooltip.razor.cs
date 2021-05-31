@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.Interop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudTooltip : MudComponentBase
     {
+        private ElementReference _containerRef, _tooltipRef;
+        private string _tooltipId = Guid.NewGuid().ToString();
+
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
             .Build();
         protected string Classname => new CssBuilder("mud-tooltip")
-            .AddClass($"mud-tooltip-placement-{Placement.ToDescriptionString()}")
+            //.AddClass($"mud-tooltip-placement-{Placement.ToDescriptionString()}")
             .AddClass(Class)
             .Build();
 
@@ -51,15 +56,28 @@ namespace MudBlazor
         /// Tooltip content. May contain any valid html
         /// </summary>
         [Parameter] public RenderFragment TooltipContent { get; set; }
-
+        
         /// <summary>
         /// Determines if this component should be inline with it's surrounding (default) or if it should behave like a block element.
         /// </summary>
         [Parameter] public Boolean Inline { get; set; } = true;
 
+        [CascadingParameter] public bool Rtl { get; set; }
+
         protected string GetTimeDelay()
         {
             return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style}";
+        }
+        
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            var options = new MudPositionOptions()
+            {
+                Center = true
+            };
+            options.SetDirection(Placement, Rtl);
+            await _tooltipRef.MudSetPositionRelativeToAsync(_containerRef, options);
+            await base.OnAfterRenderAsync(firstRender);
         }
     }
 }

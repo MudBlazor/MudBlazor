@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System;
+using System.Globalization;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.Interop;
 using MudBlazor.Utilities;
 
 
@@ -7,12 +11,14 @@ namespace MudBlazor
 {
     public partial class MudPopover : MudComponentBase
     {
+        private ElementReference _popoverRef;
+
         protected string PopoverClass =>
            new CssBuilder("mud-popover")
             .AddClass("mud-popover-open", Open)
-            .AddClass($"mud-popover-{Direction.ToDescriptionString()}")
-            .AddClass("mud-popover-offset-y", OffsetY)
-            .AddClass("mud-popover-offset-x", OffsetX)
+            //.AddClass($"mud-popover-{Direction.ToDescriptionString()}")
+            //.AddClass("mud-popover-offset-y", OffsetY)
+            //.AddClass("mud-popover-offset-x", OffsetX)
             .AddClass("mud-paper")
             .AddClass("mud-paper-square", Square)
             .AddClass($"mud-elevation-{Elevation}")
@@ -24,6 +30,14 @@ namespace MudBlazor
             .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
             .AddStyle(Style)
             .Build();
+
+        [Parameter]
+        public ElementReference ContainerRef { get; set; }
+
+        /// <summary>
+        /// If true, the popover will be same width as the <see cref="ContainerRef"/>.
+        /// </summary>
+        [Parameter] public bool FullWidth { get; set; }
 
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default.
@@ -64,5 +78,15 @@ namespace MudBlazor
         /// Child content of the component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await _popoverRef.MudSetPositionRelativeToAsync(ContainerRef, new MudPositionOptions()
+            {
+                Direction = Direction,
+                ApplyReferenceWidth = FullWidth
+            });
+            await base.OnAfterRenderAsync(firstRender);
+        }
     }
 }

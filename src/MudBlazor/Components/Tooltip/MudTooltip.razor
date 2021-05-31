@@ -1,19 +1,23 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div class="@ContainerClass">
+<div @ref="_containerRef" class="@ContainerClass" 
+     onmouseenter="document.getElementById('@_tooltipId').classList.add('mud-tooltip-hover')"
+     onmouseleave="document.getElementById('@_tooltipId').classList.remove('mud-tooltip-hover')">
     @ChildContent
     @if (!String.IsNullOrEmpty(Text) || TooltipContent != null)
     {
-        <div class="@Classname" style="@GetTimeDelay()">
-            @if (TooltipContent != null)
-            {
-                @TooltipContent
-            }
-            else
-            {
-                @Text
-            }
-        </div>
+        <MudBodyRendered>
+            <div id="@_tooltipId" @ref="_tooltipRef" class="@Classname" style="@GetTimeDelay()">
+                @if (TooltipContent != null)
+                {
+                    @TooltipContent
+                }
+                else
+                {
+                    @Text
+                }
+            </div>
+        </MudBodyRendered>
     }
 </div>

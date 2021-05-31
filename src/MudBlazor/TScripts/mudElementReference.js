@@ -118,5 +118,48 @@
         element.removeEventListener(event, this.eventListeners[eventId]);
         delete this.eventListeners[eventId];
     }
+
+    mudSetPositionRelativeTo(element, relativeTo, options) {
+        if (!element || !relativeTo)
+            return;
+
+        let elementSize = element.getBoundingClientRect();
+        let relativeToSize = relativeTo.getBoundingClientRect();
+        let scrollTop = document.documentElement.scrollTop;
+        let scrollLeft = document.documentElement.scrollLeft;
+
+        let offset = 0;
+        let style = "";
+
+        if (options.applyReferenceWidth) {
+            elementSize.width = relativeToSize.width;
+            style += `width: ${relativeToSize.width}px !important;max-width: none;`
+        }
+
+        switch (options.direction) {
+            case 0: //bottom
+                if (options.center)
+                    offset = (relativeToSize.width - elementSize.width) / 2;
+                style += `transform: translate(${scrollLeft + relativeToSize.left + offset}px, ${scrollTop + relativeToSize.bottom}px);`;
+                break;
+            case 1: //top
+                if (options.center)
+                    offset = (relativeToSize.width - elementSize.width) / 2;
+                style += `transform: translate(${scrollLeft + relativeToSize.left + offset}px, ${scrollTop + relativeToSize.top - elementSize.height}px);`;
+                break;
+            case 2: //left
+                if (options.center)
+                    offset = (relativeToSize.height - elementSize.height) / 2;
+                style += `transform: translate(${scrollLeft + relativeToSize.left - elementSize.width}px, ${scrollTop + relativeToSize.top + offset}px);`;
+                break;
+            case 3: //right
+                if (options.center)
+                    offset = (relativeToSize.height - elementSize.height) / 2;
+                style += `transform: translate(${scrollLeft + relativeToSize.right}px, ${scrollTop + relativeToSize.top + offset}px);`;
+                break;
+        }
+
+        element.setAttribute("style", style + element.getAttribute("style"));
+    }
 };
 window.mudElementRef = new MudElementReference();
