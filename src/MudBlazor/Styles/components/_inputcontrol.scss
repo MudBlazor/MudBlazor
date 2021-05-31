@@ -1,4 +1,4 @@
-﻿.mud-input-control {
+.mud-input-control {
     border: 0;
     margin: 0;
     padding: 0;
@@ -82,11 +82,38 @@
             -moz-appearance: textfield;
         }
 
-        &.mud-input-showspin .mud-input:not(.mud-input-adorned-end) input {
-            padding-right: 24px; //This must be the same width of the spinners
+        &.mud-input-showspin .mud-input:not(.mud-input-adorned-end) {
+            input {
+                padding-right: 24px; //This must be the same width of the spinners
+                padding-inline-end: 24px;
 
-            &.mud-input-root-margin-dense {
-                padding-right: 17px; //This must be the same width of the spinners
+                &.mud-input-root-margin-dense {
+                    padding-right: 17px; //This must be the same width of the spinners
+                    padding-inline-end: 17px;
+                }
+            }
+            &.mud-input-text input {
+                padding-inline-start: 0;
+
+                &.mud-input-root-margin-dense {
+                    padding-inline-start: 0;
+                }
+            }
+
+            &.mud-input-filled input {
+                padding-inline-start: 12px;
+
+                &.mud-input-root-margin-dense {
+                    padding-inline-start: 12px;
+                }
+            }
+
+            &.mud-input-outlined input {
+                padding-inline-start: 14px;
+
+                &.mud-input-root-margin-dense {
+                    padding-inline-start: 14px;
+                }
             }
         }
 
@@ -117,7 +144,7 @@
     margin: 0;
     font-size: 0.75rem;
     margin-top: 3px;
-    text-align: left;
+    text-align: start;
     font-weight: 400;
     line-height: 1.66;
     letter-spacing: 0.03333em;
