@@ -3,16 +3,16 @@
 @using MudBlazor.Services
  @using System.Globalization
 
-<div id="mudblazor-portal">
+<div id="mud-portal-container">
 
-@foreach (var item in Portal.Items)
-{
-    <div @ref=@_menuRef data-blazor="@item.Value.Id"
-                        style=@(item.Value.Autopositioned 
-                            ? GetItemStyle(item.Value)
-                            :null)>
-        @item.Value.Fragment
-    </div>
-}
+    @foreach (var item in Portal.Items)
+    {
+        <div @ref=@_menuRef data-blazor="@item.Value.Id"
+                            style=@(item.Value.Autopositioned 
+                                ? GetItemStyle(item.Value)
+                                :null)>
+            @item.Value.Fragment
+        </div>
+    }
 </div>
 
