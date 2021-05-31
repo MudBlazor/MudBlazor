@@ -166,6 +166,7 @@ namespace MudBlazor
         public MudAutocomplete()
         {
             IconSize = Size.Medium;
+            Adornment = Adornment.End;
         }
 
         public async Task SelectOption(T value)
