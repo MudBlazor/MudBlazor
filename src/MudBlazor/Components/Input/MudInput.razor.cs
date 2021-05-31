@@ -82,6 +82,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool HideSpinButtons { get; set; }
 
+        private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
+
+
         private bool _showClearable;
 
         private bool _showClearableRenderUpdate;

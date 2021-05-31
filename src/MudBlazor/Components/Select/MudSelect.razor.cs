@@ -240,17 +240,25 @@ namespace MudBlazor
                 else
                     SelectedValues.Remove(value);
                 await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))));
+                BeginValidate();
             }
             else
             {
                 // single selection
-                await SetValueAsync(value);
                 _isOpen = false;
                 UpdateIcon();
+
+                if (EqualityComparer<T>.Default.Equals(Value, value))
+                {
+                    StateHasChanged();
+                    return;
+                }
+
+                await SetValueAsync(value);
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
             }
-            BeginValidate();
+
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }

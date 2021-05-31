@@ -10,7 +10,7 @@ using MudBlazor.Services;
 
 namespace MudBlazor.UnitTests.Mocks
 {
-    public class MockResizeObserver : IResizeObserver
+    public class MockResizeObserver : IResizeObserver, IDisposable
     {
         private Dictionary<ElementReference, BoundingClientRect> _cachedValues = new();
 
@@ -108,5 +108,10 @@ namespace MudBlazor.UnitTests.Mocks
         public double GetHeight(ElementReference reference) => GetSizeInfo(reference)?.Height ?? 0.0;
         public double GetWidth(ElementReference reference) => GetSizeInfo(reference)?.Width ?? 0.0;
         public bool IsElementObserved(ElementReference reference) => _cachedValues.ContainsKey(reference);
+
+        public void Dispose()
+        {
+           
+        }
     }
 }
