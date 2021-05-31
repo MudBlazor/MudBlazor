@@ -112,8 +112,13 @@ namespace MudBlazor
         public override void InitializeSorting()
         {
             var initial_sortlabel = SortLabels.FirstOrDefault(x => x.InitialDirection != SortDirection.None);
-            if (initial_sortlabel == null)
+
+            if (initial_sortlabel == null && !Table.AllowUnsorted)
+                throw new ArgumentException("If AllowUnsorted is not set then there has to be at least one MudTableSortLabel with InitialDirection set");
+
+            if (initial_sortlabel == null && Table.AllowUnsorted)
                 return;
+
             CurrentSortLabel = initial_sortlabel;
             UpdateSortLabels(initial_sortlabel);
             // this will trigger initial sorting of the table

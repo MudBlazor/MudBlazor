@@ -688,6 +688,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The server-side loaded table should reflect initial sort direction in its initial table state.
+        /// In this case, the items should be sorted with descending order.
+        /// </summary>
+        [Test]
+        public async Task TableOnlySortedTest()
+        {
+            Assert.Throws<ArgumentException>(() => ctx.RenderComponent<TableOnlySortedTest>());
+        }
+
+        /// <summary>
         /// The table should render the classes and style to the tr using the RowStyleFunc and RowClassFunc parameters
         /// </summary>
         [Test]

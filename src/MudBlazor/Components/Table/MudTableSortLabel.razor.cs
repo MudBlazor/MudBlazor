@@ -65,15 +65,16 @@ namespace MudBlazor
 
         [Parameter] public string SortLabel { get; set; }
 
-        public Task ToggleSortDirection()
-        {
-            if (SortDirection == SortDirection.None)
-                return UpdateSortDirectionAsync(SortDirection.Ascending);
-            else if (SortDirection == SortDirection.Ascending)
-                return UpdateSortDirectionAsync(SortDirection.Descending);
-            else
-                return UpdateSortDirectionAsync(SortDirection.None);
-        }
+        public Task ToggleSortDirection() =>
+            (SortDirection, Table.AllowUnsorted) switch
+            {
+                (SortDirection.None, _) => UpdateSortDirectionAsync(SortDirection.Ascending),
+                (SortDirection.Ascending, _) => UpdateSortDirectionAsync(SortDirection.Descending),
+                (SortDirection.Descending, true) => UpdateSortDirectionAsync(SortDirection.None),
+                (SortDirection.Descending, false) => UpdateSortDirectionAsync(SortDirection.Ascending),
+
+                _ => throw new ArgumentException("Unsupported sort direction", nameof(SortDirection)),
+            };
 
         protected override void OnInitialized()
         {

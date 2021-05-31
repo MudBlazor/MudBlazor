@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTable ServerData="@(new Func<TableState, Task<TableData<int>>>(ServerReload))">
+<MudTable ServerData="@(new Func<TableState, Task<TableData<int>>>(ServerReload))" AllowUnsorted="false">
     <HeaderContent>
-        <MudTh><MudTableSortLabel SortLabel="No." InitialDirection="SortDirection.Descending" T="int">Nr</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortLabel="No." T="int">Nr</MudTableSortLabel></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Nr">@context</MudTd>
@@ -14,7 +14,7 @@
 
 @code {
 #pragma warning disable CS1998 // async without await
-    public static string __description__ = "The server-side loaded table should reflect initial sort direction in its initial table state.";
+    public static string __description__ = "When AllowUnsorted is not set a table must have at least one MudTableSortLabel with InitialDirection";
 
     private int totalItems;
 
