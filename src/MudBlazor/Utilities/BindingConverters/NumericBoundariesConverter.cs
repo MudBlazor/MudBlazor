@@ -5,15 +5,22 @@
 using System;
 using System.Globalization;
 
-namespace MudBlazor.Components.NumericField
+namespace MudBlazor
 {
+    /// <summary>
+    /// This converter is used by MudNumericInput to enforce the Min/Max boundaries on the textbox.
+    /// It's a string => string converter, the number it's only to enforce the limits.
+    /// </summary>
+    /// <typeparam name="T">Must be a numeric type</typeparam>
     public class NumericBoundariesConverter<T> : Converter<string>
     {
-        public Func<T, T> BoundariesFunc { get; set; }
+#nullable enable
+        public Func<T, T> EvaluationFunc { get; set; }
+#nullable disable
 
-        public NumericBoundariesConverter(Func<T, T> boundariesFunc)
+        public NumericBoundariesConverter(Func<T, T> evaluationFunc)
         {
-            BoundariesFunc = boundariesFunc;
+            EvaluationFunc = evaluationFunc;
             SetFunc = (value) => value;
             GetFunc = OnGet;
         }
@@ -114,6 +121,6 @@ namespace MudBlazor.Components.NumericField
             return null;
         }
 
-        private string CheckBoundaries(T value) => Convert.ToString(BoundariesFunc.Invoke(value), Culture);
+        private string CheckBoundaries(T value) => Convert.ToString(EvaluationFunc.Invoke(value), Culture);
     }
 }

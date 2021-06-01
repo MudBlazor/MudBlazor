@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Components.NumericField;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
