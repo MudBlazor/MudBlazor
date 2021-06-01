@@ -67,12 +67,19 @@ namespace MudBlazor
 
         public Task ToggleSortDirection()
         {
-            if (SortDirection == SortDirection.None)
-                return UpdateSortDirectionAsync(SortDirection.Ascending);
-            else if (SortDirection == SortDirection.Ascending)
-                return UpdateSortDirectionAsync(SortDirection.Descending);
-            else
-                return UpdateSortDirectionAsync(SortDirection.None);
+            switch (SortDirection)
+            {
+                case SortDirection.None:
+                    return UpdateSortDirectionAsync(SortDirection.Ascending);
+
+                case SortDirection.Ascending:
+                    return UpdateSortDirectionAsync(SortDirection.Descending);
+
+                case SortDirection.Descending:
+                    return UpdateSortDirectionAsync(Table.AllowUnsorted ? SortDirection.None : SortDirection.Ascending);
+            }
+
+            throw new NotImplementedException();
         }
 
         protected override void OnInitialized()
