@@ -74,11 +74,8 @@
     padding: 7px 0;
     font-size: 22px;
     margin-right: 12px;
-}
-
-.mud-application-layout-rtl .mud-alert-icon {
-    margin-right: 0;
-    margin-left: 12px;
+    margin-inline-end: 12px;
+    margin-inline-start: unset;
 }
 
 .mud-alert-message {
@@ -91,11 +88,7 @@
     margin-left: auto;
     margin-right: -8px;
     padding-left: 16px;
-}
-
-.mud-application-layout-rtl .mud-alert-action {
-    margin-right: -8px;
-    margin-left: 0;
-    padding-right: 16px;
-    padding-right: 0;
+    margin-inline-start: auto;
+    margin-inline-end: -8px;
+    padding-inline-start: 16px;
 }

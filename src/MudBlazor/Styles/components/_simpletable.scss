@@ -25,7 +25,7 @@
                 display: table-cell;
                 padding: 16px;
                 font-size: 0.875rem;
-                text-align: left;
+                text-align: start;
                 font-weight: 400;
                 line-height: 1.43;
                 border-bottom: 1px solid var(--mud-palette-table-lines);
@@ -51,10 +51,13 @@
     & * tr {
         & td, th {
             padding: 6px 24px 6px 16px;
+            padding-inline-start: 16px;
+            padding-inline-end: 24px;
         }
 
         & td, th:last-child {
             padding-right: 16px;
+            padding-inline-end: 16px;
         }
     }
 }
