@@ -20,6 +20,9 @@ namespace MudBlazor.Components.NumericField
 
         private string OnGet(string value)
         {
+            if (String.IsNullOrEmpty(value))
+                return null;
+
             try
             {
                 // sbyte
