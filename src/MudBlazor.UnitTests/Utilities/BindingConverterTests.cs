@@ -444,5 +444,99 @@ namespace MudBlazor.UnitTests.Utilities
             c16.Format = "dd/mm/yy";
             c16.Get(c16.Set(22)).Should().Be(null);
         }
+
+        [Test]
+        public void NumericBoundariesConverterTest()
+        {
+            Func<int, int> functInt = (int i) => i;//Not testing test the function, return the parameter
+            Func<double?, double?> functDbl = (double? d) => d;//Not testing test the function, return the parameter
+
+            //Note: Set doesn't do anything. The Get can change the value
+            var c1 = new NumericBoundariesConverter<int>(functInt);
+            c1.Set("hello").Should().Be("hello");
+            c1.Get("hello").Should().Be(null);
+            c1.GetError.Should().Be(true);
+            c1.GetErrorMessage.Should().Be("Not a valid number");
+            c1.Set("").Should().Be("");
+            c1.Get("").Should().Be(null);
+            c1.GetError.Should().Be(false);
+            c1.GetErrorMessage.Should().BeNull();
+            c1.Get(null).Should().Be(null);
+            c1.Set(null).Should().Be(null);
+            c1.GetError.Should().Be(false);
+            c1.GetErrorMessage.Should().BeNull();
+            c1.Get("0").Should().Be("0");
+            c1.Set("0").Should().Be("0");
+            c1.GetError.Should().Be(false);
+            c1.GetErrorMessage.Should().BeNull();
+            c1.Get("-2").Should().Be("-2");
+            c1.Set("-2").Should().Be("-2");
+            c1.GetError.Should().Be(false);
+            c1.GetErrorMessage.Should().BeNull();
+            c1.Set("1.5").Should().Be("1.5");
+            c1.GetError.Should().Be(false);
+            c1.GetErrorMessage.Should().BeNull();
+            c1.Get("1.5").Should().Be(null);
+            c1.GetError.Should().Be(true);
+            c1.GetErrorMessage.Should().Be("Not a valid number");
+            var c3 = new NumericBoundariesConverter<double?>(functDbl) { Culture = CultureInfo.InvariantCulture };
+            c3.Set("1.7").Should().Be("1.7");
+            c3.Get("1.7").Should().Be("1.7");
+            c3.GetError.Should().Be(false);
+            c3.GetErrorMessage.Should().BeNull();
+            c3.Get("1234567.15").Should().Be("1234567.15");
+            c3.Set("1234567.15").Should().Be("1234567.15");
+            c3.GetError.Should().Be(false);
+            c3.GetErrorMessage.Should().BeNull();
+            c3.Set(c3.Get("1,234,567.15")).Should().Be("1234567.15");
+            c3.GetError.Should().Be(false);
+            c3.GetErrorMessage.Should().BeNull();
+            c3.Get(c3.Set("1,234,567.15")).Should().Be("1234567.15");
+            c3.GetError.Should().Be(false);
+            c3.GetErrorMessage.Should().BeNull();
+            c3.Set(".5").Should().Be(".5");
+            c3.Get(".5").Should().Be("0.5");
+            c3.GetError.Should().Be(false);
+            c3.GetErrorMessage.Should().BeNull();
+            c3.Set("1.").Should().Be("1.");
+            c3.GetError.Should().Be(false);
+            c3.GetErrorMessage.Should().BeNull();
+            c3.Get("1.").Should().Be("1");
+            c3.GetError.Should().Be(false);
+            c3.GetErrorMessage.Should().BeNull();
+            c3.Culture = CultureInfo.GetCultureInfo("de-AT");
+            c3.Set("1,7").Should().Be("1,7");
+            c3.Get("1,7").Should().Be("1,7");
+            c3.GetError.Should().Be(false);
+            c3.GetErrorMessage.Should().BeNull();
+            c3.Set("1.7").Should().Be("1.7");
+            c3.Get("1.7").Should().Be("17");//Changes from 1.7 to 17 because the dot is a valid grouping symbol
+            c3.GetError.Should().Be(false);
+            c3.GetErrorMessage.Should().BeNull();
+            c3.Get("1,").Should().Be("1");
+            c3.GetError.Should().Be(false);
+            c3.GetErrorMessage.Should().BeNull();
+            c3.Get(c3.Set("1.234.567,15")).Should().Be("1234567,15");
+            c3.GetError.Should().Be(false);
+            c3.GetErrorMessage.Should().BeNull();
+            var c4 = new NumericBoundariesConverter<bool>((b) => b);
+            c4.Set("true").Should().Be("true");
+            c4.Get("true").Should().Be(null);
+            c4.GetError.Should().Be(true);
+            c4.GetErrorMessage.Should().Be($"Conversion to type {typeof(bool)} not implemented");
+        }
+
+        [Test]
+        public void NumericBoundariesConverter_FunctionTest()
+        {
+            //Note: Set doesn't do anything. The Get can change the value
+            var c1 = new NumericBoundariesConverter<double>((i) => -i) { Culture = CultureInfo.InvariantCulture };
+            c1.Set("1,234,567.15").Should().Be("1,234,567.15");
+            c1.GetError.Should().Be(false);
+            c1.GetErrorMessage.Should().BeNull();
+            c1.Get("1,234,567.15").Should().Be("-1234567.15");
+            c1.GetError.Should().Be(false);
+            c1.GetErrorMessage.Should().BeNull();
+        }
     }
 }
