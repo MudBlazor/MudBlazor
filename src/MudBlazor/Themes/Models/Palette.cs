@@ -8,20 +8,36 @@ namespace MudBlazor
         public string Black { get; set; } = Colors.Shades.Black;
         public string White { get; set; } = Colors.Shades.White;
         public string Primary { get; set; } = "#594AE2";
+        public string PrimaryDarken { get; set; }
+        public string PrimaryLighten { get; set; }
         public string PrimaryContrastText { get; set; } = Colors.Shades.White;
         public string Secondary { get; set; } = Colors.Pink.Accent2;
+        public string SecondaryDarken { get; set; }
+        public string SecondaryLighten { get; set; }
         public string SecondaryContrastText { get; set; } = Colors.Shades.White;
         public string Tertiary { get; set; } = "#1EC8A5";
+        public string TertiaryDarken { get; set; }
+        public string TertiaryLighten { get; set; }
         public string TertiaryContrastText { get; set; } = Colors.Shades.White;
         public string Info { get; set; } = Colors.Blue.Default;
+        public string InfoDarken { get; set; }
+        public string InfoLighten { get; set; }
         public string InfoContrastText { get; set; } = Colors.Shades.White;
         public string Success { get; set; } = Colors.Green.Accent4;
+        public string SuccessDarken { get; set; }
+        public string SuccessLighten { get; set; }
         public string SuccessContrastText { get; set; } = Colors.Shades.White;
         public string Warning { get; set; } = Colors.Orange.Default;
+        public string WarningDarken { get; set; }
+        public string WarningLighten { get; set; }
         public string WarningContrastText { get; set; } = Colors.Shades.White;
         public string Error { get; set; } = Colors.Red.Default;
+        public string ErrorDarken { get; set; }
+        public string ErrorLighten { get; set; }
         public string ErrorContrastText { get; set; } = Colors.Shades.White;
         public string Dark { get; set; } = Colors.Grey.Darken3;
+        public string DarkDarken { get; set; }
+        public string DarkLighten { get; set; }
         public string DarkContrastText { get; set; } = Colors.Shades.White;
         public string TextPrimary { get; set; } = Colors.Grey.Darken3;
         public string TextSecondary { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.54);
