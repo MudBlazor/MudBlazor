@@ -10,6 +10,11 @@
     border-radius: 50%;
     color: var(--mud-palette-action-default);
 
+    &.mud-button {
+        min-width: unset;
+        border-radius: var(--mud-default-borderradius);
+    }
+
     &:hover {
         background-color: var(--mud-palette-action-default-hover);
     }
@@ -73,4 +78,9 @@
         margin-inline-end: -3px;
         margin-inline-start: unset;
     }
+}
+
+
+.mud-icon-button-size-large.mud-button > .mud-icon-button-label > .mud-icon-size-large {
+    font-size: 2rem;
 }
