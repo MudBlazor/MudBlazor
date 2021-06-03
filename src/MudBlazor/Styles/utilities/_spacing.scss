@@ -26,11 +26,20 @@ $spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n
                 #{$prop}-bottom: $value !important;
             }
 
+            .#{$abbrev}s-#{$breakpoint}#{$name} {
+                #{$prop}-inline-start: $value !important;
+            }
+
+            .#{$abbrev}e-#{$breakpoint}#{$name} {
+                #{$prop}-inline-end: $value !important;
+            }
+
             .#{$abbrev}a-#{$breakpoint}#{$name} {
                 #{$prop}: $value !important;
             }
         }
     }
+
     @each $prop, $abbrev in (margin: m) {
         @each $name, $value in $spacing-negative-values {
             .#{$abbrev}t-#{$breakpoint}#{$name},
@@ -51,6 +60,14 @@ $spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n
             .#{$abbrev}b-#{$breakpoint}#{$name},
             .#{$abbrev}y-#{$breakpoint}#{$name} {
                 #{$prop}-bottom: $value !important;
+            }
+
+            .#{$abbrev}s-#{$breakpoint}#{$name} {
+                #{$prop}-inline-start: $value !important;
+            }
+
+            .#{$abbrev}e-#{$breakpoint}#{$name} {
+                #{$prop}-inline-end: $value !important;
             }
 
             .#{$abbrev}a-#{$breakpoint}#{$name} {
