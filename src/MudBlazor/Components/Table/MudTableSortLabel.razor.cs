@@ -72,6 +72,20 @@ namespace MudBlazor
                     SortDirection = SortDirection.Descending;
                 else
                     SortDirection = SortDirection.None;
+
+                switch (SortDirection)
+                {
+                    case SortDirection.None:
+                        return UpdateSortDirectionAsync(SortDirection.Ascending);
+
+                    case SortDirection.Ascending:
+                        return UpdateSortDirectionAsync(SortDirection.Descending);
+
+                    case SortDirection.Descending:
+                        return UpdateSortDirectionAsync(Table.AllowUnsorted ? SortDirection.None : SortDirection.Ascending);
+                }
+
+                throw new NotImplementedException();
             }
         }
 
