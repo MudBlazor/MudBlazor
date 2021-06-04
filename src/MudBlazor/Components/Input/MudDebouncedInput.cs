@@ -33,13 +33,6 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If false then updates will happen only on DebounceInterval
-        /// If true then updates will also happen when OnChange happens (blurred, enter pressed, cleared, etc.)
-        /// </summary>
-        [Parameter]
-        public bool UpdateDebouncedWhenChanged { get; set; } = false;
-
-        /// <summary>
         /// callback to be called when the debounce interval has elapsed
         /// receives the Text as a parameter
         /// </summary>
@@ -47,13 +40,8 @@ namespace MudBlazor
 
         protected Task OnChange()
         {
-            if (UpdateDebouncedWhenChanged)
-            {
-                _timer.Stop();
-                return base.UpdateValuePropertyAsync(false);
-            }
-
-            return Task.CompletedTask;
+            _timer.Stop();
+            return base.UpdateValuePropertyAsync(false);
         }
 
         protected override Task UpdateValuePropertyAsync(bool updateText)
