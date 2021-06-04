@@ -66,13 +66,6 @@ namespace MudBlazor
         {
             if (Enabled)
             {
-                if (SortDirection == SortDirection.None)
-                    SortDirection = SortDirection.Ascending;
-                else if (SortDirection == SortDirection.Ascending)
-                    SortDirection = SortDirection.Descending;
-                else
-                    SortDirection = SortDirection.None;
-
                 switch (SortDirection)
                 {
                     case SortDirection.None:
