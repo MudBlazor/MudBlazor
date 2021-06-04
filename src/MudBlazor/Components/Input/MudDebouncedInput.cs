@@ -40,8 +40,13 @@ namespace MudBlazor
 
         protected Task OnChange()
         {
-            _timer.Stop();
-            return base.UpdateValuePropertyAsync(false);
+            if (DebounceInterval > 0 && _timer != null)
+            {
+                _timer.Stop();
+                return base.UpdateValuePropertyAsync(false);
+            }
+
+            return Task.CompletedTask;
         }
 
         protected override Task UpdateValuePropertyAsync(bool updateText)
