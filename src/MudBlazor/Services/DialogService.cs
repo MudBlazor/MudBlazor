@@ -74,10 +74,17 @@ namespace MudBlazor
             {
                 var i = 0;
                 builder.OpenComponent(i++, contentComponent);
-                foreach (var parameter in parameters._parameters)
+
+                if (!dialogReference.AreParametersRendered)
                 {
-                    builder.AddAttribute(i++, parameter.Key, parameter.Value);
+                    foreach (var parameter in parameters._parameters)
+                    {
+                        builder.AddAttribute(i++, parameter.Key, parameter.Value);
+                    }
+
+                    dialogReference.AreParametersRendered = true;
                 }
+
                 builder.AddComponentReferenceCapture(1, inst => { dialogReference.InjectDialog(inst); });
                 builder.CloseComponent();
             });
