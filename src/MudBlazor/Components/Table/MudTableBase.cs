@@ -105,6 +105,12 @@ namespace MudBlazor
         [Parameter] public string SortLabel { get; set; }
 
         /// <summary>
+        /// If true allows table to be in an unsorted state through column clicks (i.e. first click sorts "Ascending", second "Descending", third "None").
+        /// If false only "Ascending" and "Descending" states are allowed (i.e. there always should be a column to sort).
+        /// </summary>
+        [Parameter] public bool AllowUnsorted { get; set; } = true;
+
+        /// <summary>
         /// If the table has more items than this number, it will break the rows into pages of said size.
         /// Note: requires a MudTablePager in PagerContent.
         /// </summary>
