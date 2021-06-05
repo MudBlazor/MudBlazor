@@ -32,9 +32,13 @@ namespace MudBlazor
             return Immediate ? SetTextAsync(args?.Value as string) : Task.CompletedTask;
         }
 
-        protected Task OnChange(ChangeEventArgs args)
+        protected async Task OnChange(ChangeEventArgs args)
         {
-            return Immediate ? Task.CompletedTask : SetTextAsync(args?.Value as string);
+            await OnInternalInputChanged.InvokeAsync(args);
+            if (!Immediate)
+            {
+                await SetTextAsync(args?.Value as string);
+            }
         }
 
         /// <summary>
