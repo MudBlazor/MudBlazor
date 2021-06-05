@@ -32,8 +32,8 @@
 	}
 
 	@if (_showClearable && !Disabled)
-    {
-	 <MudIconButton Color="@Color.Default" Icon="@Icons.Material.Filled.Clear" Size="@Size.Small" OnClick="@ClearButtonClickHandlerAsync" Class="my-n3 mr-n1" />
+	{
+	 <MudIconButton Color="@Color.Default" Icon="@Icons.Material.Filled.Clear" Size="@Size.Small" OnClick="@ClearButtonClickHandlerAsync" Class="mud-icon-button-edge-end" />
 	}
 
 	@if (Adornment == Adornment.End)
@@ -54,7 +54,3 @@
 	 </div>
 	}
 </div>
-
-@code {
-	private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
-}

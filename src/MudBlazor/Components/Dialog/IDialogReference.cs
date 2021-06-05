@@ -15,6 +15,6 @@ namespace MudBlazor
         void Close();
         void Close(DialogResult result);
 
-        MudDialog Dialog { get; }
+        object Dialog { get; }
     }
 }

@@ -29,7 +29,7 @@ namespace MudBlazor
             {
                 if (_rtl != value)
                 {
-                    _rtl = value;
+                    Rtl = _rtl = value;
                     StateHasChanged();
                 }
             }
