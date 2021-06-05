@@ -31,9 +31,10 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Multiselect</Title>
+                <SubTitle>Default MultiSelection Text</SubTitle>
                 <Description>
                     If you set <CodeInline>MultiSelection="true"</CodeInline> you can select multiple values. The selected options are returned as concatenated comma delimited
-                    string via <CodeInline>Value</CodeInline> and as a Hashset&lt;string> via <CodeInline>SelectedValues</CodeInline>
+                    string via <CodeInline>Value</CodeInline> and as a Hashset&lt;string> via <CodeInline>SelectedValues</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
@@ -42,6 +43,32 @@
                 </MudContainer>
             </SectionContent>
             <SectionSource ShowCode="false" Code="MultiSelectExample" GitHubFolderName="Select" />
+            <SectionHeader>
+                <SubTitle>MultiSelection Text with Items Number</SubTitle>
+                <Description>
+                    If you set <CodeInline>MultiSelection="true"</CodeInline> you can select multiple values. By setting <CodeInline>ConcatenateMultiSelectionResult="false"</CodeInline>, 
+                    the selected options are returned as the number of selected items.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer>
+                    <MultiSelectItemNumberExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="MultiSelectItemNumberExample" GitHubFolderName="Select" />
+            <SectionHeader>
+                <SubTitle>Customized MultiSelection Text</SubTitle>
+                <Description>
+                    If you set <CodeInline>MultiSelection="true"</CodeInline> you can select multiple values. By setting <CodeInline>ConcatenateMultiSelectionResult="false"</CodeInline>
+                    and by defining the <CodeInline>DefineMultiSelectionText</CodeInline> method, the returned selection can be fully customized.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer>
+                    <MultiSelectCustomizedExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="MultiSelectCustomizedExample" GitHubFolderName="Select" />
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -109,16 +110,59 @@ namespace MudBlazor
         [Parameter]
         public string Text { get; set; }
 
-        protected async Task SetTextAsync(string text, bool updateValue = true)
+        private string multiSelectionText;
+
+        protected async Task SetTextAsync(string text, bool updateValue = true,
+            bool concatenateMultiSelectionResult = true,
+            int countSelectedItems = 0,
+            List<string> selectedConvertedValues = null,
+            Func<int, List<string>, string> defineMultiSelectionText = null)
         {
-            if (Text != text)
+            // Keep standard logic
+            if (concatenateMultiSelectionResult)
             {
-                Text = text;
-                if (!string.IsNullOrWhiteSpace(Text))
-                    Touched = true;
-                if (updateValue)
-                    await UpdateValuePropertyAsync(false);
-                await TextChanged.InvokeAsync(Text);
+                if (Text != text)
+                {
+                    Text = text;
+                    if (!string.IsNullOrWhiteSpace(Text))
+                        Touched = true;
+                    if (updateValue)
+                        await UpdateValuePropertyAsync(false);
+                    await TextChanged.InvokeAsync(Text);
+                }
+            }
+            else
+            {
+                // Set the default multi-selection text for the following scenarios:
+                // A - A problem occurred when calling the defineMultiSelectionText method
+                // B - The defineMultiSelectionText method was not defined
+                string defaultMultiSelectionText = $"{countSelectedItems} item{(countSelectedItems > 1 ? "s" : "")} selected";
+
+                try
+                {
+                    if (defineMultiSelectionText != null)
+                    {
+                        defaultMultiSelectionText = defineMultiSelectionText.Invoke(countSelectedItems, selectedConvertedValues);
+                    }
+                }
+                catch
+                {
+                    // ignored
+                }
+
+                // The Text property of the control is updated
+                Text = defaultMultiSelectionText;
+
+                // The comparison is made on the multiSelectionText variable
+                if (multiSelectionText != text)
+                {
+                    multiSelectionText = text;
+                    if (!string.IsNullOrWhiteSpace(multiSelectionText))
+                        Touched = true;
+                    if (updateValue)
+                        await UpdateValuePropertyAsync(false);
+                    await TextChanged.InvokeAsync(multiSelectionText);
+                }
             }
         }
 

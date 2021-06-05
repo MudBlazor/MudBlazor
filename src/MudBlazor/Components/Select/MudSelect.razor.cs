@@ -60,6 +60,16 @@ namespace MudBlazor
         [Parameter] public EventCallback<HashSet<T>> SelectedValuesChanged { get; set; }
 
         /// <summary>
+        /// Return a concatenate multiselection text of selected options, if set to true.
+        /// </summary>
+        [Parameter] public bool ConcatenateMultiSelectionResult { get; set; } = true;
+
+        /// <summary>
+        /// Function to define the multiselection text when ConcatenateMultiSelectionResult="false". If not defined, a default text is returned.
+        /// </summary>
+        [Parameter] public Func<int, List<string>, string> DefineMultiSelectionText { get; set; }
+
+        /// <summary>
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
         /// </summary>
         [Parameter]
@@ -82,7 +92,11 @@ namespace MudBlazor
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
                 else
                     //Warning. Here the Converter was not set yet
-                    SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x)))).AndForget();
+                    SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
+                        concatenateMultiSelectionResult: ConcatenateMultiSelectionResult,
+                        countSelectedItems: SelectedValues.Count,
+                        selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                        defineMultiSelectionText: DefineMultiSelectionText).AndForget();
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
             }
         }
@@ -174,7 +188,11 @@ namespace MudBlazor
             // when multiselection is true, we return
             // a comma separated list of selected values
             return MultiSelection
-                ? SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))))
+                ? SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
+                    concatenateMultiSelectionResult: ConcatenateMultiSelectionResult,
+                    countSelectedItems: SelectedValues.Count,
+                    selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                    defineMultiSelectionText: DefineMultiSelectionText)
                 : base.UpdateTextPropertyAsync(updateValue);
         }
 
@@ -239,7 +257,11 @@ namespace MudBlazor
                     SelectedValues.Add(value);
                 else
                     SelectedValues.Remove(value);
-                await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))));
+                await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
+                    concatenateMultiSelectionResult: ConcatenateMultiSelectionResult,
+                    countSelectedItems: SelectedValues.Count,
+                    selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                    defineMultiSelectionText: DefineMultiSelectionText);
                 BeginValidate();
             }
             else
