@@ -75,10 +75,10 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
             picker.Date.Should().Be(null);
-            comp.SetParam(p => p.Text, "2020-10-23");
+            comp.SetParam(p => p.Text, new DateTime(2020, 10, 23).ToShortDateString());
             picker.Date.Should().Be(new DateTime(2020, 10, 23));
             comp.SetParam(p => p.Date, new DateTime(2020, 10, 26));
-            picker.Text.Should().Be("2020-10-26");
+            picker.Text.Should().Be(new DateTime(2020, 10, 26).ToShortDateString());
         }
 
         [Test]
@@ -366,12 +366,13 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SetPickerValue_CheckText()
         {
+            var date = DateTime.Now;
             var comp = ctx.RenderComponent<MudDatePicker>(
-                Parameter(nameof(MudDatePicker.Date), DateTime.Now));
+                Parameter(nameof(MudDatePicker.Date), date));
             // select elements needed for the test
             var picker = comp.Instance;
 
-            var text = DateTime.Now.ToIsoDateString();
+            var text = date.ToShortDateString();
 
             picker.Text.Should().Be(text);
             (comp.FindAll("input")[0] as IHtmlInputElement).Value.Should().Be(text);
