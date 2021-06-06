@@ -28,6 +28,8 @@
 
     & * .mud-navmenu .mud-nav-item .mud-nav-link {
         padding-left: 36px;
+        padding-inline-start: 36px;
+        padding-inline-end: unset;
     }
 }
 
@@ -93,26 +95,26 @@
 
     & .mud-nav-link-text {
         width: 100%;
-        text-align: left;
+        text-align: start;
         margin-left: 12px;
+        margin-inline-start: 12px;
+        margin-inline-end: unset;
         letter-spacing: 0;
     }
+}
+
+.mud-drawer--closed.mud-drawer-mini > .mud-drawer-content > .mud-navmenu .mud-nav-link .mud-nav-link-text {
+    visibility: hidden;
 }
 
 .mud-nav-group * .mud-navmenu > .mud-nav-group {
     & .mud-nav-link {
         padding-left: 36px;
+        padding-inline-start: 36px;
     }
 
     & * .mud-navmenu .mud-nav-item .mud-nav-link {
         padding-left: 48px;
-    }
-}
-
-.mud-application-layout-rtl {
-    & * .mud-nav-link-text {
-        text-align: right;
-        margin-left: 0px;
-        margin-right: 12px;
+        padding-inline-start: 48px;
     }
 }

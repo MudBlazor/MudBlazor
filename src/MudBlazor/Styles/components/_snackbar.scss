@@ -1,4 +1,4 @@
-﻿
+
 .mud-snackbar {
     display: flex;
     flex-wrap: wrap;
@@ -38,6 +38,9 @@
         margin-left: auto;
         margin-right: -8px;
         padding-left: 16px;
+        margin-inline-start: auto;
+        margin-inline-end: -8px;
+        padding-inline-start: 16px;
 
         & > button {
             color: inherit;

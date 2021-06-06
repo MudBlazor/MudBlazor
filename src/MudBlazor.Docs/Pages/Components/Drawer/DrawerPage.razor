@@ -61,6 +61,18 @@
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
+                <Title>Left/right drawer</Title>
+                <Description>
+                    <CodeInline>Anchor.Left</CodeInline> and <CodeInline>Anchor.Right</CodeInline> makes drawer's position absolute, they will not follow RTL-LTR changes. 
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <DrawerLeftRightExample />
+            </SectionContent>
+            <SectionSource Code="DrawerLeftRightExample" ShowCode="false" GitHubFolderName="Drawer" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
                 <Title>Responsive drawer</Title>
                 <Description>
                     Responsive drawers are behaves persistent on wider screens and temporary on smaller ones.
@@ -106,6 +118,32 @@
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader>
+                <Title>Mini drawer</Title>
+                <Description>
+                    Using mini variant the drawer will shrink (default 56px). Currently only has built-in style support for MudNavLinks.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" FullWidth="true">
+                <DrawerMiniExample />
+            </SectionContent>
+            <SectionSource Code="DrawerMiniExample" ShowCode="false" GitHubFolderName="Drawer" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Mini drawer customization</Title>
+                <Description>
+                    This example demonstrates how the combination of several parameters will affect the behaviour of a mini drawer.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <iframe src="/iframe/docs/examples/drawer/mini" class="docs-iframe">
+                    <DrawerMiniCustomExample />
+                </iframe>
+            </SectionContent>
+            <SectionSource Code="DrawerMiniCustomExample" ShowCode="false" GitHubFolderName="Drawer" />
+        </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader>
                 <Title>Sizing drawers</Title>
                 <Description>
                     It is possible to apply custom width/height values for drawers. The following examples demonstrate how to do it for different types of drawers.
@@ -115,8 +153,9 @@
             <SectionHeader>
                 <SubTitle>1. Change drawers inside <CodeInline>MudLayout</CodeInline></SubTitle>
                 <Description>
-                    Changing the default width (240px) of a left and/or right drawer is possible through setting 
+                    Changing the default width (240px) of a left and/or right drawer is possible through setting
                     <CodeInline>DrawerWidthLeft</CodeInline> and/or <CodeInline>DrawerWidthRight</CodeInline> layout properties.
+                    For mini drawers <CodeInline>DrawerMiniWidthLeft</CodeInline> and/or <CodeInline>DrawerMiniWidthRight</CodeInline> can be used.
                     For more information see <MudLink Href="/customization/default-theme">customization page</MudLink>.
                 </Description>
             </SectionHeader>

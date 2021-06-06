@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -17,6 +16,7 @@ namespace MudBlazor
             SetConverter(new DefaultConverter<T> { Culture = CultureInfo.InvariantCulture });
 
             _validateInstance = new Func<T, Task<bool>>(ValidateInput);
+            _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value) { Culture = CultureInfo.InvariantCulture };
 
             #region parameters default depending on T
             //sbyte
@@ -24,28 +24,28 @@ namespace MudBlazor
             {
                 _minDefault = (T)(object)sbyte.MinValue;
                 _maxDefault = (T)(object)sbyte.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)(sbyte)1;
             }
             // byte
             else if (typeof(T) == typeof(byte) || typeof(T) == typeof(byte?))
             {
                 _minDefault = (T)(object)byte.MinValue;
                 _maxDefault = (T)(object)byte.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)(byte)1;
             }
             // short
             else if (typeof(T) == typeof(short) || typeof(T) == typeof(short?))
             {
                 _minDefault = (T)(object)short.MinValue;
                 _maxDefault = (T)(object)short.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)(short)1;
             }
             // ushort
             else if (typeof(T) == typeof(ushort) || typeof(T) == typeof(ushort?))
             {
                 _minDefault = (T)(object)ushort.MinValue;
                 _maxDefault = (T)(object)ushort.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)(ushort)1;
             }
             // int
             else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
@@ -59,21 +59,21 @@ namespace MudBlazor
             {
                 _minDefault = (T)(object)uint.MinValue;
                 _maxDefault = (T)(object)uint.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)1u;
             }
             // long
             else if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
             {
                 _minDefault = (T)(object)long.MinValue;
                 _maxDefault = (T)(object)long.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)1L;
             }
             // ulong
             else if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
             {
                 _minDefault = (T)(object)ulong.MinValue;
                 _maxDefault = (T)(object)ulong.MaxValue;
-                _stepDefault = (T)(object)1;
+                _stepDefault = (T)(object)1ul;
             }
             // float
             else if (typeof(T) == typeof(float) || typeof(T) == typeof(float?))
@@ -108,7 +108,7 @@ namespace MudBlazor
 
         private MudInput<string> _elementReference;
 
-        private static Converter<string> s_inputConverter = new DefaultConverter<string> { Culture = CultureInfo.InvariantCulture };
+        private Converter<string> _inputConverter;
 
         public override ValueTask FocusAsync()
         {
@@ -129,7 +129,7 @@ namespace MudBlazor
         {
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
-            await base.SetValueAsync(ConstrainBoundaries(value).value, valueChanged || updateText);
+            await base.SetValueAsync(value, valueChanged || updateText);
         }
 
         protected async Task<bool> ValidateInput(T value)
@@ -309,21 +309,55 @@ namespace MudBlazor
         /// <remarks>https://try.mudblazor.com/snippet/QamlkdvmBtrsuEtb</remarks>
         protected async Task InterceptArrowKey(KeyboardEventArgs obj)
         {
-            if (obj.Type == "keydown")//KeyDown or repeat, blazor never fire InvokeKeyPress
+            if (Disabled || ReadOnly)
+                return;
+
+            if (obj.Type == "keydown")//KeyDown or repeat, blazor never fires InvokeKeyPress
             {
                 if (obj.Key == "ArrowUp")
                 {
+                    _keyDownPreventDefault = true;
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        var value = Value;
+                        await Task.Delay(1);
+                        Value = value;
+                    }
                     await Increment();
                     return;
                 }
                 else if (obj.Key == "ArrowDown")
                 {
+                    _keyDownPreventDefault = true;
+                    if (RuntimeLocation.IsServerSide)
+                    {
+                        var value = Value;
+                        await Task.Delay(1);
+                        Value = value;
+                    }
                     await Decrement();
                     return;
                 }
             }
+
             _keyDownPreventDefault = KeyDownPreventDefault;
-            OnKeyPress.InvokeAsync(obj).AndForget();
+            OnKeyDown.InvokeAsync(obj).AndForget();
+        }
+
+        /// <summary>
+        /// Overrides KeyUp event, if needed reset <see cref="_keyDownPreventDefault"/> set by <see cref="InterceptArrowKey(KeyboardEventArgs)"/>.
+        /// </summary>
+        protected void InterceptKeyUp(KeyboardEventArgs obj)
+        {
+            if (Disabled || ReadOnly)
+                return;
+
+            if (_keyDownPreventDefault != KeyDownPreventDefault)
+            {
+                _keyDownPreventDefault = KeyDownPreventDefault;
+                StateHasChanged();
+            }
+            OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
         /// <summary>

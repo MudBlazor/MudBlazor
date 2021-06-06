@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-tabs {
     display: flex;
@@ -29,8 +29,7 @@
     }
 }
 
-.mud-tabs-toolbar {
-    z-index: 20;
+.mud-tabs-toolbar {    
     position: relative;
     background-color: var(--mud-palette-surface);
 
@@ -126,7 +125,6 @@
 .mud-tab {
     width:100%;
     min-width: 160px;
-    max-width: 360px;
     display: inline-flex;
     padding: 6px 12px;
     min-height: 48px;
@@ -163,6 +161,8 @@
 
     & .mud-tab-icon-text {
         margin-right: 8px;
+        margin-inline-end: 8px;
+        margin-inline-start: unset;
     }
 }
 
@@ -196,6 +196,8 @@
 
 .mud-tab-badge{
     margin-left:8px;
+    margin-inline-start: 8px;
+    margin-inline-end: unset;
 }
 
 @each $color in $mud-palette-colors {

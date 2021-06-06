@@ -127,6 +127,44 @@ namespace MudBlazor.UnitTests.Components.Components
         }
 
         [Test]
+        public async Task MiniClosed_Open_CheckOpened_Close_CheckClosed()
+        {
+            var comp = ctx.RenderComponent<DrawerTest1>(new[]
+            {
+                Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Mini)
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            comp.Find("button").Click();
+            comp.FindAll("aside.mud-drawer--open.mud-drawer-mini").Count.Should().Be(1);
+            comp.FindAll("aside+mud-overlay-drawer").Count.Should().Be(0);
+            comp.Instance.Drawer.Open.Should().BeTrue();
+            comp.Find("button").Click();
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-mini").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task MiniClosedClipped_Open_CheckState()
+        {
+            var comp = ctx.RenderComponent<DrawerTest1>(new[]
+            {
+                Parameter(nameof(DrawerTest1.Variant), DrawerVariant.Mini),
+                Parameter(nameof(DrawerTest1.ClipMode), DrawerClipMode.Always)
+            });
+
+            Console.WriteLine(comp.Markup);
+
+            comp.Find("button").Click();
+            comp.FindAll("aside.mud-drawer-clipped-always").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeTrue();
+            comp.Find("button").Click();
+            comp.FindAll("aside.mud-drawer--closed.mud-drawer-mini").Count.Should().Be(1);
+            comp.Instance.Drawer.Open.Should().BeFalse();
+        }
+
+        [Test]
         public async Task ResponsiveClosed_Open_CheckOpened_Close_CheckClosed()
         {
             var comp = ctx.RenderComponent<DrawerResponsiveTest>();

@@ -385,5 +385,21 @@ namespace MudBlazor.UnitTests.Components
             picker.Time.Value.Hours.Should().Be(11);
             picker.Time.Value.Minutes.Should().Be(30);
         }
+
+        [Test]
+        public void SelectTimeStatic_UsingClicks_CheckTime()
+        {
+            var comp = ctx.RenderComponent<MudTimePicker>(Parameter(nameof(MudTimePicker.PickerVariant), PickerVariant.Static));
+            var picker = comp.Instance;
+            // select 16 hours on outer dial and 30 mins
+            comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click();
+            picker.Time.Value.Hours.Should().Be(16);
+            picker.Time.Value.Minutes.Should().Be(0);
+            // select 30 minutes
+            comp.FindAll("div.mud-minute")[30].Click();
+            picker.Time.Value.Hours.Should().Be(16);
+            picker.Time.Value.Minutes.Should().Be(30);
+            Console.Write(comp.Markup);
+        }
     }
 }

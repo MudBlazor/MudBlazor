@@ -1,7 +1,10 @@
 ﻿
 .mud-tooltip-root {
     position: relative;
-    display: inline-block;
+
+    &.mud-tooltip-inline {
+        display: inline-block;
+    }
 
     & .mud-tooltip {
         color: var(--mud-palette-dark-text);

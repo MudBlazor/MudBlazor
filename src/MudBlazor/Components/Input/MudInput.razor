@@ -31,6 +31,11 @@
 		   @onkeydown:preventDefault="KeyDownPreventDefault" @onkeypress:preventDefault="@KeyPressPreventDefault" @onkeyup:preventDefault="@KeyUpPreventDefault" />
 	}
 
+	@if (_showClearable && !Disabled)
+	{
+	 <MudIconButton Color="@Color.Default" Icon="@Icons.Material.Filled.Clear" Size="@Size.Small" OnClick="@ClearButtonClickHandlerAsync" Class="mud-icon-button-edge-end" />
+	}
+
 	@if (Adornment == Adornment.End)
 	{
 	 <MudInputAdornment Class="@AdornmentClassname" Icon="@AdornmentIcon" Color="@AdornmentColor" Size="@IconSize" Text="@AdornmentText" Edge="@Edge.End" AdornmentClick="@OnAdornmentClick" />
@@ -49,7 +54,3 @@
 	 </div>
 	}
 </div>
-
-@code {
-	private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
-}

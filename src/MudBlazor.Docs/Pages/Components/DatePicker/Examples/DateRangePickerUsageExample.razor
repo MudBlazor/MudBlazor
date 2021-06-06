@@ -7,7 +7,7 @@
         <MudDateRangePicker Label="Basic range picker (editable)" Editable="true" @bind-DateRange="_dateRange" />
     </MudItem>
     <MudItem xs="12" sm="6">
-        <MudDateRangePicker Label="Range picker format" HelperText="For custom cultures" DateFormat="dd/MM/yyyy" @bind-DateRange="_dateRange" />
+        <MudDateRangePicker Label="Range picker format" HelperText="For custom cultures" DateFormat="dd/MM/yyyy" TitleDateFormat="dddd, dd. MMMM" @bind-DateRange="_dateRange" />
     </MudItem>
     <MudItem xs="12" sm="6">
         <MudDateRangePicker Label="Custom start month" StartMonth="@DateTime.Now.AddMonths(-1)" @bind-DateRange="_dateRange" />

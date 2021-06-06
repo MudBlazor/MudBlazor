@@ -240,17 +240,25 @@ namespace MudBlazor
                 else
                     SelectedValues.Remove(value);
                 await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))));
+                BeginValidate();
             }
             else
             {
                 // single selection
-                await SetValueAsync(value);
                 _isOpen = false;
                 UpdateIcon();
+
+                if (EqualityComparer<T>.Default.Equals(Value, value))
+                {
+                    StateHasChanged();
+                    return;
+                }
+
+                await SetValueAsync(value);
                 SelectedValues.Clear();
                 SelectedValues.Add(value);
             }
-            BeginValidate();
+
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
         }
@@ -327,6 +335,19 @@ namespace MudBlazor
         {
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
-    }
 
+        /// <summary>
+        /// Extra handler for clearing selection.
+        /// </summary>
+        protected async Task SelectClearButtonClickHandlerAsync(MouseEventArgs e)
+        {
+            await SetValueAsync(default, false);
+            await SetTextAsync(default, false);
+            SelectedValues.Clear();
+            BeginValidate();
+            StateHasChanged();
+            await SelectedValuesChanged.InvokeAsync(SelectedValues);
+            await OnClearButtonClick.InvokeAsync();
+        }
+    }
 }

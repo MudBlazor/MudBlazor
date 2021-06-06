@@ -41,7 +41,7 @@
     <!--Command-line for the code generator-->
     <Message Text="Generating Docs and Tests" Importance="high" />
     <Exec Command="dotnet &quot;$(BinDocsCompiler)&quot;" Condition="Exists('$(BinDocsCompiler)')" />
-    <Exec Command="dotnet run $(ProjectDocsCompiler)" Condition="!Exists('$(BinDocsCompiler)')" />
+    <Exec Command="$(ProjectDocsCompiler)" Condition="!Exists('$(BinDocsCompiler)')" />
   </Target>
 
   <!--This file contains any ExampleCode that is new and needs including in the build -->

@@ -32,7 +32,15 @@
         <DocsPageSection>
             <SectionHeader>
                 <Title>Indeterminate state</Title>
-                <Description>When you use <CodeInline>T="bool?"</CodeInline> or bind the checkbox against a nullable bool it can have an indeterminate state when the value is <CodeInline>null</CodeInline>.</Description>
+                <Description>
+				When you use <CodeInline>T="bool?"</CodeInline> or bind the checkbox against a nullable bool it can have an indeterminate state when the value is <CodeInline>null</CodeInline>.
+				<p></p>
+				In addition, the different states when the checkbox is clicked are the following (with a starting <CodeInline>null</CodeInline> value):
+				<p></p>
+				Indeterminate, True, False, True, False...
+				<p></p>
+				It is not possible to obtain the Indeterminate state again. Except by resetting the value to <CodeInline>Null</CodeInline>. Or, by setting <CodeInline>TriState="true"</CodeInline>, you can get the Indeterminate state after the False state.
+			</Description>
             </SectionHeader>
             <SectionContent Outlined="true">
                 <CheckboxIndeterminateExample />

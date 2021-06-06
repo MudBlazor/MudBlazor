@@ -106,9 +106,7 @@ namespace MudBlazor
 
         protected override string GetTitleDateString()
         {
-            if (_selectedDate != null)
-                return _selectedDate.Value.ToString(TitleDateFormat ?? "ddd, dd MMM", Culture) ?? "";
-            return Date?.ToString(TitleDateFormat ?? "ddd, dd MMM", Culture) ?? "";
+            return FormatTitleDate(_selectedDate ?? Date);
         }
 
         protected override DateTime GetCalendarStartOfMonth()
