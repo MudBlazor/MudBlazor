@@ -367,6 +367,8 @@ namespace MudBlazor
         {
             //return !IsOpen ? CoerceTextToValue() : Task.CompletedTask;
             OnBlur.InvokeAsync(args);
+            IsOpen = false;
+            BeginValidate();
             return Task.CompletedTask;
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
             // resulting in a premature validation. thus, don't call base

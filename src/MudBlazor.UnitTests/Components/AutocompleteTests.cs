@@ -324,6 +324,31 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
         }
 
+        /// <summary>
+        /// Test for <seealso cref="https://github.com/Garderoben/MudBlazor/issues/1761"/>
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Close_OnBlur()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTest1>();
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            // Should be closed
+            autocomplete.IsOpen.Should().BeFalse();
+
+            // Lets type something to cause it to open
+            autocompletecomp.Find("input").Input("Calif");
+            await Task.Delay(100);
+            autocomplete.IsOpen.Should().BeTrue();
+
+            // Lets call blur on the input and confirm that it closed
+            autocompletecomp.Find("input").Blur();
+            autocomplete.IsOpen.Should().BeFalse();
+        }
+
         #region DataAttribute validation
         [Test]
         public async Task Autocomplete_Should_Validate_Data_Attribute_Fail()
