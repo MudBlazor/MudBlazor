@@ -14,33 +14,35 @@
                           />
                 @if (_items!=null && _items.Length!=0)
                 {
-                    <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" OffsetY="true">
-                            @*this must be the real scroll container, not the Popover, hence the maxheight*@
-                        <MudList Clickable="true" Dense="@Dense" Style=@($"max-height: {MaxHeight}px; overflow-y:auto;")>
-                            @for (var index= 0; index < _items.Length;index++ )
-                            {
-                                var item = _items[index];
-                                bool is_selected = index == _selectedListItemIndex;
-                                <MudListItem @key="@item" id="@GetListItemId(index)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
-                                    @if (ItemTemplate == null)
-                                    {
-                                        @GetItemString(item)
-                                    }
-                                    else if (is_selected)
-                                    {
-                                        @if (ItemSelectedTemplate == null)
-                                            @ItemTemplate(item)
+                    <MudPortal IsVisible="@IsOpen" >
+                        <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" OffsetY="true">
+                                @*this must be the real scroll container, not the Popover, hence the maxheight*@
+                            <MudList Clickable="true" Dense="@Dense" Style=@($"max-height: {MaxHeight}px; overflow-y:auto;")>
+                                @for (var index= 0; index < _items.Length;index++ )
+                                {
+                                    var item = _items[index];
+                                    bool is_selected = index == _selectedListItemIndex;
+                                    <MudListItem @key="@item" id="@GetListItemId(index)" OnClick="@(() => SelectOption(item))" Class="@(is_selected ? "mud-selected-item" : "")">
+                                        @if (ItemTemplate == null)
+                                        {
+                                            @GetItemString(item)
+                                        }
+                                        else if (is_selected)
+                                        {
+                                            @if (ItemSelectedTemplate == null)
+                                                @ItemTemplate(item)
+                                            else
+                                                @ItemSelectedTemplate(item)
+                                        }
                                         else
-                                            @ItemSelectedTemplate(item)
-                                    }
-                                    else
-                                    {
-                                        @ItemTemplate(item)
-                                    }
-                                </MudListItem>
-                            }
-                        </MudList>
-                  </MudPopover>
+                                        {
+                                            @ItemTemplate(item)
+                                        }
+                                    </MudListItem>
+                                }
+                            </MudList>
+                      </MudPopover>
+                  </MudPortal>
                }
             </InputContent>
         </MudInputControl>       

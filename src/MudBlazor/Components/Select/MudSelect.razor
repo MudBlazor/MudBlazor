@@ -19,13 +19,15 @@
                 </MudInput>
             </InputContent>
         </MudInputControl>
-        <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-            <MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
-                <MudList Clickable="true" Dense="@Dense">
-                    @ChildContent
-                </MudList>
-            </MudPopover>
-        </CascadingValue>
+        <MudPortal IsVisible="@_isOpen" >
+            <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
+                <MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
+                    <MudList Clickable="true" Dense="@Dense">
+                        @ChildContent
+                    </MudList>
+                </MudPopover>
+            </CascadingValue>
+        </MudPortal>
     </div>
 </CascadingValue>
 

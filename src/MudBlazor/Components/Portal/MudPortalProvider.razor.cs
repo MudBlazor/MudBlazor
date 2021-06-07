@@ -16,15 +16,16 @@ namespace MudBlazor
 
         private string GetItemStyle(PortalItem item)
         {
-            string ToString(double? measure) => measure?.ToString(CultureInfo.InvariantCulture) + "px";
+            static string ToString(double? measure) =>
+                measure?.ToString(CultureInfo.InvariantCulture) + "px";
 
             var result = new StyleBuilder()
                 .AddStyle("position", "absolute")
                 .AddStyle("z-index", new ZIndex().Popover.ToString())
                 .AddStyle("width", ToString(item.ClientRect?.Width))
-                .AddStyle("top", ToString(item.ClientRect?.Bottom))
-                .AddStyle("left", ToString(item.ClientRect?.Left))
-
+                .AddStyle("top", ToString(item.ClientRect.Top))
+                .AddStyle("height", ToString(item.ClientRect.Height))
+                .AddStyle("left", ToString(item.ClientRect?.Left))               
                 .Build();
             return result;
         }
