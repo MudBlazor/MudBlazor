@@ -482,6 +482,39 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ClearButtonClicked.Should().BeTrue();
         }
 
+        /// <summary>
+        /// Reselect an already selected value should not call SelectedValuesChanged event.
+        /// </summary>
+        [Test]
+        public void SelectReselectTest()
+        {
+            var comp = ctx.RenderComponent<ReselectValueTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var select = comp.FindComponent<MudSelect<string>>();
+            var menu = comp.Find("div.mud-popover");
+            var input = comp.Find("div.mud-input-control");
+
+            input.Click();
+            select.Instance.Value.Should().Be("Apple");
+
+            // now click an item and see the value change
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+
+            // menu should be closed now
+            menu.ClassList.Should().NotContain("mud-popover-open");
+            select.Instance.Value.Should().Be("Orange");
+            comp.Instance.ChangeCount.Should().Be(1);
+
+            // now click an item and see the value change
+            items = comp.FindAll("div.mud-list-item").ToArray();
+            select.Instance.Value.Should().Be("Orange");
+            comp.Instance.ChangeCount.Should().Be(1);
+            items[1].Click();
+        }
+
         #region DataAttribute validation
         [Test]
         public async Task TextField_Should_Validate_Data_Attribute_Fail()

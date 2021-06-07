@@ -12,6 +12,8 @@ namespace MudBlazor
     public partial class MudAutocomplete<T> : MudBaseInput<T>, IDisposable
     {
         [Inject] IScrollManager ScrollManager { get; set; }
+        
+        private bool _dense;
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -31,7 +33,17 @@ namespace MudBlazor
         /// <summary>
         /// If true, compact vertical padding will be applied to all select items.
         /// </summary>
-        [Parameter] public bool Dense { get; set; }
+        [Parameter] 
+        public bool Dense 
+        { 
+            get { return _dense; }
+            set
+            {
+                // Ensure that when dense is appplied we set the margin on the input controls
+                _dense = value;
+                Margin = _dense ? Margin.Dense : Margin.None;
+            }
+        }
 
         /// <summary>
         /// The Open Select Icon
@@ -123,15 +135,16 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool CoerceValue { get; set; }
 
-        protected bool _isOpen;
+        private bool _isOpen;
 
         /// <summary>
         /// Returns the open state of the drop-down.
-        /// Note, setting IsOpen will not open or close it. Use ToggleMenu() for that
         /// </summary>
         public bool IsOpen
         {
             get => _isOpen;
+            // Note: the setter is protected because it was needed by a user who derived his own autocomplete from this class.
+            // Note: setting IsOpen will not open or close it. Use ToggleMenu() for that. 
             protected set
             {
                 if (value == _isOpen)
@@ -153,6 +166,7 @@ namespace MudBlazor
         public MudAutocomplete()
         {
             IconSize = Size.Medium;
+            Adornment = Adornment.End;
         }
 
         public async Task SelectOption(T value)
@@ -379,7 +393,7 @@ namespace MudBlazor
 
         private async Task CoerceValueToText()
         {
-            if (CoerceValue==false)
+            if (CoerceValue == false)
                 return;
             _timer?.Dispose();
             var value = Converter.Get(Text);

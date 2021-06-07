@@ -9,7 +9,7 @@
 					 Error="@HasErrors" ErrorText="@GetErrorText()" Disabled="@Disabled" Margin="@Margin" Required="@Required">
 		<InputContent>
 			<MudInput T="string" @ref="_elementReference" @attributes="UserAttributes" InputType="InputType.Number" Style="@Style" Variant="@Variant"
-					  Value="@Text" ValueChanged="(v) => SetTextAsync(v)" Converter="s_inputConverter" Placeholder="@Placeholder"
+					  Value="@Text" ValueChanged="(v) => SetTextAsync(v)" Converter="_inputConverter" Placeholder="@Placeholder"
 					  Disabled=@Disabled DisableUnderLine="@DisableUnderLine" ReadOnly="@ReadOnly" Adornment="@Adornment"
 					  AdornmentText="@AdornmentText" AdornmentIcon="@AdornmentIcon" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
 					  OnAdornmentClick="@OnAdornmentClick" Error="@Error" Immediate="@Immediate" Margin="@Margin"

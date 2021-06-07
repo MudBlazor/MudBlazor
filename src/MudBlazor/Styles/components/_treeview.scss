@@ -17,6 +17,8 @@
     margin: 0px;
     padding: 0px;
     margin-left: 17px;
+    margin-inline-start: 17px;
+    margin-inline-end: unset;
     list-style: none;
 }
 
@@ -73,12 +75,16 @@
     display: flex;
     flex-shrink: 0;
     margin-right: 4px;
+    margin-inline-end: 4px;
+    margin-inline-start: unset;
     justify-content: center;
 }
 
 .mud-treeview-item-label {
     flex-grow: 1;
     padding-left: 4px;
+    padding-inline-start: 4px;
+    padding-inline-end: unset;
 }
 
 .mud-treeview-canhover .mud-treeview-item-activated .mud-treeview-item-content:hover {
@@ -118,26 +124,7 @@
 }
 
 .mud-application-layout-rtl {
-    .mud-treeview-item-icon {
-        margin-left: 4px;
-        margin-right: 0;
-    }
-
-    .mud-treeview-item-label {
-        padding-right: 4px;
-        padding-left: 0;
-    }
-
-    .mud-treeview-group {
-        margin-right: 17px;
-        margin-left: 0;
-    }
-
     .mud-treeview-item-arrow {
-        transform: rotate(180deg);
-
-        .mud-treeview-item-arrow-expand.mud-transform {
-            transform: rotate(-90deg);
-        }
+        transform: scaleX(-1);
     }
 }

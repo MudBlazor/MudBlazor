@@ -25,5 +25,10 @@ namespace MudBlazor
         /// If used renders child content of the CardHeaderActions.
         /// </summary>
         [Parameter] public RenderFragment CardHeaderActions { get; set; }
+
+        /// <summary>
+        /// Optional child content
+        /// </summary>
+        [Parameter] public RenderFragment ChildContent { get; set; }
     }
 }

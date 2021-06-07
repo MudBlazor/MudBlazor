@@ -34,7 +34,7 @@ namespace MudBlazor
            .AddClass("mud-table-square", Square)
            .AddClass("mud-table-sticky-header", FixedHeader)
            .AddClass("mud-table-sticky-footer", FixedFooter)
-           .AddClass("mud-elevation-{Elevation}", !Outlined)
+           .AddClass($"mud-elevation-{Elevation}", !Outlined)
           .AddClass(Class)
         .Build();
 
@@ -103,6 +103,12 @@ namespace MudBlazor
         /// If table is in smalldevice mode and uses any kind of sorting the text applied here will be the sort selects label.
         /// </summary>
         [Parameter] public string SortLabel { get; set; }
+
+        /// <summary>
+        /// If true allows table to be in an unsorted state through column clicks (i.e. first click sorts "Ascending", second "Descending", third "None").
+        /// If false only "Ascending" and "Descending" states are allowed (i.e. there always should be a column to sort).
+        /// </summary>
+        [Parameter] public bool AllowUnsorted { get; set; } = true;
 
         /// <summary>
         /// If the table has more items than this number, it will break the rows into pages of said size.
@@ -206,9 +212,14 @@ namespace MudBlazor
         [Parameter] public bool ReadOnly { get; set; } = false;
 
         /// <summary>
-        /// Button click event.
+        /// Button commit edit click event.
         /// </summary>
         [Parameter] public EventCallback<MouseEventArgs> OnCommitEditClick { get; set; }
+
+        /// <summary>
+        /// Button cancel edit click event.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnCancelEditClick { get; set; }
 
         /// <summary>
         /// Command executed when the user clicks on the CommitEdit Button.
@@ -224,6 +235,41 @@ namespace MudBlazor
         /// Tooltip for the CommitEdit Button.
         /// </summary>
         [Parameter] public string CommitEditTooltip { get; set; }
+
+        /// <summary>
+        /// Tooltip for the CancelEdit Button.
+        /// </summary>
+        [Parameter] public string CancelEditTooltip { get; set; }
+
+        /// <summary>
+        /// Sets the Icon of the CommitEdit Button.
+        /// </summary>
+        [Parameter] public string CommitEditIcon { get; set; } = Icons.Material.Filled.Done;
+
+        /// <summary>
+        /// Sets the Icon of the CancelEdit Button.
+        /// </summary>
+        [Parameter] public string CancelEditIcon { get; set; } = Icons.Material.Filled.Cancel;
+
+        /// <summary>
+        /// Define if Cancel button is present or not for inline editing.
+        /// </summary>
+        [Parameter] public bool CanCancelEdit { get; set; }
+
+        /// <summary>
+        /// The method is called before the item is modified in inline editing.
+        /// </summary>
+        [Parameter] public Action<object> RowEditPreview { get; set; }
+
+        /// <summary>
+        /// The method is called when the edition of the item has been commited in inline editing.
+        /// </summary>
+        [Parameter] public Action<object> RowEditCommit { get; set; }
+
+        /// <summary>
+        /// The method is called when the edition of the item has been canceled in inline editing.
+        /// </summary>
+        [Parameter] public Action<object> RowEditCancel { get; set; }
 
         /// <summary>
         /// Number of items. Used only with ServerData="true"
@@ -306,6 +352,11 @@ namespace MudBlazor
                     parameter = item;
                 CommitEditCommand.Execute(parameter);
             }
+        }
+
+        internal async Task OnCancelEditHandler(MouseEventArgs ev)
+        {
+            await OnCancelEditClick.InvokeAsync(ev);
         }
 
         protected string TableStyle

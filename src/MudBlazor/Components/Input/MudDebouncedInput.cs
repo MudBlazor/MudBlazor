@@ -38,6 +38,17 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
 
+        protected Task OnChange()
+        {
+            if (DebounceInterval > 0 && _timer != null)
+            {
+                _timer.Stop();
+                return base.UpdateValuePropertyAsync(false);
+            }
+
+            return Task.CompletedTask;
+        }
+
         protected override Task UpdateValuePropertyAsync(bool updateText)
         {
             // This method is called when Value property needs to be refreshed from the current Text property, so typically because Text property has changed.
