@@ -144,6 +144,9 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
+        [Parameter]
+        public EventCallback<ChangeEventArgs> OnInternalInputChanged { get; set; }
+
         protected bool _isFocused;
 
         protected bool _shouldRenderBeForced;

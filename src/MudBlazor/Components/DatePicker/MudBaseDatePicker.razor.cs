@@ -12,7 +12,7 @@ namespace MudBlazor
     {
         protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
         {
-            Format = "yyyy-MM-dd",
+            Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern,
             Culture = CultureInfo.CurrentCulture
         })
         { }

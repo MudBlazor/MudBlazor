@@ -12,7 +12,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudTabs : MudComponentBase, IDisposable, IAsyncDisposable
+    public partial class MudTabs : MudComponentBase, IAsyncDisposable
     {
         private bool _isDisposed;
         private int _activePanelIndex = 0;
@@ -151,7 +151,8 @@ namespace MudBlazor
                 if (_activePanelIndex != value)
                 {
                     _activePanelIndex = value;
-                    ActivePanel = _panels[_activePanelIndex];
+                    if (_isRendered)
+                        ActivePanel = _panels[_activePanelIndex];
                     ActivePanelIndexChanged.InvokeAsync(value);
                 }
             }
@@ -163,13 +164,24 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<int> ActivePanelIndexChanged { get; set; }
 
-        private List<MudTabPanel> _panels = new List<MudTabPanel>();
+        /// <summary>
+        /// A readonly list of the current panels. Panels should be added or removed through the RenderTree use this collection to get informations about the current panels
+        /// </summary>
+        public IReadOnlyList<MudTabPanel> Panels { get; private set; }
+
+        private List<MudTabPanel> _panels;
 
         private string _prevIcon;
 
         private string _nextIcon;
 
         #region Life cycle management
+
+        public MudTabs()
+        {
+            _panels = new List<MudTabPanel>();
+            Panels = _panels.AsReadOnly();
+        }
 
         protected override void OnParametersSet()
         {
@@ -183,6 +195,9 @@ namespace MudBlazor
                 var items = _panels.Select(x => x.PanelRef).ToList();
                 items.Add(_tabsContentSize);
 
+                if (_panels.Count > 0)
+                    ActivePanel = _panels[_activePanelIndex];
+
                 await _resizeObserver.Observe(items);
 
                 _resizeObserver.OnResized += OnResized;
@@ -194,30 +209,14 @@ namespace MudBlazor
             }
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            _isDisposed = true;
-            _resizeObserver.OnResized -= OnResized;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual async ValueTask DisposeAsyncCore()
-        {
-            _isDisposed = true;
-            await _resizeObserver.DisposeAsync();
-        }
 
         public async ValueTask DisposeAsync()
         {
-            await DisposeAsyncCore();
+            if (_isDisposed == true) { return; }
 
-            Dispose(false);
-            GC.SuppressFinalize(this);
+            _isDisposed = true;
+            await _resizeObserver.DisposeAsync();
+            _resizeObserver.OnResized -= OnResized;
         }
 
         #endregion

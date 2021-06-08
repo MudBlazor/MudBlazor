@@ -7,6 +7,7 @@ using Bunit;
 using FluentAssertions;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Charts;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -142,6 +143,17 @@ namespace MudBlazor.UnitTests.Components
             yaxis[0].Children[0].InnerHtml.Trim().Should().Be($"{0:n6}");
         }
 
-
+        /// <summary>
+        /// High values should not lead to millions of horizontal grid lines
+        /// this is from issue #1591 "Line chart is not able to plot big Double values"
+        /// </summary>
+        [Test]
+        [Timeout(5000)]
+        public void LineChartWithBigValues()
+        {
+            // the test should run through instantly (max 5s for a slow build server). 
+            // without the fix it took minutes on a fast computer
+            var comp = ctx.RenderComponent<LineChartWithBigValuesTest>();
+        }
     }
 }

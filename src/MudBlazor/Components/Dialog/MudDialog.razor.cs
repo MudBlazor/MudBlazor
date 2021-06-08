@@ -124,7 +124,7 @@ namespace MudBlazor
         protected override void OnAfterRender(bool firstRender)
         {
             if (IsInline && _reference != null)
-                _reference.Dialog?.ForceUpdate(); // forward render update to instance
+                (_reference.Dialog as MudDialog)?.ForceUpdate(); // forward render update to instance
             base.OnAfterRender(firstRender);
         }
 

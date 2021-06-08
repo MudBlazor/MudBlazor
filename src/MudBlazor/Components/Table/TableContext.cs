@@ -114,6 +114,7 @@ namespace MudBlazor
             var initial_sortlabel = SortLabels.FirstOrDefault(x => x.InitialDirection != SortDirection.None);
             if (initial_sortlabel == null)
                 return;
+            CurrentSortLabel = initial_sortlabel;
             UpdateSortLabels(initial_sortlabel);
             // this will trigger initial sorting of the table
             initial_sortlabel.SetSortDirection(initial_sortlabel.InitialDirection);

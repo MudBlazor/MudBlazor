@@ -77,6 +77,48 @@ namespace MudBlazor
             }
         }
 
+        private MudRangeInput<string> _rangeInput;
+
+        /// <summary>
+        /// Focuses the start date of MudDateRangePicker
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask FocusStartAsync() => _rangeInput.FocusStartAsync();
+
+        /// <summary>
+        /// Selects the start date of MudDateRangePicker
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask SelectStartAsync() => _rangeInput.SelectStartAsync();
+
+        /// <summary>
+        /// Selects the specified range of the start date text
+        /// </summary>
+        /// <param name="pos1">Start position of the selection</param>
+        /// <param name="pos2">End position of the selection</param>
+        /// <returns></returns>
+        public ValueTask SelectRangeStartAsync(int pos1, int pos2) => _rangeInput.SelectRangeStartAsync(pos1, pos2);
+
+        /// <summary>
+        /// Focuses the end date of MudDateRangePicker
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask FocusEndAsync() => _rangeInput.FocusEndAsync();
+
+        /// <summary>
+        /// Selects the end date of MudDateRangePicker
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask SelectEndAsync() => _rangeInput.SelectEndAsync();
+
+        /// <summary>
+        /// Selects the specified range of the end date text
+        /// </summary>
+        /// <param name="pos1">Start position of the selection</param>
+        /// <param name="pos2">End position of the selection</param>
+        /// <returns></returns>
+        public ValueTask SelectRangeEndAsync(int pos1, int pos2) => _rangeInput.SelectRangeEndAsync(pos1, pos2);
+
         protected override Task DateFormatChanged(string newFormat)
         {
             Touched = true;

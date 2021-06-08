@@ -74,9 +74,7 @@ namespace MudBlazor
         public Task ToggleSortDirection()
         {
             if (!Enabled)
-            {
                 return Task.CompletedTask;
-            }
 
             switch (SortDirection)
             {

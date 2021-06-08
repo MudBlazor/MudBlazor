@@ -5,3 +5,23 @@
 .mud-float-right {
     float: right;
 }
+
+//--------------------------- rtl styles ---------------------------
+.mud-float-start {
+    float: left;
+}
+
+.mud-float-end {
+    float: right;
+}
+
+.mud-application-layout-rtl {
+    .mud-float-start {
+        float: right;
+    }
+
+    .mud-float-end {
+        float: left;
+    }
+}
+//------------------------------------------------------------------

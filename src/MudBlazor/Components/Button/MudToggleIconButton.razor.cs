@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -25,6 +24,16 @@ namespace MudBlazor
         /// The Icon that will be used in the toggled state.
         /// </summary>
         [Parameter] public string ToggledIcon { get; set; }
+
+        /// <summary>
+        /// Title of the icon used for accessibility.
+        /// </summary>
+        [Parameter] public string Title { get; set; }
+
+        /// <summary>
+        /// Title used in toggled state, if different.
+        /// </summary>
+        [Parameter] public string ToggledTitle { get; set; }
 
         /// <summary>
         /// The color of the icon in the untoggled state. It supports the theme colors.
@@ -60,6 +69,11 @@ namespace MudBlazor
         /// If true, the button will be disabled.
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
+
+        /// <summary>
+        /// The variant to use.
+        /// </summary>
+        [Parameter] public Variant Variant { get; set; } = Variant.Text;
 
         public Task Toggle()
         {

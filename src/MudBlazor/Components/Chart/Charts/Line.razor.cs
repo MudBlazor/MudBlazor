@@ -11,6 +11,8 @@ namespace MudBlazor.Charts
 {
     partial class Line : MudChartBase
     {
+        private const int MaxHorizontalGridLines = 100;
+
         [CascadingParameter] public MudChart MudChartParent { get; set; }
 
         private List<SvgPath> _horizontalLines = new List<SvgPath>();
@@ -59,11 +61,21 @@ namespace MudBlazor.Charts
             var boundWidth = 650.0;
 
             double gridYUnits = MudChartParent?.ChartOptions.YAxisTicks ?? 20;
+            if (gridYUnits <= 0)
+                gridYUnits = 20;
+            int maxYTicks = MudChartParent?.ChartOptions.MaxNumYAxisTicks ?? 100;
             double gridXUnits = 30;
 
             var numVerticalLines = numValues - 1;
 
             var numHorizontalLines = ((int)(maxY / gridYUnits)) + 1;
+
+            // this is a safeguard against millions of gridlines which might arise with very high values
+            while (numHorizontalLines > maxYTicks)
+            {
+                gridYUnits *= 2;
+                numHorizontalLines = ((int)(maxY / gridYUnits)) + 1;
+            }
 
             var verticalStartSpace = 25.0;
             var horizontalStartSpace = 30.0;

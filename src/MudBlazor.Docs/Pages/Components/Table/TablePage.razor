@@ -65,9 +65,11 @@
 
         <DocsPageSection>
             <SectionHeader>
-                <Title>Fixed header</Title>
+                <Title>Fixed header and footer</Title>
                 <Description>
-                    Set <CodeInline>FixedHeader="true"</CodeInline> to make the header sticky when scrolling the table. The table will scroll if you constrain its height using <CodeInline>Height="400px"</CodeInline> for instance.
+                    Set <CodeInline>FixedHeader="true"</CodeInline> to make the header sticky when scrolling the table.<br />
+                    The same for <CodeInline>FixedFooter="true"</CodeInline> to show the footer even when the table is not scrolled all the way down.<br />
+                    The table will scroll if you constrain its height using <CodeInline>Height="400px"</CodeInline> for instance.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
@@ -93,7 +95,8 @@
             <SectionHeader>
                 <Title>Inline Edit Mode</Title>
                 <Description>
-                    Provides input elements for Selected Row.
+                    Provides input elements for Selected Row. A click on a row makes the row editable.
+                    A Cancel button appears and can be used if <CodeInline>CanCancelEdit="true"</CodeInline>. In this case, the <CodeInline>RowEditPreview</CodeInline> and <CodeInline>RowEditCancel</CodeInline> methods must be defined to save and retrieve the initial values of the edited item. <CodeInline>RowEditCommit</CodeInline> method can be used to handle the commit of the item.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
@@ -155,7 +158,7 @@
             <SectionHeader>
                 <Title>Table with horizontal Scrolling</Title>
                 <Description>
-                    If too many columns are displayed, the table will allow the user to scroll the content horizontally
+                    If too many columns are displayed, setting <CodeInline>HorizontalScrollbar="true"</CodeInline> will allow the user to scroll the content horizontally
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">

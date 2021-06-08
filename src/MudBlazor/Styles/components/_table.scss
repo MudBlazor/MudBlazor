@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-table {
     color: var(--mud-palette-text-primary);
@@ -17,8 +17,6 @@
 
 .mud-table-container {
     width: 100%;
-    display: block;
-    overflow-x: auto;
 }
 
 .mud-table-root {
@@ -92,6 +90,8 @@
 .mud-table-toolbar {
     padding-left: 16px;
     padding-right: 8px;
+    padding-inline-start: 16px;
+    padding-inline-end: 8px;
 }
 
 
@@ -100,7 +100,7 @@
     display: table-cell;
     padding: 16px;
     font-size: 0.875rem;
-    text-align: left;
+    text-align: start;
     font-weight: 400;
     line-height: 1.43;
     border-bottom: 1px solid var(--mud-palette-table-lines);
@@ -122,10 +122,13 @@
     & * .mud-table-row {
         & .mud-table-cell {
             padding: 6px 24px 6px 16px;
+            padding-inline-start: 16px;
+            padding-inline-end: 24px;
         }
 
         & .mud-table-cell:last-child {
             padding-right: 16px;
+            padding-inline-end: 16px;
         }
     }
 }
@@ -179,6 +182,25 @@
     }
 }
 
+.mud-table-sticky-footer {
+    .mud-table-container {
+        overflow-x: auto;
+    }
+
+    & * .mud-table-root {
+        border-collapse: separate;
+
+        .mud-table-foot {
+
+            & * .mud-table-cell {
+                background-color: var(--mud-palette-surface);
+                position: sticky;
+                z-index: 2;
+                bottom: 0;
+            }
+        }
+    }
+}
 
 
 .mud-table-row {
@@ -269,6 +291,8 @@
     border-top: 1px solid var(--mud-palette-table-lines);
     height: 52px;
     padding-right: 2px;
+    padding-inline-end: 2px;
+    padding-inline-start: unset;
 }
 
 .mud-table-pagination-spacer {
@@ -306,6 +330,8 @@
 .mud-table-pagination-actions {
     flex-shrink: 0;
     margin-left: 20px;
+    margin-inline-start: 20px;
+    margin-inline-end: unset;
 }
 
 .mud-table-smalldevices-sortselect {
@@ -342,7 +368,7 @@
             align-items: center;
             border: none;
             padding: 14px 16px;
-            text-align: left !important;
+            text-align: start !important;
         }
 
         &.mud-table-dense {
@@ -355,6 +381,8 @@
             content: attr(data-label);
             font-weight: 500;
             padding-right: 16px;
+            padding-inline-end: 16px;
+            padding-inline-start: unset;
         }
 
         &.mud-table-small-alignright .mud-table-cell:before {
@@ -386,6 +414,7 @@
 
             .mud-select ~ .mud-table-pagination-caption {
                 margin-left: auto;
+                margin-inline-start: auto;
             }
         }
     }
@@ -398,10 +427,13 @@
             .mud-select {
                 margin-left: auto;
                 margin-right: -14px;
+                margin-inline-start: auto;
+                margin-inline-end: -14px;
             }
 
             .mud-select ~ .mud-table-pagination-caption {
                 margin-left: unset !important;
+                margin-inline-start: unset !important;
             }
         }
     }
@@ -414,11 +446,15 @@
                 flex-wrap: wrap;
                 padding-top: 16px;
                 padding-right: 16px;
+                padding-inline-end: 16px;
+                padding-inline-start: unset;
                 min-height: 100px;
 
                 .mud-table-pagination-actions {
                     margin-left: auto;
                     margin-right: -14px;
+                    margin-inline-start: auto;
+                    margin-inline-end: -14px;
                 }
             }
         }
