@@ -74,11 +74,11 @@ namespace MudBlazor.UnitTests.Components
             var picker = comp.Instance;
             picker.Text.Should().BeNullOrEmpty();
             picker.DateRange.Should().Be(null);
-            await comp.InvokeAsync(() => picker.Text = RangeConverter<DateTime>.Join("2021-01-01", "2021-01-10"));
+            await comp.InvokeAsync(() => picker.Text = RangeConverter<DateTime>.Join(new DateTime(2021, 01, 01).ToShortDateString(), new DateTime(2021, 01, 10).ToShortDateString()));
             picker.DateRange.Start.Should().Be(new DateTime(2021, 01, 01));
             picker.DateRange.End.Should().Be(new DateTime(2021, 01, 10));
             await comp.InvokeAsync(() => picker.DateRange = new DateRange(new DateTime(2020, 12, 26), new DateTime(2021, 02, 01)));
-            picker.Text.Should().Be(RangeConverter<DateTime>.Join("2020-12-26", "2021-02-01"));
+            picker.Text.Should().Be(RangeConverter<DateTime>.Join(new DateTime(2020, 12, 26).ToShortDateString(), new DateTime(2021, 02, 01).ToShortDateString()));
         }
 
         [Test]
@@ -336,13 +336,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void SetPickerValue_CheckText()
         {
+            var date = DateTime.Now;
             var comp = ctx.RenderComponent<MudDateRangePicker>(
-                Parameter(nameof(MudDateRangePicker.DateRange), new DateRange(DateTime.Now, DateTime.Now.AddDays(5))));
+                Parameter(nameof(MudDateRangePicker.DateRange), new DateRange(date, date.AddDays(5))));
             // select elements needed for the test
             var picker = comp.Instance;
 
-            var textStart = DateTime.Now.ToIsoDateString();
-            var textEnd = DateTime.Now.AddDays(5).ToIsoDateString();
+            var textStart = date.ToShortDateString();
+            var textEnd = date.AddDays(5).ToShortDateString();
 
             picker.Text.Should().Be(RangeConverter<DateTime>.Join(textStart, textEnd));
             var inputs = comp.FindAll("input");
