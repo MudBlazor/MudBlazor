@@ -25,7 +25,7 @@ namespace MudBlazor
         public bool ShowActionButton => !IsNullOrWhiteSpace(Options.Action);
         public bool ShowCloseIcon => Options.ShowCloseIcon;
 
-        public bool NoIcon => Options.NoIcon;
+        public bool HideIcon => Options.HideIcon;
         public string Icon => Options.Icon;
 
         public string ProgressBarStyle

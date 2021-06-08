@@ -27,7 +27,7 @@ namespace MudBlazor
         protected bool ShowActionButton => Snackbar?.State.ShowActionButton == true;
         protected bool ShowCloseIcon => Snackbar?.State.ShowCloseIcon == true;
 
-        protected bool NoIcon => Snackbar?.State.NoIcon == true;
+        protected bool HideIcon => Snackbar?.State.HideIcon == true;
         protected string Icon => Snackbar?.State.Icon;
 
         protected void ActionClicked() => Snackbar?.Clicked(false);

@@ -23,7 +23,7 @@ namespace MudBlazor
 
         public bool CloseAfterNavigation { get; set; }
 
-        public bool NoIcon { get; set; }
+        public bool HideIcon { get; set; }
 
         public string Icon { get; set; }
 
