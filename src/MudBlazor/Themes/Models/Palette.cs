@@ -1,43 +1,43 @@
 ﻿using MudBlazor.Utilities;
 
 namespace MudBlazor
-
 {
     public class Palette
     {
+        private string _primaryDarken = null;
+        private string _primaryLighten = null;
+        private string _secondaryDarken = null;
+        private string _secondaryLighten = null;
+        private string _tertiaryDarken = null;
+        private string _tertiaryLighten = null;
+        private string _infoDarken = null;
+        private string _infoLighten = null;
+        private string _successDarken = null;
+        private string _successLighten = null;
+        private string _warningDarken = null;
+        private string _warningLighten = null;
+        private string _errorDarken = null;
+        private string _errorLighten = null;
+        private string _darkDarken = null;
+        private string _darkLighten = null;
+
         public string Black { get; set; } = Colors.Shades.Black;
         public string White { get; set; } = Colors.Shades.White;
         public string Primary { get; set; } = "#594AE2";
-        public string PrimaryDarken { get; set; }
-        public string PrimaryLighten { get; set; }
         public string PrimaryContrastText { get; set; } = Colors.Shades.White;
         public string Secondary { get; set; } = Colors.Pink.Accent2;
-        public string SecondaryDarken { get; set; }
-        public string SecondaryLighten { get; set; }
         public string SecondaryContrastText { get; set; } = Colors.Shades.White;
         public string Tertiary { get; set; } = "#1EC8A5";
-        public string TertiaryDarken { get; set; }
-        public string TertiaryLighten { get; set; }
         public string TertiaryContrastText { get; set; } = Colors.Shades.White;
         public string Info { get; set; } = Colors.Blue.Default;
-        public string InfoDarken { get; set; }
-        public string InfoLighten { get; set; }
         public string InfoContrastText { get; set; } = Colors.Shades.White;
         public string Success { get; set; } = Colors.Green.Accent4;
-        public string SuccessDarken { get; set; }
-        public string SuccessLighten { get; set; }
         public string SuccessContrastText { get; set; } = Colors.Shades.White;
         public string Warning { get; set; } = Colors.Orange.Default;
-        public string WarningDarken { get; set; }
-        public string WarningLighten { get; set; }
         public string WarningContrastText { get; set; } = Colors.Shades.White;
         public string Error { get; set; } = Colors.Red.Default;
-        public string ErrorDarken { get; set; }
-        public string ErrorLighten { get; set; }
         public string ErrorContrastText { get; set; } = Colors.Shades.White;
         public string Dark { get; set; } = Colors.Grey.Darken3;
-        public string DarkDarken { get; set; }
-        public string DarkLighten { get; set; }
         public string DarkContrastText { get; set; } = Colors.Shades.White;
         public string TextPrimary { get; set; } = Colors.Grey.Darken3;
         public string TextSecondary { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.54);
@@ -60,6 +60,87 @@ namespace MudBlazor
         public string TableHover { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.04);
         public string Divider { get; set; } = Colors.Grey.Lighten2;
         public string DividerLight { get; set; } = ColorManager.ToRgbaFromHex(Colors.Shades.Black, 0.8);
+
+        public string PrimaryDarken
+        {
+            get => _primaryDarken ??= BaseMudThemeProvider.ColorRgbDarken(Primary);
+            set => _primaryDarken = value;
+        }
+        public string PrimaryLighten
+        {
+            get => _primaryLighten ??= BaseMudThemeProvider.ColorRgbLighten(Primary);
+            set => _primaryLighten = value;
+        }
+        public string SecondaryDarken
+        {
+            get => _secondaryDarken ??= BaseMudThemeProvider.ColorRgbDarken(Secondary);
+            set => _secondaryDarken = value;
+        }
+        public string SecondaryLighten
+        {
+            get => _secondaryLighten ??= BaseMudThemeProvider.ColorRgbLighten(Secondary);
+            set => _secondaryLighten = value;
+        }
+        public string TertiaryDarken
+        {
+            get => _tertiaryDarken ??= BaseMudThemeProvider.ColorRgbDarken(Tertiary);
+            set => _tertiaryDarken = value;
+        }
+        public string TertiaryLighten
+        {
+            get => _tertiaryLighten ??= BaseMudThemeProvider.ColorRgbLighten(Tertiary);
+            set => _tertiaryLighten = value;
+        }
+        public string InfoDarken
+        {
+            get => _infoDarken ??= BaseMudThemeProvider.ColorRgbDarken(Info);
+            set => _infoDarken = value;
+        }
+        public string InfoLighten
+        {
+            get => _infoLighten ??= BaseMudThemeProvider.ColorRgbLighten(Info);
+            set => _infoLighten = value;
+        }
+        public string SuccessDarken
+        {
+            get => _successDarken ??= BaseMudThemeProvider.ColorRgbDarken(Success);
+            set => _successDarken = value;
+        }
+        public string SuccessLighten
+        {
+            get => _successLighten ??= BaseMudThemeProvider.ColorRgbLighten(Success);
+            set => _successLighten = value;
+        }
+        public string WarningDarken
+        {
+            get => _warningDarken ??= BaseMudThemeProvider.ColorRgbDarken(Warning);
+            set => _warningDarken = value;
+        }
+        public string WarningLighten
+        {
+            get => _warningLighten ??= BaseMudThemeProvider.ColorRgbLighten(Warning);
+            set => _warningLighten = value;
+        }
+        public string ErrorDarken
+        {
+            get => _errorDarken ??= BaseMudThemeProvider.ColorRgbDarken(Error);
+            set => _errorDarken = value;
+        }
+        public string ErrorLighten
+        {
+            get => _errorLighten ??= BaseMudThemeProvider.ColorRgbLighten(Error);
+            set => _errorLighten = value;
+        }
+        public string DarkDarken
+        {
+            get => _darkDarken ??= BaseMudThemeProvider.ColorRgbDarken(Dark);
+            set => _darkDarken = value;
+        }
+        public string DarkLighten
+        {
+            get => _darkLighten ??= BaseMudThemeProvider.ColorRgbLighten(Dark);
+            set => _darkLighten = value;
+        }
 
         public double HoverOpacity { get; set; } = 0.06;
 
