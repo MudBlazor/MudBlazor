@@ -7,10 +7,17 @@
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
                          Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu">
             <InputContent>
-                <MudInput T="string" @ref="_elementReference" InputType="InputType.Text" Variant="@Variant" @attributes="UserAttributes" Value="@Text" TextChanged="OnTextChanged" DisableUnderLine="@DisableUnderLine" Placeholder="@Placeholder" Disabled=@Disabled ReadOnly="@ReadOnly"
-                          Immediate="true" Margin="@Margin" Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
-                          OnBlur="@OnInputBlurred" OnKeyUp="@this.OnInputKeyUp"  autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
+                <MudInput @ref="_elementReference" InputType="InputType.Text"
+                          Class="mud-select-input" Margin="@Margin" 
+                          Variant="@Variant" Value="@Text" DisableUnderLine="@DisableUnderLine"
+                          Disabled="@Disabled" ReadOnly="@ReadOnly" Error="@Error"
+                          AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
                           Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick"
+
+                          TextChanged="OnTextChanged" OnBlur="OnInputBlurred"
+                          OnKeyUp="@this.OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
+                          @attributes="UserAttributes" Placeholder="@Placeholder" Immediate="true"
+                          T="string"
                           />
                 @if (_items!=null && _items.Length!=0)
                 {
