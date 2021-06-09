@@ -30,6 +30,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
 
+
+        /// <summary>
+        /// Sets the direction the select menu should be.
+        /// </summary>
+        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
+
+        /// <summary>
+        /// If true, the select menu will open either before or after the input.
+        /// </summary>
+        [Parameter] public bool OffsetY { get; set; }
+
+        [Parameter] public bool OffsetX { get; set; }
+
+
         /// <summary>
         /// If true, compact vertical padding will be applied to all select items.
         /// </summary>
