@@ -165,8 +165,8 @@ namespace MudBlazor
 
         public MudAutocomplete()
         {
-            IconSize = Size.Medium;
             Adornment = Adornment.End;
+            IconSize = Size.Medium;
         }
 
         public async Task SelectOption(T value)
@@ -203,14 +203,7 @@ namespace MudBlazor
 
         public void UpdateIcon()
         {
-            if (IsOpen)
-            {
-                CurrentIcon = OpenIcon;
-            }
-            else
-            {
-                CurrentIcon = CloseIcon;
-            }
+            CurrentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? OpenIcon : CloseIcon;
         }
 
         protected override void OnInitialized()

@@ -113,6 +113,7 @@ namespace MudBlazor
 
         public MudSelect()
         {
+            Adornment = Adornment.End;
             IconSize = Size.Medium;
         }
 
@@ -292,14 +293,7 @@ namespace MudBlazor
 
         public void UpdateIcon()
         {
-            if (_isOpen)
-            {
-                CurrentIcon = OpenIcon;
-            }
-            else
-            {
-                CurrentIcon = CloseIcon;
-            }
+            CurrentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? OpenIcon : CloseIcon;
         }
 
         protected override void OnInitialized()
@@ -339,7 +333,7 @@ namespace MudBlazor
         /// <summary>
         /// Extra handler for clearing selection.
         /// </summary>
-        protected async Task SelectClearButtonClickHandlerAsync(MouseEventArgs e)
+        protected async ValueTask SelectClearButtonClickHandlerAsync(MouseEventArgs e)
         {
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
@@ -347,7 +341,7 @@ namespace MudBlazor
             BeginValidate();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
-            await OnClearButtonClick.InvokeAsync();
+            await OnClearButtonClick.InvokeAsync(e);
         }
     }
 }
