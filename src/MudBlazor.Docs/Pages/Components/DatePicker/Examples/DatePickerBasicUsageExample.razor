@@ -23,17 +23,19 @@
 </MudGrid>
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudDatePicker @ref="_picker" Label="With action buttons" @bind-Date="date">
+        <MudDatePicker @ref="_picker" Label="With action buttons" @bind-Date="date" AutoClose="@autoClose">
             <PickerActions>
                 <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.Clear())">Clear</MudButton>
                 <MudButton OnClick="@(() => _picker.Close(false))">Cancel</MudButton>
                 <MudButton Color="Color.Primary" OnClick="@(() => _picker.Close())">Ok</MudButton>
             </PickerActions>
         </MudDatePicker>
+        <MudSwitch @bind-Checked="@autoClose" Color="Color.Secondary">AutoClose</MudSwitch>
     </MudItem>
 </MudGrid>
 
 @code {
     MudDatePicker _picker;
     DateTime? date = DateTime.Today;
+    private bool autoClose;
 }

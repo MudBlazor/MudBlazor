@@ -27,9 +27,9 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// If RequiredAction is set to false and PickerActions are defined, selecting the day will close the MudDatePicker.
+        /// If AutoClose is set to true and PickerActions are defined, selecting the day will close the MudDatePicker.
         /// </summary>
-        [Parameter] public bool RequiredAction { get; set; } = true;
+        [Parameter] public bool AutoClose { get; set; }
 
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
@@ -74,7 +74,7 @@ namespace MudBlazor
         protected override async void OnDayClicked(DateTime dateTime)
         {
             _selectedDate = dateTime;
-            if (PickerActions == null || !RequiredAction)
+            if (PickerActions == null || AutoClose)
             {
                 Submit();
 
