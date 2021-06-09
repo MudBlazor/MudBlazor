@@ -9,7 +9,7 @@ namespace MudBlazor.Services
 
     public delegate void SizeChanged(IDictionary<ElementReference, BoundingClientRect> changes);
 
-    public interface IResizeObserver : IAsyncDisposable
+    public interface IResizeObserver : IAsyncDisposable, IDisposable
     {
         Task<BoundingClientRect> Observe(ElementReference element);
         Task<IEnumerable<BoundingClientRect>> Observe(IEnumerable<ElementReference> elements);

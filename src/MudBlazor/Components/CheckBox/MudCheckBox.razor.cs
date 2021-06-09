@@ -59,7 +59,7 @@ namespace MudBlazor
         public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <summary>
-        /// Define if the checkbox can cycle again through inderterminate status.
+        /// Define if the checkbox can cycle again through indeterminate status.
         /// </summary>
         [Parameter] public bool TriState { get; set; }
 

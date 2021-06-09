@@ -5,6 +5,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
@@ -148,23 +149,43 @@ namespace MudBlazor.UnitTests.Components
             // after initial load
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
             var pagingButtons = comp.FindAll("button");
             // click next page
             pagingButtons[2].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("11-20 of 59");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
             // last page
             pagingButtons[3].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(9);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("51-59 of 59");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
             // previous page
             pagingButtons[1].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("41-50 of 59");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
             // first page
             pagingButtons[0].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
         }
 
         /// <summary>
@@ -179,23 +200,43 @@ namespace MudBlazor.UnitTests.Components
             // after initial load
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
+            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
             var pagingButtons = comp.FindAll("button");
             // click next page
             pagingButtons[1].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("11-20 of 59");
+            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
             // last page
             pagingButtons[0].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(9);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("51-59 of 59");
+            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
             // previous page
             pagingButtons[2].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("41-50 of 59");
+            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
             // first page
             pagingButtons[3].Click();
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
+            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
         }
 
 
@@ -216,16 +257,28 @@ namespace MudBlazor.UnitTests.Components
             pager.Value.Should().Be("20");
             comp.FindAll("tr.mud-table-row").Count.Should().Be(20);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-20 of 59");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(60));
             pager.Value.Should().Be("60");
             comp.FindAll("tr.mud-table-row").Count.Should().Be(59);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-59 of 59");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(10));
             pager.Value.Should().Be("10");
             comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
         }
 
         /// <summary>
@@ -246,16 +299,28 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("3");
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 99");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
             // last page
             comp.FindAll("div.mud-table-pagination-actions button")[3].Click(); // last >
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("28");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("29");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("30");
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("91-99 of 99");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
             // change page size
             await table.InvokeAsync(() => table.Instance.SetRowsPerPage(100));
             pager.Value.Should().Be("100");
             comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-99 of 99");
+            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
+            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
         }
 
         /// <summary>
@@ -702,6 +767,45 @@ namespace MudBlazor.UnitTests.Components
                 trs[i % 3 + 1].Click();
             }
             validator.ControlCount.Should().Be(2);
+        }
+
+        /// <summary>
+        /// This test validates the processing of the Commit and Cancel buttons for an inline editing table.
+        /// </summary>
+        [Test]
+        public async Task TableInlineEditCancelTest()
+        {
+            var comp = ctx.RenderComponent<TableInlineEditCancelTest>();
+
+            // Check that the value in the second row is equal to 'B'
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("B");
+
+            // Click on the second row
+            var trs = comp.FindAll("tr");
+            trs[2].Click();
+
+            // Find the textfield and change the value to 'C'
+            comp.Find("#Id2").Change("C");
+
+            // Click the commit button
+            var commitButton = comp.Find("button");
+            commitButton.Click();
+
+            // Value in the second row should be now equal to 'C'
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+
+            // Click on the second row
+            trs[2].Click();
+
+            // Find the textfield and change the value to 'D'
+            comp.Find("#Id2").Change("D");
+
+            // Click the cancel button
+            var cancelButton = comp.FindAll("button")[1];
+            cancelButton.Click();
+
+            // Value in the second row should still be equal to 'C'
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
         }
     }
 }

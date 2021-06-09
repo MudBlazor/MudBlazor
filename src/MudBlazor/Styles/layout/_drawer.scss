@@ -33,6 +33,10 @@
         &.mud-drawer-responsive.mud-drawer-#{$breakpoint} {
             @media (max-width: map-get($breakpoints, $breakpoint) - 1px) {
                 z-index: calc(var(--mud-zindex-appbar) + 2);
+
+                &.mud-drawer--initial {
+                    display: none !important;
+                }
             }
         }
     }
@@ -40,7 +44,7 @@
     &.mud-drawer-responsive, &.mud-drawer-persistent {
         height: 100%;
 
-        &.mud-drawer-anchor-left {
+        &.mud-drawer-pos-left {
             right: auto;
             width: var(--mud-drawer-width, var(--mud-drawer-width-left));
 
@@ -61,7 +65,7 @@
             }
         }
 
-        &.mud-drawer-anchor-right {
+        &.mud-drawer-pos-right {
             left: auto;
             width: var(--mud-drawer-width, var(--mud-drawer-width-right));
 
@@ -87,7 +91,7 @@
         height: 100%;
         transition: width 225ms cubic-bezier(0, 0, 0.2, 1);
 
-        &.mud-drawer-anchor-left {
+        &.mud-drawer-pos-left {
             left: 0;
             right: auto;
 
@@ -100,7 +104,7 @@
             }
         }
 
-        &.mud-drawer-anchor-right {
+        &.mud-drawer-pos-right {
             left: auto;
             right: 0;
 
@@ -119,7 +123,7 @@
         z-index: calc(var(--mud-zindex-appbar) + 2);
         transition: transform 225ms cubic-bezier(0, 0, 0.2, 1) 0ms;
 
-        &.mud-drawer-anchor-left {
+        &.mud-drawer-pos-left {
             right: auto;
             top: 0;
             height: 100%;
@@ -142,7 +146,7 @@
             }
         }
 
-        &.mud-drawer-anchor-right {
+        &.mud-drawer-pos-right {
             left: auto;
             top: 0;
             height: 100%;
@@ -165,7 +169,7 @@
             }
         }
 
-        &.mud-drawer-anchor-bottom {
+        &.mud-drawer-pos-bottom {
             left: 0;
             top: auto;
             width: 100%;
@@ -187,7 +191,7 @@
             }
         }
 
-        &.mud-drawer-anchor-top {
+        &.mud-drawer-pos-top {
             left: 0;
             bottom: auto;
             width: 100%;
@@ -210,19 +214,29 @@
         }
     }
 
-    &.mud-drawer-mini.mud-drawer-anchor-left ~ div:not(.mud-main-content),
-    &.mud-drawer-persistent.mud-drawer-anchor-left ~ div:not(.mud-main-content) {
+    &.mud-drawer-mini.mud-drawer-pos-left ~ div:not(.mud-main-content),
+    &.mud-drawer-mini.mud-drawer-pos-right ~ div:not(.mud-main-content),
+    &.mud-drawer-persistent.mud-drawer-pos-left ~ div:not(.mud-main-content),
+    &.mud-drawer-persistent.mud-drawer-pos-right ~ div:not(.mud-main-content) {
         transition: margin 225ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
     }
 
-    &.mud-drawer-mini.mud-drawer-anchor-left.mud-drawer--open ~ div:not(.mud-main-content),
-    &.mud-drawer-persistent.mud-drawer-anchor-left.mud-drawer--open ~ div:not(.mud-main-content) {
+    &.mud-drawer-mini.mud-drawer-pos-left.mud-drawer--open ~ div:not(.mud-main-content),
+    &.mud-drawer-persistent.mud-drawer-pos-left.mud-drawer--open ~ div:not(.mud-main-content) {
         margin-left: var(--mud-drawer-width, var(--mud-drawer-width-left));
     }
 
-    &.mud-drawer-mini.mud-drawer-anchor-right.mud-drawer--open ~ div:not(.mud-main-content),
-    &.mud-drawer-persistent.mud-drawer-anchor-right.mud-drawer--open ~ div:not(.mud-main-content) {
+    &.mud-drawer-mini.mud-drawer-pos-right.mud-drawer--open ~ div:not(.mud-main-content),
+    &.mud-drawer-persistent.mud-drawer-pos-right.mud-drawer--open ~ div:not(.mud-main-content) {
         margin-right: var(--mud-drawer-width, var(--mud-drawer-width-right));
+    }
+
+    &.mud-drawer-mini.mud-drawer-pos-left.mud-drawer--closed ~ div:not(.mud-main-content) {
+        margin-left: var(--mud-drawer-width, var(--mud-drawer-width-mini-left));
+    }
+
+    &.mud-drawer-mini.mud-drawer-pos-right.mud-drawer--closed ~ div:not(.mud-main-content) {
+        margin-right: var(--mud-drawer-width, var(--mud-drawer-width-mini-right));
     }
 }
 

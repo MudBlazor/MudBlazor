@@ -43,16 +43,27 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().BeEmpty();
             comp.FindAll("div.mud-tab").Should().BeEmpty();
+            comp.Instance.Tabs.Panels.Should().NotBeNull().And.BeEmpty();
+
             // add a panel
             comp.FindAll("button")[0].Click();
             Console.WriteLine("\n" + comp.Markup);
             comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().NotBeEmpty();
             comp.FindAll("div.mud-tab").Count.Should().Be(1);
             comp.FindAll("p.mud-typography").Count.Should().Be(1);
+
+            comp.Instance.Tabs.Panels.Should().NotBeNull().And.HaveCount(1);
+            comp.FindComponents<MudTabPanel>().First().Instance.Should().Be(comp.Instance.Tabs.Panels[0]);
+
             // add another
             comp.FindAll("button")[0].Click();
             Console.WriteLine("\n" + comp.Markup);
             comp.FindAll("div.mud-tab").Count.Should().Be(2);
+
+            comp.Instance.Tabs.Panels.Should().NotBeNull().And.HaveCount(2);
+            comp.FindComponents<MudTabPanel>().ElementAt(0).Instance.Should().Be(comp.Instance.Tabs.Panels[0]);
+            comp.FindComponents<MudTabPanel>().ElementAt(1).Instance.Should().Be(comp.Instance.Tabs.Panels[1]);
+
             comp.FindAll("p.mud-typography").Count.Should().Be(1, because: "Only the current tab panel is displayed");
             // we are now on tab 0
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Tab 0");
@@ -63,12 +74,18 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[1].Click();
             comp.FindAll("div.mud-tab").Count.Should().Be(1);
             comp.FindAll("p.mud-typography").Count.Should().Be(1);
+
+            comp.Instance.Tabs.Panels.Should().NotBeNull().And.HaveCount(1);
+            comp.FindComponents<MudTabPanel>().ElementAt(0).Instance.Should().Be(comp.Instance.Tabs.Panels[0]);
+
             // we should be on tab0 again
             comp.Find("p.mud-typography").TrimmedText().Should().Be("Tab 0");
             // remove another
             comp.FindAll("button")[1].Click();
             comp.Find("div.mud-tabs-panels").InnerHtml.Trim().Should().BeEmpty();
             comp.FindAll("div.mud-tab").Should().BeEmpty();
+
+            comp.Instance.Tabs.Panels.Should().NotBeNull().And.BeEmpty();
         }
 
         /// <summary>
@@ -813,6 +830,40 @@ namespace MudBlazor.UnitTests.Components
                     contentElement.TextContent.Should().Be(comp.Instance.Tabs[i].Content);
                 }
             }
+        }
+
+        [Test]
+        public async Task SelectedIndex_Binding()
+        {
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+
+            //starting with index 1:
+            var comp = ctx.RenderComponent<SelectedIndexTabsTest>();
+            comp.Instance.Tabs.ActivePanelIndex.Should().Be(1);
+            var panels = comp.FindAll(".mud-tab");
+            var activePanels = comp.FindAll(".mud-tab-active");
+            activePanels.Should().HaveCount(1);
+            panels[1].ClassList.Contains("mud-tab-active").Should().BeTrue();
+
+            //starting with index 2:
+            SelectedIndexTabsTest.SelectedTab = 2;
+            comp = ctx.RenderComponent<SelectedIndexTabsTest>();
+            comp.Instance.Tabs.ActivePanelIndex.Should().Be(2);
+            panels = comp.FindAll(".mud-tab");
+            activePanels = comp.FindAll(".mud-tab-active");
+            activePanels.Should().HaveCount(1);
+            panels[2].ClassList.Contains("mud-tab-active").Should().BeTrue();
+
+            //starting with index 0:
+            SelectedIndexTabsTest.SelectedTab = 0;
+            comp = ctx.RenderComponent<SelectedIndexTabsTest>();
+            comp.Instance.Tabs.ActivePanelIndex.Should().Be(0);
+            panels = comp.FindAll(".mud-tab");
+            activePanels = comp.FindAll(".mud-tab-active");
+            activePanels.Should().HaveCount(1);
+            panels[0].ClassList.Contains("mud-tab-active").Should().BeTrue();
+
         }
 
         #region Helper

@@ -97,6 +97,7 @@ namespace MudBlazor.Docs.Services
             //Buttons
             .AddNavGroup("Buttons", false, new DocsComponents()
                 .AddItem("Button", typeof(MudButton))
+                .AddItem("Button Group", typeof(MudButtonGroup))
                 .AddItem("IconButton", typeof(MudIconButton))
                 .AddItem("ToggleIconButton", typeof(MudToggleIconButton))
                 .AddItem("Button FAB", typeof(MudFab))
@@ -172,6 +173,7 @@ namespace MudBlazor.Docs.Services
                 new DocsLink {Title = "Flex", Href = "features/flex"},
                 new DocsLink {Title = "Icons", Href = "features/icons"},
                 new DocsLink {Title = "Spacing", Href = "features/spacing"},
+                new DocsLink {Title = "RTL Languages", Href = "features/rtl-languages"},
             }.OrderBy(x => x.Title);
 
 

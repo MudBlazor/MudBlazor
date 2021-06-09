@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
@@ -7,6 +8,10 @@ namespace MudBlazor
 {
     public partial class MudTr : MudComponentBase
     {
+        internal bool _clickRowFirstTime;
+
+        internal object _itemCopy;
+
         protected string Classname => new CssBuilder("mud-table-row")
             .AddClass(Class).Build();
 
@@ -21,6 +26,7 @@ namespace MudBlazor
         [Parameter] public bool IsEditable { get; set; }
 
         [Parameter] public bool IsHeader { get; set; }
+
         [Parameter] public bool IsFooter { get; set; }
 
         [Parameter]
@@ -43,6 +49,12 @@ namespace MudBlazor
 
         public void OnRowClicked(MouseEventArgs args)
         {
+            // Manage the Item Copy the first time the row is clicked
+            if (!_clickRowFirstTime)
+            {
+                CopyOriginalValues();
+            }
+
             if (IsHeader || !(Context?.Table.Validator.IsValid ?? true))
                 return;
 
@@ -83,6 +95,37 @@ namespace MudBlazor
             if (!Context?.Table.Validator.IsValid ?? true) return;
             Context?.Table.SetEditingItem(null);
             Context?.Table.OnCommitEditHandler(ev, Item);
+
+            // The item object has been edited
+            Context.Table.RowEditCommit?.Invoke(Item);
+            _clickRowFirstTime = false;
+        }
+
+        private void CancelEdit(MouseEventArgs ev)
+        {
+            // The edit mode is canceled
+            Context?.Table.SetEditingItem(null);
+            Context?.Table.OnCancelEditHandler(ev);
+
+            // The Item object is reset to its initial value from the Item Copy
+            CopyOriginalValues();
+        }
+
+        private void CopyOriginalValues()
+        {
+            if (IsEditable && Item != null)
+            {
+                if (!_clickRowFirstTime)
+                {
+                    Context.Table.RowEditPreview?.Invoke(Item);
+                    _clickRowFirstTime = true;
+                }
+                else
+                {
+                    Context.Table.RowEditCancel?.Invoke(Item);
+                    _clickRowFirstTime = false;
+                }
+            }
         }
     }
 }

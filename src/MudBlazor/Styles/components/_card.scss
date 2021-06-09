@@ -10,6 +10,8 @@
     & .mud-card-header-avatar {
         flex: 0 0 auto;
         margin-right: 16px;
+        margin-inline-end: 16px;
+        margin-inline-start: unset;
     }
 
     & .mud-card-header-content {
@@ -25,6 +27,8 @@
         align-self: flex-start;
         margin-top: -8px;
         margin-right: -8px;
+        margin-inline-end: -8px;
+        margin-inline-start: unset;
     }
 }
 
@@ -43,19 +47,4 @@
     display: flex;
     padding: 8px;
     align-items: center;
-}
-
-.mud-application-layout-rtl {
-    .mud-card-header {
-        & .mud-card-header-avatar {
-            margin-left: 16px;
-            margin-right: 0;
-        }
-
-        & .mud-card-header-actions {
-            align-self: flex-end;
-            margin-left: -8px;
-            margin-right: 0;
-        }
-    }
 }

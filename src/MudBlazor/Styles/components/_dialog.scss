@@ -1,4 +1,4 @@
-﻿.mud-dialog-container {
+.mud-dialog-container {
     display: flex;
     position: fixed;
     top: 0;
@@ -89,6 +89,8 @@
 
         & > :not(:first-child) {
             margin-left: 8px;
+            margin-inline-start: 8px;
+            margin-inline-end: unset;
         }
     }
 }

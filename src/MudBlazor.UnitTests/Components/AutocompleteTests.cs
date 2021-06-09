@@ -1,6 +1,5 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
+﻿// Copyright (c) mudblazor 2021
+// License MIT
 
 #pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
@@ -60,8 +59,7 @@ namespace MudBlazor.UnitTests.Components
             // now let's type a different state to see the popup open
             autocompletecomp.Find("input").Input("Calif");
             await Task.Delay(100);
-            var menu = comp.Find("div.mud-popover");
-            menu.ClassList.Should().Contain("mud-popover-open");
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             Console.WriteLine(comp.Markup);
             var items = comp.FindComponents<MudListItem>().ToArray();
             items.Length.Should().Be(1);
@@ -73,7 +71,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Text.Should().Be("California");
             comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
             await Task.Delay(100);
-            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }
 
         /// <summary>
@@ -99,12 +97,11 @@ namespace MudBlazor.UnitTests.Components
             // type 3 characters and check if it has toggled the menu
             select.Find("input").Input("ala");
             await Task.Delay(200);
-            var menu = comp.Find("div.mud-popover");
-            comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
             // type 2 characters and check if it has toggled the menu
             select.Find("input").Input("al");
-            comp.WaitForAssertion(() => menu.ClassList.Should().NotContain("mud-popover-open"));
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }
 
         /// <summary>
@@ -143,7 +140,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompletecomp.Instance;
-            await comp.InvokeAsync(() => autocomplete.DebounceInterval = 0);
+            autocompletecomp.SetParam(x => x.DebounceInterval, 0);
             // check initial state
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
@@ -155,6 +152,33 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
         }
+
+        /// <summary>
+        /// We search for a value not in list and value coercion will force the invalid value to be applied
+        /// allowing to validate the user input.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task AutocompleteCoerceValueTest()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTest1>();
+            Console.WriteLine(comp.Markup);
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+            autocompletecomp.SetParam(x => x.DebounceInterval, 0);
+            autocompletecomp.SetParam(x => x.CoerceValue, true); // if CoerceValue==true CoerceText will be ignored
+            // check initial state
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama");
+            // set a value the search won't find
+            autocompletecomp.SetParam(p=> p.Text, "Austria"); // not part of the U.S.
+
+            // now trigger the coercion by toggling the the menu (it won't even open for invalid values, but it will coerce)
+            await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            comp.WaitForAssertion(() => autocomplete.Value.Should().Be("Austria"));
+            autocomplete.Text.Should().Be("Austria");
+        }
+
 
         [Test]
         public async Task AutocompleteCoercionOffTest()
@@ -169,8 +193,8 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
-            autocompletecomp.SetParam(a => a.Text, "Austria");
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
+            autocompletecomp.SetParam(a => a.Text, "Austria");
             // now trigger the coercion by closing the menu
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
             autocomplete.Value.Should().Be("Alabama");
@@ -239,7 +263,6 @@ namespace MudBlazor.UnitTests.Components
         /// Based on this try https://try.mudblazor.com/snippet/GacPunvDUyjdUJAh
         /// and this issue https://github.com/Garderoben/MudBlazor/issues/1235
         /// </summary>
-
         [Test]
         public async Task Autocomplete_Initialize_Value_on_SetParametersAsync()
         {
@@ -284,21 +307,21 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = ctx.RenderComponent<AutocompleteTestClearable>();
             // No button when initialized empty
-            comp.FindAll("button").Should().BeEmpty();
+            comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
 
             // Button shows after entering text
             comp.Find("input").Input("text");
-            comp.Find("button").Should().NotBeNull();
+            comp.WaitForAssertion(() => comp.Find("button").Should().NotBeNull());
             // Text cleared and button removed after clicking clear button
             comp.Find("button").Click();
-            comp.FindAll("button").Should().BeEmpty();
+            comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
 
             // Button shows again after entering text
             comp.Find("input").Input("text");
-            comp.Find("button").Should().NotBeNull();
+            comp.WaitForAssertion(()=> comp.Find("button").Should().NotBeNull());
             // Button removed after clearing text
             comp.Find("input").Input(string.Empty);
-            comp.FindAll("button").Should().BeEmpty();
+            comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
         }
 
         #region DataAttribute validation
