@@ -50,7 +50,7 @@ namespace MudBlazor
         [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
-        /// The Open Select Icon
+        /// The Close Select Icon
         /// </summary>
         [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
@@ -207,16 +207,20 @@ namespace MudBlazor
         [Parameter] public int MaxHeight { get; set; } = 300;
 
         /// <summary>
-        /// Sets the direction the select menu should be.
+        /// Sets the direction the select menu should open.
         /// </summary>
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
-        /// If true, the select menu will open either before or after the input.
+        /// If true, the select menu will open either before or after the input (left/right).
+        /// </summary>
+        [Parameter] public bool OffsetX { get; set; }
+
+        /// <summary>
+        /// If true, the select menu will open either before or after the input (top/bottom).
         /// </summary>
         [Parameter] public bool OffsetY { get; set; }
 
-        [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
         /// If true, the select's input will not show any values that are not defined in the dropdown.
