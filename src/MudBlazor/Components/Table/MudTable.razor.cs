@@ -402,6 +402,6 @@ namespace MudBlazor
             return InvokeServerLoadFunc();
         }
 
-        internal override bool IsEditable { get => RowEditingTemplate != null; }
+        internal override bool IsEditable { get => (RowEditingTemplate != null) || (Columns != null); }
     }
 }

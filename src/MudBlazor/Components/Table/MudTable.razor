@@ -66,12 +66,12 @@
                         {
                             var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build();
                             var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
-                            <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" 
+                            <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="IsEditable" 
                                    IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
-                                @if ((!ReadOnly) && (RowEditingTemplate != null || Columns != null) && object.Equals(_editingItem, item))
+                                @if ((!ReadOnly) && (IsEditable) && object.Equals(_editingItem, item))
                                 {
                                 <CascadingValue Value="@Validator" IsFixed="true">
-                                    if(RowEditingTemplate != null)
+                                    @if(RowEditingTemplate != null)
                                     {
                                         @RowEditingTemplate(item)
                                     }
@@ -79,7 +79,8 @@
                                     {
                                     <CascadingValue Value="MudBaseColumn.Rendermode.Edit" Name="Mode">
                                         @Columns(item)
-                                    </CascadingValue>}
+                                    </CascadingValue>
+									}
                                 </CascadingValue>
                                 }
                                 else
