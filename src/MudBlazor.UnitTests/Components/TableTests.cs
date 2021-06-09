@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
 
@@ -101,6 +100,33 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("C");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
+        }
+
+        /// <summary>
+        /// Check if the loading parameter is adding a supplementary row.
+        /// </summary>
+        [Test]
+        public void TableLoadingTest()
+        {
+            var comp = ctx.RenderComponent<TableLoadingTest>();
+
+            // Count the number of rows
+            var trs = comp.FindAll("tr");
+
+            // It should be equal to 3 = two rows + header row
+            trs.Count.Should().Be(3);
+
+            // Find the loading switch
+            var switchElement = comp.Find("#switch");
+
+            // Click the loading switch
+            switchElement.Change(true);
+
+            // Count the number of rows
+            trs = comp.FindAll("tr");
+
+            // It should be equal to 4 = two rows + header row + loading row
+            trs.Count.Should().Be(4);
         }
 
         /// <summary>
