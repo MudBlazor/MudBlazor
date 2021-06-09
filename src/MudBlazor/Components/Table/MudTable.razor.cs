@@ -15,6 +15,7 @@ namespace MudBlazor
 
     public partial class MudTable<T> : MudTableBase
     {
+
         /// <summary>
         /// Defines how a table row looks like. Use MudTd to define the table cells and their content.
         /// </summary>
@@ -29,6 +30,21 @@ namespace MudBlazor
         /// Defines how a table row looks like in edit mode (for selected row). Use MudTd to define the table cells and their content.
         /// </summary>
         [Parameter] public RenderFragment<T> RowEditingTemplate { get; set; }
+
+        /// <summary>
+        /// Defines data grouping parameters. It can has N hierarchical levels
+        /// </summary>
+        [Parameter] public TableGroupDefinition<T> GroupBy { get; set; }
+
+        /// <summary>
+        /// Defines how a table grouping row header looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
+        /// </summary>
+        [Parameter] public RenderFragment<IGrouping<object, T>> GroupHeaderTemplate { get; set; }
+
+        /// <summary>
+        /// Defines how a table grouping row footer looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
+        /// </summary>
+        [Parameter] public RenderFragment<IGrouping<object, T>> GroupFooterTemplate { get; set; }
 
         /// <summary>
         /// Defines if the table has a horizontal scrollbar.
@@ -157,7 +173,7 @@ namespace MudBlazor
             get
             {
                 if (ServerData != null)
-                    return _server_data.Items;
+                    return _server_data.Items; ;
 
                 if (Filter == null)
                     return Context.Sort(Items);
@@ -213,6 +229,11 @@ namespace MudBlazor
             if (ServerData != null)
                 return _server_data.TotalItems;
             return FilteredItems.Count();
+        }
+
+        protected IEnumerable<IGrouping<object, T>> GetItemsOfGroup(TableGroupDefinition<T> parent, IEnumerable<T> sourceList)
+        {
+            return sourceList.GroupBy(parent.Selector).ToList();
         }
 
         public override void SetSelectedItem(object item)
