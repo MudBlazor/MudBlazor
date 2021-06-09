@@ -148,14 +148,9 @@ namespace MudBlazor
         [Parameter] public bool Loading { get; set; }
 
         /// <summary>
-        /// Define the loading text.
-        /// </summary>
-        [Parameter] public string LoadingText { get; set; } = "Loading...";
-
-        /// <summary>
         /// The color of the loading progress if used. It supports the theme colors.
         /// </summary>
-        [Parameter] public Color LoadingProgressColor { get; set; } = Color.Default;
+        [Parameter] public Color LoadingProgressColor { get; set; } = Color.Info;
 
         /// <summary>
         /// Add MudTh cells here to define the table header. If <see cref="CustomHeader"/> is set, add one or more MudTHeadRow instead.
