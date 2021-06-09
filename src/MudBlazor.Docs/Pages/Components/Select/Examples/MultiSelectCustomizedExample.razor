@@ -1,11 +1,11 @@
 ﻿@namespace MudBlazor.Docs.Examples
-
+@using System.Linq
 
 <MudGrid>
     <MudItem xs="12" md="12">
         <MudSelect T="string" Label="US States" HelperText="Pick your favorite states" MultiSelection="true" 
-         @bind-Value="value" @bind-SelectedValues="options" ConcatenateMultiSelectionResult="false"
-         DefineMultiSelectionText="@(new Func<int, List<string>, string>(GetMultiSelectionText))">
+         @bind-Value="value" @bind-SelectedValues="options"
+         MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
             @foreach (var state in states)
             {
                 <MudSelectItem T="string" Value="@state">@state</MudSelectItem>
@@ -44,15 +44,15 @@
         "Washington", "West Virginia", "Wisconsin", "Wyoming",
     };
 
-    private string GetMultiSelectionText(int countSelectedItems, List<string> selectedValues)
+    private string GetMultiSelectionText(List<string> selectedValues)
     {
         if (multiselectionTextChoice)
         {
-            return $"Selected state{(countSelectedItems > 1 ? "s" : "")}: {string.Join(", ", selectedValues.Select(x => x))}";
+            return $"Selected state{(selectedValues.Count > 1 ? "s" : "")}: {string.Join(", ", selectedValues.Select(x => x))}";
         }
         else
         {
-            return $"{countSelectedItems} state{(countSelectedItems > 1 ? "s have":" has")} been selected";
+            return $"{selectedValues.Count} state{(selectedValues.Count > 1 ? "s have":" has")} been selected";
         }
     }
 }

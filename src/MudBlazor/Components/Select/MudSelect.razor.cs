@@ -13,6 +13,7 @@ namespace MudBlazor
     {
         private HashSet<T> _selectedValues;
         private bool _dense;
+        private string multiSelectionText;
 
         protected string Classname =>
             new CssBuilder("mud-select")
@@ -60,14 +61,9 @@ namespace MudBlazor
         [Parameter] public EventCallback<HashSet<T>> SelectedValuesChanged { get; set; }
 
         /// <summary>
-        /// Return a concatenate multiselection text of selected options, if set to true.
+        /// Function to define a customized multiselection text.
         /// </summary>
-        [Parameter] public bool ConcatenateMultiSelectionResult { get; set; } = true;
-
-        /// <summary>
-        /// Function to define the multiselection text when ConcatenateMultiSelectionResult="false". If not defined, a default text is returned.
-        /// </summary>
-        [Parameter] public Func<int, List<string>, string> DefineMultiSelectionText { get; set; }
+        [Parameter] public Func<List<string>, string> MultiSelectionTextFunc { get; set; }
 
         /// <summary>
         /// Set of selected values. If MultiSelection is false it will only ever contain a single value. This property is two-way bindable.
@@ -91,12 +87,19 @@ namespace MudBlazor
                 if (!MultiSelection)
                     SetValueAsync(_selectedValues.FirstOrDefault()).AndForget();
                 else
+                {
                     //Warning. Here the Converter was not set yet
-                    SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
-                        concatenateMultiSelectionResult: ConcatenateMultiSelectionResult,
-                        countSelectedItems: SelectedValues.Count,
-                        selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
-                        defineMultiSelectionText: DefineMultiSelectionText).AndForget();
+                    if (MultiSelectionTextFunc != null)
+                    {
+                        SetCustomizedTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
+                            selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                            multiSelectionTextFunc: MultiSelectionTextFunc).AndForget();
+                    }
+                    else
+                    {
+                        SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x)))).AndForget();
+                    }
+                }
                 SelectedValuesChanged.InvokeAsync(new HashSet<T>(SelectedValues));
             }
         }
@@ -187,13 +190,20 @@ namespace MudBlazor
         {
             // when multiselection is true, we return
             // a comma separated list of selected values
-            return MultiSelection
-                ? SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
-                    concatenateMultiSelectionResult: ConcatenateMultiSelectionResult,
-                    countSelectedItems: SelectedValues.Count,
-                    selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
-                    defineMultiSelectionText: DefineMultiSelectionText)
-                : base.UpdateTextPropertyAsync(updateValue);
+            if (MultiSelectionTextFunc != null)
+            {
+                return MultiSelection
+                    ? SetCustomizedTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
+                        selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                        multiSelectionTextFunc: MultiSelectionTextFunc)
+                    : base.UpdateTextPropertyAsync(updateValue);
+            }
+            else
+            {
+                return MultiSelection
+                    ? SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))))
+                    : base.UpdateTextPropertyAsync(updateValue);
+            }
         }
 
         internal event Action<HashSet<T>> SelectionChangedFromOutside;
@@ -257,11 +267,17 @@ namespace MudBlazor
                     SelectedValues.Add(value);
                 else
                     SelectedValues.Remove(value);
-                await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
-                    concatenateMultiSelectionResult: ConcatenateMultiSelectionResult,
-                    countSelectedItems: SelectedValues.Count,
-                    selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
-                    defineMultiSelectionText: DefineMultiSelectionText);
+
+                if (MultiSelectionTextFunc != null)
+                {
+                    await SetCustomizedTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))),
+                        selectedConvertedValues: SelectedValues.Select(x => Converter.Set(x)).ToList(),
+                        multiSelectionTextFunc: MultiSelectionTextFunc);
+                }
+                else
+                {
+                    await SetTextAsync(string.Join(", ", SelectedValues.Select(x => Converter.Set(x))));
+                }
                 BeginValidate();
             }
             else
@@ -370,6 +386,25 @@ namespace MudBlazor
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
             await OnClearButtonClick.InvokeAsync();
+        }
+
+        protected async Task SetCustomizedTextAsync(string text, bool updateValue = true,
+            List<string> selectedConvertedValues = null,
+            Func<List<string>, string> multiSelectionTextFunc = null)
+        {
+            // The Text property of the control is updated
+            Text = multiSelectionTextFunc.Invoke(selectedConvertedValues);
+
+            // The comparison is made on the multiSelectionText variable
+            if (multiSelectionText != text)
+            {
+                multiSelectionText = text;
+                if (!string.IsNullOrWhiteSpace(multiSelectionText))
+                    Touched = true;
+                if (updateValue)
+                    await UpdateValuePropertyAsync(false);
+                await TextChanged.InvokeAsync(multiSelectionText);
+            }
         }
     }
 }
