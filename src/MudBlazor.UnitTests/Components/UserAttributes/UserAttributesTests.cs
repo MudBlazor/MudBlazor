@@ -24,7 +24,7 @@ namespace MudBlazor.UnitTests.UserAttributes
         static UserAttributesTests()
         {
             // Add a custom create function for components that cannot be created automatically.
-            // These include generic components or components that require certain attributes to be set before rendering anything.
+            // These include components that require certain attributes/preriquisites to be set before rendering anything.
             componentFactories.TryAdd(typeof(MudBreadcrumbs), Create_MudBreadcrumbs);
             componentFactories.TryAdd(typeof(MudCarouselItem), Create_MudCarouselItem);
             //componentFactories.TryAdd(typeof(MudDialog), Create_MudDialog);
