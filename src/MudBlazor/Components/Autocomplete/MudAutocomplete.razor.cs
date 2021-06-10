@@ -159,6 +159,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
 
+        [Parameter] public bool IsPortalEnabled { get; set; } = true;
+
+        [Parameter] public bool LockScroll { get; set; }
+
         public string CurrentIcon { get; set; }
 
         private MudInput<string> _elementReference;

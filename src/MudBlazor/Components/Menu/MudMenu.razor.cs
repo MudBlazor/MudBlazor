@@ -113,7 +113,9 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        [Parameter] public bool IsPortalEnabled { get; set; } = false;
+        [Parameter] public bool IsPortalEnabled { get; set; } = true;
+
+        [Parameter] public bool LockScroll { get; set; }
 
         public string PopoverStyle { get; set; }
 

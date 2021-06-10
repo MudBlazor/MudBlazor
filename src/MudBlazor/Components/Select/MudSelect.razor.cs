@@ -111,6 +111,10 @@ namespace MudBlazor
             }
         }
 
+        [Parameter] public bool IsPortalEnabled { get; set; } = true;
+
+        [Parameter] public bool LockScroll { get; set; } 
+
         public MudSelect()
         {
             IconSize = Size.Medium;

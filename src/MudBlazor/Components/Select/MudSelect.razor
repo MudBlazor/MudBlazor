@@ -19,7 +19,7 @@
                 </MudInput>
             </InputContent>
         </MudInputControl>
-        <MudPortal IsVisible="@_isOpen" >
+        <MudPortal IsVisible="@_isOpen" IsEnabled="IsPortalEnabled" LockScroll="LockScroll">
             <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                 <MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
                     <MudList Clickable="true" Dense="@Dense">
