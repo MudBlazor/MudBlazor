@@ -29,7 +29,6 @@ namespace MudBlazor.UnitTests.UserAttributes
             componentFactories.TryAdd(typeof(MudCarouselItem), Create_MudCarouselItem);
             //componentFactories.TryAdd(typeof(MudDialog), Create_MudDialog);
             componentFactories.TryAdd(typeof(MudOverlay), Create_MudOverlay);
-            // componentFactories.TryAdd(typeof(MudRadio<>), CreateGeneric<MudRadio<string>>);
             componentFactories.TryAdd(typeof(MudHighlighter), Create_MudHighlighter);
 
             excludedComponents.Add(typeof(LegendBase));
