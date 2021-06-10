@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
@@ -20,6 +21,7 @@ namespace MudBlazor
        .Build();
 
         private bool _isOpen;
+        private ElementReference _activatorRef;
 
         [Parameter] public string Label { get; set; }
 
@@ -120,16 +122,34 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void OpenMenu(MouseEventArgs args)
+        public async Task OpenMenu(MouseEventArgs args)
         {
             if (Disabled)
                 return;
-            PopoverStyle = PositionAtCurser ? $"position:fixed; left:{args?.ClientX}px; top:{args?.ClientY}px;" : null;
+            await SetPopoverStyle(args);
             _isOpen = true;
             StateHasChanged();
         }
+        /// <summary>
+        /// Sets the popover style when there is an activator
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        private async Task SetPopoverStyle(MouseEventArgs args)
+        {
+            static string ToString(double? measure) =>
+               measure?.ToString(CultureInfo.InvariantCulture) + "px";
 
-        public void ToggleMenu(MouseEventArgs args)
+            var activatorRect = await _activatorRef.MudGetBoundingClientRectAsync();
+
+            PopoverStyle = PositionAtCurser
+                ? @$"position:relative;
+                     left:{ToString(args?.ClientX - activatorRect.Left)}; 
+                     top:{ToString(args?.ClientY - activatorRect.Top)};"
+                : null;
+        }
+
+        public async Task ToggleMenu(MouseEventArgs args)
         {
             if (Disabled)
                 return;
@@ -140,7 +160,7 @@ namespace MudBlazor
             if (_isOpen)
                 CloseMenu();
             else
-                OpenMenu(args);
+                await OpenMenu(args);
         }
 
         /// <summary>
@@ -148,12 +168,12 @@ namespace MudBlazor
         /// </summary>
         /// <param name="activator"></param>
         /// <param name="args"></param>
-        public void Activate(object activator, MouseEventArgs args)
+        public async void Activate(object activator, MouseEventArgs args)
         {
-            ToggleMenu(args);
+            await ToggleMenu(args);
         }
 
-       
- 
+
+
     }
 }

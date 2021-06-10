@@ -31,6 +31,8 @@ namespace MudBlazor
 
         [Parameter] public bool AutoResize { get; set; } = true;
 
+        [Parameter] public bool LockScroll { get; set; }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
 
@@ -40,7 +42,6 @@ namespace MudBlazor
             }
             else
             {
-
                 WindowResizeListener.OnResized -= OnResized;
             }
 
@@ -73,8 +74,6 @@ namespace MudBlazor
            }).AndForget();
         }
 
-
-
         protected virtual void Dispose(bool disposing)
         {
             Portal.Remove(_portalItem);
@@ -86,9 +85,5 @@ namespace MudBlazor
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-
-
-
     }
 }

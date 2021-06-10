@@ -8,7 +8,7 @@
     @if (ActivatorContent != null)
     {
         <CascadingValue Value="@((IActivatable) this)" IsFixed="true">
-            <div @onmouseup="ToggleMenu">
+            <div @onmouseup="ToggleMenu" @ref="_activatorRef">
                 @ActivatorContent
             </div>
         </CascadingValue>
