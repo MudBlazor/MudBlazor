@@ -113,6 +113,8 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
+        [Parameter] public bool IsPortalEnabled { get; set; } = false;
+
         public string PopoverStyle { get; set; }
 
         public void CloseMenu()
@@ -135,9 +137,13 @@ namespace MudBlazor
         private async Task SetPopoverStyle(MouseEventArgs args)
         {
             var activatorRect = await _activatorRef.MudGetBoundingClientRectAsync();
-            PopoverStyle = @$"position:relative;
-                              left:{(args?.ClientX - activatorRect.Left).ToPixels()};
-                              top:{(args?.ClientY - activatorRect.Top).ToPixels()};";
+            PopoverStyle = IsPortalEnabled
+                ? @$"position:relative;
+                     left:{(args?.ClientX - activatorRect.Left).ToPixels()};
+                     top:{(args?.ClientY - activatorRect.Top).ToPixels()};"
+                : @$"position:fixed;
+                     left:{(args?.ClientX).ToPixels()};
+                     top:{(args?.ClientY).ToPixels()};";
         }
 
         public async Task ToggleMenu(MouseEventArgs args)

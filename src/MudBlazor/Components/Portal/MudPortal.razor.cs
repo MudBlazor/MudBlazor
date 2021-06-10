@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using MudBlazor.Interop;
 using MudBlazor.Services;
 
 namespace MudBlazor
@@ -25,28 +24,29 @@ namespace MudBlazor
 
         [Parameter] public bool AutoDirection { get; set; } = true;
 
-        [Parameter] public BoundingClientRect ClientRect { get; set; }
-
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         [Parameter] public bool IsVisible { get; set; }
 
-        [Parameter] public bool IsEnabled { get; set; } = true;
+        [Parameter] public bool IsEnabled { get; set; } = false;
 
-        [Parameter] public bool LockScroll { get; set; } = false;
+        [Parameter] public bool LockScroll { get; set; }
 
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if (!IsEnabled) return;
 
             if (IsVisible && Autopositioned)
             {
                 WindowResizeListener.OnResized += OnWindowResize;
             }
-            else
+
+            if (!IsVisible && Autopositioned)
             {
                 WindowResizeListener.OnResized -= OnWindowResize;
             }
+
 
             if (IsVisible)
             {
@@ -59,6 +59,7 @@ namespace MudBlazor
                 if (LockScroll) await ScrollManager.UnlockScrollAsync();
                 Portal.Remove(_portalItem);
             }
+
         }
 
 
