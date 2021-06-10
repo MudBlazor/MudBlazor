@@ -29,6 +29,8 @@ namespace MudBlazor
 
         [Parameter] public bool IsFooter { get; set; }
 
+        [Parameter] public bool IsGroup { get; set; }
+
         [Parameter]
         public EventCallback<bool> IsCheckedChanged { get; set; }
 

@@ -139,7 +139,8 @@
                 var items = group.ToList();
 
                 // Group Header
-                <MudTr IsHeader Item="group" @key="@($"header_{(group.Key ?? "").ToString()}")" IsCheckable="MultiSelection" IsEditable="false">
+                <MudTr IsGroup IsHeader Item="group" @key="@(new object[] { "header", group })" IsCheckable="MultiSelection" IsEditable="false" Class="@GroupHeaderClass" Style="@GroupHeaderStyle"
+                       IsCheckedChanged="((value) => { var x = items; OnGroupHeaderCheckboxClicked(value, x); })">
                     @GroupHeaderTemplate(group)
                 </MudTr>
 
@@ -154,7 +155,11 @@
                 }
 
                 // Group Footer
-                <MudTr IsHeader Item="group" @key="@($"footer_{(group.Key ?? "").ToString()}")" IsCheckable="MultiSelection" IsEditable="false">
+                <MudTr IsGroup IsHeader Item="group" @key="@(new object[] { "footer", group })" IsCheckable="false" IsEditable="false" Class="@GroupFooterClass" Style="@GroupFooterStyle">
+                    @if (MultiSelection)
+                    {
+                        <MudTd/>
+                    }
                     @GroupFooterTemplate(group)
                 </MudTr>
             }

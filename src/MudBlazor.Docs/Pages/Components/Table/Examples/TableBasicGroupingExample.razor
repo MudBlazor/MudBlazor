@@ -4,7 +4,8 @@
 @inject HttpClient httpClient
 
 
-<MudTable Items="@Elements.Take(15)" GroupBy="@(new((e) => e.Position))" Hover="true" Breakpoint="Breakpoint.Sm">
+<MudTable Items="@Elements.Take(15)" GroupBy="@(new((e) => e.Position))" Hover="true" Breakpoint="Breakpoint.Sm"
+          GroupHeaderStyle="background-color:var(--mud-palette-background-grey)" MultiSelection="true">
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -13,17 +14,17 @@
         <MudTh>Molar mass</MudTh>
     </HeaderContent>
     <GroupHeaderTemplate>
-        <MudTh colspan="5">Position: @context.Key</MudTh>
+        <MudTh Style="font-weight: 500;" colspan="5">Position: @context.Key</MudTh>
     </GroupHeaderTemplate>
     <RowTemplate>
         <MudTd DataLabel="Nr">@context.Number</MudTd>
         <MudTd DataLabel="Sign">@context.Sign</MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Position">@context.Position</MudTd>
-        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+        <MudTd Style="text-align:right" DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <GroupFooterTemplate>
-        <MudTh colspan="5" Style="text-align: right">Total Mass: @context.Sum((e) => e.Molar)</MudTh>
+        <MudTh Style="font-weight: 500;text-align: right;" colspan="5" >Total Mass: @context.Sum((e) => e.Molar)</MudTh>
     </GroupFooterTemplate>
 </MudTable>
 
