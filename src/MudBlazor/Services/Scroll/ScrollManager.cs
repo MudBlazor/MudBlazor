@@ -24,8 +24,8 @@ namespace MudBlazor
         ValueTask ScrollToTopAsync(string id, ScrollBehavior scrollBehavior = ScrollBehavior.Auto);
         ValueTask ScrollToYearAsync(string elementId);
         ValueTask ScrollToListItemAsync(string elementId, int increment, bool onEdges);
-        ValueTask LockScrollAsync(string elementId, string cssClass);
-        ValueTask UnlockScrollAsync(string elementId, string cssClass);
+        ValueTask LockScrollAsync(string selector = "body", string cssClass = "scroll-locked");
+        ValueTask UnlockScrollAsync(string selector = "body", string cssClass = "scroll-locked");
     }
 
     public class ScrollManager : IScrollManager
@@ -56,13 +56,13 @@ namespace MudBlazor
         /// <summary>
         /// Scrolls to the coordinates of the element
         /// </summary>
-        /// <param name="id">id of element</param>
+        /// <param name="selector">element selector</param>
         /// <param name="left">x coordinate</param>
         /// <param name="top">y coordinate</param>
         /// <param name="behavior">smooth or auto</param>
         /// <returns></returns>
-        public ValueTask ScrollToAsync(string id, int left, int top, ScrollBehavior behavior) =>
-            _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollTo", id, left, top, behavior.ToDescriptionString());
+        public ValueTask ScrollToAsync(string selector, int left, int top, ScrollBehavior behavior) =>
+            _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollTo", selector, left, top, behavior.ToDescriptionString());
 
         [Obsolete]
         public async Task ScrollTo(int left, int top, ScrollBehavior behavior) =>
@@ -90,11 +90,11 @@ namespace MudBlazor
         public ValueTask ScrollToListItemAsync(string elementId, int increment, bool onEdges) =>
             _jSRuntime.InvokeVoidAsync("mudScrollManager.scrollToListItem", elementId, increment, onEdges);
 
-        public ValueTask LockScrollAsync(string elementId, string cssClass) =>
-            _jSRuntime.InvokeVoidAsync("mudScrollManager.lockScroll", elementId, cssClass);
+        public ValueTask LockScrollAsync(string selector = "body", string cssClass = "scroll-locked") =>
+            _jSRuntime.InvokeVoidAsync("mudScrollManager.lockScroll", selector, cssClass);
 
-        public ValueTask UnlockScrollAsync(string elementId, string cssClass) =>
-            _jSRuntime.InvokeVoidAsync("mudScrollManager.unlockScroll", elementId, cssClass);
+        public ValueTask UnlockScrollAsync(string selector = "body", string cssClass = "scroll-locked") =>
+            _jSRuntime.InvokeVoidAsync("mudScrollManager.unlockScroll", selector, cssClass);
     }
 
     /// <summary>

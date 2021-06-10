@@ -1,7 +1,7 @@
-﻿using System.Globalization;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -126,27 +126,18 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            await SetPopoverStyle(args);
+            if (PositionAtCurser) await SetPopoverStyle(args);
             _isOpen = true;
             StateHasChanged();
         }
-        /// <summary>
-        /// Sets the popover style when there is an activator
-        /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
+
+        // Sets the popover style ONLY when there is an activator
         private async Task SetPopoverStyle(MouseEventArgs args)
         {
-            static string ToString(double? measure) =>
-               measure?.ToString(CultureInfo.InvariantCulture) + "px";
-
             var activatorRect = await _activatorRef.MudGetBoundingClientRectAsync();
-
-            PopoverStyle = PositionAtCurser
-                ? @$"position:relative;
-                     left:{ToString(args?.ClientX - activatorRect.Left)}; 
-                     top:{ToString(args?.ClientY - activatorRect.Top)};"
-                : null;
+            PopoverStyle = @$"position:relative;
+                              left:{(args?.ClientX - activatorRect.Left).ToPixels()};
+                              top:{(args?.ClientY - activatorRect.Top).ToPixels()};";
         }
 
         public async Task ToggleMenu(MouseEventArgs args)
@@ -172,8 +163,5 @@ namespace MudBlazor
         {
             await ToggleMenu(args);
         }
-
-
-
     }
 }

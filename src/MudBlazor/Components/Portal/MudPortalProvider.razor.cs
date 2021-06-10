@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Globalization;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
@@ -8,37 +8,20 @@ namespace MudBlazor
 {
     public partial class MudPortalProvider : IDisposable
     {
-
-
-
         [Inject] public IPortal Portal { get; set; }
 
+        private string GetAnchorStyle(PortalItem item) =>
+            new StyleBuilder()
+                   .AddStyle("position", "absolute")
+                   .AddStyle("top", item.ClientRect?.Top.ToPixels())
+                   .AddStyle("left", item.ClientRect?.Left.ToPixels())
+                   .AddStyle("height", item.ClientRect?.Height.ToPixels())
+                   .AddStyle("width", item.ClientRect?.Width.ToPixels())
+                   .Build();
 
-        private string GetAnchorStyle(PortalItem item)
-        {
-            static string ToString(double? measure) =>
-                measure?.ToString(CultureInfo.InvariantCulture) + "px";
+        protected override void OnInitialized() => Portal.OnChange += Refresh;
 
-            var result = new StyleBuilder()
-                .AddStyle("position", "absolute")
-                //  .AddStyle("z-index", new ZIndex().Popover.ToString())
-                .AddStyle("width", ToString(item.ClientRect?.Width))
-                .AddStyle("top", ToString(item.ClientRect?.Top))
-                .AddStyle("height", ToString(item.ClientRect?.Height))
-                .AddStyle("left", ToString(item.ClientRect?.Left))
-                .Build();
-            return result;
-        }
-
-        protected override void OnInitialized()
-        {
-            Portal.OnChange += Refresh;
-        }
-
-        void Refresh(object e, EventArgs c)
-        {
-            InvokeAsync(StateHasChanged);
-        }
+        void Refresh(object e, EventArgs c) => InvokeAsync(StateHasChanged);
 
         public void Dispose()
         {

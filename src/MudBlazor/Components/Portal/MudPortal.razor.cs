@@ -19,7 +19,11 @@ namespace MudBlazor
 
         [Inject] public IResizeListenerService WindowResizeListener { get; set; }
 
+        [Inject] public IScrollManager ScrollManager { get; set; }
+
         [Parameter] public bool Autopositioned { get; set; } = true;
+
+        [Parameter] public bool AutoDirection { get; set; } = true;
 
         [Parameter] public BoundingClientRect ClientRect { get; set; }
 
@@ -29,29 +33,30 @@ namespace MudBlazor
 
         [Parameter] public bool IsEnabled { get; set; } = true;
 
-        [Parameter] public bool AutoResize { get; set; } = true;
+        [Parameter] public bool LockScroll { get; set; } = false;
 
-        [Parameter] public bool LockScroll { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
 
-            if (IsVisible && AutoResize)
+            if (IsVisible && Autopositioned)
             {
-                WindowResizeListener.OnResized += OnResized;
+                WindowResizeListener.OnResized += OnWindowResize;
             }
             else
             {
-                WindowResizeListener.OnResized -= OnResized;
+                WindowResizeListener.OnResized -= OnWindowResize;
             }
 
             if (IsVisible)
             {
                 await ConfigurePortalItem();
                 Portal.AddOrUpdate(_portalItem);
+                if (LockScroll) await ScrollManager.LockScrollAsync();
             }
             else
             {
+                if (LockScroll) await ScrollManager.UnlockScrollAsync();
                 Portal.Remove(_portalItem);
             }
         }
@@ -62,10 +67,10 @@ namespace MudBlazor
             _portalItem.Id = _id;
             _portalItem.Fragment = ChildContent;
             _portalItem.ClientRect = await _portalRef.MudGetRelativeClientRectAsync();
-            _portalItem.Autopositioned = Autopositioned;
+            _portalItem.AutoDirection = AutoDirection;
         }
 
-        private void OnResized(object sender, BrowserWindowSize e)
+        private void OnWindowResize(object sender, BrowserWindowSize e)
         {
             Task.Run(async () =>
            {

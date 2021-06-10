@@ -16,11 +16,8 @@ namespace MudBlazor.Services
     }
     public class Portal : IPortal
     {
-        private Dictionary<Guid, PortalItem> _items = new();
-
-
+        private readonly Dictionary<Guid, PortalItem> _items = new();
         private readonly object _lockObj = new();
-
         public event EventHandler OnChange;
 
         public void AddOrUpdate(PortalItem newItem)
@@ -66,18 +63,15 @@ namespace MudBlazor.Services
         }
     }
 
-
-
     public class PortalItem
     {
-
         public Guid Id { get; set; }
 
         public RenderFragment Fragment { get; set; }
 
         public BoundingClientRect ClientRect { get; set; }
 
-        public bool Autopositioned { get; set; }
+        public bool AutoDirection { get; set; }
 
     }
 }
