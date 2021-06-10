@@ -25,25 +25,11 @@ namespace MudBlazor.UnitTests.UserAttributes
         {
             // Add a custom create function for components that cannot be created automatically.
             // These include generic components or components that require certain attributes to be set before rendering anything.
-            componentFactories.TryAdd(typeof(MudAutocomplete<>), CreateGeneric<MudAutocomplete<string>>);
             componentFactories.TryAdd(typeof(MudBreadcrumbs), Create_MudBreadcrumbs);
-            componentFactories.TryAdd(typeof(MudCarousel<>), CreateGeneric<MudCarousel<string>>);
             componentFactories.TryAdd(typeof(MudCarouselItem), Create_MudCarouselItem);
-            componentFactories.TryAdd(typeof(MudCheckBox<>), CreateGeneric<MudCheckBox<bool>>);
             //componentFactories.TryAdd(typeof(MudDialog), Create_MudDialog);
-            componentFactories.TryAdd(typeof(MudInput<>), CreateGeneric<MudInput<string>>);
-            componentFactories.TryAdd(typeof(MudNumericField<>), CreateGeneric<MudNumericField<int>>);
-            componentFactories.TryAdd(typeof(MudRangeInput<>), CreateGeneric<MudRangeInput<string>>);
             componentFactories.TryAdd(typeof(MudOverlay), Create_MudOverlay);
-            componentFactories.TryAdd(typeof(MudRadio<>), CreateGeneric<MudRadio<string>>);
-            componentFactories.TryAdd(typeof(MudSelect<>), CreateGeneric<MudSelect<string>>);
-            componentFactories.TryAdd(typeof(MudSlider<>), CreateGeneric<MudSlider<int>>);
-            componentFactories.TryAdd(typeof(MudSwitch<>), CreateGeneric<MudSwitch<bool>>);
-            componentFactories.TryAdd(typeof(MudTable<>), CreateGeneric<MudTable<string>>);
-            componentFactories.TryAdd(typeof(MudTableSortLabel<>), CreateGeneric<MudTableSortLabel<string>>);
-            componentFactories.TryAdd(typeof(MudTextField<>), CreateGeneric<MudTextField<string>>);
-            componentFactories.TryAdd(typeof(MudTreeView<>), CreateGeneric<MudTreeView<string>>);
-            componentFactories.TryAdd(typeof(MudTreeViewItem<>), CreateGeneric<MudTreeViewItem<string>>);
+            // componentFactories.TryAdd(typeof(MudRadio<>), CreateGeneric<MudRadio<string>>);
             componentFactories.TryAdd(typeof(MudHighlighter), Create_MudHighlighter);
 
             excludedComponents.Add(typeof(LegendBase));
@@ -75,6 +61,11 @@ namespace MudBlazor.UnitTests.UserAttributes
 
                 if (excludedComponents.Contains(type))
                     continue;
+
+                if (componentType.IsGenericType && componentType.GetGenericArguments().Length == 1)
+                {
+                    type = componentType.MakeGenericType(typeof(string));
+                }
 
                 var componentName = componentType.Name;
                 var componentFactory = componentFactories.GetOrAdd(type, BuildComponentFactory)
@@ -120,14 +111,6 @@ namespace MudBlazor.UnitTests.UserAttributes
         private static IRenderedFragment Create<TComponent>(TestContext testContext)
             where TComponent : MudComponentBase
             => testContext.RenderComponent<TComponent>(attributes => attributes.AddTestUserAttributes());
-
-        private static IRenderedFragment CreateGeneric<TComponent>(TestContext testContext)
-            where TComponent : MudComponentBase
-        {
-            return testContext
-                .RenderComponent<TComponent>(attributes => attributes
-                    .AddTestUserAttributes());
-        }
 
         private static IRenderedFragment Create_MudBreadcrumbs(TestContext testContext)
         {
