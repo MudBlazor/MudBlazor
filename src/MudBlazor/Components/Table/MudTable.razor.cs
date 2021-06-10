@@ -42,6 +42,26 @@ namespace MudBlazor
         [Parameter] public RenderFragment<IGrouping<object, T>> GroupHeaderTemplate { get; set; }
 
         /// <summary>
+        /// Defines custom CSS classes for using on Group Header's MudTr.
+        /// </summary>
+        [Parameter] public string GroupHeaderClass { get; set; }
+
+        /// <summary>
+        /// Defines custom styles for using on Group Header's MudTr.
+        /// </summary>
+        [Parameter] public string GroupHeaderStyle { get; set; }
+
+        /// <summary>
+        /// Defines custom CSS classes for using on Group Footer's MudTr.
+        /// </summary>
+        [Parameter] public string GroupFooterClass { get; set; }
+
+        /// <summary>
+        /// Defines custom styles for using on Group Footer's MudTr.
+        /// </summary>
+        [Parameter] public string GroupFooterStyle { get; set; }
+
+        /// <summary>
         /// Defines how a table grouping row footer looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
         /// </summary>
         [Parameter] public RenderFragment<IGrouping<object, T>> GroupFooterTemplate { get; set; }
@@ -281,6 +301,24 @@ namespace MudBlazor
             Context.UpdateRowCheckBoxes(false);
             SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
+
+        internal void OnGroupHeaderCheckboxClicked(bool value, IEnumerable<T> items)
+        {
+            if (value)
+            {
+                foreach (var item in items)
+                    Context.Selection.Add(item);
+            }
+            else
+            {
+                foreach (var item in items)
+                    Context.Selection.Remove(item);
+            }
+
+            Context.UpdateRowCheckBoxes(false);
+            SelectedItemsChanged.InvokeAsync(SelectedItems);
+        }
+
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
