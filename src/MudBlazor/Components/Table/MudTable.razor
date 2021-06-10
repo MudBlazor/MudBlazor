@@ -2,6 +2,7 @@
 @inherits MudTableBase
 @using MudBlazor.Extensions
 @using MudBlazor.Utilities
+@using Microsoft.AspNetCore.Components.Web.Virtualization
 @typeparam T
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
@@ -59,28 +60,57 @@
                     @if (CurrentPageItems != null)
                     {
                         var rowIndex = 0;
-                        @foreach (var item in CurrentPageItems)
+
+                        if (Virtualize)
                         {
-                            var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build();
-                            var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
-                            <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" 
-                                    IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
-                                @if ((!ReadOnly) && RowEditingTemplate != null && object.Equals(_editingItem, item))
-                                { 
-                                    <CascadingValue Value="@Validator" IsFixed="true">
-                                        @RowEditingTemplate(item)
-                                    </CascadingValue>
-                                }
-                                else
+                            <Virtualize Items="@CurrentPageItems?.ToList()" Context="item">
+                                @{ var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build(); }
+                                @{ var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build(); }
+                                <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null"
+                                       IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
+                                    @if ((!ReadOnly) && RowEditingTemplate != null && object.Equals(_editingItem, item))
+                                    {
+                                        <CascadingValue Value="@Validator" IsFixed="true">
+                                            @RowEditingTemplate(item)
+                                        </CascadingValue>
+                                    }
+                                    else
+                                    {
+                                        @RowTemplate(item)
+                                    }
+                                </MudTr>
+                                @if (ChildRowContent != null)
                                 {
-                                    @RowTemplate(item)
+                                    @ChildRowContent(item)
                                 }
-                            </MudTr>
-                            @if (ChildRowContent != null)
+                                @{ rowIndex++; }
+                            </Virtualize>
+                        }
+                        else
+                        {
+                            @foreach (var item in CurrentPageItems)
                             {
-                                @ChildRowContent(item)
+                                var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build();
+                                var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
+                                <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null"
+                                       IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
+                                    @if ((!ReadOnly) && RowEditingTemplate != null && object.Equals(_editingItem, item))
+                                    {
+                                        <CascadingValue Value="@Validator" IsFixed="true">
+                                            @RowEditingTemplate(item)
+                                        </CascadingValue>
+                                    }
+                                    else
+                                    {
+                                        @RowTemplate(item)
+                                    }
+                                </MudTr>
+                                @if (ChildRowContent != null)
+                                {
+                                    @ChildRowContent(item)
+                                }
+                                rowIndex++;
                             }
-                            rowIndex++;
                         }
                     }
                 </tbody>

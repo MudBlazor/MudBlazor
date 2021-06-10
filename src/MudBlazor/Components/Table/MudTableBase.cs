@@ -296,6 +296,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string RowStyle { get; set; }
 
+        /// <summary>
+        /// If true, the results are displayed in a Virtualize component, allowing a boost in rendering speed.
+        /// </summary>
+        [Parameter] public bool Virtualize { get; set; }
 
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
         /// <summary>
