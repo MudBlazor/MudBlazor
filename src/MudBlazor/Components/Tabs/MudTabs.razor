@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div class="@TabsClassnames" style="@Style">
+<div @attributes="UserAttributes" class="@TabsClassnames" style="@Style">
     <CascadingValue Value="this" IsFixed="true">
         <div class="@ToolbarClassnames">
             <div class="mud-tabs-toolbar-inner" style="@MaxHeightStyles">

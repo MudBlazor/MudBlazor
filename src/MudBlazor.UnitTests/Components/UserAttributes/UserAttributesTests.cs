@@ -9,6 +9,9 @@ using System.Linq;
 using System.Reflection;
 using Bunit;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Services;
+using MudBlazor.UnitTests.Mocks;
 using NUnit.Framework;
 using TestContext = Bunit.TestContext;
 
@@ -36,7 +39,6 @@ namespace MudBlazor.UnitTests.UserAttributes
             excludedComponents.Add(typeof(MudMessageBox)); // TODO Can we make this work?
             excludedComponents.Add(typeof(MudPicker<>)); // TODO Can we make this work?
             excludedComponents.Add(typeof(MudRadioGroup<>)); // TODO Can we make this work?
-            excludedComponents.Add(typeof(MudTabs)); // TODO Can we make this work?
             excludedComponents.Add(typeof(MudTabPanel)); // TODO Can we make this work?
         }
 
@@ -45,6 +47,7 @@ namespace MudBlazor.UnitTests.UserAttributes
         {
             using var testContext = new TestContext();
             testContext.AddTestServices();
+            testContext.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
 
             var componentTypes = typeof(MudElement).Assembly
                 .GetTypes()
