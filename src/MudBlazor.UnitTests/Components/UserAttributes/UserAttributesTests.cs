@@ -31,13 +31,13 @@ namespace MudBlazor.UnitTests.UserAttributes
             componentFactories.TryAdd(typeof(MudCarouselItem), Create_MudCarouselItem);
             componentFactories.TryAdd(typeof(MudDialog), Create_MudDialog);
             componentFactories.TryAdd(typeof(MudElement), Create_MudElement);
+            componentFactories.TryAdd(typeof(MudMessageBox), Create_MudMessageBox);
             componentFactories.TryAdd(typeof(MudOverlay), Create_MudOverlay);
             componentFactories.TryAdd(typeof(MudHighlighter), Create_MudHighlighter);
             componentFactories.TryAdd(typeof(MudTabPanel), Create_MudTabPanel);
 
             excludedComponents.Add(typeof(MudBooleanInput<>)); // This is the base class of Switch and CheckBox and should be skipped
             excludedComponents.Add(typeof(MudHidden)); // No need to test
-            excludedComponents.Add(typeof(MudMessageBox)); // Skip for now
             excludedComponents.Add(typeof(MudPicker<>)); // Internal component, skip
             excludedComponents.Add(typeof(MudRadioGroup<>)); // Wrapping component, skip
         }
@@ -146,6 +146,16 @@ namespace MudBlazor.UnitTests.UserAttributes
                 .RenderComponent<MudElement>(attributes => attributes
                     .AddTestUserAttributes()
                     .Add(x => x.HtmlTag, "div"));
+        }
+
+        private static IRenderedFragment Create_MudMessageBox(TestContext testContext)
+        {
+            var dialogInstance = testContext.RenderComponent<MudDialogInstance>();
+
+            return testContext
+                .RenderComponent<MudMessageBox>(attributes => attributes
+                    .AddTestUserAttributes()
+                    .AddCascadingValue(dialogInstance.Instance));
         }
 
         private static IRenderedFragment Create_MudOverlay(TestContext testContext)
