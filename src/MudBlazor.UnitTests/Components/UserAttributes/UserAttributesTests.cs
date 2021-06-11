@@ -36,7 +36,6 @@ namespace MudBlazor.UnitTests.UserAttributes
             excludedComponents.Add(typeof(MudMessageBox)); // TODO Can we make this work?
             excludedComponents.Add(typeof(MudPicker<>)); // TODO Can we make this work?
             excludedComponents.Add(typeof(MudRadioGroup<>)); // TODO Can we make this work?
-            excludedComponents.Add(typeof(MudSelectItem<>));
             excludedComponents.Add(typeof(MudTabs)); // TODO Can we make this work?
             excludedComponents.Add(typeof(MudTabPanel)); // TODO Can we make this work?
         }
