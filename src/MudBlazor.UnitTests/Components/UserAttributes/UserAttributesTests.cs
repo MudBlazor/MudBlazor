@@ -9,7 +9,6 @@ using System.Linq;
 using System.Reflection;
 using Bunit;
 using FluentAssertions;
-using MudBlazor.Charts;
 using NUnit.Framework;
 using TestContext = Bunit.TestContext;
 
@@ -31,7 +30,6 @@ namespace MudBlazor.UnitTests.UserAttributes
             componentFactories.TryAdd(typeof(MudOverlay), Create_MudOverlay);
             componentFactories.TryAdd(typeof(MudHighlighter), Create_MudHighlighter);
 
-            excludedComponents.Add(typeof(LegendBase));
             excludedComponents.Add(typeof(MudBooleanInput<>)); // This is an API only base class that is safe to skip
             excludedComponents.Add(typeof(MudDialog)); // TODO Can we make this work?
             excludedComponents.Add(typeof(MudElement)); // TODO Can we make this work?
