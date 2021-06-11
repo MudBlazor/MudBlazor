@@ -29,13 +29,13 @@ namespace MudBlazor.UnitTests.UserAttributes
             // These include components that require certain attributes/preriquisites to be set before rendering anything.
             componentFactories.TryAdd(typeof(MudBreadcrumbs), Create_MudBreadcrumbs);
             componentFactories.TryAdd(typeof(MudCarouselItem), Create_MudCarouselItem);
+            componentFactories.TryAdd(typeof(MudDialog), Create_MudDialog);
             componentFactories.TryAdd(typeof(MudElement), Create_MudElement);
             componentFactories.TryAdd(typeof(MudOverlay), Create_MudOverlay);
             componentFactories.TryAdd(typeof(MudHighlighter), Create_MudHighlighter);
             componentFactories.TryAdd(typeof(MudTabPanel), Create_MudTabPanel);
 
             excludedComponents.Add(typeof(MudBooleanInput<>)); // This is the base class of Switch and CheckBox and should be skipped
-            excludedComponents.Add(typeof(MudDialog)); // Skip for now
             excludedComponents.Add(typeof(MudHidden)); // No need to test
             excludedComponents.Add(typeof(MudMessageBox)); // Skip for now
             excludedComponents.Add(typeof(MudPicker<>)); // Internal component, skip
@@ -128,6 +128,16 @@ namespace MudBlazor.UnitTests.UserAttributes
                 .RenderComponent<MudCarouselItem>(attributes => attributes
                     .AddTestUserAttributes()
                     .Add(x => x.Parent, parent));
+        }
+
+        private static IRenderedFragment Create_MudDialog(TestContext testContext)
+        {
+            var dialogInstance = testContext.RenderComponent<MudDialogInstance>();
+
+            return testContext
+                .RenderComponent<MudDialog>(attributes => attributes
+                    .AddTestUserAttributes()
+                    .AddCascadingValue(dialogInstance.Instance));
         }
 
         private static IRenderedFragment Create_MudElement(TestContext testContext)
