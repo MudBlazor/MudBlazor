@@ -39,7 +39,7 @@ namespace MudBlazor.UnitTests.UserAttributes
             excludedComponents.Add(typeof(MudMessageBox)); // TODO Can we make this work?
             excludedComponents.Add(typeof(MudPicker<>)); // TODO Can we make this work?
             excludedComponents.Add(typeof(MudRadioGroup<>)); // TODO Can we make this work?
-            excludedComponents.Add(typeof(MudTabPanel)); // TODO Can we make this work?
+            componentFactories.TryAdd(typeof(MudTabPanel), Create_MudTabPanel);
         }
 
         [Test]
@@ -153,6 +153,17 @@ namespace MudBlazor.UnitTests.UserAttributes
                     .AddTestUserAttributes()
                     .Add(x => x.Text, "Hello world")
                     .Add(x => x.HighlightedText, "Hello"));
+        }
+
+        private static IRenderedFragment Create_MudTabPanel(TestContext testContext)
+        {
+            var parent = testContext.RenderComponent<MudTabs>(attributes => attributes
+                .Add(x => x.KeepPanelsAlive, true));
+
+            return testContext
+                .RenderComponent<MudTabPanel>(attributes => attributes
+                    .AddTestUserAttributes()
+                    .AddCascadingValue(parent.Instance));
         }
     }
 }
