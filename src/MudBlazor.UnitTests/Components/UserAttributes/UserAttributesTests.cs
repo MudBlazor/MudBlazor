@@ -32,14 +32,14 @@ namespace MudBlazor.UnitTests.UserAttributes
             componentFactories.TryAdd(typeof(MudElement), Create_MudElement);
             componentFactories.TryAdd(typeof(MudOverlay), Create_MudOverlay);
             componentFactories.TryAdd(typeof(MudHighlighter), Create_MudHighlighter);
-
-            excludedComponents.Add(typeof(MudBooleanInput<>)); // This is an API only base class that is safe to skip
-            excludedComponents.Add(typeof(MudDialog)); // TODO Can we make this work?
-            excludedComponents.Add(typeof(MudHidden)); // TODO Can we make this work?
-            excludedComponents.Add(typeof(MudMessageBox)); // TODO Can we make this work?
-            excludedComponents.Add(typeof(MudPicker<>)); // TODO Can we make this work?
-            excludedComponents.Add(typeof(MudRadioGroup<>)); // TODO Can we make this work?
             componentFactories.TryAdd(typeof(MudTabPanel), Create_MudTabPanel);
+
+            excludedComponents.Add(typeof(MudBooleanInput<>)); // This is the base class of Switch and CheckBox and should be skipped
+            excludedComponents.Add(typeof(MudDialog)); // Skip for now
+            excludedComponents.Add(typeof(MudHidden)); // No need to test
+            excludedComponents.Add(typeof(MudMessageBox)); // Skip for now
+            excludedComponents.Add(typeof(MudPicker<>)); // Internal component, skip
+            excludedComponents.Add(typeof(MudRadioGroup<>)); // Wrapping component, skip
         }
 
         [Test]
