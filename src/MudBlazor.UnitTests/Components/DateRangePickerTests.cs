@@ -358,5 +358,65 @@ namespace MudBlazor.UnitTests.Components
             var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.DateRange), new DateRange(today, today)));
             comp.FindAll("button.mud-selected").Count.Should().Be(1);
         }
+
+        [Test]
+        public void IsDateDisabled_DisablesCalendarDateButtons()
+        {
+            Func<DateTime, bool> isDisabledFunc = date => true;
+            var comp = OpenPicker(Parameter(nameof(MudDateRangePicker.IsDateDisabled), isDisabledFunc));
+
+            comp.Instance.IsDateDisabled.Should().Be(isDisabledFunc);
+            comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
+                .Should().OnlyContain(disabled => disabled == true);
+        }
+
+        [Test]
+        public void IsDateDisabled_SettingRangeToIncludeADisabledDateYieldsNull()
+        {
+            var today = DateTime.Today;
+            var yesterday = DateTime.Today.Subtract(TimeSpan.FromDays(1));
+            var twoDaysAgo = DateTime.Today.Subtract(TimeSpan.FromDays(2));
+            var wasEventCallbackCalled = false;
+
+            Func<DateTime, bool> isDisabledFunc = date => date == yesterday;
+            var comp = ctx.RenderComponent<MudDateRangePicker>(
+                Parameter(nameof(MudDateRangePicker.IsDateDisabled), isDisabledFunc),
+                EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
+            );
+
+            comp.SetParam(picker => picker.DateRange, new DateRange(twoDaysAgo, today));
+
+            comp.Instance.DateRange.Should().BeNull();
+            wasEventCallbackCalled.Should().BeFalse();
+        }
+
+        [Test]
+        public void IsDateDisabled_SettingRangeToExcludeADisabledDateYieldsTheRange()
+        {
+            var today = DateTime.Today;
+            var yesterday = DateTime.Today.Subtract(TimeSpan.FromDays(1));
+            var twoDaysAgo = DateTime.Today.Subtract(TimeSpan.FromDays(2));
+            var wasEventCallbackCalled = false;
+
+            Func<DateTime, bool> isDisabledFunc = date => date == twoDaysAgo;
+            var range = new DateRange(yesterday, today);
+            var comp = ctx.RenderComponent<MudDateRangePicker>(
+                Parameter(nameof(MudDateRangePicker.IsDateDisabled), isDisabledFunc),
+                EventCallback("DateRangeChanged", (DateRange _) => wasEventCallbackCalled = true)
+            );
+
+            comp.SetParam(picker => picker.DateRange, range);
+
+            comp.Instance.DateRange.Should().Be(range);
+            wasEventCallbackCalled.Should().BeTrue();
+        }
+
+        [Test]
+        public void IsDateDisabled_NoDisabledDatesByDefault()
+        {
+            var comp = OpenPicker();
+            comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
+                .Should().OnlyContain(disabled => disabled == false);
+        }
     }
 }

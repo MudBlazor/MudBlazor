@@ -121,6 +121,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string TitleDateFormat { get; set; } = "ddd, dd MMM";
 
+        /// <summary>
+        /// Function to determine whether a date is disabled
+        /// </summary>
+        [Parameter] public Func<DateTime, bool> IsDateDisabled { get; set; } = _ => false;
+
         protected virtual bool IsRange { get; } = false;
 
         private OpenTo _currentView;

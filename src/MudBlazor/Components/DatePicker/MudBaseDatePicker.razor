@@ -98,7 +98,7 @@
                                                 @onclick="(() => { var d = day; OnDayClicked(d); })" 
                                                 @onclick:stopPropagation="true"
                                                 onmouseover="this.closest('.mud-picker-calendar-content').style.setProperty('--selected-day', @tempId);"
-                                                disabled="@((day < MinDate) || (day > MaxDate))">
+                                                disabled="@((day < MinDate) || (day > MaxDate) || IsDateDisabled(day))">
                                             <p class="mud-typography mud-typography-body2 mud-inherit-text">@GetCalendarDayOfMonth(day)</p>
                                         </button>
                                     }
