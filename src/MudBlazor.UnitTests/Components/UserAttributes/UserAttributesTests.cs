@@ -26,13 +26,12 @@ namespace MudBlazor.UnitTests.UserAttributes
             // These include components that require certain attributes/preriquisites to be set before rendering anything.
             componentFactories.TryAdd(typeof(MudBreadcrumbs), Create_MudBreadcrumbs);
             componentFactories.TryAdd(typeof(MudCarouselItem), Create_MudCarouselItem);
-            //componentFactories.TryAdd(typeof(MudDialog), Create_MudDialog);
+            componentFactories.TryAdd(typeof(MudElement), Create_MudElement);
             componentFactories.TryAdd(typeof(MudOverlay), Create_MudOverlay);
             componentFactories.TryAdd(typeof(MudHighlighter), Create_MudHighlighter);
 
             excludedComponents.Add(typeof(MudBooleanInput<>)); // This is an API only base class that is safe to skip
             excludedComponents.Add(typeof(MudDialog)); // TODO Can we make this work?
-            excludedComponents.Add(typeof(MudElement)); // TODO Can we make this work?
             excludedComponents.Add(typeof(MudHidden)); // TODO Can we make this work?
             excludedComponents.Add(typeof(MudMessageBox)); // TODO Can we make this work?
             excludedComponents.Add(typeof(MudPicker<>)); // TODO Can we make this work?
@@ -129,14 +128,12 @@ namespace MudBlazor.UnitTests.UserAttributes
                     .Add(x => x.Parent, parent));
         }
 
-        private static IRenderedFragment Create_MudDialog(TestContext testContext)
+        private static IRenderedFragment Create_MudElement(TestContext testContext)
         {
-            var dialogInstance = testContext.RenderComponent<MudDialogInstance>();
-
             return testContext
-                .RenderComponent<MudDialog>(attributes => attributes
+                .RenderComponent<MudElement>(attributes => attributes
                     .AddTestUserAttributes()
-                    .AddCascadingValue("DialogInstance", dialogInstance.Instance));
+                    .Add(x => x.HtmlTag, "div"));
         }
 
         private static IRenderedFragment Create_MudOverlay(TestContext testContext)
