@@ -30,6 +30,7 @@ namespace MudBlazor.UnitTests.UserAttributes
         [Test]
         public void AllMudComponents_ShouldForwardUserAttributes()
         {
+            // Arrange
             using var testContext = new TestContext();
             testContext.AddTestServices();
             testContext.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
@@ -39,30 +40,30 @@ namespace MudBlazor.UnitTests.UserAttributes
                 UserAttributes = new Dictionary<string, object> { { "data-testid", "test-123" } },
             };
 
-            var componentTypes = typeof(MudElement).Assembly
-                .GetTypes()
-                .Where(type => type.IsAssignableTo(typeof(MudComponentBase)) && !type.IsAbstract);
-
-            foreach (var componentType in componentTypes)
+            // Act & Assert
+            var mudComponentTypes = GetMudComponentTypes();
+            mudComponentTypes.Should().NotBeEmpty();
+            foreach (var componentType in mudComponentTypes)
             {
-                var type = componentType.IsGenericType ? componentType.GetGenericTypeDefinition() : componentType;
+                var component = componentFactory.Create(componentType, testContext);
 
-                if (_excludedComponents.Contains(type))
-                    continue;
+                component.Markup.Should()
+                    .NotBeEmpty(because: $"the component {componentType.Name} should at least contain one element");
 
-                var component = componentFactory.Create(type, testContext);
-                TestComponent(component, componentType.Name);
+                var elementsWithUserAttributes = component.FindAll("[data-testid='test-123']");
+                elementsWithUserAttributes.Should()
+                    .NotBeEmpty(because: $"UserAttributes should be forwarded by component {componentType.Name}");
             }
         }
 
-        private static void TestComponent(IRenderedFragment component, string componentName)
+        private Type[] GetMudComponentTypes()
         {
-            component.Markup.Should()
-                .NotBeEmpty(because: $"the component {componentName} should at least contain one element");
-
-            var elementsWithUserAttributes = component.FindAll("[data-testid='test-123']");
-            elementsWithUserAttributes.Should()
-                .NotBeEmpty(because: $"UserAttributes should be forwarded by component {componentName}");
+            return typeof(MudElement).Assembly
+                .GetTypes()
+                .Where(type => type.IsAssignableTo(typeof(MudComponentBase)) && !type.IsAbstract)
+                .Select(type => type.IsGenericType ? type.GetGenericTypeDefinition() : type)
+                .Except(_excludedComponents)
+                .ToArray();
         }
 
         private static ConcurrentBag<Type> _excludedComponents = new ConcurrentBag<Type>();

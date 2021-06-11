@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Bunit;
 using TestContext = Bunit.TestContext;
@@ -63,8 +64,8 @@ namespace MudBlazor.UnitTests.UserAttributes
         private Func<TestContext, IRenderedFragment> BuildDefaultFactory(Type componentType)
         {
             // Use string as generic type parameter for generic components
-            if (componentType.IsGenericType && componentType.GetGenericArguments().Length == 1)
-                componentType = componentType.MakeGenericType(typeof(string));
+            if (componentType.IsGenericType)
+                componentType = componentType.MakeGenericType(componentType.GetGenericArguments().Select(_ => typeof(string)).ToArray());
 
             var defaultFactoryMethod = typeof(MudComponentFactory)
                 .GetMethod(nameof(DefaultFactory), BindingFlags.Instance | BindingFlags.NonPublic)
