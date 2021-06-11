@@ -171,7 +171,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
-            autocompletecomp.SetParam(p=> p.Text, "Austria"); // not part of the U.S.
+            autocompletecomp.SetParam(p => p.Text, "Austria"); // not part of the U.S.
 
             // now trigger the coercion by toggling the the menu (it won't even open for invalid values, but it will coerce)
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
@@ -318,7 +318,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Button shows again after entering text
             comp.Find("input").Input("text");
-            comp.WaitForAssertion(()=> comp.Find("button").Should().NotBeNull());
+            comp.WaitForAssertion(() => comp.Find("button").Should().NotBeNull());
             // Button removed after clearing text
             comp.Find("input").Input(string.Empty);
             comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
@@ -337,16 +337,16 @@ namespace MudBlazor.UnitTests.Components
             var autocomplete = autocompletecomp.Instance;
 
             // Should be closed
-            autocomplete.IsOpen.Should().BeFalse();
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
             // Lets type something to cause it to open
             autocompletecomp.Find("input").Input("Calif");
             await Task.Delay(100);
-            autocomplete.IsOpen.Should().BeTrue();
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
             // Lets call blur on the input and confirm that it closed
             autocompletecomp.Find("input").Blur();
-            autocomplete.IsOpen.Should().BeFalse();
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
         }
 
         #region DataAttribute validation
