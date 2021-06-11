@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazor-Analytics" Version="3.6.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.17.0" />
     <PackageReference Include="Toolbelt.Blazor.HeadElement" Version="5.4.1" />
     <PackageReference Include="Toolbelt.Blazor.HeadElement.ServerPrerendering" Version="1.5.1" />
