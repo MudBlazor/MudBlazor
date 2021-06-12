@@ -364,3 +364,21 @@
         color: var(--mud-palette-text-disabled);
     }
 }
+
+.mud-application-layout-rtl {
+    .mud-picker-calendar .mud-day.mud-range {
+        &.mud-range-start-selected {
+            border-radius: 0% 50% 50% 0%;
+        }
+
+        &.mud-range-end-selected {
+            border-radius: 50% 0% 0% 50%;
+        }
+
+        &.mud-range-selection:hover {
+            &:not(.mud-range-start-selected) {
+                border-radius: 50% 0% 0% 50%;
+            }
+        }
+    }
+}

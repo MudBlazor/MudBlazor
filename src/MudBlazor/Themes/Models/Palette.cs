@@ -63,82 +63,82 @@ namespace MudBlazor
 
         public string PrimaryDarken
         {
-            get => _primaryDarken ??= BaseMudThemeProvider.ColorRgbDarken(Primary);
+            get => _primaryDarken ??= ColorManager.ColorRgbDarken(Primary);
             set => _primaryDarken = value;
         }
         public string PrimaryLighten
         {
-            get => _primaryLighten ??= BaseMudThemeProvider.ColorRgbLighten(Primary);
+            get => _primaryLighten ??= ColorManager.ColorRgbLighten(Primary);
             set => _primaryLighten = value;
         }
         public string SecondaryDarken
         {
-            get => _secondaryDarken ??= BaseMudThemeProvider.ColorRgbDarken(Secondary);
+            get => _secondaryDarken ??= ColorManager.ColorRgbDarken(Secondary);
             set => _secondaryDarken = value;
         }
         public string SecondaryLighten
         {
-            get => _secondaryLighten ??= BaseMudThemeProvider.ColorRgbLighten(Secondary);
+            get => _secondaryLighten ??= ColorManager.ColorRgbLighten(Secondary);
             set => _secondaryLighten = value;
         }
         public string TertiaryDarken
         {
-            get => _tertiaryDarken ??= BaseMudThemeProvider.ColorRgbDarken(Tertiary);
+            get => _tertiaryDarken ??= ColorManager.ColorRgbDarken(Tertiary);
             set => _tertiaryDarken = value;
         }
         public string TertiaryLighten
         {
-            get => _tertiaryLighten ??= BaseMudThemeProvider.ColorRgbLighten(Tertiary);
+            get => _tertiaryLighten ??= ColorManager.ColorRgbLighten(Tertiary);
             set => _tertiaryLighten = value;
         }
         public string InfoDarken
         {
-            get => _infoDarken ??= BaseMudThemeProvider.ColorRgbDarken(Info);
+            get => _infoDarken ??= ColorManager.ColorRgbDarken(Info);
             set => _infoDarken = value;
         }
         public string InfoLighten
         {
-            get => _infoLighten ??= BaseMudThemeProvider.ColorRgbLighten(Info);
+            get => _infoLighten ??= ColorManager.ColorRgbLighten(Info);
             set => _infoLighten = value;
         }
         public string SuccessDarken
         {
-            get => _successDarken ??= BaseMudThemeProvider.ColorRgbDarken(Success);
+            get => _successDarken ??= ColorManager.ColorRgbDarken(Success);
             set => _successDarken = value;
         }
         public string SuccessLighten
         {
-            get => _successLighten ??= BaseMudThemeProvider.ColorRgbLighten(Success);
+            get => _successLighten ??= ColorManager.ColorRgbLighten(Success);
             set => _successLighten = value;
         }
         public string WarningDarken
         {
-            get => _warningDarken ??= BaseMudThemeProvider.ColorRgbDarken(Warning);
+            get => _warningDarken ??= ColorManager.ColorRgbDarken(Warning);
             set => _warningDarken = value;
         }
         public string WarningLighten
         {
-            get => _warningLighten ??= BaseMudThemeProvider.ColorRgbLighten(Warning);
+            get => _warningLighten ??= ColorManager.ColorRgbLighten(Warning);
             set => _warningLighten = value;
         }
         public string ErrorDarken
         {
-            get => _errorDarken ??= BaseMudThemeProvider.ColorRgbDarken(Error);
+            get => _errorDarken ??= ColorManager.ColorRgbDarken(Error);
             set => _errorDarken = value;
         }
         public string ErrorLighten
         {
-            get => _errorLighten ??= BaseMudThemeProvider.ColorRgbLighten(Error);
+            get => _errorLighten ??= ColorManager.ColorRgbLighten(Error);
             set => _errorLighten = value;
         }
         public string DarkDarken
         {
-            get => _darkDarken ??= BaseMudThemeProvider.ColorRgbDarken(Dark);
+            get => _darkDarken ??= ColorManager.ColorRgbDarken(Dark);
             set => _darkDarken = value;
         }
         public string DarkLighten
         {
-            get => _darkLighten ??= BaseMudThemeProvider.ColorRgbLighten(Dark);
+            get => _darkLighten ??= ColorManager.ColorRgbLighten(Dark);
             set => _darkLighten = value;
         }
 
