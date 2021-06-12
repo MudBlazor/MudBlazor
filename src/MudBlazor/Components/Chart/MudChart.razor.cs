@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
-using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class MudChartBase : MudComponentBase
+    public abstract class MudChartBase : MudComponentBase
     {
         [Parameter] public double[] InputData { get; set; } = Array.Empty<double>();
 
@@ -54,7 +50,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Selected index of a portion of the chart.
-        /// </summary>     
+        /// </summary>
         [Parameter]
         public int SelectedIndex
         {
@@ -71,7 +67,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Selected index of a portion of the chart.
-        /// </summary>    
+        /// </summary>
         [Parameter] public EventCallback<int> SelectedIndexChanged { get; set; }
 
         /// <summary>

@@ -6,7 +6,7 @@
 @namespace MudBlazor
 @inherits MudComponentBase
 
-<div id="mud-snackbar-container" class="@Classname" style="@Style">
+<div @attributes="UserAttributes" id="mud-snackbar-container" class="@Classname" style="@Style">
     @if (Snackbar != null)
     {
         @foreach (var snackbar in Snackbar)

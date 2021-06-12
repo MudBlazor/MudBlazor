@@ -30,8 +30,24 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
 
+
         /// <summary>
-        /// If true, compact vertical padding will be applied to all select items.
+        /// Sets the direction the Autocomplete menu should open.
+        /// </summary>
+        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
+
+        /// <summary>
+        /// If true, the Autocomplete menu will open either before or after the input (left/right).
+        /// </summary>
+        [Parameter] public bool OffsetX { get; set; }
+
+        /// <summary>
+        /// If true, the Autocomplete menu will open either before or after the input (top/bottom).
+        /// </summary>
+        [Parameter] public bool OffsetY { get; set; } = true;
+
+        /// <summary>
+        /// If true, compact vertical padding will be applied to all Autocomplete items.
         /// </summary>
         [Parameter] 
         public bool Dense 
@@ -46,19 +62,19 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The Open Select Icon
+        /// The Open Autocomplete Icon
         /// </summary>
         [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
-        /// The Open Select Icon
+        /// The Close Autocomplete Icon
         /// </summary>
         [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
         /// <summary>
-        /// Sets the maxheight the select can have when open.
+        /// Sets the maxheight the Autocomplete can have when open.
         /// </summary>
         [Parameter] public int MaxHeight { get; set; } = 300;
 
@@ -360,6 +376,8 @@ namespace MudBlazor
         {
             //return !IsOpen ? CoerceTextToValue() : Task.CompletedTask;
             OnBlur.InvokeAsync(args);
+            IsOpen = false;
+            BeginValidate();
             return Task.CompletedTask;
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
             // resulting in a premature validation. thus, don't call base

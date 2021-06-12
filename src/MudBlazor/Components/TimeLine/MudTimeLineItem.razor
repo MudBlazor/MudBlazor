@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div class="@Classnames" style="@Style">
+<div @attributes="UserAttributes" class="@Classnames" style="@Style">
     @if (Align == Align.Center)
     {
         <div class="align-self-center ml-auto mr-auto">
