@@ -1,4 +1,4 @@
-﻿@page "/features/rtl-languages"
+@page "/features/rtl-languages"
 
 <DocsPage>
     <DocsPageHeader Title="RTL Languages" SubTitle="Right-to-Left (RTL) specific styling options" />
@@ -28,6 +28,21 @@
                 <RTLLanguagesLayoutExample />
             </SectionContent>
             <SectionSource Code="RTLLanguagesLayoutExample" ShowCode="false"/>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Text Fields</Title>
+                <Description>
+                    <MudText>
+                        Text Fields with <CodeInline>InputType.Email</CodeInline> or <CodeInline>InputType.Telephone</CodeInline> remain left alligned. The label still remains right alligned on the other hand.
+                    </MudText>
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true">
+                <RTLLanguagesTextfieldExample />
+            </SectionContent>
+            <SectionSource Code="RTLLanguagesTextfieldExample" />
         </DocsPageSection>
 
         <DocsPageSection>

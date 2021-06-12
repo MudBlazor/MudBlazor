@@ -167,11 +167,3 @@
     margin-left: 14px;
     margin-right: 14px;
 }
-
-.mud-application-layout-rtl {
-    .mud-input-control .mud-input-control-input-container .mud-input input {
-        &[type="email"], &[type="tel"] {
-            direction: ltr;
-        }
-    }
-}
