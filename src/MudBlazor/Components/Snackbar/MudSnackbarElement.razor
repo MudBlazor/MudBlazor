@@ -8,6 +8,12 @@
 
 @Css
 <div class="@SnackbarClass" style="@AnimationStyle" @onclick="@SnackbarClicked">
+    @if (!HideIcon)
+    {
+        <div class="mud-snackbar-icon">
+            <MudIcon Icon="@Icon" />
+        </div>
+    }
 
     <div class="mud-snackbar-content-message">
         @((MarkupString)Message)

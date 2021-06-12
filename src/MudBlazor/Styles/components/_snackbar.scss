@@ -93,3 +93,13 @@
     z-index: var(--mud-zindex-snackbar);
     pointer-events: none
 }
+
+.mud-snackbar-icon {
+    display: flex;
+    opacity: 0.9;
+    padding: 7px 0;
+    font-size: 22px;
+    margin-right: 12px;
+    margin-inline-end: 12px;
+    margin-inline-start: unset;
+}
