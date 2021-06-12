@@ -39,11 +39,11 @@
                     {
                         <div class="mud-picker-calendar-header">
                             <div class="mud-picker-calendar-header-switch">
-                                <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" OnClick="OnPreviousYearClick"/>
+                                <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" OnClick="OnPreviousYearClick" Class="mud-flip-x-rtl"/>
                                 <div class="mud-picker-slide-transition mud-picker-calendar-header-transition" @onclick="OnYearClick"  @onclick:stopPropagation="true">
                                     <MudText Typo="Typo.body1" Align="Align.Center">@GetCalendarYear(PickerMonth?.Year ?? DateTime.Today.Year)</MudText>
                                 </div>
-                                <MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="OnNextYearClick"/>
+                                <MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="OnNextYearClick" Class="mud-flip-x-rtl"/>
                             </div>
                         </div>
                         <div class="mud-picker-month-container">
@@ -59,11 +59,11 @@
                     {
                         <div class="@GetCalendarHeaderClasses(tempMonth)">
                             <div class="mud-picker-calendar-header-switch">
-                                <MudIconButton Class="mud-picker-nav-button-prev" Icon="@Icons.Material.Filled.ChevronLeft" OnClick="OnPreviousMonthClick"/>
+                                <MudIconButton Class="mud-picker-nav-button-prev mud-flip-x-rtl" Icon="@Icons.Material.Filled.ChevronLeft" OnClick="OnPreviousMonthClick"/>
                                 <div class="mud-picker-slide-transition mud-picker-calendar-header-transition" @onclick="(() => OnMonthClicked(tempMonth))"  @onclick:stopPropagation="true">
                                     <MudText Typo="Typo.body1" Align="Align.Center">@GetMonthName(tempMonth)</MudText>
                                 </div>
-                                <MudIconButton Class="mud-picker-nav-button-next" Icon="@Icons.Material.Filled.ChevronRight" OnClick="OnNextMonthClick"/>
+                                <MudIconButton Class="mud-picker-nav-button-next mud-flip-x-rtl" Icon="@Icons.Material.Filled.ChevronRight" OnClick="OnNextMonthClick"/>
                             </div>
                             <div class="mud-picker-calendar-header-day">
                                 @if (ShowWeekNumbers)
