@@ -8,13 +8,16 @@
     {
         @ChildContent
     }
-    @if (_direction != SortDirection.None)
+    @if (Enabled)
     {
-        <MudIcon Icon="@SortIcon" Class="@GetSortIconClass()" />
-    }
-    else
-    {
-        <MudIcon Icon="@SortIcon" Class="mud-table-sort-label-icon"/>
+        @if (_direction != SortDirection.None)
+        {
+            <MudIcon Icon="@SortIcon" Class="@GetSortIconClass()" />
+        }
+        else
+        {
+            <MudIcon Icon="@SortIcon" Class="mud-table-sort-label-icon"/>
+        }
     }
     @if (AppendIcon)
     {

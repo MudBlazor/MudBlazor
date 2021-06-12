@@ -52,6 +52,56 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Show that sorting is disabled
+        /// </summary>
+        [Test]
+        public async Task TableDisabledSort()
+        {
+            // Get access to the table
+            var comp = ctx.RenderComponent<TableDisabledSortTest>();
+
+            // Count the number of rows including header
+            comp.FindAll("tr").Count.Should().Be(4); // Three rows + header row
+            
+            // Check the values of rows
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+
+            // Access to the table
+            var table = comp.FindComponent<MudTable<string>>();
+
+            // Get the mudtablesortlabels associated to the table
+            var mudTableSortLabels = table.Instance.Context.SortLabels;
+
+            // Sort the first column
+            await table.InvokeAsync(() => mudTableSortLabels[0].ToggleSortDirection());
+
+            // Check the values of rows
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+
+            // Sort the first column
+            await table.InvokeAsync(() => mudTableSortLabels[0].ToggleSortDirection());
+
+            // Check the values of rows
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("C");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
+
+            // Disabled the sorting of the column
+            mudTableSortLabels[0].Enabled = false;
+
+            // Sort the first column
+            await table.InvokeAsync(() => mudTableSortLabels[0].ToggleSortDirection());
+
+            // The values remain the same
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("C");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
+        }
+      
         /// Check if the loading parameter is adding a supplementary row.
         /// </summary>
         [Test]
