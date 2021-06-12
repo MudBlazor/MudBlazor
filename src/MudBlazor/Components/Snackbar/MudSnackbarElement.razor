@@ -7,7 +7,7 @@
 @inherits MudComponentBase
 
 @Css
-<div class="@SnackbarClass" style="@AnimationStyle" @onclick="@SnackbarClicked">
+<div @attributes="UserAttributes" class="@SnackbarClass" style="@AnimationStyle" @onclick="@SnackbarClicked">
     @if (!HideIcon)
     {
         <div class="mud-snackbar-icon">
