@@ -101,6 +101,32 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
         }
+      
+        /// Check if the loading parameter is adding a supplementary row.
+        /// </summary>
+        [Test]
+        public void TableLoadingTest()
+        {
+            var comp = ctx.RenderComponent<TableLoadingTest>();
+
+            // Count the number of rows
+            var trs = comp.FindAll("tr");
+
+            // It should be equal to 3 = two rows + header row
+            trs.Count.Should().Be(3);
+
+            // Find the loading switch
+            var switchElement = comp.Find("#switch");
+
+            // Click the loading switch
+            switchElement.Change(true); 
+
+            // Count the number of rows
+            trs = comp.FindAll("tr");
+
+            // It should be equal to 4 = two rows + header row + loading row
+            trs.Count.Should().Be(4);
+        }
 
         /// <summary>
         /// should only be able to select one item and selecteditems.count should never exceed 1

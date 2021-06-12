@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<span class="@Classname" style="@Style">
+<span @attributes="UserAttributes" class="@Classname" style="@Style">
     @ChildContent
     <span class="mud-badge-wrapper">
         <span class="@BadgeClass">
