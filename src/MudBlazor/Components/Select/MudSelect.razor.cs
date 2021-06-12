@@ -31,7 +31,7 @@ namespace MudBlazor
         [Parameter] public string Label { get; set; }
 
         /// <summary>
-        /// If true, compact vertical padding will be applied to all select items.
+        /// If true, compact vertical padding will be applied to all Select items.
         /// </summary>
         [Parameter]
         public bool Dense
@@ -51,7 +51,7 @@ namespace MudBlazor
         [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
-        /// The Open Select Icon
+        /// The Close Select Icon
         /// </summary>
         [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
@@ -230,26 +230,30 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Sets the maxheight the select can have when open.
+        /// Sets the maxheight the Select can have when open.
         /// </summary>
         [Parameter] public int MaxHeight { get; set; } = 300;
 
         /// <summary>
-        /// Sets the direction the select menu should be.
+        /// Sets the direction the Select menu should open.
         /// </summary>
         [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
 
         /// <summary>
-        /// If true, the select menu will open either before or after the input.
+        /// If true, the Select menu will open either before or after the input (left/right).
         /// </summary>
-        [Parameter] public bool OffsetY { get; set; }
-
         [Parameter] public bool OffsetX { get; set; }
 
         /// <summary>
-        /// If true, the select's input will not show any values that are not defined in the dropdown.
+        /// If true, the Select menu will open either before or after the input (top/bottom).
+        /// </summary>
+        [Parameter] public bool OffsetY { get; set; }
+
+
+        /// <summary>
+        /// If true, the Select's input will not show any values that are not defined in the dropdown.
         /// This can be useful if Value is bound to a variable which is initialized to a value which is not in the list
-        /// and you want the select to show the label / placeholder instead.
+        /// and you want the Select to show the label / placeholder instead.
         /// </summary>
         [Parameter] public bool Strict { get; set; }
 
