@@ -48,10 +48,11 @@ namespace MudBlazor
                 row.SetChecked(Selection.Contains(item), notify: notify);
             }
             //update group checkboxes
-            //foreach (var row in GroupRows)
-            //{
-            //    row.SetChecked(Selection.Intersect(item).Count() == item.Count, notify: notify);
-            //}
+            foreach (var row in GroupRows)
+            {
+                var rowGroupItems = row.Items.ToList();
+                row.SetChecked(Selection.Intersect(rowGroupItems).Count() == rowGroupItems.Count, notify: notify);
+            }
             if (HeaderRows.Count > 0 || FooterRows.Count > 0)
             {
                 var itemsCount = Table.GetFilteredItemsCount();

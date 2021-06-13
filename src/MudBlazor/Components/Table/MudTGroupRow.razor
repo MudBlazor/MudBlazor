@@ -6,7 +6,7 @@
 @*HEADER:*@
 @if (HeaderTemplate != null)
 {
-    <tr class="@Classname" @onclick="@OnRowClick" style="@Style" @attributes="@UserAttributes">
+    <tr class="@HeaderClass" @onclick="@OnRowClick" style="@HeaderStyle" @attributes="@UserAttributes">
         @if ((Context?.Table.MultiSelection ?? false))
         {
             <MudTd>
@@ -43,7 +43,7 @@ else
 @*FOOTER:*@
 @if (FooterTemplate != null)
 {
-    <tr class="@Classname" @onclick="@OnRowClick" style="@Style" @attributes="@UserAttributes">
+    <tr class="@FooterClass" @onclick="@OnRowClick" style="@FooterStyle" @attributes="@UserAttributes">
         @if ((Context?.Table.MultiSelection ?? false))
         {
             <MudTd>

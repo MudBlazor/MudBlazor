@@ -65,14 +65,14 @@ namespace MudBlazor
                 {
                     _checked = value;
                     if (IsCheckable)
-                        Context.Table.OnHeaderCheckboxClicked(value);
+                        Table.OnGroupHeaderCheckboxClicked(value, Items.ToList());
                 }
             }
         }
 
         protected override Task OnInitializedAsync()
         {
-            //((TableContext<T>)Context)?.GroupRows.Add(this);
+            ((TableContext<T>)Context)?.GroupRows.Add(this);
             if (GroupDefinition.InnerGroup != null)
             {
                 _innerGroupItems = Table.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);
@@ -82,7 +82,7 @@ namespace MudBlazor
 
         public void Dispose()
         {
-            //((TableContext<T>)Context)?.GroupRows.Remove(this);
+            ((TableContext<T>)Context)?.GroupRows.Remove(this);
         }
 
         public void SetChecked(bool b, bool notify)
