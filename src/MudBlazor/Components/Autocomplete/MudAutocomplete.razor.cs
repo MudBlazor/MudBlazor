@@ -165,7 +165,9 @@ namespace MudBlazor
             {
                 if (value == _isOpen)
                     return;
+
                 _isOpen = value;
+                UpdateIcon();
                 IsOpenChanged.InvokeAsync(_isOpen).AndForget();
             }
         }
@@ -193,7 +195,6 @@ namespace MudBlazor
             await SetTextAsync(GetItemString(value), false);
             _timer?.Dispose();
             IsOpen = false;
-            UpdateIcon();
             BeginValidate();
             StateHasChanged();
         }
@@ -213,7 +214,6 @@ namespace MudBlazor
                 RestoreScrollPosition();
                 await CoerceTextToValue();
             }
-            UpdateIcon();
             StateHasChanged();
         }
 
@@ -279,13 +279,11 @@ namespace MudBlazor
             {
                 await CoerceValueToText();
                 IsOpen = false;
-                UpdateIcon();
                 StateHasChanged();
                 return;
             }
 
             IsOpen = true;
-            UpdateIcon();
             StateHasChanged();
         }
 
