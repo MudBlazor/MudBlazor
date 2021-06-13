@@ -363,5 +363,19 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.ValidationErrors.Should().BeEmpty();
         }
         #endregion
+
+
+        /// <summary>
+        /// Tests the required property.
+        /// </summary>
+        [Test]
+        public void Autocomplete_Should_SetRequiredTrue()
+        {
+            var comp = ctx.RenderComponent<AutocompleteRequiredTest>();
+
+            var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
+
+            autocomplete.Required.Should().BeTrue();
+        }
     }
 }
