@@ -22,6 +22,12 @@ namespace MudBlazor
         public SortDirection InitialDirection { get; set; } = SortDirection.None;
 
         /// <summary>
+        /// Enable the sorting. Set to true by default.
+        /// </summary>
+        [Parameter]
+        public bool Enabled { get; set; } = true;
+
+        /// <summary>
         /// The Icon used to display sortdirection.
         /// </summary>
         [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
@@ -67,6 +73,9 @@ namespace MudBlazor
 
         public Task ToggleSortDirection()
         {
+            if (!Enabled)
+                return Task.CompletedTask;
+
             switch (SortDirection)
             {
                 case SortDirection.None:
@@ -119,4 +128,3 @@ namespace MudBlazor
         }
     }
 }
-

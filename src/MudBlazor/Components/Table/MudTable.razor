@@ -48,6 +48,14 @@
                     </thead>
                 }
                 <tbody class="mud-table-body">
+                    @if (Loading)
+                    {
+                        <tr>
+                            <td colspan="1000">
+                                <MudProgressLinear Color="@LoadingProgressColor" Indeterminate="true" />
+                            </td>
+                        </tr>
+                    }
                     @if (CurrentPageItems != null)
                     {
                         var rowIndex = 0;
@@ -56,7 +64,7 @@
                             var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, rowIndex)).Build();
                             var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, rowIndex)).Build();
                             <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" IsCheckable="MultiSelection" IsEditable="RowEditingTemplate != null" 
-                                   IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
+                                    IsCheckedChanged="@((value) => { var x = item; OnRowCheckboxChanged(value, x); })">
                                 @if ((!ReadOnly) && RowEditingTemplate != null && object.Equals(_editingItem, item))
                                 { 
                                     <CascadingValue Value="@Validator" IsFixed="true">
