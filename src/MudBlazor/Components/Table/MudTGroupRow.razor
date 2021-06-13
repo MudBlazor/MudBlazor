@@ -1,0 +1,62 @@
+﻿@namespace MudBlazor
+@implements IDisposable
+@inherits MudComponentBase
+@typeparam T
+
+@*HEADER:*@
+@if (HeaderTemplate != null)
+{
+    <tr class="@Classname" @onclick="@OnRowClick" style="@Style" @attributes="@UserAttributes">
+        @if ((Context?.Table.MultiSelection ?? false))
+        {
+            <MudTd>
+                @if (IsCheckable)
+                {
+                    <MudCheckBox @bind-Checked="IsChecked" />
+                }
+            </MudTd>
+        }
+        @HeaderTemplate(Items)
+        @if((Context?.Table.IsEditable ?? false))
+        {
+            <MudTd />
+        }
+    </tr>
+}
+
+@*CHILDREN:*@
+@if (_innerGroupItems != null)
+{
+    @foreach (var group in _innerGroupItems)
+    {
+        <MudTGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" IsCheckable="@IsCheckable" 
+                      HeaderClass="@HeaderClass" HeaderStyle="@HeaderStyle" 
+                      FooterClass="@FooterClass" FooterStyle="@FooterStyle"
+                      HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate"  T="T" />
+    }
+}
+else
+{
+    @Table.RenderRows(Items)
+}
+
+@*FOOTER:*@
+@if (FooterTemplate != null)
+{
+    <tr class="@Classname" @onclick="@OnRowClick" style="@Style" @attributes="@UserAttributes">
+        @if ((Context?.Table.MultiSelection ?? false))
+        {
+            <MudTd>
+                @if (IsCheckable)
+                {
+                    <MudCheckBox @bind-Checked="IsChecked" />
+                }
+            </MudTd>
+        }
+        @FooterTemplate(Items)
+        @if((Context?.Table.IsEditable ?? false))
+        {
+            <MudTd />
+        }
+    </tr>
+}

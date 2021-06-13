@@ -50,7 +50,13 @@
                 <tbody class="mud-table-body">
                     @if(GroupBy != null)
                     {
-                        @RenderGroupedRows(GroupBy, FilteredItems)
+                        @foreach (var group in GroupItemsPage)
+                        {
+                            <MudTGroupRow GroupDefinition="GroupBy" Items="group" IsCheckable="MultiSelection" 
+                                          HeaderClass="@GroupHeaderClass" HeaderStyle="@GroupHeaderStyle" 
+                                          FooterClass="@GroupFooterClass" FooterStyle="@GroupFooterStyle"
+                                          HeaderTemplate="@GroupHeaderTemplate" FooterTemplate="@GroupFooterTemplate" T="T"  />
+                        }
                     }
                     else
                     {
@@ -89,7 +95,7 @@
 @code {
 
     // moved to code to avoid repeatidelly code on markup block
-    private RenderFragment RenderRows(IEnumerable<T> source)
+    internal RenderFragment RenderRows(IEnumerable<T> source)
     {
         var rowIndex = 0;
         return @<text>
@@ -119,43 +125,4 @@
             }
         </text>;
     }
-
-    // rendering groups here to allow recursive calls
-    private RenderFragment RenderGroupedRows(TableGroupDefinition<T> parent, IEnumerable<T> source)
-    {
-        IEnumerable<IGrouping<object, T>> groupitems = GetItemsOfGroup(parent, source);
-
-        return @<text>
-            @foreach (var group in groupitems)
-            {
-                var items = group.ToList();
-
-                // Group Header
-                <MudTr IsGroup IsHeader Item="group" @key="@(new object[] { "header", group })" IsCheckable="MultiSelection" IsEditable="false" Class="@GroupHeaderClass" Style="@GroupHeaderStyle"
-                       IsCheckedChanged="((value) => { var x = items; OnGroupHeaderCheckboxClicked(value, x); })">
-                    @GroupHeaderTemplate(group)
-                </MudTr>
-
-                if (parent.InnerGroup != null)
-                {
-                    @RenderGroupedRows(parent.InnerGroup, items);
-                }
-                else
-                {
-                    // Group Items
-                    @RenderRows(items);
-                }
-
-                // Group Footer
-                <MudTr IsGroup IsHeader Item="group" @key="@(new object[] { "footer", group })" IsCheckable="false" IsEditable="false" Class="@GroupFooterClass" Style="@GroupFooterStyle">
-                    @if (MultiSelection)
-                    {
-                        <MudTd/>
-                    }
-                    @GroupFooterTemplate(group)
-                </MudTr>
-            }
-        </text>;
-    }
-
 }

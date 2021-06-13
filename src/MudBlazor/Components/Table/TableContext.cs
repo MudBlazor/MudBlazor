@@ -31,7 +31,7 @@ namespace MudBlazor
         public HashSet<T> Selection { get; set; } = new HashSet<T>();
 
         public Dictionary<T, MudTr> Rows { get; set; } = new Dictionary<T, MudTr>();
-        public Dictionary<IGrouping<object, T>, MudTr> GroupRows { get; set; } = new Dictionary<IGrouping<object, T>, MudTr>();
+        public List<MudTGroupRow<T>> GroupRows { get; set; } = new List<MudTGroupRow<T>>();
 
 
         public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
@@ -47,13 +47,11 @@ namespace MudBlazor
                 var item = pair.Key;
                 row.SetChecked(Selection.Contains(item), notify: notify);
             }
-            // update group checkboxes
-            foreach (var pair in GroupRows.ToArray())
-            {
-                var row = pair.Value;
-                var item = pair.Key.ToList();
-                row.SetChecked(Selection.Intersect(item).Count() == item.Count, notify: notify);
-            }
+            //update group checkboxes
+            //foreach (var row in GroupRows)
+            //{
+            //    row.SetChecked(Selection.Intersect(item).Count() == item.Count, notify: notify);
+            //}
             if (HeaderRows.Count > 0 || FooterRows.Count > 0)
             {
                 var itemsCount = Table.GetFilteredItemsCount();
@@ -73,11 +71,11 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
             {
-                var listT = item.As<IGrouping<object, T>>();
-                if (listT is null)
-                    return;
-                if (row.IsGroup)
-                    GroupRows[listT] = row;
+                //var listT = item.As<IGrouping<object, T>>();
+                //if (listT is null)
+                //    return;
+                //if (row.IsGroup)
+                //    GroupRows[listT] = row;
                 return;
             }
             Rows[t] = row;
@@ -88,11 +86,11 @@ namespace MudBlazor
             var t = item.As<T>();
             if (t is null)
             {
-                var listT = item.As<IGrouping<object, T>>();
-                if (listT is null)
-                    return;
-                if (row.IsGroup)
-                    GroupRows.Remove(listT);
+                //var listT = item.As<IGrouping<object, T>>();
+                //if (listT is null)
+                //    return;
+                //if (row.IsGroup)
+                //    GroupRows.Remove(listT);
                 return;
             }
             Rows.Remove(t);
