@@ -13,6 +13,7 @@
                           Disabled="@Disabled" ReadOnly="true" Error="@Error"
                           AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
                           Clearable="@Clearable" OnClearButtonClick="(async (e) => await SelectClearButtonClickHandlerAsync(e))"
+                          @attributes="UserAttributes" 
                           >
                     @if (CanRenderValue)
                     {

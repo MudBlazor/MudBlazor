@@ -13,10 +13,11 @@
                           Disabled="@Disabled" ReadOnly="@ReadOnly" Error="@Error"
                           AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
                           Clearable="@Clearable" OnClearButtonClick="@OnClearButtonClick"
+                          @attributes="UserAttributes" 
 
                           TextChanged="OnTextChanged" OnBlur="OnInputBlurred"
                           OnKeyUp="@this.OnInputKeyUp" autocomplete=@("mud-disabled-"+Guid.NewGuid()) KeyUpPreventDefault="KeyUpPreventDefault"
-                          @attributes="UserAttributes" Placeholder="@Placeholder" Immediate="true"
+                          Placeholder="@Placeholder" Immediate="true"
                           T="string"
                           />
                 @if (_items!=null && _items.Length!=0)
