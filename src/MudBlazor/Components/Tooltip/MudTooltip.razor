@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div class="@ContainerClass">
+<div @attributes="UserAttributes" class="@ContainerClass">
     @ChildContent
     @if (!String.IsNullOrEmpty(Text) || TooltipContent != null)
     {

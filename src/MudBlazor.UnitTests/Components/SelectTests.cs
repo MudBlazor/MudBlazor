@@ -462,6 +462,26 @@ namespace MudBlazor.UnitTests.Components
             value.Should().Be("FirstA, SecondA");     
         }
 
+        /// <summary>
+        /// We filled the multiselect with initial selected values.
+        /// Then the returned text in the selection is customized.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task MultiSelectCustomizedTextTest()
+        {
+            var comp = ctx.RenderComponent<MultiSelectCustomizedTextTest>();
+
+            // Select the input of the select
+            var input = comp.Find("input");
+
+            // The value of the input
+            var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
+            
+            // Value is equal to the customized values returned by the method
+            value.Should().Be("Selected values: FirstA, SecondA");
+        }
+
         [Test]
         public async Task SelectClearableTest()
         {

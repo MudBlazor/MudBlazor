@@ -94,6 +94,8 @@ namespace MudBlazor
             SortDirection = label.SortDirection;
             SortBy = label.SortBy;
             UpdateSortLabels(label);
+            if (Table.HasServerData)
+                Table.InvokeServerLoadFunc();
             TableStateHasChanged();
         }
 
