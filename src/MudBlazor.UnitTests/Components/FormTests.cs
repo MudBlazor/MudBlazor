@@ -91,6 +91,42 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Form should update the bound variables valid and touched whenever they change.
+        /// </summary>
+        [Test]
+        public async Task FormIsValidTest3()
+        {
+            var comp = ctx.RenderComponent<FormIsValidTest3>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            var textFields = comp.FindComponents<MudTextField<string>>();
+            // check initial state: form should be invalid due to having a required field that is not filled
+            form.IsValid.Should().Be(false);
+            form.IsTouched.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Checked.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Checked.Should().Be(false);
+            // filling in the required field
+            textFields[1].Find("input").Change("Fill in the required field to make this form valid");
+            form.IsValid.Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>()[0].Instance.Checked.Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>()[1].Instance.Checked.Should().Be(true);
+        }
+
+        /// <summary>
+        /// Form should update the bound variable valid to true even though it is set false upon first render because there is no required field.
+        /// </summary>
+        [Test]
+        public async Task FormIsValidTest4()
+        {
+            var comp = ctx.RenderComponent<FormIsValidTest4>();
+            Console.WriteLine(comp.Markup);
+            var form = comp.FindComponent<MudForm>().Instance;
+            // check initial state: form should be valid due to having no required field, but the user's two-way binding did override that value to false
+            comp.WaitForAssertion(() => form.IsValid.Should().Be(true));
+            comp.WaitForAssertion(()=> comp.FindComponent<MudSwitch<bool>>().Instance.Checked.Should().Be(true));
+        }
+
+        /// <summary>
         /// Changing a fields value should set IsTouched to true
         /// </summary>
         [Test]
@@ -382,32 +418,32 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<MudFormExample>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
-            form.IsValid.Should().BeFalse(because: "it contains required fields that are not filled out");
+            comp.WaitForAssertion(()=>form.IsValid.Should().BeFalse(because: "it contains required fields that are not filled out"));
             var buttons = comp.FindComponents<MudButton>();
             // click validate button
             var validateButton = buttons[1];
             validateButton.Find("button").Click();
             var textfields = comp.FindComponents<MudTextField<string>>();
-            textfields[0].Instance.HasErrors.Should().BeTrue();
+            comp.WaitForAssertion(() => textfields[0].Instance.HasErrors.Should().BeTrue());
             textfields[0].Instance.ErrorText.Should().Be("User name is required!");
-            textfields[1].Instance.HasErrors.Should().BeTrue();
+            comp.WaitForAssertion(() => textfields[1].Instance.HasErrors.Should().BeTrue());
             textfields[1].Instance.ErrorText.Should().Be("Email is required!");
-            textfields[2].Instance.HasErrors.Should().BeTrue();
+            comp.WaitForAssertion(() => textfields[2].Instance.HasErrors.Should().BeTrue());
             textfields[2].Instance.ErrorText.Should().Be("Password is required!");
             var checkbox = comp.FindComponent<MudCheckBox<bool>>();
-            checkbox.Instance.HasErrors.Should().BeTrue();
+            comp.WaitForAssertion(() => checkbox.Instance.HasErrors.Should().BeTrue());
             checkbox.Instance.ErrorText.Should().Be("You must agree");
             // click reset validation
             var resetValidationButton = buttons[3];
             resetValidationButton.Find("button").Click();
             comp.WaitForState(() => form.Errors.Length == 0);
-            textfields[0].Instance.HasErrors.Should().BeFalse();
+            comp.WaitForAssertion(() => textfields[0].Instance.HasErrors.Should().BeFalse());
             textfields[0].Instance.ErrorText.Should().BeNullOrEmpty();
-            textfields[1].Instance.HasErrors.Should().BeFalse();
+            comp.WaitForAssertion(() => textfields[1].Instance.HasErrors.Should().BeFalse());
             textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
-            textfields[2].Instance.HasErrors.Should().BeFalse();
+            comp.WaitForAssertion(() => textfields[2].Instance.HasErrors.Should().BeFalse());
             textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
-            checkbox.Instance.HasErrors.Should().BeFalse();
+            comp.WaitForAssertion(() => checkbox.Instance.HasErrors.Should().BeFalse());
             checkbox.Instance.ErrorText.Should().BeNullOrEmpty();
             // fill in the form to make it valid
             textfields[0].Find("input").Change("Rick Sanchez");
@@ -421,19 +457,19 @@ namespace MudBlazor.UnitTests.Components
             var resetButton = buttons[2];
             resetButton.Find("button").Click();
             comp.WaitForState(() => form.Errors.Length == 0);
-            textfields[0].Instance.HasErrors.Should().BeFalse();
+            comp.WaitForAssertion(() => textfields[0].Instance.HasErrors.Should().BeFalse());
             textfields[0].Instance.ErrorText.Should().BeNullOrEmpty();
             textfields[0].Instance.Text.Should().BeNullOrEmpty();
-            textfields[1].Instance.HasErrors.Should().BeFalse();
+            comp.WaitForAssertion(() => textfields[1].Instance.HasErrors.Should().BeFalse());
             textfields[1].Instance.ErrorText.Should().BeNullOrEmpty();
             textfields[1].Instance.Text.Should().BeNullOrEmpty();
-            textfields[2].Instance.HasErrors.Should().BeFalse();
+            comp.WaitForAssertion(() => textfields[2].Instance.HasErrors.Should().BeFalse());
             textfields[2].Instance.ErrorText.Should().BeNullOrEmpty();
             textfields[2].Instance.Text.Should().BeNullOrEmpty();
-            checkbox.Instance.HasErrors.Should().BeFalse();
+            comp.WaitForAssertion(() => checkbox.Instance.HasErrors.Should().BeFalse());
             checkbox.Instance.ErrorText.Should().BeNullOrEmpty();
-            checkbox.Instance.Checked.Should().BeFalse();
-            // TODO: fill out the form with errors, field after field, check how fields get validation erros after blur
+            comp.WaitForAssertion(() => checkbox.Instance.Checked.Should().BeFalse());
+            // TODO: fill out the form with errors, field after field, check how fields get validation errors after blur
         }
 
         /// <summary>
