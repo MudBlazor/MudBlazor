@@ -24,11 +24,12 @@
         <MudTd Style="text-align:right" DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <GroupFooterTemplate>
-        <MudTh Style="font-weight: 500;text-align: right;" colspan="5" >Total Mass: @context.Sum((e) => e.Molar)</MudTh>
+        <MudTh Style="font-weight: 500;text-align: right;" colspan="5">Total Mass: @context.Sum((e) => e.Molar)</MudTh>
     </GroupFooterTemplate>
 </MudTable>
 
-@code {
+@code { 
+
     private IEnumerable<Element> Elements = new List<Element>();
 
     protected override async Task OnInitializedAsync()

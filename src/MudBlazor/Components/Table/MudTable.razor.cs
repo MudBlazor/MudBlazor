@@ -85,6 +85,7 @@ namespace MudBlazor
                 if (_items == value)
                     return;
                 _items = value;
+
                 if (Context?.PagerStateHasChanged != null)
                     InvokeAsync(Context.PagerStateHasChanged);
             }
@@ -206,7 +207,10 @@ namespace MudBlazor
             get
             {
                 if (@PagerContent == null)
+                {
                     return FilteredItems; // we have no pagination
+                }
+
                 if (ServerData == null)
                 {
                     var filteredItemCount = GetFilteredItemsCount();
@@ -249,11 +253,6 @@ namespace MudBlazor
             if (ServerData != null)
                 return _server_data.TotalItems;
             return FilteredItems.Count();
-        }
-
-        protected IEnumerable<IGrouping<object, T>> GetItemsOfGroup(TableGroupDefinition<T> parent, IEnumerable<T> sourceList)
-        {
-            return sourceList.GroupBy(parent.Selector).ToList();
         }
 
         public override void SetSelectedItem(object item)
@@ -302,22 +301,22 @@ namespace MudBlazor
             SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
-        internal void OnGroupHeaderCheckboxClicked(bool value, IEnumerable<T> items)
-        {
-            if (value)
-            {
-                foreach (var item in items)
-                    Context.Selection.Add(item);
-            }
-            else
-            {
-                foreach (var item in items)
-                    Context.Selection.Remove(item);
-            }
+        //internal void OnGroupHeaderCheckboxClicked(bool value, IEnumerable<T> items)
+        //{
+        //    //if (value)
+        //    //{
+        //    //    foreach (var item in items)
+        //    //        Context.Selection.Add(item);
+        //    //}
+        //    //else
+        //    //{
+        //    //    foreach (var item in items)
+        //    //        Context.Selection.Remove(item);
+        //    //}
 
-            Context.UpdateRowCheckBoxes(false);
-            SelectedItemsChanged.InvokeAsync(SelectedItems);
-        }
+        //    //Context.UpdateRowCheckBoxes(false);
+        //    //SelectedItemsChanged.InvokeAsync(SelectedItems);
+        //}
 
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -359,8 +358,14 @@ namespace MudBlazor
             };
 
             _server_data = await ServerData(state);
+
             StateHasChanged();
             Context?.PagerStateHasChanged?.Invoke();
+        }
+
+        protected override Task OnInitializedAsync()
+        {
+            return base.OnInitializedAsync();
         }
 
         protected override void OnAfterRender(bool firstRender)
@@ -379,5 +384,23 @@ namespace MudBlazor
         }
 
         internal override bool IsEditable { get => RowEditingTemplate != null; }
+
+
+        //GROUPING:
+        private IEnumerable<IGrouping<object, T>> GroupItemsPage
+        {
+            get
+            {
+                return GetItemsOfGroup(GroupBy, CurrentPageItems); ;
+            }
+        }
+
+        internal IEnumerable<IGrouping<object, T>> GetItemsOfGroup(TableGroupDefinition<T> parent, IEnumerable<T> sourceList)
+        {
+            if (parent == null || sourceList == null)
+                return new List<IGrouping<object, T>>();
+
+            return sourceList.GroupBy(parent.Selector).ToList();
+        }
     }
 }
