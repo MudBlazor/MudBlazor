@@ -20,11 +20,13 @@ namespace MudBlazor
             .AddClass("mud-theme-" + Color.ToDescriptionString())
             .AddClass("mud-badge-top", !Bottom)
             .AddClass("mud-badge-bottom", Bottom)
-            .AddClass("mud-badge-right", !Left)
-            .AddClass("mud-badge-left", Left)
+            .AddClass("mud-badge-right", Start == RightToLeft)
+            .AddClass("mud-badge-left", Start != RightToLeft)
             .AddClass("mud-badge-overlap", Overlap)
         .Build();
 
+        [CascadingParameter] public bool RightToLeft { get; set; }
+        
         /// <summary>
         /// The color of the badge.
         /// </summary>
@@ -38,7 +40,13 @@ namespace MudBlazor
         /// <summary>
         /// Aligns the badge to left.
         /// </summary>
-        [Parameter] public bool Left { get; set; }
+        [ObsoleteAttribute("Left is obsolete. Use Start instead!", false)]
+        [Parameter] public bool Left { get => Start; set { Start = value; } }
+
+        /// <summary>
+        /// Aligns the badge to the start (Left in LTR and right in RTL).
+        /// </summary>
+        [Parameter] public bool Start { get; set; }
 
         /// <summary>
         /// Reduces the size of the badge and hide any of its content.
