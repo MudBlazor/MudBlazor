@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
+using MudBlazor.Interop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -15,6 +17,7 @@ namespace MudBlazor
             .AddClass($"mud-tooltip-placement-{Placement.ToDescriptionString()}")
             .AddClass(Class)
             .Build();
+    
 
         /// <summary>
         /// Sets the text to be displayed inside the tooltip.
@@ -57,9 +60,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Boolean Inline { get; set; } = true;
 
+        [Parameter] public bool IsVisible { get; set; }
+
         protected string GetTimeDelay()
         {
-            return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style}";
+            return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style};";
         }
+               
     }
 }

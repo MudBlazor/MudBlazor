@@ -2,18 +2,22 @@
 @inherits MudComponentBase
 
 <div class="@ContainerClass">
+    <div  @onmouseover="()=>IsVisible=true" @onmouseout="()=>IsVisible=false">
     @ChildContent
+    </div>
     @if (!String.IsNullOrEmpty(Text) || TooltipContent != null)
     {
-        <div class="@Classname" style="@GetTimeDelay()">
-            @if (TooltipContent != null)
-            {
-                @TooltipContent
-            }
-            else
-            {
-                @Text
-            }
-        </div>
+        <MudPortal IsVisible=@IsVisible Style="@(GetTimeDelay())">
+            <div class="@Classname" style="@(GetTimeDelay())">
+                    @if (TooltipContent != null)
+                    {
+                        @TooltipContent
+                    }
+                    else
+                    {
+                        @Text
+                    }
+            </div>
+        </MudPortal>
     }
 </div>

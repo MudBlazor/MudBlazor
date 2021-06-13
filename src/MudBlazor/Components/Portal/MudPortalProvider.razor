@@ -8,7 +8,7 @@
     @foreach (var item in Portal.Items)
     {
         @*this is the element where the popover will be anchored*@
-        <div data-blazor="@item.Value.Id"
+        <div class="portal" data-blazor="@item.Value.Id"
              style=@(item.Value.AutoDirection 
                 ? GetAnchorStyle(item.Value)
                 : null)>

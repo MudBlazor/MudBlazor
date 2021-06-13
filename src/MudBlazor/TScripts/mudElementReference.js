@@ -96,7 +96,6 @@
         if (!element) {
             return null;
         }
-
         var absoluteRect = element.getBoundingClientRect();
         let relativeRect = {};
 
@@ -116,6 +115,18 @@
         return relativeRect;
 
     }
+
+    /**
+     * Returns true if element has any ancestor with style position==="fixed"
+     * @param {Element} element
+     */
+    hasFixedAncestors(element) {       
+        for (; element && element !== document; element = element.parentNode) {
+            if (window.getComputedStyle(element).getPropertyValue("position") === "fixed")
+                return true;
+        }
+       return false
+    };
 
 
     changeCss (element, css) {

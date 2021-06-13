@@ -73,5 +73,7 @@ namespace MudBlazor.Services
 
         public bool AutoDirection { get; set; }
 
+        public string Position { get; set; } = "absolute";
+
     }
 }

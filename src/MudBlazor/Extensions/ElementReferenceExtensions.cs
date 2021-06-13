@@ -58,6 +58,14 @@ namespace MudBlazor
             ?? ValueTask.FromResult(new BoundingClientRect());
 
 
+        /// <summary>
+        /// Returns true if the element has an ancestor with style position == "fixed"
+        /// </summary>
+        /// <param name="elementReference"></param>
+        public static ValueTask<bool> MudHasFixedAncestorsAsync(this ElementReference elementReference) => elementReference.GetJSRuntime()?
+            .InvokeAsync<bool>("mudElementRef.hasFixedAncestors", elementReference)
+            ?? ValueTask.FromResult(false);
+
 
         public static ValueTask MudChangeCssVariableAsync(this ElementReference elementReference, string variableName, int value) =>
             elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.changeCssVariable", elementReference, variableName, value) ?? ValueTask.CompletedTask;

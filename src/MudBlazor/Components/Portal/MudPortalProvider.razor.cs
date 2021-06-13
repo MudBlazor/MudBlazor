@@ -12,11 +12,14 @@ namespace MudBlazor
 
         private string GetAnchorStyle(PortalItem item) =>
             new StyleBuilder()
-                   .AddStyle("position", "absolute")
+                   
+                   .AddStyle("position", item.Position)
                    .AddStyle("top", item.ClientRect?.Top.ToPixels())
                    .AddStyle("left", item.ClientRect?.Left.ToPixels())
                    .AddStyle("height", item.ClientRect?.Height.ToPixels())
                    .AddStyle("width", item.ClientRect?.Width.ToPixels())
+                   .AddStyle("z-index", new ZIndex().Popover.ToString(), item.Position == "fixed")
+
                    .Build();
 
         protected override void OnInitialized() => Portal.OnChange += Refresh;

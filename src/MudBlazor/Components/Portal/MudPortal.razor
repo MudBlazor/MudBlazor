@@ -1,12 +1,13 @@
 ﻿@namespace MudBlazor
+@inherits MudComponentBase
 @if (IsEnabled){
     @if (IsVisible)
     {
-        <div @ref=@_portalRef style="width:100%;position:absolute;height:100%" />
+        <div @ref=@_portalRef 
+             style=@($"top:0;pointer-events:none;width:100%;position:absolute;height:100%;z-index:1;{Style}") />
     }
 
 } else
 {
     @ChildContent
 }
-    

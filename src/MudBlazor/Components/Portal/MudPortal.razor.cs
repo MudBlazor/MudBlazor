@@ -5,14 +5,12 @@ using MudBlazor.Services;
 
 namespace MudBlazor
 {
-    public partial class MudPortal : ComponentBase, IDisposable
+    public partial class MudPortal : MudComponentBase, IDisposable
     {
         private Guid _id = Guid.NewGuid();
-
         private ElementReference _portalRef;
-
-
         private PortalItem _portalItem = new();
+        private bool? _hasFixedAncestor = null;
 
         [Inject] public IPortal Portal { get; set; }
 
@@ -28,7 +26,7 @@ namespace MudBlazor
 
         [Parameter] public bool IsVisible { get; set; }
 
-        [Parameter] public bool IsEnabled { get; set; } = false;
+        [Parameter] public bool IsEnabled { get; set; } = true;
 
         [Parameter] public bool LockScroll { get; set; }
 
@@ -36,7 +34,29 @@ namespace MudBlazor
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (!IsEnabled) return;
+            if (_portalRef.Id != null)
+                _hasFixedAncestor = _hasFixedAncestor ?? await _portalRef.MudHasFixedAncestorsAsync();
+            await ConfigurePortalItem();
+            ConfigureResizeListener();
+            await AddOrRemovePortalItem();
+        }
 
+        private async Task AddOrRemovePortalItem()
+        {
+            if (IsVisible)
+            {
+                Portal.AddOrUpdate(_portalItem);
+                if (LockScroll) await ScrollManager.LockScrollAsync();
+            }
+            else
+            {
+                if (LockScroll) await ScrollManager.UnlockScrollAsync();
+                Portal.Remove(_portalItem);
+            }
+        }
+
+        private void ConfigureResizeListener()
+        {
             if (IsVisible && Autopositioned)
             {
                 WindowResizeListener.OnResized += OnWindowResize;
@@ -46,29 +66,22 @@ namespace MudBlazor
             {
                 WindowResizeListener.OnResized -= OnWindowResize;
             }
-
-
-            if (IsVisible)
-            {
-                await ConfigurePortalItem();
-                Portal.AddOrUpdate(_portalItem);
-                if (LockScroll) await ScrollManager.LockScrollAsync();
-            }
-            else
-            {
-                if (LockScroll) await ScrollManager.UnlockScrollAsync();
-                Portal.Remove(_portalItem);
-            }
-
         }
-
 
         private async Task ConfigurePortalItem()
         {
+            _portalItem.ClientRect =
+                _hasFixedAncestor != null && _hasFixedAncestor == true
+                    ? await _portalRef.MudGetBoundingClientRectAsync()
+                    : await _portalRef.MudGetRelativeClientRectAsync();
+
             _portalItem.Id = _id;
             _portalItem.Fragment = ChildContent;
-            _portalItem.ClientRect = await _portalRef.MudGetRelativeClientRectAsync();
             _portalItem.AutoDirection = AutoDirection;
+            _portalItem.Position =
+                _hasFixedAncestor != null && _hasFixedAncestor == true
+                    ? "fixed"
+                    : "absolute";
         }
 
         private void OnWindowResize(object sender, BrowserWindowSize e)
