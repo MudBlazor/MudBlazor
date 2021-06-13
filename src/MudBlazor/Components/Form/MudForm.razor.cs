@@ -23,14 +23,35 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// Validation status. True if the form is valid and without errors. This parameter is readonly.
+        /// Validation status. True if the form is valid and without errors. This parameter is two-way bindable.
         /// </summary>
         [Parameter]
-        //public bool IForm.IsValid => _valid;
         public bool IsValid
         {
             get => _valid;
-            set { /* readonly parameter! */ }
+            set
+            {
+                if (_valid == value)
+                    return;
+                SetIsValid(value);
+                // the user might have bound bind a value that is contrary to the form's validity state. 
+                // thus, we must re-evaluate and push back to rectify the bound variable
+                ReEvaluateIsValid();
+            }
+        }
+
+        private async void ReEvaluateIsValid()
+        {
+            await Task.Delay(1);
+            Validate();
+        }
+
+        private void SetIsValid(bool value)
+        {
+            if (_valid == value)
+                return;
+            _valid = value;
+            IsValidChanged.InvokeAsync(_valid).AndForget();
         }
 
         // Note: w/o any children the form is automatically valid.
@@ -97,7 +118,7 @@ namespace MudBlazor
         void IForm.Add(IFormComponent formControl)
         {
             if (formControl.Required)
-                _valid = false;
+                SetIsValid( false);
             _formControls.Add(formControl);
         }
 
@@ -135,21 +156,19 @@ namespace MudBlazor
             _errors.Clear();
             foreach (var error in _formControls.SelectMany(control => control.ValidationErrors))
                 _errors.Add(error);
-            var old_valid = _valid;
             // form can only be valid if:
             // - none have an error
             // - all required fields have been touched (and thus validated)
             var no_errors = _formControls.All(x => x.HasErrors == false);
             var required_all_touched = _formControls.Where(x => x.Required).All(x => x.Touched);
-            _valid = no_errors && required_all_touched;
+            var valid = no_errors && required_all_touched;
 
             var old_touched = _touched;
             _touched = _formControls.Any(x => x.Touched);
             try
             {
                 _shouldRender = false;
-                if (old_valid != _valid)
-                    await IsValidChanged.InvokeAsync(_valid);
+                SetIsValid( valid);
                 await ErrorsChanged.InvokeAsync(Errors);
                 if(old_touched != _touched)
                     await IsTouchedChanged.InvokeAsync(_touched);
