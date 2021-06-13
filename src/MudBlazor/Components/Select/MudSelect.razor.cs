@@ -335,7 +335,7 @@ namespace MudBlazor
 
         public void UpdateIcon()
         {
-            CurrentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? OpenIcon : CloseIcon;
+            CurrentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
         }
 
         protected override void OnInitialized()
