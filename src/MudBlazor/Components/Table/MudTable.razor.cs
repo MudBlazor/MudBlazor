@@ -301,22 +301,22 @@ namespace MudBlazor
             SelectedItemsChanged.InvokeAsync(SelectedItems);
         }
 
-        //internal void OnGroupHeaderCheckboxClicked(bool value, IEnumerable<T> items)
-        //{
-        //    //if (value)
-        //    //{
-        //    //    foreach (var item in items)
-        //    //        Context.Selection.Add(item);
-        //    //}
-        //    //else
-        //    //{
-        //    //    foreach (var item in items)
-        //    //        Context.Selection.Remove(item);
-        //    //}
+        internal void OnGroupHeaderCheckboxClicked(bool value, IEnumerable<T> items)
+        {
+            if (value)
+            {
+                foreach (var item in items)
+                    Context.Selection.Add(item);
+            }
+            else
+            {
+                foreach (var item in items)
+                    Context.Selection.Remove(item);
+            }
 
-        //    //Context.UpdateRowCheckBoxes(false);
-        //    //SelectedItemsChanged.InvokeAsync(SelectedItems);
-        //}
+            Context.UpdateRowCheckBoxes(false);
+            SelectedItemsChanged.InvokeAsync(SelectedItems);
+        }
 
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
