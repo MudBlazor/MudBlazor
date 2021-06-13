@@ -64,12 +64,12 @@ namespace MudBlazor
         /// <summary>
         /// The Open Autocomplete Icon
         /// </summary>
-        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
         /// The Close Autocomplete Icon
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
