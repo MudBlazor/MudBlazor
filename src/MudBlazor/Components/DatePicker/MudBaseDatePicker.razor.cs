@@ -124,7 +124,7 @@ namespace MudBlazor
         /// <summary>
         /// Function to determine whether a date is disabled
         /// </summary>
-        [Parameter] public Func<DateTime, bool> IsDateDisabled { get; set; } = _ => false;
+        [Parameter] public Func<DateTime, bool> IsDateDisabledFuncFunc { get; set; } = _ => false;
 
         protected virtual bool IsRange { get; } = false;
 

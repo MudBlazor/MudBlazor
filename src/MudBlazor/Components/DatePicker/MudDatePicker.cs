@@ -35,7 +35,7 @@ namespace MudBlazor
         {
             if (_value != date)
             {
-                if (date is not null && IsDateDisabled(date.Value.Date))
+                if (date is not null && IsDateDisabledFunc(date.Value.Date))
                 {
                     await SetTextAsync(null, false);
                     return;

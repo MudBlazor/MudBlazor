@@ -44,7 +44,7 @@ namespace MudBlazor
                     .Range(0, int.MaxValue)
                     .Select(index => range.Start.Value.AddDays(index))
                     .TakeWhile(date => date <= range.End.Value)
-                    .Any(date => IsDateDisabled(date.Date));
+                    .Any(date => IsDateDisabledFunc(date.Date));
                 if (doesRangeContainDisabledDates)
                 {
                     _rangeText = null;
