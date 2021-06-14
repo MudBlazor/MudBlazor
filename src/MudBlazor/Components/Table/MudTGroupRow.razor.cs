@@ -31,12 +31,12 @@ namespace MudBlazor
         /// <summary>
         /// Defines Group Header Data Template
         /// </summary>
-        [Parameter] public RenderFragment<IGrouping<object, T>> HeaderTemplate { get; set; }
+        [Parameter] public RenderFragment<TableGroupData<object, T>> HeaderTemplate { get; set; }
 
         /// <summary>
         /// Defines Group Header Data Template
         /// </summary>
-        [Parameter] public RenderFragment<IGrouping<object, T>> FooterTemplate { get; set; }
+        [Parameter] public RenderFragment<TableGroupData<object, T>> FooterTemplate { get; set; }
 
         /// <summary>
         /// Add a multi-select checkbox that will select/unselect every item in the table

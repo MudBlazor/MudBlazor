@@ -39,7 +39,7 @@ namespace MudBlazor
         /// <summary>
         /// Defines how a table grouping row header looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
         /// </summary>
-        [Parameter] public RenderFragment<IGrouping<object, T>> GroupHeaderTemplate { get; set; }
+        [Parameter] public RenderFragment<TableGroupData<object, T>> GroupHeaderTemplate { get; set; }
 
         /// <summary>
         /// Defines custom CSS classes for using on Group Header's MudTr.
@@ -64,7 +64,7 @@ namespace MudBlazor
         /// <summary>
         /// Defines how a table grouping row footer looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
         /// </summary>
-        [Parameter] public RenderFragment<IGrouping<object, T>> GroupFooterTemplate { get; set; }
+        [Parameter] public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
 
         /// <summary>
         /// Defines if the table has a horizontal scrollbar.

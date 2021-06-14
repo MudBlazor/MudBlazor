@@ -5,20 +5,6 @@
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
-                <Title>Grouping (Basic)</Title>
-                <Description>
-                    Displays items in a grouped way, with Header and Footer by every group, allowing summaries on both.
-                </Description>
-            </SectionHeader>
-            <SectionContent DarkenBackground="true" FullWidth="true">
-                <TableBasicGroupingExample />
-            </SectionContent>
-            <SectionSource Code="TableBasicGroupingExample" ShowCode="false" GitHubFolderName="Table" />
-        </DocsPageSection>
-
-
-        @*<DocsPageSection>
-            <SectionHeader>
                 <Title>Default Table</Title>
                 <Description>
                     The default table displays your data in simple rows and is responsive, it breaks into mobile layout on <CodeInline>Breakpoint.Xs</CodeInline> unless changed.<br />
@@ -192,7 +178,21 @@
                 <TableBasicGroupingExample />
             </SectionContent>
             <SectionSource Code="TableBasicGroupingExample" ShowCode="false" GitHubFolderName="Table" />
-        </DocsPageSection>*@
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Grouping (Multi Levels)</Title>
+                <Description>
+                    Displays items recursively grouped.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TableMultiGroupingExample />
+            </SectionContent>
+            <SectionSource Code="TableMultiGroupingExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
 
     </DocsPageContent>
 </DocsPage>
