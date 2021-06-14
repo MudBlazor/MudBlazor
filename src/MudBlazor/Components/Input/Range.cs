@@ -23,7 +23,7 @@ namespace MudBlazor
 
         public override bool Equals(object obj)
         {
-            return obj is Range<T> r && r.Start.Equals(Start) && r.End.Equals(End);
+            return obj is Range<T> r && null != r.Start && r.Start.Equals(Start) && null != r.End && r.End.Equals(End);
         }
 
         public override int GetHashCode()
