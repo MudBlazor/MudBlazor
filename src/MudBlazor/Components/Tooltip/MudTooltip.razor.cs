@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Globalization;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
-using MudBlazor.Interop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -17,7 +15,7 @@ namespace MudBlazor
             .AddClass($"mud-tooltip-placement-{Placement.ToDescriptionString()}")
             .AddClass(Class)
             .Build();
-    
+
 
         /// <summary>
         /// Sets the text to be displayed inside the tooltip.
@@ -56,16 +54,21 @@ namespace MudBlazor
         [Parameter] public RenderFragment TooltipContent { get; set; }
 
         /// <summary>
-        /// Determines if this component should be inline with it's surrounding (default) or if it should behave like a block element.
+        /// Determines if this component should 
+        /// with it's surrounding (default) or if it should behave like a block element.
         /// </summary>
         [Parameter] public Boolean Inline { get; set; } = true;
 
         [Parameter] public bool IsVisible { get; set; }
 
+        private void HandleMouseOver() => IsVisible = true;
+
+        private void HandleMouseOut() => IsVisible = false;
+
         protected string GetTimeDelay()
         {
             return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style};";
         }
-               
+
     }
 }

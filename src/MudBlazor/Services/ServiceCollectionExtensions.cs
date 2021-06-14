@@ -149,7 +149,7 @@ namespace MudBlazor.Services
         /// <param name="services">IServiceCollection</param>
         public static IServiceCollection AddMudBlazorPortal(this IServiceCollection services)
         {
-            services.TryAddSingleton<IPortal, Portal>();
+            services.TryAddScoped<IPortal, Portal>();
             return services;
         }
 

@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div class="@ContainerClass">
-    <div  @onmouseover="()=>IsVisible=true" @onmouseout="()=>IsVisible=false">
+<div  @attributes="UserAttributes" class="@ContainerClass">
+    <div  @onmouseover="@HandleMouseOver" @onmouseout="@HandleMouseOut">
     @ChildContent
     </div>
     @if (!String.IsNullOrEmpty(Text) || TooltipContent != null)

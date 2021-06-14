@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-    public interface IPortal
+    internal interface IPortal
     {
         Dictionary<Guid, PortalItem> Items { get; }
         PortalItem GetItem(Guid id);
@@ -14,10 +12,12 @@ namespace MudBlazor.Services
 
         event EventHandler OnChange;
     }
-    public class Portal : IPortal
+    internal class Portal : IPortal, IDisposable
     {
         private readonly Dictionary<Guid, PortalItem> _items = new();
         private readonly object _lockObj = new();
+        private bool _disposedValue;
+
         public event EventHandler OnChange;
 
         public void AddOrUpdate(PortalItem newItem)
@@ -41,7 +41,6 @@ namespace MudBlazor.Services
             }
         }
 
-
         public Dictionary<Guid, PortalItem> Items
         {
             get
@@ -61,19 +60,23 @@ namespace MudBlazor.Services
             }
             OnChange?.Invoke(this, null);
         }
-    }
 
-    public class PortalItem
-    {
-        public Guid Id { get; set; }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                    _items.Clear();
+                }
+                _disposedValue = true;
+            }
+        }
 
-        public RenderFragment Fragment { get; set; }
-
-        public BoundingClientRect ClientRect { get; set; }
-
-        public bool AutoDirection { get; set; }
-
-        public string Position { get; set; } = "absolute";
-
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

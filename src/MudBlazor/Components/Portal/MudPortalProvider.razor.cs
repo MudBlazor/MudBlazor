@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Services;
@@ -8,23 +9,31 @@ namespace MudBlazor
 {
     public partial class MudPortalProvider : IDisposable
     {
-        [Inject] public IPortal Portal { get; set; }
+        
+
+        [Inject] internal IPortal Portal { get; set; }
 
         private string GetAnchorStyle(PortalItem item) =>
             new StyleBuilder()
-                   
+
                    .AddStyle("position", item.Position)
                    .AddStyle("top", item.ClientRect?.Top.ToPixels())
                    .AddStyle("left", item.ClientRect?.Left.ToPixels())
                    .AddStyle("height", item.ClientRect?.Height.ToPixels())
                    .AddStyle("width", item.ClientRect?.Width.ToPixels())
                    .AddStyle("z-index", new ZIndex().Popover.ToString(), item.Position == "fixed")
-
                    .Build();
 
         protected override void OnInitialized() => Portal.OnChange += Refresh;
 
         void Refresh(object e, EventArgs c) => InvokeAsync(StateHasChanged);
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            var size = await _portaledItem.MudGetBoundingClientRectAsync();
+            var height = size.Height;
+
+        }
 
         public void Dispose()
         {

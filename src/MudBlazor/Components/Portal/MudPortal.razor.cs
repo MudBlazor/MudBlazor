@@ -12,7 +12,7 @@ namespace MudBlazor
         private PortalItem _portalItem = new();
         private bool? _hasFixedAncestor = null;
 
-        [Inject] public IPortal Portal { get; set; }
+        [Inject] internal IPortal Portal { get; set; }
 
         [Inject] public IResizeListenerService WindowResizeListener { get; set; }
 
@@ -35,7 +35,7 @@ namespace MudBlazor
         {
             if (!IsEnabled) return;
             if (_portalRef.Id != null)
-                _hasFixedAncestor = _hasFixedAncestor ?? await _portalRef.MudHasFixedAncestorsAsync();
+                _hasFixedAncestor ??= await _portalRef.MudHasFixedAncestorsAsync();
             await ConfigurePortalItem();
             ConfigureResizeListener();
             await AddOrRemovePortalItem();
