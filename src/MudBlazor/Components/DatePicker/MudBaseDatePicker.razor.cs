@@ -127,23 +127,13 @@ namespace MudBlazor
         [Parameter]
         public Func<DateTime, bool> IsDateDisabledFunc
         {
-            get
-            {
-                return _isDateDisabledFunc;
-            }
+            get => _isDateDisabledFunc;
             set
             {
-                if (value is null)
-                {
-                    _isDateDisabledFunc = _ => false;
-                }
-                else
-                {
-                    _isDateDisabledFunc = value;
-                }
+                _isDateDisabledFunc = value ?? (_ => false);
             }
         }
-        private Func<DateTime, bool> _isDateDisabledFunc;
+        private Func<DateTime, bool> _isDateDisabledFunc = _ => false;
 
         protected virtual bool IsRange { get; } = false;
 
