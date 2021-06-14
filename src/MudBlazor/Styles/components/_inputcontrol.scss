@@ -167,3 +167,10 @@
     margin-left: 14px;
     margin-right: 14px;
 }
+
+.mud-application-layout-rtl {
+    .mud-input-control.mud-input-number-control .mud-input-numeric-spin {
+        left: 0;
+        right: unset;
+    }
+}
