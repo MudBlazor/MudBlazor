@@ -13,14 +13,19 @@ namespace MudBlazor
 {
     public class TableGroupDefinition<T>
     {
+        public TableGroupDefinition()
+        {
+        }
+
         public TableGroupDefinition(Func<T, object> selector, TableGroupDefinition<T> innerGroup = null)
         {
             Selector = selector;
             InnerGroup = innerGroup;
         }
 
-        public Func<T, object> Selector { get; private set; }
-        public TableGroupDefinition<T> InnerGroup { get; private set; }
+        public string GroupName { get; set; }
+        public Func<T, object> Selector { get; set; }
+        public TableGroupDefinition<T> InnerGroup { get; set; }
 
     }
 }

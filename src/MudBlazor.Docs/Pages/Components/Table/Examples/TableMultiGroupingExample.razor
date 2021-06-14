@@ -4,7 +4,9 @@
 @inject HttpClient httpClient
 
 
-<MudTable Items="@Elements.Take(15)" GroupBy="@(new((e) => e.Position) { GroupName = "Position" })" Hover="true" Breakpoint="Breakpoint.Sm"
+<MudTable Items="@Elements.Where(e => e.Position == 12 || e.Position == 13).Take(20)" Hover="true" Breakpoint="Breakpoint.Sm"
+          GroupBy="@(new TableGroupDefinition<Element>() { GroupName = "Position", Selector = (e) => e.Position, 
+                                                           InnerGroup = new TableGroupDefinition<Element>() { GroupName = "Group", Selector = (e) => e.Group } })"
           GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
           GroupFooterStyle="background-color:var(--mud-palette-background-grey)"
           MultiSelection="true">
@@ -12,31 +14,30 @@
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
         <MudTh>Name</MudTh>
+        <MudTh>Group</MudTh>
         <MudTh>Position</MudTh>
         <MudTh>Molar mass</MudTh>
     </HeaderContent>
     <GroupHeaderTemplate>
-        <MudTh Style="font-weight: 500;" colspan="5">@($"{context.GroupName}: {context.Key}")</MudTh>
+        <MudTh Style="font-weight: 500;" colspan="6">@($"{context.GroupName}: {context.Key}")</MudTh>
     </GroupHeaderTemplate>
     <RowTemplate>
         <MudTd DataLabel="Nr">@context.Number</MudTd>
         <MudTd DataLabel="Sign">@context.Sign</MudTd>
         <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Group">@context.Group</MudTd>
         <MudTd DataLabel="Position">@context.Position</MudTd>
         <MudTd Style="text-align:right" DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
     <GroupFooterTemplate>
-        <MudTh Style="font-weight: 500;text-align: right;" colspan="5">Total Mass: @context.Items.Sum((e) => e.Molar)</MudTh>
+        <MudTh Style="font-weight: 500;text-align: right;" colspan="6">Total Mass: @context.Items.Sum((e) => e.Molar)</MudTh>
     </GroupFooterTemplate>
 </MudTable>
 
-@code { 
+@code { private IEnumerable<Element> Elements = new List<Element>();
 
-    private IEnumerable<Element> Elements = new List<Element>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-    }
-}
+            protected override async Task OnInitializedAsync()
+            {
+                Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+            } }
 

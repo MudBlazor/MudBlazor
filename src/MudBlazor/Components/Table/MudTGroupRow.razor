@@ -16,7 +16,7 @@
                 }
             </MudTd>
         }
-        @HeaderTemplate(Items)
+        @HeaderTemplate(new TableGroupData<object, T>(GroupDefinition.GroupName, Items.Key, Items.ToList()))
         @if((Context?.Table.IsEditable ?? false))
         {
             <MudTd />
@@ -53,7 +53,7 @@ else
                 }
             </MudTd>
         }
-        @FooterTemplate(Items)
+        @FooterTemplate(new TableGroupData<object, T>(GroupDefinition.GroupName, Items.Key, Items.ToList()))
         @if((Context?.Table.IsEditable ?? false))
         {
             <MudTd />
