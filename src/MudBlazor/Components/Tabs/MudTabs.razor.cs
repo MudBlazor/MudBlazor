@@ -287,7 +287,7 @@ namespace MudBlazor
 
         public void ActivatePanel(object id, bool ignoreDisabledState = false)
         {
-            var panel = _panels.Where((p) => p.ID == id).FirstOrDefault();
+            var panel = _panels.Where((p) => Equals(p.ID, id)).FirstOrDefault();
             if (panel != null)
                 ActivatePanel(panel, null, ignoreDisabledState);
         }
