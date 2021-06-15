@@ -10,7 +10,7 @@
     protected virtual RenderFragment InputContent =>
         @<MudTextField @ref="_inputReference" @attributes="UserAttributes" Label="@Label" @bind-Text="@Text" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string" Style="@Style"
                     @onclick="(() => { if (!Editable) ToggleState(); })" OnAdornmentClick="ToggleState" Disabled="@Disabled" Adornment="@Adornment"
-                    AdornmentIcon="@InputIcon" IconSize="@IconSize" Margin="@Margin"
+                    AdornmentIcon="@AdornmentIcon" IconSize="@IconSize" Margin="@Margin"
                     Required="@Required" RequiredError="@RequiredError" Error="@Error" ErrorText="@ErrorText"/>;
 
     protected virtual RenderFragment PickerContent => null;

@@ -19,7 +19,7 @@ namespace MudBlazor
             Converter.GetFunc = OnGet;
             Converter.SetFunc = OnSet;
             (Converter as DefaultConverter<TimeSpan?>).Format = format24Hours;
-            InputIcon = Icons.Material.Filled.AccessTime;
+            AdornmentIcon = Icons.Material.Filled.AccessTime;
         }
 
         private string OnSet(TimeSpan? timespan)
