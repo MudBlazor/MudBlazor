@@ -418,6 +418,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<MudFormExample>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
+            comp.FindComponent<MudForm>().SetParam(x=>x.ValidationDelay, 0);
             comp.WaitForAssertion(()=>form.IsValid.Should().BeFalse(because: "it contains required fields that are not filled out"));
             var buttons = comp.FindComponents<MudButton>();
             // click validate button
