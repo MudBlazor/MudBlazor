@@ -177,7 +177,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
 
-        public string CurrentIcon { get; set; }
+        private string _currentIcon;
 
         private MudInput<string> _elementReference;
 
@@ -219,7 +219,7 @@ namespace MudBlazor
 
         public void UpdateIcon()
         {
-            CurrentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
+            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
         }
 
         protected override void OnInitialized()
