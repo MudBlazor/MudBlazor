@@ -260,7 +260,7 @@ namespace MudBlazor
 
         internal bool _isOpen;
 
-        public string CurrentIcon { get; set; }
+        public string _currentIcon { get; set; }
 
         public async Task SelectOption(object obj)
         {
@@ -333,9 +333,9 @@ namespace MudBlazor
             await OnBlur.InvokeAsync(new FocusEventArgs());
         }
 
-        public void UpdateIcon()
+        private void UpdateIcon()
         {
-            CurrentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
+            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
         }
 
         protected override void OnInitialized()
