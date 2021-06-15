@@ -51,12 +51,12 @@
                     @if (Loading)
                     {
                         <tr>
-                            <td colspan="1000">
-                                <MudProgressLinear Color="@LoadingProgressColor" Indeterminate="true" />
+                            <td colspan="1000" class="mud-table-loading">
+                                <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
                             </td>
                         </tr>
                     }
-                    @if (CurrentPageItems != null)
+                    @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
                     {
                         var rowIndex = 0;
                         @foreach (var item in CurrentPageItems)
@@ -82,6 +82,14 @@
                             }
                             rowIndex++;
                         }
+                    }
+                    else
+                    {
+                        <tr>
+                            <th colspan="1000" class="mud-table-empty-row">
+                                <MudText Class="my-3">@(Loading ? LoadingString : NoRecordsString)</MudText>
+                            </th>
+                        </tr>
                     }
                 </tbody>
                 @if (FooterContent != null)

@@ -38,6 +38,16 @@ namespace MudBlazor
         internal string GetHorizontalScrollbarStyle() => HorizontalScrollbar ? ";display: block; overflow-x: auto;" : string.Empty;
 
         /// <summary>
+        /// The localizable "No matching records found" text.
+        /// </summary>
+        [Parameter] public string NoRecordsString { get; set; } = "No matching records found";
+
+        /// <summary>
+        /// The localizable "Loading..." text.
+        /// </summary>
+        [Parameter] public string LoadingString { get; set; } = "Loading...";
+
+        /// <summary>
         /// The data to display in the table. MudTable will render one row per item
         /// </summary>
         [Parameter]
@@ -289,6 +299,7 @@ namespace MudBlazor
             if (ServerData == null)
                 return;
 
+            Loading = true;
             var label = Context.CurrentSortLabel;
 
             var state = new TableState
@@ -300,6 +311,7 @@ namespace MudBlazor
             };
 
             _server_data = await ServerData(state);
+            Loading = false;
             StateHasChanged();
             Context?.PagerStateHasChanged?.Invoke();
         }

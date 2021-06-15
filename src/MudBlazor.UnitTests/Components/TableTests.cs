@@ -128,6 +128,31 @@ namespace MudBlazor.UnitTests.Components
             trs.Count.Should().Be(4);
         }
 
+        /// Check if if empty row text is correct
+        /// </summary>
+        [Test]
+        public void TableEmptyRowTest()
+        {
+            var comp = ctx.RenderComponent<TableLoadingTest>();
+            var searchString = comp.Find("#searchString");
+            var switchElement = comp.Find("#switch");
+
+            // It should be equal to 3 = two rows + header row
+            comp.FindAll("tr").Count.Should().Be(3);
+
+            // Filter out all table rows
+            searchString.Change("ZZZ");
+
+            // It should be equal to 2 = two rows + header row
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
+
+            // It should be equal to 3 = empty row string + header row + loading row
+            switchElement.Change(true); 
+            comp.FindAll("tr").Count.Should().Be(3);
+            comp.FindAll("tr")[2].TextContent.Should().Be("Loading...");
+        }
+
         /// <summary>
         /// should only be able to select one item and selecteditems.count should never exceed 1
         /// </summary>
@@ -175,7 +200,8 @@ namespace MudBlazor.UnitTests.Components
             searchString.Change("ZZZ");
             table.GetFilteredItemsCount().Should().Be(0);
             table.FilteredItems.Count().Should().Be(0);
-            comp.FindAll("tr").Count.Should().Be(0);
+            comp.FindAll("tr").Count.Should().Be(1);
+            comp.FindAll("tr").First().TextContent.Should().Be("No matching records found");
             // should return 1 item
             searchString.Change("Alaska");
             table.GetFilteredItemsCount().Should().Be(1);

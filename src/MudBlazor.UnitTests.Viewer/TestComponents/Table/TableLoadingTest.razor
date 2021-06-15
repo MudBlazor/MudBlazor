@@ -1,6 +1,9 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTable Items="@Elements" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading">
+<MudTable Items="@Elements" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" Filter="new Func<Element, bool>(FilterFunc)">
+    <ToolBarContent>
+        <MudTextField id="searchString" @bind-Value="searchString" Placeholder="Search"></MudTextField>
+    </ToolBarContent>
     <HeaderContent>
         <MudTh>Nr</MudTh>
         <MudTh>Sign</MudTh>
@@ -22,6 +25,7 @@
 @code {
     private bool _loading = false;
     private IEnumerable<Element> Elements = new List<Element>();
+    private string searchString;
 
     protected override void OnInitialized()
     {
@@ -30,6 +34,23 @@
             new Element() { Molar = "A", Sign = "A", Name = "A", Number = "A", Position = "A"},
             new Element() { Molar = "B", Sign = "B", Name = "B", Number = "B", Position = "B"},
         };
+    }
+
+    private bool FilterFunc(Element element)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Number.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Sign.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Position.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Molar.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
     }
 
     public class Element
