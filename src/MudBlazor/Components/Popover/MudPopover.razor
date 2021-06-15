@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-    <div @attributes="UserAttributes" class="@PopoverClass" style="@PopoverStyles">
+    <div @ref=@_popoverRef @attributes="UserAttributes" class="@PopoverClass" style="@PopoverStyles">
         @ChildContent
     </div>
 

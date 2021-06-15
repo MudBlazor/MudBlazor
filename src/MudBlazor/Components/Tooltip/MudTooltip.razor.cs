@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
@@ -8,6 +9,7 @@ namespace MudBlazor
 {
     public partial class MudTooltip : MudComponentBase
     {
+        private ElementReference _tooltipRef;
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
             .Build();
@@ -16,6 +18,7 @@ namespace MudBlazor
             .AddClass(Class)
             .Build();
 
+        [Inject] public IBrowserWindowSizeProvider WindowSize { get; set; }
 
         /// <summary>
         /// Sets the text to be displayed inside the tooltip.
@@ -61,14 +64,81 @@ namespace MudBlazor
 
         [Parameter] public bool IsVisible { get; set; }
 
-        private void HandleMouseOver() => IsVisible = true;
+        private void HandleMouseOver()
+        {
+            IsVisible = true;
+            Console.WriteLine("in");
+        }
 
-        private void HandleMouseOut() => IsVisible = false;
+        private void HandleMouseOut()
+        {
+            IsVisible = false;
+            Console.WriteLine("out");
+        }
 
         protected string GetTimeDelay()
         {
-            return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;{Style};";
+            return $"transition-delay: {Delay.ToString(CultureInfo.InvariantCulture)}ms;";
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await SetDirection();
+        }
+
+        private async Task SetDirection()
+        {
+
+            if (!IsVisible) { return; }
+            if (_tooltipRef.Context == null) { return; }
+            var rect = await _tooltipRef.MudGetBoundingClientRectAsync();
+            if (rect == null) { return; }
+
+
+            Console.WriteLine("render");
+
+            var viewport = await WindowSize.GetBrowserWindowSize();
+            string style = "";
+            var placement = Placement;
+            switch (Placement)
+            {
+                case Placement.Top:
+                case Placement.Bottom:
+                    if (rect.Top < 0 && Placement == Placement.Top)
+                    { placement = Placement.Bottom; }
+                    if (rect.Bottom > viewport.Height && Placement == Placement.Bottom)
+                    { placement = Placement.Top; }
+
+                    if (rect.Right > viewport.Width)
+                    {
+                        style = $"right:{(rect.Right - viewport.Width - 14).ToPixels()};left:unset;";
+                    }
+                    if (rect.Left < 0)
+                    {
+                        style = $"left:14px;right:unset;";
+                    }
+                    break;
+
+
+
+                case Placement.Start:
+                case Placement.End:
+                    if (rect.Left < 0 && Placement == Placement.Start)
+                    { placement = Placement.End; }
+                    if (rect.Right > viewport.Width && Placement == Placement.End)
+                    { placement = Placement.Start; }
+
+
+                    if (rect.Top < 0) { style = $"top:14px;bottom:unset;"; }
+                    if (rect.Bottom > viewport.Height)
+                    { style = $"bottom:{(rect.Bottom - viewport.Height - 14).ToPixels()};top:unset;"; }
+                    break;
+
+            }
+            Style = style;
+            StateHasChanged();
         }
 
     }
+
 }

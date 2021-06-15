@@ -96,11 +96,11 @@
   <ItemGroup>
     <Content Remove="compilerconfig.json" />
     <Content Remove="excubowebcompiler.json" />
+    <Content Remove="wwwroot\MudBlazor.min.js" />
     <Content Remove="**/*/DoNotRemove.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TScripts\combined\" />
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>

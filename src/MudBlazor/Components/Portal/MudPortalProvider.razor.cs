@@ -27,14 +27,7 @@ namespace MudBlazor
         protected override void OnInitialized() => Portal.OnChange += Refresh;
 
         void Refresh(object e, EventArgs c) => InvokeAsync(StateHasChanged);
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            var size = await _portaledItem.MudGetBoundingClientRectAsync();
-            var height = size.Height;
-
-        }
-
+        
         public void Dispose()
         {
             Portal.OnChange -= Refresh;
