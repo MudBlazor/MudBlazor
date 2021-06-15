@@ -14,7 +14,7 @@
                           />
                 @if (_items!=null && _items.Length!=0)
                 {
-                    <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" OffsetY="true">
+                    <MudPopover Open="@IsOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
                             @*this must be the real scroll container, not the Popover, hence the maxheight*@
                         <MudList Clickable="true" Dense="@Dense" Style=@($"max-height: {MaxHeight}px; overflow-y:auto;")>
                             @for (var index= 0; index < _items.Length;index++ )
