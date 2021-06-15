@@ -324,7 +324,9 @@ namespace MudBlazor
                 case "ArrowUp":
                     await SelectNextItem(-1);
                     break;
+
                 case "Escape":
+                case "Tab":
                     IsOpen = false;
                     break;
             }
