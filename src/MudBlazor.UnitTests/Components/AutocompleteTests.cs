@@ -394,13 +394,17 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the required property.
         /// </summary>
         [Test]
-        public void Autocomplete_Should_SetRequiredTrue()
+        public async Task Autocomplete_Should_SetRequiredTrue()
         {
             var comp = ctx.RenderComponent<AutocompleteRequiredTest>();
 
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
 
             autocomplete.Required.Should().BeTrue();
+
+            await comp.InvokeAsync(() => autocomplete.Validate());
+
+            autocomplete.ValidationErrors.First().Should().Be("Required");
         }
     }
 }
