@@ -217,7 +217,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public void UpdateIcon()
+        private void UpdateIcon()
         {
             _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
         }
