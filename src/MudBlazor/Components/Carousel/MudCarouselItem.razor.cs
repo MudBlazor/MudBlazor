@@ -65,9 +65,7 @@ namespace MudBlazor
         {
             get
             {
-                if (Parent == null)
-                    return false;
-                return Parent.SelectedIndex == Parent.Items.IndexOf(this) || Parent.LastContainer == this;
+                return Parent == null ? false : Parent.LastContainer == this || Parent.SelectedIndex == Parent.Items.IndexOf(this);
             }
         }
 
