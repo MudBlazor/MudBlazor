@@ -9,7 +9,6 @@ namespace MudBlazor
 {
     public partial class MudCarousel<TData> : MudBaseBindableItemsControl<MudCarouselItem, TData>, IAsyncDisposable
     {
-
         protected string Classname =>
                     new CssBuilder("mud-carousel")
                          .AddClass($"mud-carousel-{_currentColor.ToDescriptionString()}")
@@ -24,23 +23,26 @@ namespace MudBlazor
 
         private Timer _timer;
         private bool _autoCycle = true;
+        private Color _currentColor = Color.Inherit;
         private TimeSpan _cycleTimeout = TimeSpan.FromSeconds(5);
-        private Color _currentColor => SelectedContainer != null ? SelectedContainer.Color : Color.Inherit;
         private void _timerElapsed(object stateInfo) => InvokeAsync(async () => await TimerTickAsync());
 
 
         [CascadingParameter] public bool RightToLeft { get; set; }
+
 
         /// <summary>
         /// Gets or Sets if 'Next' and 'Previous' arrows must be visible
         /// </summary>
         [Parameter] public bool ShowArrows { get; set; } = true;
 
+
         /// <summary>
         /// Gets or Sets if bottom bar with Delimiters musb be visible
         /// </summary>
         [Parameter] public bool ShowDelimiters { get; set; } = true;
         
+
         /// <summary>
         /// Gets or Sets automatic cycle on item collection
         /// </summary>
@@ -59,6 +61,7 @@ namespace MudBlazor
             }
         }
                 
+
         /// <summary>
         /// Gets or Sets the Auto Cycle time
         /// </summary>
@@ -70,30 +73,31 @@ namespace MudBlazor
                 _cycleTimeout = value;
 
                 if (_autoCycle == true)
-                {
-                    System.Diagnostics.Debug.WriteLine("van hiero");
                     InvokeAsync(async () => await ResetTimerAsync());
-                }
 
                 else
                     InvokeAsync(async () => await StopTimerAsync());
             }
         }
 
+
         /// <summary>
         /// Gets or Sets the Template for the Left Arrow
         /// </summary>
         [Parameter] public RenderFragment NextButtonTemplate { get; set; }
+
 
         /// <summary>
         /// Gets or Sets the Template for the Right Arrow
         /// </summary>
         [Parameter] public RenderFragment PreviousButtonTemplate { get; set; }
 
+
         /// <summary>
         /// Gets or Sets the Template for Delimiters
         /// </summary>
         [Parameter]  public RenderFragment<bool> DelimiterTemplate { get; set; }
+
 
         /// <summary>
         /// Fires when selected Index changed on base class
@@ -101,7 +105,10 @@ namespace MudBlazor
         private void SelectionChanged()
         {
             InvokeAsync(async () => await ResetTimerAsync());
+
+            _currentColor = SelectedContainer != null ? SelectedContainer.Color : Color.Inherit;
         }
+
 
         /// <summary>
         /// Provides Selection changes by horizontal swipe gesture
@@ -128,11 +135,7 @@ namespace MudBlazor
             await Task.CompletedTask;
 
             if (null != _timer && AutoCycle)
-            {
-                System.Diagnostics.Debug.WriteLine(nameof(StartTimerAsync));
-
                 _timer.Change(AutoCycleTime, TimeSpan.Zero);
-            }
         }
 
         /// <summary>
@@ -142,8 +145,6 @@ namespace MudBlazor
         {
             await Task.CompletedTask;
 
-            System.Diagnostics.Debug.WriteLine(nameof(StopTimerAsync));
-
             _timer?.Change(Timeout.Infinite, 0);
         }
 
@@ -152,8 +153,6 @@ namespace MudBlazor
         /// </summary>
         private async ValueTask ResetTimerAsync()
         {
-            System.Diagnostics.Debug.WriteLine(nameof(ResetTimerAsync));
-
             await StopTimerAsync();
             await StartTimerAsync();
         }
@@ -164,8 +163,6 @@ namespace MudBlazor
         /// </summary>
         private async ValueTask TimerTickAsync()
         {
-            System.Diagnostics.Debug.WriteLine(nameof(TimerTickAsync));
-
             await InvokeAsync(Next);
         }
 
@@ -178,7 +175,7 @@ namespace MudBlazor
             {
                 SelectedIndexChanged = new EventCallback<int>(this, (Action) SelectionChanged);
 
-                _timer = new Timer(_timerElapsed, null, 0, (int) AutoCycleTime.TotalMilliseconds);
+                _timer = new Timer(_timerElapsed, null, TimeSpan.Zero, AutoCycleTime);
             }
         }
 
@@ -188,6 +185,7 @@ namespace MudBlazor
             await DisposeAsync(true);
             GC.SuppressFinalize(this);
         }
+
 
         protected virtual async ValueTask DisposeAsync(bool disposing)
         {
