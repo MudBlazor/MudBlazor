@@ -71,14 +71,8 @@ namespace MudBlazor
         {
             var t = item.As<T>();
             if (t is null)
-            {
-                //var listT = item.As<IGrouping<object, T>>();
-                //if (listT is null)
-                //    return;
-                //if (row.IsGroup)
-                //    GroupRows[listT] = row;
                 return;
-            }
+
             Rows[t] = row;
         }
 
@@ -86,14 +80,8 @@ namespace MudBlazor
         {
             var t = item.As<T>();
             if (t is null)
-            {
-                //var listT = item.As<IGrouping<object, T>>();
-                //if (listT is null)
-                //    return;
-                //if (row.IsGroup)
-                //    GroupRows.Remove(listT);
                 return;
-            }
+
             Rows.Remove(t);
         }
 
