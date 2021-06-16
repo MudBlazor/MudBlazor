@@ -4,7 +4,7 @@
 @typeparam T
 
 @*HEADER:*@
-@if (HeaderTemplate != null)
+@if (HeaderTemplate != null && GroupDefinition != null)
 {
     <tr class="@HeaderClass" @onclick="@OnRowClick" style="@HeaderStyle" @attributes="@UserAttributes">
         @if ((Context?.Table.MultiSelection ?? false))
@@ -25,7 +25,7 @@
 }
 
 @*CHILDREN:*@
-@if (_innerGroupItems != null)
+@if (_innerGroupItems != null && GroupDefinition != null)
 {
     @foreach (var group in _innerGroupItems)
     {
@@ -37,11 +37,11 @@
 }
 else
 {
-    @Table.RenderRows(Items)
+    @Table?.RenderRows(Items)
 }
 
 @*FOOTER:*@
-@if (FooterTemplate != null)
+@if (FooterTemplate != null && GroupDefinition != null)
 {
     <tr class="@FooterClass" @onclick="@OnRowClick" style="@FooterStyle" @attributes="@UserAttributes">
         @if ((Context?.Table.MultiSelection ?? false))
