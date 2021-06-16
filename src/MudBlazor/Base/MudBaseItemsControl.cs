@@ -71,17 +71,17 @@ namespace MudBlazor
             return base.OnAfterRenderAsync(firstRender);
         }
 
-        internal bool _movenext = true;
+        internal bool _moveNext = true;
 
         /// <summary>
         /// Move to Previous Item
         /// </summary>
         public void Previous()
         {
-            _movenext = false;
+            _moveNext = false;
 
             if (SelectedIndex > 0)
-                SelectedIndex -= 1;
+                SelectedIndex--;
             else
                 SelectedIndex = Items.Count - 1;
         }
@@ -91,10 +91,10 @@ namespace MudBlazor
         /// </summary>
         public void Next()
         {
-            _movenext = true;
+            _moveNext = true;
 
             if (SelectedIndex < (Items.Count - 1))
-                SelectedIndex += 1;
+                SelectedIndex++;
             else
                 SelectedIndex = 0;
         }
@@ -104,11 +104,12 @@ namespace MudBlazor
         /// </summary>
         public void MoveTo(int index)
         {
-            _movenext = (index >= SelectedIndex);
-            SelectedIndex = index;
+            if (SelectedIndex != index)
+            {
+                _moveNext = index >= SelectedIndex;
+                SelectedIndex = index;
+            }
         }
-
-
     }
 
     public abstract class MudBaseBindableItemsControl<TChildComponent, TData> : MudBaseItemsControl<TChildComponent>
