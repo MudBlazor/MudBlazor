@@ -72,10 +72,13 @@ namespace MudBlazor
 
         protected override Task OnInitializedAsync()
         {
-            ((TableContext<T>)Context)?.GroupRows.Add(this);
-            if (GroupDefinition.InnerGroup != null)
+            if (GroupDefinition != null)
             {
-                _innerGroupItems = Table.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);
+                ((TableContext<T>)Context)?.GroupRows.Add(this);
+                if (GroupDefinition.InnerGroup != null)
+                {
+                    _innerGroupItems = Table.GetItemsOfGroup(GroupDefinition.InnerGroup, Items);
+                }
             }
             return base.OnInitializedAsync();
         }
