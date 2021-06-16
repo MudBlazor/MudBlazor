@@ -14,7 +14,7 @@
 }
 else
 {
-    @foreach (var item in Items)
+    @foreach (var item in Items ?? Array.Empty<T>())
     {
         @ChildContent(item);
     }
