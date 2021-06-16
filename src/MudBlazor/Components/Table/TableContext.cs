@@ -51,7 +51,7 @@ namespace MudBlazor
             foreach (var row in GroupRows)
             {
                 var rowGroupItems = row.Items.ToList();
-                row.SetChecked(Selection.Intersect(rowGroupItems).Count() == rowGroupItems.Count, notify: notify);
+                row.SetChecked(Selection.Intersect(rowGroupItems).Count() == rowGroupItems.Count, notify: false);
             }
             if (HeaderRows.Count > 0 || FooterRows.Count > 0)
             {
