@@ -239,58 +239,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// simple navigation using the paging buttons - RTL
-        /// </summary>
-        [Test]
-        public void TablePagingNavigationButtonsRtl()
-        {
-            var comp = ctx.RenderComponent<TablePagingTest1Rtl>();
-            // print the generated html      
-            Console.WriteLine(comp.Markup);
-            // after initial load
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-            var pagingButtons = comp.FindAll("button");
-            // click next page
-            pagingButtons[1].Click();
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("11-20 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-            // last page
-            pagingButtons[0].Click();
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(9);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("51-59 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
-            // previous page
-            pagingButtons[2].Click();
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("41-50 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-            // first page
-            pagingButtons[3].Click();
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-        }
-
-
-        /// <summary>
         /// page size select tests
         /// </summary>
         [Test]
