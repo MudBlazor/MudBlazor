@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
@@ -126,29 +125,22 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        public async Task OpenMenu(MouseEventArgs args)
+        public void OpenMenu(MouseEventArgs args)
         {
             if (Disabled)
                 return;
-            if (PositionAtCurser) await SetPopoverStyle(args);
+            if (PositionAtCurser) SetPopoverStyle(args);
             _isOpen = true;
             StateHasChanged();
         }
 
         // Sets the popover style ONLY when there is an activator
-        private async Task SetPopoverStyle(MouseEventArgs args)
+        private void SetPopoverStyle(MouseEventArgs args)
         {
-            var activatorRect = await _activatorRef.MudGetBoundingClientRectAsync();
-            PopoverStyle = IsPortalEnabled
-                ? @$"position:relative;
-                     left:{(args?.ClientX - activatorRect.Left).ToPixels()};
-                     top:{(args?.ClientY - activatorRect.Top).ToPixels()};"
-                : @$"position:fixed;
-                     left:{(args?.ClientX).ToPixels()};
-                     top:{(args?.ClientY).ToPixels()};";
+            PopoverStyle = @$"left:{args?.OffsetX.ToPixels()};top:{args?.OffsetY.ToPixels()};";
         }
 
-        public async Task ToggleMenu(MouseEventArgs args)
+        public void ToggleMenu(MouseEventArgs args)
         {
             if (Disabled)
                 return;
@@ -159,7 +151,7 @@ namespace MudBlazor
             if (_isOpen)
                 CloseMenu();
             else
-                await OpenMenu(args);
+                OpenMenu(args);
         }
 
         /// <summary>
@@ -167,9 +159,9 @@ namespace MudBlazor
         /// </summary>
         /// <param name="activator"></param>
         /// <param name="args"></param>
-        public async void Activate(object activator, MouseEventArgs args)
+        public void Activate(object activator, MouseEventArgs args)
         {
-            await ToggleMenu(args);
+            ToggleMenu(args);
         }
     }
 }

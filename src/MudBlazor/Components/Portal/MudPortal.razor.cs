@@ -10,7 +10,8 @@ namespace MudBlazor
         private Guid _id = Guid.NewGuid();
         private ElementReference _portalRef;
         private PortalItem _portalItem = new();
-        private bool? _hasFixedAncestor = null;
+        private bool? _hasFixedAncestor;
+
 
         [Inject] internal IPortal Portal { get; set; }
 
@@ -18,6 +19,9 @@ namespace MudBlazor
 
         [Inject] public IScrollManager ScrollManager { get; set; }
 
+        [Parameter] public Type PortalType { get; set; }
+
+        [Parameter] public Placement Placement { get; set; }
         [Parameter] public bool Autopositioned { get; set; } = true;
 
         [Parameter] public bool AutoDirection { get; set; } = true;
@@ -30,43 +34,57 @@ namespace MudBlazor
 
         [Parameter] public bool LockScroll { get; set; }
 
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            if (!IsEnabled) return;
+
+            parameters.TryGetValue<bool>(nameof(IsVisible), out var isCurrentlyVisible);
+            var wasPreviouslyVisible = IsVisible;
+            if (!isCurrentlyVisible && wasPreviouslyVisible)
+            {
+                await RemoveItem();
+            }
+
+            if (isCurrentlyVisible && !wasPreviouslyVisible && _portalItem.ClientRect != null)
+            {
+                await AddItem();
+            }
+
+            await base.SetParametersAsync(parameters);
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (!IsEnabled) return;
+            if (!IsEnabled || !IsVisible) return;
+
             if (_portalRef.Id != null)
+            {
                 _hasFixedAncestor ??= await _portalRef.MudHasFixedAncestorsAsync();
-            await ConfigurePortalItem();
-            ConfigureResizeListener();
-            await AddOrRemovePortalItem();
+            }
+
+            
+                await ConfigurePortalItem();
+                await AddItem();
+           
         }
 
-        private async Task AddOrRemovePortalItem()
+        private async Task AddItem()
         {
-            if (IsVisible)
-            {
-                Portal.AddOrUpdate(_portalItem);
-                if (LockScroll) await ScrollManager.LockScrollAsync();
-            }
-            else
-            {
-                if (LockScroll) await ScrollManager.UnlockScrollAsync();
-                Portal.Remove(_portalItem);
-            }
+            Portal.AddOrUpdate(_portalItem);
+            if (LockScroll) await ScrollManager.LockScrollAsync();
+            if (Autopositioned) WindowResizeListener.OnResized += OnWindowResize;
         }
 
-        private void ConfigureResizeListener()
+        private async Task RemoveItem()
         {
-            if (IsVisible && Autopositioned)
-            {
-                WindowResizeListener.OnResized += OnWindowResize;
-            }
-
-            if (!IsVisible && Autopositioned)
-            {
-                WindowResizeListener.OnResized -= OnWindowResize;
-            }
+            Portal.Remove(_portalItem);
+            if (LockScroll) await ScrollManager.UnlockScrollAsync();
+            if (Autopositioned) WindowResizeListener.OnResized -= OnWindowResize;
         }
+
+
+
+
 
         private async Task ConfigurePortalItem()
         {
@@ -74,8 +92,9 @@ namespace MudBlazor
                 _hasFixedAncestor != null && _hasFixedAncestor == true
                     ? await _portalRef.MudGetBoundingClientRectAsync()
                     : await _portalRef.MudGetRelativeClientRectAsync();
-
             _portalItem.Id = _id;
+            _portalItem.PortalType = PortalType;
+            _portalItem.Placement = Placement;
             _portalItem.Fragment = ChildContent;
             _portalItem.AutoDirection = AutoDirection;
             _portalItem.Position =

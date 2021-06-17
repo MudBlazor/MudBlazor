@@ -17,9 +17,11 @@
     width: max-content;
     background-color: var(--mud-palette-grey-darker);
     border-radius: var(--mud-default-borderradius);
-    position: absolute;
+    position: relative;
     z-index: var(--mud-zindex-tooltip);
     transition: opacity .2s;
+    visibility:hidden;
+    opacity:0;
 
     &.mud-tooltip-placement-top {
         top: 0;
@@ -43,5 +45,9 @@
         top: 0;
         right: 0;
         transform: translateX(calc(100% + 10px));
+    }
+    &.mud-tooltip-visible{
+        visibility:visible;
+        opacity:1;
     }
 }

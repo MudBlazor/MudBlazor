@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Services;
@@ -9,7 +8,7 @@ namespace MudBlazor
 {
     public partial class MudPortalProvider : IDisposable
     {
-        
+
 
         [Inject] internal IPortal Portal { get; set; }
 
@@ -26,8 +25,9 @@ namespace MudBlazor
 
         protected override void OnInitialized() => Portal.OnChange += Refresh;
 
+        //TODO Refresh only individual items
         void Refresh(object e, EventArgs c) => InvokeAsync(StateHasChanged);
-        
+
         public void Dispose()
         {
             Portal.OnChange -= Refresh;

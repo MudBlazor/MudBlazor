@@ -16,5 +16,10 @@ namespace MudBlazor.Services
 
         public string Position { get; set; } = "absolute";
 
+        public Type PortalType { get; set; }
+
+        public Placement Placement { get; set; }
+
+        public MudPortalItem Reference { get; set; }
     }
 }

@@ -8,9 +8,11 @@
     @foreach (var item in Portal.Items)
     {
         @*this is the element where the popover will be anchored*@
-        <div @key=@item.Key class="portal" data-blazor=@item.Value.Id
+        <div @key=@item.Key class="portal-anchor portal" data-blazor=@item.Value.Id
              style=@GetAnchorStyle(item.Value)>
-            @item.Value.Fragment
+
+             <MudPortalItem @ref=@item.Value.Reference Item="@item.Value" />
+
         </div>
     }
 </div>
