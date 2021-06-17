@@ -3,8 +3,9 @@
 
 <MudGrid>
     <MudItem xs="12" md="12">
-        <MudSelect T="string" Label="US States" HelperText="Pick your favorite states" MultiSelection="true" 
-         @bind-Value="value" @bind-SelectedValues="options"
+        <MudSelect T="string" Label="US States" HelperText="Pick your favorite states"
+         MultiSelection="true" OffsetY="true"
+         @bind-Value="value" @bind-SelectedValues="options" AdornmentIcon="@Icons.Material.Filled.Search"
          MultiSelectionTextFunc="@(new Func<List<string>, string>(GetMultiSelectionText))">
             @foreach (var state in states)
             {

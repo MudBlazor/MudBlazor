@@ -64,12 +64,12 @@ namespace MudBlazor
         /// <summary>
         /// The Open Autocomplete Icon
         /// </summary>
-        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
         /// The Close Autocomplete Icon
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
@@ -165,7 +165,9 @@ namespace MudBlazor
             {
                 if (value == _isOpen)
                     return;
+
                 _isOpen = value;
+                UpdateIcon();
                 IsOpenChanged.InvokeAsync(_isOpen).AndForget();
             }
         }
@@ -175,14 +177,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
 
-        public string CurrentIcon { get; set; }
+        private string _currentIcon;
 
         private MudInput<string> _elementReference;
 
         public MudAutocomplete()
         {
-            IconSize = Size.Medium;
             Adornment = Adornment.End;
+            IconSize = Size.Medium;
         }
 
         public async Task SelectOption(T value)
@@ -193,7 +195,6 @@ namespace MudBlazor
             await SetTextAsync(GetItemString(value), false);
             _timer?.Dispose();
             IsOpen = false;
-            UpdateIcon();
             BeginValidate();
             StateHasChanged();
         }
@@ -213,20 +214,12 @@ namespace MudBlazor
                 RestoreScrollPosition();
                 await CoerceTextToValue();
             }
-            UpdateIcon();
             StateHasChanged();
         }
 
-        public void UpdateIcon()
+        private void UpdateIcon()
         {
-            if (IsOpen)
-            {
-                CurrentIcon = OpenIcon;
-            }
-            else
-            {
-                CurrentIcon = CloseIcon;
-            }
+            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
         }
 
         protected override void OnInitialized()
@@ -286,13 +279,11 @@ namespace MudBlazor
             {
                 await CoerceValueToText();
                 IsOpen = false;
-                UpdateIcon();
                 StateHasChanged();
                 return;
             }
 
             IsOpen = true;
-            UpdateIcon();
             StateHasChanged();
         }
 

@@ -6,6 +6,7 @@
         <EditForm EditContext="editContext1">
         <DataAnnotationsValidator />
             <MudAutocomplete Label="US States" @bind-Value="choice1.State" 
+             AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
              SearchFunc="@SearchAsync" Immediate="true" CoerceValue="@coerceValue"
              For="@(() => choice1.State)"/>
             <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" 
@@ -30,6 +31,7 @@
         <EditForm EditContext="editContext2">
         <DataAnnotationsValidator />
             <MudAutocomplete Label="US States" @bind-Value="choice2.State" 
+             OpenIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary"
              SearchFunc="@SearchAsync" Immediate="true" CoerceValue="@coerceValue"
              Validation="@(new Func<string, IEnumerable<string>>(Validate))" />
             <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" 
@@ -53,6 +55,7 @@
     <MudItem xs="12" sm="6" md="4">
         <MudForm @ref="form" @bind-Errors="@errors">
             <MudAutocomplete T="string" Label="US States" @bind-Value="choice3.State" 
+             CloseIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Tertiary"
              SearchFunc="@SearchAsync" Immediate="true" CoerceValue="@coerceValue"
              Validation="@(new Func<string, IEnumerable<string>>(Validate))" />
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto mt-3 mb-3" 
