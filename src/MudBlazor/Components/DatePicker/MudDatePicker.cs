@@ -35,6 +35,12 @@ namespace MudBlazor
         {
             if (_value != date)
             {
+                if (date is not null && IsDateDisabledFunc(date.Value.Date))
+                {
+                    await SetTextAsync(null, false);
+                    return;
+                }
+
                 _value = date;
                 if (updateValue)
                 {

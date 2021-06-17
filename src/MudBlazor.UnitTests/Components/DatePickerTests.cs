@@ -380,6 +380,57 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void IsDateDisabledFunc_DisablesCalendarDateButtons()
+        {
+            Func<DateTime, bool> isDisabledFunc = date => true;
+            var comp = OpenPicker(Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc));
+
+            comp.Instance.IsDateDisabledFunc.Should().Be(isDisabledFunc);
+            comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
+                .Should().OnlyContain(disabled => disabled == true);
+        }
+
+        [Test]
+        public void IsDateDisabledFunc_SettingDateToADisabledDateYieldsNull()
+        {
+            var wasEventCallbackCalled = false;
+            Func<DateTime, bool> isDisabledFunc = date => true;
+            var comp = ctx.RenderComponent<MudDatePicker>(
+                Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc),
+                EventCallback("DateChanged", (DateTime? _) => wasEventCallbackCalled = true)
+            );
+
+            comp.SetParam(picker => picker.Date, DateTime.Now);
+
+            comp.Instance.Date.Should().BeNull();
+            wasEventCallbackCalled.Should().BeFalse();
+        }
+
+        [Test]
+        public void IsDateDisabledFunc_SettingDateToAnEnabledDateYieldsTheDate()
+        {
+            var wasEventCallbackCalled = false;
+            var today = DateTime.Today;
+            Func<DateTime, bool> isDisabledFunc = date => date < today;
+            var comp = ctx.RenderComponent<MudDatePicker>(
+                Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc),
+                EventCallback("DateChanged", (DateTime? _) => wasEventCallbackCalled = true)
+            );
+
+            comp.SetParam(picker => picker.Date, today);
+
+            comp.Instance.Date.Should().Be(today);
+            wasEventCallbackCalled.Should().BeTrue();
+        }
+
+        [Test]
+        public void IsDateDisabledFunc_NoDisabledDatesByDefault()
+        {
+            var comp = OpenPicker();
+            comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
+                .Should().OnlyContain(disabled => disabled == false);
+        }
+      
         public async Task CheckAutoCloseDatePickerTest()
         {
             // Define a date for comparison
