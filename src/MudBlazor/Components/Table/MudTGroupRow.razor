@@ -25,7 +25,7 @@
 }
 else
 {
-<MudText>@("There aren't any group definition to use with this component.")</MudText>
+<MudText @attributes="@UserAttributes">@("There aren't any group definition to use with this component.")</MudText>
 }
 
 @*CHILDREN:*@
@@ -36,7 +36,7 @@ else
         <MudTGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" IsCheckable="@IsCheckable"
                       HeaderClass="@HeaderClass" HeaderStyle="@HeaderStyle"
                       FooterClass="@FooterClass" FooterStyle="@FooterStyle"
-                      HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" />
+                      HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" @attributes="@UserAttributes" />
     }
 }
 else
