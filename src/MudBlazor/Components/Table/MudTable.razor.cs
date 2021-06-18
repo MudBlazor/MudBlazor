@@ -162,6 +162,41 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
 
+        /// <summary>
+        /// Defines data grouping parameters. It can has N hierarchical levels
+        /// </summary>
+        [Parameter] public TableGroupDefinition<T> GroupBy { get; set; }
+
+        /// <summary>
+        /// Defines how a table grouping row header looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
+        /// </summary>
+        [Parameter] public RenderFragment<TableGroupData<object, T>> GroupHeaderTemplate { get; set; }
+
+        /// <summary>
+        /// Defines custom CSS classes for using on Group Header's MudTr.
+        /// </summary>
+        [Parameter] public string GroupHeaderClass { get; set; }
+
+        /// <summary>
+        /// Defines custom styles for using on Group Header's MudTr.
+        /// </summary>
+        [Parameter] public string GroupHeaderStyle { get; set; }
+
+        /// <summary>
+        /// Defines custom CSS classes for using on Group Footer's MudTr.
+        /// </summary>
+        [Parameter] public string GroupFooterClass { get; set; }
+
+        /// <summary>
+        /// Defines custom styles for using on Group Footer's MudTr.
+        /// </summary>
+        [Parameter] public string GroupFooterStyle { get; set; }
+
+        /// <summary>
+        /// Defines how a table grouping row footer looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.
+        /// </summary>
+        [Parameter] public RenderFragment<TableGroupData<object, T>> GroupFooterTemplate { get; set; }
+
         public IEnumerable<T> FilteredItems
         {
             get
@@ -336,5 +371,39 @@ namespace MudBlazor
         }
 
         internal override bool IsEditable { get => RowEditingTemplate != null; }
+
+        //GROUPING:
+        private IEnumerable<IGrouping<object, T>> GroupItemsPage
+        {
+            get
+            {
+                return GetItemsOfGroup(GroupBy, CurrentPageItems);
+            }
+        }
+
+        internal IEnumerable<IGrouping<object, T>> GetItemsOfGroup(TableGroupDefinition<T> parent, IEnumerable<T> sourceList)
+        {
+            if (parent == null || sourceList == null)
+                return new List<IGrouping<object, T>>();
+
+            return sourceList.GroupBy(parent.Selector).ToList();
+        }
+
+        internal void OnGroupHeaderCheckboxClicked(bool value, IEnumerable<T> items)
+        {
+            if (value)
+            {
+                foreach (var item in items)
+                    Context.Selection.Add(item);
+            }
+            else
+            {
+                foreach (var item in items)
+                    Context.Selection.Remove(item);
+            }
+
+            Context.UpdateRowCheckBoxes(false);
+            SelectedItemsChanged.InvokeAsync(SelectedItems);
+        }
     }
 }

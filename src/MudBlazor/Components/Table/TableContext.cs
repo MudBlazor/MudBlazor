@@ -34,6 +34,7 @@ namespace MudBlazor
         public HashSet<T> Selection { get; set; } = new HashSet<T>();
 
         public Dictionary<T, MudTr> Rows { get; set; } = new Dictionary<T, MudTr>();
+        public List<MudTGroupRow<T>> GroupRows { get; set; } = new List<MudTGroupRow<T>>();
 
         public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
 
@@ -47,6 +48,12 @@ namespace MudBlazor
                 var row = pair.Value;
                 var item = pair.Key;
                 row.SetChecked(Selection.Contains(item), notify: notify);
+            }
+            //update group checkboxes
+            foreach (var row in GroupRows)
+            {
+                var rowGroupItems = row.Items.ToList();
+                row.SetChecked(Selection.Intersect(rowGroupItems).Count() == rowGroupItems.Count, notify: false);
             }
             if (HeaderRows.Count > 0 || FooterRows.Count > 0)
             {
