@@ -13,61 +13,85 @@
                     Title="@Type.ConvertToCSharpSource()" SubTitle="API documentation">
     </DocsPageHeader>
     <DocsPageContent>
-        <DocsPageSection>
-            <SectionHeader Title="Properties" />
-            <SectionContent Class="docs-content-api" FullWidth="true">
-                <MudTable Items="@Properties" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm">
-                    <HeaderContent>
-                        <MudTh>Name</MudTh>
-                        <MudTh>Type</MudTh>
-                        <MudTd>Default</MudTd>
-                        <MudTh>Description</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
-                        <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type<DocsBinding IsTwoWay="@context.IsTwoWay" /></div></MudTd>
-                        <MudTd Class="docs-content-api-cell" DataLabel="Default">@PresentDefaultValue(context.Default)</MudTd>
-                        <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description"><DocsObsolete PropertyInfo="@context.PropertyInfo" />@(HttpUtility.HtmlDecode(context.Description))</MudTd>
-                    </RowTemplate>
-                </MudTable>
-            </SectionContent>
-        </DocsPageSection>
+
+        @if (Properties?.Count() > 0)
+        {
+            <DocsPageSection>
+                <SectionHeader Title="Properties" />
+                <SectionContent Class="docs-content-api" FullWidth="true">
+                    <MudTable Items="@Properties" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm">
+                        <HeaderContent>
+                            <MudTh>Name</MudTh>
+                            <MudTh>Type</MudTh>
+                            <MudTd>Default</MudTd>
+                            <MudTh>Description</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type<DocsBinding IsTwoWay="@context.IsTwoWay" /></div></MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Default">@PresentDefaultValue(context.Default)</MudTd>
+                            <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </SectionContent>
+            </DocsPageSection>
+        }
+
+        @if (EventCallbacks?.Count() > 0)
+        {
+            <DocsPageSection>
+                <SectionHeader Title="EventCallbacks" />
+                <SectionContent Class="docs-content-api" FullWidth="true">
+                    <MudTable Items="@EventCallbacks" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm">
+                        <HeaderContent>
+                            <MudTh>Name</MudTh>
+                            <MudTh>Type</MudTh>
+                            <MudTh>Description</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.Name</CodeInline></MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Type"><div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@context.Type<DocsBinding IsTwoWay="@context.IsTwoWay" /></div></MudTd>
+                            <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(context.Description))</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </SectionContent>
+            </DocsPageSection>
+        }
+
         @if (Methods?.Count() > 0)
         {
-        <DocsPageSection>
-            <SectionHeader>
-                <Title>Methods</Title>
-            </SectionHeader>
-            <SectionContent Class="docs-content-api" FullWidth="true">
-                <MudTable Items="@Methods" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm">
-                    <HeaderContent>
-                        <MudTh>Name</MudTh>
-                        <MudTd>Parameters</MudTd>
-                        <MudTh>Return</MudTh>
-                        <MudTh>Description</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.MethodInfo.Name</CodeInline></MudTd>
-                        <MudTd Class="docs-content-api-cell" DataLabel="Parameters">
-                         @if (context.Parameters != null)
-                         {
-                             foreach (var parameterInfo in context.Parameters)
-                             {
-                                <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{parameterInfo.ParameterType.ConvertToCSharpSource()} {parameterInfo.Name}{AnalyseMethodDocumentation(context.Documentation, "param", parameterInfo.Name)}")</div>
-                             }
-                         }
-                         </MudTd>
-                        <MudTd Class="docs-content-api-cell" DataLabel="Return">
-                        @if (@context.Return != null && context.Return.ParameterType.ConvertToCSharpSource() != "Void")
-                        {
-                            <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{context.Return.ParameterType.ConvertToCSharpSource()}{AnalyseMethodDocumentation(context.Documentation, "returns")}")</div>
-                        }
-                        </MudTd>
-                        <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description"><DocsObsolete MethodInfo="@context.MethodInfo" />@(HttpUtility.HtmlDecode(AnalyseMethodDocumentation(context.Documentation, "summary")))</MudTd>
-                    </RowTemplate>
-                </MudTable>
-            </SectionContent>
-        </DocsPageSection>
+            <DocsPageSection>
+                <SectionHeader Title="Methods" />>
+                <SectionContent Class="docs-content-api" FullWidth="true">
+                    <MudTable Items="@Methods" Elevation="0" Class="mx-0" Breakpoint="@Breakpoint.Sm">
+                        <HeaderContent>
+                            <MudTh>Name</MudTh>
+                            <MudTd>Parameters</MudTd>
+                            <MudTh>Return</MudTh>
+                            <MudTh>Description</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Name"><CodeInline>@context.MethodInfo.Name</CodeInline></MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Parameters">
+                            @if (context.Parameters != null)
+                            {
+                                foreach (var parameterInfo in context.Parameters)
+                                {
+                                    <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{parameterInfo.ParameterType.ConvertToCSharpSource()} {parameterInfo.Name}{AnalyseMethodDocumentation(context.Documentation, "param", parameterInfo.Name)}")</div>
+                                }
+                            }
+                            </MudTd>
+                            <MudTd Class="docs-content-api-cell" DataLabel="Return">
+                            @if (@context.Return != null && context.Return.ParameterType.ConvertToCSharpSource() != "Void")
+                            {
+                                <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">@($"{context.Return.ParameterType.ConvertToCSharpSource()}{AnalyseMethodDocumentation(context.Documentation, "returns")}")</div>
+                            }
+                            </MudTd>
+                            <MudTd Class="docs-content-api-cell docs-content-api-description" DataLabel="Description">@(HttpUtility.HtmlDecode(AnalyseMethodDocumentation(context.Documentation, "summary")))</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </SectionContent>
+            </DocsPageSection>
         }
     </DocsPageContent>
 </DocsPage>
@@ -88,6 +112,28 @@
     };
     [Parameter] public Type Type { get; set; }
 
+    private IEnumerable<ApiProperty> EventCallbacks
+    {
+        get
+        {
+            foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>().OrderBy(x => x.Name))
+            {
+                if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && info.PropertyType.Name.Contains("EventCallback"))
+                {
+                    yield return new ApiProperty()
+                    {
+                        Name = info.Name,
+                        PropertyInfo = info,
+                        Default = string.Empty,
+                        IsTwoWay = CheckIsTwoWay(info),
+                        Description = GetDescription(Type, info),
+                        Type = info.PropertyType.ConvertToCSharpSource(),
+                    };
+                }
+            }
+        }
+    }
+
     private IEnumerable<ApiMethod> Methods
     {
         get
@@ -96,13 +142,16 @@
             {
                 if (!hiddenMethods.Any(x => x.Contains(info.Name)) && !info.Name.StartsWith("get_") && !info.Name.StartsWith("set_"))
                 {
-                    yield return new ApiMethod()
+                    if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0)
                     {
-                        MethodInfo = info,
-                        Return = info.ReturnParameter,
-                        Parameters = info.GetParameters(),
-                        Documentation = info.GetDocumentation()
-                    };
+                        yield return new ApiMethod()
+                        {
+                            MethodInfo = info,
+                            Return = info.ReturnParameter,
+                            Parameters = info.GetParameters(),
+                            Documentation = info.GetDocumentation()
+                        };
+                    }
                 }
             }
         }
@@ -114,18 +163,22 @@
         {
             foreach (var info in Type.GetPropertyInfosWithAttribute<ParameterAttribute>().OrderBy(x => x.Name))
             {
-                yield return new ApiProperty()
+                if (info.GetCustomAttributes(typeof(System.ObsoleteAttribute), true).Length == 0 && !info.PropertyType.Name.Contains("EventCallback"))
                 {
-                    Name = info.Name,
-                    PropertyInfo = info,
-                    IsTwoWay = CheckIsTwoWay(info),
-                    Description = GetDescription(Type, info),
-                    Type = info.PropertyType.ConvertToCSharpSource(),
-                    Default = GetDefaultValue(info) == null ? null : GetDefaultValue(info).ToString().Contains("EventCallback") ? "" : GetDefaultValue(info),
-                };
+                    yield return new ApiProperty()
+                    {
+                        Name = info.Name,
+                        PropertyInfo = info,
+                        IsTwoWay = CheckIsTwoWay(info),
+                        Description = GetDescription(Type, info),
+                        Type = info.PropertyType.ConvertToCSharpSource(),
+                        Default = GetDefaultValue(info) == null ? null : GetDefaultValue(info).ToString().Contains("EventCallback") ? "" : GetDefaultValue(info),
+                    };
+                }
             }
         }
     }
+
 
     private string AnalyseMethodDocumentation(string documentation, string occurence, string parameter = "")
     {
@@ -210,7 +263,7 @@
         return null;
     }
 
-     DefaultConverter<object> _converter = new DefaultConverter<object>() { Culture= CultureInfo.InvariantCulture };
+    DefaultConverter<object> _converter = new DefaultConverter<object>() { Culture= CultureInfo.InvariantCulture };
 
     private string PresentDefaultValue(object @default)
     {
