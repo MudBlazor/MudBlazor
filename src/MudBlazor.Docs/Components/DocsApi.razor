@@ -172,7 +172,7 @@
                         IsTwoWay = CheckIsTwoWay(info),
                         Description = GetDescription(Type, info),
                         Type = info.PropertyType.ConvertToCSharpSource(),
-                        Default = GetDefaultValue(info) == null ? null : GetDefaultValue(info).ToString().Contains("EventCallback") ? "" : GetDefaultValue(info),
+                        Default = GetDefaultValue(info)
                     };
                 }
             }
