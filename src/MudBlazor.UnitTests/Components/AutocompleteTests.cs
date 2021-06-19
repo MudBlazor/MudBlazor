@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
@@ -318,7 +319,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Button shows again after entering text
             comp.Find("input").Input("text");
-            comp.WaitForAssertion(()=> comp.Find("button").Should().NotBeNull());
+            comp.WaitForAssertion(() => comp.Find("button").Should().NotBeNull());
             // Button removed after clearing text
             comp.Find("input").Input(string.Empty);
             comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
@@ -383,9 +384,8 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Test for <seealso cref="https://github.com/Garderoben/MudBlazor/issues/1761"/>
         /// </summary>
-        [Ignore("This test is disabled for now because PR #1807 was reverted for introducing a bug")]
         [Test]
-        public async Task Autocomplete_Should_Close_OnBlur()
+        public async Task Autocomplete_Should_Close_OnTab()
         {
             var comp = ctx.RenderComponent<AutocompleteTest1>();
             Console.WriteLine(comp.Markup);
@@ -402,10 +402,42 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
 
             // Lets call blur on the input and confirm that it closed
-            autocompletecomp.Find("input").Blur();
+            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            // Tab closes the drop-down and does not select the selected value (California)
+            // because SelectValueOnTab is false per default
+            autocomplete.Value.Should().Be("Alabama");
         }
-        
+
+        [Test]
+        public async Task Autocomplete_Should_SelectValue_On_Tab_With_SelectValueOnTab()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTest1>();
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            autocompletecomp.SetParam(x=>x.SelectValueOnTab, true);
+            var autocomplete = autocompletecomp.Instance;
+
+            // Should be closed
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            // Lets type something to cause it to open
+            autocompletecomp.Find("input").Input("Calif");
+            await Task.Delay(100);
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+            // Lets call blur on the input and confirm that it closed
+            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            // Tab closes the drop-down and selects the selected value (California)
+            // because SelectValueOnTab is true
+            autocomplete.Value.Should().Be("California");
+
+        }
+
         /// <summary>
         /// When selecting a value by clicking on it in the list the input will blur. However, this
         /// must not cause the dropdown to close or else the click on the item will not be possible!
