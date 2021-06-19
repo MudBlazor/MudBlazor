@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor
@@ -8,11 +9,23 @@ namespace MudBlazor
     /// </summary>
     public partial class MudColumn<T> : MudBaseColumn
     {
+        T InternalValue
+        {
+            get => Value;
+            set
+            {
+                if (!EqualityComparer<T>.Default.Equals(value, Value))
+                {
+                    Value = value;
+                    ValueChanged.InvokeAsync(value);
+                }
+            }
+        }
         /// <summary>
         /// Specifies the name of the object's property bound to the column
         /// </summary>
-        [Parameter]
-        public T Value { get; set; }
+        [Parameter] public T Value { get; set; }
+        [Parameter] public EventCallback<T> ValueChanged { get; set; }
 
         [Parameter]
         public T FooterValue
@@ -26,16 +39,13 @@ namespace MudBlazor
         /// <summary>
         /// Used if no FooterValue is available
         /// </summary>
-        [Parameter]
-        public string FooterText { get; set; }
+        [Parameter] public string FooterText { get; set; }
         /// <summary>
         /// Specifies which string format should be used.
         /// </summary>
-        [Parameter]
-        public string DataFormatString { get; set; }
+        [Parameter] public string DataFormatString { get; set; }
 
-        [Parameter]
-        public bool ReadOnly { get; set; }
+        [Parameter] public bool ReadOnly { get; set; }
 
         private string GetFormattedString(T item)
         {

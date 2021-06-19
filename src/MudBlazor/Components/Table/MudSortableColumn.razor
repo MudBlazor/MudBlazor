@@ -6,13 +6,17 @@
 {
     if (Mode == Rendermode.Header)
     {
-        if (SortBy == null)
+        if (SortLabel != null)
         {
-            <MudTh>@HeaderText</MudTh>
+            <MudTh><MudTableSortLabel SortLabel="@SortLabel" T="ModelType">@HeaderText</MudTableSortLabel></MudTh>
+        }
+        else if (SortBy != null)
+        {
+            <MudTh><MudTableSortLabel SortBy="@SortBy">@HeaderText</MudTableSortLabel></MudTh>
         }
         else
         {
-            <MudTh><MudTableSortLabel SortBy="@SortBy">@HeaderText</MudTableSortLabel></MudTh>
+            <MudTh>@HeaderText</MudTh>
         }
     }
     else if (Mode == Rendermode.Item || (ReadOnly && Mode == Rendermode.Edit))
@@ -21,7 +25,7 @@
     }
     else if (Mode == Rendermode.Edit)
     {
-        <MudTd DataLabel="@HeaderText"><MudTextField @bind-Value="@Value" /></MudTd>
+        <MudTd DataLabel="@HeaderText"><MudTextField @bind-Value="InternalValue" /></MudTd>
     }
     else if (Mode == Rendermode.Footer)
     {
