@@ -55,3 +55,27 @@
     width: 75%;
     height: 75%;
 }
+
+.mud-avatar-outlined {
+    color: var(--mud-palette-text-primary);
+    background-color: var(--mud-palette-white);
+    border: 2px solid var(--mud-palette-text-primary);
+
+    @each $color in $mud-palette-colors {
+        &.mud-avatar-outlined-#{$color} {
+            color: var(--mud-palette-#{$color});
+            border: 2px solid var(--mud-palette-#{$color});
+        }
+    }
+}
+
+.mud-avatar-filled {
+    color: var(--mud-palette-white);
+    background-color: var(--mud-palette-grey-light);
+
+    @each $color in $mud-palette-colors {
+        &.mud-avatar-filled-#{$color} {
+            background-color: var(--mud-palette-#{$color});
+        }
+    }
+}
