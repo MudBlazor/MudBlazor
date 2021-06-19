@@ -11,7 +11,8 @@ namespace MudBlazor
           .AddClass($"mud-avatar-{Size.ToDescriptionString()}")
           .AddClass($"mud-avatar-rounded", Rounded)
           .AddClass($"mud-avatar-square", Square)
-          .AddClass($"mud-theme-{Color.ToDescriptionString()}")
+          .AddClass($"mud-avatar-{Variant.ToDescriptionString()}")
+          .AddClass($"mud-avatar-{Variant.ToDescriptionString()}-{Color.ToDescriptionString()}")
           .AddClass(Class)
         .Build();
 
@@ -39,6 +40,11 @@ namespace MudBlazor
         /// The Size of the MudAvatar.
         /// </summary>
         [Parameter] public Size Size { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The variant to use.
+        /// </summary>
+        [Parameter] public Variant Variant { get; set; } = Variant.Filled;
 
         /// <summary>
         /// Child content of the component.
