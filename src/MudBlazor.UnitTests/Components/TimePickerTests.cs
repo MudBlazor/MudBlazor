@@ -422,8 +422,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-minute")[30].Click();
             picker.TimeIntermediate.Value.Minutes.Should().Be(30);
 
-            // Close the timepicker
-            await comp.InvokeAsync(() => timePicker.Instance.Close(false));
+            // Click outside of the timepicker
+            comp.Find("div.mud-overlay").Click();
 
             // Check that the time should remain the same because autoclose is false
             // and there are actions which are defined
@@ -444,8 +444,8 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-minute")[30].Click();
             picker.TimeIntermediate.Value.Minutes.Should().Be(30);
 
-            // Close the timepicker
-            await comp.InvokeAsync(() => timePicker.Instance.Close(false));
+            // Click outside of the timepicker
+            comp.Find("div.mud-overlay").Click();
 
             // Check that the time should be equal to the selection this time!
             picker.Time.Should().Be(new TimeSpan(16, 30, 00));
