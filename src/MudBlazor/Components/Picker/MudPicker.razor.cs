@@ -110,6 +110,11 @@ namespace MudBlazor
         [Parameter] public bool Square { get; set; }
 
         /// <summary>
+        /// If true, no date or time can be defined.
+        /// </summary>
+        [Parameter] public bool ReadOnly { get; set; }
+
+        /// <summary>
         /// If true, border-radius is set to theme default when in Static Mode.
         /// </summary>
         [Parameter] public bool Rounded { get; set; }

@@ -1,7 +1,8 @@
 ﻿@namespace MudBlazor.Docs.Examples
 <MudGrid>
     <MudItem xs="12" sm="6" md="4">
-        <MudTimePicker Label="12 hours" AmPm="true" @bind-Time="time" />
+        <MudTimePicker Label="12 hours" AmPm="true" @bind-Time="time" ReadOnly="@readOnly" />
+        <MudSwitch @bind-Checked="@readOnly" Color="Color.Tertiary">ReadOnly</MudSwitch>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
         <MudTimePicker Label="12 hours custom format" AmPm="true" TimeFormat="h:mm tt" @bind-Time="time" />
@@ -26,4 +27,5 @@
 @code{
     MudTimePicker _picker;
     TimeSpan? time = new TimeSpan(00, 45, 00);
+    private bool readOnly;
 }
