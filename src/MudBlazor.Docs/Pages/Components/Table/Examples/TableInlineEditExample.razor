@@ -4,7 +4,7 @@
 @inject HttpClient httpClient
 @inject ISnackbar Snackbar
 
-<MudTable Items="@Elements" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem" SortLabel="Sort By" 
+<MudTable Items="@Elements" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem1" SortLabel="Sort By" 
  CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" RowEditCommit="ItemHasBeenCommitted">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
@@ -52,11 +52,38 @@
         <MudTablePager />
     </PagerContent>
 </MudTable>
+<MudTable Items="@Elements" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<Element,bool>(FilterFunc)" @bind-SelectedItem="selectedItem2" SortLabel="Sort By" 
+ CommitEditTooltip="Commit Edit" OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues" RowEditCommit="ItemHasBeenCommitted">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudToolBarSpacer />
+        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <ColGroup>
+        <col style="width:50px;" />
+        <col style="width:80px;" />
+        <col style="width:50%;" />
+        <col />
+        <col />
+        <col style="width:50px;" />
+    </ColGroup>
+    <Columns>
+        <MudSortableColumn @bind-Value="context.Number" HeaderText="Nr" SortBy="(Element x) => x.Number"></MudSortableColumn>
+        <MudSortableColumn @bind-Value="context.Sign" HeaderText="Sign" SortBy="(Element x) => x.Sign"></MudSortableColumn>
+        <MudSortableColumn @bind-Value="context.Name" HeaderText="Name" SortBy="(Element x) => x.Name"></MudSortableColumn>
+        <MudSortableColumn @bind-Value="context.Position" HeaderText="Position" SortBy="(Element x) => x.Position"></MudSortableColumn>
+        <MudSortableColumn @bind-Value="context.Molar" HeaderText="Molar mass" SortBy="(Element x) => x.Molar"></MudSortableColumn>
+    </Columns>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
 <MudSwitch @bind-Checked="@hover" Color="Color.Primary">Hover</MudSwitch>
 <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
 <MudSwitch @bind-Checked="@ronly" Color="Color.Tertiary">Read Only</MudSwitch>
 <MudSwitch @bind-Checked="@canCancelEdit" Color="Color.Info">Can Cancel Edit</MudSwitch>
-<MudText Inline="true">Selected: @selectedItem?.Name</MudText>
+<MudText Inline="true">Selected1: @selectedItem1?.Name</MudText>
+<MudText Inline="true">Selected2: @selectedItem2?.Name</MudText>
 <div style="display: flex;">
     <div style="width: 15em;">
         <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="ClearEditionEvents">Clear Edition events</MudButton>
@@ -78,9 +105,11 @@
     private bool ronly = false;
     private bool canCancelEdit = false;
     private string searchString = "";
-    private Element selectedItem = null;
+    private Element selectedItem1 = null;
+    private Element selectedItem2 = null;
     private Element elementBeforeEdition;
-    private HashSet<Element> selectedItems = new HashSet<Element>();
+    private HashSet<Element> selectedItems1 = new HashSet<Element>();
+    private HashSet<Element> selectedItems2 = new HashSet<Element>();
 
     private IEnumerable<Element> Elements = new List<Element>();
 
