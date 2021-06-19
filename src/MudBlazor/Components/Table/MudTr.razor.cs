@@ -56,7 +56,7 @@ namespace MudBlazor
                 // Cancel any PreviousRowClick variable
                 Context.CancelAnyClickRowFirstTime();
 
-                // Do a copy of original values
+                // Do a copy of the original values
                 CopyOriginalValues();
             }
 
