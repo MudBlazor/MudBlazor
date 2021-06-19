@@ -23,7 +23,7 @@ namespace MudBlazor
         public abstract string SortFieldLabel { get; internal set; }
 
         public abstract SortDirection SortDirection { get; protected set; }
-
+        public abstract void CancelAnyClickRowFirstTime(); 
     }
 
     public class TableContext<T> : TableContext
@@ -56,6 +56,14 @@ namespace MudBlazor
                 // update footer checkbox
                 foreach (var footer in FooterRows)
                     footer.SetChecked(b, notify: false);
+            }
+        }
+
+        public override void CancelAnyClickRowFirstTime()
+        {
+            if (Rows.Values.Any(x => x.ClickRowFirstTime))
+            {
+                Rows.Values.First(x => x.ClickRowFirstTime).CopyOriginalValues();
             }
         }
 

@@ -8,7 +8,7 @@ namespace MudBlazor
 {
     public partial class MudTr : MudComponentBase
     {
-        internal bool _clickRowFirstTime;
+        public bool ClickRowFirstTime;
 
         internal object _itemCopy;
 
@@ -50,8 +50,13 @@ namespace MudBlazor
         public void OnRowClicked(MouseEventArgs args)
         {
             // Manage the Item Copy the first time the row is clicked
-            if (!_clickRowFirstTime)
+            // if the CanCancelEdit functionality is used
+            if (!ClickRowFirstTime && Context.Table.CanCancelEdit)
             {
+                // Cancel any PreviousRowClick variable
+                Context.CancelAnyClickRowFirstTime();
+
+                // Do a copy of original values
                 CopyOriginalValues();
             }
 
@@ -98,7 +103,7 @@ namespace MudBlazor
 
             // The item object has been edited
             Context.Table.RowEditCommit?.Invoke(Item);
-            _clickRowFirstTime = false;
+            ClickRowFirstTime = false;
         }
 
         private void CancelEdit(MouseEventArgs ev)
@@ -111,19 +116,19 @@ namespace MudBlazor
             CopyOriginalValues();
         }
 
-        private void CopyOriginalValues()
+        public void CopyOriginalValues()
         {
             if (IsEditable && Item != null)
             {
-                if (!_clickRowFirstTime)
+                if (!ClickRowFirstTime)
                 {
                     Context.Table.RowEditPreview?.Invoke(Item);
-                    _clickRowFirstTime = true;
+                    ClickRowFirstTime = true;
                 }
                 else
                 {
                     Context.Table.RowEditCancel?.Invoke(Item);
-                    _clickRowFirstTime = false;
+                    ClickRowFirstTime = false;
                 }
             }
         }
