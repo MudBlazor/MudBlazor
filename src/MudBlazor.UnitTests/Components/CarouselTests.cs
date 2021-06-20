@@ -158,12 +158,12 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             Console.WriteLine(comp.Markup);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2); //left + right
-            /// adding some pages
+            // adding some pages
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
             comp.Instance.Items.Add(new());
             comp.Render();
-            //// playing with params
+            // playing with params
             comp.FindAll("button.mud-icon-button").Count.Should().Be(5); //left + right + 3 items
             comp.SetParam(p => p.ShowArrows, false);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(3);
@@ -173,6 +173,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-icon-button").Count.Should().Be(2);
             comp.SetParam(p => p.ShowDelimiters, true);
             comp.FindAll("button.mud-icon-button").Count.Should().Be(5);
+            // Custom classes for navigation elements
+            comp.SetParam(p => p.DelimitersClass, "fake-delimiter-class");
+            comp.SetParam(p => p.NavigationButtonsClass, "fake-navigation-class");
+            comp.FindAll("button.fake-delimiter-class").Count.Should().Be(3);
+            comp.FindAll("button.fake-navigation-class").Count.Should().Be(2);
+            comp.SetParam(p => p.DelimitersClass, null);
+            comp.SetParam(p => p.NavigationButtonsClass, null);
+            comp.FindAll("button.fake-delimiter-class").Count.Should().Be(0);
+            comp.FindAll("button.fake-navigation-class").Count.Should().Be(0);
         }
 
         /// <summary>

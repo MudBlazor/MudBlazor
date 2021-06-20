@@ -16,10 +16,17 @@ namespace MudBlazor
                                  .Build();
 
         protected string NavigationButtonsClassName =>
-                    new CssBuilder("align-self-center")
+                    new CssBuilder()
+                        .AddClass("align-self-center", !(NavigationButtonsClass ?? "").Contains("align-self-"))
                         .AddClass("mud-carousel-elements-rtl", RightToLeft)
+                        .AddClass(NavigationButtonsClass)
                         .Build();
 
+        protected string DelimitersButtonsClassName =>
+                    new CssBuilder()
+                        .AddClass("align-self-center", !(DelimitersClass ?? "").Contains("align-self-"))
+                        .AddClass(DelimitersClass)
+                        .Build();
 
         private Timer _timer;
         private bool _autoCycle = true;
@@ -80,6 +87,16 @@ namespace MudBlazor
             }
         }
 
+
+        /// <summary>
+        /// Gets or Sets custom class(es) for 'Next' and 'Previous' arrows
+        /// </summary>
+        [Parameter] public string NavigationButtonsClass { get; set; }
+
+        /// <summary>
+        /// Gets or Sets custom class(es) for Delimiters buttons
+        /// </summary>
+        [Parameter] public string DelimitersClass { get; set; }
 
         /// <summary>
         /// Gets or Sets the Template for the Left Arrow
