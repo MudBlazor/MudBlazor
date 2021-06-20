@@ -232,6 +232,11 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnCancelEditClick { get; set; }
 
         /// <summary>
+        /// Event is called before the item is modified in inline editing.
+        /// </summary>
+        [Parameter] public EventCallback<object> OnPreviewEditClick { get; set; }
+
+        /// <summary>
         /// Command executed when the user clicks on the CommitEdit Button.
         /// </summary>
         [Parameter] public ICommand CommitEditCommand { get; set; }
@@ -366,6 +371,11 @@ namespace MudBlazor
                     parameter = item;
                 CommitEditCommand.Execute(parameter);
             }
+        }
+
+        internal async Task OnPreviewEditHandler(object item)
+        {
+            await OnPreviewEditClick.InvokeAsync(item);
         }
 
         internal async Task OnCancelEditHandler(MouseEventArgs ev)

@@ -64,6 +64,9 @@ namespace MudBlazor
                 hasBeenCanceled = false;
                 hasBeenCommitted = false;
 
+                // Trigger the preview event
+                Context?.Table.OnPreviewEditHandler(Item);
+
                 // Trigger the row edit preview event
                 Context.Table.RowEditPreview?.Invoke(Item);
             }
@@ -126,7 +129,7 @@ namespace MudBlazor
 
         private void CancelEdit(MouseEventArgs ev)
         {
-            // The edit mode is canceled
+            // The edit mode is canceled and trigger the cancel event
             Context?.Table.SetEditingItem(null);
             Context?.Table.OnCancelEditHandler(ev);
 
