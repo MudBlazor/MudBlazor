@@ -1,6 +1,7 @@
 ﻿@namespace MudBlazor
-<span  @ref=@_fragmentReference style=@Style>
-
-    @Item.Fragment
-    
-</span>
+@*this is the element where the popover will be anchored*@
+<div class="portal-anchor" data-id=@Item.Id style=@AnchorStyle @ref=@_anchorRef>
+    <div class="portal-fragment" @ref=@_fragmentRef>
+        @Item.Fragment
+    </div>
+</div>

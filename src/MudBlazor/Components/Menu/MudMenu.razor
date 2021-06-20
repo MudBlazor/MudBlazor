@@ -16,15 +16,15 @@
     else if (String.IsNullOrEmpty(Icon))
     {
         <MudButton StartIcon="@StartIcon"
-                   EndIcon="@EndIcon"
-                   IconColor="@IconColor"
-                   Color="@Color"
-                   Size="@Size"
-                   Variant="@Variant"
-                   Disabled="@Disabled"
-                   DisableRipple="@DisableRipple"
-                   DisableElevation="@DisableElevation"
-                   @onclick="@ToggleMenu">
+               EndIcon="@EndIcon"
+               IconColor="@IconColor"
+               Color="@Color"
+               Size="@Size"
+               Variant="@Variant"
+               Disabled="@Disabled"
+               DisableRipple="@DisableRipple"
+               DisableElevation="@DisableElevation"
+               @onclick="@ToggleMenu">
             @Label
         </MudButton>
     }
@@ -32,15 +32,15 @@
     {
         <MudIconButton Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" @onclick="@ToggleMenu" />
     }
-   <MudPortal IsVisible="@_isOpen" IsEnabled="IsPortalEnabled" LockScroll="LockScroll">
-    <CascadingValue Value="@this">
+   
         <MudPopover Open="@_isOpen" Class="@MenuClassname" MaxHeight="@MaxHeight" Style="@PopoverStyle" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
-            <MudList Clickable="true" Dense="@Dense">
-                @ChildContent
-            </MudList>
+            <CascadingValue Value="@this">
+                <MudList Clickable="true" Dense="@Dense">
+                    @ChildContent
+                </MudList>
+            </CascadingValue>
         </MudPopover>
-    </CascadingValue>
-   </MudPortal>
+ 
     <MudOverlay Visible="@(_isOpen && ActivationEvent != MouseEvent.MouseOver)" OnClick="@ToggleMenu" LockScroll="false" />
 </div>
 

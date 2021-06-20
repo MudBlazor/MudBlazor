@@ -28,7 +28,7 @@ namespace MudBlazor.Services
                 if (item == null)
                     _items.Add(newItem.Id, newItem);
                 else
-                    item.ClientRect = newItem.ClientRect;
+                    item.AnchorRect = newItem.AnchorRect;
             }
             OnChange?.Invoke(this, null);
         }

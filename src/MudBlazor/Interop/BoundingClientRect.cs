@@ -14,6 +14,26 @@ namespace MudBlazor.Interop
         public double Right { get; set; }
         public double Bottom { get; set; }
         public double Left { get; set; }
+
+        public double WindowHeight { get; set; }
+        public double WindowWidth { get; set; }
+
+        public double ScrollX { get; set; }
+        public double ScrollY { get; set; }
+
+        public double AbsoluteLeft => Left + ScrollX;
+
+        public double AbsoluteTop => Top + ScrollY;
+
+        public double AbsoluteRight => Right + ScrollX;
+
+        public double AbsoluteBottom => Bottom + ScrollY;
+
+
+
+        
+
+        
     }
 
 }

@@ -9,54 +9,58 @@ namespace MudBlazor
 {
     public partial class MudPortalItem
     {
-        private ElementReference _fragmentReference;
-        private BoundingClientRect _fragmentRect;
-        private string _right, _left;
-
-       
-
-        private string Style => new StyleBuilder()
-            .AddStyle("left", _left, _left.IsNonEmpty())
-            .AddStyle("right", _right, _right.IsNonEmpty())
-            .AddStyle("bottom", (-(_fragmentRect?.Height + 10)).ToPixels())
-            .AddStyle("height", "max-content")
-            .AddStyle("width", "max-content")
-            .AddStyle("position", "absolute", Item.PortalType == typeof(MudTooltip))
-            .Build();
-
+        private bool _hasBeenRendered=true;
+        private ElementReference _fragmentRef;
+        private ElementReference _anchorRef;
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         [Parameter] public PortalItem Item { get; set; }
 
+        public void Update() => StateHasChanged();
 
-        [Inject] public IBrowserWindowSizeProvider ViewPort { get; set; }
+        protected override bool ShouldRender()
+        {
+            return base.ShouldRender();
+        }
+        private string AnchorStyle =>
+            new StyleBuilder()
 
-        public void Update() => StateHasChanged();              
+                   .AddStyle("position", "fixed", !_hasBeenRendered)
+                   //.AddStyle("visibility", "hidden", !_hasBeenRendered)
+                   .AddStyle("position", Item.Position, _hasBeenRendered)
+                   .AddStyle("top", Item.AnchorRect?.AbsoluteTop.ToPixels())
+                   .AddStyle("left", Item.AnchorRect?.AbsoluteLeft.ToPixels())
+                   .AddStyle("height", Item.AnchorRect?.Height.ToPixels(), _hasBeenRendered)
+                   .AddStyle("width", Item.AnchorRect?.Width.ToPixels(), _hasBeenRendered)
+                   .AddStyle("z-index", new ZIndex().Popover.ToString(), Item.Position == "fixed")
+                   .Build();
+
+       
+
+        private void SetDirection()
+        {
+           
+            var viewPortHeight = Item.FragmentRect.WindowHeight;
+
+            if (Item.FragmentRect?.Height + Item.AnchorRect.Bottom> viewPortHeight)
+            {
+                Item.AnchorRect.Top -= Item.AnchorRect.AbsoluteBottom + Item.FragmentRect.Height - viewPortHeight;
+                Item.AnchorRect.Bottom = Item.AnchorRect.Top + Item.AnchorRect.Height;
+                
+            }
+
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-
-            var size = await ViewPort.GetBrowserWindowSize();
-            if (size.Width > 0) return;
-            if (_fragmentRect == null)
+            if (firstRender)
             {
-                _fragmentRect = await _fragmentReference.MudGetBoundingClientRectAsync();
-                StateHasChanged();
+                Item.FragmentRect = await _fragmentRef.MudGetBoundingClientRectAsync();
+                //SetDirection();
+                //StateHasChanged();
             }
+            _hasBeenRendered = true;
 
-            if (Item.Placement == Placement.Bottom || Item.Placement == Placement.Top)
-            {
-                _left = (Item.ClientRect?.Width / 2 - _fragmentRect?.Width / 2).ToPixels();
-
-            }
-
-            if (_fragmentRect?.Right > size.Width)
-            {
-                _right = "0";
-                _left = "unset";
-
-
-            }
         }
     }
 }

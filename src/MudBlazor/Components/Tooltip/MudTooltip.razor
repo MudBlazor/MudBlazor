@@ -7,7 +7,7 @@
     </div>
     @if (!String.IsNullOrEmpty(Text) || TooltipContent != null)
     {
-        <MudPortal IsVisible=true PortalType=@this.GetType() Placement=@Placement>
+        <MudPortal IsVisible=@IsVisible PortalType=@this.GetType() Placement=@Placement>
 
             <div class=@Classname data-placement=@Placement @ref=@_tooltipRef style=@Stylename>
                 @if (TooltipContent != null)

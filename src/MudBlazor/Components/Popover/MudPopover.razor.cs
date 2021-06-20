@@ -62,59 +62,55 @@ namespace MudBlazor
         /// <summary>
         /// If true, the select menu will open either before or after the input depending on the direction.
         /// </summary>
-        [Parameter] public bool OffsetY { get; set; }
+        [Parameter] public bool OffsetY { get; set; } = true;
 
         /// <summary>
         /// Child content of the component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            await SetDirection();
 
-        }
 
-        private async Task SetDirection()
-        {
-            if (!Open) return;
-            var rect = await _popoverRef.MudGetBoundingClientRectAsync();
-            var viewport = await WindowSize.GetBrowserWindowSize();
-            Direction direction = Direction;
+        //private async Task SetDirection()
+        //{
+        //    if (!Open) return;
+        //    var rect = await _popoverRef.MudGetBoundingClientRectAsync();
+        //    var viewport = await WindowSize.GetBrowserWindowSize();
+        //    var direction = Direction;
 
-            switch (Direction)
-            {
-                case Direction.Bottom:
-                    if (rect.Bottom > viewport.Height)
-                    {
-                        direction = Direction.Top;
-                    }
-                    break;
+        //    switch (Direction)
+        //    {
+        //        case Direction.Bottom:
+        //            if (rect.Bottom > viewport.Height)
+        //            {
+        //                direction = Direction.Top;
+        //            }
+        //            break;
 
-                case Direction.Top:
-                    if (rect.Top < 0)
-                    {
-                        direction = Direction.Bottom;
-                    }
-                    break;
-                case Direction.Left:
-                    if (rect.Left < 0)
-                    {
-                        direction = Direction.Right;
-                    }
-                    break;
-                case Direction.Right:
-                    if (rect.Right > viewport.Width)
-                    {
-                        direction = Direction.Left;
-                    }
-                    break;
-            }
-            if (direction != Direction)
-            {
-                Direction = direction;
-                StateHasChanged();
-            }
-        }
+        //        case Direction.Top:
+        //            if (rect.Top < 0)
+        //            {
+        //                direction = Direction.Bottom;
+        //            }
+        //            break;
+        //        case Direction.Left:
+        //            if (rect.Left < 0)
+        //            {
+        //                direction = Direction.Right;
+        //            }
+        //            break;
+        //        case Direction.Right:
+        //            if (rect.Right > viewport.Width)
+        //            {
+        //                direction = Direction.Left;
+        //            }
+        //            break;
+        //    }
+        //    if (direction != Direction)
+        //    {
+        //        Direction = direction;
+        //        StateHasChanged();
+        //    }
+        //}
     }
 }

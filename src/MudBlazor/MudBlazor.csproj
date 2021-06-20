@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TScripts\combined\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>

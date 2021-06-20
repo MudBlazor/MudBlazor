@@ -10,11 +10,17 @@ namespace MudBlazor.Services
 
         public RenderFragment Fragment { get; set; }
 
-        public BoundingClientRect ClientRect { get; set; }
+        public BoundingClientRect AnchorRect { get; set; }
+
+        public BoundingClientRect FragmentRect { get; set; }
 
         public bool AutoDirection { get; set; }
 
         public string Position { get; set; } = "absolute";
+
+        public int ViewportHeight { get; set; }
+
+        public int ViewportWidth { get; set; }
 
         public Type PortalType { get; set; }
 

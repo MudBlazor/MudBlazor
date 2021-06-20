@@ -1,6 +1,27 @@
 ﻿.portal{
     pointer-events:none;
+    outline:5px solid red;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    position:absolute;
 }
-.portal>*{
-    pointer-events:all;
+
+
+.portal-anchor {
+    outline: 5px solid green;   
+    position: absolute;
+    z-index: 11111;
+    pointer-events: none;
+}
+
+
+
+.portal-fragment {
+    outline: 5px solid blue;
+    pointer-events: all;
+    width: max-content;
+    height: max-content;
+ 
 }

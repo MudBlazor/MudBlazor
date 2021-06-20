@@ -10,23 +10,22 @@
                 <MudInput @ref="_elementReference" Variant="@Variant" Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine" Disabled=@Disabled ReadOnly="true"
                           Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" AdornmentColor="@AdornmentColor" IconSize="@IconSize" Margin="@Margin"
                           InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
-                          Clearable="@Clearable" OnClearButtonClick="@SelectClearButtonClickHandlerAsync"
-                          >
+                          Clearable="@Clearable" OnClearButtonClick="@SelectClearButtonClickHandlerAsync">
                     @if (CanRenderValue)
-                    {
-                        @GetSelectedValuePresenter()
+                        {
+                    @GetSelectedValuePresenter()
                     }
                 </MudInput>
             </InputContent>
         </MudInputControl>
         <MudPortal IsVisible="@_isOpen" IsEnabled="IsPortalEnabled" LockScroll="LockScroll">
-            <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
-                <MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
+            <MudPopover Open="@_isOpen" MaxHeight="@MaxHeight" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
+                <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                     <MudList Clickable="true" Dense="@Dense">
                         @ChildContent
                     </MudList>
-                </MudPopover>
-            </CascadingValue>
+                </CascadingValue>
+            </MudPopover>
         </MudPortal>
     </div>
 </CascadingValue>

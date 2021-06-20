@@ -5,12 +5,14 @@ using MudBlazor.Services;
 
 namespace MudBlazor
 {
-    public partial class MudPortal : MudComponentBase, IDisposable
+    public partial class MudPortal : IDisposable
     {
         private Guid _id = Guid.NewGuid();
-        private ElementReference _portalRef;
         private PortalItem _portalItem = new();
-        private bool? _hasFixedAncestor;
+
+
+        private ElementReference _portalRef;
+
 
 
         [Inject] internal IPortal Portal { get; set; }
@@ -22,6 +24,7 @@ namespace MudBlazor
         [Parameter] public Type PortalType { get; set; }
 
         [Parameter] public Placement Placement { get; set; }
+        
         [Parameter] public bool Autopositioned { get; set; } = true;
 
         [Parameter] public bool AutoDirection { get; set; } = true;
@@ -30,42 +33,24 @@ namespace MudBlazor
 
         [Parameter] public bool IsVisible { get; set; }
 
+        [Parameter] public bool IsFixed { get; set; }
+
         [Parameter] public bool IsEnabled { get; set; } = true;
 
         [Parameter] public bool LockScroll { get; set; }
-
-        public override async Task SetParametersAsync(ParameterView parameters)
+        [Inject] public IBrowserWindowSizeProvider ViewPort { get; set; }
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (!IsEnabled) return;
-
-            parameters.TryGetValue<bool>(nameof(IsVisible), out var isCurrentlyVisible);
-            var wasPreviouslyVisible = IsVisible;
-            if (!isCurrentlyVisible && wasPreviouslyVisible)
+            ConfigurePortalItem();
+            if (IsVisible)
+            {
+                await ConfigureAnchorRect();
+                await AddItem();
+            }
+            else
             {
                 await RemoveItem();
             }
-
-            if (isCurrentlyVisible && !wasPreviouslyVisible && _portalItem.ClientRect != null)
-            {
-                await AddItem();
-            }
-
-            await base.SetParametersAsync(parameters);
-        }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (!IsEnabled || !IsVisible) return;
-
-            if (_portalRef.Id != null)
-            {
-                _hasFixedAncestor ??= await _portalRef.MudHasFixedAncestorsAsync();
-            }
-
-            
-                await ConfigurePortalItem();
-                await AddItem();
-           
         }
 
         private async Task AddItem()
@@ -82,33 +67,28 @@ namespace MudBlazor
             if (Autopositioned) WindowResizeListener.OnResized -= OnWindowResize;
         }
 
-
-
-
-
-        private async Task ConfigurePortalItem()
+        private async Task ConfigureAnchorRect()
         {
-            _portalItem.ClientRect =
-                _hasFixedAncestor != null && _hasFixedAncestor == true
-                    ? await _portalRef.MudGetBoundingClientRectAsync()
-                    : await _portalRef.MudGetRelativeClientRectAsync();
+            _portalItem.AnchorRect = await _portalRef.MudGetBoundingClientRectAsync();
+            
+        }
+
+        private void ConfigurePortalItem()
+        {
             _portalItem.Id = _id;
             _portalItem.PortalType = PortalType;
             _portalItem.Placement = Placement;
             _portalItem.Fragment = ChildContent;
             _portalItem.AutoDirection = AutoDirection;
-            _portalItem.Position =
-                _hasFixedAncestor != null && _hasFixedAncestor == true
-                    ? "fixed"
-                    : "absolute";
+            _portalItem.Position = IsFixed ? "fixed" : "absolute";
         }
 
         private void OnWindowResize(object sender, BrowserWindowSize e)
         {
             Task.Run(async () =>
            {
-               _portalItem.ClientRect = await _portalRef.MudGetRelativeClientRectAsync();
-               Portal.AddOrUpdate(_portalItem);
+               _portalItem.AnchorRect = await _portalRef.MudGetBoundingClientRectAsync();
+               if (IsVisible) { Portal.AddOrUpdate(_portalItem); } else { Portal.Remove(_portalItem); }
            }).AndForget();
         }
 

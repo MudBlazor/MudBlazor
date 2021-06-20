@@ -48,15 +48,6 @@ namespace MudBlazor
         public static ValueTask<BoundingClientRect> MudGetBoundingClientRectAsync(this ElementReference elementReference) =>
             elementReference.GetJSRuntime()?.InvokeAsync<BoundingClientRect>("mudElementRef.getBoundingClientRect", elementReference) ?? ValueTask.FromResult(new BoundingClientRect());
 
-        /// <summary>
-        /// It's like bounding client rect, but gets the client rectangle relative to the window,
-        /// not to the viewport
-        /// </summary>
-        /// <param name="elementReference"></param>
-        public static ValueTask<BoundingClientRect> MudGetRelativeClientRectAsync(this ElementReference elementReference) => elementReference.GetJSRuntime()?
-            .InvokeAsync<BoundingClientRect>("mudElementRef.getRelativeClientRect", elementReference)
-            ?? ValueTask.FromResult(new BoundingClientRect());
-
 
         /// <summary>
         /// Returns true if the element has an ancestor with style position == "fixed"
