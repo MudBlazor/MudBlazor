@@ -7,10 +7,13 @@
         <MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" FullWidth="@FullWidth" Margin="@Margin" Class="@Classname" Style="@Style"
                          Error="@Error" ErrorText="@ErrorText" Disabled="@Disabled" @onclick="@ToggleMenu" Required="@Required">
             <InputContent>
-                <MudInput @ref="_elementReference" @attributes="UserAttributes" Variant="@Variant" Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine" Disabled=@Disabled ReadOnly="true"
-                          Class="mud-select-input" Error="@Error" AdornmentIcon="@CurrentIcon" Adornment="Adornment.End" AdornmentColor="@AdornmentColor" IconSize="@IconSize" Margin="@Margin"
-                          InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
-                          Clearable="@Clearable" OnClearButtonClick="@SelectClearButtonClickHandlerAsync"
+                <MudInput @ref="_elementReference" InputType="@(CanRenderValue || (Strict && !IsValueInList) ? InputType.Hidden : InputType.Text)"
+                          Class="mud-select-input" Margin="@Margin" 
+                          Variant="@Variant" Value="@(Strict && !IsValueInList ? null : Text)" DisableUnderLine="@DisableUnderLine"
+                          Disabled="@Disabled" ReadOnly="true" Error="@Error"
+                          AdornmentIcon="@_currentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize"
+                          Clearable="@Clearable" OnClearButtonClick="(async (e) => await SelectClearButtonClickHandlerAsync(e))"
+                          @attributes="UserAttributes" 
                           >
                     @if (CanRenderValue)
                     {

@@ -64,12 +64,12 @@ namespace MudBlazor
         /// <summary>
         /// The Open Autocomplete Icon
         /// </summary>
-        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
         /// The Close Autocomplete Icon
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
@@ -166,6 +166,7 @@ namespace MudBlazor
                 if (value == _isOpen)
                     return;
                 _isOpen = value;
+                UpdateIcon();
                 IsOpenChanged.InvokeAsync(_isOpen).AndForget();
             }
         }
@@ -175,14 +176,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
 
-        public string CurrentIcon { get; set; }
+        /// <summary>
+        /// Set to true to select the currently selected item from the drop-down (if it is open) 
+        /// </summary>
+        [Parameter] public bool SelectValueOnTab { get; set; } = false;
+
+
+        private string _currentIcon;
 
         private MudInput<string> _elementReference;
 
         public MudAutocomplete()
         {
-            IconSize = Size.Medium;
             Adornment = Adornment.End;
+            IconSize = Size.Medium;
         }
 
         public async Task SelectOption(T value)
@@ -193,7 +200,6 @@ namespace MudBlazor
             await SetTextAsync(GetItemString(value), false);
             _timer?.Dispose();
             IsOpen = false;
-            UpdateIcon();
             BeginValidate();
             StateHasChanged();
         }
@@ -213,20 +219,12 @@ namespace MudBlazor
                 RestoreScrollPosition();
                 await CoerceTextToValue();
             }
-            UpdateIcon();
             StateHasChanged();
         }
 
-        public void UpdateIcon()
+        private void UpdateIcon()
         {
-            if (IsOpen)
-            {
-                CurrentIcon = OpenIcon;
-            }
-            else
-            {
-                CurrentIcon = CloseIcon;
-            }
+            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
         }
 
         protected override void OnInitialized()
@@ -286,13 +284,11 @@ namespace MudBlazor
             {
                 await CoerceValueToText();
                 IsOpen = false;
-                UpdateIcon();
                 StateHasChanged();
                 return;
             }
 
             IsOpen = true;
-            UpdateIcon();
             StateHasChanged();
         }
 
@@ -308,8 +304,22 @@ namespace MudBlazor
             return "null";
         }
 
-        //[Obsolete("Use OnInputKeyUp instead")]
-        protected virtual async Task OnInputKeyDown(KeyboardEventArgs args) => await OnInputKeyUp(args);
+        protected virtual async Task OnInputKeyDown(KeyboardEventArgs args)
+        {
+            switch (args.Key)
+            {
+                case "Tab":
+                    // NOTE: We need to catch Tab in Keydown because a tab will move focus to the next element and thus
+                    // in OnInputKeyUp we'd never get the tab key
+                    if (!IsOpen)
+                        return;
+                    if (SelectValueOnTab)
+                        await OnEnterKey();
+                    else
+                        IsOpen = false;
+                    break;
+            }
+        }
 
         protected virtual async Task OnInputKeyUp(KeyboardEventArgs args)
         {
@@ -326,6 +336,15 @@ namespace MudBlazor
                     break;
                 case "Escape":
                     IsOpen = false;
+                    break;
+                case "Tab":
+                    await Task.Delay(1);
+                    if (!IsOpen)
+                        return;
+                    if (SelectValueOnTab)
+                        await OnEnterKey();
+                    else
+                        await ToggleMenu();
                     break;
             }
             base.InvokeKeyUp(args);
@@ -381,7 +400,6 @@ namespace MudBlazor
 
         private Task OnInputBlurred(FocusEventArgs args)
         {
-            //return !IsOpen ? CoerceTextToValue() : Task.CompletedTask;
             OnBlur.InvokeAsync(args);
             return Task.CompletedTask;
             // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
@@ -443,5 +461,6 @@ namespace MudBlazor
                 return;
             _ = SetTextAsync(text, true);
         }
+
     }
 }

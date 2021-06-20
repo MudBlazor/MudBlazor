@@ -48,12 +48,12 @@ namespace MudBlazor
         /// <summary>
         /// The Open Select Icon
         /// </summary>
-        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
         /// The Close Select Icon
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         /// <summary>
         /// Fires when SelectedValues changes.
@@ -130,6 +130,7 @@ namespace MudBlazor
 
         public MudSelect()
         {
+            Adornment = Adornment.End;
             IconSize = Size.Medium;
         }
 
@@ -259,7 +260,7 @@ namespace MudBlazor
 
         internal bool _isOpen;
 
-        public string CurrentIcon { get; set; }
+        public string _currentIcon { get; set; }
 
         public async Task SelectOption(object obj)
         {
@@ -332,16 +333,9 @@ namespace MudBlazor
             await OnBlur.InvokeAsync(new FocusEventArgs());
         }
 
-        public void UpdateIcon()
+        private void UpdateIcon()
         {
-            if (_isOpen)
-            {
-                CurrentIcon = OpenIcon;
-            }
-            else
-            {
-                CurrentIcon = CloseIcon;
-            }
+            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
         }
 
         protected override void OnInitialized()
@@ -381,7 +375,7 @@ namespace MudBlazor
         /// <summary>
         /// Extra handler for clearing selection.
         /// </summary>
-        protected async Task SelectClearButtonClickHandlerAsync(MouseEventArgs e)
+        protected async ValueTask SelectClearButtonClickHandlerAsync(MouseEventArgs e)
         {
             await SetValueAsync(default, false);
             await SetTextAsync(default, false);
@@ -389,7 +383,7 @@ namespace MudBlazor
             BeginValidate();
             StateHasChanged();
             await SelectedValuesChanged.InvokeAsync(SelectedValues);
-            await OnClearButtonClick.InvokeAsync();
+            await OnClearButtonClick.InvokeAsync(e);
         }
 
         protected async Task SetCustomizedTextAsync(string text, bool updateValue = true,

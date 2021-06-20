@@ -572,5 +572,23 @@ namespace MudBlazor.UnitTests.Components
             select.ValidationErrors.Should().BeEmpty();
         }
         #endregion
+
+
+        /// <summary>
+        /// Tests the required property.
+        /// </summary>
+        [Test]
+        public async Task Select_Should_SetRequiredTrue()
+        {
+            var comp = ctx.RenderComponent<SelectRequiredTest>();
+
+            var select = comp.FindComponent<MudSelect<string>>().Instance;
+
+            select.Required.Should().BeTrue();
+
+            await comp.InvokeAsync(() => select.Validate());
+
+            select.ValidationErrors.First().Should().Be("Required");
+        }
     }
 }

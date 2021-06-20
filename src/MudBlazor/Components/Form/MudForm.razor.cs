@@ -31,19 +31,8 @@ namespace MudBlazor
             get => _valid;
             set
             {
-                if (_valid == value)
-                    return;
-                SetIsValid(value);
-                // the user might have bound bind a value that is contrary to the form's validity state. 
-                // thus, we must re-evaluate and push back to rectify the bound variable
-                ReEvaluateIsValid();
+                _valid = value;
             }
-        }
-
-        private async void ReEvaluateIsValid()
-        {
-            await Task.Delay(1);
-            Validate();
         }
 
         private void SetIsValid(bool value)
@@ -220,6 +209,21 @@ namespace MudBlazor
                 control.ResetValidation();
             }
             EvaluateForm(debounce: false);
+        }
+
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                var valid = _formControls.All(x => x.Required == false);
+                if (valid != _valid)
+                {
+                    // the user probably bound a variable to IsValid and it conflicts with our state.
+                    // let's set this right
+                    SetIsValid(valid);
+                }
+            }
+            return base.OnAfterRenderAsync(firstRender);
         }
 
         public void Dispose()

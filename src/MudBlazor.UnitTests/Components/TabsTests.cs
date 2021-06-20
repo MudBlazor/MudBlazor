@@ -866,6 +866,26 @@ namespace MudBlazor.UnitTests.Components
 
         }
 
+        [Test]
+        public async Task HtmlTextTabs()
+        {
+            ctx.Services.Add(new ServiceDescriptor(typeof(IResizeObserver), new MockResizeObserver()));
+
+            // get the tab panels, we must have 2 tabs, one with html text and one without
+            var comp = ctx.RenderComponent<HtmlTextTabsTest>();
+            Console.WriteLine(comp.Markup);
+            var panels = comp.FindAll(".mud-tab");
+            panels.Should().HaveCount(2);
+
+            // index 0 : html text "Hello <span>World</span>!"
+            panels[0].InnerHtml.Contains("Hello <span>World</span>!").Should().BeTrue();
+            panels[0].TextContent.Contains("Hello World!").Should().BeTrue();
+
+            // index 1 : simple text without html "Hello World!"
+            panels[1].InnerHtml.Contains("Hello World!").Should().BeTrue();
+            panels[1].TextContent.Contains("Hello World!").Should().BeTrue();
+        }
+
         #region Helper
 
         private static double GetSliderValue(IRenderedComponent<ScrollableTabsTest> comp, string attribute = "left")
