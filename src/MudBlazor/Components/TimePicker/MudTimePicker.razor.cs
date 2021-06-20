@@ -69,6 +69,11 @@ namespace MudBlazor
         [Parameter] public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
 
         /// <summary>
+        /// If AutoClose is set to true and PickerActions are defined, the hour and the minutes can be defined without any action.
+        /// </summary>
+        [Parameter] public bool AutoClose { get; set; }
+
+        /// <summary>
         /// If true, sets 12 hour selection clock.
         /// </summary>
         [Parameter] public bool AmPm
@@ -192,7 +197,7 @@ namespace MudBlazor
         private void UpdateTime()
         {
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
-            if (PickerVariant == PickerVariant.Static && PickerActions == null)
+            if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
                 Submit();
             }
