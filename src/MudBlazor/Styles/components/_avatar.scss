@@ -59,12 +59,12 @@
 .mud-avatar-outlined {
     color: var(--mud-palette-text-primary);
     background-color: var(--mud-palette-white);
-    border: 2px solid var(--mud-palette-text-primary);
+    border: 1px solid var(--mud-palette-text-primary);
 
     @each $color in $mud-palette-colors {
         &.mud-avatar-outlined-#{$color} {
             color: var(--mud-palette-#{$color});
-            border: 2px solid var(--mud-palette-#{$color});
+            border: 1px solid var(--mud-palette-#{$color});
         }
     }
 }
