@@ -101,6 +101,8 @@ namespace MudBlazor
 
         protected override async void Submit()
         {
+            if (ReadOnly)
+                return;
             if (_selectedDate == null)
                 return;
 

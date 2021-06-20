@@ -162,6 +162,8 @@ namespace MudBlazor
 
         protected override void Submit()
         {
+            if (ReadOnly)
+                return;
             Time = TimeIntermediate;
         }
 
