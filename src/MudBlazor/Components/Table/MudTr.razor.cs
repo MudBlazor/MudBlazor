@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
@@ -8,7 +7,9 @@ namespace MudBlazor
 {
     public partial class MudTr : MudComponentBase
     {
-        internal bool _clickRowFirstTime;
+        private bool hasBeenCanceled;
+        private bool hasBeenCommitted;
+        private bool hasBeenClikedFirstTime;
 
         internal object _itemCopy;
 
@@ -49,10 +50,22 @@ namespace MudBlazor
 
         public void OnRowClicked(MouseEventArgs args)
         {
-            // Manage the Item Copy the first time the row is clicked
-            if (!_clickRowFirstTime)
+            // Manage any previous edited row
+            Context.ManagePreviousEditedRow(this);
+
+            // Manage edition the first time the row is clicked and if the table is editable
+            if (!hasBeenClikedFirstTime && IsEditable)
             {
-                CopyOriginalValues();
+                // Sets hasBeenClikedFirstTime to true
+                hasBeenClikedFirstTime = true;
+
+                // Set to false that the item has been committed
+                // Set to false that the item has been cancelled
+                hasBeenCanceled = false;
+                hasBeenCommitted = false;
+
+                // Trigger the row edit preview event
+                Context.Table.RowEditPreview?.Invoke(Item);
             }
 
             if (IsHeader || !(Context?.Table.Validator.IsValid ?? true))
@@ -92,13 +105,23 @@ namespace MudBlazor
 
         private void FinishEdit(MouseEventArgs ev)
         {
+            // Check the validity of the item
             if (!Context?.Table.Validator.IsValid ?? true) return;
+
+            // Set item value and trigger the commit event
             Context?.Table.SetEditingItem(null);
             Context?.Table.OnCommitEditHandler(ev, Item);
 
-            // The item object has been edited
+            // Trigger the row edit commit event
             Context.Table.RowEditCommit?.Invoke(Item);
-            _clickRowFirstTime = false;
+
+            // Set to true that the item has been committed
+            // Set to false that the item has been cancelled
+            hasBeenCommitted = true;
+            hasBeenCanceled = false;
+
+            // Set hasBeenClikedFirstTime to false 
+            hasBeenClikedFirstTime = false;
         }
 
         private void CancelEdit(MouseEventArgs ev)
@@ -107,25 +130,31 @@ namespace MudBlazor
             Context?.Table.SetEditingItem(null);
             Context?.Table.OnCancelEditHandler(ev);
 
-            // The Item object is reset to its initial value from the Item Copy
-            CopyOriginalValues();
+            // Trigger the row edit cancel event
+            Context.Table.RowEditCancel?.Invoke(Item);
+
+            // Set to true that the item has been canceled
+            // Set to false that the items has been committed
+            hasBeenCanceled = true;
+            hasBeenCommitted = false;
+
+            // Set hasBeenClikedFirstTime to false 
+            hasBeenClikedFirstTime = false;
         }
 
-        private void CopyOriginalValues()
+        public void ManagePreviousEdition()
         {
-            if (IsEditable && Item != null)
+            // Reset the item to its original value if no cancellation and no commit has been done
+            if (!hasBeenCanceled && !hasBeenCommitted)
             {
-                if (!_clickRowFirstTime)
-                {
-                    Context.Table.RowEditPreview?.Invoke(Item);
-                    _clickRowFirstTime = true;
-                }
-                else
-                {
-                    Context.Table.RowEditCancel?.Invoke(Item);
-                    _clickRowFirstTime = false;
-                }
+                // Trigger the row edit cancel event
+                Context.Table.RowEditCancel?.Invoke(Item);
             }
+
+            // Reset the variables
+            hasBeenCanceled = false;
+            hasBeenCommitted = false;
+            hasBeenClikedFirstTime = false;
         }
     }
 }
