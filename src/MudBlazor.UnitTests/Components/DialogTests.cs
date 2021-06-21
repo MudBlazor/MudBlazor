@@ -147,6 +147,43 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A test that ensures parameters are not overwritten when dialog is updated
+        /// </summary>
+        [Test]
+        public async Task DialogShouldNotOverwriteParameters()
+        {
+            var comp = ctx.RenderComponent<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = ctx.Services.GetService<IDialogService>() as DialogService;
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+
+            var parameters = new DialogParameters();
+            parameters.Add("TestValue", "test");
+            parameters.Add("Color_Test", Color.Error); // !! comment me !!
+
+            await comp.InvokeAsync(() => dialogReference = service?.Show<DialogWithParameters>(string.Empty, parameters));
+            dialogReference.Should().NotBe(null);
+
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine(comp.Markup);
+
+            var textField = comp.FindComponent<MudInput<string>>().Instance;
+            textField.Text.Should().Be("test");
+
+            comp.Find("input").Change("new_test");
+            comp.Find("input").Blur();
+            textField.Text.Should().Be("new_test");
+
+            comp.FindAll("button")[0].Click();
+            Console.WriteLine("----------------------------------------");
+            Console.WriteLine(comp.Markup);
+
+            (dialogReference.Dialog as DialogWithParameters).TestValue.Should().Be("new_test");
+            textField.Text.Should().Be("new_test");
+        }
+
+        /// <summary>
         /// Based on bug report #1385
         /// Dialog Class and Style parameters should be honored
         /// </summary>
