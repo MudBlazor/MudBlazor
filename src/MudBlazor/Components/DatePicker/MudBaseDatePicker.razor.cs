@@ -12,7 +12,7 @@ namespace MudBlazor
     {
         protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
         {
-            Format = "yyyy-MM-dd",
+            Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern,
             Culture = CultureInfo.CurrentCulture
         })
         { }
@@ -120,6 +120,20 @@ namespace MudBlazor
         /// For instance, display the long names like this "dddd, dd. MMMM". 
         /// </summary>
         [Parameter] public string TitleDateFormat { get; set; } = "ddd, dd MMM";
+
+        /// <summary>
+        /// Function to determine whether a date is disabled
+        /// </summary>
+        [Parameter]
+        public Func<DateTime, bool> IsDateDisabledFunc
+        {
+            get => _isDateDisabledFunc;
+            set
+            {
+                _isDateDisabledFunc = value ?? (_ => false);
+            }
+        }
+        private Func<DateTime, bool> _isDateDisabledFunc = _ => false;
 
         protected virtual bool IsRange { get; } = false;
 

@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div class="@DivClassname" role="progressbar" style="transform: rotate(-90deg);@Style" aria-valuenow="@Value">
+<div @attributes="UserAttributes" class="@DivClassname" role="progressbar" style="transform: rotate(-90deg);@Style" aria-valuenow="@Value">
     <svg class="mud-progress-circular-svg" viewBox="22 22 44 44">
         @if (Indeterminate)
         {

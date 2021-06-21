@@ -155,6 +155,16 @@ namespace MudBlazor
         [Parameter] public RenderFragment ToolBarContent { get; set; }
 
         /// <summary>
+        /// Show a loading animation, if true.
+        /// </summary>
+        [Parameter] public bool Loading { get; set; }
+
+        /// <summary>
+        /// The color of the loading progress if used. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color LoadingProgressColor { get; set; } = Color.Info;
+
+        /// <summary>
         /// Add MudTh cells here to define the table header. If <see cref="CustomHeader"/> is set, add one or more MudTHeadRow instead.
         /// </summary>
         [Parameter] public RenderFragment HeaderContent { get; set; }
@@ -286,6 +296,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string RowStyle { get; set; }
 
+        /// <summary>
+        /// If true, the results are displayed in a Virtualize component, allowing a boost in rendering speed.
+        /// </summary>
+        [Parameter] public bool Virtualize { get; set; }
 
         #region --> Obsolete Forwarders for Backwards-Compatiblilty
         /// <summary>

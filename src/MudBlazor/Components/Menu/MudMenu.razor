@@ -2,9 +2,7 @@
 @using MudBlazor.Interfaces
 @inherits MudBaseButton
 
-
-
-<div class="@Classname" style="@Style" oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? "return false;" : "")">
+<div @attributes="UserAttributes" class="@Classname" style="@Style" oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? "return false;" : "")">
     @if (ActivatorContent != null)
     {
         <CascadingValue Value="@((IActivatable) this)" IsFixed="true">

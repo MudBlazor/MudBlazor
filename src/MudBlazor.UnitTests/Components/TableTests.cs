@@ -52,6 +52,83 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Show that sorting is disabled
+        /// </summary>
+        [Test]
+        public async Task TableDisabledSort()
+        {
+            // Get access to the table
+            var comp = ctx.RenderComponent<TableDisabledSortTest>();
+
+            // Count the number of rows including header
+            comp.FindAll("tr").Count.Should().Be(4); // Three rows + header row
+            
+            // Check the values of rows
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+
+            // Access to the table
+            var table = comp.FindComponent<MudTable<string>>();
+
+            // Get the mudtablesortlabels associated to the table
+            var mudTableSortLabels = table.Instance.Context.SortLabels;
+
+            // Sort the first column
+            await table.InvokeAsync(() => mudTableSortLabels[0].ToggleSortDirection());
+
+            // Check the values of rows
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+
+            // Sort the first column
+            await table.InvokeAsync(() => mudTableSortLabels[0].ToggleSortDirection());
+
+            // Check the values of rows
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("C");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
+
+            // Disabled the sorting of the column
+            mudTableSortLabels[0].Enabled = false;
+
+            // Sort the first column
+            await table.InvokeAsync(() => mudTableSortLabels[0].ToggleSortDirection());
+
+            // The values remain the same
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("C");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
+        }
+      
+        /// Check if the loading parameter is adding a supplementary row.
+        /// </summary>
+        [Test]
+        public void TableLoadingTest()
+        {
+            var comp = ctx.RenderComponent<TableLoadingTest>();
+
+            // Count the number of rows
+            var trs = comp.FindAll("tr");
+
+            // It should be equal to 3 = two rows + header row
+            trs.Count.Should().Be(3);
+
+            // Find the loading switch
+            var switchElement = comp.Find("#switch");
+
+            // Click the loading switch
+            switchElement.Change(true); 
+
+            // Count the number of rows
+            trs = comp.FindAll("tr");
+
+            // It should be equal to 4 = two rows + header row + loading row
+            trs.Count.Should().Be(4);
+        }
+
+        /// <summary>
         /// should only be able to select one item and selecteditems.count should never exceed 1
         /// </summary>
         [Test]
@@ -160,58 +237,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[2].IsDisabled().Should().Be(false);
             comp.FindAll("button")[3].IsDisabled().Should().Be(false);
         }
-
-        /// <summary>
-        /// simple navigation using the paging buttons - RTL
-        /// </summary>
-        [Test]
-        public void TablePagingNavigationButtonsRtl()
-        {
-            var comp = ctx.RenderComponent<TablePagingTest1Rtl>();
-            // print the generated html      
-            Console.WriteLine(comp.Markup);
-            // after initial load
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-            var pagingButtons = comp.FindAll("button");
-            // click next page
-            pagingButtons[1].Click();
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("11-20 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-            // last page
-            pagingButtons[0].Click();
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(9);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("51-59 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
-            // previous page
-            pagingButtons[2].Click();
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("41-50 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-            // first page
-            pagingButtons[3].Click();
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-        }
-
 
         /// <summary>
         /// page size select tests
@@ -685,6 +710,25 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("3");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("2");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("1");
+        }
+
+        /// <summary>
+        /// The server-side loaded table should reload when mobile sort if performed.
+        /// </summary>
+        [Test]
+        public async Task TableServerSideDataTest4()
+        {
+            var comp = ctx.RenderComponent<TableServerSideDataTest4>();
+            Console.WriteLine(comp.Markup);
+            comp.FindAll("tr").Count.Should().Be(4); // three rows + header row
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("1");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
+            comp.FindAll("td")[4].TextContent.Trim().Should().Be("3");
+            comp.FindAll("div.mud-select-input")[0].Click(); // mobile sort drop down
+            comp.FindAll("div.mud-list-item-clickable")[1].Click(); // sort b column
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("3");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("2");
+            comp.FindAll("td")[4].TextContent.Trim().Should().Be("1");
         }
 
         /// <summary>

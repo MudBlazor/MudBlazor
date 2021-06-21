@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
@@ -39,6 +40,18 @@ namespace MudBlazor
         {
             if (_dateRange != range)
             {
+                var doesRangeContainDisabledDates = Enumerable
+                    .Range(0, int.MaxValue)
+                    .Select(index => range.Start.Value.AddDays(index))
+                    .TakeWhile(date => date <= range.End.Value)
+                    .Any(date => IsDateDisabledFunc(date.Date));
+                if (doesRangeContainDisabledDates)
+                {
+                    _rangeText = null;
+                    await SetTextAsync(null, false);
+                    return;
+                }
+
                 _dateRange = range;
 
                 if (updateValue)

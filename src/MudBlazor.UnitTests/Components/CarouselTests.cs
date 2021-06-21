@@ -39,7 +39,7 @@ namespace MudBlazor.UnitTests.Components
             var carousel = comp.FindComponent<MudCarousel<object>>().Instance;
             //// validating some renders
             carousel.Should().NotBeNull();
-            comp.FindAll("div.mud-carousel-item").Count.Should().Be(1);
+            comp.WaitForAssertion(()=>comp.FindAll("div.mud-carousel-item").Count.Should().Be(1));
             comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(0);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);

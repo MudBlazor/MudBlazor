@@ -26,10 +26,21 @@ namespace MudBlazor
             set => SetDateAsync(value, true).AndForget();
         }
 
+        /// <summary>
+        /// If AutoClose is set to true and PickerActions are defined, selecting the day will close the MudDatePicker.
+        /// </summary>
+        [Parameter] public bool AutoClose { get; set; }
+
         protected async Task SetDateAsync(DateTime? date, bool updateValue)
         {
             if (_value != date)
             {
+                if (date is not null && IsDateDisabledFunc(date.Value.Date))
+                {
+                    await SetTextAsync(null, false);
+                    return;
+                }
+
                 _value = date;
                 if (updateValue)
                 {
@@ -69,7 +80,7 @@ namespace MudBlazor
         protected override async void OnDayClicked(DateTime dateTime)
         {
             _selectedDate = dateTime;
-            if (PickerActions == null)
+            if (PickerActions == null || AutoClose)
             {
                 Submit();
 

@@ -30,8 +30,24 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
 
+
         /// <summary>
-        /// If true, compact vertical padding will be applied to all select items.
+        /// Sets the direction the Autocomplete menu should open.
+        /// </summary>
+        [Parameter] public Direction Direction { get; set; } = Direction.Bottom;
+
+        /// <summary>
+        /// If true, the Autocomplete menu will open either before or after the input (left/right).
+        /// </summary>
+        [Parameter] public bool OffsetX { get; set; }
+
+        /// <summary>
+        /// If true, the Autocomplete menu will open either before or after the input (top/bottom).
+        /// </summary>
+        [Parameter] public bool OffsetY { get; set; } = true;
+
+        /// <summary>
+        /// If true, compact vertical padding will be applied to all Autocomplete items.
         /// </summary>
         [Parameter] 
         public bool Dense 
@@ -46,19 +62,19 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The Open Select Icon
+        /// The Open Autocomplete Icon
         /// </summary>
-        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
+        [Parameter] public string OpenIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
-        /// The Open Select Icon
+        /// The Close Autocomplete Icon
         /// </summary>
-        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+        [Parameter] public string CloseIcon { get; set; } = Icons.Material.Filled.ArrowDropUp;
 
         //internal event Action<HashSet<T>> SelectionChangedFromOutside;
 
         /// <summary>
-        /// Sets the maxheight the select can have when open.
+        /// Sets the maxheight the Autocomplete can have when open.
         /// </summary>
         [Parameter] public int MaxHeight { get; set; } = 300;
 
@@ -149,7 +165,9 @@ namespace MudBlazor
             {
                 if (value == _isOpen)
                     return;
+
                 _isOpen = value;
+                UpdateIcon();
                 IsOpenChanged.InvokeAsync(_isOpen).AndForget();
             }
         }
@@ -159,14 +177,14 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
 
-        public string CurrentIcon { get; set; }
+        private string _currentIcon;
 
         private MudInput<string> _elementReference;
 
         public MudAutocomplete()
         {
-            IconSize = Size.Medium;
             Adornment = Adornment.End;
+            IconSize = Size.Medium;
         }
 
         public async Task SelectOption(T value)
@@ -177,7 +195,6 @@ namespace MudBlazor
             await SetTextAsync(GetItemString(value), false);
             _timer?.Dispose();
             IsOpen = false;
-            UpdateIcon();
             BeginValidate();
             StateHasChanged();
         }
@@ -197,20 +214,12 @@ namespace MudBlazor
                 RestoreScrollPosition();
                 await CoerceTextToValue();
             }
-            UpdateIcon();
             StateHasChanged();
         }
 
-        public void UpdateIcon()
+        private void UpdateIcon()
         {
-            if (IsOpen)
-            {
-                CurrentIcon = OpenIcon;
-            }
-            else
-            {
-                CurrentIcon = CloseIcon;
-            }
+            _currentIcon = !string.IsNullOrWhiteSpace(AdornmentIcon) ? AdornmentIcon : _isOpen ? CloseIcon : OpenIcon;
         }
 
         protected override void OnInitialized()
@@ -270,13 +279,11 @@ namespace MudBlazor
             {
                 await CoerceValueToText();
                 IsOpen = false;
-                UpdateIcon();
                 StateHasChanged();
                 return;
             }
 
             IsOpen = true;
-            UpdateIcon();
             StateHasChanged();
         }
 

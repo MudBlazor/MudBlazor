@@ -6,7 +6,7 @@
 <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<Element,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
-        <MudToolBarSpacer />
+        <MudSpacer />
         <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
@@ -32,7 +32,7 @@
 <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<Element,bool>(FilterFunc2)" @bind-SelectedItem="selectedItem2">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
-        <MudToolBarSpacer />
+        <MudSpacer />
         <MudTextField @bind-Value="searchString2" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
     <Columns>
@@ -52,10 +52,10 @@
     <MudSwitch @bind-Checked="@dense" Color="Color.Secondary">Dense</MudSwitch>
     <MudSwitch @bind-Checked="@striped" Color="Color.Tertiary">Striped</MudSwitch>
     <MudSwitch @bind-Checked="@bordered" Color="Color.Warning">Bordered</MudSwitch>
-    <MudToolBarSpacer />
+    <MudSpacer />
     <div style="min-width:200px;">
-        <MudText Inline="true">Selected1: @selectedItem1?.Name</MudText>
-        <MudText Inline="true">Selected2: @selectedItem2?.Name</MudText>
+        <MudText Inline="true" Class="align-self-center">Selected1: @selectedItem1?.Name</MudText>
+        <MudText Inline="true" Class="align-self-center">Selected2: @selectedItem2?.Name</MudText>
     </div>
 </div>
 
