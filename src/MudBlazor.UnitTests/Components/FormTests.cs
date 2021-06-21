@@ -689,6 +689,18 @@ namespace MudBlazor.UnitTests.Components
                 vc.Should().NotBeNull();
             }
         }
+
+        /// <summary>
+        /// This test should prevent regressions like #1912, caused by commit 86bc257d (#1868)
+        /// </summary>
+        [Test]
+        public async Task MudForm_MustNot_ValidateOnInitialRender()
+        {
+            var comp = ctx.RenderComponent<MudFormExample>();
+            await Task.Delay(100);
+            var form=comp.FindComponent<MudForm>().Instance;
+            form.Errors.Should().BeEmpty();
+        }
     }
 }
 

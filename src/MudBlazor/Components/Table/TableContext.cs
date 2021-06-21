@@ -24,10 +24,13 @@ namespace MudBlazor
 
         public abstract SortDirection SortDirection { get; protected set; }
 
+        public abstract void ManagePreviousEditedRow(MudTr row);
     }
 
     public class TableContext<T> : TableContext
     {
+        private MudTr editedRow;
+
         public HashSet<T> Selection { get; set; } = new HashSet<T>();
 
         public Dictionary<T, MudTr> Rows { get; set; } = new Dictionary<T, MudTr>();
@@ -56,6 +59,22 @@ namespace MudBlazor
                 // update footer checkbox
                 foreach (var footer in FooterRows)
                     footer.SetChecked(b, notify: false);
+            }
+        }
+
+        public override void ManagePreviousEditedRow(MudTr row)
+        {
+            if (Table.IsEditable)
+            {
+                // Reset edition values of the edited row
+                // if another row is selected for edition
+                if (editedRow != null && row != editedRow)
+                {
+                    editedRow.ManagePreviousEdition();
+                }
+
+                // The selected row is the edited row
+                editedRow = row;
             }
         }
 

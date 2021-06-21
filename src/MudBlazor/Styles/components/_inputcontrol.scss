@@ -88,8 +88,8 @@
                 padding-inline-end: 24px;
 
                 &.mud-input-root-margin-dense {
-                    padding-right: 17px; //This must be the same width of the spinners
-                    padding-inline-end: 17px;
+                    padding-right: 20px; //This must be the same width of the spinners
+                    padding-inline-end: 20px;
                 }
             }
             &.mud-input-text input {
@@ -133,7 +133,7 @@
             }
         }
 
-        & .mud-input-underline .mud-input-numeric-spin button {
+        .mud-input-numeric-spin button {
             padding: 2px 0;
         }
     }

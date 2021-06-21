@@ -35,6 +35,12 @@ namespace MudBlazor
         {
             if (_value != date)
             {
+                if (date is not null && IsDateDisabledFunc(date.Value.Date))
+                {
+                    await SetTextAsync(null, false);
+                    return;
+                }
+
                 _value = date;
                 if (updateValue)
                 {
@@ -95,6 +101,8 @@ namespace MudBlazor
 
         protected override async void Submit()
         {
+            if (ReadOnly)
+                return;
             if (_selectedDate == null)
                 return;
 

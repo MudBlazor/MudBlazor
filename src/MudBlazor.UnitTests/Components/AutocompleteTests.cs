@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
 using Bunit;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
@@ -171,7 +172,7 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Value.Should().Be("Alabama");
             autocomplete.Text.Should().Be("Alabama");
             // set a value the search won't find
-            autocompletecomp.SetParam(p=> p.Text, "Austria"); // not part of the U.S.
+            autocompletecomp.SetParam(p => p.Text, "Austria"); // not part of the U.S.
 
             // now trigger the coercion by toggling the the menu (it won't even open for invalid values, but it will coerce)
             await comp.InvokeAsync(() => autocomplete.ToggleMenu());
@@ -318,13 +319,12 @@ namespace MudBlazor.UnitTests.Components
 
             // Button shows again after entering text
             comp.Find("input").Input("text");
-            comp.WaitForAssertion(()=> comp.Find("button").Should().NotBeNull());
+            comp.WaitForAssertion(() => comp.Find("button").Should().NotBeNull());
             // Button removed after clearing text
             comp.Find("input").Input(string.Empty);
             comp.WaitForAssertion(() => comp.FindAll("button").Should().BeEmpty());
         }
 
-        #region DataAttribute validation
         [Test]
         public async Task Autocomplete_Should_Validate_Data_Attribute_Fail()
         {
@@ -362,6 +362,119 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => autocomplete.Validate());
             autocomplete.ValidationErrors.Should().BeEmpty();
         }
-        #endregion
+
+
+        /// <summary>
+        /// Tests the required property.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_SetRequiredTrue()
+        {
+            var comp = ctx.RenderComponent<AutocompleteRequiredTest>();
+
+            var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
+
+            autocomplete.Required.Should().BeTrue();
+
+            await comp.InvokeAsync(() => autocomplete.Validate());
+
+            autocomplete.ValidationErrors.First().Should().Be("Required");
+        }
+
+        /// <summary>
+        /// Test for <seealso cref="https://github.com/Garderoben/MudBlazor/issues/1761"/>
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Close_OnTab()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTest1>();
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            // Should be closed
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            // Lets type something to cause it to open
+            autocompletecomp.Find("input").Input("Calif");
+            await Task.Delay(100);
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+            // Lets call blur on the input and confirm that it closed
+            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            // Tab closes the drop-down and does not select the selected value (California)
+            // because SelectValueOnTab is false per default
+            autocomplete.Value.Should().Be("Alabama");
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_SelectValue_On_Tab_With_SelectValueOnTab()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTest1>();
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            autocompletecomp.SetParam(x=>x.SelectValueOnTab, true);
+            var autocomplete = autocompletecomp.Instance;
+
+            // Should be closed
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            // Lets type something to cause it to open
+            autocompletecomp.Find("input").Input("Calif");
+            await Task.Delay(100);
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeTrue());
+
+            // Lets call blur on the input and confirm that it closed
+            autocompletecomp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Tab" });
+            comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
+
+            // Tab closes the drop-down and selects the selected value (California)
+            // because SelectValueOnTab is true
+            autocomplete.Value.Should().Be("California");
+
+        }
+
+        /// <summary>
+        /// When selecting a value by clicking on it in the list the input will blur. However, this
+        /// must not cause the dropdown to close or else the click on the item will not be possible!
+        ///
+        /// If this test fails it means the dropdown has closed before we can even click any value in the list.
+        /// Such a regression happened and caused PR #1807 to be reverted
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_NotCloseDropdownOnInputBlur()
+        {
+            var comp = ctx.RenderComponent<AutocompleteTest1>();
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompletecomp.Instance;
+
+            //No popover, due it's closed
+            comp.Markup.Should().NotContain("mud-popover");
+
+            // check initial state
+            autocomplete.Value.Should().Be("Alabama");
+            autocomplete.Text.Should().Be("Alabama");
+            await Task.Delay(100);
+
+
+            // now let's type a different state to see the popup open
+            autocompletecomp.Find("input").Input("Calif");
+            await Task.Delay(100);
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            var items = comp.FindComponents<MudListItem>().ToArray();
+            items.Length.Should().Be(1);
+            items.First().Markup.Should().Contain("California");
+
+            // now, we blur the input and assert that the popover is still open.
+            autocompletecomp.Find("input").Blur();
+            await Task.Delay(100);
+            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+        }
     }
 }

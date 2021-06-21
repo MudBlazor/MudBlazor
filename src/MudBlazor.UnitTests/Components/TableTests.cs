@@ -62,7 +62,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Count the number of rows including header
             comp.FindAll("tr").Count.Should().Be(4); // Three rows + header row
-            
+
             // Check the values of rows
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("B");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("A");
@@ -101,7 +101,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
         }
-      
+
         /// Check if the loading parameter is adding a supplementary row.
         /// </summary>
         [Test]
@@ -119,7 +119,7 @@ namespace MudBlazor.UnitTests.Components
             var switchElement = comp.Find("#switch");
 
             // Click the loading switch
-            switchElement.Change(true); 
+            switchElement.Change(true);
 
             // Count the number of rows
             trs = comp.FindAll("tr");
@@ -237,58 +237,6 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button")[2].IsDisabled().Should().Be(false);
             comp.FindAll("button")[3].IsDisabled().Should().Be(false);
         }
-
-        /// <summary>
-        /// simple navigation using the paging buttons - RTL
-        /// </summary>
-        [Test]
-        public void TablePagingNavigationButtonsRtl()
-        {
-            var comp = ctx.RenderComponent<TablePagingTest1Rtl>();
-            // print the generated html      
-            Console.WriteLine(comp.Markup);
-            // after initial load
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-            var pagingButtons = comp.FindAll("button");
-            // click next page
-            pagingButtons[1].Click();
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("11-20 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-            // last page
-            pagingButtons[0].Click();
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(9);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("51-59 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(true);
-            // previous page
-            pagingButtons[2].Click();
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("41-50 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-            // first page
-            pagingButtons[3].Click();
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(10);
-            comp.FindAll("p.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 59");
-            comp.FindAll("button")[2].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[3].IsDisabled().Should().Be(true);
-            comp.FindAll("button")[0].IsDisabled().Should().Be(false);
-            comp.FindAll("button")[1].IsDisabled().Should().Be(false);
-        }
-
 
         /// <summary>
         /// page size select tests
@@ -875,6 +823,38 @@ namespace MudBlazor.UnitTests.Components
 
             // Value in the second row should still be equal to 'C'
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
+        }
+
+        /// <summary>
+        /// This test validates the processing of the Commit and Cancel buttons for an inline editing table.
+        /// </summary>
+        [Test]
+        public async Task TableInlineEditCancel2Test()
+        {
+            var comp = ctx.RenderComponent<TableInlineEditCancelTest>();
+
+            // Check that the value in the second row is equal to 'B'
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("B");
+
+            // Click on the second row
+            var trs = comp.FindAll("tr");
+            trs[2].Click();
+
+            // Find the textfield and change the value to 'Z'
+            comp.Find("#Id2").Change("Z");
+
+            // Click on the first row
+            trs[1].Click();
+
+            // Click on the second row
+            trs[2].Click();
+
+            // Click the cancel button
+            var cancelButton = comp.FindAll("button")[1];
+            cancelButton.Click();
+
+            // Value in the second row should still be equal to 'B'
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("B");
         }
     }
 }

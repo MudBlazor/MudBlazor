@@ -19,7 +19,7 @@
                                 <div @ref="panel.PanelRef" class="@GetTabClass(panel)" style="@GetTabStyle(panel)" @onclick=@( e => ActivatePanel(panel, e, false) )>
                                     @if (!String.IsNullOrEmpty(panel.Text) && String.IsNullOrEmpty(panel.Icon))
                                     {
-                                        @panel.Text
+                                        @((MarkupString)panel.Text)
                                     }
                                     else if (String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
                                     {
@@ -28,7 +28,7 @@
                                     else if (!String.IsNullOrEmpty(panel.Text) && !String.IsNullOrEmpty(panel.Icon))
                                     {
                                         <MudIcon Icon="@panel.Icon" Color="@IconColor" Class="mud-tab-icon-text" />
-                                        @panel.Text
+                                        @((MarkupString)panel.Text)
                                     }
                                     @if (panel.BadgeData != null)
                                     {

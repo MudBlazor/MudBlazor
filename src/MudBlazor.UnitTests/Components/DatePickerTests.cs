@@ -380,6 +380,57 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void IsDateDisabledFunc_DisablesCalendarDateButtons()
+        {
+            Func<DateTime, bool> isDisabledFunc = date => true;
+            var comp = OpenPicker(Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc));
+
+            comp.Instance.IsDateDisabledFunc.Should().Be(isDisabledFunc);
+            comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
+                .Should().OnlyContain(disabled => disabled == true);
+        }
+
+        [Test]
+        public void IsDateDisabledFunc_SettingDateToADisabledDateYieldsNull()
+        {
+            var wasEventCallbackCalled = false;
+            Func<DateTime, bool> isDisabledFunc = date => true;
+            var comp = ctx.RenderComponent<MudDatePicker>(
+                Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc),
+                EventCallback("DateChanged", (DateTime? _) => wasEventCallbackCalled = true)
+            );
+
+            comp.SetParam(picker => picker.Date, DateTime.Now);
+
+            comp.Instance.Date.Should().BeNull();
+            wasEventCallbackCalled.Should().BeFalse();
+        }
+
+        [Test]
+        public void IsDateDisabledFunc_SettingDateToAnEnabledDateYieldsTheDate()
+        {
+            var wasEventCallbackCalled = false;
+            var today = DateTime.Today;
+            Func<DateTime, bool> isDisabledFunc = date => date < today;
+            var comp = ctx.RenderComponent<MudDatePicker>(
+                Parameter(nameof(MudDatePicker.IsDateDisabledFunc), isDisabledFunc),
+                EventCallback("DateChanged", (DateTime? _) => wasEventCallbackCalled = true)
+            );
+
+            comp.SetParam(picker => picker.Date, today);
+
+            comp.Instance.Date.Should().Be(today);
+            wasEventCallbackCalled.Should().BeTrue();
+        }
+
+        [Test]
+        public void IsDateDisabledFunc_NoDisabledDatesByDefault()
+        {
+            var comp = OpenPicker();
+            comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
+                .Should().OnlyContain(disabled => disabled == false);
+        }
+      
         public async Task CheckAutoCloseDatePickerTest()
         {
             // Define a date for comparison
@@ -441,6 +492,72 @@ namespace MudBlazor.UnitTests.Components
             {
                 datePicker.Instance.Date.Should().Be(new DateTime(now.Year, now.Month, 19));
             }
+        }
+
+        [Test]
+        public async Task CheckReadOnlyTest()
+        {
+            // Define a date for comparison
+            DateTime now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+            // Get access to the datepicker of the instance
+            var comp = ctx.RenderComponent<MudDatePicker>();
+            var picker = comp.Instance;
+
+            // Open the datepicker
+            await comp.InvokeAsync(() => picker.Open());
+
+            // Clicking a day button to select a date
+            // It must be a different day than the day of now!
+            // So the test is working when the day is 20
+            if (now.Day != 20)
+            {
+                comp.FindAll("button.mud-picker-calendar-day")
+                    .Where(x => x.TrimmedText().Equals("20")).First().Click();
+            }
+            else
+            {
+                comp.FindAll("button.mud-picker-calendar-day")
+                    .Where(x => x.TrimmedText().Equals("19")).First().Click();
+            }
+
+            // Close the datepicker
+            await comp.InvokeAsync(() => picker.Close());
+
+            // Check that the date should be equal to the new date 19 or 20
+            if (now.Day != 20)
+            {
+                picker.Date.Should().Be(new DateTime(now.Year, now.Month, 20));
+            }
+            else
+            {
+                picker.Date.Should().Be(new DateTime(now.Year, now.Month, 19));
+            }
+
+            // Change the value of readonly and update the value of now
+            now = picker.Date.Value;
+            picker.ReadOnly = true;
+
+            // Open the datepicker
+            await comp.InvokeAsync(() => picker.Open());
+
+            // Clicking a day button to select a date
+            if (now.Day != 21)
+            {
+                comp.FindAll("button.mud-picker-calendar-day")
+                    .Where(x => x.TrimmedText().Equals("22")).First().Click();
+            }
+            else
+            {
+                comp.FindAll("button.mud-picker-calendar-day")
+                    .Where(x => x.TrimmedText().Equals("21")).First().Click();
+            }
+
+            // Close the datepicker
+            await comp.InvokeAsync(() => picker.Close());
+
+            // Check that the date should remain the same because readonly is true
+            picker.Date.Should().Be(now);
         }
     }
 }

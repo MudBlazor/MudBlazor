@@ -154,7 +154,8 @@ namespace MudBlazor
         //the user is accepting a value
         private static bool ShouldRenderBeForced(string key) => key == "Enter"
                                                              || key == "ArrowDown"
-                                                             || key == "ArrowUp";
+                                                             || key == "ArrowUp"
+                                                             || key == "Tab";
 
         protected virtual void OnBlurred(FocusEventArgs obj)
         {

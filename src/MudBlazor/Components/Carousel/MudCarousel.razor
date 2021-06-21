@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseBindableItemsControl<MudCarouselItem, TData>
-@implements IDisposable
+@implements IAsyncDisposable
 @typeparam TData
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
@@ -50,11 +50,11 @@
                             int current = i;
                             if (DelimiterTemplate == null)
                             {
-                                <MudIconButton Class="align-self-center" Style="z-index:3;opacity:0.75" Icon="@(current == SelectedIndex ? Icons.Material.Filled.RadioButtonChecked : Icons.Material.Filled.RadioButtonUnchecked)" OnClick="(() => MoveTo(current))" Color="Color.Inherit" />
+                                <MudIconButton Class="@DelimitersButtonsClassName" Style="z-index:3;opacity:0.75" Icon="@(current == SelectedIndex ? Icons.Material.Filled.RadioButtonChecked : Icons.Material.Filled.RadioButtonUnchecked)" OnClick="(() => MoveTo(current))" Color="Color.Inherit" />
                             }
                             else
                             {
-                                <div @onclick="() => MoveTo(current)" class="align-self-center" style="z-index:3;opacity:0.75">
+                                <div @onclick="() => MoveTo(current)" class="@DelimitersButtonsClassName" style="z-index:3;opacity:0.75">
                                     @DelimiterTemplate(current == SelectedIndex)
                                 </div>
                             }
