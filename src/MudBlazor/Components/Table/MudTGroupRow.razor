@@ -50,12 +50,7 @@ else
     <tr class="@FooterClass" @onclick="@OnRowClick" style="@FooterStyle" @attributes="@UserAttributes">
         @if ((Context?.Table.MultiSelection ?? false))
         {
-            <MudTd>
-                @if (IsCheckable)
-                {
-                    <MudCheckBox @bind-Checked="IsChecked" />
-                }
-            </MudTd>
+            <MudTd />
         }
         @FooterTemplate(new TableGroupData<object, T>(GroupDefinition.GroupName, Items.Key, Items.ToList()))
         @if ((Context?.Table.IsEditable ?? false))
