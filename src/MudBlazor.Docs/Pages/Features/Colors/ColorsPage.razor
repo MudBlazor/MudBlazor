@@ -30,28 +30,34 @@
                 <ColorsMaterialExample />
             </SectionContent>
             <SectionSource ShowCode="false" Code="ColorsMaterialExample" />
+
+
+            <MudText Class="my-8">Each color can also be accessed from code: <CodeInline>... Style=@@($"color: {Colors.Red.Accent1}; background-color: {Colors.Blue.Darken3};")</CodeInline>
+            </MudText>
+
+
+
+
             <MudText Class="my-8">Below is a list of the Material design color palette grouped by primary color</MudText>
             <MudGrid Spacing="4">
                 @foreach (var color in MaterialColors)
                 {
-                    <MudItem md="6" lg="4" xs="12">
-                        <div class="mud-paper mud-paper-square docs-color-card" style="background-color:@color.Value;color:#fff">
-                            <MudText Align="Align.Left" Typo="Typo.h6">@color.Color</MudText>
-                        </div>
-                        @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
-                        {
-                            IsLightColor = false;
-                            if (shade.Name.Contains("Lighten5") || shade.Name.Contains("Lighten4") || shade.Name.Contains("Lighten3") || shade.Name.Contains("White") || shade.Name.Contains("Transparent"))
-                            {
-                                IsLightColor = true;
-                            }
-                            <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:@shade.Value;@(IsLightColor? "color:#444" : "color:#fff")">
-                                <MudText Align="Align.Left">@shade.Name</MudText>
-                                <MudText Align="Align.Right">@shade.Value</MudText>
-                            </div>
-                        }
-                    </MudItem>
+        <MudItem md="6" lg="4" xs="12">
+            <div class="mud-paper mud-paper-square docs-color-card" style="background-color:@color.Value;color:#fff">
+                <MudText Align="Align.Left" Typo="Typo.h6">@color.Color</MudText>
+            </div>
+            @foreach (var shade in MaterialColorShades.Where(i => i.Color == color.Color))
+            {
+                IsLightColor = false;
+                if (shade.Name.Contains("Lighten5") || shade.Name.Contains("Lighten4") || shade.Name.Contains("Lighten3") || shade.Name.Contains("White") || shade.Name.Contains("Transparent"))
+                {
+                    IsLightColor = true;
                 }
+        <div class="mud-paper mud-paper-square docs-color-card py-6" style="background-color:@shade.Value;@(IsLightColor? "color:#444" : "color:#fff")">
+            <MudText Align="Align.Left">@shade.Name</MudText>
+            <MudText Align="Align.Right">@shade.Value</MudText>
+        </div>}
+        </MudItem>}
             </MudGrid>
         </DocsPageSection>
     </DocsPageContent>
