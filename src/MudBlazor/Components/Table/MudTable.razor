@@ -2,9 +2,9 @@
 @inherits MudTableBase
 @using MudBlazor.Utilities
 @typeparam T
+<div @attributes="UserAttributes" class="@Classname" style="@Style">
 @if (Items != null || ServerData != null)
 {
-<div @attributes="UserAttributes" class="@Classname" style="@Style">
     <CascadingValue Value="TableContext" IsFixed="true">
         @if (ToolBarContent != null)
         {
@@ -144,7 +144,6 @@
             </div>
         }
     </CascadingValue>
-</div>
 }
-
+</div>
 
