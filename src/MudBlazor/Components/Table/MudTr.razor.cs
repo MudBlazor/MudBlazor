@@ -53,6 +53,11 @@ namespace MudBlazor
             // Manage any previous edited row
             Context.ManagePreviousEditedRow(this);
 
+            if (IsHeader || !(Context?.Table.Validator.IsValid ?? true))
+                return;
+
+            Context?.Table.SetSelectedItem(Item);
+
             // Manage edition the first time the row is clicked and if the table is editable
             if (!hasBeenClikedFirstTime && IsEditable)
             {
@@ -71,10 +76,6 @@ namespace MudBlazor
                 Context.Table.RowEditPreview?.Invoke(Item);
             }
 
-            if (IsHeader || !(Context?.Table.Validator.IsValid ?? true))
-                return;
-
-            Context?.Table.SetSelectedItem(Item);
             Context?.Table.SetEditingItem(Item);
 
             if (Context?.Table.MultiSelection == true && !IsHeader)
