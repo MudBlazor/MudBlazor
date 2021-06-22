@@ -413,8 +413,8 @@ namespace MudBlazor.UnitTests.Components
             // Open the timepicker
             await comp.InvokeAsync(() => timePicker.Instance.Open());
             var picker = timePicker.Instance;
-  
-              // Select 16 hours
+
+            // Select 16 hours
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click();
             picker.TimeIntermediate.Value.Hours.Should().Be(16);
 
@@ -424,7 +424,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Click outside of the timepicker
             comp.Find("div.mud-overlay").Click();
-  
+
             // Check that the time should remain the same because autoclose is false
             // and there are actions which are defined
             picker.Time.Should().Be(new TimeSpan(00, 45, 00));
@@ -443,10 +443,10 @@ namespace MudBlazor.UnitTests.Components
             // Select 30 minutes
             comp.FindAll("div.mud-minute")[30].Click();
             picker.TimeIntermediate.Value.Minutes.Should().Be(30);
-  
+
             // Click outside of the timepicker
             comp.Find("div.mud-overlay").Click();
-  
+
             // Check that the time should be equal to the selection this time!
             picker.Time.Should().Be(new TimeSpan(16, 30, 00));
         }
@@ -459,8 +459,8 @@ namespace MudBlazor.UnitTests.Components
 
             // Open the timepicker
             await comp.InvokeAsync(() => picker.Open());
-  
-              // Select 16 hours
+
+            // Select 16 hours
             comp.FindAll("div.mud-picker-stick-outer.mud-hour")[3].Click();
             picker.TimeIntermediate.Value.Hours.Should().Be(16);
 
@@ -470,8 +470,8 @@ namespace MudBlazor.UnitTests.Components
 
             // Click outside of the timepicker
             comp.Find("div.mud-overlay").Click();
-  
-              // Check that the time have been changed
+
+            // Check that the time have been changed
             picker.Time.Should().Be(new TimeSpan(16, 30, 00));
 
             // Changer the readonly to true
@@ -487,10 +487,10 @@ namespace MudBlazor.UnitTests.Components
             // Select 31 minutes
             comp.FindAll("div.mud-minute")[34].Click();
             picker.TimeIntermediate.Value.Minutes.Should().Be(34);
-  
+
             // Click outside of the timepicker
             comp.Find("div.mud-overlay").Click();
-  
+
             // Check that the time have not been changed
             picker.Time.Should().Be(new TimeSpan(16, 30, 00));
         }

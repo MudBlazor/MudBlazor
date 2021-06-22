@@ -76,7 +76,8 @@ namespace MudBlazor
         /// <summary>
         /// If true, sets 12 hour selection clock.
         /// </summary>
-        [Parameter] public bool AmPm
+        [Parameter]
+        public bool AmPm
         {
             get => _amPm;
             set

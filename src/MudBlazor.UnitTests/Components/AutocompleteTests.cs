@@ -417,7 +417,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
-            autocompletecomp.SetParam(x=>x.SelectValueOnTab, true);
+            autocompletecomp.SetParam(x => x.SelectValueOnTab, true);
             var autocomplete = autocompletecomp.Instance;
 
             // Should be closed

@@ -123,7 +123,7 @@ namespace MudBlazor.UnitTests.Components
             var form = comp.FindComponent<MudForm>().Instance;
             // check initial state: form should be valid due to having no required field, but the user's two-way binding did override that value to false
             comp.WaitForAssertion(() => form.IsValid.Should().Be(true));
-            comp.WaitForAssertion(()=> comp.FindComponent<MudSwitch<bool>>().Instance.Checked.Should().Be(true));
+            comp.WaitForAssertion(() => comp.FindComponent<MudSwitch<bool>>().Instance.Checked.Should().Be(true));
         }
 
         /// <summary>
@@ -418,8 +418,8 @@ namespace MudBlazor.UnitTests.Components
             var comp = ctx.RenderComponent<MudFormExample>();
             Console.WriteLine(comp.Markup);
             var form = comp.FindComponent<MudForm>().Instance;
-            comp.FindComponent<MudForm>().SetParam(x=>x.ValidationDelay, 0);
-            comp.WaitForAssertion(()=>form.IsValid.Should().BeFalse(because: "it contains required fields that are not filled out"));
+            comp.FindComponent<MudForm>().SetParam(x => x.ValidationDelay, 0);
+            comp.WaitForAssertion(() => form.IsValid.Should().BeFalse(because: "it contains required fields that are not filled out"));
             var buttons = comp.FindComponents<MudButton>();
             // click validate button
             var validateButton = buttons[1];
@@ -698,7 +698,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = ctx.RenderComponent<MudFormExample>();
             await Task.Delay(100);
-            var form=comp.FindComponent<MudForm>().Instance;
+            var form = comp.FindComponent<MudForm>().Instance;
             form.Errors.Should().BeEmpty();
         }
     }
