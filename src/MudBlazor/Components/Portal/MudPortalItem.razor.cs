@@ -9,7 +9,7 @@ namespace MudBlazor
 {
     public partial class MudPortalItem
     {
-        private bool _hasBeenRendered=true;
+        private bool _hasBeenRendered;
         private ElementReference _fragmentRef;
         private ElementReference _anchorRef;
         [Parameter] public RenderFragment ChildContent { get; set; }
@@ -22,33 +22,35 @@ namespace MudBlazor
         {
             return base.ShouldRender();
         }
+        private string AnchorClass =>
+            new CssBuilder("portal-anchor")
+            .AddClass("portal-anchor-hidden", !_hasBeenRendered)
+            .Build();
+
         private string AnchorStyle =>
             new StyleBuilder()
+            .AddStyle("position", Item.Position, _hasBeenRendered)
+            .AddStyle("top", Item.AnchorRect?.AbsoluteTop.ToPixels())
+            .AddStyle("left", Item.AnchorRect?.AbsoluteLeft.ToPixels())
+            .AddStyle("height", Item.AnchorRect?.Height.ToPixels())
+            .AddStyle("width", Item.AnchorRect?.Width.ToPixels())
+            .AddStyle("z-index", new ZIndex().Popover.ToString(), Item.Position == "fixed")
+            .Build();
 
-                   .AddStyle("position", "fixed", !_hasBeenRendered)
-                   //.AddStyle("visibility", "hidden", !_hasBeenRendered)
-                   .AddStyle("position", Item.Position, _hasBeenRendered)
-                   .AddStyle("top", Item.AnchorRect?.AbsoluteTop.ToPixels())
-                   .AddStyle("left", Item.AnchorRect?.AbsoluteLeft.ToPixels())
-                   .AddStyle("height", Item.AnchorRect?.Height.ToPixels(), _hasBeenRendered)
-                   .AddStyle("width", Item.AnchorRect?.Width.ToPixels(), _hasBeenRendered)
-                   .AddStyle("z-index", new ZIndex().Popover.ToString(), Item.Position == "fixed")
-                   .Build();
-
-       
+        private string FragmentClass =>
+            new CssBuilder("portal-fragment")
+            .AddClass($"mud-popover-{Item.Direction.ToDescriptionString()}")
+            .AddClass("portal-fragment-hidden", !_hasBeenRendered)
+            .Build();
 
         private void SetDirection()
         {
-           
-            var viewPortHeight = Item.FragmentRect.WindowHeight;
-
-            if (Item.FragmentRect?.Height + Item.AnchorRect.Bottom> viewPortHeight)
+            //nom funciona porque fragment rect height =0 quando position fixed
+            if (Item.FragmentRect.IsOutOfViewPort)
             {
-                Item.AnchorRect.Top -= Item.AnchorRect.AbsoluteBottom + Item.FragmentRect.Height - viewPortHeight;
-                Item.AnchorRect.Bottom = Item.AnchorRect.Top + Item.AnchorRect.Height;
-                
+                if (Item.Direction == Direction.Bottom) Item.AnchorRect.Top -= Item.FragmentRect.Height;
+                if (Item.Direction == Direction.Top) Item.AnchorRect.Top += Item.FragmentRect.Height;
             }
-
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -57,10 +59,9 @@ namespace MudBlazor
             {
                 Item.FragmentRect = await _fragmentRef.MudGetBoundingClientRectAsync();
                 //SetDirection();
-                //StateHasChanged();
+                _hasBeenRendered = false;
+                StateHasChanged();
             }
-            _hasBeenRendered = true;
-
         }
     }
 }

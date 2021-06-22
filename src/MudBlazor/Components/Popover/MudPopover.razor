@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
-<MudPortal IsVisible="@Open">
+<MudPortal IsVisible="@Open" Direction=@Direction>
     <div @ref=@_popoverRef @attributes="UserAttributes" class="@PopoverClass" style="@PopoverStyles">
         @ChildContent
     </div>

@@ -26,6 +26,8 @@ namespace MudBlazor.Services
 
         public Placement Placement { get; set; }
 
+        public Direction Direction { get; set; }
+
         public MudPortalItem Reference { get; set; }
     }
 }

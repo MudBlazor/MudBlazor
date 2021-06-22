@@ -24,7 +24,9 @@ namespace MudBlazor
         [Parameter] public Type PortalType { get; set; }
 
         [Parameter] public Placement Placement { get; set; }
-        
+
+        [Parameter] public Direction Direction { get; set; }
+
         [Parameter] public bool Autopositioned { get; set; } = true;
 
         [Parameter] public bool AutoDirection { get; set; } = true;
@@ -78,6 +80,7 @@ namespace MudBlazor
             _portalItem.Id = _id;
             _portalItem.PortalType = PortalType;
             _portalItem.Placement = Placement;
+            _portalItem.Direction = Direction;
             _portalItem.Fragment = ChildContent;
             _portalItem.AutoDirection = AutoDirection;
             _portalItem.Position = IsFixed ? "fixed" : "absolute";

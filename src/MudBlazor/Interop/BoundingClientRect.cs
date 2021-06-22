@@ -29,11 +29,13 @@ namespace MudBlazor.Interop
 
         public double AbsoluteBottom => Bottom + ScrollY;
 
+        public bool IsOutOfViewPort => 
+            Bottom > WindowHeight
+            || Top < 0
+            || Left < 0
+            || Right > WindowWidth;
 
 
-        
-
-        
     }
 
 }
