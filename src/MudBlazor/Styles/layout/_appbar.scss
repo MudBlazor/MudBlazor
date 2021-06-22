@@ -55,6 +55,52 @@
             width: calc(100% - var(--mud-drawer-width-left) - var(--mud-drawer-width-right));
         }
     }
+
+    &-mini {
+        @each $breakpoint in map-keys($breakpoints) {
+            &-#{$breakpoint} {
+                @media (min-width: map-get($breakpoints, $breakpoint)) {
+                    &-left.mud-drawer-left-clipped-never .mud-appbar {
+                        margin-left: var(--mud-drawer-width-left);
+                        width: calc(100% - var(--mud-drawer-width-left));
+                    }
+
+                    &-right.mud-drawer-right-clipped-never .mud-appbar {
+                        margin-right: var(--mud-drawer-width-right);
+                        width: calc(100% - var(--mud-drawer-width-right));
+                    }
+
+                    &-left.mud-drawer-left-clipped-never#{&}-right.mud-drawer-right-clipped-never .mud-appbar {
+                        margin-left: var(--mud-drawer-width-left);
+                        margin-right: var(--mud-drawer-width-right);
+                        width: calc(100% - var(--mud-drawer-width-left) - var(--mud-drawer-width-right));
+                    }
+                }
+            }
+        }
+    }
+}
+
+.mud-drawer-close-mini {
+    @each $breakpoint in map-keys($breakpoints) {
+        &-#{$breakpoint} {
+            &-left.mud-drawer-left-clipped-never .mud-appbar {
+                margin-left: var(--mud-drawer-width-mini-left);
+                width: calc(100% - var(--mud-drawer-width-mini-left));
+            }
+
+            &-right.mud-drawer-right-clipped-never .mud-appbar {
+                margin-right: var(--mud-drawer-width-mini-right);
+                width: calc(100% - var(--mud-drawer-width-mini-right));
+            }
+
+            &-left.mud-drawer-left-clipped-never#{&}-right.mud-drawer-right-clipped-never .mud-appbar {
+                margin-left: var(--mud-drawer-width-mini-left);
+                margin-right: var(--mud-drawer-width-mini-right);
+                width: calc(100% - var(--mud-drawer-width-mini-left) - var(--mud-drawer-width-mini-right));
+            }
+        }
+    }
 }
 
 .mud-appbar-fixed {

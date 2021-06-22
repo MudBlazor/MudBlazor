@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor
+@inherits ComponentBase
+@typeparam T
+@using Microsoft.AspNetCore.Components.Web.Virtualization 
+
+@if (IsEnabled)
+{
+    <Virtualize Items="@Items" Context="item">
+        @if (@ChildContent != null)
+        {
+            @ChildContent(item);
+        }
+    </Virtualize>
+}
+else
+{
+    @foreach (var item in Items ?? Array.Empty<T>())
+    {
+        @ChildContent(item);
+    }
+}
+

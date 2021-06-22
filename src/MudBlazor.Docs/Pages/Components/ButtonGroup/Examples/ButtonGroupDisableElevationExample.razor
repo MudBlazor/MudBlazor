@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" DisableElevation="@_disableElevation">
+    <MudButton>One</MudButton>
+    <MudButton>Two</MudButton>
+    <MudButton>Three</MudButton>
+</MudButtonGroup>
+
+<MudSwitch @bind-Checked="@_disableElevation" Label="Disable elevation" Color="Color.Primary" />
+
+@code {
+    private bool _disableElevation = true;
+}

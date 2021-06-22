@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
@@ -39,10 +40,23 @@ namespace MudBlazor
         {
             if (_dateRange != range)
             {
+                var doesRangeContainDisabledDates = Enumerable
+                    .Range(0, int.MaxValue)
+                    .Select(index => range.Start.Value.AddDays(index))
+                    .TakeWhile(date => date <= range.End.Value)
+                    .Any(date => IsDateDisabledFunc(date.Date));
+                if (doesRangeContainDisabledDates)
+                {
+                    _rangeText = null;
+                    await SetTextAsync(null, false);
+                    return;
+                }
+
                 _dateRange = range;
 
                 if (updateValue)
                 {
+                    Converter.GetError = false;
                     if (_dateRange == null)
                     {
                         _rangeText = null;
@@ -50,24 +64,15 @@ namespace MudBlazor
                     }
                     else
                     {
-                        if (!IsNullOrEmpty(DateFormat))
-                        {
-                            _rangeText = new Range<string>(
-                                _dateRange.Start?.ToString(DateFormat) ?? Empty,
-                                _dateRange.End?.ToString(DateFormat) ?? Empty);
-                            await SetTextAsync(_dateRange.ToString(DateFormat), false);
-                        }
-                        else
-                        {
-                            _rangeText = new Range<string>(
-                                _dateRange.Start?.ToIsoDateString() ?? Empty,
-                                _dateRange.End?.ToIsoDateString() ?? Empty);
-                            await SetTextAsync(_dateRange.ToIsoDateString(), false);
-                        }
+                        _rangeText = new Range<string>(
+                            Converter.Set(_dateRange.Start),
+                            Converter.Set(_dateRange.End));
+                        await SetTextAsync(_dateRange.ToString(Converter), false);
                     }
                 }
 
                 await DateRangeChanged.InvokeAsync(_dateRange);
+                BeginValidate();
             }
         }
 
@@ -79,25 +84,80 @@ namespace MudBlazor
                 if (_rangeText.Equals(value))
                     return;
 
+                Touched = true;
                 _rangeText = value;
                 SetDateRangeAsync(ParseDateRangeValue(value.Start, value.End), false).AndForget();
             }
         }
 
+        private MudRangeInput<string> _rangeInput;
+
+        /// <summary>
+        /// Focuses the start date of MudDateRangePicker
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask FocusStartAsync() => _rangeInput.FocusStartAsync();
+
+        /// <summary>
+        /// Selects the start date of MudDateRangePicker
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask SelectStartAsync() => _rangeInput.SelectStartAsync();
+
+        /// <summary>
+        /// Selects the specified range of the start date text
+        /// </summary>
+        /// <param name="pos1">Start position of the selection</param>
+        /// <param name="pos2">End position of the selection</param>
+        /// <returns></returns>
+        public ValueTask SelectRangeStartAsync(int pos1, int pos2) => _rangeInput.SelectRangeStartAsync(pos1, pos2);
+
+        /// <summary>
+        /// Focuses the end date of MudDateRangePicker
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask FocusEndAsync() => _rangeInput.FocusEndAsync();
+
+        /// <summary>
+        /// Selects the end date of MudDateRangePicker
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask SelectEndAsync() => _rangeInput.SelectEndAsync();
+
+        /// <summary>
+        /// Selects the specified range of the end date text
+        /// </summary>
+        /// <param name="pos1">Start position of the selection</param>
+        /// <param name="pos2">End position of the selection</param>
+        /// <returns></returns>
+        public ValueTask SelectRangeEndAsync(int pos1, int pos2) => _rangeInput.SelectRangeEndAsync(pos1, pos2);
+
+        protected override Task DateFormatChanged(string newFormat)
+        {
+            Touched = true;
+            return SetTextAsync(_dateRange?.ToString(Converter), false);
+        }
+
         protected override Task StringValueChanged(string value)
         {
+            Touched = true;
             // Update the daterange property (without updating back the Value property)
             return SetDateRangeAsync(ParseDateRangeValue(value), false);
         }
 
+        protected override bool HasValue(DateTime? value)
+        {
+            return _dateRange != null;
+        }
+
         private DateRange ParseDateRangeValue(string value)
         {
-            return DateRange.TryParse(value, out var dateRange) ? dateRange : null;
+            return DateRange.TryParse(value, Converter, out var dateRange) ? dateRange : null;
         }
 
         private DateRange ParseDateRangeValue(string start, string end)
         {
-            return DateRange.TryParse(start, end, out var dateRange) ? dateRange : null;
+            return DateRange.TryParse(start, end, Converter, out var dateRange) ? dateRange : null;
         }
 
         protected override void OnPickerClosed()
@@ -199,6 +259,8 @@ namespace MudBlazor
 
         protected override async void Submit()
         {
+            if (ReadOnly)
+                return;
             if (_firstDate == null || _secondDate == null)
                 return;
 
@@ -217,19 +279,14 @@ namespace MudBlazor
 
         protected override string GetTitleDateString()
         {
-            if (_firstDate != null && _secondDate != null)
-                return $"{_firstDate.Value.ToString("dd MMM", Culture)} - {_secondDate.Value.ToString("dd MMM", Culture)}";
-            else if (_firstDate != null)
-                return _firstDate.Value.ToString("dd MMM", Culture) + " - ";
-
-            if (DateRange == null || DateRange.Start == null)
-                return "";
-            if (DateRange.End == null)
-                return DateRange.Start.Value.ToString("dd MMM", Culture);
-
-            return $"{DateRange.Start.Value.ToString("dd MMM", Culture)} - {DateRange.End.Value.ToString("dd MMM", Culture)}";
+            if (_firstDate != null)
+                return $"{FormatTitleDate(_firstDate)} - {FormatTitleDate(_secondDate)}";
+            
+            return DateRange?.Start != null
+                ? $"{FormatTitleDate(DateRange.Start)} - {FormatTitleDate(DateRange.End)}"
+                : "";
         }
-
+        
         protected override DateTime GetCalendarStartOfMonth()
         {
             var date = StartMonth ?? DateRange?.Start ?? DateTime.Today;

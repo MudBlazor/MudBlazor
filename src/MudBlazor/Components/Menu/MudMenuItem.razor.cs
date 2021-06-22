@@ -2,16 +2,15 @@
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    public class ComponentBaseMudMenuItem : MudComponentBase
+    public partial class MudMenuItem : MudComponentBase
     {
         [CascadingParameter] public MudMenu MudMenu { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
         [Parameter] public bool Disabled { get; set; }
-        [Inject] public Microsoft.AspNetCore.Components.NavigationManager UriHelper { get; set; }
+        [Inject] public NavigationManager UriHelper { get; set; }
         [Inject] public IJsApiService JsApiService { get; set; }
         [Parameter] public string Link { get; set; }
         [Parameter] public string Target { get; set; }

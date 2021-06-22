@@ -99,6 +99,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Check the implementation of the TriState parameter
+        /// </summary>
+        [Test]
+        public void CheckBoxTriStateTest()
+        {
+            var comp = ctx.RenderComponent<MudCheckBox<bool?>>(new[] { ComponentParameter.CreateParameter("TriState", true) });
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var box = comp.Instance;
+            var input = comp.Find("input");
+            // check initial state
+            box.Checked.Should().Be(default);
+            // click and check if it has toggled
+            input.Change(true);
+            box.Checked.Should().Be(true);
+            Console.WriteLine(comp.Markup);
+            input.Change(false);
+            box.Checked.Should().Be(false);
+            Console.WriteLine(comp.Markup);
+            // click and check if this is the indeterminate value
+            input.Change(false);
+            box.Checked.Should().Be(default);
+            Console.WriteLine(comp.Markup);
+            // click and check if this is the true value
+            input.Change(true);
+            box.Checked.Should().Be(true);
+            Console.WriteLine(comp.Markup);
+        }
+
+        /// <summary>
         /// Without clicking the required checkbox the form should not validate
         /// </summary>
         [Test]

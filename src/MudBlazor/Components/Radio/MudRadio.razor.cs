@@ -25,7 +25,6 @@ namespace MudBlazor
             .AddClass($"mud-radio-color-{Color.ToDescriptionString()}")
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-checked", Checked)
-            .AddClass(Class)
             .Build();
 
         protected string RadioIconsClassNames =>

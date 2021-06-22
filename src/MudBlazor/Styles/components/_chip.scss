@@ -52,6 +52,8 @@
     .mud-chip-icon {
         margin-left: -4px;
         margin-right: 4px;
+        margin-inline-start: -4px;
+        margin-inline-end: 4px;
         color: inherit;
     }
 
@@ -59,6 +61,8 @@
         padding: 1px;
         margin-right: -4px;
         margin-left: 6px;
+        margin-inline-end: -4px;
+        margin-inline-start: 6px;
         height: 18px;
         width: 18px;
         color: inherit;
@@ -81,8 +85,6 @@
         user-select: none;
     }
 }
-
-
 
 .mud-chip-filled {
     color: var(--mud-palette-text-primary);

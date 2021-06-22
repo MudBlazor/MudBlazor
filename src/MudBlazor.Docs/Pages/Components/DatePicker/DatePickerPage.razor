@@ -11,6 +11,10 @@
                 <Title>Basic Usage</Title>
                 <Description>
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: Always use the two-way binding <CodeInline>@@bind-Date</CodeInline> to bind to a field of type <CodeInline>DateTime?</CodeInline></MudAlert>
+                    <MudText Class="py-6">
+                        If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, selecting the day will close the MudDatePicker.
+                        If <CodeInline>ReadOnly</CodeInline> is set to true, the DatePicker can be used but the value will remain unchanged regardless of the actions performed or the values entered.
+                    </MudText>
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true">

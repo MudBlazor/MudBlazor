@@ -42,5 +42,26 @@ namespace MudBlazor.UnitTests.Components
                 .And.Contain("customicon")
                 .And.Contain($"style=\"{colorStyle}\"");
         }
+
+        /// <summary>
+        /// MudIcon should have a Title tag/attribute if specified
+        /// </summary>
+        [Test]
+        public void ShouldRenderTitle()
+        {
+            var title = "Title and tooltip";
+            //svg
+            var icon = Parameter(nameof(MudIcon.Icon), Icons.Filled.Add);
+            var titleParam = Parameter(nameof(MudIcon.Title), title);
+            var comp = ctx.RenderComponent<MudIcon>(icon, titleParam);
+            comp.Find("svg Title").TextContent.Should().Be(title);
+
+            //class
+            icon = Parameter(nameof(MudIcon.Icon), "customicon");
+            comp.SetParametersAndRender(icon, titleParam);
+            comp.Markup.Trim().Should().StartWith("<span")
+                .And.Contain("customicon")
+                .And.Contain($"title=\"{title}\"");
+        }
     }
 }

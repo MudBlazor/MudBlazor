@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor
+@implements IDisposable
+@inherits MudComponentBase
+
+<tr class="@Classname" @onclick="@OnRowClick" style="@Style" @attributes="@UserAttributes">
+    @if ((Context?.Table.MultiSelection ?? false) && !IgnoreCheckbox)
+    {
+        <MudTd>
+            @if (IsCheckable)
+            {
+                <MudCheckBox @bind-Checked="IsChecked" />
+            }
+        </MudTd>
+    }
+    @ChildContent
+    @if((Context?.Table.IsEditable ?? false) && !IgnoreEditable)
+    {
+        <MudTd />
+    }
+</tr>
+
+

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -17,7 +18,6 @@ namespace MudBlazor
             .AddClass($"mud-checkbox-{Color.ToDescriptionString()}")
             .AddClass($"mud-ripple mud-ripple-checkbox", !DisableRipple)
             .AddClass($"mud-disabled", Disabled)
-          .AddClass(Class)
         .Build();
 
         /// <summary>
@@ -58,6 +58,11 @@ namespace MudBlazor
         [Parameter]
         public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
+        /// <summary>
+        /// Define if the checkbox can cycle again through indeterminate status.
+        /// </summary>
+        [Parameter] public bool TriState { get; set; }
+
         private string GetIcon()
         {
             if (BoolValue == true)
@@ -71,6 +76,29 @@ namespace MudBlazor
             }
 
             return IndeterminateIcon;
+        }
+
+        protected override Task OnChange(ChangeEventArgs args)
+        {
+            Touched = true;
+
+            // Apply only when TriState parameter is set to true and T is bool?
+            if (TriState && typeof(T) == typeof(bool?))
+            {
+                // The cycle is forced with the following steps: true, false, indeterminate, true, false, indeterminate...
+                if (!((bool?)(object)_value).HasValue)
+                {
+                    return SetBoolValueAsync(true);
+                }
+                else
+                {
+                    return ((bool?)(object)_value).Value ? SetBoolValueAsync(false) : SetBoolValueAsync(default);
+                }
+            }
+            else
+            {
+                return SetBoolValueAsync((bool?)args.Value);
+            }
         }
     }
 }

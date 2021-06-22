@@ -2,7 +2,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
-using MudColor = System.Drawing.Color;
 
 namespace MudBlazor
 {
@@ -38,37 +37,6 @@ namespace MudBlazor
         private const string LayoutProperties = "mud";
         private const string Zindex = "mud-zindex";
 
-        public static string ColorRgbDarken(string hex)
-        {
-            var color = ColorManager.FromHex(hex);
-            color = ColorManager.ColorDarken(color, 0.075);
-            return $"rgb({color.R},{color.G},{color.B})";
-        }
-        public static string ColorRgbLighten(string hex)
-        {
-            var color = ColorManager.FromHex(hex);
-            color = ColorManager.ColorLighten(color, 0.075);
-            return $"rgb({color.R},{color.G},{color.B})";
-        }
-
-        public static string ColorRgb(string hex)
-        {
-            var color = ColorManager.FromHex(hex);
-            return $"rgb({color.R},{color.G},{color.B})";
-        }
-
-        public static string ColorRgbElements(string hex)
-        {
-            var color = ColorManager.FromHex(hex);
-            return $"{color.R},{color.G},{color.B}";
-        }
-
-        public static string ColorRgba(string hex, double alpha)
-        {
-            var color = ColorManager.FromHex(hex);
-            return $"rgba({color.R},{color.G},{color.B}, {alpha.ToString(CultureInfo.InvariantCulture)})";
-        }
-
         protected virtual void GenerateTheme(StringBuilder theme)
         {
             //Palette
@@ -76,55 +44,60 @@ namespace MudBlazor
             theme.AppendLine($"--{Palette}-white: {Theme.Palette.White};");
 
             theme.AppendLine($"--{Palette}-primary: {Theme.Palette.Primary};");
-            theme.AppendLine($"--{Palette}-primary-rgb: {ColorRgbElements(Theme.Palette.Primary)};");
+            theme.AppendLine($"--{Palette}-primary-rgb: {ColorManager.ColorRgbElements(Theme.Palette.Primary)};");
             theme.AppendLine($"--{Palette}-primary-text: {Theme.Palette.PrimaryContrastText};");
-            theme.AppendLine($"--{Palette}-primary-darken: {ColorRgbDarken(Theme.Palette.Primary)};");
-            theme.AppendLine($"--{Palette}-primary-lighten: {ColorRgbLighten(Theme.Palette.Primary)};");
-            theme.AppendLine($"--{Palette}-primary-hover: {ColorRgba(Theme.Palette.Primary, Theme.Palette.HoverOpacity)};");
+            theme.AppendLine($"--{Palette}-primary-darken: {Theme.Palette.PrimaryDarken};");
+            theme.AppendLine($"--{Palette}-primary-lighten: {Theme.Palette.PrimaryLighten};");
+            theme.AppendLine($"--{Palette}-primary-hover: {ColorManager.ColorRgba(Theme.Palette.Primary, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-secondary: {Theme.Palette.Secondary};");
-            theme.AppendLine($"--{Palette}-secondary-rgb: {ColorRgbElements(Theme.Palette.Secondary)};");
+            theme.AppendLine($"--{Palette}-secondary-rgb: {ColorManager.ColorRgbElements(Theme.Palette.Secondary)};");
             theme.AppendLine($"--{Palette}-secondary-text: {Theme.Palette.SecondaryContrastText};");
-            theme.AppendLine($"--{Palette}-secondary-darken: {ColorRgbDarken(Theme.Palette.Secondary)};");
-            theme.AppendLine($"--{Palette}-secondary-lighten: {ColorRgbLighten(Theme.Palette.Secondary)};");
-            theme.AppendLine($"--{Palette}-secondary-hover: {ColorRgba(Theme.Palette.Secondary, Theme.Palette.HoverOpacity)};");
+            theme.AppendLine($"--{Palette}-secondary-darken: {Theme.Palette.SecondaryDarken};");
+            theme.AppendLine($"--{Palette}-secondary-lighten: {Theme.Palette.SecondaryLighten};");
+            theme.AppendLine($"--{Palette}-secondary-hover: {ColorManager.ColorRgba(Theme.Palette.Secondary, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-tertiary: {Theme.Palette.Tertiary};");
-            theme.AppendLine($"--{Palette}-tertiary-rgb: {ColorRgbElements(Theme.Palette.Tertiary)};");
+            theme.AppendLine($"--{Palette}-tertiary-rgb: {ColorManager.ColorRgbElements(Theme.Palette.Tertiary)};");
             theme.AppendLine($"--{Palette}-tertiary-text: {Theme.Palette.TertiaryContrastText};");
-            theme.AppendLine($"--{Palette}-tertiary-darken: {ColorRgbDarken(Theme.Palette.Tertiary)};");
-            theme.AppendLine($"--{Palette}-tertiary-lighten: {ColorRgbLighten(Theme.Palette.Tertiary)};");
-            theme.AppendLine($"--{Palette}-tertiary-hover: {ColorRgba(Theme.Palette.Tertiary, Theme.Palette.HoverOpacity)};");
+            theme.AppendLine($"--{Palette}-tertiary-darken: {Theme.Palette.TertiaryDarken};");
+            theme.AppendLine($"--{Palette}-tertiary-lighten: {Theme.Palette.TertiaryLighten};");
+            theme.AppendLine($"--{Palette}-tertiary-hover: {ColorManager.ColorRgba(Theme.Palette.Tertiary, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-info: {Theme.Palette.Info};");
+            theme.AppendLine($"--{Palette}-info-rgb: {ColorManager.ColorRgbElements(Theme.Palette.Info)};");
             theme.AppendLine($"--{Palette}-info-text: {Theme.Palette.InfoContrastText};");
-            theme.AppendLine($"--{Palette}-info-darken: {ColorRgbDarken(Theme.Palette.Info)};");
-            theme.AppendLine($"--{Palette}-info-lighten: {ColorRgbLighten(Theme.Palette.Info)};");
-            theme.AppendLine($"--{Palette}-info-hover: {ColorRgba(Theme.Palette.Info, Theme.Palette.HoverOpacity)};");
+            theme.AppendLine($"--{Palette}-info-darken: {Theme.Palette.InfoDarken};");
+            theme.AppendLine($"--{Palette}-info-lighten: {Theme.Palette.InfoLighten};");
+            theme.AppendLine($"--{Palette}-info-hover: {ColorManager.ColorRgba(Theme.Palette.Info, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-success: {Theme.Palette.Success};");
+            theme.AppendLine($"--{Palette}-success-rgb: {ColorManager.ColorRgbElements(Theme.Palette.Success)};");
             theme.AppendLine($"--{Palette}-success-text: {Theme.Palette.SuccessContrastText};");
-            theme.AppendLine($"--{Palette}-success-darken: {ColorRgbDarken(Theme.Palette.Success)};");
-            theme.AppendLine($"--{Palette}-success-lighten: {ColorRgbLighten(Theme.Palette.Success)};");
-            theme.AppendLine($"--{Palette}-success-hover: {ColorRgba(Theme.Palette.Success, Theme.Palette.HoverOpacity)};");
+            theme.AppendLine($"--{Palette}-success-darken: {Theme.Palette.SuccessDarken};");
+            theme.AppendLine($"--{Palette}-success-lighten: {Theme.Palette.SuccessLighten};");
+            theme.AppendLine($"--{Palette}-success-hover: {ColorManager.ColorRgba(Theme.Palette.Success, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-warning: {Theme.Palette.Warning};");
+            theme.AppendLine($"--{Palette}-warning-rgb: {ColorManager.ColorRgbElements(Theme.Palette.Warning)};");
             theme.AppendLine($"--{Palette}-warning-text: {Theme.Palette.WarningContrastText};");
-            theme.AppendLine($"--{Palette}-warning-darken: {ColorRgbDarken(Theme.Palette.Warning)};");
-            theme.AppendLine($"--{Palette}-warning-lighten: {ColorRgbLighten(Theme.Palette.Warning)};");
-            theme.AppendLine($"--{Palette}-warning-hover: {ColorRgba(Theme.Palette.Warning, Theme.Palette.HoverOpacity)};");
+            theme.AppendLine($"--{Palette}-warning-darken: {Theme.Palette.WarningDarken};");
+            theme.AppendLine($"--{Palette}-warning-lighten: {Theme.Palette.WarningLighten};");
+            theme.AppendLine($"--{Palette}-warning-hover: {ColorManager.ColorRgba(Theme.Palette.Warning, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-error: {Theme.Palette.Error};");
+            theme.AppendLine($"--{Palette}-error-rgb: {ColorManager.ColorRgbElements(Theme.Palette.Error)};");
             theme.AppendLine($"--{Palette}-error-text: {Theme.Palette.ErrorContrastText};");
-            theme.AppendLine($"--{Palette}-error-darken: {ColorRgbDarken(Theme.Palette.Error)};");
-            theme.AppendLine($"--{Palette}-error-lighten: {ColorRgbLighten(Theme.Palette.Error)};");
-            theme.AppendLine($"--{Palette}-error-hover: {ColorRgba(Theme.Palette.Error, Theme.Palette.HoverOpacity)};");
+            theme.AppendLine($"--{Palette}-error-darken: {Theme.Palette.ErrorDarken};");
+            theme.AppendLine($"--{Palette}-error-lighten: {Theme.Palette.ErrorLighten};");
+            theme.AppendLine($"--{Palette}-error-hover: {ColorManager.ColorRgba(Theme.Palette.Error, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-dark: {Theme.Palette.Dark};");
+            theme.AppendLine($"--{Palette}-dark-rgb: {ColorManager.ColorRgbElements(Theme.Palette.Dark)};");
             theme.AppendLine($"--{Palette}-dark-text: {Theme.Palette.DarkContrastText};");
-            theme.AppendLine($"--{Palette}-dark-darken: {ColorRgbDarken(Theme.Palette.Dark)};");
-            theme.AppendLine($"--{Palette}-dark-lighten: {ColorRgbLighten(Theme.Palette.Dark)};");
-            theme.AppendLine($"--{Palette}-dark-hover: {ColorRgba(Theme.Palette.Dark, Theme.Palette.HoverOpacity)};");
+            theme.AppendLine($"--{Palette}-dark-darken: {Theme.Palette.DarkDarken};");
+            theme.AppendLine($"--{Palette}-dark-lighten: {Theme.Palette.DarkLighten};");
+            theme.AppendLine($"--{Palette}-dark-hover: {ColorManager.ColorRgba(Theme.Palette.Dark, Theme.Palette.HoverOpacity)};");
 
             theme.AppendLine($"--{Palette}-text-primary: {Theme.Palette.TextPrimary};");
             theme.AppendLine($"--{Palette}-text-secondary: {Theme.Palette.TextSecondary};");
             theme.AppendLine($"--{Palette}-text-disabled: {Theme.Palette.TextDisabled};");
 
             theme.AppendLine($"--{Palette}-action-default: {Theme.Palette.ActionDefault};");
-            theme.AppendLine($"--{Palette}-action-default-hover: {ColorRgba(Colors.Shades.Black, Theme.Palette.HoverOpacity)};");
+            theme.AppendLine($"--{Palette}-action-default-hover: {ColorManager.ColorRgba(Colors.Shades.Black, Theme.Palette.HoverOpacity)};");
             theme.AppendLine($"--{Palette}-action-disabled: {Theme.Palette.ActionDisabled};");
             theme.AppendLine($"--{Palette}-action-disabled-background: {Theme.Palette.ActionDisabledBackground};");
 
@@ -198,6 +171,8 @@ namespace MudBlazor
                 theme.AppendLine($"--{LayoutProperties}-drawer-width-left: {Theme.LayoutProperties.DrawerWidthLeft};");
                 theme.AppendLine($"--{LayoutProperties}-drawer-width-right: {Theme.LayoutProperties.DrawerWidthRight};");
             }
+            theme.AppendLine($"--{LayoutProperties}-drawer-width-mini-left: {Theme.LayoutProperties.DrawerMiniWidthLeft};");
+            theme.AppendLine($"--{LayoutProperties}-drawer-width-mini-right: {Theme.LayoutProperties.DrawerMiniWidthRight};");
             theme.AppendLine($"--{LayoutProperties}-appbar-min-height: {Theme.LayoutProperties.AppbarMinHeight};");
 
             //Breakpoint

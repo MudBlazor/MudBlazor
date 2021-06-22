@@ -23,20 +23,38 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         /// <summary>
-        /// Validation status. True if the form is valid and without errors. This parameter is readonly.
+        /// Validation status. True if the form is valid and without errors. This parameter is two-way bindable.
         /// </summary>
         [Parameter]
-        //public bool IForm.IsValid => _valid;
         public bool IsValid
         {
             get => _valid;
-            set { /* readonly parameter! */ }
+            set
+            {
+                _valid = value;
+            }
+        }
+
+        private void SetIsValid(bool value)
+        {
+            if (_valid == value)
+                return;
+            _valid = value;
+            IsValidChanged.InvokeAsync(_valid).AndForget();
         }
 
         // Note: w/o any children the form is automatically valid.
         // It stays valid, as long as non-required fields are added or
         // a required field is added or the user touches a field that fails validation.
         private bool _valid = true;
+
+        /// <summary>
+        /// True if any field of the field was touched. This parameter is readonly.
+        /// </summary>
+        [Parameter]
+        public bool IsTouched { get => _touched; set {/* readonly parameter! */ } }
+
+        private bool _touched = false;
 
         /// <summary>
         /// Validation debounce delay in milliseconds. This can help improve rendering performance of forms with real-time validation of inputs
@@ -65,6 +83,11 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<bool> IsValidChanged { get; set; }
 
+        /// <summary>
+        /// Raised when IsTouched changes.
+        /// </summary>
+        [Parameter] public EventCallback<bool> IsTouchedChanged { get; set; }
+
         // keeps track of validation. if the input was validated at least once the value will be true
         protected HashSet<IFormComponent> _formControls = new HashSet<IFormComponent>();
         protected HashSet<string> _errors = new HashSet<string>();
@@ -84,13 +107,13 @@ namespace MudBlazor
         void IForm.Add(IFormComponent formControl)
         {
             if (formControl.Required)
-                _valid = false;
+                SetIsValid( false);
             _formControls.Add(formControl);
         }
 
         void IForm.Remove(IFormComponent formControl)
         {
-            //_formControls.Remove(formControl);
+            _formControls.Remove(formControl);
         }
 
         private Timer _timer;
@@ -122,19 +145,22 @@ namespace MudBlazor
             _errors.Clear();
             foreach (var error in _formControls.SelectMany(control => control.ValidationErrors))
                 _errors.Add(error);
-            var old_valid = _valid;
             // form can only be valid if:
             // - none have an error
             // - all required fields have been touched (and thus validated)
             var no_errors = _formControls.All(x => x.HasErrors == false);
             var required_all_touched = _formControls.Where(x => x.Required).All(x => x.Touched);
-            _valid = no_errors && required_all_touched;
+            var valid = no_errors && required_all_touched;
+
+            var old_touched = _touched;
+            _touched = _formControls.Any(x => x.Touched);
             try
             {
                 _shouldRender = false;
-                if (old_valid != _valid)
-                    await IsValidChanged.InvokeAsync(_valid);
+                SetIsValid( valid);
                 await ErrorsChanged.InvokeAsync(Errors);
+                if(old_touched != _touched)
+                    await IsTouchedChanged.InvokeAsync(_touched);
             }
             finally
             {
@@ -183,6 +209,21 @@ namespace MudBlazor
                 control.ResetValidation();
             }
             EvaluateForm(debounce: false);
+        }
+
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                var valid = _formControls.All(x => x.Required == false);
+                if (valid != _valid)
+                {
+                    // the user probably bound a variable to IsValid and it conflicts with our state.
+                    // let's set this right
+                    SetIsValid(valid);
+                }
+            }
+            return base.OnAfterRenderAsync(firstRender);
         }
 
         public void Dispose()

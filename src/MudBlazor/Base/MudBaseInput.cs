@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
@@ -74,6 +72,16 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnAdornmentClick { get; set; }
 
         /// <summary>
+        /// Show clear button.
+        /// </summary>
+        [Parameter] public bool Clearable { get; set; } = false;
+
+        /// <summary>
+        /// Button click event for clear button. Called after text and value has been cleared.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
+
+        /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
         /// </summary>
         [Parameter] public InputType InputType { get; set; } = InputType.Text;
@@ -136,23 +144,56 @@ namespace MudBlazor
 
         [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
+        [Parameter]
+        public EventCallback<ChangeEventArgs> OnInternalInputChanged { get; set; }
+
+        protected bool _isFocused;
+
+        protected bool _shouldRenderBeForced;
+        //if you press Enter or Arrows, the input should re-render, because
+        //the user is accepting a value
+        private static bool ShouldRenderBeForced(string key) => key == "Enter"
+                                                             || key == "ArrowDown"
+                                                             || key == "ArrowUp"
+                                                             || key == "Tab";
+
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
+            _isFocused = false;
             Touched = true;
             BeginValidateAfter(OnBlur.InvokeAsync(obj));
         }
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyDown { get; set; }
 
-        protected virtual void InvokeKeyDown(KeyboardEventArgs obj) => OnKeyDown.InvokeAsync(obj).AndForget();
+        protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
+        {
+            _isFocused = true;
+            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
+            OnKeyDown.InvokeAsync(obj).AndForget();
+        }
+
+        [Parameter] public bool KeyDownPreventDefault { get; set; }
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyPress { get; set; }
 
-        protected virtual void InvokeKeyPress(KeyboardEventArgs obj) => OnKeyPress.InvokeAsync(obj).AndForget();
+        protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
+        {
+            OnKeyPress.InvokeAsync(obj).AndForget();
+        }
+
+        [Parameter] public bool KeyPressPreventDefault { get; set; }
 
         [Parameter] public EventCallback<KeyboardEventArgs> OnKeyUp { get; set; }
 
-        protected virtual void InvokeKeyUp(KeyboardEventArgs obj) => OnKeyUp.InvokeAsync(obj).AndForget();
+        protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
+        {
+            _isFocused = true;
+            _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
+            OnKeyUp.InvokeAsync(obj).AndForget();
+        }
+
+        [Parameter] public bool KeyUpPreventDefault { get; set; }
 
         /// <summary>
         /// Fired when the Value property changes.
@@ -170,7 +211,7 @@ namespace MudBlazor
             set => _value = value;
         }
 
-        protected async Task SetValueAsync(T value, bool updateText = true)
+        protected virtual async Task SetValueAsync(T value, bool updateText = true)
         {
             if (!EqualityComparer<T>.Default.Equals(Value, value))
             {

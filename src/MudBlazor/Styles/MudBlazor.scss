@@ -1,4 +1,4 @@
-﻿/*!
+/*!
  * MudBlazor (https://mudblazor.com/)
  * Copyright (c) 2020-2021 Jonny Larsson
  * Licensed under MIT (https://github.com/Garderoben/MudBlazor/blob/master/LICENSE)
@@ -22,8 +22,10 @@
 @import 'components/_avatar';
 @import 'components/_breadcrumbs';
 @import 'components/_button';
+@import 'components/_buttongroup';
 @import 'components/_iconbutton';
 @import 'components/_card';
+@import 'components/_carousel';
 @import 'components/_charts';
 @import 'components/_checkbox';
 @import 'components/_chip';
@@ -75,6 +77,7 @@
 @import 'utilities/_scroll';
 @import 'utilities/_position';
 @import 'utilities/_visibility';
+@import 'utilities/_rtl';
 
 
 @import 'layout/_appbar';

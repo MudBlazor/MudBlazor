@@ -1,4 +1,4 @@
-﻿.mud-input-control {
+.mud-input-control {
     border: 0;
     margin: 0;
     padding: 0;
@@ -24,25 +24,31 @@
         width: 100%;
     }
 
-    & > div {
-        &.mud-input.mud-input-text {
-            margin-top: 16px;
-        }
+    & > .mud-input-control-input-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
 
-        &.mud-input.mud-input-filled {
-        }
+        & > div {
+            &.mud-input.mud-input-text {
+                margin-top: 16px;
+            }
 
-        &.mud-input.mud-input-outlined {
+            &.mud-input.mud-input-filled {
+            }
+
+            &.mud-input.mud-input-outlined {
+            }
         }
     }
 
-    & > .mud-input-label-outlined {
+    & > .mud-input-control-input-container > .mud-input-label-outlined {
         &.mud-input-label-inputcontrol {
             line-height: 18px;
         }
     }
 
-    & > .mud-input-label-inputcontrol {
+    & > .mud-input-control-input-container > .mud-input-label-inputcontrol {
         color: var(--mud-palette-text-secondary);
         padding: 0;
         font-size: 1rem;
@@ -50,7 +56,7 @@
         line-height: 1;
         letter-spacing: 0.00938em;
         z-index: 0;
-        pointer-events:none;
+        pointer-events: none;
 
         &.mud-disabled {
             color: var(--mud-palette-text-disabled);
@@ -61,8 +67,75 @@
         }
     }
 
-    &.mud-input-required > .mud-input-label::after {
+    &.mud-input-required > .mud-input-control-input-container > .mud-input-label::after {
         content: "*";
+    }
+
+    &.mud-input-number-control {
+        & input::-webkit-outer-spin-button,
+        & input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        & input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        &.mud-input-showspin .mud-input:not(.mud-input-adorned-end) {
+            input {
+                padding-right: 24px; //This must be the same width of the spinners
+                padding-inline-end: 24px;
+
+                &.mud-input-root-margin-dense {
+                    padding-right: 20px; //This must be the same width of the spinners
+                    padding-inline-end: 20px;
+                }
+            }
+            &.mud-input-text input {
+                padding-inline-start: 0;
+
+                &.mud-input-root-margin-dense {
+                    padding-inline-start: 0;
+                }
+            }
+
+            &.mud-input-filled input {
+                padding-inline-start: 12px;
+
+                &.mud-input-root-margin-dense {
+                    padding-inline-start: 12px;
+                }
+            }
+
+            &.mud-input-outlined input {
+                padding-inline-start: 14px;
+
+                &.mud-input-root-margin-dense {
+                    padding-inline-start: 14px;
+                }
+            }
+        }
+
+        & .mud-input-numeric-spin {
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+
+            & button {
+                padding: 2px;
+                min-width: unset;
+                min-height: unset;
+            }
+        }
+
+        .mud-input-numeric-spin button {
+            padding: 2px 0;
+        }
     }
 }
 
@@ -71,7 +144,7 @@
     margin: 0;
     font-size: 0.75rem;
     margin-top: 3px;
-    text-align: left;
+    text-align: start;
     font-weight: 400;
     line-height: 1.66;
     letter-spacing: 0.03333em;
@@ -93,4 +166,11 @@
 .mud-input-helper-text-contained {
     margin-left: 14px;
     margin-right: 14px;
+}
+
+.mud-application-layout-rtl {
+    .mud-input-control.mud-input-number-control .mud-input-numeric-spin {
+        left: 0;
+        right: unset;
+    }
 }

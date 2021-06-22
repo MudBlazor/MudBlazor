@@ -41,6 +41,7 @@
                 <Description>
                     To enable sorting add <CodeInline>&lt;MudTableSortLabel></CodeInline> to the header cells and define a function that simply returns the value which should be sorted by when sorting by the specific column.
                     Click on a header to sort the table by that column then click to cycle through sorting directions.
+                    The sorting enability can be controlled on the column level with the property <CodeInline>Enabled</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
@@ -64,9 +65,11 @@
 
         <DocsPageSection>
             <SectionHeader>
-                <Title>Fixed header</Title>
+                <Title>Fixed header and footer</Title>
                 <Description>
-                    Set <CodeInline>FixedHeader="true"</CodeInline> to make the header sticky when scrolling the table. The table will scroll if you constrain its height using <CodeInline>Height="400px"</CodeInline> for instance.
+                    Set <CodeInline>FixedHeader="true"</CodeInline> to make the header sticky when scrolling the table.<br />
+                    The same for <CodeInline>FixedFooter="true"</CodeInline> to show the footer even when the table is not scrolled all the way down.<br />
+                    The table will scroll if you constrain its height using <CodeInline>Height="400px"</CodeInline> for instance.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
@@ -92,7 +95,8 @@
             <SectionHeader>
                 <Title>Inline Edit Mode</Title>
                 <Description>
-                    Provides input elements for Selected Row.
+                    Provides input elements for Selected Row. A click on a row makes the row editable.
+                    A Cancel button appears and can be used if <CodeInline>CanCancelEdit="true"</CodeInline>. In this case, the <CodeInline>RowEditPreview</CodeInline> and <CodeInline>RowEditCancel</CodeInline> methods must be defined to save and retrieve the initial values of the edited item. <CodeInline>RowEditCommit</CodeInline> method can be used to handle the commit of the item.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" FullWidth="true">
@@ -120,6 +124,25 @@
 
         <DocsPageSection>
             <SectionHeader>
+                <Title>Header and Footer</Title>
+                <Description>
+                    By default you can put a list of <CodeInline>&lt;MudTh></CodeInline> inside <CodeInline>&lt;HeaderContent></CodeInline> and <CodeInline>&lt;MudTd></CodeInline> inside <CodeInline>&lt;FooterContent></CodeInline>, MudTable will automatically manage the table row for you, including the select-all column and adding an empty column for editable tables.<br />
+                    If you need to customize the behavior, as well as rendering multiple header or footer rows, you can set the <CodeInline>CustomHeader</CodeInline> and <CodeInline>CustomFooter</CodeInline> attributes to true.<br />
+                    Then setting a list of <CodeInline>&lt;MudTHeadRow></CodeInline> or <CodeInline>&lt;MudTFootRow></CodeInline> with their respective cells will render exactly what required inside the table header and footer.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        Note: Unless you specify the attribute <CodeInline>IsCheckeable</CodeInline> for a specific row, MudTable won't render a checkbox in case of a multi-selection table.
+                        Attributes <CodeInline>IgnoreCheckbox</CodeInline> and <CodeInline>IgnoreEditable</CodeInline> won't render an empty cell either, requiring you to do it manually (for example for a colspan on the entire row).
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TableHeaderAndFooterExample />
+            </SectionContent>
+            <SectionSource Code="TableHeaderAndFooterExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
                 <Title>Table With related data</Title>
                 <Description>
                     Making use of the <CodeInline>&lt;ChildRowContent&gt;</CodeInline> allows more control over the layout for scenarios such as showing the related address data for each person below.
@@ -129,6 +152,32 @@
                 <TableRelationalExample />
             </SectionContent>
             <SectionSource Code="TableRelationalExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Table with horizontal Scrolling</Title>
+                <Description>
+                    If too many columns are displayed, setting <CodeInline>HorizontalScrollbar="true"</CodeInline> will allow the user to scroll the content horizontally
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TableHorizontalScrollExample />
+            </SectionContent>
+            <SectionSource Code="TableHorizontalScrollExample" ShowCode="false" GitHubFolderName="Table" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Table Virtualization</Title>
+                <Description>
+                    You can virtualize the results of a table to increase rendering speed.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" FullWidth="true">
+                <TableVirtualizationExample />
+            </SectionContent>
+            <SectionSource Code="TableVirtualizationExample" ShowCode="false" GitHubFolderName="Table" />
         </DocsPageSection>
 
     </DocsPageContent>

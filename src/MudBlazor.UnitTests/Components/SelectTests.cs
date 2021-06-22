@@ -380,7 +380,7 @@ namespace MudBlazor.UnitTests.Components
             select.SetParam(x => x.Validation, (object)new Func<string, bool>(value =>
               {
                   validatedValue = value; // NOTE: select does only update the value for T string
-                return true;
+                  return true;
               }));
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
@@ -443,6 +443,97 @@ namespace MudBlazor.UnitTests.Components
             validatedValue.Should().Be("1");
         }
 
+        /// <summary>
+        /// We filled the multiselect with initial selected values, that must
+        /// show in the value of the input as a comma separated list of strings
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task MultiSelect_Initial_Values()
+        {
+            var comp = ctx.RenderComponent<MultiSelectWithInitialValues>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+
+            // select the input of the select
+            var input = comp.Find("input");
+            //the value of the input
+            var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
+            value.Should().Be("FirstA, SecondA");     
+        }
+
+        /// <summary>
+        /// We filled the multiselect with initial selected values.
+        /// Then the returned text in the selection is customized.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task MultiSelectCustomizedTextTest()
+        {
+            var comp = ctx.RenderComponent<MultiSelectCustomizedTextTest>();
+
+            // Select the input of the select
+            var input = comp.Find("input");
+
+            // The value of the input
+            var value = input.Attributes.Where(a => a.LocalName == "value").First().Value;
+            
+            // Value is equal to the customized values returned by the method
+            value.Should().Be("Selected values: FirstA, SecondA");
+        }
+
+        [Test]
+        public async Task SelectClearableTest()
+        {
+            var comp = ctx.RenderComponent<SelectClearableTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            // No button when initialized
+            comp.FindAll("button").Should().BeEmpty();
+            // Button shows after selecting item
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+            select.Instance.Value.Should().Be("2");
+            comp.Find("button").Should().NotBeNull();
+            // Selection cleared and button removed after clicking clear button
+            comp.Find("button").Click();
+            select.Instance.Value.Should().BeNullOrEmpty();
+            comp.FindAll("button").Should().BeEmpty();
+            // Clear button click handler should have been invoked
+            comp.Instance.ClearButtonClicked.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Reselect an already selected value should not call SelectedValuesChanged event.
+        /// </summary>
+        [Test]
+        public void SelectReselectTest()
+        {
+            var comp = ctx.RenderComponent<ReselectValueTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            // select elements needed for the test
+            var select = comp.FindComponent<MudSelect<string>>();
+            var menu = comp.Find("div.mud-popover");
+            var input = comp.Find("div.mud-input-control");
+
+            input.Click();
+            select.Instance.Value.Should().Be("Apple");
+
+            // now click an item and see the value change
+            var items = comp.FindAll("div.mud-list-item").ToArray();
+            items[1].Click();
+
+            // menu should be closed now
+            menu.ClassList.Should().NotContain("mud-popover-open");
+            select.Instance.Value.Should().Be("Orange");
+            comp.Instance.ChangeCount.Should().Be(1);
+
+            // now click an item and see the value change
+            items = comp.FindAll("div.mud-list-item").ToArray();
+            select.Instance.Value.Should().Be("Orange");
+            comp.Instance.ChangeCount.Should().Be(1);
+            items[1].Click();
+        }
 
         #region DataAttribute validation
         [Test]
@@ -481,5 +572,23 @@ namespace MudBlazor.UnitTests.Components
             select.ValidationErrors.Should().BeEmpty();
         }
         #endregion
+
+
+        /// <summary>
+        /// Tests the required property.
+        /// </summary>
+        [Test]
+        public async Task Select_Should_SetRequiredTrue()
+        {
+            var comp = ctx.RenderComponent<SelectRequiredTest>();
+
+            var select = comp.FindComponent<MudSelect<string>>().Instance;
+
+            select.Required.Should().BeTrue();
+
+            await comp.InvokeAsync(() => select.Validate());
+
+            select.ValidationErrors.First().Should().Be("Required");
+        }
     }
 }

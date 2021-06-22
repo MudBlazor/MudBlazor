@@ -12,7 +12,7 @@ namespace MudBlazor
     {
         protected MudBaseDatePicker() : base(new DefaultConverter<DateTime?>
         {
-            Format = "yyyy-MM-dd",
+            Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern,
             Culture = CultureInfo.CurrentCulture
         })
         { }
@@ -120,6 +120,20 @@ namespace MudBlazor
         /// For instance, display the long names like this "dddd, dd. MMMM". 
         /// </summary>
         [Parameter] public string TitleDateFormat { get; set; } = "ddd, dd MMM";
+
+        /// <summary>
+        /// Function to determine whether a date is disabled
+        /// </summary>
+        [Parameter]
+        public Func<DateTime, bool> IsDateDisabledFunc
+        {
+            get => _isDateDisabledFunc;
+            set
+            {
+                _isDateDisabledFunc = value ?? (_ => false);
+            }
+        }
+        private Func<DateTime, bool> _isDateDisabledFunc = _ => false;
 
         protected virtual bool IsRange { get; } = false;
 
@@ -230,6 +244,11 @@ namespace MudBlazor
         }
 
         protected abstract string GetTitleDateString();
+        
+        protected string FormatTitleDate(DateTime? date)
+        {
+            return date?.ToString(TitleDateFormat ?? "ddd, dd MMM", Culture) ?? "";
+        }
 
         protected string GetFormattedYearString()
         {
@@ -338,9 +357,10 @@ namespace MudBlazor
                 yield return Culture.Calendar.AddMonths(firstOfCalendarYear, i);
         }
 
-        private string GetAbbreviatedMonthName(in DateTime month)
+        private string GetAbbreviatedMonthName(DateTime month)
         {
-            return Culture.DateTimeFormat.AbbreviatedMonthNames[month.Month - 1];
+            var calendarMonth = Culture.Calendar.GetMonth(month);
+            return Culture.DateTimeFormat.AbbreviatedMonthNames[calendarMonth - 1];
         }
 
         private string GetMonthClasses(DateTime month)
@@ -350,7 +370,7 @@ namespace MudBlazor
             return null;
         }
 
-        private Typo GetMonthTypo(in DateTime month)
+        private Typo GetMonthTypo(DateTime month)
         {
             if (GetMonthStart(0) == month)
                 return Typo.h5;
@@ -364,7 +384,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private void OnMonthSelected(in DateTime month)
+        private void OnMonthSelected(DateTime month)
         {
             _currentView = OpenTo.Date;
             PickerMonth = month;

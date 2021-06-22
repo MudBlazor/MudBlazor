@@ -44,7 +44,7 @@ namespace MudBlazor
         [Parameter] public bool DisableSidePadding { get; set; }
 
         /// <summary>
-        /// CSS class that will be applied to the body container
+        /// CSS class that will be applied to the dialog content
         /// </summary>
         [Parameter] public string ClassContent { get; set; }
 
@@ -52,6 +52,11 @@ namespace MudBlazor
         /// CSS class that will be applied to the action buttons container
         /// </summary>
         [Parameter] public string ClassActions { get; set; }
+
+        /// <summary>
+        /// CSS styles to be applied to the dialog content
+        /// </summary>
+        [Parameter] public string ContentStyle { get; set; }
 
         /// <summary>
         /// Bind this two-way to show and close an inlined dialog. Has no effect on opened dialogs
@@ -119,7 +124,7 @@ namespace MudBlazor
         protected override void OnAfterRender(bool firstRender)
         {
             if (IsInline && _reference != null)
-                _reference.Dialog?.ForceUpdate(); // forward render update to instance
+                (_reference.Dialog as MudDialog)?.ForceUpdate(); // forward render update to instance
             base.OnAfterRender(firstRender);
         }
 

@@ -2,13 +2,11 @@
 @using MudBlazor.Interfaces
 @inherits MudBaseButton
 
-
-<div class="@Classname" onmouseleave="@(EventCallback.Factory.Create<EventArgs>(this, OnMouseOut))">
+<div @attributes="UserAttributes" class="@Classname" style="@Style" oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? "return false;" : "")">
     @if (ActivatorContent != null)
     {
         <CascadingValue Value="@((IActivatable) this)" IsFixed="true">
-            <div style="cursor: pointer;" @onmouseup="ToggleMenu" @onmouseover="OnMouseOver"
-                 oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? "return false;" : "")">
+            <div @onmouseup="ToggleMenu">
                 @ActivatorContent
             </div>
         </CascadingValue>
@@ -30,7 +28,7 @@
     }
     else
     {
-        <MudIconButton Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" @onclick="@ToggleMenu" />
+        <MudIconButton Variant="@Variant" Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" @onclick="@ToggleMenu" />
     }
     <CascadingValue Value="@this">
         <MudPopover Open="@_isOpen" Class="@MenuClassname" MaxHeight="@MaxHeight" Style="@PopoverStyle" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
@@ -39,7 +37,7 @@
             </MudList>
         </MudPopover>
     </CascadingValue>
+    <MudOverlay Visible="@(_isOpen && ActivationEvent != MouseEvent.MouseOver)" OnClick="@ToggleMenu" LockScroll="false" />
 </div>
 
-<MudOverlay Visible="@(_isOpen && ActivationEvent != MouseEvent.MouseOver)" OnClick="@ToggleMenu" LockScroll="false" />
 

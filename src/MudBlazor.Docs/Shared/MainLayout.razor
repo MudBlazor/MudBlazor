@@ -11,13 +11,13 @@
         <MudAppBar Elevation="25">
             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
             <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text d-none d-md-flex">Mudblazor</MudText>
-            <MudAppBarSpacer />
+            <MudSpacer />
             <MudAutocomplete T="ApiLinkServiceEntry" Placeholder="Search" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar">
                 <ItemTemplate Context="result">
                     <MudText>@result.Title</MudText> <MudText Typo="Typo.body2">@result.SubTitle</MudText>
                 </ItemTemplate>
             </MudAutocomplete>
-            <MudAppBarSpacer />
+            <MudSpacer />
             <div class="d-none d-md-flex align-center">
                 <MudMenu EndIcon="@Icons.Filled.KeyboardArrowDown" Label="Support" Color="Color.Inherit" Dense="true" Direction="Direction.Right" OffsetY="true">
                     <MudText Typo="Typo.body2" Class="px-4 py-2"><b>Community Support</b></MudText>
@@ -26,6 +26,8 @@
                     <MudText Typo="Typo.body2" Class="px-4 py-2"><b>Tools and resources</b></MudText>
                     <MudMenuItem Link="https://try.mudblazor.com/snippet" Target="_blank">TryMudBlazor</MudMenuItem>
                     <MudMenuItem Link="https://github.com/Garderoben/MudBlazor.Templates" Target="_blank">Templates</MudMenuItem>
+                    <MudText Typo="Typo.body2" Class="px-4 py-2"><b>Sponsor</b></MudText>
+                    <MudMenuItem Link="https://opencollective.com/mudblazor" Target="_blank">Open Collective</MudMenuItem>
                 </MudMenu>
                 <MudDivider Vertical="true" FlexItem="true" DividerType="DividerType.Middle" Class="mx-4 my-3" />
                 @if (Wasm)
@@ -70,6 +72,8 @@
                 <MudText Typo="Typo.body2" Class="px-4 py-2"><b>Tools and resources</b></MudText>
                 <MudMenuItem Link="https://try.mudblazor.com/snippet" Target="_blank">TryMudBlazor</MudMenuItem>
                 <MudMenuItem Link="https://github.com/Garderoben/MudBlazor.Templates" Target="_blank">Templates</MudMenuItem>
+                <MudText Typo="Typo.body2" Class="px-4 py-2"><b>Sponsor</b></MudText>
+                <MudMenuItem Link="https://opencollective.com/mudblazor" Target="_blank">Open Collective</MudMenuItem>
             </MudMenu>
         </MudAppBar>
 

@@ -1,13 +1,17 @@
-﻿using System;
+using System;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     public partial class MudTablePager : MudComponentBase
     {
-        [CascadingParameter] public TableContext Context { get; set; }
+        protected string Classname =>
+            new CssBuilder("mud-table-pagination-toolbar")
+            .AddClass(Class)
+            .Build();
 
-        [CascadingParameter] public bool RightToLeft { get; set; }
+        [CascadingParameter] public TableContext Context { get; set; }
 
         /// <summary>
         /// Set true to hide the part of the pager which allows to change the page size.
@@ -40,6 +44,10 @@ namespace MudBlazor
         {
             Table?.SetRowsPerPage(int.Parse(size));
         }
+
+        private bool BackButtonsDisabled => Table == null ? false : Table.CurrentPage == 0;
+
+        private bool ForwardButtonsDisabled => Table == null ? false : (Table.CurrentPage + 1) * Table.RowsPerPage >= Table.GetFilteredItemsCount();
 
         public MudTableBase Table => Context?.Table;
 

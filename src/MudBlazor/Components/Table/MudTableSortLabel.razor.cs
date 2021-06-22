@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -21,6 +22,12 @@ namespace MudBlazor
         public SortDirection InitialDirection { get; set; } = SortDirection.None;
 
         /// <summary>
+        /// Enable the sorting. Set to true by default.
+        /// </summary>
+        [Parameter]
+        public bool Enabled { get; set; } = true;
+
+        /// <summary>
         /// The Icon used to display sortdirection.
         /// </summary>
         [Parameter] public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
@@ -41,11 +48,19 @@ namespace MudBlazor
                 if (_direction == value)
                     return;
                 _direction = value;
+
                 SortDirectionChanged.InvokeAsync(_direction);
-                if (SortBy != null || Table.HasServerData)
-                    Context?.SetSortFunc(this);
-                Table.InvokeServerLoadFunc();
             }
+        }
+
+        private Task UpdateSortDirectionAsync(SortDirection sortDirection)
+        {
+            SortDirection = sortDirection;
+
+            if (SortBy != null || Table.HasServerData)
+                Context?.SetSortFunc(this);
+
+            return Table.InvokeServerLoadFunc();
         }
 
         [Parameter]
@@ -56,14 +71,24 @@ namespace MudBlazor
 
         [Parameter] public string SortLabel { get; set; }
 
-        public void ToggleSortDirection()
+        public Task ToggleSortDirection()
         {
-            if (SortDirection == SortDirection.None)
-                SortDirection = SortDirection.Ascending;
-            else if (SortDirection == SortDirection.Ascending)
-                SortDirection = SortDirection.Descending;
-            else
-                SortDirection = SortDirection.None;
+            if (!Enabled)
+                return Task.CompletedTask;
+
+            switch (SortDirection)
+            {
+                case SortDirection.None:
+                    return UpdateSortDirectionAsync(SortDirection.Ascending);
+
+                case SortDirection.Ascending:
+                    return UpdateSortDirectionAsync(SortDirection.Descending);
+
+                case SortDirection.Descending:
+                    return UpdateSortDirectionAsync(Table.AllowUnsorted ? SortDirection.None : SortDirection.Ascending);
+            }
+
+            throw new NotImplementedException();
         }
 
         protected override void OnInitialized()
@@ -103,4 +128,3 @@ namespace MudBlazor
         }
     }
 }
-

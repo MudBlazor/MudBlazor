@@ -2,7 +2,7 @@
 @using System.Globalization;
 @inherits MudChartBase
 
-<svg class="mud-chart-line" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
+<svg @attributes="UserAttributes" class="mud-chart-line mud-ltr" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="0 0 650 350">
     <g class="mud-charts-grid">
         <g class="mud-charts-gridlines-yaxis">
             @foreach (var horizontalLine in _horizontalLines)
@@ -35,7 +35,7 @@
     <g class="mud-charts-line-series">
         @foreach (var chartLine in _chartLines)
         {
-            <path fill="none" stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(chartLine.Index % ChartOptions.ChartPalette.Count()))" stroke-width="3" d="@chartLine.Data"></path>
+            <path class="mud-chart-line" @onclick="() => SelectedIndex = chartLine.Index"  fill="none" stroke="@(MudChartParent.ChartOptions.ChartPalette.GetValue(chartLine.Index % ChartOptions.ChartPalette.Count()))" stroke-width="3" d="@chartLine.Data"></path>
         }
     </g>
 </svg>

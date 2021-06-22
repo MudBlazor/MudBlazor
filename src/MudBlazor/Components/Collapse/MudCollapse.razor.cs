@@ -18,7 +18,7 @@ namespace MudBlazor
 
         private double _height;
         private int _listenerId;
-        private bool _expanded, _isRendered;
+        private bool _expanded, _isRendered, _updateHeight;
         private ElementReference _container, _wrapper;
         private CollapseState _state = CollapseState.Exited;
         private DotNetObjectReference<MudCollapse> _dotNetRef;
@@ -29,6 +29,7 @@ namespace MudBlazor
             .AddStyle("height", "auto", _state == CollapseState.Entered)
             .AddStyle("height", $"{_height.ToString("#.##", CultureInfo.InvariantCulture)}px", _state == CollapseState.Entering || _state == CollapseState.Exiting)
             .AddStyle("animation-duration", $"{CalculatedAnimationDuration.ToString("#.##", CultureInfo.InvariantCulture)}s", _state == CollapseState.Entering)
+            .AddStyle(Style)
             .Build();
 
         protected string Classname =>
@@ -56,6 +57,7 @@ namespace MudBlazor
                 {
                     _state = _expanded ? CollapseState.Entering : CollapseState.Exiting;
                     _ = UpdateHeight();
+                    _updateHeight = _height == 0;
                 }
                 else if (_expanded)
                 {
@@ -129,6 +131,12 @@ namespace MudBlazor
                 await UpdateHeight();
                 if (_dotNetRef != null)
                     _listenerId = await _container.MudAddEventListenerAsync(_dotNetRef, "animationend", nameof(AnimationEnd));
+            }
+            else if (_updateHeight && (_state == CollapseState.Entering || _state == CollapseState.Exiting))
+            {
+                _updateHeight = false;
+                await UpdateHeight();
+                StateHasChanged();
             }
             await base.OnAfterRenderAsync(firstRender);
         }

@@ -38,6 +38,48 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
+        private ElementReference _elementReferenceStart, _elementReferenceEnd;
+
+        /// <summary>
+        /// Focuses the start input of MudRangeInput
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask FocusStartAsync() => _elementReferenceStart.FocusAsync();
+
+        /// <summary>
+        /// Selects the start text of MudRangeInput
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask SelectStartAsync() => _elementReferenceStart.MudSelectAsync();
+
+        /// <summary>
+        /// Selects the specified range of the start text
+        /// </summary>
+        /// <param name="pos1">Start position of the selection</param>
+        /// <param name="pos2">End position of the selection</param>
+        /// <returns></returns>
+        public ValueTask SelectRangeStartAsync(int pos1, int pos2) => _elementReferenceStart.MudSelectRangeAsync(pos1, pos2);
+
+        /// <summary>
+        /// Focuses the end input of MudRangeInput
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask FocusEndAsync() => _elementReferenceEnd.FocusAsync();
+
+        /// <summary>
+        /// Selects the end text of MudRangeInput
+        /// </summary>
+        /// <returns></returns>
+        public ValueTask SelectEndAsync() => _elementReferenceEnd.MudSelectAsync();
+
+        /// <summary>
+        /// Selects the specified range of the end text
+        /// </summary>
+        /// <param name="pos1">Start position of the selection</param>
+        /// <param name="pos2">End position of the selection</param>
+        /// <returns></returns>
+        public ValueTask SelectRangeEndAsync(int pos1, int pos2) => _elementReferenceEnd.MudSelectRangeAsync(pos1, pos2);
+
         public string TextStart
         {
             get => _textStart;

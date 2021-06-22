@@ -2,11 +2,11 @@
 @inherits MudComponentBase
 
 
-<form class="@Classname" style="@Style">
+<form @attributes="UserAttributes" class="@Classname" style="@Style">
     @if (SuppressImplicitSubmission)
     {
-        <!-- Prevent implicit submission of the form --> 
-        <!-- Note: adding another submit button to the form will automatically enable it again even with SuppressImplicitSubmission set to false --> 
+        <!-- Prevent implicit submission of the form -->
+        <!-- Note: adding another submit button to the form will automatically enable it again even with SuppressImplicitSubmission set to false -->
         <button type="submit" disabled style="display: none" aria-hidden="true"></button>
     }
     <CascadingValue Value="this" IsFixed="true">

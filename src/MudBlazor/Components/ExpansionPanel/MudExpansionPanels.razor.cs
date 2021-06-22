@@ -75,6 +75,7 @@ namespace MudBlazor
                     last.NextPanelExpanded = panel.IsExpanded;
                 last = panel;
             }
+            StateHasChanged();
         }
 
         public void CloseAllExcept(MudExpansionPanel panel)

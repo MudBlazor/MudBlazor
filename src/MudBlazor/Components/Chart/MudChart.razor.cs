@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public class MudChartBase : MudComponentBase
+    public abstract class MudChartBase : MudComponentBase
     {
         [Parameter] public double[] InputData { get; set; } = Array.Empty<double>();
 
@@ -46,6 +46,30 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public Position LegendPosition { get; set; } = Position.Bottom;
 
+        private int _selectedIndex;
+
+        /// <summary>
+        /// Selected index of a portion of the chart.
+        /// </summary>
+        [Parameter]
+        public int SelectedIndex
+        {
+            get => _selectedIndex;
+            set
+            {
+                if (value != _selectedIndex)
+                {
+                    _selectedIndex = value;
+                    SelectedIndexChanged.InvokeAsync(value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Selected index of a portion of the chart.
+        /// </summary>
+        [Parameter] public EventCallback<int> SelectedIndexChanged { get; set; }
+
         /// <summary>
         /// Scales the input data to the range between 0 and 1
         /// </summary>
@@ -57,10 +81,14 @@ namespace MudBlazor
             return InputData.Select(x => Math.Abs(x) / total).ToArray();
         }
 
-        protected string ToS(double d)
+        protected string ToS(double d, string format = null)
         {
-            return d.ToString(CultureInfo.InvariantCulture);
+            if (string.IsNullOrEmpty(format))
+                return d.ToString(CultureInfo.InvariantCulture);
+
+            return d.ToString(format);
         }
+
     }
 
     public enum ChartType

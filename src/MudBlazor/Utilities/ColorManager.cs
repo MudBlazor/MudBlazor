@@ -77,5 +77,36 @@ namespace MudBlazor.Utilities
 
             return string.Concat(red, red, green, green, blue, blue, alpha, alpha);
         }
+
+        public static string ColorRgbDarken(string hex)
+        {
+            var color = FromHex(hex);
+            color = ColorDarken(color, 0.075);
+            return $"rgb({color.R},{color.G},{color.B})";
+        }
+        public static string ColorRgbLighten(string hex)
+        {
+            var color = FromHex(hex);
+            color = ColorLighten(color, 0.075);
+            return $"rgb({color.R},{color.G},{color.B})";
+        }
+
+        public static string ColorRgb(string hex)
+        {
+            var color = FromHex(hex);
+            return $"rgb({color.R},{color.G},{color.B})";
+        }
+
+        public static string ColorRgbElements(string hex)
+        {
+            var color = FromHex(hex);
+            return $"{color.R},{color.G},{color.B}";
+        }
+
+        public static string ColorRgba(string hex, double alpha)
+        {
+            var color = FromHex(hex);
+            return $"rgba({color.R},{color.G},{color.B}, {alpha.ToString(CultureInfo.InvariantCulture)})";
+        }
     }
 }

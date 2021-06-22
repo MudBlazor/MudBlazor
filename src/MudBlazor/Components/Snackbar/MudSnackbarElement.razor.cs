@@ -15,7 +15,7 @@ namespace MudBlazor
 
         protected RenderFragment Css;
 
-        protected string AnimationStyle => Snackbar?.State.AnimationStyle;
+        protected string AnimationStyle => Snackbar?.State.AnimationStyle + Style;
         protected string SnackbarClass => Snackbar?.State.SnackbarClass;
 
         protected string Message => Snackbar?.Message;
@@ -26,6 +26,9 @@ namespace MudBlazor
 
         protected bool ShowActionButton => Snackbar?.State.ShowActionButton == true;
         protected bool ShowCloseIcon => Snackbar?.State.ShowCloseIcon == true;
+
+        protected bool HideIcon => Snackbar?.State.HideIcon == true;
+        protected string Icon => Snackbar?.State.Icon;
 
         protected void ActionClicked() => Snackbar?.Clicked(false);
         protected void CloseIconClicked() => Snackbar?.Clicked(true);

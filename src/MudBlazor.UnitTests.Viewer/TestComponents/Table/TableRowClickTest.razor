@@ -1,16 +1,23 @@
 ﻿@namespace MudBlazor.UnitTests.TestComponents
 
-<MudTable T="int" Items="items" OnRowClick="@(args => OnRowClicked(args))">
+<MudTable T="int" Items="items" OnRowClick="@(args => OnRowClicked(args))" CustomHeader="true" CustomFooter="true">
     <HeaderContent>
-        <MudTh>#</MudTh>
+        <MudTHeadRow OnRowClick="OnHeaderClicked">
+            <MudTh>#</MudTh>
+        </MudTHeadRow>
     </HeaderContent>
     <RowTemplate>
         <MudTd>@context</MudTd>
     </RowTemplate>
+    <FooterContent>
+        <MudTFootRow OnRowClick="OnFooterClicked">
+            <MudTd>#</MudTd>
+        </MudTFootRow>
+    </FooterContent>
 </MudTable>
 
 <p>
-    @(string.Join(",",clicked_items))
+    @(string.Join(",", clicked_items))
 </p>
 
 @code {
@@ -18,6 +25,15 @@
 
     int[] items = new int[]{0,1,2};
     List<int> clicked_items = new List<int>();
+
+    private void OnHeaderClicked()
+    {
+        clicked_items.Add(-1);
+    }
+    private void OnFooterClicked()
+    {
+        clicked_items.Add(100);
+    }
 
     private void OnRowClicked(TableRowClickEventArgs<int> args )
     {

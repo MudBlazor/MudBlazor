@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Utilities
 @inherits MudComponentBase
 
 @if (Items == null || Items.Count == 0)
@@ -7,7 +8,7 @@
 }
 
 <CascadingValue Value="this" IsFixed="true">
-    <ul class="mud-breadcrumbs mud-typography-body1">
+    <ul @attributes="UserAttributes" class=@Classname style="@Style">
         @if (MaxItems != null && Collapsed && Items.Count >= MaxItems)
         {
             <BreadcrumbLink Item="Items[0]"></BreadcrumbLink>
@@ -33,3 +34,10 @@
         }
     </ul>
 </CascadingValue>
+
+@code {
+    private string Classname => new CssBuilder("mud-breadcrumbs")
+        .AddClass("mud-typography-body1")
+        .AddClass(Class)
+        .Build();
+}
