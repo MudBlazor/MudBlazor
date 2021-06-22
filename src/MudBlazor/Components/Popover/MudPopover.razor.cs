@@ -27,8 +27,6 @@ namespace MudBlazor
             .AddStyle(Style)
             .Build();
 
-        [Inject] public IBrowserWindowSizeProvider WindowSize { get; set; }
-
         /// <summary>
         /// The higher the number, the heavier the drop-shadow. 0 for no shadow set to 8 by default.
         /// </summary>
@@ -71,46 +69,6 @@ namespace MudBlazor
 
 
 
-        //private async Task SetDirection()
-        //{
-        //    if (!Open) return;
-        //    var rect = await _popoverRef.MudGetBoundingClientRectAsync();
-        //    var viewport = await WindowSize.GetBrowserWindowSize();
-        //    var direction = Direction;
-
-        //    switch (Direction)
-        //    {
-        //        case Direction.Bottom:
-        //            if (rect.Bottom > viewport.Height)
-        //            {
-        //                direction = Direction.Top;
-        //            }
-        //            break;
-
-        //        case Direction.Top:
-        //            if (rect.Top < 0)
-        //            {
-        //                direction = Direction.Bottom;
-        //            }
-        //            break;
-        //        case Direction.Left:
-        //            if (rect.Left < 0)
-        //            {
-        //                direction = Direction.Right;
-        //            }
-        //            break;
-        //        case Direction.Right:
-        //            if (rect.Right > viewport.Width)
-        //            {
-        //                direction = Direction.Left;
-        //            }
-        //            break;
-        //    }
-        //    if (direction != Direction)
-        //    {
-        //        Direction = direction;
-        //        StateHasChanged();
-        //    }
-        //}
+        
     }
 }

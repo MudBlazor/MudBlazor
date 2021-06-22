@@ -5,7 +5,7 @@ using MudBlazor.Services;
 
 namespace MudBlazor
 {
-    public partial class MudPortal : IDisposable
+    public partial class MudPortal : MudComponentBase, IDisposable
     {
         private Guid _id = Guid.NewGuid();
         private PortalItem _portalItem = new();
@@ -26,6 +26,10 @@ namespace MudBlazor
         [Parameter] public Placement Placement { get; set; }
 
         [Parameter] public Direction Direction { get; set; }
+
+        [Parameter] public bool OffsetX { get; set; }
+
+        [Parameter] public bool OffsetY { get; set; }
 
         [Parameter] public bool Autopositioned { get; set; } = true;
 
@@ -81,6 +85,8 @@ namespace MudBlazor
             _portalItem.PortalType = PortalType;
             _portalItem.Placement = Placement;
             _portalItem.Direction = Direction;
+            _portalItem.OffsetX = OffsetX;
+            _portalItem.OffsetY = OffsetY;
             _portalItem.Fragment = ChildContent;
             _portalItem.AutoDirection = AutoDirection;
             _portalItem.Position = IsFixed ? "fixed" : "absolute";

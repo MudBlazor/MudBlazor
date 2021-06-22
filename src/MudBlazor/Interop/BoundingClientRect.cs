@@ -29,14 +29,23 @@ namespace MudBlazor.Interop
 
         public double AbsoluteBottom => Bottom + ScrollY;
 
-        public bool IsOutOfViewPort => 
+        public bool IsOutOfViewPort =>
             Bottom > WindowHeight
             || Top < 0
             || Left < 0
             || Right > WindowWidth;
 
+        public void SetRectInsideViewPort()
+        {
 
+            if (WindowHeight - Bottom < 0) Bottom = 0;
+            if (WindowWidth - Right < 0) Right = 0;
+            if (Top < 0) Top = 0;
+            if (Left < 0) Left = 0;
+
+        }
     }
 
 }
 
+º

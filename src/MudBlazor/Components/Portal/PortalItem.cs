@@ -28,6 +28,10 @@ namespace MudBlazor.Services
 
         public Direction Direction { get; set; }
 
+        public bool OffsetX { get; set; }
+
+        public bool OffsetY { get; set; }
+
         public MudPortalItem Reference { get; set; }
     }
 }

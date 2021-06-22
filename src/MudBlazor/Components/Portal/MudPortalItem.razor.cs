@@ -39,27 +39,21 @@ namespace MudBlazor
 
         private string FragmentClass =>
             new CssBuilder("portal-fragment")
-            .AddClass($"mud-popover-{Item.Direction.ToDescriptionString()}")
             .AddClass("portal-fragment-hidden", !_hasBeenRendered)
+            .AddClass($"mud-popover-{Item.Direction.ToDescriptionString()}")
+            .AddClass("mud-popover-offset-y", Item.OffsetY)
+            .AddClass("mud-popover-offset-x", Item.OffsetX)
             .Build();
 
-        private void SetDirection()
-        {
-            //nom funciona porque fragment rect height =0 quando position fixed
-            if (Item.FragmentRect.IsOutOfViewPort)
-            {
-                if (Item.Direction == Direction.Bottom) Item.AnchorRect.Top -= Item.FragmentRect.Height;
-                if (Item.Direction == Direction.Top) Item.AnchorRect.Top += Item.FragmentRect.Height;
-            }
-        }
+        
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
                 Item.FragmentRect = await _fragmentRef.MudGetBoundingClientRectAsync();
-                //SetDirection();
-                _hasBeenRendered = false;
+                Item.FragmentRect.SetRectInsideViewPort();
+                _hasBeenRendered = true;
                 StateHasChanged();
             }
         }
