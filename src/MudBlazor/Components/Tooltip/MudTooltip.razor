@@ -7,7 +7,7 @@
     </div>
     @if (!String.IsNullOrEmpty(Text) || TooltipContent != null)
     {
-        <MudPortal IsVisible=@IsVisible PortalType=@this.GetType() Placement=@Placement>
+        <MudPopover Open=true OffsetY="true" Elevation="0" Style="overflow:visible;background-color:transparent">
 
             <div class=@Classname data-placement=@Placement @ref=@_tooltipRef style=@Stylename>
                 @if (TooltipContent != null)
@@ -20,6 +20,6 @@
                 }
             </div>
 
-        </MudPortal>
+        </MudPopover>
     }
 </div>

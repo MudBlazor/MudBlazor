@@ -37,9 +37,20 @@ namespace MudBlazor.Interop
 
         public void SetRectInsideViewPort()
         {
+            var bottomDiff = WindowHeight - Bottom;
+            if (bottomDiff < 0)
+            {
+                Bottom = WindowHeight ;
+                Top = Bottom - Height;
+            }
+            var rightDiff = WindowWidth - Right;
+            if (rightDiff < 0)
+            {
+                Right = WindowWidth ;
+                Left = Right - Width;
+                
+            }
 
-            if (WindowHeight - Bottom < 0) Bottom = 0;
-            if (WindowWidth - Right < 0) Right = 0;
             if (Top < 0) Top = 0;
             if (Left < 0) Left = 0;
 
@@ -48,4 +59,3 @@ namespace MudBlazor.Interop
 
 }
 
-º
