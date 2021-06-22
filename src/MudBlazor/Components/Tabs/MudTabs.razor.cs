@@ -27,9 +27,9 @@ namespace MudBlazor
         private double _allTabsSize;
         private double _scrollPosition;
 
-        
+
         [CascadingParameter] public bool RightToLeft { get; set; }
-        
+
         [Inject] private IResizeObserver _resizeObserver { get; set; }
 
         /// <summary>
@@ -365,7 +365,7 @@ namespace MudBlazor
             .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
             .Build();
 
-        protected string SliderStyle => RightToLeft ? 
+        protected string SliderStyle => RightToLeft ?
             new StyleBuilder()
             .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
             .AddStyle("right", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
@@ -498,7 +498,7 @@ namespace MudBlazor
 
             if (RightToLeft && scrollValue > 0) scrollValue = 0;
 
-            if(!RightToLeft && scrollValue < 0) scrollValue = 0;
+            if (!RightToLeft && scrollValue < 0) scrollValue = 0;
 
             _scrollPosition = scrollValue;
 

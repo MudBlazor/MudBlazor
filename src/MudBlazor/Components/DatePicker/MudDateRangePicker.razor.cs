@@ -281,12 +281,12 @@ namespace MudBlazor
         {
             if (_firstDate != null)
                 return $"{FormatTitleDate(_firstDate)} - {FormatTitleDate(_secondDate)}";
-            
+
             return DateRange?.Start != null
                 ? $"{FormatTitleDate(DateRange.Start)} - {FormatTitleDate(DateRange.End)}"
                 : "";
         }
-        
+
         protected override DateTime GetCalendarStartOfMonth()
         {
             var date = StartMonth ?? DateRange?.Start ?? DateTime.Today;

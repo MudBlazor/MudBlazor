@@ -107,7 +107,7 @@ namespace MudBlazor
         void IForm.Add(IFormComponent formControl)
         {
             if (formControl.Required)
-                SetIsValid( false);
+                SetIsValid(false);
             _formControls.Add(formControl);
         }
 
@@ -157,9 +157,9 @@ namespace MudBlazor
             try
             {
                 _shouldRender = false;
-                SetIsValid( valid);
+                SetIsValid(valid);
                 await ErrorsChanged.InvokeAsync(Errors);
-                if(old_touched != _touched)
+                if (old_touched != _touched)
                     await IsTouchedChanged.InvokeAsync(_touched);
             }
             finally

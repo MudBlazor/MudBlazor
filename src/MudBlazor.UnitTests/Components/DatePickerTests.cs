@@ -430,7 +430,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-picker-calendar-day").Select(button => (button as IHtmlButtonElement).IsDisabled)
                 .Should().OnlyContain(disabled => disabled == false);
         }
-      
+
         public async Task CheckAutoCloseDatePickerTest()
         {
             // Define a date for comparison
@@ -467,7 +467,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Change the value of autoclose
             datePicker.Instance.AutoClose = true;
-            
+
             // Open the datepicker
             await comp.InvokeAsync(() => datePicker.Instance.Open());
 
