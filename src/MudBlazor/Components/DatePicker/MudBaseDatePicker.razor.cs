@@ -363,6 +363,12 @@ namespace MudBlazor
             return Culture.DateTimeFormat.AbbreviatedMonthNames[calendarMonth - 1];
         }
 
+        private string GetMonthName(DateTime month)
+        {
+            var calendarMonth = Culture.Calendar.GetMonth(month);
+            return Culture.DateTimeFormat.MonthNames[calendarMonth - 1];
+        }
+
         private string GetMonthClasses(DateTime month)
         {
             if (GetMonthStart(0) == month)
