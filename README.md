@@ -5,6 +5,7 @@
 [![GitHub](https://img.shields.io/github/license/garderoben/mudblazor?color=%23594ae2&style=flat-square)](https://github.com/Garderoben/MudBlazor/blob/master/LICENSE)
 [![Gitter](https://img.shields.io/gitter/room/MudBlazor/community?style=flat-square)](https://gitter.im/MudBlazor/community)
 [![Discord](https://img.shields.io/discord/786656789310865418?color=%237289da&label=Discord&logo=discord&logoColor=%237289da&style=flat-square)](https://discord.gg/mudblazor)
+[![Twitter](https://img.shields.io/twitter/follow/MudBlazor?color=1DA1F2&label=Twitter&logo=Twitter&style=flat-square)](https://twitter.com/MudBlazor)
 [![GitHub Repo stars](https://img.shields.io/github/stars/garderoben/mudblazor?style=flat-square)](https://github.com/Garderoben/MudBlazor/stargazers)
 [![GitHub last commit](https://img.shields.io/github/last-commit/garderoben/mudblazor?style=flat-square)](https://github.com/Garderoben/MudBlazor)
 [![Contributors](https://img.shields.io/github/contributors/garderoben/mudblazor)](https://github.com/Garderoben/MudBlazor/graphs/contributors)
