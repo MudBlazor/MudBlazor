@@ -30,6 +30,7 @@
                 <ColorsMaterialExample />
             </SectionContent>
             <SectionSource ShowCode="false" Code="ColorsMaterialExample" />
+            <MudText Class="my-8">Each color can also be accessed from code: <CodeInline>... Style=@@($"color: {Colors.Red.Accent1}; background-color: {Colors.Blue.Darken3};")</CodeInline></MudText>
             <MudText Class="my-8">Below is a list of the Material design color palette grouped by primary color</MudText>
             <MudGrid Spacing="4">
                 @foreach (var color in MaterialColors)
