@@ -20,34 +20,35 @@
     position: relative;
     z-index: var(--mud-zindex-tooltip);
     transition: opacity .2s;
-    visibility:hidden;
-    opacity:0;
+    visibility: hidden;
+    opacity: 0;
 
-    &.mud-tooltip-placement-top {
-        top: 0;
-        left: 50%;
-        transform: translate(-50%, calc(-100% - 10px));
-    }
-
-    &.mud-tooltip-placement-bottom {
-        bottom: 0;
-        left: 50%;
-        transform: translate(-50%, calc(100% + 10px));
-    }
-
-    &.mud-tooltip-placement-start {
-        top: 0;
-        left: 0;
-        transform: translateX(calc(-100% - 10px));
-    }
-
-    &.mud-tooltip-placement-end {
-        top: 0;
-        right: 0;
-        transform: translateX(calc(100% + 10px));
-    }
-    &.mud-tooltip-visible{
-        visibility:visible;
-        opacity:1;
+    &.mud-tooltip-visible {
+        visibility: visible;
+        opacity: 1;
     }
 }
+.mud-tooltip-placement-top {
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, calc(-100% - 10px));
+}
+
+.mud-tooltip-placement-bottom {
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, calc(100% + 10px));
+}
+
+.mud-tooltip-placement-start {
+    top: 0;
+    left: 0;
+    transform: translateX(calc(-100% - 10px));
+}
+
+.mud-tooltip-placement-end {
+    top: 0;
+    right: 0;
+    transform: translateX(calc(100% + 10px));
+}
+

@@ -29,30 +29,39 @@ namespace MudBlazor.Interop
 
         public double AbsoluteBottom => Bottom + ScrollY;
 
-        public bool IsOutOfViewPort =>
-            Bottom > WindowHeight
-            || Top < 0
-            || Left < 0
-            || Right > WindowWidth;
+        //check if the rect is outside of the viewport
+        public bool IsOutsideBottom => Bottom > WindowHeight;
+        public bool IsOutsideLeft => Left < 0;
+        public bool IsOutsideTop => Top < 0;
+        public bool IsOutsideRight => Right > WindowWidth;
+
 
         public void SetRectInsideViewPort()
         {
-            var bottomDiff = WindowHeight - Bottom;
-            if (bottomDiff < 0)
+
+            if (IsOutsideBottom)
             {
-                Bottom = WindowHeight ;
-                Top = Bottom - Height;
-            }
-            var rightDiff = WindowWidth - Right;
-            if (rightDiff < 0)
-            {
-                Right = WindowWidth ;
-                Left = Right - Width;
-                
+                Bottom = WindowHeight;
+                Top = Bottom - Height;//top must be corrected
             }
 
-            if (Top < 0) Top = 0;
-            if (Left < 0) Left = 0;
+            if (IsOutsideRight)
+            {
+                Right = WindowWidth;
+                Left = Right - Width; //left must be corrected
+            }
+
+            if (IsOutsideTop)
+            {
+                Top = 0;
+                Bottom = Height;
+            }
+
+            if (IsOutsideLeft)
+            {
+                Left = 0;
+                Right = Width;
+            }
 
         }
     }

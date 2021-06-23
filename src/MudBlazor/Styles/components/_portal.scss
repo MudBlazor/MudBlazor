@@ -31,6 +31,7 @@
 }
 
 .portal-fragment-hidden {
+    outline: 5px solid red;
     width: max-content;
     height: max-content;
     &>*{

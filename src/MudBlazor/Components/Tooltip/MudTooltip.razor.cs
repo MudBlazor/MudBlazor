@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
