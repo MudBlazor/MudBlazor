@@ -6,7 +6,7 @@
     <span class="@CheckBoxClassname">
         @*note: stopping the click propagation is important here. otherwise checking the checkbox results in click events on its parent (i.e. table row), which is generally not what you would want*@
         <input @attributes="UserAttributes" type="checkbox" class="mud-checkbox-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:stopPropagation="true" @onclick:preventDefault="@ReadOnly"/>
-        <MudIcon Icon="@GetIcon()"/>
+        <MudIcon Icon="@GetIcon()" Size="@Size"/>
     </span>
     @if (!String.IsNullOrEmpty(Label))
     {
