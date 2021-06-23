@@ -87,7 +87,7 @@
                     {
                         <tr>
                             <th colspan="1000" class="mud-table-empty-row">
-                                <MudText Class="my-3">@(Loading ? LoadingString : NoRecordsString)</MudText>
+                                <MudText Class="my-3">@(Loading ? LoadingContent : NoRecordsContent)</MudText>
                             </th>
                         </tr>
                     }
@@ -119,3 +119,14 @@
 </div>
 
 
+@code {
+    /// <summary>
+    /// Defines the table body content when there are no matching records found
+    /// </summary>
+    [Parameter] public RenderFragment NoRecordsContent { get; set; } = @<p>No matching records found</p>;
+
+    /// <summary>
+    /// Defines the table body content when the table has no rows and is loading
+    /// </summary>
+    [Parameter] public RenderFragment LoadingContent { get; set; } = @<p>Loading...</p>;
+}

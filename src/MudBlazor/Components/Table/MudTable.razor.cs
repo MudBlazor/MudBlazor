@@ -38,16 +38,6 @@ namespace MudBlazor
         internal string GetHorizontalScrollbarStyle() => HorizontalScrollbar ? ";display: block; overflow-x: auto;" : string.Empty;
 
         /// <summary>
-        /// The localizable "No matching records found" text.
-        /// </summary>
-        [Parameter] public string NoRecordsString { get; set; } = "No matching records found";
-
-        /// <summary>
-        /// The localizable "Loading..." text.
-        /// </summary>
-        [Parameter] public string LoadingString { get; set; } = "Loading...";
-
-        /// <summary>
         /// The data to display in the table. MudTable will render one row per item
         /// </summary>
         [Parameter]
