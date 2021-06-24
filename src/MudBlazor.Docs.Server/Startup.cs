@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MudBlazor.Docs.Extensions;
+using MudBlazor.Docs.Services;
 using MudBlazor.Examples.Data;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
@@ -27,7 +28,7 @@ namespace MudBlazor.Docs.Server
         {
             services.AddScoped<IPeriodicTableService, PeriodicTableService>();
             services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri(Configuration["ApiBase"]) });
-            services.AddHttpClient<GitHubApiClient>(client => { client.BaseAddress = new Uri("https://api.github.com:443/"); client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Mobile Safari/537.36");});
+            services.AddScoped<GitHubApiClient>();
             services.AddHeadElementHelper();
             services.AddRazorPages();
             services.AddServerSideBlazor();
