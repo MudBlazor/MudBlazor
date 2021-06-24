@@ -17,6 +17,8 @@ namespace MudBlazor.Docs.Client
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddScoped(client => new HttpClient { BaseAddress = new Uri("https://api.github.com:443/") });
+            builder.Services.AddScoped<GitHubApiClient>();
             builder.Services.TryAddDocsViewServices();
             builder.Services.AddHeadElementHelper();
             builder.Services.AddGoogleAnalytics("G-PRYNCB61NV");
