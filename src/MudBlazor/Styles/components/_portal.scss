@@ -1,43 +1,34 @@
-﻿.portal{
-    pointer-events:none;
-    width:100%;
-    height:100%;
-    top:0;
-    left:0;
-    position:absolute;
-}
-
-
-.portal-anchor {
-    outline: 5px solid green;   
-    position: absolute;
-    z-index: 11111;
+﻿.portal {
     pointer-events: none;
-}
-
-.portal-anchor-hidden{
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: absolute;
+    outline: 5px solid blue;
     visibility:hidden;
     opacity:0;
     overflow:hidden;
-}
-.portal-anchor *{
-    pointer-events:all;
-}
 
-.portal-fragment {
-    outline: 5px solid blue;   
-    width: 100%;    
-    position:absolute;
-}
-
-.portal-fragment-hidden {
-    outline: 5px solid red;
-    width: max-content;
-    height: max-content;
-    &>*{
-        position:relative;
+    /*this is the popover*/
+    & * {
+        background: red !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 }
+
+.portal-anchor {
+    outline: 5px solid green;
+    position: absolute;
+    z-index: 11111;
+    pointer-events: none;
+
+    & * {
+        pointer-events: all;
+    }
+}
+
 
 
 

@@ -10,8 +10,11 @@ namespace MudBlazor
     {
         private ElementReference _popoverRef;
         protected string PopoverClass =>
-           new CssBuilder("mud-popover")
-            .AddClass("mud-popover-open", Open)           
+         new CssBuilder("mud-popover")
+            .AddClass("mud-popover-open", Open)
+            .AddClass($"mud-popover-{Direction.ToDescriptionString()}")
+            .AddClass("mud-popover-offset-y", OffsetY)
+            .AddClass("mud-popover-offset-x", OffsetX)
             .AddClass("mud-paper")
             .AddClass("mud-paper-square", Square)
             .AddClass($"mud-elevation-{Elevation}")

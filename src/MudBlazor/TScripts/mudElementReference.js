@@ -76,6 +76,11 @@
         }
     }
 
+    getClientRectFromFirstChild(element) {
+        let child = element.children[0];
+        return this.getBoundingClientRect(child);
+    }
+
     getBoundingClientRect (element) {
         if (element)
         {

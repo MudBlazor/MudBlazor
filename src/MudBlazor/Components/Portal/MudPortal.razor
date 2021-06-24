@@ -1,11 +1,12 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
- 
- 
-    <div class="portal" @ref=@_portalRef data-id=@_id>
-    <div class=@FragmentClass style="position:relative">
-        
-        @ChildContent
+
+@if (IsVisible)
+{
+    <div class="portal" @ref=@_portalRef>
+        <div @ref="@_fragmentRef">
+            @ChildContent
+        </div>
     </div>
-    </div>
- 
+}
+

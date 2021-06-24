@@ -14,24 +14,6 @@ namespace MudBlazor.Services
 
         public BoundingClientRect FragmentRect { get; set; }
 
-        public bool AutoDirection { get; set; }
-
         public string Position { get; set; } = "absolute";
-
-        public int ViewportHeight { get; set; }
-
-        public int ViewportWidth { get; set; }
-
-        public Type PortalType { get; set; }
-
-        public Placement Placement { get; set; }
-
-        public Direction Direction { get; set; }
-
-        public bool OffsetX { get; set; }
-
-        public bool OffsetY { get; set; }
-
-        public MudPortalItem Reference { get; set; }
     }
 }

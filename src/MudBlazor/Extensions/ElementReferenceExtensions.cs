@@ -49,6 +49,10 @@ namespace MudBlazor
             elementReference.GetJSRuntime()?.InvokeAsync<BoundingClientRect>("mudElementRef.getBoundingClientRect", elementReference) ?? ValueTask.FromResult(new BoundingClientRect());
 
 
+        public static ValueTask<BoundingClientRect> MudGetClientRectFromFirstChildAsync(this ElementReference elementReference) =>
+            elementReference.GetJSRuntime()?.InvokeAsync<BoundingClientRect>("mudElementRef.getClientRectFromFirstChild", elementReference) ?? ValueTask.FromResult(new BoundingClientRect());
+
+
         /// <summary>
         /// Returns true if the element has an ancestor with style position == "fixed"
         /// </summary>

@@ -54,6 +54,7 @@ namespace MudBlazor.Services
 
         public void Remove(PortalItem item)
         {
+            if (_items.Count == 0) return;
             lock (_lockObj)
             {
                 _items.Remove(item.Id);

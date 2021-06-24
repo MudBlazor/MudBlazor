@@ -11,8 +11,14 @@ namespace MudBlazor
         protected override void OnInitialized() => Portal.OnChange += Refresh;
 
         //TODO Refresh only individual items
-        private void Refresh(object e, EventArgs c) => InvokeAsync(StateHasChanged);
-
+        private void Refresh(object e, EventArgs c)
+        {
+            InvokeAsync(StateHasChanged);
+        }
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+        }
         public void Dispose()
         {
             Portal.OnChange -= Refresh;

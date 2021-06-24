@@ -17,11 +17,12 @@
     width: max-content;
     background-color: var(--mud-palette-grey-darker);
     border-radius: var(--mud-default-borderradius);
-    position: relative;
+    position: absolute;
     z-index: var(--mud-zindex-tooltip);
     transition: opacity .2s;
-    visibility: hidden;
-    opacity: 0;
+    border:none;
+    /*visibility: hidden;
+    opacity: 0;*/
 
     &.mud-tooltip-visible {
         visibility: visible;

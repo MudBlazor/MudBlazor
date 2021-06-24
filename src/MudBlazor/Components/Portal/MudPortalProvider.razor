@@ -1,5 +1,5 @@
 ﻿@namespace MudBlazor
-<div id="mud-portal-container">
+<div id="mud-portal-container" data-items=@(Portal.Items.Count())>
 
     @foreach (var (key, item) in Portal.Items)
     {

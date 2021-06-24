@@ -17,7 +17,7 @@ namespace MudBlazor
             get
             {
                 var result = new CssBuilder("mud-tooltip")
-                    //.AddClass($"mud-tooltip-placement-{Placement.ToDescriptionString()}")
+                    .AddClass($"mud-tooltip-placement-{Placement.ToDescriptionString()}")
                     .AddClass("mud-tooltip-visible", IsVisible)
                     .AddClass(Class)
                     .Build();

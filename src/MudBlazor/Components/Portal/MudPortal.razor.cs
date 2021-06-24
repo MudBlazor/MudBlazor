@@ -11,11 +11,8 @@ namespace MudBlazor
     {
         private Guid _id = Guid.NewGuid();
         private PortalItem _portalItem = new();
-
-
         private ElementReference _portalRef;
-
-
+        private ElementReference _fragmentRef;
 
         [Inject] internal IPortal Portal { get; set; }
 
@@ -23,19 +20,7 @@ namespace MudBlazor
 
         [Inject] public IScrollManager ScrollManager { get; set; }
 
-        [Parameter] public Type PortalType { get; set; }
-
-        [Parameter] public Placement Placement { get; set; }
-
-        [Parameter] public Direction Direction { get; set; }
-
-        [Parameter] public bool OffsetX { get; set; }
-
-        [Parameter] public bool OffsetY { get; set; }
-
-        [Parameter] public bool Autopositioned { get; set; } = true;
-
-        [Parameter] public bool AutoDirection { get; set; } = true;
+        [Parameter] public bool Autopositioned { get; set; } = false;
 
         [Parameter] public RenderFragment ChildContent { get; set; }
 
@@ -43,20 +28,21 @@ namespace MudBlazor
 
         [Parameter] public bool IsFixed { get; set; }
 
-        [Parameter] public bool IsEnabled { get; set; } = true;
-
         [Parameter] public bool LockScroll { get; set; }
-        [Inject] public IBrowserWindowSizeProvider ViewPort { get; set; }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            ConfigurePortalItem();
+
             if (IsVisible)
             {
                 await ConfigureAnchorRect();
+                ConfigurePosition();
+                ConfigurePortalItem();
                 await AddItem();
             }
             else
             {
+                if (firstRender) return;
                 await RemoveItem();
             }
         }
@@ -78,19 +64,45 @@ namespace MudBlazor
         private async Task ConfigureAnchorRect()
         {
             _portalItem.AnchorRect = await _portalRef.MudGetBoundingClientRectAsync();
-            
+            _portalItem.FragmentRect = await _fragmentRef.MudGetClientRectFromFirstChildAsync();
+
+        }
+
+        private void ConfigurePosition()
+        {
+            if (_portalItem.FragmentRect.IsOutsideBottom)
+            {
+                _portalItem.AnchorRect.Top -=
+                    _portalItem.FragmentRect.Height 
+                    + _portalItem.FragmentRect.Top
+                    - _portalItem.AnchorRect.Top ;
+
+            }
+            if (_portalItem.FragmentRect.IsOutsideTop)
+            {
+                _portalItem.AnchorRect.Top += _portalItem.FragmentRect.Height + _portalItem.AnchorRect.Height;
+
+            }
+            if (_portalItem.FragmentRect.IsOutsideLeft)
+            {
+                _portalItem.AnchorRect.Left += _portalItem.FragmentRect.Width + _portalItem.AnchorRect.Width;
+
+            }
+            if (_portalItem.FragmentRect.IsOutsideRight)
+            {
+                _portalItem.AnchorRect.Left -= _portalItem.FragmentRect.Width + _portalItem.AnchorRect.Width;
+
+            }
+
+
+
+
         }
 
         private void ConfigurePortalItem()
         {
             _portalItem.Id = _id;
-            _portalItem.PortalType = PortalType;
-            _portalItem.Placement = Placement;
-            _portalItem.Direction = Direction;
-            _portalItem.OffsetX = OffsetX;
-            _portalItem.OffsetY = OffsetY;
             _portalItem.Fragment = ChildContent;
-            _portalItem.AutoDirection = AutoDirection;
             _portalItem.Position = IsFixed ? "fixed" : "absolute";
         }
 
@@ -98,8 +110,10 @@ namespace MudBlazor
         {
             Task.Run(async () =>
            {
-               _portalItem.AnchorRect = await _portalRef.MudGetBoundingClientRectAsync();
-               if (IsVisible) { Portal.AddOrUpdate(_portalItem); } else { Portal.Remove(_portalItem); }
+               await ConfigureAnchorRect();
+               await Task.Delay(0);
+               if (IsVisible) { 
+                   Portal.AddOrUpdate(_portalItem); } else { Portal.Remove(_portalItem); }
            }).AndForget();
         }
 
@@ -115,11 +129,6 @@ namespace MudBlazor
             GC.SuppressFinalize(this);
         }
 
-        private string FragmentClass=> 
-            new CssBuilder("portal-fragment-hidden")
-            .AddClass("mud-popover-offset-x", OffsetX)
-            .AddClass("mud-popover-offset-y", OffsetY)
-            .AddClass($"mud-popover-{Direction.ToDescriptionString()}")
-            .Build();
+
     }
 }
