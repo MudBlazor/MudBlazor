@@ -109,12 +109,4 @@
     </AssemblyAttribute>
   </ItemGroup>
 
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Components\Table\MudTGroupRow.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="Components\Table\MudTGroupRow.razor" />
-  </ItemGroup>
-
 </Project>

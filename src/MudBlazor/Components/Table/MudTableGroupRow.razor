@@ -33,10 +33,10 @@ else
 {
     @foreach (var group in _innerGroupItems)
     {
-        <MudTGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" IsCheckable="@IsCheckable"
-                      HeaderClass="@HeaderClass" HeaderStyle="@HeaderStyle"
-                      FooterClass="@FooterClass" FooterStyle="@FooterStyle"
-                      HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" @attributes="@UserAttributes" />
+        <MudTableGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" IsCheckable="@IsCheckable"
+                          HeaderClass="@HeaderClass" HeaderStyle="@HeaderStyle"
+                          FooterClass="@FooterClass" FooterStyle="@FooterStyle"
+                          HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" @attributes="@UserAttributes" />
     }
 }
 else

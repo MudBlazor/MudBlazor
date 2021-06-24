@@ -34,7 +34,7 @@ namespace MudBlazor
         public HashSet<T> Selection { get; set; } = new HashSet<T>();
 
         public Dictionary<T, MudTr> Rows { get; set; } = new Dictionary<T, MudTr>();
-        public List<MudTGroupRow<T>> GroupRows { get; set; } = new List<MudTGroupRow<T>>();
+        public List<MudTableGroupRow<T>> GroupRows { get; set; } = new List<MudTableGroupRow<T>>();
 
         public List<MudTableSortLabel<T>> SortLabels { get; set; } = new List<MudTableSortLabel<T>>();
 

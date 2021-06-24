@@ -59,10 +59,10 @@
                     {
                         @foreach (var group in GroupItemsPage)
                         {
-                            <MudTGroupRow GroupDefinition="GroupBy" Items="group" IsCheckable="MultiSelection" 
-                                          HeaderClass="@GroupHeaderClass" HeaderStyle="@GroupHeaderStyle" 
-                                          FooterClass="@GroupFooterClass" FooterStyle="@GroupFooterStyle"
-                                          HeaderTemplate="@GroupHeaderTemplate" FooterTemplate="@GroupFooterTemplate" T="T"  />
+                            <MudTableGroupRow GroupDefinition="GroupBy" Items="group" IsCheckable="MultiSelection" 
+                                              HeaderClass="@GroupHeaderClass" HeaderStyle="@GroupHeaderStyle" 
+                                              FooterClass="@GroupFooterClass" FooterStyle="@GroupFooterStyle"
+                                              HeaderTemplate="@GroupHeaderTemplate" FooterTemplate="@GroupFooterTemplate" T="T"  />
                         }
                     }
                     else

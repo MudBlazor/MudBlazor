@@ -8,7 +8,7 @@
           GroupBy="@(new TableGroupDefinition<Element>() { GroupName = "Position", Selector = (e) => e.Position,
                                                            InnerGroup = new TableGroupDefinition<Element>() { GroupName = "Group", Selector = (e) => e.Group } })"
           GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
-          GroupFooterStyle="background-color:var(--mud-palette-background-grey)"
+          GroupFooterClass="mb-4"
           MultiSelection="true">
     <HeaderContent>
         <MudTh>Nr</MudTh>
