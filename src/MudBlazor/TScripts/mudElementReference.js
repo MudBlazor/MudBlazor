@@ -77,7 +77,8 @@
     }
 
     getClientRectFromFirstChild(element) {
-        let child = element.children[0];
+        if (!element) return;
+        let child = element.children && element.children[0];
         return this.getBoundingClientRect(child);
     }
 
@@ -88,10 +89,9 @@
             
             rect.scrollY = window.scrollY || document.documentElement.scrollTop;
             rect.scrollX = window.scrollX || document.documentElement.scrollLeft;
+
             rect.windowHeight = window.innerHeight;
             rect.windowWidth = window.innerWidth;
-            
-        
             return rect;
         }
         return null;

@@ -75,17 +75,28 @@ namespace MudBlazor
                 _portalItem.AnchorRect.Top -=
                     _portalItem.FragmentRect.Height 
                     + _portalItem.FragmentRect.Top
-                    - _portalItem.AnchorRect.Top ;
+                    - _portalItem.AnchorRect.Top 
+                    ;
 
             }
             if (_portalItem.FragmentRect.IsOutsideTop)
             {
-                _portalItem.AnchorRect.Top += _portalItem.FragmentRect.Height + _portalItem.AnchorRect.Height;
+                _portalItem.AnchorRect.Top +=
+                    _portalItem.AnchorRect.Top
+                    - _portalItem.FragmentRect.Top
+                    + _portalItem.AnchorRect.Height
+                    + _portalItem.AnchorRect.Top
+                    - _portalItem.FragmentRect.Bottom;
 
             }
             if (_portalItem.FragmentRect.IsOutsideLeft)
             {
-                _portalItem.AnchorRect.Left += _portalItem.FragmentRect.Width + _portalItem.AnchorRect.Width;
+                _portalItem.AnchorRect.Left += 
+                    _portalItem.AnchorRect.Left 
+                    - _portalItem.FragmentRect.Left 
+                    + _portalItem.AnchorRect.Width
+                    + _portalItem.AnchorRect.Left
+                    - _portalItem.FragmentRect.Right;
 
             }
             if (_portalItem.FragmentRect.IsOutsideRight)
