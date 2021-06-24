@@ -152,6 +152,8 @@ namespace MudBlazor
                 {
                     UpdateBreakpointState(_screenBreakpoint);
                 }
+
+                DrawerContainer?.FireDrawersChanged();
             }
         }
 
@@ -181,10 +183,8 @@ namespace MudBlazor
                 {
                     _ = UpdateHeight();
                 }
-                if (DrawerContainer != null)
-                {
-                    DrawerContainer.FireDrawersChanged();
-                }
+
+                DrawerContainer?.FireDrawersChanged();
                 OpenChanged.InvokeAsync(_open);
             }
         }
