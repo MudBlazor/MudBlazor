@@ -36,10 +36,25 @@
         <MudText Typo="@Typo.body2">Check out the <MudLink Href="@ComponentLink">Examples</MudLink> for this component.</MudText>
     }
 </div>
-<MudElement HtmlTag="script" async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESDLK3E&placement=mudblazorcom" id="_carbonads_js"></MudElement>
+<div id="mudads">
+    @if (RenderAds)
+    { 
+        <MudElement HtmlTag="script" async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESDLK3E&placement=mudblazorcom" id="_carbonads_js"></MudElement>
+    }
+</div>
 
 @code {
 
+    public bool RenderAds { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            RenderAds = true;
+            StateHasChanged();
+        }
+    }
 
     [Inject] public NavigationManager NavigationManager { get; set; }
 
