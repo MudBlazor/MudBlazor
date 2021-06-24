@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Extensions;
 using MudBlazor.Services;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -112,5 +114,12 @@ namespace MudBlazor
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        private string FragmentClass=> 
+            new CssBuilder("portal-fragment-hidden")
+            .AddClass("mud-popover-offset-x", OffsetX)
+            .AddClass("mud-popover-offset-y", OffsetY)
+            .AddClass($"mud-popover-{Direction.ToDescriptionString()}")
+            .Build();
     }
 }
