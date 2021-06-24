@@ -58,7 +58,7 @@
 
 .mud-avatar-outlined {
     color: var(--mud-palette-text-primary);
-    background-color: var(--mud-palette-white);
+    background-color: unset;
     border: 1px solid var(--mud-palette-text-primary);
 
     @each $color in $mud-palette-colors {
