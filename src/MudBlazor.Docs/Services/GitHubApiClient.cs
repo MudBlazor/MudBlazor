@@ -8,22 +8,24 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using MudBlazor.Docs.Models;
 
-namespace MudBlazor.Docs.Extensions
+namespace MudBlazor.Docs.Services
 {
     public class GitHubApiClient
     {
-        private readonly HttpClient http;
+        private readonly HttpClient _http;
 
         public GitHubApiClient(HttpClient http)
         {
-            this.http = http;
+            _http = http;
+            http.BaseAddress = new Uri("https://api.github.com:443/");
+            http.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Mobile Safari/537.36");
         }
 
         public async Task<GithubContributors[]> GetContributorsAsync()
         {
             try
             {
-                var result = await http.GetFromJsonAsync<GithubContributors[]>("repos/Garderoben/MudBlazor/contributors");
+                var result = await _http.GetFromJsonAsync<GithubContributors[]>("repos/Garderoben/MudBlazor/contributors");
                 return result;
             }
             catch (Exception e)

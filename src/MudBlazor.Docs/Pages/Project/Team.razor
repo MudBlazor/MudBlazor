@@ -1,6 +1,5 @@
 ﻿@page "/project/team"
-@using MudBlazor.Docs.Extensions;
-@inject GitHubApiClient _GitHubApiClient;
+@inject GitHubApiClient _gitHubApiClient;
 
 <DocsPage>
     <MudContainer>
@@ -65,7 +64,7 @@
         <MudText Class="mb-8">Core Contributors who work closly with the Core Team and are actively working on Mudblazor.</MudText>
 
         <MudGrid>
-            @foreach (var contri in contributors)
+            @foreach (var contri in _contributors)
             {
                 <MudItem xs="12" md="6">
                     <MudCard Elevation="4">
@@ -97,13 +96,13 @@
 
         <MudText Typo="Typo.h4" Class="mt-16 mb-8" GutterBottom="true">All contributors</MudText>
         <MudGrid>
-            @if (githubContributors == null)
+            @if (_githubContributors == null)
             {
                 <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
             }
             else
             {
-                @foreach (var contributor in githubContributors.OrderByDescending(x => x.contributions))
+                @foreach (var contributor in _githubContributors.OrderByDescending(x => x.contributions))
                 {
                     <MudItem xs="12" md="6">
                         <MudContributor Firstname="@contributor.login" AvatarLink="@contributor.avatar_url" GithubLink="@contributor.html_url" />
@@ -120,15 +119,14 @@
 
 @code
 {
-    private GithubContributors[] githubContributors { get; set; }
-
+    private GithubContributors[] _githubContributors;
     protected override async Task OnInitializedAsync()
     {
-        githubContributors = await _GitHubApiClient.GetContributorsAsync();
+        _githubContributors = await _gitHubApiClient.GetContributorsAsync();
         StateHasChanged();
     }
 
-    Contributor[] contributors = new Contributor[]
+    private Contributor[] _contributors = new Contributor[]
     {
         new Contributor { Name = "András Tangl", From = "Szombathely, Hungary", Github = "tungi52", Avatar = "https://avatars.githubusercontent.com/u/22996720?v=4", LinkedIn = "https://www.linkedin.com/in/andr%C3%A1s-tangl-683a20215/"},
         new Contributor { Name = "Henrique Clausing", From = "Minas Gerais, Brazil", Github = "HClausing", Avatar = "https://avatars.githubusercontent.com/u/15158923?v=4", LinkedIn = "https://www.linkedin.com/in/henrique-clausing-cunha-45085944/"},
@@ -138,7 +136,7 @@
         new Contributor { Name = "Jonas B", From = "Germany", Github = "JonBunator", Avatar = "https://avatars.githubusercontent.com/u/62108893?v=4", LinkedIn = null}
     };
 
-    class Contributor
+    internal class Contributor
     {
         public string Name;
         public string From;
