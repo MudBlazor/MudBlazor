@@ -162,10 +162,21 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public EventCallback<HashSet<T>> SelectedItemsChanged { get; set; }
 
+        private TableGroupDefinition<T> _groupBy;
         /// <summary>
         /// Defines data grouping parameters. It can has N hierarchical levels
         /// </summary>
-        [Parameter] public TableGroupDefinition<T> GroupBy { get; set; }
+        [Parameter]
+        public TableGroupDefinition<T> GroupBy
+        {
+            get => _groupBy;
+            set
+            {
+                _groupBy = value;
+                if (_groupBy != null)
+                    _groupBy.Context = Context;
+            }
+        }
 
         /// <summary>
         /// Defines how a table grouping row header looks like. It works only when GroupBy is not null. Use MudTd to define the table cells and their content.

@@ -11,8 +11,14 @@ namespace MudBlazor
 {
     public partial class MudTableGroupRow<T> : MudComponentBase
     {
-        protected string Classname => new CssBuilder("mud-table-row")
-                            .AddClass(Class).Build();
+        protected string HeaderClassname => new CssBuilder()
+                                .AddClass(HeaderClass)
+                                .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level - 1}", (GroupDefinition?.Indentation ?? false) && GroupDefinition?.Level > 1).Build();
+
+        protected string FooteerClassname => new CssBuilder()
+                                .AddClass(FooterClass)
+                                .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level}", GroupDefinition?.Indentation ?? false).Build();
+
 
         [CascadingParameter] public TableContext Context { get; set; }
 
@@ -69,6 +75,8 @@ namespace MudBlazor
                 }
             }
         }
+
+        public bool IsExpanded { get; internal set; } = true;
 
         protected override Task OnInitializedAsync()
         {

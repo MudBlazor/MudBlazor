@@ -26,6 +26,8 @@ namespace MudBlazor
 
         [Parameter] public bool IsEditable { get; set; }
 
+        [Parameter] public bool IsExpandable { get; set; }
+
         [Parameter] public bool IsHeader { get; set; }
 
         [Parameter] public bool IsFooter { get; set; }

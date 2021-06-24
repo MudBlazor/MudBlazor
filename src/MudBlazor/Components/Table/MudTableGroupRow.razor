@@ -6,7 +6,7 @@
 @*HEADER:*@
 @if (HeaderTemplate != null && GroupDefinition != null)
 {
-<tr class="@HeaderClass" @onclick="@OnRowClick" style="@HeaderStyle" @attributes="@UserAttributes">
+<tr class="@HeaderClassname" @onclick="@OnRowClick" style="@HeaderStyle" @attributes="@UserAttributes">        
     @if ((Context?.Table.MultiSelection ?? false))
     {
         <MudTd>
@@ -14,6 +14,12 @@
             {
                 <MudCheckBox @bind-Checked="IsChecked" />
             }
+        </MudTd>
+    }
+    @if (GroupDefinition?.Expandable ?? false)
+    {
+        <MudTd Class="pa-0">
+            <MudIconButton Class="ma-0" Icon="@(IsExpanded ? Icons.Material.Filled.Remove : Icons.Material.Filled.Add)" OnClick="@(() => IsExpanded = !IsExpanded)" />
         </MudTd>
     }
     @HeaderTemplate(new TableGroupData<object, T>(GroupDefinition.GroupName, Items.Key, Items.ToList()))
@@ -28,34 +34,41 @@ else
 <MudText @attributes="@UserAttributes">@("There aren't any group definition to use with this component.")</MudText>
 }
 
-@*CHILDREN:*@
-@if (_innerGroupItems != null && GroupDefinition != null)
+@if (IsExpanded)
 {
-    @foreach (var group in _innerGroupItems)
+    @*CHILDREN:*@
+    @if (_innerGroupItems != null && GroupDefinition != null)
     {
-        <MudTableGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" IsCheckable="@IsCheckable"
-                          HeaderClass="@HeaderClass" HeaderStyle="@HeaderStyle"
-                          FooterClass="@FooterClass" FooterStyle="@FooterStyle"
-                          HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" @attributes="@UserAttributes" />
+        @foreach (var group in _innerGroupItems)
+        {
+            <MudTableGroupRow GroupDefinition="GroupDefinition.InnerGroup" Items="@group" IsCheckable="@IsCheckable"
+                              HeaderClass="@HeaderClassname" HeaderStyle="@HeaderStyle"
+                              FooterClass="@FooterClass" FooterStyle="@FooterStyle"
+                              HeaderTemplate="@HeaderTemplate" FooterTemplate="@FooterTemplate" T="T" @attributes="@UserAttributes" />
+        }
     }
-}
-else
-{
-    @Table?.RenderRows(Items)
-}
+    else
+    {
+        @Table?.RenderRows(Items, (GroupDefinition?.Indentation ?? false) ? $"mud-table-row-group-indented-{GroupDefinition?.Level}" : null, GroupDefinition?.Expandable ?? false)
+    }
 
-@*FOOTER:*@
-@if (FooterTemplate != null && GroupDefinition != null)
-{
-    <tr class="@FooterClass" @onclick="@OnRowClick" style="@FooterStyle" @attributes="@UserAttributes">
-        @if ((Context?.Table.MultiSelection ?? false))
-        {
-            <MudTd />
-        }
-        @FooterTemplate(new TableGroupData<object, T>(GroupDefinition.GroupName, Items.Key, Items.ToList()))
-        @if ((Context?.Table.IsEditable ?? false))
-        {
-            <MudTd />
-        }
-    </tr>
+    @*FOOTER:*@
+    @if (FooterTemplate != null && GroupDefinition != null)
+    {
+        <tr class="@FooteerClassname" @onclick="@OnRowClick" style="@FooterStyle" @attributes="@UserAttributes">
+            @if ((Context?.Table.MultiSelection ?? false))
+            {
+                <MudTd/>
+            }
+            @if (GroupDefinition?.Expandable ?? false)
+            {
+                <MudTd/>
+            }
+            @FooterTemplate(new TableGroupData<object, T>(GroupDefinition.GroupName, Items.Key, Items.ToList()))
+            @if ((Context?.Table.IsEditable ?? false))
+            {
+                <MudTd/>
+            }
+        </tr>
+    }
 }

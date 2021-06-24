@@ -971,9 +971,9 @@ namespace MudBlazor.UnitTests.Components
             inputs[1].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
-            inputs[5].Change(true); // selecting only GTE category
+            inputs[4].Change(true); // selecting only GTE category
             table.SelectedItems.Count.Should().Be(3);
-            inputs[5].Change(false);
+            inputs[4].Change(false);
             table.SelectedItems.Count.Should().Be(0);
 
             inputs[0].Change(true); // all
@@ -988,10 +988,14 @@ namespace MudBlazor.UnitTests.Components
             {
                 GroupName = "Category",
                 Selector = rc => rc.Category,
-                InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>() { GroupName = "Brand", Selector = rc => rc.Brand }
+                InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>()
+                {
+                    GroupName = "Brand",
+                    Selector = rc => rc.Brand 
+                }
             };
             comp.Render();
-            table.Context.GroupRows.Count.Should().Be(13); // 4 categories and 9 brands (can repeat on different categories
+            table.Context.GroupRows.Count.Should().Be(13); // 4 categories and 9 cars (can repeat on different categories)
             tr = comp.FindAll("tr").ToArray();
             tr.Length.Should().Be(36); // 1 table header + 13 group headers + 9 item rows + 13 group footers
 
@@ -1006,7 +1010,32 @@ namespace MudBlazor.UnitTests.Components
             inputs[1].Change(true); // selecting only LMP1 category
             table.SelectedItems.Count.Should().Be(2);
 
+            // indentation:
+            table.GroupBy.Indentation = true;
+            comp.Render();
+            tr = comp.FindAll("tr.mud-table-row-group-indented-1").ToArray();
+            tr.Length.Should().Be(13); // 2 LMP1 brands + 3 GTE brands + 2 GT3 Brands + 2 F1 Brands + 4 category footers + no rows ( because they're indented-2 )
+            tr = comp.FindAll("tr.mud-table-row-group-indented-2").ToArray();
+            tr.Length.Should().Be(18); // 9 cars + 9 brands footers (3 from Porsche + 2 from Audi + 2 from Ferrari + 2 From Aston Martin)
 
+            // expand and collpase groups:
+            table.GroupBy.Indentation = false;
+            table.GroupBy.Expandable = true;
+            table.GroupBy.InnerGroup.Expandable = true;
+            comp.Render();
+
+            var buttons = comp.FindAll("button").ToArray();
+            buttons.Length.Should().Be(13);// 4 categories and 9 cars (can repeat on different categories)
+            tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(36); // 1 table header + 8 category group rows (h + f)  + 18 brands group rows (see line 915) + 9 car rows
+
+            // collapsing category LMP1:
+            buttons[0].Click();
+            tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(29); // 1 table header + 8 category group rows (h + f) - LMP1 footer + 18 brands group rows (see line 915) - 2 brands LMP2 Header - 2 brands LMP1 footer + 9 car rows - 2 LMP1 car rows
+            buttons[0].Click();
+            tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(36); 
         }
     }
 }

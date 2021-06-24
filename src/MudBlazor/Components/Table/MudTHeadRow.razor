@@ -12,6 +12,10 @@
             }
         </MudTh>
     }
+    @if (IsExpandable)
+    {
+        <MudTd/>
+    }
     @ChildContent
     @if((Context?.Table.IsEditable ?? false) && !IgnoreEditable)
     {
