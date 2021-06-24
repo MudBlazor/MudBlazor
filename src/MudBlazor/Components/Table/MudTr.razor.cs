@@ -53,6 +53,11 @@ namespace MudBlazor
             // Manage any previous edited row
             Context.ManagePreviousEditedRow(this);
 
+            if (IsHeader || !(Context?.Table.Validator.IsValid ?? true))
+                return;
+
+            Context?.Table.SetSelectedItem(Item);
+
             // Manage edition the first time the row is clicked and if the table is editable
             if (!hasBeenClikedFirstTime && IsEditable)
             {
@@ -64,14 +69,13 @@ namespace MudBlazor
                 hasBeenCanceled = false;
                 hasBeenCommitted = false;
 
+                // Trigger the preview event
+                Context?.Table.OnPreviewEditHandler(Item);
+
                 // Trigger the row edit preview event
                 Context.Table.RowEditPreview?.Invoke(Item);
             }
 
-            if (IsHeader || !(Context?.Table.Validator.IsValid ?? true))
-                return;
-
-            Context?.Table.SetSelectedItem(Item);
             Context?.Table.SetEditingItem(Item);
 
             if (Context?.Table.MultiSelection == true && !IsHeader)
@@ -126,7 +130,7 @@ namespace MudBlazor
 
         private void CancelEdit(MouseEventArgs ev)
         {
-            // The edit mode is canceled
+            // The edit mode is canceled and trigger the cancel event
             Context?.Table.SetEditingItem(null);
             Context?.Table.OnCancelEditHandler(ev);
 
