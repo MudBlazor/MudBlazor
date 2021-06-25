@@ -11,6 +11,12 @@
         justify-content: center;
     }
 
+    &.mud-dialog-topcenter {
+        align-items: flex-start;
+        justify-content: center;
+        margin-top: 32px;
+    }
+
     &.mud-dialog-topleft .mud-dialog {
         position: absolute;
         top: 32px;

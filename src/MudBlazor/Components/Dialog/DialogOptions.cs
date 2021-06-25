@@ -28,6 +28,8 @@ namespace MudBlazor
     {
         [Description("center")]
         Center,
+        [Description("topcenter")]
+        TopCenter,
         [Description("topleft")]
         TopLeft,
         [Description("topright")]
