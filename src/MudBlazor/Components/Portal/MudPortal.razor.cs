@@ -70,43 +70,41 @@ namespace MudBlazor
 
         private void ConfigurePosition()
         {
+            if (_portalItem.FragmentRect is null || _portalItem.AnchorRect is null) return;
+
             if (_portalItem.FragmentRect.IsOutsideBottom)
             {
                 _portalItem.AnchorRect.Top -=
-                    _portalItem.FragmentRect.Height 
-                    + _portalItem.FragmentRect.Top
-                    - _portalItem.AnchorRect.Top 
-                    ;
+                   2 * (_portalItem.FragmentRect.Top - _portalItem.AnchorRect.Bottom)
+                    + _portalItem.AnchorRect.Height
+                    + _portalItem.FragmentRect.Height;
 
             }
             if (_portalItem.FragmentRect.IsOutsideTop)
             {
                 _portalItem.AnchorRect.Top +=
-                    _portalItem.AnchorRect.Top
-                    - _portalItem.FragmentRect.Top
-                    + _portalItem.AnchorRect.Height
-                    + _portalItem.AnchorRect.Top
-                    - _portalItem.FragmentRect.Bottom;
+                  2 * (_portalItem.AnchorRect.Top - _portalItem.FragmentRect.Bottom)
+                  + _portalItem.AnchorRect.Height
+                  + _portalItem.FragmentRect.Height;
 
             }
             if (_portalItem.FragmentRect.IsOutsideLeft)
             {
-                _portalItem.AnchorRect.Left += 
-                    _portalItem.AnchorRect.Left 
-                    - _portalItem.FragmentRect.Left 
-                    + _portalItem.AnchorRect.Width
-                    + _portalItem.AnchorRect.Left
-                    - _portalItem.FragmentRect.Right;
+                _portalItem.AnchorRect.Left +=
+                   2 * (_portalItem.AnchorRect.Left - _portalItem.FragmentRect.Right)
+                   + _portalItem.FragmentRect.Width
+                   + _portalItem.AnchorRect.Width;
 
             }
             if (_portalItem.FragmentRect.IsOutsideRight)
             {
-                _portalItem.AnchorRect.Left -= _portalItem.FragmentRect.Width + _portalItem.AnchorRect.Width;
+                _portalItem.AnchorRect.Left -=
+                   2 * (_portalItem.FragmentRect.Left - _portalItem.AnchorRect.Right)
+                   + _portalItem.FragmentRect.Width
+                   + _portalItem.AnchorRect.Width;
+
 
             }
-
-
-
 
         }
 
@@ -123,8 +121,11 @@ namespace MudBlazor
            {
                await ConfigureAnchorRect();
                await Task.Delay(0);
-               if (IsVisible) { 
-                   Portal.AddOrUpdate(_portalItem); } else { Portal.Remove(_portalItem); }
+               if (IsVisible)
+               {
+                   Portal.AddOrUpdate(_portalItem);
+               }
+               else { Portal.Remove(_portalItem); }
            }).AndForget();
         }
 

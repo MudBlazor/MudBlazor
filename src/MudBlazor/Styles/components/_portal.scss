@@ -5,30 +5,16 @@
     top: 0;
     left: 0;
     position: absolute;
-    outline: 5px solid blue;
-   /* visibility:hidden;
+    visibility:hidden;
     opacity:0;
-    overflow:hidden;*/
-
-    /*this is the popover*/
-    & * {
-        background: red !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
+    overflow:hidden;
 }
 
 .portal-anchor {
-    outline: 5px solid green;
     position: absolute;
-    z-index: 11111;
     pointer-events: none;
 
     & * {
         pointer-events: all;
     }
 }
-
-
-
-
