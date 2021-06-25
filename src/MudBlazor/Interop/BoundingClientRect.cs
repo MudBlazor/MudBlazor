@@ -31,39 +31,14 @@ namespace MudBlazor.Interop
 
         //check if the rect is outside of the viewport
         public bool IsOutsideBottom => Bottom > WindowHeight;
+
         public bool IsOutsideLeft => Left < 0;
+
         public bool IsOutsideTop => Top < 0;
+
         public bool IsOutsideRight => Right > WindowWidth;
 
 
-        public void SetRectInsideViewPort()
-        {
-
-            if (IsOutsideBottom)
-            {
-                Bottom = WindowHeight;
-                Top = Bottom - Height;//top must be corrected
-            }
-
-            if (IsOutsideRight)
-            {
-                Right = WindowWidth;
-                Left = Right - Width; //left must be corrected
-            }
-
-            if (IsOutsideTop)
-            {
-                Top = 0;
-                Bottom = Height;
-            }
-
-            if (IsOutsideLeft)
-            {
-                Left = 0;
-                Right = Width;
-            }
-
-        }
     }
 
 }

@@ -30,13 +30,16 @@ namespace MudBlazor
 
         [Parameter] public bool LockScroll { get; set; }
 
+        [Parameter] public Type Type { get; set; }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
 
             if (IsVisible)
             {
                 await ConfigureAnchorRect();
-                ConfigurePosition();
+                await ConfigureCssPosition();
+                CorrectBoundaries();
                 ConfigurePortalItem();
                 await AddItem();
             }
@@ -68,7 +71,16 @@ namespace MudBlazor
 
         }
 
-        private void ConfigurePosition()
+        private async Task ConfigureCssPosition()
+        {
+            var isFixed = await _portalRef.MudHasFixedAncestorsAsync();
+            _portalItem.CssPosition = isFixed && Type != typeof(MudTooltip)
+                ? "fixed"
+                : "absolute";
+
+        }
+
+        private void CorrectBoundaries()
         {
             if (_portalItem.FragmentRect is null || _portalItem.AnchorRect is null) return;
 
@@ -83,7 +95,7 @@ namespace MudBlazor
             if (_portalItem.FragmentRect.IsOutsideTop)
             {
                 _portalItem.AnchorRect.Top +=
-                  2 * (_portalItem.AnchorRect.Top - _portalItem.FragmentRect.Bottom)
+                    2 * (_portalItem.AnchorRect.Top - _portalItem.FragmentRect.Bottom)
                   + _portalItem.AnchorRect.Height
                   + _portalItem.FragmentRect.Height;
 
@@ -91,30 +103,50 @@ namespace MudBlazor
             if (_portalItem.FragmentRect.IsOutsideLeft)
             {
                 _portalItem.AnchorRect.Left +=
-                   2 * (_portalItem.AnchorRect.Left - _portalItem.FragmentRect.Right)
-                   + _portalItem.FragmentRect.Width
-                   + _portalItem.AnchorRect.Width;
+                     FragmentIsAboveorBelowAnchor
+                        ? _portalItem.AnchorRect.Left - _portalItem.FragmentRect.Left
+                        : 2 * (_portalItem.AnchorRect.Left - _portalItem.FragmentRect.Right)
+                            + _portalItem.FragmentRect.Width
+                            + _portalItem.AnchorRect.Width;
 
             }
             if (_portalItem.FragmentRect.IsOutsideRight)
             {
                 _portalItem.AnchorRect.Left -=
-                   2 * (_portalItem.FragmentRect.Left - _portalItem.AnchorRect.Right)
-                   + _portalItem.FragmentRect.Width
-                   + _portalItem.AnchorRect.Width;
-
-
+                    FragmentIsAboveorBelowAnchor
+                    ? _portalItem.FragmentRect.Right - _portalItem.AnchorRect.Right
+                    : 2 * (Math.Abs(_portalItem.FragmentRect.Left - _portalItem.AnchorRect.Right))
+                        + _portalItem.FragmentRect.Width
+                        + _portalItem.AnchorRect.Width;
             }
 
         }
+
+        private bool FragmentIsBelowAnchor
+            => _portalItem.FragmentRect.Top > _portalItem.AnchorRect.Bottom;
+
+        private bool FragmentIsAboveAnchor
+            => _portalItem.FragmentRect.Bottom < _portalItem.AnchorRect.Top;
+
+        private bool FragmentIsToTheRightOfAnchor
+            => _portalItem.FragmentRect.Left > _portalItem.AnchorRect.Right;
+
+        private bool FragmentIsToTheLeftOfAnchor
+            => _portalItem.FragmentRect.Right < _portalItem.AnchorRect.Left;
+
+
+        private bool FragmentIsAboveorBelowAnchor
+            => FragmentIsAboveAnchor || FragmentIsBelowAnchor;
+
 
         private void ConfigurePortalItem()
         {
             _portalItem.Id = _id;
             _portalItem.Fragment = ChildContent;
-            _portalItem.Position = IsFixed ? "fixed" : "absolute";
+            _portalItem.Type = Type;
         }
 
+        //warning this listenir doesn't work too well, create other
         private void OnWindowResize(object sender, BrowserWindowSize e)
         {
             Task.Run(async () =>

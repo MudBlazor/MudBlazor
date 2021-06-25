@@ -14,6 +14,8 @@ namespace MudBlazor.Services
 
         public BoundingClientRect FragmentRect { get; set; }
 
-        public string Position { get; set; } = "absolute";
+        public string CssPosition { get; set; } = "absolute";
+
+        public Type Type { get; set; }
     }
 }

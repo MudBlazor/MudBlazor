@@ -15,11 +15,16 @@ namespace MudBlazor
 
         private string  AnchorStyle =>
             new StyleBuilder()
-            .AddStyle("top", Item.AnchorRect.AbsoluteTop.ToPixels())
-            .AddStyle("left", Item.AnchorRect.AbsoluteLeft.ToPixels())
-            .AddStyle("height", Item.AnchorRect.Height.ToPixels())
+            .AddStyle("top", Item.CssPosition == "fixed" 
+                ? Item.AnchorRect.Top.ToPixels()
+                : Item.AnchorRect.AbsoluteTop.ToPixels())
+            .AddStyle("left", Item.CssPosition == "fixed"
+                ? Item.AnchorRect.Left.ToPixels() 
+                : Item.AnchorRect.AbsoluteLeft.ToPixels())
+             .AddStyle("height", Item.AnchorRect.Height.ToPixels())
             .AddStyle("width", Item.AnchorRect.Width.ToPixels())
-            .AddStyle("z-index", new ZIndex().Popover.ToString(), Item.Position == "fixed")
+            .AddStyle("position", Item.CssPosition)
+            .AddStyle("z-index", new ZIndex().Popover.ToString(), Item.CssPosition == "fixed")
             .Build();
     }
 }
