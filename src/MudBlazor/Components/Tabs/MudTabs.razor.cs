@@ -27,9 +27,9 @@ namespace MudBlazor
         private double _allTabsSize;
         private double _scrollPosition;
 
-        
+
         [CascadingParameter] public bool RightToLeft { get; set; }
-        
+
         [Inject] private IResizeObserver _resizeObserver { get; set; }
 
         /// <summary>
@@ -287,7 +287,7 @@ namespace MudBlazor
 
         public void ActivatePanel(object id, bool ignoreDisabledState = false)
         {
-            var panel = _panels.Where((p) => p.ID == id).FirstOrDefault();
+            var panel = _panels.Where((p) => Equals(p.ID, id)).FirstOrDefault();
             if (panel != null)
                 ActivatePanel(panel, null, ignoreDisabledState);
         }
@@ -365,7 +365,7 @@ namespace MudBlazor
             .AddStyle("max-height", $"{MaxHeight}px", MaxHeight != null)
             .Build();
 
-        protected string SliderStyle => RightToLeft ? 
+        protected string SliderStyle => RightToLeft ?
             new StyleBuilder()
             .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
             .AddStyle("right", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
@@ -498,7 +498,7 @@ namespace MudBlazor
 
             if (RightToLeft && scrollValue > 0) scrollValue = 0;
 
-            if(!RightToLeft && scrollValue < 0) scrollValue = 0;
+            if (!RightToLeft && scrollValue < 0) scrollValue = 0;
 
             _scrollPosition = scrollValue;
 

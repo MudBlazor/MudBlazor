@@ -48,12 +48,13 @@ namespace MudBlazor
         /// Gets or Sets if bottom bar with Delimiters musb be visible
         /// </summary>
         [Parameter] public bool ShowDelimiters { get; set; } = true;
-        
+
 
         /// <summary>
         /// Gets or Sets automatic cycle on item collection
         /// </summary>
-        [Parameter] public bool AutoCycle
+        [Parameter]
+        public bool AutoCycle
         {
             get => _autoCycle;
             set
@@ -67,12 +68,13 @@ namespace MudBlazor
                     InvokeAsync(async () => await StopTimerAsync());
             }
         }
-                
+
 
         /// <summary>
         /// Gets or Sets the Auto Cycle time
         /// </summary>
-        [Parameter] public TimeSpan AutoCycleTime
+        [Parameter]
+        public TimeSpan AutoCycleTime
         {
             get => _cycleTimeout;
             set
@@ -113,7 +115,7 @@ namespace MudBlazor
         /// <summary>
         /// Gets or Sets the Template for Delimiters
         /// </summary>
-        [Parameter]  public RenderFragment<bool> DelimiterTemplate { get; set; }
+        [Parameter] public RenderFragment<bool> DelimiterTemplate { get; set; }
 
 
         /// <summary>
@@ -190,7 +192,7 @@ namespace MudBlazor
 
             if (firstRender)
             {
-                SelectedIndexChanged = new EventCallback<int>(this, (Action) SelectionChanged);
+                SelectedIndexChanged = new EventCallback<int>(this, (Action)SelectionChanged);
 
                 _timer = new Timer(_timerElapsed, null, TimeSpan.Zero, AutoCycleTime);
             }

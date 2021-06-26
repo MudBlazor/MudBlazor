@@ -53,13 +53,20 @@ namespace MudBlazor
 
         public static ValueTask<int> MudAddEventListenerAsync<T>(this ElementReference elementReference, DotNetObjectReference<T> dotnet, string @event, string callback, bool stopPropagation = false) where T : class
         {
-            var parameters = dotnet.Value.GetType().GetMethods().First(m => m.Name == callback).GetParameters().Select(p => p.ParameterType);
-            var parameterSpecs = new object[parameters.Count()];
-            for (int i = 0; i < parameters.Count(); ++i)
+            var parameters = dotnet?.Value.GetType().GetMethods().First(m => m.Name == callback).GetParameters().Select(p => p.ParameterType);
+            if (parameters != null)
             {
-                parameterSpecs[i] = GetSerializationSpec(parameters.ElementAt(i));
+                var parameterSpecs = new object[parameters.Count()];
+                for (int i = 0; i < parameters.Count(); ++i)
+                {
+                    parameterSpecs[i] = GetSerializationSpec(parameters.ElementAt(i));
+                }
+                return elementReference.GetJSRuntime()?.InvokeAsync<int>("mudElementRef.addEventListener", elementReference, dotnet, @event, callback, parameterSpecs, stopPropagation) ?? ValueTask.FromResult(0);
             }
-            return elementReference.GetJSRuntime()?.InvokeAsync<int>("mudElementRef.addEventListener", elementReference, dotnet, @event, callback, parameterSpecs, stopPropagation) ?? ValueTask.FromResult(0);
+            else
+            {
+                return new ValueTask<int>(0);
+            }
         }
 
         public static ValueTask MudRemoveEventListenerAsync(this ElementReference elementReference, string @event, int eventId) =>

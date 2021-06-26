@@ -244,7 +244,7 @@ namespace MudBlazor
         }
 
         protected abstract string GetTitleDateString();
-        
+
         protected string FormatTitleDate(DateTime? date)
         {
             return date?.ToString(TitleDateFormat ?? "ddd, dd MMM", Culture) ?? "";
@@ -361,6 +361,12 @@ namespace MudBlazor
         {
             var calendarMonth = Culture.Calendar.GetMonth(month);
             return Culture.DateTimeFormat.AbbreviatedMonthNames[calendarMonth - 1];
+        }
+
+        private string GetMonthName(DateTime month)
+        {
+            var calendarMonth = Culture.Calendar.GetMonth(month);
+            return Culture.DateTimeFormat.MonthNames[calendarMonth - 1];
         }
 
         private string GetMonthClasses(DateTime month)

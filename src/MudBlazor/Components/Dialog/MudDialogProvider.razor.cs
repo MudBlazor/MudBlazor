@@ -56,7 +56,7 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        private void DismissAll()
+        public void DismissAll()
         {
             _dialogs.ToList().ForEach(r => r.Dismiss(DialogResult.Cancel()));
             _dialogs.Clear();

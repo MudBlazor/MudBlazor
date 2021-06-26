@@ -382,7 +382,7 @@ namespace MudBlazor.UnitTests.Components
             var textField = comp.FindComponent<MudTextField<string>>();
             // No button when initialized
             comp.FindAll("button").Should().BeEmpty();
-            
+
             // Button shows after entering text
             comp.Find("input").Change("text");
             textField.Instance.Value.Should().Be("text");

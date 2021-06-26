@@ -67,7 +67,7 @@ namespace MudBlazor
             else
             {
                 _checked = b;
-                if(IsCheckable)
+                if (IsCheckable)
                     InvokeAsync(StateHasChanged);
             }
         }

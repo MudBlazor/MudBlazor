@@ -6,7 +6,7 @@
     <span class="mud-switch-span mud-flip-x-rtl">
         <span class="@SwitchClassname">
             <span class="mud-switch-button">
-                <input @attributes="UserAttributes" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
+                <input @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(Disabled.ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@Disabled" @onclick:preventDefault="@ReadOnly"/>
                 <span class="mud-switch-thumb"></span>
             </span>
         </span>

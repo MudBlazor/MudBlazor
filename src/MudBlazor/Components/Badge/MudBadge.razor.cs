@@ -26,7 +26,7 @@ namespace MudBlazor
         .Build();
 
         [CascadingParameter] public bool RightToLeft { get; set; }
-        
+
         /// <summary>
         /// The color of the badge.
         /// </summary>

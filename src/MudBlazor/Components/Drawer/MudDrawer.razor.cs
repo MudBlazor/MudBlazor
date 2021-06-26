@@ -124,7 +124,7 @@ namespace MudBlazor
         /// Show overlay for responsive and temporary drawers.
         /// </summary>
         [Parameter] public bool DisableOverlay { get; set; } = false;
-        
+
         /// <summary>
         /// Preserve open state for responsive drawer when window resized above <see cref="Breakpoint" />.
         /// </summary>
@@ -258,11 +258,8 @@ namespace MudBlazor
                     StateHasChanged();
                 }
 
-                if (_dotNetRef != null)
-                {
-                    _mouseEnterListenerId = await _drawerRef.MudAddEventListenerAsync(_dotNetRef, "mouseenter", nameof(OnMouseEnter), true);
-                    _mouseLeaveListenerId = await _drawerRef.MudAddEventListenerAsync(_dotNetRef, "mouseleave", nameof(OnMouseLeave), true);
-                }
+                _mouseEnterListenerId = await _drawerRef.MudAddEventListenerAsync(_dotNetRef, "mouseenter", nameof(OnMouseEnter), true);
+                _mouseLeaveListenerId = await _drawerRef.MudAddEventListenerAsync(_dotNetRef, "mouseleave", nameof(OnMouseLeave), true);
             }
 
             await base.OnAfterRenderAsync(firstRender);

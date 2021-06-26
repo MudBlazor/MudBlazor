@@ -44,6 +44,8 @@ namespace MudBlazor
 
         public Task<DialogResult> Result => _resultCompletion.Task;
 
+        public bool AreParametersRendered { get; set; }
+
         internal void InjectDialog(object inst)
         {
             Dialog = inst;
