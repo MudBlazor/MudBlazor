@@ -1,6 +1,6 @@
 ﻿#mudads {
     margin-bottom: 50px;
-    min-height: 112px;
+    min-height: 100px;
 }
 
 #carbonads * {
@@ -14,7 +14,8 @@
 
 #carbonads {
     display: flex;
-    max-width: 330px;
+    width: 100%;
+    max-width: 400px;
     background-color: var(--mud-palette-surface);
     box-shadow: var(--mud-elevation-25);
     border-radius: var(--mud-default-borderradius);
