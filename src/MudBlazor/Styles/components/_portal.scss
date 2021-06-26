@@ -12,9 +12,15 @@
 
 .portal-anchor {
     position: absolute;
-    pointer-events: none;
 
     & * {
         pointer-events: all;
     }
+}
+.portal-anchor-hoverable:hover>.mud-popover{
+    visibility:visible;
+    opacity:1;
+    z-index: var(--mud-zindex-popover);
+    pointer-events:all;
+   
 }

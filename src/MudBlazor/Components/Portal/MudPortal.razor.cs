@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
@@ -20,7 +21,11 @@ namespace MudBlazor
 
         [Inject] public IScrollManager ScrollManager { get; set; }
 
-        [Parameter] public bool Autopositioned { get; set; } = false;
+        [Inject] public IJSRuntime JS { get; set; }
+
+        [CascadingParameter] public MouseEvent ActivationEvent { get; set; }
+
+        [Parameter] public bool Autopositioned { get; set; } = true;
 
         [Parameter] public RenderFragment ChildContent { get; set; }
 
@@ -28,20 +33,19 @@ namespace MudBlazor
 
         [Parameter] public bool IsFixed { get; set; }
 
+        [Parameter] public bool OpenOnHover { get; set; }
+
         [Parameter] public bool LockScroll { get; set; }
 
         [Parameter] public Type Type { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-
             if (IsVisible)
             {
-                await ConfigureAnchorRect();
-                await ConfigureCssPosition();
-                CorrectBoundaries();
-                ConfigurePortalItem();
-                await AddItem();
+                await AddOrUpdateItem();
+              
+                if (Autopositioned) WindowResizeListener.OnResized += OnWindowResize;               
             }
             else
             {
@@ -50,11 +54,17 @@ namespace MudBlazor
             }
         }
 
-        private async Task AddItem()
+        private async Task AddOrUpdateItem()
         {
+            await ConfigureRects();
+            await ConfigureCssPosition();
+            CorrectAnchorBoundaries();
+            ConfigurePortalItem();
+
             Portal.AddOrUpdate(_portalItem);
+
             if (LockScroll) await ScrollManager.LockScrollAsync();
-            if (Autopositioned) WindowResizeListener.OnResized += OnWindowResize;
+
         }
 
         private async Task RemoveItem()
@@ -64,8 +74,9 @@ namespace MudBlazor
             if (Autopositioned) WindowResizeListener.OnResized -= OnWindowResize;
         }
 
-        private async Task ConfigureAnchorRect()
+        private async Task ConfigureRects()
         {
+            await JS.InvokeVoidAsync("window.setStylePositionInParent", _portalRef, "relative");
             _portalItem.AnchorRect = await _portalRef.MudGetBoundingClientRectAsync();
             _portalItem.FragmentRect = await _fragmentRef.MudGetClientRectFromFirstChildAsync();
 
@@ -73,21 +84,21 @@ namespace MudBlazor
 
         private async Task ConfigureCssPosition()
         {
+            if (Type == typeof(MudTooltip)) return;
+
             var isFixed = await _portalRef.MudHasFixedAncestorsAsync();
-            _portalItem.CssPosition = isFixed && Type != typeof(MudTooltip)
-                ? "fixed"
-                : "absolute";
+            if (isFixed) _portalItem.CssPosition = "fixed";
 
         }
 
-        private void CorrectBoundaries()
+        private void CorrectAnchorBoundaries()
         {
             if (_portalItem.FragmentRect is null || _portalItem.AnchorRect is null) return;
 
             if (_portalItem.FragmentRect.IsOutsideBottom)
             {
                 _portalItem.AnchorRect.Top -=
-                   2 * (_portalItem.FragmentRect.Top - _portalItem.AnchorRect.Bottom)
+                   2 * ( (_portalItem.FragmentRect.Top - _portalItem.AnchorRect.Bottom))
                     + _portalItem.AnchorRect.Height
                     + _portalItem.FragmentRect.Height;
 
@@ -95,7 +106,7 @@ namespace MudBlazor
             if (_portalItem.FragmentRect.IsOutsideTop)
             {
                 _portalItem.AnchorRect.Top +=
-                    2 * (_portalItem.AnchorRect.Top - _portalItem.FragmentRect.Bottom)
+                    2 * (Math.Abs(_portalItem.AnchorRect.Top - _portalItem.FragmentRect.Bottom))
                   + _portalItem.AnchorRect.Height
                   + _portalItem.FragmentRect.Height;
 
@@ -105,7 +116,7 @@ namespace MudBlazor
                 _portalItem.AnchorRect.Left +=
                      FragmentIsAboveorBelowAnchor
                         ? _portalItem.AnchorRect.Left - _portalItem.FragmentRect.Left
-                        : 2 * (_portalItem.AnchorRect.Left - _portalItem.FragmentRect.Right)
+                        : 2 * (Math.Abs(_portalItem.AnchorRect.Left - _portalItem.FragmentRect.Right))
                             + _portalItem.FragmentRect.Width
                             + _portalItem.AnchorRect.Width;
 
@@ -119,7 +130,6 @@ namespace MudBlazor
                         + _portalItem.FragmentRect.Width
                         + _portalItem.AnchorRect.Width;
             }
-
         }
 
         private bool FragmentIsBelowAnchor
@@ -128,22 +138,15 @@ namespace MudBlazor
         private bool FragmentIsAboveAnchor
             => _portalItem.FragmentRect.Bottom < _portalItem.AnchorRect.Top;
 
-        private bool FragmentIsToTheRightOfAnchor
-            => _portalItem.FragmentRect.Left > _portalItem.AnchorRect.Right;
-
-        private bool FragmentIsToTheLeftOfAnchor
-            => _portalItem.FragmentRect.Right < _portalItem.AnchorRect.Left;
-
-
         private bool FragmentIsAboveorBelowAnchor
             => FragmentIsAboveAnchor || FragmentIsBelowAnchor;
-
 
         private void ConfigurePortalItem()
         {
             _portalItem.Id = _id;
             _portalItem.Fragment = ChildContent;
             _portalItem.Type = Type;
+            _portalItem.OpenOnHover = ActivationEvent == MouseEvent.MouseOver;
         }
 
         //warning this listenir doesn't work too well, create other
@@ -151,13 +154,14 @@ namespace MudBlazor
         {
             Task.Run(async () =>
            {
-               await ConfigureAnchorRect();
-               await Task.Delay(0);
-               if (IsVisible)
+               if (IsVisible || OpenOnHover)
                {
-                   Portal.AddOrUpdate(_portalItem);
+                   await AddOrUpdateItem();
                }
-               else { Portal.Remove(_portalItem); }
+               else
+               {
+                   await RemoveItem();
+               }
            }).AndForget();
         }
 

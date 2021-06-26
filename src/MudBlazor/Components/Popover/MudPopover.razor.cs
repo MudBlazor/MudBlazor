@@ -47,6 +47,7 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Open { get; set; }
 
+        [Parameter] public bool OpenOnHover { get; set; }
         /// <summary>
         /// Sets the direction the popover will start from relative to its parent.
         /// </summary>

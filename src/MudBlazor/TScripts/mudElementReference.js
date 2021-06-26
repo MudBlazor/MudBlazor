@@ -75,7 +75,7 @@
             element.select();
         }
     }
-
+    
     getClientRectFromFirstChild(element) {
         if (!element) return;
         let child = element.children && element.children[0];
@@ -83,18 +83,18 @@
     }
 
     getBoundingClientRect (element) {
-        if (element)
-        {
-            var rect = JSON.parse(JSON.stringify(element.getBoundingClientRect()));
-            
-            rect.scrollY = window.scrollY || document.documentElement.scrollTop;
-            rect.scrollX = window.scrollX || document.documentElement.scrollLeft;
+        if (!element) return;      
 
-            rect.windowHeight = window.innerHeight;
-            rect.windowWidth = window.innerWidth;
-            return rect;
-        }
-        return null;
+        var rect = JSON.parse(JSON.stringify(element.getBoundingClientRect()));
+
+        rect.scrollY = window.scrollY || document.documentElement.scrollTop;
+        rect.scrollX = window.scrollX || document.documentElement.scrollLeft;
+
+        rect.windowHeight = window.innerHeight;
+        rect.windowWidth = window.innerWidth;
+        return rect;
+        
+        
     }
 
 

@@ -8,7 +8,7 @@ namespace MudBlazor
 {
     public partial class MudTooltip : MudComponentBase
     {
-        private ElementReference _tooltipRef;
+     
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
             .Build();
@@ -38,8 +38,6 @@ namespace MudBlazor
                 return result;
             }
         }
-
-        [Inject] public IBrowserWindowSizeProvider WindowSize { get; set; }
 
         /// <summary>
         /// Sets the text to be displayed inside the tooltip.

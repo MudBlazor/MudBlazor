@@ -9,7 +9,7 @@
     {
         <MudPortal Type=@this.GetType() IsVisible=@IsVisible OffsetY="true" Placement=@Placement PortalType=@this.GetType()>
 
-            <div class=@Classname data-placement=@Placement @ref=@_tooltipRef style=@Stylename>
+            <div class=@Classname  style=@Stylename>
                 @if (TooltipContent != null)
                 {
                     @TooltipContent 

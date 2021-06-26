@@ -24,6 +24,7 @@
                Disabled="@Disabled"
                DisableRipple="@DisableRipple"
                DisableElevation="@DisableElevation"
+              
                @onclick="@ToggleMenu">
             @Label
         </MudButton>
@@ -32,14 +33,15 @@
     {
         <MudIconButton Icon="@Icon" Color="@Color" Size="@Size" Disabled="@Disabled" DisableRipple="@DisableRipple" @onclick="@ToggleMenu" />
     }
-   
-        <MudPopover Open="@_isOpen" Class="@MenuClassname" MaxHeight="@MaxHeight" Style="@PopoverStyle" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
+
+        <MudPopover Open="@_isOpen" OpenOnHover="@(ActivationEvent == MouseEvent.MouseOver)" Class="@MenuClassname" MaxHeight="@MaxHeight" Style="@PopoverStyle" Direction="@Direction" OffsetX="@OffsetX" OffsetY="@OffsetY">
             <CascadingValue Value="@this">
                 <MudList Clickable="true" Dense="@Dense">
                     @ChildContent
                 </MudList>
             </CascadingValue>
         </MudPopover>
+
  
     <MudOverlay Visible="@(_isOpen && ActivationEvent != MouseEvent.MouseOver)" OnClick="@ToggleMenu" LockScroll="false" />
 </div>

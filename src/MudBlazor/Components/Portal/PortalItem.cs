@@ -17,5 +17,7 @@ namespace MudBlazor.Services
         public string CssPosition { get; set; } = "absolute";
 
         public Type Type { get; set; }
+
+        public bool OpenOnHover { get; set; }
     }
 }

@@ -12,19 +12,23 @@ namespace MudBlazor
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         [Parameter] public PortalItem Item { get; set; }
+        private string AnchorClass =>
+            new CssBuilder("portal-anchor")
+            .AddClass("portal-anchor-hoverable", Item.OpenOnHover)
+            .Build();
 
-        private string  AnchorStyle =>
+        private string AnchorStyle =>
             new StyleBuilder()
-            .AddStyle("top", Item.CssPosition == "fixed" 
-                ? Item.AnchorRect.Top.ToPixels()
-                : Item.AnchorRect.AbsoluteTop.ToPixels())
+            .AddStyle("top", Item.CssPosition == "fixed"
+                ? Item.AnchorRect?.Top.ToPixels()
+                : Item.AnchorRect?.AbsoluteTop.ToPixels())
             .AddStyle("left", Item.CssPosition == "fixed"
-                ? Item.AnchorRect.Left.ToPixels() 
-                : Item.AnchorRect.AbsoluteLeft.ToPixels())
-             .AddStyle("height", Item.AnchorRect.Height.ToPixels())
-            .AddStyle("width", Item.AnchorRect.Width.ToPixels())
+                ? Item.AnchorRect?.Left.ToPixels()
+                : Item.AnchorRect?.AbsoluteLeft.ToPixels())
+             .AddStyle("height", Item.AnchorRect?.Height.ToPixels())
+            .AddStyle("width", Item.AnchorRect?.Width.ToPixels())
             .AddStyle("position", Item.CssPosition)
-            .AddStyle("z-index", new ZIndex().Popover.ToString(), Item.CssPosition == "fixed")
+            .AddStyle("z-index", new ZIndex().Popover.ToString(), Item.CssPosition == "fixed" || Item.OpenOnHover)
             .Build();
     }
 }
