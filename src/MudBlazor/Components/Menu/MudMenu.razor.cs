@@ -116,6 +116,7 @@ namespace MudBlazor
 
         public string PopoverStyle { get; set; }
 
+
         public void CloseMenu()
         {
             _isOpen = false;
@@ -160,6 +161,15 @@ namespace MudBlazor
         public void Activate(object activator, MouseEventArgs args)
         {
             ToggleMenu(args);
+        }
+
+        private void HandleMouseEnter()
+        {
+            if (Disabled)
+                return;
+           
+            _isOpen = true;
+            StateHasChanged();
         }
     }
 }
