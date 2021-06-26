@@ -17,7 +17,7 @@
     width: 100%;
     max-width: 400px;
     background-color: var(--mud-palette-surface);
-    box-shadow: var(--mud-elevation-25);
+    box-shadow: 0 1px 3px hsla(0, 0%, 0%, .10);
     border-radius: var(--mud-default-borderradius);
     z-index: 100;
     animation: mud-animation-fadein ease .15s;
