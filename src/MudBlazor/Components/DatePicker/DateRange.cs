@@ -12,15 +12,12 @@ namespace MudBlazor
 
         public string ToString(Converter<DateTime?, string> converter)
         {
-            if (Start == null || End == null)
-                return "";
-
-            return RangeConverter<DateTime>.Join(converter.Set(Start.Value), converter.Set(End.Value));
+            return Start == null || End == null ? string.Empty : RangeConverter<DateTime>.Join(converter.Set(Start.Value), converter.Set(End.Value));
         }
 
         public string ToIsoDateString()
         {
-            return RangeConverter<DateTime>.Join(Start.ToIsoDateString(), End.ToIsoDateString());
+            return Start == null || End == null ? string.Empty : RangeConverter<DateTime>.Join(Start.ToIsoDateString(), End.ToIsoDateString());
         }
 
         public static bool TryParse(string value, Converter<DateTime?, string> converter, out DateRange date)
