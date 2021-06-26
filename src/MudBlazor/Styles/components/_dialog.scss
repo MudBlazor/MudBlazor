@@ -14,7 +14,25 @@
     &.mud-dialog-topcenter {
         align-items: flex-start;
         justify-content: center;
-        margin-top: 32px;
+        padding-top: 32px;
+    }
+
+    &.mud-dialog-bottomcenter {
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 32px;
+    }
+
+    &.mud-dialog-centerright {
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 32px;
+    }
+
+    &.mud-dialog-centerleft {
+        align-items: center;
+        justify-content: flex-start;
+        padding-left: 32px;
     }
 
     &.mud-dialog-topleft .mud-dialog {
