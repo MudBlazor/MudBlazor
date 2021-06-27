@@ -98,7 +98,7 @@ namespace MudBlazor.UnitTests.Components
             // type 3 characters and check if it has toggled the menu
             select.Find("input").Input("ala");
             await Task.Delay(200);
-            var menu = comp.Find("div.mud-popover");
+            var menu = comp.Find(".portal");
             comp.WaitForAssertion(() => menu.ClassList.Should().Contain("mud-popover-open"));
 
             // type 2 characters and check if it has toggled the menu
