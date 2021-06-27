@@ -4,8 +4,8 @@
 <DocsPage MaxWidth="MaxWidth.Large">
     <DocsPageHeader Title="Converters" SubTitle="Converters are essential for binding input elements to your model.">
         <Description>
-            When you bind a non-string value to a <CodeInline Tag="true">MudTextField<Tag>T</Tag></CodeInline> or any other input element that supports a value of type T then a <CodeInline>Converter</CodeInline>
-            converts that value to string for display and converts the user's input back to T. This happens automatically without you having to do anything special. <br/>
+            When you bind a non-string value to a <CodeInline Tag="true">MudTextField<Tag>T</Tag></CodeInline> or any other input element that supports a value of type T, then a <CodeInline>Converter</CodeInline>
+            converts that value to <CodeInline>string</CodeInline> for display and converts the user's input back to T. This happens automatically without you having to do anything special. <br/>
             MudBlazor's <CodeInline>DefaultConverter<Tag>T</Tag></CodeInline> is pretty capable as you can see below but sometimes 
             you'll want to use your own conversion functions. This page is all about that.
         </Description>
@@ -359,7 +359,7 @@
                 <Title>DateConverter</Title>
                 <Description>
                     <MudText>
-                        By default the <CodeInline>DefaultConverter</CodeInline> uses your local culture settings. If you want to change that you can either set the <CodeInline>Culture</CodeInline> of individual inputs or converters, or change it globally
+                        By default, the <CodeInline>DefaultConverter</CodeInline> uses your local culture settings. If you want to change that, you can either set the <CodeInline>Culture</CodeInline> of individual inputs or converters, or change it globally
                         by setting <CodeInline>Converters.DefaultCulture</CodeInline> to your desired <CodeInline>CultureInfo</CodeInline> at application start.
                     </MudText>
                     <MudText Class="mt-4">
@@ -380,7 +380,7 @@
             <SectionHeader>
                 <Title>Custom Binding Converters</Title>
                 <Description>
-                    If you need some really special binding conversion it is very easy to plug in your own converter.
+                    If you need some really special binding conversion, it is very easy to plug in your own converter.
                     Just create a <CodeInline>Converter<Tag>T</Tag></CodeInline> and set the <CodeInline>SetFunc</CodeInline> and the <CodeInline>GetFunc</CodeInline>.
                     <MudText>
                         Type in the textfield to set the switch or flip the switch to set the text:
