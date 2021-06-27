@@ -10,7 +10,7 @@
     <MudLayout RightToLeft="@_rightToLeft">
         <MudAppBar Elevation="25">
             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-            <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text d-none d-md-flex">Mudblazor</MudText>
+            <MudText Typo="Typo.h5" Class="mudblazor-appbar-brand-text d-none d-md-flex">MudBlazor</MudText>
             <MudSpacer />
             <MudAutocomplete T="ApiLinkServiceEntry" Placeholder="Search" SearchFunc="Search" Variant="Variant.Outlined" ValueChanged="OnSearchResult" Class="docs-search-bar">
                 <ItemTemplate Context="result">

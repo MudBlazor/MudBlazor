@@ -16,7 +16,7 @@ namespace MudBlazor
         [Parameter] public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, the input will be read only.
+        /// If true, the input will be read-only.
         /// </summary>
         [Parameter] public bool ReadOnly { get; set; }
 
