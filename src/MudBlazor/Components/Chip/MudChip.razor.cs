@@ -112,7 +112,7 @@ namespace MudBlazor
         [Parameter] public bool ForceLoad { get; set; }
 
         /// <summary>
-        /// If true, this chip is selected per default if used in a ChipSet. 
+        /// If true, this chip is selected by default if used in a ChipSet. 
         /// </summary>
         [Parameter] public bool Default { get; set; }
 
