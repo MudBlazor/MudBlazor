@@ -1,7 +1,8 @@
-﻿
-<MudContainer MaxWidth="@MaxWidth">
+﻿<MudContainer MaxWidth="@MaxWidth">
     <div class="docs-page">
-        @ChildContent
+        <CascadingValue Value="this" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
     </div>
     <div class="docs-contents">
         <MudDrawer Open="true" Anchor="Anchor.End" Variant="DrawerVariant.Temporary" DisableOverlay="true" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent" Class="pt-6 pr-3">
@@ -9,15 +10,13 @@
                 Contents
             </MudText>
             <MudNavMenu Class="pl-4">
-                <MudNavLink Match="NavLinkMatch.All" Class="docs-contents-navlink" Href="/components/button#filledbuttons">Filled Buttons</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Class="docs-contents-navlink" Href="/components/button#textbuttons">Text Buttons</MudNavLink>
-                <MudNavLink Match="NavLinkMatch.All" Class="docs-contents-navlink" Href="/components/button#outlinedbuttons">Outlined Buttons</MudNavLink>
+                @foreach(var section in _sections)
+                {
+                    <MudNavLink Match="NavLinkMatch.All" Class="docs-contents-navlink" Href="@section.Href">
+                        @section.Title
+                    </MudNavLink>
+                }
             </MudNavMenu>
         </MudDrawer>
     </div>
 </MudContainer>
-@code {
-    [Parameter] public RenderFragment ChildContent { get; set; }
-
-    [Parameter] public MaxWidth MaxWidth { get; set; } = MaxWidth.Medium;
-}
