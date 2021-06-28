@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using MudBlazor.Docs.Models;
+using MudBlazor.Docs.Extensions;
 
 namespace MudBlazor.Docs.Components
 {
@@ -25,7 +26,7 @@ namespace MudBlazor.Docs.Components
 
         protected override void OnInitialized()
         {
-            _pageuri = NavigationManager.Uri;
+            _pageuri = $"{NavigationManagerExtensions.GetSection(NavigationManager)}/{NavigationManagerExtensions.GetComponentLink(NavigationManager)}";
             NavigationManager.LocationChanged += TryFragmentNavigation;
         }
 
