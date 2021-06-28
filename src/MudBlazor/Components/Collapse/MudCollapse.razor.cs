@@ -129,8 +129,7 @@ namespace MudBlazor
             {
                 _isRendered = true;
                 await UpdateHeight();
-                if (_dotNetRef != null)
-                    _listenerId = await _container.MudAddEventListenerAsync(_dotNetRef, "animationend", nameof(AnimationEnd));
+                _listenerId = await _container.MudAddEventListenerAsync(_dotNetRef, "animationend", nameof(AnimationEnd));
             }
             else if (_updateHeight && (_state == CollapseState.Entering || _state == CollapseState.Exiting))
             {

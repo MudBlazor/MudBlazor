@@ -7,6 +7,6 @@
     {
         <MudText Typo="Typo.body1">@ChildContent</MudText>
     }
-    <input class="@InputClassName" @attributes="UserAttributes" type="range" min="@_min" max="@_max" step="@_step" disabled="@Disabled"
+    <input class="@InputClassName" aria-valuenow="@Value" aria-valuemin="@_min" aria-valuemax="@_max" role="slider" @attributes="UserAttributes" type="range" min="@_min" max="@_max" step="@_step" disabled="@Disabled"
                     @bind-value="@Text" @bind-value:event="@((Immediate ? "oninput" : "onchange"))"/>
 </div>

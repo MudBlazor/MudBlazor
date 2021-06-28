@@ -3,15 +3,15 @@
 
 
 <div class="@Class">
-    @if (!string.IsNullOrEmpty(Text))
+    @if (!string.IsNullOrWhiteSpace(Text))
     {
         <MudText Color="@Color">@Text</MudText>
     }
-    else if (!string.IsNullOrEmpty(Icon))
+    else if (!string.IsNullOrWhiteSpace(Icon))
     {
         @if (AdornmentClick.HasDelegate)
         {
-            <MudIconButton Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="Size.Medium" Color="@Color" />
+            <MudIconButton Icon="@Icon" OnClick="@AdornmentClick" Edge="@Edge" Size="@Size" Color="@Color" />
         }
         else
         {
@@ -26,7 +26,7 @@
     [Parameter] public string Text { get; set; }
     [Parameter] public string Icon { get; set; }
     [Parameter] public Edge Edge { get; set; }
-    [Parameter] public Size Size { get; set; }
+    [Parameter] public Size Size { get; set; } = Size.Medium;
     [Parameter] public Color Color { get; set; } = Color.Default;
 
     [Parameter] public EventCallback<MouseEventArgs> AdornmentClick { get; set; }

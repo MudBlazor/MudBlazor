@@ -12,7 +12,7 @@ namespace MudBlazor
     public partial class MudAutocomplete<T> : MudBaseInput<T>, IDisposable
     {
         [Inject] IScrollManager ScrollManager { get; set; }
-        
+
         private bool _dense;
 
         protected string Classname =>
@@ -49,9 +49,9 @@ namespace MudBlazor
         /// <summary>
         /// If true, compact vertical padding will be applied to all Autocomplete items.
         /// </summary>
-        [Parameter] 
-        public bool Dense 
-        { 
+        [Parameter]
+        public bool Dense
+        {
             get { return _dense; }
             set
             {

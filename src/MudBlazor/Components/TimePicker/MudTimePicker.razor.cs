@@ -64,7 +64,7 @@ namespace MudBlazor
         [Parameter] public OpenTo OpenTo { get; set; } = OpenTo.Hours;
 
         /// <summary>
-        /// Choose the edition mode. By default you can edit hours and minutes.
+        /// Choose the edition mode. By default, you can edit hours and minutes.
         /// </summary>
         [Parameter] public TimeEditMode TimeEditMode { get; set; } = TimeEditMode.Normal;
 
@@ -76,7 +76,8 @@ namespace MudBlazor
         /// <summary>
         /// If true, sets 12 hour selection clock.
         /// </summary>
-        [Parameter] public bool AmPm
+        [Parameter]
+        public bool AmPm
         {
             get => _amPm;
             set

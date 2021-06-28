@@ -45,7 +45,7 @@ namespace MudBlazor
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
-        [Parameter]  public Color Color { get; set; } = Color.Default;
+        [Parameter] public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// The transition effect of the component.

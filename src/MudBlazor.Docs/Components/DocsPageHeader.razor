@@ -24,7 +24,7 @@
     <Link Rel="canonical" Href="@($"https://mudblazor.com{@ComponentLink}")" />
 }
 
-<div class="docs-page-header">
+<div class="docs-page-header mb-12">
     <MudText Typo="@Typo.h3">@Title</MudText>
     <MudText>@GetSubTitle() @Description</MudText>
     @if (!IsApiPage && GetComponentTypeName() != null)
@@ -36,9 +36,25 @@
         <MudText Typo="@Typo.body2">Check out the <MudLink Href="@ComponentLink">Examples</MudLink> for this component.</MudText>
     }
 </div>
+<div id="mudads">
+    @if (RenderAds)
+    { 
+        <MudElement HtmlTag="script" async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESDLK3E&placement=mudblazorcom" id="_carbonads_js"></MudElement>
+    }
+</div>
 
 @code {
 
+    public bool RenderAds { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            RenderAds = true;
+            StateHasChanged();
+        }
+    }
 
     [Inject] public NavigationManager NavigationManager { get; set; }
 

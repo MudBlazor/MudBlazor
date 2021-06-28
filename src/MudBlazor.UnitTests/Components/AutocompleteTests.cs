@@ -406,7 +406,7 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => autocomplete.IsOpen.Should().BeFalse());
 
             // Tab closes the drop-down and does not select the selected value (California)
-            // because SelectValueOnTab is false per default
+            // because SelectValueOnTab is false by default
             autocomplete.Value.Should().Be("Alabama");
         }
 
@@ -417,7 +417,7 @@ namespace MudBlazor.UnitTests.Components
             Console.WriteLine(comp.Markup);
             // select elements needed for the test
             var autocompletecomp = comp.FindComponent<MudAutocomplete<string>>();
-            autocompletecomp.SetParam(x=>x.SelectValueOnTab, true);
+            autocompletecomp.SetParam(x => x.SelectValueOnTab, true);
             var autocomplete = autocompletecomp.Instance;
 
             // Should be closed

@@ -2,7 +2,7 @@
 
 
 <DocsPage>
-    <DocsPageHeader Title="Select" SubTitle="Select fields allows users to provide information from a list of options." />
+    <DocsPageHeader Title="Select" SubTitle="Select fields allow users to provide information from a list of options." />
     <DocsPageContent>
         <DocsPageSection>
             <SectionHeader>
@@ -33,8 +33,8 @@
                 <Title>Multiselect</Title>
                 <SubTitle>Default MultiSelection Text</SubTitle>
                 <Description>
-                    If you set <CodeInline>MultiSelection="true"</CodeInline> you can select multiple values. The selected options are returned as concatenated comma delimited
-                    string via <CodeInline>Value</CodeInline> and as a Hashset&lt;string> via <CodeInline>SelectedValues</CodeInline>.
+                    If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values. The selected options are returned as concatenated comma-delimited
+                    string via <CodeInline>Value</CodeInline> and as a <CodeInline>HashSet&lt;string></CodeInline> via <CodeInline>SelectedValues</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
@@ -46,7 +46,7 @@
             <SectionHeader>
                 <SubTitle>Customized MultiSelection Text</SubTitle>
                 <Description>
-                    If you set <CodeInline>MultiSelection="true"</CodeInline> you can select multiple values.
+                    If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values.
                     By defining the <CodeInline>MultiSelectionTextFunc</CodeInline> method, the returned selection can be fully customized.
                 </Description>
             </SectionHeader>
@@ -95,7 +95,7 @@
             <SectionHeader>
                 <Title>Value presentation</Title>
                 <Description>
-                    Select uses the render fragements you specify for the items to display the selected value (if any). If you don't specify render fragments the value will be displayed as text. Also, if you have render fragments
+                    Select uses the render fragments you specify for the items to display the selected value (if any). If you don't specify render fragments, the value will be displayed as text. Also, if you have render fragments
                     but the value that has been set is not in the list, it will also be displayed as text.
                 </Description>
             </SectionHeader>
@@ -112,9 +112,9 @@
             <Title>Select with custom converter</Title>
             <Description>
                 Select has a built-in <CodeInline>DefaultConverter</CodeInline> which converts the values from any primitive type to string for presentation of the selected value. 
-                You can customize that converter as described under <MudLink Href="/features/converters">Converters</MudLink>. Here we use <CodeInline>ToStringFunc</CodeInline> to 
+                You can customize that converter as described under <MudLink Href="/features/converters">Converters</MudLink>. Here, we use <CodeInline>ToStringFunc</CodeInline> to 
                 convert objects of type Pizza to their string representation. Note how the <CodeInline Tag="true">MudSelectItem</CodeInline> uses that string representation if you don't 
-                specify a render fragement.
+                specify a render fragment.
             </Description>
         </SectionHeader>
         <SectionContent Outlined="true" DisplayFlex="true">
