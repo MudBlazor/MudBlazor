@@ -3,6 +3,18 @@
     <div class="docs-page">
         @ChildContent
     </div>
+    <div class="docs-contents">
+        <MudDrawer Open="true" Anchor="Anchor.End" Variant="DrawerVariant.Temporary" DisableOverlay="true" ClipMode="DrawerClipMode.Always" Elevation="0" Color="Color.Transparent" Class="pt-6 pr-3">
+            <MudText Typo="Typo.h6" GutterBottom="true">
+                Contents
+            </MudText>
+            <MudNavMenu Class="pl-4">
+                <MudNavLink Match="NavLinkMatch.All" Class="docs-contents-navlink" Href="/components/button#filledbuttons">Filled Buttons</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Class="docs-contents-navlink" Href="/components/button#textbuttons">Text Buttons</MudNavLink>
+                <MudNavLink Match="NavLinkMatch.All" Class="docs-contents-navlink" Href="/components/button#outlinedbuttons">Outlined Buttons</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+    </div>
 </MudContainer>
 @code {
     [Parameter] public RenderFragment ChildContent { get; set; }
