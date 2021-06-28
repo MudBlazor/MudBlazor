@@ -4,8 +4,11 @@
     <DocsPageHeader Title="Display" SubTitle="The display classes help you set the display type or change it upon viewport." />
     <DocsPageContent>
         <DocsPageSection>
-            <MudText Typo="Typo.h4" GutterBottom="true">How it works</MudText>
-            <MudText>Specify the element's <CodeInline>display</CodeInline> property, the classes can be used with all breakpoints from <CodeInline>xs</CodeInline> to <CodeInline>xl</CodeInline>.</MudText>
+            <SectionHeader Title="How it works">
+                <Description>
+                    <MudText>Specify the element's <CodeInline>display</CodeInline> property, the classes can be used with all breakpoints from <CodeInline>xs</CodeInline> to <CodeInline>xl</CodeInline>.</MudText>
+                </Description>
+            </SectionHeader>
             <div class="d-flex">
 
             </div>
@@ -55,8 +58,7 @@
             </MudTabs>
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Visibility</Title>
+            <SectionHeader Title="Visibility">
                 <Description>Display an element based on the current viewport. The same breakpoint classes apply from the bottom up. That means <CodeInline>.d-none</CodeInline> applies to all breakpoints, but <CodeInline>.d-md-none</CodeInline> will only apply to <CodeInline>md</CodeInline> and up.</Description>
             </SectionHeader>
             <MudSimpleTable Outlined="true" Hover="true">

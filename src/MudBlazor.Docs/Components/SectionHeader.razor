@@ -17,8 +17,7 @@
 
     [Parameter] public string Class { get; set; }
 
-    [Parameter] public RenderFragment Title { get; set; }
-    [Parameter] public string Title2 { get; set; }
+    [Parameter] public string Title { get; set; }
     [Parameter] public RenderFragment SubTitle { get; set; }
     [Parameter] public RenderFragment Description { get; set; }
 
@@ -28,10 +27,10 @@
     {
         base.OnInitialized();
 
-        if (DocsPage != null && !String.IsNullOrEmpty(Title2))
+        if (DocsPage != null && !String.IsNullOrEmpty(Title))
         {
-            DocsPage.AddSection(Title2);
-            _sectionid = Title2.Replace(" ", "").ToLower();
+            DocsPage.AddSection(Title);
+            _sectionid = Title.Replace(" ", "").ToLower();
         }
     }
 }
