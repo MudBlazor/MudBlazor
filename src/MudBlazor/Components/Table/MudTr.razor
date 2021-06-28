@@ -3,24 +3,16 @@
 @inherits MudComponentBase
 
 <tr class="@Classname" @onclick="@OnRowClicked" style="@Style" @attributes="@UserAttributes">
-    @if (IsCheckable)
+    @if (IsExpandable || IsCheckable)
     {
-        if (IsHeader)
-        {
-            <MudTh>
-                <MudCheckBox @bind-Checked="IsChecked"></MudCheckBox>
-            </MudTh>
-        }
-        else
-        {
-            <MudTd>
-                <MudCheckBox @bind-Checked="IsChecked"></MudCheckBox>
-            </MudTd>
-        }
-    }
-    @if (IsExpandable)
-    {
-        <MudTd/>
+        <MudElement HtmlTag="@(IsHeader ? "Th" : "Td")" Class="mud-table-cell">
+            <div class="d-flex" style="@ActionsStylename">
+                @if (IsCheckable)
+                {
+                    <MudCheckBox @bind-Checked="IsChecked"></MudCheckBox>
+                }
+            </div>
+        </MudElement>
     }
     @ChildContent
     @if (IsEditable)
@@ -41,7 +33,7 @@
                 {
                     <div style="display: flex;">
                         <MudTooltip Text="@Context.Table.CommitEditTooltip">
-                            <MudIconButton Class="pa-0" Icon="@Context.Table.CommitEditIcon" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!Context?.Table.Validator?.IsValid ?? false)"/>
+                            <MudIconButton Class="pa-0" Icon="@Context.Table.CommitEditIcon" OnClick="FinishEdit" Size="@Size.Small" Disabled="@(!(Context?.Table.Validator?.IsValid ?? false))"/>
                         </MudTooltip>
                         @if (Context.Table.CanCancelEdit)
                         {

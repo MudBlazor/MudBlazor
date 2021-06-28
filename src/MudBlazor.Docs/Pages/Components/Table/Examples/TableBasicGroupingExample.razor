@@ -15,18 +15,21 @@
 </style>
 
 <MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
-          Items="@Elements.Take(15)"
+          Items="@Elements"
           GroupBy="@_groupDefinition"
           GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
           GroupFooterClass="mb-4"
+          Dense="_dense"
           MultiSelection="_multiSelect">
     <ColGroup>
         @if (_multiSelect)
         {
-<col style="width: 60px;" />}
+<col style="width: 60px;" />
+}
         @if (_groupDefinition.Expandable)
         {
-<col style="width: 60px;" />}
+<col style="width: 60px;" />
+}
         <col />
         <col />
         <col />
@@ -54,19 +57,21 @@
         <MudTh Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">Total Mass: @context.Items.Sum((e) => e.Molar)</MudTh>
     </GroupFooterTemplate>
 </MudTable>
+<MudSwitch @bind-Checked="_dense" Color="Color.Primary">Dense</MudSwitch>
 <MudSwitch @bind-Checked="_multiSelect" Color="Color.Primary">MultiSelect</MudSwitch>
 <MudSwitch @bind-Checked="_groupDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>
 <MudSwitch @bind-Checked="_groupDefinition.Expandable" Color="Color.Primary">Expandable</MudSwitch>
 
 @code { 
-
+    private bool _dense = false;
     private bool _multiSelect = true;
 
     private TableGroupDefinition<Element> _groupDefinition = new()
     {
-        GroupName = "Position",
-        Indentation = true,
-        Selector = (e) => e.Position
+        GroupName = "Group",
+        Indentation = false,
+        Expandable = false,
+        Selector = (e) => e.Group
     };
 
     private IEnumerable<Element> Elements = new List<Element>();

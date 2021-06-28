@@ -11,14 +11,16 @@ namespace MudBlazor
 {
     public partial class MudTableGroupRow<T> : MudComponentBase
     {
-        protected string HeaderClassname => new CssBuilder()
+        protected string HeaderClassname => new CssBuilder("mud-table-row")
                                 .AddClass(HeaderClass)
                                 .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level - 1}", (GroupDefinition?.Indentation ?? false) && GroupDefinition?.Level > 1).Build();
 
-        protected string FooteerClassname => new CssBuilder()
+        protected string FooterClassname => new CssBuilder("mud-table-row")
                                 .AddClass(FooterClass)
-                                .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level}", GroupDefinition?.Indentation ?? false).Build();
+                                .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level - 1}", (GroupDefinition?.Indentation ?? false) && GroupDefinition?.Level > 1).Build();
 
+        protected string ActionsStylename => new StyleBuilder()
+            .AddStyle("padding-left", "34px", GroupDefinition?.IsParentExpandable ?? false).Build();
 
         [CascadingParameter] public TableContext Context { get; set; }
 

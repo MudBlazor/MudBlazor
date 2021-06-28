@@ -90,6 +90,28 @@ namespace MudBlazor
             }
         }
 
+        internal bool IsParentExpandable
+        {
+            get
+            {
+                if (Parent?.Expandable ?? false)
+                    return true;
+                else
+                    return Parent?.IsParentExpandable ?? false;
+            }
+        }
+
+        internal bool IsThisOrParentExpandable
+        {
+            get
+            {
+                if (Expandable)
+                    return Expandable;
+                else
+                    return Parent?.IsThisOrParentExpandable ?? false;
+            }
+        }
+
         internal int Level
         {
             get

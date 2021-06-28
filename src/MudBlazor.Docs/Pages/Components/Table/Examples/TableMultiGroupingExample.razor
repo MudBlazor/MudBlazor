@@ -15,10 +15,11 @@
 </style>
 
 <MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
-          Items="@Elements.Where(e => e.Position == 12 || e.Position == 13).Take(20)" 
+          Items="@Elements"
           GroupBy="@_groupDefinition"
           GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
           GroupFooterClass="mb-4"
+          Dense="_dense"
           MultiSelection="_multiSelect">
     <HeaderContent>
         <MudTh>Nr</MudTh>
@@ -43,24 +44,27 @@
         <MudTh Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="6">Total Mass: @context.Items.Sum((e) => e.Molar)</MudTh>
     </GroupFooterTemplate>
 </MudTable>
+<MudSwitch @bind-Checked="_dense" Color="Color.Primary">Dense</MudSwitch>
 <MudSwitch @bind-Checked="_multiSelect" Color="Color.Primary">MultiSelect</MudSwitch>
 <MudSwitch @bind-Checked="_groupDefinition.Indentation" Color="Color.Primary">Indentation</MudSwitch>
-<MudSwitch @bind-Checked="_groupDefinition.Expandable" Color="Color.Primary">Expandable</MudSwitch>
+<MudSwitch @bind-Checked="_groupDefinition.Expandable" Color="Color.Primary">Expandable (Root Level)</MudSwitch>
+<MudSwitch @bind-Checked="_groupDefinition.InnerGroup.Expandable" Color="Color.Primary">Expandable (Second Level)</MudSwitch>
 
 @code {
-
+    private bool _dense = false;
     private bool _multiSelect = true;
 
     private TableGroupDefinition<Element> _groupDefinition = new TableGroupDefinition<Element>()
     {
-        GroupName = "Position", 
-        Indentation = true,
-        Selector = (e) => e.Position,
+        GroupName = "Group",
+        Indentation = false,
+        Expandable = false,
+        Selector = (e) => e.Group,
         InnerGroup = new TableGroupDefinition<Element>()
         {
-            GroupName = "Group", 
-            Selector = (e) => e.Group
-
+            GroupName = "Position",
+            Expandable = false,
+            Selector = (e) => e.Position
         }
 
     };
@@ -72,4 +76,5 @@
     {
         Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
+
 }

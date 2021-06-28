@@ -1014,9 +1014,9 @@ namespace MudBlazor.UnitTests.Components
             table.GroupBy.Indentation = true;
             comp.Render();
             tr = comp.FindAll("tr.mud-table-row-group-indented-1").ToArray();
-            tr.Length.Should().Be(13); // 2 LMP1 brands + 3 GTE brands + 2 GT3 Brands + 2 F1 Brands + 4 category footers + no rows ( because they're indented-2 )
+            tr.Length.Should().Be(27); // (4 LMP1 group (h / f) + 6 GTE + 4 GTE + 4 Formula 1) brands groups per category + 9 data rows
             tr = comp.FindAll("tr.mud-table-row-group-indented-2").ToArray();
-            tr.Length.Should().Be(18); // 9 cars + 9 brands footers (3 from Porsche + 2 from Audi + 2 from Ferrari + 2 From Aston Martin)
+            tr.Length.Should().Be(0); // indentation works with Level - 1 class. (level 1 doens't need to be indented)
 
             // expand and collpase groups:
             table.GroupBy.Indentation = false;
