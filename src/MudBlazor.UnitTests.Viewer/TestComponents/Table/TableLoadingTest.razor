@@ -18,11 +18,15 @@
         <MudTd DataLabel="Position">@context.Position</MudTd>
         <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
     </RowTemplate>
+    <NoRecordsContent>No matching records found</NoRecordsContent>
+    <LoadingContent>Loading...</LoadingContent>
 </MudTable>
 
 <MudSwitch id="switch" @bind-Checked="_loading">Show Loading</MudSwitch>
 
 @code {
+    public static string __description__ = "When loading is true a progress bar should appear";
+
     private bool _loading = false;
     private IEnumerable<Element> Elements = new List<Element>();
     private string searchString;

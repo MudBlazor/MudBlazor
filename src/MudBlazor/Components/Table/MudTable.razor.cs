@@ -31,6 +31,16 @@ namespace MudBlazor
         [Parameter] public RenderFragment<T> RowEditingTemplate { get; set; }
 
         /// <summary>
+        /// Defines the table body content when there are no matching records found
+        /// </summary>
+        [Parameter] public RenderFragment NoRecordsContent { get; set; }
+
+        /// <summary>
+        /// Defines the table body content  the table has no rows and is loading
+        /// </summary>
+        [Parameter] public RenderFragment LoadingContent { get; set; }
+
+        /// <summary>
         /// Defines if the table has a horizontal scrollbar.
         /// </summary>
         [Parameter] public bool HorizontalScrollbar { get; set; }
@@ -301,6 +311,10 @@ namespace MudBlazor
             };
 
             _server_data = await ServerData(state);
+
+            if (CurrentPage * RowsPerPage > _server_data.TotalItems)
+                CurrentPage = 0;
+
             Loading = false;
             StateHasChanged();
             Context?.PagerStateHasChanged?.Invoke();

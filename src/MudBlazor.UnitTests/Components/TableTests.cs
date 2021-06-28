@@ -131,7 +131,7 @@ namespace MudBlazor.UnitTests.Components
         /// Check if if empty row text is correct
         /// </summary>
         [Test]
-        public void TableEmptyRowTest()
+        public void TableHeadContentTest()
         {
             var comp = ctx.RenderComponent<TableLoadingTest>();
             var searchString = comp.Find("#searchString");
@@ -200,8 +200,7 @@ namespace MudBlazor.UnitTests.Components
             searchString.Change("ZZZ");
             table.GetFilteredItemsCount().Should().Be(0);
             table.FilteredItems.Count().Should().Be(0);
-            comp.FindAll("tr").Count.Should().Be(1);
-            comp.FindAll("tr").First().TextContent.Should().Be("No matching records found");
+            comp.FindAll("tr").Count.Should().Be(0);
             // should return 1 item
             searchString.Change("Alaska");
             table.GetFilteredItemsCount().Should().Be(1);

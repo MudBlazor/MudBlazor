@@ -83,11 +83,20 @@
                             rowIndex++;
                         }
                     }
-                    else
+                    else if(Loading ? LoadingContent != null : NoRecordsContent != null)
                     {
                         <tr>
                             <th colspan="1000" class="mud-table-empty-row">
-                                <MudText Class="my-3">@(Loading ? LoadingContent : NoRecordsContent)</MudText>
+                                <MudText Class="my-3">
+                                    @if(Loading)
+                                    {
+                                        @LoadingContent
+                                    }
+                                    else
+                                    {
+                                        @NoRecordsContent
+                                    }
+                                </MudText>
                             </th>
                         </tr>
                     }
@@ -117,16 +126,3 @@
         }
     </CascadingValue>
 </div>
-
-
-@code {
-    /// <summary>
-    /// Defines the table body content when there are no matching records found
-    /// </summary>
-    [Parameter] public RenderFragment NoRecordsContent { get; set; } = @<p>No matching records found</p>;
-
-    /// <summary>
-    /// Defines the table body content when the table has no rows and is loading
-    /// </summary>
-    [Parameter] public RenderFragment LoadingContent { get; set; } = @<p>Loading...</p>;
-}
