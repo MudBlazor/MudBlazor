@@ -338,6 +338,20 @@
     display: none;
 }
 
+.mud-table-loading {
+    position: relative;
+
+    & .mud-table-loading-progress {
+        position: absolute;
+        width: 100%;
+    }
+}
+
+.mud-table-empty-row {
+    vertical-align: middle;
+    text-align: center;
+}
+
 @mixin table-display-smalldevices ($breakpoint) {
     .mud-#{$breakpoint}table {
         .mud-table-root .mud-table-head,
