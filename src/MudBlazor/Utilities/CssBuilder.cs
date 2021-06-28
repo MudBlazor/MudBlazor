@@ -10,7 +10,8 @@ namespace MudBlazor.Utilities
 {
     public struct CssBuilder
     {
-        private StringBuilder _stringBuilder;
+        private const int _textBufferLength = 256;
+        private StringBuilder _textBuffer;
 
         /// <summary>
         /// Creates a CssBuilder used to define conditional CSS classes used in a component.
@@ -30,7 +31,7 @@ namespace MudBlazor.Utilities
         /// Call Build() to return the completed CSS Classes as a string. 
         /// </summary>
         /// <param name="value"></param>
-        public CssBuilder(string value) => _stringBuilder = null != value ? new StringBuilder(value.Trim()) : null;
+        public CssBuilder(string value) => _textBuffer = !string.IsNullOrWhiteSpace(value) ? new StringBuilder(_textBufferLength).Append(value.Trim()) : null;
 
         /// <summary>
         /// Adds a raw string to the builder that will be concatenated with the next class or value added to the builder.
@@ -41,11 +42,11 @@ namespace MudBlazor.Utilities
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
-                if (null == _stringBuilder)
-                    _stringBuilder = new StringBuilder(value.Trim());
-
+                if (null == _textBuffer)
+                    _textBuffer = new StringBuilder(_textBufferLength).Append(value.Trim());
+                
                 else
-                    _stringBuilder.Append($" {value.Trim()}");
+                    _textBuffer.Append($" {value.Trim()}");
             }
 
             return this;
@@ -129,7 +130,7 @@ namespace MudBlazor.Utilities
         public string Build()
         {
             // String buffer finalization code
-            return _stringBuilder?.Length > 0 ? _stringBuilder.ToString() : string.Empty;
+            return _textBuffer?.Length > 0 ? _textBuffer.ToString() : string.Empty;
         }
 
         // ToString should only and always call Build to finalize the rendered string.
