@@ -40,7 +40,7 @@ namespace MudBlazor
         {
             if (_dateRange != range)
             {
-                if (null != range.Start && null != range.End && Enumerable
+                if (null != range && null != range.Start && null != range.End && Enumerable
                     .Range(0, int.MaxValue)
                     .Select(index => range.Start.Value.AddDays(index))
                     .TakeWhile(date => date <= range.End.Value)
@@ -140,7 +140,7 @@ namespace MudBlazor
 
         protected override bool HasValue(DateTime? value)
         {
-            return _dateRange != null;
+            return null != value && value.HasValue;
         }
 
         private DateRange ParseDateRangeValue(string value)
