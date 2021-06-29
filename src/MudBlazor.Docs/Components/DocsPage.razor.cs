@@ -17,9 +17,6 @@ namespace MudBlazor.Docs.Components
 {
     public partial class DocsPage : ComponentBase, IDisposable
     {
-        public string test1 { get; set; }
-        public string test2 { get; set; }
-
         [Inject] IScrollListener ScrollListener { get; set; }
         [Inject] IScrollManager ScrollManager { get; set; }
         [Inject] IResizeObserver ResizeObserver { get; set; }
@@ -76,9 +73,8 @@ namespace MudBlazor.Docs.Components
             activelink.Active = true;
 
             await ChangeUrl(activelink.Id);
-            StateHasChanged();
 
-            await InvokeAsync(() => StateHasChanged());
+            StateHasChanged();
         }
 
         private async void TryFragmentNavigation(object sender, LocationChangedEventArgs args)
