@@ -113,7 +113,7 @@ namespace MudBlazor
         public int? MaxItems { get; set; } = 10;
 
         /// <summary>
-        /// Minimum characters to initiate a search, defaults to 2
+        /// Minimum characters to initiate a search
         /// </summary>
         [Parameter]
         public int MinCharacters { get; set; } = 0;
