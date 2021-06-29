@@ -8,3 +8,7 @@ var mudBlazorDocs = {
         element.scrollIntoView({ block: 'center', behavior:'smooth' })
     }
 }
+
+window.ChangeUrl = function (url) {
+    history.pushState(null, '', url);
+}
