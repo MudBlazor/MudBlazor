@@ -136,5 +136,10 @@ namespace MudBlazor
             get => ItemsSource == null ? Items[SelectedIndex] : ItemsSource.ElementAtOrDefault(SelectedIndex);
         }
 
+        internal IEnumerable<TData> RefreshItemsSource()
+        {
+            return ItemsSource;
+        }
+
     }
 }
