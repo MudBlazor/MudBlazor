@@ -1,6 +1,6 @@
 ﻿@using MudBlazor.Utilities
 
-<div id="@_sectionid" class="@Classname">
+<div @ref="@SectionReference" id="@Section.Id" class="@Classname">
     <MudText Typo="Typo.h4">@Title</MudText>
     <MudText Typo="Typo.h6">@SubTitle</MudText>
     <MudText>@Description</MudText>
@@ -21,7 +21,9 @@
     [Parameter] public RenderFragment SubTitle { get; set; }
     [Parameter] public RenderFragment Description { get; set; }
 
-    private string _sectionid { get; set; }
+    private ElementReference SectionReference;
+
+    private DocsSectionLink Section { get; set; }
 
     protected override void OnInitialized()
     {
@@ -29,8 +31,21 @@
 
         if (DocsPage != null && !String.IsNullOrEmpty(Title))
         {
-            DocsPage.AddSection(Title);
-            _sectionid = Title.Replace(" ", "").ToLower();
+            Section = new DocsSectionLink
+            {
+                Id = Title.Replace(" ", "-").ToLower(),
+                Title = Title,
+            };
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender == true && DocsPage != null && !String.IsNullOrEmpty(Title))
+        {
+            Section.Reference = SectionReference;
+            DocsPage.AddSection(Section);
         }
     }
 }
