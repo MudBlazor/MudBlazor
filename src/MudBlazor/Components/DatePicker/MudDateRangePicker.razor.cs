@@ -55,12 +55,18 @@ namespace MudBlazor
                 if (updateValue)
                 {
                     Converter.GetError = false;
-
-                    _rangeText = _dateRange != null
-                        ? new Range<string>(Converter.Set(_dateRange.Start), Converter.Set(_dateRange.End))
-                        : null;
-
-                    await SetTextAsync(_dateRange?.ToString(Converter), false);
+                    if (_dateRange == null)
+                    {
+                        _rangeText = null;
+                        await SetTextAsync(null, false);
+                    }
+                    else
+                    {
+                        _rangeText = new Range<string>(
+                            Converter.Set(_dateRange.Start),
+                            Converter.Set(_dateRange.End));
+                        await SetTextAsync(_dateRange.ToString(Converter), false);
+                    }
                 }
 
                 await DateRangeChanged.InvokeAsync(_dateRange);
