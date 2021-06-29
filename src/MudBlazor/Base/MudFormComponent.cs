@@ -275,7 +275,10 @@ namespace MudBlazor
 
         protected virtual bool HasValue(T value)
         {
-            return typeof(T) == typeof(string) ? !IsNullOrWhiteSpace(value as string) : value != null;
+            if (typeof(T) == typeof(string))
+                return !string.IsNullOrWhiteSpace(value as string);
+
+            return value != null;
         }
 
         protected virtual void ValidateWithAttribute(ValidationAttribute attr, T value, List<string> errors)
