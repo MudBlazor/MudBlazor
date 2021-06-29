@@ -83,6 +83,14 @@
     display: none;
 
     .docs-contents-navlink {
+        &.active {
+            .mud-nav-link {
+                color: var(--mud-palette-primary);
+                border-color: var(--mud-palette-primary);
+                background-color: transparent;
+            }
+        }
+
         .mud-nav-link {
             padding: 4px 16px 4px 16px;
             color: var(--mud-palette-text-disabled);
