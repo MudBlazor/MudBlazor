@@ -153,8 +153,8 @@ namespace MudBlazor
         {
             await Task.CompletedTask;
 
-            if (null != _timer && AutoCycle)
-                _timer.Change(AutoCycleTime, TimeSpan.Zero);
+            if (AutoCycle)
+                _timer?.Change(AutoCycleTime, TimeSpan.Zero);
         }
 
         /// <summary>
@@ -208,8 +208,13 @@ namespace MudBlazor
 
         protected virtual async ValueTask DisposeAsync(bool disposing)
         {
-            if (disposing)
+            if (disposing && null != _timer)
+            {
                 await StopTimerAsync();
+
+                await _timer.DisposeAsync();
+                _timer = null;
+            }
         }
     }
 }
