@@ -39,11 +39,13 @@ namespace MudBlazor
         {
             if (_dateRange != range)
             {
-                if (range?.Start != null && range?.End != null && Enumerable
+                var doesRangeContainDisabledDates = range?.Start != null && range?.End != null && Enumerable
                     .Range(0, int.MaxValue)
                     .Select(index => range.Start.Value.AddDays(index))
                     .TakeWhile(date => date <= range.End.Value)
-                    .Any(date => IsDateDisabledFunc(date.Date)))
+                    .Any(date => IsDateDisabledFunc(date.Date));
+
+                if (doesRangeContainDisabledDates)
                 {
                     _rangeText = null;
                     await SetTextAsync(null, false);
@@ -260,8 +262,9 @@ namespace MudBlazor
             if (ReadOnly)
                 return;
             if (_firstDate == null || _secondDate == null)
+                return;
 
-                await SetDateRangeAsync(new DateRange(_firstDate, _secondDate), true);
+            await SetDateRangeAsync(new DateRange(_firstDate, _secondDate), true);
 
             _firstDate = null;
             _secondDate = null;
