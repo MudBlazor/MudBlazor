@@ -40,12 +40,11 @@ namespace MudBlazor
         {
             if (_dateRange != range)
             {
-                var doesRangeContainDisabledDates = Enumerable
+                if (null != range.Start && null != range.End && Enumerable
                     .Range(0, int.MaxValue)
                     .Select(index => range.Start.Value.AddDays(index))
                     .TakeWhile(date => date <= range.End.Value)
-                    .Any(date => IsDateDisabledFunc(date.Date));
-                if (doesRangeContainDisabledDates)
+                    .Any(date => IsDateDisabledFunc(date.Date)))
                 {
                     _rangeText = null;
                     await SetTextAsync(null, false);
@@ -57,18 +56,12 @@ namespace MudBlazor
                 if (updateValue)
                 {
                     Converter.GetError = false;
-                    if (_dateRange == null)
-                    {
-                        _rangeText = null;
-                        await SetTextAsync(null, false);
-                    }
-                    else
-                    {
-                        _rangeText = new Range<string>(
-                            Converter.Set(_dateRange.Start),
-                            Converter.Set(_dateRange.End));
-                        await SetTextAsync(_dateRange.ToString(Converter), false);
-                    }
+
+                    _rangeText = _dateRange != null
+                        ? new Range<string>(Converter.Set(_dateRange.Start), Converter.Set(_dateRange.End))
+                        : null;
+
+                    await SetTextAsync(_dateRange?.ToString(Converter), false);
                 }
 
                 await DateRangeChanged.InvokeAsync(_dateRange);
@@ -259,9 +252,7 @@ namespace MudBlazor
 
         protected override async void Submit()
         {
-            if (ReadOnly)
-                return;
-            if (_firstDate == null || _secondDate == null)
+            if (ReadOnly || _firstDate == null || _secondDate == null)
                 return;
 
             await SetDateRangeAsync(new DateRange(_firstDate, _secondDate), true);
