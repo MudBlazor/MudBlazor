@@ -23,6 +23,7 @@ namespace MudBlazor
         new CssBuilder("mud-button-root mud-icon-button")
             .AddClass($"mud-ripple mud-ripple-radio", !DisableRipple)
             .AddClass($"mud-radio-color-{Color.ToDescriptionString()}")
+            .AddClass($"mud-radio-dense", Dense)
             .AddClass($"mud-disabled", Disabled)
             .AddClass($"mud-checked", Checked)
             .Build();
@@ -46,6 +47,11 @@ namespace MudBlazor
         /// The value to associate to the button.
         /// </summary>
         [Parameter] public T Option { get; set; }
+
+        /// <summary>
+        /// If true, compact padding will be applied.
+        /// </summary>
+        [Parameter] public bool Dense { get; set; }
 
         /// <summary>
         /// If true, disables ripple effect.
