@@ -15,7 +15,7 @@ namespace MudBlazor.EnhanceChart
             try
             {
                 //sometimes fires a render error, not sure why
-                StateHasChanged();
+                //StateHasChanged();
             }
             catch (Exception)
             {
@@ -29,28 +29,28 @@ namespace MudBlazor.EnhanceChart
             Chart?.SetLegend(this);
         }
 
-        protected void ToggleEnabledStateOfSeries(ChartLegendInfoSeries series)
-        {
-            series.Series?.ToggleEnabledState();
-        }
+        protected void ToggleEnabledStateOfSeries(ChartLegendInfoSeries series) => ToggleEnabledStateOfSeries(series.Series);
+        protected void ToggleEnabledStateOfSeries(ChartLegendInfoPoint point) => ToggleEnabledStateOfSeries(point.Point);
+        protected void ToggleEnabledStateOfSeries(IChartDataElement element) => element?.ToggleEnabledState();
 
-        public void ToggleEnabledStateOfSeries(ChartLegendInfoSeries series, Boolean callStateHasChanged)
+        public void ToggleEnabledStateOfSeries(IChartDataElement element, Boolean callStateHasChanged)
         {
-            series.Series?.ToggleEnabledState();
-            if(callStateHasChanged == true)
+            element?.ToggleEnabledState();
+            if (callStateHasChanged == true)
             {
                 StateHasChanged();
             }
         }
 
-        protected void DeactiveAllOtherSeries(ChartLegendInfoSeries active)
-        {
-            active.Series.SentRequestToBecomeActiveAlone();
-        }
+        public void ToggleEnabledStateOfSeries(ChartLegendInfoSeries series, Boolean callStateHasChanged) => ToggleEnabledStateOfSeries(series.Series, callStateHasChanged);
+        public void ToggleEnabledStateOfSeries(ChartLegendInfoPoint point, Boolean callStateHasChanged) => ToggleEnabledStateOfSeries(point.Point, callStateHasChanged);
 
-        public void ActivedAllSeries(ChartLegendInfoSeries active)
-        {
-            active.Series.RevokeExclusiveActiveState();
-        }
+        protected void DeactiveAllOtherSeries(IChartDataElement element) => element?.SentRequestToBecomeActiveAlone();
+        protected void DeactiveAllOtherSeries(ChartLegendInfoSeries active) => DeactiveAllOtherSeries(active.Series);
+        protected void DeactiveAllOtherSeries(ChartLegendInfoPoint point) => DeactiveAllOtherSeries(point.Point);
+
+        public void ActivedAllSeries(IChartDataElement element) => element.RevokeExclusiveActiveState();
+        public void ActivedAllSeries(ChartLegendInfoSeries active) => ActivedAllSeries(active.Series);
+        public void ActivedAllSeries(ChartLegendInfoPoint active) => ActivedAllSeries(active.Point);
     }
 }

@@ -1,0 +1,239 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudEnhancedChart TitlePosition="@config.TitlePosition" TitleAlignment="@config.TitleAlignment" ShowTitle="@config.ShowTitle" Title="@config.TitleCaption"
+                  LegendPosition="@config.LegendPosition" LegendAlignment="@config.LegendAlignment" ShowLegend="config.ShowLegend">
+    <Legend>
+        <MudEnhancedDonutChartLegend LegendInfo="context" />
+    </Legend>
+    <ToolTip>
+        <MudEnhancedDonutChartToolTip ToolTips="context.OfType<DonutChartToolTipInfo>()" />
+    </ToolTip>
+    <Chart>
+        <MudEnhancedDonutChart @key="config" Padding="@config.Padding" Thickness="@config.Thickness" StartAngle="@config.StartAngleInDegree" @ref="_donutChart" AnimationIsEnabled="true">
+            @foreach (var item in config.DataPoints)
+            {
+				<MudEnhancedDonutChartDataPoint Id="@item.Id" @key="@item.GetHashCode()" Value="@item.Value" Label="@item.Label" FillColor="@item.FillColor" @bind-IsEnabled="@item.IsEnabled" />
+            }
+		</MudEnhancedDonutChart>
+    </Chart>
+    <TitleDrawer>
+        @if (config.UseCustomerTitleContainer == true) { 
+			<MudIcon Icon="@config.TitleIcon" /><MudText Typo="Typo.h3">@context</MudText>
+		} 
+		else 
+		{
+			<MudText Typo="Typo.h6">@context</MudText>
+		}
+    </TitleDrawer>
+</MudEnhancedChart>
+
+<MudText Typo="Typo.h6">Configuration</MudText>
+
+<MudExpansionPanels MultiExpansion="true">
+    <MudExpansionPanel Text="Legend">
+        <MudGrid>
+            <MudItem xs="12">
+                <MudCheckBox @bind-Checked="@config.ShowLegend" Label="Show Legend"></MudCheckBox>
+            </MudItem>
+            @if (config.ShowLegend == true)
+            {
+				<MudItem xs="12" sm="6" md="4">
+					<MudSelect T="Position" Label="Position" @bind-Value="config.LegendPosition">
+						<MudSelectItem Value="@(Position.Top)" />
+						<MudSelectItem Value="@(Position.Left)" />
+						<MudSelectItem Value="@(Position.Right)" />
+						<MudSelectItem Value="@(Position.Bottom)" />
+					</MudSelect>
+				</MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="Align" Label="Position" @bind-Value="config.LegendAlignment">
+                        <MudSelectItem Value="@(Align.Center)" />
+                        <MudSelectItem Value="@(Align.Left)" />
+                        <MudSelectItem Value="@(Align.Right)" />
+                    </MudSelect>
+                </MudItem>
+			}
+        </MudGrid>
+    </MudExpansionPanel>
+    <MudExpansionPanel Text="Title">
+        <MudGrid>
+            <MudItem xs="12">
+                <MudCheckBox @bind-Checked="@config.ShowTitle" Label="Show Title"></MudCheckBox>
+            </MudItem>
+            @if (config.ShowTitle == true)
+            {
+				<MudItem xs="12" sm="6" md="4">
+					<MudSelect T="Position" Label="Position" @bind-Value="config.TitlePosition">
+						<MudSelectItem Value="@(Position.Top)" />
+						<MudSelectItem Value="@(Position.Left)" />
+						<MudSelectItem Value="@(Position.Right)" />
+						<MudSelectItem Value="@(Position.Bottom)" />
+					</MudSelect>
+				</MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="Align" Label="Position" @bind-Value="config.TitleAlignment">
+                        <MudSelectItem Value="@(Align.Center)" />
+                        <MudSelectItem Value="@(Align.Left)" />
+                        <MudSelectItem Value="@(Align.Right)" />
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudCheckBox @bind-Checked="@config.UseCustomerTitleContainer" Label="Use Custom Container" />
+                </MudItem>
+				<MudItem xs="12" sm="6" md="4">
+					<MudTextField Immediate="true" @bind-Value="@config.TitleCaption" Label="Chart Title" Variant="Variant.Text" Placeholder="enter a name here" />
+				</MudItem>
+                <MudItem xs="12" sm="6" md="4">
+                    <MudSelect T="String" Label="Icon" @bind-Value="config.TitleIcon">
+                        <MudSelectItem Value="@Icons.Custom.Uncategorized.Radioactive">Radioactive</MudSelectItem>
+                        <MudSelectItem Value="@Icons.Custom.Brands.MudBlazor">MudBlazor</MudSelectItem>
+                        <MudSelectItem Value="@Icons.Material.Filled.Alarm">Alarm</MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+			}
+        </MudGrid>
+    </MudExpansionPanel>
+    <MudExpansionPanel Text="Donut Chart Properties">
+        <MudGrid>
+            <MudItem xs="12" sm="6">
+                <MudSlider @bind-Value="@config.StartAngleInDegree" Min="-360" Max="360" Step="5">Startposition in DEG</MudSlider>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSlider @bind-Value="@config.Padding" Min="0" Max="100">Padding</MudSlider>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSlider @bind-Value="@config.Thickness" Min="0" Max="50">Thickness</MudSlider>
+            </MudItem>
+        </MudGrid>
+    </MudExpansionPanel>
+    <MudExpansionPanel Text="Datapoints">
+        <MudGrid>
+            <MudItem xs="12">
+                <div class="d-flex flex-row justify-end">
+                    <MudTooltip Text="Randomize Data Points">
+                        <MudIconButton Icon="@Icons.Material.Filled.Shuffle" OnClick="Randomize" />
+                    </MudTooltip>
+                    <MudTooltip Text="Append Point">
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="AddDataPoint" />
+                    </MudTooltip>
+                </div>
+            </MudItem>
+			<MudSimpleTable Style="overflow-x: auto;">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Label</th>
+						<th>Value</th>
+						<th>Fill</th>
+						<th>Show</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+            @for (int i = 0; i < config.DataPoints.Count; i++)
+            {
+                Int32 temp = i;
+				<tr>
+					<td>@(i+1)</td>
+					<td>
+						 <MudTextField Immediate="true" @bind-Value="config.DataPoints[temp].Label" T="string" />
+					</td>
+					<td>
+						 <MudTextField InputType="InputType.Number" Immediate="true" @bind-Value="config.DataPoints[temp].Value" T="double" />
+					</td>
+					<td>
+						<MudTextField Immediate="true" InputType="InputType.Color"  T="string" @bind-Value="config.DataPoints[temp].FillColor" />
+					</td>
+					<td>
+						<MudCheckBox @bind-Checked="config.DataPoints[temp].IsEnabled" T="Boolean"  />
+					</td>
+					<td>
+						<MudIconButton Icon="@Icons.Material.Filled.Remove" Color="Color.Error" OnClick="@( () => RemovePoint(config.DataPoints[temp]))" />
+					</td>
+				</tr>
+
+			}
+				</tbody>
+			</MudSimpleTable>
+        </MudGrid>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+
+@code {
+
+    private Random _random = new();
+
+    public class DonutChartDataPointConig
+    {
+        public String Label { get; set; } = "My new Series";
+        public String FillColor { get; set; } = MudBlazor.Utilities.RandomColorSelector.GetRandomColor();
+        public Double Value { get; set; } = new();
+        public Boolean IsEnabled { get; set; } = true;
+
+        public Guid Id { get; private set; }
+
+        public DonutChartDataPointConig(String label, Double value)
+        {
+            Id = Guid.NewGuid();
+            Label = label;
+            Value = value;
+        }
+    }
+
+    public class DonutChartConfiguration
+    {
+        public Position LegendPosition { get; set; } = Position.Right;
+        public Align LegendAlignment { get; set; } = Align.Center;
+        public Boolean ShowLegend { get; set; } = true;
+
+        public Position TitlePosition { get; set; } = Position.Top;
+        public Align TitleAlignment { get; set; } = Align.Center;
+        public Boolean ShowTitle { get; set; } = true;
+        public String TitleCaption { get; set; } = "Fancy MudBlazor Donut Chart";
+        public Boolean UseCustomerTitleContainer { get; set; } = false;
+        public String TitleIcon { get; set; } = Icons.Custom.Uncategorized.Radioactive;
+
+        public Double StartAngleInDegree { get; set; } = 90.0;
+        public Double Padding { get; set; } = 5.0;
+        public Double Thickness { get; set; } = 20.0;
+
+        public List<DonutChartDataPointConig> DataPoints { get; set; } = new();
+    }
+
+    private DonutChartConfiguration config = new();
+    private MudEnhancedDonutChart _donutChart;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        for(int i = 0; i < 5; i++)
+        {
+            AddDataPoint();
+        }
+    }
+
+    private void AddDataPoint()
+    {
+        config.DataPoints.Add(
+            new DonutChartDataPointConig(
+                $"new point {config.DataPoints.Count +1}",
+                _random.Next(5,25) + _random.NextDouble()));
+    }
+
+    private void Randomize()
+    {
+        foreach(var point in config.DataPoints)
+        {
+            point.Value = _random.Next(5,25) + _random.NextDouble();
+        }
+
+        _donutChart.ForceRedraw();
+    }
+
+    private void RemovePoint(DonutChartDataPointConig point)
+    {
+        config.DataPoints.Remove(point);
+    }
+}
+

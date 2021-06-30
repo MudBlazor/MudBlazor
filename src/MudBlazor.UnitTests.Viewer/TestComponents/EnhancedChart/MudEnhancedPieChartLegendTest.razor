@@ -1,0 +1,22 @@
+﻿@using MudBlazor.EnhanceChart
+
+<MudEnhancedChart>
+    <Chart>
+        <MudEnhancedPieChart  StartAngle="0" Padding="10">
+            <MudEnhancedPieChartDataPoint Id="@Guid.Parse("ed8a9a45-f109-41b9-9ff6-074ad168b933")" Value="250.0" FillColor="Colors.BlueGrey.Darken1" Label="Point 1" IsEnabled="@IsEnabled[0]" IsEnabledChanged="@(() => IsEnabled[0] = !IsEnabled[0])" />
+            <MudEnhancedPieChartDataPoint Id="@Guid.Parse("ed8a9a45-f109-41b9-9ff6-074ad168b934")" Value="500.0" FillColor="Colors.Amber.Darken1" Label="Point 2" IsEnabled="@IsEnabled[1]" IsEnabledChanged="@(() => IsEnabled[1] = !IsEnabled[1])" />
+            <MudEnhancedPieChartDataPoint Id="@Guid.Parse("ed8a9a45-f109-41b9-9ff6-074ad168b935")" Value="125.0" FillColor="Colors.Brown.Darken1" Label="Point 3" IsEnabled="@IsEnabled[2]" IsEnabledChanged="@(() => IsEnabled[2] = !IsEnabled[2])" />
+            <MudEnhancedPieChartDataPoint Id="@Guid.Parse("ed8a9a45-f109-41b9-9ff6-074ad168b936")" Value="125.0" FillColor="Colors.Green.Darken1" Label="Point 4" IsEnabled="@IsEnabled[3]" IsEnabledChanged="@(() => IsEnabled[3] = !IsEnabled[3])" />
+        </MudEnhancedPieChart>
+    </Chart>
+    <Legend>
+        <MudEnhancedPieChartLegend LegendInfo="context" />
+    </Legend>
+</MudEnhancedChart>
+
+@code {
+
+    public Boolean[] IsEnabled { get; } = new[] { true, true, true, true };
+
+
+}

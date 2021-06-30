@@ -76,7 +76,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new ChartLegendInfoSeries("my 2 series", Colors.Red.Accent1.ToCssColor(), true, comp.FindComponents<MudEnhancedBarChartSeries>().ElementAt(1).Instance),
             };
 
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+            var group1 = new DataSeriesBasedChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
 
             List<ChartLegendInfoSeries> secondDataSetseriesInfo = new()
             {
@@ -84,7 +84,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new ChartLegendInfoSeries("my 4 series", Colors.Purple.Accent1.ToCssColor(), true, comp.FindComponents<MudEnhancedBarChartSeries>().ElementAt(3).Instance),
             };
 
-            var group2 = new ChartLegendInfoGroup("my 2 dataset", secondDataSetseriesInfo, true);
+            var group2 = new DataSeriesBasedChartLegendInfoGroup("my 2 dataset", secondDataSetseriesInfo, true);
 
             var expectedLegendInfo = new ChartLegendInfo(new[] { group1, group2 });
 
@@ -150,7 +150,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new ChartLegendInfoSeries("my 2 series", Colors.Red.Accent1.ToCssColor(), true, comp.FindComponents<MudEnhancedBarChartSeries>().ElementAt(1).Instance),
             };
 
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+            var group1 = new DataSeriesBasedChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
 
             List<ChartLegendInfoSeries> secondDataSetseriesInfo = new()
             {
@@ -158,7 +158,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new ChartLegendInfoSeries("my 4 series", Colors.Purple.Accent1.ToCssColor(), true, series2),
             };
 
-            var group2 = new ChartLegendInfoGroup("my 2 dataset", secondDataSetseriesInfo, true);
+            var group2 = new DataSeriesBasedChartLegendInfoGroup("my 2 dataset", secondDataSetseriesInfo, true);
 
             expectedLegendInfo = new ChartLegendInfo(new[] { group1, group2 });
 
@@ -232,7 +232,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new ChartLegendInfoSeries("my 2 series", Colors.Red.Accent1.ToCssColor(), true, comp.FindComponents<MudEnhancedBarChartSeries>().ElementAt(1).Instance),
             };
 
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+            var group1 = new DataSeriesBasedChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
 
             expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
 
@@ -300,7 +300,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new ChartLegendInfoSeries("my 2 series", Colors.Red.Accent1.ToCssColor(), true, series),
             };
 
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+            var group1 = new DataSeriesBasedChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
             expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
 
             dataset.Add(series);
@@ -360,7 +360,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor(), true, comp.FindComponents<MudEnhancedBarChartSeries>().ElementAt(0).Instance),
             };
 
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+            var group1 = new DataSeriesBasedChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
 
             expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
 
@@ -417,7 +417,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new ChartLegendInfoSeries("my 1 series", Colors.Blue.Accent1.ToCssColor(), true, comp.FindComponents<MudEnhancedBarChartSeries>().ElementAt(0).Instance),
             };
 
-            var group1 = new ChartLegendInfoGroup("my 1 dataset changed", firstDataSetseriesInfo, true);
+            var group1 = new DataSeriesBasedChartLegendInfoGroup("my 1 dataset changed", firstDataSetseriesInfo, true);
 
             expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
 
@@ -476,7 +476,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new ChartLegendInfoSeries("my 1 series changed", Colors.Blue.Accent1.ToCssColor(), true, comp.FindComponents<MudEnhancedBarChartSeries>().ElementAt(0).Instance),
             };
 
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+            var group1 = new DataSeriesBasedChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
 
             expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
 
@@ -535,7 +535,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new ChartLegendInfoSeries("my 1 series", Colors.Cyan.Accent1.ToCssColor(), true, comp.FindComponents<MudEnhancedBarChartSeries>().ElementAt(0).Instance),
             };
 
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+            var group1 = new DataSeriesBasedChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
 
             expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
 
@@ -575,7 +575,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 new ChartLegendInfoSeries("my 1 series", Colors.Cyan.Accent1.ToCssColor(), true, comp.FindComponents<MudEnhancedBarChartSeries>().ElementAt(0).Instance),
             };
 
-            var group1 = new ChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
+            var group1 = new DataSeriesBasedChartLegendInfoGroup("my 1 dataset", firstDataSetseriesInfo, true);
 
             var expectedLegendInfo = new ChartLegendInfo(new[] { group1 });
 
@@ -698,7 +698,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
                 // for some reasons only the first is working, all other events are not invoked
                 // switch to gettting the series element from tag and invoke method there
                 //seriesItems[j].(new MouseEventArgs());
-                await comp.InvokeAsync( () =>  seriesItems[j].Series.SentRequestToBecomeActiveAlone());
+                await comp.InvokeAsync(() => seriesItems[j].Series.SentRequestToBecomeActiveAlone());
 
                 rects = comp.FindAll("polygon");
                 rects.Should().HaveCount(9);
@@ -846,7 +846,7 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
 
                 for (int j = 0; j < rects.Count; j++)
                 {
-                    if( (j % moduloFactor) == i % moduloFactor)
+                    if ((j % moduloFactor) == i % moduloFactor)
                     {
                         rects[j].ClassList.Contains("active").Should().Be(true);
                     }
@@ -896,15 +896,19 @@ namespace MudBlazor.UnitTests.Components.EnhancedChart
 
             for (int i = 0; i < expectedLegendInfo.Groups.Count(); i++)
             {
-                var actualGroup = acutalLegendInfo.Groups.ElementAt(i);
-                var expectedGroup = expectedLegendInfo.Groups.ElementAt(i);
-                actualGroup.Should().NotBeNull().And.BeEquivalentTo(actualGroup, opt => opt.Excluding(x => x.Series));
+                var actualGroup = acutalLegendInfo.Groups.ElementAt(i) ;
+                var expectedGroup = expectedLegendInfo.Groups.ElementAt(i) as DataSeriesBasedChartLegendInfoGroup;
 
-                actualGroup.Series.Should().NotBeNull().And.HaveCount(expectedGroup.Series.Count());
+                actualGroup.Should().NotBeNull().And.BeOfType<DataSeriesBasedChartLegendInfoGroup>();
+                var actualCastedGroup = (DataSeriesBasedChartLegendInfoGroup)actualGroup;
+
+                actualCastedGroup.Should().BeEquivalentTo(actualGroup, opt => opt.Excluding(x => ((DataSeriesBasedChartLegendInfoGroup)x).Series));
+
+                actualCastedGroup.Series.Should().NotBeNull().And.HaveCount(expectedGroup.Series.Count());
 
                 for (int j = 0; j < expectedGroup.Series.Count(); j++)
                 {
-                    var actualSeries = actualGroup.Series.ElementAt(j);
+                    var actualSeries = actualCastedGroup.Series.ElementAt(j);
                     var expectedSeries = expectedGroup.Series.ElementAt(j);
 
                     actualSeries.Should().NotBeNull().And.Be(expectedSeries);

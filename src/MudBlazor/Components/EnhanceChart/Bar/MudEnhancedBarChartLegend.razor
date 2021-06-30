@@ -4,8 +4,8 @@
 <MudPaper Width="200px">
     <MudList Clickable="true">
         @if(LegendInfo != null && LegendInfo.Groups != null && LegendInfo.Groups.Any())
-        { 
-            @foreach (var group in LegendInfo.Groups)
+        {
+            @foreach (var group in LegendInfo.Groups.OfType<DataSeriesBasedChartLegendInfoGroup>())
             {
                 <MudListItem Icon="@Icons.Material.Filled.BarChart" Text="@group.Name" InitiallyExpanded="true">
                     <NestedList>

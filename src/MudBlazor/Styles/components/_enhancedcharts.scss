@@ -27,7 +27,7 @@
 
 .mud-enhanced-chart-series {
 
-    &.bar {
+    &.bar, &.pie, &.donut {
         transition: fill 0.5s;
     }
 

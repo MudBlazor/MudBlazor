@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.EnhanceChart
+@inherits MudEnhancedChartLegendBase
+
+<MudPaper Width="200px">
+    <MudList Clickable="true">
+        @if (LegendInfo != null && LegendInfo.Groups != null && LegendInfo.Groups.Any())
+        {
+            var points = (LegendInfo.Groups.First() as DataPointBasedChartLegendInfoGroup).Points;
+
+            foreach (var item in points)
+            {
+              <MudListItem @key="item.Point.Id"
+                 OnClick="@(() => ToggleEnabledStateOfSeries(item))"
+                 @onmouseover="@(() => DeactiveAllOtherSeries(item))"
+                 @onmouseout="@(() => ActivedAllSeries(item))"
+                 Icon="@Icons.Material.Filled.PieChartOutlined" Style="@($"color:{item.Color};text-decoration: {(item.IsEnabled == false ? "line-through" : "inherit")}  ")"
+                 Text="@item.Name" Tag="@item" />
+            }
+        }
+    </MudList>
+</MudPaper>
+
+@code
+{ 
+
+}

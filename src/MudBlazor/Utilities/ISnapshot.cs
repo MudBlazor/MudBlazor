@@ -8,12 +8,19 @@ namespace MudBlazor.Utilities
         protected TSnapShot OldSnapshotValue { get; set; }
         protected TSnapShot CreateSnapShot();
 
-        public Boolean SnapshotHasChanged(Boolean autoUpdate)
+        public (Boolean,Boolean) SnapshotHasChanged(Boolean autoUpdate, Func<TSnapShot, TSnapShot,Boolean> additionalChecks)
         {
             var currentState = CreateSnapShot();
             if (currentState.Equals(OldSnapshotValue) == true)
             {
-                return false;
+                return (false,false);
+            }
+
+            Boolean detailChanged = false;
+
+            if (additionalChecks != null)
+            {
+                detailChanged = additionalChecks(OldSnapshotValue, currentState);
             }
 
             if (autoUpdate == true)
@@ -21,8 +28,10 @@ namespace MudBlazor.Utilities
                 OldSnapshotValue = currentState;
             }
 
-            return true;
+            return (true, detailChanged);
         }
+
+        public Boolean SnapshotHasChanged(Boolean autoUpdate) => SnapshotHasChanged(autoUpdate, null).Item1;
 
         public void CreateSnapshot()
         {

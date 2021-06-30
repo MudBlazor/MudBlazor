@@ -11,12 +11,12 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor.EnhanceChart
 {
-    record MudEnchancedBarChartSnapShot(Double Margin, Double Padding);
+    record MudEnhancedBarChartSnapShot(Double Margin, Double Padding);
 
     /// <summary>
     /// The bar chart offering rich interactions
     /// </summary>
-    public partial class MudEnhancedBarChart : ICollection<MudEnhancedBarDataSet>, ICollection<IYAxis>, ISnapshot<MudEnchancedBarChartSnapShot>
+    public partial class MudEnhancedBarChart : MudEnhancedChartBase, ICollection<MudEnhancedBarDataSet>, ICollection<IYAxis>, ISnapshot<MudEnhancedBarChartSnapShot>
     {
         #region Fields
 
@@ -31,17 +31,7 @@ namespace MudBlazor.EnhanceChart
 
         private Dictionary<String, String> _oldBarPaths = new();
 
-
-        private Boolean _triggerAnimation = false;
-        private Boolean _isRendered = false;
-
         #endregion
-
-
-        /// <summary>
-        /// The "parent" Chart of this BarChart
-        /// </summary>
-        [CascadingParameter] MudEnhancedChart Chart { get; set; }
 
         /// <summary>
         /// The Datasets that should be rendered
@@ -75,26 +65,11 @@ namespace MudBlazor.EnhanceChart
         [Parameter] public Double Padding { get; set; } = 3.0;
 
         /// <summary>
-        /// Callback for changes about the legend. This is invoked for instance if a new series is added
-        /// </summary>
-        [Parameter] public EventCallback<ChartLegendInfo> LegendInfoChanged { get; set; }
-
-        /// <summary>
         /// The data for the legend
         /// </summary>
-        public ChartLegendInfo LegendInfo => new ChartLegendInfo(_dataSets.Select(x => new ChartLegendInfoGroup(x.Name,
+        public override ChartLegendInfo LegendInfo => new ChartLegendInfo(_dataSets.Select(x => new DataSeriesBasedChartLegendInfoGroup(x.Name,
             x.Select(y => new ChartLegendInfoSeries(y.Name, "#" + (String)y.Color, y.IsEnabled, y)),
             true)));
-
-        /// <summary>
-        /// If this value is true, the bars will have a transition animation when the value changes
-        /// </summary>
-        [Parameter] public Boolean AnimationIsEnabled { get; set; } = true;
-
-        /// <summary>
-        /// The id of the chart
-        /// </summary>
-        [Parameter] public Guid Id { get; set; } = Guid.NewGuid();
 
         #region Tooltips and legend
 
@@ -110,13 +85,6 @@ namespace MudBlazor.EnhanceChart
             Chart.UpdateTooltip(currentToolTips.Values);
         }
 
-        private void InvokeLegendChanged()
-        {
-            var info = LegendInfo;
-            LegendInfoChanged.InvokeAsync(info);
-            Chart?.UpdateLegend(info);
-        }
-
         #endregion
 
         #region Updates from children
@@ -128,7 +96,7 @@ namespace MudBlazor.EnhanceChart
                 _dataSets.Add(barChartSeries);
             }
 
-            _triggerAnimation = true;
+            TriggerAnimation = true;
 
             InvokeLegendChanged();
             CreateDrawingInstruction();
@@ -136,7 +104,7 @@ namespace MudBlazor.EnhanceChart
 
         protected internal void SeriesAdded(MudEnhancedBarChartSeries _)
         {
-            _triggerAnimation = true;
+            TriggerAnimation = true;
 
             CreateDrawingInstruction();
             InvokeLegendChanged();
@@ -177,7 +145,7 @@ namespace MudBlazor.EnhanceChart
 
         protected internal void DataSetCleared(MudEnhancedBarDataSet _)
         {
-            _triggerAnimation = true;
+            TriggerAnimation = true;
 
             CreateDrawingInstruction();
             InvokeLegendChanged();
@@ -185,7 +153,7 @@ namespace MudBlazor.EnhanceChart
 
         protected internal void DataSeriesRemoved(MudEnhancedBarChartSeries _)
         {
-            _triggerAnimation = true;
+            TriggerAnimation = true;
 
             CreateDrawingInstruction();
             InvokeLegendChanged();
@@ -193,7 +161,7 @@ namespace MudBlazor.EnhanceChart
 
         protected internal void SeriesUpdated(MudEnhancedBarDataSet _, MudEnhancedBarChartSeries __)
         {
-            _triggerAnimation = true;
+            TriggerAnimation = true;
 
             InvokeLegendChanged();
             CreateDrawingInstruction();
@@ -203,21 +171,21 @@ namespace MudBlazor.EnhanceChart
 
         protected internal void AxesUpdated(MudEnhancedNumericLinearAutoScaleAxis _)
         {
-            _triggerAnimation = true;
+            TriggerAnimation = true;
 
             CreateDrawingInstruction();
         }
 
         protected internal void MajorTickChanged(IYAxis axe, MudEnhancedTick _)
         {
-            _triggerAnimation = true;
+            TriggerAnimation = true;
 
             CreateDrawingInstruction();
         }
 
         protected internal void MinorTickChanged(IYAxis axe, MudEnhancedTick _)
         {
-            _triggerAnimation = true;
+            TriggerAnimation = true;
 
             CreateDrawingInstruction();
         }
@@ -233,7 +201,7 @@ namespace MudBlazor.EnhanceChart
                 _xAxis = barChartXAxes;
             }
 
-            _triggerAnimation = true;
+            TriggerAnimation = true;
             CreateDrawingInstruction();
         }
 
@@ -243,19 +211,7 @@ namespace MudBlazor.EnhanceChart
 
         #region Drawing
 
-        protected internal void SoftRedraw()
-        {
-            StateHasChanged();
-        }
-
-        public void ForceRedraw()
-        {
-            _triggerAnimation = true;
-
-            CreateDrawingInstruction();
-        }
-
-        private void CreateDrawingInstruction()
+        protected override void CreateDrawingInstruction()
         {
             BeforeCreatingInstructionCallBack?.Invoke(this);
 
@@ -528,7 +484,7 @@ namespace MudBlazor.EnhanceChart
                     _labels[_labels.Count - 1].Baseline = "text-before-edge";
                 }
 
-                if (_isRendered == true)
+                if (IsRendered == true)
                 {
                     //PreserveCurrentBarStates();
                 }
@@ -613,7 +569,7 @@ namespace MudBlazor.EnhanceChart
             return (min, max);
         }
 
-        private void PreserveCurrentBarStates()
+        protected override void PreserveCurrentChartStates()
         {
             if (AnimationIsEnabled == false) { return; }
 
@@ -733,7 +689,7 @@ namespace MudBlazor.EnhanceChart
         {
             base.OnParametersSet();
 
-            ISnapshot<MudEnchancedBarChartSnapShot> _this = this;
+            ISnapshot<MudEnhancedBarChartSnapShot> _this = this;
 
             if (_this.SnapshotHasChanged(true) == true)
             {
@@ -741,42 +697,8 @@ namespace MudBlazor.EnhanceChart
             }
         }
 
-        protected override void OnAfterRender(bool firstRender)
-        {
-            base.OnAfterRender(firstRender);
-
-            if (firstRender == true)
-            {
-                _isRendered = true;
-                PreserveCurrentBarStates();
-            }
-            else
-            {
-                if (_triggerAnimation == true)
-                {
-                    PreserveCurrentBarStates();
-                }
-            }
-        }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (AnimationIsEnabled == false) { return; }
-            if (_triggerAnimation == false) { return; }
-
-            try
-            {
-                _triggerAnimation = false;
-                await _jsruntime.InvokeVoidAsync("mudEnhancedChartHelper.triggerAnimation", Id);
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        MudEnchancedBarChartSnapShot ISnapshot<MudEnchancedBarChartSnapShot>.OldSnapshotValue { get; set; }
-        MudEnchancedBarChartSnapShot ISnapshot<MudEnchancedBarChartSnapShot>.CreateSnapShot() => new MudEnchancedBarChartSnapShot(Margin, Padding);
-
+        MudEnhancedBarChartSnapShot ISnapshot<MudEnhancedBarChartSnapShot>.OldSnapshotValue { get; set; }
+        MudEnhancedBarChartSnapShot ISnapshot<MudEnhancedBarChartSnapShot>.CreateSnapShot() => new MudEnhancedBarChartSnapShot(Margin, Padding);
 
     }
 }

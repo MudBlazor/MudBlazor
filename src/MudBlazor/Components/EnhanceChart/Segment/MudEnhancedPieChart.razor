@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.EnhanceChart
+@using MudBlazor.EnhanceChart.Internal
+@inherits MudEnhancedSegmentChart<MudEnhancedPieChart,MudEnhancedPieChartDataPoint,SvgCircleSegmentRepresentation>
+
+@foreach (var item in Segments)
+{
+    <path data-chartid="@Id" @key="item.Id" @onmouseover="@item.Actived" @onmouseout="@item.Deactived" class="@item.GetCssClass()" fill="#@item.Fill" stroke="none" d="@item.GetPathValue()">
+        @if (String.IsNullOrEmpty(item.OldPath) == false)
+        {
+            <animate attributeName="d" dur="500ms" from="@item.OldPath" to="@item.GetPathValue()"></animate>
+        }
+    </path>
+}
+@{
+    RemoveUpdateStateFlag();
+}
+
+<CascadingValue IsFixed="true" Value="this">
+    @ChildContent
+</CascadingValue>

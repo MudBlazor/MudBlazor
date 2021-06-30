@@ -106,4 +106,16 @@
     </AssemblyAttribute>
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Components\EnhanceChart\Segment\MudEnhancedPieChartDataPoint - Copy - Copy.razor.cs">
+      <DependentUpon>MudEnhancedPieChartDataPoint - Copy.razor.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Components\EnhanceChart\Segment\MudEnhancedPieChartDataPoint - Copy.razor.cs">
+      <DependentUpon>MudEnhancedPieChartDataPoint.razor.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Components\EnhanceChart\Segment\MudEnhancedPieChartToolTip - Copy.razor.cs">
+      <DependentUpon>MudEnhancedPieChartToolTip.razor.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

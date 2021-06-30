@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.EnhanceChart
+
+<MudCard Style="@GetStyle()" Class="mud-enhanched-chart-pie-chart-tooltip" >
+    <MudList Clickable="true">
+        @if(ToolTips != null)
+        { 
+            @foreach (var item in ToolTips)
+            {
+                <MudListItem> <div style="color:@item.Color"><span>@item.SeriesName</span> <strong>@item.Value</strong></div>  </MudListItem>
+            }
+        }
+    </MudList>
+</MudCard>
+
+@code { 
+
+}

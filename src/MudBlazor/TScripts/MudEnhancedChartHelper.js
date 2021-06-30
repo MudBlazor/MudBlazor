@@ -4,15 +4,13 @@
     }
 
     triggerAnimation(chartid) {
-        var elements = document.getElementsByTagName('polygon');
+        var elements = document.querySelectorAll('[data-chartid="' + chartid + '"]')
 
         for (var i = 0; i < elements.length; i++) {
-            if (elements[i].getAttribute('data-chartid') == chartid) {
-                elements[i].firstChild.beginElement();
-            }
+            elements[i].firstChild.beginElement();
         }
     }
-   
+
 };
 
 window.mudEnhancedChartHelper = new MudEnhancedChartHelper();

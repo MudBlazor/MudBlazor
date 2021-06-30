@@ -2,5 +2,10 @@
 
 namespace MudBlazor.EnhanceChart
 {
-    public record ChartLegendInfo(IEnumerable<ChartLegendInfoGroup> Groups);
+    public interface IChartLegendInfoGroup
+    {
+
+    }
+
+    public record ChartLegendInfo(IEnumerable<IChartLegendInfoGroup> Groups);
 }
