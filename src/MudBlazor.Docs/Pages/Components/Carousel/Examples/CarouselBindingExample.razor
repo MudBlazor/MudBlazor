@@ -24,7 +24,6 @@
 
     private async Task AddAsync()
     {
-        // A photo is added
         _source.Add($"Item {_source.Count + 1}");
         await Task.Delay(1);
         _carousel.MoveTo(_source.Count - 1);
