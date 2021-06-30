@@ -30,6 +30,10 @@
         }
     }
 
+    & .mud-radio-dense {
+        padding: 4px;
+    }
+
     &.mud-checked {
         color: var(--mud-palette-action-default);
 
