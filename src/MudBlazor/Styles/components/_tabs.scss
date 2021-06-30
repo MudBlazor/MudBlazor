@@ -250,11 +250,34 @@
     }
 }
 
+.mud-dynamic-tabs {
+    .mud-tabs-toolbar {
+        .mud-tab {
+            padding: 6px 14px;
+
+            .mud-icon-button {
+                padding: 4px;
+                margin-right: -4px;
+            }
+
+            .mud-tabs-panel-header-before {
+                padding-right: 8px;
+            }
+
+            .mud-tabs-panel-header-after {
+                padding-left: 8px;
+            }
+        }
+    }
+}
+
 .mud-tabs-header {
     &.mud-tabs-header-before {
+        display: inherit;
     }
 
     &.mud-tabs-header-after {
+        display: inherit;
     }
 }
 

@@ -1,13 +1,12 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudButton Color="Color.Primary" OnClick="Restore">Restore</MudButton>
-
-<MudDynamicTabs AddTab="AddTabCallback" CloseTab="@((panel) => CloseTabCallback(panel))" @bind-ActivePanelIndex="_index" AddIconToolTip="Click here to add a new tab" CloseIconToolTip="Close this tab. All data will be lost">
+<MudDynamicTabs Elevation="4" Rounded="true" ApplyEffectsToContainer="true" PanelClass="px-4 py-6" AddTab="AddTabCallback" CloseTab="@((panel) => CloseTabCallback(panel))" @bind-ActivePanelIndex="_index" AddIconToolTip="Click here to add a new tab" CloseIconToolTip="Close this tab. All data will be lost">
 	@foreach (var item in _tabs)
 	{
 	 <MudTabPanel Text="@item.Name" Tag="@item.Id">@item.Content</MudTabPanel>
 	}
 </MudDynamicTabs>
+<MudButton Color="Color.Primary" OnClick="Restore" Size="Size.Small" Class="ml-2 mt-1 mb-n2">Restore</MudButton>
 
 @code {
 
@@ -25,9 +24,9 @@
 	private void Restore()
 	{
 		_tabs.Clear();
-		_tabs.Add(new TabView { Content = "first tab content", Name = "Tab A", Id = Guid.NewGuid() });
-		_tabs.Add(new TabView { Content = "second tab content", Name = "Tab B", Id = Guid.NewGuid() });
-		_tabs.Add(new TabView { Content = "third tab content", Name = "Tab C", Id = Guid.NewGuid() });
+		_tabs.Add(new TabView { Content = "First tab content", Name = "Tab A", Id = Guid.NewGuid() });
+		_tabs.Add(new TabView { Content = "Second tab content", Name = "Tab B", Id = Guid.NewGuid() });
+		_tabs.Add(new TabView { Content = "Third tab content", Name = "Tab C", Id = Guid.NewGuid() });
 	}
 
 	protected override void OnInitialized()
@@ -38,7 +37,7 @@
 
 	private void AddTabCallback()
 	{
-		_tabs.Add(new TabView { Name = "dynamic content", Content = "a new tab", Id = Guid.NewGuid() });
+		_tabs.Add(new TabView { Name = "Dynamic Content", Content = "A new tab", Id = Guid.NewGuid() });
 		//the tab becomes availabe after it is rendered. Hence, we can't set the index here
 		_updateIndex = true;
 	}

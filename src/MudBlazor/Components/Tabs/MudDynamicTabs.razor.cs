@@ -58,5 +58,7 @@ namespace MudBlazor
         /// Tooltip that shown when a user hovers of the close button. Empty or null, if no tooltip should be visible
         /// </summary>
         [Parameter] public string CloseIconToolTip { get; set; } = string.Empty;
+
+        protected override string InternalClassName { get; set; } = "mud-dynamic-tabs";
     }
 }

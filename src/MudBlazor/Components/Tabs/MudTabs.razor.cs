@@ -195,6 +195,8 @@ namespace MudBlazor
         [Parameter]
         public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
 
+        protected virtual String InternalClassName { get; set; } = String.Empty;
+
         private string _prevIcon;
 
         private string _nextIcon;
@@ -344,6 +346,7 @@ namespace MudBlazor
             .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
             .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
             .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right)
+            .AddClass(InternalClassName)
             .AddClass(Class)
             .Build();
 

@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTabs @bind-ActivePanelIndex="_index">
+<MudTabs @bind-ActivePanelIndex="_index" Border="true" Outlined="true" PanelClass="px-4 py-6" ApplyEffectsToContainer="true">
 	<ChildContent>
 		@foreach (var item in _tabs)
 		{
@@ -8,20 +8,18 @@
 		}
 	</ChildContent>
 	<Header>
-		<MudButtonGroup>
-			<MudTooltip Text="Prepend a tab">
-				<MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@( () => AddTabCallback(false) )" />
-			</MudTooltip>
-			<MudTooltip Text="Append a tab">
-				<MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@( () => AddTabCallback(true) )"  />
-			</MudTooltip>
-		</MudButtonGroup>
+		<MudTooltip Text="Prepend a tab">
+			<MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@( () => AddTabCallback(false) )" />
+		</MudTooltip>
+		<MudTooltip Text="Append a tab">
+			<MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@( () => AddTabCallback(true) )"  />
+		</MudTooltip>
 	</Header>
 	<TabPanelHeader>
 		@if(context.Text.StartsWith("Tab") == false)
 		{
 			<MudTooltip Text="only dynamic tabs can be closed">
-				<MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.Remove" OnClick="(_) => RemoveTab(context)" />
+				<MudIconButton Class="ml-2 pa-1" Color="Color.Error" Icon="@Icons.Material.Filled.Remove" OnClick="(_) => RemoveTab(context)" />
 			</MudTooltip>
 		}
   </TabPanelHeader>
@@ -53,14 +51,14 @@
 	{
 		base.OnInitialized();
 
-		_tabs.Add(new TabView { Content = "first tab content", Name = "Tab A", Id = Guid.NewGuid() });
-		_tabs.Add(new TabView { Content = "second tab content", Name = "Tab B", Id = Guid.NewGuid() });
-		_tabs.Add(new TabView { Content = "third tab content", Name = "Tab C", Id = Guid.NewGuid() });
+		_tabs.Add(new TabView { Content = "First tab content", Name = "Tab A", Id = Guid.NewGuid() });
+		_tabs.Add(new TabView { Content = "Second tab content", Name = "Tab B", Id = Guid.NewGuid() });
+		_tabs.Add(new TabView { Content = "Third tab content", Name = "Tab C", Id = Guid.NewGuid() });
 	}
 
 	private void AddTabCallback(Boolean append)
 	{
-		var tabView = new TabView { Name = "dynamic content", Content = "a new tab", Id = Guid.NewGuid() };
+		var tabView = new TabView { Name = "Dynamic content", Content = "A new tab", Id = Guid.NewGuid() };
 		
 		//the tab becomes availabe after it is rendered. Hence, we can't set the index here
 		if(append == true)
