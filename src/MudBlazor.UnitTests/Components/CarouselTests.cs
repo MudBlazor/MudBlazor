@@ -234,7 +234,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         /// <returns></returns>
         [Test]
-        public async Task CarouselTest_DataBinding()
+        public void CarouselTest_DataBinding()
         {
             var comp = ctx.RenderComponent<CarouselBindingTest>();
             // print the generated html
@@ -253,12 +253,12 @@ namespace MudBlazor.UnitTests.Components
             ((IList<string>)source).Add("Item added by hand");
             source.Count().Should().Be(6);
             carousel.Items.Count.Should().Be(5); // should call StateHasChanged() or Task.Delay(1)
-            await Task.Delay(1);
+            comp.Render();
             carousel.Items.Count.Should().Be(6);
             //// removing item
             ((IList<string>)source).RemoveAt(source.Count() - 1);
             source.Count().Should().Be(5);
-            carousel.Items.Count.Should().Be(6); // should call StateHasChanged()
+            carousel.Items.Count.Should().Be(6); // should call StateHasChanged() or Task.Delay(1)
             comp.Render();
             carousel.Items.Count.Should().Be(5);
         }
