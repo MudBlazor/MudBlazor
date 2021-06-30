@@ -83,6 +83,11 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Sets the initial expansion state. Do not use in combination with IsExpanded.
+        /// </summary>
+        [Parameter] public bool StartExpanded { get; set; }
+
+        /// <summary>
         /// If true, the component will be disabled.
         /// </summary>
         [Parameter] public bool Disabled { get; set; }
@@ -149,10 +154,17 @@ namespace MudBlazor
             Parent?.AddPanel(this);
         }
 
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+
+            if (firstRender && StartExpanded)
+                IsExpanded = true;
+        }
+
         public void Dispose()
         {
             Parent?.RemovePanel(this);
         }
-
     }
 }
