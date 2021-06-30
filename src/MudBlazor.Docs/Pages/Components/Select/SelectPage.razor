@@ -108,23 +108,40 @@
         </DocsPageSection>
 
         <DocsPageSection>
-        <SectionHeader>
-            <Title>Select with custom converter</Title>
-            <Description>
-                Select has a built-in <CodeInline>DefaultConverter</CodeInline> which converts the values from any primitive type to string for presentation of the selected value. 
-                You can customize that converter as described under <MudLink Href="/features/converters">Converters</MudLink>. Here, we use <CodeInline>ToStringFunc</CodeInline> to 
-                convert objects of type Pizza to their string representation. Note how the <CodeInline Tag="true">MudSelectItem</CodeInline> uses that string representation if you don't 
-                specify a render fragment.
-            </Description>
-        </SectionHeader>
-        <SectionContent Outlined="true" DisplayFlex="true">
-            <MudContainer Class="py-6">
-                <SelectCustomConverterExample />
-            </MudContainer>
-        </SectionContent>
-        <SectionSource ShowCode="false" Code="SelectCustomConverterExample" GitHubFolderName="Select" />
-    </DocsPageSection>
-        
+            <SectionHeader>
+                <Title>Select with custom converter</Title>
+                <Description>
+                    Select has a built-in <CodeInline>DefaultConverter</CodeInline> which converts the values from any primitive type to string for presentation of the selected value.
+                    You can customize that converter as described under <MudLink Href="/features/converters">Converters</MudLink>. Here, we use <CodeInline>ToStringFunc</CodeInline> to
+                    convert objects of type Pizza to their string representation. Note how the <CodeInline Tag="true">MudSelectItem</CodeInline> uses that string representation if you don't
+                    specify a render fragment.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer Class="py-6">
+                    <SelectCustomConverterExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="SelectCustomConverterExample" GitHubFolderName="Select" />
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader>
+                <Title>Select with numeric collection</Title>
+                <Description>
+                    If the items of the Select source are numeric such as <CodeInline>int</CodeInline> or <CodeInline>double</CodeInline>, the combination of properties <CodeInline>Required=true</CodeInline> and <CodeInline>Clearable=true</CodeInline>
+                    requires that these items are of a nullable numeric type such as <CodeInline>int?</CodeInline> or <CodeInline>double?</CodeInline>,
+                    to get the expected behaviour.
+                </Description>
+            </SectionHeader>
+            <SectionContent Outlined="true" DisplayFlex="true">
+                <MudContainer>
+                    <SelectNumericCollectionExample />
+                </MudContainer>
+            </SectionContent>
+            <SectionSource ShowCode="false" Code="SelectNumericCollectionExample" GitHubFolderName="Select" />
+        </DocsPageSection>
+
 
     </DocsPageContent>
 </DocsPage>
