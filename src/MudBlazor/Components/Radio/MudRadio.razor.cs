@@ -33,6 +33,16 @@ namespace MudBlazor
             .AddClass($"mud-checked", Checked)
             .Build();
 
+        protected string IconClassName =>
+        new CssBuilder("mud-icon-root mud-svg-icon")
+            .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
+            .Build();
+
+        protected string CheckedIconClassName =>
+        new CssBuilder("mud-icon-root mud-svg-icon mud-radio-icon-checked")
+            .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
+            .Build();
+
         /// <summary>
         /// The color of the component. It supports the theme colors.
         /// </summary>
@@ -52,6 +62,11 @@ namespace MudBlazor
         /// If true, compact padding will be applied.
         /// </summary>
         [Parameter] public bool Dense { get; set; }
+
+        /// <summary>
+        /// The Size of the component.
+        /// </summary>
+        [Parameter] public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// If true, disables ripple effect.
