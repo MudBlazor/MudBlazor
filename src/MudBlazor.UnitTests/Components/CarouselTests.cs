@@ -1,6 +1,8 @@
 ﻿#pragma warning disable BL0005 // Set parameter outside component
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Bunit;
 using FluentAssertions;
@@ -227,6 +229,39 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
         }
 
+        /// <summary>
+        /// Testing DataBinding with Add and Remove from data source (MVVM, MVC and another patterns)
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task CarouselTest_DataBinding()
+        {
+            var comp = ctx.RenderComponent<CarouselBindingTest>();
+            // print the generated html
+            Console.WriteLine(comp.Markup);
+            //// select elements needed for the test
+            var carousel = comp.FindComponent<MudCarousel<string>>().Instance;
+            //// validating some renders
+            carousel.Should().NotBeNull();
+            carousel.MoveTo(0);
+            //// working with ItemsSource
+            var source = carousel.ItemsSource;
+            source.Count().Should().Be(5);
+            carousel.Items.Count.Should().Be(5);
+            carousel.SelectedIndex.Should().Be(0);
+            //// adding item
+            ((IList<string>)source).Add("Item added by hand");
+            source.Count().Should().Be(6);
+            carousel.Items.Count.Should().Be(5); // should call StateHasChanged() or Task.Delay(1)
+            await Task.Delay(1);
+            carousel.Items.Count.Should().Be(6);
+            //// removing item
+            ((IList<string>)source).RemoveAt(source.Count() - 1);
+            source.Count().Should().Be(5);
+            carousel.Items.Count.Should().Be(6); // should call StateHasChanged()
+            comp.Render();
+            carousel.Items.Count.Should().Be(5);
+        }
 
     }
 }
