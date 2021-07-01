@@ -164,7 +164,7 @@ namespace MudBlazor
         {
             await Task.CompletedTask;
 
-            _timer?.Change(Timeout.Infinite, 0);
+            _timer?.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
         /// <summary>
@@ -185,19 +185,24 @@ namespace MudBlazor
             await InvokeAsync(Next);
         }
 
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+
+            _timer = new Timer(_timerElapsed, null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await Task.CompletedTask;
+            await base.OnAfterRenderAsync(firstRender);
 
             if (firstRender)
             {
                 SelectedIndexChanged = new EventCallback<int>(this, (Action)SelectionChanged);
 
-                _timer = new Timer(_timerElapsed, null, TimeSpan.Zero, AutoCycleTime);
+                await StartTimerAsync();
             }
         }
-
 
         public async ValueTask DisposeAsync()
         {
@@ -208,12 +213,16 @@ namespace MudBlazor
 
         protected virtual async ValueTask DisposeAsync(bool disposing)
         {
-            if (disposing && _timer != null)
+            if (disposing)
             {
                 await StopTimerAsync();
 
-                await _timer.DisposeAsync();
-                _timer = null;
+                var timer = _timer;
+                if (timer != null)
+                {
+                    _timer = null;
+                    await timer.DisposeAsync();
+                }
             }
         }
     }
