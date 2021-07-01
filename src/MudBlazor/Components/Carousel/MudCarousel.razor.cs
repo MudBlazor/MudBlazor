@@ -208,7 +208,7 @@ namespace MudBlazor
 
         protected virtual async ValueTask DisposeAsync(bool disposing)
         {
-            if (disposing && null != _timer)
+            if (disposing && _timer != null)
             {
                 await StopTimerAsync();
 
