@@ -29,7 +29,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudExpansionPanel_Respects_Collapsing_Order()
         {
-            var comp = ctx.RenderComponent<ExpansionPanelExpansions>();
+            var comp = ctx.RenderComponent<ExpansionPanelExpansionsTest>();
             //the order in which the panels are going to be clicked
             //First, the first; then, the third, and then the second
             var sequence = new List<int> { 0, 2, 1 };
@@ -56,7 +56,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudExpansionPanel_MultiExpansion_Doesnt_Collapse_Others()
         {
-            var comp = ctx.RenderComponent<ExpansionPanelMultiExpansion>();
+            var comp = ctx.RenderComponent<ExpansionPanelMultiExpansionTest>();
 
             //click in the three headers
             foreach (var header in comp.FindAll(".mud-expand-panel-header"))
@@ -75,7 +75,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudExpansionPanel_StartExpanded_Expands()
         {
-            var comp = ctx.RenderComponent<ExpansionPanelStartExpanded>();
+            var comp = ctx.RenderComponent<ExpansionPanelStartExpandedTest>();
 
             // one panel is expanded initially
             var panels = comp.FindAll(".mud-panel-expanded").ToList();
@@ -95,7 +95,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudExpansionPanel_StartExpanded_Works_With_Multi_Expanded()
         {
-            var comp = ctx.RenderComponent<ExpansionPanelStartExpandedMultiple>();
+            var comp = ctx.RenderComponent<ExpansionPanelStartExpandedMultipleTest>();
 
             // three panels is expanded initially
             var panels = comp.FindAll(".mud-panel-expanded").ToList();
