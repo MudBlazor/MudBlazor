@@ -118,9 +118,11 @@ namespace MudBlazor.Docs.Components
 
         private async Task ObserveAllSectionsAsync()
         {
-            foreach (var section in _sections)
+            var observeResult = (await ResizeObserver.Observe(_sections.Select(x => x.Reference).ToArray())).ToArray();
+
+            for (int i = 0; i < _sections.Count; i++)
             {
-                section.Location = await ResizeObserver.Observe(section.Reference);
+                _sections[i].Location = observeResult[i];
             }
             _scrolled = true;
             StateHasChanged();
