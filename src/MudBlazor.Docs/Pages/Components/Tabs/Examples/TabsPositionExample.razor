@@ -2,8 +2,10 @@
 
 <MudSelect Variant="Variant.Outlined" Label="Tabs Position" Dense="true" Margin="Margin.Dense" T="@Position" @bind-Value="Position">
     <MudSelectItem T="Position" Value="@Position.Top">Top</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.Start">Start</MudSelectItem>
     <MudSelectItem T="Position" Value="@Position.Left">Left</MudSelectItem>
     <MudSelectItem T="Position" Value="@Position.Right">Right</MudSelectItem>
+    <MudSelectItem T="Position" Value="@Position.End">End</MudSelectItem>
     <MudSelectItem T="Position" Value="@Position.Bottom">Bottom</MudSelectItem>
 </MudSelect>
 
@@ -31,11 +33,17 @@
             case Position.Top:
                 Position = Position.Top;
                 break;
+            case Position.Start:
+                Position = Position.Start;
+                break;
             case Position.Left:
                 Position = Position.Left;
                 break;
             case Position.Right:
                 Position = Position.Right;
+                break;
+            case Position.End:
+                Position = Position.End;
                 break;
             case Position.Bottom:
                 Position = Position.Bottom;
