@@ -195,7 +195,10 @@ namespace MudBlazor
         [Parameter]
         public TabHeaderPosition TabPanelHeaderPosition { get; set; } = TabHeaderPosition.After;
 
-        protected virtual String InternalClassName { get; set; } = String.Empty;
+        /// <summary>
+        /// Can be used in derivate class to add a class to the main container. If not overwritten return an empty string
+        /// </summary>
+        protected virtual string InternalClassName { get; } = string.Empty;
 
         private string _prevIcon;
 
