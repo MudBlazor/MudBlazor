@@ -84,6 +84,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Sets the initial expansion state. Do not use in combination with IsExpanded.
+        /// Combine with MultiExpansion to have more than one panel start open.
         /// </summary>
         [Parameter] public bool StartExpanded { get; set; }
 
@@ -158,6 +159,7 @@ namespace MudBlazor
         {
             base.OnAfterRender(firstRender);
 
+            // apply only on first render, so that subsequent collapse/expands are not overwrritten
             if (firstRender && StartExpanded)
                 IsExpanded = true;
         }

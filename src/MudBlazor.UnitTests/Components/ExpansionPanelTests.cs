@@ -4,6 +4,7 @@ using Bunit;
 using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
+
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
@@ -47,9 +48,7 @@ namespace MudBlazor.UnitTests.Components
                     panels[other].OuterHtml.Should().NotContain("mud-panel-expanded");
                 }
             }
-
         }
-
 
         /// <summary>
         /// MultiExpansion panel should not collapse other panels
@@ -59,7 +58,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = ctx.RenderComponent<ExpansionPanelMultiExpansion>();
 
-            //click in the three headers 
+            //click in the three headers
             foreach (var header in comp.FindAll(".mud-expand-panel-header"))
             {
                 header.Click();
@@ -68,14 +67,49 @@ namespace MudBlazor.UnitTests.Components
             //the three panels must be expanded
             var panels = comp.FindAll(".mud-panel-expanded").ToList();
             panels.Count.Should().Be(3);
-
         }
 
+        /// <summary>
+        /// Start expanded should expand panel
+        /// </summary>
+        [Test]
+        public void MudExpansionPanel_StartExpanded_Expands()
+        {
+            var comp = ctx.RenderComponent<ExpansionPanelStartExpanded>();
 
+            // one panel is expanded initially
+            var panels = comp.FindAll(".mud-panel-expanded").ToList();
+            panels.Count.Should().Be(1);
 
+            var header = comp.FindAll(".panel-two > .mud-expand-panel-header").First(); ;
+            header.Click();
 
+            //we could close the panel
+            panels = comp.FindAll(".mud-panel-expanded").ToList();
+            panels.Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Start expanded should work with multi expansion
+        /// </summary>
+        [Test]
+        public void MudExpansionPanel_StartExpanded_Works_With_Multi_Expanded()
+        {
+            var comp = ctx.RenderComponent<ExpansionPanelStartExpandedMultiple>();
+
+            // three panels is expanded initially
+            var panels = comp.FindAll(".mud-panel-expanded").ToList();
+            panels.Count.Should().Be(3);
+
+            //click in the three headers
+            foreach (var header in comp.FindAll(".mud-expand-panel-header"))
+            {
+                header.Click();
+            }
+
+            //we could close them all
+            panels = comp.FindAll(".mud-panel-expanded").ToList();
+            panels.Count.Should().Be(0);
+        }
     }
 }
-
-
-
