@@ -1,0 +1,133 @@
+﻿
+.mud-picker-color-content {
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    max-width: 300px;
+    min-width: 300px;
+}
+
+.mud-picker-color-picker {
+    width: 300px;
+    height: 250px;
+
+    .mud-picker-color-overlay {
+        width: 100%;
+        height: 100%;
+
+        &.mud-picker-color-overlay-white {
+            background: linear-gradient(to right, white 0%, rgba(255, 255, 255, 0) 100%);
+        }
+
+        &.mud-picker-color-overlay-black {
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, black 100%);
+        }
+    }
+
+    .mud-picker-color-selector{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 18px;
+        height: 18px;
+        background: transparent;
+        border-radius: 50%;
+        box-shadow: 0 0 0 1.5px #FFF, inset 0 0 1px 1.5px rgba(0, 0, 0, 0.3);
+    }
+}
+
+.mud-picker-color-controls {
+    width: 300px;
+    height: 155px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+
+    .mud-picker-color-controls-row {
+        display: flex;
+        align-items: center;
+
+        & + .mud-picker-color-controls-row{
+            margin-top: 24px;
+        }
+
+        .mud-picker-color-dot {
+            height: 38px;
+            width: 38px;
+            border-radius: var(--mud-default-borderradius);
+            margin-right: 16px;
+        }
+
+        .mud-picker-color-sliders {
+            display: flex;
+            flex: 1 0 auto;
+            flex-direction: column;
+
+            .mud-picker-color-slider {
+                border-radius: var(--mud-default-borderradius);
+
+                &:first-child {
+                    margin-bottom: 18px;
+                }
+
+                & > input {
+                    height: 10px;
+                    border-radius: var(--mud-default-borderradius);
+
+                    @include slider-track {
+                        background: initial;
+                    }
+
+                    @include slider-thumb {
+                        appearance: none;
+                        margin-top: -6px;
+                        height: 14px;
+                        width: 14px;
+                        transform: none;
+                        transition: none;
+                        background: #f0f0f0;
+                        box-shadow: rgba(0, 0, 0, 0.37) 0px 1px 4px 0px;
+                    }
+
+                    &:active {
+                        @include slider-thumb {
+                            box-shadow: 0 0 0 2px var(--mud-palette-action-default-hover) !important;
+                        }
+                    }
+                }
+
+                &.hue > input {
+                    background: linear-gradient( 90deg, #FF0000, #ff0 16.66%, #0f0 33.33%,#0ff 50%, #00f 66.66%, #f0f 83.33%, #FF0000);
+                }
+
+                &.alpha > input {
+                    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGElEQVQYlWNgYGCQwoKxgqGgcJA5h3yFAAs8BRWVSwooAAAAAElFTkSuQmCC) repeat;
+                }
+            }
+        }
+
+        .mud-picker-color-inputs {
+            display: flex;
+            flex: 1 1 auto;
+
+            .mud-picker-color-inputfield{
+                width: 100%;
+                margin-right: 8px;
+                .mud-input {
+                    input{
+                        padding: 6px;
+                        height: 1em;
+                        text-align: center;
+                        font-size: 14px;
+                    }
+                }
+                .mud-input-helper-text{
+                    text-align: center;
+                }
+            }
+        }
+
+        .mud-picker-control-switch{
+            padding-bottom: 16px;
+        }
+    }
+}
