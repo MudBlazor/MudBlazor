@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -344,8 +344,8 @@ namespace MudBlazor
             .AddClass($"mud-paper-outlined", ApplyEffectsToContainer && Outlined)
             .AddClass($"mud-elevation-{Elevation}", ApplyEffectsToContainer && Elevation != 0)
             .AddClass($"mud-tabs-reverse", Position == Position.Bottom)
-            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
-            .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right)
+            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
+            .AddClass($"mud-tabs-vertical-reverse", Position == Position.Right && !RightToLeft || (Position == Position.Left) && RightToLeft || Position == Position.End)
             .AddClass(InternalClassName)
             .AddClass(Class)
             .Build();
@@ -353,9 +353,9 @@ namespace MudBlazor
         protected string ToolbarClassnames =>
             new CssBuilder("mud-tabs-toolbar")
             .AddClass($"mud-tabs-rounded", !ApplyEffectsToContainer && Rounded)
-            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
+            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
             .AddClass($"mud-tabs-toolbar-{Color.ToDescriptionString()}", Color != Color.Default)
-            .AddClass($"mud-tabs-border-{Position.ToDescriptionString()}", Border)
+            .AddClass($"mud-tabs-border-{ConvertPosition(Position).ToDescriptionString()}", Border)
             .AddClass($"mud-paper-outlined", !ApplyEffectsToContainer && Outlined)
             .AddClass($"mud-elevation-{Elevation}", !ApplyEffectsToContainer && Elevation != 0)
             .Build();
@@ -363,18 +363,18 @@ namespace MudBlazor
         protected string WrapperClassnames =>
             new CssBuilder("mud-tabs-toolbar-wrapper")
             .AddClass($"mud-tabs-centered", Centered)
-            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
+            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
             .Build();
 
         protected string WrapperScrollStyle =>
         new StyleBuilder()
             .AddStyle("transform", $"translateX({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position == Position.Top || Position == Position.Bottom)
-            .AddStyle("transform", $"translateY({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", Position == Position.Left || Position == Position.Right)
+            .AddStyle("transform", $"translateY({ (-1 * _scrollPosition).ToString(CultureInfo.InvariantCulture)}px)", IsVerticalTabs())
             .Build();
 
         protected string PanelsClassnames =>
             new CssBuilder("mud-tabs-panels")
-            .AddClass($"mud-tabs-vertical", Position == Position.Left || Position == Position.Right)
+            .AddClass($"mud-tabs-vertical", IsVerticalTabs())
             .AddClass(PanelClass)
             .Build();
 
@@ -382,9 +382,9 @@ namespace MudBlazor
             new CssBuilder("mud-tab-slider")
             .AddClass($"mud-{SliderColor.ToDescriptionString()}", SliderColor != Color.Inherit)
             .AddClass($"mud-tab-slider-horizontal", Position == Position.Top || Position == Position.Bottom)
-            .AddClass($"mud-tab-slider-vertical", Position == Position.Left || Position == Position.Right)
+            .AddClass($"mud-tab-slider-vertical", IsVerticalTabs())
             .AddClass($"mud-tab-slider-horizontal-reverse", Position == Position.Bottom)
-            .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right)
+            .AddClass($"mud-tab-slider-vertical-reverse", Position == Position.Right || Position == Position.Start && RightToLeft || Position == Position.End && !RightToLeft)
             .Build();
 
         protected string MaxHeightStyles =>
@@ -397,15 +397,30 @@ namespace MudBlazor
             .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
             .AddStyle("right", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
             .AddStyle("transition", "right .3s cubic-bezier(.64,.09,.08,1);", Position == Position.Top || Position == Position.Bottom)
-            .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
-            .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
+            .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
+            .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
             .Build() : new StyleBuilder()
             .AddStyle("width", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
             .AddStyle("left", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Top || Position == Position.Bottom)
-            .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
-            .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", Position == Position.Left || Position == Position.Right)
+            .AddStyle("height", $"{_size.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
+            .AddStyle("top", $"{_position.ToString(CultureInfo.InvariantCulture)}px", IsVerticalTabs())
             .Build();
 
+        private bool IsVerticalTabs()
+        {
+            return Position is Position.Left or Position.Right or Position.Start or Position.End;
+        }
+
+        private Position ConvertPosition(Position position)
+        {
+            return position switch
+            {
+                Position.Start => RightToLeft ? Position.Right : Position.Left,
+                Position.End => RightToLeft ? Position.Left : Position.Right,
+                _ => position
+            };
+        }
+        
         string GetTabClass(MudTabPanel panel)
         {
             var tabClass = new CssBuilder("mud-tab")
