@@ -62,7 +62,7 @@ namespace MudBlazor
                 _autoCycle = value;
 
                 if (_autoCycle)
-                    InvokeAsync(async () => await StartTimerAsync());
+                    InvokeAsync(async () => await ResetTimerAsync());
 
                 else
                     InvokeAsync(async () => await StopTimerAsync());
@@ -185,13 +185,6 @@ namespace MudBlazor
             await InvokeAsync(Next);
         }
 
-        protected override async Task OnInitializedAsync()
-        {
-            await base.OnInitializedAsync();
-
-            _timer = new Timer(_timerElapsed, null, Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-        }
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
@@ -200,7 +193,7 @@ namespace MudBlazor
             {
                 SelectedIndexChanged = new EventCallback<int>(this, (Action)SelectionChanged);
 
-                await StartTimerAsync();
+                _timer = new Timer(_timerElapsed, null, AutoCycle ? AutoCycleTime : Timeout.InfiniteTimeSpan, AutoCycleTime);
             }
         }
 
