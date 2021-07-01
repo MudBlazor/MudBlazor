@@ -152,16 +152,8 @@ namespace MudBlazor
             //if (Parent == null)
             //    throw new ArgumentNullException(nameof(Parent), "ExpansionPanel must exist within a ExpansionPanels component");
             base.OnInitialized();
+            IsExpanded = IsInitiallyExpanded;
             Parent?.AddPanel(this);
-        }
-
-        protected override void OnAfterRender(bool firstRender)
-        {
-            base.OnAfterRender(firstRender);
-
-            // apply only on first render, so that subsequent collapse/expands are not overwrritten
-            if (firstRender && IsInitiallyExpanded)
-                IsExpanded = true;
         }
 
         public void Dispose()
