@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor.Docs.Examples
+﻿@namespace MudBlazor.UnitTests.TestComponents
 
 <MudCarousel @ref="_carousel" ItemsSource="@_source" Style="height:200px;" ShowArrows="@_arrows" ShowDelimiters="@_delimiters" AutoCycle="@_autocycle">
     <ItemTemplate>
@@ -8,28 +8,23 @@
         </div>
     </ItemTemplate>
 </MudCarousel>
-<MudSwitch @bind-Checked="@_arrows" Color="Color.Primary">Show Arrows</MudSwitch>
-<MudSwitch @bind-Checked="@_delimiters" Color="Color.Primary">Show Delimiters</MudSwitch>
-<MudSwitch @bind-Checked="@_autocycle" Color="Color.Primary">Auto Cycle (Default: 5 secs)</MudSwitch>
-<br />
-<MudButton Class="ma-2" Variant="Variant.Filled" Color="Color.Primary" OnClick="AddAsync">Add</MudButton>
-<MudButton Class="ma-2" Variant="Variant.Filled" Color="Color.Error" OnClick="@(async () => await DeleteAsync(_carousel.SelectedIndex))">Delete</MudButton>
 
 @code {
     private MudCarousel<string> _carousel;
     private bool _arrows = true;
     private bool _delimiters = true;
-    private bool _autocycle = true;
+    private bool _autocycle = false;
     private IList<string> _source = new List<string>() { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
 
-    private async Task AddAsync()
+    public async Task AddAsync()
     {
+        // A photo is added
         _source.Add($"Item {_source.Count + 1}");
         await Task.Delay(1);
         _carousel.MoveTo(_source.Count - 1);
     }
 
-    private async Task DeleteAsync(int index)
+    public async Task DeleteAsync(int index)
     {
         if (_source.Any())
         {
