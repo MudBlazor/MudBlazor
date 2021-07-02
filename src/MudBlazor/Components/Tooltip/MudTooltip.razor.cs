@@ -39,6 +39,9 @@ namespace MudBlazor
             }
         }
 
+        private ElementReference _anchorRef;
+
+
         /// <summary>
         /// Sets the text to be displayed inside the tooltip.
         /// </summary>

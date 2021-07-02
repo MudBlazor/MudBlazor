@@ -8,29 +8,34 @@
 {
 
     protected virtual RenderFragment InputContent => 
-        @<MudTextField @ref="_inputReference" Label="@Label" @bind-Text="@Text" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string" Style="@Style"
-                    @onclick="(() => { if (!Editable) ToggleState(); })" OnAdornmentClick="ToggleState" Disabled="@Disabled" Adornment="@Adornment"
-                    AdornmentIcon="@InputIcon" IconSize="@IconSize" Margin="@Margin"
-                    Required="@Required" RequiredError="@RequiredError" Error="@Error" ErrorText="@ErrorText"/>;
+        @<div @ref="@_anchorRef">
+    <MudTextField @ref="_inputReference" Label="@Label" @bind-Text="@Text" HelperText="@HelperText" Variant="@InputVariant" ReadOnly="@(!Editable)" T="string" Style="@Style"
+                  @onclick="(() => { if (!Editable) ToggleState(); })" OnAdornmentClick="ToggleState" Disabled="@Disabled" Adornment="@Adornment"
+                  AdornmentIcon="@InputIcon" IconSize="@IconSize" Margin="@Margin"
+                  Required="@Required" RequiredError="@RequiredError" Error="@Error" ErrorText="@ErrorText" />
+</div>;
 
     protected virtual RenderFragment PickerContent => null;
 
     protected virtual RenderFragment Render => 
     @<CascadingValue Value="@this" IsFixed="true">
-        <div class="@PickerClass">
-            @if (PickerVariant != PickerVariant.Static)
-            {
-                <CascadingValue Name="Standalone" Value="false" IsFixed="true">
-                    @InputContent
-                </CascadingValue>
-            }
-            @if (IsOpen && PickerVariant == PickerVariant.Inline)
-            {
-               <div @ref="_pickerInlineRef" class="@PickerInlineClass">
-                   <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
-                       <div class="@PickerContainerClass">
-                           @PickerContent
-                       </div>
+         <div class="@PickerClass">
+             @if (PickerVariant != PickerVariant.Static)
+             {
+         <CascadingValue Name="Standalone" Value="false" IsFixed="true">
+             @InputContent
+         </CascadingValue>}
+
+             @if (IsOpen && PickerVariant == PickerVariant.Inline)
+             {
+         <MudPortal IsVisible="@IsOpen" AnchorRef=@_anchorRef>
+             <div @ref="_pickerInlineRef" class="@PickerInlineClass">
+                 <MudPaper @attributes="UserAttributes" Class="@PickerPaperClass" Elevation="@_pickerElevation" Square="@_pickerSquare">
+                     <div class="@PickerContainerClass">
+
+
+                         @PickerContent
+                             </div>
                         @if (PickerActions != null)
                         {
                             <div class="@ActionClass">
@@ -39,6 +44,8 @@
                         }
                    </MudPaper>
                </div>
+         </MudPortal>
+
             }
             else if (PickerVariant == PickerVariant.Static)
             {

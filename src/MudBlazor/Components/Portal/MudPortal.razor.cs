@@ -39,6 +39,8 @@ namespace MudBlazor
 
         [Parameter] public Type Type { get; set; }
 
+        [Parameter] public ElementReference AnchorRef{ get; set; }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (IsVisible)
@@ -77,6 +79,9 @@ namespace MudBlazor
         private async Task ConfigureRects()
         {
             await JS.InvokeVoidAsync("window.setStylePositionInParent", _portalRef, "relative");
+            
+            var apagarAnchorRect = await AnchorRef.MudGetBoundingClientRectAsync();
+            if (apagarAnchorRect.Width > 1000000) return;
             _portalItem.AnchorRect = await _portalRef.MudGetBoundingClientRectAsync();
             _portalItem.FragmentRect = await _fragmentRef.MudGetClientRectFromFirstChildAsync();
 
@@ -98,7 +103,7 @@ namespace MudBlazor
             if (_portalItem.FragmentRect.IsOutsideBottom)
             {
                 _portalItem.AnchorRect.Top -=
-                   2 * ( (_portalItem.FragmentRect.Top - _portalItem.AnchorRect.Bottom))
+                   2 * (_portalItem.FragmentRect.Top - _portalItem.AnchorRect.Bottom)
                     + _portalItem.AnchorRect.Height
                     + _portalItem.FragmentRect.Height;
 
@@ -149,7 +154,7 @@ namespace MudBlazor
             _portalItem.OpenOnHover = ActivationEvent == MouseEvent.MouseOver;
         }
 
-        //warning this listenir doesn't work too well, create other
+       
         private void OnWindowResize(object sender, BrowserWindowSize e)
         {
             Task.Run(async () =>

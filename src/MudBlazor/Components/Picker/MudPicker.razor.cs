@@ -262,7 +262,7 @@ namespace MudBlazor
         }
 
         private MudTextField<string> _inputReference;
-
+        private ElementReference _anchorRef;
         public virtual ValueTask FocusAsync() => _inputReference?.FocusAsync() ?? ValueTask.CompletedTask;
 
         public virtual ValueTask SelectAsync() => _inputReference?.SelectAsync() ?? ValueTask.CompletedTask;
