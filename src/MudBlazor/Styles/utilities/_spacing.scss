@@ -1,7 +1,7 @@
 ﻿@import '../abstracts/variables';
 
-$spacing-values: ( "0": 0, "1": 4px, "2": 8px, "3": 12px, "4": 16px, "5": 20px, "6": 24px, "7": 28px, "8": 32px, "9": 36px, "10": 40px, "11": 44px, "12": 48px, "13": 52px, "14": 56px, "15": 60px, "16": 64px, "auto": auto );
-$spacing-negative-values: ( "n1": -4px, "n2": -8px, "n3": -12px, "n4": -16px, "n5": -20px, "n6": -24px, "n7": -28px, "n8": -32px, "n9": -36px, "n10": -40px, "n11": -44px, "n12": -48px, "n13": -52px, "n14": -56px, "n15": -60px, "n16": -64px );
+$spacing-values: ( "0": 0, "1": 0.25rem, "2": 0.5rem, "3": 0.75rem, "4": 1rem, "5": 1.25rem, "6": 1.5rem, "7": 1.75rem, "8": 2rem, "9": 2.25rem, "10": 2.5rem, "11": 2.75rem, "12": 3rem, "13": 3.25rem, "14": 3.5rem, "15": 3.75rem, "16": 4rem, "auto": auto );
+$spacing-negative-values: ( "n1": -0.25rem, "n2": -0.5rem, "n3": -0.75rem, "n4": -1rem, "n5": -1.25rem, "n6": -1.5rem, "n7": -1.75rem, "n8": -2rem, "n9": -2.25rem, "n10": -2.5rem, "n11": -2.75rem, "n12": -3rem, "n13": -3.25rem, "n14": -3.5rem, "n15": -3.75rem, "n16": -4rem );
 
 @mixin spacing-positive-negative ($breakpoint) {
     @each $prop, $abbrev in (margin: m, padding: p) {

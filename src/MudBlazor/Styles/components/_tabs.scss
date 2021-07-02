@@ -29,32 +29,32 @@
     }
 }
 
-.mud-tabs-toolbar {    
+.mud-tabs-toolbar {
     position: relative;
     background-color: var(--mud-palette-surface);
 
     &.mud-tabs-border-left {
         border-top-right-radius: 0 !important;
         border-bottom-right-radius: 0 !important;
-        border-right: 1px solid var(--mud-palette-lines-default);
+        border-right: 0.0625rem solid var(--mud-palette-lines-default);
     }
 
     &.mud-tabs-border-right {
         border-top-left-radius: 0 !important;
         border-bottom-left-radius: 0 !important;
-        border-left: 1px solid var(--mud-palette-lines-default);
+        border-left: 0.0625rem solid var(--mud-palette-lines-default);
     }
 
     &.mud-tabs-border-top {
         border-bottom-left-radius: 0 !important;
         border-bottom-right-radius: 0 !important;
-        border-bottom: 1px solid var(--mud-palette-lines-default);
+        border-bottom: 0.0625rem solid var(--mud-palette-lines-default);
     }
 
     &.mud-tabs-border-bottom {
         border-top-left-radius: 0 !important;
         border-top-right-radius: 0 !important;
-        border-top: 1px solid var(--mud-palette-lines-default);
+        border-top: 0.0625rem solid var(--mud-palette-lines-default);
     }
 
     &.mud-tabs-rounded {
@@ -68,8 +68,8 @@
             .mud-tabs-scroll-button {
                 .mud-button-root {
                     width: 100%;
-                    border-radius: 0px;
-                    height: 32px;
+                    border-radius: 0;
+                    height: 2rem;
 
                     .mud-icon-button-label {
                         .mud-icon-root{
@@ -83,7 +83,7 @@
 
     & .mud-tabs-toolbar-inner {
         display: flex;
-        min-height: 48px;
+        min-height: 3rem;
     }
 }
 
@@ -124,10 +124,10 @@
 
 .mud-tab {
     width:100%;
-    min-width: 160px;
+    min-width: 10rem;
     display: inline-flex;
-    padding: 6px 12px;
-    min-height: 48px;
+    padding: 0.375rem 0.75rem;
+    min-height: 3rem;
     flex-shrink: 0;
     font-weight: 500;
     line-height: 1.75;
@@ -160,8 +160,8 @@
     }
 
     & .mud-tab-icon-text {
-        margin-right: 8px;
-        margin-inline-end: 8px;
+        margin-right: 0.5rem;
+        margin-inline-end: 0.5rem;
         margin-inline-start: unset;
     }
 }
@@ -171,19 +171,19 @@
     background: var(--mud-palette-primary);
 
     &.mud-tab-slider-horizontal {
-        height: 2px;
+        height: 0.125rem;
         left: 0;
         bottom: 0;
         transition: left .3s cubic-bezier(.64,.09,.08,1);
         will-change: left;
 
         &.mud-tab-slider-horizontal-reverse {
-            top: 0px;
+            top: 0;
         }
     }
 
     &.mud-tab-slider-vertical {
-        width: 2px;
+        width: 0.125rem;
         right: 0;
         transition: top .3s cubic-bezier(.64,.09,.08,1);
         will-change: top;
@@ -195,8 +195,8 @@
 }
 
 .mud-tab-badge{
-    margin-left:8px;
-    margin-inline-start: 8px;
+    margin-left: 0.5rem;
+    margin-inline-start: 0.5rem;
     margin-inline-end: unset;
 }
 

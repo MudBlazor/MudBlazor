@@ -7,11 +7,11 @@
     transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
     &.mud-table-square {
-        border-radius: 0px;
+        border-radius: 0;
     }
 
     &.mud-table-outlined {
-        border: 1px solid var(--mud-palette-lines-default);
+        border: 0.0625rem solid var(--mud-palette-lines-default);
     }
 }
 
@@ -68,11 +68,11 @@
     }
 
     .mud-table-sort-label-icon {
-        font-size: 18px;
+        font-size: 1.125rem;
         transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-        margin-left: 4px;
+        margin-left: 0.25rem;
         user-select: none;
-        margin-right: 4px;
+        margin-right: 0.25rem;
         opacity: 0;
 
         &.mud-direction-desc {
@@ -88,27 +88,27 @@
 }
 
 .mud-table-toolbar {
-    padding-left: 16px;
-    padding-right: 8px;
-    padding-inline-start: 16px;
-    padding-inline-end: 8px;
+    padding-left: 1rem;
+    padding-right: 0.5rem;
+    padding-inline-start: 1rem;
+    padding-inline-end: 0.5rem;
 }
 
 
 
 .mud-table-cell {
     display: table-cell;
-    padding: 16px;
+    padding: 1rem;
     font-size: 0.875rem;
     text-align: start;
     font-weight: 400;
     line-height: 1.43;
-    border-bottom: 1px solid var(--mud-palette-table-lines);
+    border-bottom: 0.0625rem solid var(--mud-palette-table-lines);
     letter-spacing: 0.01071em;
     vertical-align: inherit;
 
     & .mud-checkbox {
-        margin: -12px;
+        margin: -0.75rem;
     }
 }
 
@@ -121,14 +121,14 @@
 .mud-table-dense {
     & * .mud-table-row {
         & .mud-table-cell {
-            padding: 6px 24px 6px 16px;
-            padding-inline-start: 16px;
-            padding-inline-end: 24px;
+            padding: 0.375rem 1.5rem 0.375rem 1rem;
+            padding-inline-start: 1rem;
+            padding-inline-end: 1.5rem;
         }
 
         & .mud-table-cell:last-child {
-            padding-right: 16px;
-            padding-inline-end: 16px;
+            padding-right: 1rem;
+            padding-inline-end: 1rem;
         }
     }
 }
@@ -137,7 +137,7 @@
     & .mud-table-container .mud-table-root .mud-table-body {
         & .mud-table-row {
             .mud-table-cell {
-                border-right: 1px solid var(--mud-palette-table-lines);
+                border-right: 0.0625rem solid var(--mud-palette-table-lines);
             }
         }
     }
@@ -145,7 +145,7 @@
     & .mud-table-container .mud-table-root .mud-table-head.table-head-bordered {
         & .mud-table-row {
             .mud-table-cell {
-                border-right: 1px solid var(--mud-palette-table-lines);
+                border-right: 0.0625rem solid var(--mud-palette-table-lines);
             }
         }
     }
@@ -153,7 +153,7 @@
     & .mud-table-container .mud-table-root .mud-table-foot.table-foot-bordered {
         & .mud-table-row {
             .mud-table-cell {
-                border-right: 1px solid var(--mud-palette-table-lines);
+                border-right: 0.0625rem solid var(--mud-palette-table-lines);
             }
         }
     }
@@ -169,7 +169,7 @@
 
         .mud-table-head {
             & * .mud-table-cell:first-child {
-                border-radius: var(--mud-default-borderradius) 0px 0px 0px;
+                border-radius: var(--mud-default-borderradius) 0 0 0;
             }
 
             & * .mud-table-cell {
@@ -240,8 +240,8 @@
         & > div.mud-input.mud-input-text {
             color: var(--mud-theme-on-surface);
             font-size: 0.875rem;
-            margin-top: -14px;
-            margin-bottom: -8px;
+            margin-top: -0.875rem;
+            margin-bottom: -0.5rem;
         }
     }
 
@@ -250,8 +250,8 @@
             & > div.mud-input.mud-input-text {
                 color: var(--mud-theme-on-surface);
                 font-size: 0.875rem;
-                margin-top: -14px;
-                margin-bottom: -8px;
+                margin-top: -0.875rem;
+                margin-bottom: -0.5rem;
             }
         }
     }
@@ -288,10 +288,10 @@
 }
 
 .mud-table-pagination-toolbar {
-    border-top: 1px solid var(--mud-palette-table-lines);
-    height: 52px;
-    padding-right: 2px;
-    padding-inline-end: 2px;
+    border-top: 0.0625rem solid var(--mud-palette-table-lines);
+    height: 3.25rem;
+    padding-right: 0.125rem;
+    padding-inline-end: 0.125rem;
     padding-inline-start: unset;
 }
 
@@ -305,19 +305,19 @@
 
 .mud-table-pagination-select {
     cursor: pointer;
-    margin-left: 10px !important;
-    margin-right: 10px !important;
-    min-width: 52px;
-    margin-top: 0px !important;
+    margin-left: 0.625rem !important;
+    margin-right: 0.625rem !important;
+    min-width: 3.25rem;
+    margin-top: 0 !important;
 
     & .mud-select-input {
-        margin-top: 0px !important;
+        margin-top: 0 !important;
     }
 
     & .mud-input .mud-input-root {
-        max-width: 80px;
+        max-width: 5rem;
         cursor: pointer;
-        margin-top: 2px;
+        margin-top: 0.125rem;
         border: none;
         font-size: .875rem;
         font-weight: 400;
@@ -329,8 +329,8 @@
 
 .mud-table-pagination-actions {
     flex-shrink: 0;
-    margin-left: 20px;
-    margin-inline-start: 20px;
+    margin-left: 1.25rem;
+    margin-inline-start: 1.25rem;
     margin-inline-end: unset;
 }
 
@@ -347,18 +347,18 @@
 
         .mud-table-smalldevices-sortselect {
             display: block;
-            padding: 4px 16px 8px;
+            padding: 0.25rem 1rem 0.5rem;
         }
 
         .mud-table-body {
-            border-top: 1px solid var(--mud-palette-table-lines);
+            border-top: 0.0625rem solid var(--mud-palette-table-lines);
         }
 
         .mud-table-row {
             display: initial;
 
             .mud-table-cell:last-child {
-                border-bottom: 1px solid var(--mud-palette-table-lines);
+                border-bottom: 0.0625rem solid var(--mud-palette-table-lines);
             }
         }
 
@@ -367,21 +367,21 @@
             justify-content: space-between;
             align-items: center;
             border: none;
-            padding: 14px 16px;
+            padding: 0.875rem 1rem;
             text-align: start !important;
         }
 
         &.mud-table-dense {
             & .mud-table-cell {
-                padding: 6px 16px;
+                padding: 0.375rem 1rem;
             }
         }
 
         .mud-table-cell:before {
             content: attr(data-label);
             font-weight: 500;
-            padding-right: 16px;
-            padding-inline-end: 16px;
+            padding-right: 1rem;
+            padding-inline-end: 1rem;
             padding-inline-start: unset;
         }
 
@@ -426,9 +426,9 @@
         .mud-table-pagination {
             .mud-select {
                 margin-left: auto;
-                margin-right: -14px;
+                margin-right: -0.875rem;
                 margin-inline-start: auto;
-                margin-inline-end: -14px;
+                margin-inline-end: -0.875rem;
             }
 
             .mud-select ~ .mud-table-pagination-caption {
@@ -444,17 +444,17 @@
         .mud-table-pagination {
             .mud-table-pagination-toolbar {
                 flex-wrap: wrap;
-                padding-top: 16px;
-                padding-right: 16px;
-                padding-inline-end: 16px;
+                padding-top: 1rem;
+                padding-right: 1rem;
+                padding-inline-end: 1rem;
                 padding-inline-start: unset;
-                min-height: 100px;
+                min-height: 6.25rem;
 
                 .mud-table-pagination-actions {
                     margin-left: auto;
-                    margin-right: -14px;
+                    margin-right: -0.875rem;
                     margin-inline-start: auto;
-                    margin-inline-end: -14px;
+                    margin-inline-end: -0.875rem;
                 }
             }
         }

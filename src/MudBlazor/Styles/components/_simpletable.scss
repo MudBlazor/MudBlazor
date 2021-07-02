@@ -23,12 +23,12 @@
 
             > td, th {
                 display: table-cell;
-                padding: 16px;
+                padding: 1rem;
                 font-size: 0.875rem;
                 text-align: start;
                 font-weight: 400;
                 line-height: 1.43;
-                border-bottom: 1px solid var(--mud-palette-table-lines);
+                border-bottom: 0.0625rem solid var(--mud-palette-table-lines);
                 letter-spacing: 0.01071em;
                 vertical-align: inherit;
             }
@@ -50,14 +50,14 @@
 .mud-simple-table.mud-table-dense {
     & * tr {
         & td, th {
-            padding: 6px 24px 6px 16px;
-            padding-inline-start: 16px;
-            padding-inline-end: 24px;
+            padding: 0.375rem 1.5rem 0.375rem 1rem;
+            padding-inline-start: 1rem;
+            padding-inline-end: 1.5rem;
         }
 
         & td, th:last-child {
-            padding-right: 16px;
-            padding-inline-end: 16px;
+            padding-right: 1rem;
+            padding-inline-end: 1rem;
         }
     }
 }
@@ -74,7 +74,7 @@
     & .mud-table-container table tbody {
         & tr {
             td {
-                border-right: 1px solid var(--mud-palette-table-lines);
+                border-right: 0.0625rem solid var(--mud-palette-table-lines);
             }
 
             td:last-child {

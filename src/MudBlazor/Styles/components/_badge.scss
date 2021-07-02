@@ -16,12 +16,12 @@
         width: 100%;
 
         .mud-badge-badge {
-            border-radius: 10px;
-            font-size: 12px;
-            height: 20px;
+            border-radius: 0.625rem;
+            font-size: 0.75rem;
+            height: 1.25rem;
             letter-spacing: 0;
-            min-width: 20px;
-            padding: 4px 6px;
+            min-width: 1.25rem;
+            padding: 0.25rem 0.375rem;
             pointer-events: auto;
             position: absolute;
             text-align: center;
@@ -33,75 +33,75 @@
             &.mud-badge-bordered {
                 border-color: inherit;
                 border-style: solid;
-                border-width: 2px;
-                padding: 3px 4px;
+                border-width: 0.125rem;
+                padding: 0.1875rem 0.25rem;
 
                 &.mud-badge-icon {
-                    padding: 4px 6px;
+                    padding: 0.25rem 0.375rem;
 
                     & .mud-icon-badge {
-                        margin-left: -4px;
-                        margin-inline-start: -4px;
+                        margin-left: -0.25rem;
+                        margin-inline-start: -0.25rem;
                         margin-inline-end: unset;
-                        margin-top: -4px;
+                        margin-top: -0.25rem;
                     }
                 }
             }
 
             &.mud-badge-icon {
-                width: 20px;
-                height: 20px;
+                width: 1.25rem;
+                height: 1.25rem;
 
                 & .mud-icon-badge {
                     color: inherit;
-                    font-size: 12px;
-                    margin-left: -2px;
-                    margin-inline-start: -2px;
+                    font-size: 0.75rem;
+                    margin-left: -0.125rem;
+                    margin-inline-start: -0.125rem;
                     margin-inline-end: unset;
                 }
             }
 
             &.mud-badge-dot {
                 border-radius: 50%;
-                height: 9px;
+                height: 0.5625rem;
                 min-width: 0;
                 padding: 0;
-                width: 9px;
+                width: 0.5625rem;
             }
 
             &.mud-badge-top {
                 top: auto;
-                bottom: calc(100% - 4px);
+                bottom: calc(100% - 0.25rem);
 
                 &.mud-badge-overlap {
-                    bottom: calc(100% - 12px);
+                    bottom: calc(100% - 0.75rem);
                 }
             }
 
             &.mud-badge-bottom {
                 bottom: auto;
-                top: calc(100% - 4px);
+                top: calc(100% - 0.25rem);
 
                 &.mud-badge-overlap {
-                    top: calc(100% - 12px);
+                    top: calc(100% - 0.75rem);
                 }
             }
 
             &.mud-badge-right {
                 right: auto;
-                left: calc(100% - 4px);
+                left: calc(100% - 0.25rem);
 
                 &.mud-badge-overlap {
-                    left: calc(100% - 12px);
+                    left: calc(100% - 0.75rem);
                 }
             }
 
             &.mud-badge-left {
                 left: auto;
-                right: calc(100% - 4px);
+                right: calc(100% - 0.25rem);
 
                 &.mud-badge-overlap {
-                    right: calc(100% - 12px);
+                    right: calc(100% - 0.75rem);
                 }
             }
         }

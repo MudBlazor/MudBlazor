@@ -6,14 +6,14 @@
     box-sizing: border-box;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 @media (min-width:$breakpoint-sm) {
     .mud-container {
-        padding-left: 24px;
-        padding-right: 24px;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
     }
 }
 

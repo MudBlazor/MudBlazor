@@ -2,7 +2,7 @@
 
     .mud-timepicker-button {
         padding: 0;
-        min-width: 16px;
+        min-width: 1rem;
         text-transform: none;
 
         &.mud-timepicker-toolbar-text {
@@ -29,14 +29,14 @@
 
     .mud-timepicker-ampm {
         display: flex;
-        margin-left: 20px;
-        margin-right: -20px;
-        margin-inline-start: 20px;
-        margin-inline-end: -20px;
+        margin-left: 1.25rem;
+        margin-right: -1.25rem;
+        margin-inline-start: 1.25rem;
+        margin-inline-end: -1.25rem;
         flex-direction: column;
 
         .mud-timepicker-button {
-            font-size: 18px;
+            font-size: 1.125rem;
             font-weight: 400;
             line-height: 1.75;
             letter-spacing: 0.00938em;
@@ -45,14 +45,14 @@
 
     .mud-timepicker-separator {
         cursor: default;
-        margin: 0 4px 0 2px;
-        margin-inline-start: 2px;
-        margin-inline-end: 4px;
+        margin: 0 0.25rem 0 0.125rem;
+        margin-inline-start: 0.125rem;
+        margin-inline-end: 0.25rem;
     }
 
     &.mud-picker-timepicker-toolbar-landscape {
         flex-wrap: wrap;
-        width: 150px;
+        width: 9.375rem;
         justify-content: center;
 
         .mud-timepicker-hourminute {
@@ -60,20 +60,20 @@
                 font-size: 3rem;
                 font-weight: 400;
                 line-height: 1.04;
-                letter-spacing: 0em;
+                letter-spacing: 0;
             }
         }
 
         .mud-timepicker-ampm {
             display: flex;
-            margin-left: 20px;
-            margin-right: -20px;
-            margin-inline-start: 20px;
-            margin-inline-end: -20px;
+            margin-left: 1.25rem;
+            margin-right: -1.25rem;
+            margin-inline-start: 1.25rem;
+            margin-inline-end: -1.25rem;
             flex-direction: column;
 
             .mud-timepicker-button {
-                font-size: 18px;
+                font-size: 1.125rem;
                 font-weight: 400;
                 line-height: 1.75;
                 letter-spacing: 0.00938em;
@@ -84,20 +84,20 @@
             font-size: 3rem;
             font-weight: 400;
             line-height: 1.04;
-            letter-spacing: 0em;
+            letter-spacing: 0;
         }
     }
 }
 
 .mud-picker-time-container {
-    margin: 16px 0 8px;
+    margin: 1rem 0 0.5rem;
     display: flex;
     align-items: flex-end;
     justify-content: center;
 
     .mud-picker-time-clock {
-        width: 260px;
-        height: 260px;
+        width: 16.25rem;
+        height: 16.25rem;
         position: relative;
         border-radius: 50%;
         pointer-events: none;
@@ -116,20 +116,20 @@
         .mud-picker-time-clock-pin {
             top: 50%;
             left: 50%;
-            width: 6px;
-            height: 6px;
+            width: 0.375rem;
+            height: 0.375rem;
             position: absolute;
             transform: translate(-50%, -50%);
             border-radius: 50%;
         }
 
         .mud-picker-stick-inner {
-            left: calc(50% - 1px);
-            width: 3px;
+            left: calc(50% - 0.0625rem);
+            width: 0.1875rem;
             height: 35%;
             bottom: 0;
             position: absolute;
-            transform-origin: center bottom 0px;
+            transform-origin: center bottom 0;
 
             &.mud-hour {
                 &:after {
@@ -137,8 +137,8 @@
                     position: absolute;
                     left: 50%;
                     transform: translate(-50%,-50%);
-                    height: 48px;
-                    width: 48px;
+                    height: 3rem;
+                    width: 3rem;
                     top: -60%;
                     border-radius: 50%;
                     background-color: inherit;
@@ -147,12 +147,12 @@
         }
 
         .mud-picker-stick-outer {
-            left: calc(50% - 1px);
+            left: calc(50% - 0.0625rem);
             width: 0;
             height: 35%;
             bottom: 35%;
             position: absolute;
-            transform-origin: center bottom 0px;
+            transform-origin: center bottom 0;
 
             &.mud-hour {
                 &:after {
@@ -160,9 +160,9 @@
                     position: absolute;
                     left: 50%;
                     transform: translate(-50%,-50%);
-                    height: 48px;
-                    width: 62px;
-                    top: -20px;
+                    height: 3rem;
+                    width: 3.875rem;
+                    top: -1.25rem;
                     border-radius: 50%;
                     background-color: inherit;
                 }
@@ -170,12 +170,12 @@
         }
 
         .mud-picker-stick {
-            left: calc(50% - 1px);
-            width: 3px;
+            left: calc(50% - 0.0625rem);
+            width: 0.1875rem;
             height: 50%;
             bottom: 50%;
             position: absolute;
-            transform-origin: center bottom 0px;
+            transform-origin: center bottom 0;
 
             &.mud-hour {
                 &:after {
@@ -183,9 +183,9 @@
                     position: absolute;
                     left: 50%;
                     transform: translate(-50%,-50%);
-                    height: 62px;
-                    width: 62px;
-                    top: 20px;
+                    height: 3.875rem;
+                    width: 3.875rem;
+                    top: 1.25rem;
                     border-radius: 50%;
                     background-color: inherit;
                 }
@@ -197,9 +197,9 @@
                     position: absolute;
                     left: 50%;
                     transform: translate(-50%,-50%);
-                    height: 44px;
-                    width: 15px;
-                    top: 20px;
+                    height: 2.75rem;
+                    width: 0.9375rem;
+                    top: 1.25rem;
                     border-radius: 50%;
                     background-color: inherit;
                 }
@@ -207,11 +207,11 @@
         }
 
         .mud-picker-time-clock-pointer {
-            left: calc(50% - 1px);
-            width: 2px;
+            left: calc(50% - 0.0625rem);
+            width: 0.125rem;
             bottom: 50%;
             position: absolute;
-            transform-origin: center bottom 0px;
+            transform-origin: center bottom 0;
 
             &.mud-picker-time-clock-pointer-animation {
                 transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,height 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
@@ -222,31 +222,31 @@
                 border-radius: 100%;
 
                 &.mud-onclock-text {
-                    top: -19px;
-                    left: -13px;
-                    width: 28px;
-                    height: 28px;
+                    top: -1.1875rem;
+                    left: -0.8125rem;
+                    width: 1.75rem;
+                    height: 1.75rem;
                     border: none;
                     background-color: inherit
                 }
 
                 &.mud-onclock-minute {
                     background: transparent;
-                    border: 2px solid;
-                    width: 10px;
-                    height: 10px;
-                    top: -9px;
-                    left: -4px;
+                    border: 0.125rem solid;
+                    width: 0.625rem;
+                    height: 0.625rem;
+                    top: -0.5625rem;
+                    left: -0.25rem;
                 }
             }
         }
 
         .mud-clock-number {
-            left: calc((100% - 32px) / 2);
+            left: calc((100% - 2rem) / 2);
             color: var(--mud-palette-text-primary);
             background-color: transparent !important;
-            width: 32px;
-            height: 32px;
+            width: 2rem;
+            height: 2rem;
             display: inline-flex;
             position: absolute;
             align-items: center;

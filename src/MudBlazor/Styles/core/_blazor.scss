@@ -1,7 +1,7 @@
 ﻿#blazor-error-ui {
     background: lightyellow;
     bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 -0.0625rem 0.125rem rgba(0, 0, 0, 0.2);
     display: none;
     left: 0;
     padding: 0.6rem 1.25rem 0.7rem 1.25rem;
@@ -21,14 +21,14 @@
     z-index: 9999 !important;
 
     h5 {
-        font-size: 18px;
+        font-size: 1.125rem;
     }
 
     button {
         color: var(--mud-palette-text-primary);
-        padding: 8px 16px;
+        padding: 0.5rem 1rem;
         font-size: .875rem;
-        min-width: 64px;
+        min-width: 4rem;
         box-sizing: border-box;
         transition: background-color 250ms cubic-bezier(.4,0,.2,1) 0ms,box-shadow 250ms cubic-bezier(.4,0,.2,1) 0ms,border 250ms cubic-bezier(.4,0,.2,1) 0ms;
         font-weight: 500;
@@ -36,7 +36,7 @@
         border-radius: var(--mud-default-borderradius);
         letter-spacing: .02857em;
         text-transform: uppercase;
-        margin: 40px auto !important;
+        margin: 2.5rem auto !important;
 
         &:hover {
             background-color: var(--mud-palette-action-default-hover);

@@ -33,7 +33,7 @@
         > .mud-button-root:not(:first-child), :not(:first-child) .mud-button-root {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
-            margin-left: -1px;
+            margin-left: -0.0625rem;
         }
     }
 
@@ -41,7 +41,7 @@
         > .mud-button-root:not(:last-child), :not(:last-child) .mud-button-root {
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
-            margin-left: -1px;
+            margin-left: -0.0625rem;
         }
 
         > .mud-button-root:not(:first-child), :not(:first-child) .mud-button-root {
@@ -65,28 +65,28 @@
     > .mud-button-root:not(:first-child), :not(:first-child) .mud-button-root {
         border-top-right-radius: 0;
         border-top-left-radius: 0;
-        margin-top: -1px;
+        margin-top: -0.0625rem;
     }
 }
 
 .mud-button-group-text {
     &.mud-button-group-override-styles {
         .mud-button-root {
-            padding: 6px 8px;
+            padding: 0.375rem 0.5rem;
         }
 
         &.mud-button-group-horizontal {
             &:not(.mud-button-group-rtl) .mud-button-root:not(:first-child) {
-                border-left: 1px solid var(--mud-palette-text-primary);
+                border-left: 0.0625rem solid var(--mud-palette-text-primary);
             }
 
             &.mud-button-group-rtl .mud-button-root:not(:first-child) {
-                border-right: 1px solid var(--mud-palette-text-primary);
+                border-right: 0.0625rem solid var(--mud-palette-text-primary);
             }
         }
 
         &.mud-button-group-vertical .mud-button-root:not(:last-child) {
-            border-bottom: 1px solid var(--mud-palette-text-primary);
+            border-bottom: 0.0625rem solid var(--mud-palette-text-primary);
         }
 
         @each $color in $mud-palette-colors {
@@ -101,16 +101,16 @@
 
                 &.mud-button-group-horizontal {
                     &:not(.mud-button-group-rtl) .mud-button-root:not(:first-child) {
-                        border-left: 1px solid var(--mud-palette-#{$color});
+                        border-left: 0.0625rem solid var(--mud-palette-#{$color});
                     }
 
                     &.mud-button-group-rtl .mud-button-root:not(:first-child) {
-                        border-right: 1px solid var(--mud-palette-#{$color});
+                        border-right: 0.0625rem solid var(--mud-palette-#{$color});
                     }
                 }
 
                 &.mud-button-group-vertical .mud-button-root:not(:last-child) {
-                    border-bottom: 1px solid var(--mud-palette-#{$color});
+                    border-bottom: 0.0625rem solid var(--mud-palette-#{$color});
                 }
             }
         }
@@ -120,14 +120,14 @@
 .mud-button-group-outlined {
     &.mud-button-group-override-styles {
         .mud-button-root {
-            padding: 5px 15px;
-            border: 1px solid var(--mud-palette-text-primary);
+            padding: 0.3125rem 0.9375rem;
+            border: 0.0625rem solid var(--mud-palette-text-primary);
         }
 
         @each $color in $mud-palette-colors {
             &.mud-button-group-outlined-#{$color} .mud-button-root {
                 color: var(--mud-palette-#{$color});
-                border: 1px solid var(--mud-palette-#{$color});
+                border: 0.0625rem solid var(--mud-palette-#{$color});
 
                 &:hover {
                     background-color: var(--mud-palette-#{$color}-hover);
@@ -151,28 +151,28 @@
     &.mud-button-group-override-styles {
         .mud-button-root {
             background-color: var(--mud-palette-action-default-hover);
-            padding: 6px 16px;
+            padding: 0.375rem 1rem;
         }
 
         &.mud-button-group-horizontal {
             &:not(.mud-button-group-rtl) .mud-button-root:not(:first-child) {
-                border-left: 1px solid var(--mud-palette-divider);
+                border-left: 0.0625rem solid var(--mud-palette-divider);
             }
 
             &.mud-button-group-rtl .mud-button-root:not(:first-child) {
-                border-right: 1px solid var(--mud-palette-divider);
+                border-right: 0.0625rem solid var(--mud-palette-divider);
             }
         }
 
         &.mud-button-group-vertical .mud-button-root:not(:first-child) {
-            border-top: 1px solid var(--mud-palette-divider);
+            border-top: 0.0625rem solid var(--mud-palette-divider);
         }
 
         @each $color in $mud-palette-colors {
             &.mud-button-group-filled-#{$color} {
                 .mud-button-root {
                     background-color: var(--mud-palette-#{$color});
-                    color: var(--mud-palette-#{$color}-text);             
+                    color: var(--mud-palette-#{$color}-text);
 
                     &:hover {
                         background-color: var(--mud-palette-#{$color}-darken);
@@ -181,16 +181,16 @@
 
                 &.mud-button-group-horizontal {
                     &:not(.mud-button-group-rtl) .mud-button-root:not(:first-child) {
-                        border-left: 1px solid var(--mud-palette-#{$color}-lighten);
+                        border-left: 0.0625rem solid var(--mud-palette-#{$color}-lighten);
                     }
 
                     &.mud-button-group-rtl .mud-button-root:not(:first-child) {
-                        border-right: 1px solid var(--mud-palette-#{$color}-lighten);
+                        border-right: 0.0625rem solid var(--mud-palette-#{$color}-lighten);
                     }
                 }
 
                 &.mud-button-group-vertical .mud-button-root:not(:first-child) {
-                    border-top: 1px solid var(--mud-palette-#{$color}-lighten);
+                    border-top: 0.0625rem solid var(--mud-palette-#{$color}-lighten);
                 }
             }
         }
@@ -203,7 +203,7 @@
 
 .mud-button-group-root {
     &.mud-button-group-text-size-small .mud-button-root {
-        padding: 4px 5px;
+        padding: 0.25rem 0.3125rem;
         font-size: 0.8125rem;
 
         &.mud-icon-button .mud-icon-root {
@@ -212,7 +212,7 @@
     }
 
     &.mud-button-group-text-size-large .mud-button-root {
-        padding: 8px 11px;
+        padding: 0.5rem 0.6875rem;
         font-size: 0.9375rem;
 
         &.mud-icon-button .mud-icon-root {
@@ -221,11 +221,11 @@
     }
 
     &.mud-button-group-outlined-size-small .mud-button-root {
-        padding: 3px 9px;
+        padding: 0.1875rem 0.5625rem;
         font-size: 0.8125rem;
 
         &.mud-icon-button {
-            padding: 3px 9px;
+            padding: 0.1875rem 0.5625rem;
 
             .mud-icon-root {
                 font-size: 1.422rem;
@@ -234,11 +234,11 @@
     }
 
     &.mud-button-group-outlined-size-large .mud-button-root {
-        padding: 7px 21px;
+        padding: 0.4375rem 1.3125rem;
         font-size: 0.9375rem;
 
         &.mud-icon-button {
-            padding: 7px 15px;
+            padding: 0.4375rem 0.9375rem;
 
             .mud-icon-root {
                 font-size: 1.641rem;
@@ -247,11 +247,11 @@
     }
 
     &.mud-button-group-filled-size-small .mud-button-root {
-        padding: 4px 10px;
+        padding: 0.25rem 0.625rem;
         font-size: 0.8125rem;
 
         &.mud-icon-button {
-            padding: 4px 10px;
+            padding: 0.25rem 0.625rem;
 
             .mud-icon-root {
                 font-size: 1.422rem;
@@ -260,11 +260,11 @@
     }
 
     &.mud-button-group-filled-size-large .mud-button-root {
-        padding: 8px 22px;
+        padding: 0.5rem 1.375rem;
         font-size: 0.9375rem;
 
         &.mud-icon-button {
-            padding: 8px 16px;
+            padding: 0.5rem 1rem;
 
             .mud-icon-root {
                 font-size: 1.641rem;
@@ -281,8 +281,8 @@
     }
 
     .mud-button-root.mud-icon-button {
-        padding-right: 12px;
-        padding-left: 12px;
+        padding-right: 0.75rem;
+        padding-left: 0.75rem;
 
         .mud-icon-root {
             font-size: 1.516rem;

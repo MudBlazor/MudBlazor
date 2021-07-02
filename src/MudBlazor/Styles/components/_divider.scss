@@ -1,6 +1,6 @@
 ﻿.mud-divider {
     border: none;
-    height: 1px;
+    height: 0.0625rem;
     margin: 0;
     flex-shrink: 0;
     background-color: var(--mud-palette-divider);
@@ -14,8 +14,8 @@
 }
 
 .mud-divider-inset {
-    margin-left: 72px;
-    margin-inline-start: 72px;
+    margin-left: 4.5rem;
+    margin-inline-start: 4.5rem;
     margin-inline-end: unset;
 }
 
@@ -24,12 +24,12 @@
 }
 
 .mud-divider-middle {
-    margin-left: 16px;
-    margin-right: 16px;
+    margin-left: 1rem;
+    margin-right: 1rem;
 }
 
 .mud-divider-vertical {
-    width: 1px;
+    width: 0.0625rem;
     height: 100%;
 }
 

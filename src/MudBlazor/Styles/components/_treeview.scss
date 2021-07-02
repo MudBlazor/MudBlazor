@@ -1,6 +1,6 @@
 ﻿.mud-treeview {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     list-style: none;
     overflow: auto;
 
@@ -14,10 +14,10 @@
 }
 
 .mud-treeview-group {
-    margin: 0px;
-    padding: 0px;
-    margin-left: 17px;
-    margin-inline-start: 17px;
+    margin: 0;
+    padding: 0;
+    margin-left: 1.0625rem;
+    margin-inline-start: 1.0625rem;
     margin-inline-end: unset;
     list-style: none;
 }
@@ -33,14 +33,14 @@
     -webkit-tap-highlight-color: transparent;
 
     .mud-icon-button {
-        padding: 4px;
+        padding: 0.25rem;
     }
 }
 
 .mud-treeview-item-content {
     width: 100%;
     display: flex;
-    padding: 4px;
+    padding: 0.25rem;
     align-items: center;
 
     &.mud-treeview-item-activated {
@@ -52,7 +52,7 @@
     width: 2rem;
     display: flex;
     flex-shrink: 0;
-    margin: 0 4px;
+    margin: 0 0.25rem;
     justify-content: center;
 
     .mud-treeview-item-arrow-expand {
@@ -71,19 +71,19 @@
 }
 
 .mud-treeview-item-icon {
-    width: 32px;
+    width: 2rem;
     display: flex;
     flex-shrink: 0;
-    margin-right: 4px;
-    margin-inline-end: 4px;
+    margin-right: 0.25rem;
+    margin-inline-end: 0.25rem;
     margin-inline-start: unset;
     justify-content: center;
 }
 
 .mud-treeview-item-label {
     flex-grow: 1;
-    padding-left: 4px;
-    padding-inline-start: 4px;
+    padding-left: 0.25rem;
+    padding-inline-start: 0.25rem;
     padding-inline-end: unset;
 }
 
@@ -101,7 +101,7 @@
     }
 
     .mud-treeview-item-content {
-        padding: 1px;
+        padding: 0.0625rem;
     }
 
     .mud-treeview-item-arrow button {

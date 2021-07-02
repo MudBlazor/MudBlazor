@@ -3,8 +3,8 @@
 .mud-carousel {
     display: flex !important;
     position: relative;
-    margin: 0px !important;
-    clip-path: inset(0px 0px 0px 0px);
+    margin: 0 !important;
+    clip-path: inset(0 0 0 0);
     overflow: hidden;
 
     @each $color in $mud-palette-colors {
@@ -20,10 +20,10 @@
 
 .mud-carousel-item {
     position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 0px;
-    bottom: 0px;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
     margin: inherit;
     padding: inherit;
     z-index: 2;
@@ -43,7 +43,7 @@
 /* ### Transitions ### */
 
 /*Fade
-*/ 
+*/
 @keyframes mud-carousel-transition-fade-in-keyframe {
     from {
         opacity: 0;

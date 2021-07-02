@@ -15,20 +15,20 @@
     background-color: var(--mud-palette-grey-light);
 
     &.mud-avatar-small {
-        width: 24px;
-        height: 24px;
+        width: 1.5rem;
+        height: 1.5rem;
         font-size: .875rem;
     }
 
     &.mud-avatar-medium {
-        width: 40px;
-        height: 40px;
+        width: 2.5rem;
+        height: 2.5rem;
         font-size: 1.25rem;
     }
 
     &.mud-avatar-large {
-        width: 56px;
-        height: 56px;
+        width: 3.5rem;
+        height: 3.5rem;
         font-size: 1.75rem;
     }
 }
@@ -59,12 +59,12 @@
 .mud-avatar-outlined {
     color: var(--mud-palette-text-primary);
     background-color: unset;
-    border: 1px solid var(--mud-palette-text-primary);
+    border: 0.0625rem solid var(--mud-palette-text-primary);
 
     @each $color in $mud-palette-colors {
         &.mud-avatar-outlined-#{$color} {
             color: var(--mud-palette-#{$color});
-            border: 1px solid var(--mud-palette-#{$color});
+            border: 0.0625rem solid var(--mud-palette-#{$color});
         }
     }
 }

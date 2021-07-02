@@ -8,11 +8,11 @@
 
     & .mud-tooltip {
         color: var(--mud-palette-dark-text);
-        padding: 4px 8px;
+        padding: 0.25rem 0.5rem;
         text-align: center;
         font-weight: 500;
-        font-size: 12px;
-        line-height: 1.4em;
+        font-size: 0.75rem;
+        line-height: 1.4rem;
         width: max-content;
         background-color: var(--mud-palette-grey-darker);
         border-radius: var(--mud-default-borderradius);
@@ -25,25 +25,25 @@
         &.mud-tooltip-placement-top {
             top: 0;
             left: 50%;
-            transform: translate(-50%, calc(-100% - 10px));
+            transform: translate(-50%, calc(-100% - 0.625rem));
         }
 
         &.mud-tooltip-placement-bottom {
             bottom: 0;
             left: 50%;
-            transform: translate(-50%, calc(100% + 10px));
+            transform: translate(-50%, calc(100% + 0.625rem));
         }
 
         &.mud-tooltip-placement-start {
             top: 0;
             left: 0;
-            transform: translateX(calc(-100% - 10px));
+            transform: translateX(calc(-100% - 0.625rem));
         }
 
         &.mud-tooltip-placement-end {
             top: 0;
             right: 0;
-            transform: translateX(calc(100% + 10px));
+            transform: translateX(calc(100% + 0.625rem));
         }
     }
 

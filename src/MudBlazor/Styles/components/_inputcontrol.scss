@@ -8,16 +8,16 @@
     position: relative;
     flex-direction: column;
     vertical-align: top;
-    margin-top: 6px;
+    margin-top: 0.375rem;
 
     &.mud-input-control-margin-normal {
-        margin-top: 16px;
-        margin-bottom: 8px;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
     }
 
     &.mud-input-control-margin-dense {
-        margin-top: 3px;
-        margin-bottom: 2px;
+        margin-top: 0.1875rem;
+        margin-bottom: 0.125rem;
     }
 
     &.mud-input-control-full-width {
@@ -31,7 +31,7 @@
 
         & > div {
             &.mud-input.mud-input-text {
-                margin-top: 16px;
+                margin-top: 1rem;
             }
 
             &.mud-input.mud-input-filled {
@@ -44,7 +44,7 @@
 
     & > .mud-input-control-input-container > .mud-input-label-outlined {
         &.mud-input-label-inputcontrol {
-            line-height: 18px;
+            line-height: 1.125rem;
         }
     }
 
@@ -84,12 +84,12 @@
 
         &.mud-input-showspin .mud-input:not(.mud-input-adorned-end) {
             input {
-                padding-right: 24px; //This must be the same width of the spinners
-                padding-inline-end: 24px;
+                padding-right: 1.5rem; //This must be the same width of the spinners
+                padding-inline-end: 1.5rem;
 
                 &.mud-input-root-margin-dense {
-                    padding-right: 20px; //This must be the same width of the spinners
-                    padding-inline-end: 20px;
+                    padding-right: 1.25rem; //This must be the same width of the spinners
+                    padding-inline-end: 1.25rem;
                 }
             }
             &.mud-input-text input {
@@ -101,18 +101,18 @@
             }
 
             &.mud-input-filled input {
-                padding-inline-start: 12px;
+                padding-inline-start: 0.75rem;
 
                 &.mud-input-root-margin-dense {
-                    padding-inline-start: 12px;
+                    padding-inline-start: 0.75rem;
                 }
             }
 
             &.mud-input-outlined input {
-                padding-inline-start: 14px;
+                padding-inline-start: 0.875rem;
 
                 &.mud-input-root-margin-dense {
-                    padding-inline-start: 14px;
+                    padding-inline-start: 0.875rem;
                 }
             }
         }
@@ -127,14 +127,14 @@
             bottom: 0;
 
             & button {
-                padding: 2px;
+                padding: 0.125rem;
                 min-width: unset;
                 min-height: unset;
             }
         }
 
         .mud-input-numeric-spin button {
-            padding: 2px 0;
+            padding: 0.125rem 0;
         }
     }
 }
@@ -143,7 +143,7 @@
     color: var(--mud-palette-text-secondary);
     margin: 0;
     font-size: 0.75rem;
-    margin-top: 3px;
+    margin-top: 0.1875rem;
     text-align: start;
     font-weight: 400;
     line-height: 1.66;
@@ -160,12 +160,12 @@
 }
 
 .mud-input-helper-text-margin-dense {
-    margin-top: 4px;
+    margin-top: 0.25rem;
 }
 
 .mud-input-helper-text-contained {
-    margin-left: 14px;
-    margin-right: 14px;
+    margin-left: 0.875rem;
+    margin-right: 0.875rem;
 }
 
 .mud-application-layout-rtl {

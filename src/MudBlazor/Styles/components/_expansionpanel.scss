@@ -7,12 +7,12 @@
     border-radius: var(--mud-default-borderradius);
 
     &.mud-expansion-panels-square {
-        border-radius: 0px;
+        border-radius: 0;
     }
 
     &.mud-expansion-panels-borders {
         & .mud-expand-panel {
-            border-bottom: 1px solid var(--mud-palette-lines-default);
+            border-bottom: 0.0625rem solid var(--mud-palette-lines-default);
         }
     }
 }
@@ -27,7 +27,7 @@
     background-color: var(--mud-palette-surface);
 
     &.mud-expand-panel-border {
-        border-bottom: 1px solid var(--mud-palette-lines-default);
+        border-bottom: 0.0625rem solid var(--mud-palette-lines-default);
     }
 
     &:first-child {
@@ -42,7 +42,7 @@
     }
 
     &.mud-panel-expanded {
-        margin: 16px 0;
+        margin: 1rem 0;
         border-radius: inherit;
         border-bottom: none;
         transition-delay: 0ms;
@@ -73,9 +73,9 @@
         display: flex;
         font-size: .9375rem;
         line-height: 1;
-        min-height: 48px;
+        min-height: 3rem;
         outline: none;
-        padding: 16px 24px;
+        padding: 1rem 1.5rem;
         position: relative;
         transition: min-height .3s cubic-bezier(.25,.8,.5,1);
         user-select: none;
@@ -98,18 +98,18 @@
     }
 
     & .mud-expand-panel-content {
-        padding: 0 24px 16px;
+        padding: 0 1.5rem 1rem;
         flex: 1 1 auto;
         max-width: 100%;
 
         &.mud-expand-panel-gutters {
-            padding-left: 0px;
-            padding-right: 0px;
+            padding-left: 0;
+            padding-right: 0;
         }
 
         &.mud-expand-panel-dense {
-            padding-top: 0px;
-            padding-bottom: 0px;
+            padding-top: 0;
+            padding-bottom: 0;
         }
     }
 }

@@ -4,10 +4,10 @@
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    margin-left: -11px;
-    margin-right: 16px;
-    margin-inline-start: -11px;
-    margin-inline-end: 16px;
+    margin-left: -0.6875rem;
+    margin-right: 1rem;
+    margin-inline-start: -0.6875rem;
+    margin-inline-end: 1rem;
     vertical-align: middle;
     -webkit-tap-highlight-color: transparent;
     color: var(--mud-palette-action-default);
@@ -90,23 +90,23 @@
 
 .mud-radio-content-placement- {
     &start {
-        margin-left: 16px;
-        margin-right: -11px;
-        margin-inline-start: 16px;
-        margin-inline-end: -11px;
+        margin-left: 1rem;
+        margin-right: -0.6875rem;
+        margin-inline-start: 1rem;
+        margin-inline-end: -0.6875rem;
         flex-direction: row-reverse;
     }
 
     &top {
-        margin-left: 16px;
-        margin-inline-start: 16px;
+        margin-left: 1rem;
+        margin-inline-start: 1rem;
         margin-inline-end: unset;
         flex-direction: column-reverse;
     }
 
     &bottom {
-        margin-left: 16px;
-        margin-inline-start: 16px;
+        margin-left: 1rem;
+        margin-inline-start: 1rem;
         margin-inline-end: unset;
         flex-direction: column;
     }

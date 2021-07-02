@@ -32,12 +32,12 @@
             content: "\00a0";
             position: absolute;
             transition: border-bottom 0.2s, background-color 0.2s;
-            border-bottom: 1px solid var(--mud-palette-lines-inputs);
+            border-bottom: 0.0625rem solid var(--mud-palette-lines-inputs);
             pointer-events: none;
         }
 
         &:hover:not(.mud-disabled):before {
-            border-bottom: 1px solid var(--mud-palette-action-default);
+            border-bottom: 0.0625rem solid var(--mud-palette-action-default);
         }
 
         &:after {
@@ -48,7 +48,7 @@
             position: absolute;
             transform: scaleX(0);
             transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-            border-bottom: 2px solid var(--mud-palette-primary);
+            border-bottom: 0.125rem solid var(--mud-palette-primary);
             pointer-events: none;
         }
 
@@ -66,8 +66,8 @@
         position: relative;
         transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
         background-color: rgba(0, 0, 0, 0.09);
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
 
         &:hover {
             background-color: rgba(0, 0, 0, 0.13);
@@ -82,14 +82,14 @@
         }
 
         &.mud-input-adorned-start {
-            padding-left: 12px;
-            padding-inline-start: 12px;
+            padding-left: 0.75rem;
+            padding-inline-start: 0.75rem;
             padding-inline-end: unset;
         }
 
         &.mud-input-adorned-end {
-            padding-right: 12px;
-            padding-inline-end: 12px;
+            padding-right: 0.75rem;
+            padding-inline-end: 0.75rem;
             padding-inline-start: unset;
         }
 
@@ -101,7 +101,7 @@
                 content: "\00a0";
                 position: absolute;
                 transition: border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-                border-bottom: 1px solid var(--mud-palette-lines-inputs);
+                border-bottom: 0.0625rem solid var(--mud-palette-lines-inputs);
                 pointer-events: none;
             }
 
@@ -113,12 +113,12 @@
                 position: absolute;
                 transform: scaleX(0);
                 transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
-                border-bottom: 2px solid var(--mud-palette-primary);
+                border-bottom: 0.125rem solid var(--mud-palette-primary);
                 pointer-events: none;
             }
 
             &:hover:before {
-                border-bottom: 1px solid var(--mud-palette-action-default);
+                border-bottom: 0.0625rem solid var(--mud-palette-action-default);
             }
 
             &.mud-disabled:before {
@@ -134,7 +134,7 @@
 
     &.mud-input-outlined {
         position: relative;
-        border-width: 0px;
+        border-width: 0;
 
         & .mud-input-outlined-border {
             display: flex;
@@ -150,7 +150,7 @@
             pointer-events: none;
             border-radius: var(--mud-default-borderradius);
             border-color: var(--mud-palette-lines-inputs);
-            border-width: 1px;
+            border-width: 0.0625rem;
             border-style: solid;
             transition: border-width,border-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
         }
@@ -160,7 +160,7 @@
         }
 
         &:focus-within .mud-input-outlined-border {
-            border-width: 2px;
+            border-width: 0.125rem;
             border-color: var(--mud-palette-primary);
         }
 
@@ -169,14 +169,14 @@
         }
 
         &.mud-input-adorned-start {
-            padding-left: 14px;
-            padding-inline-start: 14px;
+            padding-left: 0.875rem;
+            padding-inline-start: 0.875rem;
             padding-inline-end: unset;
         }
 
         &.mud-input-adorned-end {
-            padding-right: 14px;
-            padding-inline-end: 14px;
+            padding-right: 0.875rem;
+            padding-inline-end: 0.875rem;
             padding-inline-start: unset;
         }
     }
@@ -199,7 +199,7 @@
         height: 1.1876em;
         margin: 0;
         display: block;
-        padding: 6px 0 7px;
+        padding: 0.375rem 0 0.4375rem;
         min-width: 0;
         background: none;
         position: relative;
@@ -214,7 +214,7 @@
         }
 
         &.mud-input-root-margin-dense {
-            padding-top: 3px;
+            padding-top: 0.1875rem;
         }
 
         &.mud-input-root-multiline {
@@ -241,11 +241,11 @@
         }
 
         &.mud-input-root-filled {
-            padding: 27px 12px 10px;
+            padding: 1.6875rem 0.75rem 0.625rem;
 
             &.mud-input-root-margin-dense {
-                padding-top: 23px;
-                padding-bottom: 6px;
+                padding-top: 1.4375rem;
+                padding-bottom: 0.375rem;
             }
 
             &:-webkit-autofill {
@@ -254,12 +254,12 @@
             }
 
             &.mud-input-root-hidden-label {
-                padding-top: 18px;
-                padding-bottom: 19px;
+                padding-top: 1.125rem;
+                padding-bottom: 1.1875rem;
 
                 &.mud-input-root-margin-dense {
-                    padding-top: 10px;
-                    padding-bottom: 11px;
+                    padding-top: 0.625rem;
+                    padding-bottom: 0.6875rem;
                 }
             }
 
@@ -270,19 +270,19 @@
             &.mud-input-root-adorned-start {
                 padding-left: 0;
                 padding-inline-start: 0;
-                padding-inline-end: 12px;
+                padding-inline-end: 0.75rem;
             }
 
             &.mud-input-root-adorned-end {
                 padding-right: 0;
                 padding-inline-end: 0;
-                padding-inline-start: 12px;
+                padding-inline-start: 0.75rem;
             }
         }
     }
 
     &.mud-input-root-outlined {
-        padding: 18.5px 14px;
+        padding: 1.15625rem 0.875rem;
 
 
         &.mud-input-root:-webkit-autofill {
@@ -290,20 +290,20 @@
         }
 
         &.mud-input-root-margin-dense {
-            padding-top: 10.5px;
-            padding-bottom: 10.5px;
+            padding-top: 0.65625rem;
+            padding-bottom: 0.65625rem;
         }
 
         &.mud-input-root-adorned-start {
             padding-left: 0;
             padding-inline-start: 0;
-            padding-inline-end: 14px;
+            padding-inline-end: 0.875rem;
         }
 
         &.mud-input-root-adorned-end {
             padding-right: 0;
             padding-inline-end: 0;
-            padding-inline-start: 14px;
+            padding-inline-start: 0.875rem;
         }
     }
 
@@ -319,7 +319,7 @@
     width: 100%;
     border: 0;
     height: auto;
-    margin: 6px 0 7px;
+    margin: 0.375rem 0 0.4375rem;
     padding: 0;
     display: block;
     min-width: 0;
@@ -339,7 +339,7 @@
     }
 
     &.mud-input-root-margin-dense {
-      margin-top: 3px;
+      margin-top: 0.1875rem;
     }
 
     &.mud-input-root-type-search {
@@ -360,11 +360,11 @@
     }
 
     &.mud-input-root-filled {
-      margin: 27px 12px 10px;
+      margin: 1.6875rem 0.75rem 0.625rem;
 
       &.mud-input-root-margin-dense {
-        margin-top: 23px;
-        margin-bottom: 6px;
+        margin-top: 1.4375rem;
+        margin-bottom: 0.375rem;
       }
 
       &:-webkit-autofill {
@@ -373,39 +373,39 @@
       }
 
       &.mud-input-root-hidden-label {
-        margin-top: 18px;
-        margin-bottom: 19px;
+        margin-top: 1.125rem;
+        margin-bottom: 1.1875rem;
 
         &.mud-input-root-margin-dense {
-          margin-top: 10px;
-          margin-bottom: 11px;
+          margin-top: 0.625rem;
+          margin-bottom: 0.6875rem;
         }
       }
 
       &.mud-input-root-adorned-start {
         margin-left: 0;
         margin-inline-start: 0;
-        margin-inline-end: 12px;
+        margin-inline-end: 0.75rem;
 
       }
 
       &.mud-input-root-adorned-end {
         margin-right: 0;
         margin-inline-end: unset;
-        margin-inline-start: 12px;
+        margin-inline-start: 0.75rem;
       }
     }
 
     &::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
+      width: 0.5rem;
+      height: 0.5rem;
       z-index: 1;
       cursor: crosshair;
     }
 
     &::-webkit-scrollbar-thumb {
       background: var(--mud-palette-lines-inputs);
-      border-radius: 1px;
+      border-radius: 0.0625rem;
     }
 
     &::-webkit-scrollbar-track {
@@ -414,7 +414,7 @@
   }
 
   &.mud-input-root-outlined {
-    margin: 18.5px 14px;
+    margin: 1.15625rem 0.875rem;
 
 
     &.mud-input-root:-webkit-autofill {
@@ -422,20 +422,20 @@
     }
 
     &.mud-input-root-margin-dense {
-      margin-top: 10.5px;
-      margin-bottom: 10.5px;
+      margin-top: 0.65625rem;
+      margin-bottom: 0.65625rem;
     }
 
     &.mud-input-root-adorned-start {
       margin-left: 0;
       margin-inline-start: 0;
-      margin-inline-end: 14px;
+      margin-inline-end: 0.875rem;
     }
 
     &.mud-input-root-adorned-end {
       margin-right: 0;
       margin-inline-end: 0;
-      margin-inline-start: 14px;
+      margin-inline-start: 0.875rem;
     }
   }
 }
@@ -450,31 +450,31 @@
 
 .mud-input-adornment-start {
   &.mud-input-root-filled-shrink {
-    margin-top: 16px;
+    margin-top: 1rem;
   }
 }
 
 .mud-input-adornment-start {
-    margin-right: 8px;
-    margin-inline-end: 8px;
+    margin-right: 0.5rem;
+    margin-inline-end: 0.5rem;
     margin-inline-start: unset;
 }
 
 .mud-input-adornment-end {
-  margin-left: 8px;
-  margin-inline-start: 8px;
+  margin-left: 0.5rem;
+  margin-inline-start: 0.5rem;
   margin-inline-end: unset;
 }
 
 .mud-input-number-control.mud-input-showspin .mud-input-adornment-end {
-    margin-right: 12px;
-    margin-inline-end: 12px;
+    margin-right: 0.75rem;
+    margin-inline-end: 0.75rem;
     margin-inline-start: unset;
 }
 
 .mud-input-number-control.mud-input-showspin .mud-input-underline:not(.mud-input-filled) .mud-input-adornment-end {
-    margin-right: 24px;
-    margin-inline-end: 24px;
+    margin-right: 1.5rem;
+    margin-inline-end: 1.5rem;
     margin-inline-start: unset;
 }
 
@@ -484,7 +484,7 @@
 
 .mud-range-input-separator {
     visibility: hidden;
-    margin: 0 4px;
+    margin: 0 0.25rem;
 }
 
 .mud-input:focus-within .mud-range-input-separator {

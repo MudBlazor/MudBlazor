@@ -1,4 +1,4 @@
-﻿$border-radiuses: ( "0": 0, "sm": 2px, "lg": 8px, "xl": 24px );
+﻿$border-radiuses: ( "0": 0, "sm": 0.125rem, "lg": 0.5rem, "xl": 1.5rem );
 
 @each $size, $value in $border-radiuses {
     .rounded-#{$size} {

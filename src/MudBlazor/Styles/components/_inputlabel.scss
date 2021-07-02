@@ -7,15 +7,15 @@
     top: 0;
     left: 0;
     position: absolute;
-    transform: translate(0, 24px) scale(1);
+    transform: translate(0, 1.5rem) scale(1);
 }
 
 .mud-input-label-margindense {
-    transform: translate(0, 21px) scale(1);
+    transform: translate(0, 1.3125rem) scale(1);
 }
 
 .mud-input-label-shrink {
-    transform: translate(0, 1.5px) scale(0.75);
+    transform: translate(0, 0.09375rem) scale(0.75);
     transform-origin: top left;
 }
 
@@ -25,24 +25,24 @@
 
 .mud-input-label-filled {
     z-index: 1;
-    transform: translate(12px, 20px) scale(1);
+    transform: translate(0.75rem, 1.25rem) scale(1);
     pointer-events: none;
 
     &.mud-input-label-margin-dense {
-        transform: translate(12px, 17px) scale(1);
+        transform: translate(0.75rem, 1.0625rem) scale(1);
     }
 }
 
 
 .mud-input-label-outlined {
-    transform: translate(14px, 20px) scale(1);
+    transform: translate(0.875rem, 1.25rem) scale(1);
     pointer-events: none;
     background-color: var(--mud-palette-surface);
-    padding: 0px 5px !important;
+    padding: 0 0.3125rem !important;
 
 
     &.mud-input-label-margin-dense {
-        transform: translate(14px, 12px) scale(1);
+        transform: translate(0.875rem, 0.75rem) scale(1);
     }
 }
 
@@ -57,19 +57,19 @@ label.mud-input-label.mud-input-label-inputcontrol {
 
     .mud-shrink ~ &,
     .mud-input:focus-within ~ & {
-        transform: translate(0, 1.5px) scale(0.75);
+        transform: translate(0, 0.09375rem) scale(0.75);
         transform-origin: top left;
 
         &.mud-input-label-filled {
-            transform: translate(12px, 10px) scale(0.75);
+            transform: translate(0.75rem, 0.625rem) scale(0.75);
 
             &.mud-input-label-margin-dense {
-                transform: translate(12px, 7px) scale(0.75);
+                transform: translate(0.75rem, 0.4375rem) scale(0.75);
             }
         }
 
         &.mud-input-label-outlined {
-            transform: translate(14px, -6px) scale(0.75);
+            transform: translate(0.875rem, -0.375rem) scale(0.75);
         }
     }
 
@@ -92,18 +92,18 @@ label.mud-input-label.mud-input-label-inputcontrol {
     }
 
     .mud-input-label-filled {
-        transform: translate(-12px, 20px) scale(1);
+        transform: translate(-0.75rem, 1.25rem) scale(1);
 
         &.mud-input-label-margin-dense {
-            transform: translate(-12px, 17px) scale(1);
+            transform: translate(-0.75rem, 1.0625rem) scale(1);
         }
     }
 
     .mud-input-label-outlined {
-        transform: translate(-14px, 20px) scale(1);
+        transform: translate(-0.875rem, 1.25rem) scale(1);
 
         &.mud-input-label-margin-dense {
-            transform: translate(-14px, 12px) scale(1);
+            transform: translate(-0.875rem, 0.75rem) scale(1);
         }
     }
 
@@ -112,15 +112,15 @@ label.mud-input-label.mud-input-label-inputcontrol {
             transform-origin: top right;
 
             &.mud-input-label-filled {
-                transform: translate(-12px, 10px) scale(0.75);
+                transform: translate(-0.75rem, 0.625rem) scale(0.75);
 
                 &.mud-input-label-margin-dense {
-                    transform: translate(-12px, 7px) scale(0.75);
+                    transform: translate(-0.75rem, 0.4375rem) scale(0.75);
                 }
             }
 
             &.mud-input-label-outlined {
-                transform: translate(-14px, -6px) scale(0.75);
+                transform: translate(-0.875rem, -0.375rem) scale(0.75);
             }
         }
     }

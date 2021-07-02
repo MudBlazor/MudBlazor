@@ -7,7 +7,7 @@
     user-select: none;
 
     & > .mud-typography {
-        margin-top: 10px;
+        margin-top: 0.625rem;
     }
 
     & > input {
@@ -24,10 +24,10 @@
         }
 
         @include slider-track {
-            margin: 10px 0;
-            border-radius: 1px;
+            margin: 0.625rem 0;
+            border-radius: 0.0625rem;
             width: 100%;
-            height: 2px;
+            height: 0.125rem;
         }
 
         @include slider-thumb {
@@ -35,8 +35,8 @@
             -webkit-appearance: none;
             border: none;
             border-radius: 50%;
-            height: 2px;
-            width: 2px;
+            height: 0.125rem;
+            width: 0.125rem;
             transform: scale(6, 6);
             transition: box-shadow 0.2s;
         }
@@ -52,7 +52,7 @@
 
                 &:active{
                     @include slider-thumb {
-                        box-shadow: 0 0 0 2px rgba(var(--mud-palette-#{$color}-rgb), 0.24) !important;
+                        box-shadow: 0 0 0 0.125rem rgba(var(--mud-palette-#{$color}-rgb), 0.24) !important;
                     }
                 }
             }
@@ -69,7 +69,7 @@
             @include slider-thumb {
                 background-color: rgb( 0, 0, 0);
                 color: rgb(255, 255, 255);
-                box-shadow: 0 0 0 1px rgb( 255, 255, 255) !important;
+                box-shadow: 0 0 0 0.0625rem rgb( 255, 255, 255) !important;
                 transform: scale(4, 4);
             }
         }

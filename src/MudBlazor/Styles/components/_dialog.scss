@@ -13,26 +13,26 @@
 
     &.mud-dialog-topleft .mud-dialog {
         position: absolute;
-        top: 32px;
-        left: 32px;
+        top: 2rem;
+        left: 2rem;
     }
 
     &.mud-dialog-topright .mud-dialog {
         position: absolute;
-        top: 32px;
-        right: 32px;
+        top: 2rem;
+        right: 2rem;
     }
 
     &.mud-dialog-bottomleft .mud-dialog {
         position: absolute;
-        bottom: 32px;
-        left: 32px;
+        bottom: 2rem;
+        left: 2rem;
     }
 
     &.mud-dialog-bottomright .mud-dialog {
         position: absolute;
-        bottom: 32px;
-        right: 32px;
+        bottom: 2rem;
+        right: 2rem;
     }
 }
 
@@ -45,12 +45,12 @@
     border-radius: var(--mud-default-borderradius);
     -webkit-animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
     animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
-    box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2), 0px 24px 38px 3px rgba(0,0,0,0.14), 0px 9px 46px 8px rgba(0,0,0,0.12);
+    box-shadow: 0 0.6875rem 0.9375rem -0.4375rem rgba(0,0,0,0.2), 0 1.5rem 2.375rem 0.1875rem rgba(0,0,0,0.14), 0 0.5625rem 2.875rem 0.5rem rgba(0,0,0,0.12);
 
     & .mud-dialog-title {
         flex: 0 0 auto;
         margin: 0;
-        padding: 16px 24px;        
+        padding: 1rem 1.5rem;
         border-top-left-radius: var(--mud-default-borderradius);
         border-top-right-radius: var(--mud-default-borderradius);
 
@@ -59,8 +59,8 @@
         }
 
         & .mud-button-root {
-            top: 8px;
-            right: 8px;
+            top: 0.5rem;
+            right: 0.5rem;
             position: absolute;
         }
     }
@@ -68,28 +68,28 @@
     & .mud-dialog-content {
         position: relative;
         flex: 1 1 auto;
-        padding: 8px 24px;
+        padding: 0.5rem 1.5rem;
         -webkit-overflow-scrolling: touch;
         border-top-left-radius: var(--mud-default-borderradius);
         border-top-right-radius: var(--mud-default-borderradius);
 
         &.mud-dialog-no-side-padding {
-            padding: 12px 0px;
+            padding: 0.75rem 0;
         }
     }
 
     & .mud-dialog-actions {
         flex: 0 0 auto;
         display: flex;
-        padding: 8px;
+        padding: 0.5rem;
         align-items: center;
         justify-content: flex-end;
         border-bottom-left-radius: var(--mud-default-borderradius);
         border-bottom-right-radius: var(--mud-default-borderradius);
 
         & > :not(:first-child) {
-            margin-left: 8px;
-            margin-inline-start: 8px;
+            margin-left: 0.5rem;
+            margin-inline-start: 0.5rem;
             margin-inline-end: unset;
         }
     }

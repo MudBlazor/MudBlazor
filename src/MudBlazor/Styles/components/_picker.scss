@@ -6,13 +6,13 @@
     & .mud-picker-actions {
         flex: 0 0 auto;
         display: flex;
-        padding: 8px;
+        padding: 0.5rem;
         align-items: center;
         justify-content: flex-end;
 
         & > :not(:first-child) {
-            margin-left: 8px;
-            margin-inline-start: 8px;
+            margin-left: 0.5rem;
+            margin-inline-start: 0.5rem;
             margin-inline-end: unset;
         }
     }
@@ -56,7 +56,7 @@
 .mud-picker-static {
     display: flex;
     overflow: hidden;
-    min-width: 310px;
+    min-width: 19.375rem;
     flex-direction: column;
 }
 
@@ -79,15 +79,15 @@
     outline: 0;
     z-index: calc(var(--mud-zindex-popover) + 1);
     position: absolute;
-    min-width: 16px;
-    min-height: 16px;
+    min-width: 1rem;
+    min-height: 1rem;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
 .mud-picker-view {
     display: none;
-    margin-top: 20px;
+    margin-top: 1.25rem;
 
     &.mud-picker-open {
         display: block;
@@ -97,21 +97,20 @@
 
 .mud-picker-content {
     display: flex;
-    //max-width: 325px;
     max-width: 100%;
-    min-width: 310px;
-    min-height: 305px;
+    min-width: 19.375rem;
+    min-height: 19.0625rem;
     overflow: hidden;
     flex-direction: column;
     justify-content: center;
 
     &.mud-picker-content-landscape {
-        padding: 0 8px;
+        padding: 0 0.5rem;
     }
 }
 
 .mud-picker-toolbar {
-    height: 100px;
+    height: 6.25rem;
     display: flex;
     align-items: center;
     flex-direction: row;
@@ -119,15 +118,15 @@
 
     &.mud-picker-toolbar-landscape {
         height: auto;
-        padding: 8px;
-        max-width: 150px;
+        padding: 0.5rem;
+        max-width: 9.375rem;
         justify-content: flex-start;
     }
 
 
     &.mud-button-root {
         padding: 0;
-        min-width: 16px;
+        min-width: 1rem;
         text-transform: none;
     }
 }
@@ -135,7 +134,7 @@
 .mud-picker-inline-paper {
     position: absolute;
     z-index: calc(var(--mud-zindex-popover) + 1);
-    
+
     .mud-paper {
         position: relative !important;
     }
@@ -146,21 +145,21 @@
 }
 
 .mud-picker-pos-top {
-    top: 0px;
+    top: 0;
     position: fixed;
     visibility: visible;
 
     &.mud-picker-pos-left {
-        left: 10px;
+        left: 0.625rem;
     }
 
     &.mud-picker-pos-right {
-        right: 10px;
+        right: 0.625rem;
     }
 }
 
 .mud-picker-pos-above {
-    bottom: 0px;
+    bottom: 0;
     visibility: visible;
 
     &.mud-picker-pos-left {
@@ -169,21 +168,21 @@
     }
 
     &.mud-picker-pos-right {
-        right: 0px;
+        right: 0;
     }
 }
 
 .mud-picker-pos-bottom {
-    bottom: 10px;
+    bottom: 0.625rem;
     position: fixed;
     visibility: visible;
 
     &.mud-picker-pos-left {
-        left: 10px;
+        left: 0.625rem;
     }
 
     &.mud-picker-pos-right {
-        right: 10px;
+        right: 0.625rem;
     }
 }
 
@@ -196,6 +195,6 @@
     }
 
     &.mud-picker-pos-right {
-        right: 0px;
+        right: 0;
     }
 }

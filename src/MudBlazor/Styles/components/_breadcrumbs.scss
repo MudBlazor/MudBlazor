@@ -5,11 +5,11 @@
     align-items: center;
     list-style-type: none;
     margin: 0;
-    padding: 16px 12px;
+    padding: 1rem 0.75rem;
 }
 
 .mud-breadcrumb-separator {
-    padding: 0 12px;
+    padding: 0 0.75rem;
 }
 
 .mud-breadcrumb-separator > span {
@@ -22,8 +22,8 @@
 }
 
 .mud-breadcrumb-item > a > svg.mud-svg-icon-root {
-    margin-right: 4px;
-    margin-inline-end: 4px;
+    margin-right: 0.25rem;
+    margin-inline-end: 0.25rem;
     margin-inline-start: unset;
 }
 
@@ -43,5 +43,5 @@
 }
 
 .mud-breadcrumbs-expander > svg {
-    width: 26px;
+    width: 1.625rem;
 }

@@ -12,18 +12,18 @@
     }
 
     &.mud-progress-small {
-        height: 24px;
-        width: 24px;
+        height: 1.5rem;
+        width: 1.5rem;
     }
 
     &.mud-progress-medium {
-        height: 40px;
-        width: 40px;
+        height: 2.5rem;
+        width: 2.5rem;
     }
 
     &.mud-progress-large {
-        height: 56px;
-        width: 56px;
+        height: 3.5rem;
+        width: 3.5rem;
     }
 }
 
@@ -37,8 +37,8 @@
 
     &.mud-progress-indeterminate {
         animation: mud-progress-circular-keyframes-circular-dash 1.4s ease-in-out infinite;
-        stroke-dasharray: 80px, 200px;
-        stroke-dashoffset: 0px;
+        stroke-dasharray: 5rem, 12.5rem;
+        stroke-dashoffset: 0;
     }
 
     &.mud-progress-static {
@@ -60,18 +60,18 @@
 
 @-webkit-keyframes mud-progress-circular-keyframes-circular-dash {
     0% {
-        stroke-dasharray: 1px, 200px;
-        stroke-dashoffset: 0px;
+        stroke-dasharray: 0.0625rem, 12.5rem;
+        stroke-dashoffset: 0;
     }
 
     50% {
-        stroke-dasharray: 100px, 200px;
-        stroke-dashoffset: -15px;
+        stroke-dasharray: 6.25rem, 12.5rem;
+        stroke-dashoffset: -0.9375rem;
     }
 
     100% {
-        stroke-dasharray: 100px, 200px;
-        stroke-dashoffset: -125px;
+        stroke-dasharray: 6.25rem, 12.5rem;
+        stroke-dashoffset: -7.8125rem;
     }
 }
 
@@ -85,7 +85,7 @@
 
 
 .mud-progress-linear {
-    height: 4px;
+    height: 0.25rem;
     overflow: hidden;
     position: relative;
 }
@@ -123,15 +123,15 @@
 }
 
 .mud-progress-linear-dashed-color-primary {
-    background-size: 10px 10px;
+    background-size: 0.625rem 0.625rem;
     background-image: radial-gradient(rgb(195, 189, 244) 0%, rgb(154, 145, 237) 16%, transparent 42%);
-    background-position: 0 -23px;
+    background-position: 0 -1.4375rem;
 }
 
 .mud-progress-linear-dashed-color-secondary {
-    background-size: 10px 10px;
+    background-size: 0.625rem 0.625rem;
     background-image: radial-gradient(rgb(255, 128, 175) 0%, rgb(255, 77, 143) 16%, transparent 42%);
-    background-position: 0 -23px;
+    background-position: 0 -1.4375rem;
 }
 
 .mud-progress-linear-bar {
@@ -206,16 +206,16 @@
 @-webkit-keyframes mud-progress-linear-keyframes-buffer {
     0% {
         opacity: 1;
-        background-position: 0 -23px;
+        background-position: 0 -1.4375rem;
     }
 
     50% {
         opacity: 0;
-        background-position: 0 -23px;
+        background-position: 0 -1.4375rem;
     }
 
     100% {
         opacity: 1;
-        background-position: -200px -23px;
+        background-position: -12.5rem -1.4375rem;
     }
 }

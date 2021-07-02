@@ -4,27 +4,27 @@
     display: flex;
     position: relative;
     align-items: center;
-    height: 56px;
+    height: 3.5rem;
 }
 
 .mud-toolbar-gutters {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 @media (min-width:$breakpoint-xs) and (orientation: landscape) {
     .mud-toolbar {
-        height: 48px;
+        height: 3rem;
 
         &.mud-toolbar-appbar {
-            height: calc(var(--mud-appbar-min-height) - 16px);
+            height: calc(var(--mud-appbar-min-height) - 1rem);
         }
     }
 }
 
 @media (min-width:$breakpoint-sm) {
     .mud-toolbar {
-        height: 64px;
+        height: 4rem;
 
         &.mud-toolbar-appbar {
             height: var(--mud-appbar-min-height);
@@ -32,15 +32,15 @@
     }
 
     .mud-toolbar-gutters {
-        padding-left: 24px;
-        padding-right: 24px;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
     }
 }
 
 .mud-toolbar-dense {
-    height: 48px;
+    height: 3rem;
 
     &.mud-toolbar-appbar {
-        height: calc(var(--mud-appbar-min-height) - 16px);
+        height: calc(var(--mud-appbar-min-height) - 1rem);
     }
 }

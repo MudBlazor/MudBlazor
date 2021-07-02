@@ -1,7 +1,7 @@
 ﻿
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 0.5rem;
+    height: 0.5rem;
     z-index: 1;
 }
 
@@ -11,7 +11,7 @@
 
 ::-webkit-scrollbar-thumb {
     background: #c4c4c4;
-    border-radius: 1px;
+    border-radius: 0.0625rem;
 }
 
 ::-webkit-scrollbar-thumb:hover {

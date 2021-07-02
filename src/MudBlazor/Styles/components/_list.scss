@@ -5,8 +5,8 @@
     list-style: none;
 
     &.mud-list-padding {
-        padding-top: 8px;
-        padding-bottom: 8px;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
     }
 }
 
@@ -17,14 +17,14 @@
     box-sizing: border-box;
     text-align: start;
     align-items: center;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
     justify-content: flex-start;
     text-decoration: none;
 
     &.mud-list-item-dense {
-        padding-top: 4px;
-        padding-bottom: 4px;
+        padding-top: 0.25rem;
+        padding-bottom: 0.25rem;
     }
 
     &.mud-list-item-disabled {
@@ -62,29 +62,29 @@
 }
 
 .mud-list-item-gutters {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 
 .mud-list-item-text {
     flex: 1 1 auto;
     min-width: 0;
-    margin-top: 4px;
-    margin-bottom: 4px;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
 }
 
 
 .mud-list-item-text-inset {
-    padding-left: 56px;
-    padding-inline-start: 56px;
+    padding-left: 3.5rem;
+    padding-inline-start: 3.5rem;
     padding-inline-end: unset;
 }
 
 .mud-list-item-icon {
     color: var(--mud-palette-action-default);
     display: inline-flex;
-    min-width: 56px;
+    min-width: 3.5rem;
     flex-shrink: 0;
 }
 
@@ -95,18 +95,18 @@
     box-sizing: border-box;
     list-style: none;
     font-weight: 500;
-    padding-top: 8px;
-    padding-bottom: 20px;
+    padding-top: 0.5rem;
+    padding-bottom: 1.25rem;
 }
 
 .mud-list-subheader-gutters {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .mud-list-subheader-inset {
-    padding-left: 72px;
-    padding-inline-start: 72px;
+    padding-left: 4.5rem;
+    padding-inline-start: 4.5rem;
     padding-inline-end: unset;
 }
 
@@ -119,14 +119,14 @@
 
 
 .mud-list-item-avatar {
-    min-width: 56px;
+    min-width: 3.5rem;
     flex-shrink: 0;
 }
 
 .mud-nested-list {
     & > .mud-list-item {
-        padding-left: 32px;
-        padding-inline-start: 32px;
+        padding-left: 2rem;
+        padding-inline-start: 2rem;
         padding-inline-end: unset;
     }
 }

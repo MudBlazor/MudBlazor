@@ -5,7 +5,7 @@
         flex-direction: column;
 
         .mud-chart-legend {
-            margin-top: 10px;
+            margin-top: 0.625rem;
             justify-content: center;
             width: 100%;
         }
@@ -44,17 +44,17 @@
 
     & .mud-chart-legend {
         display: flex;
-        padding: 10px 0px;
+        padding: 0.625rem 0;
         margin: auto;
         flex-wrap: wrap;
 
         & .mud-chart-legend-item {
             display: block;
-            margin: 2px 5px;
+            margin: 0.125rem 0.3125rem;
 
             & .mud-chart-legend-marker {
-                height: 12px;
-                width: 12px;
+                height: 0.75rem;
+                width: 0.75rem;
                 border-radius: 50%;
                 position: relative;
                 display: inline-flex;
@@ -101,8 +101,8 @@
 }
 
 .mud-chart-legend-marker {
-    height: 12px;
-    width: 12px;
+    height: 0.75rem;
+    width: 0.75rem;
     border-radius: 50%;
     position: relative;
     display: inline-block;

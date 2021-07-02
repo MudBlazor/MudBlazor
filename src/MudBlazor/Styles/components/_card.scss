@@ -1,16 +1,16 @@
 ﻿.mud-card {
-    
+
 }
 
 .mud-card-header {
     display: flex;
-    padding: 16px;
+    padding: 1rem;
     align-items: center;
 
     & .mud-card-header-avatar {
         flex: 0 0 auto;
-        margin-right: 16px;
-        margin-inline-end: 16px;
+        margin-right: 1rem;
+        margin-inline-end: 1rem;
         margin-inline-start: unset;
     }
 
@@ -25,9 +25,9 @@
     & .mud-card-header-actions {
         flex: 0 0 auto;
         align-self: flex-start;
-        margin-top: -8px;
-        margin-right: -8px;
-        margin-inline-end: -8px;
+        margin-top: -0.5rem;
+        margin-right: -0.5rem;
+        margin-inline-end: -0.5rem;
         margin-inline-start: unset;
     }
 }
@@ -40,11 +40,11 @@
 }
 
 .mud-card-content {
-    padding: 16px;
+    padding: 1rem;
 }
 
 .mud-card-actions {
     display: flex;
-    padding: 8px;
+    padding: 0.5rem;
     align-items: center;
 }

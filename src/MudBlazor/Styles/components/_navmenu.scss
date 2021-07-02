@@ -27,8 +27,8 @@
     }
 
     & * .mud-navmenu .mud-nav-item .mud-nav-link {
-        padding-left: 36px;
-        padding-inline-start: 36px;
+        padding-left: 2.25rem;
+        padding-inline-start: 2.25rem;
         padding-inline-end: unset;
     }
 }
@@ -43,7 +43,7 @@
 .mud-nav-link {
     width: 100%;
     font-weight: 400;
-    padding: 8px 16px 8px 16px;
+    padding: 0.5rem 1rem 0.5rem 1rem;
     color: inherit;
     line-height: 1.75;
     display: inline-flex;
@@ -96,8 +96,8 @@
     & .mud-nav-link-text {
         width: 100%;
         text-align: start;
-        margin-left: 12px;
-        margin-inline-start: 12px;
+        margin-left: 0.75rem;
+        margin-inline-start: 0.75rem;
         margin-inline-end: unset;
         letter-spacing: 0;
     }
@@ -109,12 +109,12 @@
 
 .mud-nav-group * .mud-navmenu > .mud-nav-group {
     & .mud-nav-link {
-        padding-left: 36px;
-        padding-inline-start: 36px;
+        padding-left: 2.25rem;
+        padding-inline-start: 2.25rem;
     }
 
     & * .mud-navmenu .mud-nav-item .mud-nav-link {
-        padding-left: 48px;
-        padding-inline-start: 48px;
+        padding-left: 3rem;
+        padding-inline-start: 3rem;
     }
 }

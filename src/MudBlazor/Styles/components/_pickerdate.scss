@@ -21,27 +21,27 @@
 }
 
 .mud-picker-datepicker-toolbar-landscape {
-    padding: 16px;
+    padding: 1rem;
 }
 
 .mud-picker-datepicker-date-landscape {
-    margin-right: 16px;
-    margin-inline-end: 16px;
+    margin-right: 1rem;
+    margin-inline-end: 1rem;
     margin-inline-start: unset;
 }
 
 
 .mud-picker-calendar-header-switch {
     display: flex;
-    margin-top: 4px;
+    margin-top: 0.25rem;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
     justify-content: space-between;
 
     & > .mud-icon-button {
         z-index: 1;
-        padding: 8px;
-        margin: 6px;
+        padding: 1rem;
+        margin: 0.375rem;
         background-color: var(--mud-palette-surface);
 
         &:hover {
@@ -51,7 +51,7 @@
 
     & .mud-picker-calendar-header-transition {
         width: 100%;
-        height: 23px;
+        height: 1.4375rem;
         overflow: hidden;
 
         &:hover {
@@ -66,25 +66,25 @@
 
 .mud-picker-calendar-header-day {
     display: flex;
-    max-height: 16px;
+    max-height: 1rem;
     align-items: center;
     justify-content: center;
 
     .mud-day-label {
         color: var(--mud-palette-text-secondary);
-        width: 36px;
-        margin: 0 2px;
+        width: 2.25rem;
+        margin: 0 0.125rem;
         text-align: center;
     }
 }
 
 .mud-picker-year-container {
-    height: 300px;
+    height: 18.75rem;
     overflow-y: auto;
 
     .mud-picker-year {
         cursor: pointer;
-        height: 40px;
+        height: 2.5rem;
         display: flex;
         outline: none;
         align-items: center;
@@ -98,14 +98,14 @@
         }
 
         & .mud-picker-year-selected {
-            margin: 10px 0;
+            margin: 0.625rem 0;
             font-weight: 500;
         }
     }
 }
 
 .mud-picker-month-container {
-    width: 310px;
+    width: 19.375rem;
     display: flex;
     flex-wrap: wrap;
     align-content: stretch;
@@ -113,7 +113,7 @@
     .mud-picker-month {
         flex: 1 0 33.33%;
         cursor: pointer;
-        height: 60px;
+        height: 3.75rem;
         display: flex;
         outline: none;
         transition: font-size 100ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
@@ -150,8 +150,8 @@
 }
 
 .mud-picker-calendar-transition {
-    margin-top: 12px;
-    min-height: 216px;
+    margin-top: 0.75rem;
+    min-height: 13.5rem;
 }
 
 .mud-picker-calendar-progress-container {
@@ -165,7 +165,7 @@
 .mud-picker-calendar-content {
     display: grid;
     --selected-day: 0;
-    grid-column-gap: 10px;
+    grid-column-gap: 0.625rem;
     grid-template-columns: auto;
 }
 
@@ -262,7 +262,7 @@
 
 .mud-picker-calendar-container {
     display: flex;
-    width: 310px;
+    width: 19.375rem;
     flex-direction: column;
 }
 
@@ -273,9 +273,9 @@
 
     .mud-day {
         color: var(--mud-palette-text-primary);
-        width: 36px;
-        height: 36px;
-        margin: 0 2px;
+        width: 2.25rem;
+        height: 2.25rem;
+        margin: 0 0.125rem;
         padding: 0;
         font-size: 0.75rem;
         font-weight: 500;
@@ -298,7 +298,7 @@
         }
 
         .mud-typography {
-            margin-top: 2px;
+            margin-top: 0.125rem;
         }
 
         &.mud-disabled {
@@ -308,7 +308,7 @@
 
         &.mud-range {
             margin: 0;
-            width: 40px;
+            width: 2.5rem;
             transition: none;
 
             &.mud-range-start-selected {
@@ -354,13 +354,13 @@
 
 .mud-picker-calendar-week {
     display: flex;
-    margin: 0 5px;
+    margin: 0 0.3125rem;
     justify-content: center;
     align-items: center;
 
     .mud-picker-calendar-week-text {
-        width: 15px;
-        margin-top: 2px !important;
+        width: 0.9375rem;
+        margin-top: 0.125rem !important;
         color: var(--mud-palette-text-disabled);
     }
 }
