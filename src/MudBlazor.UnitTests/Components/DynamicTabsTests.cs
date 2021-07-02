@@ -60,6 +60,11 @@ namespace MudBlazor.UnitTests.Components
             tabs.CloseIconClass.Should().BeNullOrEmpty();
             tabs.CloseIconStyle.Should().BeNullOrEmpty();
             tabs.CloseIconToolTip.Should().BeNullOrEmpty();
+
+            comp.Nodes.Should().ContainSingle();
+            comp.Nodes[0].Should().BeAssignableTo<IHtmlDivElement>();
+
+            (comp.Nodes[0] as IHtmlDivElement).ClassList.Should().BeEquivalentTo(new[] { "mud-tabs", "mud-dynamic-tabs" });
         }
 
         [Test]
