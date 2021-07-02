@@ -73,7 +73,7 @@ namespace MudBlazor.UnitTests.Components
         /// Start expanded should expand panel
         /// </summary>
         [Test]
-        public void MudExpansionPanel_StartExpanded_Expands()
+        public void MudExpansionPanel_IsInitiallyExpanded_Expands()
         {
             var comp = ctx.RenderComponent<ExpansionPanelStartExpandedTest>();
 
@@ -93,7 +93,7 @@ namespace MudBlazor.UnitTests.Components
         /// Start expanded should work with multi expansion
         /// </summary>
         [Test]
-        public void MudExpansionPanel_StartExpanded_Works_With_Multi_Expanded()
+        public void MudExpansionPanel_IsInitiallyExpanded_Works_With_Multi_Expanded()
         {
             var comp = ctx.RenderComponent<ExpansionPanelStartExpandedMultipleTest>();
 
