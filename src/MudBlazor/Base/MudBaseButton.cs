@@ -105,6 +105,7 @@ namespace MudBlazor
         private void OnCanExecuteChanged(object sender, EventArgs e)
         {
             Disabled = !Command.CanExecute(CommandParameter);
+            StateHasChanged();
         }
 
         /// <summary>
