@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -7,8 +8,11 @@ using static System.String;
 
 namespace MudBlazor
 {
-    public abstract class MudBaseButton : MudComponentBase
+    public abstract class MudBaseButton : MudComponentBase, IDisposable
     {
+        private ICommand _command;
+        private bool _disposed;
+
         /// <summary>
         /// Potential activation target for this button. This enables RenderFragments with user-defined
         /// buttons which will automatically activate the intended functionality. 
@@ -54,7 +58,54 @@ namespace MudBlazor
         /// <summary>
         /// Command executed when the user clicks on an element.
         /// </summary>
-        [Parameter] public ICommand Command { get; set; }
+        [Parameter]
+        public ICommand Command
+        {
+            get => _command;
+            set
+            {
+                UnsubscribeCanExecuteChanged();
+
+                _command = value;
+                OnCanExecuteChanged(this, EventArgs.Empty);
+
+                SubscribeCanExecuteChanged();
+            }
+        }
+
+        /// <summary>
+        /// Subscribes to <see cref="ICommand.CanExecuteChanged"/>, if the <see cref="Command"/> is not null.
+        /// </summary>
+        private void SubscribeCanExecuteChanged()
+        {
+            if (_command is null)
+            {
+                return;
+            }
+
+            _command.CanExecuteChanged += OnCanExecuteChanged;
+        }
+
+        /// <summary>
+        /// Unsubscribes from <see cref="ICommand.CanExecuteChanged"/>, if the <see cref="Command"/> field is not null.
+        /// </summary>
+        private void UnsubscribeCanExecuteChanged()
+        {
+            if (_command is null)
+            {
+                return;
+            }
+
+            _command.CanExecuteChanged -= OnCanExecuteChanged;
+        }
+
+        /// <summary>
+        /// Reacts to <see cref="ICommand.CanExecuteChanged"/> and updates <see cref="Disabled"/> accordingly.
+        /// </summary>
+        private void OnCanExecuteChanged(object sender, EventArgs e)
+        {
+            Disabled = !Command.CanExecute(CommandParameter);
+        }
 
         /// <summary>
         /// Command parameter.
@@ -110,5 +161,28 @@ namespace MudBlazor
         protected ElementReference _elementReference;
 
         public ValueTask FocusAsync() => _elementReference.FocusAsync();
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                UnsubscribeCanExecuteChanged();
+            }
+
+            _disposed = true;
+        }
     }
 }

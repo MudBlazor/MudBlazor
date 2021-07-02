@@ -1,8 +1,11 @@
 ﻿#pragma warning disable CS1998 // async without await
 #pragma warning disable IDE1006 // leading underscore
 
+using System;
+using System.Windows.Input;
 using Bunit;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using static Bunit.ComponentParameterFactory;
 
@@ -194,6 +197,78 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("button span.mud-icon-button-label").InnerHtml.Trim().Should().StartWith("<span")
                 .And.Contain("customicon")
                 .And.Contain($"title=\"{title}\"");
+        }
+
+        /// <summary>
+        /// MudButtons should respect <see cref="ICommand.CanExecute(object?)"/> and set <see cref="MudBaseButton.Disabled"/> accordingly.
+        /// </summary>
+        [Test]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        public void DisabledShouldMatchCanExecuteState(bool canExecuteResult, bool isDisabled)
+        {
+            var command = new Mock<ICommand>();
+            command.Setup(x => x.CanExecute(null)).Returns(canExecuteResult);
+
+            var commandParam = Parameter(nameof(MudButton.Command), command.Object);
+            var comp = ctx.RenderComponent<MudButton>(commandParam);
+            comp.Instance.Disabled.Should().Be(isDisabled);
+        }
+
+        /// <summary>
+        /// MudButtons should react to <see cref="ICommand.CanExecuteChanged"/> and update <see cref="MudBaseButton.Disabled"/>.
+        /// </summary>
+        [Test]
+        [TestCase(false, true, false)]
+        [TestCase(true, false, true)]
+        public void DisabledShouldChangeIfCanExecuteChanged(bool initialCanExecute, bool changedCanExecute, bool isDisabled)
+        {
+            var command = new Mock<ICommand>();
+            command.Setup(x => x.CanExecute(null)).Returns(initialCanExecute);
+
+            var commandParam = Parameter(nameof(MudButton.Command), command.Object);
+            var comp = ctx.RenderComponent<MudButton>(commandParam);
+            comp.Instance.Disabled.Should().Be(!isDisabled);
+
+            command.Setup(x => x.CanExecute(null)).Returns(changedCanExecute);
+            command.Raise(m => m.CanExecuteChanged += null, command.Object, EventArgs.Empty);
+            comp.Instance.Disabled.Should().Be(isDisabled);
+        }
+
+        /// <summary>
+        /// MudButtons should unhook <see cref="ICommand.CanExecuteChanged"/> when getting disposed to avoid memory leaks.
+        /// </summary>
+        [Test]
+        public void ShouldUnhookEventWhenDisposed()
+        {
+            var command = new Mock<ICommand>();
+            //command.SetupRemove(m => m.CanExecuteChanged -= It.IsAny<EventHandler>());
+
+            var commandParam = Parameter(nameof(MudButton.Command), command.Object);
+            var comp = ctx.RenderComponent<MudButton>(commandParam);
+            ctx.Dispose();
+
+            GC.Collect();
+            GC.Collect();
+
+            command.VerifyRemove(m => m.CanExecuteChanged -= It.IsAny<EventHandler>());
+        }
+
+        /// <summary>
+        /// MudButtons should unhook old <see cref="ICommand.CanExecuteChanged"/> when a new command is set to avoid memory leaks.
+        /// </summary>
+        [Test]
+        public void ShouldUnhookEventWhenCommandChanged()
+        {
+            var command = new Mock<ICommand>();
+            //command.SetupRemove(m => m.CanExecuteChanged -= It.IsAny<EventHandler>());
+
+            var commandParam = Parameter(nameof(MudButton.Command), command.Object);
+            var comp = ctx.RenderComponent<MudButton>(commandParam);
+            var newCommand = new Mock<ICommand>();
+            comp.SetParam(nameof(MudButton.Command), newCommand.Object);
+
+            command.VerifyRemove(m => m.CanExecuteChanged -= It.IsAny<EventHandler>());
         }
     }
 }
