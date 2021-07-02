@@ -929,5 +929,113 @@ namespace MudBlazor.UnitTests.Components
             // Check that the result should be true
             result.Should().Be(true);
         }
+
+        /// <summary>
+        /// Tests the grouping behavior and ensure that it won't break anything else.
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task TableGroupingTest()
+        {
+            // without grouping, to ensure that anything was broken:
+            var comp = ctx.RenderComponent<TableGroupingTest>();
+            var table = comp.Instance.tableInstance;
+            table.Context.HeaderRows.Count.Should().Be(1);
+            table.Context.GroupRows.Count.Should().Be(0);
+            table.Context.Rows.Count.Should().Be(9);
+
+            // now, with multi selection:
+            table.MultiSelection = true;
+            var inputs = comp.FindAll("input").ToArray();
+            inputs.Length.Should().Be(10);
+            inputs[0].Change(true);
+            table.SelectedItems.Count.Should().Be(9);
+            inputs[0].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+
+            //group by Racing Category:
+            comp = ctx.RenderComponent<TableGroupingTest>();
+            table = comp.Instance.tableInstance;
+            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category, null) { GroupName = "Category" };
+            comp.Render();
+            table.Context.GroupRows.Count.Should().Be(4);
+            var tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(18); // 1 table header + 4 group headers + 9 item rows + 4 group footers
+
+            // multi selection:
+            table.MultiSelection = true;
+            inputs = comp.FindAll("input").ToArray();
+
+            inputs[1].Change(true); // selecting only LMP1 category
+            table.SelectedItems.Count.Should().Be(2); // only one porsche and one audi
+            inputs[1].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+
+            inputs[4].Change(true); // selecting only GTE category
+            table.SelectedItems.Count.Should().Be(3);
+            inputs[4].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+
+            inputs[0].Change(true); // all
+            table.SelectedItems.Count.Should().Be(9);
+            inputs[0].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+
+            //group by Racing Category and Brand:
+            comp = ctx.RenderComponent<TableGroupingTest>();
+            table = comp.Instance.tableInstance;
+            table.GroupBy = new TableGroupDefinition<TableGroupingTest.RacingCar>()
+            {
+                GroupName = "Category",
+                Selector = rc => rc.Category,
+                InnerGroup = new TableGroupDefinition<TableGroupingTest.RacingCar>()
+                {
+                    GroupName = "Brand",
+                    Selector = rc => rc.Brand 
+                }
+            };
+            comp.Render();
+            table.Context.GroupRows.Count.Should().Be(13); // 4 categories and 9 cars (can repeat on different categories)
+            tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(36); // 1 table header + 13 group headers + 9 item rows + 13 group footers
+
+            // multi selection:
+            table.MultiSelection = true;
+            inputs = comp.FindAll("input").ToArray();
+            inputs[0].Change(true); // all
+            table.SelectedItems.Count.Should().Be(9);
+            inputs[0].Change(false);
+            table.SelectedItems.Count.Should().Be(0);
+
+            inputs[1].Change(true); // selecting only LMP1 category
+            table.SelectedItems.Count.Should().Be(2);
+
+            // indentation:
+            table.GroupBy.Indentation = true;
+            comp.Render();
+            tr = comp.FindAll("tr.mud-table-row-group-indented-1").ToArray();
+            tr.Length.Should().Be(27); // (4 LMP1 group (h / f) + 6 GTE + 4 GTE + 4 Formula 1) brands groups per category + 9 data rows
+            tr = comp.FindAll("tr.mud-table-row-group-indented-2").ToArray();
+            tr.Length.Should().Be(0); // indentation works with Level - 1 class. (level 1 doens't need to be indented)
+
+            // expand and collpase groups:
+            table.GroupBy.Indentation = false;
+            table.GroupBy.Expandable = true;
+            table.GroupBy.InnerGroup.Expandable = true;
+            comp.Render();
+
+            var buttons = comp.FindAll("button").ToArray();
+            buttons.Length.Should().Be(13);// 4 categories and 9 cars (can repeat on different categories)
+            tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(36); // 1 table header + 8 category group rows (h + f)  + 18 brands group rows (see line 915) + 9 car rows
+
+            // collapsing category LMP1:
+            buttons[0].Click();
+            tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(29); // 1 table header + 8 category group rows (h + f) - LMP1 footer + 18 brands group rows (see line 915) - 2 brands LMP2 Header - 2 brands LMP1 footer + 9 car rows - 2 LMP1 car rows
+            buttons[0].Click();
+            tr = comp.FindAll("tr").ToArray();
+            tr.Length.Should().Be(36); 
+        }
     }
 }
