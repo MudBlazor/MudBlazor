@@ -62,7 +62,7 @@ namespace MudBlazor
                 _autoCycle = value;
 
                 if (_autoCycle)
-                    InvokeAsync(async () => await StartTimerAsync());
+                    InvokeAsync(async () => await ResetTimerAsync());
 
                 else
                     InvokeAsync(async () => await StopTimerAsync());
@@ -153,8 +153,8 @@ namespace MudBlazor
         {
             await Task.CompletedTask;
 
-            if (null != _timer && AutoCycle)
-                _timer.Change(AutoCycleTime, TimeSpan.Zero);
+            if (AutoCycle)
+                _timer?.Change(AutoCycleTime, TimeSpan.Zero);
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace MudBlazor
         {
             await Task.CompletedTask;
 
-            _timer?.Change(Timeout.Infinite, 0);
+            _timer?.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
         /// <summary>
@@ -185,19 +185,17 @@ namespace MudBlazor
             await InvokeAsync(Next);
         }
 
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await Task.CompletedTask;
+            await base.OnAfterRenderAsync(firstRender);
 
             if (firstRender)
             {
                 SelectedIndexChanged = new EventCallback<int>(this, (Action)SelectionChanged);
 
-                _timer = new Timer(_timerElapsed, null, TimeSpan.Zero, AutoCycleTime);
+                _timer = new Timer(_timerElapsed, null, AutoCycle ? AutoCycleTime : Timeout.InfiniteTimeSpan, AutoCycleTime);
             }
         }
-
 
         public async ValueTask DisposeAsync()
         {
@@ -209,7 +207,16 @@ namespace MudBlazor
         protected virtual async ValueTask DisposeAsync(bool disposing)
         {
             if (disposing)
+            {
                 await StopTimerAsync();
+
+                var timer = _timer;
+                if (timer != null)
+                {
+                    _timer = null;
+                    await timer.DisposeAsync();
+                }
+            }
         }
     }
 }
