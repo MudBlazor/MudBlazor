@@ -5,8 +5,7 @@
     <DocsPageHeader Title="Select" SubTitle="Select fields allow users to provide information from a list of options." />
     <DocsPageContent>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Variants</Title>
+            <SectionHeader Title="Variants">
                 <Description>Select comes in the variants Text, Filled and Outline. Also, Select is generic, meaning you can use values of any type with it. See the example code how that works.</Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
@@ -17,8 +16,7 @@
             <SectionSource ShowCode="false" Code="SelectVariantsExample" GitHubFolderName="Select" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Usage</Title>
+            <SectionHeader Title="Usage">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
@@ -29,8 +27,7 @@
             <SectionSource ShowCode="false" Code="SelectUsageExample" GitHubFolderName="Select" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Multiselect</Title>
+            <SectionHeader Title="Multiselect">
                 <SubTitle>Default MultiSelection Text</SubTitle>
                 <Description>
                     If you set <CodeInline>MultiSelection="true"</CodeInline>, you can select multiple values. The selected options are returned as concatenated comma-delimited
@@ -58,8 +55,7 @@
             <SectionSource ShowCode="false" Code="MultiSelectCustomizedExample" GitHubFolderName="Select" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Dense</Title>
+            <SectionHeader Title="Dense">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -68,8 +64,7 @@
             <SectionSource Code="SelectDenseExample" GitHubFolderName="Select" />
         </DocsPageSection>
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Disabled</Title>
+            <SectionHeader Title="Disabled">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true">
@@ -79,8 +74,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Interactive</Title>
+            <SectionHeader Title="Interactive">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Outlined="true" DisplayFlex="true">
@@ -92,8 +86,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader>
-                <Title>Value presentation</Title>
+            <SectionHeader Title="Value presentation">
                 <Description>
                     Select uses the render fragments you specify for the items to display the selected value (if any). If you don't specify render fragments, the value will be displayed as text. Also, if you have render fragments
                     but the value that has been set is not in the list, it will also be displayed as text.
@@ -108,8 +101,7 @@
         </DocsPageSection>
 
         <DocsPageSection>
-        <SectionHeader>
-            <Title>Select with custom converter</Title>
+        <SectionHeader Title="Custom converter">
             <Description>
                 Select has a built-in <CodeInline>DefaultConverter</CodeInline> which converts the values from any primitive type to string for presentation of the selected value. 
                 You can customize that converter as described under <MudLink Href="/features/converters">Converters</MudLink>. Here, we use <CodeInline>ToStringFunc</CodeInline> to 
