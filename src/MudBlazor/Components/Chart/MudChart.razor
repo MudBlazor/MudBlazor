@@ -3,7 +3,7 @@
 @inherits MudChartBase
 
 <CascadingValue Value="@this" IsFixed="true">
-    <div @attributes="UserAttributes" class="@Classname" style="@Style">
+    <div @attributes="UserAttributes" class="@Classname" style="@Style" dir="ltr">
         @if (ChartType == ChartType.Donut)
         {
             <Donut InputData="@InputData" @bind-SelectedIndex="@SelectedIndex" InputLabels="@InputLabels"></Donut>

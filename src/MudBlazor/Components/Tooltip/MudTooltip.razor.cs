@@ -12,10 +12,14 @@ namespace MudBlazor
             .AddClass("mud-tooltip-inline", Inline)
             .Build();
         protected string Classname => new CssBuilder("mud-tooltip")
-            .AddClass($"mud-tooltip-placement-{Placement.ToDescriptionString()}")
+            .AddClass($"mud-tooltip-placement-{ConvertPlacement(Placement).ToDescriptionString()}")
             .AddClass(Class)
             .Build();
 
+        
+        [CascadingParameter]
+        public bool RightToLeft { get; set; }
+        
         /// <summary>
         /// Sets the text to be displayed inside the tooltip.
         /// </summary>
@@ -41,6 +45,16 @@ namespace MudBlazor
         /// Tooltip placement.
         /// </summary>
         [Parameter] public Placement Placement { get; set; } = Placement.Bottom;
+
+        private Placement ConvertPlacement(Placement placement)
+        {
+            return placement switch
+            {
+                Placement.Start => RightToLeft ? Placement.Right : Placement.Left,
+                Placement.End => RightToLeft ? Placement.Left : Placement.Right,
+                _ => placement
+            };
+        }
 
         /// <summary>
         /// Child content of component.

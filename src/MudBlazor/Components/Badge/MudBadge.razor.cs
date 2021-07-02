@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
@@ -83,7 +85,18 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
 
+        /// <summary>
+        /// Button click event if set.
+        /// </summary>
+        [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
         private string _content;
+
+        private async Task HandleBadgeClick(MouseEventArgs e)
+        {
+            if (OnClick.HasDelegate)
+                await OnClick.InvokeAsync(e);
+        }
 
         protected override void OnParametersSet()
         {

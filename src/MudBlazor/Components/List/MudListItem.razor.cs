@@ -71,6 +71,17 @@ namespace MudBlazor
         [Parameter] public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
+        /// Sets the Icon Size.
+        /// </summary>
+        [Parameter] public Size IconSize { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The color of the adornment if used. It supports the theme colors.
+        /// </summary>
+        [Parameter] public Color AdornmentColor { get; set; } = Color.Default;
+
+
+        /// <summary>
         /// If true, the List Subheader will be indented.
         /// </summary>
         [Parameter] public bool Inset { get; set; }

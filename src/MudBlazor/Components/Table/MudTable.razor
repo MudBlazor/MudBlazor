@@ -50,12 +50,12 @@
                     @if (Loading)
                     {
                         <tr>
-                            <td colspan="1000">
-                                <MudProgressLinear Color="@LoadingProgressColor" Indeterminate="true" />
+                            <td colspan="1000" class="mud-table-loading">
+                                <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
                             </td>
                         </tr>
                     }
-                    @if (CurrentPageItems != null)
+                    @if (CurrentPageItems != null && CurrentPageItems.Count() > 0)
                     {
                         var rowIndex = 0;
                         <MudVirtualize IsEnabled="@Virtualize" Items="@CurrentPageItems?.ToList()" Context="item">
@@ -80,6 +80,23 @@
                                 }
                                 @{ rowIndex++; }
                          </MudVirtualize>
+                    }
+                    else if(Loading ? LoadingContent != null : NoRecordsContent != null)
+                    {
+                        <tr>
+                            <th colspan="1000" class="mud-table-empty-row">
+                                <div Class="my-3">
+                                    @if(Loading)
+                                    {
+                                        @LoadingContent
+                                    }
+                                    else
+                                    {
+                                        @NoRecordsContent
+                                    }
+                                </div>
+                            </th>
+                        </tr>
                     }
                 </tbody>
                 @if (FooterContent != null)
@@ -107,5 +124,3 @@
         }
     </CascadingValue>
 </div>
-
-
