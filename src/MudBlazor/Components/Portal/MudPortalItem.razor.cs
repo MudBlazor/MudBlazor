@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-    public partial class MudPortalItem:MudComponentBase
+    public partial class MudPortalItem
     {
         private string AnchorClass =>
             new CssBuilder("portal-anchor")
