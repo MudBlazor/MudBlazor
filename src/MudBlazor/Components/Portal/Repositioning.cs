@@ -16,11 +16,12 @@ namespace MudBlazor
 
         public static void CorrectAnchorBoundaries(PortalItem portalItem)
         {
+            if (portalItem.FragmentRect is null || portalItem.AnchorRect is null) return;
+            
             var FragmentIsAboveorBelowAnchor
                 = portalItem.FragmentRect.Top > portalItem.AnchorRect.Bottom
                 || portalItem.FragmentRect.Bottom < portalItem.AnchorRect.Top;
 
-            if (portalItem.FragmentRect is null || portalItem.AnchorRect is null) return;
 
             // comes out at the bottom 
             if (portalItem.FragmentRect.IsOutsideBottom)
