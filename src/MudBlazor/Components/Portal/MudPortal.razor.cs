@@ -59,7 +59,7 @@ namespace MudBlazor
             _portalItem.FragmentRect = await _fragmentRef.MudGetClientRectFromFirstChildAsync();
 
             //correct the position if it's out of the viewport
-            CorrectAnchorBoundaries();
+            Repositioning.CorrectAnchorBoundaries(_portalItem);
 
             //if has an ancestor with position==fixed, then set the position of the element to fixed
             if (Type != typeof(MudTooltip))
@@ -74,59 +74,7 @@ namespace MudBlazor
             _portalItem.Type = Type;
 
         }
-
-        /// <summary>
-        /// If the PortalItem is outside of the viewport, correct the position to be visible
-        /// </summary>
-        private void CorrectAnchorBoundaries()
-        {
-            if (_portalItem.FragmentRect is null || _portalItem.AnchorRect is null) return;
-
-            // comes out at the bottom 
-            if (_portalItem.FragmentRect.IsOutsideBottom)
-            {
-                _portalItem.AnchorRect.Top -=
-                   2 * (_portalItem.FragmentRect.Top - _portalItem.AnchorRect.Bottom)
-                    + _portalItem.AnchorRect.Height
-                    + _portalItem.FragmentRect.Height;
-            }
-
-            // comes out at the top
-            if (_portalItem.FragmentRect.IsOutsideTop)
-            {
-                _portalItem.AnchorRect.Top +=
-                    2 * (Math.Abs(_portalItem.AnchorRect.Top - _portalItem.FragmentRect.Bottom))
-                  + _portalItem.AnchorRect.Height
-                  + _portalItem.FragmentRect.Height;
-            }
-
-            // comes out at the left
-            if (_portalItem.FragmentRect.IsOutsideLeft)
-            {
-                _portalItem.AnchorRect.Left +=
-                     FragmentIsAboveorBelowAnchor
-                        ? _portalItem.AnchorRect.Left - _portalItem.FragmentRect.Left
-                        : 2 * (Math.Abs(_portalItem.AnchorRect.Left - _portalItem.FragmentRect.Right))
-                            + _portalItem.FragmentRect.Width
-                            + _portalItem.AnchorRect.Width;
-            }
-
-            // comes out at the right
-            if (_portalItem.FragmentRect.IsOutsideRight)
-            {
-                _portalItem.AnchorRect.Left -=
-                    FragmentIsAboveorBelowAnchor
-                    ? _portalItem.FragmentRect.Right - _portalItem.AnchorRect.Right
-                    : 2 * (Math.Abs(_portalItem.FragmentRect.Left - _portalItem.AnchorRect.Right))
-                        + _portalItem.FragmentRect.Width
-                        + _portalItem.AnchorRect.Width;
-            }
-        }
-
-        private bool FragmentIsAboveorBelowAnchor
-            => _portalItem.FragmentRect.Top > _portalItem.AnchorRect.Bottom
-            || _portalItem.FragmentRect.Bottom < _portalItem.AnchorRect.Top;
-
+      
         /// <summary>
         /// If the window is resized, calculate the new coordinates of the PortalItem
         /// </summary>
