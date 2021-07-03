@@ -258,6 +258,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool Strict { get; set; }
 
+        /// <summary>
+        /// If true, the list values are pre-rendered when the select is closed.
+        /// Use it only if you need to show a render fragment as a value
+        /// </summary>
+        [Parameter] public bool IsPrerrendered { get; set; }
+
         internal bool _isOpen;
 
         public string _currentIcon { get; set; }

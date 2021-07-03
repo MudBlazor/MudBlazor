@@ -37,7 +37,16 @@ namespace MudBlazor
             builder.OpenElement(0, HtmlTag);
 
             //splatted attributes
-            builder.AddMultipleAttributes(1, UserAttributes);
+            foreach (var att in UserAttributes)
+            {
+                //checking if the value is null, we can get rid of null event handlers
+                // for example `@onmouseenter=@(IsOpen ? HandleEnter : null)`
+                //this is a powerful feature that in normal HTML elements doesn't work, because
+                //Blazor adds always the attribute value and creates an EventCallback
+                if(att.Value!= null)
+                builder.AddAttribute(1, att.Key, att.Value);
+
+            }
             //Class
             builder.AddAttribute(2, "class", Class);
             //Style

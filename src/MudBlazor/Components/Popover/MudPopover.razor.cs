@@ -64,5 +64,10 @@ namespace MudBlazor
         /// Child content of the component.
         /// </summary>
         [Parameter] public RenderFragment ChildContent { get; set; }
+
+        /// <summary>
+        /// If true, the Portal is prerrendered. 
+        /// </summary>
+        [Parameter] public bool IsPrerrendered { get; set; }
     }
 }
