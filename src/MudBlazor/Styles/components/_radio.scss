@@ -4,10 +4,6 @@
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    margin-left: -11px;
-    margin-right: 16px;
-    margin-inline-start: -11px;
-    margin-inline-end: 16px;
     vertical-align: middle;
     -webkit-tap-highlight-color: transparent;
     color: var(--mud-palette-action-default);
@@ -99,6 +95,14 @@
         margin-inline-start: 16px;
         margin-inline-end: -11px;
         flex-direction: row-reverse;
+    }
+
+    &end {
+        margin-left: -11px;
+        margin-right: 16px;
+        margin-inline-start: -11px;
+        margin-inline-end: 16px;
+        flex-direction: row;
     }
 
     &top {
