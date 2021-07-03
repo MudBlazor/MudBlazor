@@ -60,6 +60,7 @@ namespace MudBlazor.UnitTests.Components
             // now let's type a different state to see the popup open
             autocompletecomp.Find("input").Input("Calif");
             await Task.Delay(100);
+            
             comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             Console.WriteLine(comp.Markup);
             var items = comp.FindComponents<MudListItem>().ToArray();
@@ -70,9 +71,7 @@ namespace MudBlazor.UnitTests.Components
             // check state
             autocomplete.Value.Should().Be("California");
             autocomplete.Text.Should().Be("California");
-            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
-            await Task.Delay(100);
-            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            
         }
 
         /// <summary>
@@ -102,7 +101,7 @@ namespace MudBlazor.UnitTests.Components
 
             // type 2 characters and check if it has toggled the menu
             select.Find("input").Input("al");
-            comp.WaitForAssertion(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            comp.WaitForAssertion(() => comp.Markup.Should().NotContain("mud-popover"));
         }
 
         /// <summary>
