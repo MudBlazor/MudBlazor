@@ -17,7 +17,9 @@ namespace MudBlazor
 
         protected string NavigationButtonsClassName =>
                     new CssBuilder()
-                        .AddClass("align-self-center", !(NavigationButtonsClass ?? "").Contains("align-self-"))
+                        .AddClass("align-self-start", !(NavigationButtonsClass ?? "").Contains("align-self-") && ArrowsPosition == ArrowsPosition.Start)
+                        .AddClass("align-self-center", !(NavigationButtonsClass ?? "").Contains("align-self-") && ArrowsPosition == ArrowsPosition.Center)
+                        .AddClass("align-self-end", !(NavigationButtonsClass ?? "").Contains("align-self-") && ArrowsPosition == ArrowsPosition.End)
                         .AddClass("mud-carousel-elements-rtl", RightToLeft)
                         .AddClass(NavigationButtonsClass)
                         .Build();
@@ -43,6 +45,10 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public bool ShowArrows { get; set; } = true;
 
+        /// <summary>
+        /// Gets or Sets if 'Next' and 'Previous' arrows must be visible
+        /// </summary>
+        [Parameter] public ArrowsPosition ArrowsPosition { get; set; } = ArrowsPosition.Center;
 
         /// <summary>
         /// Gets or Sets if bottom bar with Delimiters musb be visible
