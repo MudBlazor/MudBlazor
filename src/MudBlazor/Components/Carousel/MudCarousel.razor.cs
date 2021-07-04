@@ -46,7 +46,7 @@ namespace MudBlazor
         [Parameter] public bool ShowArrows { get; set; } = true;
 
         /// <summary>
-        /// Gets or Sets if 'Next' and 'Previous' arrows must be visible
+        /// Sets the position of the arrows. By default, the position is the Center position
         /// </summary>
         [Parameter] public ArrowsPosition ArrowsPosition { get; set; } = ArrowsPosition.Center;
 
