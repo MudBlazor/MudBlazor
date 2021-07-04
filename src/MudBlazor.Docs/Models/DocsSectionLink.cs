@@ -12,7 +12,5 @@ namespace MudBlazor.Docs.Models
         public string Id { get; set; }
         public string Title { get; set; }
         public bool Active { get; set; }
-        public ElementReference Reference { get; set; }
-        public BoundingClientRect Location { get; set; }
     }
 }
