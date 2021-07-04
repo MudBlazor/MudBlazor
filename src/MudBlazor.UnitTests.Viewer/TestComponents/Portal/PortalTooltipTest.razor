@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.UnitTests.Components
+
+<MudPortalProvider />
+ 
+
+    <MudTooltip @onmouseover="HandleMouseOver" @onmouseout="HandleMouseOut"  Text="Delete">
+       
+
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" />
+       
+    </MudTooltip>
+ 
+
+@code {
+    private void HandleMouseOver() { }
+    private void HandleMouseOut() { }
+}

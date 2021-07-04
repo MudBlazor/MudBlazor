@@ -6,14 +6,18 @@ namespace MudBlazor.Interop
 {
     public class BoundingClientRect
     {
-        public double X { get; set; }
-        public double Y { get; set; }
+        public double Top { get; set; }
+        public double Left { get; set; }
+
         public double Width { get; set; }
         public double Height { get; set; }
-        public double Top { get; set; }
-        public double Right { get; set; }
-        public double Bottom { get; set; }
-        public double Left { get; set; }
+
+        // computed properties, read only
+        public double X => Left;
+        public double Y => Top;
+        public double Bottom => Top + Height;
+        public double Right => Left + Width;
+
 
         /// <summary>
         /// height of the viewport
