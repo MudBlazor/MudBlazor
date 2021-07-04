@@ -48,8 +48,11 @@ namespace MudBlazor.Docs.Components
 
         internal void AddSection(DocsSectionLink section)
         {
-            _sections.Add(section);
-            StateHasChanged();
+            if (!_sections.Select(x => x.Title).Contains(section.Title))
+            {
+                _sections.Add(section);
+                StateHasChanged();
+            }
         }
 
         private async void ScrollListener_OnScroll(object sender, ScrollEventArgs e)

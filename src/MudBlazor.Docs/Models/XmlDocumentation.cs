@@ -241,12 +241,23 @@ namespace MudBlazor.Docs.Models
 
         public static void LoadXmlDocumentation(Assembly assembly)
         {
+            string xmlFilePath;
+
             if (LoadedAssemblies.Contains(assembly))
             {
                 return;
             }
+
             var directoryPath = assembly.GetDirectoryPath();
-            var xmlFilePath = Path.Combine(directoryPath, assembly.GetName().Name + ".xml");
+            if (!string.IsNullOrEmpty(directoryPath))
+            {
+                xmlFilePath = Path.Combine(directoryPath, assembly.GetName().Name + ".xml");
+            }
+            else
+            {
+                xmlFilePath = assembly.GetName().Name + ".xml";
+            }
+
             if (File.Exists(xmlFilePath))
             {
                 using var streamReader = new StreamReader(xmlFilePath);
