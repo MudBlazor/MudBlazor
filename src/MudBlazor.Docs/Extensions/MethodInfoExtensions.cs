@@ -105,6 +105,41 @@ namespace MudBlazor.Docs.Extensions
             return stringBuilder.ToString();
         }
 
+        public static string GetAliases(string value, Type type = null)
+        {
+            switch (value.ToUpperInvariant())
+            {
+                case "STRING": return "string";
+                case "INT16": return "short";
+                case "INT32": return "int";
+                case "INT64": return "long";
+                case "INTPTR": return "nint";
+                case "UINT16": return "ushort";
+                case "UINT32": return "uint";
+                case "UINT64": return "ulong";
+                case "UINTPTR": return "nuint";
+                case "DOUBLE": return "double";
+                case "DECIMAL": return "decimal";
+                case "OBJECT": return "object";
+                case "VOID": return string.Empty;
+                case "BOOLEAN": return "bool";
+                case "SBYTE": return "sbyte";
+                case "CHAR": return "char";
+                case "FLOAT": return "float";
+                default:
+                    {
+                        if (type != null)
+                        {
+                            return string.IsNullOrWhiteSpace(type.FullName) ? Cleaning(type.Name) : Cleaning(type.FullName);
+                        }
+                        else
+                        {
+                            return value.Replace("System.Threading.Tasks.", "").Replace("System.", "").Replace("MudBlazor.", "").ToLowerInvariant();
+                        }
+                    }
+            }
+        }
+
         /// <summary>
         /// Get full type name with full namespace names
         /// </summary>
@@ -122,27 +157,7 @@ namespace MudBlazor.Docs.Extensions
 
             if (!(type.IsGenericType && type.Name.Contains('`')))
             {
-                switch (type.Name.ToUpperInvariant())
-                {
-                    case "STRING": return "string";
-                    case "INT16": return "short";
-                    case "INT32": return "int";
-                    case "INT64": return "long";
-                    case "INTPTR": return "nint";
-                    case "UINT16": return "ushort";
-                    case "UINT32": return "uint";
-                    case "UINT64": return "ulong";
-                    case "UINTPTR": return "nuint";
-                    case "DOUBLE": return "double";
-                    case "DECIMAL": return "decimal";
-                    case "OBJECT": return "object";
-                    case "VOID": return string.Empty;
-                    case "BOOLEAN": return "bool";
-                    case "SBYTE": return "sbyte";
-                    case "CHAR": return "char";
-                    case "FLOAT": return "float";
-                    default: return string.IsNullOrWhiteSpace(type.FullName) ? Cleaning(type.Name) : Cleaning(type.FullName);
-                }
+                return GetAliases(type.Name.ToUpperInvariant(), type);
             }
 
             var stringBuilder = new StringBuilder(type.Name.Substring(0, type.Name.IndexOf('`')));
