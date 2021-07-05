@@ -1,0 +1,51 @@
+﻿@using System.Reflection
+
+@if (foundObsoleteMethod)
+{
+    <CodeInline SecondaryColor="true">Obsolete</CodeInline> @descriptionObsoleteMethod
+}
+@if (foundObsoleteProperty)
+{
+    <CodeInline SecondaryColor="true">Obsolete</CodeInline> @descriptionObsoleteProperty
+}
+
+@code {
+    private bool foundObsoleteMethod;
+    private bool foundObsoleteProperty;
+    private string descriptionObsoleteMethod = string.Empty;
+    private string descriptionObsoleteProperty = string.Empty;
+    [Parameter] public MethodInfo MethodInfo { get; set; }
+    [Parameter] public PropertyInfo PropertyInfo { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SearchObsoleteMethod();
+        SearchObsoleteProperty();
+    }
+
+    private void SearchObsoleteMethod()
+    {
+        if (MethodInfo != null)
+        {
+            // Define object attributes associated to the method
+            object[] attributes = MethodInfo.GetCustomAttributes(false);
+
+            // Parse all obsolete attributes
+            foreach (ObsoleteAttribute attribute in attributes.OfType<ObsoleteAttribute>())
+            {
+                foundObsoleteMethod = true;
+                descriptionObsoleteMethod += attribute.Message + " ";
+            }
+        }
+    }
+
+    private void SearchObsoleteProperty()
+    {
+        if (PropertyInfo != null && PropertyInfo.GetCustomAttribute(typeof(ObsoleteAttribute), false) != null)
+        {
+            foundObsoleteProperty = true;
+            ObsoleteAttribute attribute = (ObsoleteAttribute)PropertyInfo.GetCustomAttribute(typeof(ObsoleteAttribute), false);
+            descriptionObsoleteProperty += attribute.Message + " ";
+        }
+    }
+}

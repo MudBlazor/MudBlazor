@@ -8,12 +8,14 @@
 		}
 	</ChildContent>
 	<Header>
-		<MudTooltip Text="Prepend a tab">
-			<MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@( () => AddTabCallback(false) )" />
-		</MudTooltip>
-		<MudTooltip Text="Append a tab">
-			<MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@( () => AddTabCallback(true) )"  />
-		</MudTooltip>
+		<MudButtonGroup>
+			<MudTooltip Text="Prepend a tab">
+				<MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" OnClick="@( () => AddTabCallback(false) )" />
+			</MudTooltip>
+			<MudTooltip Text="Append a tab">
+				<MudIconButton Icon="@Icons.Material.Filled.ChevronRight" OnClick="@( () => AddTabCallback(true) )"  />
+			</MudTooltip>
+		</MudButtonGroup>
 	</Header>
 	<TabPanelHeader>
 		@if(context.Text.StartsWith("Tab") == false)
