@@ -31,8 +31,8 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            ((DialogService)DialogService).OnDialogInstanceAdded += AddInstance;
-            ((DialogService)DialogService).OnDialogCloseRequested += DismissInstance;
+            DialogService.OnDialogInstanceAdded += AddInstance;
+            DialogService.OnDialogCloseRequested += DismissInstance;
             NavigationManager.LocationChanged += LocationChanged;
 
             _globalDialogOptions.DisableBackdropClick = DisableBackdropClick;
@@ -50,7 +50,7 @@ namespace MudBlazor
                 DismissInstance(reference, result);
         }
 
-        private void AddInstance(DialogReference dialog)
+        private void AddInstance(IDialogReference dialog)
         {
             _dialogs.Add(dialog);
             StateHasChanged();

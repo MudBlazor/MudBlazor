@@ -15,7 +15,7 @@ namespace MudBlazor
         public Guid Id { get; }
         public RenderFragment RenderFragment { get; set; }
 
-        public bool AreParametersRendered { get; }
+        public bool AreParametersRendered { get; set; }
 
         Task<DialogResult> Result { get; }
 
@@ -25,5 +25,9 @@ namespace MudBlazor
         bool Dismiss(DialogResult result);
 
         object Dialog { get; }
+
+        void InjectRenderFragment(RenderFragment rf);
+
+        void InjectDialog(object inst);
     }
 }

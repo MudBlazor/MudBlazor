@@ -13,8 +13,8 @@ namespace MudBlazor
 {
     public class DialogService : IDialogService
     {
-        internal event Action<DialogReference> OnDialogInstanceAdded;
-        internal event Action<DialogReference, DialogResult> OnDialogCloseRequested;
+        public event Action<IDialogReference> OnDialogInstanceAdded;
+        public event Action<IDialogReference, DialogResult> OnDialogCloseRequested;
 
         public IDialogReference Show<T>() where T : ComponentBase
         {
@@ -67,8 +67,8 @@ namespace MudBlazor
             {
                 throw new ArgumentException($"{contentComponent.FullName} must be a Blazor Component");
             }
-            var dialogInstanceId = Guid.NewGuid();
-            var dialogReference = new DialogReference(dialogInstanceId, this);
+            var dialogReference = CreateReference();
+
             var dialogContent = new RenderFragment(builder =>
             {
                 var i = 0;
@@ -94,11 +94,11 @@ namespace MudBlazor
             var dialogInstance = new RenderFragment(builder =>
             {
                 builder.OpenComponent<MudDialogInstance>(0);
-                builder.SetKey(dialogInstanceId);
+                builder.SetKey(dialogReference.Id);
                 builder.AddAttribute(1, "Options", options);
                 builder.AddAttribute(2, "Title", title);
                 builder.AddAttribute(3, "Content", dialogContent);
-                builder.AddAttribute(4, "Id", dialogInstanceId);
+                builder.AddAttribute(4, "Id", dialogReference.Id);
                 builder.CloseComponent();
             });
             dialogReference.InjectRenderFragment(dialogInstance);
@@ -147,6 +147,10 @@ namespace MudBlazor
             OnDialogCloseRequested?.Invoke(dialog, result);
         }
 
+        public virtual IDialogReference CreateReference()
+        {
+            return new DialogReference(Guid.NewGuid(), this);
+        }
     }
 
     [ExcludeFromCodeCoverage]

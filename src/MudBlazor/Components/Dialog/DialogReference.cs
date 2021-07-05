@@ -14,9 +14,9 @@ namespace MudBlazor
     {
         private readonly TaskCompletionSource<DialogResult> _resultCompletion = new TaskCompletionSource<DialogResult>();
 
-        private readonly DialogService _dialogService;
+        private readonly IDialogService _dialogService;
 
-        public DialogReference(Guid dialogInstanceId, DialogService dialogService)
+        public DialogReference(Guid dialogInstanceId, IDialogService dialogService)
         {
             Id = dialogInstanceId;
             _dialogService = dialogService;
@@ -32,7 +32,7 @@ namespace MudBlazor
             _dialogService.Close(this, result);
         }
 
-        public bool Dismiss(DialogResult result)
+        public virtual bool Dismiss(DialogResult result)
         {
             return _resultCompletion.TrySetResult(result);
         }
@@ -46,12 +46,12 @@ namespace MudBlazor
 
         public bool AreParametersRendered { get; set; }
 
-        internal void InjectDialog(object inst)
+        public void InjectDialog(object inst)
         {
             Dialog = inst;
         }
 
-        internal void InjectRenderFragment(RenderFragment rf)
+        public void InjectRenderFragment(RenderFragment rf)
         {
             RenderFragment = rf;
         }
