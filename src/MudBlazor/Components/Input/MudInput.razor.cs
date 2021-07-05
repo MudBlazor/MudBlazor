@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -28,17 +29,32 @@ namespace MudBlazor
 
         protected Task OnInput(ChangeEventArgs args)
         {
+            Console.WriteLine("OnInput");
             _isFocused = true;
             return Immediate ? SetTextAsync(args?.Value as string) : Task.CompletedTask;
         }
 
         protected async Task OnChange(ChangeEventArgs args)
         {
+            Console.WriteLine("OnChange");
             await OnInternalInputChanged.InvokeAsync(args);
             if (!Immediate)
             {
                 await SetTextAsync(args?.Value as string);
             }
+        }
+
+        /// <summary>
+        /// Paste hook for descendants.
+        /// </summary>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+
+        protected virtual async Task OnPaste(ClipboardEventArgs args)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        {
+            Console.WriteLine("OnPaste");
+            // do nothing
+            return;
         }
 
         /// <summary>
@@ -68,7 +84,6 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Placeholder { get; set; }
 
-
         /// <summary>
         /// Invokes the callback when the Up arrow button is clicked when the input is set to <see cref="InputType.Number"/>.
         /// Note: use the optimized control <see cref="MudNumericField{T}"/> if you need to deal with numbers.
@@ -87,7 +102,6 @@ namespace MudBlazor
         [Parameter] public bool HideSpinButtons { get; set; }
 
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
-
 
         private bool _showClearable;
 

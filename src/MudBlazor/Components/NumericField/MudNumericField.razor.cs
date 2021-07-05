@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -19,6 +20,7 @@ namespace MudBlazor
             _inputConverter = new NumericBoundariesConverter<T>((val) => ConstrainBoundaries(val).value) { Culture = CultureInfo.InvariantCulture };
 
             #region parameters default depending on T
+
             //sbyte
             if (typeof(T) == typeof(sbyte) || typeof(T) == typeof(sbyte?))
             {
@@ -96,8 +98,14 @@ namespace MudBlazor
                 _maxDefault = (T)(object)decimal.MaxValue;
                 _stepDefault = (T)(object)1M;
             }
-            #endregion
+
+            #endregion parameters default depending on T
         }
+
+        /// <summary>
+        /// TODO: What to write here..?
+        /// </summary>
+        [Parameter] public override InputType InputType { get; set; } = InputType.Text;
 
         protected string Classname =>
            new CssBuilder("mud-input-input-control mud-input-number-control " + (HideSpinButtons ? "mud-input-nospin" : "mud-input-showspin"))
@@ -112,21 +120,27 @@ namespace MudBlazor
 
         public override ValueTask FocusAsync()
         {
+            Console.WriteLine("FocusAsync");
             return _elementReference.FocusAsync();
         }
 
         public override ValueTask SelectAsync()
         {
+            Console.WriteLine("SelectAsync");
             return _elementReference.SelectAsync();
         }
 
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
+            Console.WriteLine("SelectRangeAsync");
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
         protected override async Task SetValueAsync(T value, bool updateText = true)
         {
+            Console.WriteLine("SetValueAsync");
+            Console.WriteLine(value);
+            Console.WriteLine(_value);
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
             await base.SetValueAsync(value, valueChanged || updateText);
@@ -134,6 +148,7 @@ namespace MudBlazor
 
         protected async Task<bool> ValidateInput(T value)
         {
+            Console.WriteLine("ValidateInput");
             bool valueChanged;
             (value, valueChanged) = ConstrainBoundaries(value);
             if (valueChanged)
@@ -141,8 +156,8 @@ namespace MudBlazor
             return true;//Don't show errors
         }
 
-
         #region Numeric range
+
         public async Task Increment()
         {
             dynamic val;
@@ -298,45 +313,76 @@ namespace MudBlazor
             return (value, false);
         }
 
-        #endregion
+        #endregion Numeric range
 
         private bool _keyDownPreventDefault;
+
         /// <summary>
         /// Overrides KeyDown event, intercepts Arrow Up/Down and uses them to add/substract the value manually by the step value.
         /// Relying on the browser mean the steps are each integer multiple from <see cref="Min"/> up until <see cref="Max"/>.
         /// This align the behaviour with the spinner buttons.
         /// </summary>
         /// <remarks>https://try.mudblazor.com/snippet/QamlkdvmBtrsuEtb</remarks>
-        protected async Task InterceptArrowKey(KeyboardEventArgs obj)
+        protected async Task InterceptKeydown(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
 
             if (obj.Type == "keydown")//KeyDown or repeat, blazor never fires InvokeKeyPress
             {
-                if (obj.Key == "ArrowUp")
+                switch (obj.Key)
                 {
-                    _keyDownPreventDefault = true;
-                    if (RuntimeLocation.IsServerSide)
-                    {
-                        var value = Value;
-                        await Task.Delay(1);
-                        Value = value;
-                    }
-                    await Increment();
-                    return;
-                }
-                else if (obj.Key == "ArrowDown")
-                {
-                    _keyDownPreventDefault = true;
-                    if (RuntimeLocation.IsServerSide)
-                    {
-                        var value = Value;
-                        await Task.Delay(1);
-                        Value = value;
-                    }
-                    await Decrement();
-                    return;
+                    case "ArrowUp":
+                        _keyDownPreventDefault = true;
+                        if (RuntimeLocation.IsServerSide)
+                        {
+                            var value = Value;
+                            await Task.Delay(1);
+                            Value = value;
+                        }
+                        await Increment();
+                        return;
+
+                    case "ArrowDown":
+                        _keyDownPreventDefault = true;
+                        if (RuntimeLocation.IsServerSide)
+                        {
+                            var value = Value;
+                            await Task.Delay(1);
+                            Value = value;
+                        }
+                        await Decrement();
+                        return;
+                    // various navigation keys
+                    case "ArrowLeft":
+                    case "ArrowRight":
+                    case "Tab":
+                    case "Backspace":
+                        break;
+
+                    //copy/paste
+                    case "v":
+                    case "c":
+                        if (obj.CtrlKey is false)
+                        {
+                            _keyDownPreventDefault = true;
+                            return;
+                        }
+                        break;
+
+                    default:
+                        var acceptableKeyTypes = new Regex("^[0-9,.]$");
+
+                        var isMatch = acceptableKeyTypes.Match(obj.Key).Success;
+
+                        Console.WriteLine(obj.Key + " did match " + isMatch);
+
+                        if (isMatch is false)
+                        {
+                            _keyDownPreventDefault = true;
+                            return;
+                        }
+                        break;
                 }
             }
 
@@ -345,18 +391,16 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Overrides KeyUp event, if needed reset <see cref="_keyDownPreventDefault"/> set by <see cref="InterceptArrowKey(KeyboardEventArgs)"/>.
+        /// Overrides KeyUp event, if needed reset <see cref="_keyDownPreventDefault"/> set by <see cref="InterceptKeydown(KeyboardEventArgs)"/>.
         /// </summary>
         protected void InterceptKeyUp(KeyboardEventArgs obj)
         {
             if (Disabled || ReadOnly)
                 return;
 
-            if (_keyDownPreventDefault != KeyDownPreventDefault)
-            {
-                _keyDownPreventDefault = KeyDownPreventDefault;
-                StateHasChanged();
-            }
+            _keyDownPreventDefault = false;
+            StateHasChanged();
+
             OnKeyUp.InvokeAsync(obj).AndForget();
         }
 
@@ -370,11 +414,12 @@ namespace MudBlazor
         /// </summary>
         [Parameter] public string Label { get; set; }
 
-
         //Tracks if Min has a value.
         private bool _minHasValue = false;
+
         //default value for the type
         private T _minDefault;
+
         private T _min;
         /// <summary>
         /// The minimum value for the input.
@@ -392,8 +437,10 @@ namespace MudBlazor
 
         //Tracks if Max has a value.
         private bool _maxHasValue = false;
+
         //default value for the type
         private T _maxDefault;
+
         private T _max;
         /// <summary>
         /// The maximum value for the input.
@@ -411,8 +458,10 @@ namespace MudBlazor
 
         //Tracks if Max has a value.
         private bool _stepHasValue = false;
+
         //default value for the type, it's useful for decimal type to avoid constant evaluation
         private T _stepDefault;
+
         private T _step;
 
         /// <summary>

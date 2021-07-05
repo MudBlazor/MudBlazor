@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -84,7 +85,7 @@ namespace MudBlazor
         /// <summary>
         /// Type of the input element. It should be a valid HTML5 input type.
         /// </summary>
-        [Parameter] public InputType InputType { get; set; } = InputType.Text;
+        [Parameter] public virtual InputType InputType { get; set; } = InputType.Text;
 
         /// <summary>
         /// Variant to use.
@@ -150,6 +151,7 @@ namespace MudBlazor
         protected bool _isFocused;
 
         protected bool _shouldRenderBeForced;
+
         //if you press Enter or Arrows, the input should re-render, because
         //the user is accepting a value
         private static bool ShouldRenderBeForced(string key) => key == "Enter"
@@ -159,6 +161,7 @@ namespace MudBlazor
 
         protected virtual void OnBlurred(FocusEventArgs obj)
         {
+            Console.WriteLine("OnBlurred");
             _isFocused = false;
             Touched = true;
             BeginValidateAfter(OnBlur.InvokeAsync(obj));
@@ -168,6 +171,7 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyDown(KeyboardEventArgs obj)
         {
+            Console.WriteLine("InvokeKeyDown");
             _isFocused = true;
             _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyDown.InvokeAsync(obj).AndForget();
@@ -179,6 +183,7 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyPress(KeyboardEventArgs obj)
         {
+            Console.WriteLine("InvokeKeyPress base");
             OnKeyPress.InvokeAsync(obj).AndForget();
         }
 
@@ -188,6 +193,7 @@ namespace MudBlazor
 
         protected virtual void InvokeKeyUp(KeyboardEventArgs obj)
         {
+            Console.WriteLine("InvokeKeyUp");
             _isFocused = true;
             _shouldRenderBeForced = ShouldRenderBeForced(obj.Key);
             OnKeyUp.InvokeAsync(obj).AndForget();
@@ -228,6 +234,7 @@ namespace MudBlazor
         /// </summary>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
+            Console.WriteLine("UpdateValuePropertyAsync " + Text);
             return SetValueAsync(Converter.Get(Text), updateText);
         }
 
