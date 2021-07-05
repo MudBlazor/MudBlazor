@@ -11,29 +11,9 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor
 {
-    public static class StringExtentionsForScrollSpy
+    public class ScrollSectionCenteredEventArgs
     {
-        public static string RemoveHashIfNeeded(this string input)
-        {
-            if (string.IsNullOrEmpty(input) == true)
-            {
-                return input;
-            }
-
-            if(input.StartsWith('#') == true)
-            {
-                return input.Substring(1);
-            }
-
-            return input;
-
-
-        }
-    }
-
-    public class ScrollSectionSectionCenteredEventArgs
-    {
-        public ScrollSectionSectionCenteredEventArgs(string id)
+        public ScrollSectionCenteredEventArgs(string id)
         {
             Id = id;
         }
@@ -63,7 +43,7 @@ namespace MudBlazor
         /// <param name="uri">The uri which contains the fragement. If no fragment it scrolls to the top of the page</param>
         /// <returns></returns>
         Task ScrollToSection(Uri uri);
-        event EventHandler<ScrollSectionSectionCenteredEventArgs> ScrollSectionSectionCentered;
+        event EventHandler<ScrollSectionCenteredEventArgs> ScrollSectionSectionCentered;
 
         /// <summary>
         /// Get the current position of the centered section
@@ -90,16 +70,16 @@ namespace MudBlazor
         public void SectionChangeOccured(string id)
         {
             CenteredSection = id;
-            ScrollSectionSectionCentered?.Invoke(this, new ScrollSectionSectionCenteredEventArgs(id));
+            ScrollSectionSectionCentered?.Invoke(this, new ScrollSectionCenteredEventArgs(id));
         }
 
-        public event EventHandler<ScrollSectionSectionCenteredEventArgs> ScrollSectionSectionCentered;
+        public event EventHandler<ScrollSectionCenteredEventArgs> ScrollSectionSectionCentered;
 
         public async Task ScrollToSection(string id)
         {
             CenteredSection = id;
             await _js.InvokeVoidAsync
-            ("mudScrollSpy.scrollToSection", id.RemoveHashIfNeeded());
+            ("mudScrollSpy.scrollToSection", id.Trim('#'));
         }
 
         public async Task ScrollToSection(Uri uri) => await ScrollToSection(uri.Fragment);

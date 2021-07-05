@@ -10,7 +10,7 @@ namespace MudBlazor.UnitTests.Mocks
     {
         public string CenteredSection => "my-item";
 
-        public event EventHandler<ScrollSectionSectionCenteredEventArgs> ScrollSectionSectionCentered;
+        public event EventHandler<ScrollSectionCenteredEventArgs> ScrollSectionSectionCentered;
 
         public ValueTask DisposeAsync() => ValueTask.CompletedTask;
         public Task ScrollToSection(string id) => Task.FromResult(true);

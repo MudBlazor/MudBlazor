@@ -62,7 +62,7 @@ namespace MudBlazor.Docs.Components
             StateHasChanged();
         }
 
-        private void ScrollSpy_ScrollSectionSectionCentered(object sender, ScrollSectionSectionCenteredEventArgs e)
+        private void ScrollSpy_ScrollSectionSectionCentered(object sender, ScrollSectionCenteredEventArgs e)
         {
             SelectActiveSection(e.Id);
         }
