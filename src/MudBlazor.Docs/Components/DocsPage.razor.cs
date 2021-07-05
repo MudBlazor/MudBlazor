@@ -15,124 +15,70 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor.Docs.Components
 {
-    public partial class DocsPage : ComponentBase, IDisposable
+    public partial class DocsPage : ComponentBase, IAsyncDisposable
     {
-        [Inject] IScrollListener ScrollListener { get; set; }
-        [Inject] IScrollManager ScrollManager { get; set; }
-        [Inject] IResizeObserver ResizeObserver { get; set; }
-        [Inject] IJSRuntime JsRuntime { get; set; }
+        [Inject] IScrollSpy ScrollSpy { get; set; }
         [Inject] NavigationManager NavigationManager { get; set; }
 
         [Parameter] public MaxWidth MaxWidth { get; set; } = MaxWidth.Medium;
-        [Parameter] public EventCallback<ScrollEventArgs> OnScroll { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
 
-        private List<DocsSectionLink> _sections = new List<DocsSectionLink>();
-        private string _pageuri { get; set; }
+        private List<DocsSectionLink> _sections = new();
 
-        private bool _scrolled = false;
-        private bool _eventScrolled = false;
 
-        protected override void OnInitialized()
-        {
-            NavigationManager.LocationChanged += TryFragmentNavigation;
-        }
-
-        protected override void OnAfterRender(bool firstRender)
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
             {
-                ScrollListener.OnScroll += ScrollListener_OnScroll;
+                ScrollSpy.ScrollSectionSectionCentered += ScrollSpy_ScrollSectionSectionCentered;
+
+                await ScrollSpy.ScrollToSection(new Uri(NavigationManager.Uri));
+                await ScrollSpy.StartSpying("docs-section-header");
+                SelectActiveSection(ScrollSpy.CenteredSection);
             }
         }
 
         internal void AddSection(DocsSectionLink section)
         {
             _sections.Add(section);
+            if(section.Id == ScrollSpy.CenteredSection)
+            {
+                section.Active = true;
+            }
+
             StateHasChanged();
         }
 
-        private async void ScrollListener_OnScroll(object sender, ScrollEventArgs e)
+        private void SelectActiveSection(string id)
         {
-            await OnScroll.InvokeAsync(e);
-
-            if(_scrolled == false)
-            {
-                await ObserveAllSectionsAsync();
-            }
-
-            if(_eventScrolled)
-            {
-                _eventScrolled = false;
-                return;
-            }
-
-            var activelink = _sections.OrderBy(item => Math.Abs((e.FirstChildBoundingClientRect.Top * -1) - item.Location.Top)).First();
+            if(string.IsNullOrEmpty(id)) { return; }
+            
+            var activelink = _sections.FirstOrDefault(x => x.Id == id);
+            if(activelink == null) { return; }
 
             _sections.ToList().ForEach(item => item.Active = false);
             activelink.Active = true;
 
-            await ChangeUrl(activelink.Id);
-
             StateHasChanged();
         }
 
-        private async void TryFragmentNavigation(object sender, LocationChangedEventArgs args)
+        private void ScrollSpy_ScrollSectionSectionCentered(object sender, ScrollSectionCenteredEventArgs e)
         {
-            string currenturl = NavigationManager.Uri;
-
-            if (currenturl.Contains("#"))
-            {
-                string id = currenturl.Substring(currenturl.IndexOf('#') + 1);
-                var activelink = _sections.FirstOrDefault(item => item.Id == id);
-                activelink.Active = true;
-                _eventScrolled = true;
-                await ScrollManager.ScrollToFragmentAsync(id, ScrollBehavior.Smooth);
-            }
-            StateHasChanged();
+            SelectActiveSection(e.Id);
         }
 
-        private async void OnNavLinkClick(string id)
+        private async Task OnNavLinkClick(string id)
         {
             _sections.ToList().ForEach(item => item.Active = false);
             var activelink = _sections.FirstOrDefault(item => item.Id == id);
             activelink.Active = true;
-            _eventScrolled = true;
-
-            await ChangeUrl(activelink.Id);
-            await ScrollManager.ScrollToFragmentAsync(id, ScrollBehavior.Smooth);
-
-            StateHasChanged();
+            await ScrollSpy.ScrollToSection(id);
         }
 
-        private async Task ChangeUrl(string id)
+        public async ValueTask DisposeAsync()
         {
-            string currenturl = $"{NavigationManagerExtensions.GetSection(NavigationManager)}/{NavigationManagerExtensions.GetComponentLink(NavigationManager)}";
-            if (currenturl.Contains("#"))
-            {
-                currenturl = currenturl.Substring(0, currenturl.IndexOf("#") + 0);
-            }
-            _pageuri = currenturl;
-            await JsRuntime.InvokeVoidAsync("ChangeUrl", $"{_pageuri}#{id}");
-        }
-
-        private async Task ObserveAllSectionsAsync()
-        {
-            var observeResult = (await ResizeObserver.Observe(_sections.Select(x => x.Reference).ToArray())).ToArray();
-
-            for (int i = 0; i < _sections.Count; i++)
-            {
-                _sections[i].Location = observeResult[i];
-            }
-            _scrolled = true;
-            StateHasChanged();
-        }
-
-        public void Dispose()
-        {
-            ScrollListener.OnScroll -= ScrollListener_OnScroll;
-            NavigationManager.LocationChanged -= TryFragmentNavigation;
-            ResizeObserver.Dispose();
+            ScrollSpy.ScrollSectionSectionCentered -= ScrollSpy_ScrollSectionSectionCentered;
+            await ScrollSpy.DisposeAsync();
         }
 
         private string GetNavLinkClass(bool active)
