@@ -90,6 +90,15 @@ namespace MudBlazor
             _selectorY = e.OffsetY;
         }
 
+        private void OnMouseOver(MouseEventArgs e)
+        {
+            if (MouseDown)
+            {
+                _selectorX = e.OffsetX;
+                _selectorY = e.OffsetY;
+            }
+        }
+
         private void OnMouseMove(MouseEventArgs e)
         {
             if (MouseDown)
@@ -97,21 +106,6 @@ namespace MudBlazor
                 _selectorX = e.OffsetX;
                 _selectorY = e.OffsetY;
             }
-        }
-
-        private void OnDrag(DragEventArgs e)
-        {
-            if (MouseDown)
-            {
-                _selectorX = e.OffsetX;
-                _selectorY = e.OffsetY;
-            }
-        }
-
-        private void OnDragEnd(DragEventArgs e)
-        {
-            _selectorX = e.OffsetX;
-            _selectorY = e.OffsetY;
         }
 
         private string GetSelectorLocation()

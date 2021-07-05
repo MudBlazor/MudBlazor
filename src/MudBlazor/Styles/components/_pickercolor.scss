@@ -9,6 +9,8 @@
 .mud-picker-color-picker {
     width: 300px;
     height: 250px;
+    position: relative;
+    overflow: hidden;
 
     .mud-picker-color-overlay {
         width: 100%;

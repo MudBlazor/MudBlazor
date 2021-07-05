@@ -8,10 +8,11 @@
     protected override RenderFragment PickerContent=> 
     @<CascadingValue Value="@this" IsFixed="true">
         <MudPickerContent Class="mud-picker-color-content">
-            <div class="mud-picker-color-picker" style="background-color: rgb(255, 0, 0);"> @*Update the Style's background-color here' here with the selected color from the picker with NO alpha.*@
+            <div class="mud-picker-color-picker" style="background-color: rgb(255, 0, 0);">
+                @*Update the Style's background-color here' here with the selected color from the picker with NO alpha.*@
                 <div class="mud-picker-color-overlay mud-picker-color-overlay-white">
                     <div class="mud-picker-color-overlay mud-picker-color-overlay-black">
-                        <div class="mud-picker-color-overlay" @onclick="OnMouseClick" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp" draggable="true" @ondrag="OnDrag" @ondragend="OnDragEnd" ondragstart="event.dataTransfer.setDragImage('', 0, 0);">
+                        <div class="mud-picker-color-overlay" @onclick="OnMouseClick" @onmousedown="OnMouseDown" @onmouseup="OnMouseUp" @onmouseover="OnMouseOver">
                             <div class="mud-picker-color-selector" style="transform: @GetSelectorLocation()"></div> @*Update the position of the selector here on mouse drag?.*@
                         </div>
                     </div>
