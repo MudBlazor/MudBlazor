@@ -48,12 +48,11 @@
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnAfterRender(bool firstRender)
     {
-        await base.OnAfterRenderAsync(firstRender);
+        base.OnAfterRender(firstRender);
         if (firstRender == true && DocsPage != null && !String.IsNullOrWhiteSpace(Title))
         {
-            Section.Reference = SectionReference;
             DocsPage.AddSection(Section);
         }
     }

@@ -51,14 +51,13 @@ namespace MudBlazor.Docs.Components
 
         private void SelectActiveSection(string id)
         {
-            if (string.IsNullOrEmpty(id)) { return; }
-
+            if (string.IsNullOrEmpty(id)) 
+              return;
             var activelink = _sections.FirstOrDefault(x => x.Id == id);
-            if (activelink == null) { return; }
-
+            if (activelink == null) 
+              return; 
             _sections.ToList().ForEach(item => item.Active = false);
             activelink.Active = true;
-
             StateHasChanged();
         }
 
