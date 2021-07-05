@@ -24,7 +24,7 @@ namespace MudBlazor.Docs.Extensions
             if (callable == false)
             {
                 // Append return type
-                stringBuilder.Append(TypeName(method.ReturnType));
+                stringBuilder.Append(Cleaning(TypeName(method.ReturnType)));
                 stringBuilder.Append(' ');
             }
 
@@ -141,7 +141,7 @@ namespace MudBlazor.Docs.Extensions
                     case "SBYTE": return "sbyte";
                     case "CHAR": return "char";
                     case "FLOAT": return "float";
-                    default: return Cleaning(string.IsNullOrWhiteSpace(type.FullName) ? type.Name : type.FullName);
+                    default: return string.IsNullOrWhiteSpace(type.FullName) ? Cleaning(type.Name) : Cleaning(type.FullName);
                 }
             }
 
@@ -165,7 +165,7 @@ namespace MudBlazor.Docs.Extensions
 
         private static string Cleaning(string value)
         {
-            return value.Replace("System.Threading.Tasks.", "").Replace("System.", "").Replace("MudBlazor.", "");
+            return value.Replace("System.Threading.Tasks.", "").Replace("System.", "").Replace("MudBlazor.", "").ToLowerInvariant();
         }
     }
 }

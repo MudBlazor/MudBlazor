@@ -133,24 +133,24 @@
     {
         switch (value.ToUpperInvariant())
         {
-            case "STRING": return "String";
-            case "INT16": return "Short";
-            case "INT32": return "Int";
-            case "INT64": return "Long";
-            case "INTPTR": return "Nint";
-            case "UINT16": return "Ushort";
-            case "UINT32": return "Uint";
-            case "UINT64": return "Ulong";
-            case "UINTPTR": return "Nuint";
-            case "DOUBLE": return "Double";
-            case "DECIMAL": return "Decimal";
-            case "OBJECT": return "Object";
+            case "STRING": return "string";
+            case "INT16": return "short";
+            case "INT32": return "int";
+            case "INT64": return "long";
+            case "INTPTR": return "nint";
+            case "UINT16": return "ushort";
+            case "UINT32": return "uint";
+            case "UINT64": return "ulong";
+            case "UINTPTR": return "nuint";
+            case "DOUBLE": return "double";
+            case "DECIMAL": return "decimal";
+            case "OBJECT": return "object";
             case "VOID": return string.Empty;
-            case "BOOLEAN": return "Bool";
-            case "SBYTE": return "Sbyte";
-            case "CHAR": return "Char";
-            case "FLOAT": return "Float";
-            default: return value;
+            case "BOOLEAN": return "bool";
+            case "SBYTE": return "sbyte";
+            case "CHAR": return "char";
+            case "FLOAT": return "float";
+            default: return value.Replace("System.Threading.Tasks.", "").Replace("System.", "").Replace("MudBlazor.", "").ToLowerInvariant();
         }
     }
     private List<string> hiddenMethods = new List<string>()
